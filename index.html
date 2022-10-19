@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ace linters demo</title>
+
+</head>
+<body>
+Language:
+<select id="lang">
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+</select><br>
+<div id="container" style="width: 100%; height: 300px">
+
+</div>
+<script src="bundle.simple.js"></script>
+<script>
+    var lang = document.getElementById("lang");
+    lang.onchange = () => {
+        if (lang.value && window[lang.value]) {
+            window.editor.session.setMode(window[lang.value].mode);
+            window.editor.session.setValue(window[lang.value].content);
+            window["worker"] = window[lang.value].worker;
+        }
+    };
+</script>
+</body>
+</html>
