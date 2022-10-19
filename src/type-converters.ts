@@ -1,4 +1,4 @@
-import type {Range, Position} from "vscode-languageserver-types";
+import type {Range, Position, Diagnostic} from "vscode-languageserver-types";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 
@@ -30,4 +30,15 @@ export function fromPoint(point: Ace.Point): Position {
 export function toPoint(position: Position): Ace.Point {
     if (!position) return;
     return {row: position.line, column: position.character}
+}
+
+export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
+    return diagnostics && diagnostics.map((el) => {
+        if (el.severity !== 4) return {
+            row: el.range.start.line,
+            column: el.range.start.character,
+            text: el.message,
+            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
+        };
+    });
 }

@@ -1,8 +1,7 @@
 import {LanguageWorker} from "./language-worker";
 import {LanguageService} from "vscode-css-languageservice";
-import {Diagnostic} from "vscode-languageserver-types";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations} from "../type-converters";
 
 var cssService = require('vscode-css-languageservice');
 
@@ -44,7 +43,7 @@ export class CSSWorker implements LanguageWorker {
         return hover;
     }
 
-    doValidation(): Diagnostic[] {
+    doValidation(): Ace.Annotation[] {
         let document = this.$getDocument();
         if (!document) {
             return [];
@@ -52,7 +51,6 @@ export class CSSWorker implements LanguageWorker {
         let cssDocument = this.$service.parseStylesheet(document);
 
         let diagnostics = this.$service.doValidation(document, cssDocument);
-        console.log(diagnostics);
-        return diagnostics;
+        return toAnnotations(diagnostics);
     }
 }
