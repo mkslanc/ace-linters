@@ -8,6 +8,8 @@ import {HtmlWorker} from "./workers/html-worker";
 import {CSSWorker} from "./workers/css-worker";
 import {Mode as HTMLMode} from "ace-code/src/mode/html";
 import {Mode as CSSMode} from "ace-code/src/mode/css";
+import {Mode as LessMode} from "ace-code/src/mode/less";
+import {Mode as SCSSMode} from "ace-code/src/mode/scss";
 import {Mode as JsonMode} from "ace-code/src/mode/json";
 
 import {Range as AceRange} from "ace-code/src/range";
@@ -15,6 +17,8 @@ import {Range as AceRange} from "ace-code/src/range";
 var theme = require("ace-code/src/theme/textmate");
 import * as ace from "ace-code";
 import {cssContent} from "./docs-example/css-example";
+import {lessContent} from "./docs-example/less-example";
+import {scssContent} from "./docs-example/scss-example";
 
 
 var editor = ace.edit("container");
@@ -22,6 +26,7 @@ window["editor"] = editor;
 
 var htmlMode = new HTMLMode();
 editor.setTheme(theme);
+editor.setOptions({"customScrollbar": true})
 editor.session.setValue(htmlContent);
 editor.session.setMode(htmlMode);
 editor.container = document.getElementById("container");
@@ -35,21 +40,32 @@ window["html"] = {
 window["worker"] = htmlworker;
 var cssworker = new CSSWorker(editor.session);
 var cssMode = new CSSMode();
-window["css"] = cssworker;
 window["css"] = {
     worker: cssworker,
     mode: cssMode,
     content: cssContent
 };
+var lessMode = new LessMode();
+window["less"] = {
+    worker: cssworker,
+    mode: lessMode,
+    content: lessContent
+};
+var scssMode = new SCSSMode();
+window["scss"] = {
+    worker: cssworker,
+    mode: scssMode,
+    content: scssContent
+};
 
 var menuKb = new HashHandler([
     {
         bindKey: "Ctrl-`",
-        name: "FormatHtml",
+        name: "format",
         exec: function () {
             var row = editor.session.getLength();
             var column = editor.session.getLine(row).length - 1;
-            var newContent = htmlworker.format(new AceRange(0, 0, row, column));
+            var newContent = window["worker"].format(new AceRange(0, 0, row, column));
             editor.session.setValue(newContent[0].newText);
         }
     }

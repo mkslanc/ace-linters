@@ -7,14 +7,32 @@ var cssService = require('vscode-css-languageservice');
 
 export class CSSWorker implements LanguageWorker {
     $service: LanguageService;
-    session;
+    session: Ace.EditSession;
     $languageId;
 
-    constructor(session) {
-        this.$languageId = "css";
-        //TODO: different services depending on language id
-        this.$service = cssService.getCSSLanguageService();
-        this.session = session;
+    constructor(session: Ace.EditSession) {
+        this.changeLanguageService(session);
+    }
+
+    changeLanguageService(session?: Ace.EditSession, modeName?: string) {
+        let language = modeName ?? session?.$modeId.replace("ace/mode/", "") ?? "css";
+        switch (language) {
+            case "less":
+                this.$languageId = "less";
+                this.$service = cssService.getLESSLanguageService();
+                break;
+            case "scss":
+                this.$languageId = "scss";
+                this.$service = cssService.getSCSSLanguageService();
+                break;
+            case "css":
+            default:
+                this.$languageId = "css";
+                this.$service = cssService.getCSSLanguageService();
+                break;
+        }
+        if (session)
+            this.session = session;
     }
 
     $getDocument() {

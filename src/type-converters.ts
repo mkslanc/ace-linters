@@ -34,7 +34,7 @@ export function toPoint(position: Position): Ace.Point {
 
 export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     return diagnostics && diagnostics.map((el) => {
-        if (el.severity !== 4) return {
+        return {
             row: el.range.start.line,
             column: el.range.start.character,
             text: el.message,
