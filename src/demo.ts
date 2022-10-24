@@ -19,7 +19,8 @@ import * as ace from "ace-code";
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
 import {scssContent} from "./docs-example/scss-example";
-
+import {jsonSchema, jsonContent} from "./docs-example/json-example";
+import {JsonWorker} from "./workers/json-worker";
 
 var editor = ace.edit("container");
 window["editor"] = editor;
@@ -56,6 +57,13 @@ window["scss"] = {
     worker: cssworker,
     mode: scssMode,
     content: scssContent
+};
+var jsonworker = new JsonWorker(editor.session, jsonSchema);
+var jsonMode = new JsonMode();
+window["json"] = {
+    worker: jsonworker,
+    mode: jsonMode,
+    content: jsonContent
 };
 
 var menuKb = new HashHandler([

@@ -12,6 +12,7 @@ Language:
     <option value="css">CSS</option>
     <option value="less">LESS</option>
     <option value="scss">SCSS</option>
+    <option value="json">JSON</option>
 </select><br>
 <div id="container" style="width: 100%; height: 300px">
 
@@ -20,15 +21,15 @@ Language:
 <script>
     var lang = document.getElementById("lang");
 
-    function validate() {
+    async function validate() {
         window.editor.session.clearAnnotations();
-        var annotations = window["worker"].doValidation();
+        var annotations = await window["worker"].doValidation();
         if (annotations && annotations.length > 0) {
             window.editor.session.setAnnotations(annotations);
         }
     }
 
-    lang.onchange = () => {
+    lang.onchange = async () => {
         if (lang.value && window[lang.value]) {
             var session = window.editor.session;
             session.setMode(window[lang.value].mode);
@@ -37,10 +38,10 @@ Language:
             if (window["worker"].changeLanguageService !== undefined) {
                 window["worker"].changeLanguageService(undefined, lang.value);
             }
-            session.on("change", () => {
+            window.editor.on("input", () => {
                 validate();
             });
-            validate();
+            await validate();
         }
     };
 </script>

@@ -8,7 +8,9 @@
   "dependencies": {
     "ace-code": "latest",
     "vscode-html-languageservice": "latest",
-    "vscode-css-languageservice": "latest"
+    "vscode-css-languageservice": "latest",
+    "vscode-json-languageservice": "4.2.1",
+    "typescript": "latest"
   },
   "devDependencies": {
     "webpack": "latest",
