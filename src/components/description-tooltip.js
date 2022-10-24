@@ -24,7 +24,7 @@ oop.inherits(DescriptionTooltip, Tooltip);
     this.token = {};
     this.range = new Range();
 
-    this.update = function () {
+    this.update = async function () {
         this.$timer = null;
 
         var r = this.editor.renderer;
@@ -42,14 +42,19 @@ oop.inherits(DescriptionTooltip, Tooltip);
 
         var screenPos = {
             row: row,
-            column: col
+            column: col < 0 ? 0 : col
         };
-        var description = window["worker"].doHover(screenPos);
+        var description = await window["worker"].doHover(screenPos);
         if (!description) {
             this.hide();
             return;
         }
-        var descriptionText = description.contents.value;
+        var descriptionText = Array.isArray(description.contents) ? description.contents.join(" ")
+            : description.contents.value;
+        if (descriptionText === "") {
+            this.hide();
+            return;
+        }
         if (this.descriptionText != descriptionText) {
             this.setText(descriptionText);
             this.width = this.getWidth();
