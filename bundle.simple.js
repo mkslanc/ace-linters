@@ -400,6 +400,1053 @@ exports.B = function(docLines, delta, doNotValidate) {
 
 /***/ }),
 
+/***/ 9528:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+var __webpack_unused_export__;
+
+
+var HashHandler = (__webpack_require__(7116).HashHandler);
+var AcePopup = (__webpack_require__(2985)/* .AcePopup */ .u);
+var util = __webpack_require__(3860);
+var lang = __webpack_require__(124);
+var dom = __webpack_require__(6359);
+var snippetManager = (__webpack_require__(6629)/* .snippetManager */ .w);
+var config = __webpack_require__(3188);
+
+var Autocomplete = function() {
+    this.autoInsert = false;
+    this.autoSelect = true;
+    this.exactMatch = false;
+    this.gatherCompletionsId = 0;
+    this.keyboardHandler = new HashHandler();
+    this.keyboardHandler.bindKeys(this.commands);
+
+    this.blurListener = this.blurListener.bind(this);
+    this.changeListener = this.changeListener.bind(this);
+    this.mousedownListener = this.mousedownListener.bind(this);
+    this.mousewheelListener = this.mousewheelListener.bind(this);
+
+    this.changeTimer = lang.delayedCall(function() {
+        this.updateCompletions(true);
+    }.bind(this));
+
+    this.tooltipTimer = lang.delayedCall(this.updateDocTooltip.bind(this), 50);
+};
+
+(function() {
+
+    this.$init = function() {
+        this.popup = new AcePopup(document.body || document.documentElement);
+        this.popup.on("click", function(e) {
+            this.insertMatch();
+            e.stop();
+        }.bind(this));
+        this.popup.focus = this.editor.focus.bind(this.editor);
+        this.popup.on("show", this.tooltipTimer.bind(null, null));
+        this.popup.on("select", this.tooltipTimer.bind(null, null));
+        this.popup.on("changeHoverMarker", this.tooltipTimer.bind(null, null));
+        return this.popup;
+    };
+
+    this.getPopup = function() {
+        return this.popup || this.$init();
+    };
+
+    this.openPopup = function(editor, prefix, keepPopupPosition) {
+        if (!this.popup)
+            this.$init();
+
+        this.popup.autoSelect = this.autoSelect;
+
+        this.popup.setData(this.completions.filtered, this.completions.filterText);
+
+        editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
+        
+        var renderer = editor.renderer;
+        this.popup.setRow(this.autoSelect ? 0 : -1);
+        if (!keepPopupPosition) {
+            this.popup.setTheme(editor.getTheme());
+            this.popup.setFontSize(editor.getFontSize());
+
+            var lineHeight = renderer.layerConfig.lineHeight;
+
+            var pos = renderer.$cursorLayer.getPixelPosition(this.base, true);
+            pos.left -= this.popup.getTextLeftOffset();
+
+            var rect = editor.container.getBoundingClientRect();
+            pos.top += rect.top - renderer.layerConfig.offset;
+            pos.left += rect.left - editor.renderer.scrollLeft;
+            pos.left += renderer.gutterWidth;
+
+            this.popup.show(pos, lineHeight);
+        } else if (keepPopupPosition && !prefix) {
+            this.detach();
+        }
+        this.changeTimer.cancel();
+    };
+
+    this.detach = function() {
+        this.editor.keyBinding.removeKeyboardHandler(this.keyboardHandler);
+        this.editor.off("changeSelection", this.changeListener);
+        this.editor.off("blur", this.blurListener);
+        this.editor.off("mousedown", this.mousedownListener);
+        this.editor.off("mousewheel", this.mousewheelListener);
+        this.changeTimer.cancel();
+        this.hideDocTooltip();
+
+        this.gatherCompletionsId += 1;
+        if (this.popup && this.popup.isOpen)
+            this.popup.hide();
+
+        if (this.base)
+            this.base.detach();
+        this.activated = false;
+        this.completions = this.base = null;
+    };
+
+    this.changeListener = function(e) {
+        var cursor = this.editor.selection.lead;
+        if (cursor.row != this.base.row || cursor.column < this.base.column) {
+            this.detach();
+        }
+        if (this.activated)
+            this.changeTimer.schedule();
+        else
+            this.detach();
+    };
+
+    this.blurListener = function(e) {
+        // we have to check if activeElement is a child of popup because
+        // on IE preventDefault doesn't stop scrollbar from being focussed
+        var el = document.activeElement;
+        var text = this.editor.textInput.getElement();
+        var fromTooltip = e.relatedTarget && this.tooltipNode && this.tooltipNode.contains(e.relatedTarget);
+        var container = this.popup && this.popup.container;
+        if (el != text && el.parentNode != container && !fromTooltip
+            && el != this.tooltipNode && e.relatedTarget != text
+        ) {
+            this.detach();
+        }
+    };
+
+    this.mousedownListener = function(e) {
+        this.detach();
+    };
+
+    this.mousewheelListener = function(e) {
+        this.detach();
+    };
+
+    this.goTo = function(where) {
+        this.popup.goTo(where);
+    };
+
+    this.insertMatch = function(data, options) {
+        if (!data)
+            data = this.popup.getData(this.popup.getRow());
+        if (!data)
+            return false;
+
+        var completions = this.completions;
+        this.editor.startOperation({command: {name: "insertMatch"}});
+        if (data.completer && data.completer.insertMatch) {
+            data.completer.insertMatch(this.editor, data);
+        } else {
+            // TODO add support for options.deleteSuffix
+            if (!completions)
+                return false;
+            if (completions.filterText) {
+                var ranges = this.editor.selection.getAllRanges();
+                for (var i = 0, range; range = ranges[i]; i++) {
+                    range.start.column -= completions.filterText.length;
+                    this.editor.session.remove(range);
+                }
+            }
+            if (data.snippet)
+                snippetManager.insertSnippet(this.editor, data.snippet);
+            else
+                this.editor.execCommand("insertstring", data.value || data);
+        }
+        // detach only if new popup was not opened while inserting match
+        if (this.completions == completions)
+            this.detach();
+        this.editor.endOperation();
+    };
+
+
+    this.commands = {
+        "Up": function(editor) { editor.completer.goTo("up"); },
+        "Down": function(editor) { editor.completer.goTo("down"); },
+        "Ctrl-Up|Ctrl-Home": function(editor) { editor.completer.goTo("start"); },
+        "Ctrl-Down|Ctrl-End": function(editor) { editor.completer.goTo("end"); },
+
+        "Esc": function(editor) { editor.completer.detach(); },
+        "Return": function(editor) { return editor.completer.insertMatch(); },
+        "Shift-Return": function(editor) { editor.completer.insertMatch(null, {deleteSuffix: true}); },
+        "Tab": function(editor) {
+            var result = editor.completer.insertMatch();
+            if (!result && !editor.tabstopManager)
+                editor.completer.goTo("down");
+            else
+                return result;
+        },
+
+        "PageUp": function(editor) { editor.completer.popup.gotoPageUp(); },
+        "PageDown": function(editor) { editor.completer.popup.gotoPageDown(); }
+    };
+
+    this.gatherCompletions = function(editor, callback) {
+        var session = editor.getSession();
+        var pos = editor.getCursorPosition();
+
+        var prefix = util.getCompletionPrefix(editor);
+
+        this.base = session.doc.createAnchor(pos.row, pos.column - prefix.length);
+        this.base.$insertRight = true;
+
+        var matches = [];
+        var total = editor.completers.length;
+        editor.completers.forEach(function(completer, i) {
+            completer.getCompletions(editor, session, pos, prefix, function(err, results) {
+                if (!err && results)
+                    matches = matches.concat(results);
+                // Fetch prefix again, because they may have changed by now
+                callback(null, {
+                    prefix: util.getCompletionPrefix(editor),
+                    matches: matches,
+                    finished: (--total === 0)
+                });
+            });
+        });
+        return true;
+    };
+
+    this.showPopup = function(editor, options) {
+        if (this.editor)
+            this.detach();
+
+        this.activated = true;
+
+        this.editor = editor;
+        if (editor.completer != this) {
+            if (editor.completer)
+                editor.completer.detach();
+            editor.completer = this;
+        }
+
+        editor.on("changeSelection", this.changeListener);
+        editor.on("blur", this.blurListener);
+        editor.on("mousedown", this.mousedownListener);
+        editor.on("mousewheel", this.mousewheelListener);
+
+        this.updateCompletions(false, options);
+    };
+
+    this.updateCompletions = function(keepPopupPosition, options) {
+        if (keepPopupPosition && this.base && this.completions) {
+            var pos = this.editor.getCursorPosition();
+            var prefix = this.editor.session.getTextRange({start: this.base, end: pos});
+            if (prefix == this.completions.filterText)
+                return;
+            this.completions.setFilter(prefix);
+            if (!this.completions.filtered.length)
+                return this.detach();
+            if (this.completions.filtered.length == 1
+            && this.completions.filtered[0].value == prefix
+            && !this.completions.filtered[0].snippet)
+                return this.detach();
+            this.openPopup(this.editor, prefix, keepPopupPosition);
+            return;
+        }
+        
+        if (options && options.matches) {
+            var pos = this.editor.getSelectionRange().start;
+            this.base = this.editor.session.doc.createAnchor(pos.row, pos.column);
+            this.base.$insertRight = true;
+            this.completions = new FilteredList(options.matches);
+            return this.openPopup(this.editor, "", keepPopupPosition);
+        }
+
+        // Save current gatherCompletions session, session is close when a match is insert
+        var _id = this.gatherCompletionsId;
+
+        // Only detach if result gathering is finished
+        var detachIfFinished = function(results) {
+            if (!results.finished) return;
+            return this.detach();
+        }.bind(this);
+
+        var processResults = function(results) {
+            var prefix = results.prefix;
+            var matches = results.matches;
+
+            this.completions = new FilteredList(matches);
+
+            if (this.exactMatch)
+                this.completions.exactMatch = true;
+
+            this.completions.setFilter(prefix);
+            var filtered = this.completions.filtered;
+
+            // No results
+            if (!filtered.length)
+                return detachIfFinished(results);
+
+            // One result equals to the prefix
+            if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
+                return detachIfFinished(results);
+
+            // Autoinsert if one result
+            if (this.autoInsert && filtered.length == 1 && results.finished)
+                return this.insertMatch(filtered[0]);
+
+            this.openPopup(this.editor, prefix, keepPopupPosition);
+        }.bind(this);
+
+        var isImmediate = true;
+        var immediateResults = null;
+        this.gatherCompletions(this.editor, function(err, results) {
+            var prefix = results.prefix;
+            var matches = results && results.matches;
+
+            if (!matches || !matches.length)
+                return detachIfFinished(results);
+
+            // Wrong prefix or wrong session -> ignore
+            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
+                return;
+
+            // If multiple completers return their results immediately, we want to process them together
+            if (isImmediate) {
+                immediateResults = results;
+                return;
+            }
+
+            processResults(results);
+        }.bind(this));
+        
+        isImmediate = false;
+        if (immediateResults) {
+            var results = immediateResults;
+            immediateResults = null;
+            processResults(results);
+        }
+    };
+
+    this.cancelContextMenu = function() {
+        this.editor.$mouseHandler.cancelContextMenu();
+    };
+
+    this.updateDocTooltip = function() {
+        var popup = this.popup;
+        var all = popup.data;
+        var selected = all && (all[popup.getHoveredRow()] || all[popup.getRow()]);
+        var doc = null;
+        if (!selected || !this.editor || !this.popup.isOpen)
+            return this.hideDocTooltip();
+        this.editor.completers.some(function(completer) {
+            if (completer.getDocTooltip)
+                doc = completer.getDocTooltip(selected);
+            return doc;
+        });
+        if (!doc && typeof selected != "string")
+            doc = selected;
+
+        if (typeof doc == "string")
+            doc = {docText: doc};
+        if (!doc || !(doc.docHTML || doc.docText))
+            return this.hideDocTooltip();
+        this.showDocTooltip(doc);
+    };
+
+    this.showDocTooltip = function(item) {
+        if (!this.tooltipNode) {
+            this.tooltipNode = dom.createElement("div");
+            this.tooltipNode.className = "ace_tooltip ace_doc-tooltip";
+            this.tooltipNode.style.margin = 0;
+            this.tooltipNode.style.pointerEvents = "auto";
+            this.tooltipNode.tabIndex = -1;
+            this.tooltipNode.onblur = this.blurListener.bind(this);
+            this.tooltipNode.onclick = this.onTooltipClick.bind(this);
+        }
+
+        var tooltipNode = this.tooltipNode;
+        if (item.docHTML) {
+            tooltipNode.innerHTML = item.docHTML;
+        } else if (item.docText) {
+            tooltipNode.textContent = item.docText;
+        }
+
+        if (!tooltipNode.parentNode)
+            document.body.appendChild(tooltipNode);
+        var popup = this.popup;
+        var rect = popup.container.getBoundingClientRect();
+        tooltipNode.style.top = popup.container.style.top;
+        tooltipNode.style.bottom = popup.container.style.bottom;
+
+        tooltipNode.style.display = "block";
+        if (window.innerWidth - rect.right < 320) {
+            if (rect.left < 320) {
+                if(popup.isTopdown) {
+                    tooltipNode.style.top = rect.bottom + "px";
+                    tooltipNode.style.left = rect.left + "px";
+                    tooltipNode.style.right = "";
+                    tooltipNode.style.bottom = "";
+                } else {
+                    tooltipNode.style.top = popup.container.offsetTop - tooltipNode.offsetHeight + "px";
+                    tooltipNode.style.left = rect.left + "px";
+                    tooltipNode.style.right = "";
+                    tooltipNode.style.bottom = "";
+                }
+            } else {
+                tooltipNode.style.right = window.innerWidth - rect.left + "px";
+                tooltipNode.style.left = "";
+            }
+        } else {
+            tooltipNode.style.left = (rect.right + 1) + "px";
+            tooltipNode.style.right = "";
+        }
+    };
+
+    this.hideDocTooltip = function() {
+        this.tooltipTimer.cancel();
+        if (!this.tooltipNode) return;
+        var el = this.tooltipNode;
+        if (!this.editor.isFocused() && document.activeElement == el)
+            this.editor.focus();
+        this.tooltipNode = null;
+        if (el.parentNode)
+            el.parentNode.removeChild(el);
+    };
+    
+    this.onTooltipClick = function(e) {
+        var a = e.target;
+        while (a && a != this.tooltipNode) {
+            if (a.nodeName == "A" && a.href) {
+                a.rel = "noreferrer";
+                a.target = "_blank";
+                break;
+            }
+            a = a.parentNode;
+        }
+    };
+
+    this.destroy = function() {
+        this.detach();
+        if (this.popup) {
+            this.popup.destroy();
+            var el = this.popup.container;
+            if (el && el.parentNode)
+                el.parentNode.removeChild(el);
+        }
+        if (this.editor && this.editor.completer == this)
+            this.editor.completer == null;
+        this.popup = null;
+    };
+
+}).call(Autocomplete.prototype);
+
+
+Autocomplete.for = function(editor) {
+    if (editor.completer) {
+        return editor.completer;
+    }
+    if (config.get("sharedPopups")) {
+        if (!Autocomplete.$shared)
+            Autocomplete.$sharedInstance = new Autocomplete();
+        editor.completer = Autocomplete.$sharedInstance;
+    } else {
+        editor.completer = new Autocomplete();
+        editor.once("destroy", function(e, editor) {
+            editor.completer.destroy();
+        });
+    }
+    return editor.completer;
+};
+
+Autocomplete.startCommand = {
+    name: "startAutocomplete",
+    exec: function(editor, options) {
+        var completer = Autocomplete.for(editor);
+        completer.autoInsert = false;
+        completer.autoSelect = true;
+        completer.showPopup(editor, options);
+        // prevent ctrl-space opening context menu on firefox on mac
+        completer.cancelContextMenu();
+    },
+    bindKey: "Ctrl-Space|Ctrl-Shift-Space|Alt-Space"
+};
+
+var FilteredList = function(array, filterText) {
+    this.all = array;
+    this.filtered = array;
+    this.filterText = filterText || "";
+    this.exactMatch = false;
+};
+(function(){
+    this.setFilter = function(str) {
+        if (str.length > this.filterText && str.lastIndexOf(this.filterText, 0) === 0)
+            var matches = this.filtered;
+        else
+            var matches = this.all;
+
+        this.filterText = str;
+        matches = this.filterCompletions(matches, this.filterText);
+        matches = matches.sort(function(a, b) {
+            return b.exactMatch - a.exactMatch || b.$score - a.$score 
+                || (a.caption || a.value).localeCompare(b.caption || b.value);
+        });
+
+        // make unique
+        var prev = null;
+        matches = matches.filter(function(item){
+            var caption = item.snippet || item.caption || item.value;
+            if (caption === prev) return false;
+            prev = caption;
+            return true;
+        });
+
+        this.filtered = matches;
+    };
+    this.filterCompletions = function(items, needle) {
+        var results = [];
+        var upper = needle.toUpperCase();
+        var lower = needle.toLowerCase();
+        loop: for (var i = 0, item; item = items[i]; i++) {
+            var caption = item.caption || item.value || item.snippet;
+            if (!caption) continue;
+            var lastIndex = -1;
+            var matchMask = 0;
+            var penalty = 0;
+            var index, distance;
+
+            if (this.exactMatch) {
+                if (needle !== caption.substr(0, needle.length))
+                    continue loop;
+            } else {
+                /**
+                 * It is for situation then, for example, we find some like 'tab' in item.value="Check the table"
+                 * and want to see "Check the TABle" but see "Check The tABle".
+                 */
+                var fullMatchIndex = caption.toLowerCase().indexOf(lower);
+                if (fullMatchIndex > -1) {
+                    penalty = fullMatchIndex;
+                } else {
+                    // caption char iteration is faster in Chrome but slower in Firefox, so lets use indexOf
+                    for (var j = 0; j < needle.length; j++) {
+                        // TODO add penalty on case mismatch
+                        var i1 = caption.indexOf(lower[j], lastIndex + 1);
+                        var i2 = caption.indexOf(upper[j], lastIndex + 1);
+                        index = (i1 >= 0) ? ((i2 < 0 || i1 < i2) ? i1 : i2) : i2;
+                        if (index < 0)
+                            continue loop;
+                        distance = index - lastIndex - 1;
+                        if (distance > 0) {
+                            // first char mismatch should be more sensitive
+                            if (lastIndex === -1)
+                                penalty += 10;
+                            penalty += distance;
+                            matchMask = matchMask | (1 << j);
+                        }
+                        lastIndex = index;
+                    }
+                }
+            }
+            item.matchMask = matchMask;
+            item.exactMatch = penalty ? 0 : 1;
+            item.$score = (item.score || 0) - penalty;
+            results.push(item);
+        }
+        return results;
+    };
+}).call(FilteredList.prototype);
+
+exports.F = Autocomplete;
+__webpack_unused_export__ = FilteredList;
+
+
+/***/ }),
+
+/***/ 2985:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+var __webpack_unused_export__;
+
+
+var Renderer = (__webpack_require__(3049)/* .VirtualRenderer */ ._);
+var Editor = (__webpack_require__(2880)/* .Editor */ .M);
+var Range = (__webpack_require__(9082).Range);
+var event = __webpack_require__(7989);
+var lang = __webpack_require__(124);
+var dom = __webpack_require__(6359);
+
+var $singleLineEditor = function(el) {
+    var renderer = new Renderer(el);
+
+    renderer.$maxLines = 4;
+
+    var editor = new Editor(renderer);
+
+    editor.setHighlightActiveLine(false);
+    editor.setShowPrintMargin(false);
+    editor.renderer.setShowGutter(false);
+    editor.renderer.setHighlightGutterLine(false);
+
+    editor.$mouseHandler.$focusTimeout = 0;
+    editor.$highlightTagPending = true;
+
+    return editor;
+};
+
+/**
+ * This object is used in some places where needed to show popups - like prompt; autocomplete etc.
+ * @class
+ */
+
+/**
+ * Creates and renders single line editor in popup window. If `parentNode` param is isset, then attaching it to this element.
+ * @param {Element} parentNode
+ * @constructor
+ */
+var AcePopup = function(parentNode) {
+    var el = dom.createElement("div");
+    var popup = new $singleLineEditor(el);
+
+    if (parentNode)
+        parentNode.appendChild(el);
+    el.style.display = "none";
+    popup.renderer.content.style.cursor = "default";
+    popup.renderer.setStyle("ace_autocomplete");
+
+    popup.setOption("displayIndentGuides", false);
+    popup.setOption("dragDelay", 150);
+
+    var noop = function(){};
+
+    popup.focus = noop;
+    popup.$isFocused = true;
+
+    popup.renderer.$cursorLayer.restartTimer = noop;
+    popup.renderer.$cursorLayer.element.style.opacity = 0;
+
+    popup.renderer.$maxLines = 8;
+    popup.renderer.$keepTextAreaAtCursor = false;
+
+    popup.setHighlightActiveLine(false);
+    // set default highlight color
+    popup.session.highlight("");
+    popup.session.$searchHighlight.clazz = "ace_highlight-marker";
+
+    popup.on("mousedown", function(e) {
+        var pos = e.getDocumentPosition();
+        popup.selection.moveToPosition(pos);
+        selectionMarker.start.row = selectionMarker.end.row = pos.row;
+        e.stop();
+    });
+
+    var lastMouseEvent;
+    var hoverMarker = new Range(-1,0,-1,Infinity);
+    var selectionMarker = new Range(-1,0,-1,Infinity);
+    selectionMarker.id = popup.session.addMarker(selectionMarker, "ace_active-line", "fullLine");
+    popup.setSelectOnHover = function(val) {
+        if (!val) {
+            hoverMarker.id = popup.session.addMarker(hoverMarker, "ace_line-hover", "fullLine");
+        } else if (hoverMarker.id) {
+            popup.session.removeMarker(hoverMarker.id);
+            hoverMarker.id = null;
+        }
+    };
+    popup.setSelectOnHover(false);
+    popup.on("mousemove", function(e) {
+        if (!lastMouseEvent) {
+            lastMouseEvent = e;
+            return;
+        }
+        if (lastMouseEvent.x == e.x && lastMouseEvent.y == e.y) {
+            return;
+        }
+        lastMouseEvent = e;
+        lastMouseEvent.scrollTop = popup.renderer.scrollTop;
+        var row = lastMouseEvent.getDocumentPosition().row;
+        if (hoverMarker.start.row != row) {
+            if (!hoverMarker.id)
+                popup.setRow(row);
+            setHoverMarker(row);
+        }
+    });
+    popup.renderer.on("beforeRender", function() {
+        if (lastMouseEvent && hoverMarker.start.row != -1) {
+            lastMouseEvent.$pos = null;
+            var row = lastMouseEvent.getDocumentPosition().row;
+            if (!hoverMarker.id)
+                popup.setRow(row);
+            setHoverMarker(row, true);
+        }
+    });
+    popup.renderer.on("afterRender", function() {
+        var row = popup.getRow();
+        var t = popup.renderer.$textLayer;
+        var selected = t.element.childNodes[row - t.config.firstRow];
+        if (selected !== t.selectedNode && t.selectedNode)
+            dom.removeCssClass(t.selectedNode, "ace_selected");
+        t.selectedNode = selected;
+        if (selected)
+            dom.addCssClass(selected, "ace_selected");
+    });
+    var hideHoverMarker = function() { setHoverMarker(-1); };
+    var setHoverMarker = function(row, suppressRedraw) {
+        if (row !== hoverMarker.start.row) {
+            hoverMarker.start.row = hoverMarker.end.row = row;
+            if (!suppressRedraw)
+                popup.session._emit("changeBackMarker");
+            popup._emit("changeHoverMarker");
+        }
+    };
+    popup.getHoveredRow = function() {
+        return hoverMarker.start.row;
+    };
+
+    event.addListener(popup.container, "mouseout", hideHoverMarker);
+    popup.on("hide", hideHoverMarker);
+    popup.on("changeSelection", hideHoverMarker);
+
+    popup.session.doc.getLength = function() {
+        return popup.data.length;
+    };
+    popup.session.doc.getLine = function(i) {
+        var data = popup.data[i];
+        if (typeof data == "string")
+            return data;
+        return (data && data.value) || "";
+    };
+
+    var bgTokenizer = popup.session.bgTokenizer;
+    bgTokenizer.$tokenizeRow = function(row) {
+        var data = popup.data[row];
+        var tokens = [];
+        if (!data)
+            return tokens;
+        if (typeof data == "string")
+            data = {value: data};
+        var caption = data.caption || data.value || data.name;
+
+        function addToken(value, className) {
+            value && tokens.push({
+                type: (data.className || "") + (className || ""), 
+                value: value
+            });
+        }
+        
+        var lower = caption.toLowerCase();
+        var filterText = (popup.filterText || "").toLowerCase();
+        var lastIndex = 0;
+        var lastI = 0;
+        for (var i = 0; i <= filterText.length; i++) {
+            if (i != lastI && (data.matchMask & (1 << i) || i == filterText.length)) {
+                var sub = filterText.slice(lastI, i);
+                lastI = i;
+                var index = lower.indexOf(sub, lastIndex);
+                if (index == -1) continue;
+                addToken(caption.slice(lastIndex, index), "");
+                lastIndex = index + sub.length;
+                addToken(caption.slice(index, lastIndex), "completion-highlight");
+            }
+        }
+        addToken(caption.slice(lastIndex, caption.length), "");
+        
+        if (data.meta)
+            tokens.push({type: "completion-meta", value: data.meta});
+        if (data.message)
+            tokens.push({type: "completion-message", value: data.message});
+
+        return tokens;
+    };
+    bgTokenizer.$updateOnChange = noop;
+    bgTokenizer.start = noop;
+
+    popup.session.$computeWidth = function() {
+        return this.screenWidth = 0;
+    };
+
+    // public
+    popup.isOpen = false;
+    popup.isTopdown = false;
+    popup.autoSelect = true;
+    popup.filterText = "";
+
+    popup.data = [];
+    popup.setData = function(list, filterText) {
+        popup.filterText = filterText || "";
+        popup.setValue(lang.stringRepeat("\n", list.length), -1);
+        popup.data = list || [];
+        popup.setRow(0);
+    };
+    popup.getData = function(row) {
+        return popup.data[row];
+    };
+
+    popup.getRow = function() {
+        return selectionMarker.start.row;
+    };
+    popup.setRow = function(line) {
+        line = Math.max(this.autoSelect ? 0 : -1, Math.min(this.data.length, line));
+        if (selectionMarker.start.row != line) {
+            popup.selection.clearSelection();
+            selectionMarker.start.row = selectionMarker.end.row = line || 0;
+            popup.session._emit("changeBackMarker");
+            popup.moveCursorTo(line || 0, 0);
+            if (popup.isOpen)
+                popup._signal("select");
+        }
+    };
+
+    popup.on("changeSelection", function() {
+        if (popup.isOpen)
+            popup.setRow(popup.selection.lead.row);
+        popup.renderer.scrollCursorIntoView();
+    });
+
+    popup.hide = function() {
+        this.container.style.display = "none";
+        this._signal("hide");
+        popup.isOpen = false;
+    };
+    popup.show = function(pos, lineHeight, topdownOnly) {
+        var el = this.container;
+        var screenHeight = window.innerHeight;
+        var screenWidth = window.innerWidth;
+        var renderer = this.renderer;
+        // var maxLines = Math.min(renderer.$maxLines, this.session.getLength());
+        var maxH = renderer.$maxLines * lineHeight * 1.4;
+        var top = pos.top + this.$borderSize;
+        var allowTopdown = top > screenHeight / 2 && !topdownOnly;
+        if (allowTopdown && top + lineHeight + maxH > screenHeight) {
+            renderer.$maxPixelHeight = top - 2 * this.$borderSize;
+            el.style.top = "";
+            el.style.bottom = screenHeight - top + "px";
+            popup.isTopdown = false;
+        } else {
+            top += lineHeight;
+            renderer.$maxPixelHeight = screenHeight - top - 0.2 * lineHeight;
+            el.style.top = top + "px";
+            el.style.bottom = "";
+            popup.isTopdown = true;
+        }
+
+        el.style.display = "";
+
+        var left = pos.left;
+        if (left + el.offsetWidth > screenWidth)
+            left = screenWidth - el.offsetWidth;
+
+        el.style.left = left + "px";
+
+        this._signal("show");
+        lastMouseEvent = null;
+        popup.isOpen = true;
+    };
+
+    popup.goTo = function(where) {
+        var row = this.getRow();
+        var max = this.session.getLength() - 1;
+
+        switch(where) {
+            case "up": row = row <= 0 ? max : row - 1; break;
+            case "down": row = row >= max ? -1 : row + 1; break;
+            case "start": row = 0; break;
+            case "end": row = max; break;
+        }
+
+        this.setRow(row);
+    };
+
+
+    popup.getTextLeftOffset = function() {
+        return this.$borderSize + this.renderer.$padding + this.$imageSize;
+    };
+
+    popup.$imageSize = 0;
+    popup.$borderSize = 1;
+
+    return popup;
+};
+
+dom.importCssString(`
+.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+    background-color: #CAD6FA;
+    z-index: 1;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+    background-color: #3a674e;
+}
+.ace_editor.ace_autocomplete .ace_line-hover {
+    border: 1px solid #abbffe;
+    margin-top: -1px;
+    background: rgba(233,233,253,0.4);
+    position: absolute;
+    z-index: 2;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_line-hover {
+    border: 1px solid rgba(109, 150, 13, 0.8);
+    background: rgba(58, 103, 78, 0.62);
+}
+.ace_completion-meta {
+    opacity: 0.5;
+    margin: 0.9em;
+}
+.ace_completion-message {
+    color: blue;
+}
+.ace_editor.ace_autocomplete .ace_completion-highlight{
+    color: #2d69c7;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_completion-highlight{
+    color: #93ca12;
+}
+.ace_editor.ace_autocomplete {
+    width: 300px;
+    z-index: 200000;
+    border: 1px lightgray solid;
+    position: fixed;
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+    line-height: 1.4;
+    background: #fefefe;
+    color: #111;
+}
+.ace_dark.ace_editor.ace_autocomplete {
+    border: 1px #484747 solid;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.51);
+    line-height: 1.4;
+    background: #25282c;
+    color: #c1c1c1;
+}`, "autocompletion.css", false);
+
+exports.u = AcePopup;
+__webpack_unused_export__ = $singleLineEditor;
+
+
+/***/ }),
+
+/***/ 2636:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+var Range = (__webpack_require__(9082).Range);
+    
+    var splitRegex = /[^a-zA-Z_0-9\$\-\u00C0-\u1FFF\u2C00-\uD7FF\w]+/;
+
+    function getWordIndex(doc, pos) {
+        var textBefore = doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
+        return textBefore.split(splitRegex).length - 1;
+    }
+
+    /**
+     * Does a distance analysis of the word `prefix` at position `pos` in `doc`.
+     * @return Map
+     */
+    function wordDistance(doc, pos) {
+        var prefixPos = getWordIndex(doc, pos);
+        var words = doc.getValue().split(splitRegex);
+        var wordScores = Object.create(null);
+        
+        var currentWord = words[prefixPos];
+
+        words.forEach(function(word, idx) {
+            if (!word || word === currentWord) return;
+
+            var distance = Math.abs(prefixPos - idx);
+            var score = words.length - distance;
+            if (wordScores[word]) {
+                wordScores[word] = Math.max(score, wordScores[word]);
+            } else {
+                wordScores[word] = score;
+            }
+        });
+        return wordScores;
+    }
+
+    exports.getCompletions = function(editor, session, pos, prefix, callback) {
+        var wordScore = wordDistance(session, pos);
+        var wordList = Object.keys(wordScore);
+        callback(null, wordList.map(function(word) {
+            return {
+                caption: word,
+                value: word,
+                score: wordScore[word],
+                meta: "local"
+            };
+        }));
+    };
+
+
+/***/ }),
+
+/***/ 3860:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+exports.parForEach = function(array, fn, callback) {
+    var completed = 0;
+    var arLength = array.length;
+    if (arLength === 0)
+        callback();
+    for (var i = 0; i < arLength; i++) {
+        fn(array[i], function(result, err) {
+            completed++;
+            if (completed === arLength)
+                callback(result, err);
+        });
+    }
+};
+
+var ID_REGEX = /[a-zA-Z_0-9\$\-\u00A2-\u2000\u2070-\uFFFF]/;
+
+exports.retrievePrecedingIdentifier = function(text, pos, regex) {
+    regex = regex || ID_REGEX;
+    var buf = [];
+    for (var i = pos-1; i >= 0; i--) {
+        if (regex.test(text[i]))
+            buf.push(text[i]);
+        else
+            break;
+    }
+    return buf.reverse().join("");
+};
+
+exports.retrieveFollowingIdentifier = function(text, pos, regex) {
+    regex = regex || ID_REGEX;
+    var buf = [];
+    for (var i = pos; i < text.length; i++) {
+        if (regex.test(text[i]))
+            buf.push(text[i]);
+        else
+            break;
+    }
+    return buf;
+};
+
+exports.getCompletionPrefix = function (editor) {
+    var pos = editor.getCursorPosition();
+    var line = editor.session.getLine(pos.row);
+    var prefix;
+    editor.completers.forEach(function(completer) {
+        if (completer.identifierRegexps) {
+            completer.identifierRegexps.forEach(function(identifierRegex) {
+                if (!prefix && identifierRegex)
+                    prefix = this.retrievePrecedingIdentifier(line, pos.column, identifierRegex);
+            }.bind(this));
+        }
+    }.bind(this));
+    return prefix || this.retrievePrecedingIdentifier(line, pos.column);
+};
+
+
+/***/ }),
+
 /***/ 2484:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -10875,6 +11922,208 @@ dom.importCssString(`
         top: -5px;
     }
 `, "error_marker.css", false);
+
+
+/***/ }),
+
+/***/ 1105:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var snippetManager = (__webpack_require__(6629)/* .snippetManager */ .w);
+var Autocomplete = (__webpack_require__(9528)/* .Autocomplete */ .F);
+var config = __webpack_require__(3188);
+var lang = __webpack_require__(124);
+var util = __webpack_require__(3860);
+
+var textCompleter = __webpack_require__(2636);
+var keyWordCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        if (session.$mode.completer) {
+            return session.$mode.completer.getCompletions(editor, session, pos, prefix, callback);
+        }
+        var state = editor.session.getState(pos.row);
+        var completions = session.$mode.getCompletions(state, session, pos, prefix);
+        callback(null, completions);
+    }
+};
+
+var transformSnippetTooltip = function(str) {
+    var record = {};
+    return str.replace(/\${(\d+)(:(.*?))?}/g, function(_, p1, p2, p3) {
+        return (record[p1] = p3 || '');
+    }).replace(/\$(\d+?)/g, function (_, p1) {
+        return record[p1];
+    });
+};
+
+var snippetCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        var scopes = [];
+
+        // set scope to html-tag if we're inside an html tag
+        var token = session.getTokenAt(pos.row, pos.column);
+        if (token && token.type.match(/(tag-name|tag-open|tag-whitespace|attribute-name|attribute-value)\.xml$/))
+            scopes.push('html-tag');
+        else
+            scopes = snippetManager.getActiveScopes(editor);
+
+        var snippetMap = snippetManager.snippetMap;
+        var completions = [];
+        scopes.forEach(function(scope) {
+            var snippets = snippetMap[scope] || [];
+            for (var i = snippets.length; i--;) {
+                var s = snippets[i];
+                var caption = s.name || s.tabTrigger;
+                if (!caption)
+                    continue;
+                completions.push({
+                    caption: caption,
+                    snippet: s.content,
+                    meta: s.tabTrigger && !s.name ? s.tabTrigger + "\u21E5 " : "snippet",
+                    type: "snippet"
+                });
+            }
+        }, this);
+        callback(null, completions);
+    },
+    getDocTooltip: function(item) {
+        if (item.type == "snippet" && !item.docHTML) {
+            item.docHTML = [
+                "<b>", lang.escapeHTML(item.caption), "</b>", "<hr></hr>",
+                lang.escapeHTML(transformSnippetTooltip(item.snippet))
+            ].join("");
+        }
+    }
+};
+
+var completers = [snippetCompleter, textCompleter, keyWordCompleter];
+// Modifies list of default completers
+exports.setCompleters = function(val) {
+    completers.length = 0;
+    if (val) completers.push.apply(completers, val);
+};
+exports.addCompleter = function(completer) {
+    completers.push(completer);
+};
+
+// Exports existing completer so that user can construct his own set of completers.
+exports.textCompleter = textCompleter;
+exports.keyWordCompleter = keyWordCompleter;
+exports.snippetCompleter = snippetCompleter;
+
+var expandSnippet = {
+    name: "expandSnippet",
+    exec: function(editor) {
+        return snippetManager.expandWithTab(editor);
+    },
+    bindKey: "Tab"
+};
+
+var onChangeMode = function(e, editor) {
+    loadSnippetsForMode(editor.session.$mode);
+};
+
+var loadSnippetsForMode = function(mode) {
+    if (typeof mode == "string")
+        mode = config.$modes[mode];
+    if (!mode)
+        return;
+    if (!snippetManager.files)
+        snippetManager.files = {};
+    
+    loadSnippetFile(mode.$id, mode.snippetFileId);
+    if (mode.modes)
+        mode.modes.forEach(loadSnippetsForMode);
+};
+
+var loadSnippetFile = function(id, snippetFilePath) {
+    if (!snippetFilePath || !id || snippetManager.files[id])
+        return;
+    snippetManager.files[id] = {};
+    config.loadModule(snippetFilePath, function(m) {
+        if (!m) return;
+        snippetManager.files[id] = m;
+        if (!m.snippets && m.snippetText)
+            m.snippets = snippetManager.parseSnippetFile(m.snippetText);
+        snippetManager.register(m.snippets || [], m.scope);
+        if (m.includeScopes) {
+            snippetManager.snippetMap[m.scope].includeScopes = m.includeScopes;
+            m.includeScopes.forEach(function(x) {
+                loadSnippetsForMode("ace/mode/" + x);
+            });
+        }
+    });
+};
+
+var doLiveAutocomplete = function(e) {
+    var editor = e.editor;
+    var hasCompleter = editor.completer && editor.completer.activated;
+
+    // We don't want to autocomplete with no prefix
+    if (e.command.name === "backspace") {
+        if (hasCompleter && !util.getCompletionPrefix(editor))
+            editor.completer.detach();
+    }
+    else if (e.command.name === "insertstring") {
+        var prefix = util.getCompletionPrefix(editor);
+        // Only autocomplete if there's a prefix that can be matched
+        if (prefix && !hasCompleter) {
+            var completer = Autocomplete.for(editor);
+            // Disable autoInsert
+            completer.autoInsert = false;
+            completer.showPopup(editor);
+        }
+    }
+};
+
+var Editor = (__webpack_require__(2880)/* .Editor */ .M);
+(__webpack_require__(3188).defineOptions)(Editor.prototype, "editor", {
+    enableBasicAutocompletion: {
+        set: function(val) {
+            if (val) {
+                if (!this.completers)
+                    this.completers = Array.isArray(val)? val: completers;
+                this.commands.addCommand(Autocomplete.startCommand);
+            } else {
+                this.commands.removeCommand(Autocomplete.startCommand);
+            }
+        },
+        value: false
+    },
+    /**
+     * Enable live autocomplete. If the value is an array, it is assumed to be an array of completers
+     * and will use them instead of the default completers.
+     */
+    enableLiveAutocompletion: {
+        set: function(val) {
+            if (val) {
+                if (!this.completers)
+                    this.completers = Array.isArray(val)? val: completers;
+                // On each change automatically trigger the autocomplete
+                this.commands.on('afterExec', doLiveAutocomplete);
+            } else {
+                this.commands.removeListener('afterExec', doLiveAutocomplete);
+            }
+        },
+        value: false
+    },
+    enableSnippets: {
+        set: function(val) {
+            if (val) {
+                this.commands.addCommand(expandSnippet);
+                this.on("changeMode", onChangeMode);
+                onChangeMode(null, this);
+            } else {
+                this.commands.removeCommand(expandSnippet);
+                this.off("changeMode", onChangeMode);
+            }
+        },
+        value: false
+    }
+});
 
 
 /***/ }),
@@ -26343,6 +27592,1034 @@ exports.Y = Selection;
 
 /***/ }),
 
+/***/ 6629:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+var dom = __webpack_require__(6359);
+var oop = __webpack_require__(9359);
+var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var lang = __webpack_require__(124);
+var Range = (__webpack_require__(9082).Range);
+var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
+var HashHandler = (__webpack_require__(7116).HashHandler);
+var Tokenizer = (__webpack_require__(760)/* .Tokenizer */ .d);
+var clipboard = __webpack_require__(6311);
+
+var VARIABLES = {
+    CURRENT_WORD: function(editor) {
+        return editor.session.getTextRange(editor.session.getWordRange());
+    },
+    SELECTION: function(editor, name, indentation) {
+        var text = editor.session.getTextRange();
+        if (indentation)
+            return text.replace(/\n\r?([ \t]*\S)/g, "\n" + indentation + "$1");
+        return text;
+    },
+    CURRENT_LINE: function(editor) {
+        return editor.session.getLine(editor.getCursorPosition().row);
+    },
+    PREV_LINE: function(editor) {
+        return editor.session.getLine(editor.getCursorPosition().row - 1);
+    },
+    LINE_INDEX: function(editor) {
+        return editor.getCursorPosition().row;
+    },
+    LINE_NUMBER: function(editor) {
+        return editor.getCursorPosition().row + 1;
+    },
+    SOFT_TABS: function(editor) {
+        return editor.session.getUseSoftTabs() ? "YES" : "NO";
+    },
+    TAB_SIZE: function(editor) {
+        return editor.session.getTabSize();
+    },
+    CLIPBOARD: function(editor) {
+        return clipboard.getText && clipboard.getText();
+    },
+    // filenames
+    FILENAME: function(editor) {
+        return /[^/\\]*$/.exec(this.FILEPATH(editor))[0];
+    },
+    FILENAME_BASE: function(editor) {
+        return /[^/\\]*$/.exec(this.FILEPATH(editor))[0].replace(/\.[^.]*$/, "");
+    },
+    DIRECTORY: function(editor) {
+        return this.FILEPATH(editor).replace(/[^/\\]*$/, "");
+    },
+    FILEPATH: function(editor) { return "/not implemented.txt"; },
+    WORKSPACE_NAME: function() { return "Unknown"; },
+    FULLNAME: function() { return "Unknown"; },
+    // comments
+    BLOCK_COMMENT_START: function(editor) {
+        var mode = editor.session.$mode || {};
+        return mode.blockComment && mode.blockComment.start || "";
+    },
+    BLOCK_COMMENT_END: function(editor) {
+        var mode = editor.session.$mode || {};
+        return mode.blockComment && mode.blockComment.end || "";
+    },
+    LINE_COMMENT: function(editor) {
+        var mode = editor.session.$mode || {};
+        return mode.lineCommentStart || "";
+    },
+    // dates
+    CURRENT_YEAR: date.bind(null, {year: "numeric"}),
+    CURRENT_YEAR_SHORT: date.bind(null, {year: "2-digit"}),
+    CURRENT_MONTH: date.bind(null, {month: "numeric"}),
+    CURRENT_MONTH_NAME: date.bind(null, {month: "long"}),
+    CURRENT_MONTH_NAME_SHORT: date.bind(null, {month: "short"}),
+    CURRENT_DATE: date.bind(null, {day: "2-digit"}),
+    CURRENT_DAY_NAME: date.bind(null, {weekday: "long"}),
+    CURRENT_DAY_NAME_SHORT: date.bind(null, {weekday: "short"}),
+    CURRENT_HOUR: date.bind(null, {hour: "2-digit", hour12: false}),
+    CURRENT_MINUTE: date.bind(null, {minute: "2-digit"}),
+    CURRENT_SECOND: date.bind(null, {second: "2-digit"})
+};
+
+VARIABLES.SELECTED_TEXT = VARIABLES.SELECTION;
+
+function date(dateFormat) {
+    var str = new Date().toLocaleString("en-us", dateFormat);
+    return str.length == 1 ? "0" + str : str;
+}
+
+var SnippetManager = function() {
+    this.snippetMap = {};
+    this.snippetNameMap = {};
+};
+
+(function() {
+    oop.implement(this, EventEmitter);
+    
+    this.getTokenizer = function() {
+        return SnippetManager.$tokenizer || this.createTokenizer();
+    };
+    
+    this.createTokenizer = function() {
+        function TabstopToken(str) {
+            str = str.substr(1);
+            if (/^\d+$/.test(str))
+                return [{tabstopId: parseInt(str, 10)}];
+            return [{text: str}];
+        }
+        function escape(ch) {
+            return "(?:[^\\\\" + ch + "]|\\\\.)";
+        }
+        var formatMatcher = {
+            regex: "/(" + escape("/") + "+)/", 
+            onMatch: function(val, state, stack) {
+                var ts = stack[0];
+                ts.fmtString = true;
+                ts.guard = val.slice(1, -1);
+                ts.flag = "";
+                return "";
+            },
+            next: "formatString"
+        };
+        
+        SnippetManager.$tokenizer = new Tokenizer({
+            start: [
+                {regex: /\\./, onMatch: function(val, state, stack) {
+                    var ch = val[1];
+                    if (ch == "}" && stack.length) {
+                        val = ch;
+                    } else if ("`$\\".indexOf(ch) != -1) {
+                        val = ch;
+                    }
+                    return [val];
+                }},
+                {regex: /}/, onMatch: function(val, state, stack) {
+                    return [stack.length ? stack.shift() : val];
+                }},
+                {regex: /\$(?:\d+|\w+)/, onMatch: TabstopToken},
+                {regex: /\$\{[\dA-Z_a-z]+/, onMatch: function(str, state, stack) {
+                    var t = TabstopToken(str.substr(1));
+                    stack.unshift(t[0]);
+                    return t;
+                }, next: "snippetVar"},
+                {regex: /\n/, token: "newline", merge: false}
+            ],
+            snippetVar: [
+                {regex: "\\|" + escape("\\|") + "*\\|", onMatch: function(val, state, stack) {
+                    var choices = val.slice(1, -1).replace(/\\[,|\\]|,/g, function(operator) {
+                        return operator.length == 2 ? operator[1] : "\x00";
+                    }).split("\x00").map(function(value){
+                        return {value: value};
+                    });
+                    stack[0].choices = choices;
+                    return [choices[0]];
+                }, next: "start"},
+                formatMatcher,
+                {regex: "([^:}\\\\]|\\\\.)*:?", token: "", next: "start"}
+            ],
+            formatString: [
+                {regex: /:/, onMatch: function(val, state, stack) {
+                    if (stack.length && stack[0].expectElse) {
+                        stack[0].expectElse = false;
+                        stack[0].ifEnd = {elseEnd: stack[0]};
+                        return [stack[0].ifEnd];
+                    }
+                    return ":";
+                }},
+                {regex: /\\./, onMatch: function(val, state, stack) {
+                    var ch = val[1];
+                    if (ch == "}" && stack.length)
+                        val = ch;
+                    else if ("`$\\".indexOf(ch) != -1)
+                        val = ch;
+                    else if (ch == "n")
+                        val = "\n";
+                    else if (ch == "t")
+                        val = "\t";
+                    else if ("ulULE".indexOf(ch) != -1)
+                        val = {changeCase: ch, local: ch > "a"};
+                    return [val];
+                }},
+                {regex: "/\\w*}", onMatch: function(val, state, stack) {
+                    var next = stack.shift();
+                    if (next)
+                        next.flag = val.slice(1, -1);
+                    this.next = next && next.tabstopId ? "start" : "";
+                    return [next || val];
+                }, next: "start"},
+                {regex: /\$(?:\d+|\w+)/, onMatch: function(val, state, stack) {
+                    return [{text: val.slice(1)}];
+                }},
+                {regex: /\${\w+/, onMatch: function(val, state, stack) {
+                    var token = {text: val.slice(2)};
+                    stack.unshift(token);
+                    return [token];
+                }, next: "formatStringVar"},
+                {regex: /\n/, token: "newline", merge: false},
+                {regex: /}/, onMatch: function(val, state, stack) {
+                    var next = stack.shift();
+                    this.next = next && next.tabstopId ? "start" : "";
+                    return [next || val];
+                }, next: "start"}
+            ],
+            formatStringVar: [
+                {regex: /:\/\w+}/, onMatch: function(val, state, stack) {
+                    var ts = stack[0];
+                    ts.formatFunction = val.slice(2, -1);
+                    return [stack.shift()];
+                }, next: "formatString"},
+                formatMatcher,
+                {regex: /:[\?\-+]?/, onMatch: function(val, state, stack) {
+                    if (val[1] == "+")
+                        stack[0].ifEnd = stack[0];
+                    if (val[1] == "?")
+                        stack[0].expectElse = true;
+                }, next: "formatString"},
+                {regex: "([^:}\\\\]|\\\\.)*:?", token: "", next: "formatString"}
+            ]
+        });
+        return SnippetManager.$tokenizer;
+    };
+
+    this.tokenizeTmSnippet = function(str, startState) {
+        return this.getTokenizer().getLineTokens(str, startState).tokens.map(function(x) {
+            return x.value || x;
+        });
+    };
+    
+    this.getVariableValue = function(editor, name, indentation) {
+        if (/^\d+$/.test(name))
+            return (this.variables.__ || {})[name] || "";
+        if (/^[A-Z]\d+$/.test(name))
+            return (this.variables[name[0] + "__"] || {})[name.substr(1)] || "";
+        
+        name = name.replace(/^TM_/, "");
+        if (!this.variables.hasOwnProperty(name))
+            return "";
+        var value = this.variables[name];
+        if (typeof value == "function")
+            value = this.variables[name](editor, name, indentation);
+        return value == null ? "" : value;
+    };
+    
+    this.variables = VARIABLES;
+
+    // returns string formatted according to http://manual.macromates.com/en/regular_expressions#replacement_string_syntax_format_strings
+    this.tmStrFormat = function(str, ch, editor) {
+        if (!ch.fmt) return str;
+        var flag = ch.flag || "";
+        var re = ch.guard;
+        re = new RegExp(re, flag.replace(/[^gim]/g, ""));
+        var fmtTokens = typeof ch.fmt == "string" ? this.tokenizeTmSnippet(ch.fmt, "formatString") : ch.fmt;
+        var _self = this;
+        var formatted = str.replace(re, function() {
+            var oldArgs = _self.variables.__;
+            _self.variables.__ = [].slice.call(arguments);
+            var fmtParts = _self.resolveVariables(fmtTokens, editor);
+            var gChangeCase = "E";
+            for (var i  = 0; i < fmtParts.length; i++) {
+                var ch = fmtParts[i];
+                if (typeof ch == "object") {
+                    fmtParts[i] = "";
+                    if (ch.changeCase && ch.local) {
+                        var next = fmtParts[i + 1];
+                        if (next && typeof next == "string") {
+                            if (ch.changeCase == "u")
+                                fmtParts[i] = next[0].toUpperCase();
+                            else
+                                fmtParts[i] = next[0].toLowerCase();
+                            fmtParts[i + 1] = next.substr(1);
+                        }
+                    } else if (ch.changeCase) {
+                        gChangeCase = ch.changeCase;
+                    }
+                } else if (gChangeCase == "U") {
+                    fmtParts[i] = ch.toUpperCase();
+                } else if (gChangeCase == "L") {
+                    fmtParts[i] = ch.toLowerCase();
+                }
+            }
+            _self.variables.__ = oldArgs;
+            return fmtParts.join("");
+        });
+        return formatted;
+    };
+    
+    this.tmFormatFunction = function(str, ch, editor) {
+        if (ch.formatFunction == "upcase")
+            return str.toUpperCase();
+        if (ch.formatFunction == "downcase")
+            return str.toLowerCase();
+        return str;
+    };
+
+    this.resolveVariables = function(snippet, editor) {
+        var result = [];
+        var indentation = "";
+        var afterNewLine = true;
+        for (var i = 0; i < snippet.length; i++) {
+            var ch = snippet[i];
+            if (typeof ch == "string") {
+                result.push(ch);
+                if (ch == "\n") {
+                    afterNewLine = true;
+                    indentation = "";
+                }
+                else if (afterNewLine) {
+                    indentation = /^\t*/.exec(ch)[0];
+                    afterNewLine = /\S/.test(ch);
+                }
+                continue;
+            }
+            if (!ch)  continue;
+            afterNewLine = false;
+            
+            if (ch.fmtString) {
+                var j = snippet.indexOf(ch, i + 1);
+                if (j == -1) j = snippet.length;
+                ch.fmt = snippet.slice(i + 1, j);
+                i = j;
+            }
+            
+            if (ch.text) {
+                var value = this.getVariableValue(editor, ch.text, indentation) + "";
+                if (ch.fmtString)
+                    value = this.tmStrFormat(value, ch, editor);
+                if (ch.formatFunction)
+                    value = this.tmFormatFunction(value, ch, editor);
+                
+                if (value && !ch.ifEnd) {
+                    result.push(value);
+                    gotoNext(ch);
+                } else if (!value && ch.ifEnd) {
+                    gotoNext(ch.ifEnd);
+                }
+            } else if (ch.elseEnd) {
+                gotoNext(ch.elseEnd);
+            } else if (ch.tabstopId != null) {
+                result.push(ch);
+            } else if (ch.changeCase != null) {
+                result.push(ch);
+            }
+        }
+        function gotoNext(ch) {
+            var i1 = snippet.indexOf(ch, i + 1);
+            if (i1 != -1)
+                i = i1;
+        }
+        return result;
+    };
+
+    this.insertSnippetForSelection = function(editor, snippetText) {
+        var cursor = editor.getCursorPosition();
+        var line = editor.session.getLine(cursor.row);
+        var tabString = editor.session.getTabString();
+        var indentString = line.match(/^\s*/)[0];
+        
+        if (cursor.column < indentString.length)
+            indentString = indentString.slice(0, cursor.column);
+
+        snippetText = snippetText.replace(/\r/g, "");
+        var tokens = this.tokenizeTmSnippet(snippetText);
+        tokens = this.resolveVariables(tokens, editor);
+        // indent
+        tokens = tokens.map(function(x) {
+            if (x == "\n")
+                return x + indentString;
+            if (typeof x == "string")
+                return x.replace(/\t/g, tabString);
+            return x;
+        });
+        // tabstop values
+        var tabstops = [];
+        tokens.forEach(function(p, i) {
+            if (typeof p != "object")
+                return;
+            var id = p.tabstopId;
+            var ts = tabstops[id];
+            if (!ts) {
+                ts = tabstops[id] = [];
+                ts.index = id;
+                ts.value = "";
+                ts.parents = {};
+            }
+            if (ts.indexOf(p) !== -1)
+                return;
+            if (p.choices && !ts.choices)
+                ts.choices = p.choices;
+            ts.push(p);
+            var i1 = tokens.indexOf(p, i + 1);
+            if (i1 === -1)
+                return;
+
+            var value = tokens.slice(i + 1, i1);
+            var isNested = value.some(function(t) {return typeof t === "object";});
+            if (isNested && !ts.value) {
+                ts.value = value;
+            } else if (value.length && (!ts.value || typeof ts.value !== "string")) {
+                ts.value = value.join("");
+            }
+        });
+
+        // expand tabstop values
+        tabstops.forEach(function(ts) {ts.length = 0;});
+        var expanding = {};
+        function copyValue(val) {
+            var copy = [];
+            for (var i = 0; i < val.length; i++) {
+                var p = val[i];
+                if (typeof p == "object") {
+                    if (expanding[p.tabstopId])
+                        continue;
+                    var j = val.lastIndexOf(p, i - 1);
+                    p = copy[j] || {tabstopId: p.tabstopId};
+                }
+                copy[i] = p;
+            }
+            return copy;
+        }
+        for (var i = 0; i < tokens.length; i++) {
+            var p = tokens[i];
+            if (typeof p != "object")
+                continue;
+            var id = p.tabstopId;
+            var ts = tabstops[id];
+            var i1 = tokens.indexOf(p, i + 1);
+            if (expanding[id]) {
+                // if reached closing bracket clear expanding state
+                if (expanding[id] === p) {
+                    delete expanding[id];
+                    Object.keys(expanding).forEach(function(parentId) {
+                        ts.parents[parentId] = true;
+                    });
+                }
+                // otherwise just ignore recursive tabstop
+                continue;
+            }
+            expanding[id] = p;
+            var value = ts.value;
+            if (typeof value !== "string")
+                value = copyValue(value);
+            else if (p.fmt)
+                value = this.tmStrFormat(value, p, editor);
+            tokens.splice.apply(tokens, [i + 1, Math.max(0, i1 - i)].concat(value, p));
+
+            if (ts.indexOf(p) === -1)
+                ts.push(p);
+        }
+        
+        // convert to plain text
+        var row = 0, column = 0;
+        var text = "";
+        tokens.forEach(function(t) {
+            if (typeof t === "string") {
+                var lines = t.split("\n");
+                if (lines.length > 1){
+                    column = lines[lines.length - 1].length;
+                    row += lines.length - 1;
+                } else
+                    column += t.length;
+                text += t;
+            } else if (t) {
+                if (!t.start)
+                    t.start = {row: row, column: column};
+                else
+                    t.end = {row: row, column: column};
+            }
+        });
+        var range = editor.getSelectionRange();
+        var end = editor.session.replace(range, text);
+
+        var tabstopManager = new TabstopManager(editor);
+        var selectionId = editor.inVirtualSelectionMode && editor.selection.index;
+        tabstopManager.addTabstops(tabstops, range.start, end, selectionId);
+    };
+    
+    this.insertSnippet = function(editor, snippetText) {
+        var self = this;
+        if (editor.inVirtualSelectionMode)
+            return self.insertSnippetForSelection(editor, snippetText);
+        
+        editor.forEachSelection(function() {
+            self.insertSnippetForSelection(editor, snippetText);
+        }, null, {keepOrder: true});
+        
+        if (editor.tabstopManager)
+            editor.tabstopManager.tabNext();
+    };
+
+    this.$getScope = function(editor) {
+        var scope = editor.session.$mode.$id || "";
+        scope = scope.split("/").pop();
+        if (scope === "html" || scope === "php") {
+            // PHP is actually HTML
+            if (scope === "php" && !editor.session.$mode.inlinePhp) 
+                scope = "html";
+            var c = editor.getCursorPosition();
+            var state = editor.session.getState(c.row);
+            if (typeof state === "object") {
+                state = state[0];
+            }
+            if (state.substring) {
+                if (state.substring(0, 3) == "js-")
+                    scope = "javascript";
+                else if (state.substring(0, 4) == "css-")
+                    scope = "css";
+                else if (state.substring(0, 4) == "php-")
+                    scope = "php";
+            }
+        }
+        
+        return scope;
+    };
+
+    this.getActiveScopes = function(editor) {
+        var scope = this.$getScope(editor);
+        var scopes = [scope];
+        var snippetMap = this.snippetMap;
+        if (snippetMap[scope] && snippetMap[scope].includeScopes) {
+            scopes.push.apply(scopes, snippetMap[scope].includeScopes);
+        }
+        scopes.push("_");
+        return scopes;
+    };
+
+    this.expandWithTab = function(editor, options) {
+        var self = this;
+        var result = editor.forEachSelection(function() {
+            return self.expandSnippetForSelection(editor, options);
+        }, null, {keepOrder: true});
+        if (result && editor.tabstopManager)
+            editor.tabstopManager.tabNext();
+        return result;
+    };
+    
+    this.expandSnippetForSelection = function(editor, options) {
+        var cursor = editor.getCursorPosition();
+        var line = editor.session.getLine(cursor.row);
+        var before = line.substring(0, cursor.column);
+        var after = line.substr(cursor.column);
+
+        var snippetMap = this.snippetMap;
+        var snippet;
+        this.getActiveScopes(editor).some(function(scope) {
+            var snippets = snippetMap[scope];
+            if (snippets)
+                snippet = this.findMatchingSnippet(snippets, before, after);
+            return !!snippet;
+        }, this);
+        if (!snippet)
+            return false;
+        if (options && options.dryRun)
+            return true;
+        editor.session.doc.removeInLine(cursor.row,
+            cursor.column - snippet.replaceBefore.length,
+            cursor.column + snippet.replaceAfter.length
+        );
+
+        this.variables.M__ = snippet.matchBefore;
+        this.variables.T__ = snippet.matchAfter;
+        this.insertSnippetForSelection(editor, snippet.content);
+
+        this.variables.M__ = this.variables.T__ = null;
+        return true;
+    };
+
+    this.findMatchingSnippet = function(snippetList, before, after) {
+        for (var i = snippetList.length; i--;) {
+            var s = snippetList[i];
+            if (s.startRe && !s.startRe.test(before))
+                continue;
+            if (s.endRe && !s.endRe.test(after))
+                continue;
+            if (!s.startRe && !s.endRe)
+                continue;
+
+            s.matchBefore = s.startRe ? s.startRe.exec(before) : [""];
+            s.matchAfter = s.endRe ? s.endRe.exec(after) : [""];
+            s.replaceBefore = s.triggerRe ? s.triggerRe.exec(before)[0] : "";
+            s.replaceAfter = s.endTriggerRe ? s.endTriggerRe.exec(after)[0] : "";
+            return s;
+        }
+    };
+
+    this.snippetMap = {};
+    this.snippetNameMap = {};
+    this.register = function(snippets, scope) {
+        var snippetMap = this.snippetMap;
+        var snippetNameMap = this.snippetNameMap;
+        var self = this;
+        
+        if (!snippets) 
+            snippets = [];
+        
+        function wrapRegexp(src) {
+            if (src && !/^\^?\(.*\)\$?$|^\\b$/.test(src))
+                src = "(?:" + src + ")";
+
+            return src || "";
+        }
+        function guardedRegexp(re, guard, opening) {
+            re = wrapRegexp(re);
+            guard = wrapRegexp(guard);
+            if (opening) {
+                re = guard + re;
+                if (re && re[re.length - 1] != "$")
+                    re = re + "$";
+            } else {
+                re = re + guard;
+                if (re && re[0] != "^")
+                    re = "^" + re;
+            }
+            return new RegExp(re);
+        }
+
+        function addSnippet(s) {
+            if (!s.scope)
+                s.scope = scope || "_";
+            scope = s.scope;
+            if (!snippetMap[scope]) {
+                snippetMap[scope] = [];
+                snippetNameMap[scope] = {};
+            }
+
+            var map = snippetNameMap[scope];
+            if (s.name) {
+                var old = map[s.name];
+                if (old)
+                    self.unregister(old);
+                map[s.name] = s;
+            }
+            snippetMap[scope].push(s);
+
+            if (s.prefix)
+                s.tabTrigger = s.prefix;
+
+            if (!s.content && s.body)
+                s.content = Array.isArray(s.body) ? s.body.join("\n") : s.body;
+
+            if (s.tabTrigger && !s.trigger) {
+                if (!s.guard && /^\w/.test(s.tabTrigger))
+                    s.guard = "\\b";
+                s.trigger = lang.escapeRegExp(s.tabTrigger);
+            }
+            
+            if (!s.trigger && !s.guard && !s.endTrigger && !s.endGuard)
+                return;
+            
+            s.startRe = guardedRegexp(s.trigger, s.guard, true);
+            s.triggerRe = new RegExp(s.trigger);
+
+            s.endRe = guardedRegexp(s.endTrigger, s.endGuard, true);
+            s.endTriggerRe = new RegExp(s.endTrigger);
+        }
+
+        if (Array.isArray(snippets)) {
+            snippets.forEach(addSnippet);
+        } else {
+            Object.keys(snippets).forEach(function(key) {
+                addSnippet(snippets[key]);
+            });
+        }
+        
+        this._signal("registerSnippets", {scope: scope});
+    };
+    this.unregister = function(snippets, scope) {
+        var snippetMap = this.snippetMap;
+        var snippetNameMap = this.snippetNameMap;
+
+        function removeSnippet(s) {
+            var nameMap = snippetNameMap[s.scope||scope];
+            if (nameMap && nameMap[s.name]) {
+                delete nameMap[s.name];
+                var map = snippetMap[s.scope||scope];
+                var i = map && map.indexOf(s);
+                if (i >= 0)
+                    map.splice(i, 1);
+            }
+        }
+        if (snippets.content)
+            removeSnippet(snippets);
+        else if (Array.isArray(snippets))
+            snippets.forEach(removeSnippet);
+    };
+    this.parseSnippetFile = function(str) {
+        str = str.replace(/\r/g, "");
+        var list = [], snippet = {};
+        var re = /^#.*|^({[\s\S]*})\s*$|^(\S+) (.*)$|^((?:\n*\t.*)+)/gm;
+        var m;
+        while (m = re.exec(str)) {
+            if (m[1]) {
+                try {
+                    snippet = JSON.parse(m[1]);
+                    list.push(snippet);
+                } catch (e) {}
+            } if (m[4]) {
+                snippet.content = m[4].replace(/^\t/gm, "");
+                list.push(snippet);
+                snippet = {};
+            } else {
+                var key = m[2], val = m[3];
+                if (key == "regex") {
+                    var guardRe = /\/((?:[^\/\\]|\\.)*)|$/g;
+                    snippet.guard = guardRe.exec(val)[1];
+                    snippet.trigger = guardRe.exec(val)[1];
+                    snippet.endTrigger = guardRe.exec(val)[1];
+                    snippet.endGuard = guardRe.exec(val)[1];
+                } else if (key == "snippet") {
+                    snippet.tabTrigger = val.match(/^\S*/)[0];
+                    if (!snippet.name)
+                        snippet.name = val;
+                } else if (key) {
+                    snippet[key] = val;
+                }
+            }
+        }
+        return list;
+    };
+    this.getSnippetByName = function(name, editor) {
+        var snippetMap = this.snippetNameMap;
+        var snippet;
+        this.getActiveScopes(editor).some(function(scope) {
+            var snippets = snippetMap[scope];
+            if (snippets)
+                snippet = snippets[name];
+            return !!snippet;
+        }, this);
+        return snippet;
+    };
+
+}).call(SnippetManager.prototype);
+
+
+var TabstopManager = function(editor) {
+    if (editor.tabstopManager)
+        return editor.tabstopManager;
+    editor.tabstopManager = this;
+    this.$onChange = this.onChange.bind(this);
+    this.$onChangeSelection = lang.delayedCall(this.onChangeSelection.bind(this)).schedule;
+    this.$onChangeSession = this.onChangeSession.bind(this);
+    this.$onAfterExec = this.onAfterExec.bind(this);
+    this.attach(editor);
+};
+(function() {
+    this.attach = function(editor) {
+        this.index = 0;
+        this.ranges = [];
+        this.tabstops = [];
+        this.$openTabstops = null;
+        this.selectedTabstop = null;
+
+        this.editor = editor;
+        this.editor.on("change", this.$onChange);
+        this.editor.on("changeSelection", this.$onChangeSelection);
+        this.editor.on("changeSession", this.$onChangeSession);
+        this.editor.commands.on("afterExec", this.$onAfterExec);
+        this.editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
+    };
+    this.detach = function() {
+        this.tabstops.forEach(this.removeTabstopMarkers, this);
+        this.ranges = null;
+        this.tabstops = null;
+        this.selectedTabstop = null;
+        this.editor.removeListener("change", this.$onChange);
+        this.editor.removeListener("changeSelection", this.$onChangeSelection);
+        this.editor.removeListener("changeSession", this.$onChangeSession);
+        this.editor.commands.removeListener("afterExec", this.$onAfterExec);
+        this.editor.keyBinding.removeKeyboardHandler(this.keyboardHandler);
+        this.editor.tabstopManager = null;
+        this.editor = null;
+    };
+
+    this.onChange = function(delta) {
+        var isRemove = delta.action[0] == "r";
+        var selectedTabstop = this.selectedTabstop || {};
+        var parents = selectedTabstop.parents || {};
+        var tabstops = (this.tabstops || []).slice();
+        for (var i = 0; i < tabstops.length; i++) {
+            var ts = tabstops[i];
+            var active = ts == selectedTabstop || parents[ts.index];
+            ts.rangeList.$bias = active ? 0 : 1;
+            
+            if (delta.action == "remove" && ts !== selectedTabstop) {
+                var parentActive = ts.parents && ts.parents[selectedTabstop.index];
+                var startIndex = ts.rangeList.pointIndex(delta.start, parentActive);
+                startIndex = startIndex < 0 ? -startIndex - 1 : startIndex + 1;
+                var endIndex = ts.rangeList.pointIndex(delta.end, parentActive);
+                endIndex = endIndex < 0 ? -endIndex - 1 : endIndex - 1;
+                var toRemove = ts.rangeList.ranges.slice(startIndex, endIndex);
+                for (var j = 0; j < toRemove.length; j++)
+                    this.removeRange(toRemove[j]);
+            }
+            ts.rangeList.$onChange(delta);
+        }
+        var session = this.editor.session;
+        if (!this.$inChange && isRemove && session.getLength() == 1 && !session.getValue())
+            this.detach();
+    };
+    this.updateLinkedFields = function() {
+        var ts = this.selectedTabstop;
+        if (!ts || !ts.hasLinkedRanges || !ts.firstNonLinked)
+            return;
+        this.$inChange = true;
+        var session = this.editor.session;
+        var text = session.getTextRange(ts.firstNonLinked);
+        for (var i = 0; i < ts.length; i++) {
+            var range = ts[i];
+            if (!range.linked)
+                continue;
+            var original = range.original;
+            var fmt = exports.w.tmStrFormat(text, original, this.editor);
+            session.replace(range, fmt);
+        }
+        this.$inChange = false;
+    };
+    this.onAfterExec = function(e) {
+        if (e.command && !e.command.readOnly)
+            this.updateLinkedFields();
+    };
+    this.onChangeSelection = function() {
+        if (!this.editor)
+            return;
+        var lead = this.editor.selection.lead;
+        var anchor = this.editor.selection.anchor;
+        var isEmpty = this.editor.selection.isEmpty();
+        for (var i = 0; i < this.ranges.length; i++) {
+            if (this.ranges[i].linked)
+                continue;
+            var containsLead = this.ranges[i].contains(lead.row, lead.column);
+            var containsAnchor = isEmpty || this.ranges[i].contains(anchor.row, anchor.column);
+            if (containsLead && containsAnchor)
+                return;
+        }
+        this.detach();
+    };
+    this.onChangeSession = function() {
+        this.detach();
+    };
+    this.tabNext = function(dir) {
+        var max = this.tabstops.length;
+        var index = this.index + (dir || 1);
+        index = Math.min(Math.max(index, 1), max);
+        if (index == max)
+            index = 0;
+        this.selectTabstop(index);
+        if (index === 0)
+            this.detach();
+    };
+    this.selectTabstop = function(index) {
+        this.$openTabstops = null;
+        var ts = this.tabstops[this.index];
+        if (ts)
+            this.addTabstopMarkers(ts);
+        this.index = index;
+        ts = this.tabstops[this.index];
+        if (!ts || !ts.length)
+            return;
+        
+        this.selectedTabstop = ts;
+        var range = ts.firstNonLinked || ts;
+        if (ts.choices) range.cursor = range.start;
+        if (!this.editor.inVirtualSelectionMode) {
+            var sel = this.editor.multiSelect;
+            sel.toSingleRange(range);
+            for (var i = 0; i < ts.length; i++) {
+                if (ts.hasLinkedRanges && ts[i].linked)
+                    continue;
+                sel.addRange(ts[i].clone(), true);
+            }
+        } else {
+            this.editor.selection.fromOrientedRange(range);
+        }
+        
+        this.editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
+        if (this.selectedTabstop && this.selectedTabstop.choices)
+            this.editor.execCommand("startAutocomplete", {matches: this.selectedTabstop.choices});
+    };
+    this.addTabstops = function(tabstops, start, end) {
+        var useLink = this.useLink || !this.editor.getOption("enableMultiselect");
+        
+        if (!this.$openTabstops)
+            this.$openTabstops = [];
+        // add final tabstop if missing
+        if (!tabstops[0]) {
+            var p = Range.fromPoints(end, end);
+            moveRelative(p.start, start);
+            moveRelative(p.end, start);
+            tabstops[0] = [p];
+            tabstops[0].index = 0;
+        }
+
+        var i = this.index;
+        var arg = [i + 1, 0];
+        var ranges = this.ranges;
+        tabstops.forEach(function(ts, index) {
+            var dest = this.$openTabstops[index] || ts;
+            
+            for (var i = 0; i < ts.length; i++) {
+                var p = ts[i];
+                var range = Range.fromPoints(p.start, p.end || p.start);
+                movePoint(range.start, start);
+                movePoint(range.end, start);
+                range.original = p;
+                range.tabstop = dest;
+                ranges.push(range);
+                if (dest != ts)
+                    dest.unshift(range);
+                else
+                    dest[i] = range;
+                if (p.fmtString || (dest.firstNonLinked && useLink)) {
+                    range.linked = true;
+                    dest.hasLinkedRanges = true;
+                } else if (!dest.firstNonLinked)
+                    dest.firstNonLinked = range;
+            }
+            if (!dest.firstNonLinked)
+                dest.hasLinkedRanges = false;
+            if (dest === ts) {
+                arg.push(dest);
+                this.$openTabstops[index] = dest;
+            }
+            this.addTabstopMarkers(dest);
+            dest.rangeList = dest.rangeList || new RangeList();
+            dest.rangeList.$bias = 0;
+            dest.rangeList.addList(dest);
+        }, this);
+        
+        if (arg.length > 2) {
+            // when adding new snippet inside existing one, make sure 0 tabstop is at the end
+            if (this.tabstops.length)
+                arg.push(arg.splice(2, 1)[0]);
+            this.tabstops.splice.apply(this.tabstops, arg);
+        }
+    };
+
+    this.addTabstopMarkers = function(ts) {
+        var session = this.editor.session;
+        ts.forEach(function(range) {
+            if  (!range.markerId)
+                range.markerId = session.addMarker(range, "ace_snippet-marker", "text");
+        });
+    };
+    this.removeTabstopMarkers = function(ts) {
+        var session = this.editor.session;
+        ts.forEach(function(range) {
+            session.removeMarker(range.markerId);
+            range.markerId = null;
+        });
+    };
+    this.removeRange = function(range) {
+        var i = range.tabstop.indexOf(range);
+        if (i != -1) range.tabstop.splice(i, 1);
+        i = this.ranges.indexOf(range);
+        if (i != -1) this.ranges.splice(i, 1);
+        i = range.tabstop.rangeList.ranges.indexOf(range);
+        if (i != -1) range.tabstop.splice(i, 1);
+        this.editor.session.removeMarker(range.markerId);
+        if (!range.tabstop.length) {
+            i = this.tabstops.indexOf(range.tabstop);
+            if (i != -1)
+                this.tabstops.splice(i, 1);
+            if (!this.tabstops.length)
+                this.detach();
+        }
+    };
+
+    this.keyboardHandler = new HashHandler();
+    this.keyboardHandler.bindKeys({
+        "Tab": function(editor) {
+            if (exports.w && exports.w.expandWithTab(editor))
+                return;
+            editor.tabstopManager.tabNext(1);
+            editor.renderer.scrollCursorIntoView();
+        },
+        "Shift-Tab": function(editor) {
+            editor.tabstopManager.tabNext(-1);
+            editor.renderer.scrollCursorIntoView();
+        },
+        "Esc": function(editor) {
+            editor.tabstopManager.detach();
+        }
+    });
+}).call(TabstopManager.prototype);
+
+
+
+var movePoint = function(point, diff) {
+    if (point.row == 0)
+        point.column += diff.column;
+    point.row += diff.row;
+};
+
+var moveRelative = function(point, start) {
+    if (point.row == start.row)
+        point.column -= start.column;
+    point.row -= start.row;
+};
+
+
+dom.importCssString(`
+.ace_snippet-marker {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: rgba(194, 193, 208, 0.09);
+    border: 1px dotted rgba(211, 208, 235, 0.62);
+    position: absolute;
+}`, "snippets.css", false);
+
+exports.w = new SnippetManager();
+
+
+var Editor = (__webpack_require__(2880)/* .Editor */ .M);
+(function() {
+    this.insertSnippet = function(content, options) {
+        return exports.w.insertSnippet(this, content, options);
+    };
+    this.expandSnippet = function(options) {
+        return exports.w.expandWithTab(this, options);
+    };
+}).call(Editor.prototype);
+
+
+/***/ }),
+
 /***/ 5673:
 /***/ ((module) => {
 
@@ -29900,6 +32177,10 @@ exports.jsonSchema = {
             "type": "string",
             "enum": ["Ireland", "Iceland"],
             "description": "Country name",
+        },
+        "age": {
+            "type": "number",
+            "description": "Age of object"
         }
     }
 };
@@ -29937,7 +32218,8 @@ exports.scssContent = "/* style.scss */\n\n#navbar {\n    $navbar-width: 800px;\
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
+exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
+var vscode_languageserver_types_1 = __webpack_require__(1674);
 var range_1 = __webpack_require__(9082);
 function fromRange(range) {
     if (!range) {
@@ -29982,6 +32264,27 @@ function toAnnotations(diagnostics) {
     });
 }
 exports.toAnnotations = toAnnotations;
+function toCompletions(completionList) {
+    return completionList && completionList.items.map(function (item) {
+        var _a;
+        var kind = Object.keys(vscode_languageserver_types_1.CompletionItemKind)[Object.values(vscode_languageserver_types_1.CompletionItemKind).indexOf(item.kind)];
+        if (item.insertTextFormat == vscode_languageserver_types_1.InsertTextFormat.Snippet) {
+            return {
+                meta: kind,
+                type: (item === null || item === void 0 ? void 0 : item.insertTextFormat) == vscode_languageserver_types_1.InsertTextFormat.Snippet ? "snippet" : undefined,
+                snippet: item.insertText,
+                caption: item.label,
+                doc: item.documentation
+            };
+        }
+        return {
+            value: (_a = item.insertText) !== null && _a !== void 0 ? _a : item.label,
+            meta: kind,
+            doc: item.documentation
+        };
+    });
+}
+exports.toCompletions = toCompletions;
 
 
 /***/ }),
@@ -30104,6 +32407,15 @@ var CSSWorker = /** @class */ (function () {
             });
         });
     };
+    //TODO: markdown parsing for completions
+    CSSWorker.prototype.doComplete = function (position) {
+        return __awaiter(this, void 0, void 0, function () {
+            var document, cssDocument, completions;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, null];
+            });
+        });
+    };
     return CSSWorker;
 }());
 exports.CSSWorker = CSSWorker;
@@ -30203,6 +32515,15 @@ var HtmlWorker = /** @class */ (function () {
             });
         });
     };
+    //TODO: markdown parsing for completions
+    HtmlWorker.prototype.doComplete = function (position) {
+        return __awaiter(this, void 0, void 0, function () {
+            var document, htmlDocument, completions;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, null];
+            });
+        });
+    };
     return HtmlWorker;
 }());
 exports.HtmlWorker = HtmlWorker;
@@ -30292,6 +32613,7 @@ var JsonWorker = /** @class */ (function () {
             return [];
         }
         var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), this.$formatConfig);
+        console.log(textEdits);
         return textEdits;
     };
     JsonWorker.prototype.doHover = function (position) {
@@ -30326,6 +32648,25 @@ var JsonWorker = /** @class */ (function () {
             });
         });
     };
+    JsonWorker.prototype.doComplete = function (position) {
+        return __awaiter(this, void 0, void 0, function () {
+            var document, jsonDocument, completions, _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        document = this.$getDocument();
+                        if (!document) {
+                            return [2 /*return*/, null];
+                        }
+                        jsonDocument = this.$service.parseJSONDocument(document);
+                        completions = this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), jsonDocument);
+                        _a = type_converters_1.toCompletions;
+                        return [4 /*yield*/, completions];
+                    case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
+                }
+            });
+        });
+    };
     return JsonWorker;
 }());
 exports.JsonWorker = JsonWorker;
@@ -30343,43 +32684,43 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "CodeAction": () => (/* reexport */ esm_main/* CodeAction */.B2),
-  "CodeActionContext": () => (/* reexport */ esm_main/* CodeActionContext */.IT),
-  "CodeActionKind": () => (/* reexport */ esm_main/* CodeActionKind */.yN),
-  "Color": () => (/* reexport */ esm_main/* Color */.Il),
-  "ColorInformation": () => (/* reexport */ esm_main/* ColorInformation */.pr),
-  "ColorPresentation": () => (/* reexport */ esm_main/* ColorPresentation */.oi),
-  "Command": () => (/* reexport */ esm_main/* Command */.mY),
-  "CompletionItem": () => (/* reexport */ esm_main/* CompletionItem */.FG),
-  "CompletionItemKind": () => (/* reexport */ esm_main/* CompletionItemKind */.cm),
-  "CompletionItemTag": () => (/* reexport */ esm_main/* CompletionItemTag */.we),
-  "CompletionList": () => (/* reexport */ esm_main/* CompletionList */.Ub),
-  "Diagnostic": () => (/* reexport */ esm_main/* Diagnostic */.R9),
-  "DiagnosticSeverity": () => (/* reexport */ esm_main/* DiagnosticSeverity */.H_),
-  "DocumentHighlight": () => (/* reexport */ esm_main/* DocumentHighlight */.eh),
-  "DocumentHighlightKind": () => (/* reexport */ esm_main/* DocumentHighlightKind */.MY),
-  "DocumentLink": () => (/* reexport */ esm_main/* DocumentLink */.jW),
-  "DocumentSymbol": () => (/* reexport */ esm_main/* DocumentSymbol */.w6),
-  "DocumentUri": () => (/* reexport */ esm_main/* DocumentUri */.Oj),
+  "CodeAction": () => (/* reexport */ esm_main.CodeAction),
+  "CodeActionContext": () => (/* reexport */ esm_main.CodeActionContext),
+  "CodeActionKind": () => (/* reexport */ esm_main.CodeActionKind),
+  "Color": () => (/* reexport */ esm_main.Color),
+  "ColorInformation": () => (/* reexport */ esm_main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ esm_main.ColorPresentation),
+  "Command": () => (/* reexport */ esm_main.Command),
+  "CompletionItem": () => (/* reexport */ esm_main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ esm_main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ esm_main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ esm_main.CompletionList),
+  "Diagnostic": () => (/* reexport */ esm_main.Diagnostic),
+  "DiagnosticSeverity": () => (/* reexport */ esm_main.DiagnosticSeverity),
+  "DocumentHighlight": () => (/* reexport */ esm_main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ esm_main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ esm_main.DocumentLink),
+  "DocumentSymbol": () => (/* reexport */ esm_main.DocumentSymbol),
+  "DocumentUri": () => (/* reexport */ esm_main.DocumentUri),
   "FileType": () => (/* reexport */ FileType),
-  "FoldingRange": () => (/* reexport */ esm_main/* FoldingRange */.so),
-  "FoldingRangeKind": () => (/* reexport */ esm_main/* FoldingRangeKind */.AD),
-  "Hover": () => (/* reexport */ esm_main/* Hover */.TM),
-  "InsertTextFormat": () => (/* reexport */ esm_main/* InsertTextFormat */.lO),
-  "Location": () => (/* reexport */ esm_main/* Location */.Ye),
-  "MarkedString": () => (/* reexport */ esm_main/* MarkedString */.oB),
-  "MarkupContent": () => (/* reexport */ esm_main/* MarkupContent */.A_),
-  "MarkupKind": () => (/* reexport */ esm_main/* MarkupKind */.a4),
-  "Position": () => (/* reexport */ esm_main/* Position */.Ly),
-  "Range": () => (/* reexport */ esm_main/* Range */.e6),
-  "SelectionRange": () => (/* reexport */ esm_main/* SelectionRange */.xm),
-  "SymbolInformation": () => (/* reexport */ esm_main/* SymbolInformation */.JN),
-  "SymbolKind": () => (/* reexport */ esm_main/* SymbolKind */.cR),
+  "FoldingRange": () => (/* reexport */ esm_main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ esm_main.FoldingRangeKind),
+  "Hover": () => (/* reexport */ esm_main.Hover),
+  "InsertTextFormat": () => (/* reexport */ esm_main.InsertTextFormat),
+  "Location": () => (/* reexport */ esm_main.Location),
+  "MarkedString": () => (/* reexport */ esm_main.MarkedString),
+  "MarkupContent": () => (/* reexport */ esm_main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ esm_main.MarkupKind),
+  "Position": () => (/* reexport */ esm_main.Position),
+  "Range": () => (/* reexport */ esm_main.Range),
+  "SelectionRange": () => (/* reexport */ esm_main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ esm_main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ esm_main.SymbolKind),
   "TextDocument": () => (/* reexport */ lib_esm_main/* TextDocument */.n),
-  "TextDocumentEdit": () => (/* reexport */ esm_main/* TextDocumentEdit */.sx),
-  "TextEdit": () => (/* reexport */ esm_main/* TextEdit */.PY),
-  "VersionedTextDocumentIdentifier": () => (/* reexport */ esm_main/* VersionedTextDocumentIdentifier */.XL),
-  "WorkspaceEdit": () => (/* reexport */ esm_main/* WorkspaceEdit */.Db),
+  "TextDocumentEdit": () => (/* reexport */ esm_main.TextDocumentEdit),
+  "TextEdit": () => (/* reexport */ esm_main.TextEdit),
+  "VersionedTextDocumentIdentifier": () => (/* reexport */ esm_main.VersionedTextDocumentIdentifier),
+  "WorkspaceEdit": () => (/* reexport */ esm_main.WorkspaceEdit),
   "getCSSLanguageService": () => (/* binding */ getCSSLanguageService),
   "getDefaultCSSDataProvider": () => (/* binding */ getDefaultCSSDataProvider),
   "getLESSLanguageService": () => (/* binding */ getLESSLanguageService),
@@ -32690,11 +35031,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [esm_main/* MarkupKind.Markdown */.a4.Markdown, esm_main/* MarkupKind.PlainText */.a4.PlainText]
+                    documentationFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [esm_main/* MarkupKind.Markdown */.a4.Markdown, esm_main/* MarkupKind.PlainText */.a4.PlainText]
+                contentFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
             }
         }
     };
@@ -32813,7 +35154,7 @@ function getEntryMarkdownDescription(entry, settings) {
             result += textToMarkedString(entry.description);
         }
         else {
-            result += entry.description.kind === esm_main/* MarkupKind.Markdown */.a4.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
+            result += entry.description.kind === esm_main.MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
         }
         const browserLabel = getBrowserLabel(entry.browsers);
         if (browserLabel) {
@@ -35610,7 +37951,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, fullValueRange) {
         else {
             endPos = fullValueRange.end;
         }
-        replaceRange = esm_main/* Range.create */.e6.create(startPos, endPos);
+        replaceRange = esm_main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -35619,8 +37960,8 @@ function createCompletionItem(name, isDir, replaceRange) {
         name = name + '/';
         return {
             label: escapePath(name),
-            kind: esm_main/* CompletionItemKind.Folder */.cm.Folder,
-            textEdit: esm_main/* TextEdit.replace */.PY.replace(replaceRange, escapePath(name)),
+            kind: esm_main.CompletionItemKind.Folder,
+            textEdit: esm_main.TextEdit.replace(replaceRange, escapePath(name)),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -35630,8 +37971,8 @@ function createCompletionItem(name, isDir, replaceRange) {
     else {
         return {
             label: escapePath(name),
-            kind: esm_main/* CompletionItemKind.File */.cm.File,
-            textEdit: esm_main/* TextEdit.replace */.PY.replace(replaceRange, escapePath(name))
+            kind: esm_main.CompletionItemKind.File,
+            textEdit: esm_main.TextEdit.replace(replaceRange, escapePath(name))
         };
     }
 }
@@ -35640,12 +37981,12 @@ function escapePath(p) {
     return p.replace(/(\s|\(|\)|,|"|')/g, '\\$1');
 }
 function shiftPosition(pos, offset) {
-    return esm_main/* Position.create */.Ly.create(pos.line, pos.character + offset);
+    return esm_main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     const start = shiftPosition(range.start, startOffset);
     const end = shiftPosition(range.end, endOffset);
-    return esm_main/* Range.create */.e6.create(start, end);
+    return esm_main.Range.create(start, end);
 }
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/services/cssCompletion.js
@@ -35663,7 +38004,7 @@ function shiftRange(range, startOffset, endOffset) {
 
 
 const cssCompletion_localize = main.loadMessageBundle();
-const SnippetFormat = esm_main/* InsertTextFormat.Snippet */.lO.Snippet;
+const SnippetFormat = esm_main.InsertTextFormat.Snippet;
 const retriggerCommand = {
     title: 'Suggest',
     command: 'editor.action.triggerSuggest'
@@ -35719,7 +38060,7 @@ class CSSCompletion {
         this.offset = document.offsetAt(position);
         this.position = position;
         this.currentWord = getCurrentWord(document, this.offset);
-        this.defaultReplaceRange = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+        this.defaultReplaceRange = esm_main.Range.create(esm_main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         this.textDocument = document;
         this.styleSheet = styleSheet;
         this.documentSettings = documentSettings;
@@ -35873,10 +38214,10 @@ class CSSCompletion {
             const item = {
                 label: entry.name,
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(range, insertText),
-                insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-                kind: esm_main/* CompletionItemKind.Property */.cm.Property
+                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
+                textEdit: esm_main.TextEdit.replace(range, insertText),
+                insertTextFormat: esm_main.InsertTextFormat.Snippet,
+                kind: esm_main.CompletionItemKind.Property
             };
             if (!entry.restrictions) {
                 retrigger = false;
@@ -35968,8 +38309,8 @@ class CSSCompletion {
             for (const existingValue of existingValues.getEntries()) {
                 result.items.push({
                     label: existingValue,
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), existingValue),
-                    kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), existingValue),
+                    kind: esm_main.CompletionItemKind.Value
                 });
             }
         }
@@ -35996,10 +38337,10 @@ class CSSCompletion {
                 const item = {
                     label: value.name,
                     documentation: getEntryDescription(value, this.doesSupportMarkdown()),
-                    tags: isDeprecated(entry) ? [esm_main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertString),
+                    tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertString),
                     sortText,
-                    kind: esm_main/* CompletionItemKind.Value */.cm.Value,
+                    kind: esm_main.CompletionItemKind.Value,
                     insertTextFormat
                 };
                 result.items.push(item);
@@ -36012,8 +38353,8 @@ class CSSCompletion {
             result.items.push({
                 label: keywords,
                 documentation: cssWideKeywords[keywords],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), keywords),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), keywords),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         for (const func in cssWideFunctions) {
@@ -36021,8 +38362,8 @@ class CSSCompletion {
             result.items.push({
                 label: func,
                 documentation: cssWideFunctions[func],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: esm_main.CompletionItemKind.Function,
                 insertTextFormat: SnippetFormat,
                 command: startsWith(func, 'var') ? retriggerCommand : undefined
             });
@@ -36042,12 +38383,12 @@ class CSSCompletion {
             const completionItem = {
                 label: symbol.name,
                 documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main/* CompletionItemKind.Variable */.cm.Variable,
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: esm_main.CompletionItemKind.Variable,
                 sortText: SortTexts.Variable
             };
             if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                completionItem.kind = esm_main/* CompletionItemKind.Color */.cm.Color;
+                completionItem.kind = esm_main.CompletionItemKind.Color;
             }
             if (symbol.node.type === NodeType.FunctionParameter) {
                 const mixinNode = (symbol.node.getParent());
@@ -36068,11 +38409,11 @@ class CSSCompletion {
                 const completionItem = {
                     label: symbol.name,
                     documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(null), symbol.name),
-                    kind: esm_main/* CompletionItemKind.Variable */.cm.Variable
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(null), symbol.name),
+                    kind: esm_main.CompletionItemKind.Variable
                 };
                 if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                    completionItem.kind = esm_main/* CompletionItemKind.Color */.cm.Color;
+                    completionItem.kind = esm_main.CompletionItemKind.Color;
                 }
                 result.items.push(completionItem);
             }
@@ -36082,8 +38423,8 @@ class CSSCompletion {
             if (startsWith(name, '--')) {
                 const completionItem = {
                     label: name,
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(null), name),
-                    kind: esm_main/* CompletionItemKind.Variable */.cm.Variable
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(null), name),
+                    kind: esm_main.CompletionItemKind.Variable
                 };
                 result.items.push(completionItem);
             }
@@ -36113,8 +38454,8 @@ class CSSCompletion {
                         const insertText = currentWord + unit;
                         result.items.push({
                             label: insertText,
-                            textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                            kind: esm_main/* CompletionItemKind.Unit */.cm.Unit
+                            textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                            kind: esm_main.CompletionItemKind.Unit
                         });
                     }
                 }
@@ -36127,7 +38468,7 @@ class CSSCompletion {
             const end = existingNode.end !== -1 ? this.textDocument.positionAt(existingNode.end) : this.position;
             const start = this.textDocument.positionAt(existingNode.offset);
             if (start.line === end.line) {
-                return esm_main/* Range.create */.e6.create(start, end); // multi line edits are not allowed
+                return esm_main.Range.create(start, end); // multi line edits are not allowed
             }
         }
         return this.defaultReplaceRange;
@@ -36137,16 +38478,16 @@ class CSSCompletion {
             result.items.push({
                 label: color,
                 documentation: colors[color],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), color),
-                kind: esm_main/* CompletionItemKind.Color */.cm.Color
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: esm_main.CompletionItemKind.Color
             });
         }
         for (const color in colorKeywords) {
             result.items.push({
                 label: color,
                 documentation: colorKeywords[color],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), color),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         const colorValues = new Set();
@@ -36154,8 +38495,8 @@ class CSSCompletion {
         for (const color of colorValues.getEntries()) {
             result.items.push({
                 label: color,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), color),
-                kind: esm_main/* CompletionItemKind.Color */.cm.Color
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: esm_main.CompletionItemKind.Color
             });
         }
         for (const p of colorFunctions) {
@@ -36166,9 +38507,9 @@ class CSSCompletion {
                 label: p.func.substr(0, p.func.indexOf('(')),
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 insertTextFormat: SnippetFormat,
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function
+                kind: esm_main.CompletionItemKind.Function
             });
         }
         return result;
@@ -36178,8 +38519,8 @@ class CSSCompletion {
             result.items.push({
                 label: position,
                 documentation: positionKeywords[position],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), position),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), position),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         return result;
@@ -36189,8 +38530,8 @@ class CSSCompletion {
             result.items.push({
                 label: repeat,
                 documentation: repeatStyleKeywords[repeat],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), repeat),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), repeat),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         return result;
@@ -36200,8 +38541,8 @@ class CSSCompletion {
             result.items.push({
                 label: lineStyle,
                 documentation: lineStyleKeywords[lineStyle],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), lineStyle),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), lineStyle),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         return result;
@@ -36210,8 +38551,8 @@ class CSSCompletion {
         for (const lineWidth of lineWidthKeywords) {
             result.items.push({
                 label: lineWidth,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), lineWidth),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), lineWidth),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         return result;
@@ -36221,8 +38562,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: geometryBoxKeywords[box],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), box),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         return result;
@@ -36232,8 +38573,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: boxKeywords[box],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), box),
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: esm_main.CompletionItemKind.Value
             });
         }
         return result;
@@ -36244,8 +38585,8 @@ class CSSCompletion {
             result.items.push({
                 label: image,
                 documentation: imageFunctions[image],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: esm_main.CompletionItemKind.Function,
                 insertTextFormat: image !== insertText ? SnippetFormat : void 0
             });
         }
@@ -36257,8 +38598,8 @@ class CSSCompletion {
             result.items.push({
                 label: timing,
                 documentation: transitionTimingFunctions[timing],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: esm_main.CompletionItemKind.Function,
                 insertTextFormat: timing !== insertText ? SnippetFormat : void 0
             });
         }
@@ -36270,8 +38611,8 @@ class CSSCompletion {
             result.items.push({
                 label: shape,
                 documentation: basicShapeFunctions[shape],
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: esm_main.CompletionItemKind.Function,
                 insertTextFormat: shape !== insertText ? SnippetFormat : void 0
             });
         }
@@ -36294,10 +38635,10 @@ class CSSCompletion {
         this.cssDataManager.getAtDirectives().forEach(entry => {
             result.items.push({
                 label: entry.name,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(null), entry.name),
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(null), entry.name),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
+                kind: esm_main.CompletionItemKind.Keyword
             });
         });
         this.getCompletionsForSelector(null, false, result);
@@ -36323,17 +38664,17 @@ class CSSCompletion {
             if (this.hasCharacterAtPosition(this.offset - this.currentWord.length - 1, ':')) {
                 this.currentWord = ':' + this.currentWord; // for '::'
             }
-            this.defaultReplaceRange = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+            this.defaultReplaceRange = esm_main.Range.create(esm_main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         }
         const pseudoClasses = this.cssDataManager.getPseudoClasses();
         pseudoClasses.forEach(entry => {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
+                kind: esm_main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, ':-')) {
@@ -36346,10 +38687,10 @@ class CSSCompletion {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
+                kind: esm_main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, '::-')) {
@@ -36361,15 +38702,15 @@ class CSSCompletion {
             for (const entry of html5Tags) {
                 result.items.push({
                     label: entry,
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), entry),
-                    kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: esm_main.CompletionItemKind.Keyword
                 });
             }
             for (const entry of svgElements) {
                 result.items.push({
                     label: entry,
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), entry),
-                    kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: esm_main.CompletionItemKind.Keyword
                 });
             }
         }
@@ -36383,8 +38724,8 @@ class CSSCompletion {
                     visited[selector] = true;
                     result.items.push({
                         label: selector,
-                        textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), selector),
-                        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+                        textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), selector),
+                        kind: esm_main.CompletionItemKind.Keyword
                     });
                 }
                 return false;
@@ -36514,9 +38855,9 @@ class CSSCompletion {
         return {
             label: symbol.name,
             detail: symbol.name + '(' + params.join(', ') + ')',
-            textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+            textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
             insertTextFormat: SnippetFormat,
-            kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+            kind: esm_main.CompletionItemKind.Function,
             sortText: SortTexts.Term
         };
     }
@@ -36564,7 +38905,7 @@ class CSSCompletion {
             uriValue = '';
             position = this.position;
             const emptyURIValuePosition = this.textDocument.positionAt(uriLiteralNode.offset + 'url('.length);
-            range = esm_main/* Range.create */.e6.create(emptyURIValuePosition, emptyURIValuePosition);
+            range = esm_main.Range.create(emptyURIValuePosition, emptyURIValuePosition);
         }
         else {
             const uriValueNode = uriLiteralNode.getChild(0);
@@ -36606,7 +38947,7 @@ class CSSCompletion {
                 return this.supportsMarkdown;
             }
             const documentationFormat = this.lsOptions.clientCapabilities.textDocument?.completion?.completionItem?.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(esm_main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -37221,7 +39562,7 @@ class CSSHover {
     }
     doHover(document, position, stylesheet, settings = this.defaultSettings) {
         function getRange(node) {
-            return esm_main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.end));
+            return esm_main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
         }
         const offset = document.offsetAt(position);
         const nodepath = getNodePath(stylesheet, offset);
@@ -37342,7 +39683,7 @@ class CSSHover {
                 return this.supportsMarkdown;
             }
             const hover = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.hover;
-            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(esm_main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -37520,7 +39861,7 @@ class CSSNavigation {
             const entry = {
                 name,
                 kind,
-                location: esm_main/* Location.create */.Ye.create(document.uri, range)
+                location: esm_main.Location.create(document.uri, range)
             };
             result.push(entry);
         };
@@ -37532,7 +39873,7 @@ class CSSNavigation {
         const parents = [];
         const addDocumentSymbol = (name, kind, symbolNodeOrRange, nameNodeOrRange, bodyNode) => {
             const range = symbolNodeOrRange instanceof Node ? getRange(symbolNodeOrRange, document) : symbolNodeOrRange;
-            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? esm_main/* Range.create */.e6.create(range.start, range.start);
+            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? esm_main.Range.create(range.start, range.start);
             const entry = {
                 name,
                 kind,
@@ -37566,33 +39907,33 @@ class CSSNavigation {
             if (node instanceof RuleSet) {
                 for (const selector of node.getSelectors().getChildren()) {
                     if (selector instanceof Selector) {
-                        const range = esm_main/* Range.create */.e6.create(document.positionAt(selector.offset), document.positionAt(node.end));
-                        collect(selector.getText(), esm_main/* SymbolKind.Class */.cR.Class, range, selector, node.getDeclarations());
+                        const range = esm_main.Range.create(document.positionAt(selector.offset), document.positionAt(node.end));
+                        collect(selector.getText(), esm_main.SymbolKind.Class, range, selector, node.getDeclarations());
                     }
                 }
             }
             else if (node instanceof VariableDeclaration) {
-                collect(node.getName(), esm_main/* SymbolKind.Variable */.cR.Variable, node, node.getVariable(), undefined);
+                collect(node.getName(), esm_main.SymbolKind.Variable, node, node.getVariable(), undefined);
             }
             else if (node instanceof MixinDeclaration) {
-                collect(node.getName(), esm_main/* SymbolKind.Method */.cR.Method, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), esm_main.SymbolKind.Method, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FunctionDeclaration) {
-                collect(node.getName(), esm_main/* SymbolKind.Function */.cR.Function, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), esm_main.SymbolKind.Function, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof Keyframe) {
                 const name = cssNavigation_localize('literal.keyframes', "@keyframes {0}", node.getName());
-                collect(name, esm_main/* SymbolKind.Class */.cR.Class, node, node.getIdentifier(), node.getDeclarations());
+                collect(name, esm_main.SymbolKind.Class, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FontFace) {
                 const name = cssNavigation_localize('literal.fontface', "@font-face");
-                collect(name, esm_main/* SymbolKind.Class */.cR.Class, node, undefined, node.getDeclarations());
+                collect(name, esm_main.SymbolKind.Class, node, undefined, node.getDeclarations());
             }
             else if (node instanceof Media) {
                 const mediaList = node.getChild(0);
                 if (mediaList instanceof Medialist) {
                     const name = '@media ' + mediaList.getText();
-                    collect(name, esm_main/* SymbolKind.Module */.cR.Module, node, mediaList, node.getDeclarations());
+                    collect(name, esm_main.SymbolKind.Module, node, mediaList, node.getDeclarations());
                 }
             }
             return true;
@@ -37619,14 +39960,14 @@ class CSSNavigation {
         else {
             label = `rgba(${red256}, ${green256}, ${blue256}, ${color.alpha})`;
         }
-        result.push({ label: label, textEdit: esm_main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
         if (color.alpha === 1) {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}`;
         }
         else {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}${toTwoDigitHex(Math.round(color.alpha * 255))}`;
         }
-        result.push({ label: label, textEdit: esm_main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
         const hsl = hslFromColor(color);
         if (hsl.a === 1) {
             label = `hsl(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%)`;
@@ -37634,7 +39975,7 @@ class CSSNavigation {
         else {
             label = `hsla(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%, ${hsl.a})`;
         }
-        result.push({ label: label, textEdit: esm_main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
         const hwb = hwbFromColor(color);
         if (hwb.a === 1) {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}%)`;
@@ -37642,12 +39983,12 @@ class CSSNavigation {
         else {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}% / ${hwb.a})`;
         }
-        result.push({ label: label, textEdit: esm_main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
         return result;
     }
     doRename(document, position, newName, stylesheet) {
         const highlights = this.findDocumentHighlights(document, position, stylesheet);
-        const edits = highlights.map(h => esm_main/* TextEdit.replace */.PY.replace(h.range, newName));
+        const edits = highlights.map(h => esm_main.TextEdit.replace(h.range, newName));
         return {
             changes: { [document.uri]: edits }
         };
@@ -37732,7 +40073,7 @@ function getColorInformation(node, document) {
     return null;
 }
 function getRange(node, document) {
-    return esm_main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.end));
+    return esm_main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
 }
 /**
  * Test if `otherRange` is in `range`. If the ranges are equal, will return true.
@@ -37756,12 +40097,12 @@ function containsRange(range, otherRange) {
 }
 function getHighlightKind(node) {
     if (node.type === NodeType.Selector) {
-        return esm_main/* DocumentHighlightKind.Write */.MY.Write;
+        return esm_main.DocumentHighlightKind.Write;
     }
     if (node instanceof Identifier) {
         if (node.parent && node.parent instanceof Property) {
             if (node.isCustomProperty) {
-                return esm_main/* DocumentHighlightKind.Write */.MY.Write;
+                return esm_main.DocumentHighlightKind.Write;
             }
         }
     }
@@ -37772,10 +40113,10 @@ function getHighlightKind(node) {
             case NodeType.Keyframe:
             case NodeType.VariableDeclaration:
             case NodeType.FunctionParameter:
-                return esm_main/* DocumentHighlightKind.Write */.MY.Write;
+                return esm_main.DocumentHighlightKind.Write;
         }
     }
-    return esm_main/* DocumentHighlightKind.Read */.MY.Read;
+    return esm_main.DocumentHighlightKind.Read;
 }
 function toTwoDigitHex(n) {
     const r = n.toString(16);
@@ -37895,7 +40236,7 @@ class CSSCodeActions {
     doCodeActions(document, range, context, stylesheet) {
         return this.doCodeActions2(document, range, context, stylesheet).map(ca => {
             const textDocumentEdit = ca.edit && ca.edit.documentChanges && ca.edit.documentChanges[0];
-            return esm_main/* Command.create */.mY.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
+            return esm_main.Command.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
         });
     }
     doCodeActions2(document, range, context, stylesheet) {
@@ -37924,10 +40265,10 @@ class CSSCodeActions {
         for (const candidate of candidates) {
             const propertyName = candidate.property;
             const title = cssCodeActions_localize('css.codeaction.rename', "Rename to '{0}'", propertyName);
-            const edit = esm_main/* TextEdit.replace */.PY.replace(marker.range, propertyName);
-            const documentIdentifier = esm_main/* VersionedTextDocumentIdentifier.create */.XL.create(document.uri, document.version);
-            const workspaceEdit = { documentChanges: [esm_main/* TextDocumentEdit.create */.sx.create(documentIdentifier, [edit])] };
-            const codeAction = esm_main/* CodeAction.create */.B2.create(title, workspaceEdit, esm_main/* CodeActionKind.QuickFix */.yN.QuickFix);
+            const edit = esm_main.TextEdit.replace(marker.range, propertyName);
+            const documentIdentifier = esm_main.VersionedTextDocumentIdentifier.create(document.uri, document.version);
+            const workspaceEdit = { documentChanges: [esm_main.TextDocumentEdit.create(documentIdentifier, [edit])] };
+            const codeAction = esm_main.CodeAction.create(title, workspaceEdit, esm_main.CodeActionKind.QuickFix);
             codeAction.diagnostics = [marker];
             result.push(codeAction);
             if (--maxActions <= 0) {
@@ -38702,13 +41043,13 @@ class CSSValidation {
             ruleIds.push(Rules[r].id);
         }
         function toDiagnostic(marker) {
-            const range = esm_main/* Range.create */.e6.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
+            const range = esm_main.Range.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
             const source = document.languageId;
             return {
                 code: marker.getRule().id,
                 source: source,
                 message: marker.getMessage(),
-                severity: marker.getLevel() === Level.Warning ? esm_main/* DiagnosticSeverity.Warning */.H_.Warning : esm_main/* DiagnosticSeverity.Error */.H_.Error,
+                severity: marker.getLevel() === Level.Warning ? esm_main.DiagnosticSeverity.Warning : esm_main.DiagnosticSeverity.Error,
                 range: range
             };
         }
@@ -39671,8 +42012,8 @@ class SCSSCompletion extends CSSCompletion {
                 const item = {
                     label: p.label,
                     documentation: p.documentation,
-                    textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
-                    kind: esm_main/* CompletionItemKind.Module */.cm.Module
+                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
+                    kind: esm_main.CompletionItemKind.Module
                 };
                 result.items.push(item);
             }
@@ -39693,9 +42034,9 @@ class SCSSCompletion extends CSSCompletion {
                 label: label,
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                insertTextFormat: esm_main.InsertTextFormat.Snippet,
+                kind: esm_main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -39730,8 +42071,8 @@ class SCSSCompletion extends CSSCompletion {
         for (const symbol of symbols) {
             const suggest = {
                 label: symbol.name,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), symbol.name),
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), symbol.name),
+                kind: esm_main.CompletionItemKind.Function,
             };
             result.items.push(suggest);
         }
@@ -39855,72 +42196,72 @@ SCSSCompletion.scssAtDirectives = [
     {
         label: "@extend",
         documentation: scssCompletion_localize("scss.builtin.@extend", "Inherits the styles of another selector."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@at-root",
         documentation: scssCompletion_localize("scss.builtin.@at-root", "Causes one or more rules to be emitted at the root of the document."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@debug",
         documentation: scssCompletion_localize("scss.builtin.@debug", "Prints the value of an expression to the standard error output stream. Useful for debugging complicated Sass files."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@warn",
         documentation: scssCompletion_localize("scss.builtin.@warn", "Prints the value of an expression to the standard error output stream. Useful for libraries that need to warn users of deprecations or recovering from minor mixin usage mistakes. Warnings can be turned off with the `--quiet` command-line option or the `:quiet` Sass option."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@error",
         documentation: scssCompletion_localize("scss.builtin.@error", "Throws the value of an expression as a fatal error with stack trace. Useful for validating arguments to mixins and functions."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@if",
         documentation: scssCompletion_localize("scss.builtin.@if", "Includes the body if the expression does not evaluate to `false` or `null`."),
         insertText: "@if ${1:expr} {\n\t$0\n}",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@for",
         documentation: scssCompletion_localize("scss.builtin.@for", "For loop that repeatedly outputs a set of styles for each `$var` in the `from/through` or `from/to` clause."),
         insertText: "@for \\$${1:var} from ${2:start} ${3|to,through|} ${4:end} {\n\t$0\n}",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@each",
         documentation: scssCompletion_localize("scss.builtin.@each", "Each loop that sets `$var` to each item in the list or map, then outputs the styles it contains using that value of `$var`."),
         insertText: "@each \\$${1:var} in ${2:list} {\n\t$0\n}",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@while",
         documentation: scssCompletion_localize("scss.builtin.@while", "While loop that takes an expression and repeatedly outputs the nested styles until the statement evaluates to `false`."),
         insertText: "@while ${1:condition} {\n\t$0\n}",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@mixin",
         documentation: scssCompletion_localize("scss.builtin.@mixin", "Defines styles that can be re-used throughout the stylesheet with `@include`."),
         insertText: "@mixin ${1:name} {\n\t$0\n}",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@include",
         documentation: scssCompletion_localize("scss.builtin.@include", "Includes the styles defined by another mixin into the current rule."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@function",
         documentation: scssCompletion_localize("scss.builtin.@function", "Defines complex operations that can be re-used throughout stylesheets."),
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: esm_main.CompletionItemKind.Keyword
     }
 ];
 SCSSCompletion.scssModuleLoaders = [
@@ -39929,16 +42270,16 @@ SCSSCompletion.scssModuleLoaders = [
         documentation: scssCompletion_localize("scss.builtin.@use", "Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
         references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/use' }],
         insertText: "@use $0;",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
     {
         label: "@forward",
         documentation: scssCompletion_localize("scss.builtin.@forward", "Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
         references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/forward' }],
         insertText: "@forward $0;",
-        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+        kind: esm_main.CompletionItemKind.Keyword
     },
 ];
 SCSSCompletion.scssModuleBuiltIns = [
@@ -40795,9 +43136,9 @@ class LESSCompletion extends CSSCompletion {
                 label: p.name,
                 detail: p.example,
                 documentation: p.description,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
-                insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
-                kind: esm_main/* CompletionItemKind.Function */.cm.Function
+                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
+                insertTextFormat: esm_main.InsertTextFormat.Snippet,
+                kind: esm_main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -43041,13 +45382,13 @@ function format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = esm_main/* Range.create */.e6.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = esm_main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Test if inside a rule
         inRule = isInRule(value, startOffset);
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            const startOfLineOffset = document.offsetAt(esm_main/* Position.create */.Ly.create(range.start.line, 0));
+            const startOfLineOffset = document.offsetAt(esm_main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
         if (inRule) {
@@ -43055,7 +45396,7 @@ function format(document, range, options) {
         }
     }
     else {
-        range = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(0, 0), document.positionAt(value.length));
+        range = esm_main.Range.create(esm_main.Position.create(0, 0), document.positionAt(value.length));
     }
     const cssOptions = {
         indent_size: tabSize,
@@ -65409,10 +67750,10 @@ function getSelectionRanges(document, positions, stylesheet) {
         const applicableRanges = getApplicableRanges(position);
         let current = undefined;
         for (let index = applicableRanges.length - 1; index >= 0; index--) {
-            current = esm_main/* SelectionRange.create */.xm.create(esm_main/* Range.create */.e6.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+            current = esm_main.SelectionRange.create(esm_main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
         }
         if (!current) {
-            current = esm_main/* SelectionRange.create */.xm.create(esm_main/* Range.create */.e6.create(position, position));
+            current = esm_main.SelectionRange.create(esm_main.Range.create(position, position));
         }
         return current;
     }
@@ -65595,41 +67936,41 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "Color": () => (/* reexport */ esm_main/* Color */.Il),
-  "ColorInformation": () => (/* reexport */ esm_main/* ColorInformation */.pr),
-  "ColorPresentation": () => (/* reexport */ esm_main/* ColorPresentation */.oi),
-  "Command": () => (/* reexport */ esm_main/* Command */.mY),
-  "CompletionItem": () => (/* reexport */ esm_main/* CompletionItem */.FG),
-  "CompletionItemKind": () => (/* reexport */ esm_main/* CompletionItemKind */.cm),
-  "CompletionItemTag": () => (/* reexport */ esm_main/* CompletionItemTag */.we),
-  "CompletionList": () => (/* reexport */ esm_main/* CompletionList */.Ub),
-  "Diagnostic": () => (/* reexport */ esm_main/* Diagnostic */.R9),
-  "DocumentHighlight": () => (/* reexport */ esm_main/* DocumentHighlight */.eh),
-  "DocumentHighlightKind": () => (/* reexport */ esm_main/* DocumentHighlightKind */.MY),
-  "DocumentLink": () => (/* reexport */ esm_main/* DocumentLink */.jW),
-  "DocumentUri": () => (/* reexport */ esm_main/* DocumentUri */.Oj),
+  "Color": () => (/* reexport */ esm_main.Color),
+  "ColorInformation": () => (/* reexport */ esm_main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ esm_main.ColorPresentation),
+  "Command": () => (/* reexport */ esm_main.Command),
+  "CompletionItem": () => (/* reexport */ esm_main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ esm_main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ esm_main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ esm_main.CompletionList),
+  "Diagnostic": () => (/* reexport */ esm_main.Diagnostic),
+  "DocumentHighlight": () => (/* reexport */ esm_main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ esm_main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ esm_main.DocumentLink),
+  "DocumentUri": () => (/* reexport */ esm_main.DocumentUri),
   "FileType": () => (/* reexport */ FileType),
-  "FoldingRange": () => (/* reexport */ esm_main/* FoldingRange */.so),
-  "FoldingRangeKind": () => (/* reexport */ esm_main/* FoldingRangeKind */.AD),
-  "FormattingOptions": () => (/* reexport */ esm_main/* FormattingOptions */.Wy),
-  "Hover": () => (/* reexport */ esm_main/* Hover */.TM),
-  "InsertReplaceEdit": () => (/* reexport */ esm_main/* InsertReplaceEdit */.db),
-  "InsertTextFormat": () => (/* reexport */ esm_main/* InsertTextFormat */.lO),
-  "InsertTextMode": () => (/* reexport */ esm_main/* InsertTextMode */.DM),
-  "Location": () => (/* reexport */ esm_main/* Location */.Ye),
-  "MarkedString": () => (/* reexport */ esm_main/* MarkedString */.oB),
-  "MarkupContent": () => (/* reexport */ esm_main/* MarkupContent */.A_),
-  "MarkupKind": () => (/* reexport */ esm_main/* MarkupKind */.a4),
-  "Position": () => (/* reexport */ esm_main/* Position */.Ly),
-  "Range": () => (/* reexport */ esm_main/* Range */.e6),
+  "FoldingRange": () => (/* reexport */ esm_main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ esm_main.FoldingRangeKind),
+  "FormattingOptions": () => (/* reexport */ esm_main.FormattingOptions),
+  "Hover": () => (/* reexport */ esm_main.Hover),
+  "InsertReplaceEdit": () => (/* reexport */ esm_main.InsertReplaceEdit),
+  "InsertTextFormat": () => (/* reexport */ esm_main.InsertTextFormat),
+  "InsertTextMode": () => (/* reexport */ esm_main.InsertTextMode),
+  "Location": () => (/* reexport */ esm_main.Location),
+  "MarkedString": () => (/* reexport */ esm_main.MarkedString),
+  "MarkupContent": () => (/* reexport */ esm_main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ esm_main.MarkupKind),
+  "Position": () => (/* reexport */ esm_main.Position),
+  "Range": () => (/* reexport */ esm_main.Range),
   "ScannerState": () => (/* reexport */ ScannerState),
-  "SelectionRange": () => (/* reexport */ esm_main/* SelectionRange */.xm),
-  "SymbolInformation": () => (/* reexport */ esm_main/* SymbolInformation */.JN),
-  "SymbolKind": () => (/* reexport */ esm_main/* SymbolKind */.cR),
+  "SelectionRange": () => (/* reexport */ esm_main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ esm_main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ esm_main.SymbolKind),
   "TextDocument": () => (/* reexport */ lib_esm_main/* TextDocument */.n),
-  "TextEdit": () => (/* reexport */ esm_main/* TextEdit */.PY),
+  "TextEdit": () => (/* reexport */ esm_main.TextEdit),
   "TokenType": () => (/* reexport */ TokenType),
-  "WorkspaceEdit": () => (/* reexport */ esm_main/* WorkspaceEdit */.Db),
+  "WorkspaceEdit": () => (/* reexport */ esm_main.WorkspaceEdit),
   "getDefaultHTMLDataProvider": () => (/* binding */ getDefaultHTMLDataProvider),
   "getLanguageService": () => (/* binding */ getLanguageService),
   "newHTMLDataProvider": () => (/* binding */ newHTMLDataProvider)
@@ -65694,11 +68035,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [esm_main/* MarkupKind.Markdown */.a4.Markdown, esm_main/* MarkupKind.PlainText */.a4.PlainText]
+                    documentationFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [esm_main/* MarkupKind.Markdown */.a4.Markdown, esm_main/* MarkupKind.PlainText */.a4.PlainText]
+                contentFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
             }
         }
     };
@@ -68986,7 +71327,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, range) {
         else {
             endPos = shiftPosition(range.end, -1);
         }
-        replaceRange = esm_main/* Range.create */.e6.create(startPos, endPos);
+        replaceRange = esm_main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -68995,8 +71336,8 @@ function createCompletionItem(p, isDir, replaceRange) {
         p = p + '/';
         return {
             label: p,
-            kind: esm_main/* CompletionItemKind.Folder */.cm.Folder,
-            textEdit: esm_main/* TextEdit.replace */.PY.replace(replaceRange, p),
+            kind: esm_main.CompletionItemKind.Folder,
+            textEdit: esm_main.TextEdit.replace(replaceRange, p),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -69006,18 +71347,18 @@ function createCompletionItem(p, isDir, replaceRange) {
     else {
         return {
             label: p,
-            kind: esm_main/* CompletionItemKind.File */.cm.File,
-            textEdit: esm_main/* TextEdit.replace */.PY.replace(replaceRange, p)
+            kind: esm_main.CompletionItemKind.File,
+            textEdit: esm_main.TextEdit.replace(replaceRange, p)
         };
     }
 }
 function shiftPosition(pos, offset) {
-    return esm_main/* Position.create */.Ly.create(pos.line, pos.character + offset);
+    return esm_main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     var start = shiftPosition(range.start, startOffset);
     var end = shiftPosition(range.end, endOffset);
-    return esm_main/* Range.create */.e6.create(start, end);
+    return esm_main.Range.create(start, end);
 }
 // Selected from https://stackoverflow.com/a/2725168/1780148
 var PATH_TAG_AND_ATTR = {
@@ -69172,10 +71513,10 @@ var HTMLCompletion = /** @class */ (function () {
                 provider.provideTags().forEach(function (tag) {
                     result.items.push({
                         label: tag.name,
-                        kind: esm_main/* CompletionItemKind.Property */.cm.Property,
+                        kind: esm_main.CompletionItemKind.Property,
                         documentation: generateDocumentation(tag, undefined, doesSupportMarkdown),
-                        textEdit: esm_main/* TextEdit.replace */.PY.replace(range, tag.name),
-                        insertTextFormat: esm_main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: esm_main.TextEdit.replace(range, tag.name),
+                        insertTextFormat: esm_main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -69208,16 +71549,16 @@ var HTMLCompletion = /** @class */ (function () {
                 if (tag && (!curr.closed || curr.endTagStart && (curr.endTagStart > offset))) {
                     var item = {
                         label: '/' + tag,
-                        kind: esm_main/* CompletionItemKind.Property */.cm.Property,
+                        kind: esm_main.CompletionItemKind.Property,
                         filterText: '/' + tag,
-                        textEdit: esm_main/* TextEdit.replace */.PY.replace(range, '/' + tag + closeTag),
-                        insertTextFormat: esm_main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: esm_main.TextEdit.replace(range, '/' + tag + closeTag),
+                        insertTextFormat: esm_main.InsertTextFormat.PlainText
                     };
                     var startIndent = getLineIndent(curr.start);
                     var endIndent = getLineIndent(afterOpenBracket - 1);
                     if (startIndent !== null && endIndent !== null && startIndent !== endIndent) {
                         var insertText = startIndent + '</' + tag + closeTag;
-                        item.textEdit = esm_main/* TextEdit.replace */.PY.replace(getReplaceRange(afterOpenBracket - 1 - endIndent.length), insertText);
+                        item.textEdit = esm_main.TextEdit.replace(getReplaceRange(afterOpenBracket - 1 - endIndent.length), insertText);
                         item.filterText = endIndent + '</' + tag;
                     }
                     result.items.push(item);
@@ -69232,11 +71573,11 @@ var HTMLCompletion = /** @class */ (function () {
                 provider.provideTags().forEach(function (tag) {
                     result.items.push({
                         label: '/' + tag.name,
-                        kind: esm_main/* CompletionItemKind.Property */.cm.Property,
+                        kind: esm_main.CompletionItemKind.Property,
                         documentation: generateDocumentation(tag, undefined, doesSupportMarkdown),
                         filterText: '/' + tag.name + closeTag,
-                        textEdit: esm_main/* TextEdit.replace */.PY.replace(range, '/' + tag.name + closeTag),
-                        insertTextFormat: esm_main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: esm_main.TextEdit.replace(range, '/' + tag.name + closeTag),
+                        insertTextFormat: esm_main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -69250,10 +71591,10 @@ var HTMLCompletion = /** @class */ (function () {
                 var pos = document.positionAt(tagCloseEnd);
                 result.items.push({
                     label: '</' + tag + '>',
-                    kind: esm_main/* CompletionItemKind.Property */.cm.Property,
+                    kind: esm_main.CompletionItemKind.Property,
                     filterText: '</' + tag + '>',
-                    textEdit: esm_main/* TextEdit.insert */.PY.insert(pos, '$0</' + tag + '>'),
-                    insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet
+                    textEdit: esm_main.TextEdit.insert(pos, '$0</' + tag + '>'),
+                    insertTextFormat: esm_main.InsertTextFormat.Snippet
                 });
             }
             return result;
@@ -69314,10 +71655,10 @@ var HTMLCompletion = /** @class */ (function () {
                     }
                     result.items.push({
                         label: attr.name,
-                        kind: attr.valueSet === 'handler' ? esm_main/* CompletionItemKind.Function */.cm.Function : esm_main/* CompletionItemKind.Value */.cm.Value,
+                        kind: attr.valueSet === 'handler' ? esm_main.CompletionItemKind.Function : esm_main.CompletionItemKind.Value,
                         documentation: generateDocumentation(attr, undefined, doesSupportMarkdown),
-                        textEdit: esm_main/* TextEdit.replace */.PY.replace(range, codeSnippet),
-                        insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet,
+                        textEdit: esm_main.TextEdit.replace(range, codeSnippet),
+                        insertTextFormat: esm_main.InsertTextFormat.Snippet,
                         command: command
                     });
                 });
@@ -69342,9 +71683,9 @@ var HTMLCompletion = /** @class */ (function () {
             }
             Object.keys(dataAttributes).forEach(function (attr) { return result.items.push({
                 label: attr,
-                kind: esm_main/* CompletionItemKind.Value */.cm.Value,
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(range, dataAttributes[attr]),
-                insertTextFormat: esm_main/* InsertTextFormat.Snippet */.lO.Snippet
+                kind: esm_main.CompletionItemKind.Value,
+                textEdit: esm_main.TextEdit.replace(range, dataAttributes[attr]),
+                insertTextFormat: esm_main.InsertTextFormat.Snippet
             }); });
         }
         function collectAttributeValueSuggestions(valueStart, valueEnd) {
@@ -69388,10 +71729,10 @@ var HTMLCompletion = /** @class */ (function () {
                     result.items.push({
                         label: value.name,
                         filterText: insertText,
-                        kind: esm_main/* CompletionItemKind.Unit */.cm.Unit,
+                        kind: esm_main.CompletionItemKind.Unit,
                         documentation: generateDocumentation(value, undefined, doesSupportMarkdown),
-                        textEdit: esm_main/* TextEdit.replace */.PY.replace(range, insertText),
-                        insertTextFormat: esm_main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: esm_main.TextEdit.replace(range, insertText),
+                        insertTextFormat: esm_main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -69425,16 +71766,16 @@ var HTMLCompletion = /** @class */ (function () {
                 characterStart--;
             }
             if (k >= 0 && text[k] === '&') {
-                var range = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(position.line, characterStart - 1), position);
+                var range = esm_main.Range.create(esm_main.Position.create(position.line, characterStart - 1), position);
                 for (var entity in entities) {
                     if (endsWith(entity, ';')) {
                         var label = '&' + entity;
                         result.items.push({
                             label: label,
-                            kind: esm_main/* CompletionItemKind.Keyword */.cm.Keyword,
+                            kind: esm_main.CompletionItemKind.Keyword,
                             documentation: htmlCompletion_localize('entity.propose', "Character entity representing '".concat(entities[entity], "'")),
-                            textEdit: esm_main/* TextEdit.replace */.PY.replace(range, label),
-                            insertTextFormat: esm_main/* InsertTextFormat.PlainText */.lO.PlainText
+                            textEdit: esm_main.TextEdit.replace(range, label),
+                            insertTextFormat: esm_main.InsertTextFormat.PlainText
                         });
                     }
                 }
@@ -69445,10 +71786,10 @@ var HTMLCompletion = /** @class */ (function () {
             var range = getReplaceRange(replaceStart, replaceEnd);
             result.items.push({
                 label: '!DOCTYPE',
-                kind: esm_main/* CompletionItemKind.Property */.cm.Property,
+                kind: esm_main.CompletionItemKind.Property,
                 documentation: 'A preamble for an HTML document.',
-                textEdit: esm_main/* TextEdit.replace */.PY.replace(range, '!DOCTYPE html>'),
-                insertTextFormat: esm_main/* InsertTextFormat.PlainText */.lO.PlainText
+                textEdit: esm_main.TextEdit.replace(range, '!DOCTYPE html>'),
+                insertTextFormat: esm_main.InsertTextFormat.PlainText
             });
         }
         var token = scanner.scan();
@@ -69646,7 +71987,7 @@ var HTMLCompletion = /** @class */ (function () {
                 return this.supportsMarkdown;
             }
             var documentationFormat = (_c = (_b = (_a = this.lsOptions.clientCapabilities.textDocument) === null || _a === void 0 ? void 0 : _a.completion) === null || _b === void 0 ? void 0 : _b.completionItem) === null || _c === void 0 ? void 0 : _c.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(esm_main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -69849,10 +72190,10 @@ var HTMLHover = /** @class */ (function () {
             if (k >= 0 && text[k] === '&') {
                 var range = null;
                 if (text[n] === ';') {
-                    range = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(position.line, characterStart), esm_main/* Position.create */.Ly.create(position.line, characterEnd + 1));
+                    range = esm_main.Range.create(esm_main.Position.create(position.line, characterStart), esm_main.Position.create(position.line, characterEnd + 1));
                 }
                 else {
-                    range = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(position.line, characterStart), esm_main/* Position.create */.Ly.create(position.line, characterEnd));
+                    range = esm_main.Range.create(esm_main.Position.create(position.line, characterStart), esm_main.Position.create(position.line, characterEnd));
                 }
                 return range;
             }
@@ -69949,7 +72290,7 @@ var HTMLHover = /** @class */ (function () {
                 return this.supportsMarkdown;
             }
             var contentFormat = (_c = (_b = (_a = this.lsOptions.clientCapabilities) === null || _a === void 0 ? void 0 : _a.textDocument) === null || _b === void 0 ? void 0 : _b.hover) === null || _c === void 0 ? void 0 : _c.contentFormat;
-            this.supportsMarkdown = Array.isArray(contentFormat) && contentFormat.indexOf(esm_main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(contentFormat) && contentFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -74782,7 +77123,7 @@ function format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = esm_main/* Range.create */.e6.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = esm_main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Do not modify if substring starts in inside an element
         // Ending inside an element is fine as it doesn't cause formatting errors
         var firstHalf = value.substring(0, startOffset);
@@ -74797,12 +77138,12 @@ function format(document, range, options) {
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            var startOfLineOffset = document.offsetAt(esm_main/* Position.create */.Ly.create(range.start.line, 0));
+            var startOfLineOffset = document.offsetAt(esm_main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
     }
     else {
-        range = esm_main/* Range.create */.e6.create(esm_main/* Position.create */.Ly.create(0, 0), document.positionAt(value.length));
+        range = esm_main.Range.create(esm_main.Position.create(0, 0), document.positionAt(value.length));
     }
     var htmlOptions = {
         indent_size: tabSize,
@@ -74961,7 +77302,7 @@ function createLink(document, documentContext, attributeValue, startOffset, endO
         return undefined;
     }
     return {
-        range: esm_main/* Range.create */.e6.create(document.positionAt(startOffset), document.positionAt(endOffset)),
+        range: esm_main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset)),
         target: workspaceUrl
     };
 }
@@ -75053,10 +77394,10 @@ function findDocumentHighlights(document, position, htmlDocument) {
     var endTagRange = typeof node.endTagStart === 'number' && getTagNameRange(TokenType.EndTag, document, node.endTagStart);
     if (startTagRange && covers(startTagRange, position) || endTagRange && covers(endTagRange, position)) {
         if (startTagRange) {
-            result.push({ kind: esm_main/* DocumentHighlightKind.Read */.MY.Read, range: startTagRange });
+            result.push({ kind: esm_main.DocumentHighlightKind.Read, range: startTagRange });
         }
         if (endTagRange) {
-            result.push({ kind: esm_main/* DocumentHighlightKind.Read */.MY.Read, range: endTagRange });
+            result.push({ kind: esm_main.DocumentHighlightKind.Read, range: endTagRange });
         }
     }
     return result;
@@ -75094,12 +77435,12 @@ function findDocumentSymbols(document, htmlDocument) {
 }
 function provideFileSymbolsInternal(document, node, container, symbols) {
     var name = nodeToName(node);
-    var location = esm_main/* Location.create */.Ye.create(document.uri, esm_main/* Range.create */.e6.create(document.positionAt(node.start), document.positionAt(node.end)));
+    var location = esm_main.Location.create(document.uri, esm_main.Range.create(document.positionAt(node.start), document.positionAt(node.end)));
     var symbol = {
         name: name,
         location: location,
         containerName: container,
-        kind: esm_main/* SymbolKind.Field */.cR.Field
+        kind: esm_main.SymbolKind.Field
     };
     symbols.push(symbol);
     node.children.forEach(function (child) {
@@ -75221,8 +77562,8 @@ function findLinkedEditingRanges(document, position, htmlDocument) {
         // Within closing tag, compute open tag
         node.endTagStart + '</'.length <= offset && offset <= node.endTagStart + '</'.length + tagLength) {
         return [
-            esm_main/* Range.create */.e6.create(document.positionAt(node.start + '<'.length), document.positionAt(node.start + '<'.length + tagLength)),
-            esm_main/* Range.create */.e6.create(document.positionAt(node.endTagStart + '</'.length), document.positionAt(node.endTagStart + '</'.length + tagLength))
+            esm_main.Range.create(document.positionAt(node.start + '<'.length), document.positionAt(node.start + '<'.length + tagLength)),
+            esm_main.Range.create(document.positionAt(node.endTagStart + '</'.length), document.positionAt(node.endTagStart + '</'.length + tagLength))
         ];
     }
     return null;
@@ -75376,7 +77717,7 @@ var HTMLFolding = /** @class */ (function () {
                                 var endLine = startLine;
                                 startLine = stackElement.startLine;
                                 if (endLine > startLine && prevStart !== startLine) {
-                                    addRange({ startLine: startLine, endLine: endLine, kind: esm_main/* FoldingRangeKind.Region */.AD.Region });
+                                    addRange({ startLine: startLine, endLine: endLine, kind: esm_main.FoldingRangeKind.Region });
                                 }
                             }
                         }
@@ -75384,7 +77725,7 @@ var HTMLFolding = /** @class */ (function () {
                     else {
                         var endLine = document.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
                         if (startLine < endLine) {
-                            addRange({ startLine: startLine, endLine: endLine, kind: esm_main/* FoldingRangeKind.Comment */.AD.Comment });
+                            addRange({ startLine: startLine, endLine: endLine, kind: esm_main.FoldingRangeKind.Comment });
                         }
                     }
                     break;
@@ -75425,12 +77766,12 @@ var HTMLSelectionRange = /** @class */ (function () {
         for (var index = applicableRanges.length - 1; index >= 0; index--) {
             var range = applicableRanges[index];
             if (!prev || range[0] !== prev[0] || range[1] !== prev[1]) {
-                current = esm_main/* SelectionRange.create */.xm.create(esm_main/* Range.create */.e6.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+                current = esm_main.SelectionRange.create(esm_main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
             }
             prev = range;
         }
         if (!current) {
-            current = esm_main/* SelectionRange.create */.xm.create(esm_main/* Range.create */.e6.create(position, position));
+            current = esm_main.SelectionRange.create(esm_main.Range.create(position, position));
         }
         return current;
     };
@@ -75444,7 +77785,7 @@ var HTMLSelectionRange = /** @class */ (function () {
             if (currNode.startTagEnd !== currNode.end) {
                 return [[currNode.start, currNode.end]];
             }
-            var closeRange = esm_main/* Range.create */.e6.create(document.positionAt(currNode.startTagEnd - 2), document.positionAt(currNode.startTagEnd));
+            var closeRange = esm_main.Range.create(document.positionAt(currNode.startTagEnd - 2), document.positionAt(currNode.startTagEnd));
             var closeText = document.getText(closeRange);
             // Self-closing element
             if (closeText === '/>') {
@@ -75515,7 +77856,7 @@ var HTMLSelectionRange = /** @class */ (function () {
     };
     ;
     HTMLSelectionRange.prototype.getAttributeLevelRanges = function (document, currNode, currOffset) {
-        var currNodeRange = esm_main/* Range.create */.e6.create(document.positionAt(currNode.start), document.positionAt(currNode.end));
+        var currNodeRange = esm_main.Range.create(document.positionAt(currNode.start), document.positionAt(currNode.end));
         var currNodeText = document.getText(currNodeRange);
         var relativeOffset = currOffset - currNode.start;
         /**
@@ -81829,42 +84170,42 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "CodeAction": () => (/* reexport */ main/* CodeAction */.B2),
-  "CodeActionContext": () => (/* reexport */ main/* CodeActionContext */.IT),
-  "CodeActionKind": () => (/* reexport */ main/* CodeActionKind */.yN),
-  "Color": () => (/* reexport */ main/* Color */.Il),
-  "ColorInformation": () => (/* reexport */ main/* ColorInformation */.pr),
-  "ColorPresentation": () => (/* reexport */ main/* ColorPresentation */.oi),
-  "Command": () => (/* reexport */ main/* Command */.mY),
-  "CompletionItem": () => (/* reexport */ main/* CompletionItem */.FG),
-  "CompletionItemKind": () => (/* reexport */ main/* CompletionItemKind */.cm),
-  "CompletionItemTag": () => (/* reexport */ main/* CompletionItemTag */.we),
-  "CompletionList": () => (/* reexport */ main/* CompletionList */.Ub),
-  "Diagnostic": () => (/* reexport */ main/* Diagnostic */.R9),
-  "DiagnosticSeverity": () => (/* reexport */ main/* DiagnosticSeverity */.H_),
-  "DocumentHighlight": () => (/* reexport */ main/* DocumentHighlight */.eh),
-  "DocumentHighlightKind": () => (/* reexport */ main/* DocumentHighlightKind */.MY),
-  "DocumentLink": () => (/* reexport */ main/* DocumentLink */.jW),
-  "DocumentSymbol": () => (/* reexport */ main/* DocumentSymbol */.w6),
+  "CodeAction": () => (/* reexport */ main.CodeAction),
+  "CodeActionContext": () => (/* reexport */ main.CodeActionContext),
+  "CodeActionKind": () => (/* reexport */ main.CodeActionKind),
+  "Color": () => (/* reexport */ main.Color),
+  "ColorInformation": () => (/* reexport */ main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
+  "Command": () => (/* reexport */ main.Command),
+  "CompletionItem": () => (/* reexport */ main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ main.CompletionList),
+  "Diagnostic": () => (/* reexport */ main.Diagnostic),
+  "DiagnosticSeverity": () => (/* reexport */ main.DiagnosticSeverity),
+  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ main.DocumentLink),
+  "DocumentSymbol": () => (/* reexport */ main.DocumentSymbol),
   "ErrorCode": () => (/* reexport */ ErrorCode),
-  "FoldingRange": () => (/* reexport */ main/* FoldingRange */.so),
-  "FoldingRangeKind": () => (/* reexport */ main/* FoldingRangeKind */.AD),
-  "Hover": () => (/* reexport */ main/* Hover */.TM),
-  "InsertTextFormat": () => (/* reexport */ main/* InsertTextFormat */.lO),
-  "Location": () => (/* reexport */ main/* Location */.Ye),
-  "MarkedString": () => (/* reexport */ main/* MarkedString */.oB),
-  "MarkupContent": () => (/* reexport */ main/* MarkupContent */.A_),
-  "MarkupKind": () => (/* reexport */ main/* MarkupKind */.a4),
-  "Position": () => (/* reexport */ main/* Position */.Ly),
-  "Range": () => (/* reexport */ main/* Range */.e6),
-  "SelectionRange": () => (/* reexport */ main/* SelectionRange */.xm),
-  "SymbolInformation": () => (/* reexport */ main/* SymbolInformation */.JN),
-  "SymbolKind": () => (/* reexport */ main/* SymbolKind */.cR),
+  "FoldingRange": () => (/* reexport */ main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
+  "Hover": () => (/* reexport */ main.Hover),
+  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
+  "Location": () => (/* reexport */ main.Location),
+  "MarkedString": () => (/* reexport */ main.MarkedString),
+  "MarkupContent": () => (/* reexport */ main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ main.MarkupKind),
+  "Position": () => (/* reexport */ main.Position),
+  "Range": () => (/* reexport */ main.Range),
+  "SelectionRange": () => (/* reexport */ main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ main.SymbolKind),
   "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
-  "TextDocumentEdit": () => (/* reexport */ main/* TextDocumentEdit */.sx),
-  "TextEdit": () => (/* reexport */ main/* TextEdit */.PY),
-  "VersionedTextDocumentIdentifier": () => (/* reexport */ main/* VersionedTextDocumentIdentifier */.XL),
-  "WorkspaceEdit": () => (/* reexport */ main/* WorkspaceEdit */.Db),
+  "TextDocumentEdit": () => (/* reexport */ main.TextDocumentEdit),
+  "TextEdit": () => (/* reexport */ main.TextEdit),
+  "VersionedTextDocumentIdentifier": () => (/* reexport */ main.VersionedTextDocumentIdentifier),
+  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
   "getLanguageService": () => (/* binding */ getLanguageService)
 });
 
@@ -83743,7 +86084,7 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [main/* MarkupKind.Markdown */.a4.Markdown, main/* MarkupKind.PlainText */.a4.PlainText],
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText],
                     commitCharactersSupport: true
                 }
             }
@@ -84062,14 +86403,14 @@ var JSONDocument = /** @class */ (function () {
         }
     };
     JSONDocument.prototype.validate = function (textDocument, schema, severity) {
-        if (severity === void 0) { severity = main/* DiagnosticSeverity.Warning */.H_.Warning; }
+        if (severity === void 0) { severity = main.DiagnosticSeverity.Warning; }
         if (this.root && schema) {
             var validationResult = new ValidationResult();
             validate(this.root, schema, validationResult, NoOpSchemaCollector.instance);
             return validationResult.problems.map(function (p) {
                 var _a;
-                var range = main/* Range.create */.e6.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
-                return main/* Diagnostic.create */.R9.create(range, p.message, (_a = p.severity) !== null && _a !== void 0 ? _a : severity, p.code);
+                var range = main.Range.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
+                return main.Diagnostic.create(range, p.message, (_a = p.severity) !== null && _a !== void 0 ? _a : severity, p.code);
             });
         }
         return undefined;
@@ -84274,7 +86615,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (schema.deprecationMessage && node.parent) {
             validationResult.problems.push({
                 location: { offset: node.parent.offset, length: node.parent.length },
-                severity: main/* DiagnosticSeverity.Warning */.H_.Warning,
+                severity: main.DiagnosticSeverity.Warning,
                 message: schema.deprecationMessage,
                 code: ErrorCode.Deprecated
             });
@@ -84700,7 +87041,7 @@ function jsonParser_parse(textDocument, config) {
                 case 12 /* LineCommentTrivia */:
                 case 13 /* BlockCommentTrivia */:
                     if (Array.isArray(commentRanges)) {
-                        commentRanges.push(main/* Range.create */.e6.create(textDocument.positionAt(scanner.getTokenOffset()), textDocument.positionAt(scanner.getTokenOffset() + scanner.getTokenLength())));
+                        commentRanges.push(main.Range.create(textDocument.positionAt(scanner.getTokenOffset()), textDocument.positionAt(scanner.getTokenOffset() + scanner.getTokenLength())));
                     }
                     break;
                 case 15 /* Trivia */:
@@ -84719,10 +87060,10 @@ function jsonParser_parse(textDocument, config) {
         return false;
     }
     function _errorAtRange(message, code, startOffset, endOffset, severity) {
-        if (severity === void 0) { severity = main/* DiagnosticSeverity.Error */.H_.Error; }
+        if (severity === void 0) { severity = main.DiagnosticSeverity.Error; }
         if (problems.length === 0 || startOffset !== lastProblemOffset) {
-            var range = main/* Range.create */.e6.create(textDocument.positionAt(startOffset), textDocument.positionAt(endOffset));
-            problems.push(main/* Diagnostic.create */.R9.create(range, message, severity, code, textDocument.languageId));
+            var range = main.Range.create(textDocument.positionAt(startOffset), textDocument.positionAt(endOffset));
+            problems.push(main.Diagnostic.create(range, message, severity, code, textDocument.languageId));
             lastProblemOffset = startOffset;
         }
     }
@@ -84847,9 +87188,9 @@ function jsonParser_parse(textDocument, config) {
         node.keyNode = key;
         var seen = keysSeen[key.value];
         if (seen) {
-            _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, node.keyNode.offset, node.keyNode.offset + node.keyNode.length, main/* DiagnosticSeverity.Warning */.H_.Warning);
+            _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, node.keyNode.offset, node.keyNode.offset + node.keyNode.length, main.DiagnosticSeverity.Warning);
             if (typeof seen === 'object') {
-                _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, seen.keyNode.offset, seen.keyNode.offset + seen.keyNode.length, main/* DiagnosticSeverity.Warning */.H_.Warning);
+                _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, seen.keyNode.offset, seen.keyNode.offset + seen.keyNode.length, main.DiagnosticSeverity.Warning);
             }
             keysSeen[key.value] = true; // if the same key is duplicate again, avoid duplicate error reporting
         }
@@ -85076,14 +87417,14 @@ var JSONCompletion = /** @class */ (function () {
         var currentWord = this.getCurrentWord(document, offset);
         var overwriteRange;
         if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-            overwriteRange = main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+            overwriteRange = main.Range.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
         }
         else {
             var overwriteStart = offset - currentWord.length;
             if (overwriteStart > 0 && text[overwriteStart - 1] === '"') {
                 overwriteStart--;
             }
-            overwriteRange = main/* Range.create */.e6.create(document.positionAt(overwriteStart), position);
+            overwriteRange = main.Range.create(document.positionAt(overwriteStart), position);
         }
         var supportsCommitCharacters = false; //this.doesSupportsCommitCharacters(); disabled for now, waiting for new API: https://github.com/microsoft/vscode/issues/42544
         var proposed = {};
@@ -85100,10 +87441,10 @@ var JSONCompletion = /** @class */ (function () {
                         }
                     }
                     if (overwriteRange && suggestion.insertText !== undefined) {
-                        suggestion.textEdit = main/* TextEdit.replace */.PY.replace(overwriteRange, suggestion.insertText);
+                        suggestion.textEdit = main.TextEdit.replace(overwriteRange, suggestion.insertText);
                     }
                     if (supportsCommitCharacters) {
-                        suggestion.commitCharacters = suggestion.kind === main/* CompletionItemKind.Property */.cm.Property ? propertyCommitCharacters : valueCommitCharacters;
+                        suggestion.commitCharacters = suggestion.kind === main.CompletionItemKind.Property ? propertyCommitCharacters : valueCommitCharacters;
                     }
                     suggestion.label = label;
                     proposed[label] = suggestion;
@@ -85159,7 +87500,7 @@ var JSONCompletion = /** @class */ (function () {
                 var properties = node.properties;
                 properties.forEach(function (p) {
                     if (!currentProperty || currentProperty !== p) {
-                        proposed[p.keyNode.value] = main/* CompletionItem.create */.FG.create('__');
+                        proposed[p.keyNode.value] = main.CompletionItem.create('__');
                     }
                 });
                 var separatorAfter_1 = '';
@@ -85183,10 +87524,10 @@ var JSONCompletion = /** @class */ (function () {
                 });
                 if ((!schema && currentWord.length > 0 && text.charAt(offset - currentWord.length - 1) !== '"')) {
                     collector.add({
-                        kind: main/* CompletionItemKind.Property */.cm.Property,
+                        kind: main.CompletionItemKind.Property,
                         label: _this.getLabelForValue(currentWord),
                         insertText: _this.getInsertTextForProperty(currentWord, undefined, false, separatorAfter_1),
-                        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: '',
+                        insertTextFormat: main.InsertTextFormat.Snippet, documentation: '',
                     });
                     collector.setAsIncomplete();
                 }
@@ -85228,10 +87569,10 @@ var JSONCompletion = /** @class */ (function () {
                         var propertySchema = schemaProperties_1[key];
                         if (typeof propertySchema === 'object' && !propertySchema.deprecationMessage && !propertySchema.doNotSuggest) {
                             var proposal = {
-                                kind: main/* CompletionItemKind.Property */.cm.Property,
+                                kind: main.CompletionItemKind.Property,
                                 label: key,
                                 insertText: _this.getInsertTextForProperty(key, propertySchema, addValue, separatorAfter),
-                                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                                insertTextFormat: main.InsertTextFormat.Snippet,
                                 filterText: _this.getFilterTextForValue(key),
                                 documentation: _this.fromMarkup(propertySchema.markdownDescription) || propertySchema.description || '',
                             };
@@ -85253,10 +87594,10 @@ var JSONCompletion = /** @class */ (function () {
                     var propertyNameCompletionItem = function (name, enumDescription) {
                         if (enumDescription === void 0) { enumDescription = undefined; }
                         var proposal = {
-                            kind: main/* CompletionItemKind.Property */.cm.Property,
+                            kind: main.CompletionItemKind.Property,
                             label: name,
                             insertText: _this.getInsertTextForProperty(name, undefined, addValue, separatorAfter),
-                            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                            insertTextFormat: main.InsertTextFormat.Snippet,
                             filterText: _this.getFilterTextForValue(name),
                             documentation: enumDescription || _this.fromMarkup(schemaPropertyNames_1.markdownDescription) || schemaPropertyNames_1.description || '',
                         };
@@ -85296,10 +87637,10 @@ var JSONCompletion = /** @class */ (function () {
             obj.properties.forEach(function (p) {
                 var key = p.keyNode.value;
                 collector.add({
-                    kind: main/* CompletionItemKind.Property */.cm.Property,
+                    kind: main.CompletionItemKind.Property,
                     label: key,
                     insertText: _this.getInsertTextForValue(key, ''),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                    insertTextFormat: main.InsertTextFormat.Snippet,
                     filterText: _this.getFilterTextForValue(key),
                     documentation: ''
                 });
@@ -85327,10 +87668,10 @@ var JSONCompletion = /** @class */ (function () {
         }
         else if (node.type === 'object') {
             collector.add({
-                kind: main/* CompletionItemKind.Property */.cm.Property,
+                kind: main.CompletionItemKind.Property,
                 label: '$schema',
                 insertText: this.getInsertTextForProperty('$schema', undefined, true, ''),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: '',
+                insertTextFormat: main.InsertTextFormat.Snippet, documentation: '',
                 filterText: this.getFilterTextForValue("$schema")
             });
         }
@@ -85347,14 +87688,14 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind('object'),
                 label: 'Empty object',
                 insertText: this.getInsertTextForValue({}, ''),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 documentation: ''
             });
             collector.add({
                 kind: this.getSuggestionKind('array'),
                 label: 'Empty array',
                 insertText: this.getInsertTextForValue([], ''),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 documentation: ''
             });
             return;
@@ -85366,7 +87707,7 @@ var JSONCompletion = /** @class */ (function () {
                     kind: _this.getSuggestionKind(value.type),
                     label: _this.getLabelTextForMatchingNode(value, document),
                     insertText: _this.getInsertTextForMatchingNode(value, document, separatorAfter),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: ''
+                    insertTextFormat: main.InsertTextFormat.Snippet, documentation: ''
                 });
             }
             if (value.type === 'boolean') {
@@ -85546,7 +87887,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind(type),
                 label: this.getLabelForValue(value),
                 insertText: this.getInsertTextForValue(value, separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 detail: jsonCompletion_localize('json.suggest.default', 'Default value')
             });
             hasProposals = true;
@@ -85563,7 +87904,7 @@ var JSONCompletion = /** @class */ (function () {
                     kind: _this.getSuggestionKind(type),
                     label: _this.getLabelForValue(value),
                     insertText: _this.getInsertTextForValue(value, separatorAfter),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet
+                    insertTextFormat: main.InsertTextFormat.Snippet
                 });
                 hasProposals = true;
             });
@@ -85605,7 +87946,7 @@ var JSONCompletion = /** @class */ (function () {
                     label: label,
                     documentation: _this.fromMarkup(s.markdownDescription) || s.description,
                     insertText: insertText,
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                    insertTextFormat: main.InsertTextFormat.Snippet,
                     filterText: filterText
                 });
                 hasProposals = true;
@@ -85621,7 +87962,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind(schema.type),
                 label: this.getLabelForValue(schema.const),
                 insertText: this.getInsertTextForValue(schema.const, separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 documentation: this.fromMarkup(schema.markdownDescription) || schema.description
             });
         }
@@ -85639,7 +87980,7 @@ var JSONCompletion = /** @class */ (function () {
                     kind: this.getSuggestionKind(schema.type),
                     label: this.getLabelForValue(enm),
                     insertText: this.getInsertTextForValue(enm, separatorAfter),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                    insertTextFormat: main.InsertTextFormat.Snippet,
                     documentation: documentation
                 });
             }
@@ -85663,7 +88004,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind('object'),
                 label: '{}',
                 insertText: this.getInsertTextForGuessedValue({}, separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 detail: jsonCompletion_localize('defaults.object', 'New object'),
                 documentation: ''
             });
@@ -85673,7 +88014,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind('array'),
                 label: '[]',
                 insertText: this.getInsertTextForGuessedValue([], separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 detail: jsonCompletion_localize('defaults.array', 'New array'),
                 documentation: ''
             });
@@ -85684,7 +88025,7 @@ var JSONCompletion = /** @class */ (function () {
             kind: this.getSuggestionKind('boolean'),
             label: value ? 'true' : 'false',
             insertText: this.getInsertTextForValue(value, separatorAfter),
-            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+            insertTextFormat: main.InsertTextFormat.Snippet,
             documentation: ''
         });
     };
@@ -85693,7 +88034,7 @@ var JSONCompletion = /** @class */ (function () {
             kind: this.getSuggestionKind('null'),
             label: 'null',
             insertText: 'null' + separatorAfter,
-            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+            insertTextFormat: main.InsertTextFormat.Snippet,
             documentation: ''
         });
     };
@@ -85701,11 +88042,11 @@ var JSONCompletion = /** @class */ (function () {
         var _this = this;
         var schemaIds = this.schemaService.getRegisteredSchemaIds(function (schema) { return schema === 'http' || schema === 'https'; });
         schemaIds.forEach(function (schemaId) { return collector.add({
-            kind: main/* CompletionItemKind.Module */.cm.Module,
+            kind: main.CompletionItemKind.Module,
             label: _this.getLabelForValue(schemaId),
             filterText: _this.getFilterTextForValue(schemaId),
             insertText: _this.getInsertTextForValue(schemaId, separatorAfter),
-            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: ''
+            insertTextFormat: main.InsertTextFormat.Snippet, documentation: ''
         }); });
     };
     JSONCompletion.prototype.getLabelForValue = function (value) {
@@ -85769,13 +88110,13 @@ var JSONCompletion = /** @class */ (function () {
             type = array.length > 0 ? array[0] : undefined;
         }
         if (!type) {
-            return main/* CompletionItemKind.Value */.cm.Value;
+            return main.CompletionItemKind.Value;
         }
         switch (type) {
-            case 'string': return main/* CompletionItemKind.Value */.cm.Value;
-            case 'object': return main/* CompletionItemKind.Module */.cm.Module;
-            case 'property': return main/* CompletionItemKind.Property */.cm.Property;
-            default: return main/* CompletionItemKind.Value */.cm.Value;
+            case 'string': return main.CompletionItemKind.Value;
+            case 'object': return main.CompletionItemKind.Module;
+            case 'property': return main.CompletionItemKind.Property;
+            default: return main.CompletionItemKind.Value;
         }
     };
     JSONCompletion.prototype.getLabelTextForMatchingNode = function (node, document) {
@@ -85929,7 +88270,7 @@ var JSONCompletion = /** @class */ (function () {
     JSONCompletion.prototype.fromMarkup = function (markupString) {
         if (markupString && this.doesSupportMarkdown()) {
             return {
-                kind: main/* MarkupKind.Markdown */.a4.Markdown,
+                kind: main.MarkupKind.Markdown,
                 value: markupString
             };
         }
@@ -85938,7 +88279,7 @@ var JSONCompletion = /** @class */ (function () {
     JSONCompletion.prototype.doesSupportMarkdown = function () {
         if (!isDefined(this.supportsMarkdown)) {
             var completion = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.completion;
-            this.supportsMarkdown = completion && completion.completionItem && Array.isArray(completion.completionItem.documentationFormat) && completion.completionItem.documentationFormat.indexOf(main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = completion && completion.completionItem && Array.isArray(completion.completionItem.documentationFormat) && completion.completionItem.documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -85984,7 +88325,7 @@ var JSONHover = /** @class */ (function () {
                 }
             }
         }
-        var hoverRange = main/* Range.create */.e6.create(document.positionAt(hoverRangeNode.offset), document.positionAt(hoverRangeNode.offset + hoverRangeNode.length));
+        var hoverRange = main.Range.create(document.positionAt(hoverRangeNode.offset), document.positionAt(hoverRangeNode.offset + hoverRangeNode.length));
         var createHover = function (contents) {
             var result = {
                 contents: contents,
@@ -86085,7 +88426,7 @@ var JSONValidation = /** @class */ (function () {
     JSONValidation.prototype.configure = function (raw) {
         if (raw) {
             this.validationEnabled = raw.validate !== false;
-            this.commentSeverity = raw.allowComments ? undefined : main/* DiagnosticSeverity.Error */.H_.Error;
+            this.commentSeverity = raw.allowComments ? undefined : main.DiagnosticSeverity.Error;
         }
     };
     JSONValidation.prototype.doValidation = function (textDocument, jsonDocument, documentSettings, schema) {
@@ -86104,22 +88445,22 @@ var JSONValidation = /** @class */ (function () {
             }
         };
         var getDiagnostics = function (schema) {
-            var trailingCommaSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.trailingCommas) ? toDiagnosticSeverity(documentSettings.trailingCommas) : main/* DiagnosticSeverity.Error */.H_.Error;
+            var trailingCommaSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.trailingCommas) ? toDiagnosticSeverity(documentSettings.trailingCommas) : main.DiagnosticSeverity.Error;
             var commentSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.comments) ? toDiagnosticSeverity(documentSettings.comments) : _this.commentSeverity;
-            var schemaValidation = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : main/* DiagnosticSeverity.Warning */.H_.Warning;
-            var schemaRequest = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : main/* DiagnosticSeverity.Warning */.H_.Warning;
+            var schemaValidation = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : main.DiagnosticSeverity.Warning;
+            var schemaRequest = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : main.DiagnosticSeverity.Warning;
             if (schema) {
                 if (schema.errors.length && jsonDocument.root && schemaRequest) {
                     var astRoot = jsonDocument.root;
                     var property = astRoot.type === 'object' ? astRoot.properties[0] : undefined;
                     if (property && property.keyNode.value === '$schema') {
                         var node = property.valueNode || property;
-                        var range = main/* Range.create */.e6.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
-                        addProblem(main/* Diagnostic.create */.R9.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
+                        var range = main.Range.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
+                        addProblem(main.Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
                     }
                     else {
-                        var range = main/* Range.create */.e6.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
-                        addProblem(main/* Diagnostic.create */.R9.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
+                        var range = main.Range.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
+                        addProblem(main.Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
                     }
                 }
                 else if (schemaValidation) {
@@ -86148,7 +88489,7 @@ var JSONValidation = /** @class */ (function () {
             if (typeof commentSeverity === 'number') {
                 var message_1 = jsonValidation_localize('InvalidCommentToken', 'Comments are not permitted in JSON.');
                 jsonDocument.comments.forEach(function (c) {
-                    addProblem(main/* Diagnostic.create */.R9.create(c, message_1, commentSeverity, ErrorCode.CommentNotPermitted));
+                    addProblem(main.Diagnostic.create(c, message_1, commentSeverity, ErrorCode.CommentNotPermitted));
                 });
             }
             return diagnostics;
@@ -86211,8 +88552,8 @@ function schemaAllowsTrailingCommas(schemaRef) {
 }
 function toDiagnosticSeverity(severityLevel) {
     switch (severityLevel) {
-        case 'error': return main/* DiagnosticSeverity.Error */.H_.Error;
-        case 'warning': return main/* DiagnosticSeverity.Warning */.H_.Warning;
+        case 'error': return main.DiagnosticSeverity.Error;
+        case 'warning': return main.DiagnosticSeverity.Warning;
         case 'ignore': return undefined;
     }
     return undefined;
@@ -86321,8 +88662,8 @@ var JSONDocumentSymbols = /** @class */ (function () {
                         for (var _b = 0, _c = item.properties; _b < _c.length; _b++) {
                             var property = _c[_b];
                             if (property.keyNode.value === 'key' && property.valueNode) {
-                                var location = main/* Location.create */.Ye.create(document.uri, getRange(document, item));
-                                result_1.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main/* SymbolKind.Function */.cR.Function, location: location });
+                                var location = main.Location.create(document.uri, getRange(document, item));
+                                result_1.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main.SymbolKind.Function, location: location });
                                 limit--;
                                 if (limit <= 0) {
                                     if (context && context.onResultLimitExceeded) {
@@ -86357,7 +88698,7 @@ var JSONDocumentSymbols = /** @class */ (function () {
                     if (valueNode) {
                         if (limit > 0) {
                             limit--;
-                            var location = main/* Location.create */.Ye.create(document.uri, getRange(document, property));
+                            var location = main.Location.create(document.uri, getRange(document, property));
                             var childContainerName = containerName ? containerName + '.' + property.keyNode.value : property.keyNode.value;
                             result.push({ name: _this.getKeyLabel(property), kind: _this.getSymbolKind(valueNode.type), location: location, containerName: containerName });
                             toVisit.push({ node: valueNode, containerName: childContainerName });
@@ -86400,7 +88741,7 @@ var JSONDocumentSymbols = /** @class */ (function () {
                             if (property.keyNode.value === 'key' && property.valueNode) {
                                 var range = getRange(document, item);
                                 var selectionRange = getRange(document, property.keyNode);
-                                result_2.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main/* SymbolKind.Function */.cR.Function, range: range, selectionRange: selectionRange });
+                                result_2.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main.SymbolKind.Function, range: range, selectionRange: selectionRange });
                                 limit--;
                                 if (limit <= 0) {
                                     if (context && context.onResultLimitExceeded) {
@@ -86473,17 +88814,17 @@ var JSONDocumentSymbols = /** @class */ (function () {
     JSONDocumentSymbols.prototype.getSymbolKind = function (nodeType) {
         switch (nodeType) {
             case 'object':
-                return main/* SymbolKind.Module */.cR.Module;
+                return main.SymbolKind.Module;
             case 'string':
-                return main/* SymbolKind.String */.cR.String;
+                return main.SymbolKind.String;
             case 'number':
-                return main/* SymbolKind.Number */.cR.Number;
+                return main.SymbolKind.Number;
             case 'array':
-                return main/* SymbolKind.Array */.cR.Array;
+                return main.SymbolKind.Array;
             case 'boolean':
-                return main/* SymbolKind.Boolean */.cR.Boolean;
+                return main.SymbolKind.Boolean;
             default: // 'null'
-                return main/* SymbolKind.Variable */.cR.Variable;
+                return main.SymbolKind.Variable;
         }
     };
     JSONDocumentSymbols.prototype.getKeyLabel = function (property) {
@@ -86559,14 +88900,14 @@ var JSONDocumentSymbols = /** @class */ (function () {
         else {
             label = "#".concat(toTwoDigitHex(red256)).concat(toTwoDigitHex(green256)).concat(toTwoDigitHex(blue256)).concat(toTwoDigitHex(Math.round(color.alpha * 255)));
         }
-        result.push({ label: label, textEdit: main/* TextEdit.replace */.PY.replace(range, JSON.stringify(label)) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, JSON.stringify(label)) });
         return result;
     };
     return JSONDocumentSymbols;
 }());
 
 function getRange(document, node) {
-    return main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+    return main.Range.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
 }
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-json-languageservice/lib/esm/services/configuration.js
@@ -87879,11 +90220,11 @@ function getFoldingRanges(document, context) {
                 var startLine = document.positionAt(scanner.getTokenOffset()).line;
                 var endLine = document.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
                 if (scanner.getTokenError() === 1 /* UnexpectedEndOfComment */ && startLine + 1 < document.lineCount) {
-                    scanner.setPosition(document.offsetAt(main/* Position.create */.Ly.create(startLine + 1, 0)));
+                    scanner.setPosition(document.offsetAt(main.Position.create(startLine + 1, 0)));
                 }
                 else {
                     if (startLine < endLine) {
-                        addRange({ startLine: startLine, endLine: endLine, kind: main/* FoldingRangeKind.Comment */.AD.Comment });
+                        addRange({ startLine: startLine, endLine: endLine, kind: main.FoldingRangeKind.Comment });
                         prevStart = startLine;
                     }
                 }
@@ -87895,12 +90236,12 @@ function getFoldingRanges(document, context) {
                 if (m) {
                     var line = document.positionAt(scanner.getTokenOffset()).line;
                     if (m[1]) { // start pattern match
-                        var range = { startLine: line, endLine: line, kind: main/* FoldingRangeKind.Region */.AD.Region };
+                        var range = { startLine: line, endLine: line, kind: main.FoldingRangeKind.Region };
                         stack.push(range);
                     }
                     else {
                         var i = stack.length - 1;
-                        while (i >= 0 && stack[i].kind !== main/* FoldingRangeKind.Region */.AD.Region) {
+                        while (i >= 0 && stack[i].kind !== main.FoldingRangeKind.Region) {
                             i--;
                         }
                         if (i >= 0) {
@@ -87998,15 +90339,15 @@ function getSelectionRanges(document, positions, doc) {
         }
         var current = undefined;
         for (var index = result.length - 1; index >= 0; index--) {
-            current = main/* SelectionRange.create */.xm.create(result[index], current);
+            current = main.SelectionRange.create(result[index], current);
         }
         if (!current) {
-            current = main/* SelectionRange.create */.xm.create(main/* Range.create */.e6.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     }
     function newRange(start, end) {
-        return main/* Range.create */.e6.create(document.positionAt(start), document.positionAt(end));
+        return main.Range.create(document.positionAt(start), document.positionAt(end));
     }
     var scanner = main_createScanner(document.getText(), true);
     function getOffsetAfterNextToken(offset, expectedToken) {
@@ -88046,7 +90387,7 @@ function findLinks(document, doc) {
     return Promise.resolve(links);
 }
 function createRange(document, node) {
-    return main/* Range.create */.e6.create(document.positionAt(node.offset + 1), document.positionAt(node.offset + node.length - 1));
+    return main.Range.create(document.positionAt(node.offset + 1), document.positionAt(node.offset + node.length - 1));
 }
 function findTargetNode(doc, path) {
     var tokens = parseJSONPointer(path);
@@ -88157,7 +90498,7 @@ function getLanguageService(params) {
             }
             var options = { tabSize: o ? o.tabSize : 4, insertSpaces: (o === null || o === void 0 ? void 0 : o.insertSpaces) === true, insertFinalNewline: (o === null || o === void 0 ? void 0 : o.insertFinalNewline) === true, eol: '\n' };
             return main_format(d.getText(), range, options).map(function (e) {
-                return main/* TextEdit.replace */.PY.replace(main/* Range.create */.e6.create(d.positionAt(e.offset), d.positionAt(e.offset + e.length)), e.content);
+                return main.TextEdit.replace(main.Range.create(d.positionAt(e.offset), d.positionAt(e.offset + e.length)), e.content);
             });
         }
     };
@@ -88431,47 +90772,84 @@ function getWellformedEdit(textEdit) {
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AD": () => (/* binding */ FoldingRangeKind),
-/* harmony export */   "A_": () => (/* binding */ MarkupContent),
-/* harmony export */   "B2": () => (/* binding */ CodeAction),
-/* harmony export */   "DM": () => (/* binding */ InsertTextMode),
-/* harmony export */   "Db": () => (/* binding */ WorkspaceEdit),
-/* harmony export */   "FG": () => (/* binding */ CompletionItem),
-/* harmony export */   "H_": () => (/* binding */ DiagnosticSeverity),
-/* harmony export */   "IT": () => (/* binding */ CodeActionContext),
-/* harmony export */   "Il": () => (/* binding */ Color),
-/* harmony export */   "JN": () => (/* binding */ SymbolInformation),
-/* harmony export */   "Ly": () => (/* binding */ Position),
-/* harmony export */   "MY": () => (/* binding */ DocumentHighlightKind),
-/* harmony export */   "Oj": () => (/* binding */ DocumentUri),
-/* harmony export */   "PY": () => (/* binding */ TextEdit),
-/* harmony export */   "R9": () => (/* binding */ Diagnostic),
-/* harmony export */   "TM": () => (/* binding */ Hover),
-/* harmony export */   "Ub": () => (/* binding */ CompletionList),
-/* harmony export */   "Wy": () => (/* binding */ FormattingOptions),
-/* harmony export */   "XL": () => (/* binding */ VersionedTextDocumentIdentifier),
-/* harmony export */   "Ye": () => (/* binding */ Location),
-/* harmony export */   "a4": () => (/* binding */ MarkupKind),
-/* harmony export */   "cR": () => (/* binding */ SymbolKind),
-/* harmony export */   "cm": () => (/* binding */ CompletionItemKind),
-/* harmony export */   "db": () => (/* binding */ InsertReplaceEdit),
-/* harmony export */   "e6": () => (/* binding */ Range),
-/* harmony export */   "eh": () => (/* binding */ DocumentHighlight),
-/* harmony export */   "jW": () => (/* binding */ DocumentLink),
-/* harmony export */   "lO": () => (/* binding */ InsertTextFormat),
-/* harmony export */   "mY": () => (/* binding */ Command),
-/* harmony export */   "oB": () => (/* binding */ MarkedString),
-/* harmony export */   "oi": () => (/* binding */ ColorPresentation),
-/* harmony export */   "pr": () => (/* binding */ ColorInformation),
-/* harmony export */   "so": () => (/* binding */ FoldingRange),
-/* harmony export */   "sx": () => (/* binding */ TextDocumentEdit),
-/* harmony export */   "w6": () => (/* binding */ DocumentSymbol),
-/* harmony export */   "we": () => (/* binding */ CompletionItemTag),
-/* harmony export */   "xm": () => (/* binding */ SelectionRange),
-/* harmony export */   "yN": () => (/* binding */ CodeActionKind)
+/* harmony export */   "AnnotatedTextEdit": () => (/* binding */ AnnotatedTextEdit),
+/* harmony export */   "ChangeAnnotation": () => (/* binding */ ChangeAnnotation),
+/* harmony export */   "ChangeAnnotationIdentifier": () => (/* binding */ ChangeAnnotationIdentifier),
+/* harmony export */   "CodeAction": () => (/* binding */ CodeAction),
+/* harmony export */   "CodeActionContext": () => (/* binding */ CodeActionContext),
+/* harmony export */   "CodeActionKind": () => (/* binding */ CodeActionKind),
+/* harmony export */   "CodeActionTriggerKind": () => (/* binding */ CodeActionTriggerKind),
+/* harmony export */   "CodeDescription": () => (/* binding */ CodeDescription),
+/* harmony export */   "CodeLens": () => (/* binding */ CodeLens),
+/* harmony export */   "Color": () => (/* binding */ Color),
+/* harmony export */   "ColorInformation": () => (/* binding */ ColorInformation),
+/* harmony export */   "ColorPresentation": () => (/* binding */ ColorPresentation),
+/* harmony export */   "Command": () => (/* binding */ Command),
+/* harmony export */   "CompletionItem": () => (/* binding */ CompletionItem),
+/* harmony export */   "CompletionItemKind": () => (/* binding */ CompletionItemKind),
+/* harmony export */   "CompletionItemLabelDetails": () => (/* binding */ CompletionItemLabelDetails),
+/* harmony export */   "CompletionItemTag": () => (/* binding */ CompletionItemTag),
+/* harmony export */   "CompletionList": () => (/* binding */ CompletionList),
+/* harmony export */   "CreateFile": () => (/* binding */ CreateFile),
+/* harmony export */   "DeleteFile": () => (/* binding */ DeleteFile),
+/* harmony export */   "Diagnostic": () => (/* binding */ Diagnostic),
+/* harmony export */   "DiagnosticRelatedInformation": () => (/* binding */ DiagnosticRelatedInformation),
+/* harmony export */   "DiagnosticSeverity": () => (/* binding */ DiagnosticSeverity),
+/* harmony export */   "DiagnosticTag": () => (/* binding */ DiagnosticTag),
+/* harmony export */   "DocumentHighlight": () => (/* binding */ DocumentHighlight),
+/* harmony export */   "DocumentHighlightKind": () => (/* binding */ DocumentHighlightKind),
+/* harmony export */   "DocumentLink": () => (/* binding */ DocumentLink),
+/* harmony export */   "DocumentSymbol": () => (/* binding */ DocumentSymbol),
+/* harmony export */   "DocumentUri": () => (/* binding */ DocumentUri),
+/* harmony export */   "EOL": () => (/* binding */ EOL),
+/* harmony export */   "FoldingRange": () => (/* binding */ FoldingRange),
+/* harmony export */   "FoldingRangeKind": () => (/* binding */ FoldingRangeKind),
+/* harmony export */   "FormattingOptions": () => (/* binding */ FormattingOptions),
+/* harmony export */   "Hover": () => (/* binding */ Hover),
+/* harmony export */   "InlayHint": () => (/* binding */ InlayHint),
+/* harmony export */   "InlayHintKind": () => (/* binding */ InlayHintKind),
+/* harmony export */   "InlayHintLabelPart": () => (/* binding */ InlayHintLabelPart),
+/* harmony export */   "InlineValueContext": () => (/* binding */ InlineValueContext),
+/* harmony export */   "InlineValueEvaluatableExpression": () => (/* binding */ InlineValueEvaluatableExpression),
+/* harmony export */   "InlineValueText": () => (/* binding */ InlineValueText),
+/* harmony export */   "InlineValueVariableLookup": () => (/* binding */ InlineValueVariableLookup),
+/* harmony export */   "InsertReplaceEdit": () => (/* binding */ InsertReplaceEdit),
+/* harmony export */   "InsertTextFormat": () => (/* binding */ InsertTextFormat),
+/* harmony export */   "InsertTextMode": () => (/* binding */ InsertTextMode),
+/* harmony export */   "Location": () => (/* binding */ Location),
+/* harmony export */   "LocationLink": () => (/* binding */ LocationLink),
+/* harmony export */   "MarkedString": () => (/* binding */ MarkedString),
+/* harmony export */   "MarkupContent": () => (/* binding */ MarkupContent),
+/* harmony export */   "MarkupKind": () => (/* binding */ MarkupKind),
+/* harmony export */   "OptionalVersionedTextDocumentIdentifier": () => (/* binding */ OptionalVersionedTextDocumentIdentifier),
+/* harmony export */   "ParameterInformation": () => (/* binding */ ParameterInformation),
+/* harmony export */   "Position": () => (/* binding */ Position),
+/* harmony export */   "Range": () => (/* binding */ Range),
+/* harmony export */   "RenameFile": () => (/* binding */ RenameFile),
+/* harmony export */   "SelectionRange": () => (/* binding */ SelectionRange),
+/* harmony export */   "SemanticTokenModifiers": () => (/* binding */ SemanticTokenModifiers),
+/* harmony export */   "SemanticTokenTypes": () => (/* binding */ SemanticTokenTypes),
+/* harmony export */   "SemanticTokens": () => (/* binding */ SemanticTokens),
+/* harmony export */   "SignatureInformation": () => (/* binding */ SignatureInformation),
+/* harmony export */   "SymbolInformation": () => (/* binding */ SymbolInformation),
+/* harmony export */   "SymbolKind": () => (/* binding */ SymbolKind),
+/* harmony export */   "SymbolTag": () => (/* binding */ SymbolTag),
+/* harmony export */   "TextDocument": () => (/* binding */ TextDocument),
+/* harmony export */   "TextDocumentEdit": () => (/* binding */ TextDocumentEdit),
+/* harmony export */   "TextDocumentIdentifier": () => (/* binding */ TextDocumentIdentifier),
+/* harmony export */   "TextDocumentItem": () => (/* binding */ TextDocumentItem),
+/* harmony export */   "TextEdit": () => (/* binding */ TextEdit),
+/* harmony export */   "URI": () => (/* binding */ URI),
+/* harmony export */   "VersionedTextDocumentIdentifier": () => (/* binding */ VersionedTextDocumentIdentifier),
+/* harmony export */   "WorkspaceChange": () => (/* binding */ WorkspaceChange),
+/* harmony export */   "WorkspaceEdit": () => (/* binding */ WorkspaceEdit),
+/* harmony export */   "WorkspaceFolder": () => (/* binding */ WorkspaceFolder),
+/* harmony export */   "WorkspaceSymbol": () => (/* binding */ WorkspaceSymbol),
+/* harmony export */   "integer": () => (/* binding */ integer),
+/* harmony export */   "uinteger": () => (/* binding */ uinteger)
 /* harmony export */ });
-/* unused harmony exports URI, integer, uinteger, LocationLink, DiagnosticRelatedInformation, DiagnosticTag, CodeDescription, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, CreateFile, RenameFile, DeleteFile, WorkspaceChange, TextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, CompletionItemLabelDetails, ParameterInformation, SignatureInformation, SymbolTag, WorkspaceSymbol, CodeActionTriggerKind, CodeLens, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind, InlayHintLabelPart, InlayHint, WorkspaceFolder, EOL, TextDocument */
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
@@ -90435,7 +92813,7 @@ var WorkspaceFolder;
     }
     WorkspaceFolder.is = is;
 })(WorkspaceFolder || (WorkspaceFolder = {}));
-var EOL = (/* unused pure expression or super */ null && (['\n', '\r\n', '\r']));
+var EOL = ['\n', '\r\n', '\r'];
 /**
  * @deprecated Use the text document from the new vscode-languageserver-textdocument package.
  */
@@ -90929,6 +93307,7 @@ var exports = __webpack_exports__;
 var __webpack_unused_export__;
 
 __webpack_unused_export__ = ({ value: true });
+__webpack_require__(1105);
 var html_example_1 = __webpack_require__(3417);
 var event = __webpack_require__(7989);
 var HashHandler = (__webpack_require__(7116).HashHandler);
@@ -90951,6 +93330,9 @@ var json_example_1 = __webpack_require__(7433);
 var json_worker_1 = __webpack_require__(9591);
 var type_converters_1 = __webpack_require__(7472);
 var editor = ace.edit("container");
+editor.setOptions({
+    enableLiveAutocompletion: true
+});
 window["editor"] = editor;
 var htmlMode = new html_1.Mode();
 editor.setTheme(theme);
@@ -91021,8 +93403,8 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
 new DescriptionTooltip(editor);
 function applyEdits(range) {
     var edits = window["worker"].format(range);
-    for (var _i = 0, edits_1 = edits; _i < edits_1.length; _i++) {
-        var edit = edits_1[_i];
+    for (var _i = 0, _a = edits.reverse(); _i < _a.length; _i++) {
+        var edit = _a[_i];
         editor.session.getDocument().replace((0, type_converters_1.toRange)(edit.range), edit.newText);
     }
 }

@@ -29,6 +29,31 @@ Language:
         }
     }
 
+    async function doComplete() {
+        var cursor = window.editor.getCursorPosition();
+        var completions = await window["worker"].doComplete(cursor);
+        return completions;
+    }
+
+    function registerCompleters() {
+        window.editor.completers = [
+            {
+                getCompletions: async function (editor, session, pos, prefix, callback) {
+                    var completions = await doComplete();
+                    callback(null, completions);
+                },
+                getDocTooltip: function (item) {
+                    if (!item.docHTML && item.doc) {
+                        item.docHTML = [
+                            "<b>", (typeof item.doc == "string") ? item.doc : item.doc?.value, "</b>", "<hr>",
+                            item.snippet
+                        ].join("");
+                    }
+                }
+            }
+        ];
+    }
+
     lang.onchange = async () => {
         if (lang.value && window[lang.value]) {
             var session = window.editor.session;
@@ -41,9 +66,12 @@ Language:
             window.editor.on("input", () => {
                 validate();
             });
+
+            registerCompleters();
             await validate();
         }
     };
+    registerCompleters();
 </script>
 </body>
 </html>
