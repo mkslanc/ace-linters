@@ -18,4 +18,6 @@ interface LanguageWorker {
     doHover(position: Ace.Point): Promise<Hover>;
 
     doValidation(): Promise<Ace.Annotation[]>;
+
+    doComplete(position: Ace.Point);
 }

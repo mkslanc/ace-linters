@@ -1,7 +1,7 @@
 import {LanguageWorker} from "./language-worker";
 import {LanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toCompletions} from "../type-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 
 var cssService = require('vscode-css-languageservice');
@@ -83,5 +83,18 @@ export class CSSWorker implements LanguageWorker {
 
         let diagnostics = this.$service.doValidation(document, cssDocument);
         return toAnnotations(diagnostics);
+    }
+
+    //TODO: markdown parsing for completions
+    async doComplete(position: Ace.Point) {
+        return null;
+        let document = this.$getDocument();
+        if (!document) {
+            return null;
+        }
+        let cssDocument = this.$service.parseStylesheet(document);
+
+        let completions = this.$service.doComplete(document, fromPoint(position), cssDocument);
+        return toCompletions(completions);
     }
 }

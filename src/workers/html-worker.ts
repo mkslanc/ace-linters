@@ -1,7 +1,7 @@
 import {LanguageWorker} from "./language-worker";
 import {LanguageService, Position, Range} from "vscode-html-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange} from "../type-converters";
+import {fromPoint, fromRange, toCompletions} from "../type-converters";
 import {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 
 var htmlService = require('vscode-html-languageservice');
@@ -57,5 +57,19 @@ export class HtmlWorker implements LanguageWorker {
     //TODO: separate validator for HTML
     async doValidation() {
         return [];
+    }
+
+    //TODO: markdown parsing for completions
+    async doComplete(position: Ace.Point) {
+        return null;
+
+        let document = this.$getDocument();
+        if (!document) {
+            return null;
+        }
+        let htmlDocument = this.$service.parseHTMLDocument(document);
+
+        let completions = this.$service.doComplete(document, fromPoint(position), htmlDocument);
+        return toCompletions(completions);
     }
 }

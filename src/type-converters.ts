@@ -1,4 +1,11 @@
-import type {Range, Position, Diagnostic} from "vscode-languageserver-types";
+import {
+    Range,
+    Position,
+    Diagnostic,
+    InsertTextFormat,
+    CompletionList,
+    CompletionItemKind
+} from "vscode-languageserver-types";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 
@@ -41,4 +48,25 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
             type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
         };
     });
+}
+
+export function toCompletions(completionList: CompletionList) {
+    return completionList && completionList.items.map((item) => {
+            let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
+            if (item.insertTextFormat == InsertTextFormat.Snippet) {
+                return {
+                    meta: kind,
+                    type: item?.insertTextFormat == InsertTextFormat.Snippet ? "snippet" : undefined,
+                    snippet: item.insertText,
+                    caption: item.label,
+                    doc: item.documentation
+                }
+            }
+            return {
+                value: item.insertText ?? item.label,
+                meta: kind,
+                doc: item.documentation
+            }
+        }
+    );
 }

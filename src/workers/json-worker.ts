@@ -1,7 +1,7 @@
 import {LanguageWorker} from "./language-worker";
 import {FormattingOptions, JSONSchema, LanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toCompletions} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
 
 var jsonService = require('vscode-json-languageservice');
@@ -49,6 +49,7 @@ export class JsonWorker implements LanguageWorker {
             return [];
         }
         let textEdits = this.$service.format(document, fromRange(range), this.$formatConfig);
+        console.log(textEdits);
         return textEdits;
     }
 
@@ -70,5 +71,16 @@ export class JsonWorker implements LanguageWorker {
 
         let diagnostics = this.$service.doValidation(document, jsonDocument, null, this.$jsonSchema);
         return toAnnotations(await diagnostics);
+    }
+
+    async doComplete(position: Ace.Point) {
+        let document = this.$getDocument();
+        if (!document) {
+            return null;
+        }
+        let jsonDocument = this.$service.parseJSONDocument(document);
+
+        let completions = this.$service.doComplete(document, fromPoint(position), jsonDocument);
+        return toCompletions(await completions);
     }
 }
