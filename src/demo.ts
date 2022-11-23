@@ -1,3 +1,4 @@
+import "ace-code/src/ext/language_tools";
 import {htmlContent} from "./docs-example/html-example";
 
 var event = require("ace-code/src/lib/event");
@@ -22,8 +23,13 @@ import {scssContent} from "./docs-example/scss-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {JsonWorker} from "./workers/json-worker";
 import {toRange} from "./type-converters";
+import {TextEdit} from "vscode-languageserver-types";
 
 var editor = ace.edit("container");
+editor.setOptions({
+    enableLiveAutocompletion: true
+});
+
 window["editor"] = editor;
 
 var htmlMode = new HTMLMode();
@@ -97,8 +103,8 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
 new DescriptionTooltip(editor);
 
 function applyEdits(range: AceRange) {
-    var edits = window["worker"].format(range);
-    for (var edit of edits) {
+    var edits: TextEdit[] = window["worker"].format(range);
+    for (var edit of edits.reverse()) {
         editor.session.getDocument().replace(toRange(edit.range), edit.newText);
     }
 }
