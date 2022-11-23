@@ -21,6 +21,7 @@ import {lessContent} from "./docs-example/less-example";
 import {scssContent} from "./docs-example/scss-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {JsonWorker} from "./workers/json-worker";
+import {toRange} from "./type-converters";
 
 var editor = ace.edit("container");
 window["editor"] = editor;
@@ -73,11 +74,18 @@ var menuKb = new HashHandler([
         exec: function () {
             var row = editor.session.getLength();
             var column = editor.session.getLine(row).length - 1;
-            var newContent = window["worker"].format(new AceRange(0, 0, row, column));
-            editor.session.setValue(newContent[0].newText);
+            var selectionRanges = editor.getSelection().getAllRanges();
+            if (selectionRanges.length > 0 && !selectionRanges[0].isEmpty()) {
+                for (var range of selectionRanges) {
+                    applyEdits(range);
+                }
+            } else {
+                applyEdits(new AceRange(0, 0, row, column));
+            }
         }
     }
 ]);
+
 event.addCommandKeyListener(window, function (e, hashId, keyCode) {
 
     var keyString = keyUtil.keyCodeToString(keyCode);
@@ -87,3 +95,10 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
     }
 });
 new DescriptionTooltip(editor);
+
+function applyEdits(range: AceRange) {
+    var edits = window["worker"].format(range);
+    for (var edit of edits) {
+        editor.session.getDocument().replace(toRange(edit.range), edit.newText);
+    }
+}

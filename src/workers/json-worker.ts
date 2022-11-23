@@ -3,7 +3,6 @@ import {FormattingOptions, JSONSchema, LanguageService} from "vscode-json-langua
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
-import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 
 var jsonService = require('vscode-json-languageservice');
 
@@ -13,7 +12,7 @@ export class JsonWorker implements LanguageWorker {
     private $jsonSchema: JSONSchema;
     $formatConfig: FormattingOptions;
 
-    constructor(session: Ace.EditSession, jsonSchema?: JSONSchema) {
+    constructor(session: Ace.EditSession, jsonSchema?: JSONSchema, configuration?: FormattingOptions) {
         this.$jsonSchema = jsonSchema;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
@@ -24,9 +23,10 @@ export class JsonWorker implements LanguageWorker {
         });
         this.$service.configure({allowComments: false, schemas: [{fileMatch: ["test.json"], uri: "schema.json"}]})
         this.session = session;
+        this.$setFormatConfiguration(configuration);
     }
 
-    $setFormatConfiguration(configuration?: CSSFormatConfiguration) {
+    $setFormatConfiguration(configuration?: FormattingOptions) {
         if (!configuration) {
             this.$formatConfig = {tabSize: 4, insertSpaces: true};
         }
@@ -43,9 +43,7 @@ export class JsonWorker implements LanguageWorker {
         return null;
     }
 
-    //TODO: not working now, returns edits in unsupported format for now
     format(range: Ace.Range): TextEdit[] {
-        return [];
         let document = this.$getDocument();
         if (!document) {
             return [];
