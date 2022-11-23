@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
         },
         output: {
             filename: 'bundle.[name].js',
-            path: __dirname + '/built'
+            path: __dirname + '/build'
         },
         optimization: {
             minimize: false
