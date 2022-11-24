@@ -32080,8 +32080,11 @@ oop.inherits(DescriptionTooltip, Tooltip);
                             this.hide();
                             return [2 /*return*/];
                         }
-                        descriptionText = Array.isArray(description.contents) ? description.contents.join(" ")
-                            : description.contents.value;
+                        descriptionText = description.contents.value;
+                        if (Array.isArray(description.contents)) {
+                            description.contents = description.contents.map(function (el) { return typeof el !== "string" ? el.value : el; });
+                            descriptionText = description.contents.join(" ");
+                        }
                         if (descriptionText === "") {
                             this.hide();
                             return [2 /*return*/];
@@ -32266,20 +32269,21 @@ function toAnnotations(diagnostics) {
 exports.toAnnotations = toAnnotations;
 function toCompletions(completionList) {
     return completionList && completionList.items.map(function (item) {
-        var _a;
+        var _a, _b, _c;
         var kind = Object.keys(vscode_languageserver_types_1.CompletionItemKind)[Object.values(vscode_languageserver_types_1.CompletionItemKind).indexOf(item.kind)];
+        var text = (_c = (_b = (_a = item.textEdit) === null || _a === void 0 ? void 0 : _a.newText) !== null && _b !== void 0 ? _b : item.insertText) !== null && _c !== void 0 ? _c : item.label;
         if (item.insertTextFormat == vscode_languageserver_types_1.InsertTextFormat.Snippet) {
             return {
                 meta: kind,
-                type: (item === null || item === void 0 ? void 0 : item.insertTextFormat) == vscode_languageserver_types_1.InsertTextFormat.Snippet ? "snippet" : undefined,
-                snippet: item.insertText,
+                snippet: text,
                 caption: item.label,
                 doc: item.documentation
             };
         }
         return {
-            value: (_a = item.insertText) !== null && _a !== void 0 ? _a : item.label,
+            value: text,
             meta: kind,
+            caption: item.label,
             doc: item.documentation
         };
     });
@@ -32412,7 +32416,13 @@ var CSSWorker = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var document, cssDocument, completions;
             return __generator(this, function (_a) {
-                return [2 /*return*/, null];
+                document = this.$getDocument();
+                if (!document) {
+                    return [2 /*return*/, null];
+                }
+                cssDocument = this.$service.parseStylesheet(document);
+                completions = this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), cssDocument);
+                return [2 /*return*/, (0, type_converters_1.toCompletions)(completions)];
             });
         });
     };
@@ -32520,7 +32530,13 @@ var HtmlWorker = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var document, htmlDocument, completions;
             return __generator(this, function (_a) {
-                return [2 /*return*/, null];
+                document = this.$getDocument();
+                if (!document) {
+                    return [2 /*return*/, null];
+                }
+                htmlDocument = this.$service.parseHTMLDocument(document);
+                completions = this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), htmlDocument);
+                return [2 /*return*/, (0, type_converters_1.toCompletions)(completions)];
             });
         });
     };
@@ -32650,19 +32666,19 @@ var JsonWorker = /** @class */ (function () {
     };
     JsonWorker.prototype.doComplete = function (position) {
         return __awaiter(this, void 0, void 0, function () {
-            var document, jsonDocument, completions, _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var document, jsonDocument, completions;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         document = this.$getDocument();
                         if (!document) {
                             return [2 /*return*/, null];
                         }
                         jsonDocument = this.$service.parseJSONDocument(document);
-                        completions = this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), jsonDocument);
-                        _a = type_converters_1.toCompletions;
-                        return [4 /*yield*/, completions];
-                    case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
+                        return [4 /*yield*/, this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), jsonDocument)];
+                    case 1:
+                        completions = _a.sent();
+                        return [2 /*return*/, (0, type_converters_1.toCompletions)(completions)];
                 }
             });
         });
@@ -93405,7 +93421,7 @@ function applyEdits(range) {
     var edits = window["worker"].format(range);
     for (var _i = 0, _a = edits.reverse(); _i < _a.length; _i++) {
         var edit = _a[_i];
-        editor.session.getDocument().replace((0, type_converters_1.toRange)(edit.range), edit.newText);
+        editor.session.doc.replace((0, type_converters_1.toRange)(edit.range), edit.newText);
     }
 }
 
