@@ -53,18 +53,19 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
 export function toCompletions(completionList: CompletionList) {
     return completionList && completionList.items.map((item) => {
             let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
+            let text = item.textEdit?.newText ?? item.insertText ?? item.label;
             if (item.insertTextFormat == InsertTextFormat.Snippet) {
                 return {
                     meta: kind,
-                    type: item?.insertTextFormat == InsertTextFormat.Snippet ? "snippet" : undefined,
-                    snippet: item.insertText,
+                    snippet: text,
                     caption: item.label,
                     doc: item.documentation
                 }
             }
             return {
-                value: item.insertText ?? item.label,
+                value: text,
                 meta: kind,
+                caption: item.label,
                 doc: item.documentation
             }
         }

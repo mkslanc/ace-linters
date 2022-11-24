@@ -105,6 +105,6 @@ new DescriptionTooltip(editor);
 function applyEdits(range: AceRange) {
     var edits: TextEdit[] = window["worker"].format(range);
     for (var edit of edits.reverse()) {
-        editor.session.getDocument().replace(toRange(edit.range), edit.newText);
+        editor.session.doc.replace(toRange(edit.range), edit.newText);
     }
 }

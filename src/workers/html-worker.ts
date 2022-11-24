@@ -61,8 +61,6 @@ export class HtmlWorker implements LanguageWorker {
 
     //TODO: markdown parsing for completions
     async doComplete(position: Ace.Point) {
-        return null;
-
         let document = this.$getDocument();
         if (!document) {
             return null;

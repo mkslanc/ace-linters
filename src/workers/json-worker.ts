@@ -80,7 +80,7 @@ export class JsonWorker implements LanguageWorker {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
 
-        let completions = this.$service.doComplete(document, fromPoint(position), jsonDocument);
-        return toCompletions(await completions);
+        let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
+        return toCompletions(completions);
     }
 }

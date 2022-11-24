@@ -49,8 +49,12 @@ oop.inherits(DescriptionTooltip, Tooltip);
             this.hide();
             return;
         }
-        var descriptionText = Array.isArray(description.contents) ? description.contents.join(" ")
-            : description.contents.value;
+        var descriptionText = description.contents.value;
+        if (Array.isArray(description.contents)) {
+            description.contents = description.contents.map((el) => typeof el !== "string" ? el.value : el);
+            descriptionText = description.contents.join(" ");
+        }
+
         if (descriptionText === "") {
             this.hide();
             return;

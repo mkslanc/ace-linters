@@ -44,10 +44,7 @@ Language:
                 },
                 getDocTooltip: function (item) {
                     if (!item.docHTML && item.doc) {
-                        item.docHTML = [
-                            "<b>", (typeof item.doc == "string") ? item.doc : item.doc?.value, "</b>", "<hr>",
-                            item.snippet
-                        ].join("");
+                        item.docHTML = (typeof item.doc == "string") ? item.doc : item.doc?.value;
                     }
                 }
             }
