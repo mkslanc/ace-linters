@@ -7612,7 +7612,7 @@ exports.F = BracketMatch;
 "use strict";
 
 
-var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
+var RangeList = (__webpack_require__(6510).RangeList);
 var oop = __webpack_require__(9359);
 /*
  * Simple fold-data struct.
@@ -23613,7 +23613,7 @@ exports.W = function(el, editor) {
 /***/ 2972:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
+var RangeList = (__webpack_require__(6510).RangeList);
 var Range = (__webpack_require__(9082).Range);
 var Selection = (__webpack_require__(8939)/* .Selection */ .Y);
 var onMouseDown = (__webpack_require__(4407)/* .onMouseDown */ .P);
@@ -25533,7 +25533,7 @@ var RangeList = function() {
 
 }).call(RangeList.prototype);
 
-exports.$ = RangeList;
+exports.RangeList = RangeList;
 
 
 /***/ }),
@@ -27602,7 +27602,7 @@ var oop = __webpack_require__(9359);
 var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
 var lang = __webpack_require__(124);
 var Range = (__webpack_require__(9082).Range);
-var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
+var RangeList = (__webpack_require__(6510).RangeList);
 var HashHandler = (__webpack_require__(7116).HashHandler);
 var Tokenizer = (__webpack_require__(760)/* .Tokenizer */ .d);
 var clipboard = __webpack_require__(6311);
@@ -32221,9 +32221,10 @@ exports.scssContent = "/* style.scss */\n\n#navbar {\n    $navbar-width: 800px;\
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
+exports.getTextEditRange = exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
 var vscode_languageserver_types_1 = __webpack_require__(1674);
 var range_1 = __webpack_require__(9082);
+var range_list_1 = __webpack_require__(6510);
 function fromRange(range) {
     if (!range) {
         return;
@@ -32269,26 +32270,43 @@ function toAnnotations(diagnostics) {
 exports.toAnnotations = toAnnotations;
 function toCompletions(completionList) {
     return completionList && completionList.items.map(function (item) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         var kind = Object.keys(vscode_languageserver_types_1.CompletionItemKind)[Object.values(vscode_languageserver_types_1.CompletionItemKind).indexOf(item.kind)];
         var text = (_c = (_b = (_a = item.textEdit) === null || _a === void 0 ? void 0 : _a.newText) !== null && _b !== void 0 ? _b : item.insertText) !== null && _c !== void 0 ? _c : item.label;
-        if (item.insertTextFormat == vscode_languageserver_types_1.InsertTextFormat.Snippet) {
-            return {
-                meta: kind,
-                snippet: text,
-                caption: item.label,
-                doc: item.documentation
-            };
-        }
-        return {
-            value: text,
+        var command = (((_d = item.command) === null || _d === void 0 ? void 0 : _d.command) == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
+        var range = getTextEditRange(item.textEdit);
+        var completion = {
             meta: kind,
             caption: item.label,
-            doc: item.documentation
+            doc: item.documentation,
+            command: command,
+            range: range
         };
+        if (item.insertTextFormat == vscode_languageserver_types_1.InsertTextFormat.Snippet) {
+            completion["snippet"] = text;
+        }
+        else {
+            completion["value"] = text;
+        }
+        return completion;
     });
 }
 exports.toCompletions = toCompletions;
+function getTextEditRange(textEdit) {
+    if (!textEdit) {
+        return;
+    }
+    if (textEdit.insert != undefined && textEdit.replace != undefined) {
+        var rangeList = new range_list_1.RangeList();
+        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
+        rangeList.merge();
+        return rangeList[0];
+    }
+    if (textEdit.range) {
+        return toRange(textEdit.range);
+    }
+}
+exports.getTextEditRange = getTextEditRange;
 
 
 /***/ }),
@@ -32598,7 +32616,7 @@ var JsonWorker = /** @class */ (function () {
         this.$jsonSchema = jsonSchema;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: function (uri) {
-                if (_this.$jsonSchema)
+                if (_this.$jsonSchema) //TODO: make it with url resolving?
                     return Promise.resolve(JSON.stringify(_this.$jsonSchema));
                 return Promise.reject("Unabled to load schema at ".concat(uri));
             }
@@ -32629,7 +32647,6 @@ var JsonWorker = /** @class */ (function () {
             return [];
         }
         var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), this.$formatConfig);
-        console.log(textEdits);
         return textEdits;
     };
     JsonWorker.prototype.doHover = function (position) {
@@ -32682,6 +32699,9 @@ var JsonWorker = /** @class */ (function () {
                 }
             });
         });
+    };
+    JsonWorker.prototype.resetSchema = function (uri) {
+        return this.$service.resetSchema(uri);
     };
     return JsonWorker;
 }());
@@ -93347,6 +93367,7 @@ var json_worker_1 = __webpack_require__(9591);
 var type_converters_1 = __webpack_require__(7472);
 var editor = ace.edit("container");
 editor.setOptions({
+    enableBasicAutocompletion: true,
     enableLiveAutocompletion: true
 });
 window["editor"] = editor;
