@@ -44,7 +44,7 @@ oop.inherits(DescriptionTooltip, Tooltip);
             row: row,
             column: col < 0 ? 0 : col
         };
-        var description = await window["worker"].doHover(screenPos);
+        var description = await window["provider"].worker.doHover(screenPos);
         if (!description) {
             this.hide();
             return;
