@@ -16,7 +16,7 @@ export class JsonWorker implements LanguageWorker {
         this.$jsonSchema = jsonSchema;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
-                if (this.$jsonSchema)
+                if (this.$jsonSchema) //TODO: make it with url resolving?
                     return Promise.resolve(JSON.stringify(this.$jsonSchema));
                 return Promise.reject(`Unabled to load schema at ${uri}`);
             }
@@ -49,7 +49,6 @@ export class JsonWorker implements LanguageWorker {
             return [];
         }
         let textEdits = this.$service.format(document, fromRange(range), this.$formatConfig);
-        console.log(textEdits);
         return textEdits;
     }
 
@@ -79,8 +78,11 @@ export class JsonWorker implements LanguageWorker {
             return null;
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
-
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
         return toCompletions(completions);
+    }
+
+    resetSchema(uri: string): boolean {
+        return this.$service.resetSchema(uri);
     }
 }

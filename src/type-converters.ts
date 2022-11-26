@@ -8,6 +8,7 @@ import {
 } from "vscode-languageserver-types";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
+import {RangeList} from "ace-code/src/range_list";
 
 export function fromRange(range: Ace.Range): Range | undefined {
     if (!range) {
@@ -54,20 +55,36 @@ export function toCompletions(completionList: CompletionList) {
     return completionList && completionList.items.map((item) => {
             let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
             let text = item.textEdit?.newText ?? item.insertText ?? item.label;
-            if (item.insertTextFormat == InsertTextFormat.Snippet) {
-                return {
-                    meta: kind,
-                    snippet: text,
-                    caption: item.label,
-                    doc: item.documentation
-                }
-            }
-            return {
-                value: text,
+            let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
+            let range = getTextEditRange(item.textEdit)
+            let completion = {
                 meta: kind,
                 caption: item.label,
-                doc: item.documentation
+                doc: item.documentation,
+                command: command,
+                range: range
+            };
+            if (item.insertTextFormat == InsertTextFormat.Snippet) {
+                completion["snippet"] = text;
+            } else {
+                completion["value"] = text;
             }
+            return completion;
         }
     );
+}
+
+export function getTextEditRange(textEdit?): Ace.Range | undefined {
+    if (!textEdit) {
+        return;
+    }
+    if (textEdit.insert != undefined && textEdit.replace != undefined) {
+        let rangeList = new RangeList();
+        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
+        rangeList.merge();
+        return rangeList[0];
+    }
+    if (textEdit.range) {
+        return toRange(textEdit.range);
+    }
 }

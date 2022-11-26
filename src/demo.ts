@@ -27,6 +27,7 @@ import {TextEdit} from "vscode-languageserver-types";
 
 var editor = ace.edit("container");
 editor.setOptions({
+    enableBasicAutocompletion: true,
     enableLiveAutocompletion: true
 });
 
