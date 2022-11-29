@@ -1,7 +1,7 @@
 import {LanguageWorker} from "./language-worker";
 import {LanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations, toCompletions} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toCompletions, toTooltip} from "../type-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 
 var cssService = require('vscode-css-languageservice');
@@ -71,7 +71,7 @@ export class CSSWorker implements LanguageWorker {
         }
         let cssDocument = this.$service.parseStylesheet(document);
         let hover = this.$service.doHover(document, fromPoint(position), cssDocument);
-        return Promise.resolve(hover);
+        return Promise.resolve(toTooltip(hover));
     }
 
     async doValidation(): Promise<Ace.Annotation[]> {

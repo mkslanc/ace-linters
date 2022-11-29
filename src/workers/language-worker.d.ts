@@ -3,6 +3,7 @@ import type {Ace} from "ace-code";
 import type {FormattingOptions, Hover, TextEdit} from "vscode-languageserver-types";
 import type {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import type {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
+import {TooltipType} from "../type-converters";
 
 interface LanguageWorker {
     session: Ace.EditSession;
@@ -15,9 +16,14 @@ interface LanguageWorker {
 
     format(range: Ace.Range): TextEdit[];
 
-    doHover(position: Ace.Point): Promise<Hover>;
+    doHover(position: Ace.Point): Promise<Tooltip>;
 
     doValidation(): Promise<Ace.Annotation[]>;
 
     doComplete(position: Ace.Point);
+}
+
+interface Tooltip {
+    content: { type: TooltipType, text: string }
+    range?: Ace.Range
 }
