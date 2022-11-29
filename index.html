@@ -20,55 +20,25 @@ Language:
 <script src="bundle.simple.js"></script>
 <script>
     var lang = document.getElementById("lang");
-
-    async function validate() {
-        window.editor.session.clearAnnotations();
-        var annotations = await window["worker"].doValidation();
-        if (annotations && annotations.length > 0) {
-            window.editor.session.setAnnotations(annotations);
-        }
-    }
-
-    async function doComplete() {
-        var cursor = window.editor.getCursorPosition();
-        var completions = await window["worker"].doComplete(cursor);
-        return completions;
-    }
-
-    function registerCompleters() {
-        window.editor.completers = [
-            {
-                getCompletions: async function (editor, session, pos, prefix, callback) {
-                    var completions = await doComplete();
-                    callback(null, completions);
-                },
-                getDocTooltip: function (item) {
-                    if (!item.docHTML && item.doc) {
-                        item.docHTML = (typeof item.doc == "string") ? item.doc : item.doc?.value;
-                    }
-                }
-            }
-        ];
-    }
-
+    var provider = window["provider"];
     lang.onchange = async () => {
         if (lang.value && window[lang.value]) {
             var session = window.editor.session;
             session.setMode(window[lang.value].mode);
             session.setValue(window[lang.value].content);
-            window["worker"] = window[lang.value].worker;
-            if (window["worker"].changeLanguageService !== undefined) {
-                window["worker"].changeLanguageService(undefined, lang.value);
+            provider = window["provider"] = window[lang.value].provider;
+            if (provider.worker.changeLanguageService !== undefined) {
+                provider.worker.changeLanguageService(undefined, lang.value);
             }
             window.editor.on("input", () => {
-                validate();
+                provider.validate();
             });
 
-            registerCompleters();
-            await validate();
+            provider.registerCompleters();
+            await provider.validate();
         }
     };
-    registerCompleters();
+    provider.registerCompleters();
 </script>
 </body>
 </html>
