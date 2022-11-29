@@ -4,11 +4,12 @@ import {
     Diagnostic,
     InsertTextFormat,
     CompletionList,
-    CompletionItemKind
+    CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind
 } from "vscode-languageserver-types";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
+import {Tooltip} from "./workers/language-worker";
 
 export function fromRange(range: Ace.Range): Range | undefined {
     if (!range) {
@@ -87,4 +88,38 @@ export function getTextEditRange(textEdit?): Ace.Range | undefined {
     if (textEdit.range) {
         return toRange(textEdit.range);
     }
+}
+
+export function toTooltip(hover: Hover): Tooltip {
+    let content;
+    if (!hover) {
+        return;
+    }
+    if (MarkupContent.is(hover.contents)) {
+        if (hover.contents.kind === MarkupKind.Markdown) {
+            content = {type: TooltipType.markdown, text: hover.contents.value};
+        } else {
+            content = {type: TooltipType.plainText, text: hover.contents.value};
+        }
+    } else if (MarkedString.is(hover.contents)) {
+
+        content = {type: TooltipType.markdown, text: "```" + (hover.contents as any).value + "```"};
+    } else if (Array.isArray(hover.contents)) {
+        var contents = hover.contents.map((el) => {
+            if (typeof el !== "string") {
+                return `\`\`\`${el.value}\`\`\``
+            }
+            return el;
+        });
+        content = {type: TooltipType.markdown, text: contents.join("\n- - -\n")};
+    } else {
+        return;
+    }
+    let tooltip: Tooltip = {content: content, range: toRange(hover.range)};
+    return tooltip;
+}
+
+export enum TooltipType {
+    plainText,
+    markdown
 }

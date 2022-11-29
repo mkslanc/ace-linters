@@ -34,39 +34,41 @@ oop.inherits(DescriptionTooltip, Tooltip);
             this.maxHeight = window.innerHeight;
             this.maxWidth = window.innerWidth;
         }
-
-        var canvasPos = r.rect || (r.rect = r.scroller.getBoundingClientRect());
-        var offset = (this.x + r.scrollLeft - canvasPos.left - r.$padding) / r.characterWidth;
-        var row = Math.floor((this.y + r.scrollTop - canvasPos.top) / r.lineHeight);
-        var col = Math.round(offset);
+        var pos = r.pixelToScreenCoordinates(this.x, this.y);
+        var row = pos.row;
+        var col = pos.column;
 
         var screenPos = {
             row: row,
             column: col < 0 ? 0 : col
         };
-        var description = await window["worker"].doHover(screenPos);
+
+        var description = await window["provider"].doHover(screenPos);
         if (!description) {
             this.hide();
             return;
         }
-        var descriptionText = description.contents.value;
-        if (Array.isArray(description.contents)) {
-            description.contents = description.contents.map((el) => typeof el !== "string" ? el.value : el);
-            descriptionText = description.contents.join(" ");
-        }
+        var descriptionText = description.text;
 
         if (descriptionText === "") {
             this.hide();
             return;
         }
         if (this.descriptionText != descriptionText) {
-            this.setText(descriptionText);
+            this.setHtml(descriptionText);
             this.width = this.getWidth();
             this.height = this.getHeight();
             this.descriptionText = descriptionText;
         }
 
-        this.show(null, this.x, this.y);
+        var session = this.editor.session;
+        var docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
+        var token = session.getTokenAt(docPos.row, docPos.column + 1);
+        console.log(`Row: ${docPos.row}  Column: ${docPos.column + 1}`);
+        var pos = this.editor.renderer.textToScreenCoordinates(description.range?.start.row + 1 ?? docPos.row, description.range?.start.column ?? token.start);
+        console.log(pos);
+        console.log(token.start);
+        this.show(null, pos.pageX, pos.pageY);
     };
 
     this.onMouseMove = function (e) {
@@ -74,9 +76,9 @@ oop.inherits(DescriptionTooltip, Tooltip);
         this.y = e.clientY;
         if (this.isOpen) {
             this.lastT = e.timeStamp;
-            this.setPosition(this.x, this.y);
+            //this.setPosition(this.x, this.y);
         }
-        if (!this.$timer) this.$timer = setTimeout(this.update, 100);
+        if (!this.$timer) this.$timer = setTimeout(this.update, 10);
     };
 
     this.onMouseOut = function (e) {
@@ -86,10 +88,7 @@ oop.inherits(DescriptionTooltip, Tooltip);
     };
 
     this.setPosition = function (x, y) {
-        if (x + 10 + this.width > this.maxWidth) x = window.innerWidth - this.width - 10;
-        if (y > window.innerHeight * 0.75 || y + 20 + this.height > this.maxHeight) y = y - this.height - 30;
-
-        Tooltip.prototype.setPosition.call(this, x + 10, y + 20);
+        Tooltip.prototype.setPosition.call(this, x, y);
     };
 
     this.destroy = function () {

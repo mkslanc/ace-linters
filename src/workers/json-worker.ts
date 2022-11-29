@@ -1,7 +1,7 @@
 import {LanguageWorker} from "./language-worker";
 import {FormattingOptions, JSONSchema, LanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations, toCompletions} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toCompletions, toTooltip} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
 
 var jsonService = require('vscode-json-languageservice');
@@ -58,7 +58,8 @@ export class JsonWorker implements LanguageWorker {
             return null;
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
-        return this.$service.doHover(document, fromPoint(position), jsonDocument);
+        let hover = await this.$service.doHover(document, fromPoint(position), jsonDocument);
+        return toTooltip(hover);
     }
 
     async doValidation(): Promise<Ace.Annotation[]> {

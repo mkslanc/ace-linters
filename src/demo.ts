@@ -24,6 +24,7 @@ import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {JsonWorker} from "./workers/json-worker";
 import {toRange} from "./type-converters";
 import {TextEdit} from "vscode-languageserver-types";
+import {LanguageProvider} from "./language-provider";
 
 var editor = ace.edit("container");
 editor.setOptions({
@@ -41,37 +42,45 @@ editor.session.setMode(htmlMode);
 editor.container = document.getElementById("container");
 
 var htmlworker = new HtmlWorker(editor.session);
+var htmlProvider = new LanguageProvider(editor, htmlworker);
 window["html"] = {
     worker: htmlworker,
     mode: htmlMode,
-    content: htmlContent
+    content: htmlContent,
+    provider: htmlProvider
 };
-window["worker"] = htmlworker;
+window["provider"] = htmlProvider;
 var cssworker = new CSSWorker(editor.session);
 var cssMode = new CSSMode();
+var cssProvider = new LanguageProvider(editor, cssworker);
 window["css"] = {
     worker: cssworker,
     mode: cssMode,
-    content: cssContent
+    content: cssContent,
+    provider: cssProvider
 };
 var lessMode = new LessMode();
 window["less"] = {
     worker: cssworker,
     mode: lessMode,
-    content: lessContent
+    content: lessContent,
+    provider: cssProvider
 };
 var scssMode = new SCSSMode();
 window["scss"] = {
     worker: cssworker,
     mode: scssMode,
-    content: scssContent
+    content: scssContent,
+    provider: cssProvider
 };
 var jsonworker = new JsonWorker(editor.session, jsonSchema);
 var jsonMode = new JsonMode();
+var jsonProvider = new LanguageProvider(editor, jsonworker);
 window["json"] = {
     worker: jsonworker,
     mode: jsonMode,
-    content: jsonContent
+    content: jsonContent,
+    provider: jsonProvider
 };
 
 var menuKb = new HashHandler([
@@ -104,7 +113,7 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
 new DescriptionTooltip(editor);
 
 function applyEdits(range: AceRange) {
-    var edits: TextEdit[] = window["worker"].format(range);
+    var edits: TextEdit[] = window["provider"].worker.format(range);
     for (var edit of edits.reverse()) {
         editor.session.doc.replace(toRange(edit.range), edit.newText);
     }

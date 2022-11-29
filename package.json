@@ -10,7 +10,8 @@
     "vscode-html-languageservice": "latest",
     "vscode-css-languageservice": "latest",
     "vscode-json-languageservice": "4.2.1",
-    "typescript": "latest"
+    "typescript": "latest",
+    "showdown": "latest"
   },
   "devDependencies": {
     "webpack": "latest",
@@ -19,5 +20,6 @@
     "text-loader": "latest",
     "ts-loader": "latest",
     "copy-webpack-plugin": "9.1.0"
-  }
+  },
+  "main": "build/bundle.index.js"
 }
