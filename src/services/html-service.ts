@@ -1,37 +1,35 @@
-import {LanguageWorker} from "./language-worker";
-import {LanguageService, Position, Range} from "vscode-html-languageservice";
+import {LanguageService} from "./language-service";
+import {LanguageService as VSLanguageService} from "vscode-html-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toCompletions, toTooltip} from "../type-converters";
+import {fromPoint, fromRange, toTooltip} from "../type-converters";
 import {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 
 var htmlService = require('vscode-html-languageservice');
 
-export class HtmlWorker implements LanguageWorker {
-    $service: LanguageService;
-    session: Ace.EditSession;
-    $formatConfig: HTMLFormatConfiguration;
+export class HtmlService implements LanguageService {
+    $service: VSLanguageService;
+    doc: Ace.Document;
+    $formatConfig: HTMLFormatConfiguration = {};
 
-    constructor(session: Ace.EditSession, configuration?: HTMLFormatConfiguration) {
+    constructor(doc: Ace.Document, configuration?: HTMLFormatConfiguration) {
         this.$service = htmlService.getLanguageService();
-        this.session = session;
+        this.doc = doc;
         this.$setFormatConfiguration(configuration);
     }
 
     $setFormatConfiguration(configuration?: HTMLFormatConfiguration) {
-        if (!configuration) {
-            this.$formatConfig = {};
-        }
-        var options = this.session.getOptions();
-        this.$formatConfig.tabSize = configuration?.tabSize ?? options.tabSize;
-        this.$formatConfig.insertSpaces = configuration?.insertSpaces ?? options.useSoftTabs;
+        this.$formatConfig.tabSize = configuration?.tabSize;
+        this.$formatConfig.insertSpaces = configuration?.insertSpaces;
     }
 
     $getDocument() {
-        if (this.session) {
-            var doc = this.session.getDocument().getValue();
-            return htmlService.TextDocument.create("file://test.html", "html", 1, doc);
-        }
-        return null;
+        var doc = this.doc.getValue(); //TODO: update
+        return htmlService.TextDocument.create("file://test.html", "html", 1, doc);
+    }
+
+    //TODO:
+    setValue(value) {
+        this.doc.setValue(value);
     }
 
     format(range: Ace.Range) {
@@ -44,7 +42,7 @@ export class HtmlWorker implements LanguageWorker {
         return textEdits;
     }
 
-    doHover(position: Ace.Point) {
+    async doHover(position: Ace.Point) {
         let document = this.$getDocument();
         if (!document) {
             return null;
@@ -59,7 +57,6 @@ export class HtmlWorker implements LanguageWorker {
         return [];
     }
 
-    //TODO: markdown parsing for completions
     async doComplete(position: Ace.Point) {
         let document = this.$getDocument();
         if (!document) {
@@ -68,6 +65,6 @@ export class HtmlWorker implements LanguageWorker {
         let htmlDocument = this.$service.parseHTMLDocument(document);
 
         let completions = this.$service.doComplete(document, fromPoint(position), htmlDocument);
-        return toCompletions(completions);
+        return completions;
     }
 }

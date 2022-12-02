@@ -1,13 +1,14 @@
-import {LanguageWorker} from "./language-worker";
-import {LanguageService} from "vscode-css-languageservice";
+import {LanguageService} from "./language-service";
+import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations, toCompletions, toTooltip} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 
 var cssService = require('vscode-css-languageservice');
 
-export class CSSWorker implements LanguageWorker {
-    $service: LanguageService;
+//TODO:
+export class CssService implements LanguageService {
+    $service: VSLanguageService;
     session: Ace.EditSession;
     $languageId: string;
     $formatConfig: CSSFormatConfiguration;
@@ -94,6 +95,6 @@ export class CSSWorker implements LanguageWorker {
         let cssDocument = this.$service.parseStylesheet(document);
 
         let completions = this.$service.doComplete(document, fromPoint(position), cssDocument);
-        return toCompletions(completions);
+        return completions;
     }
 }

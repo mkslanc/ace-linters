@@ -1,18 +1,18 @@
-import {LanguageWorker} from "./language-worker";
-import {FormattingOptions, JSONSchema, LanguageService} from "vscode-json-languageservice";
+import {LanguageService} from "./language-service";
+import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toCompletions, toTooltip} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
 
 var jsonService = require('vscode-json-languageservice');
 
-export class JsonWorker implements LanguageWorker {
-    $service: LanguageService;
-    session: Ace.EditSession;
+export class JsonService implements LanguageService {
+    $service: VSLanguageService;
+    doc: Ace.Document;
     private $jsonSchema: JSONSchema;
-    $formatConfig: FormattingOptions;
+    $formatConfig: FormattingOptions = {tabSize: 4, insertSpaces: true};
 
-    constructor(session: Ace.EditSession, jsonSchema?: JSONSchema, configuration?: FormattingOptions) {
+    constructor(doc: Ace.Document, jsonSchema?: JSONSchema, configuration?: FormattingOptions) {
         this.$jsonSchema = jsonSchema;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
@@ -22,25 +22,23 @@ export class JsonWorker implements LanguageWorker {
             }
         });
         this.$service.configure({allowComments: false, schemas: [{fileMatch: ["test.json"], uri: "schema.json"}]})
-        this.session = session;
+        this.doc = doc;
         this.$setFormatConfiguration(configuration);
     }
 
     $setFormatConfiguration(configuration?: FormattingOptions) {
-        if (!configuration) {
-            this.$formatConfig = {tabSize: 4, insertSpaces: true};
-        }
-        var options = this.session.getOptions();
-        this.$formatConfig.tabSize = configuration?.tabSize ?? options.tabSize;
-        this.$formatConfig.insertSpaces = configuration?.insertSpaces ?? options.useSoftTabs;
+        this.$formatConfig.tabSize ??= configuration?.tabSize;
+        this.$formatConfig.insertSpaces ??= configuration?.insertSpaces;
     }
 
     $getDocument() {
-        if (this.session) {
-            var doc = this.session.getDocument().getValue();
-            return jsonService.TextDocument.create("test.json", "json", 1, doc);
-        }
-        return null;
+        var doc = this.doc.getValue(); //TODO: update
+        return jsonService.TextDocument.create("test.json", "json", 1, doc);
+    }
+
+    //TODO:
+    setValue(value) {
+        this.doc.setValue(value);
     }
 
     format(range: Ace.Range): TextEdit[] {
@@ -80,7 +78,7 @@ export class JsonWorker implements LanguageWorker {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
-        return toCompletions(completions);
+        return completions;
     }
 
     resetSchema(uri: string): boolean {

@@ -5,8 +5,8 @@ import type {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cs
 import type {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 import {TooltipType} from "../type-converters";
 
-interface LanguageWorker {
-    session: Ace.EditSession;
+interface LanguageService {
+    doc: Ace.Document;
     $service;
     $formatConfig: CSSFormatConfiguration | HTMLFormatConfiguration | FormattingOptions;
 
@@ -23,7 +23,12 @@ interface LanguageWorker {
     doComplete(position: Ace.Point);
 }
 
+interface TooltipContent {
+    type: TooltipType,
+    text: string
+}
+
 interface Tooltip {
-    content: { type: TooltipType, text: string }
+    content: TooltipContent
     range?: Ace.Range
 }
