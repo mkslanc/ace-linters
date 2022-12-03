@@ -81,6 +81,10 @@ export class JsonService implements LanguageService {
         return completions;
     }
 
+    setSchema(schema: JSONSchema) {
+        this.$jsonSchema = schema;
+    }
+
     resetSchema(uri: string): boolean {
         return this.$service.resetSchema(uri);
     }

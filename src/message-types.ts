@@ -1,52 +1,57 @@
 import {Ace} from "ace-code";
 
 export class InitMessage {
-    type: MessageType;
+    type: MessageType = MessageType.init;
+    sessionId: string;
     options: { [key: string]: any };
     value: string;
 
-    constructor(options, value: string) {
-        this.type = MessageType.init;
+    constructor(sessionId: string, value: string, options: { [p: string]: any }) {
+        this.sessionId = sessionId;
         this.options = options;
         this.value = value;
     }
 }
 
 export class FormatMessage {
-    type: MessageType;
+    type: MessageType = MessageType.format;
+    sessionId: string;
     value: Ace.Range;
 
-    constructor(value: Ace.Range) {
-        this.type = MessageType.format;
+    constructor(sessionId: string, value: Ace.Range) {
+        this.sessionId = sessionId;
         this.value = value;
     }
 }
 
 export class CompleteMessage {
-    type: MessageType;
+    type: MessageType = MessageType.complete;
+    sessionId: string;
     value: Ace.Point;
 
-    constructor(value: Ace.Point) {
-        this.type = MessageType.complete;
+    constructor(sessionId: string, value: Ace.Point) {
+        this.sessionId = sessionId;
         this.value = value;
     }
 }
 
 export class HoverMessage {
-    type: MessageType;
+    type: MessageType = MessageType.hover;
+    sessionId: string;
     value: Ace.Point;
 
-    constructor(value: Ace.Point) {
-        this.type = MessageType.hover;
+    constructor(sessionId: string, value: Ace.Point) {
+        this.sessionId = sessionId;
         this.value = value;
     }
 }
 
 export class ValidateMessage {
-    type: MessageType;
+    type: MessageType = MessageType.validate;
+    sessionId: string;
 
-    constructor() {
-        this.type = MessageType.validate;
+    constructor(sessionId: string) {
+        this.sessionId = sessionId;
     }
 }
 

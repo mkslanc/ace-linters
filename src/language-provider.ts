@@ -2,7 +2,7 @@ import {Ace} from "ace-code";
 import {toCompletions, TooltipType, toRange} from "./type-converters";
 import {Range as AceRange} from "ace-code/src/range";
 import {TextEdit} from "vscode-languageserver-types";
-import {MessageAdapter} from "./message-adapter";
+import {MessageController} from "./message-controller";
 import {MessageType} from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
@@ -12,9 +12,8 @@ var showdown = require('showdown');
 
 export class LanguageProvider {
     private $editor: Ace.Editor;
-    worker: Worker;
     markdownConverter: MarkDownConverter;
-    message: MessageAdapter;
+    message: MessageController;
 
     constructor(editor: Ace.Editor, markdownConverter?: MarkDownConverter) {
         this.$editor = editor;
@@ -23,60 +22,55 @@ export class LanguageProvider {
         } else {
             this.markdownConverter = new showdown.Converter();
         }
-        this.$initWorker();
-        this.message = new MessageAdapter(this.worker);
-        this.message.init(this.$editor.getOptions(), this.$editor.getValue());
+        this.$init();
+        this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.$editor.getOptions());
         //TODO:
         this.$editor.on("change", () => {
-            this.worker.postMessage({type: 3, value: this.$editor.getValue()})
+            this.message.postMessage({type: 3, sessionId: this.$editor.session["id"], value: this.$editor.getValue()})
             this.validate();
             var $setAnnotations = (annotations: Ace.Annotation[]) => {
-                this.off("validate", $setAnnotations);
+                this["off"]("validate", $setAnnotations);
                 this.$editor.session.clearAnnotations();
                 if (annotations && annotations.length > 0) {
                     this.$editor.session.setAnnotations(annotations);
                 }
             }
-            this.on("validate", $setAnnotations);
+            this["on"]("validate", $setAnnotations);
         });
     }
 
-    private $initWorker() {
-        // @ts-ignore
-        this.worker = new Worker(new URL('./webworker.ts', import.meta.url));
-        this.worker.onmessage = (e) => {
+    private $init() {
+        this.message = MessageController.instance;
+        this.message["on"]("message-" + this.$editor.session["id"], (e) => {
             let message = e.data;
-
             switch (message.type as MessageType) {
                 case MessageType.format:
                     var edits: TextEdit[] = message.edits;
                     this.$applyFormat(edits);
                     break;
                 case MessageType.complete:
-                    //@ts-ignore
-                    this._signal("completions", toCompletions(message.completions, this.markdownConverter));
+                    this["_signal"]("completions", toCompletions(message.completions, this.markdownConverter));
                     break;
                 case MessageType.hover:
                     var hover: Tooltip = message.hover;
-                    this._signal("hover", hover);
+                    this["_signal"]("hover", hover);
                     break;
                 case MessageType.validate:
                     var annotations: Ace.Annotation[] = message.annotations;
-                    this._signal("validate", annotations);
+                    this["_signal"]("validate", annotations);
                     break;
                 case MessageType.init:
                     break;
             }
-        };
+        });
     }
 
-
     validate() {
-        this.message.doValidation();
+        this.message.doValidation(this.$editor.session["id"]);
     }
 
     doHover(position: Ace.Point) {
-        this.message.doHover(position);
+        this.message.doHover(this.$editor.session["id"], position);
     }
 
     getTooltipText(hover: Tooltip) {
@@ -92,10 +86,10 @@ export class LanguageProvider {
         var selectionRanges = this.$editor.getSelection().getAllRanges();
         if (selectionRanges.length > 0 && !selectionRanges[0].isEmpty()) {
             for (var range of selectionRanges) {
-                this.message.format(range);
+                this.message.format(this.$editor.session["id"], range);
             }
         } else {
-            this.message.format(new AceRange(0, 0, row, column));
+            this.message.format(this.$editor.session["id"], new AceRange(0, 0, row, column));
         }
     }
 
@@ -107,7 +101,7 @@ export class LanguageProvider {
 
     doComplete() {
         let cursor = this.$editor.getCursorPosition();
-        this.message.doComplete(cursor);
+        this.message.doComplete(this.$editor.session["id"], cursor);
     }
 
     registerCompleters() {
@@ -116,12 +110,10 @@ export class LanguageProvider {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
                     this.doComplete();
                     var $setCompletions = (completions) => {
-                        //@ts-ignore
-                        this.off("completions", $setCompletions);
+                        this["off"]("completions", $setCompletions);
                         callback(null, completions);
                     }
-                    //@ts-ignore
-                    this.on("completions", $setCompletions)
+                    this["on"]("completions", $setCompletions)
                 }
             }
         ];
