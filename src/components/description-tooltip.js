@@ -42,13 +42,13 @@ oop.inherits(DescriptionTooltip, Tooltip);
             row: row,
             column: col < 0 ? 0 : col
         };
-        window["provider"].doHover(screenPos);
+        this.editor.provider.doHover(screenPos);
 
         var description;
         var $setHover = (hover) => {
             //@ts-ignore
-            description = window["provider"].getTooltipText(hover);
-            window["provider"].off("hover", $setHover);
+            description = this.editor.provider.getTooltipText(hover);
+            this.editor.provider.off("hover", $setHover);
             if (!description) {
                 this.hide();
                 return;
@@ -76,7 +76,7 @@ oop.inherits(DescriptionTooltip, Tooltip);
             this.show(null, pos.pageX, pos.pageY);
         };
         //@ts-ignore
-        window["provider"].on("hover", $setHover);
+        this.editor.provider.on("hover", $setHover);
     };
 
     this.onMouseMove = function (e) {
