@@ -55,6 +55,28 @@ export class ValidateMessage {
     }
 }
 
+export class ChangeMessage {
+    type: MessageType = MessageType.change;
+    sessionId: string;
+    value: string;
+
+    constructor(sessionId: string, value: string) {
+        this.sessionId = sessionId;
+        this.value = value;
+    }
+}
+
+export class DeltasMessage {
+    type: MessageType = MessageType.applyDelta;
+    sessionId: string;
+    value: Ace.Delta[];
+
+    constructor(sessionId: string, value: Ace.Delta[]) {
+        this.sessionId = sessionId;
+        this.value = value;
+    }
+}
+
 export enum MessageType {
-    init, format, complete, change, hover, validate
+    init, format, complete, change, hover, validate, applyDelta
 }

@@ -3,17 +3,17 @@ import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
+import {BaseService} from "./base-service";
 
 var cssService = require('vscode-css-languageservice');
 
-export class CssService implements LanguageService {
+export class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;
-    doc: Ace.Document;
     $languageId: string;
     $formatConfig: CSSFormatConfiguration;
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
-        this.doc = doc;
+        super(doc, options);
         this.changeLanguageService(options.mode);
         this.$formatConfig = options.format;
     }
@@ -34,11 +34,6 @@ export class CssService implements LanguageService {
                 this.$service = cssService.getCSSLanguageService();
                 break;
         }
-    }
-
-    //TODO:
-    setValue(value) {
-        this.doc.setValue(value);
     }
 
     $getDocument() {
@@ -76,7 +71,6 @@ export class CssService implements LanguageService {
         return toAnnotations(diagnostics);
     }
 
-    //TODO: markdown parsing for completions
     async doComplete(position: Ace.Point) {
         let document = this.$getDocument();
         if (!document) {

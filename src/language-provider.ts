@@ -15,6 +15,7 @@ export class LanguageProvider {
     markdownConverter: MarkDownConverter;
     message: MessageController;
     options: ServiceOptions;
+    deltaQueue: Ace.Delta[] = [];
 
     constructor(editor: Ace.Editor, options: ServiceOptions, markdownConverter?: MarkDownConverter) {
         this.$editor = editor;
@@ -26,22 +27,28 @@ export class LanguageProvider {
             this.markdownConverter = new showdown.Converter();
         }
         this.$init();
-        this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.options);
         this.validate();
-        //TODO:
-        this.$editor.on("change", () => {
-            let changed = () => {
-                this.validate();
-                this["off"]("changed", changed);
-            };
-            this["on"]("changed", changed);
-            this.message.postMessage({
-                type: 3,
-                sessionId: this.$editor.session["id"],
-                value: this.$editor.getValue()
-            });
-        });
+        this.$editor.session.doc.on("change", this.$changeListener.bind(this), true);
     }
+
+    private $changeListener(delta) {
+        if (delta.action == "insert")
+            this.deltaQueue.push(delta.start, delta.lines);
+        else this.deltaQueue.push(delta.start, delta.end);
+        this.$sendDeltaQueue();
+    }
+
+    private $sendDeltaQueue() {
+        var deltas = this.deltaQueue;
+        if (!deltas) return;
+        this.deltaQueue = [];
+        let changed = () => {
+            this.validate();
+            this["off"]("changed", changed);
+        };
+        this["on"]("changed", changed);
+        this.message.change(this.$editor.session["id"], deltas, this.$editor.session.getValue(), this.$editor.session.doc.getLength());
+    };
 
     private $adaptOptions() {
         let editorOptions = this.$editor.getOptions();
@@ -80,6 +87,7 @@ export class LanguageProvider {
                     break;
             }
         });
+        this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.options);
     }
 
     validate() {

@@ -3,16 +3,18 @@ import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} fro
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
+import {BaseService} from "./base-service";
+import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
 var jsonService = require('vscode-json-languageservice');
 
-export class JsonService implements LanguageService {
+export class JsonService extends BaseService implements LanguageService {
     $service: VSLanguageService;
-    doc: Ace.Document;
     private $jsonSchema: JSONSchema;
     $formatConfig: FormattingOptions = {tabSize: 4, insertSpaces: true};
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
+        super(doc, options);
         this.$jsonSchema = options?.other.jsonSchema;
         this.$formatConfig = options.format;
         this.$service = jsonService.getLanguageService({
@@ -23,17 +25,11 @@ export class JsonService implements LanguageService {
             }
         });
         this.$service.configure({allowComments: false, schemas: [{fileMatch: ["test.json"], uri: "schema.json"}]})
-        this.doc = doc;
     }
 
     $getDocument() {
         var doc = this.doc.getValue(); //TODO: update
         return jsonService.TextDocument.create("test.json", "json", 1, doc);
-    }
-
-    //TODO:
-    setValue(value) {
-        this.doc.setValue(value);
     }
 
     format(range: Ace.Range): TextEdit[] {
@@ -66,7 +62,7 @@ export class JsonService implements LanguageService {
         return toAnnotations(await diagnostics);
     }
 
-    async doComplete(position: Ace.Point) {
+    async doComplete(position: Ace.Point): Promise<CompletionList> {
         let document = this.$getDocument();
         if (!document) {
             return null;

@@ -4,6 +4,7 @@ import type {FormattingOptions, Hover, TextEdit} from "vscode-languageserver-typ
 import type {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import type {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 import {TooltipType} from "../type-converters";
+import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
 interface LanguageService {
     doc: Ace.Document;
@@ -18,7 +19,11 @@ interface LanguageService {
 
     doValidation(): Promise<Ace.Annotation[]>;
 
-    doComplete(position: Ace.Point);
+    doComplete(position: Ace.Point): Promise<CompletionList>;
+
+    setValue(value: string);
+
+    applyDeltas(delta: Ace.Delta[]);
 }
 
 interface TooltipContent {

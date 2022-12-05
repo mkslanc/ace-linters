@@ -1,5 +1,12 @@
 import {Ace} from "ace-code";
-import {CompleteMessage, FormatMessage, HoverMessage, InitMessage, ValidateMessage} from "./message-types";
+import {
+    ChangeMessage,
+    CompleteMessage, DeltasMessage,
+    FormatMessage,
+    HoverMessage,
+    InitMessage,
+    ValidateMessage
+} from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {ServiceOptions} from "./services/language-service";
@@ -43,6 +50,14 @@ export class MessageController {
 
     doHover(sessionId: string, position: Ace.Point) {
         this.worker.postMessage(new HoverMessage(sessionId, position))
+    }
+
+    change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number) {
+        if (deltas.length > 50 && deltas.length > docLength >> 1) {
+            this.worker.postMessage(new ChangeMessage(sessionId, value));
+        } else {
+            this.worker.postMessage(new DeltasMessage(sessionId, deltas));
+        }
     }
 
     postMessage(message: any ) {
