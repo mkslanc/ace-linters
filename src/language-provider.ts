@@ -30,8 +30,16 @@ export class LanguageProvider {
         this.validate();
         //TODO:
         this.$editor.on("change", () => {
-            this.message.postMessage({type: 3, sessionId: this.$editor.session["id"], value: this.$editor.getValue()})
-            this.validate();
+            let changed = () => {
+                this.validate();
+                this["off"]("changed", changed);
+            };
+            this["on"]("changed", changed);
+            this.message.postMessage({
+                type: 3,
+                sessionId: this.$editor.session["id"],
+                value: this.$editor.getValue()
+            });
         });
     }
 
@@ -64,6 +72,9 @@ export class LanguageProvider {
                 case MessageType.validate:
                     var annotations: Ace.Annotation[] = message.annotations;
                     this["_signal"]("validate", annotations);
+                    break;
+                case MessageType.change:
+                    this["_signal"]("changed", null);
                     break;
                 case MessageType.init:
                     break;

@@ -20,6 +20,7 @@ ctx.onmessage = async (ev) => {
             break;
         case MessageType.change:
             manager.getServiceInstance(uri).setValue(message.value);
+            ctx.postMessage({type: MessageType.change, sessionId: uri});
             break;
         case MessageType.hover:
             let hover = await manager.getServiceInstance(uri).doHover(message.value);
