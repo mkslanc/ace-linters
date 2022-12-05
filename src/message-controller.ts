@@ -2,6 +2,7 @@ import {Ace} from "ace-code";
 import {CompleteMessage, FormatMessage, HoverMessage, InitMessage, ValidateMessage} from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
+import {ServiceOptions} from "./services/language-service";
 
 export class MessageController {
     private static _instance: MessageController;
@@ -24,7 +25,7 @@ export class MessageController {
         }
     }
 
-    init(sessionId: string, value: string, options: { [key: string]: any }) {
+    init(sessionId: string, value: string, options: ServiceOptions) {
         this.worker.postMessage(new InitMessage(sessionId, value, options));
     }
 

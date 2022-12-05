@@ -1,6 +1,7 @@
 import {Document} from "ace-code/src/document";
 import {MessageType} from "./message-types";
 import {ServiceManager} from "./services/service-manager";
+import {ServiceOptions} from "./services/language-service";
 
 const ctx: Worker = self as any;
 
@@ -29,7 +30,7 @@ ctx.onmessage = async (ev) => {
             ctx.postMessage({type: MessageType.validate, sessionId: uri, annotations: annotations});
             break;
         case MessageType.init: //this should be first message
-            let options = message.options;
+            let options: ServiceOptions = message.options;
             let doc = new Document(message.value);
             await manager.addServiceInstance(uri, doc, options);
             break;

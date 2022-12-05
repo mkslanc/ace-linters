@@ -12,8 +12,6 @@ interface LanguageService {
 
     $getDocument(): TextDocument;
 
-    $setFormatConfiguration(configuration?: FormattingOptions);
-
     format(range: Ace.Range): TextEdit[];
 
     doHover(position: Ace.Point): Promise<Tooltip>;
@@ -31,4 +29,15 @@ interface TooltipContent {
 interface Tooltip {
     content: TooltipContent
     range?: Ace.Range
+}
+
+interface ServiceOptions {
+    mode?: string,
+    format?: {
+        tabSize: number,
+        insertSpaces: boolean
+    },
+    other?: {
+        [name: string]: any
+    }
 }

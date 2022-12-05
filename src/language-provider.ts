@@ -6,7 +6,7 @@ import {MessageController} from "./message-controller";
 import {MessageType} from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {Tooltip} from "./services/language-service";
+import {ServiceOptions, Tooltip} from "./services/language-service";
 
 var showdown = require('showdown');
 
@@ -14,16 +14,19 @@ export class LanguageProvider {
     private $editor: Ace.Editor;
     markdownConverter: MarkDownConverter;
     message: MessageController;
+    options: ServiceOptions;
 
-    constructor(editor: Ace.Editor, markdownConverter?: MarkDownConverter) {
+    constructor(editor: Ace.Editor, options: ServiceOptions, markdownConverter?: MarkDownConverter) {
         this.$editor = editor;
+        this.options = options;
+        this.$adaptOptions();
         if (markdownConverter) {
             this.markdownConverter = markdownConverter;
         } else {
             this.markdownConverter = new showdown.Converter();
         }
         this.$init();
-        this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.$editor.getOptions());
+        this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.options);
         //TODO:
         this.$editor.on("change", () => {
             this.message.postMessage({type: 3, sessionId: this.$editor.session["id"], value: this.$editor.getValue()})
@@ -37,6 +40,16 @@ export class LanguageProvider {
             }
             this["on"]("validate", $setAnnotations);
         });
+    }
+
+    private $adaptOptions() {
+        let editorOptions = this.$editor.getOptions();
+        this.options.mode ??= editorOptions.mode;
+        if (!this.options.format) {
+            this.options.format = {tabSize: null, insertSpaces: null};
+        }
+        this.options.format.tabSize ??= editorOptions.tabSize;
+        this.options.format.insertSpaces ??= editorOptions.useSoftTabs;
     }
 
     private $init() {

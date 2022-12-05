@@ -1,7 +1,7 @@
-import {LanguageService} from "./language-service";
+import {LanguageService, ServiceOptions} from "./language-service";
 import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations, toCompletions, toTooltip} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
 
 var jsonService = require('vscode-json-languageservice');
@@ -12,8 +12,9 @@ export class JsonService implements LanguageService {
     private $jsonSchema: JSONSchema;
     $formatConfig: FormattingOptions = {tabSize: 4, insertSpaces: true};
 
-    constructor(doc: Ace.Document, jsonSchema?: JSONSchema, configuration?: FormattingOptions) {
-        this.$jsonSchema = jsonSchema;
+    constructor(doc: Ace.Document, options: ServiceOptions) {
+        this.$jsonSchema = options?.other.jsonSchema;
+        this.$formatConfig = options.format;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
                 if (this.$jsonSchema) //TODO: make it with url resolving?
@@ -23,12 +24,6 @@ export class JsonService implements LanguageService {
         });
         this.$service.configure({allowComments: false, schemas: [{fileMatch: ["test.json"], uri: "schema.json"}]})
         this.doc = doc;
-        this.$setFormatConfiguration(configuration);
-    }
-
-    $setFormatConfiguration(configuration?: FormattingOptions) {
-        this.$formatConfig.tabSize ??= configuration?.tabSize;
-        this.$formatConfig.insertSpaces ??= configuration?.insertSpaces;
     }
 
     $getDocument() {

@@ -1,4 +1,4 @@
-import {LanguageService} from "./language-service";
+import {LanguageService, ServiceOptions} from "./language-service";
 import {LanguageService as VSLanguageService} from "vscode-html-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toTooltip} from "../type-converters";
@@ -11,15 +11,10 @@ export class HtmlService implements LanguageService {
     doc: Ace.Document;
     $formatConfig: HTMLFormatConfiguration = {};
 
-    constructor(doc: Ace.Document, configuration?: HTMLFormatConfiguration) {
+    constructor(doc: Ace.Document, options: ServiceOptions) {
         this.$service = htmlService.getLanguageService();
         this.doc = doc;
-        this.$setFormatConfiguration(configuration);
-    }
-
-    $setFormatConfiguration(configuration?: HTMLFormatConfiguration) {
-        this.$formatConfig.tabSize = configuration?.tabSize;
-        this.$formatConfig.insertSpaces = configuration?.insertSpaces;
+        this.$formatConfig = options.format;
     }
 
     $getDocument() {

@@ -32,7 +32,7 @@ editor.setTheme(theme);
 editor.setOptions({"customScrollbar": true})
 editor.session.setValue(htmlContent);
 editor.session.setMode(htmlMode);
-var provider = window["provider"] = new LanguageProvider(editor);
+var provider = window["provider"] = new LanguageProvider(editor, {});
 editor.provider = provider;
 
 var secondEditor = ace.edit("newcontainer");
@@ -45,9 +45,7 @@ secondEditor.setOptions({"customScrollbar": true});
 var jsonMode = new JsonMode();
 secondEditor.setValue(jsonContent);
 secondEditor.session.setMode(jsonMode);
-// @ts-ignore
-secondEditor.setOption("schema", jsonSchema); //TODO:
-var jsonProvider = new LanguageProvider(secondEditor);
+var jsonProvider = new LanguageProvider(secondEditor, {other: {jsonSchema: jsonSchema}});
 jsonProvider.registerCompleters();
 secondEditor.provider = jsonProvider;
 

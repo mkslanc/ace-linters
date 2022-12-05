@@ -1,26 +1,24 @@
-import {LanguageService} from "./language-service";
+import {LanguageService, ServiceOptions} from "./language-service";
 import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
+import htmlService from "vscode-html-languageservice";
 
 var cssService = require('vscode-css-languageservice');
 
-//TODO:
 export class CssService implements LanguageService {
     $service: VSLanguageService;
-    session: Ace.EditSession;
+    doc: Ace.Document;
     $languageId: string;
     $formatConfig: CSSFormatConfiguration;
 
-    constructor(session: Ace.EditSession, configuration?: CSSFormatConfiguration) {
-        this.changeLanguageService(session);
-        this.$setFormatConfiguration(configuration);
+    constructor(doc: Ace.Document, options: ServiceOptions) {
+        this.changeLanguageService(options.mode);
     }
 
-    changeLanguageService(session?: Ace.EditSession, modeName?: string) {
-        let language = modeName ?? session?.getOption("mode").replace("ace/mode/", "") ?? "css";
-        switch (language) {
+    changeLanguageService(modeName?: string) {
+        switch (modeName) {
             case "less":
                 this.$languageId = "less";
                 this.$service = cssService.getLESSLanguageService();
@@ -35,25 +33,11 @@ export class CssService implements LanguageService {
                 this.$service = cssService.getCSSLanguageService();
                 break;
         }
-        if (session)
-            this.session = session;
-    }
-
-    $setFormatConfiguration(configuration?: CSSFormatConfiguration) {
-        if (!configuration) {
-            this.$formatConfig = {};
-        }
-        var options = this.session.getOptions();
-        this.$formatConfig.tabSize = configuration?.tabSize ?? options.tabSize;
-        this.$formatConfig.insertSpaces = configuration?.insertSpaces ?? options.useSoftTabs;
     }
 
     $getDocument() {
-        if (this.session) {
-            var doc = this.session.getDocument().getValue();
-            return cssService.TextDocument.create("file://test.css", this.$languageId, 1, doc);
-        }
-        return null;
+        var doc = this.doc.getValue(); //TODO: update
+        return htmlService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
     }
 
     format(range: Ace.Range) {

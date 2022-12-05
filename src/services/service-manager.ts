@@ -1,4 +1,4 @@
-import {LanguageService} from "./language-service";
+import {LanguageService, ServiceOptions} from "./language-service";
 import {CssService} from "./css-service";
 
 export class ServiceManager {
@@ -29,20 +29,16 @@ export class ServiceManager {
         return ServiceManager._instance;
     }
 
-    async addServiceInstance(uri: string, doc, options): Promise<LanguageService> {
+    async addServiceInstance(uri: string, doc, options: ServiceOptions): Promise<LanguageService> {
         if (!options["mode"] || !/^ace\/mode\//.test(options["mode"]))
             return;
         let resolvedMode = options["mode"]?.replace("ace/mode/", "");
-        var config = {
-            tabSize: options.tabSize,
-            insertSpaces: options.useSoftTabs
-        }
         try {
             let service = this.findServiceByExtension(resolvedMode);
             if (!service) {
                 throw "No such service";
             }
-            this.serviceInstances[uri] = new (await service.module)[service.name](doc, config);
+            this.serviceInstances[uri] = new (await service.module)[service.name](doc, options);
             return this.serviceInstances[uri];
         } catch (e) {
             throw "Couldn't resolve language service for " + resolvedMode;
