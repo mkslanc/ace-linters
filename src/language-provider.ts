@@ -27,18 +27,11 @@ export class LanguageProvider {
         }
         this.$init();
         this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.options);
+        this.validate();
         //TODO:
         this.$editor.on("change", () => {
             this.message.postMessage({type: 3, sessionId: this.$editor.session["id"], value: this.$editor.getValue()})
             this.validate();
-            var $setAnnotations = (annotations: Ace.Annotation[]) => {
-                this["off"]("validate", $setAnnotations);
-                this.$editor.session.clearAnnotations();
-                if (annotations && annotations.length > 0) {
-                    this.$editor.session.setAnnotations(annotations);
-                }
-            }
-            this["on"]("validate", $setAnnotations);
         });
     }
 
@@ -80,6 +73,14 @@ export class LanguageProvider {
 
     validate() {
         this.message.doValidation(this.$editor.session["id"]);
+        var $setAnnotations = (annotations: Ace.Annotation[]) => {
+            this["off"]("validate", $setAnnotations);
+            this.$editor.session.clearAnnotations();
+            if (annotations && annotations.length > 0) {
+                this.$editor.session.setAnnotations(annotations);
+            }
+        }
+        this["on"]("validate", $setAnnotations);
     }
 
     doHover(position: Ace.Point) {

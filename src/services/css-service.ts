@@ -3,7 +3,6 @@ import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
-import htmlService from "vscode-html-languageservice";
 
 var cssService = require('vscode-css-languageservice');
 
@@ -14,20 +13,22 @@ export class CssService implements LanguageService {
     $formatConfig: CSSFormatConfiguration;
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
+        this.doc = doc;
         this.changeLanguageService(options.mode);
+        this.$formatConfig = options.format;
     }
 
     changeLanguageService(modeName?: string) {
         switch (modeName) {
-            case "less":
+            case "ace/mode/less":
                 this.$languageId = "less";
                 this.$service = cssService.getLESSLanguageService();
                 break;
-            case "scss":
+            case "ace/mode/scss":
                 this.$languageId = "scss";
                 this.$service = cssService.getSCSSLanguageService();
                 break;
-            case "css":
+            case "ace/mode/css":
             default:
                 this.$languageId = "css";
                 this.$service = cssService.getCSSLanguageService();
@@ -35,9 +36,14 @@ export class CssService implements LanguageService {
         }
     }
 
+    //TODO:
+    setValue(value) {
+        this.doc.setValue(value);
+    }
+
     $getDocument() {
         var doc = this.doc.getValue(); //TODO: update
-        return htmlService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
+        return cssService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
     }
 
     format(range: Ace.Range) {

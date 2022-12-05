@@ -19,43 +19,50 @@ import {scssContent} from "./docs-example/scss-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {LanguageProvider} from "./language-provider";
 
-var editor = ace.edit("container");
-editor.setOptions({
-    enableBasicAutocompletion: true,
-    enableLiveAutocompletion: true
-});
 
-window["editor"] = editor;
+let modes = [
+    {name: "json",mode: JsonMode, content: jsonContent},
+    {name: "html", mode: HTMLMode, content: htmlContent},
+    {name: "css",mode: CSSMode, content: cssContent},
+    {name: "less",mode: LessMode, content: lessContent},
+    {name: "scss",mode: SCSSMode, content: scssContent},
+]
+let i = 0;
+var activeEditor;
+for (let mode of modes) {
+    let el = document.createElement("div");
+    let modeName = document.createElement("p");
+    modeName.innerText = mode.name;
+    modeName.style.margin = "0";
+    el.appendChild(modeName);
 
-var htmlMode = new HTMLMode();
-editor.setTheme(theme);
-editor.setOptions({"customScrollbar": true})
-editor.session.setValue(htmlContent);
-editor.session.setMode(htmlMode);
-var provider = window["provider"] = new LanguageProvider(editor, {});
-editor.provider = provider;
+    let editorContainer = document.createElement("div");
+    editorContainer.setAttribute("id", "container" + i);
+    editorContainer.style.height = "300px";
+    el.appendChild(editorContainer);
+    el.style.width = "49%";
+    el.style.float = "left";
+    document.body.appendChild(el);
 
-var secondEditor = ace.edit("newcontainer");
-secondEditor.setOptions({
-    enableBasicAutocompletion: true,
-    enableLiveAutocompletion: true
-});
-secondEditor.setTheme(theme);
-secondEditor.setOptions({"customScrollbar": true});
-var jsonMode = new JsonMode();
-secondEditor.setValue(jsonContent);
-secondEditor.session.setMode(jsonMode);
-var jsonProvider = new LanguageProvider(secondEditor, {other: {jsonSchema: jsonSchema}});
-jsonProvider.registerCompleters();
-secondEditor.provider = jsonProvider;
-
-var activeEditor = editor;
-editor.on("focus", () => {
-    activeEditor = editor;
-});
-secondEditor.on("focus", () => {
-    activeEditor = secondEditor;
-});
+    let editor = ace.edit("container" + i);
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true
+    });
+    editor.setTheme(theme);
+    editor.setOptions({"customScrollbar": true})
+    editor.session.setValue(mode.content);
+    editor.session.setMode(new mode.mode());
+    let options = mode.name == "json" ? {other: {jsonSchema: jsonSchema}} : {};
+    var provider = new LanguageProvider(editor, options);
+    editor.provider = provider;
+    editor.provider.registerCompleters();
+    editor.on("focus", () => {
+        activeEditor = editor;
+    });
+    new DescriptionTooltip(editor);
+    i++;
+}
 
 var menuKb = new HashHandler([
     {
@@ -75,5 +82,3 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
         command.exec();
     }
 });
-new DescriptionTooltip(editor);
-new DescriptionTooltip(secondEditor);
