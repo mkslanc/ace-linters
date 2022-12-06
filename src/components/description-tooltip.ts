@@ -5,6 +5,11 @@ var {Tooltip} = require("ace-code/src/tooltip");
 
 export class DescriptionTooltip extends Tooltip{
     private provider: LanguageProvider;
+
+    $timer: NodeJS.Timeout;
+    row?: number;
+    column?: number;
+
     constructor(provider: LanguageProvider) {
         super();
         this.provider = provider;
@@ -24,10 +29,6 @@ export class DescriptionTooltip extends Tooltip{
         this.getElement().style.whiteSpace = "pre-wrap";
     }
 
-    $timer;
-    row?: number;
-    column?: number;
-
     update () {
         clearTimeout(this.$timer);
 
@@ -36,12 +37,10 @@ export class DescriptionTooltip extends Tooltip{
 
 
         this.provider.doHover(screenPos);
-        var description;
         var $setHover = (hover) => {
             this.provider["off"]("hover", $setHover);
 
-            //@ts-ignore
-            description = this.provider.getTooltipText(hover);
+            let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();
                 return;
