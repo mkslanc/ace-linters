@@ -28,7 +28,7 @@ let modes = [
     {name: "scss",mode: SCSSMode, content: scssContent},
 ]
 let i = 0;
-var activeEditor;
+var activeProvider: LanguageProvider;
 for (let mode of modes) {
     let el = document.createElement("div");
     let modeName = document.createElement("p");
@@ -54,13 +54,11 @@ for (let mode of modes) {
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
     let options = mode.name == "json" ? {other: {jsonSchema: jsonSchema}} : {};
-    var provider = new LanguageProvider(editor, options);
-    editor.provider = provider;
-    editor.provider.registerCompleters();
+    let provider = new LanguageProvider(editor, options);
+    provider.registerCompleters();
     editor.on("focus", () => {
-        activeEditor = editor;
+        activeProvider = provider;
     });
-    new DescriptionTooltip(editor);
     i++;
 }
 
@@ -69,7 +67,7 @@ var menuKb = new HashHandler([
         bindKey: "Ctrl-`",
         name: "format",
         exec: function () {
-            activeEditor.provider.format();
+            activeProvider.format();
         }
     }
 ]);

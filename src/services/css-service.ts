@@ -7,7 +7,7 @@ import {BaseService} from "./base-service";
 
 var cssService = require('vscode-css-languageservice');
 
-export class CssService extends BaseService implements LanguageService {
+export class CssService extends BaseService {
     $service: VSLanguageService;
     $languageId: string;
     $formatConfig: CSSFormatConfiguration;

@@ -8,7 +8,7 @@ import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTy
 
 var jsonService = require('vscode-json-languageservice');
 
-export class JsonService extends BaseService implements LanguageService {
+export class JsonService extends BaseService {
     $service: VSLanguageService;
     private $jsonSchema: JSONSchema;
     $formatConfig: FormattingOptions = {tabSize: 4, insertSpaces: true};
