@@ -39,6 +39,12 @@ ctx.onmessage = async (ev) => {
             let doc = new Document(message.value);
             await manager.addServiceInstance(uri, doc, options);
             break;
+        case MessageType.changeMode:
+            let newOptions: ServiceOptions = message.value;
+            let service = manager.getServiceInstance(uri);
+            let newDoc = new Document(service.doc.getValue());
+            manager.removeServiceInstance(uri);
+            await manager.addServiceInstance(uri, newDoc, newOptions);
+            break;
     }
 };
-//TODO: on mode change - unregister/register

@@ -15,7 +15,7 @@ export class JsonService extends BaseService implements LanguageService {
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
         super(doc, options);
-        this.$jsonSchema = options?.other.jsonSchema;
+        this.$jsonSchema = options?.other?.jsonSchema;
         this.$formatConfig = options.format;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {

@@ -36,13 +36,18 @@ export class ServiceManager {
         try {
             let service = this.findServiceByExtension(resolvedMode);
             if (!service) {
-                throw "No such service";
+                console.log("No service registered for " + resolvedMode);
+                return;
             }
             this.serviceInstances[uri] = new (await service.module)[service.name](doc, options);
             return this.serviceInstances[uri];
         } catch (e) {
             throw "Couldn't resolve language service for " + resolvedMode;
         }
+    }
+
+    removeServiceInstance(uri: string) {
+        this.serviceInstances[uri] = undefined;
     }
 
     getServiceInstance(uri: string): LanguageService {

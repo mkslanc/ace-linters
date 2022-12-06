@@ -1,4 +1,5 @@
 import {Ace} from "ace-code";
+import {ServiceOptions} from "./services/language-service";
 
 export class InitMessage {
     type: MessageType = MessageType.init;
@@ -77,6 +78,17 @@ export class DeltasMessage {
     }
 }
 
+export class ChangeModeMessage {
+    type: MessageType = MessageType.changeMode;
+    sessionId: string;
+    value: ServiceOptions;
+
+    constructor(sessionId: string, value: ServiceOptions) {
+        this.sessionId = sessionId;
+        this.value = value;
+    }
+}
+
 export enum MessageType {
-    init, format, complete, change, hover, validate, applyDelta
+    init, format, complete, change, hover, validate, applyDelta, changeMode
 }

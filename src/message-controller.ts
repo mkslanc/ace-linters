@@ -1,6 +1,6 @@
 import {Ace} from "ace-code";
 import {
-    ChangeMessage,
+    ChangeMessage, ChangeModeMessage,
     CompleteMessage, DeltasMessage,
     FormatMessage,
     HoverMessage,
@@ -58,6 +58,10 @@ export class MessageController {
         } else {
             this.worker.postMessage(new DeltasMessage(sessionId, deltas));
         }
+    }
+
+    changeMode(sessionId: string, options: ServiceOptions) {
+        this.worker.postMessage(new ChangeModeMessage(sessionId, options));
     }
 
     postMessage(message: any ) {

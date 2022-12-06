@@ -52,12 +52,12 @@ export class LanguageProvider {
 
     private $adaptOptions() {
         let editorOptions = this.$editor.getOptions();
-        this.options.mode ??= editorOptions.mode;
+        this.options.mode = editorOptions.mode;
         if (!this.options.format) {
             this.options.format = {tabSize: null, insertSpaces: null};
         }
-        this.options.format.tabSize ??= editorOptions.tabSize;
-        this.options.format.insertSpaces ??= editorOptions.useSoftTabs;
+        this.options.format.tabSize = editorOptions.tabSize;
+        this.options.format.insertSpaces = editorOptions.useSoftTabs;
     }
 
     private $init() {
@@ -88,6 +88,12 @@ export class LanguageProvider {
             }
         });
         this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.options);
+        // @ts-ignore
+        this.$editor.on("changeMode", () => {
+            this.$adaptOptions();
+            this.message.changeMode(this.$editor.session["id"], this.options);
+            //TODO: validate after mode change?
+        });
     }
 
     validate() {
