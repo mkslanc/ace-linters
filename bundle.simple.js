@@ -37149,149 +37149,144 @@ if (true) {
 
 /***/ }),
 
-/***/ 5:
+/***/ 4977:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var oop = __webpack_require__(9359);
-var event = __webpack_require__(7989);
-var Range = (__webpack_require__(9082).Range);
-var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
-function DescriptionTooltip(editor) {
-    if (editor.descriptionTooltip)
-        return;
-    Tooltip.call(this, editor.container);
-    editor.descriptionTooltip = this;
-    this.editor = editor;
-    this.update = this.update.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseOut = this.onMouseOut.bind(this);
-    event.addListener(editor.renderer.scroller, "mousemove", this.onMouseMove);
-    event.addListener(editor.renderer.content, "mouseout", this.onMouseOut);
-}
-oop.inherits(DescriptionTooltip, Tooltip);
-(function () {
-    this.token = {};
-    this.range = new Range();
-    this.update = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var r, pos, row, col, screenPos, description, $setHover;
-            var _this = this;
-            return __generator(this, function (_a) {
-                this.$timer = null;
-                r = this.editor.renderer;
-                if (this.lastT - (r.timeStamp || 0) > 1000) {
-                    r.rect = null;
-                    r.timeStamp = this.lastT;
-                    this.maxHeight = window.innerHeight;
-                    this.maxWidth = window.innerWidth;
-                }
-                pos = r.pixelToScreenCoordinates(this.x, this.y);
-                row = pos.row;
-                col = pos.column;
-                screenPos = {
-                    row: row,
-                    column: col < 0 ? 0 : col
-                };
-                this.editor.provider.doHover(screenPos);
-                $setHover = function (hover) {
-                    var _a, _b, _c, _d;
-                    //@ts-ignore
-                    description = _this.editor.provider.getTooltipText(hover);
-                    _this.editor.provider.off("hover", $setHover);
-                    if (!description) {
-                        _this.hide();
-                        return;
-                    }
-                    var descriptionText = description.text;
-                    if (descriptionText === "") {
-                        _this.hide();
-                        return;
-                    }
-                    if (_this.descriptionText !== descriptionText) {
-                        _this.setHtml(descriptionText);
-                        _this.width = _this.getWidth();
-                        _this.height = _this.getHeight();
-                        _this.descriptionText = descriptionText;
-                    }
-                    var session = _this.editor.session;
-                    var docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
-                    var token = session.getTokenAt(docPos.row, docPos.column + 1);
-                    console.log("Row: ".concat(docPos.row, "  Column: ").concat(docPos.column + 1));
-                    var pos = _this.editor.renderer.textToScreenCoordinates((_b = ((_a = description.range) === null || _a === void 0 ? void 0 : _a.start.row) + 1) !== null && _b !== void 0 ? _b : docPos.row, (_d = (_c = description.range) === null || _c === void 0 ? void 0 : _c.start.column) !== null && _d !== void 0 ? _d : token.start);
-                    console.log(pos);
-                    console.log(token.start);
-                    _this.show(null, pos.pageX, pos.pageY);
-                };
-                //@ts-ignore
-                this.editor.provider.on("hover", $setHover);
-                return [2 /*return*/];
-            });
-        });
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
     };
-    this.onMouseMove = function (e) {
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.DescriptionTooltip = void 0;
+var event = __webpack_require__(7989);
+var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
+var DescriptionTooltip = /** @class */ (function (_super) {
+    __extends(DescriptionTooltip, _super);
+    function DescriptionTooltip(provider) {
+        var _this = _super.call(this) || this;
+        _this.provider = provider;
+        Tooltip.call(_this, provider.editor.container);
+        _this.onMouseMove = _this.onMouseMove.bind(_this);
+        _this.onMouseOut = _this.onMouseOut.bind(_this);
+        _this.onMouseDown = _this.onMouseDown.bind(_this);
+        _this.onTooltipMouseOut = _this.onTooltipMouseOut.bind(_this);
+        event.addListener(_this.provider.editor.renderer.scroller, "mousemove", _this.onMouseMove);
+        event.addListener(_this.provider.editor.renderer.scroller, "mouseout", _this.onMouseOut);
+        event.addListener(_this.provider.editor.renderer.scroller, "mousedown", _this.onMouseDown);
+        event.addListener(_this.getElement(), "mouseout", _this.onTooltipMouseOut);
+        _this.getElement().style.pointerEvents = "auto";
+        _this.getElement().style.whiteSpace = "pre-wrap";
+        return _this;
+    }
+    DescriptionTooltip.prototype.update = function () {
+        var _this = this;
+        clearTimeout(this.$timer);
+        var renderer = this.provider.editor.renderer;
+        var screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
+        this.provider.doHover(screenPos);
+        var $setHover = function (hover) {
+            var _a, _b, _c, _d;
+            _this.provider["off"]("hover", $setHover);
+            var description = _this.provider.getTooltipText(hover);
+            if (!description || !description.text) {
+                _this.hide();
+                return;
+            }
+            var descriptionText = description.text;
+            var session = _this.provider.editor.session;
+            var docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
+            var token = session.getTokenAt(docPos.row, docPos.column + 1);
+            var row = (_b = (_a = description.range) === null || _a === void 0 ? void 0 : _a.start.row) !== null && _b !== void 0 ? _b : docPos.row;
+            var column = (_d = (_c = description.range) === null || _c === void 0 ? void 0 : _c.start.column) !== null && _d !== void 0 ? _d : token.start;
+            if (_this.descriptionText != descriptionText) {
+                _this.hide();
+                _this.setHtml(descriptionText);
+                _this.descriptionText = descriptionText;
+            }
+            else if (_this.row == row && _this.column == column && _this.isOpen) {
+                return;
+            }
+            _this.row = row;
+            _this.column = column;
+            _this.$timer = setTimeout(function () {
+                var position = renderer.textToScreenCoordinates(row, column);
+                var cursorPos = _this.provider.editor.getCursorPosition();
+                _this.show(null, position.pageX, position.pageY);
+                var labelHeight = _this.getElement().getBoundingClientRect().height;
+                var rect = renderer.scroller.getBoundingClientRect();
+                var isTopdown = true;
+                if (row > cursorPos.row)
+                    // don't obscure cursor
+                    isTopdown = true;
+                else if (row < cursorPos.row)
+                    // don't obscure cursor
+                    isTopdown = false;
+                if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
+                    // not enough space above us
+                    isTopdown = true;
+                else if (position.pageY + labelHeight > rect.bottom)
+                    isTopdown = false;
+                if (!isTopdown)
+                    position.pageY -= labelHeight;
+                else
+                    position.pageY += renderer.lineHeight;
+                _this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+                _this.show(null, position.pageX, position.pageY);
+            }, 500);
+        };
+        //@ts-ignore
+        this.provider.on("hover", $setHover);
+    };
+    ;
+    DescriptionTooltip.prototype.onMouseMove = function (e) {
         this.x = e.clientX;
         this.y = e.clientY;
-        if (this.isOpen) {
-            this.lastT = e.timeStamp;
-            //this.setPosition(this.x, this.y);
-        }
-        if (!this.$timer)
-            this.$timer = setTimeout(this.update, 10);
+        this.update();
     };
-    this.onMouseOut = function (e) {
+    ;
+    DescriptionTooltip.prototype.onMouseOut = function (e) {
+        if (e && e.relatedTarget == this.getElement())
+            return;
+        this.$hide();
+    };
+    ;
+    DescriptionTooltip.prototype.onTooltipMouseOut = function (e) {
+        //@ts-ignore
         if (e && e.currentTarget.contains(e.relatedTarget))
             return;
+        this.onMouseMove(e);
+    };
+    DescriptionTooltip.prototype.onMouseDown = function (e) {
+        this.$hide();
+    };
+    ;
+    DescriptionTooltip.prototype.$hide = function () {
+        clearTimeout(this.$timer);
         this.hide();
-        this.$timer = clearTimeout(this.$timer);
     };
-    this.setPosition = function (x, y) {
-        Tooltip.prototype.setPosition.call(this, x, y);
+    DescriptionTooltip.prototype.destroy = function () {
+        this.$hide();
+        event.removeListener(this.provider.editor.renderer.scroller, "mousemove", this.onMouseMove);
+        event.removeListener(this.provider.editor.renderer.scroller, "mouseout", this.onMouseOut);
+        event.removeListener(this.provider.editor.renderer.scroller, "mousedown", this.onMouseDown);
+        event.removeListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
     };
-    this.destroy = function () {
-        this.onMouseOut();
-        event.removeListener(this.editor.renderer.scroller, "mousemove", this.onMouseMove);
-        event.removeListener(this.editor.renderer.content, "mouseout", this.onMouseOut);
-        delete this.editor.descriptionTooltip;
-    };
-}).call(DescriptionTooltip.prototype);
+    ;
+    return DescriptionTooltip;
+}(Tooltip));
 exports.DescriptionTooltip = DescriptionTooltip;
 
 
@@ -37425,11 +37420,13 @@ var message_controller_1 = __webpack_require__(4896);
 var message_types_1 = __webpack_require__(6653);
 var oop = __webpack_require__(9359);
 var event_emitter_1 = __webpack_require__(3056);
+var description_tooltip_1 = __webpack_require__(4977);
 var showdown = __webpack_require__(3787);
 var LanguageProvider = /** @class */ (function () {
     function LanguageProvider(editor, options, markdownConverter) {
         this.deltaQueue = [];
-        this.$editor = editor;
+        this.editor = editor;
+        this.$descriptionTooltip = new description_tooltip_1.DescriptionTooltip(this);
         this.options = options;
         this.$adaptOptions();
         if (markdownConverter) {
@@ -37440,7 +37437,7 @@ var LanguageProvider = /** @class */ (function () {
         }
         this.$init();
         this.validate();
-        this.$editor.session.doc.on("change", this.$changeListener.bind(this), true);
+        this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
     }
     LanguageProvider.prototype.$changeListener = function (delta) {
         if (delta.action == "insert")
@@ -37460,11 +37457,11 @@ var LanguageProvider = /** @class */ (function () {
             _this["off"]("changed", changed);
         };
         this["on"]("changed", changed);
-        this.message.change(this.$editor.session["id"], deltas, this.$editor.session.getValue(), this.$editor.session.doc.getLength());
+        this.message.change(this.editor.session["id"], deltas, this.editor.session.getValue(), this.editor.session.doc.getLength());
     };
     ;
     LanguageProvider.prototype.$adaptOptions = function () {
-        var editorOptions = this.$editor.getOptions();
+        var editorOptions = this.editor.getOptions();
         this.options.mode = editorOptions.mode;
         if (!this.options.format) {
             this.options.format = { tabSize: null, insertSpaces: null };
@@ -37475,7 +37472,7 @@ var LanguageProvider = /** @class */ (function () {
     LanguageProvider.prototype.$init = function () {
         var _this = this;
         this.message = message_controller_1.MessageController.instance;
-        this.message["on"]("message-" + this.$editor.session["id"], function (e) {
+        this.message["on"]("message-" + this.editor.session["id"], function (e) {
             var message = e.data;
             switch (message.type) {
                 case message_types_1.MessageType.format:
@@ -37500,28 +37497,28 @@ var LanguageProvider = /** @class */ (function () {
                     break;
             }
         });
-        this.message.init(this.$editor.session["id"], this.$editor.getValue(), this.options);
+        this.message.init(this.editor.session["id"], this.editor.getValue(), this.options);
         // @ts-ignore
-        this.$editor.on("changeMode", function () {
+        this.editor.on("changeMode", function () {
             _this.$adaptOptions();
-            _this.message.changeMode(_this.$editor.session["id"], _this.options);
+            _this.message.changeMode(_this.editor.session["id"], _this.options);
             //TODO: validate after mode change?
         });
     };
     LanguageProvider.prototype.validate = function () {
         var _this = this;
-        this.message.doValidation(this.$editor.session["id"]);
+        this.message.doValidation(this.editor.session["id"]);
         var $setAnnotations = function (annotations) {
             _this["off"]("validate", $setAnnotations);
-            _this.$editor.session.clearAnnotations();
+            _this.editor.session.clearAnnotations();
             if (annotations && annotations.length > 0) {
-                _this.$editor.session.setAnnotations(annotations);
+                _this.editor.session.setAnnotations(annotations);
             }
         };
         this["on"]("validate", $setAnnotations);
     };
     LanguageProvider.prototype.doHover = function (position) {
-        this.message.doHover(this.$editor.session["id"], position);
+        this.message.doHover(this.editor.session["id"], position);
     };
     LanguageProvider.prototype.getTooltipText = function (hover) {
         if (!hover)
@@ -37530,32 +37527,32 @@ var LanguageProvider = /** @class */ (function () {
         return { text: text, range: hover.range };
     };
     LanguageProvider.prototype.format = function () {
-        var row = this.$editor.session.getLength();
-        var column = this.$editor.session.getLine(row).length - 1;
-        var selectionRanges = this.$editor.getSelection().getAllRanges();
+        var row = this.editor.session.getLength();
+        var column = this.editor.session.getLine(row).length - 1;
+        var selectionRanges = this.editor.getSelection().getAllRanges();
         if (selectionRanges.length > 0 && !selectionRanges[0].isEmpty()) {
             for (var _i = 0, selectionRanges_1 = selectionRanges; _i < selectionRanges_1.length; _i++) {
                 var range = selectionRanges_1[_i];
-                this.message.format(this.$editor.session["id"], range);
+                this.message.format(this.editor.session["id"], range);
             }
         }
         else {
-            this.message.format(this.$editor.session["id"], new range_1.Range(0, 0, row, column));
+            this.message.format(this.editor.session["id"], new range_1.Range(0, 0, row, column));
         }
     };
     LanguageProvider.prototype.$applyFormat = function (edits) {
         for (var _i = 0, _a = edits.reverse(); _i < _a.length; _i++) {
             var edit = _a[_i];
-            this.$editor.session.doc.replace((0, type_converters_1.toRange)(edit.range), edit.newText);
+            this.editor.session.doc.replace((0, type_converters_1.toRange)(edit.range), edit.newText);
         }
     };
     LanguageProvider.prototype.doComplete = function () {
-        var cursor = this.$editor.getCursorPosition();
-        this.message.doComplete(this.$editor.session["id"], cursor);
+        var cursor = this.editor.getCursorPosition();
+        this.message.doComplete(this.editor.session["id"], cursor);
     };
     LanguageProvider.prototype.registerCompleters = function () {
         var _this = this;
-        this.$editor.completers = [
+        this.editor.completers = [
             {
                 getCompletions: function (editor, session, pos, prefix, callback) { return __awaiter(_this, void 0, void 0, function () {
                     var $setCompletions;
@@ -40324,7 +40321,7 @@ var html_example_1 = __webpack_require__(3417);
 var event = __webpack_require__(7989);
 var HashHandler = (__webpack_require__(7116).HashHandler);
 var keyUtil = __webpack_require__(1797);
-var DescriptionTooltip = (__webpack_require__(5).DescriptionTooltip);
+var DescriptionTooltip = (__webpack_require__(4977).DescriptionTooltip);
 var html_1 = __webpack_require__(5528);
 var css_1 = __webpack_require__(8771);
 var less_1 = __webpack_require__(4629);
@@ -40345,7 +40342,7 @@ var modes = [
     { name: "scss", mode: scss_1.Mode, content: scss_example_1.scssContent },
 ];
 var i = 0;
-var activeEditor;
+var activeProvider;
 var _loop_1 = function (mode) {
     var el = document.createElement("div");
     var modeName = document.createElement("p");
@@ -40369,16 +40366,13 @@ var _loop_1 = function (mode) {
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
     var options = mode.name == "json" ? { other: { jsonSchema: json_example_1.jsonSchema } } : {};
-    provider = new language_provider_1.LanguageProvider(editor, options);
-    editor.provider = provider;
-    editor.provider.registerCompleters();
+    var provider = new language_provider_1.LanguageProvider(editor, options);
+    provider.registerCompleters();
     editor.on("focus", function () {
-        activeEditor = editor;
+        activeProvider = provider;
     });
-    new DescriptionTooltip(editor);
     i++;
 };
-var provider;
 for (var _i = 0, modes_1 = modes; _i < modes_1.length; _i++) {
     var mode = modes_1[_i];
     _loop_1(mode);
@@ -40388,7 +40382,7 @@ var menuKb = new HashHandler([
         bindKey: "Ctrl-`",
         name: "format",
         exec: function () {
-            activeEditor.provider.format();
+            activeProvider.format();
         }
     }
 ]);
