@@ -17,13 +17,15 @@ export class DescriptionTooltip extends Tooltip{
 
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseOut = this.onMouseOut.bind(this);
-        this.onMouseDown = this.onMouseDown.bind(this);
+        this.$hide = this.$hide.bind(this);
         this.onTooltipMouseOut = this.onTooltipMouseOut.bind(this);
 
         event.addListener(this.provider.editor.renderer.scroller, "mousemove", this.onMouseMove);
         event.addListener(this.provider.editor.renderer.scroller, "mouseout", this.onMouseOut);
-        event.addListener(this.provider.editor.renderer.scroller, "mousedown", this.onMouseDown);
+        event.addListener(this.provider.editor.renderer.scroller, "mousedown", this.$hide);
         event.addListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
+        this.provider.editor.on("change", this.$hide);
+        this.provider.editor.on("mousewheel", this.$hide);
 
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
@@ -120,10 +122,6 @@ export class DescriptionTooltip extends Tooltip{
         this.onMouseMove(e);
     }
 
-    onMouseDown (e: MouseEvent) {
-        this.$hide();
-    };
-
     $hide() {
         clearTimeout(this.$timer);
         this.hide();
@@ -133,8 +131,10 @@ export class DescriptionTooltip extends Tooltip{
         this.$hide();
         event.removeListener(this.provider.editor.renderer.scroller, "mousemove", this.onMouseMove);
         event.removeListener(this.provider.editor.renderer.scroller, "mouseout", this.onMouseOut);
-        event.removeListener(this.provider.editor.renderer.scroller, "mousedown", this.onMouseDown);
+        event.removeListener(this.provider.editor.renderer.scroller, "mousedown", this.$hide);
         event.removeListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
+        this.provider.editor.off("change", this.$hide);
+        this.provider.editor.off("mousewheel", this.$hide);
     };
 
 }
