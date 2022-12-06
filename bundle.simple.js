@@ -37181,12 +37181,14 @@ var DescriptionTooltip = /** @class */ (function (_super) {
         Tooltip.call(_this, provider.editor.container);
         _this.onMouseMove = _this.onMouseMove.bind(_this);
         _this.onMouseOut = _this.onMouseOut.bind(_this);
-        _this.onMouseDown = _this.onMouseDown.bind(_this);
+        _this.$hide = _this.$hide.bind(_this);
         _this.onTooltipMouseOut = _this.onTooltipMouseOut.bind(_this);
         event.addListener(_this.provider.editor.renderer.scroller, "mousemove", _this.onMouseMove);
         event.addListener(_this.provider.editor.renderer.scroller, "mouseout", _this.onMouseOut);
-        event.addListener(_this.provider.editor.renderer.scroller, "mousedown", _this.onMouseDown);
+        event.addListener(_this.provider.editor.renderer.scroller, "mousedown", _this.$hide);
         event.addListener(_this.getElement(), "mouseout", _this.onTooltipMouseOut);
+        _this.provider.editor.on("change", _this.$hide);
+        _this.provider.editor.on("mousewheel", _this.$hide);
         _this.getElement().style.pointerEvents = "auto";
         _this.getElement().style.whiteSpace = "pre-wrap";
         return _this;
@@ -37269,10 +37271,6 @@ var DescriptionTooltip = /** @class */ (function (_super) {
             return;
         this.onMouseMove(e);
     };
-    DescriptionTooltip.prototype.onMouseDown = function (e) {
-        this.$hide();
-    };
-    ;
     DescriptionTooltip.prototype.$hide = function () {
         clearTimeout(this.$timer);
         this.hide();
@@ -37281,8 +37279,10 @@ var DescriptionTooltip = /** @class */ (function (_super) {
         this.$hide();
         event.removeListener(this.provider.editor.renderer.scroller, "mousemove", this.onMouseMove);
         event.removeListener(this.provider.editor.renderer.scroller, "mouseout", this.onMouseOut);
-        event.removeListener(this.provider.editor.renderer.scroller, "mousedown", this.onMouseDown);
+        event.removeListener(this.provider.editor.renderer.scroller, "mousedown", this.$hide);
         event.removeListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
+        this.provider.editor.off("change", this.$hide);
+        this.provider.editor.off("mousewheel", this.$hide);
     };
     ;
     return DescriptionTooltip;
