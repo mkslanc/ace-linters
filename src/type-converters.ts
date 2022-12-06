@@ -9,7 +9,7 @@ import {
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
-import {Tooltip} from "./workers/language-worker";
+import {Tooltip, TooltipContent} from "./services/language-service";
 
 export function fromRange(range: Ace.Range): Range | undefined {
     if (!range) {
@@ -52,7 +52,7 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
-export function toCompletions(completionList: CompletionList) {
+export function toCompletions(completionList: CompletionList, markdownConverter: MarkDownConverter) {
     return completionList && completionList.items.map((item) => {
             let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
             let text = item.textEdit?.newText ?? item.insertText ?? item.label;
@@ -61,10 +61,17 @@ export function toCompletions(completionList: CompletionList) {
             let completion = {
                 meta: kind,
                 caption: item.label,
-                doc: item.documentation,
                 command: command,
                 range: range
             };
+            let doc = fromMarkupContent(item.documentation);
+            if (doc) {
+                if (doc.type === TooltipType.markdown) {
+                    completion["docHTML"] = markdownConverter.makeHtml(doc.text);
+                } else {
+                    completion["docText"] = doc.text;
+                }
+            }
             if (item.insertTextFormat == InsertTextFormat.Snippet) {
                 completion["snippet"] = text;
             } else {
@@ -96,13 +103,8 @@ export function toTooltip(hover: Hover): Tooltip {
         return;
     }
     if (MarkupContent.is(hover.contents)) {
-        if (hover.contents.kind === MarkupKind.Markdown) {
-            content = {type: TooltipType.markdown, text: hover.contents.value};
-        } else {
-            content = {type: TooltipType.plainText, text: hover.contents.value};
-        }
+        content = fromMarkupContent(hover.contents);
     } else if (MarkedString.is(hover.contents)) {
-
         content = {type: TooltipType.markdown, text: "```" + (hover.contents as any).value + "```"};
     } else if (Array.isArray(hover.contents)) {
         var contents = hover.contents.map((el) => {
@@ -118,6 +120,20 @@ export function toTooltip(hover: Hover): Tooltip {
     let tooltip: Tooltip = {content: content, range: toRange(hover.range)};
     return tooltip;
 }
+
+export function fromMarkupContent(content?: string | MarkupContent): TooltipContent {
+    if (!content)
+        return;
+    if (typeof content === "string") {
+        return {type: TooltipType.plainText, text: content};
+    }
+    if (content.kind === MarkupKind.Markdown) {
+        return {type: TooltipType.markdown, text: content.value};
+    } else {
+        return {type: TooltipType.plainText, text: content.value};
+    }
+}
+
 
 export enum TooltipType {
     plainText,

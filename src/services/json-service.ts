@@ -1,19 +1,22 @@
-import {LanguageWorker} from "./language-worker";
-import {FormattingOptions, JSONSchema, LanguageService} from "vscode-json-languageservice";
+import {LanguageService, ServiceOptions} from "./language-service";
+import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations, toCompletions, toTooltip} from "../type-converters";
+import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
 import {TextEdit} from "vscode-languageserver-types";
+import {BaseService} from "./base-service";
+import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
 var jsonService = require('vscode-json-languageservice');
 
-export class JsonWorker implements LanguageWorker {
-    $service: LanguageService;
-    session: Ace.EditSession;
+export class JsonService extends BaseService implements LanguageService {
+    $service: VSLanguageService;
     private $jsonSchema: JSONSchema;
-    $formatConfig: FormattingOptions;
+    $formatConfig: FormattingOptions = {tabSize: 4, insertSpaces: true};
 
-    constructor(session: Ace.EditSession, jsonSchema?: JSONSchema, configuration?: FormattingOptions) {
-        this.$jsonSchema = jsonSchema;
+    constructor(doc: Ace.Document, options: ServiceOptions) {
+        super(doc, options);
+        this.$jsonSchema = options?.other?.jsonSchema;
+        this.$formatConfig = options.format;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
                 if (this.$jsonSchema) //TODO: make it with url resolving?
@@ -22,25 +25,11 @@ export class JsonWorker implements LanguageWorker {
             }
         });
         this.$service.configure({allowComments: false, schemas: [{fileMatch: ["test.json"], uri: "schema.json"}]})
-        this.session = session;
-        this.$setFormatConfiguration(configuration);
-    }
-
-    $setFormatConfiguration(configuration?: FormattingOptions) {
-        if (!configuration) {
-            this.$formatConfig = {tabSize: 4, insertSpaces: true};
-        }
-        var options = this.session.getOptions();
-        this.$formatConfig.tabSize = configuration?.tabSize ?? options.tabSize;
-        this.$formatConfig.insertSpaces = configuration?.insertSpaces ?? options.useSoftTabs;
     }
 
     $getDocument() {
-        if (this.session) {
-            var doc = this.session.getDocument().getValue();
-            return jsonService.TextDocument.create("test.json", "json", 1, doc);
-        }
-        return null;
+        var doc = this.doc.getValue(); //TODO: update
+        return jsonService.TextDocument.create("test.json", "json", 1, doc);
     }
 
     format(range: Ace.Range): TextEdit[] {
@@ -73,14 +62,18 @@ export class JsonWorker implements LanguageWorker {
         return toAnnotations(await diagnostics);
     }
 
-    async doComplete(position: Ace.Point) {
+    async doComplete(position: Ace.Point): Promise<CompletionList> {
         let document = this.$getDocument();
         if (!document) {
             return null;
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
-        return toCompletions(completions);
+        return completions;
+    }
+
+    setSchema(schema: JSONSchema) {
+        this.$jsonSchema = schema;
     }
 
     resetSchema(uri: string): boolean {

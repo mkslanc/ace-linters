@@ -6,39 +6,8 @@
 
 </head>
 <body>
-Language:
-<select id="lang">
-    <option value="html">HTML</option>
-    <option value="css">CSS</option>
-    <option value="less">LESS</option>
-    <option value="scss">SCSS</option>
-    <option value="json">JSON</option>
-</select><br>
-<div id="container" style="width: 100%; height: 300px">
 
-</div>
 <script src="bundle.simple.js"></script>
-<script>
-    var lang = document.getElementById("lang");
-    var provider = window["provider"];
-    lang.onchange = async () => {
-        if (lang.value && window[lang.value]) {
-            var session = window.editor.session;
-            session.setMode(window[lang.value].mode);
-            session.setValue(window[lang.value].content);
-            provider = window["provider"] = window[lang.value].provider;
-            if (provider.worker.changeLanguageService !== undefined) {
-                provider.worker.changeLanguageService(undefined, lang.value);
-            }
-            window.editor.on("input", () => {
-                provider.validate();
-            });
 
-            provider.registerCompleters();
-            await provider.validate();
-        }
-    };
-    provider.registerCompleters();
-</script>
 </body>
 </html>

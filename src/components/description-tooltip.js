@@ -42,33 +42,41 @@ oop.inherits(DescriptionTooltip, Tooltip);
             row: row,
             column: col < 0 ? 0 : col
         };
+        this.editor.provider.doHover(screenPos);
 
-        var description = await window["provider"].doHover(screenPos);
-        if (!description) {
-            this.hide();
-            return;
-        }
-        var descriptionText = description.text;
+        var description;
+        var $setHover = (hover) => {
+            //@ts-ignore
+            description = this.editor.provider.getTooltipText(hover);
+            this.editor.provider.off("hover", $setHover);
+            if (!description) {
+                this.hide();
+                return;
+            }
+            var descriptionText = description.text;
 
-        if (descriptionText === "") {
-            this.hide();
-            return;
-        }
-        if (this.descriptionText != descriptionText) {
-            this.setHtml(descriptionText);
-            this.width = this.getWidth();
-            this.height = this.getHeight();
-            this.descriptionText = descriptionText;
-        }
+            if (descriptionText === "") {
+                this.hide();
+                return;
+            }
+            if (this.descriptionText !== descriptionText) {
+                this.setHtml(descriptionText);
+                this.width = this.getWidth();
+                this.height = this.getHeight();
+                this.descriptionText = descriptionText;
+            }
 
-        var session = this.editor.session;
-        var docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
-        var token = session.getTokenAt(docPos.row, docPos.column + 1);
-        console.log(`Row: ${docPos.row}  Column: ${docPos.column + 1}`);
-        var pos = this.editor.renderer.textToScreenCoordinates(description.range?.start.row + 1 ?? docPos.row, description.range?.start.column ?? token.start);
-        console.log(pos);
-        console.log(token.start);
-        this.show(null, pos.pageX, pos.pageY);
+            var session = this.editor.session;
+            var docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
+            var token = session.getTokenAt(docPos.row, docPos.column + 1);
+            console.log(`Row: ${docPos.row}  Column: ${docPos.column + 1}`);
+            var pos = this.editor.renderer.textToScreenCoordinates(description.range?.start.row + 1 ?? docPos.row, description.range?.start.column ?? token.start);
+            console.log(pos);
+            console.log(token.start);
+            this.show(null, pos.pageX, pos.pageY);
+        };
+        //@ts-ignore
+        this.editor.provider.on("hover", $setHover);
     };
 
     this.onMouseMove = function (e) {

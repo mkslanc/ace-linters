@@ -4,15 +4,14 @@ import type {FormattingOptions, Hover, TextEdit} from "vscode-languageserver-typ
 import type {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import type {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 import {TooltipType} from "../type-converters";
+import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
-interface LanguageWorker {
-    session: Ace.EditSession;
+interface LanguageService {
+    doc: Ace.Document;
     $service;
     $formatConfig: CSSFormatConfiguration | HTMLFormatConfiguration | FormattingOptions;
 
     $getDocument(): TextDocument;
-
-    $setFormatConfiguration(configuration?: FormattingOptions);
 
     format(range: Ace.Range): TextEdit[];
 
@@ -20,10 +19,30 @@ interface LanguageWorker {
 
     doValidation(): Promise<Ace.Annotation[]>;
 
-    doComplete(position: Ace.Point);
+    doComplete(position: Ace.Point): Promise<CompletionList>;
+
+    setValue(value: string);
+
+    applyDeltas(delta: Ace.Delta[]);
+}
+
+interface TooltipContent {
+    type: TooltipType,
+    text: string
 }
 
 interface Tooltip {
-    content: { type: TooltipType, text: string }
+    content: TooltipContent
     range?: Ace.Range
+}
+
+interface ServiceOptions {
+    mode?: string,
+    format?: {
+        tabSize: number,
+        insertSpaces: boolean
+    },
+    other?: {
+        [name: string]: any
+    }
 }
