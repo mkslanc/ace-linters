@@ -271,6 +271,7 @@ var CssService = /** @class */ (function (_super) {
         var _this = _super.call(this, doc, options) || this;
         _this.changeLanguageService(options.mode);
         _this.$formatConfig = options.format;
+        _this.$service.configure();
         return _this;
     }
     CssService.prototype.changeLanguageService = function (modeName) {
@@ -764,7 +765,7 @@ exports.ServiceManager = ServiceManager;
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TooltipType = exports.fromMarkupContent = exports.toTooltip = exports.getTextEditRange = exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
+exports.TooltipType = exports.cleanHtml = exports.fromMarkupContent = exports.toTooltip = exports.getTextEditRange = exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
 var vscode_languageserver_types_1 = __webpack_require__(1674);
 var range_1 = __webpack_require__(9082);
 var range_list_1 = __webpack_require__(6510);
@@ -827,7 +828,7 @@ function toCompletions(completionList, markdownConverter) {
         var doc = fromMarkupContent(item.documentation);
         if (doc) {
             if (doc.type === TooltipType.markdown) {
-                completion["docHTML"] = markdownConverter.makeHtml(doc.text);
+                completion["docHTML"] = cleanHtml(markdownConverter.makeHtml(doc.text));
             }
             else {
                 completion["docText"] = doc.text;
@@ -876,7 +877,7 @@ function toTooltip(hover) {
             }
             return el;
         });
-        content = { type: TooltipType.markdown, text: contents.join("\n- - -\n") };
+        content = { type: TooltipType.markdown, text: contents.join("\n\n") };
     }
     else {
         return;
@@ -899,6 +900,10 @@ function fromMarkupContent(content) {
     }
 }
 exports.fromMarkupContent = fromMarkupContent;
+function cleanHtml(html) {
+    return html.replace(/<a\s/, "<a target='_blank' ");
+}
+exports.cleanHtml = cleanHtml;
 var TooltipType;
 (function (TooltipType) {
     TooltipType[TooltipType["plainText"] = 0] = "plainText";
