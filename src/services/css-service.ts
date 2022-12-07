@@ -16,6 +16,7 @@ export class CssService extends BaseService {
         super(doc, options);
         this.changeLanguageService(options.mode);
         this.$formatConfig = options.format;
+        this.$service.configure()
     }
 
     changeLanguageService(modeName?: string) {
