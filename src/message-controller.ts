@@ -13,8 +13,8 @@ import {
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {ServiceOptions, Tooltip} from "./services/language-service";
-import {FormattingOptions, TextEdit} from "vscode-languageserver-types";
+import {AceLinters} from "./services/language-service";
+import {FormattingOptions} from "vscode-languageserver-types";
 
 export class MessageController {
     private static _instance: MessageController;
@@ -56,7 +56,7 @@ export class MessageController {
         };
     }
 
-    init(sessionId: string, value: string, options: ServiceOptions, callback?: () => void) {
+    init(sessionId: string, value: string, options: AceLinters.ServiceOptions, callback?: () => void) {
         this.postMessage(new InitMessage(sessionId, value, options), MessageType.init, callback);
     }
 
@@ -68,11 +68,11 @@ export class MessageController {
         this.postMessage(new CompleteMessage(sessionId, position), MessageType.complete, callback);
     }
 
-    format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: TextEdit[]) => void) {
+    format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: AceLinters.TextEdit[]) => void) {
         this.postMessage(new FormatMessage(sessionId, range, format), MessageType.format, callback);
     }
 
-    doHover(sessionId: string, position: Ace.Point, callback?: (hover: Tooltip) => void) {
+    doHover(sessionId: string, position: Ace.Point, callback?: (hover: AceLinters.Tooltip) => void) {
         this.postMessage(new HoverMessage(sessionId, position), MessageType.hover, callback)
     }
 
@@ -87,7 +87,7 @@ export class MessageController {
         this.postMessage(message, MessageType.change, callback)
     }
 
-    changeMode(sessionId: string, options: ServiceOptions, callback?: () => void) {
+    changeMode(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void) {
         this.postMessage(new ChangeModeMessage(sessionId, options), MessageType.changeMode, callback);
     }
 

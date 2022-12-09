@@ -4,12 +4,15 @@ import {
     Diagnostic,
     InsertTextFormat,
     CompletionList,
-    CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind
+    CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind, TextEdit
 } from "vscode-languageserver-types";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
-import {Tooltip, TooltipContent} from "./services/language-service";
+import {AceLinters} from "../services/language-service";
+import Tooltip = AceLinters.Tooltip;
+import TooltipContent = AceLinters.TooltipContent;
+import {TooltipType} from "./common-converters";
 
 export function fromRange(range: Ace.Range): Range | undefined {
     if (!range) {
@@ -52,7 +55,7 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
-export function toCompletions(completionList: CompletionList, markdownConverter: MarkDownConverter): Ace.Completion[] {
+export function toCompletions(completionList: CompletionList): Ace.Completion[] {
     return completionList && completionList.items.map((item) => {
             let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
             let text = item.textEdit?.newText ?? item.insertText ?? item.label;
@@ -69,7 +72,7 @@ export function toCompletions(completionList: CompletionList, markdownConverter:
             let doc = fromMarkupContent(item.documentation);
             if (doc) {
                 if (doc.type === TooltipType.markdown) {
-                    completion["docHTML"] = cleanHtml(markdownConverter.makeHtml(doc.text));
+                    completion["docMarkdown"] = doc.text;
                 } else {
                     completion["docText"] = doc.text;
                 }
@@ -119,7 +122,7 @@ export function toTooltip(hover: Hover): Tooltip {
     } else {
         return;
     }
-    return  {content: content, range: toRange(hover.range)};
+    return {content: content, range: toRange(hover.range)};
 }
 
 export function fromMarkupContent(content?: string | MarkupContent): TooltipContent {
@@ -135,11 +138,12 @@ export function fromMarkupContent(content?: string | MarkupContent): TooltipCont
     }
 }
 
-export function cleanHtml(html: string) {//TODO: improve this
-    return html.replace(/<a\s/, "<a target='_blank' ");
+export function toAceTextEdits(textEdits: TextEdit[]): AceLinters.TextEdit[] {
+    return textEdits.reverse().map((el) => {
+        return {
+            range: toRange(el.range),
+            newText: el.newText
+        };
+    })
 }
 
-export enum TooltipType {
-    plainText,
-    markdown
-}

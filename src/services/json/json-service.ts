@@ -1,10 +1,10 @@
-import {ServiceOptions} from "./language-service";
 import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
-import {TextEdit} from "vscode-languageserver-types";
-import {BaseService} from "./base-service";
+import {fromPoint, fromRange, toAceTextEdits, toAnnotations, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
+import {BaseService} from "../base-service";
 import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
+import {AceLinters} from "../language-service";
+import ServiceOptions = AceLinters.ServiceOptions;
 
 var jsonService = require('vscode-json-languageservice');
 
@@ -30,13 +30,13 @@ export class JsonService extends BaseService {
         return jsonService.TextDocument.create("test.json", "json", 1, doc);
     }
 
-    format(range: Ace.Range, format: FormattingOptions): TextEdit[] {
+    format(range: Ace.Range, format: FormattingOptions) {
         let document = this.$getDocument();
         if (!document) {
             return [];
         }
         let textEdits = this.$service.format(document, fromRange(range), format);
-        return textEdits;
+        return toAceTextEdits(textEdits);
     }
 
     async doHover(position: Ace.Point) {
@@ -60,14 +60,14 @@ export class JsonService extends BaseService {
         return toAnnotations(await diagnostics);
     }
 
-    async doComplete(position: Ace.Point): Promise<CompletionList> {
+    async doComplete(position: Ace.Point) {
         let document = this.$getDocument();
         if (!document) {
             return null;
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
-        return completions;
+        return toCompletions(completions);
     }
 
     setSchema(schema: JSONSchema) {

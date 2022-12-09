@@ -1,9 +1,10 @@
-import {ServiceOptions} from "./language-service";
 import {LanguageService as VSLanguageService} from "vscode-html-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toTooltip} from "../type-converters";
+import {fromPoint, fromRange, toAceTextEdits, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
 import {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
-import {BaseService} from "./base-service";
+import {BaseService} from "../base-service";
+import {AceLinters} from "../language-service";
+import ServiceOptions = AceLinters.ServiceOptions;
 
 var htmlService = require('vscode-html-languageservice');
 
@@ -27,7 +28,7 @@ export class HtmlService extends BaseService {
         }
 
         let textEdits = this.$service.format(document, fromRange(range), format);
-        return textEdits;
+        return toAceTextEdits(textEdits);
     }
 
     async doHover(position: Ace.Point) {
@@ -53,6 +54,6 @@ export class HtmlService extends BaseService {
         let htmlDocument = this.$service.parseHTMLDocument(document);
 
         let completions = this.$service.doComplete(document, fromPoint(position), htmlDocument);
-        return completions;
+        return toCompletions(completions);
     }
 }

@@ -1,7 +1,8 @@
 import {Document} from "ace-code/src/document";
 import {MessageType} from "./message-types";
 import {ServiceManager} from "./services/service-manager";
-import {ServiceOptions} from "./services/language-service";
+import {AceLinters} from "./services/language-service";
+import ServiceOptions = AceLinters.ServiceOptions;
 
 const ctx: Worker = self as any;
 

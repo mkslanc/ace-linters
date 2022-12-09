@@ -1,13 +1,12 @@
-import {LanguageService, ServiceOptions} from "./language-service";
+import {FormattingOptions} from "vscode-languageserver-types";
+import {AceLinters} from "./language-service";
 import {Ace} from "ace-code";
-import {FormattingOptions, TextEdit} from "vscode-languageserver-types";
-import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
-export class BaseService implements LanguageService {
+export class BaseService implements AceLinters.LanguageService {
     $service;
     doc: Ace.Document;
 
-    constructor(doc: Ace.Document, options: ServiceOptions) {
+    constructor(doc: Ace.Document, options: AceLinters.ServiceOptions) {
         this.doc = doc;
     }
 
@@ -47,7 +46,7 @@ export class BaseService implements LanguageService {
         }
     }
 
-    format(range: Ace.Range, format: FormattingOptions): TextEdit[] {
+    format(range: Ace.Range, format: FormattingOptions): AceLinters.TextEdit[] {
         return [];
     }
 
@@ -59,7 +58,7 @@ export class BaseService implements LanguageService {
         return [];
     }
 
-    async doComplete(position: Ace.Point): Promise<CompletionList> {
+    async doComplete(position: Ace.Point): Promise<Ace.Completion[]> {
         return;
     }
 }
