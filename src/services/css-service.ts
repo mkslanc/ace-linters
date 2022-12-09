@@ -1,4 +1,4 @@
-import {LanguageService, ServiceOptions} from "./language-service";
+import {ServiceOptions} from "./language-service";
 import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
@@ -10,12 +10,10 @@ var cssService = require('vscode-css-languageservice');
 export class CssService extends BaseService {
     $service: VSLanguageService;
     $languageId: string;
-    $formatConfig: CSSFormatConfiguration;
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
         super(doc, options);
         this.changeLanguageService(options.mode);
-        this.$formatConfig = options.format;
     }
 
     changeLanguageService(modeName?: string) {
@@ -41,12 +39,12 @@ export class CssService extends BaseService {
         return cssService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
     }
 
-    format(range: Ace.Range) {
+    format(range: Ace.Range, format: CSSFormatConfiguration) {
         let document = this.$getDocument();
         if (!document) {
             return [];
         }
-        let textEdits = this.$service.format(document, fromRange(range), this.$formatConfig);
+        let textEdits = this.$service.format(document, fromRange(range), format);
         return textEdits;
     }
 

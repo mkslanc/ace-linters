@@ -1,4 +1,4 @@
-import {LanguageService, ServiceOptions} from "./language-service";
+import {ServiceOptions} from "./language-service";
 import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAnnotations, toTooltip} from "../type-converters";
@@ -11,12 +11,10 @@ var jsonService = require('vscode-json-languageservice');
 export class JsonService extends BaseService {
     $service: VSLanguageService;
     private $jsonSchema: JSONSchema;
-    $formatConfig: FormattingOptions = {tabSize: 4, insertSpaces: true};
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
         super(doc, options);
         this.$jsonSchema = options?.other?.jsonSchema;
-        this.$formatConfig = options.format;
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
                 if (this.$jsonSchema) //TODO: make it with url resolving?
@@ -32,12 +30,12 @@ export class JsonService extends BaseService {
         return jsonService.TextDocument.create("test.json", "json", 1, doc);
     }
 
-    format(range: Ace.Range): TextEdit[] {
+    format(range: Ace.Range, format: FormattingOptions): TextEdit[] {
         let document = this.$getDocument();
         if (!document) {
             return [];
         }
-        let textEdits = this.$service.format(document, fromRange(range), this.$formatConfig);
+        let textEdits = this.$service.format(document, fromRange(range), format);
         return textEdits;
     }
 
