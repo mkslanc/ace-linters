@@ -38,10 +38,7 @@ export class DescriptionTooltip extends Tooltip{
         var screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
 
 
-        this.provider.doHover(screenPos);
-        var $setHover = (hover) => {
-            this.provider["off"]("hover", $setHover);
-
+        this.provider.doHover(screenPos, (hover) => {
             let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();
@@ -98,9 +95,7 @@ export class DescriptionTooltip extends Tooltip{
                 this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
                 this.show(null, position.pageX, position.pageY);
             }, 500);
-        }
-        //@ts-ignore
-        this.provider.on("hover", $setHover);
+        });
     };
 
     onMouseMove (e: MouseEvent) {

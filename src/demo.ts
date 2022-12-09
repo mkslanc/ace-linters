@@ -4,7 +4,6 @@ import {htmlContent} from "./docs-example/html-example";
 var event = require("ace-code/src/lib/event");
 var {HashHandler} = require("ace-code/src/keyboard/hash_handler");
 var keyUtil = require("ace-code/src/lib/keys");
-
 import {Mode as HTMLMode} from "ace-code/src/mode/html";
 import {Mode as CSSMode} from "ace-code/src/mode/css";
 import {Mode as LessMode} from "ace-code/src/mode/less";
@@ -60,7 +59,7 @@ for (let mode of modes) {
     editor.session.setMode(new mode.mode());
     let options = mode.options ?? {};
     let provider = new LanguageProvider(editor, options);
-    provider.registerCompleters();
+    activeProvider ??= provider;
     editor.on("focus", () => {
         activeProvider = provider;
     });

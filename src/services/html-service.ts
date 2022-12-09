@@ -1,4 +1,4 @@
-import {LanguageService, ServiceOptions} from "./language-service";
+import {ServiceOptions} from "./language-service";
 import {LanguageService as VSLanguageService} from "vscode-html-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toTooltip} from "../type-converters";
@@ -9,12 +9,10 @@ var htmlService = require('vscode-html-languageservice');
 
 export class HtmlService extends BaseService {
     $service: VSLanguageService;
-    $formatConfig: HTMLFormatConfiguration = {};
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
         super(doc, options);
         this.$service = htmlService.getLanguageService();
-        this.$formatConfig = options.format;
     }
 
     $getDocument() {
@@ -22,13 +20,13 @@ export class HtmlService extends BaseService {
         return htmlService.TextDocument.create("file://test.html", "html", 1, doc);
     }
 
-    format(range: Ace.Range) {
+    format(range: Ace.Range, format: HTMLFormatConfiguration) {
         let document = this.$getDocument();
         if (!document || !range) {
             return [];
         }
 
-        let textEdits = this.$service.format(document, fromRange(range), this.$formatConfig);
+        let textEdits = this.$service.format(document, fromRange(range), format);
         return textEdits;
     }
 

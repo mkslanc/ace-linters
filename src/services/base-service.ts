@@ -1,12 +1,11 @@
 import {LanguageService, ServiceOptions} from "./language-service";
 import {Ace} from "ace-code";
-import {TextEdit} from "vscode-languageserver-types";
+import {FormattingOptions, TextEdit} from "vscode-languageserver-types";
 import {CompletionList} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
 export class BaseService implements LanguageService {
     $service;
     doc: Ace.Document;
-    $formatConfig;
 
     constructor(doc: Ace.Document, options: ServiceOptions) {
         this.doc = doc;
@@ -48,7 +47,7 @@ export class BaseService implements LanguageService {
         }
     }
 
-    format(range: Ace.Range): TextEdit[] {
+    format(range: Ace.Range, format: FormattingOptions): TextEdit[] {
         return [];
     }
 

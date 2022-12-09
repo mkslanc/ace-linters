@@ -1,15 +1,20 @@
 import {Ace} from "ace-code";
 import {
-    ChangeMessage, ChangeModeMessage,
-    CompleteMessage, DeltasMessage,
+    BaseMessage,
+    ChangeMessage,
+    ChangeModeMessage,
+    CompleteMessage,
+    DeltasMessage,
     FormatMessage,
     HoverMessage,
     InitMessage,
+    MessageType,
     ValidateMessage
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {ServiceOptions} from "./services/language-service";
+import {ServiceOptions, Tooltip} from "./services/language-service";
+import {FormattingOptions, TextEdit} from "vscode-languageserver-types";
 
 export class MessageController {
     private static _instance: MessageController;
@@ -21,51 +26,81 @@ export class MessageController {
         return MessageController._instance;
     }
 
-    private worker: Worker;
+    private $worker: Worker;
 
     constructor() {
         //@ts-ignore
-        this.worker = new Worker(new URL('./webworker.ts', import.meta.url));
+        this.$worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-        this.worker.onmessage = (e) => {
-            this["_signal"]("message-" + e.data.sessionId, e);
-        }
+        this.$worker.onmessage = (e) => {
+            let message = e.data;
+            let data = null;
+            switch (message.type as MessageType) {
+                case MessageType.format:
+                    data = message.edits;
+                    break;
+                case MessageType.complete:
+                    data = message.completions;
+                    break;
+                case MessageType.hover:
+                    data = message.hover;
+                    break;
+                case MessageType.validate:
+                    data = message.annotations;
+                    break;
+                default:
+                    break;
+            }
+
+            this["_signal"](message.type + "-" + message.sessionId, data);
+        };
     }
 
-    init(sessionId: string, value: string, options: ServiceOptions) {
-        this.worker.postMessage(new InitMessage(sessionId, value, options));
+    init(sessionId: string, value: string, options: ServiceOptions, callback?: () => void) {
+        this.postMessage(new InitMessage(sessionId, value, options), MessageType.init, callback);
     }
 
-    doValidation(sessionId: string) {
-        this.worker.postMessage(new ValidateMessage(sessionId))
+    doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void) {
+        this.postMessage(new ValidateMessage(sessionId), MessageType.validate, callback);
     }
 
-    doComplete(sessionId: string, position: Ace.Point) {
-        this.worker.postMessage(new CompleteMessage(sessionId, position))
+    doComplete(sessionId: string, position: Ace.Point, callback?: (CompletionList) => void) {
+        this.postMessage(new CompleteMessage(sessionId, position), MessageType.complete, callback);
     }
 
-    format(sessionId: string, range: Ace.Range) {
-        this.worker.postMessage(new FormatMessage(sessionId, range));
+    format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: TextEdit[]) => void) {
+        this.postMessage(new FormatMessage(sessionId, range, format), MessageType.format, callback);
     }
 
-    doHover(sessionId: string, position: Ace.Point) {
-        this.worker.postMessage(new HoverMessage(sessionId, position))
+    doHover(sessionId: string, position: Ace.Point, callback?: (hover: Tooltip) => void) {
+        this.postMessage(new HoverMessage(sessionId, position), MessageType.hover, callback)
     }
 
-    change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number) {
+    change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number, callback?: () => void) {
+        let message: BaseMessage;
         if (deltas.length > 50 && deltas.length > docLength >> 1) {
-            this.worker.postMessage(new ChangeMessage(sessionId, value));
+            message = new ChangeMessage(sessionId, value);
         } else {
-            this.worker.postMessage(new DeltasMessage(sessionId, deltas));
+            message = new DeltasMessage(sessionId, deltas);
         }
+
+        this.postMessage(message, MessageType.change, callback)
     }
 
-    changeMode(sessionId: string, options: ServiceOptions) {
-        this.worker.postMessage(new ChangeModeMessage(sessionId, options));
+    changeMode(sessionId: string, options: ServiceOptions, callback?: () => void) {
+        this.postMessage(new ChangeModeMessage(sessionId, options), MessageType.changeMode, callback);
     }
 
-    postMessage(message: any ) {
-        this.worker.postMessage(message);
+    postMessage(message: BaseMessage, event?: MessageType, callback?: (any) => void) {
+        if (event != undefined && callback) {
+            let eventName = event.toString() + "-" + message.sessionId;
+            let callbackFunction = (data) => {
+                this["off"](eventName, callbackFunction);
+                callback(data);
+            }
+            this["on"](eventName, callbackFunction);
+        }
+        this.$worker.postMessage(message);
     }
 }
 

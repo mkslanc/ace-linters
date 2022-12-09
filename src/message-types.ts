@@ -1,90 +1,94 @@
 import {Ace} from "ace-code";
 import {ServiceOptions} from "./services/language-service";
+import {FormattingOptions} from "vscode-languageserver-types";
 
-export class InitMessage {
-    type: MessageType = MessageType.init;
+export abstract class BaseMessage {
+    abstract type: MessageType;
     sessionId: string;
+
+    protected constructor(sessionId) {
+        this.sessionId = sessionId;
+    }
+}
+
+export class InitMessage extends  BaseMessage {
+    type: MessageType = MessageType.init;
     options: { [key: string]: any };
     value: string;
 
     constructor(sessionId: string, value: string, options: { [p: string]: any }) {
-        this.sessionId = sessionId;
+        super(sessionId);
         this.options = options;
         this.value = value;
     }
 }
 
-export class FormatMessage {
+export class FormatMessage extends  BaseMessage {
     type: MessageType = MessageType.format;
-    sessionId: string;
     value: Ace.Range;
+    format: FormattingOptions;
 
-    constructor(sessionId: string, value: Ace.Range) {
-        this.sessionId = sessionId;
+    constructor(sessionId: string, value: Ace.Range, format) {
+        super(sessionId);
         this.value = value;
+        this.format = format;
     }
 }
 
-export class CompleteMessage {
+export class CompleteMessage extends  BaseMessage {
     type: MessageType = MessageType.complete;
-    sessionId: string;
     value: Ace.Point;
 
     constructor(sessionId: string, value: Ace.Point) {
-        this.sessionId = sessionId;
+        super(sessionId);
         this.value = value;
     }
 }
 
-export class HoverMessage {
+export class HoverMessage extends  BaseMessage {
     type: MessageType = MessageType.hover;
-    sessionId: string;
     value: Ace.Point;
 
     constructor(sessionId: string, value: Ace.Point) {
-        this.sessionId = sessionId;
+        super(sessionId);
         this.value = value;
     }
 }
 
-export class ValidateMessage {
+export class ValidateMessage extends  BaseMessage {
     type: MessageType = MessageType.validate;
-    sessionId: string;
 
     constructor(sessionId: string) {
-        this.sessionId = sessionId;
+        super(sessionId);
     }
 }
 
-export class ChangeMessage {
+export class ChangeMessage extends  BaseMessage {
     type: MessageType = MessageType.change;
-    sessionId: string;
     value: string;
 
     constructor(sessionId: string, value: string) {
-        this.sessionId = sessionId;
+        super(sessionId);
         this.value = value;
     }
 }
 
-export class DeltasMessage {
+export class DeltasMessage extends  BaseMessage {
     type: MessageType = MessageType.applyDelta;
-    sessionId: string;
     value: Ace.Delta[];
 
     constructor(sessionId: string, value: Ace.Delta[]) {
-        this.sessionId = sessionId;
+        super(sessionId);
         this.value = value;
     }
 }
 
-export class ChangeModeMessage {
+export class ChangeModeMessage extends  BaseMessage {
     type: MessageType = MessageType.changeMode;
-    sessionId: string;
     value: ServiceOptions;
 
     constructor(sessionId: string, value: ServiceOptions) {
-        this.sessionId = sessionId;
+        super(sessionId);
         this.value = value;
     }
 }
