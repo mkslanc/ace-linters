@@ -52,7 +52,7 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
-export function toCompletions(completionList: CompletionList, markdownConverter: MarkDownConverter) {
+export function toCompletions(completionList: CompletionList, markdownConverter: MarkDownConverter): Ace.Completion[] {
     return completionList && completionList.items.map((item) => {
             let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
             let text = item.textEdit?.newText ?? item.insertText ?? item.label;
@@ -62,7 +62,9 @@ export function toCompletions(completionList: CompletionList, markdownConverter:
                 meta: kind,
                 caption: item.label,
                 command: command,
-                range: range
+                range: range,
+                value: "",
+                score: null
             };
             let doc = fromMarkupContent(item.documentation);
             if (doc) {
@@ -107,7 +109,7 @@ export function toTooltip(hover: Hover): Tooltip {
     } else if (MarkedString.is(hover.contents)) {
         content = {type: TooltipType.markdown, text: "```" + (hover.contents as any).value + "```"};
     } else if (Array.isArray(hover.contents)) {
-        var contents = hover.contents.map((el) => {
+        let contents = hover.contents.map((el) => {
             if (typeof el !== "string") {
                 return `\`\`\`${el.value}\`\`\``
             }
@@ -117,8 +119,7 @@ export function toTooltip(hover: Hover): Tooltip {
     } else {
         return;
     }
-    let tooltip: Tooltip = {content: content, range: toRange(hover.range)};
-    return tooltip;
+    return  {content: content, range: toRange(hover.range)};
 }
 
 export function fromMarkupContent(content?: string | MarkupContent): TooltipContent {
