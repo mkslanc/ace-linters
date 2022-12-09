@@ -69,7 +69,7 @@ export function toCompletions(completionList: CompletionList, markdownConverter:
             let doc = fromMarkupContent(item.documentation);
             if (doc) {
                 if (doc.type === TooltipType.markdown) {
-                    completion["docHTML"] = markdownConverter.makeHtml(doc.text);
+                    completion["docHTML"] = cleanHtml(markdownConverter.makeHtml(doc.text));
                 } else {
                     completion["docText"] = doc.text;
                 }
@@ -115,7 +115,7 @@ export function toTooltip(hover: Hover): Tooltip {
             }
             return el;
         });
-        content = {type: TooltipType.markdown, text: contents.join("\n- - -\n")};
+        content = {type: TooltipType.markdown, text: contents.join("\n\n")};
     } else {
         return;
     }
@@ -135,6 +135,9 @@ export function fromMarkupContent(content?: string | MarkupContent): TooltipCont
     }
 }
 
+export function cleanHtml(html: string) {//TODO: improve this
+    return html.replace(/<a\s/, "<a target='_blank' ");
+}
 
 export enum TooltipType {
     plainText,

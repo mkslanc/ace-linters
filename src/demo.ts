@@ -18,13 +18,18 @@ import {scssContent} from "./docs-example/scss-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {LanguageProvider} from "./language-provider";
 
+//TODO:
+import * as lintersCSS from "../css/linters.css";
+import * as dom from "ace-code/src/lib/dom";
+
+dom.importCssString(lintersCSS, "linters.css");
 
 let modes = [
-    {name: "json",mode: JsonMode, content: jsonContent},
+    {name: "json", mode: JsonMode, content: jsonContent, options: {other: {jsonSchema: jsonSchema}}},
     {name: "html", mode: HTMLMode, content: htmlContent},
-    {name: "css",mode: CSSMode, content: cssContent},
-    {name: "less",mode: LessMode, content: lessContent},
-    {name: "scss",mode: SCSSMode, content: scssContent},
+    {name: "css", mode: CSSMode, content: cssContent},
+    {name: "less", mode: LessMode, content: lessContent},
+    {name: "scss", mode: SCSSMode, content: scssContent},
 ]
 let i = 0;
 var activeProvider: LanguageProvider;
@@ -52,7 +57,7 @@ for (let mode of modes) {
     editor.setOptions({"customScrollbar": true})
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
-    let options = mode.name == "json" ? {other: {jsonSchema: jsonSchema}} : {};
+    let options = mode.options ?? {};
     let provider = new LanguageProvider(editor, options);
     activeProvider ??= provider;
     editor.on("focus", () => {

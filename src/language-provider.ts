@@ -1,5 +1,5 @@
 import {Ace} from "ace-code";
-import {toCompletions, TooltipType, toRange} from "./type-converters";
+import {cleanHtml, toCompletions, TooltipType, toRange} from "./type-converters";
 import {Range as AceRange} from "ace-code/src/range";
 import {FormattingOptions, TextEdit} from "vscode-languageserver-types";
 import {MessageController} from "./message-controller";
@@ -87,7 +87,7 @@ export class LanguageProvider {
     getTooltipText(hover: Tooltip) {
         if (!hover)
             return;
-        let text = hover.content.type === TooltipType.markdown ? this.$markdownConverter.makeHtml(hover.content.text) : hover.content.text;
+        let text = hover.content.type === TooltipType.markdown ? cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
         return {text: text, range: hover.range}
     }
 

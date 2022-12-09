@@ -16,12 +16,15 @@ module.exports = (env, argv) => {
     return {
         devtool: 'source-map',
         entry: {
-            simple: './src/demo.ts',
+            simple: './src/demo.ts'
         },
         mode: "production",
         module: {
             rules: [
-                loader
+                loader, {
+                    test: /\.css$/,
+                    use: ["style-loader", "css-loader"]
+                }
             ]
         },
         resolveLoader: {

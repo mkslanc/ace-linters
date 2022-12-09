@@ -14,6 +14,7 @@ export class CssService extends BaseService {
     constructor(doc: Ace.Document, options: ServiceOptions) {
         super(doc, options);
         this.changeLanguageService(options.mode);
+        this.$service.configure();
     }
 
     changeLanguageService(modeName?: string) {
