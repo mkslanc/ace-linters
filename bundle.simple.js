@@ -37685,10 +37685,8 @@ var DescriptionTooltip = /** @class */ (function (_super) {
         clearTimeout(this.$timer);
         var renderer = this.provider.editor.renderer;
         var screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
-        this.provider.doHover(screenPos);
-        var $setHover = function (hover) {
+        this.provider.doHover(screenPos, function (hover) {
             var _a, _b, _c, _d;
-            _this.provider["off"]("hover", $setHover);
             var description = _this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 _this.hide();
@@ -37735,9 +37733,7 @@ var DescriptionTooltip = /** @class */ (function (_super) {
                 _this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
                 _this.show(null, position.pageX, position.pageY);
             }, 500);
-        };
-        //@ts-ignore
-        this.provider.on("hover", $setHover);
+        });
     };
     ;
     DescriptionTooltip.prototype.onMouseMove = function (e) {
@@ -37904,27 +37900,44 @@ exports.LanguageProvider = void 0;
 var type_converters_1 = __webpack_require__(7472);
 var range_1 = __webpack_require__(9082);
 var message_controller_1 = __webpack_require__(4896);
-var message_types_1 = __webpack_require__(6653);
-var oop = __webpack_require__(9359);
-var event_emitter_1 = __webpack_require__(3056);
 var description_tooltip_1 = __webpack_require__(4977);
 var showdown = __webpack_require__(3787);
 var LanguageProvider = /** @class */ (function () {
     function LanguageProvider(editor, options, markdownConverter) {
+        var _this = this;
         this.deltaQueue = [];
+        this.validate = function () {
+            _this.$message.doValidation(_this.editor.session["id"], function (annotations) {
+                _this.editor.session.clearAnnotations();
+                if (annotations && annotations.length > 0) {
+                    _this.editor.session.setAnnotations(annotations);
+                }
+            });
+        };
+        this.format = function () {
+            var selectionRanges = _this.editor.getSelection().getAllRanges();
+            var $format = _this.$format;
+            if (!selectionRanges || selectionRanges[0].isEmpty()) {
+                var row = _this.editor.session.getLength();
+                var column = _this.editor.session.getLine(row).length - 1;
+                selectionRanges = [new range_1.Range(0, 0, row, column)];
+            }
+            for (var _i = 0, selectionRanges_1 = selectionRanges; _i < selectionRanges_1.length; _i++) {
+                var range = selectionRanges_1[_i];
+                _this.$message.format(_this.editor.session["id"], range, $format, _this.$applyFormat);
+            }
+        };
+        this.$applyFormat = function (edits) {
+            for (var _i = 0, _a = edits.reverse(); _i < _a.length; _i++) {
+                var edit = _a[_i];
+                _this.editor.session.doc.replace((0, type_converters_1.toRange)(edit.range), edit.newText);
+            }
+        };
         this.editor = editor;
-        this.$descriptionTooltip = new description_tooltip_1.DescriptionTooltip(this);
         this.options = options;
         this.$adaptOptions();
-        if (markdownConverter) {
-            this.markdownConverter = markdownConverter;
-        }
-        else {
-            this.markdownConverter = new showdown.Converter();
-        }
+        this.$markdownConverter = markdownConverter !== null && markdownConverter !== void 0 ? markdownConverter : new showdown.Converter();
         this.$init();
-        this.validate();
-        this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
     }
     LanguageProvider.prototype.$changeListener = function (delta) {
         if (delta.action == "insert")
@@ -37934,121 +37947,68 @@ var LanguageProvider = /** @class */ (function () {
         this.$sendDeltaQueue();
     };
     LanguageProvider.prototype.$sendDeltaQueue = function () {
-        var _this = this;
-        var deltas = this.deltaQueue;
-        if (!deltas)
+        if (!this.deltaQueue)
             return;
         this.deltaQueue = [];
-        var changed = function () {
-            _this.validate();
-            _this["off"]("changed", changed);
-        };
-        this["on"]("changed", changed);
-        this.message.change(this.editor.session["id"], deltas, this.editor.session.getValue(), this.editor.session.doc.getLength());
+        this.$message.change(this.editor.session["id"], this.deltaQueue, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
     };
     ;
     LanguageProvider.prototype.$adaptOptions = function () {
         var editorOptions = this.editor.getOptions();
         this.options.mode = editorOptions.mode;
-        this.options.format = {
-            tabSize: editorOptions.tabSize, insertSpaces: editorOptions.useSoftTabs
-        };
     };
+    Object.defineProperty(LanguageProvider.prototype, "$format", {
+        get: function () {
+            var editorOptions = this.editor.getOptions();
+            return {
+                tabSize: editorOptions.tabSize,
+                insertSpaces: editorOptions.useSoftTabs
+            };
+        },
+        enumerable: false,
+        configurable: true
+    });
     LanguageProvider.prototype.$init = function () {
         var _this = this;
-        this.message = message_controller_1.MessageController.instance;
-        this.message["on"]("message-" + this.editor.session["id"], function (e) {
-            var message = e.data;
-            switch (message.type) {
-                case message_types_1.MessageType.format:
-                    var edits = message.edits;
-                    _this.$applyFormat(edits);
-                    break;
-                case message_types_1.MessageType.complete:
-                    _this["_signal"]("completions", (0, type_converters_1.toCompletions)(message.completions, _this.markdownConverter));
-                    break;
-                case message_types_1.MessageType.hover:
-                    var hover = message.hover;
-                    _this["_signal"]("hover", hover);
-                    break;
-                case message_types_1.MessageType.validate:
-                    var annotations = message.annotations;
-                    _this["_signal"]("validate", annotations);
-                    break;
-                case message_types_1.MessageType.change:
-                    _this["_signal"]("changed", null);
-                    break;
-                case message_types_1.MessageType.init:
-                    break;
-            }
-        });
-        this.message.init(this.editor.session["id"], this.editor.getValue(), this.options);
-        // @ts-ignore
-        this.editor.on("changeMode", function () {
-            _this.$adaptOptions();
-            _this.message.changeMode(_this.editor.session["id"], _this.options);
-            //TODO: validate after mode change?
+        this.$message = message_controller_1.MessageController.instance;
+        this.$message.init(this.editor.session["id"], this.editor.getValue(), this.options, function () {
+            _this.$descriptionTooltip = new description_tooltip_1.DescriptionTooltip(_this);
+            _this.editor.session.doc.on("change", _this.$changeListener.bind(_this), true);
+            _this.validate();
+            _this.registerCompleters();
+            // @ts-ignore
+            _this.editor.on("changeMode", function () {
+                _this.$adaptOptions();
+                _this.$message.changeMode(_this.editor.session["id"], _this.options, function () {
+                    _this.validate();
+                    _this.registerCompleters();
+                });
+            });
         });
     };
-    LanguageProvider.prototype.validate = function () {
-        var _this = this;
-        this.message.doValidation(this.editor.session["id"]);
-        var $setAnnotations = function (annotations) {
-            _this["off"]("validate", $setAnnotations);
-            _this.editor.session.clearAnnotations();
-            if (annotations && annotations.length > 0) {
-                _this.editor.session.setAnnotations(annotations);
-            }
-        };
-        this["on"]("validate", $setAnnotations);
-    };
-    LanguageProvider.prototype.doHover = function (position) {
-        this.message.doHover(this.editor.session["id"], position);
+    LanguageProvider.prototype.doHover = function (position, callback) {
+        this.$message.doHover(this.editor.session["id"], position, callback);
     };
     LanguageProvider.prototype.getTooltipText = function (hover) {
         if (!hover)
             return;
-        var text = hover.content.type === type_converters_1.TooltipType.markdown ? (0, type_converters_1.cleanHtml)(this.markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+        var text = hover.content.type === type_converters_1.TooltipType.markdown ? (0, type_converters_1.cleanHtml)(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
         return { text: text, range: hover.range };
     };
-    LanguageProvider.prototype.format = function () {
-        var row = this.editor.session.getLength();
-        var column = this.editor.session.getLine(row).length - 1;
-        var selectionRanges = this.editor.getSelection().getAllRanges();
-        if (selectionRanges.length > 0 && !selectionRanges[0].isEmpty()) {
-            for (var _i = 0, selectionRanges_1 = selectionRanges; _i < selectionRanges_1.length; _i++) {
-                var range = selectionRanges_1[_i];
-                this.message.format(this.editor.session["id"], range);
-            }
-        }
-        else {
-            this.message.format(this.editor.session["id"], new range_1.Range(0, 0, row, column));
-        }
-    };
-    LanguageProvider.prototype.$applyFormat = function (edits) {
-        for (var _i = 0, _a = edits.reverse(); _i < _a.length; _i++) {
-            var edit = _a[_i];
-            this.editor.session.doc.replace((0, type_converters_1.toRange)(edit.range), edit.newText);
-        }
-    };
-    LanguageProvider.prototype.doComplete = function () {
+    LanguageProvider.prototype.doComplete = function (callback) {
         var cursor = this.editor.getCursorPosition();
-        this.message.doComplete(this.editor.session["id"], cursor);
+        this.$message.doComplete(this.editor.session["id"], cursor, callback);
     };
     LanguageProvider.prototype.registerCompleters = function () {
         var _this = this;
         this.editor.completers = [
             {
                 getCompletions: function (editor, session, pos, prefix, callback) { return __awaiter(_this, void 0, void 0, function () {
-                    var $setCompletions;
                     var _this = this;
                     return __generator(this, function (_a) {
-                        this.doComplete();
-                        $setCompletions = function (completions) {
-                            _this["off"]("completions", $setCompletions);
-                            callback(null, completions);
-                        };
-                        this["on"]("completions", $setCompletions);
+                        this.doComplete(function (completions) {
+                            callback(null, (0, type_converters_1.toCompletions)(completions, _this.$markdownConverter));
+                        });
                         return [2 /*return*/];
                     });
                 }); }
@@ -38058,7 +38018,6 @@ var LanguageProvider = /** @class */ (function () {
     return LanguageProvider;
 }());
 exports.LanguageProvider = LanguageProvider;
-oop.implement(LanguageProvider.prototype, event_emitter_1.EventEmitter);
 
 
 /***/ }),
@@ -38077,9 +38036,27 @@ var MessageController = /** @class */ (function () {
     function MessageController() {
         var _this = this;
         //@ts-ignore
-        this.worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(979), __webpack_require__.b));
-        this.worker.onmessage = function (e) {
-            _this["_signal"]("message-" + e.data.sessionId, e);
+        this.$worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(979), __webpack_require__.b));
+        this.$worker.onmessage = function (e) {
+            var message = e.data;
+            var data = null;
+            switch (message.type) {
+                case message_types_1.MessageType.format:
+                    data = message.edits;
+                    break;
+                case message_types_1.MessageType.complete:
+                    data = message.completions;
+                    break;
+                case message_types_1.MessageType.hover:
+                    data = message.hover;
+                    break;
+                case message_types_1.MessageType.validate:
+                    data = message.annotations;
+                    break;
+                default:
+                    break;
+            }
+            _this["_signal"](message.type + "-" + message.sessionId, data);
         };
     }
     Object.defineProperty(MessageController, "instance", {
@@ -38092,34 +38069,45 @@ var MessageController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    MessageController.prototype.init = function (sessionId, value, options) {
-        this.worker.postMessage(new message_types_1.InitMessage(sessionId, value, options));
+    MessageController.prototype.init = function (sessionId, value, options, callback) {
+        this.postMessage(new message_types_1.InitMessage(sessionId, value, options), message_types_1.MessageType.init, callback);
     };
-    MessageController.prototype.doValidation = function (sessionId) {
-        this.worker.postMessage(new message_types_1.ValidateMessage(sessionId));
+    MessageController.prototype.doValidation = function (sessionId, callback) {
+        this.postMessage(new message_types_1.ValidateMessage(sessionId), message_types_1.MessageType.validate, callback);
     };
-    MessageController.prototype.doComplete = function (sessionId, position) {
-        this.worker.postMessage(new message_types_1.CompleteMessage(sessionId, position));
+    MessageController.prototype.doComplete = function (sessionId, position, callback) {
+        this.postMessage(new message_types_1.CompleteMessage(sessionId, position), message_types_1.MessageType.complete, callback);
     };
-    MessageController.prototype.format = function (sessionId, range) {
-        this.worker.postMessage(new message_types_1.FormatMessage(sessionId, range));
+    MessageController.prototype.format = function (sessionId, range, format, callback) {
+        this.postMessage(new message_types_1.FormatMessage(sessionId, range, format), message_types_1.MessageType.format, callback);
     };
-    MessageController.prototype.doHover = function (sessionId, position) {
-        this.worker.postMessage(new message_types_1.HoverMessage(sessionId, position));
+    MessageController.prototype.doHover = function (sessionId, position, callback) {
+        this.postMessage(new message_types_1.HoverMessage(sessionId, position), message_types_1.MessageType.hover, callback);
     };
-    MessageController.prototype.change = function (sessionId, deltas, value, docLength) {
+    MessageController.prototype.change = function (sessionId, deltas, value, docLength, callback) {
+        var message;
         if (deltas.length > 50 && deltas.length > docLength >> 1) {
-            this.worker.postMessage(new message_types_1.ChangeMessage(sessionId, value));
+            message = new message_types_1.ChangeMessage(sessionId, value);
         }
         else {
-            this.worker.postMessage(new message_types_1.DeltasMessage(sessionId, deltas));
+            message = new message_types_1.DeltasMessage(sessionId, deltas);
         }
+        this.postMessage(message, message_types_1.MessageType.change, callback);
     };
-    MessageController.prototype.changeMode = function (sessionId, options) {
-        this.worker.postMessage(new message_types_1.ChangeModeMessage(sessionId, options));
+    MessageController.prototype.changeMode = function (sessionId, options, callback) {
+        this.postMessage(new message_types_1.ChangeModeMessage(sessionId, options), message_types_1.MessageType.changeMode, callback);
     };
-    MessageController.prototype.postMessage = function (message) {
-        this.worker.postMessage(message);
+    MessageController.prototype.postMessage = function (message, event, callback) {
+        var _this = this;
+        if (event != undefined && callback) {
+            var eventName_1 = event.toString() + "-" + message.sessionId;
+            var callbackFunction_1 = function (data) {
+                _this["off"](eventName_1, callbackFunction_1);
+                callback(data);
+            };
+            this["on"](eventName_1, callbackFunction_1);
+        }
+        this.$worker.postMessage(message);
     };
     return MessageController;
 }());
@@ -38130,83 +38118,122 @@ oop.implement(MessageController.prototype, event_emitter_1.EventEmitter);
 /***/ }),
 
 /***/ 6653:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports) {
 
 "use strict";
 
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MessageType = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = void 0;
-var InitMessage = /** @class */ (function () {
-    function InitMessage(sessionId, value, options) {
-        this.type = MessageType.init;
+exports.MessageType = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
+var BaseMessage = /** @class */ (function () {
+    function BaseMessage(sessionId) {
         this.sessionId = sessionId;
-        this.options = options;
-        this.value = value;
+    }
+    return BaseMessage;
+}());
+exports.BaseMessage = BaseMessage;
+var InitMessage = /** @class */ (function (_super) {
+    __extends(InitMessage, _super);
+    function InitMessage(sessionId, value, options) {
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.init;
+        _this.options = options;
+        _this.value = value;
+        return _this;
     }
     return InitMessage;
-}());
+}(BaseMessage));
 exports.InitMessage = InitMessage;
-var FormatMessage = /** @class */ (function () {
-    function FormatMessage(sessionId, value) {
-        this.type = MessageType.format;
-        this.sessionId = sessionId;
-        this.value = value;
+var FormatMessage = /** @class */ (function (_super) {
+    __extends(FormatMessage, _super);
+    function FormatMessage(sessionId, value, format) {
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.format;
+        _this.value = value;
+        _this.format = format;
+        return _this;
     }
     return FormatMessage;
-}());
+}(BaseMessage));
 exports.FormatMessage = FormatMessage;
-var CompleteMessage = /** @class */ (function () {
+var CompleteMessage = /** @class */ (function (_super) {
+    __extends(CompleteMessage, _super);
     function CompleteMessage(sessionId, value) {
-        this.type = MessageType.complete;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.complete;
+        _this.value = value;
+        return _this;
     }
     return CompleteMessage;
-}());
+}(BaseMessage));
 exports.CompleteMessage = CompleteMessage;
-var HoverMessage = /** @class */ (function () {
+var HoverMessage = /** @class */ (function (_super) {
+    __extends(HoverMessage, _super);
     function HoverMessage(sessionId, value) {
-        this.type = MessageType.hover;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.hover;
+        _this.value = value;
+        return _this;
     }
     return HoverMessage;
-}());
+}(BaseMessage));
 exports.HoverMessage = HoverMessage;
-var ValidateMessage = /** @class */ (function () {
+var ValidateMessage = /** @class */ (function (_super) {
+    __extends(ValidateMessage, _super);
     function ValidateMessage(sessionId) {
-        this.type = MessageType.validate;
-        this.sessionId = sessionId;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.validate;
+        return _this;
     }
     return ValidateMessage;
-}());
+}(BaseMessage));
 exports.ValidateMessage = ValidateMessage;
-var ChangeMessage = /** @class */ (function () {
+var ChangeMessage = /** @class */ (function (_super) {
+    __extends(ChangeMessage, _super);
     function ChangeMessage(sessionId, value) {
-        this.type = MessageType.change;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.change;
+        _this.value = value;
+        return _this;
     }
     return ChangeMessage;
-}());
+}(BaseMessage));
 exports.ChangeMessage = ChangeMessage;
-var DeltasMessage = /** @class */ (function () {
+var DeltasMessage = /** @class */ (function (_super) {
+    __extends(DeltasMessage, _super);
     function DeltasMessage(sessionId, value) {
-        this.type = MessageType.applyDelta;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.applyDelta;
+        _this.value = value;
+        return _this;
     }
     return DeltasMessage;
-}());
+}(BaseMessage));
 exports.DeltasMessage = DeltasMessage;
-var ChangeModeMessage = /** @class */ (function () {
+var ChangeModeMessage = /** @class */ (function (_super) {
+    __extends(ChangeModeMessage, _super);
     function ChangeModeMessage(sessionId, value) {
-        this.type = MessageType.changeMode;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.changeMode;
+        _this.value = value;
+        return _this;
     }
     return ChangeModeMessage;
-}());
+}(BaseMessage));
 exports.ChangeModeMessage = ChangeModeMessage;
 var MessageType;
 (function (MessageType) {
@@ -38287,7 +38314,9 @@ function toCompletions(completionList, markdownConverter) {
             meta: kind,
             caption: item.label,
             command: command,
-            range: range
+            range: range,
+            value: "",
+            score: null
         };
         var doc = fromMarkupContent(item.documentation);
         if (doc) {
@@ -38346,8 +38375,7 @@ function toTooltip(hover) {
     else {
         return;
     }
-    var tooltip = { content: content, range: toRange(hover.range) };
-    return tooltip;
+    return { content: content, range: toRange(hover.range) };
 }
 exports.toTooltip = toTooltip;
 function fromMarkupContent(content) {
@@ -40877,7 +40905,7 @@ var _loop_1 = function (mode) {
     editor.session.setMode(new mode.mode());
     var options = (_a = mode.options) !== null && _a !== void 0 ? _a : {};
     var provider = new language_provider_1.LanguageProvider(editor, options);
-    provider.registerCompleters();
+    activeProvider !== null && activeProvider !== void 0 ? activeProvider : (activeProvider = provider);
     editor.on("focus", function () {
         activeProvider = provider;
     });

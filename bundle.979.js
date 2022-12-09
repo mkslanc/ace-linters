@@ -3,82 +3,121 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 6653:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports) {
 
 
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MessageType = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = void 0;
-var InitMessage = /** @class */ (function () {
-    function InitMessage(sessionId, value, options) {
-        this.type = MessageType.init;
+exports.MessageType = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
+var BaseMessage = /** @class */ (function () {
+    function BaseMessage(sessionId) {
         this.sessionId = sessionId;
-        this.options = options;
-        this.value = value;
+    }
+    return BaseMessage;
+}());
+exports.BaseMessage = BaseMessage;
+var InitMessage = /** @class */ (function (_super) {
+    __extends(InitMessage, _super);
+    function InitMessage(sessionId, value, options) {
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.init;
+        _this.options = options;
+        _this.value = value;
+        return _this;
     }
     return InitMessage;
-}());
+}(BaseMessage));
 exports.InitMessage = InitMessage;
-var FormatMessage = /** @class */ (function () {
-    function FormatMessage(sessionId, value) {
-        this.type = MessageType.format;
-        this.sessionId = sessionId;
-        this.value = value;
+var FormatMessage = /** @class */ (function (_super) {
+    __extends(FormatMessage, _super);
+    function FormatMessage(sessionId, value, format) {
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.format;
+        _this.value = value;
+        _this.format = format;
+        return _this;
     }
     return FormatMessage;
-}());
+}(BaseMessage));
 exports.FormatMessage = FormatMessage;
-var CompleteMessage = /** @class */ (function () {
+var CompleteMessage = /** @class */ (function (_super) {
+    __extends(CompleteMessage, _super);
     function CompleteMessage(sessionId, value) {
-        this.type = MessageType.complete;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.complete;
+        _this.value = value;
+        return _this;
     }
     return CompleteMessage;
-}());
+}(BaseMessage));
 exports.CompleteMessage = CompleteMessage;
-var HoverMessage = /** @class */ (function () {
+var HoverMessage = /** @class */ (function (_super) {
+    __extends(HoverMessage, _super);
     function HoverMessage(sessionId, value) {
-        this.type = MessageType.hover;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.hover;
+        _this.value = value;
+        return _this;
     }
     return HoverMessage;
-}());
+}(BaseMessage));
 exports.HoverMessage = HoverMessage;
-var ValidateMessage = /** @class */ (function () {
+var ValidateMessage = /** @class */ (function (_super) {
+    __extends(ValidateMessage, _super);
     function ValidateMessage(sessionId) {
-        this.type = MessageType.validate;
-        this.sessionId = sessionId;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.validate;
+        return _this;
     }
     return ValidateMessage;
-}());
+}(BaseMessage));
 exports.ValidateMessage = ValidateMessage;
-var ChangeMessage = /** @class */ (function () {
+var ChangeMessage = /** @class */ (function (_super) {
+    __extends(ChangeMessage, _super);
     function ChangeMessage(sessionId, value) {
-        this.type = MessageType.change;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.change;
+        _this.value = value;
+        return _this;
     }
     return ChangeMessage;
-}());
+}(BaseMessage));
 exports.ChangeMessage = ChangeMessage;
-var DeltasMessage = /** @class */ (function () {
+var DeltasMessage = /** @class */ (function (_super) {
+    __extends(DeltasMessage, _super);
     function DeltasMessage(sessionId, value) {
-        this.type = MessageType.applyDelta;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.applyDelta;
+        _this.value = value;
+        return _this;
     }
     return DeltasMessage;
-}());
+}(BaseMessage));
 exports.DeltasMessage = DeltasMessage;
-var ChangeModeMessage = /** @class */ (function () {
+var ChangeModeMessage = /** @class */ (function (_super) {
+    __extends(ChangeModeMessage, _super);
     function ChangeModeMessage(sessionId, value) {
-        this.type = MessageType.changeMode;
-        this.sessionId = sessionId;
-        this.value = value;
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.changeMode;
+        _this.value = value;
+        return _this;
     }
     return ChangeModeMessage;
-}());
+}(BaseMessage));
 exports.ChangeModeMessage = ChangeModeMessage;
 var MessageType;
 (function (MessageType) {
@@ -174,7 +213,7 @@ var BaseService = /** @class */ (function () {
             }
         }
     };
-    BaseService.prototype.format = function (range) {
+    BaseService.prototype.format = function (range, format) {
         return [];
     };
     BaseService.prototype.doHover = function (position) {
@@ -270,7 +309,6 @@ var CssService = /** @class */ (function (_super) {
     function CssService(doc, options) {
         var _this = _super.call(this, doc, options) || this;
         _this.changeLanguageService(options.mode);
-        _this.$formatConfig = options.format;
         _this.$service.configure();
         return _this;
     }
@@ -295,12 +333,12 @@ var CssService = /** @class */ (function (_super) {
         var doc = this.doc.getValue(); //TODO: update
         return cssService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
     };
-    CssService.prototype.format = function (range) {
+    CssService.prototype.format = function (range, format) {
         var document = this.$getDocument();
         if (!document) {
             return [];
         }
-        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), this.$formatConfig);
+        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), format);
         return textEdits;
     };
     CssService.prototype.doHover = function (position) {
@@ -411,21 +449,19 @@ var HtmlService = /** @class */ (function (_super) {
     __extends(HtmlService, _super);
     function HtmlService(doc, options) {
         var _this = _super.call(this, doc, options) || this;
-        _this.$formatConfig = {};
         _this.$service = htmlService.getLanguageService();
-        _this.$formatConfig = options.format;
         return _this;
     }
     HtmlService.prototype.$getDocument = function () {
         var doc = this.doc.getValue(); //TODO: update
         return htmlService.TextDocument.create("file://test.html", "html", 1, doc);
     };
-    HtmlService.prototype.format = function (range) {
+    HtmlService.prototype.format = function (range, format) {
         var document = this.$getDocument();
         if (!document || !range) {
             return [];
         }
-        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), this.$formatConfig);
+        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), format);
         return textEdits;
     };
     HtmlService.prototype.doHover = function (position) {
@@ -537,9 +573,7 @@ var JsonService = /** @class */ (function (_super) {
         var _this = this;
         var _a;
         _this = _super.call(this, doc, options) || this;
-        _this.$formatConfig = { tabSize: 4, insertSpaces: true };
         _this.$jsonSchema = (_a = options === null || options === void 0 ? void 0 : options.other) === null || _a === void 0 ? void 0 : _a.jsonSchema;
-        _this.$formatConfig = options.format;
         _this.$service = jsonService.getLanguageService({
             schemaRequestService: function (uri) {
                 if (_this.$jsonSchema) //TODO: make it with url resolving?
@@ -554,12 +588,12 @@ var JsonService = /** @class */ (function (_super) {
         var doc = this.doc.getValue(); //TODO: update
         return jsonService.TextDocument.create("test.json", "json", 1, doc);
     };
-    JsonService.prototype.format = function (range) {
+    JsonService.prototype.format = function (range, format) {
         var document = this.$getDocument();
         if (!document) {
             return [];
         }
-        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), this.$formatConfig);
+        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), format);
         return textEdits;
     };
     JsonService.prototype.doHover = function (position) {
@@ -823,7 +857,9 @@ function toCompletions(completionList, markdownConverter) {
             meta: kind,
             caption: item.label,
             command: command,
-            range: range
+            range: range,
+            value: "",
+            score: null
         };
         var doc = fromMarkupContent(item.documentation);
         if (doc) {
@@ -882,8 +918,7 @@ function toTooltip(hover) {
     else {
         return;
     }
-    var tooltip = { content: content, range: toRange(hover.range) };
-    return tooltip;
+    return { content: content, range: toRange(hover.range) };
 }
 exports.toTooltip = toTooltip;
 function fromMarkupContent(content) {
@@ -959,13 +994,17 @@ var message_types_1 = __webpack_require__(6653);
 var service_manager_1 = __webpack_require__(2692);
 var ctx = self;
 ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, function () {
-    var message, uri, manager, _a, edits, completions, hover, annotations, options, doc, newOptions, service, newDoc;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var message, uri, manager, postMessage, _a, _b, _c, _d, _e, _f, _g, options, doc, newOptions, service, newDoc;
+    return __generator(this, function (_h) {
+        switch (_h.label) {
             case 0:
                 message = ev.data;
                 uri = message.sessionId;
                 manager = service_manager_1.ServiceManager.instance;
+                postMessage = {
+                    "type": message.type,
+                    "sessionId": uri,
+                };
                 _a = message["type"];
                 switch (_a) {
                     case message_types_1.MessageType.format: return [3 /*break*/, 1];
@@ -979,38 +1018,42 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
                 }
                 return [3 /*break*/, 14];
             case 1:
-                edits = manager.getServiceInstance(uri).format(message.value);
-                ctx.postMessage({ type: message_types_1.MessageType.format, sessionId: uri, edits: edits });
+                postMessage["edits"] = manager.getServiceInstance(uri).format(message.value, message.format);
                 return [3 /*break*/, 14];
-            case 2: return [4 /*yield*/, manager.getServiceInstance(uri).doComplete(message.value)];
+            case 2:
+                _b = postMessage;
+                _c = "completions";
+                return [4 /*yield*/, manager.getServiceInstance(uri).doComplete(message.value)];
             case 3:
-                completions = _b.sent();
-                ctx.postMessage({ type: message_types_1.MessageType.complete, sessionId: uri, completions: completions });
+                _b[_c] = _h.sent();
                 return [3 /*break*/, 14];
             case 4:
                 manager.getServiceInstance(uri).setValue(message.value);
-                ctx.postMessage({ type: message_types_1.MessageType.change, sessionId: uri });
                 return [3 /*break*/, 14];
             case 5:
                 manager.getServiceInstance(uri).applyDeltas(message.value);
-                ctx.postMessage({ type: message_types_1.MessageType.change, sessionId: uri });
+                postMessage["type"] = message_types_1.MessageType.change;
                 return [3 /*break*/, 14];
-            case 6: return [4 /*yield*/, manager.getServiceInstance(uri).doHover(message.value)];
+            case 6:
+                _d = postMessage;
+                _e = "hover";
+                return [4 /*yield*/, manager.getServiceInstance(uri).doHover(message.value)];
             case 7:
-                hover = _b.sent();
-                ctx.postMessage({ type: message_types_1.MessageType.hover, sessionId: uri, hover: hover });
+                _d[_e] = _h.sent();
                 return [3 /*break*/, 14];
-            case 8: return [4 /*yield*/, manager.getServiceInstance(uri).doValidation()];
+            case 8:
+                _f = postMessage;
+                _g = "annotations";
+                return [4 /*yield*/, manager.getServiceInstance(uri).doValidation()];
             case 9:
-                annotations = _b.sent();
-                ctx.postMessage({ type: message_types_1.MessageType.validate, sessionId: uri, annotations: annotations });
+                _f[_g] = _h.sent();
                 return [3 /*break*/, 14];
             case 10:
                 options = message.options;
                 doc = new document_1.Document(message.value);
                 return [4 /*yield*/, manager.addServiceInstance(uri, doc, options)];
             case 11:
-                _b.sent();
+                _h.sent();
                 return [3 /*break*/, 14];
             case 12:
                 newOptions = message.value;
@@ -1019,9 +1062,11 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
                 manager.removeServiceInstance(uri);
                 return [4 /*yield*/, manager.addServiceInstance(uri, newDoc, newOptions)];
             case 13:
-                _b.sent();
+                _h.sent();
                 return [3 /*break*/, 14];
-            case 14: return [2 /*return*/];
+            case 14:
+                ctx.postMessage(postMessage);
+                return [2 /*return*/];
         }
     });
 }); };
