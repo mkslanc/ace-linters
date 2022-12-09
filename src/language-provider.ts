@@ -1,10 +1,12 @@
-import {Ace} from "ace-code";
-import {cleanHtml, toCompletions, TooltipType, toRange} from "./type-converters";
-import {Range as AceRange} from "ace-code/src/range";
-import {FormattingOptions, TextEdit} from "vscode-languageserver-types";
+import {Ace, Range as AceRange} from "ace-code";
 import {MessageController} from "./message-controller";
-import {ServiceOptions, Tooltip} from "./services/language-service";
 import {DescriptionTooltip} from "./components/description-tooltip";
+import Tooltip = AceLinters.Tooltip;
+import ServiceOptions = AceLinters.ServiceOptions;
+import {AceLinters} from "./services/language-service";
+import TextEdit = AceLinters.TextEdit;
+import {FormattingOptions} from "vscode-languageserver-types";
+import {cleanHtml, toCompletions, TooltipType, toRange} from "./type-converters/common-converters";
 
 let showdown = require('showdown');
 
@@ -32,9 +34,10 @@ export class LanguageProvider {
     }
 
     private $sendDeltaQueue() {
-        if (!this.deltaQueue) return;
+        var deltas = this.deltaQueue;
+        if (!deltas) return;
         this.deltaQueue = [];
-        this.$message.change(this.editor.session["id"], this.deltaQueue, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
+        this.$message.change(this.editor.session["id"], deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
     };
 
     private $adaptOptions() {
@@ -105,8 +108,8 @@ export class LanguageProvider {
     }
 
     private $applyFormat = (edits: TextEdit[]) => {
-        for (let edit of edits.reverse()) {
-            this.editor.session.doc.replace(toRange(edit.range), edit.newText);
+        for (let edit of edits) {
+            this.editor.session.doc.replace(toRange(edit.range), edit.newText); //we need this to mirror Range
         }
     }
 

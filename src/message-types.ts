@@ -1,6 +1,7 @@
 import {Ace} from "ace-code";
-import {ServiceOptions} from "./services/language-service";
 import {FormattingOptions} from "vscode-languageserver-types";
+import {AceLinters} from "./services/language-service";
+import ServiceOptions = AceLinters.ServiceOptions;
 
 export abstract class BaseMessage {
     abstract type: MessageType;

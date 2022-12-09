@@ -1,21 +1,22 @@
-import {LanguageService, ServiceOptions} from "./language-service";
-import {CssService} from "./css-service";
+import {AceLinters} from "./language-service";
+import LanguageService = AceLinters.LanguageService;
+import ServiceOptions = AceLinters.ServiceOptions;
 
 export class ServiceManager {
     private static _instance: ServiceManager;
     services: { module: any, name: string, extensions: string }[] = [
         {
-            module: import("./html-service"),
+            module: import("./html/html-service"),
             name: "HtmlService",
             extensions: "html"
         },
         {
-            module: import("./css-service"),
+            module: import("./css/css-service"),
             name: "CssService",
             extensions: "css|less|scss"
         },
         {
-            module: import("./json-service"),
+            module: import("./json/json-service"),
             name: "JsonService",
             extensions: "json"
         }
