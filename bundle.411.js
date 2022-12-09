@@ -1,10 +1,25 @@
 /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
+
+/***/ 2126:
+/***/ ((module) => {
+
+function webpackEmptyContext(req) {
+	var e = new Error("Cannot find module '" + req + "'");
+	e.code = 'MODULE_NOT_FOUND';
+	throw e;
+}
+webpackEmptyContext.keys = () => ([]);
+webpackEmptyContext.resolve = webpackEmptyContext;
+webpackEmptyContext.id = 2126;
+module.exports = webpackEmptyContext;
+
+/***/ }),
 
 /***/ 6653:
 /***/ (function(__unused_webpack_module, exports) {
 
+"use strict";
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -137,6 +152,7 @@ var MessageType;
 /***/ 9565:
 /***/ (function(__unused_webpack_module, exports) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -244,9 +260,10 @@ exports.BaseService = BaseService;
 
 /***/ }),
 
-/***/ 8893:
+/***/ 4891:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -301,7 +318,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CssService = void 0;
-var type_converters_1 = __webpack_require__(7472);
+var vscode_converters_1 = __webpack_require__(334);
 var base_service_1 = __webpack_require__(9565);
 var cssService = __webpack_require__(8535);
 var CssService = /** @class */ (function (_super) {
@@ -338,8 +355,8 @@ var CssService = /** @class */ (function (_super) {
         if (!document) {
             return [];
         }
-        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), format);
-        return textEdits;
+        var textEdits = this.$service.format(document, (0, vscode_converters_1.fromRange)(range), format);
+        return (0, vscode_converters_1.toAceTextEdits)(textEdits);
     };
     CssService.prototype.doHover = function (position) {
         var document = this.$getDocument();
@@ -347,8 +364,8 @@ var CssService = /** @class */ (function (_super) {
             return null;
         }
         var cssDocument = this.$service.parseStylesheet(document);
-        var hover = this.$service.doHover(document, (0, type_converters_1.fromPoint)(position), cssDocument);
-        return Promise.resolve((0, type_converters_1.toTooltip)(hover));
+        var hover = this.$service.doHover(document, (0, vscode_converters_1.fromPoint)(position), cssDocument);
+        return Promise.resolve((0, vscode_converters_1.toTooltip)(hover));
     };
     CssService.prototype.doValidation = function () {
         return __awaiter(this, void 0, Promise, function () {
@@ -360,7 +377,7 @@ var CssService = /** @class */ (function (_super) {
                 }
                 cssDocument = this.$service.parseStylesheet(document);
                 diagnostics = this.$service.doValidation(document, cssDocument);
-                return [2 /*return*/, (0, type_converters_1.toAnnotations)(diagnostics)];
+                return [2 /*return*/, (0, vscode_converters_1.toAnnotations)(diagnostics)];
             });
         });
     };
@@ -373,8 +390,8 @@ var CssService = /** @class */ (function (_super) {
                     return [2 /*return*/, null];
                 }
                 cssDocument = this.$service.parseStylesheet(document);
-                completions = this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), cssDocument);
-                return [2 /*return*/, completions];
+                completions = this.$service.doComplete(document, (0, vscode_converters_1.fromPoint)(position), cssDocument);
+                return [2 /*return*/, (0, vscode_converters_1.toCompletions)(completions)];
             });
         });
     };
@@ -385,9 +402,10 @@ exports.CssService = CssService;
 
 /***/ }),
 
-/***/ 4750:
+/***/ 1051:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -442,7 +460,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.HtmlService = void 0;
-var type_converters_1 = __webpack_require__(7472);
+var vscode_converters_1 = __webpack_require__(334);
 var base_service_1 = __webpack_require__(9565);
 var htmlService = __webpack_require__(132);
 var HtmlService = /** @class */ (function (_super) {
@@ -461,8 +479,8 @@ var HtmlService = /** @class */ (function (_super) {
         if (!document || !range) {
             return [];
         }
-        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), format);
-        return textEdits;
+        var textEdits = this.$service.format(document, (0, vscode_converters_1.fromRange)(range), format);
+        return (0, vscode_converters_1.toAceTextEdits)(textEdits);
     };
     HtmlService.prototype.doHover = function (position) {
         return __awaiter(this, void 0, void 0, function () {
@@ -473,8 +491,8 @@ var HtmlService = /** @class */ (function (_super) {
                     return [2 /*return*/, null];
                 }
                 htmlDocument = this.$service.parseHTMLDocument(document);
-                hover = this.$service.doHover(document, (0, type_converters_1.fromPoint)(position), htmlDocument);
-                return [2 /*return*/, Promise.resolve((0, type_converters_1.toTooltip)(hover))];
+                hover = this.$service.doHover(document, (0, vscode_converters_1.fromPoint)(position), htmlDocument);
+                return [2 /*return*/, Promise.resolve((0, vscode_converters_1.toTooltip)(hover))];
             });
         });
     };
@@ -495,8 +513,8 @@ var HtmlService = /** @class */ (function (_super) {
                     return [2 /*return*/, null];
                 }
                 htmlDocument = this.$service.parseHTMLDocument(document);
-                completions = this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), htmlDocument);
-                return [2 /*return*/, completions];
+                completions = this.$service.doComplete(document, (0, vscode_converters_1.fromPoint)(position), htmlDocument);
+                return [2 /*return*/, (0, vscode_converters_1.toCompletions)(completions)];
             });
         });
     };
@@ -507,9 +525,10 @@ exports.HtmlService = HtmlService;
 
 /***/ }),
 
-/***/ 465:
+/***/ 7991:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -564,7 +583,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.JsonService = void 0;
-var type_converters_1 = __webpack_require__(7472);
+var vscode_converters_1 = __webpack_require__(334);
 var base_service_1 = __webpack_require__(9565);
 var jsonService = __webpack_require__(8644);
 var JsonService = /** @class */ (function (_super) {
@@ -593,8 +612,8 @@ var JsonService = /** @class */ (function (_super) {
         if (!document) {
             return [];
         }
-        var textEdits = this.$service.format(document, (0, type_converters_1.fromRange)(range), format);
-        return textEdits;
+        var textEdits = this.$service.format(document, (0, vscode_converters_1.fromRange)(range), format);
+        return (0, vscode_converters_1.toAceTextEdits)(textEdits);
     };
     JsonService.prototype.doHover = function (position) {
         return __awaiter(this, void 0, void 0, function () {
@@ -607,10 +626,10 @@ var JsonService = /** @class */ (function (_super) {
                             return [2 /*return*/, null];
                         }
                         jsonDocument = this.$service.parseJSONDocument(document);
-                        return [4 /*yield*/, this.$service.doHover(document, (0, type_converters_1.fromPoint)(position), jsonDocument)];
+                        return [4 /*yield*/, this.$service.doHover(document, (0, vscode_converters_1.fromPoint)(position), jsonDocument)];
                     case 1:
                         hover = _a.sent();
-                        return [2 /*return*/, (0, type_converters_1.toTooltip)(hover)];
+                        return [2 /*return*/, (0, vscode_converters_1.toTooltip)(hover)];
                 }
             });
         });
@@ -627,7 +646,7 @@ var JsonService = /** @class */ (function (_super) {
                         }
                         jsonDocument = this.$service.parseJSONDocument(document);
                         diagnostics = this.$service.doValidation(document, jsonDocument, null, this.$jsonSchema);
-                        _a = type_converters_1.toAnnotations;
+                        _a = vscode_converters_1.toAnnotations;
                         return [4 /*yield*/, diagnostics];
                     case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
                 }
@@ -635,7 +654,7 @@ var JsonService = /** @class */ (function (_super) {
         });
     };
     JsonService.prototype.doComplete = function (position) {
-        return __awaiter(this, void 0, Promise, function () {
+        return __awaiter(this, void 0, void 0, function () {
             var document, jsonDocument, completions;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -645,10 +664,10 @@ var JsonService = /** @class */ (function (_super) {
                             return [2 /*return*/, null];
                         }
                         jsonDocument = this.$service.parseJSONDocument(document);
-                        return [4 /*yield*/, this.$service.doComplete(document, (0, type_converters_1.fromPoint)(position), jsonDocument)];
+                        return [4 /*yield*/, this.$service.doComplete(document, (0, vscode_converters_1.fromPoint)(position), jsonDocument)];
                     case 1:
                         completions = _a.sent();
-                        return [2 /*return*/, completions];
+                        return [2 /*return*/, (0, vscode_converters_1.toCompletions)(completions)];
                 }
             });
         });
@@ -669,6 +688,7 @@ exports.JsonService = JsonService;
 /***/ 2692:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -712,17 +732,17 @@ var ServiceManager = /** @class */ (function () {
     function ServiceManager() {
         this.services = [
             {
-                module: Promise.resolve().then(function () { return __webpack_require__(4750); }),
+                module: Promise.resolve().then(function () { return __webpack_require__(1051); }),
                 name: "HtmlService",
                 extensions: "html"
             },
             {
-                module: Promise.resolve().then(function () { return __webpack_require__(8893); }),
+                module: Promise.resolve().then(function () { return __webpack_require__(4891); }),
                 name: "CssService",
                 extensions: "css|less|scss"
             },
             {
-                module: Promise.resolve().then(function () { return __webpack_require__(465); }),
+                module: Promise.resolve().then(function () { return __webpack_require__(7991); }),
                 name: "JsonService",
                 extensions: "json"
             }
@@ -794,15 +814,58 @@ exports.ServiceManager = ServiceManager;
 
 /***/ }),
 
-/***/ 7472:
+/***/ 5393:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
+"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TooltipType = exports.cleanHtml = exports.fromMarkupContent = exports.toTooltip = exports.getTextEditRange = exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
+exports.TooltipType = exports.toRange = exports.cleanHtml = exports.toCompletions = void 0;
+var ace_code_1 = __webpack_require__(9100);
+function toCompletions(completions, markdownConverter) {
+    return completions.map(function (el) {
+        if (el["docMarkdown"]) {
+            el["docHtml"] = cleanHtml(markdownConverter.makeHtml(el["docMarkdown"]));
+            el["docMarkdown"] = undefined;
+        }
+        if (el["range"]) {
+            el["range"] = toRange(el["range"]);
+        }
+        return el;
+    });
+}
+exports.toCompletions = toCompletions;
+function cleanHtml(html) {
+    return html.replace(/<a\s/, "<a target='_blank' ");
+}
+exports.cleanHtml = cleanHtml;
+function toRange(range) {
+    if (!range || !range.start || !range.end) {
+        return;
+    }
+    return ace_code_1.Range.fromPoints(range.start, range.end);
+}
+exports.toRange = toRange;
+var TooltipType;
+(function (TooltipType) {
+    TooltipType[TooltipType["plainText"] = 0] = "plainText";
+    TooltipType[TooltipType["markdown"] = 1] = "markdown";
+})(TooltipType = exports.TooltipType || (exports.TooltipType = {}));
+
+
+/***/ }),
+
+/***/ 334:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.toAceTextEdits = exports.fromMarkupContent = exports.toTooltip = exports.getTextEditRange = exports.toCompletions = exports.toAnnotations = exports.toPoint = exports.fromPoint = exports.toRange = exports.fromRange = void 0;
 var vscode_languageserver_types_1 = __webpack_require__(1674);
 var range_1 = __webpack_require__(9082);
 var range_list_1 = __webpack_require__(6510);
+var common_converters_1 = __webpack_require__(5393);
 function fromRange(range) {
     if (!range) {
         return;
@@ -846,7 +909,7 @@ function toAnnotations(diagnostics) {
     });
 }
 exports.toAnnotations = toAnnotations;
-function toCompletions(completionList, markdownConverter) {
+function toCompletions(completionList) {
     return completionList && completionList.items.map(function (item) {
         var _a, _b, _c, _d;
         var kind = Object.keys(vscode_languageserver_types_1.CompletionItemKind)[Object.values(vscode_languageserver_types_1.CompletionItemKind).indexOf(item.kind)];
@@ -863,8 +926,8 @@ function toCompletions(completionList, markdownConverter) {
         };
         var doc = fromMarkupContent(item.documentation);
         if (doc) {
-            if (doc.type === TooltipType.markdown) {
-                completion["docHTML"] = cleanHtml(markdownConverter.makeHtml(doc.text));
+            if (doc.type === common_converters_1.TooltipType.markdown) {
+                completion["docMarkdown"] = doc.text;
             }
             else {
                 completion["docText"] = doc.text;
@@ -904,7 +967,7 @@ function toTooltip(hover) {
         content = fromMarkupContent(hover.contents);
     }
     else if (vscode_languageserver_types_1.MarkedString.is(hover.contents)) {
-        content = { type: TooltipType.markdown, text: "```" + hover.contents.value + "```" };
+        content = { type: common_converters_1.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
     }
     else if (Array.isArray(hover.contents)) {
         var contents = hover.contents.map(function (el) {
@@ -913,7 +976,7 @@ function toTooltip(hover) {
             }
             return el;
         });
-        content = { type: TooltipType.markdown, text: contents.join("\n\n") };
+        content = { type: common_converters_1.TooltipType.markdown, text: contents.join("\n\n") };
     }
     else {
         return;
@@ -925,25 +988,25 @@ function fromMarkupContent(content) {
     if (!content)
         return;
     if (typeof content === "string") {
-        return { type: TooltipType.plainText, text: content };
+        return { type: common_converters_1.TooltipType.plainText, text: content };
     }
     if (content.kind === vscode_languageserver_types_1.MarkupKind.Markdown) {
-        return { type: TooltipType.markdown, text: content.value };
+        return { type: common_converters_1.TooltipType.markdown, text: content.value };
     }
     else {
-        return { type: TooltipType.plainText, text: content.value };
+        return { type: common_converters_1.TooltipType.plainText, text: content.value };
     }
 }
 exports.fromMarkupContent = fromMarkupContent;
-function cleanHtml(html) {
-    return html.replace(/<a\s/, "<a target='_blank' ");
+function toAceTextEdits(textEdits) {
+    return textEdits.reverse().map(function (el) {
+        return {
+            range: toRange(el.range),
+            newText: el.newText
+        };
+    });
 }
-exports.cleanHtml = cleanHtml;
-var TooltipType;
-(function (TooltipType) {
-    TooltipType[TooltipType["plainText"] = 0] = "plainText";
-    TooltipType[TooltipType["markdown"] = 1] = "markdown";
-})(TooltipType = exports.TooltipType || (exports.TooltipType = {}));
+exports.toAceTextEdits = toAceTextEdits;
 
 
 /***/ }),
@@ -951,6 +1014,7 @@ var TooltipType;
 /***/ 8979:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
+"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1107,7 +1171,7 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
 /******/ 	__webpack_require__.x = () => {
 /******/ 		// Load entry module and return exports
 /******/ 		// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 		var __webpack_exports__ = __webpack_require__.O(undefined, [826], () => (__webpack_require__(8979)))
+/******/ 		var __webpack_exports__ = __webpack_require__.O(undefined, [937], () => (__webpack_require__(8979)))
 /******/ 		__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 		return __webpack_exports__;
 /******/ 	};
@@ -1234,7 +1298,7 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
 /******/ 		// object to store loaded chunks
 /******/ 		// "1" means "already loaded"
 /******/ 		var installedChunks = {
-/******/ 			979: 1
+/******/ 			411: 1
 /******/ 		};
 /******/ 		
 /******/ 		// importScripts chunk loading
@@ -1272,7 +1336,7 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
 /******/ 	(() => {
 /******/ 		var next = __webpack_require__.x;
 /******/ 		__webpack_require__.x = () => {
-/******/ 			return __webpack_require__.e(826).then(next);
+/******/ 			return __webpack_require__.e(937).then(next);
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -1283,4 +1347,4 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=bundle.979.js.map
+//# sourceMappingURL=bundle.411.js.map
