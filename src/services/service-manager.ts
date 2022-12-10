@@ -5,21 +5,21 @@ import {Document} from "ace-code/src/document";
 
 export class ServiceManager {
     private static _instance: ServiceManager;
-    private $services: { module: any, name: string, extensions: string }[] = [
+    private $services: { module: any, name: string, modes: string }[] = [
         {
             module: import("./html/html-service"),
             name: "HtmlService",
-            extensions: "html"
+            modes: "html"
         },
         {
             module: import("./css/css-service"),
             name: "CssService",
-            extensions: "css|less|scss"
+            modes: "css|less|scss"
         },
         {
             module: import("./json/json-service"),
             name: "JsonService",
-            extensions: "json"
+            modes: "json"
         }
     ];
     private $serviceInstances: { [mode: string]: LanguageService } = {};
@@ -35,7 +35,7 @@ export class ServiceManager {
     private async $initServiceInstance(mode: string): Promise<LanguageService> {
         let resolvedMode = mode?.replace("ace/mode/", "");
         try {
-            let service = this.findServiceByExtension(resolvedMode);
+            let service = this.findServiceByMode(resolvedMode);
             if (!service) {
                 console.log("No service registered for " + resolvedMode);
                 return;
@@ -47,7 +47,7 @@ export class ServiceManager {
         }
     }
 
-    private async $getServiceInstance(mode: string): Promise<LanguageService> {
+    private async $getServiceInstanceByMode(mode: string): Promise<LanguageService> {
         if (!this.$serviceInstances[mode]) {
             await this.$initServiceInstance(mode);
         }
@@ -60,7 +60,7 @@ export class ServiceManager {
 
         let document = new Document(documentValue);
 
-        let serviceInstance = await this.$getServiceInstance(mode);
+        let serviceInstance = await this.$getServiceInstanceByMode(mode);
         serviceInstance.addDocument(sessionID, document, options);
 
         this.$sessionIDToMode[sessionID] = mode;
@@ -85,10 +85,10 @@ export class ServiceManager {
         return this.$serviceInstances[mode];
     }
 
-    findServiceByExtension(extension: string) {
+    findServiceByMode(mode: string) {
         return this.$services.find((el) => {
-            let extensions = el.extensions.split('|');
-            if (extensions.indexOf(extension) !== -1)
+            let extensions = el.modes.split('|');
+            if (extensions.indexOf(mode) !== -1)
                 return el;
         })
     }
