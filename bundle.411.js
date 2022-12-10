@@ -37,7 +37,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MessageType = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
+exports.MessageType = exports.ChangeOptionsMessage = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
 var BaseMessage = /** @class */ (function () {
     function BaseMessage(sessionId) {
         this.sessionId = sessionId;
@@ -47,10 +47,11 @@ var BaseMessage = /** @class */ (function () {
 exports.BaseMessage = BaseMessage;
 var InitMessage = /** @class */ (function (_super) {
     __extends(InitMessage, _super);
-    function InitMessage(sessionId, value, options) {
+    function InitMessage(sessionId, value, mode, options) {
         var _this = _super.call(this, sessionId) || this;
         _this.type = MessageType.init;
         _this.options = options;
+        _this.mode = mode;
         _this.value = value;
         return _this;
     }
@@ -125,15 +126,27 @@ var DeltasMessage = /** @class */ (function (_super) {
 exports.DeltasMessage = DeltasMessage;
 var ChangeModeMessage = /** @class */ (function (_super) {
     __extends(ChangeModeMessage, _super);
-    function ChangeModeMessage(sessionId, value) {
+    function ChangeModeMessage(sessionId, mode, options) {
         var _this = _super.call(this, sessionId) || this;
         _this.type = MessageType.changeMode;
-        _this.value = value;
+        _this.mode = mode;
+        _this.options = options;
         return _this;
     }
     return ChangeModeMessage;
 }(BaseMessage));
 exports.ChangeModeMessage = ChangeModeMessage;
+var ChangeOptionsMessage = /** @class */ (function (_super) {
+    __extends(ChangeOptionsMessage, _super);
+    function ChangeOptionsMessage(sessionId, options) {
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.changeOptions;
+        _this.options = options;
+        return _this;
+    }
+    return ChangeOptionsMessage;
+}(BaseMessage));
+exports.ChangeOptionsMessage = ChangeOptionsMessage;
 var MessageType;
 (function (MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -144,6 +157,7 @@ var MessageType;
     MessageType[MessageType["validate"] = 5] = "validate";
     MessageType[MessageType["applyDelta"] = 6] = "applyDelta";
     MessageType[MessageType["changeMode"] = 7] = "changeMode";
+    MessageType[MessageType["changeOptions"] = 8] = "changeOptions";
 })(MessageType = exports.MessageType || (exports.MessageType = {}));
 
 
@@ -193,60 +207,84 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.BaseService = void 0;
 var BaseService = /** @class */ (function () {
-    function BaseService(doc, options) {
-        this.doc = doc;
+    function BaseService(mode) {
+        this.documents = {};
+        this.options = {};
+        this.mode = mode;
     }
-    BaseService.prototype.$getDocument = function () {
+    BaseService.prototype.$getDocument = function (sessionID) {
         return null;
     };
-    BaseService.prototype.setValue = function (value) {
-        this.doc.setValue(value);
+    BaseService.prototype.addDocument = function (sessionID, document, options) {
+        this.documents[sessionID] = document;
+        if (options)
+            this.setOptions(sessionID, options);
     };
-    BaseService.prototype.applyDeltas = function (deltas) {
+    BaseService.prototype.getDocument = function (sessionID) {
+        return this.documents[sessionID];
+    };
+    BaseService.prototype.removeDocument = function (sessionID) {
+        delete this.documents[sessionID];
+        if (this.options[sessionID]) {
+            delete this.options[sessionID];
+        }
+    };
+    BaseService.prototype.getDocumentValue = function (sessionID) {
+        return this.getDocument(sessionID).getValue();
+    };
+    BaseService.prototype.setValue = function (sessionID, value) {
+        this.getDocument(sessionID).setValue(value);
+    };
+    BaseService.prototype.setOptions = function (sessionID, options) {
+        this.options[sessionID] = options;
+    };
+    BaseService.prototype.applyDeltas = function (sessionID, deltas) {
         var data = deltas;
+        var document = this.getDocument(sessionID);
         if (data[0].start) {
-            this.doc.applyDeltas(data);
+            document.applyDeltas(data);
         }
         else {
             for (var i = 0; i < data.length; i += 2) {
-                var d, err;
+                var d = void 0, err = void 0;
                 if (Array.isArray(data[i + 1])) {
                     d = { action: "insert", start: data[i], lines: data[i + 1] };
                 }
                 else {
                     d = { action: "remove", start: data[i], end: data[i + 1] };
                 }
-                if ((d.action == "insert" ? d.start : d.end).row >= this.doc["$lines"].length) {
+                var linesLength = document["$lines"].length;
+                if ((d.action == "insert" ? d.start : d.end).row >= linesLength) {
                     err = new Error("Invalid delta");
                     err.data = {
-                        linesLength: this.doc["$lines"].length,
+                        linesLength: linesLength,
                         start: d.start,
                         end: d.end
                     };
                     throw err;
                 }
-                this.doc.applyDelta(d, true);
+                document.applyDelta(d, true);
             }
         }
     };
-    BaseService.prototype.format = function (range, format) {
+    BaseService.prototype.format = function (sessionID, range, format) {
         return [];
     };
-    BaseService.prototype.doHover = function (position) {
+    BaseService.prototype.doHover = function (sessionID, position) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, null];
             });
         });
     };
-    BaseService.prototype.doValidation = function () {
+    BaseService.prototype.doValidation = function (sessionID) {
         return __awaiter(this, void 0, Promise, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, []];
             });
         });
     };
-    BaseService.prototype.doComplete = function (position) {
+    BaseService.prototype.doComplete = function (sessionID, position) {
         return __awaiter(this, void 0, Promise, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/];
@@ -323,14 +361,14 @@ var base_service_1 = __webpack_require__(9565);
 var cssService = __webpack_require__(8535);
 var CssService = /** @class */ (function (_super) {
     __extends(CssService, _super);
-    function CssService(doc, options) {
-        var _this = _super.call(this, doc, options) || this;
-        _this.changeLanguageService(options.mode);
+    function CssService(mode) {
+        var _this = _super.call(this, mode) || this;
+        _this.$initLanguageService();
         _this.$service.configure();
         return _this;
     }
-    CssService.prototype.changeLanguageService = function (modeName) {
-        switch (modeName) {
+    CssService.prototype.$initLanguageService = function () {
+        switch (this.mode) {
             case "ace/mode/less":
                 this.$languageId = "less";
                 this.$service = cssService.getLESSLanguageService();
@@ -346,20 +384,20 @@ var CssService = /** @class */ (function (_super) {
                 break;
         }
     };
-    CssService.prototype.$getDocument = function () {
-        var doc = this.doc.getValue(); //TODO: update
-        return cssService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
+    CssService.prototype.$getDocument = function (sessionID) {
+        var documentValue = this.getDocumentValue(sessionID);
+        return cssService.TextDocument.create("file://test.html", this.$languageId, 1, documentValue);
     };
-    CssService.prototype.format = function (range, format) {
-        var document = this.$getDocument();
+    CssService.prototype.format = function (sessionID, range, format) {
+        var document = this.$getDocument(sessionID);
         if (!document) {
             return [];
         }
         var textEdits = this.$service.format(document, (0, vscode_converters_1.fromRange)(range), format);
         return (0, vscode_converters_1.toAceTextEdits)(textEdits);
     };
-    CssService.prototype.doHover = function (position) {
-        var document = this.$getDocument();
+    CssService.prototype.doHover = function (sessionID, position) {
+        var document = this.$getDocument(sessionID);
         if (!document) {
             return null;
         }
@@ -367,11 +405,11 @@ var CssService = /** @class */ (function (_super) {
         var hover = this.$service.doHover(document, (0, vscode_converters_1.fromPoint)(position), cssDocument);
         return Promise.resolve((0, vscode_converters_1.toTooltip)(hover));
     };
-    CssService.prototype.doValidation = function () {
+    CssService.prototype.doValidation = function (sessionID) {
         return __awaiter(this, void 0, Promise, function () {
             var document, cssDocument, diagnostics;
             return __generator(this, function (_a) {
-                document = this.$getDocument();
+                document = this.$getDocument(sessionID);
                 if (!document) {
                     return [2 /*return*/, []];
                 }
@@ -381,11 +419,11 @@ var CssService = /** @class */ (function (_super) {
             });
         });
     };
-    CssService.prototype.doComplete = function (position) {
+    CssService.prototype.doComplete = function (sessionID, position) {
         return __awaiter(this, void 0, void 0, function () {
             var document, cssDocument, completions;
             return __generator(this, function (_a) {
-                document = this.$getDocument();
+                document = this.$getDocument(sessionID);
                 if (!document) {
                     return [2 /*return*/, null];
                 }
@@ -465,28 +503,28 @@ var base_service_1 = __webpack_require__(9565);
 var htmlService = __webpack_require__(132);
 var HtmlService = /** @class */ (function (_super) {
     __extends(HtmlService, _super);
-    function HtmlService(doc, options) {
-        var _this = _super.call(this, doc, options) || this;
+    function HtmlService(mode) {
+        var _this = _super.call(this, mode) || this;
         _this.$service = htmlService.getLanguageService();
         return _this;
     }
-    HtmlService.prototype.$getDocument = function () {
-        var doc = this.doc.getValue(); //TODO: update
-        return htmlService.TextDocument.create("file://test.html", "html", 1, doc);
+    HtmlService.prototype.$getDocument = function (sessionID) {
+        var documentValue = this.getDocumentValue(sessionID);
+        return htmlService.TextDocument.create("file://test.html", "html", 1, documentValue);
     };
-    HtmlService.prototype.format = function (range, format) {
-        var document = this.$getDocument();
+    HtmlService.prototype.format = function (sessionID, range, format) {
+        var document = this.$getDocument(sessionID);
         if (!document || !range) {
             return [];
         }
         var textEdits = this.$service.format(document, (0, vscode_converters_1.fromRange)(range), format);
         return (0, vscode_converters_1.toAceTextEdits)(textEdits);
     };
-    HtmlService.prototype.doHover = function (position) {
+    HtmlService.prototype.doHover = function (sessionID, position) {
         return __awaiter(this, void 0, void 0, function () {
             var document, htmlDocument, hover;
             return __generator(this, function (_a) {
-                document = this.$getDocument();
+                document = this.$getDocument(sessionID);
                 if (!document) {
                     return [2 /*return*/, null];
                 }
@@ -497,18 +535,18 @@ var HtmlService = /** @class */ (function (_super) {
         });
     };
     //TODO: separate validator for HTML
-    HtmlService.prototype.doValidation = function () {
+    HtmlService.prototype.doValidation = function (sessionID) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, []];
             });
         });
     };
-    HtmlService.prototype.doComplete = function (position) {
+    HtmlService.prototype.doComplete = function (sessionID, position) {
         return __awaiter(this, void 0, void 0, function () {
             var document, htmlDocument, completions;
             return __generator(this, function (_a) {
-                document = this.$getDocument();
+                document = this.$getDocument(sessionID);
                 if (!document) {
                     return [2 /*return*/, null];
                 }
@@ -588,40 +626,57 @@ var base_service_1 = __webpack_require__(9565);
 var jsonService = __webpack_require__(8644);
 var JsonService = /** @class */ (function (_super) {
     __extends(JsonService, _super);
-    function JsonService(doc, options) {
-        var _this = this;
-        var _a;
-        _this = _super.call(this, doc, options) || this;
-        _this.$jsonSchema = (_a = options === null || options === void 0 ? void 0 : options.other) === null || _a === void 0 ? void 0 : _a.jsonSchema;
+    function JsonService(mode) {
+        var _this = _super.call(this, mode) || this;
+        _this.schemas = [];
         _this.$service = jsonService.getLanguageService({
             schemaRequestService: function (uri) {
-                if (_this.$jsonSchema) //TODO: make it with url resolving?
-                    return Promise.resolve(JSON.stringify(_this.$jsonSchema));
-                return Promise.reject("Unabled to load schema at ".concat(uri));
+                uri = uri.replace("file:///", "");
+                var jsonSchema = _this.$getJsonSchema(uri);
+                if (jsonSchema)
+                    return Promise.resolve(JSON.stringify(jsonSchema));
+                return Promise.reject("Unable to load schema at ".concat(uri));
             }
         });
-        _this.$service.configure({ allowComments: false, schemas: [{ fileMatch: ["test.json"], uri: "schema.json" }] });
+        _this.$service.configure({ allowComments: false });
         return _this;
     }
-    JsonService.prototype.$getDocument = function () {
-        var doc = this.doc.getValue(); //TODO: update
-        return jsonService.TextDocument.create("test.json", "json", 1, doc);
+    JsonService.prototype.$getJsonSchema = function (sessionID) {
+        var _a;
+        return (_a = this.options[sessionID]) === null || _a === void 0 ? void 0 : _a.jsonSchema;
     };
-    JsonService.prototype.format = function (range, format) {
-        var document = this.$getDocument();
+    JsonService.prototype.addDocument = function (sessionID, document, options) {
+        _super.prototype.addDocument.call(this, sessionID, document, options);
+        this.schemas.push({ uri: sessionID, fileMatch: [sessionID] });
+        this.$service.configure({ schemas: this.schemas });
+    };
+    JsonService.prototype.removeDocument = function (sessionID) {
+        _super.prototype.removeDocument.call(this, sessionID);
+        this.schemas = this.schemas.filter(function (schema) { return schema.uri != sessionID; });
+    };
+    JsonService.prototype.setOptions = function (sessionID, options) {
+        _super.prototype.setOptions.call(this, sessionID, options);
+        this.$service.resetSchema(sessionID);
+    };
+    JsonService.prototype.$getDocument = function (sessionID) {
+        var documentValue = this.getDocumentValue(sessionID);
+        return jsonService.TextDocument.create(sessionID, "json", 1, documentValue);
+    };
+    JsonService.prototype.format = function (sessionID, range, format) {
+        var document = this.$getDocument(sessionID);
         if (!document) {
             return [];
         }
         var textEdits = this.$service.format(document, (0, vscode_converters_1.fromRange)(range), format);
         return (0, vscode_converters_1.toAceTextEdits)(textEdits);
     };
-    JsonService.prototype.doHover = function (position) {
+    JsonService.prototype.doHover = function (sessionID, position) {
         return __awaiter(this, void 0, void 0, function () {
             var document, jsonDocument, hover;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        document = this.$getDocument();
+                        document = this.$getDocument(sessionID);
                         if (!document) {
                             return [2 /*return*/, null];
                         }
@@ -634,18 +689,18 @@ var JsonService = /** @class */ (function (_super) {
             });
         });
     };
-    JsonService.prototype.doValidation = function () {
+    JsonService.prototype.doValidation = function (sessionID) {
         return __awaiter(this, void 0, Promise, function () {
             var document, jsonDocument, diagnostics, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        document = this.$getDocument();
+                        document = this.$getDocument(sessionID);
                         if (!document) {
                             return [2 /*return*/, []];
                         }
                         jsonDocument = this.$service.parseJSONDocument(document);
-                        diagnostics = this.$service.doValidation(document, jsonDocument, null, this.$jsonSchema);
+                        diagnostics = this.$service.doValidation(document, jsonDocument, null, this.$getJsonSchema(sessionID));
                         _a = vscode_converters_1.toAnnotations;
                         return [4 /*yield*/, diagnostics];
                     case 1: return [2 /*return*/, _a.apply(void 0, [_b.sent()])];
@@ -653,13 +708,13 @@ var JsonService = /** @class */ (function (_super) {
             });
         });
     };
-    JsonService.prototype.doComplete = function (position) {
+    JsonService.prototype.doComplete = function (sessionID, position) {
         return __awaiter(this, void 0, void 0, function () {
             var document, jsonDocument, completions;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        document = this.$getDocument();
+                        document = this.$getDocument(sessionID);
                         if (!document) {
                             return [2 /*return*/, null];
                         }
@@ -671,12 +726,6 @@ var JsonService = /** @class */ (function (_super) {
                 }
             });
         });
-    };
-    JsonService.prototype.setSchema = function (schema) {
-        this.$jsonSchema = schema;
-    };
-    JsonService.prototype.resetSchema = function (uri) {
-        return this.$service.resetSchema(uri);
     };
     return JsonService;
 }(base_service_1.BaseService));
@@ -728,26 +777,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ServiceManager = void 0;
+var document_1 = __webpack_require__(1218);
 var ServiceManager = /** @class */ (function () {
     function ServiceManager() {
-        this.services = [
+        this.$services = [
             {
                 module: Promise.resolve().then(function () { return __webpack_require__(1051); }),
                 name: "HtmlService",
-                extensions: "html"
+                modes: "html"
             },
             {
                 module: Promise.resolve().then(function () { return __webpack_require__(4891); }),
                 name: "CssService",
-                extensions: "css|less|scss"
+                modes: "css|less|scss"
             },
             {
                 module: Promise.resolve().then(function () { return __webpack_require__(7991); }),
                 name: "JsonService",
-                extensions: "json"
+                modes: "json"
             }
         ];
-        this.serviceInstances = {};
+        this.$serviceInstances = {};
+        this.$sessionIDToMode = {};
     }
     Object.defineProperty(ServiceManager, "instance", {
         get: function () {
@@ -759,51 +810,98 @@ var ServiceManager = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    ServiceManager.prototype.addServiceInstance = function (uri, doc, options) {
-        var _a;
+    ServiceManager.prototype.$initServiceInstance = function (mode) {
         return __awaiter(this, void 0, Promise, function () {
-            var resolvedMode, service, _b, _c, e_1;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            var resolvedMode, service, _a, _b, e_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        if (!options["mode"] || !/^ace\/mode\//.test(options["mode"]))
-                            return [2 /*return*/];
-                        resolvedMode = (_a = options["mode"]) === null || _a === void 0 ? void 0 : _a.replace("ace/mode/", "");
-                        _d.label = 1;
+                        resolvedMode = mode === null || mode === void 0 ? void 0 : mode.replace("ace/mode/", "");
+                        _c.label = 1;
                     case 1:
-                        _d.trys.push([1, 3, , 4]);
-                        service = this.findServiceByExtension(resolvedMode);
+                        _c.trys.push([1, 3, , 4]);
+                        service = this.findServiceByMode(resolvedMode);
                         if (!service) {
                             console.log("No service registered for " + resolvedMode);
                             return [2 /*return*/];
                         }
-                        _b = this.serviceInstances;
-                        _c = uri;
+                        _a = this.$serviceInstances;
+                        _b = mode;
                         return [4 /*yield*/, service.module];
                     case 2:
-                        _b[_c] = new (_d.sent())[service.name](doc, options);
-                        return [2 /*return*/, this.serviceInstances[uri]];
+                        _a[_b] = new (_c.sent())[service.name](mode);
+                        return [2 /*return*/, this.$serviceInstances[mode]];
                     case 3:
-                        e_1 = _d.sent();
+                        e_1 = _c.sent();
                         throw "Couldn't resolve language service for " + resolvedMode;
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    ServiceManager.prototype.removeServiceInstance = function (uri) {
-        this.serviceInstances[uri] = undefined;
+    ServiceManager.prototype.$getServiceInstanceByMode = function (mode) {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!!this.$serviceInstances[mode]) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.$initServiceInstance(mode)];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/, this.$serviceInstances[mode]];
+                }
+            });
+        });
     };
-    ServiceManager.prototype.getServiceInstance = function (uri) {
-        if (!this.serviceInstances[uri]) {
-            throw Error("No registered service for " + uri);
+    ServiceManager.prototype.addDocument = function (sessionID, documentValue, mode, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var document, serviceInstance;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!mode || !/^ace\/mode\//.test(mode))
+                            return [2 /*return*/];
+                        document = new document_1.Document(documentValue);
+                        return [4 /*yield*/, this.$getServiceInstanceByMode(mode)];
+                    case 1:
+                        serviceInstance = _a.sent();
+                        serviceInstance.addDocument(sessionID, document, options);
+                        this.$sessionIDToMode[sessionID] = mode;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ServiceManager.prototype.changeDocumentMode = function (sessionID, mode, options) {
+        return __awaiter(this, void 0, void 0, function () {
+            var service, documentValue;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        service = this.getServiceInstance(sessionID);
+                        documentValue = service.getDocumentValue(sessionID);
+                        service.removeDocument(sessionID);
+                        delete this.$sessionIDToMode[sessionID];
+                        return [4 /*yield*/, this.addDocument(sessionID, documentValue, mode, options)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ServiceManager.prototype.getServiceInstance = function (sessionID) {
+        var mode = this.$sessionIDToMode[sessionID];
+        if (!mode || !this.$serviceInstances[mode]) {
+            throw Error("No registered service for " + sessionID);
         }
-        return this.serviceInstances[uri];
+        return this.$serviceInstances[mode];
     };
-    ServiceManager.prototype.findServiceByExtension = function (extension) {
-        return this.services.find(function (el) {
-            var extensions = el.extensions.split('|');
-            if (extensions.indexOf(extension) !== -1)
+    ServiceManager.prototype.findServiceByMode = function (mode) {
+        return this.$services.find(function (el) {
+            var extensions = el.modes.split('|');
+            if (extensions.indexOf(mode) !== -1)
                 return el;
         });
     };
@@ -1053,21 +1151,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-var document_1 = __webpack_require__(1218);
 var message_types_1 = __webpack_require__(6653);
 var service_manager_1 = __webpack_require__(2692);
 var ctx = self;
 ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, function () {
-    var message, uri, manager, postMessage, _a, _b, _c, _d, _e, _f, _g, options, doc, newOptions, service, newDoc;
+    var message, sessionID, manager, postMessage, _a, _b, _c, _d, _e, _f, _g;
     return __generator(this, function (_h) {
         switch (_h.label) {
             case 0:
                 message = ev.data;
-                uri = message.sessionId;
+                sessionID = message.sessionId;
                 manager = service_manager_1.ServiceManager.instance;
                 postMessage = {
                     "type": message.type,
-                    "sessionId": uri,
+                    "sessionId": sessionID,
                 };
                 _a = message["type"];
                 switch (_a) {
@@ -1079,56 +1176,52 @@ ctx.onmessage = function (ev) { return __awaiter(void 0, void 0, void 0, functio
                     case message_types_1.MessageType.validate: return [3 /*break*/, 8];
                     case message_types_1.MessageType.init: return [3 /*break*/, 10];
                     case message_types_1.MessageType.changeMode: return [3 /*break*/, 12];
+                    case message_types_1.MessageType.changeOptions: return [3 /*break*/, 14];
                 }
-                return [3 /*break*/, 14];
+                return [3 /*break*/, 15];
             case 1:
-                postMessage["edits"] = manager.getServiceInstance(uri).format(message.value, message.format);
-                return [3 /*break*/, 14];
+                postMessage["edits"] = manager.getServiceInstance(sessionID).format(sessionID, message.value, message.format);
+                return [3 /*break*/, 15];
             case 2:
                 _b = postMessage;
                 _c = "completions";
-                return [4 /*yield*/, manager.getServiceInstance(uri).doComplete(message.value)];
+                return [4 /*yield*/, manager.getServiceInstance(sessionID).doComplete(sessionID, message.value)];
             case 3:
                 _b[_c] = _h.sent();
-                return [3 /*break*/, 14];
+                return [3 /*break*/, 15];
             case 4:
-                manager.getServiceInstance(uri).setValue(message.value);
-                return [3 /*break*/, 14];
+                manager.getServiceInstance(sessionID).setValue(sessionID, message.value);
+                return [3 /*break*/, 15];
             case 5:
-                manager.getServiceInstance(uri).applyDeltas(message.value);
-                postMessage["type"] = message_types_1.MessageType.change;
-                return [3 /*break*/, 14];
+                manager.getServiceInstance(sessionID).applyDeltas(sessionID, message.value);
+                return [3 /*break*/, 15];
             case 6:
                 _d = postMessage;
                 _e = "hover";
-                return [4 /*yield*/, manager.getServiceInstance(uri).doHover(message.value)];
+                return [4 /*yield*/, manager.getServiceInstance(sessionID).doHover(sessionID, message.value)];
             case 7:
                 _d[_e] = _h.sent();
-                return [3 /*break*/, 14];
+                return [3 /*break*/, 15];
             case 8:
                 _f = postMessage;
                 _g = "annotations";
-                return [4 /*yield*/, manager.getServiceInstance(uri).doValidation()];
+                return [4 /*yield*/, manager.getServiceInstance(sessionID).doValidation(sessionID)];
             case 9:
                 _f[_g] = _h.sent();
-                return [3 /*break*/, 14];
-            case 10:
-                options = message.options;
-                doc = new document_1.Document(message.value);
-                return [4 /*yield*/, manager.addServiceInstance(uri, doc, options)];
+                return [3 /*break*/, 15];
+            case 10: //this should be first message
+            return [4 /*yield*/, manager.addDocument(sessionID, message.value, message.mode, message.options)];
             case 11:
                 _h.sent();
-                return [3 /*break*/, 14];
-            case 12:
-                newOptions = message.value;
-                service = manager.getServiceInstance(uri);
-                newDoc = new document_1.Document(service.doc.getValue());
-                manager.removeServiceInstance(uri);
-                return [4 /*yield*/, manager.addServiceInstance(uri, newDoc, newOptions)];
+                return [3 /*break*/, 15];
+            case 12: return [4 /*yield*/, manager.changeDocumentMode(sessionID, message.mode, message.options)];
             case 13:
                 _h.sent();
-                return [3 /*break*/, 14];
+                return [3 /*break*/, 15];
             case 14:
+                manager.getServiceInstance(sessionID).setOptions(sessionID, message.options);
+                return [3 /*break*/, 15];
+            case 15:
                 ctx.postMessage(postMessage);
                 return [2 /*return*/];
         }

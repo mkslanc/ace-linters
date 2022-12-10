@@ -37906,6 +37906,13 @@ var LanguageProvider = /** @class */ (function () {
     function LanguageProvider(editor, options, markdownConverter) {
         var _this = this;
         this.deltaQueue = [];
+        this.$changeOptions = function () {
+            _this.$message.changeOptions(_this.editor.session["id"], _this.$options, _this.$onInit);
+        };
+        this.$onInit = function () {
+            _this.validate();
+            _this.registerCompleters();
+        };
         this.validate = function () {
             _this.$message.doValidation(_this.editor.session["id"], function (annotations) {
                 _this.editor.session.clearAnnotations();
@@ -37934,11 +37941,22 @@ var LanguageProvider = /** @class */ (function () {
             }
         };
         this.editor = editor;
-        this.options = options;
-        this.$adaptOptions();
+        this.$options = options;
         this.$markdownConverter = markdownConverter !== null && markdownConverter !== void 0 ? markdownConverter : new showdown.Converter();
         this.$init();
     }
+    Object.defineProperty(LanguageProvider.prototype, "options", {
+        set: function (options) {
+            this.$options = options;
+            this.$changeOptions();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    LanguageProvider.prototype.setOption = function (optionName, optionValue) {
+        this.$options[optionName] = optionValue;
+        this.$changeOptions();
+    };
     LanguageProvider.prototype.$changeListener = function (delta) {
         if (delta.action == "insert")
             this.deltaQueue.push(delta.start, delta.lines);
@@ -37954,13 +37972,23 @@ var LanguageProvider = /** @class */ (function () {
         this.$message.change(this.editor.session["id"], deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
     };
     ;
-    LanguageProvider.prototype.$adaptOptions = function () {
-        var editorOptions = this.editor.getOptions();
-        this.options.mode = editorOptions.mode;
-    };
+    Object.defineProperty(LanguageProvider.prototype, "$editorOptions", {
+        get: function () {
+            return this.editor.getOptions();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(LanguageProvider.prototype, "$mode", {
+        get: function () {
+            return this.$editorOptions.mode;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(LanguageProvider.prototype, "$format", {
         get: function () {
-            var editorOptions = this.editor.getOptions();
+            var editorOptions = this.$editorOptions;
             return {
                 tabSize: editorOptions.tabSize,
                 insertSpaces: editorOptions.useSoftTabs
@@ -37972,18 +38000,13 @@ var LanguageProvider = /** @class */ (function () {
     LanguageProvider.prototype.$init = function () {
         var _this = this;
         this.$message = message_controller_1.MessageController.instance;
-        this.$message.init(this.editor.session["id"], this.editor.getValue(), this.options, function () {
+        this.$message.init(this.editor.session["id"], this.editor.getValue(), this.$mode, this.$options, function () {
             _this.$descriptionTooltip = new description_tooltip_1.DescriptionTooltip(_this);
             _this.editor.session.doc.on("change", _this.$changeListener.bind(_this), true);
-            _this.validate();
-            _this.registerCompleters();
+            _this.$onInit();
             // @ts-ignore
             _this.editor.on("changeMode", function () {
-                _this.$adaptOptions();
-                _this.$message.changeMode(_this.editor.session["id"], _this.options, function () {
-                    _this.validate();
-                    _this.registerCompleters();
-                });
+                _this.$message.changeMode(_this.editor.session["id"], _this.$mode, _this.$options, _this.$onInit);
             });
         });
     };
@@ -38070,20 +38093,20 @@ var MessageController = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    MessageController.prototype.init = function (sessionId, value, options, callback) {
-        this.postMessage(new message_types_1.InitMessage(sessionId, value, options), message_types_1.MessageType.init, callback);
+    MessageController.prototype.init = function (sessionId, value, mode, options, callback) {
+        this.postMessage(new message_types_1.InitMessage(sessionId, value, mode, options), callback);
     };
     MessageController.prototype.doValidation = function (sessionId, callback) {
-        this.postMessage(new message_types_1.ValidateMessage(sessionId), message_types_1.MessageType.validate, callback);
+        this.postMessage(new message_types_1.ValidateMessage(sessionId), callback);
     };
     MessageController.prototype.doComplete = function (sessionId, position, callback) {
-        this.postMessage(new message_types_1.CompleteMessage(sessionId, position), message_types_1.MessageType.complete, callback);
+        this.postMessage(new message_types_1.CompleteMessage(sessionId, position), callback);
     };
     MessageController.prototype.format = function (sessionId, range, format, callback) {
-        this.postMessage(new message_types_1.FormatMessage(sessionId, range, format), message_types_1.MessageType.format, callback);
+        this.postMessage(new message_types_1.FormatMessage(sessionId, range, format), callback);
     };
     MessageController.prototype.doHover = function (sessionId, position, callback) {
-        this.postMessage(new message_types_1.HoverMessage(sessionId, position), message_types_1.MessageType.hover, callback);
+        this.postMessage(new message_types_1.HoverMessage(sessionId, position), callback);
     };
     MessageController.prototype.change = function (sessionId, deltas, value, docLength, callback) {
         var message;
@@ -38093,15 +38116,18 @@ var MessageController = /** @class */ (function () {
         else {
             message = new message_types_1.DeltasMessage(sessionId, deltas);
         }
-        this.postMessage(message, message_types_1.MessageType.change, callback);
+        this.postMessage(message, callback);
     };
-    MessageController.prototype.changeMode = function (sessionId, options, callback) {
-        this.postMessage(new message_types_1.ChangeModeMessage(sessionId, options), message_types_1.MessageType.changeMode, callback);
+    MessageController.prototype.changeMode = function (sessionId, mode, options, callback) {
+        this.postMessage(new message_types_1.ChangeModeMessage(sessionId, mode, options), callback);
     };
-    MessageController.prototype.postMessage = function (message, event, callback) {
+    MessageController.prototype.changeOptions = function (sessionId, options, callback) {
+        this.postMessage(new message_types_1.ChangeOptionsMessage(sessionId, options), callback);
+    };
+    MessageController.prototype.postMessage = function (message, callback) {
         var _this = this;
-        if (event != undefined && callback) {
-            var eventName_1 = event.toString() + "-" + message.sessionId;
+        if (callback) {
+            var eventName_1 = message.type.toString() + "-" + message.sessionId;
             var callbackFunction_1 = function (data) {
                 _this["off"](eventName_1, callbackFunction_1);
                 callback(data);
@@ -38139,7 +38165,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MessageType = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
+exports.MessageType = exports.ChangeOptionsMessage = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
 var BaseMessage = /** @class */ (function () {
     function BaseMessage(sessionId) {
         this.sessionId = sessionId;
@@ -38149,10 +38175,11 @@ var BaseMessage = /** @class */ (function () {
 exports.BaseMessage = BaseMessage;
 var InitMessage = /** @class */ (function (_super) {
     __extends(InitMessage, _super);
-    function InitMessage(sessionId, value, options) {
+    function InitMessage(sessionId, value, mode, options) {
         var _this = _super.call(this, sessionId) || this;
         _this.type = MessageType.init;
         _this.options = options;
+        _this.mode = mode;
         _this.value = value;
         return _this;
     }
@@ -38227,15 +38254,27 @@ var DeltasMessage = /** @class */ (function (_super) {
 exports.DeltasMessage = DeltasMessage;
 var ChangeModeMessage = /** @class */ (function (_super) {
     __extends(ChangeModeMessage, _super);
-    function ChangeModeMessage(sessionId, value) {
+    function ChangeModeMessage(sessionId, mode, options) {
         var _this = _super.call(this, sessionId) || this;
         _this.type = MessageType.changeMode;
-        _this.value = value;
+        _this.mode = mode;
+        _this.options = options;
         return _this;
     }
     return ChangeModeMessage;
 }(BaseMessage));
 exports.ChangeModeMessage = ChangeModeMessage;
+var ChangeOptionsMessage = /** @class */ (function (_super) {
+    __extends(ChangeOptionsMessage, _super);
+    function ChangeOptionsMessage(sessionId, options) {
+        var _this = _super.call(this, sessionId) || this;
+        _this.type = MessageType.changeOptions;
+        _this.options = options;
+        return _this;
+    }
+    return ChangeOptionsMessage;
+}(BaseMessage));
+exports.ChangeOptionsMessage = ChangeOptionsMessage;
 var MessageType;
 (function (MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -38246,6 +38285,7 @@ var MessageType;
     MessageType[MessageType["validate"] = 5] = "validate";
     MessageType[MessageType["applyDelta"] = 6] = "applyDelta";
     MessageType[MessageType["changeMode"] = 7] = "changeMode";
+    MessageType[MessageType["changeOptions"] = 8] = "changeOptions";
 })(MessageType = exports.MessageType || (exports.MessageType = {}));
 
 
@@ -38466,7 +38506,7 @@ var lintersCSS = __webpack_require__(5563);
 var dom = __webpack_require__(6359);
 dom.importCssString(lintersCSS, "linters.css");
 var modes = [
-    { name: "json", mode: json_1.Mode, content: json_example_1.jsonContent, options: { other: { jsonSchema: json_example_1.jsonSchema } } },
+    { name: "json", mode: json_1.Mode, content: json_example_1.jsonContent, options: { jsonSchema: json_example_1.jsonSchema } },
     { name: "html", mode: html_1.Mode, content: html_example_1.htmlContent },
     { name: "css", mode: css_1.Mode, content: css_example_1.cssContent },
     { name: "less", mode: less_1.Mode, content: less_example_1.lessContent },
