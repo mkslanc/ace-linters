@@ -15,7 +15,7 @@ export class HtmlService extends BaseService {
     }
 
     $getDocument(sessionID: string) {
-        let documentValue = this.getDocumentValue(sessionID); //TODO: update
+        let documentValue = this.getDocumentValue(sessionID);
         return htmlService.TextDocument.create("file://test.html", "html", 1, documentValue);
     }
 

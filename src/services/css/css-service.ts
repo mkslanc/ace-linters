@@ -35,7 +35,7 @@ export class CssService extends BaseService {
     }
 
     $getDocument(sessionID: string) {
-        let documentValue = this.getDocumentValue(sessionID); //TODO: update
+        let documentValue = this.getDocumentValue(sessionID);
         return cssService.TextDocument.create("file://test.html", this.$languageId, 1, documentValue);
     }
 

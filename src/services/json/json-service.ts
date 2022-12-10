@@ -20,7 +20,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
             schemaRequestService: (uri) => {
                 uri = uri.replace("file:///", "");
                 let jsonSchema = this.$getJsonSchema(uri);
-                if (jsonSchema) //TODO: make it with url resolving?
+                if (jsonSchema)
                     return Promise.resolve(JSON.stringify(jsonSchema));
                 return Promise.reject(`Unable to load schema at ${uri}`);
             }
@@ -49,7 +49,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
     }
 
     $getDocument(sessionID: string) {
-        let documentValue = this.getDocumentValue(sessionID); //TODO: update
+        let documentValue = this.getDocumentValue(sessionID);
         return jsonService.TextDocument.create(sessionID, "json", 1, documentValue);
     }
 
