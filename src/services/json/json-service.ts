@@ -1,8 +1,12 @@
-import {FormattingOptions, JSONSchema, LanguageService as VSLanguageService} from "vscode-json-languageservice";
+import {
+    FormattingOptions,
+    JSONSchema,
+    LanguageService as VSLanguageService,
+    SchemaConfiguration
+} from "vscode-json-languageservice";
 import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAceTextEdits, toAnnotations, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
 import {BaseService} from "../base-service";
-import {SchemaConfiguration} from "vscode-json-languageservice/lib/umd/jsonLanguageTypes";
 
 let jsonService = require('vscode-json-languageservice');
 
