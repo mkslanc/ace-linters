@@ -1,48 +1,56 @@
 import type {FormattingOptions} from "vscode-languageserver-types";
 import type {Ace} from "ace-code/ace";
 import {TooltipType} from "../type-converters/common-converters";
+import {TextDocument} from "vscode-json-languageservice";
 
 export namespace AceLinters {
     export interface LanguageService {
-        doc: Ace.Document;
+        documents: { [sessionID: string]: Ace.Document };
         $service;
+        mode: string;
 
-        $getDocument(): any; //TODO: TextDocument
+        $getDocument(sessionID: string): TextDocument;
 
-        format(range: Ace.Range, format: FormattingOptions): TextEdit[];
+        format(sessionID: string, range: Ace.Range, format: FormattingOptions): TextEdit[];
 
-        doHover(position: Ace.Point): Promise<Tooltip>;
+        doHover(sessionID: string, position: Ace.Point): Promise<Tooltip>;
 
-        doValidation(): Promise<Ace.Annotation[]>;
+        doValidation(sessionID: string): Promise<Ace.Annotation[]>;
 
-        doComplete(position: Ace.Point): Promise<Ace.Completion[]>;
+        doComplete(sessionID: string, position: Ace.Point): Promise<Ace.Completion[]>;
 
-        setValue(value: string);
+        setValue(sessionID: string, value: string);
 
-        applyDeltas(delta: Ace.Delta[]);
+        applyDeltas(sessionID: string, delta: Ace.Delta[]);
+
+        addDocument(sessionID: string, document: Ace.Document, options: ServiceOptions);
+
+        setOptions(sessionID: string, options: ServiceOptions);
+
+        getDocument(sessionID: string): Ace.Document;
+
+        removeDocument(sessionID: string);
+
+        getDocumentValue(sessionID: string): string;
     }
-
 
     interface TooltipContent {
         type: TooltipType,
         text: string
     }
 
-    interface Tooltip {
+    export interface Tooltip {
         content: TooltipContent
         range?: Ace.Range
-    }
-
-    interface ServiceOptions {
-        mode?: string,
-        other?: {
-            [name: string]: any
-        }
     }
 
     export interface TextEdit {
         range: Ace.Range;
         newText: string;
+    }
+
+    export interface ServiceOptions {
+        [name: string]: any
     }
 }
 

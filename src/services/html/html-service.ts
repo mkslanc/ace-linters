@@ -3,26 +3,24 @@ import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAceTextEdits, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
 import {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 import {BaseService} from "../base-service";
-import {AceLinters} from "../language-service";
-import ServiceOptions = AceLinters.ServiceOptions;
 
-var htmlService = require('vscode-html-languageservice');
+let htmlService = require('vscode-html-languageservice');
 
 export class HtmlService extends BaseService {
     $service: VSLanguageService;
 
-    constructor(doc: Ace.Document, options: ServiceOptions) {
-        super(doc, options);
+    constructor(mode: string) {
+        super(mode);
         this.$service = htmlService.getLanguageService();
     }
 
-    $getDocument() {
-        var doc = this.doc.getValue(); //TODO: update
-        return htmlService.TextDocument.create("file://test.html", "html", 1, doc);
+    $getDocument(sessionID: string) {
+        let documentValue = this.getDocumentValue(sessionID);
+        return htmlService.TextDocument.create("file://test.html", "html", 1, documentValue);
     }
 
-    format(range: Ace.Range, format: HTMLFormatConfiguration) {
-        let document = this.$getDocument();
+    format(sessionID: string, range: Ace.Range, format: HTMLFormatConfiguration) {
+        let document = this.$getDocument(sessionID);
         if (!document || !range) {
             return [];
         }
@@ -31,8 +29,8 @@ export class HtmlService extends BaseService {
         return toAceTextEdits(textEdits);
     }
 
-    async doHover(position: Ace.Point) {
-        let document = this.$getDocument();
+    async doHover(sessionID: string, position: Ace.Point) {
+        let document = this.$getDocument(sessionID);
         if (!document) {
             return null;
         }
@@ -42,12 +40,12 @@ export class HtmlService extends BaseService {
     }
 
     //TODO: separate validator for HTML
-    async doValidation() {
+    async doValidation(sessionID: string) {
         return [];
     }
 
-    async doComplete(position: Ace.Point) {
-        let document = this.$getDocument();
+    async doComplete(sessionID: string, position: Ace.Point) {
+        let document = this.$getDocument(sessionID);
         if (!document) {
             return null;
         }

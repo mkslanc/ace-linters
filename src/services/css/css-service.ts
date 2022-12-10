@@ -3,23 +3,21 @@ import {Ace} from "ace-code";
 import {fromPoint, fromRange, toAceTextEdits, toAnnotations, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import {BaseService} from "../base-service";
-import {AceLinters} from "../language-service";
-import ServiceOptions = AceLinters.ServiceOptions;
 
-var cssService = require('vscode-css-languageservice');
+let cssService = require('vscode-css-languageservice');
 
 export class CssService extends BaseService {
     $service: VSLanguageService;
     $languageId: string;
 
-    constructor(doc: Ace.Document, options: ServiceOptions) {
-        super(doc, options);
-        this.changeLanguageService(options.mode);
+    constructor(mode: string) {
+        super(mode);
+        this.$initLanguageService();
         this.$service.configure();
     }
 
-    changeLanguageService(modeName?: string) {
-        switch (modeName) {
+    private $initLanguageService() {
+        switch (this.mode) {
             case "ace/mode/less":
                 this.$languageId = "less";
                 this.$service = cssService.getLESSLanguageService();
@@ -36,13 +34,13 @@ export class CssService extends BaseService {
         }
     }
 
-    $getDocument() {
-        var doc = this.doc.getValue(); //TODO: update
-        return cssService.TextDocument.create("file://test.html", this.$languageId, 1, doc);
+    $getDocument(sessionID: string) {
+        let documentValue = this.getDocumentValue(sessionID);
+        return cssService.TextDocument.create("file://test.html", this.$languageId, 1, documentValue);
     }
 
-    format(range: Ace.Range, format: CSSFormatConfiguration) {
-        let document = this.$getDocument();
+    format(sessionID: string, range: Ace.Range, format: CSSFormatConfiguration) {
+        let document = this.$getDocument(sessionID);
         if (!document) {
             return [];
         }
@@ -50,8 +48,8 @@ export class CssService extends BaseService {
         return toAceTextEdits(textEdits);
     }
 
-    doHover(position: Ace.Point) {
-        let document = this.$getDocument();
+    doHover(sessionID: string, position: Ace.Point) {
+        let document = this.$getDocument(sessionID);
         if (!document) {
             return null;
         }
@@ -60,8 +58,8 @@ export class CssService extends BaseService {
         return Promise.resolve(toTooltip(hover));
     }
 
-    async doValidation(): Promise<Ace.Annotation[]> {
-        let document = this.$getDocument();
+    async doValidation(sessionID: string): Promise<Ace.Annotation[]> {
+        let document = this.$getDocument(sessionID);
         if (!document) {
             return [];
         }
@@ -71,8 +69,8 @@ export class CssService extends BaseService {
         return toAnnotations(diagnostics);
     }
 
-    async doComplete(position: Ace.Point) {
-        let document = this.$getDocument();
+    async doComplete(sessionID: string, position: Ace.Point) {
+        let document = this.$getDocument(sessionID);
         if (!document) {
             return null;
         }
