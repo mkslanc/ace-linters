@@ -2,7 +2,6 @@ import {Ace, Range as AceRange} from "ace-code";
 import {MessageController} from "./message-controller";
 import {DescriptionTooltip} from "./components/description-tooltip";
 import Tooltip = AceLinters.Tooltip;
-import ServiceOptions = AceLinters.ServiceOptions;
 import {AceLinters} from "./services/language-service";
 import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-types";
@@ -10,20 +9,29 @@ import {cleanHtml, toCompletions, TooltipType, toRange} from "./type-converters/
 
 let showdown = require('showdown');
 
-export class LanguageProvider {
+export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     editor: Ace.Editor;
     private $descriptionTooltip;
-    private $markdownConverter: MarkDownConverter;
+    private readonly $markdownConverter: MarkDownConverter;
     private $message: MessageController;
-    options: ServiceOptions;
+    private $options: OptionsType;
     deltaQueue: Ace.Delta[] = [];
 
-    constructor(editor: Ace.Editor, options: ServiceOptions, markdownConverter?: MarkDownConverter) {
+    constructor(editor: Ace.Editor, options: OptionsType, markdownConverter?: MarkDownConverter) {
         this.editor = editor;
-        this.options = options;
-        this.$adaptOptions();
+        this.$options = options;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
         this.$init();
+    }
+
+    set options(options: OptionsType) {
+        this.$options = options;
+        this.$changeOptions();
+    }
+
+    setOption<T extends keyof OptionsType>(optionName: T, optionValue: OptionsType[T]) {
+        this.$options[optionName] = optionValue;
+        this.$changeOptions();
     }
 
     private $changeListener(delta) {
@@ -34,19 +42,22 @@ export class LanguageProvider {
     }
 
     private $sendDeltaQueue() {
-        var deltas = this.deltaQueue;
+        let deltas = this.deltaQueue;
         if (!deltas) return;
         this.deltaQueue = [];
         this.$message.change(this.editor.session["id"], deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
     };
 
-    private $adaptOptions() {
-        let editorOptions = this.editor.getOptions();
-        this.options.mode = editorOptions.mode;
+    private get $editorOptions() {
+        return this.editor.getOptions();
+    }
+
+    private get $mode() {
+        return this.$editorOptions.mode;
     }
 
     private get $format(): FormattingOptions {
-        let editorOptions = this.editor.getOptions();
+        let editorOptions = this.$editorOptions;
         return {
             tabSize: editorOptions.tabSize,
             insertSpaces: editorOptions.useSoftTabs
@@ -55,23 +66,27 @@ export class LanguageProvider {
 
     private $init() {
         this.$message = MessageController.instance;
-        this.$message.init(this.editor.session["id"], this.editor.getValue(), this.options, () => {
+        this.$message.init(this.editor.session["id"], this.editor.getValue(), this.$mode, this.$options, () => {
             this.$descriptionTooltip = new DescriptionTooltip(this);
 
             this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
 
-            this.validate();
-            this.registerCompleters();
+            this.$onInit();
 
             // @ts-ignore
             this.editor.on("changeMode", () => {
-                this.$adaptOptions();
-                this.$message.changeMode(this.editor.session["id"], this.options, () => {
-                    this.validate();
-                    this.registerCompleters();
-                });
+                this.$message.changeMode(this.editor.session["id"], this.$mode, this.$options, this.$onInit);
             });
         });
+    }
+
+    private $changeOptions = () => {
+        this.$message.changeOptions(this.editor.session["id"], this.$options, this.$onInit);
+    }
+
+    private $onInit = () => {
+        this.validate();
+        this.registerCompleters();
     }
 
     validate = () => {

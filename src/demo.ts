@@ -1,16 +1,16 @@
 import "ace-code/src/ext/language_tools";
 import {htmlContent} from "./docs-example/html-example";
 
-var event = require("ace-code/src/lib/event");
-var {HashHandler} = require("ace-code/src/keyboard/hash_handler");
-var keyUtil = require("ace-code/src/lib/keys");
+let event = require("ace-code/src/lib/event");
+let {HashHandler} = require("ace-code/src/keyboard/hash_handler");
+let keyUtil = require("ace-code/src/lib/keys");
 import {Mode as HTMLMode} from "ace-code/src/mode/html";
 import {Mode as CSSMode} from "ace-code/src/mode/css";
 import {Mode as LessMode} from "ace-code/src/mode/less";
 import {Mode as SCSSMode} from "ace-code/src/mode/scss";
 import {Mode as JsonMode} from "ace-code/src/mode/json";
 
-var theme = require("ace-code/src/theme/textmate");
+let theme = require("ace-code/src/theme/textmate");
 import * as ace from "ace-code";
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
@@ -25,14 +25,14 @@ import * as dom from "ace-code/src/lib/dom";
 dom.importCssString(lintersCSS, "linters.css");
 
 let modes = [
-    {name: "json", mode: JsonMode, content: jsonContent, options: {other: {jsonSchema: jsonSchema}}},
+    {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchema: jsonSchema}},
     {name: "html", mode: HTMLMode, content: htmlContent},
     {name: "css", mode: CSSMode, content: cssContent},
     {name: "less", mode: LessMode, content: lessContent},
     {name: "scss", mode: SCSSMode, content: scssContent},
 ]
 let i = 0;
-var activeProvider: LanguageProvider;
+let activeProvider: LanguageProvider;
 for (let mode of modes) {
     let el = document.createElement("div");
     let modeName = document.createElement("p");
@@ -66,7 +66,7 @@ for (let mode of modes) {
     i++;
 }
 
-var menuKb = new HashHandler([
+let menuKb = new HashHandler([
     {
         bindKey: "Ctrl-`",
         name: "format",
@@ -78,8 +78,8 @@ var menuKb = new HashHandler([
 
 event.addCommandKeyListener(window, function (e, hashId, keyCode) {
 
-    var keyString = keyUtil.keyCodeToString(keyCode);
-    var command = menuKb.findKeyCommand(hashId, keyString);
+    let keyString = keyUtil.keyCodeToString(keyCode);
+    let command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
         command.exec();
     }

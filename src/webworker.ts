@@ -1,50 +1,44 @@
-import {Document} from "ace-code/src/document";
 import {MessageType} from "./message-types";
 import {ServiceManager} from "./services/service-manager";
-import {AceLinters} from "./services/language-service";
-import ServiceOptions = AceLinters.ServiceOptions;
 
 const ctx: Worker = self as any;
 
 ctx.onmessage = async (ev) => {
     let message = ev.data;
-    let uri = message.sessionId;
+    let sessionID = message.sessionId;
     let manager = ServiceManager.instance;
     let postMessage = {
         "type": message.type,
-        "sessionId": uri,
+        "sessionId": sessionID,
     };
     switch (message["type"] as MessageType) {
         case MessageType.format:
-            postMessage["edits"] = manager.getServiceInstance(uri).format(message.value, message.format);
+            postMessage["edits"] = manager.getServiceInstance(sessionID).format(sessionID, message.value, message.format);
             break;
         case MessageType.complete:
-            postMessage["completions"] = await manager.getServiceInstance(uri).doComplete(message.value);
+            postMessage["completions"] = await manager.getServiceInstance(sessionID).doComplete(sessionID, message.value);
             break;
         case MessageType.change:
-            manager.getServiceInstance(uri).setValue(message.value);
+            manager.getServiceInstance(sessionID).setValue(sessionID, message.value);
             break;
         case MessageType.applyDelta:
-            manager.getServiceInstance(uri).applyDeltas(message.value);
+            manager.getServiceInstance(sessionID).applyDeltas(sessionID, message.value);
             postMessage["type"] = MessageType.change;
             break;
         case MessageType.hover:
-            postMessage["hover"] = await manager.getServiceInstance(uri).doHover(message.value);
+            postMessage["hover"] = await manager.getServiceInstance(sessionID).doHover(sessionID, message.value);
             break;
         case MessageType.validate:
-            postMessage["annotations"] = await manager.getServiceInstance(uri).doValidation();
+            postMessage["annotations"] = await manager.getServiceInstance(sessionID).doValidation(sessionID);
             break;
         case MessageType.init: //this should be first message
-            let options: ServiceOptions = message.options;
-            let doc = new Document(message.value);
-            await manager.addServiceInstance(uri, doc, options);
+            await manager.addDocument(sessionID, message.value, message.mode, message.options);
             break;
         case MessageType.changeMode:
-            let newOptions: ServiceOptions = message.value;
-            let service = manager.getServiceInstance(uri);
-            let newDoc = new Document(service.doc.getValue());
-            manager.removeServiceInstance(uri);
-            await manager.addServiceInstance(uri, newDoc, newOptions);
+            await manager.changeDocumentMode(sessionID, message.mode, message.options);
+            break;
+        case MessageType.changeOptions:
+            manager.getServiceInstance(sessionID).setOptions(sessionID, message.options);
             break;
     }
 

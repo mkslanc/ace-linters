@@ -12,19 +12,21 @@ export abstract class BaseMessage {
     }
 }
 
-export class InitMessage extends  BaseMessage {
+export class InitMessage extends BaseMessage {
     type: MessageType = MessageType.init;
+    mode: string;
     options: { [key: string]: any };
     value: string;
 
-    constructor(sessionId: string, value: string, options: { [p: string]: any }) {
+    constructor(sessionId: string, value: string, mode: string, options: { [p: string]: any }) {
         super(sessionId);
         this.options = options;
+        this.mode = mode;
         this.value = value;
     }
 }
 
-export class FormatMessage extends  BaseMessage {
+export class FormatMessage extends BaseMessage {
     type: MessageType = MessageType.format;
     value: Ace.Range;
     format: FormattingOptions;
@@ -36,7 +38,7 @@ export class FormatMessage extends  BaseMessage {
     }
 }
 
-export class CompleteMessage extends  BaseMessage {
+export class CompleteMessage extends BaseMessage {
     type: MessageType = MessageType.complete;
     value: Ace.Point;
 
@@ -46,7 +48,7 @@ export class CompleteMessage extends  BaseMessage {
     }
 }
 
-export class HoverMessage extends  BaseMessage {
+export class HoverMessage extends BaseMessage {
     type: MessageType = MessageType.hover;
     value: Ace.Point;
 
@@ -56,7 +58,7 @@ export class HoverMessage extends  BaseMessage {
     }
 }
 
-export class ValidateMessage extends  BaseMessage {
+export class ValidateMessage extends BaseMessage {
     type: MessageType = MessageType.validate;
 
     constructor(sessionId: string) {
@@ -64,7 +66,7 @@ export class ValidateMessage extends  BaseMessage {
     }
 }
 
-export class ChangeMessage extends  BaseMessage {
+export class ChangeMessage extends BaseMessage {
     type: MessageType = MessageType.change;
     value: string;
 
@@ -74,7 +76,7 @@ export class ChangeMessage extends  BaseMessage {
     }
 }
 
-export class DeltasMessage extends  BaseMessage {
+export class DeltasMessage extends BaseMessage {
     type: MessageType = MessageType.applyDelta;
     value: Ace.Delta[];
 
@@ -84,16 +86,28 @@ export class DeltasMessage extends  BaseMessage {
     }
 }
 
-export class ChangeModeMessage extends  BaseMessage {
+export class ChangeModeMessage extends BaseMessage {
     type: MessageType = MessageType.changeMode;
-    value: ServiceOptions;
+    mode: string;
+    options: ServiceOptions;
 
-    constructor(sessionId: string, value: ServiceOptions) {
+    constructor(sessionId: string, mode: string, options: ServiceOptions) {
         super(sessionId);
-        this.value = value;
+        this.mode = mode;
+        this.options = options;
+    }
+}
+
+export class ChangeOptionsMessage extends BaseMessage {
+    type: MessageType = MessageType.changeOptions;
+    options: ServiceOptions;
+
+    constructor(sessionId: string, options: ServiceOptions) {
+        super(sessionId);
+        this.options = options;
     }
 }
 
 export enum MessageType {
-    init, format, complete, change, hover, validate, applyDelta, changeMode
+    init, format, complete, change, hover, validate, applyDelta, changeMode, changeOptions
 }

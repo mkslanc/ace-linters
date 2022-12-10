@@ -1,10 +1,11 @@
 import {AceLinters} from "./language-service";
 import LanguageService = AceLinters.LanguageService;
 import ServiceOptions = AceLinters.ServiceOptions;
+import {Document} from "ace-code/src/document";
 
 export class ServiceManager {
     private static _instance: ServiceManager;
-    services: { module: any, name: string, extensions: string }[] = [
+    private $services: { module: any, name: string, extensions: string }[] = [
         {
             module: import("./html/html-service"),
             name: "HtmlService",
@@ -21,7 +22,8 @@ export class ServiceManager {
             extensions: "json"
         }
     ];
-    serviceInstances: { [sessionId: string]: LanguageService } = {};
+    private $serviceInstances: { [mode: string]: LanguageService } = {};
+    private $sessionIDToMode: {[sessionID: string]: string} = {};
 
     static get instance() {
         if (!ServiceManager._instance) {
@@ -30,36 +32,61 @@ export class ServiceManager {
         return ServiceManager._instance;
     }
 
-    async addServiceInstance(uri: string, doc, options: ServiceOptions): Promise<LanguageService> {
-        if (!options["mode"] || !/^ace\/mode\//.test(options["mode"]))
-            return;
-        let resolvedMode = options["mode"]?.replace("ace/mode/", "");
+    private async $initServiceInstance(mode: string): Promise<LanguageService> {
+        let resolvedMode = mode?.replace("ace/mode/", "");
         try {
             let service = this.findServiceByExtension(resolvedMode);
             if (!service) {
                 console.log("No service registered for " + resolvedMode);
                 return;
             }
-            this.serviceInstances[uri] = new (await service.module)[service.name](doc, options);
-            return this.serviceInstances[uri];
+            this.$serviceInstances[mode] = new (await service.module)[service.name](mode);
+            return this.$serviceInstances[mode];
         } catch (e) {
             throw "Couldn't resolve language service for " + resolvedMode;
         }
     }
 
-    removeServiceInstance(uri: string) {
-        this.serviceInstances[uri] = undefined;
+    private async $getServiceInstance(mode: string): Promise<LanguageService> {
+        if (!this.$serviceInstances[mode]) {
+            await this.$initServiceInstance(mode);
+        }
+        return this.$serviceInstances[mode];
     }
 
-    getServiceInstance(uri: string): LanguageService {
-        if (!this.serviceInstances[uri]) {
-            throw Error("No registered service for " + uri);
+    async addDocument(sessionID: string, documentValue: string, mode: string, options: ServiceOptions) {
+        if (!mode || !/^ace\/mode\//.test(mode))
+            return;
+
+        let document = new Document(documentValue);
+
+        let serviceInstance = await this.$getServiceInstance(mode);
+        serviceInstance.addDocument(sessionID, document, options);
+
+        this.$sessionIDToMode[sessionID] = mode;
+    }
+
+    async changeDocumentMode(sessionID: string, mode: string, options: ServiceOptions) {
+        let service = this.getServiceInstance(sessionID);
+        let documentValue = service.getDocumentValue(sessionID);
+
+        service.removeDocument(sessionID);
+
+        delete this.$sessionIDToMode[sessionID];
+
+        await this.addDocument(sessionID, documentValue, mode, options);
+    }
+
+    getServiceInstance(sessionID: string): LanguageService {
+        let mode = this.$sessionIDToMode[sessionID];
+        if (!mode || !this.$serviceInstances[mode]) {
+            throw Error("No registered service for " + sessionID);
         }
-        return this.serviceInstances[uri];
+        return this.$serviceInstances[mode];
     }
 
     findServiceByExtension(extension: string) {
-        return this.services.find((el) => {
+        return this.$services.find((el) => {
             let extensions = el.extensions.split('|');
             if (extensions.indexOf(extension) !== -1)
                 return el;

@@ -2,7 +2,7 @@ import {Ace} from "ace-code";
 import {
     BaseMessage,
     ChangeMessage,
-    ChangeModeMessage,
+    ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
     DeltasMessage,
     FormatMessage,
@@ -56,24 +56,24 @@ export class MessageController {
         };
     }
 
-    init(sessionId: string, value: string, options: AceLinters.ServiceOptions, callback?: () => void) {
-        this.postMessage(new InitMessage(sessionId, value, options), MessageType.init, callback);
+    init(sessionId: string, value: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void) {
+        this.postMessage(new InitMessage(sessionId, value, mode, options), callback);
     }
 
     doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void) {
-        this.postMessage(new ValidateMessage(sessionId), MessageType.validate, callback);
+        this.postMessage(new ValidateMessage(sessionId), callback);
     }
 
     doComplete(sessionId: string, position: Ace.Point, callback?: (CompletionList) => void) {
-        this.postMessage(new CompleteMessage(sessionId, position), MessageType.complete, callback);
+        this.postMessage(new CompleteMessage(sessionId, position), callback);
     }
 
     format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: AceLinters.TextEdit[]) => void) {
-        this.postMessage(new FormatMessage(sessionId, range, format), MessageType.format, callback);
+        this.postMessage(new FormatMessage(sessionId, range, format), callback);
     }
 
     doHover(sessionId: string, position: Ace.Point, callback?: (hover: AceLinters.Tooltip) => void) {
-        this.postMessage(new HoverMessage(sessionId, position), MessageType.hover, callback)
+        this.postMessage(new HoverMessage(sessionId, position), callback)
     }
 
     change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number, callback?: () => void) {
@@ -84,16 +84,20 @@ export class MessageController {
             message = new DeltasMessage(sessionId, deltas);
         }
 
-        this.postMessage(message, MessageType.change, callback)
+        this.postMessage(message, callback)
     }
 
-    changeMode(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void) {
-        this.postMessage(new ChangeModeMessage(sessionId, options), MessageType.changeMode, callback);
+    changeMode(sessionId: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void) {
+        this.postMessage(new ChangeModeMessage(sessionId, mode, options), callback);
     }
 
-    postMessage(message: BaseMessage, event?: MessageType, callback?: (any) => void) {
-        if (event != undefined && callback) {
-            let eventName = event.toString() + "-" + message.sessionId;
+    changeOptions(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void) {
+        this.postMessage(new ChangeOptionsMessage(sessionId, options), callback);
+    }
+
+    postMessage(message: BaseMessage, callback?: (any) => void) {
+        if (callback) {
+            let eventName = message.type.toString() + "-" + message.sessionId;
             let callbackFunction = (data) => {
                 this["off"](eventName, callbackFunction);
                 callback(data);

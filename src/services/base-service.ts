@@ -2,63 +2,92 @@ import {FormattingOptions} from "vscode-languageserver-types";
 import {AceLinters} from "./language-service";
 import {Ace} from "ace-code";
 
-export class BaseService implements AceLinters.LanguageService {
-    $service;
-    doc: Ace.Document;
+export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions = AceLinters.ServiceOptions> implements AceLinters.LanguageService {
+    abstract $service;
+    mode: string;
+    documents: {[sessionID: string]: Ace.Document} = {};
+    options: {[sessionID: string]: OptionsType} = {};
 
-    constructor(doc: Ace.Document, options: AceLinters.ServiceOptions) {
-        this.doc = doc;
+    protected constructor(mode: string) {
+        this.mode = mode;
     }
 
-    $getDocument() {
+    $getDocument(sessionID: string) {
         return null;
     }
 
-    setValue(value: string) {
-        this.doc.setValue(value);
+    addDocument(sessionID: string, document: Ace.Document, options?: OptionsType) {
+        this.documents[sessionID] = document;
+        if (options)
+            this.setOptions(sessionID, options);
     }
 
-    applyDeltas(deltas: Ace.Delta[]) {
-        var data = deltas;
+    getDocument(sessionID: string): Ace.Document {
+        return this.documents[sessionID];
+    }
+
+    removeDocument(sessionID: string) {
+        delete this.documents[sessionID];
+        if (this.options[sessionID]) {
+            delete this.options[sessionID];
+        }
+    }
+
+    getDocumentValue(sessionID: string): string {
+        return this.getDocument(sessionID).getValue();
+    }
+
+    setValue(sessionID: string, value: string) {
+        this.getDocument(sessionID).setValue(value);
+    }
+
+    setOptions(sessionID: string, options: OptionsType) {
+        this.options[sessionID] = options;
+    }
+
+    applyDeltas(sessionID: string, deltas: Ace.Delta[]) {
+        let data = deltas;
+        let document = this.getDocument(sessionID);
         if (data[0].start) {
-            this.doc.applyDeltas(data);
+            document.applyDeltas(data);
         } else {
-            for (var i = 0; i < data.length; i += 2) {
-                var d, err;
+            for (let i = 0; i < data.length; i += 2) {
+                let d, err;
                 if (Array.isArray(data[i + 1])) {
                     d = {action: "insert", start: data[i], lines: data[i + 1]};
                 } else {
                     d = {action: "remove", start: data[i], end: data[i + 1]};
                 }
 
-                if ((d.action == "insert" ? d.start : d.end).row >= this.doc["$lines"].length) {
+                let linesLength = document["$lines"].length;
+                if ((d.action == "insert" ? d.start : d.end).row >= linesLength) {
                     err = new Error("Invalid delta");
                     err.data = {
-                        linesLength: this.doc["$lines"].length,
+                        linesLength: linesLength,
                         start: d.start,
                         end: d.end
                     };
                     throw err;
                 }
 
-                this.doc.applyDelta(d, true);
+                document.applyDelta(d, true);
             }
         }
     }
 
-    format(range: Ace.Range, format: FormattingOptions): AceLinters.TextEdit[] {
+    format(sessionID: string, range: Ace.Range, format: FormattingOptions): AceLinters.TextEdit[] {
         return [];
     }
 
-    async doHover(position: Ace.Point) {
+    async doHover(sessionID: string, position: Ace.Point) {
         return null;
     }
 
-    async doValidation(): Promise<Ace.Annotation[]> {
+    async doValidation(sessionID: string): Promise<Ace.Annotation[]> {
         return [];
     }
 
-    async doComplete(position: Ace.Point): Promise<Ace.Completion[]> {
+    async doComplete(sessionID: string, position: Ace.Point): Promise<Ace.Completion[]> {
         return;
     }
 }
