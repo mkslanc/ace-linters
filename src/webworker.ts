@@ -23,7 +23,6 @@ ctx.onmessage = async (ev) => {
             break;
         case MessageType.applyDelta:
             manager.getServiceInstance(sessionID).applyDeltas(sessionID, message.value);
-            postMessage["type"] = MessageType.change;
             break;
         case MessageType.hover:
             postMessage["hover"] = await manager.getServiceInstance(sessionID).doHover(sessionID, message.value);
