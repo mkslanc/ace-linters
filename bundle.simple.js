@@ -38300,9 +38300,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TooltipType = exports.toRange = exports.cleanHtml = exports.toCompletions = void 0;
 var ace_code_1 = __webpack_require__(9100);
 function toCompletions(completions, markdownConverter) {
-    return completions.map(function (el) {
+    return completions && completions.map(function (el) {
         if (el["docMarkdown"]) {
-            el["docHtml"] = cleanHtml(markdownConverter.makeHtml(el["docMarkdown"]));
+            el["docHTML"] = cleanHtml(markdownConverter.makeHtml(el["docMarkdown"]));
             el["docMarkdown"] = undefined;
         }
         if (el["range"]) {
