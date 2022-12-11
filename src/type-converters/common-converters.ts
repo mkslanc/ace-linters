@@ -1,9 +1,9 @@
 import {Ace, Range as AceRange} from "ace-code";
 
 export function toCompletions(completions: Ace.Completion[], markdownConverter: MarkDownConverter): Ace.Completion[] {
-    return completions.map((el) => {
+    return completions && completions.map((el) => {
         if (el["docMarkdown"]) {
-            el["docHtml"] = cleanHtml(markdownConverter.makeHtml(el["docMarkdown"]));
+            el["docHTML"] = cleanHtml(markdownConverter.makeHtml(el["docMarkdown"]));
             el["docMarkdown"] = undefined;
         }
         if (el["range"]) {
