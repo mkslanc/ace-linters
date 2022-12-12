@@ -20,6 +20,11 @@ export class ServiceManager {
             module: import("./json/json-service"),
             name: "JsonService",
             modes: "json"
+        },
+        {
+            module: import("./typescript/typescript-service"),
+            name: "TypescriptService",
+            modes: "typescript|javascript"
         }
     ];
     private $serviceInstances: { [mode: string]: LanguageService } = {};

@@ -14,6 +14,7 @@ module.exports = (env, argv) => {
         exclude: /node_modules/
     };
     return {
+        cache: true,
         devtool: 'source-map',
         entry: {
             simple: './src/demo.ts'
