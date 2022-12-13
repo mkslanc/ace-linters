@@ -6,7 +6,7 @@
     "start": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "latest",
+    "ace-code": "mkslanc/ace#completions-improvements",
     "typescript": "latest"
   },
   "devDependencies": {
