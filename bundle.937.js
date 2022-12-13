@@ -1,5 +1,18 @@
 (self["webpackChunkace_linters"] = self["webpackChunkace_linters"] || []).push([[937],{
 
+/***/ 8482:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "t": () => (/* binding */ p)
+/* harmony export */ });
+/* unused harmony export config */
+async function g(r){if(r.protocol==="http"||r.protocol==="https")return await(await fetch(r)).text();throw new Error("Unsupported protocol")}function m(r){throw new Error("Unsupported in browser")}var o;function f(r){if("contents"in r){typeof r.contents=="string"?o=JSON.parse(r.contents):o=r.contents;return}if("fsPath"in r){let n=m(r.fsPath);o=JSON.parse(n);return}if(r.uri){let n=r.uri;return typeof r.uri=="string"&&(n=new URL(r.uri)),g(n).then(t=>{o=JSON.parse(t)})}}function p(...r){let n=r[0],t,e,s;if(typeof n=="string"?(t=n,e=n,r.splice(0,1),s=!r||typeof r[0]!="object"?r:r[0]):(e=n.message,t=e,n.comment&&n.comment.length>0&&(t+=`/${Array.isArray(n.comment)?n.comment.join():n.comment}`),s=n.args??{}),!o)return a(e,s);let i=o[t];return i?typeof i=="string"?a(i,s):i.comment?a(i.message,s):a(e,s):a(e,s)}var u=/{([^}]+)}/g;function a(r,n){return r.replace(u,(t,e)=>n[e]??t)}
+
+
+/***/ }),
+
 /***/ 9100:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -1897,6 +1910,10 @@ exports.C = [{
     scrollIntoView: "cursor",
     readOnly: true
 }, {
+    name: "openlink",
+    bindKey: bindKey("Ctrl+F3", "F3"),
+    exec: function(editor) { editor.openLink(); }
+}, {
     name: "joinlines",
     description: "Join lines",
     bindKey: bindKey(null, null),
@@ -2287,7 +2304,7 @@ var reportErrorIfPathIsNotConfigured = function() {
     }
 };
 
-exports.version = "1.12.1";
+exports.version = "1.13.1";
 
 
 
@@ -6177,17 +6194,21 @@ function BracketMatch() {
      * * one Range if there is only one bracket
      *
      * @param {Point} pos
+     * @param {boolean} [isBackwards]
      * @returns {null|Range[]}
      */
-    this.getMatchingBracketRanges = function(pos) {
+    this.getMatchingBracketRanges = function(pos, isBackwards) {
         var line = this.getLine(pos.row);
-
-        var chr = line.charAt(pos.column - 1);
-        var match = chr && chr.match(/([\(\[\{])|([\)\]\}])/);
+        var bracketsRegExp = /([\(\[\{])|([\)\]\}])/;
+        var chr = !isBackwards && line.charAt(pos.column - 1);
+        var match = chr && chr.match(bracketsRegExp);
         if (!match) {
-            chr = line.charAt(pos.column);
-            pos = {row: pos.row, column: pos.column + 1};
-            match = chr && chr.match(/([\(\[\{])|([\)\]\}])/);
+            chr = (isBackwards === undefined || isBackwards) && line.charAt(pos.column);
+            pos = {
+                row: pos.row,
+                column: pos.column + 1
+            };
+            match = chr && chr.match(bracketsRegExp);
         }
 
         if (!match)
@@ -8307,7 +8328,10 @@ Editor.$uid = 0;
                 session.$bracketHighlight = null;
             }
             var pos = self.getCursorPosition();
-            var ranges = session.getMatchingBracketRanges(pos);
+            var handler = self.getKeyboardHandler();
+            var isBackwards = handler && handler.$getDirectionForHighlight && handler.$getDirectionForHighlight(self);
+            var ranges = session.getMatchingBracketRanges(pos, isBackwards);
+
             if (!ranges) {
                 var iterator = new TokenIterator(session, pos.row, pos.column);
                 var token = iterator.getCurrentToken();
@@ -9527,6 +9551,41 @@ Editor.$uid = 0;
                 }
             }
         }
+    };
+
+    /**
+     * Finds link at defined {row} and {column}
+     * @returns {String}
+     **/
+    this.findLinkAt = function (row, column) {
+        var line = this.session.getLine(row);
+        var wordParts = line.split(/((?:https?|ftp):\/\/[\S]+)/);
+        var columnPosition = column;
+        if (columnPosition < 0) columnPosition = 0;
+        var previousPosition = 0, currentPosition = 0, match;
+        for (let item of wordParts) {
+            currentPosition = previousPosition + item.length;
+            if (columnPosition >= previousPosition && columnPosition <= currentPosition) {
+                if (item.match(/((?:https?|ftp):\/\/[\S]+)/)) {
+                    match = item.replace(/[\s:.,'";}\]]+$/, "");
+                    break;
+                }
+            }
+            previousPosition = currentPosition;
+        }
+        return match;
+    };
+
+    /**
+     * Open valid url under cursor in another tab
+     * @returns {Boolean}
+     **/
+    this.openLink = function () {
+        var cursor =  this.selection.getCursor();
+        var url = this.findLinkAt(cursor.row, cursor.column);
+        if (url)
+            window.open(url, '_blank');
+        return url != null;
     };
 
     /**
@@ -12367,30 +12426,30 @@ var event = __webpack_require__(7989);
 var useragent = __webpack_require__(618);
 var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
-var CHAR_COUNT = 256;
+var DEFAULT_CHAR_COUNT = 250;
 var USE_OBSERVER = typeof ResizeObserver == "function";
 var L = 200;
 
-var FontMetrics = exports.c = function(parentEl) {
+var FontMetrics = exports.c = function(parentEl, charCount) {
+    this.charCount = charCount || DEFAULT_CHAR_COUNT;
+
     this.el = dom.createElement("div");
     this.$setMeasureNodeStyles(this.el.style, true);
-    
+
     this.$main = dom.createElement("div");
     this.$setMeasureNodeStyles(this.$main.style);
-    
+
     this.$measureNode = dom.createElement("div");
     this.$setMeasureNodeStyles(this.$measureNode.style);
-    
-    
+
     this.el.appendChild(this.$main);
     this.el.appendChild(this.$measureNode);
     parentEl.appendChild(this.el);
-    
-    this.$measureNode.textContent = lang.stringRepeat("X", CHAR_COUNT);
-    
+
+    this.$measureNode.textContent = lang.stringRepeat("X", this.charCount);
+
     this.$characterSize = {width: 0, height: 0};
-    
-    
+
     if (USE_OBSERVER)
         this.$addObserver();
     else
@@ -12400,9 +12459,9 @@ var FontMetrics = exports.c = function(parentEl) {
 (function() {
 
     oop.implement(this, EventEmitter);
-        
+
     this.$characterSize = {width: 0, height: 0};
-    
+
     this.$setMeasureNodeStyles = function(style, isRoot) {
         style.width = style.height = "auto";
         style.left = style.top = "0px";
@@ -12431,7 +12490,7 @@ var FontMetrics = exports.c = function(parentEl) {
             this._emit("changeCharacterSize", {data: size});
         }
     };
-    
+
     this.$addObserver = function() {
         var self = this;
         this.$observer = new window.ResizeObserver(function(e) {
@@ -12445,13 +12504,13 @@ var FontMetrics = exports.c = function(parentEl) {
         if (this.$pollSizeChangesTimer || this.$observer)
             return this.$pollSizeChangesTimer;
         var self = this;
-        
+
         return this.$pollSizeChangesTimer = event.onIdle(function cb() {
             self.checkForSizeChanges();
             event.onIdle(cb, 500);
         }, 500);
     };
-    
+
     this.setPolling = function(val) {
         if (val) {
             this.$pollSizeChanges();
@@ -12462,24 +12521,32 @@ var FontMetrics = exports.c = function(parentEl) {
     };
 
     this.$measureSizes = function(node) {
-        var size = {
-            height: (node || this.$measureNode).clientHeight,
-            width: (node || this.$measureNode).clientWidth / CHAR_COUNT
+        node = node || this.$measureNode;
+
+        // Avoid `Element.clientWidth` since it is rounded to an integer (see
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth).
+        // Using it here can result in a noticeable cursor offset for long lines.
+        const rect = node.getBoundingClientRect();
+        const charSize = {
+            height: rect.height,
+            width: rect.width / this.charCount
         };
-        
+
         // Size and width can be null if the editor is not visible or
         // detached from the document
-        if (size.width === 0 || size.height === 0)
+        if (charSize.width === 0 || charSize.height === 0)
             return null;
-        return size;
+        return charSize;
     };
 
     this.$measureCharWidth = function(ch) {
-        this.$main.textContent = lang.stringRepeat(ch, CHAR_COUNT);
+        this.$main.textContent = lang.stringRepeat(ch, this.charCount);
+        // Avoid `Element.clientWidth` since it is rounded to an integer (see
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth).
         var rect = this.$main.getBoundingClientRect();
-        return rect.width / CHAR_COUNT;
+        return rect.width / this.charCount;
     };
-    
+
     this.getCharacterWidth = function(ch) {
         var w = this.charSizes[ch];
         if (w === undefined) {
@@ -12496,7 +12563,7 @@ var FontMetrics = exports.c = function(parentEl) {
             this.el.parentNode.removeChild(this.el);
     };
 
-    
+
     this.$getZoom = function getZoom(element) {
         if (!element || !element.parentElement) return 1;
         return (window.getComputedStyle(element).zoom || 1) * getZoom(element.parentElement);
@@ -12533,7 +12600,7 @@ var FontMetrics = exports.c = function(parentEl) {
 
         if (!this.els)
             this.$initTransformMeasureNodes();
-        
+
         function p(el) {
             var r = el.getBoundingClientRect();
             return [r.left, r.top];
@@ -12548,7 +12615,7 @@ var FontMetrics = exports.c = function(parentEl) {
 
         var m1 = mul(1 + h[0], sub(b, a));
         var m2 = mul(1 + h[1], sub(c, a));
-        
+
         if (elPos) {
             var x = elPos;
             var k = h[0] * x[0] / L + h[1] * x[1] / L + 1;
@@ -12559,7 +12626,7 @@ var FontMetrics = exports.c = function(parentEl) {
         var f = solve(sub(m1, mul(h[0], u)), sub(m2, mul(h[1], u)), u);
         return mul(L, f);
     };
-    
+
 }).call(FontMetrics.prototype);
 
 
@@ -13397,6 +13464,8 @@ var Text = function(parentEl) {
     this.SPACE_CHAR = "\xB7";
     this.$padding = 0;
     this.MAX_LINE_LENGTH = 10000;
+    // Smaller chunks result in higher cursor precision at the cost of more DOM nodes
+    this.MAX_CHUNK_LENGTH = 250;
 
     this.$updateEolChar = function() {
         var doc = this.session.doc;
@@ -13690,6 +13759,19 @@ var Text = function(parentEl) {
         "lparen": true
     };
 
+    this.$renderTokenInChunks = function(parent, screenColumn, token, value) {
+        var newScreenColumn;
+        for (var i = 0; i < value.length; i += this.MAX_CHUNK_LENGTH) {
+            var valueChunk = value.substring(i, i + this.MAX_CHUNK_LENGTH);
+            var tokenChunk = {
+                type: token.type,
+                value: valueChunk
+            };
+            newScreenColumn = this.$renderToken(parent, screenColumn + i, tokenChunk, valueChunk);
+        }
+        return newScreenColumn;
+    };
+
     this.$renderToken = function(parent, screenColumn, token, value) {
         var self = this;
         var re = /(\t)|( +)|([\x00-\x1f\x80-\xa0\xad\u1680\u180E\u2000-\u200f\u2028\u2029\u202F\u205F\uFEFF\uFFF9-\uFFFC\u2066\u2067\u2068\u202A\u202B\u202D\u202E\u202C\u2069]+)|(\u3000)|([\u1100-\u115F\u11A3-\u11A7\u11FA-\u11FF\u2329-\u232A\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u2FF0-\u2FFB\u3001-\u303E\u3041-\u3096\u3099-\u30FF\u3105-\u312D\u3131-\u318E\u3190-\u31BA\u31C0-\u31E3\u31F0-\u321E\u3220-\u3247\u3250-\u32FE\u3300-\u4DBF\u4E00-\uA48C\uA490-\uA4C6\uA960-\uA97C\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFAFF\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE66\uFE68-\uFE6B\uFF01-\uFF60\uFFE0-\uFFE6]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g;
@@ -13755,20 +13837,16 @@ var Text = function(parentEl) {
 
         valueFragment.appendChild(this.dom.createTextNode(i ? value.slice(i) : value, this.element));
 
+        var span = this.dom.createElement("span");
         if (!this.$textToken[token.type]) {
             var classes = "ace_" + token.type.replace(/\./g, " ace_");
-            var span = this.dom.createElement("span");
             if (token.type == "fold")
                 span.style.width = (token.value.length * this.config.characterWidth) + "px";
 
             span.className = classes;
-            span.appendChild(valueFragment);
-
-            parent.appendChild(span);
         }
-        else {
-            parent.appendChild(valueFragment);
-        }
+        span.appendChild(valueFragment);
+        parent.appendChild(span);
 
         return screenColumn + value.length;
     };
@@ -13935,11 +14013,11 @@ var Text = function(parentEl) {
             }
 
             if (chars + value.length < splitChars) {
-                screenColumn = this.$renderToken(lineEl, screenColumn, token, value);
+                screenColumn = this.$renderTokenInChunks(lineEl, screenColumn, token, value);
                 chars += value.length;
             } else {
                 while (chars + value.length >= splitChars) {
-                    screenColumn = this.$renderToken(
+                    screenColumn = this.$renderTokenInChunks(
                         lineEl, screenColumn,
                         token, value.substring(0, splitChars - chars)
                     );
@@ -13957,7 +14035,7 @@ var Text = function(parentEl) {
                 }
                 if (value.length != 0) {
                     chars += value.length;
-                    screenColumn = this.$renderToken(
+                    screenColumn = this.$renderTokenInChunks(
                         lineEl, screenColumn, token, value
                     );
                 }
@@ -13979,15 +14057,23 @@ var Text = function(parentEl) {
                 if (!value)
                     continue;
             }
-            if (screenColumn + value.length > this.MAX_LINE_LENGTH)
-                return this.$renderOverflowMessage(parent, screenColumn, token, value);
-            screenColumn = this.$renderToken(parent, screenColumn, token, value);
+            if (screenColumn + value.length > this.MAX_LINE_LENGTH) {
+                this.$renderOverflowMessage(parent, screenColumn, token, value);
+                return;
+            }
+            screenColumn = this.$renderTokenInChunks(parent, screenColumn, token, value);
         }
     };
 
     this.$renderOverflowMessage = function(parent, screenColumn, token, value, hide) {
-        token && this.$renderToken(parent, screenColumn, token,
-            value.slice(0, this.MAX_LINE_LENGTH - screenColumn));
+        if (token) {
+            this.$renderTokenInChunks(
+                parent,
+                screenColumn,
+                token,
+                value.slice(0, this.MAX_LINE_LENGTH - screenColumn)
+            );
+        }
 
         var overflowEl = this.dom.createElement("span");
         overflowEl.className = "ace_inline_button ace_keyword ace_toggle_wrap";
@@ -14865,7 +14951,7 @@ exports.importCssString = importCssString;
 exports.importCssStylsheet = function(uri, doc) {
     exports.buildDom(["link", {rel: "stylesheet", href: uri}], exports.getDocumentHead(doc));
 };
-exports.scrollbarWidth = function(document) {
+exports.scrollbarWidth = function(doc) {
     var inner = exports.createElement("ace_inner");
     inner.style.width = "100%";
     inner.style.minWidth = "0px";
@@ -14885,7 +14971,9 @@ exports.scrollbarWidth = function(document) {
 
     outer.appendChild(inner);
 
-    var body = document.documentElement;
+    var body = (doc && doc.documentElement) || (document && document.documentElement);
+    if (!body) return 0;
+
     body.appendChild(outer);
 
     var noScrollbar = inner.offsetWidth;
@@ -14893,13 +14981,13 @@ exports.scrollbarWidth = function(document) {
     style.overflow = "scroll";
     var withScrollbar = inner.offsetWidth;
 
-    if (noScrollbar == withScrollbar) {
+    if (noScrollbar === withScrollbar) {
         withScrollbar = outer.clientWidth;
     }
 
     body.removeChild(outer);
 
-    return noScrollbar-withScrollbar;
+    return noScrollbar - withScrollbar;
 };
 
 exports.computedStyle = function(element, style) {
@@ -15539,6 +15627,9 @@ var Keys = (function() {
         }
     };
 
+    // workaround for firefox bug
+    ret.PRINTABLE_KEYS[173] = '-';
+
     // A reverse map of FUNCTION_KEYS
     var name, i;
     for (i in ret.FUNCTION_KEYS) {
@@ -15562,9 +15653,6 @@ var Keys = (function() {
     ret.enter = ret["return"];
     ret.escape = ret.esc;
     ret.del = ret["delete"];
-
-    // workaround for firefox bug
-    ret[173] = '-';
     
     (function() {
         var mods = ["cmd", "ctrl", "alt", "shift"];
@@ -21459,16 +21547,45 @@ var dom = __webpack_require__(6359);
 var event = __webpack_require__(7989);
 var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
-dom.importCssString('.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{\n' + '  position: absolute;\n'
-    + '  background: rgba(128, 128, 128, 0.6);\n' + '  -moz-box-sizing: border-box;\n' + '  box-sizing: border-box;\n'
-    + '  border: 1px solid #bbb;\n' + '  border-radius: 2px;\n' + '  z-index: 8;\n' + '}\n'
-    + '.ace_editor>.ace_sb-v, .ace_editor>.ace_sb-h {\n' + '  position: absolute;\n' + '  z-index: 6;\n'
-    + '  background: none;' + '  overflow: hidden!important;\n' + '}\n' + '.ace_editor>.ace_sb-v {\n'
-    + '  z-index: 6;\n' + '  right: 0;\n' + '  top: 0;\n' + '  width: 12px;\n' + '}' + '.ace_editor>.ace_sb-v div {\n'
-    + '  z-index: 8;\n' + '  right: 0;\n' + '  width: 100%;\n' + '}' + '.ace_editor>.ace_sb-h {\n' + '  bottom: 0;\n'
-    + '  left: 0;\n' + '  height: 12px;\n' + '}' + '.ace_editor>.ace_sb-h div {\n' + '  bottom: 0;\n'
-    + '  height: 100%;\n' + '}' + '.ace_editor>.ace_sb_grabbed {\n' + '  z-index: 8;\n' + '  background: #000;\n'
-    + '}');
+dom.importCssString(`.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{
+  position: absolute;
+  background: rgba(128, 128, 128, 0.6);
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #bbb;
+  border-radius: 2px;
+  z-index: 8;
+}
+.ace_editor>.ace_sb-v, .ace_editor>.ace_sb-h {
+  position: absolute;
+  z-index: 6;
+  background: none;
+  overflow: hidden!important;
+}
+.ace_editor>.ace_sb-v {
+  z-index: 6;
+  right: 0;
+  top: 0;
+  width: 12px;
+}
+.ace_editor>.ace_sb-v div {
+  z-index: 8;
+  right: 0;
+  width: 100%;
+}
+.ace_editor>.ace_sb-h {
+  bottom: 0;
+  left: 0;
+  height: 12px;
+}
+.ace_editor>.ace_sb-h div {
+  bottom: 0;
+  height: 100%;
+}
+.ace_editor>.ace_sb_grabbed {
+  z-index: 8;
+  background: #000;
+}`, "ace_scrollbar.css", false);
 
 /**
  * An abstract class representing a native scrollbar control.
@@ -21966,12 +22083,13 @@ var Search = function() {
 
         if (range) {
             var startColumn = range.start.column;
-            var endColumn = range.start.column;
+            var endColumn = range.end.column;
             var i = 0, j = ranges.length - 1;
-            while (i < j && ranges[i].start.column < startColumn && ranges[i].start.row == range.start.row)
+            while (i < j && ranges[i].start.column < startColumn && ranges[i].start.row == 0)
                 i++;
 
-            while (i < j && ranges[j].end.column > endColumn && ranges[j].end.row == range.end.row)
+            var endRow = range.end.row - range.start.row;
+            while (i < j && ranges[j].end.column > endColumn && ranges[j].end.row == endRow)
                 j--;
             
             ranges = ranges.slice(i, j + 1);
@@ -24672,7 +24790,7 @@ var VirtualRenderer = function(container, theme) {
         column : 0
     };
 
-    this.$fontMetrics = new FontMetrics(this.container);
+    this.$fontMetrics = new FontMetrics(this.container, this.$textLayer.MAX_CHUNK_LENGTH);
     this.$textLayer.$setFontMetrics(this.$fontMetrics);
     this.$textLayer.on("changeCharacterSize", function(e) {
         _self.updateCharacterSize();
@@ -25806,6 +25924,10 @@ var VirtualRenderer = function(container, theme) {
         
         var topMargin = $viewMargin && $viewMargin.top || 0;
         var bottomMargin = $viewMargin && $viewMargin.bottom || 0;
+
+        if (this.$scrollAnimation) {
+            this.$stopAnimation = true;
+        }
         
         var scrollTop = this.$scrollAnimation ? this.session.getScrollTop() : this.scrollTop;
         
@@ -25952,7 +26074,20 @@ var VirtualRenderer = function(container, theme) {
         _self.session.setScrollTop(steps.shift());
         // trick session to think it's already scrolled to not loose toValue
         _self.session.$scrollTop = toValue;
+        
+        function endAnimation() {
+            _self.$timer = clearInterval(_self.$timer);
+            _self.$scrollAnimation = null;
+            _self.$stopAnimation = false;
+            callback && callback();
+        }
+        
         this.$timer = setInterval(function() {
+            if (_self.$stopAnimation) {
+                endAnimation();
+                return;
+            }
+
             if (!_self.session) 
                 return clearInterval(_self.$timer);
             if (steps.length) {
@@ -25964,9 +26099,7 @@ var VirtualRenderer = function(container, theme) {
                 toValue = null;
             } else {
                 // do this on separate step to not get spurious scroll event from scrollbar
-                _self.$timer = clearInterval(_self.$timer);
-                _self.$scrollAnimation = null;
-                callback && callback();
+                endAnimation();
             }
         }, 10);
     };
@@ -26536,43 +26669,43 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "CodeAction": () => (/* reexport */ esm_main.CodeAction),
-  "CodeActionContext": () => (/* reexport */ esm_main.CodeActionContext),
-  "CodeActionKind": () => (/* reexport */ esm_main.CodeActionKind),
-  "Color": () => (/* reexport */ esm_main.Color),
-  "ColorInformation": () => (/* reexport */ esm_main.ColorInformation),
-  "ColorPresentation": () => (/* reexport */ esm_main.ColorPresentation),
-  "Command": () => (/* reexport */ esm_main.Command),
-  "CompletionItem": () => (/* reexport */ esm_main.CompletionItem),
-  "CompletionItemKind": () => (/* reexport */ esm_main.CompletionItemKind),
-  "CompletionItemTag": () => (/* reexport */ esm_main.CompletionItemTag),
-  "CompletionList": () => (/* reexport */ esm_main.CompletionList),
-  "Diagnostic": () => (/* reexport */ esm_main.Diagnostic),
-  "DiagnosticSeverity": () => (/* reexport */ esm_main.DiagnosticSeverity),
-  "DocumentHighlight": () => (/* reexport */ esm_main.DocumentHighlight),
-  "DocumentHighlightKind": () => (/* reexport */ esm_main.DocumentHighlightKind),
-  "DocumentLink": () => (/* reexport */ esm_main.DocumentLink),
-  "DocumentSymbol": () => (/* reexport */ esm_main.DocumentSymbol),
-  "DocumentUri": () => (/* reexport */ esm_main.DocumentUri),
+  "CodeAction": () => (/* reexport */ main.CodeAction),
+  "CodeActionContext": () => (/* reexport */ main.CodeActionContext),
+  "CodeActionKind": () => (/* reexport */ main.CodeActionKind),
+  "Color": () => (/* reexport */ main.Color),
+  "ColorInformation": () => (/* reexport */ main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
+  "Command": () => (/* reexport */ main.Command),
+  "CompletionItem": () => (/* reexport */ main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ main.CompletionList),
+  "Diagnostic": () => (/* reexport */ main.Diagnostic),
+  "DiagnosticSeverity": () => (/* reexport */ main.DiagnosticSeverity),
+  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ main.DocumentLink),
+  "DocumentSymbol": () => (/* reexport */ main.DocumentSymbol),
+  "DocumentUri": () => (/* reexport */ main.DocumentUri),
   "FileType": () => (/* reexport */ FileType),
-  "FoldingRange": () => (/* reexport */ esm_main.FoldingRange),
-  "FoldingRangeKind": () => (/* reexport */ esm_main.FoldingRangeKind),
-  "Hover": () => (/* reexport */ esm_main.Hover),
-  "InsertTextFormat": () => (/* reexport */ esm_main.InsertTextFormat),
-  "Location": () => (/* reexport */ esm_main.Location),
-  "MarkedString": () => (/* reexport */ esm_main.MarkedString),
-  "MarkupContent": () => (/* reexport */ esm_main.MarkupContent),
-  "MarkupKind": () => (/* reexport */ esm_main.MarkupKind),
-  "Position": () => (/* reexport */ esm_main.Position),
-  "Range": () => (/* reexport */ esm_main.Range),
-  "SelectionRange": () => (/* reexport */ esm_main.SelectionRange),
-  "SymbolInformation": () => (/* reexport */ esm_main.SymbolInformation),
-  "SymbolKind": () => (/* reexport */ esm_main.SymbolKind),
-  "TextDocument": () => (/* reexport */ lib_esm_main/* TextDocument */.n),
-  "TextDocumentEdit": () => (/* reexport */ esm_main.TextDocumentEdit),
-  "TextEdit": () => (/* reexport */ esm_main.TextEdit),
-  "VersionedTextDocumentIdentifier": () => (/* reexport */ esm_main.VersionedTextDocumentIdentifier),
-  "WorkspaceEdit": () => (/* reexport */ esm_main.WorkspaceEdit),
+  "FoldingRange": () => (/* reexport */ main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
+  "Hover": () => (/* reexport */ main.Hover),
+  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
+  "Location": () => (/* reexport */ main.Location),
+  "MarkedString": () => (/* reexport */ main.MarkedString),
+  "MarkupContent": () => (/* reexport */ main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ main.MarkupKind),
+  "Position": () => (/* reexport */ main.Position),
+  "Range": () => (/* reexport */ main.Range),
+  "SelectionRange": () => (/* reexport */ main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ main.SymbolKind),
+  "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
+  "TextDocumentEdit": () => (/* reexport */ main.TextDocumentEdit),
+  "TextEdit": () => (/* reexport */ main.TextEdit),
+  "VersionedTextDocumentIdentifier": () => (/* reexport */ main.VersionedTextDocumentIdentifier),
+  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
   "getCSSLanguageService": () => (/* binding */ getCSSLanguageService),
   "getDefaultCSSDataProvider": () => (/* binding */ getDefaultCSSDataProvider),
   "getLESSLanguageService": () => (/* binding */ getLESSLanguageService),
@@ -27433,6 +27566,7 @@ function getParentDeclaration(node) {
     return null;
 }
 class Node {
+    get end() { return this.offset + this.length; }
     constructor(offset = -1, len = -1, nodeType) {
         this.parent = null;
         this.offset = offset;
@@ -27441,7 +27575,6 @@ class Node {
             this.nodeType = nodeType;
         }
     }
-    get end() { return this.offset + this.length; }
     set type(type) {
         this.nodeType = type;
     }
@@ -28796,13 +28929,13 @@ export class DefaultVisitor implements IVisitor {
 }
 */
 class ParseErrorCollector {
-    constructor() {
-        this.entries = [];
-    }
     static entries(node) {
         const visitor = new ParseErrorCollector();
         node.acceptVisitor(visitor);
         return visitor.entries;
+    }
+    constructor() {
+        this.entries = [];
     }
     visitNode(node) {
         if (node.isErroneous()) {
@@ -28812,8 +28945,8 @@ class ParseErrorCollector {
     }
 }
 
-// EXTERNAL MODULE: ./node_modules/vscode-nls/lib/browser/main.js
-var main = __webpack_require__(189);
+// EXTERNAL MODULE: ./node_modules/@vscode/l10n/dist/browser.esm.js
+var browser_esm = __webpack_require__(8482);
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/parser/cssErrors.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28821,7 +28954,6 @@ var main = __webpack_require__(189);
  *--------------------------------------------------------------------------------------------*/
 
 
-const localize = main.loadMessageBundle();
 class CSSIssueType {
     constructor(id, message) {
         this.id = id;
@@ -28829,45 +28961,45 @@ class CSSIssueType {
     }
 }
 const ParseError = {
-    NumberExpected: new CSSIssueType('css-numberexpected', localize('expected.number', "number expected")),
-    ConditionExpected: new CSSIssueType('css-conditionexpected', localize('expected.condt', "condition expected")),
-    RuleOrSelectorExpected: new CSSIssueType('css-ruleorselectorexpected', localize('expected.ruleorselector', "at-rule or selector expected")),
-    DotExpected: new CSSIssueType('css-dotexpected', localize('expected.dot', "dot expected")),
-    ColonExpected: new CSSIssueType('css-colonexpected', localize('expected.colon', "colon expected")),
-    SemiColonExpected: new CSSIssueType('css-semicolonexpected', localize('expected.semicolon', "semi-colon expected")),
-    TermExpected: new CSSIssueType('css-termexpected', localize('expected.term', "term expected")),
-    ExpressionExpected: new CSSIssueType('css-expressionexpected', localize('expected.expression', "expression expected")),
-    OperatorExpected: new CSSIssueType('css-operatorexpected', localize('expected.operator', "operator expected")),
-    IdentifierExpected: new CSSIssueType('css-identifierexpected', localize('expected.ident', "identifier expected")),
-    PercentageExpected: new CSSIssueType('css-percentageexpected', localize('expected.percentage', "percentage expected")),
-    URIOrStringExpected: new CSSIssueType('css-uriorstringexpected', localize('expected.uriorstring', "uri or string expected")),
-    URIExpected: new CSSIssueType('css-uriexpected', localize('expected.uri', "URI expected")),
-    VariableNameExpected: new CSSIssueType('css-varnameexpected', localize('expected.varname', "variable name expected")),
-    VariableValueExpected: new CSSIssueType('css-varvalueexpected', localize('expected.varvalue', "variable value expected")),
-    PropertyValueExpected: new CSSIssueType('css-propertyvalueexpected', localize('expected.propvalue', "property value expected")),
-    LeftCurlyExpected: new CSSIssueType('css-lcurlyexpected', localize('expected.lcurly', "{ expected")),
-    RightCurlyExpected: new CSSIssueType('css-rcurlyexpected', localize('expected.rcurly', "} expected")),
-    LeftSquareBracketExpected: new CSSIssueType('css-rbracketexpected', localize('expected.lsquare', "[ expected")),
-    RightSquareBracketExpected: new CSSIssueType('css-lbracketexpected', localize('expected.rsquare', "] expected")),
-    LeftParenthesisExpected: new CSSIssueType('css-lparentexpected', localize('expected.lparen', "( expected")),
-    RightParenthesisExpected: new CSSIssueType('css-rparentexpected', localize('expected.rparent', ") expected")),
-    CommaExpected: new CSSIssueType('css-commaexpected', localize('expected.comma', "comma expected")),
-    PageDirectiveOrDeclarationExpected: new CSSIssueType('css-pagedirordeclexpected', localize('expected.pagedirordecl', "page directive or declaraton expected")),
-    UnknownAtRule: new CSSIssueType('css-unknownatrule', localize('unknown.atrule', "at-rule unknown")),
-    UnknownKeyword: new CSSIssueType('css-unknownkeyword', localize('unknown.keyword', "unknown keyword")),
-    SelectorExpected: new CSSIssueType('css-selectorexpected', localize('expected.selector', "selector expected")),
-    StringLiteralExpected: new CSSIssueType('css-stringliteralexpected', localize('expected.stringliteral', "string literal expected")),
-    WhitespaceExpected: new CSSIssueType('css-whitespaceexpected', localize('expected.whitespace', "whitespace expected")),
-    MediaQueryExpected: new CSSIssueType('css-mediaqueryexpected', localize('expected.mediaquery', "media query expected")),
-    IdentifierOrWildcardExpected: new CSSIssueType('css-idorwildcardexpected', localize('expected.idorwildcard', "identifier or wildcard expected")),
-    WildcardExpected: new CSSIssueType('css-wildcardexpected', localize('expected.wildcard', "wildcard expected")),
-    IdentifierOrVariableExpected: new CSSIssueType('css-idorvarexpected', localize('expected.idorvar', "identifier or variable expected")),
+    NumberExpected: new CSSIssueType('css-numberexpected', browser_esm.t("number expected")),
+    ConditionExpected: new CSSIssueType('css-conditionexpected', browser_esm.t("condition expected")),
+    RuleOrSelectorExpected: new CSSIssueType('css-ruleorselectorexpected', browser_esm.t("at-rule or selector expected")),
+    DotExpected: new CSSIssueType('css-dotexpected', browser_esm.t("dot expected")),
+    ColonExpected: new CSSIssueType('css-colonexpected', browser_esm.t("colon expected")),
+    SemiColonExpected: new CSSIssueType('css-semicolonexpected', browser_esm.t("semi-colon expected")),
+    TermExpected: new CSSIssueType('css-termexpected', browser_esm.t("term expected")),
+    ExpressionExpected: new CSSIssueType('css-expressionexpected', browser_esm.t("expression expected")),
+    OperatorExpected: new CSSIssueType('css-operatorexpected', browser_esm.t("operator expected")),
+    IdentifierExpected: new CSSIssueType('css-identifierexpected', browser_esm.t("identifier expected")),
+    PercentageExpected: new CSSIssueType('css-percentageexpected', browser_esm.t("percentage expected")),
+    URIOrStringExpected: new CSSIssueType('css-uriorstringexpected', browser_esm.t("uri or string expected")),
+    URIExpected: new CSSIssueType('css-uriexpected', browser_esm.t("URI expected")),
+    VariableNameExpected: new CSSIssueType('css-varnameexpected', browser_esm.t("variable name expected")),
+    VariableValueExpected: new CSSIssueType('css-varvalueexpected', browser_esm.t("variable value expected")),
+    PropertyValueExpected: new CSSIssueType('css-propertyvalueexpected', browser_esm.t("property value expected")),
+    LeftCurlyExpected: new CSSIssueType('css-lcurlyexpected', browser_esm.t("{ expected")),
+    RightCurlyExpected: new CSSIssueType('css-rcurlyexpected', browser_esm.t("} expected")),
+    LeftSquareBracketExpected: new CSSIssueType('css-rbracketexpected', browser_esm.t("[ expected")),
+    RightSquareBracketExpected: new CSSIssueType('css-lbracketexpected', browser_esm.t("] expected")),
+    LeftParenthesisExpected: new CSSIssueType('css-lparentexpected', browser_esm.t("( expected")),
+    RightParenthesisExpected: new CSSIssueType('css-rparentexpected', browser_esm.t(") expected")),
+    CommaExpected: new CSSIssueType('css-commaexpected', browser_esm.t("comma expected")),
+    PageDirectiveOrDeclarationExpected: new CSSIssueType('css-pagedirordeclexpected', browser_esm.t("page directive or declaraton expected")),
+    UnknownAtRule: new CSSIssueType('css-unknownatrule', browser_esm.t("at-rule unknown")),
+    UnknownKeyword: new CSSIssueType('css-unknownkeyword', browser_esm.t("unknown keyword")),
+    SelectorExpected: new CSSIssueType('css-selectorexpected', browser_esm.t("selector expected")),
+    StringLiteralExpected: new CSSIssueType('css-stringliteralexpected', browser_esm.t("string literal expected")),
+    WhitespaceExpected: new CSSIssueType('css-whitespaceexpected', browser_esm.t("whitespace expected")),
+    MediaQueryExpected: new CSSIssueType('css-mediaqueryexpected', browser_esm.t("media query expected")),
+    IdentifierOrWildcardExpected: new CSSIssueType('css-idorwildcardexpected', browser_esm.t("identifier or wildcard expected")),
+    WildcardExpected: new CSSIssueType('css-wildcardexpected', browser_esm.t("wildcard expected")),
+    IdentifierOrVariableExpected: new CSSIssueType('css-idorvarexpected', browser_esm.t("identifier or variable expected")),
 };
 
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-types/lib/esm/main.js
-var esm_main = __webpack_require__(1674);
+var main = __webpack_require__(1674);
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-textdocument/lib/esm/main.js
-var lib_esm_main = __webpack_require__(6813);
+var esm_main = __webpack_require__(6813);
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/cssLanguageTypes.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -28883,11 +29015,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
+                contentFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
             }
         }
     };
@@ -29006,7 +29138,7 @@ function getEntryMarkdownDescription(entry, settings) {
             result += textToMarkedString(entry.description);
         }
         else {
-            result += entry.description.kind === esm_main.MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
+            result += entry.description.kind === main.MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
         }
         const browserLabel = getBrowserLabel(entry.browsers);
         if (browserLabel) {
@@ -29058,13 +29190,12 @@ function getBrowserLabel(browsers = []) {
  *--------------------------------------------------------------------------------------------*/
 
 
-const colors_localize = main.loadMessageBundle();
 const colorFunctions = [
-    { func: 'rgb($red, $green, $blue)', desc: colors_localize('css.builtin.rgb', 'Creates a Color from red, green, and blue values.') },
-    { func: 'rgba($red, $green, $blue, $alpha)', desc: colors_localize('css.builtin.rgba', 'Creates a Color from red, green, blue, and alpha values.') },
-    { func: 'hsl($hue, $saturation, $lightness)', desc: colors_localize('css.builtin.hsl', 'Creates a Color from hue, saturation, and lightness values.') },
-    { func: 'hsla($hue, $saturation, $lightness, $alpha)', desc: colors_localize('css.builtin.hsla', 'Creates a Color from hue, saturation, lightness, and alpha values.') },
-    { func: 'hwb($hue $white $black)', desc: colors_localize('css.builtin.hwb', 'Creates a Color from hue, white and black.') }
+    { func: 'rgb($red, $green, $blue)', desc: browser_esm.t('Creates a Color from red, green, and blue values.') },
+    { func: 'rgba($red, $green, $blue, $alpha)', desc: browser_esm.t('Creates a Color from red, green, blue, and alpha values.') },
+    { func: 'hsl($hue, $saturation, $lightness)', desc: browser_esm.t('Creates a Color from hue, saturation, and lightness values.') },
+    { func: 'hsla($hue, $saturation, $lightness, $alpha)', desc: browser_esm.t('Creates a Color from hue, saturation, lightness, and alpha values.') },
+    { func: 'hwb($hue $white $black)', desc: browser_esm.t('Creates a Color from hue, white and black.') }
 ];
 const colors = {
     aliceblue: '#f0f8ff',
@@ -30661,29 +30792,17 @@ class Parser {
         // <mf-plain> = <mf-name> : <mf-value>
         // <mf-boolean> = <mf-name>
         // <mf-range> = <mf-name> [ '<' | '>' ]? '='? <mf-value> | <mf-value> [ '<' | '>' ]? '='? <mf-name> | <mf-value> '<' '='? <mf-name> '<' '='? <mf-value> | <mf-value> '>' '='? <mf-name> '>' '='? <mf-value>
-        const parseRangeOperator = () => {
-            if (this.acceptDelim('<') || this.acceptDelim('>')) {
-                if (!this.hasWhitespace()) {
-                    this.acceptDelim('=');
-                }
-                return true;
-            }
-            else if (this.acceptDelim('=')) {
-                return true;
-            }
-            return false;
-        };
         if (node.addChild(this._parseMediaFeatureName())) {
             if (this.accept(TokenType.Colon)) {
                 if (!node.addChild(this._parseMediaFeatureValue())) {
                     return this.finish(node, ParseError.TermExpected, [], resyncStopToken);
                 }
             }
-            else if (parseRangeOperator()) {
+            else if (this._parseMediaFeatureRangeOperator()) {
                 if (!node.addChild(this._parseMediaFeatureValue())) {
                     return this.finish(node, ParseError.TermExpected, [], resyncStopToken);
                 }
-                if (parseRangeOperator()) {
+                if (this._parseMediaFeatureRangeOperator()) {
                     if (!node.addChild(this._parseMediaFeatureValue())) {
                         return this.finish(node, ParseError.TermExpected, [], resyncStopToken);
                     }
@@ -30694,13 +30813,13 @@ class Parser {
             }
         }
         else if (node.addChild(this._parseMediaFeatureValue())) {
-            if (!parseRangeOperator()) {
+            if (!this._parseMediaFeatureRangeOperator()) {
                 return this.finish(node, ParseError.OperatorExpected, [], resyncStopToken);
             }
             if (!node.addChild(this._parseMediaFeatureName())) {
                 return this.finish(node, ParseError.IdentifierExpected, [], resyncStopToken);
             }
-            if (parseRangeOperator()) {
+            if (this._parseMediaFeatureRangeOperator()) {
                 if (!node.addChild(this._parseMediaFeatureValue())) {
                     return this.finish(node, ParseError.TermExpected, [], resyncStopToken);
                 }
@@ -30710,6 +30829,18 @@ class Parser {
             return this.finish(node, ParseError.IdentifierExpected, [], resyncStopToken);
         }
         return this.finish(node);
+    }
+    _parseMediaFeatureRangeOperator() {
+        if (this.acceptDelim('<') || this.acceptDelim('>')) {
+            if (!this.hasWhitespace()) {
+                this.acceptDelim('=');
+            }
+            return true;
+        }
+        else if (this.acceptDelim('=')) {
+            return true;
+        }
+        return false;
     }
     _parseMediaFeatureName() {
         return this._parseIdent();
@@ -31803,7 +31934,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, fullValueRange) {
         else {
             endPos = fullValueRange.end;
         }
-        replaceRange = esm_main.Range.create(startPos, endPos);
+        replaceRange = main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -31812,8 +31943,8 @@ function createCompletionItem(name, isDir, replaceRange) {
         name = name + '/';
         return {
             label: escapePath(name),
-            kind: esm_main.CompletionItemKind.Folder,
-            textEdit: esm_main.TextEdit.replace(replaceRange, escapePath(name)),
+            kind: main.CompletionItemKind.Folder,
+            textEdit: main.TextEdit.replace(replaceRange, escapePath(name)),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -31823,8 +31954,8 @@ function createCompletionItem(name, isDir, replaceRange) {
     else {
         return {
             label: escapePath(name),
-            kind: esm_main.CompletionItemKind.File,
-            textEdit: esm_main.TextEdit.replace(replaceRange, escapePath(name))
+            kind: main.CompletionItemKind.File,
+            textEdit: main.TextEdit.replace(replaceRange, escapePath(name))
         };
     }
 }
@@ -31833,12 +31964,12 @@ function escapePath(p) {
     return p.replace(/(\s|\(|\)|,|"|')/g, '\\$1');
 }
 function shiftPosition(pos, offset) {
-    return esm_main.Position.create(pos.line, pos.character + offset);
+    return main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     const start = shiftPosition(range.start, startOffset);
     const end = shiftPosition(range.end, endOffset);
-    return esm_main.Range.create(start, end);
+    return main.Range.create(start, end);
 }
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/services/cssCompletion.js
@@ -31855,8 +31986,7 @@ function shiftRange(range, startOffset, endOffset) {
 
 
 
-const cssCompletion_localize = main.loadMessageBundle();
-const SnippetFormat = esm_main.InsertTextFormat.Snippet;
+const SnippetFormat = main.InsertTextFormat.Snippet;
 const retriggerCommand = {
     title: 'Suggest',
     command: 'editor.action.triggerSuggest'
@@ -31901,6 +32031,7 @@ class CSSCompletion {
             const pathCompletionResult = await participant.computeCompletions(document, documentContext);
             return {
                 isIncomplete: result.isIncomplete || pathCompletionResult.isIncomplete,
+                itemDefaults: result.itemDefaults,
                 items: pathCompletionResult.items.concat(result.items)
             };
         }
@@ -31912,12 +32043,21 @@ class CSSCompletion {
         this.offset = document.offsetAt(position);
         this.position = position;
         this.currentWord = getCurrentWord(document, this.offset);
-        this.defaultReplaceRange = esm_main.Range.create(esm_main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+        this.defaultReplaceRange = main.Range.create(main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         this.textDocument = document;
         this.styleSheet = styleSheet;
         this.documentSettings = documentSettings;
         try {
-            const result = { isIncomplete: false, items: [] };
+            const result = {
+                isIncomplete: false,
+                itemDefaults: {
+                    editRange: {
+                        start: { line: position.line, character: position.character - this.currentWord.length },
+                        end: position
+                    }
+                },
+                items: []
+            };
             this.nodePath = getNodePath(this.styleSheet, this.offset);
             for (let i = this.nodePath.length - 1; i >= 0; i--) {
                 const node = this.nodePath[i];
@@ -32066,10 +32206,10 @@ class CSSCompletion {
             const item = {
                 label: entry.name,
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
-                textEdit: esm_main.TextEdit.replace(range, insertText),
-                insertTextFormat: esm_main.InsertTextFormat.Snippet,
-                kind: esm_main.CompletionItemKind.Property
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                textEdit: main.TextEdit.replace(range, insertText),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Property
             };
             if (!entry.restrictions) {
                 retrigger = false;
@@ -32161,8 +32301,8 @@ class CSSCompletion {
             for (const existingValue of existingValues.getEntries()) {
                 result.items.push({
                     label: existingValue,
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), existingValue),
-                    kind: esm_main.CompletionItemKind.Value
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), existingValue),
+                    kind: main.CompletionItemKind.Value
                 });
             }
         }
@@ -32189,10 +32329,10 @@ class CSSCompletion {
                 const item = {
                     label: value.name,
                     documentation: getEntryDescription(value, this.doesSupportMarkdown()),
-                    tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertString),
+                    tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertString),
                     sortText,
-                    kind: esm_main.CompletionItemKind.Value,
+                    kind: main.CompletionItemKind.Value,
                     insertTextFormat
                 };
                 result.items.push(item);
@@ -32205,8 +32345,8 @@ class CSSCompletion {
             result.items.push({
                 label: keywords,
                 documentation: cssWideKeywords[keywords],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), keywords),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), keywords),
+                kind: main.CompletionItemKind.Value
             });
         }
         for (const func in cssWideFunctions) {
@@ -32214,8 +32354,8 @@ class CSSCompletion {
             result.items.push({
                 label: func,
                 documentation: cssWideFunctions[func],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main.CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: SnippetFormat,
                 command: startsWith(func, 'var') ? retriggerCommand : undefined
             });
@@ -32235,17 +32375,17 @@ class CSSCompletion {
             const completionItem = {
                 label: symbol.name,
                 documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main.CompletionItemKind.Variable,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Variable,
                 sortText: SortTexts.Variable
             };
             if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                completionItem.kind = esm_main.CompletionItemKind.Color;
+                completionItem.kind = main.CompletionItemKind.Color;
             }
             if (symbol.node.type === NodeType.FunctionParameter) {
                 const mixinNode = (symbol.node.getParent());
                 if (mixinNode.type === NodeType.MixinDeclaration) {
-                    completionItem.detail = cssCompletion_localize('completion.argument', 'argument from \'{0}\'', mixinNode.getName());
+                    completionItem.detail = browser_esm.t('argument from \'{0}\'', mixinNode.getName());
                 }
             }
             result.items.push(completionItem);
@@ -32253,7 +32393,7 @@ class CSSCompletion {
         return result;
     }
     getVariableProposalsForCSSVarFunction(result) {
-        const allReferencedVariables = new Set();
+        const allReferencedVariables = new cssCompletion_Set();
         this.styleSheet.acceptVisitor(new VariableCollector(allReferencedVariables, this.offset));
         let symbols = this.getSymbolContext().findSymbolsAtOffset(this.offset, ReferenceType.Variable);
         for (const symbol of symbols) {
@@ -32261,11 +32401,11 @@ class CSSCompletion {
                 const completionItem = {
                     label: symbol.name,
                     documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(null), symbol.name),
-                    kind: esm_main.CompletionItemKind.Variable
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(null), symbol.name),
+                    kind: main.CompletionItemKind.Variable
                 };
                 if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                    completionItem.kind = esm_main.CompletionItemKind.Color;
+                    completionItem.kind = main.CompletionItemKind.Color;
                 }
                 result.items.push(completionItem);
             }
@@ -32275,8 +32415,8 @@ class CSSCompletion {
             if (startsWith(name, '--')) {
                 const completionItem = {
                     label: name,
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(null), name),
-                    kind: esm_main.CompletionItemKind.Variable
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(null), name),
+                    kind: main.CompletionItemKind.Variable
                 };
                 result.items.push(completionItem);
             }
@@ -32306,8 +32446,8 @@ class CSSCompletion {
                         const insertText = currentWord + unit;
                         result.items.push({
                             label: insertText,
-                            textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                            kind: esm_main.CompletionItemKind.Unit
+                            textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                            kind: main.CompletionItemKind.Unit
                         });
                     }
                 }
@@ -32320,7 +32460,7 @@ class CSSCompletion {
             const end = existingNode.end !== -1 ? this.textDocument.positionAt(existingNode.end) : this.position;
             const start = this.textDocument.positionAt(existingNode.offset);
             if (start.line === end.line) {
-                return esm_main.Range.create(start, end); // multi line edits are not allowed
+                return main.Range.create(start, end); // multi line edits are not allowed
             }
         }
         return this.defaultReplaceRange;
@@ -32330,25 +32470,25 @@ class CSSCompletion {
             result.items.push({
                 label: color,
                 documentation: colors[color],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), color),
-                kind: esm_main.CompletionItemKind.Color
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Color
             });
         }
         for (const color in colorKeywords) {
             result.items.push({
                 label: color,
                 documentation: colorKeywords[color],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), color),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Value
             });
         }
-        const colorValues = new Set();
+        const colorValues = new cssCompletion_Set();
         this.styleSheet.acceptVisitor(new ColorValueCollector(colorValues, this.offset));
         for (const color of colorValues.getEntries()) {
             result.items.push({
                 label: color,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), color),
-                kind: esm_main.CompletionItemKind.Color
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Color
             });
         }
         for (const p of colorFunctions) {
@@ -32359,9 +32499,9 @@ class CSSCompletion {
                 label: p.func.substr(0, p.func.indexOf('(')),
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 insertTextFormat: SnippetFormat,
-                kind: esm_main.CompletionItemKind.Function
+                kind: main.CompletionItemKind.Function
             });
         }
         return result;
@@ -32371,8 +32511,8 @@ class CSSCompletion {
             result.items.push({
                 label: position,
                 documentation: positionKeywords[position],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), position),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), position),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -32382,8 +32522,8 @@ class CSSCompletion {
             result.items.push({
                 label: repeat,
                 documentation: repeatStyleKeywords[repeat],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), repeat),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), repeat),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -32393,8 +32533,8 @@ class CSSCompletion {
             result.items.push({
                 label: lineStyle,
                 documentation: lineStyleKeywords[lineStyle],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), lineStyle),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), lineStyle),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -32403,8 +32543,8 @@ class CSSCompletion {
         for (const lineWidth of lineWidthKeywords) {
             result.items.push({
                 label: lineWidth,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), lineWidth),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), lineWidth),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -32414,8 +32554,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: geometryBoxKeywords[box],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), box),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -32425,8 +32565,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: boxKeywords[box],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), box),
-                kind: esm_main.CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -32437,8 +32577,8 @@ class CSSCompletion {
             result.items.push({
                 label: image,
                 documentation: imageFunctions[image],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main.CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: image !== insertText ? SnippetFormat : void 0
             });
         }
@@ -32450,8 +32590,8 @@ class CSSCompletion {
             result.items.push({
                 label: timing,
                 documentation: transitionTimingFunctions[timing],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main.CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: timing !== insertText ? SnippetFormat : void 0
             });
         }
@@ -32463,8 +32603,8 @@ class CSSCompletion {
             result.items.push({
                 label: shape,
                 documentation: basicShapeFunctions[shape],
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: esm_main.CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: shape !== insertText ? SnippetFormat : void 0
             });
         }
@@ -32487,10 +32627,10 @@ class CSSCompletion {
         this.cssDataManager.getAtDirectives().forEach(entry => {
             result.items.push({
                 label: entry.name,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(null), entry.name),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(null), entry.name),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
-                kind: esm_main.CompletionItemKind.Keyword
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Keyword
             });
         });
         this.getCompletionsForSelector(null, false, result);
@@ -32516,17 +32656,17 @@ class CSSCompletion {
             if (this.hasCharacterAtPosition(this.offset - this.currentWord.length - 1, ':')) {
                 this.currentWord = ':' + this.currentWord; // for '::'
             }
-            this.defaultReplaceRange = esm_main.Range.create(esm_main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+            this.defaultReplaceRange = main.Range.create(main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         }
         const pseudoClasses = this.cssDataManager.getPseudoClasses();
         pseudoClasses.forEach(entry => {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
-                kind: esm_main.CompletionItemKind.Function,
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, ':-')) {
@@ -32539,10 +32679,10 @@ class CSSCompletion {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [esm_main.CompletionItemTag.Deprecated] : [],
-                kind: esm_main.CompletionItemKind.Function,
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, '::-')) {
@@ -32554,15 +32694,15 @@ class CSSCompletion {
             for (const entry of html5Tags) {
                 result.items.push({
                     label: entry,
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
-                    kind: esm_main.CompletionItemKind.Keyword
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: main.CompletionItemKind.Keyword
                 });
             }
             for (const entry of svgElements) {
                 result.items.push({
                     label: entry,
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
-                    kind: esm_main.CompletionItemKind.Keyword
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: main.CompletionItemKind.Keyword
                 });
             }
         }
@@ -32576,8 +32716,8 @@ class CSSCompletion {
                     visited[selector] = true;
                     result.items.push({
                         label: selector,
-                        textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), selector),
-                        kind: esm_main.CompletionItemKind.Keyword
+                        textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), selector),
+                        kind: main.CompletionItemKind.Keyword
                     });
                 }
                 return false;
@@ -32707,9 +32847,9 @@ class CSSCompletion {
         return {
             label: symbol.name,
             detail: symbol.name + '(' + params.join(', ') + ')',
-            textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+            textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
             insertTextFormat: SnippetFormat,
-            kind: esm_main.CompletionItemKind.Function,
+            kind: main.CompletionItemKind.Function,
             sortText: SortTexts.Term
         };
     }
@@ -32757,7 +32897,7 @@ class CSSCompletion {
             uriValue = '';
             position = this.position;
             const emptyURIValuePosition = this.textDocument.positionAt(uriLiteralNode.offset + 'url('.length);
-            range = esm_main.Range.create(emptyURIValuePosition, emptyURIValuePosition);
+            range = main.Range.create(emptyURIValuePosition, emptyURIValuePosition);
         }
         else {
             const uriValueNode = uriLiteralNode.getChild(0);
@@ -32799,7 +32939,7 @@ class CSSCompletion {
                 return this.supportsMarkdown;
             }
             const documentationFormat = this.lsOptions.clientCapabilities.textDocument?.completion?.completionItem?.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -32810,7 +32950,7 @@ function isDeprecated(entry) {
     }
     return false;
 }
-class Set {
+class cssCompletion_Set {
     constructor() {
         this.entries = {};
     }
@@ -32829,7 +32969,7 @@ function moveCursorInsideParenthesis(text) {
 }
 function collectValues(styleSheet, declaration) {
     const fullPropertyName = declaration.getFullPropertyName();
-    const entries = new Set();
+    const entries = new cssCompletion_Set();
     function visitValue(node) {
         if (node instanceof Identifier || node instanceof NumericValue || node instanceof HexColorValue) {
             entries.add(node.getText());
@@ -32906,7 +33046,6 @@ function isColorString(s) {
 
 
 
-const selectorPrinting_localize = main.loadMessageBundle();
 class Element {
     constructor() {
         this.parent = null;
@@ -33304,7 +33443,7 @@ class SelectorPrinting {
         };
         const specificity = calculateScore(node);
         ;
-        return selectorPrinting_localize('specificity', "[Selector Specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity): ({0}, {1}, {2})", specificity.id, specificity.attr, specificity.tag);
+        return browser_esm.t("[Selector Specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity): ({0}, {1}, {2})", specificity.id, specificity.attr, specificity.tag);
     }
 }
 class SelectorElementBuilder {
@@ -33414,7 +33553,7 @@ class CSSHover {
     }
     doHover(document, position, stylesheet, settings = this.defaultSettings) {
         function getRange(node) {
-            return esm_main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
+            return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
         }
         const offset = document.offsetAt(position);
         const nodepath = getNodePath(stylesheet, offset);
@@ -33535,7 +33674,7 @@ class CSSHover {
                 return this.supportsMarkdown;
             }
             const hover = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.hover;
-            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
+            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -33554,7 +33693,6 @@ class CSSHover {
 
 
 
-const cssNavigation_localize = main.loadMessageBundle();
 const startsWithSchemeRegex = /^\w+:\/\//;
 const startsWithData = /^data:/;
 class CSSNavigation {
@@ -33587,15 +33725,22 @@ class CSSNavigation {
             };
         });
     }
-    findDocumentHighlights(document, position, stylesheet) {
-        const result = [];
+    getHighlightNode(document, position, stylesheet) {
         const offset = document.offsetAt(position);
         let node = getNodeAtOffset(stylesheet, offset);
         if (!node || node.type === NodeType.Stylesheet || node.type === NodeType.Declarations) {
-            return result;
+            return;
         }
         if (node.type === NodeType.Identifier && node.parent && node.parent.type === NodeType.ClassSelector) {
             node = node.parent;
+        }
+        return node;
+    }
+    findDocumentHighlights(document, position, stylesheet) {
+        const result = [];
+        const node = this.getHighlightNode(document, position, stylesheet);
+        if (!node) {
+            return result;
         }
         const symbols = new Symbols(stylesheet);
         const symbol = symbols.findSymbolFromNode(node);
@@ -33713,7 +33858,7 @@ class CSSNavigation {
             const entry = {
                 name,
                 kind,
-                location: esm_main.Location.create(document.uri, range)
+                location: main.Location.create(document.uri, range)
             };
             result.push(entry);
         };
@@ -33725,7 +33870,7 @@ class CSSNavigation {
         const parents = [];
         const addDocumentSymbol = (name, kind, symbolNodeOrRange, nameNodeOrRange, bodyNode) => {
             const range = symbolNodeOrRange instanceof Node ? getRange(symbolNodeOrRange, document) : symbolNodeOrRange;
-            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? esm_main.Range.create(range.start, range.start);
+            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? main.Range.create(range.start, range.start);
             const entry = {
                 name,
                 kind,
@@ -33759,33 +33904,33 @@ class CSSNavigation {
             if (node instanceof RuleSet) {
                 for (const selector of node.getSelectors().getChildren()) {
                     if (selector instanceof Selector) {
-                        const range = esm_main.Range.create(document.positionAt(selector.offset), document.positionAt(node.end));
-                        collect(selector.getText(), esm_main.SymbolKind.Class, range, selector, node.getDeclarations());
+                        const range = main.Range.create(document.positionAt(selector.offset), document.positionAt(node.end));
+                        collect(selector.getText(), main.SymbolKind.Class, range, selector, node.getDeclarations());
                     }
                 }
             }
             else if (node instanceof VariableDeclaration) {
-                collect(node.getName(), esm_main.SymbolKind.Variable, node, node.getVariable(), undefined);
+                collect(node.getName(), main.SymbolKind.Variable, node, node.getVariable(), undefined);
             }
             else if (node instanceof MixinDeclaration) {
-                collect(node.getName(), esm_main.SymbolKind.Method, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), main.SymbolKind.Method, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FunctionDeclaration) {
-                collect(node.getName(), esm_main.SymbolKind.Function, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), main.SymbolKind.Function, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof Keyframe) {
-                const name = cssNavigation_localize('literal.keyframes', "@keyframes {0}", node.getName());
-                collect(name, esm_main.SymbolKind.Class, node, node.getIdentifier(), node.getDeclarations());
+                const name = browser_esm.t("@keyframes {0}", node.getName());
+                collect(name, main.SymbolKind.Class, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FontFace) {
-                const name = cssNavigation_localize('literal.fontface', "@font-face");
-                collect(name, esm_main.SymbolKind.Class, node, undefined, node.getDeclarations());
+                const name = browser_esm.t("@font-face");
+                collect(name, main.SymbolKind.Class, node, undefined, node.getDeclarations());
             }
             else if (node instanceof Media) {
                 const mediaList = node.getChild(0);
                 if (mediaList instanceof Medialist) {
                     const name = '@media ' + mediaList.getText();
-                    collect(name, esm_main.SymbolKind.Module, node, mediaList, node.getDeclarations());
+                    collect(name, main.SymbolKind.Module, node, mediaList, node.getDeclarations());
                 }
             }
             return true;
@@ -33812,14 +33957,14 @@ class CSSNavigation {
         else {
             label = `rgba(${red256}, ${green256}, ${blue256}, ${color.alpha})`;
         }
-        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         if (color.alpha === 1) {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}`;
         }
         else {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}${toTwoDigitHex(Math.round(color.alpha * 255))}`;
         }
-        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         const hsl = hslFromColor(color);
         if (hsl.a === 1) {
             label = `hsl(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%)`;
@@ -33827,7 +33972,7 @@ class CSSNavigation {
         else {
             label = `hsla(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%, ${hsl.a})`;
         }
-        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         const hwb = hwbFromColor(color);
         if (hwb.a === 1) {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}%)`;
@@ -33835,12 +33980,18 @@ class CSSNavigation {
         else {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}% / ${hwb.a})`;
         }
-        result.push({ label: label, textEdit: esm_main.TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         return result;
+    }
+    prepareRename(document, position, stylesheet) {
+        const node = this.getHighlightNode(document, position, stylesheet);
+        if (node) {
+            return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
+        }
     }
     doRename(document, position, newName, stylesheet) {
         const highlights = this.findDocumentHighlights(document, position, stylesheet);
-        const edits = highlights.map(h => esm_main.TextEdit.replace(h.range, newName));
+        const edits = highlights.map(h => main.TextEdit.replace(h.range, newName));
         return {
             changes: { [document.uri]: edits }
         };
@@ -33925,7 +34076,7 @@ function getColorInformation(node, document) {
     return null;
 }
 function getRange(node, document) {
-    return esm_main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
+    return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
 }
 /**
  * Test if `otherRange` is in `range`. If the ranges are equal, will return true.
@@ -33949,12 +34100,12 @@ function containsRange(range, otherRange) {
 }
 function getHighlightKind(node) {
     if (node.type === NodeType.Selector) {
-        return esm_main.DocumentHighlightKind.Write;
+        return main.DocumentHighlightKind.Write;
     }
     if (node instanceof Identifier) {
         if (node.parent && node.parent instanceof Property) {
             if (node.isCustomProperty) {
-                return esm_main.DocumentHighlightKind.Write;
+                return main.DocumentHighlightKind.Write;
             }
         }
     }
@@ -33965,10 +34116,10 @@ function getHighlightKind(node) {
             case NodeType.Keyframe:
             case NodeType.VariableDeclaration:
             case NodeType.FunctionParameter:
-                return esm_main.DocumentHighlightKind.Write;
+                return main.DocumentHighlightKind.Write;
         }
     }
-    return esm_main.DocumentHighlightKind.Read;
+    return main.DocumentHighlightKind.Read;
 }
 function toTwoDigitHex(n) {
     const r = n.toString(16);
@@ -33999,7 +34150,6 @@ function getModuleNameFromPath(path) {
 
 
 
-const lintRules_localize = main.loadMessageBundle();
 const Warning = Level.Warning;
 const lintRules_Error = Level.Error;
 const Ignore = Level.Ignore;
@@ -34020,28 +34170,28 @@ class Setting {
     }
 }
 const Rules = {
-    AllVendorPrefixes: new Rule('compatibleVendorPrefixes', lintRules_localize('rule.vendorprefixes.all', "When using a vendor-specific prefix make sure to also include all other vendor-specific properties"), Ignore),
-    IncludeStandardPropertyWhenUsingVendorPrefix: new Rule('vendorPrefix', lintRules_localize('rule.standardvendorprefix.all', "When using a vendor-specific prefix also include the standard property"), Warning),
-    DuplicateDeclarations: new Rule('duplicateProperties', lintRules_localize('rule.duplicateDeclarations', "Do not use duplicate style definitions"), Ignore),
-    EmptyRuleSet: new Rule('emptyRules', lintRules_localize('rule.emptyRuleSets', "Do not use empty rulesets"), Warning),
-    ImportStatemement: new Rule('importStatement', lintRules_localize('rule.importDirective', "Import statements do not load in parallel"), Ignore),
-    BewareOfBoxModelSize: new Rule('boxModel', lintRules_localize('rule.bewareOfBoxModelSize', "Do not use width or height when using padding or border"), Ignore),
-    UniversalSelector: new Rule('universalSelector', lintRules_localize('rule.universalSelector', "The universal selector (*) is known to be slow"), Ignore),
-    ZeroWithUnit: new Rule('zeroUnits', lintRules_localize('rule.zeroWidthUnit', "No unit for zero needed"), Ignore),
-    RequiredPropertiesForFontFace: new Rule('fontFaceProperties', lintRules_localize('rule.fontFaceProperties', "@font-face rule must define 'src' and 'font-family' properties"), Warning),
-    HexColorLength: new Rule('hexColorLength', lintRules_localize('rule.hexColor', "Hex colors must consist of three, four, six or eight hex numbers"), lintRules_Error),
-    ArgsInColorFunction: new Rule('argumentsInColorFunction', lintRules_localize('rule.colorFunction', "Invalid number of parameters"), lintRules_Error),
-    UnknownProperty: new Rule('unknownProperties', lintRules_localize('rule.unknownProperty', "Unknown property."), Warning),
-    UnknownAtRules: new Rule('unknownAtRules', lintRules_localize('rule.unknownAtRules', "Unknown at-rule."), Warning),
-    IEStarHack: new Rule('ieHack', lintRules_localize('rule.ieHack', "IE hacks are only necessary when supporting IE7 and older"), Ignore),
-    UnknownVendorSpecificProperty: new Rule('unknownVendorSpecificProperties', lintRules_localize('rule.unknownVendorSpecificProperty', "Unknown vendor specific property."), Ignore),
-    PropertyIgnoredDueToDisplay: new Rule('propertyIgnoredDueToDisplay', lintRules_localize('rule.propertyIgnoredDueToDisplay', "Property is ignored due to the display."), Warning),
-    AvoidImportant: new Rule('important', lintRules_localize('rule.avoidImportant', "Avoid using !important. It is an indication that the specificity of the entire CSS has gotten out of control and needs to be refactored."), Ignore),
-    AvoidFloat: new Rule('float', lintRules_localize('rule.avoidFloat', "Avoid using 'float'. Floats lead to fragile CSS that is easy to break if one aspect of the layout changes."), Ignore),
-    AvoidIdSelector: new Rule('idSelector', lintRules_localize('rule.avoidIdSelector', "Selectors should not contain IDs because these rules are too tightly coupled with the HTML."), Ignore),
+    AllVendorPrefixes: new Rule('compatibleVendorPrefixes', browser_esm.t("When using a vendor-specific prefix make sure to also include all other vendor-specific properties"), Ignore),
+    IncludeStandardPropertyWhenUsingVendorPrefix: new Rule('vendorPrefix', browser_esm.t("When using a vendor-specific prefix also include the standard property"), Warning),
+    DuplicateDeclarations: new Rule('duplicateProperties', browser_esm.t("Do not use duplicate style definitions"), Ignore),
+    EmptyRuleSet: new Rule('emptyRules', browser_esm.t("Do not use empty rulesets"), Warning),
+    ImportStatemement: new Rule('importStatement', browser_esm.t("Import statements do not load in parallel"), Ignore),
+    BewareOfBoxModelSize: new Rule('boxModel', browser_esm.t("Do not use width or height when using padding or border"), Ignore),
+    UniversalSelector: new Rule('universalSelector', browser_esm.t("The universal selector (*) is known to be slow"), Ignore),
+    ZeroWithUnit: new Rule('zeroUnits', browser_esm.t("No unit for zero needed"), Ignore),
+    RequiredPropertiesForFontFace: new Rule('fontFaceProperties', browser_esm.t("@font-face rule must define 'src' and 'font-family' properties"), Warning),
+    HexColorLength: new Rule('hexColorLength', browser_esm.t("Hex colors must consist of three, four, six or eight hex numbers"), lintRules_Error),
+    ArgsInColorFunction: new Rule('argumentsInColorFunction', browser_esm.t("Invalid number of parameters"), lintRules_Error),
+    UnknownProperty: new Rule('unknownProperties', browser_esm.t("Unknown property."), Warning),
+    UnknownAtRules: new Rule('unknownAtRules', browser_esm.t("Unknown at-rule."), Warning),
+    IEStarHack: new Rule('ieHack', browser_esm.t("IE hacks are only necessary when supporting IE7 and older"), Ignore),
+    UnknownVendorSpecificProperty: new Rule('unknownVendorSpecificProperties', browser_esm.t("Unknown vendor specific property."), Ignore),
+    PropertyIgnoredDueToDisplay: new Rule('propertyIgnoredDueToDisplay', browser_esm.t("Property is ignored due to the display."), Warning),
+    AvoidImportant: new Rule('important', browser_esm.t("Avoid using !important. It is an indication that the specificity of the entire CSS has gotten out of control and needs to be refactored."), Ignore),
+    AvoidFloat: new Rule('float', browser_esm.t("Avoid using 'float'. Floats lead to fragile CSS that is easy to break if one aspect of the layout changes."), Ignore),
+    AvoidIdSelector: new Rule('idSelector', browser_esm.t("Selectors should not contain IDs because these rules are too tightly coupled with the HTML."), Ignore),
 };
 const Settings = {
-    ValidProperties: new Setting('validProperties', lintRules_localize('rule.validProperties', "A list of properties that are not validated against the `unknownProperties` rule."), [])
+    ValidProperties: new Setting('validProperties', browser_esm.t("A list of properties that are not validated against the `unknownProperties` rule."), [])
 };
 class LintConfigurationSettings {
     constructor(conf = {}) {
@@ -34080,7 +34230,6 @@ function toLevel(level) {
 
 
 
-const cssCodeActions_localize = main.loadMessageBundle();
 class CSSCodeActions {
     constructor(cssDataManager) {
         this.cssDataManager = cssDataManager;
@@ -34088,7 +34237,7 @@ class CSSCodeActions {
     doCodeActions(document, range, context, stylesheet) {
         return this.doCodeActions2(document, range, context, stylesheet).map(ca => {
             const textDocumentEdit = ca.edit && ca.edit.documentChanges && ca.edit.documentChanges[0];
-            return esm_main.Command.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
+            return main.Command.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
         });
     }
     doCodeActions2(document, range, context, stylesheet) {
@@ -34116,11 +34265,11 @@ class CSSCodeActions {
         let maxActions = 3;
         for (const candidate of candidates) {
             const propertyName = candidate.property;
-            const title = cssCodeActions_localize('css.codeaction.rename', "Rename to '{0}'", propertyName);
-            const edit = esm_main.TextEdit.replace(marker.range, propertyName);
-            const documentIdentifier = esm_main.VersionedTextDocumentIdentifier.create(document.uri, document.version);
-            const workspaceEdit = { documentChanges: [esm_main.TextDocumentEdit.create(documentIdentifier, [edit])] };
-            const codeAction = esm_main.CodeAction.create(title, workspaceEdit, esm_main.CodeActionKind.QuickFix);
+            const title = browser_esm.t("Rename to '{0}'", propertyName);
+            const edit = main.TextEdit.replace(marker.range, propertyName);
+            const documentIdentifier = main.VersionedTextDocumentIdentifier.create(document.uri, document.version);
+            const workspaceEdit = { documentChanges: [main.TextDocumentEdit.create(documentIdentifier, [edit])] };
+            const codeAction = main.CodeAction.create(title, workspaceEdit, main.CodeActionKind.QuickFix);
             codeAction.diagnostics = [marker];
             result.push(codeAction);
             if (--maxActions <= 0) {
@@ -34358,7 +34507,6 @@ function calculateBoxModel(propertyTable) {
 
 
 
-const lint_localize = main.loadMessageBundle();
 class NodesByRootMap {
     constructor() {
         this.data = {};
@@ -34376,6 +34524,12 @@ class NodesByRootMap {
     }
 }
 class LintVisitor {
+    static entries(node, document, settings, cssDataManager, entryFilter) {
+        const visitor = new LintVisitor(document, settings, cssDataManager);
+        node.acceptVisitor(visitor);
+        visitor.completeValidations();
+        return visitor.getEntries(entryFilter);
+    }
     constructor(document, settings, cssDataManager) {
         this.cssDataManager = cssDataManager;
         this.warnings = [];
@@ -34394,12 +34548,6 @@ class LintVisitor {
                 }
             });
         }
-    }
-    static entries(node, document, settings, cssDataManager, entryFilter) {
-        const visitor = new LintVisitor(document, settings, cssDataManager);
-        node.acceptVisitor(visitor);
-        visitor.completeValidations();
-        return visitor.getEntries(entryFilter);
     }
     isValidPropertyDeclaration(element) {
         const propertyName = element.fullPropertyName;
@@ -34458,10 +34606,10 @@ class LintVisitor {
             const curr = expectedClone[i];
             if (curr) {
                 if (result === null) {
-                    result = lint_localize('namelist.single', "'{0}'", curr);
+                    result = browser_esm.t("'{0}'", curr);
                 }
                 else {
-                    result = lint_localize('namelist.concatenated', "{0}, '{1}'", result, curr);
+                    result = browser_esm.t("{0}, '{1}'", result, curr);
                 }
             }
         }
@@ -34532,11 +34680,11 @@ class LintVisitor {
             if (missingVendorSpecific || needsStandard) {
                 for (const node of this.keyframes.data[name].nodes) {
                     if (needsStandard) {
-                        const message = lint_localize('keyframes.standardrule.missing', "Always define standard rule '@keyframes' when defining keyframes.");
+                        const message = browser_esm.t("Always define standard rule '@keyframes' when defining keyframes.");
                         this.addEntry(node, Rules.IncludeStandardPropertyWhenUsingVendorPrefix, message);
                     }
                     if (missingVendorSpecific) {
-                        const message = lint_localize('keyframes.vendorspecific.missing', "Always include all vendor specific rules: Missing: {0}", missingVendorSpecific);
+                        const message = browser_esm.t("Always include all vendor specific rules: Missing: {0}", missingVendorSpecific);
                         this.addEntry(node, Rules.AllVendorPrefixes, message);
                     }
                 }
@@ -34635,7 +34783,7 @@ class LintVisitor {
                 const node = elem[index].node;
                 const value = node.getValue();
                 if (value && !value.matches('none')) {
-                    this.addEntry(node, Rules.PropertyIgnoredDueToDisplay, lint_localize('rule.propertyIgnoredDueToDisplayInlineBlock', "inline-block is ignored due to the float. If 'float' has a value other than 'none', the box is floated and 'display' is treated as 'block'"));
+                    this.addEntry(node, Rules.PropertyIgnoredDueToDisplay, browser_esm.t("inline-block is ignored due to the float. If 'float' has a value other than 'none', the box is floated and 'display' is treated as 'block'"));
                 }
             }
         }
@@ -34644,7 +34792,7 @@ class LintVisitor {
         if (displayElems.length > 0) {
             const elem = this.fetch(propertyTable, 'vertical-align');
             for (let index = 0; index < elem.length; index++) {
-                this.addEntry(elem[index].node, Rules.PropertyIgnoredDueToDisplay, lint_localize('rule.propertyIgnoredDueToDisplayBlock', "Property is ignored due to the display. With 'display: block', vertical-align should not be used."));
+                this.addEntry(elem[index].node, Rules.PropertyIgnoredDueToDisplay, browser_esm.t("Property is ignored due to the display. With 'display: block', vertical-align should not be used."));
             }
         }
         /////////////////////////////////////////////////////////////
@@ -34707,7 +34855,7 @@ class LintVisitor {
                         // _property and *property might be contributed via custom data
                         if (!this.cssDataManager.isKnownProperty(fullName) && !this.cssDataManager.isKnownProperty(name)) {
                             if (!this.validProperties[name]) {
-                                this.addEntry(decl.getProperty(), Rules.UnknownProperty, lint_localize('property.unknownproperty.detailed', "Unknown property: '{0}'", decl.getFullPropertyName()));
+                                this.addEntry(decl.getProperty(), Rules.UnknownProperty, browser_esm.t("Unknown property: '{0}'", decl.getFullPropertyName()));
                             }
                         }
                         propertiesBySuffix.add(name, name, null); // don't pass the node as we don't show errors on the standard
@@ -34725,6 +34873,23 @@ class LintVisitor {
                     if (!needsStandard && actual.length === 1) {
                         continue; // only the non-vendor specific rule is used, that's fine, no warning
                     }
+                    /**
+                     * We should ignore missing standard properties, if there's an explicit contextual reference to a
+                     * vendor specific pseudo-element selector with the same vendor (prefix)
+                     *
+                     * (See https://github.com/microsoft/vscode/issues/164350)
+                     */
+                    const entriesThatNeedStandard = new Set(needsStandard ? entry.nodes : []);
+                    if (needsStandard) {
+                        const pseudoElements = this.getContextualVendorSpecificPseudoElements(node);
+                        for (const node of entry.nodes) {
+                            const propertyName = node.getName();
+                            const prefix = propertyName.substring(0, propertyName.length - suffix.length);
+                            if (pseudoElements.some(x => x.startsWith(prefix))) {
+                                entriesThatNeedStandard.delete(node);
+                            }
+                        }
+                    }
                     const expected = [];
                     for (let i = 0, len = LintVisitor.prefixes.length; i < len; i++) {
                         const prefix = LintVisitor.prefixes[i];
@@ -34735,12 +34900,12 @@ class LintVisitor {
                     const missingVendorSpecific = this.getMissingNames(expected, actual);
                     if (missingVendorSpecific || needsStandard) {
                         for (const node of entry.nodes) {
-                            if (needsStandard) {
-                                const message = lint_localize('property.standard.missing', "Also define the standard property '{0}' for compatibility", suffix);
+                            if (needsStandard && entriesThatNeedStandard.has(node)) {
+                                const message = browser_esm.t("Also define the standard property '{0}' for compatibility", suffix);
                                 this.addEntry(node, Rules.IncludeStandardPropertyWhenUsingVendorPrefix, message);
                             }
                             if (missingVendorSpecific) {
-                                const message = lint_localize('property.vendorspecific.missing', "Always include all vendor specific properties: Missing: {0}", missingVendorSpecific);
+                                const message = browser_esm.t("Always include all vendor specific properties: Missing: {0}", missingVendorSpecific);
                                 this.addEntry(node, Rules.AllVendorPrefixes, message);
                             }
                         }
@@ -34749,6 +34914,36 @@ class LintVisitor {
             }
         }
         return true;
+    }
+    /**
+     * Walks up the syntax tree (starting from given `node`) and captures vendor
+     * specific pseudo-element selectors.
+     * @returns An array of vendor specific pseudo-elements; or empty if none
+     * was found.
+     */
+    getContextualVendorSpecificPseudoElements(node) {
+        function walkDown(s, n) {
+            for (const child of n.getChildren()) {
+                if (child.type === NodeType.PseudoSelector) {
+                    const pseudoElement = child.getChildren()[0]?.getText();
+                    if (pseudoElement) {
+                        s.add(pseudoElement);
+                    }
+                }
+                walkDown(s, child);
+            }
+        }
+        function walkUp(s, n) {
+            if (n.type === NodeType.Ruleset) {
+                for (const selector of n.getSelectors().getChildren()) {
+                    walkDown(s, selector);
+                }
+            }
+            return n.parent ? walkUp(s, n.parent) : undefined;
+        }
+        const result = new Set();
+        walkUp(result, node);
+        return Array.from(result);
     }
     visitPrio(node) {
         /////////////////////////////////////////////////////////////
@@ -34895,13 +35090,13 @@ class CSSValidation {
             ruleIds.push(Rules[r].id);
         }
         function toDiagnostic(marker) {
-            const range = esm_main.Range.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
+            const range = main.Range.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
             const source = document.languageId;
             return {
                 code: marker.getRule().id,
                 source: source,
                 message: marker.getMessage(),
-                severity: marker.getLevel() === Level.Warning ? esm_main.DiagnosticSeverity.Warning : esm_main.DiagnosticSeverity.Error,
+                severity: marker.getLevel() === Level.Warning ? main.DiagnosticSeverity.Warning : main.DiagnosticSeverity.Error,
                 range: range
             };
         }
@@ -35013,7 +35208,6 @@ class SCSSScanner extends Scanner {
  *--------------------------------------------------------------------------------------------*/
 
 
-const scssErrors_localize = main.loadMessageBundle();
 class SCSSIssueType {
     constructor(id, message) {
         this.id = id;
@@ -35021,9 +35215,9 @@ class SCSSIssueType {
     }
 }
 const SCSSParseError = {
-    FromExpected: new SCSSIssueType('scss-fromexpected', scssErrors_localize('expected.from', "'from' expected")),
-    ThroughOrToExpected: new SCSSIssueType('scss-throughexpected', scssErrors_localize('expected.through', "'through' or 'to' expected")),
-    InExpected: new SCSSIssueType('scss-fromexpected', scssErrors_localize('expected.in', "'in' expected")),
+    FromExpected: new SCSSIssueType('scss-fromexpected', browser_esm.t("'from' expected")),
+    ThroughOrToExpected: new SCSSIssueType('scss-throughexpected', browser_esm.t("'through' or 'to' expected")),
+    InExpected: new SCSSIssueType('scss-fromexpected', browser_esm.t("'in' expected")),
 };
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/parser/scssParser.js
@@ -35117,6 +35311,9 @@ class SCSSParser extends Parser {
     }
     _parseMediaCondition() {
         return this._parseInterpolation() || super._parseMediaCondition();
+    }
+    _parseMediaFeatureRangeOperator() {
+        return this.accept(SmallerEqualsOperator) || this.accept(GreaterEqualsOperator) || super._parseMediaFeatureRangeOperator();
     }
     _parseMediaFeatureName() {
         return this._parseModuleMember()
@@ -35845,7 +36042,7 @@ class SCSSParser extends Parser {
 
 
 
-const scssCompletion_localize = main.loadMessageBundle();
+const sassDocumentationName = browser_esm.t('Sass documentation');
 class SCSSCompletion extends CSSCompletion {
     constructor(lsServiceOptions, cssDataManager) {
         super('$', lsServiceOptions, cssDataManager);
@@ -35864,8 +36061,8 @@ class SCSSCompletion extends CSSCompletion {
                 const item = {
                     label: p.label,
                     documentation: p.documentation,
-                    textEdit: esm_main.TextEdit.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
-                    kind: esm_main.CompletionItemKind.Module
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
+                    kind: main.CompletionItemKind.Module
                 };
                 result.items.push(item);
             }
@@ -35886,9 +36083,9 @@ class SCSSCompletion extends CSSCompletion {
                 label: label,
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                insertTextFormat: esm_main.InsertTextFormat.Snippet,
-                kind: esm_main.CompletionItemKind.Function
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -35923,8 +36120,8 @@ class SCSSCompletion extends CSSCompletion {
         for (const symbol of symbols) {
             const suggest = {
                 label: symbol.name,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), symbol.name),
-                kind: esm_main.CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), symbol.name),
+                kind: main.CompletionItemKind.Function,
             };
             result.items.push(suggest);
         }
@@ -35963,212 +36160,212 @@ SCSSCompletion.variableDefaults = {
     '$limit': '1'
 };
 SCSSCompletion.colorProposals = [
-    { func: 'red($color)', desc: scssCompletion_localize('scss.builtin.red', 'Gets the red component of a color.') },
-    { func: 'green($color)', desc: scssCompletion_localize('scss.builtin.green', 'Gets the green component of a color.') },
-    { func: 'blue($color)', desc: scssCompletion_localize('scss.builtin.blue', 'Gets the blue component of a color.') },
-    { func: 'mix($color, $color, [$weight])', desc: scssCompletion_localize('scss.builtin.mix', 'Mixes two colors together.') },
-    { func: 'hue($color)', desc: scssCompletion_localize('scss.builtin.hue', 'Gets the hue component of a color.') },
-    { func: 'saturation($color)', desc: scssCompletion_localize('scss.builtin.saturation', 'Gets the saturation component of a color.') },
-    { func: 'lightness($color)', desc: scssCompletion_localize('scss.builtin.lightness', 'Gets the lightness component of a color.') },
-    { func: 'adjust-hue($color, $degrees)', desc: scssCompletion_localize('scss.builtin.adjust-hue', 'Changes the hue of a color.') },
-    { func: 'lighten($color, $amount)', desc: scssCompletion_localize('scss.builtin.lighten', 'Makes a color lighter.') },
-    { func: 'darken($color, $amount)', desc: scssCompletion_localize('scss.builtin.darken', 'Makes a color darker.') },
-    { func: 'saturate($color, $amount)', desc: scssCompletion_localize('scss.builtin.saturate', 'Makes a color more saturated.') },
-    { func: 'desaturate($color, $amount)', desc: scssCompletion_localize('scss.builtin.desaturate', 'Makes a color less saturated.') },
-    { func: 'grayscale($color)', desc: scssCompletion_localize('scss.builtin.grayscale', 'Converts a color to grayscale.') },
-    { func: 'complement($color)', desc: scssCompletion_localize('scss.builtin.complement', 'Returns the complement of a color.') },
-    { func: 'invert($color)', desc: scssCompletion_localize('scss.builtin.invert', 'Returns the inverse of a color.') },
-    { func: 'alpha($color)', desc: scssCompletion_localize('scss.builtin.alpha', 'Gets the opacity component of a color.') },
+    { func: 'red($color)', desc: browser_esm.t('Gets the red component of a color.') },
+    { func: 'green($color)', desc: browser_esm.t('Gets the green component of a color.') },
+    { func: 'blue($color)', desc: browser_esm.t('Gets the blue component of a color.') },
+    { func: 'mix($color, $color, [$weight])', desc: browser_esm.t('Mixes two colors together.') },
+    { func: 'hue($color)', desc: browser_esm.t('Gets the hue component of a color.') },
+    { func: 'saturation($color)', desc: browser_esm.t('Gets the saturation component of a color.') },
+    { func: 'lightness($color)', desc: browser_esm.t('Gets the lightness component of a color.') },
+    { func: 'adjust-hue($color, $degrees)', desc: browser_esm.t('Changes the hue of a color.') },
+    { func: 'lighten($color, $amount)', desc: browser_esm.t('Makes a color lighter.') },
+    { func: 'darken($color, $amount)', desc: browser_esm.t('Makes a color darker.') },
+    { func: 'saturate($color, $amount)', desc: browser_esm.t('Makes a color more saturated.') },
+    { func: 'desaturate($color, $amount)', desc: browser_esm.t('Makes a color less saturated.') },
+    { func: 'grayscale($color)', desc: browser_esm.t('Converts a color to grayscale.') },
+    { func: 'complement($color)', desc: browser_esm.t('Returns the complement of a color.') },
+    { func: 'invert($color)', desc: browser_esm.t('Returns the inverse of a color.') },
+    { func: 'alpha($color)', desc: browser_esm.t('Gets the opacity component of a color.') },
     { func: 'opacity($color)', desc: 'Gets the alpha component (opacity) of a color.' },
-    { func: 'rgba($color, $alpha)', desc: scssCompletion_localize('scss.builtin.rgba', 'Changes the alpha component for a color.') },
-    { func: 'opacify($color, $amount)', desc: scssCompletion_localize('scss.builtin.opacify', 'Makes a color more opaque.') },
-    { func: 'fade-in($color, $amount)', desc: scssCompletion_localize('scss.builtin.fade-in', 'Makes a color more opaque.') },
-    { func: 'transparentize($color, $amount)', desc: scssCompletion_localize('scss.builtin.transparentize', 'Makes a color more transparent.') },
-    { func: 'fade-out($color, $amount)', desc: scssCompletion_localize('scss.builtin.fade-out', 'Makes a color more transparent.') },
-    { func: 'adjust-color($color, [$red], [$green], [$blue], [$hue], [$saturation], [$lightness], [$alpha])', desc: scssCompletion_localize('scss.builtin.adjust-color', 'Increases or decreases one or more components of a color.') },
-    { func: 'scale-color($color, [$red], [$green], [$blue], [$saturation], [$lightness], [$alpha])', desc: scssCompletion_localize('scss.builtin.scale-color', 'Fluidly scales one or more properties of a color.') },
-    { func: 'change-color($color, [$red], [$green], [$blue], [$hue], [$saturation], [$lightness], [$alpha])', desc: scssCompletion_localize('scss.builtin.change-color', 'Changes one or more properties of a color.') },
-    { func: 'ie-hex-str($color)', desc: scssCompletion_localize('scss.builtin.ie-hex-str', 'Converts a color into the format understood by IE filters.') }
+    { func: 'rgba($color, $alpha)', desc: browser_esm.t('Changes the alpha component for a color.') },
+    { func: 'opacify($color, $amount)', desc: browser_esm.t('Makes a color more opaque.') },
+    { func: 'fade-in($color, $amount)', desc: browser_esm.t('Makes a color more opaque.') },
+    { func: 'transparentize($color, $amount)', desc: browser_esm.t('Makes a color more transparent.') },
+    { func: 'fade-out($color, $amount)', desc: browser_esm.t('Makes a color more transparent.') },
+    { func: 'adjust-color($color, [$red], [$green], [$blue], [$hue], [$saturation], [$lightness], [$alpha])', desc: browser_esm.t('Increases or decreases one or more components of a color.') },
+    { func: 'scale-color($color, [$red], [$green], [$blue], [$saturation], [$lightness], [$alpha])', desc: browser_esm.t('Fluidly scales one or more properties of a color.') },
+    { func: 'change-color($color, [$red], [$green], [$blue], [$hue], [$saturation], [$lightness], [$alpha])', desc: browser_esm.t('Changes one or more properties of a color.') },
+    { func: 'ie-hex-str($color)', desc: browser_esm.t('Converts a color into the format understood by IE filters.') }
 ];
 SCSSCompletion.selectorFuncs = [
-    { func: 'selector-nest($selectors…)', desc: scssCompletion_localize('scss.builtin.selector-nest', 'Nests selector beneath one another like they would be nested in the stylesheet.') },
-    { func: 'selector-append($selectors…)', desc: scssCompletion_localize('scss.builtin.selector-append', 'Appends selectors to one another without spaces in between.') },
-    { func: 'selector-extend($selector, $extendee, $extender)', desc: scssCompletion_localize('scss.builtin.selector-extend', 'Extends $extendee with $extender within $selector.') },
-    { func: 'selector-replace($selector, $original, $replacement)', desc: scssCompletion_localize('scss.builtin.selector-replace', 'Replaces $original with $replacement within $selector.') },
-    { func: 'selector-unify($selector1, $selector2)', desc: scssCompletion_localize('scss.builtin.selector-unify', 'Unifies two selectors to produce a selector that matches elements matched by both.') },
-    { func: 'is-superselector($super, $sub)', desc: scssCompletion_localize('scss.builtin.is-superselector', 'Returns whether $super matches all the elements $sub does, and possibly more.') },
-    { func: 'simple-selectors($selector)', desc: scssCompletion_localize('scss.builtin.simple-selectors', 'Returns the simple selectors that comprise a compound selector.') },
-    { func: 'selector-parse($selector)', desc: scssCompletion_localize('scss.builtin.selector-parse', 'Parses a selector into the format returned by &.') }
+    { func: 'selector-nest($selectors…)', desc: browser_esm.t('Nests selector beneath one another like they would be nested in the stylesheet.') },
+    { func: 'selector-append($selectors…)', desc: browser_esm.t('Appends selectors to one another without spaces in between.') },
+    { func: 'selector-extend($selector, $extendee, $extender)', desc: browser_esm.t('Extends $extendee with $extender within $selector.') },
+    { func: 'selector-replace($selector, $original, $replacement)', desc: browser_esm.t('Replaces $original with $replacement within $selector.') },
+    { func: 'selector-unify($selector1, $selector2)', desc: browser_esm.t('Unifies two selectors to produce a selector that matches elements matched by both.') },
+    { func: 'is-superselector($super, $sub)', desc: browser_esm.t('Returns whether $super matches all the elements $sub does, and possibly more.') },
+    { func: 'simple-selectors($selector)', desc: browser_esm.t('Returns the simple selectors that comprise a compound selector.') },
+    { func: 'selector-parse($selector)', desc: browser_esm.t('Parses a selector into the format returned by &.') }
 ];
 SCSSCompletion.builtInFuncs = [
-    { func: 'unquote($string)', desc: scssCompletion_localize('scss.builtin.unquote', 'Removes quotes from a string.') },
-    { func: 'quote($string)', desc: scssCompletion_localize('scss.builtin.quote', 'Adds quotes to a string.') },
-    { func: 'str-length($string)', desc: scssCompletion_localize('scss.builtin.str-length', 'Returns the number of characters in a string.') },
-    { func: 'str-insert($string, $insert, $index)', desc: scssCompletion_localize('scss.builtin.str-insert', 'Inserts $insert into $string at $index.') },
-    { func: 'str-index($string, $substring)', desc: scssCompletion_localize('scss.builtin.str-index', 'Returns the index of the first occurance of $substring in $string.') },
-    { func: 'str-slice($string, $start-at, [$end-at])', desc: scssCompletion_localize('scss.builtin.str-slice', 'Extracts a substring from $string.') },
-    { func: 'to-upper-case($string)', desc: scssCompletion_localize('scss.builtin.to-upper-case', 'Converts a string to upper case.') },
-    { func: 'to-lower-case($string)', desc: scssCompletion_localize('scss.builtin.to-lower-case', 'Converts a string to lower case.') },
-    { func: 'percentage($number)', desc: scssCompletion_localize('scss.builtin.percentage', 'Converts a unitless number to a percentage.'), type: 'percentage' },
-    { func: 'round($number)', desc: scssCompletion_localize('scss.builtin.round', 'Rounds a number to the nearest whole number.') },
-    { func: 'ceil($number)', desc: scssCompletion_localize('scss.builtin.ceil', 'Rounds a number up to the next whole number.') },
-    { func: 'floor($number)', desc: scssCompletion_localize('scss.builtin.floor', 'Rounds a number down to the previous whole number.') },
-    { func: 'abs($number)', desc: scssCompletion_localize('scss.builtin.abs', 'Returns the absolute value of a number.') },
-    { func: 'min($numbers)', desc: scssCompletion_localize('scss.builtin.min', 'Finds the minimum of several numbers.') },
-    { func: 'max($numbers)', desc: scssCompletion_localize('scss.builtin.max', 'Finds the maximum of several numbers.') },
-    { func: 'random([$limit])', desc: scssCompletion_localize('scss.builtin.random', 'Returns a random number.') },
-    { func: 'length($list)', desc: scssCompletion_localize('scss.builtin.length', 'Returns the length of a list.') },
-    { func: 'nth($list, $n)', desc: scssCompletion_localize('scss.builtin.nth', 'Returns a specific item in a list.') },
-    { func: 'set-nth($list, $n, $value)', desc: scssCompletion_localize('scss.builtin.set-nth', 'Replaces the nth item in a list.') },
-    { func: 'join($list1, $list2, [$separator])', desc: scssCompletion_localize('scss.builtin.join', 'Joins together two lists into one.') },
-    { func: 'append($list1, $val, [$separator])', desc: scssCompletion_localize('scss.builtin.append', 'Appends a single value onto the end of a list.') },
-    { func: 'zip($lists)', desc: scssCompletion_localize('scss.builtin.zip', 'Combines several lists into a single multidimensional list.') },
-    { func: 'index($list, $value)', desc: scssCompletion_localize('scss.builtin.index', 'Returns the position of a value within a list.') },
-    { func: 'list-separator(#list)', desc: scssCompletion_localize('scss.builtin.list-separator', 'Returns the separator of a list.') },
-    { func: 'map-get($map, $key)', desc: scssCompletion_localize('scss.builtin.map-get', 'Returns the value in a map associated with a given key.') },
-    { func: 'map-merge($map1, $map2)', desc: scssCompletion_localize('scss.builtin.map-merge', 'Merges two maps together into a new map.') },
-    { func: 'map-remove($map, $keys)', desc: scssCompletion_localize('scss.builtin.map-remove', 'Returns a new map with keys removed.') },
-    { func: 'map-keys($map)', desc: scssCompletion_localize('scss.builtin.map-keys', 'Returns a list of all keys in a map.') },
-    { func: 'map-values($map)', desc: scssCompletion_localize('scss.builtin.map-values', 'Returns a list of all values in a map.') },
-    { func: 'map-has-key($map, $key)', desc: scssCompletion_localize('scss.builtin.map-has-key', 'Returns whether a map has a value associated with a given key.') },
-    { func: 'keywords($args)', desc: scssCompletion_localize('scss.builtin.keywords', 'Returns the keywords passed to a function that takes variable arguments.') },
-    { func: 'feature-exists($feature)', desc: scssCompletion_localize('scss.builtin.feature-exists', 'Returns whether a feature exists in the current Sass runtime.') },
-    { func: 'variable-exists($name)', desc: scssCompletion_localize('scss.builtin.variable-exists', 'Returns whether a variable with the given name exists in the current scope.') },
-    { func: 'global-variable-exists($name)', desc: scssCompletion_localize('scss.builtin.global-variable-exists', 'Returns whether a variable with the given name exists in the global scope.') },
-    { func: 'function-exists($name)', desc: scssCompletion_localize('scss.builtin.function-exists', 'Returns whether a function with the given name exists.') },
-    { func: 'mixin-exists($name)', desc: scssCompletion_localize('scss.builtin.mixin-exists', 'Returns whether a mixin with the given name exists.') },
-    { func: 'inspect($value)', desc: scssCompletion_localize('scss.builtin.inspect', 'Returns the string representation of a value as it would be represented in Sass.') },
-    { func: 'type-of($value)', desc: scssCompletion_localize('scss.builtin.type-of', 'Returns the type of a value.') },
-    { func: 'unit($number)', desc: scssCompletion_localize('scss.builtin.unit', 'Returns the unit(s) associated with a number.') },
-    { func: 'unitless($number)', desc: scssCompletion_localize('scss.builtin.unitless', 'Returns whether a number has units.') },
-    { func: 'comparable($number1, $number2)', desc: scssCompletion_localize('scss.builtin.comparable', 'Returns whether two numbers can be added, subtracted, or compared.') },
-    { func: 'call($name, $args…)', desc: scssCompletion_localize('scss.builtin.call', 'Dynamically calls a Sass function.') }
+    { func: 'unquote($string)', desc: browser_esm.t('Removes quotes from a string.') },
+    { func: 'quote($string)', desc: browser_esm.t('Adds quotes to a string.') },
+    { func: 'str-length($string)', desc: browser_esm.t('Returns the number of characters in a string.') },
+    { func: 'str-insert($string, $insert, $index)', desc: browser_esm.t('Inserts $insert into $string at $index.') },
+    { func: 'str-index($string, $substring)', desc: browser_esm.t('Returns the index of the first occurance of $substring in $string.') },
+    { func: 'str-slice($string, $start-at, [$end-at])', desc: browser_esm.t('Extracts a substring from $string.') },
+    { func: 'to-upper-case($string)', desc: browser_esm.t('Converts a string to upper case.') },
+    { func: 'to-lower-case($string)', desc: browser_esm.t('Converts a string to lower case.') },
+    { func: 'percentage($number)', desc: browser_esm.t('Converts a unitless number to a percentage.'), type: 'percentage' },
+    { func: 'round($number)', desc: browser_esm.t('Rounds a number to the nearest whole number.') },
+    { func: 'ceil($number)', desc: browser_esm.t('Rounds a number up to the next whole number.') },
+    { func: 'floor($number)', desc: browser_esm.t('Rounds a number down to the previous whole number.') },
+    { func: 'abs($number)', desc: browser_esm.t('Returns the absolute value of a number.') },
+    { func: 'min($numbers)', desc: browser_esm.t('Finds the minimum of several numbers.') },
+    { func: 'max($numbers)', desc: browser_esm.t('Finds the maximum of several numbers.') },
+    { func: 'random([$limit])', desc: browser_esm.t('Returns a random number.') },
+    { func: 'length($list)', desc: browser_esm.t('Returns the length of a list.') },
+    { func: 'nth($list, $n)', desc: browser_esm.t('Returns a specific item in a list.') },
+    { func: 'set-nth($list, $n, $value)', desc: browser_esm.t('Replaces the nth item in a list.') },
+    { func: 'join($list1, $list2, [$separator])', desc: browser_esm.t('Joins together two lists into one.') },
+    { func: 'append($list1, $val, [$separator])', desc: browser_esm.t('Appends a single value onto the end of a list.') },
+    { func: 'zip($lists)', desc: browser_esm.t('Combines several lists into a single multidimensional list.') },
+    { func: 'index($list, $value)', desc: browser_esm.t('Returns the position of a value within a list.') },
+    { func: 'list-separator(#list)', desc: browser_esm.t('Returns the separator of a list.') },
+    { func: 'map-get($map, $key)', desc: browser_esm.t('Returns the value in a map associated with a given key.') },
+    { func: 'map-merge($map1, $map2)', desc: browser_esm.t('Merges two maps together into a new map.') },
+    { func: 'map-remove($map, $keys)', desc: browser_esm.t('Returns a new map with keys removed.') },
+    { func: 'map-keys($map)', desc: browser_esm.t('Returns a list of all keys in a map.') },
+    { func: 'map-values($map)', desc: browser_esm.t('Returns a list of all values in a map.') },
+    { func: 'map-has-key($map, $key)', desc: browser_esm.t('Returns whether a map has a value associated with a given key.') },
+    { func: 'keywords($args)', desc: browser_esm.t('Returns the keywords passed to a function that takes variable arguments.') },
+    { func: 'feature-exists($feature)', desc: browser_esm.t('Returns whether a feature exists in the current Sass runtime.') },
+    { func: 'variable-exists($name)', desc: browser_esm.t('Returns whether a variable with the given name exists in the current scope.') },
+    { func: 'global-variable-exists($name)', desc: browser_esm.t('Returns whether a variable with the given name exists in the global scope.') },
+    { func: 'function-exists($name)', desc: browser_esm.t('Returns whether a function with the given name exists.') },
+    { func: 'mixin-exists($name)', desc: browser_esm.t('Returns whether a mixin with the given name exists.') },
+    { func: 'inspect($value)', desc: browser_esm.t('Returns the string representation of a value as it would be represented in Sass.') },
+    { func: 'type-of($value)', desc: browser_esm.t('Returns the type of a value.') },
+    { func: 'unit($number)', desc: browser_esm.t('Returns the unit(s) associated with a number.') },
+    { func: 'unitless($number)', desc: browser_esm.t('Returns whether a number has units.') },
+    { func: 'comparable($number1, $number2)', desc: browser_esm.t('Returns whether two numbers can be added, subtracted, or compared.') },
+    { func: 'call($name, $args…)', desc: browser_esm.t('Dynamically calls a Sass function.') }
 ];
 SCSSCompletion.scssAtDirectives = [
     {
         label: "@extend",
-        documentation: scssCompletion_localize("scss.builtin.@extend", "Inherits the styles of another selector."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Inherits the styles of another selector."),
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@at-root",
-        documentation: scssCompletion_localize("scss.builtin.@at-root", "Causes one or more rules to be emitted at the root of the document."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Causes one or more rules to be emitted at the root of the document."),
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@debug",
-        documentation: scssCompletion_localize("scss.builtin.@debug", "Prints the value of an expression to the standard error output stream. Useful for debugging complicated Sass files."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Prints the value of an expression to the standard error output stream. Useful for debugging complicated Sass files."),
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@warn",
-        documentation: scssCompletion_localize("scss.builtin.@warn", "Prints the value of an expression to the standard error output stream. Useful for libraries that need to warn users of deprecations or recovering from minor mixin usage mistakes. Warnings can be turned off with the `--quiet` command-line option or the `:quiet` Sass option."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Prints the value of an expression to the standard error output stream. Useful for libraries that need to warn users of deprecations or recovering from minor mixin usage mistakes. Warnings can be turned off with the `--quiet` command-line option or the `:quiet` Sass option."),
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@error",
-        documentation: scssCompletion_localize("scss.builtin.@error", "Throws the value of an expression as a fatal error with stack trace. Useful for validating arguments to mixins and functions."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Throws the value of an expression as a fatal error with stack trace. Useful for validating arguments to mixins and functions."),
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@if",
-        documentation: scssCompletion_localize("scss.builtin.@if", "Includes the body if the expression does not evaluate to `false` or `null`."),
+        documentation: browser_esm.t("Includes the body if the expression does not evaluate to `false` or `null`."),
         insertText: "@if ${1:expr} {\n\t$0\n}",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@for",
-        documentation: scssCompletion_localize("scss.builtin.@for", "For loop that repeatedly outputs a set of styles for each `$var` in the `from/through` or `from/to` clause."),
+        documentation: browser_esm.t("For loop that repeatedly outputs a set of styles for each `$var` in the `from/through` or `from/to` clause."),
         insertText: "@for \\$${1:var} from ${2:start} ${3|to,through|} ${4:end} {\n\t$0\n}",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@each",
-        documentation: scssCompletion_localize("scss.builtin.@each", "Each loop that sets `$var` to each item in the list or map, then outputs the styles it contains using that value of `$var`."),
+        documentation: browser_esm.t("Each loop that sets `$var` to each item in the list or map, then outputs the styles it contains using that value of `$var`."),
         insertText: "@each \\$${1:var} in ${2:list} {\n\t$0\n}",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@while",
-        documentation: scssCompletion_localize("scss.builtin.@while", "While loop that takes an expression and repeatedly outputs the nested styles until the statement evaluates to `false`."),
+        documentation: browser_esm.t("While loop that takes an expression and repeatedly outputs the nested styles until the statement evaluates to `false`."),
         insertText: "@while ${1:condition} {\n\t$0\n}",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@mixin",
-        documentation: scssCompletion_localize("scss.builtin.@mixin", "Defines styles that can be re-used throughout the stylesheet with `@include`."),
+        documentation: browser_esm.t("Defines styles that can be re-used throughout the stylesheet with `@include`."),
         insertText: "@mixin ${1:name} {\n\t$0\n}",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@include",
-        documentation: scssCompletion_localize("scss.builtin.@include", "Includes the styles defined by another mixin into the current rule."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Includes the styles defined by another mixin into the current rule."),
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@function",
-        documentation: scssCompletion_localize("scss.builtin.@function", "Defines complex operations that can be re-used throughout stylesheets."),
-        kind: esm_main.CompletionItemKind.Keyword
+        documentation: browser_esm.t("Defines complex operations that can be re-used throughout stylesheets."),
+        kind: main.CompletionItemKind.Keyword
     }
 ];
 SCSSCompletion.scssModuleLoaders = [
     {
         label: "@use",
-        documentation: scssCompletion_localize("scss.builtin.@use", "Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/use' }],
+        documentation: browser_esm.t("Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/at-rules/use' }],
         insertText: "@use $0;",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@forward",
-        documentation: scssCompletion_localize("scss.builtin.@forward", "Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/at-rules/forward' }],
+        documentation: browser_esm.t("Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/at-rules/forward' }],
         insertText: "@forward $0;",
-        insertTextFormat: esm_main.InsertTextFormat.Snippet,
-        kind: esm_main.CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
 ];
 SCSSCompletion.scssModuleBuiltIns = [
     {
         label: 'sass:math',
-        documentation: scssCompletion_localize('scss.builtin.sass:math', 'Provides functions that operate on numbers.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/math' }]
+        documentation: browser_esm.t('Provides functions that operate on numbers.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/math' }]
     },
     {
         label: 'sass:string',
-        documentation: scssCompletion_localize('scss.builtin.sass:string', 'Makes it easy to combine, search, or split apart strings.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/string' }]
+        documentation: browser_esm.t('Makes it easy to combine, search, or split apart strings.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/string' }]
     },
     {
         label: 'sass:color',
-        documentation: scssCompletion_localize('scss.builtin.sass:color', 'Generates new colors based on existing ones, making it easy to build color themes.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/color' }]
+        documentation: browser_esm.t('Generates new colors based on existing ones, making it easy to build color themes.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/color' }]
     },
     {
         label: 'sass:list',
-        documentation: scssCompletion_localize('scss.builtin.sass:list', 'Lets you access and modify values in lists.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/list' }]
+        documentation: browser_esm.t('Lets you access and modify values in lists.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/list' }]
     },
     {
         label: 'sass:map',
-        documentation: scssCompletion_localize('scss.builtin.sass:map', 'Makes it possible to look up the value associated with a key in a map, and much more.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/map' }]
+        documentation: browser_esm.t('Makes it possible to look up the value associated with a key in a map, and much more.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/map' }]
     },
     {
         label: 'sass:selector',
-        documentation: scssCompletion_localize('scss.builtin.sass:selector', 'Provides access to Sass’s powerful selector engine.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/selector' }]
+        documentation: browser_esm.t('Provides access to Sass’s powerful selector engine.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/selector' }]
     },
     {
         label: 'sass:meta',
-        documentation: scssCompletion_localize('scss.builtin.sass:meta', 'Exposes the details of Sass’s inner workings.'),
-        references: [{ name: 'Sass documentation', url: 'https://sass-lang.com/documentation/modules/meta' }]
+        documentation: browser_esm.t('Exposes the details of Sass’s inner workings.'),
+        references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/meta' }]
     },
 ];
 /**
@@ -36977,7 +37174,6 @@ class LESSParser extends Parser {
 
 
 
-const lessCompletion_localize = main.loadMessageBundle();
 class LESSCompletion extends CSSCompletion {
     constructor(lsOptions, cssDataManager) {
         super('@', lsOptions, cssDataManager);
@@ -36988,9 +37184,9 @@ class LESSCompletion extends CSSCompletion {
                 label: p.name,
                 detail: p.example,
                 documentation: p.description,
-                textEdit: esm_main.TextEdit.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
-                insertTextFormat: esm_main.InsertTextFormat.Snippet,
-                kind: esm_main.CompletionItemKind.Function
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -37021,156 +37217,156 @@ LESSCompletion.builtInProposals = [
     {
         'name': 'if',
         'example': 'if(condition, trueValue [, falseValue]);',
-        'description': lessCompletion_localize('less.builtin.if', 'returns one of two values depending on a condition.')
+        'description': browser_esm.t('returns one of two values depending on a condition.')
     },
     {
         'name': 'boolean',
         'example': 'boolean(condition);',
-        'description': lessCompletion_localize('less.builtin.boolean', '"store" a boolean test for later evaluation in a guard or if().')
+        'description': browser_esm.t('"store" a boolean test for later evaluation in a guard or if().')
     },
     // List functions
     {
         'name': 'length',
         'example': 'length(@list);',
-        'description': lessCompletion_localize('less.builtin.length', 'returns the number of elements in a value list')
+        'description': browser_esm.t('returns the number of elements in a value list')
     },
     {
         'name': 'extract',
         'example': 'extract(@list, index);',
-        'description': lessCompletion_localize('less.builtin.extract', 'returns a value at the specified position in the list')
+        'description': browser_esm.t('returns a value at the specified position in the list')
     },
     {
         'name': 'range',
         'example': 'range([start, ] end [, step]);',
-        'description': lessCompletion_localize('less.builtin.range', 'generate a list spanning a range of values')
+        'description': browser_esm.t('generate a list spanning a range of values')
     },
     {
         'name': 'each',
         'example': 'each(@list, ruleset);',
-        'description': lessCompletion_localize('less.builtin.each', 'bind the evaluation of a ruleset to each member of a list.')
+        'description': browser_esm.t('bind the evaluation of a ruleset to each member of a list.')
     },
     // Other built-ins
     {
         'name': 'escape',
         'example': 'escape(@string);',
-        'description': lessCompletion_localize('less.builtin.escape', 'URL encodes a string')
+        'description': browser_esm.t('URL encodes a string')
     },
     {
         'name': 'e',
         'example': 'e(@string);',
-        'description': lessCompletion_localize('less.builtin.e', 'escape string content')
+        'description': browser_esm.t('escape string content')
     },
     {
         'name': 'replace',
         'example': 'replace(@string, @pattern, @replacement[, @flags]);',
-        'description': lessCompletion_localize('less.builtin.replace', 'string replace')
+        'description': browser_esm.t('string replace')
     },
     {
         'name': 'unit',
         'example': 'unit(@dimension, [@unit: \'\']);',
-        'description': lessCompletion_localize('less.builtin.unit', 'remove or change the unit of a dimension')
+        'description': browser_esm.t('remove or change the unit of a dimension')
     },
     {
         'name': 'color',
         'example': 'color(@string);',
-        'description': lessCompletion_localize('less.builtin.color', 'parses a string to a color'),
+        'description': browser_esm.t('parses a string to a color'),
         'type': 'color'
     },
     {
         'name': 'convert',
         'example': 'convert(@value, unit);',
-        'description': lessCompletion_localize('less.builtin.convert', 'converts numbers from one type into another')
+        'description': browser_esm.t('converts numbers from one type into another')
     },
     {
         'name': 'data-uri',
         'example': 'data-uri([mimetype,] url);',
-        'description': lessCompletion_localize('less.builtin.data-uri', 'inlines a resource and falls back to `url()`'),
+        'description': browser_esm.t('inlines a resource and falls back to `url()`'),
         'type': 'url'
     },
     {
         'name': 'abs',
-        'description': lessCompletion_localize('less.builtin.abs', 'absolute value of a number'),
+        'description': browser_esm.t('absolute value of a number'),
         'example': 'abs(number);'
     },
     {
         'name': 'acos',
-        'description': lessCompletion_localize('less.builtin.acos', 'arccosine - inverse of cosine function'),
+        'description': browser_esm.t('arccosine - inverse of cosine function'),
         'example': 'acos(number);'
     },
     {
         'name': 'asin',
-        'description': lessCompletion_localize('less.builtin.asin', 'arcsine - inverse of sine function'),
+        'description': browser_esm.t('arcsine - inverse of sine function'),
         'example': 'asin(number);'
     },
     {
         'name': 'ceil',
         'example': 'ceil(@number);',
-        'description': lessCompletion_localize('less.builtin.ceil', 'rounds up to an integer')
+        'description': browser_esm.t('rounds up to an integer')
     },
     {
         'name': 'cos',
-        'description': lessCompletion_localize('less.builtin.cos', 'cosine function'),
+        'description': browser_esm.t('cosine function'),
         'example': 'cos(number);'
     },
     {
         'name': 'floor',
-        'description': lessCompletion_localize('less.builtin.floor', 'rounds down to an integer'),
+        'description': browser_esm.t('rounds down to an integer'),
         'example': 'floor(@number);'
     },
     {
         'name': 'percentage',
-        'description': lessCompletion_localize('less.builtin.percentage', 'converts to a %, e.g. 0.5 > 50%'),
+        'description': browser_esm.t('converts to a %, e.g. 0.5 > 50%'),
         'example': 'percentage(@number);',
         'type': 'percentage'
     },
     {
         'name': 'round',
-        'description': lessCompletion_localize('less.builtin.round', 'rounds a number to a number of places'),
+        'description': browser_esm.t('rounds a number to a number of places'),
         'example': 'round(number, [places: 0]);'
     },
     {
         'name': 'sqrt',
-        'description': lessCompletion_localize('less.builtin.sqrt', 'calculates square root of a number'),
+        'description': browser_esm.t('calculates square root of a number'),
         'example': 'sqrt(number);'
     },
     {
         'name': 'sin',
-        'description': lessCompletion_localize('less.builtin.sin', 'sine function'),
+        'description': browser_esm.t('sine function'),
         'example': 'sin(number);'
     },
     {
         'name': 'tan',
-        'description': lessCompletion_localize('less.builtin.tan', 'tangent function'),
+        'description': browser_esm.t('tangent function'),
         'example': 'tan(number);'
     },
     {
         'name': 'atan',
-        'description': lessCompletion_localize('less.builtin.atan', 'arctangent - inverse of tangent function'),
+        'description': browser_esm.t('arctangent - inverse of tangent function'),
         'example': 'atan(number);'
     },
     {
         'name': 'pi',
-        'description': lessCompletion_localize('less.builtin.pi', 'returns pi'),
+        'description': browser_esm.t('returns pi'),
         'example': 'pi();'
     },
     {
         'name': 'pow',
-        'description': lessCompletion_localize('less.builtin.pow', 'first argument raised to the power of the second argument'),
+        'description': browser_esm.t('first argument raised to the power of the second argument'),
         'example': 'pow(@base, @exponent);'
     },
     {
         'name': 'mod',
-        'description': lessCompletion_localize('less.builtin.mod', 'first argument modulus second argument'),
+        'description': browser_esm.t('first argument modulus second argument'),
         'example': 'mod(number, number);'
     },
     {
         'name': 'min',
-        'description': lessCompletion_localize('less.builtin.min', 'returns the lowest of one or more values'),
+        'description': browser_esm.t('returns the lowest of one or more values'),
         'example': 'min(@x, @y);'
     },
     {
         'name': 'max',
-        'description': lessCompletion_localize('less.builtin.max', 'returns the lowest of one or more values'),
+        'description': browser_esm.t('returns the lowest of one or more values'),
         'example': 'max(@x, @y);'
     }
 ];
@@ -37178,137 +37374,137 @@ LESSCompletion.colorProposals = [
     {
         'name': 'argb',
         'example': 'argb(@color);',
-        'description': lessCompletion_localize('less.builtin.argb', 'creates a #AARRGGBB')
+        'description': browser_esm.t('creates a #AARRGGBB')
     },
     {
         'name': 'hsl',
         'example': 'hsl(@hue, @saturation, @lightness);',
-        'description': lessCompletion_localize('less.builtin.hsl', 'creates a color')
+        'description': browser_esm.t('creates a color')
     },
     {
         'name': 'hsla',
         'example': 'hsla(@hue, @saturation, @lightness, @alpha);',
-        'description': lessCompletion_localize('less.builtin.hsla', 'creates a color')
+        'description': browser_esm.t('creates a color')
     },
     {
         'name': 'hsv',
         'example': 'hsv(@hue, @saturation, @value);',
-        'description': lessCompletion_localize('less.builtin.hsv', 'creates a color')
+        'description': browser_esm.t('creates a color')
     },
     {
         'name': 'hsva',
         'example': 'hsva(@hue, @saturation, @value, @alpha);',
-        'description': lessCompletion_localize('less.builtin.hsva', 'creates a color')
+        'description': browser_esm.t('creates a color')
     },
     {
         'name': 'hue',
         'example': 'hue(@color);',
-        'description': lessCompletion_localize('less.builtin.hue', 'returns the `hue` channel of `@color` in the HSL space')
+        'description': browser_esm.t('returns the `hue` channel of `@color` in the HSL space')
     },
     {
         'name': 'saturation',
         'example': 'saturation(@color);',
-        'description': lessCompletion_localize('less.builtin.saturation', 'returns the `saturation` channel of `@color` in the HSL space')
+        'description': browser_esm.t('returns the `saturation` channel of `@color` in the HSL space')
     },
     {
         'name': 'lightness',
         'example': 'lightness(@color);',
-        'description': lessCompletion_localize('less.builtin.lightness', 'returns the `lightness` channel of `@color` in the HSL space')
+        'description': browser_esm.t('returns the `lightness` channel of `@color` in the HSL space')
     },
     {
         'name': 'hsvhue',
         'example': 'hsvhue(@color);',
-        'description': lessCompletion_localize('less.builtin.hsvhue', 'returns the `hue` channel of `@color` in the HSV space')
+        'description': browser_esm.t('returns the `hue` channel of `@color` in the HSV space')
     },
     {
         'name': 'hsvsaturation',
         'example': 'hsvsaturation(@color);',
-        'description': lessCompletion_localize('less.builtin.hsvsaturation', 'returns the `saturation` channel of `@color` in the HSV space')
+        'description': browser_esm.t('returns the `saturation` channel of `@color` in the HSV space')
     },
     {
         'name': 'hsvvalue',
         'example': 'hsvvalue(@color);',
-        'description': lessCompletion_localize('less.builtin.hsvvalue', 'returns the `value` channel of `@color` in the HSV space')
+        'description': browser_esm.t('returns the `value` channel of `@color` in the HSV space')
     },
     {
         'name': 'red',
         'example': 'red(@color);',
-        'description': lessCompletion_localize('less.builtin.red', 'returns the `red` channel of `@color`')
+        'description': browser_esm.t('returns the `red` channel of `@color`')
     },
     {
         'name': 'green',
         'example': 'green(@color);',
-        'description': lessCompletion_localize('less.builtin.green', 'returns the `green` channel of `@color`')
+        'description': browser_esm.t('returns the `green` channel of `@color`')
     },
     {
         'name': 'blue',
         'example': 'blue(@color);',
-        'description': lessCompletion_localize('less.builtin.blue', 'returns the `blue` channel of `@color`')
+        'description': browser_esm.t('returns the `blue` channel of `@color`')
     },
     {
         'name': 'alpha',
         'example': 'alpha(@color);',
-        'description': lessCompletion_localize('less.builtin.alpha', 'returns the `alpha` channel of `@color`')
+        'description': browser_esm.t('returns the `alpha` channel of `@color`')
     },
     {
         'name': 'luma',
         'example': 'luma(@color);',
-        'description': lessCompletion_localize('less.builtin.luma', 'returns the `luma` value (perceptual brightness) of `@color`')
+        'description': browser_esm.t('returns the `luma` value (perceptual brightness) of `@color`')
     },
     {
         'name': 'saturate',
         'example': 'saturate(@color, 10%);',
-        'description': lessCompletion_localize('less.builtin.saturate', 'return `@color` 10% points more saturated')
+        'description': browser_esm.t('return `@color` 10% points more saturated')
     },
     {
         'name': 'desaturate',
         'example': 'desaturate(@color, 10%);',
-        'description': lessCompletion_localize('less.builtin.desaturate', 'return `@color` 10% points less saturated')
+        'description': browser_esm.t('return `@color` 10% points less saturated')
     },
     {
         'name': 'lighten',
         'example': 'lighten(@color, 10%);',
-        'description': lessCompletion_localize('less.builtin.lighten', 'return `@color` 10% points lighter')
+        'description': browser_esm.t('return `@color` 10% points lighter')
     },
     {
         'name': 'darken',
         'example': 'darken(@color, 10%);',
-        'description': lessCompletion_localize('less.builtin.darken', 'return `@color` 10% points darker')
+        'description': browser_esm.t('return `@color` 10% points darker')
     },
     {
         'name': 'fadein',
         'example': 'fadein(@color, 10%);',
-        'description': lessCompletion_localize('less.builtin.fadein', 'return `@color` 10% points less transparent')
+        'description': browser_esm.t('return `@color` 10% points less transparent')
     },
     {
         'name': 'fadeout',
         'example': 'fadeout(@color, 10%);',
-        'description': lessCompletion_localize('less.builtin.fadeout', 'return `@color` 10% points more transparent')
+        'description': browser_esm.t('return `@color` 10% points more transparent')
     },
     {
         'name': 'fade',
         'example': 'fade(@color, 50%);',
-        'description': lessCompletion_localize('less.builtin.fade', 'return `@color` with 50% transparency')
+        'description': browser_esm.t('return `@color` with 50% transparency')
     },
     {
         'name': 'spin',
         'example': 'spin(@color, 10);',
-        'description': lessCompletion_localize('less.builtin.spin', 'return `@color` with a 10 degree larger in hue')
+        'description': browser_esm.t('return `@color` with a 10 degree larger in hue')
     },
     {
         'name': 'mix',
         'example': 'mix(@color1, @color2, [@weight: 50%]);',
-        'description': lessCompletion_localize('less.builtin.mix', 'return a mix of `@color1` and `@color2`')
+        'description': browser_esm.t('return a mix of `@color1` and `@color2`')
     },
     {
         'name': 'greyscale',
         'example': 'greyscale(@color);',
-        'description': lessCompletion_localize('less.builtin.greyscale', 'returns a grey, 100% desaturated color'),
+        'description': browser_esm.t('returns a grey, 100% desaturated color'),
     },
     {
         'name': 'contrast',
         'example': 'contrast(@color1, [@darkcolor: black], [@lightcolor: white], [@threshold: 43%]);',
-        'description': lessCompletion_localize('less.builtin.contrast', 'return `@darkcolor` if `@color1 is> 43% luma` otherwise return `@lightcolor`, see notes')
+        'description': browser_esm.t('return `@darkcolor` if `@color1 is> 43% luma` otherwise return `@lightcolor`, see notes')
     },
     {
         'name': 'multiply',
@@ -37542,7 +37738,7 @@ function limitFoldingRanges(ranges, context) {
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/beautify/beautify-css.js
 // copied from js-beautify/js/lib/beautify-css.js
-// version: 1.14.6
+// version: 1.14.7
 /* AUTO-GENERATED. DO NOT MODIFY. */
 /*
 
@@ -39234,13 +39430,13 @@ function format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = esm_main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Test if inside a rule
         inRule = isInRule(value, startOffset);
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            const startOfLineOffset = document.offsetAt(esm_main.Position.create(range.start.line, 0));
+            const startOfLineOffset = document.offsetAt(main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
         if (inRule) {
@@ -39248,7 +39444,7 @@ function format(document, range, options) {
         }
     }
     else {
-        range = esm_main.Range.create(esm_main.Position.create(0, 0), document.positionAt(value.length));
+        range = main.Range.create(main.Position.create(0, 0), document.positionAt(value.length));
     }
     const cssOptions = {
         indent_size: tabSize,
@@ -39359,6 +39555,14 @@ const cssData = {
         },
         {
             "name": "align-content",
+            "browsers": [
+                "E12",
+                "FF28",
+                "S9",
+                "C29",
+                "IE11",
+                "O16"
+            ],
             "values": [
                 {
                     "name": "center",
@@ -39393,21 +39597,29 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/align-content"
                 }
             ],
-            "description": "Aligns a flex container’s lines within the flex container when there is extra space in the cross-axis, similar to how 'justify-content' aligns individual items within the main-axis.",
+            "description": "Aligns a flex container's lines within the flex container when there is extra space in the cross-axis, similar to how 'justify-content' aligns individual items within the main-axis.",
             "restrictions": [
                 "enum"
             ]
         },
         {
             "name": "align-items",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE11",
+                "O16"
+            ],
             "values": [
                 {
                     "name": "baseline",
-                    "description": "If the flex item’s inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
+                    "description": "If the flex item's inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
                 },
                 {
                     "name": "center",
-                    "description": "The flex item’s margin box is centered in the cross axis within the line."
+                    "description": "The flex item's margin box is centered in the cross axis within the line."
                 },
                 {
                     "name": "flex-end",
@@ -39423,7 +39635,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
-            "relevance": 85,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39437,6 +39649,14 @@ const cssData = {
         },
         {
             "name": "justify-items",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C52",
+                "IE11",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "auto"
@@ -39514,6 +39734,14 @@ const cssData = {
         },
         {
             "name": "justify-self",
+            "browsers": [
+                "E16",
+                "FF45",
+                "S10.1",
+                "C57",
+                "IE10",
+                "O44"
+            ],
             "values": [
                 {
                     "name": "auto"
@@ -39588,18 +39816,26 @@ const cssData = {
         },
         {
             "name": "align-self",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE10",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "auto",
-                    "description": "Computes to the value of 'align-items' on the element’s parent, or 'stretch' if the element has no parent. On absolutely positioned elements, it computes to itself."
+                    "description": "Computes to the value of 'align-items' on the element's parent, or 'stretch' if the element has no parent. On absolutely positioned elements, it computes to itself."
                 },
                 {
                     "name": "baseline",
-                    "description": "If the flex item’s inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
+                    "description": "If the flex item's inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
                 },
                 {
                     "name": "center",
-                    "description": "The flex item’s margin box is centered in the cross axis within the line."
+                    "description": "The flex item's margin box is centered in the cross axis within the line."
                 },
                 {
                     "name": "flex-end",
@@ -39615,7 +39851,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position>",
-            "relevance": 72,
+            "relevance": 73,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39638,7 +39874,7 @@ const cssData = {
             ],
             "values": [],
             "syntax": "initial | inherit | unset | revert | revert-layer",
-            "relevance": 53,
+            "relevance": 52,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39671,6 +39907,14 @@ const cssData = {
         },
         {
             "name": "animation",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "values": [
                 {
                     "name": "alternate",
@@ -39710,7 +39954,7 @@ const cssData = {
                 }
             ],
             "syntax": "<single-animation>#",
-            "relevance": 82,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39728,6 +39972,14 @@ const cssData = {
         },
         {
             "name": "animation-delay",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "syntax": "<time>#",
             "relevance": 65,
             "references": [
@@ -39743,6 +39995,14 @@ const cssData = {
         },
         {
             "name": "animation-direction",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "values": [
                 {
                     "name": "alternate",
@@ -39776,8 +40036,16 @@ const cssData = {
         },
         {
             "name": "animation-duration",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "syntax": "<time>#",
-            "relevance": 70,
+            "relevance": 71,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39791,6 +40059,14 @@ const cssData = {
         },
         {
             "name": "animation-fill-mode",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "values": [
                 {
                     "name": "backwards",
@@ -39824,6 +40100,14 @@ const cssData = {
         },
         {
             "name": "animation-iteration-count",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "values": [
                 {
                     "name": "infinite",
@@ -39846,6 +40130,14 @@ const cssData = {
         },
         {
             "name": "animation-name",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -39853,7 +40145,7 @@ const cssData = {
                 }
             ],
             "syntax": "[ none | <keyframes-name> ]#",
-            "relevance": 70,
+            "relevance": 71,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39868,6 +40160,14 @@ const cssData = {
         },
         {
             "name": "animation-play-state",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "values": [
                 {
                     "name": "paused",
@@ -39879,7 +40179,7 @@ const cssData = {
                 }
             ],
             "syntax": "<single-animation-play-state>#",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39893,8 +40193,16 @@ const cssData = {
         },
         {
             "name": "animation-timing-function",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "syntax": "<easing-function>#",
-            "relevance": 71,
+            "relevance": 72,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -39908,6 +40216,14 @@ const cssData = {
         },
         {
             "name": "backface-visibility",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S15.4",
+                "C36",
+                "IE10",
+                "O23"
+            ],
             "values": [
                 {
                     "name": "hidden",
@@ -39933,6 +40249,14 @@ const cssData = {
         },
         {
             "name": "background",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "fixed",
@@ -39973,6 +40297,14 @@ const cssData = {
         },
         {
             "name": "background-attachment",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "fixed",
@@ -39980,11 +40312,19 @@ const cssData = {
                 },
                 {
                     "name": "local",
-                    "description": "The background is fixed with regard to the element’s contents: if the element has a scrolling mechanism, the background scrolls with the element’s contents."
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O3.5"
+                    ],
+                    "description": "The background is fixed with regard to the element's contents: if the element has a scrolling mechanism, the background scrolls with the element's contents."
                 },
                 {
                     "name": "scroll",
-                    "description": "The background is fixed with regard to the element itself and does not scroll with its contents. (It is effectively attached to the element’s border.)"
+                    "description": "The background is fixed with regard to the element itself and does not scroll with its contents. (It is effectively attached to the element's border.)"
                 }
             ],
             "syntax": "<attachment>#",
@@ -40118,8 +40458,16 @@ const cssData = {
         },
         {
             "name": "background-clip",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S14",
+                "C1",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<box>#",
-            "relevance": 69,
+            "relevance": 66,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40133,6 +40481,14 @@ const cssData = {
         },
         {
             "name": "background-color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<color>",
             "relevance": 94,
             "references": [
@@ -40148,6 +40504,14 @@ const cssData = {
         },
         {
             "name": "background-image",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -40170,8 +40534,16 @@ const cssData = {
         },
         {
             "name": "background-origin",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S3",
+                "C1",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<box>#",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40185,8 +40557,16 @@ const cssData = {
         },
         {
             "name": "background-position",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<bg-position>#",
-            "relevance": 87,
+            "relevance": 88,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40202,6 +40582,14 @@ const cssData = {
         },
         {
             "name": "background-position-x",
+            "browsers": [
+                "E12",
+                "FF49",
+                "S1",
+                "C1",
+                "IE6",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "center",
@@ -40217,7 +40605,7 @@ const cssData = {
                 }
             ],
             "syntax": "[ center | [ [ left | right | x-start | x-end ]? <length-percentage>? ]! ]#",
-            "relevance": 54,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40232,6 +40620,14 @@ const cssData = {
         },
         {
             "name": "background-position-y",
+            "browsers": [
+                "E12",
+                "FF49",
+                "S1",
+                "C1",
+                "IE6",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "bottom",
@@ -40262,9 +40658,17 @@ const cssData = {
         },
         {
             "name": "background-repeat",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [],
             "syntax": "<repeat-style>#",
-            "relevance": 85,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40278,10 +40682,18 @@ const cssData = {
         },
         {
             "name": "background-size",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C3",
+                "IE9",
+                "O10"
+            ],
             "values": [
                 {
                     "name": "auto",
-                    "description": "Resolved by using the image’s intrinsic ratio and the size of the other dimension, or failing that, using the image’s intrinsic size, or failing that, treating it as 100%."
+                    "description": "Resolved by using the image's intrinsic ratio and the size of the other dimension, or failing that, using the image's intrinsic size, or failing that, treating it as 100%."
                 },
                 {
                     "name": "contain",
@@ -40293,7 +40705,7 @@ const cssData = {
                 }
             ],
             "syntax": "<bg-size>#",
-            "relevance": 85,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40348,6 +40760,14 @@ const cssData = {
         },
         {
             "name": "border",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width> || <line-style> || <color>",
             "relevance": 95,
             "references": [
@@ -40381,7 +40801,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end"
                 }
             ],
-            "description": "Logical 'border-bottom'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width",
@@ -40406,7 +40826,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start"
                 }
             ],
-            "description": "Logical 'border-top'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width",
@@ -40431,7 +40851,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end-color"
                 }
             ],
-            "description": "Logical 'border-bottom-color'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-bottom-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "color"
             ]
@@ -40453,7 +40873,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start-color"
                 }
             ],
-            "description": "Logical 'border-top-color'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-top-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "color"
             ]
@@ -40475,7 +40895,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end-style"
                 }
             ],
-            "description": "Logical 'border-bottom-style'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-bottom-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "line-style"
             ]
@@ -40497,7 +40917,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start-style"
                 }
             ],
-            "description": "Logical 'border-top-style'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-top-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "line-style"
             ]
@@ -40519,7 +40939,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end-width"
                 }
             ],
-            "description": "Logical 'border-bottom-width'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-bottom-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width"
@@ -40542,7 +40962,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start-width"
                 }
             ],
-            "description": "Logical 'border-top-width'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-top-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width"
@@ -40550,6 +40970,14 @@ const cssData = {
         },
         {
             "name": "border-bottom",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width> || <line-style> || <color>",
             "relevance": 88,
             "references": [
@@ -40568,6 +40996,14 @@ const cssData = {
         },
         {
             "name": "border-bottom-color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<'border-top-color'>",
             "relevance": 71,
             "references": [
@@ -40583,6 +41019,14 @@ const cssData = {
         },
         {
             "name": "border-bottom-left-radius",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C4",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<length-percentage>{1,2}",
             "relevance": 75,
             "references": [
@@ -40599,6 +41043,14 @@ const cssData = {
         },
         {
             "name": "border-bottom-right-radius",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C4",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<length-percentage>{1,2}",
             "relevance": 75,
             "references": [
@@ -40615,6 +41067,14 @@ const cssData = {
         },
         {
             "name": "border-bottom-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O9.2"
+            ],
             "syntax": "<line-style>",
             "relevance": 59,
             "references": [
@@ -40630,8 +41090,16 @@ const cssData = {
         },
         {
             "name": "border-bottom-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width>",
-            "relevance": 63,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40646,6 +41114,14 @@ const cssData = {
         },
         {
             "name": "border-collapse",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.2",
+                "C1",
+                "IE5",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "collapse",
@@ -40657,7 +41133,7 @@ const cssData = {
                 }
             ],
             "syntax": "collapse | separate",
-            "relevance": 75,
+            "relevance": 74,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -40671,6 +41147,14 @@ const cssData = {
         },
         {
             "name": "border-color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [],
             "syntax": "<color>{1,4}",
             "relevance": 87,
@@ -40687,6 +41171,14 @@ const cssData = {
         },
         {
             "name": "border-image",
+            "browsers": [
+                "E12",
+                "FF15",
+                "S6",
+                "C16",
+                "IE11",
+                "O11"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -40739,6 +41231,14 @@ const cssData = {
         },
         {
             "name": "border-image-outset",
+            "browsers": [
+                "E12",
+                "FF15",
+                "S6",
+                "C15",
+                "IE11",
+                "O15"
+            ],
             "syntax": "[ <length> | <number> ]{1,4}",
             "relevance": 50,
             "references": [
@@ -40755,6 +41255,14 @@ const cssData = {
         },
         {
             "name": "border-image-repeat",
+            "browsers": [
+                "E12",
+                "FF15",
+                "S6",
+                "C15",
+                "IE11",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "repeat",
@@ -40788,6 +41296,14 @@ const cssData = {
         },
         {
             "name": "border-image-slice",
+            "browsers": [
+                "E12",
+                "FF15",
+                "S6",
+                "C15",
+                "IE11",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "fill",
@@ -40810,6 +41326,14 @@ const cssData = {
         },
         {
             "name": "border-image-source",
+            "browsers": [
+                "E12",
+                "FF15",
+                "S6",
+                "C15",
+                "IE11",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -40831,6 +41355,14 @@ const cssData = {
         },
         {
             "name": "border-image-width",
+            "browsers": [
+                "E12",
+                "FF13",
+                "S6",
+                "C15",
+                "IE11",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -40869,7 +41401,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end"
                 }
             ],
-            "description": "Logical 'border-right'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width",
@@ -40894,7 +41426,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start"
                 }
             ],
-            "description": "Logical 'border-left'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width",
@@ -40919,7 +41451,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end-color"
                 }
             ],
-            "description": "Logical 'border-right-color'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-right-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "color"
             ]
@@ -40941,7 +41473,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start-color"
                 }
             ],
-            "description": "Logical 'border-left-color'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-left-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "color"
             ]
@@ -40963,7 +41495,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end-style"
                 }
             ],
-            "description": "Logical 'border-right-style'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-right-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "line-style"
             ]
@@ -40985,7 +41517,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start-style"
                 }
             ],
-            "description": "Logical 'border-left-style'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-left-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "line-style"
             ]
@@ -41007,7 +41539,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end-width"
                 }
             ],
-            "description": "Logical 'border-right-width'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-right-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width"
@@ -41030,7 +41562,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start-width"
                 }
             ],
-            "description": "Logical 'border-left-width'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'border-left-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "line-width"
@@ -41038,6 +41570,14 @@ const cssData = {
         },
         {
             "name": "border-left",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width> || <line-style> || <color>",
             "relevance": 82,
             "references": [
@@ -41056,8 +41596,16 @@ const cssData = {
         },
         {
             "name": "border-left-color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<color>",
-            "relevance": 66,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41071,6 +41619,14 @@ const cssData = {
         },
         {
             "name": "border-left-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O9.2"
+            ],
             "syntax": "<line-style>",
             "relevance": 53,
             "references": [
@@ -41086,6 +41642,14 @@ const cssData = {
         },
         {
             "name": "border-left-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width>",
             "relevance": 59,
             "references": [
@@ -41102,6 +41666,14 @@ const cssData = {
         },
         {
             "name": "border-radius",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C4",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<length-percentage>{1,4} [ / <length-percentage>{1,4} ]?",
             "relevance": 92,
             "references": [
@@ -41118,6 +41690,14 @@ const cssData = {
         },
         {
             "name": "border-right",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O9.2"
+            ],
             "syntax": "<line-width> || <line-style> || <color>",
             "relevance": 81,
             "references": [
@@ -41136,6 +41716,14 @@ const cssData = {
         },
         {
             "name": "border-right-color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<color>",
             "relevance": 66,
             "references": [
@@ -41151,6 +41739,14 @@ const cssData = {
         },
         {
             "name": "border-right-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O9.2"
+            ],
             "syntax": "<line-style>",
             "relevance": 53,
             "references": [
@@ -41166,8 +41762,16 @@ const cssData = {
         },
         {
             "name": "border-right-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width>",
-            "relevance": 60,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41182,6 +41786,14 @@ const cssData = {
         },
         {
             "name": "border-spacing",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE8",
+                "O4"
+            ],
             "syntax": "<length> <length>?",
             "relevance": 68,
             "references": [
@@ -41197,6 +41809,14 @@ const cssData = {
         },
         {
             "name": "border-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [],
             "syntax": "<line-style>{1,4}",
             "relevance": 80,
@@ -41213,6 +41833,14 @@ const cssData = {
         },
         {
             "name": "border-top",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width> || <line-style> || <color>",
             "relevance": 87,
             "references": [
@@ -41231,6 +41859,14 @@ const cssData = {
         },
         {
             "name": "border-top-color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<color>",
             "relevance": 71,
             "references": [
@@ -41246,8 +41882,16 @@ const cssData = {
         },
         {
             "name": "border-top-left-radius",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C4",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<length-percentage>{1,2}",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41262,8 +41906,16 @@ const cssData = {
         },
         {
             "name": "border-top-right-radius",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C4",
+                "IE9",
+                "O10.5"
+            ],
             "syntax": "<length-percentage>{1,2}",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41278,8 +41930,16 @@ const cssData = {
         },
         {
             "name": "border-top-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O9.2"
+            ],
             "syntax": "<line-style>",
-            "relevance": 57,
+            "relevance": 58,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41293,8 +41953,16 @@ const cssData = {
         },
         {
             "name": "border-top-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<line-width>",
-            "relevance": 61,
+            "relevance": 62,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41309,9 +41977,17 @@ const cssData = {
         },
         {
             "name": "border-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [],
             "syntax": "<line-width>{1,4}",
-            "relevance": 82,
+            "relevance": 81,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41326,6 +42002,14 @@ const cssData = {
         },
         {
             "name": "bottom",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5",
+                "O6"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -41380,6 +42064,14 @@ const cssData = {
         },
         {
             "name": "box-shadow",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5.1",
+                "C10",
+                "IE9",
+                "O10.5"
+            ],
             "values": [
                 {
                     "name": "inset",
@@ -41407,6 +42099,14 @@ const cssData = {
         },
         {
             "name": "box-sizing",
+            "browsers": [
+                "E12",
+                "FF29",
+                "S5.1",
+                "C10",
+                "IE8",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "border-box",
@@ -41432,6 +42132,14 @@ const cssData = {
         },
         {
             "name": "break-after",
+            "browsers": [
+                "E12",
+                "FF65",
+                "S10",
+                "C50",
+                "IE10",
+                "O37"
+            ],
             "values": [
                 {
                     "name": "always",
@@ -41485,6 +42193,14 @@ const cssData = {
         },
         {
             "name": "break-before",
+            "browsers": [
+                "E12",
+                "FF65",
+                "S10",
+                "C50",
+                "IE10",
+                "O37"
+            ],
             "values": [
                 {
                     "name": "always",
@@ -41538,6 +42254,14 @@ const cssData = {
         },
         {
             "name": "break-inside",
+            "browsers": [
+                "E12",
+                "FF65",
+                "S10",
+                "C50",
+                "IE10",
+                "O37"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -41571,6 +42295,14 @@ const cssData = {
         },
         {
             "name": "caption-side",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE8",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "bottom",
@@ -41610,7 +42342,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | <color>",
-            "relevance": 53,
+            "relevance": 52,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41625,6 +42357,14 @@ const cssData = {
         },
         {
             "name": "clear",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "both",
@@ -41644,7 +42384,7 @@ const cssData = {
                 }
             ],
             "syntax": "none | left | right | both | inline-start | inline-end",
-            "relevance": 84,
+            "relevance": 85,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41658,6 +42398,14 @@ const cssData = {
         },
         {
             "name": "clip",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -41669,20 +42417,28 @@ const cssData = {
                 }
             ],
             "syntax": "<shape> | auto",
-            "relevance": 75,
+            "relevance": 74,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/clip"
                 }
             ],
-            "description": "Deprecated. Use the 'clip-path' property when support allows. Defines the visible portion of an element’s box.",
+            "description": "Deprecated. Use the 'clip-path' property when support allows. Defines the visible portion of an element's box.",
             "restrictions": [
                 "enum"
             ]
         },
         {
             "name": "clip-path",
+            "browsers": [
+                "E79",
+                "FF3.5",
+                "S9.1",
+                "C55",
+                "IE10",
+                "O42"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -41694,7 +42450,7 @@ const cssData = {
                 }
             ],
             "syntax": "<clip-source> | [ <basic-shape> || <geometry-box> ] | none",
-            "relevance": 62,
+            "relevance": 61,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41722,11 +42478,11 @@ const cssData = {
             "values": [
                 {
                     "name": "evenodd",
-                    "description": "Determines the ‘insideness’ of a point on the canvas by drawing a ray from that point to infinity in any direction and counting the number of path segments from the given shape that the ray crosses."
+                    "description": "Determines the 'insideness' of a point on the canvas by drawing a ray from that point to infinity in any direction and counting the number of path segments from the given shape that the ray crosses."
                 },
                 {
                     "name": "nonzero",
-                    "description": "Determines the ‘insideness’ of a point on the canvas by drawing a ray from that point to infinity in any direction and then examining the places where a segment of the shape crosses the ray."
+                    "description": "Determines the 'insideness' of a point on the canvas by drawing a ray from that point to infinity in any direction and then examining the places where a segment of the shape crosses the ray."
                 }
             ],
             "relevance": 50,
@@ -41737,6 +42493,14 @@ const cssData = {
         },
         {
             "name": "color",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "syntax": "<color>",
             "relevance": 95,
             "references": [
@@ -41782,6 +42546,14 @@ const cssData = {
         },
         {
             "name": "column-count",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -41804,6 +42576,14 @@ const cssData = {
         },
         {
             "name": "column-fill",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O37"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -41829,6 +42609,14 @@ const cssData = {
         },
         {
             "name": "column-gap",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S3",
+                "C1",
+                "IE10",
+                "O11.1"
+            ],
             "values": [
                 {
                     "name": "normal",
@@ -41836,7 +42624,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | <length-percentage>",
-            "relevance": 55,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41851,6 +42639,14 @@ const cssData = {
         },
         {
             "name": "column-rule",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "syntax": "<'column-rule-width'> || <'column-rule-style'> || <'column-rule-color'>",
             "relevance": 51,
             "references": [
@@ -41869,6 +42665,14 @@ const cssData = {
         },
         {
             "name": "column-rule-color",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "syntax": "<color>",
             "relevance": 50,
             "references": [
@@ -41884,6 +42688,14 @@ const cssData = {
         },
         {
             "name": "column-rule-style",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "syntax": "<'border-style'>",
             "relevance": 50,
             "references": [
@@ -41899,6 +42711,14 @@ const cssData = {
         },
         {
             "name": "column-rule-width",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "syntax": "<'border-width'>",
             "relevance": 50,
             "references": [
@@ -41915,6 +42735,14 @@ const cssData = {
         },
         {
             "name": "columns",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -41938,6 +42766,14 @@ const cssData = {
         },
         {
             "name": "column-span",
+            "browsers": [
+                "E12",
+                "FF71",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "values": [
                 {
                     "name": "all",
@@ -41963,6 +42799,14 @@ const cssData = {
         },
         {
             "name": "column-width",
+            "browsers": [
+                "E12",
+                "FF50",
+                "S9",
+                "C50",
+                "IE10",
+                "O11.1"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -42037,6 +42881,14 @@ const cssData = {
         },
         {
             "name": "content",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE8",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "attr()",
@@ -42078,6 +42930,14 @@ const cssData = {
         },
         {
             "name": "counter-increment",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3",
+                "C2",
+                "IE8",
+                "O9.2"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -42085,7 +42945,7 @@ const cssData = {
                 }
             ],
             "syntax": "[ <counter-name> <integer>? ]+ | none",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42100,6 +42960,14 @@ const cssData = {
         },
         {
             "name": "counter-reset",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3",
+                "C2",
+                "IE8",
+                "O9.2"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -42122,6 +42990,14 @@ const cssData = {
         },
         {
             "name": "cursor",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.2",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "alias",
@@ -42169,10 +43045,26 @@ const cssData = {
                 },
                 {
                     "name": "grab",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be grabbed."
                 },
                 {
                     "name": "grabbing",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something is being grabbed."
                 },
                 {
@@ -42185,18 +43077,50 @@ const cssData = {
                 },
                 {
                     "name": "-moz-grab",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be grabbed."
                 },
                 {
                     "name": "-moz-grabbing",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something is being grabbed."
                 },
                 {
                     "name": "-moz-zoom-in",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be zoomed (magnified) in."
                 },
                 {
                     "name": "-moz-zoom-out",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be zoomed (magnified) out."
                 },
                 {
@@ -42273,18 +43197,50 @@ const cssData = {
                 },
                 {
                     "name": "-webkit-grab",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be grabbed."
                 },
                 {
                     "name": "-webkit-grabbing",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something is being grabbed."
                 },
                 {
                     "name": "-webkit-zoom-in",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be zoomed (magnified) in."
                 },
                 {
                     "name": "-webkit-zoom-out",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be zoomed (magnified) out."
                 },
                 {
@@ -42293,10 +43249,26 @@ const cssData = {
                 },
                 {
                     "name": "zoom-in",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be zoomed (magnified) in."
                 },
                 {
                     "name": "zoom-out",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Indicates that something can be zoomed (magnified) out."
                 }
             ],
@@ -42317,6 +43289,14 @@ const cssData = {
         },
         {
             "name": "direction",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C2",
+                "IE5.5",
+                "O9.2"
+            ],
             "values": [
                 {
                     "name": "ltr",
@@ -42342,6 +43322,14 @@ const cssData = {
         },
         {
             "name": "display",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "block",
@@ -42349,22 +43337,62 @@ const cssData = {
                 },
                 {
                     "name": "contents",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element itself does not generate any boxes, but its children and pseudo-elements still generate boxes as normal."
                 },
                 {
                     "name": "flex",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element generates a principal flex container box and establishes a flex formatting context."
                 },
                 {
                     "name": "flexbox",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element lays out its contents using flow layout (block-and-inline layout). Standardized as 'flex'."
                 },
                 {
                     "name": "flow-root",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element generates a block container box, and lays out its contents using flow layout."
                 },
                 {
                     "name": "grid",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element generates a principal grid container box, and establishes a grid formatting context."
                 },
                 {
@@ -42377,10 +43405,26 @@ const cssData = {
                 },
                 {
                     "name": "inline-flex",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level flex container."
                 },
                 {
                     "name": "inline-flexbox",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level flex container. Standardized as 'inline-flex'"
                 },
                 {
@@ -42393,56 +43437,184 @@ const cssData = {
                 },
                 {
                     "name": "-moz-box",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element lays out its contents using flow layout (block-and-inline layout). Standardized as 'flex'."
                 },
                 {
-                    "name": "-moz-deck"
+                    "name": "-moz-deck",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-grid"
+                    "name": "-moz-grid",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-grid-group"
+                    "name": "-moz-grid-group",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-grid-line"
+                    "name": "-moz-grid-line",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-groupbox"
+                    "name": "-moz-groupbox",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
                     "name": "-moz-inline-box",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level flex container. Standardized as 'inline-flex'"
                 },
                 {
-                    "name": "-moz-inline-grid"
+                    "name": "-moz-inline-grid",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-inline-stack"
+                    "name": "-moz-inline-stack",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-marker"
+                    "name": "-moz-marker",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-popup"
+                    "name": "-moz-popup",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
-                    "name": "-moz-stack"
+                    "name": "-moz-stack",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ]
                 },
                 {
                     "name": "-ms-flexbox",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element lays out its contents using flow layout (block-and-inline layout). Standardized as 'flex'."
                 },
                 {
                     "name": "-ms-grid",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element generates a principal grid container box, and establishes a grid formatting context."
                 },
                 {
                     "name": "-ms-inline-flexbox",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level flex container. Standardized as 'inline-flex'"
                 },
                 {
                     "name": "-ms-inline-grid",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level grid container."
                 },
                 {
@@ -42467,6 +43639,14 @@ const cssData = {
                 },
                 {
                     "name": "run-in",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element generates a run-in box. Run-in elements act like inlines or blocks, depending on the surrounding elements."
                 },
                 {
@@ -42499,18 +43679,50 @@ const cssData = {
                 },
                 {
                     "name": "-webkit-box",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element lays out its contents using flow layout (block-and-inline layout). Standardized as 'flex'."
                 },
                 {
                     "name": "-webkit-flex",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "The element lays out its contents using flow layout (block-and-inline layout)."
                 },
                 {
                     "name": "-webkit-inline-box",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level flex container. Standardized as 'inline-flex'"
                 },
                 {
                     "name": "-webkit-inline-flex",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Inline-level flex container."
                 }
             ],
@@ -42529,13 +43741,29 @@ const cssData = {
         },
         {
             "name": "empty-cells",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.2",
+                "C1",
+                "IE8",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "hide",
                     "description": "No borders or backgrounds are drawn around/behind empty cells."
                 },
                 {
-                    "name": "-moz-show-background"
+                    "name": "-moz-show-background",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.2",
+                        "C1",
+                        "IE8",
+                        "O4"
+                    ]
                 },
                 {
                     "name": "show",
@@ -42583,7 +43811,7 @@ const cssData = {
             ],
             "syntax": "<counter-style-name>",
             "relevance": 50,
-            "description": "@counter-style descriptor. Specifies a fallback counter style to be used when the current counter style can’t create a representation for a given counter value.",
+            "description": "@counter-style descriptor. Specifies a fallback counter style to be used when the current counter style can't create a representation for a given counter value.",
             "restrictions": [
                 "identifier"
             ]
@@ -42593,14 +43821,14 @@ const cssData = {
             "values": [
                 {
                     "name": "url()",
-                    "description": "A URL reference to a paint server element, which is an element that defines a paint server: ‘hatch’, ‘linearGradient’, ‘mesh’, ‘pattern’, ‘radialGradient’ and ‘solidcolor’."
+                    "description": "A URL reference to a paint server element, which is an element that defines a paint server: 'hatch', 'linearGradient', 'mesh', 'pattern', 'radialGradient' and 'solidcolor'."
                 },
                 {
                     "name": "none",
                     "description": "No paint is applied in this layer."
                 }
             ],
-            "relevance": 76,
+            "relevance": 77,
             "description": "Paints the interior of the given graphical element.",
             "restrictions": [
                 "color",
@@ -42621,11 +43849,11 @@ const cssData = {
             "values": [
                 {
                     "name": "evenodd",
-                    "description": "Determines the ‘insideness’ of a point on the canvas by drawing a ray from that point to infinity in any direction and counting the number of path segments from the given shape that the ray crosses."
+                    "description": "Determines the 'insideness' of a point on the canvas by drawing a ray from that point to infinity in any direction and counting the number of path segments from the given shape that the ray crosses."
                 },
                 {
                     "name": "nonzero",
-                    "description": "Determines the ‘insideness’ of a point on the canvas by drawing a ray from that point to infinity in any direction and then examining the places where a segment of the shape crosses the ray."
+                    "description": "Determines the 'insideness' of a point on the canvas by drawing a ray from that point to infinity in any direction and then examining the places where a segment of the shape crosses the ray."
                 }
             ],
             "relevance": 51,
@@ -42701,14 +43929,14 @@ const cssData = {
                 }
             ],
             "syntax": "none | <filter-function-list>",
-            "relevance": 66,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/filter"
                 }
             ],
-            "description": "Processes an element’s rendering before it is displayed in the document, by applying one or more filter effects.",
+            "description": "Processes an element's rendering before it is displayed in the document, by applying one or more filter effects.",
             "restrictions": [
                 "enum",
                 "url"
@@ -42716,6 +43944,14 @@ const cssData = {
         },
         {
             "name": "flex",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -42723,7 +43959,15 @@ const cssData = {
                 },
                 {
                     "name": "content",
-                    "description": "Indicates automatic sizing, based on the flex item’s content."
+                    "browsers": [
+                        "E12",
+                        "FF20",
+                        "S9",
+                        "C29",
+                        "IE11",
+                        "O12.1"
+                    ],
+                    "description": "Indicates automatic sizing, based on the flex item's content."
                 },
                 {
                     "name": "none",
@@ -42731,7 +43975,7 @@ const cssData = {
                 }
             ],
             "syntax": "none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]",
-            "relevance": 79,
+            "relevance": 80,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42747,6 +43991,14 @@ const cssData = {
         },
         {
             "name": "flex-basis",
+            "browsers": [
+                "E12",
+                "FF22",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -42754,11 +44006,19 @@ const cssData = {
                 },
                 {
                     "name": "content",
-                    "description": "Indicates automatic sizing, based on the flex item’s content."
+                    "browsers": [
+                        "E12",
+                        "FF22",
+                        "S9",
+                        "C29",
+                        "IE11",
+                        "O12.1"
+                    ],
+                    "description": "Indicates automatic sizing, based on the flex item's content."
                 }
             ],
             "syntax": "content | <'width'>",
-            "relevance": 66,
+            "relevance": 68,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42774,10 +44034,18 @@ const cssData = {
         },
         {
             "name": "flex-direction",
+            "browsers": [
+                "E12",
+                "FF81",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "column",
-                    "description": "The flex container’s main axis has the same orientation as the block axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the block axis of the current writing mode."
                 },
                 {
                     "name": "column-reverse",
@@ -42785,7 +44053,7 @@ const cssData = {
                 },
                 {
                     "name": "row",
-                    "description": "The flex container’s main axis has the same orientation as the inline axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the inline axis of the current writing mode."
                 },
                 {
                     "name": "row-reverse",
@@ -42793,24 +44061,32 @@ const cssData = {
                 }
             ],
             "syntax": "row | row-reverse | column | column-reverse",
-            "relevance": 82,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/flex-direction"
                 }
             ],
-            "description": "Specifies how flex items are placed in the flex container, by setting the direction of the flex container’s main axis.",
+            "description": "Specifies how flex items are placed in the flex container, by setting the direction of the flex container's main axis.",
             "restrictions": [
                 "enum"
             ]
         },
         {
             "name": "flex-flow",
+            "browsers": [
+                "E12",
+                "FF28",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "column",
-                    "description": "The flex container’s main axis has the same orientation as the block axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the block axis of the current writing mode."
                 },
                 {
                     "name": "column-reverse",
@@ -42822,7 +44098,7 @@ const cssData = {
                 },
                 {
                     "name": "row",
-                    "description": "The flex container’s main axis has the same orientation as the inline axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the inline axis of the current writing mode."
                 },
                 {
                     "name": "row-reverse",
@@ -42838,7 +44114,7 @@ const cssData = {
                 }
             ],
             "syntax": "<'flex-direction'> || <'flex-wrap'>",
-            "relevance": 65,
+            "relevance": 66,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42852,6 +44128,14 @@ const cssData = {
         },
         {
             "name": "flex-grow",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "syntax": "<number>",
             "relevance": 76,
             "references": [
@@ -42867,8 +44151,16 @@ const cssData = {
         },
         {
             "name": "flex-shrink",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE10",
+                "O12.1"
+            ],
             "syntax": "<number>",
-            "relevance": 74,
+            "relevance": 75,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42882,6 +44174,14 @@ const cssData = {
         },
         {
             "name": "flex-wrap",
+            "browsers": [
+                "E12",
+                "FF28",
+                "S9",
+                "C29",
+                "IE11",
+                "O17"
+            ],
             "values": [
                 {
                     "name": "nowrap",
@@ -42897,7 +44197,7 @@ const cssData = {
                 }
             ],
             "syntax": "nowrap | wrap | wrap-reverse",
-            "relevance": 79,
+            "relevance": 80,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42911,13 +44211,37 @@ const cssData = {
         },
         {
             "name": "float",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "inline-end",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "A keyword indicating that the element must float on the end side of its containing block. That is the right side with ltr scripts, and the left side with rtl scripts."
                 },
                 {
                     "name": "inline-start",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "A keyword indicating that the element must float on the start side of its containing block. That is the left side with ltr scripts, and the right side with rtl scripts."
                 },
                 {
@@ -42981,6 +44305,14 @@ const cssData = {
         },
         {
             "name": "font",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "100",
@@ -43113,6 +44445,14 @@ const cssData = {
         },
         {
             "name": "font-family",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif"
@@ -43184,6 +44524,14 @@ const cssData = {
         },
         {
             "name": "font-feature-settings",
+            "browsers": [
+                "E15",
+                "FF34",
+                "S9.1",
+                "C48",
+                "IE10",
+                "O35"
+            ],
             "values": [
                 {
                     "name": "\"aalt\"",
@@ -43742,6 +45090,14 @@ const cssData = {
         },
         {
             "name": "font-size",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "large"
@@ -43793,7 +45149,7 @@ const cssData = {
             "values": [
                 {
                     "name": "none",
-                    "description": "Do not preserve the font’s x-height."
+                    "description": "Do not preserve the font's x-height."
                 }
             ],
             "syntax": "none | [ ex-height | cap-height | ch-width | ic-width | ic-height ]? [ from-font | <number> ]",
@@ -43811,6 +45167,14 @@ const cssData = {
         },
         {
             "name": "font-stretch",
+            "browsers": [
+                "E12",
+                "FF9",
+                "S11",
+                "C60",
+                "IE9",
+                "O47"
+            ],
             "values": [
                 {
                     "name": "condensed"
@@ -43826,6 +45190,14 @@ const cssData = {
                 },
                 {
                     "name": "narrower",
+                    "browsers": [
+                        "E12",
+                        "FF9",
+                        "S11",
+                        "C60",
+                        "IE9",
+                        "O47"
+                    ],
                     "description": "Indicates a narrower value relative to the width of the parent element."
                 },
                 {
@@ -43845,6 +45217,14 @@ const cssData = {
                 },
                 {
                     "name": "wider",
+                    "browsers": [
+                        "E12",
+                        "FF9",
+                        "S11",
+                        "C60",
+                        "IE9",
+                        "O47"
+                    ],
                     "description": "Indicates a wider value relative to the width of the parent element."
                 }
             ],
@@ -43863,6 +45243,14 @@ const cssData = {
         },
         {
             "name": "font-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "italic",
@@ -43928,6 +45316,14 @@ const cssData = {
         },
         {
             "name": "font-variant",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "normal",
@@ -43939,7 +45335,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> || stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) || [ small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ] || <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero || <east-asian-variant-values> || <east-asian-width-values> || ruby ]",
-            "relevance": 64,
+            "relevance": 65,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44201,14 +45597,14 @@ const cssData = {
                 }
             ],
             "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ]",
-            "relevance": 53,
+            "relevance": 52,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/font-variant-ligatures"
                 }
             ],
-            "description": "Specifies control over which ligatures are enabled or disabled. A value of ‘normal’ implies that the defaults set by the font are used.",
+            "description": "Specifies control over which ligatures are enabled or disabled. A value of 'normal' implies that the defaults set by the font are used.",
             "restrictions": [
                 "enum"
             ]
@@ -44308,6 +45704,14 @@ const cssData = {
         },
         {
             "name": "font-weight",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C2",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "100",
@@ -44412,22 +45816,22 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line> [ / <grid-line> ]{0,3}",
-            "relevance": 55,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/grid-area"
                 }
             ],
-            "description": "Determine a grid item’s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement. Shorthand for 'grid-row-start', 'grid-column-start', 'grid-row-end', and 'grid-column-end'.",
+            "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement. Shorthand for 'grid-row-start', 'grid-column-start', 'grid-row-end', and 'grid-column-end'.",
             "restrictions": [
                 "identifier",
                 "integer"
@@ -44461,6 +45865,14 @@ const cssData = {
         },
         {
             "name": "grid-auto-columns",
+            "browsers": [
+                "E16",
+                "FF70",
+                "S10.1",
+                "C57",
+                "IE10",
+                "O44"
+            ],
             "values": [
                 {
                     "name": "min-content",
@@ -44513,7 +45925,7 @@ const cssData = {
                 },
                 {
                     "name": "dense",
-                    "description": "If specified, the auto-placement algorithm uses a “dense” packing algorithm, which attempts to fill in holes earlier in the grid if smaller items come up later."
+                    "description": "If specified, the auto-placement algorithm uses a \"dense\" packing algorithm, which attempts to fill in holes earlier in the grid if smaller items come up later."
                 }
             ],
             "syntax": "[ row | column ] || dense",
@@ -44531,6 +45943,14 @@ const cssData = {
         },
         {
             "name": "grid-auto-rows",
+            "browsers": [
+                "E16",
+                "FF70",
+                "S10.1",
+                "C57",
+                "IE10",
+                "O44"
+            ],
             "values": [
                 {
                     "name": "min-content",
@@ -44575,11 +45995,11 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line> [ / <grid-line> ]?",
@@ -44609,11 +46029,11 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line>",
@@ -44624,7 +46044,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/grid-column-end"
                 }
             ],
-            "description": "Determine a grid item’s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+            "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
             "restrictions": [
                 "identifier",
                 "integer",
@@ -44659,11 +46079,11 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line>",
@@ -44674,7 +46094,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/grid-column-start"
                 }
             ],
-            "description": "Determine a grid item’s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+            "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
             "restrictions": [
                 "identifier",
                 "integer",
@@ -44709,11 +46129,11 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line> [ / <grid-line> ]?",
@@ -44743,11 +46163,11 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line>",
@@ -44758,7 +46178,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/grid-row-end"
                 }
             ],
-            "description": "Determine a grid item’s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+            "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
             "restrictions": [
                 "identifier",
                 "integer",
@@ -44775,7 +46195,7 @@ const cssData = {
             ],
             "status": "obsolete",
             "syntax": "<length-percentage>",
-            "relevance": 1,
+            "relevance": 2,
             "description": "Specifies the gutters between grid rows. Replaced by 'row-gap' property.",
             "restrictions": [
                 "length"
@@ -44793,11 +46213,11 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "The property contributes nothing to the grid item’s placement, indicating auto-placement, an automatic span, or a default span of one."
+                    "description": "The property contributes nothing to the grid item's placement, indicating auto-placement, an automatic span, or a default span of one."
                 },
                 {
                     "name": "span",
-                    "description": "Contributes a grid span to the grid item’s placement such that the corresponding edge of the grid item’s grid area is N lines from its opposite edge."
+                    "description": "Contributes a grid span to the grid item's placement such that the corresponding edge of the grid item's grid area is N lines from its opposite edge."
                 }
             ],
             "syntax": "<grid-line>",
@@ -44808,7 +46228,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/grid-row-start"
                 }
             ],
-            "description": "Determine a grid item’s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+            "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
             "restrictions": [
                 "identifier",
                 "integer",
@@ -44883,11 +46303,11 @@ const cssData = {
             "values": [
                 {
                     "name": "none",
-                    "description": "The grid container doesn’t define any named grid areas."
+                    "description": "The grid container doesn't define any named grid areas."
                 }
             ],
             "syntax": "none | <string>+",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44901,6 +46321,14 @@ const cssData = {
         },
         {
             "name": "grid-template-columns",
+            "browsers": [
+                "E16",
+                "FF52",
+                "S10.1",
+                "C57",
+                "IE10",
+                "O44"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -44949,6 +46377,14 @@ const cssData = {
         },
         {
             "name": "grid-template-rows",
+            "browsers": [
+                "E16",
+                "FF52",
+                "S10.1",
+                "C57",
+                "IE10",
+                "O44"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -44998,6 +46434,14 @@ const cssData = {
         },
         {
             "name": "height",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -45005,14 +46449,38 @@ const cssData = {
                 },
                 {
                     "name": "fit-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Use the fit-content inline size or fit-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "max-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Use the max-content inline size or max-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "min-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Use the min-content inline size or min-content block size, as appropriate to the writing mode."
                 }
             ],
@@ -45032,6 +46500,14 @@ const cssData = {
         },
         {
             "name": "hyphens",
+            "browsers": [
+                "E79",
+                "FF43",
+                "S5.1",
+                "C55",
+                "IE10",
+                "O44"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -45133,7 +46609,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | crisp-edges | pixelated",
-            "relevance": 54,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45251,6 +46727,14 @@ const cssData = {
         },
         {
             "name": "justify-content",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "center",
@@ -45318,7 +46802,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ]",
-            "relevance": 85,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45347,6 +46831,14 @@ const cssData = {
         },
         {
             "name": "left",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O5"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -45369,6 +46861,14 @@ const cssData = {
         },
         {
             "name": "letter-spacing",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "normal",
@@ -45376,7 +46876,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | <length>",
-            "relevance": 81,
+            "relevance": 82,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45406,6 +46906,14 @@ const cssData = {
         },
         {
             "name": "line-break",
+            "browsers": [
+                "E14",
+                "FF69",
+                "S11",
+                "C58",
+                "IE5.5",
+                "O45"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -45429,7 +46937,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | loose | normal | strict | anywhere",
-            "relevance": 52,
+            "relevance": 51,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45443,6 +46951,14 @@ const cssData = {
         },
         {
             "name": "line-height",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "normal",
@@ -45466,6 +46982,14 @@ const cssData = {
         },
         {
             "name": "list-style",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "armenian"
@@ -45516,6 +47040,14 @@ const cssData = {
                 },
                 {
                     "name": "symbols()",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
                     "description": "Allows a counter style to be defined inline."
                 },
                 {
@@ -45548,10 +47080,18 @@ const cssData = {
         },
         {
             "name": "list-style-image",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "none",
-                    "description": "The default contents of the of the list item’s marker are given by 'list-style-type' instead."
+                    "description": "The default contents of the of the list item's marker are given by 'list-style-type' instead."
                 }
             ],
             "syntax": "<image> | none",
@@ -45569,6 +47109,14 @@ const cssData = {
         },
         {
             "name": "list-style-position",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "inside",
@@ -45594,6 +47142,14 @@ const cssData = {
         },
         {
             "name": "list-style-type",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "armenian",
@@ -45645,6 +47201,14 @@ const cssData = {
                 },
                 {
                     "name": "symbols()",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O3.5"
+                    ],
                     "description": "Allows a counter style to be defined inline."
                 },
                 {
@@ -45668,7 +47232,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/list-style-type"
                 }
             ],
-            "description": "Used to construct the default contents of a list item’s marker",
+            "description": "Used to construct the default contents of a list item's marker",
             "restrictions": [
                 "enum",
                 "string"
@@ -45676,13 +47240,21 @@ const cssData = {
         },
         {
             "name": "margin",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "auto"
                 }
             ],
             "syntax": "[ <length> | <percentage> | auto ]{1,4}",
-            "relevance": 95,
+            "relevance": 96,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45717,7 +47289,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/margin-block-end"
                 }
             ],
-            "description": "Logical 'margin-bottom'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'margin-bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -45745,7 +47317,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/margin-block-start"
                 }
             ],
-            "description": "Logical 'margin-top'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'margin-top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -45753,6 +47325,14 @@ const cssData = {
         },
         {
             "name": "margin-bottom",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "auto"
@@ -45794,7 +47374,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/margin-inline-end"
                 }
             ],
-            "description": "Logical 'margin-right'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'margin-right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -45822,7 +47402,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/margin-inline-start"
                 }
             ],
-            "description": "Logical 'margin-left'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'margin-left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -45830,13 +47410,21 @@ const cssData = {
         },
         {
             "name": "margin-left",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "auto"
                 }
             ],
             "syntax": "<length> | <percentage> | auto",
-            "relevance": 91,
+            "relevance": 92,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45851,6 +47439,14 @@ const cssData = {
         },
         {
             "name": "margin-right",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "auto"
@@ -45872,6 +47468,14 @@ const cssData = {
         },
         {
             "name": "margin-top",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "auto"
@@ -45904,7 +47508,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given ‘path’ element or basic shape.",
+            "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given 'path' element or basic shape.",
             "restrictions": [
                 "url"
             ]
@@ -46113,7 +47717,7 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "Resolved by using the image’s intrinsic ratio and the size of the other dimension, or failing that, using the image’s intrinsic size, or failing that, treating it as 100%."
+                    "description": "Resolved by using the image's intrinsic ratio and the size of the other dimension, or failing that, using the image's intrinsic size, or failing that, treating it as 100%."
                 },
                 {
                     "name": "contain",
@@ -46202,6 +47806,14 @@ const cssData = {
         },
         {
             "name": "max-height",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.3",
+                "C18",
+                "IE7",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -46209,19 +47821,43 @@ const cssData = {
                 },
                 {
                     "name": "fit-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.3",
+                        "C18",
+                        "IE7",
+                        "O7"
+                    ],
                     "description": "Use the fit-content inline size or fit-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "max-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.3",
+                        "C18",
+                        "IE7",
+                        "O7"
+                    ],
                     "description": "Use the max-content inline size or max-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "min-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.3",
+                        "C18",
+                        "IE7",
+                        "O7"
+                    ],
                     "description": "Use the min-content inline size or min-content block size, as appropriate to the writing mode."
                 }
             ],
             "syntax": "<viewport-length>",
-            "relevance": 85,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -46265,6 +47901,14 @@ const cssData = {
         },
         {
             "name": "max-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE7",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -46272,19 +47916,43 @@ const cssData = {
                 },
                 {
                     "name": "fit-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the fit-content inline size or fit-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "max-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the max-content inline size or max-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "min-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the min-content inline size or min-content block size, as appropriate to the writing mode."
                 }
             ],
             "syntax": "<viewport-length>",
-            "relevance": 90,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -46322,20 +47990,60 @@ const cssData = {
         },
         {
             "name": "min-height",
+            "browsers": [
+                "E12",
+                "FF3",
+                "S1.3",
+                "C1",
+                "IE7",
+                "O4"
+            ],
             "values": [
                 {
-                    "name": "auto"
+                    "name": "auto",
+                    "browsers": [
+                        "E12",
+                        "FF3",
+                        "S1.3",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ]
                 },
                 {
                     "name": "fit-content",
+                    "browsers": [
+                        "E12",
+                        "FF3",
+                        "S1.3",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the fit-content inline size or fit-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "max-content",
+                    "browsers": [
+                        "E12",
+                        "FF3",
+                        "S1.3",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the max-content inline size or max-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "min-content",
+                    "browsers": [
+                        "E12",
+                        "FF3",
+                        "S1.3",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the min-content inline size or min-content block size, as appropriate to the writing mode."
                 }
             ],
@@ -46378,20 +48086,60 @@ const cssData = {
         },
         {
             "name": "min-width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE7",
+                "O4"
+            ],
             "values": [
                 {
-                    "name": "auto"
+                    "name": "auto",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ]
                 },
                 {
                     "name": "fit-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the fit-content inline size or fit-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "max-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the max-content inline size or max-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "min-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE7",
+                        "O4"
+                    ],
                     "description": "Use the min-content inline size or min-content block size, as appropriate to the writing mode."
                 }
             ],
@@ -48241,11 +49989,11 @@ const cssData = {
             "values": [
                 {
                     "name": "baseline",
-                    "description": "If the flex item’s inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
+                    "description": "If the flex item's inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
                 },
                 {
                     "name": "center",
-                    "description": "The flex item’s margin box is centered in the cross axis within the line."
+                    "description": "The flex item's margin box is centered in the cross axis within the line."
                 },
                 {
                     "name": "end",
@@ -48274,7 +50022,7 @@ const cssData = {
             "values": [
                 {
                     "name": "column",
-                    "description": "The flex container’s main axis has the same orientation as the block axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the block axis of the current writing mode."
                 },
                 {
                     "name": "column-reverse",
@@ -48282,7 +50030,7 @@ const cssData = {
                 },
                 {
                     "name": "row",
-                    "description": "The flex container’s main axis has the same orientation as the inline axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the inline axis of the current writing mode."
                 },
                 {
                     "name": "row-reverse",
@@ -48290,7 +50038,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Specifies how flex items are placed in the flex container, by setting the direction of the flex container’s main axis.",
+            "description": "Specifies how flex items are placed in the flex container, by setting the direction of the flex container's main axis.",
             "restrictions": [
                 "enum"
             ]
@@ -48303,7 +50051,7 @@ const cssData = {
             "values": [
                 {
                     "name": "column",
-                    "description": "The flex container’s main axis has the same orientation as the block axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the block axis of the current writing mode."
                 },
                 {
                     "name": "column-reverse",
@@ -48315,7 +50063,7 @@ const cssData = {
                 },
                 {
                     "name": "row",
-                    "description": "The flex container’s main axis has the same orientation as the inline axis of the current writing mode."
+                    "description": "The flex container's main axis has the same orientation as the inline axis of the current writing mode."
                 },
                 {
                     "name": "wrap",
@@ -48340,15 +50088,15 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "Computes to the value of 'align-items' on the element’s parent, or 'stretch' if the element has no parent. On absolutely positioned elements, it computes to itself."
+                    "description": "Computes to the value of 'align-items' on the element's parent, or 'stretch' if the element has no parent. On absolutely positioned elements, it computes to itself."
                 },
                 {
                     "name": "baseline",
-                    "description": "If the flex item’s inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
+                    "description": "If the flex item's inline axis is the same as the cross axis, this value is identical to 'flex-start'. Otherwise, it participates in baseline alignment."
                 },
                 {
                     "name": "center",
-                    "description": "The flex item’s margin box is centered in the cross axis within the line."
+                    "description": "The flex item's margin box is centered in the cross axis within the line."
                 },
                 {
                     "name": "end",
@@ -48401,7 +50149,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Aligns a flex container’s lines within the flex container when there is extra space in the cross-axis, similar to how 'justify-content' aligns individual items within the main-axis.",
+            "description": "Aligns a flex container's lines within the flex container when there is extra space in the cross-axis, similar to how 'justify-content' aligns individual items within the main-axis.",
             "restrictions": [
                 "enum"
             ]
@@ -49587,7 +51335,7 @@ const cssData = {
                 },
                 {
                     "name": "digits",
-                    "description": "Attempt to typeset horizontally each maximal sequence of consecutive ASCII digits (U+0030–U+0039) that has as many or fewer characters than the specified integer such that it takes up the space of a single character within the vertical line box."
+                    "description": "Attempt to typeset horizontally each maximal sequence of consecutive ASCII digits (U+0030-U+0039) that has as many or fewer characters than the specified integer such that it takes up the space of a single character within the vertical line box."
                 },
                 {
                     "name": "none",
@@ -50035,7 +51783,7 @@ const cssData = {
                 },
                 {
                     "name": "minimum",
-                    "description": "Inline flow content can flow around the edge of the exclusion with the smallest available space within the flow content’s containing block, and must leave the other edge of the exclusion empty."
+                    "description": "Inline flow content can flow around the edge of the exclusion with the smallest available space within the flow content's containing block, and must leave the other edge of the exclusion empty."
                 },
                 {
                     "name": "start",
@@ -50516,15 +52264,15 @@ const cssData = {
             "values": [
                 {
                     "name": "contain",
-                    "description": "The replaced content is sized to maintain its aspect ratio while fitting within the element’s content box: its concrete object size is resolved as a contain constraint against the element's used width and height."
+                    "description": "The replaced content is sized to maintain its aspect ratio while fitting within the element's content box: its concrete object size is resolved as a contain constraint against the element's used width and height."
                 },
                 {
                     "name": "cover",
-                    "description": "The replaced content is sized to maintain its aspect ratio while filling the element's entire content box: its concrete object size is resolved as a cover constraint against the element’s used width and height."
+                    "description": "The replaced content is sized to maintain its aspect ratio while filling the element's entire content box: its concrete object size is resolved as a cover constraint against the element's used width and height."
                 },
                 {
                     "name": "fill",
-                    "description": "The replaced content is sized to fill the element’s content box: the object's concrete object size is the element's used width and height."
+                    "description": "The replaced content is sized to fill the element's content box: the object's concrete object size is the element's used width and height."
                 },
                 {
                     "name": "none",
@@ -50532,11 +52280,11 @@ const cssData = {
                 },
                 {
                     "name": "scale-down",
-                    "description": "Size the content as if ‘none’ or ‘contain’ were specified, whichever would result in a smaller concrete object size."
+                    "description": "Size the content as if 'none' or 'contain' were specified, whichever would result in a smaller concrete object size."
                 }
             ],
             "syntax": "fill | contain | cover | none | scale-down",
-            "relevance": 68,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -50624,15 +52372,15 @@ const cssData = {
             "values": [
                 {
                     "name": "contain",
-                    "description": "The replaced content is sized to maintain its aspect ratio while fitting within the element’s content box: its concrete object size is resolved as a contain constraint against the element's used width and height."
+                    "description": "The replaced content is sized to maintain its aspect ratio while fitting within the element's content box: its concrete object size is resolved as a contain constraint against the element's used width and height."
                 },
                 {
                     "name": "cover",
-                    "description": "The replaced content is sized to maintain its aspect ratio while filling the element's entire content box: its concrete object size is resolved as a cover constraint against the element’s used width and height."
+                    "description": "The replaced content is sized to maintain its aspect ratio while filling the element's entire content box: its concrete object size is resolved as a cover constraint against the element's used width and height."
                 },
                 {
                     "name": "fill",
-                    "description": "The replaced content is sized to fill the element’s content box: the object's concrete object size is the element's used width and height."
+                    "description": "The replaced content is sized to fill the element's content box: the object's concrete object size is the element's used width and height."
                 },
                 {
                     "name": "none",
@@ -50640,7 +52388,7 @@ const cssData = {
                 },
                 {
                     "name": "scale-down",
-                    "description": "Size the content as if ‘none’ or ‘contain’ were specified, whichever would result in a smaller concrete object size."
+                    "description": "Size the content as if 'none' or 'contain' were specified, whichever would result in a smaller concrete object size."
                 }
             ],
             "relevance": 50,
@@ -50664,6 +52412,14 @@ const cssData = {
         },
         {
             "name": "opacity",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S2",
+                "C1",
+                "IE9",
+                "O9"
+            ],
             "syntax": "<alpha-value>",
             "relevance": 93,
             "references": [
@@ -50679,6 +52435,14 @@ const cssData = {
         },
         {
             "name": "order",
+            "browsers": [
+                "E12",
+                "FF20",
+                "S9",
+                "C29",
+                "IE11",
+                "O12.1"
+            ],
             "syntax": "<integer>",
             "relevance": 64,
             "references": [
@@ -50957,7 +52721,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Logical 'bottom'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -50975,7 +52739,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Logical 'top'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -50993,7 +52757,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Logical 'right'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -51011,7 +52775,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Logical 'left'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -51019,6 +52783,14 @@ const cssData = {
         },
         {
             "name": "outline",
+            "browsers": [
+                "E94",
+                "FF88",
+                "S1.2",
+                "C94",
+                "IE8",
+                "O80"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -51026,6 +52798,14 @@ const cssData = {
                 },
                 {
                     "name": "invert",
+                    "browsers": [
+                        "E94",
+                        "FF88",
+                        "S1.2",
+                        "C94",
+                        "IE8",
+                        "O80"
+                    ],
                     "description": "Performs a color inversion on the pixels on the screen."
                 }
             ],
@@ -51048,14 +52828,30 @@ const cssData = {
         },
         {
             "name": "outline-color",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S1.2",
+                "C1",
+                "IE8",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "invert",
+                    "browsers": [
+                        "E12",
+                        "FF1.5",
+                        "S1.2",
+                        "C1",
+                        "IE8",
+                        "O7"
+                    ],
                     "description": "Performs a color inversion on the pixels on the screen."
                 }
             ],
             "syntax": "<color> | invert",
-            "relevance": 56,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -51092,6 +52888,14 @@ const cssData = {
         },
         {
             "name": "outline-style",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S1.2",
+                "C1",
+                "IE8",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -51099,7 +52903,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | <'border-style'>",
-            "relevance": 61,
+            "relevance": 62,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -51114,6 +52918,14 @@ const cssData = {
         },
         {
             "name": "outline-width",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S1.2",
+                "C1",
+                "IE8",
+                "O7"
+            ],
             "syntax": "<line-width>",
             "relevance": 61,
             "references": [
@@ -51130,6 +52942,14 @@ const cssData = {
         },
         {
             "name": "overflow",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -51141,7 +52961,15 @@ const cssData = {
                 },
                 {
                     "name": "-moz-hidden-unscrollable",
-                    "description": "Same as the standardized 'clip', except doesn’t establish a block formatting context."
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O7"
+                    ],
+                    "description": "Same as the standardized 'clip', except doesn't establish a block formatting context."
                 },
                 {
                     "name": "scroll",
@@ -51167,6 +52995,14 @@ const cssData = {
         },
         {
             "name": "overflow-wrap",
+            "browsers": [
+                "E18",
+                "FF49",
+                "S7",
+                "C23",
+                "IE5.5",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "break-word",
@@ -51192,6 +53028,14 @@ const cssData = {
         },
         {
             "name": "overflow-x",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S3",
+                "C1",
+                "IE5",
+                "O9.5"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -51225,6 +53069,14 @@ const cssData = {
         },
         {
             "name": "overflow-y",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S3",
+                "C1",
+                "IE5",
+                "O9.5"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -51244,7 +53096,7 @@ const cssData = {
                 }
             ],
             "syntax": "visible | hidden | clip | scroll | auto",
-            "relevance": 82,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -51263,7 +53115,7 @@ const cssData = {
             ],
             "syntax": "<integer> && <symbol>",
             "relevance": 50,
-            "description": "@counter-style descriptor. Specifies a “fixed-width” counter style, where representations shorter than the pad value are padded with a particular <symbol>",
+            "description": "@counter-style descriptor. Specifies a \"fixed-width\" counter style, where representations shorter than the pad value are padded with a particular <symbol>",
             "restrictions": [
                 "integer",
                 "image",
@@ -51273,6 +53125,14 @@ const cssData = {
         },
         {
             "name": "padding",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [],
             "syntax": "[ <length> | <percentage> ]{1,4}",
             "relevance": 95,
@@ -51290,6 +53150,14 @@ const cssData = {
         },
         {
             "name": "padding-bottom",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<length> | <percentage>",
             "relevance": 89,
             "references": [
@@ -51321,7 +53189,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/padding-block-end"
                 }
             ],
-            "description": "Logical 'padding-bottom'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'padding-bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -51344,7 +53212,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/padding-block-start"
                 }
             ],
-            "description": "Logical 'padding-top'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'padding-top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -51367,7 +53235,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/padding-inline-end"
                 }
             ],
-            "description": "Logical 'padding-right'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'padding-right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -51390,7 +53258,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/padding-inline-start"
                 }
             ],
-            "description": "Logical 'padding-left'. Mapping depends on the parent element’s 'writing-mode', 'direction', and 'text-orientation'.",
+            "description": "Logical 'padding-left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
             "restrictions": [
                 "length",
                 "percentage"
@@ -51398,6 +53266,14 @@ const cssData = {
         },
         {
             "name": "padding-left",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<length> | <percentage>",
             "relevance": 90,
             "references": [
@@ -51414,6 +53290,14 @@ const cssData = {
         },
         {
             "name": "padding-right",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<length> | <percentage>",
             "relevance": 89,
             "references": [
@@ -51430,6 +53314,14 @@ const cssData = {
         },
         {
             "name": "padding-top",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "syntax": "<length> | <percentage>",
             "relevance": 90,
             "references": [
@@ -51446,6 +53338,14 @@ const cssData = {
         },
         {
             "name": "page-break-after",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.2",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "always",
@@ -51483,6 +53383,14 @@ const cssData = {
         },
         {
             "name": "page-break-before",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.2",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "always",
@@ -51520,6 +53428,14 @@ const cssData = {
         },
         {
             "name": "page-break-inside",
+            "browsers": [
+                "E12",
+                "FF19",
+                "S1.3",
+                "C1",
+                "IE8",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -51582,6 +53498,14 @@ const cssData = {
         },
         {
             "name": "perspective",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C36",
+                "IE10",
+                "O23"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -51589,7 +53513,7 @@ const cssData = {
                 }
             ],
             "syntax": "none | <length>",
-            "relevance": 56,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -51604,6 +53528,14 @@ const cssData = {
         },
         {
             "name": "perspective-origin",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C36",
+                "IE10",
+                "O23"
+            ],
             "syntax": "<position>",
             "relevance": 51,
             "references": [
@@ -51621,6 +53553,14 @@ const cssData = {
         },
         {
             "name": "pointer-events",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S4",
+                "C1",
+                "IE11",
+                "O9"
+            ],
             "values": [
                 {
                     "name": "all",
@@ -51644,19 +53584,19 @@ const cssData = {
                 },
                 {
                     "name": "visible",
-                    "description": "The given element can be the target element for pointer events when the ‘visibility’ property is set to visible and the pointer is over either the interior or the perimeter of the element."
+                    "description": "The given element can be the target element for pointer events when the 'visibility' property is set to visible and the pointer is over either the interior or the perimeter of the element."
                 },
                 {
                     "name": "visibleFill",
-                    "description": "The given element can be the target element for pointer events when the ‘visibility’ property is set to visible and when the pointer is over the interior of the element."
+                    "description": "The given element can be the target element for pointer events when the 'visibility' property is set to visible and when the pointer is over the interior of the element."
                 },
                 {
                     "name": "visiblePainted",
-                    "description": "The given element can be the target element for pointer events when the ‘visibility’ property is set to visible and when the pointer is over a ‘painted’ area."
+                    "description": "The given element can be the target element for pointer events when the 'visibility' property is set to visible and when the pointer is over a 'painted' area."
                 },
                 {
                     "name": "visibleStroke",
-                    "description": "The given element can be the target element for pointer events when the ‘visibility’ property is set to visible and when the pointer is over the perimeter of the element."
+                    "description": "The given element can be the target element for pointer events when the 'visibility' property is set to visible and when the pointer is over the perimeter of the element."
                 }
             ],
             "syntax": "auto | none | visiblePainted | visibleFill | visibleStroke | visible | painted | fill | stroke | all | inherit",
@@ -51674,6 +53614,14 @@ const cssData = {
         },
         {
             "name": "position",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "absolute",
@@ -51685,6 +53633,14 @@ const cssData = {
                 },
                 {
                     "name": "-ms-page",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O4"
+                    ],
                     "description": "The box's position is calculated according to the 'absolute' model."
                 },
                 {
@@ -51697,10 +53653,26 @@ const cssData = {
                 },
                 {
                     "name": "sticky",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O4"
+                    ],
                     "description": "The box's position is calculated according to the normal flow. Then the box is offset relative to its flow root and containing block and in all cases, including table elements, does not affect the position of any following boxes."
                 },
                 {
                     "name": "-webkit-sticky",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O4"
+                    ],
                     "description": "The box's position is calculated according to the normal flow. Then the box is offset relative to its flow root and containing block and in all cases, including table elements, does not affect the position of any following boxes."
                 }
             ],
@@ -51733,6 +53705,14 @@ const cssData = {
         },
         {
             "name": "quotes",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S9",
+                "C11",
+                "IE8",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -51803,7 +53783,7 @@ const cssData = {
                 }
             ],
             "syntax": "none | both | horizontal | vertical | block | inline",
-            "relevance": 61,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -51817,6 +53797,14 @@ const cssData = {
         },
         {
             "name": "right",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O5"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -52162,7 +54150,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | smooth",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -52194,7 +54182,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-coordinate"
                 }
             ],
-            "description": "Defines the x and y coordinate within the element which will align with the nearest ancestor scroll container’s snap-destination for the respective axis.",
+            "description": "Defines the x and y coordinate within the element which will align with the nearest ancestor scroll container's snap-destination for the respective axis.",
             "restrictions": [
                 "position",
                 "length",
@@ -52216,7 +54204,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-destination"
                 }
             ],
-            "description": "Define the x and y coordinate within the scroll container’s visual viewport which element snap points will align with.",
+            "description": "Define the x and y coordinate within the scroll container's visual viewport which element snap points will align with.",
             "restrictions": [
                 "position",
                 "length",
@@ -52236,7 +54224,7 @@ const cssData = {
                 },
                 {
                     "name": "repeat()",
-                    "description": "Defines an interval at which snap points are defined, starting from the container’s relevant start edge."
+                    "description": "Defines an interval at which snap points are defined, starting from the container's relevant start edge."
                 }
             ],
             "status": "obsolete",
@@ -52266,7 +54254,7 @@ const cssData = {
                 },
                 {
                     "name": "repeat()",
-                    "description": "Defines an interval at which snap points are defined, starting from the container’s relevant start edge."
+                    "description": "Defines an interval at which snap points are defined, starting from the container's relevant start edge."
                 }
             ],
             "status": "obsolete",
@@ -52285,6 +54273,14 @@ const cssData = {
         },
         {
             "name": "scroll-snap-type",
+            "browsers": [
+                "E79",
+                "FF99",
+                "S11",
+                "C69",
+                "IE10",
+                "O56"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -52478,7 +54474,7 @@ const cssData = {
             "values": [
                 {
                     "name": "url()",
-                    "description": "A URL reference to a paint server element, which is an element that defines a paint server: ‘hatch’, ‘linearGradient’, ‘mesh’, ‘pattern’, ‘radialGradient’ and ‘solidcolor’."
+                    "description": "A URL reference to a paint server element, which is an element that defines a paint server: 'hatch', 'linearGradient', 'mesh', 'pattern', 'radialGradient' and 'solidcolor'."
                 },
                 {
                     "name": "none",
@@ -52565,7 +54561,7 @@ const cssData = {
         },
         {
             "name": "stroke-miterlimit",
-            "relevance": 51,
+            "relevance": 50,
             "description": "When two line segments meet at a sharp angle and miter joins have been specified for 'stroke-linejoin', it is possible for the miter to extend far beyond the thickness of the line stroking the path.",
             "restrictions": [
                 "number"
@@ -52573,7 +54569,7 @@ const cssData = {
         },
         {
             "name": "stroke-opacity",
-            "relevance": 51,
+            "relevance": 52,
             "description": "Specifies the opacity of the painting operation used to stroke the current object.",
             "restrictions": [
                 "number(0-1)"
@@ -52581,7 +54577,7 @@ const cssData = {
         },
         {
             "name": "stroke-width",
-            "relevance": 63,
+            "relevance": 64,
             "description": "Specifies the width of the stroke on the current object.",
             "restrictions": [
                 "percentage",
@@ -52610,7 +54606,7 @@ const cssData = {
             "values": [
                 {
                     "name": "additive",
-                    "description": "Represents “sign-value” numbering systems, which, rather than using reusing digits in different positions to change their value, define additional digits with much larger values, so that the value of the number can be obtained by adding all the digits together."
+                    "description": "Represents \"sign-value\" numbering systems, which, rather than using reusing digits in different positions to change their value, define additional digits with much larger values, so that the value of the number can be obtained by adding all the digits together."
                 },
                 {
                     "name": "alphabetic",
@@ -52639,7 +54635,7 @@ const cssData = {
             ],
             "syntax": "cyclic | numeric | alphabetic | symbolic | additive | [ fixed <integer>? ] | [ extends <counter-style-name> ]",
             "relevance": 50,
-            "description": "@counter-style descriptor. Specifies which algorithm will be used to construct the counter’s representation based on the counter value.",
+            "description": "@counter-style descriptor. Specifies which algorithm will be used to construct the counter's representation based on the counter value.",
             "restrictions": [
                 "enum",
                 "integer"
@@ -52661,6 +54657,14 @@ const cssData = {
         },
         {
             "name": "table-layout",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C14",
+                "IE5",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -52709,6 +54713,14 @@ const cssData = {
         },
         {
             "name": "text-align",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "center",
@@ -52716,6 +54728,14 @@ const cssData = {
                 },
                 {
                     "name": "end",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE3",
+                        "O3.5"
+                    ],
                     "description": "The inline contents are aligned to the end edge of the line box."
                 },
                 {
@@ -52732,6 +54752,14 @@ const cssData = {
                 },
                 {
                     "name": "start",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE3",
+                        "O3.5"
+                    ],
                     "description": "The inline contents are aligned to the start edge of the line box."
                 }
             ],
@@ -52750,6 +54778,14 @@ const cssData = {
         },
         {
             "name": "text-align-last",
+            "browsers": [
+                "E12",
+                "FF49",
+                "S16",
+                "C47",
+                "IE5.5",
+                "O34"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -52809,6 +54845,14 @@ const cssData = {
         },
         {
             "name": "text-decoration",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "dashed",
@@ -52871,7 +54915,7 @@ const cssData = {
                 "O44"
             ],
             "syntax": "<color>",
-            "relevance": 54,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -52973,9 +55017,17 @@ const cssData = {
         },
         {
             "name": "text-indent",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "values": [],
             "syntax": "<length-percentage> && hanging? && each-line?",
-            "relevance": 68,
+            "relevance": 69,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53094,6 +55146,14 @@ const cssData = {
         },
         {
             "name": "text-overflow",
+            "browsers": [
+                "E12",
+                "FF7",
+                "S1.3",
+                "C1",
+                "IE6",
+                "O11"
+            ],
             "values": [
                 {
                     "name": "clip",
@@ -53145,20 +55205,28 @@ const cssData = {
                 }
             ],
             "syntax": "auto | optimizeSpeed | optimizeLegibility | geometricPrecision",
-            "relevance": 70,
+            "relevance": 69,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/text-rendering"
                 }
             ],
-            "description": "The creator of SVG content might want to provide a hint to the implementation about what tradeoffs to make as it renders text. The ‘text-rendering’ property provides these hints.",
+            "description": "The creator of SVG content might want to provide a hint to the implementation about what tradeoffs to make as it renders text. The 'text-rendering' property provides these hints.",
             "restrictions": [
                 "enum"
             ]
         },
         {
             "name": "text-shadow",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S1.1",
+                "C2",
+                "IE10",
+                "O9.5"
+            ],
             "values": [
                 {
                     "name": "none",
@@ -53166,7 +55234,7 @@ const cssData = {
                 }
             ],
             "syntax": "none | <shadow-t>#",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53181,6 +55249,14 @@ const cssData = {
         },
         {
             "name": "text-transform",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O7"
+            ],
             "values": [
                 {
                     "name": "capitalize",
@@ -53200,31 +55276,39 @@ const cssData = {
                 }
             ],
             "syntax": "none | capitalize | uppercase | lowercase | full-width | full-size-kana",
-            "relevance": 85,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/text-transform"
                 }
             ],
-            "description": "Controls capitalization effects of an element’s text.",
+            "description": "Controls capitalization effects of an element's text.",
             "restrictions": [
                 "enum"
             ]
         },
         {
             "name": "text-underline-position",
+            "browsers": [
+                "E12",
+                "FF74",
+                "S12.1",
+                "C33",
+                "IE6",
+                "O20"
+            ],
             "values": [
                 {
                     "name": "above"
                 },
                 {
                     "name": "auto",
-                    "description": "The user agent may use any algorithm to determine the underline’s position. In horizontal line layout, the underline should be aligned as for alphabetic. In vertical line layout, if the language is set to Japanese or Korean, the underline should be aligned as for over."
+                    "description": "The user agent may use any algorithm to determine the underline's position. In horizontal line layout, the underline should be aligned as for alphabetic. In vertical line layout, if the language is set to Japanese or Korean, the underline should be aligned as for over."
                 },
                 {
                     "name": "below",
-                    "description": "The underline is aligned with the under edge of the element’s content box."
+                    "description": "The underline is aligned with the under edge of the element's content box."
                 }
             ],
             "syntax": "auto | from-font | [ under || [ left | right ] ]",
@@ -53242,6 +55326,14 @@ const cssData = {
         },
         {
             "name": "top",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5",
+                "O6"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -53264,19 +55356,51 @@ const cssData = {
         },
         {
             "name": "touch-action",
+            "browsers": [
+                "E12",
+                "FF52",
+                "S13",
+                "C36",
+                "IE11",
+                "O23"
+            ],
             "values": [
                 {
                     "name": "auto",
                     "description": "The user agent may determine any permitted touch behaviors for touches that begin on the element."
                 },
                 {
-                    "name": "cross-slide-x"
+                    "name": "cross-slide-x",
+                    "browsers": [
+                        "E12",
+                        "FF52",
+                        "S13",
+                        "C36",
+                        "IE11",
+                        "O23"
+                    ]
                 },
                 {
-                    "name": "cross-slide-y"
+                    "name": "cross-slide-y",
+                    "browsers": [
+                        "E12",
+                        "FF52",
+                        "S13",
+                        "C36",
+                        "IE11",
+                        "O23"
+                    ]
                 },
                 {
-                    "name": "double-tap-zoom"
+                    "name": "double-tap-zoom",
+                    "browsers": [
+                        "E12",
+                        "FF52",
+                        "S13",
+                        "C36",
+                        "IE11",
+                        "O23"
+                    ]
                 },
                 {
                     "name": "manipulation",
@@ -53288,18 +55412,26 @@ const cssData = {
                 },
                 {
                     "name": "pan-x",
-                    "description": "The user agent may consider touches that begin on the element only for the purposes of horizontally scrolling the element’s nearest ancestor with horizontally scrollable content."
+                    "description": "The user agent may consider touches that begin on the element only for the purposes of horizontally scrolling the element's nearest ancestor with horizontally scrollable content."
                 },
                 {
                     "name": "pan-y",
-                    "description": "The user agent may consider touches that begin on the element only for the purposes of vertically scrolling the element’s nearest ancestor with vertically scrollable content."
+                    "description": "The user agent may consider touches that begin on the element only for the purposes of vertically scrolling the element's nearest ancestor with vertically scrollable content."
                 },
                 {
-                    "name": "pinch-zoom"
+                    "name": "pinch-zoom",
+                    "browsers": [
+                        "E12",
+                        "FF52",
+                        "S13",
+                        "C36",
+                        "IE11",
+                        "O23"
+                    ]
                 }
             ],
             "syntax": "auto | none | [ [ pan-x | pan-left | pan-right ] || [ pan-y | pan-up | pan-down ] || pinch-zoom ] | manipulation",
-            "relevance": 69,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53313,6 +55445,14 @@ const cssData = {
         },
         {
             "name": "transform",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C36",
+                "IE10",
+                "O23"
+            ],
             "values": [
                 {
                     "name": "matrix()",
@@ -53403,7 +55543,7 @@ const cssData = {
                 }
             ],
             "syntax": "none | <transform-list>",
-            "relevance": 90,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53417,8 +55557,16 @@ const cssData = {
         },
         {
             "name": "transform-origin",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C36",
+                "IE10",
+                "O23"
+            ],
             "syntax": "[ <length-percentage> | left | center | right | top | bottom ] | [ [ <length-percentage> | left | center | right ] && [ <length-percentage> | top | center | bottom ] ] <length>?",
-            "relevance": 76,
+            "relevance": 77,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53473,6 +55621,14 @@ const cssData = {
         },
         {
             "name": "transition",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C26",
+                "IE10",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "all",
@@ -53484,7 +55640,7 @@ const cssData = {
                 }
             ],
             "syntax": "<single-transition>#",
-            "relevance": 88,
+            "relevance": 89,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53501,6 +55657,14 @@ const cssData = {
         },
         {
             "name": "transition-delay",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C26",
+                "IE10",
+                "O12.1"
+            ],
             "syntax": "<time>#",
             "relevance": 63,
             "references": [
@@ -53516,8 +55680,16 @@ const cssData = {
         },
         {
             "name": "transition-duration",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C26",
+                "IE10",
+                "O12.1"
+            ],
             "syntax": "<time>#",
-            "relevance": 66,
+            "relevance": 63,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53531,6 +55703,14 @@ const cssData = {
         },
         {
             "name": "transition-property",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C26",
+                "IE10",
+                "O12.1"
+            ],
             "values": [
                 {
                     "name": "all",
@@ -53556,8 +55736,16 @@ const cssData = {
         },
         {
             "name": "transition-timing-function",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C26",
+                "IE10",
+                "O12.1"
+            ],
             "syntax": "<easing-function>#",
-            "relevance": 66,
+            "relevance": 63,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53571,6 +55759,14 @@ const cssData = {
         },
         {
             "name": "unicode-bidi",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.3",
+                "C2",
+                "IE5.5",
+                "O9.2"
+            ],
             "values": [
                 {
                     "name": "bidi-override",
@@ -53582,10 +55778,26 @@ const cssData = {
                 },
                 {
                     "name": "isolate",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.3",
+                        "C2",
+                        "IE5.5",
+                        "O9.2"
+                    ],
                     "description": "The contents of the element are considered to be inside a separate, independent paragraph."
                 },
                 {
                     "name": "isolate-override",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.3",
+                        "C2",
+                        "IE5.5",
+                        "O9.2"
+                    ],
                     "description": "This combines the isolation behavior of 'isolate' with the directional override behavior of 'bidi-override'"
                 },
                 {
@@ -53594,6 +55806,14 @@ const cssData = {
                 },
                 {
                     "name": "plaintext",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1.3",
+                        "C2",
+                        "IE5.5",
+                        "O9.2"
+                    ],
                     "description": "For the purposes of the Unicode bidirectional algorithm, the base directionality of each bidi paragraph for which the element forms the containing block is determined not by the element's computed 'direction'."
                 }
             ],
@@ -53618,7 +55838,7 @@ const cssData = {
                     "description": "Ampersand."
                 },
                 {
-                    "name": "U+20-24F, U+2B0-2FF, U+370-4FF, U+1E00-1EFF, U+2000-20CF, U+2100-23FF, U+2500-26FF, U+E000-F8FF, U+FB00–FB4F",
+                    "name": "U+20-24F, U+2B0-2FF, U+370-4FF, U+1E00-1EFF, U+2000-20CF, U+2100-23FF, U+2500-26FF, U+E000-F8FF, U+FB00-FB4F",
                     "description": "WGL4 character set (Pan-European)."
                 },
                 {
@@ -53674,167 +55894,167 @@ const cssData = {
                     "description": "Cyrillic Supplement. Extra letters for Komi, Khanty, Chukchi, Mordvin, Kurdish, Aleut, Chuvash, Abkhaz, Azerbaijani, and Orok."
                 },
                 {
-                    "name": "U+00-52F, U+1E00-1FFF, U+2200–22FF",
+                    "name": "U+00-52F, U+1E00-1FFF, U+2200-22FF",
                     "description": "Latin, Greek, Cyrillic, some punctuation and symbols."
                 },
                 {
-                    "name": "U+530–58F",
+                    "name": "U+530-58F",
                     "description": "Armenian."
                 },
                 {
-                    "name": "U+590–5FF",
+                    "name": "U+590-5FF",
                     "description": "Hebrew."
                 },
                 {
-                    "name": "U+600–6FF",
+                    "name": "U+600-6FF",
                     "description": "Arabic."
                 },
                 {
-                    "name": "U+750–77F",
+                    "name": "U+750-77F",
                     "description": "Arabic Supplement. Additional letters for African languages, Khowar, Torwali, Burushaski, and early Persian."
                 },
                 {
-                    "name": "U+8A0–8FF",
+                    "name": "U+8A0-8FF",
                     "description": "Arabic Extended-A. Additional letters for African languages, European and Central Asian languages, Rohingya, Tamazight, Arwi, and Koranic annotation signs."
                 },
                 {
-                    "name": "U+700–74F",
+                    "name": "U+700-74F",
                     "description": "Syriac."
                 },
                 {
-                    "name": "U+900–97F",
+                    "name": "U+900-97F",
                     "description": "Devanagari."
                 },
                 {
-                    "name": "U+980–9FF",
+                    "name": "U+980-9FF",
                     "description": "Bengali."
                 },
                 {
-                    "name": "U+A00–A7F",
+                    "name": "U+A00-A7F",
                     "description": "Gurmukhi."
                 },
                 {
-                    "name": "U+A80–AFF",
+                    "name": "U+A80-AFF",
                     "description": "Gujarati."
                 },
                 {
-                    "name": "U+B00–B7F",
+                    "name": "U+B00-B7F",
                     "description": "Oriya."
                 },
                 {
-                    "name": "U+B80–BFF",
+                    "name": "U+B80-BFF",
                     "description": "Tamil."
                 },
                 {
-                    "name": "U+C00–C7F",
+                    "name": "U+C00-C7F",
                     "description": "Telugu."
                 },
                 {
-                    "name": "U+C80–CFF",
+                    "name": "U+C80-CFF",
                     "description": "Kannada."
                 },
                 {
-                    "name": "U+D00–D7F",
+                    "name": "U+D00-D7F",
                     "description": "Malayalam."
                 },
                 {
-                    "name": "U+D80–DFF",
+                    "name": "U+D80-DFF",
                     "description": "Sinhala."
                 },
                 {
-                    "name": "U+118A0–118FF",
+                    "name": "U+118A0-118FF",
                     "description": "Warang Citi."
                 },
                 {
-                    "name": "U+E00–E7F",
+                    "name": "U+E00-E7F",
                     "description": "Thai."
                 },
                 {
-                    "name": "U+1A20–1AAF",
+                    "name": "U+1A20-1AAF",
                     "description": "Tai Tham."
                 },
                 {
-                    "name": "U+AA80–AADF",
+                    "name": "U+AA80-AADF",
                     "description": "Tai Viet."
                 },
                 {
-                    "name": "U+E80–EFF",
+                    "name": "U+E80-EFF",
                     "description": "Lao."
                 },
                 {
-                    "name": "U+F00–FFF",
+                    "name": "U+F00-FFF",
                     "description": "Tibetan."
                 },
                 {
-                    "name": "U+1000–109F",
+                    "name": "U+1000-109F",
                     "description": "Myanmar (Burmese)."
                 },
                 {
-                    "name": "U+10A0–10FF",
+                    "name": "U+10A0-10FF",
                     "description": "Georgian."
                 },
                 {
-                    "name": "U+1200–137F",
+                    "name": "U+1200-137F",
                     "description": "Ethiopic."
                 },
                 {
-                    "name": "U+1380–139F",
+                    "name": "U+1380-139F",
                     "description": "Ethiopic Supplement. Extra Syllables for Sebatbeit, and Tonal marks"
                 },
                 {
-                    "name": "U+2D80–2DDF",
+                    "name": "U+2D80-2DDF",
                     "description": "Ethiopic Extended. Extra Syllables for Me'en, Blin, and Sebatbeit."
                 },
                 {
-                    "name": "U+AB00–AB2F",
+                    "name": "U+AB00-AB2F",
                     "description": "Ethiopic Extended-A. Extra characters for Gamo-Gofa-Dawro, Basketo, and Gumuz."
                 },
                 {
-                    "name": "U+1780–17FF",
+                    "name": "U+1780-17FF",
                     "description": "Khmer."
                 },
                 {
-                    "name": "U+1800–18AF",
+                    "name": "U+1800-18AF",
                     "description": "Mongolian."
                 },
                 {
-                    "name": "U+1B80–1BBF",
+                    "name": "U+1B80-1BBF",
                     "description": "Sundanese."
                 },
                 {
-                    "name": "U+1CC0–1CCF",
+                    "name": "U+1CC0-1CCF",
                     "description": "Sundanese Supplement. Punctuation."
                 },
                 {
-                    "name": "U+4E00–9FD5",
+                    "name": "U+4E00-9FD5",
                     "description": "CJK (Chinese, Japanese, Korean) Unified Ideographs. Most common ideographs for modern Chinese and Japanese."
                 },
                 {
-                    "name": "U+3400–4DB5",
+                    "name": "U+3400-4DB5",
                     "description": "CJK Unified Ideographs Extension A. Rare ideographs."
                 },
                 {
-                    "name": "U+2F00–2FDF",
+                    "name": "U+2F00-2FDF",
                     "description": "Kangxi Radicals."
                 },
                 {
-                    "name": "U+2E80–2EFF",
+                    "name": "U+2E80-2EFF",
                     "description": "CJK Radicals Supplement. Alternative forms of Kangxi Radicals."
                 },
                 {
-                    "name": "U+1100–11FF",
+                    "name": "U+1100-11FF",
                     "description": "Hangul Jamo."
                 },
                 {
-                    "name": "U+AC00–D7AF",
+                    "name": "U+AC00-D7AF",
                     "description": "Hangul Syllables."
                 },
                 {
-                    "name": "U+3040–309F",
+                    "name": "U+3040-309F",
                     "description": "Hiragana."
                 },
                 {
-                    "name": "U+30A0–30FF",
+                    "name": "U+30A0-30FF",
                     "description": "Katakana."
                 },
                 {
@@ -53842,15 +56062,15 @@ const cssData = {
                     "description": "Japanese Kanji, Hiragana and Katakana characters plus Yen/Yuan symbol."
                 },
                 {
-                    "name": "U+A4D0–A4FF",
+                    "name": "U+A4D0-A4FF",
                     "description": "Lisu."
                 },
                 {
-                    "name": "U+A000–A48F",
+                    "name": "U+A000-A48F",
                     "description": "Yi Syllables."
                 },
                 {
-                    "name": "U+A490–A4CF",
+                    "name": "U+A490-A4CF",
                     "description": "Yi Radicals."
                 },
                 {
@@ -53858,35 +56078,35 @@ const cssData = {
                     "description": "General Punctuation."
                 },
                 {
-                    "name": "U+3000–303F",
+                    "name": "U+3000-303F",
                     "description": "CJK Symbols and Punctuation."
                 },
                 {
-                    "name": "U+2070–209F",
+                    "name": "U+2070-209F",
                     "description": "Superscripts and Subscripts."
                 },
                 {
-                    "name": "U+20A0–20CF",
+                    "name": "U+20A0-20CF",
                     "description": "Currency Symbols."
                 },
                 {
-                    "name": "U+2100–214F",
+                    "name": "U+2100-214F",
                     "description": "Letterlike Symbols."
                 },
                 {
-                    "name": "U+2150–218F",
+                    "name": "U+2150-218F",
                     "description": "Number Forms."
                 },
                 {
-                    "name": "U+2190–21FF",
+                    "name": "U+2190-21FF",
                     "description": "Arrows."
                 },
                 {
-                    "name": "U+2200–22FF",
+                    "name": "U+2200-22FF",
                     "description": "Mathematical Operators."
                 },
                 {
-                    "name": "U+2300–23FF",
+                    "name": "U+2300-23FF",
                     "description": "Miscellaneous Technical."
                 },
                 {
@@ -53894,31 +56114,31 @@ const cssData = {
                     "description": "Private Use Area."
                 },
                 {
-                    "name": "U+FB00–FB4F",
+                    "name": "U+FB00-FB4F",
                     "description": "Alphabetic Presentation Forms. Ligatures for latin, Armenian, and Hebrew."
                 },
                 {
-                    "name": "U+FB50–FDFF",
+                    "name": "U+FB50-FDFF",
                     "description": "Arabic Presentation Forms-A. Contextual forms / ligatures for Persian, Urdu, Sindhi, Central Asian languages, etc, Arabic pedagogical symbols, word ligatures."
                 },
                 {
-                    "name": "U+1F600–1F64F",
+                    "name": "U+1F600-1F64F",
                     "description": "Emoji: Emoticons."
                 },
                 {
-                    "name": "U+2600–26FF",
+                    "name": "U+2600-26FF",
                     "description": "Emoji: Miscellaneous Symbols."
                 },
                 {
-                    "name": "U+1F300–1F5FF",
+                    "name": "U+1F300-1F5FF",
                     "description": "Emoji: Miscellaneous Symbols and Pictographs."
                 },
                 {
-                    "name": "U+1F900–1F9FF",
+                    "name": "U+1F900-1F9FF",
                     "description": "Emoji: Supplemental Symbols and Pictographs."
                 },
                 {
-                    "name": "U+1F680–1F6FF",
+                    "name": "U+1F680-1F6FF",
                     "description": "Emoji: Transport and Map Symbols."
                 }
             ],
@@ -53931,6 +56151,14 @@ const cssData = {
         },
         {
             "name": "user-select",
+            "browsers": [
+                "E79",
+                "FF69",
+                "S3",
+                "C54",
+                "IE10",
+                "O41"
+            ],
             "values": [
                 {
                     "name": "all",
@@ -53953,7 +56181,7 @@ const cssData = {
                 }
             ],
             "syntax": "auto | text | none | contain | all",
-            "relevance": 77,
+            "relevance": 81,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -53967,6 +56195,14 @@ const cssData = {
         },
         {
             "name": "vertical-align",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -54005,11 +56241,19 @@ const cssData = {
                     "description": "Align the before edge of the extended inline box with the before-edge of the line box."
                 },
                 {
-                    "name": "-webkit-baseline-middle"
+                    "name": "-webkit-baseline-middle",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O4"
+                    ]
                 }
             ],
             "syntax": "baseline | sub | super | text-top | text-bottom | middle | top | bottom | <percentage> | <length>",
-            "relevance": 91,
+            "relevance": 92,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -54024,6 +56268,14 @@ const cssData = {
         },
         {
             "name": "visibility",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "collapse",
@@ -54046,7 +56298,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/visibility"
                 }
             ],
-            "description": "Specifies whether the boxes generated by an element are rendered. Invisible boxes still affect layout (set the ‘display’ property to ‘none’ to suppress box generation altogether).",
+            "description": "Specifies whether the boxes generated by an element are rendered. Invisible boxes still affect layout (set the 'display' property to 'none' to suppress box generation altogether).",
             "restrictions": [
                 "enum"
             ]
@@ -55285,7 +57537,7 @@ const cssData = {
                 }
             ],
             "relevance": 50,
-            "description": "Processes an element’s rendering before it is displayed in the document, by applying one or more filter effects.",
+            "description": "Processes an element's rendering before it is displayed in the document, by applying one or more filter effects.",
             "restrictions": [
                 "enum",
                 "url"
@@ -55583,7 +57835,7 @@ const cssData = {
             "values": [
                 {
                     "name": "auto",
-                    "description": "Resolved by using the image’s intrinsic ratio and the size of the other dimension, or failing that, using the image’s intrinsic size, or failing that, treating it as 100%."
+                    "description": "Resolved by using the image's intrinsic ratio and the size of the other dimension, or failing that, using the image's intrinsic size, or failing that, treating it as 100%."
                 },
                 {
                     "name": "contain",
@@ -56221,6 +58473,14 @@ const cssData = {
         },
         {
             "name": "width",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -56228,14 +58488,38 @@ const cssData = {
                 },
                 {
                     "name": "fit-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O3.5"
+                    ],
                     "description": "Use the fit-content inline size or fit-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "max-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O3.5"
+                    ],
                     "description": "Use the max-content inline size or max-content block size, as appropriate to the writing mode."
                 },
                 {
                     "name": "min-content",
+                    "browsers": [
+                        "E12",
+                        "FF1",
+                        "S1",
+                        "C1",
+                        "IE4",
+                        "O3.5"
+                    ],
                     "description": "Use the min-content inline size or min-content block size, as appropriate to the writing mode."
                 }
             ],
@@ -56269,7 +58553,7 @@ const cssData = {
                 },
                 {
                     "name": "contents",
-                    "description": "Indicates that the author expects to animate or change something about the element’s contents in the near future."
+                    "description": "Indicates that the author expects to animate or change something about the element's contents in the near future."
                 },
                 {
                     "name": "scroll-position",
@@ -56292,6 +58576,14 @@ const cssData = {
         },
         {
             "name": "word-break",
+            "browsers": [
+                "E12",
+                "FF15",
+                "S3",
+                "C1",
+                "IE5.5",
+                "O15"
+            ],
             "values": [
                 {
                     "name": "break-all",
@@ -56307,7 +58599,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | break-all | keep-all | break-word",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -56321,6 +58613,14 @@ const cssData = {
         },
         {
             "name": "word-spacing",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE6",
+                "O3.5"
+            ],
             "values": [
                 {
                     "name": "normal",
@@ -56335,7 +58635,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/word-spacing"
                 }
             ],
-            "description": "Specifies additional spacing between “words”.",
+            "description": "Specifies additional spacing between \"words\".",
             "restrictions": [
                 "length",
                 "percentage"
@@ -56354,7 +58654,7 @@ const cssData = {
                 }
             ],
             "syntax": "normal | break-word",
-            "relevance": 77,
+            "relevance": 78,
             "description": "Specifies whether the UA may break within a word to prevent overflow when an otherwise-unbreakable string is too long to fit.",
             "restrictions": [
                 "enum"
@@ -56362,6 +58662,14 @@ const cssData = {
         },
         {
             "name": "writing-mode",
+            "browsers": [
+                "E12",
+                "FF41",
+                "S10.1",
+                "C48",
+                "IE9",
+                "O35"
+            ],
             "values": [
                 {
                     "name": "horizontal-tb",
@@ -56369,10 +58677,26 @@ const cssData = {
                 },
                 {
                     "name": "sideways-lr",
+                    "browsers": [
+                        "E12",
+                        "FF41",
+                        "S10.1",
+                        "C48",
+                        "IE9",
+                        "O35"
+                    ],
                     "description": "Left-to-right block flow direction. The writing mode is vertical, while the typographic mode is horizontal."
                 },
                 {
                     "name": "sideways-rl",
+                    "browsers": [
+                        "E12",
+                        "FF41",
+                        "S10.1",
+                        "C48",
+                        "IE9",
+                        "O35"
+                    ],
                     "description": "Right-to-left block flow direction. The writing mode is vertical, while the typographic mode is horizontal."
                 },
                 {
@@ -56399,6 +58723,14 @@ const cssData = {
         },
         {
             "name": "z-index",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O4"
+            ],
             "values": [
                 {
                     "name": "auto",
@@ -56452,6 +58784,14 @@ const cssData = {
             "name": "-ms-ime-align",
             "status": "nonstandard",
             "syntax": "auto | after",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "after"
+                }
+            ],
             "relevance": 0,
             "description": "Aligns the Input Method Editor (IME) candidate window box relative to the element on which the IME composition is active."
         },
@@ -56482,6 +58822,20 @@ const cssData = {
             "name": "-moz-float-edge",
             "status": "obsolete",
             "syntax": "border-box | content-box | margin-box | padding-box",
+            "values": [
+                {
+                    "name": "border-box"
+                },
+                {
+                    "name": "content-box"
+                },
+                {
+                    "name": "margin-box"
+                },
+                {
+                    "name": "padding-box"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF1"
@@ -56498,6 +58852,14 @@ const cssData = {
             "name": "-moz-force-broken-image-icon",
             "status": "obsolete",
             "syntax": "0 | 1",
+            "values": [
+                {
+                    "name": "0"
+                },
+                {
+                    "name": "1"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF1"
@@ -56530,6 +58892,20 @@ const cssData = {
             "name": "-moz-orient",
             "status": "nonstandard",
             "syntax": "inline | block | horizontal | vertical",
+            "values": [
+                {
+                    "name": "inline"
+                },
+                {
+                    "name": "block"
+                },
+                {
+                    "name": "horizontal"
+                },
+                {
+                    "name": "vertical"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF6"
@@ -56626,6 +59002,14 @@ const cssData = {
             "name": "-moz-stack-sizing",
             "status": "nonstandard",
             "syntax": "ignore | stretch-to-fit",
+            "values": [
+                {
+                    "name": "ignore"
+                },
+                {
+                    "name": "stretch-to-fit"
+                }
+            ],
             "relevance": 0,
             "description": "-moz-stack-sizing is an extended CSS property. Normally, a stack will change its size so that all of its child elements are completely visible. For example, moving a child of the stack far to the right will widen the stack so the child remains visible."
         },
@@ -56633,6 +59017,14 @@ const cssData = {
             "name": "-moz-text-blink",
             "status": "nonstandard",
             "syntax": "none | blink",
+            "values": [
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "blink"
+                }
+            ],
             "relevance": 0,
             "description": "The -moz-text-blink non-standard Mozilla CSS extension specifies the blink mode."
         },
@@ -56640,6 +59032,20 @@ const cssData = {
             "name": "-moz-user-input",
             "status": "obsolete",
             "syntax": "auto | none | enabled | disabled",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "enabled"
+                },
+                {
+                    "name": "disabled"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF1"
@@ -56656,6 +59062,17 @@ const cssData = {
             "name": "-moz-user-modify",
             "status": "nonstandard",
             "syntax": "read-only | read-write | write-only",
+            "values": [
+                {
+                    "name": "read-only"
+                },
+                {
+                    "name": "read-write"
+                },
+                {
+                    "name": "write-only"
+                }
+            ],
             "relevance": 0,
             "description": "The -moz-user-modify property has no effect. It was originally planned to determine whether or not the content of an element can be edited by a user."
         },
@@ -56663,6 +59080,14 @@ const cssData = {
             "name": "-moz-window-dragging",
             "status": "nonstandard",
             "syntax": "drag | no-drag",
+            "values": [
+                {
+                    "name": "drag"
+                },
+                {
+                    "name": "no-drag"
+                }
+            ],
             "relevance": 0,
             "description": "The -moz-window-dragging CSS property specifies whether a window is draggable or not. It only works in Chrome code, and only on Mac OS X."
         },
@@ -56670,6 +59095,23 @@ const cssData = {
             "name": "-moz-window-shadow",
             "status": "nonstandard",
             "syntax": "default | menu | tooltip | sheet | none",
+            "values": [
+                {
+                    "name": "default"
+                },
+                {
+                    "name": "menu"
+                },
+                {
+                    "name": "tooltip"
+                },
+                {
+                    "name": "sheet"
+                },
+                {
+                    "name": "none"
+                }
+            ],
             "relevance": 0,
             "description": "The -moz-window-shadow CSS property specifies whether a window will have a shadow. It only works on Mac OS X."
         },
@@ -56827,6 +59269,20 @@ const cssData = {
             "name": "-webkit-mask-repeat-x",
             "status": "nonstandard",
             "syntax": "repeat | no-repeat | space | round",
+            "values": [
+                {
+                    "name": "repeat"
+                },
+                {
+                    "name": "no-repeat"
+                },
+                {
+                    "name": "space"
+                },
+                {
+                    "name": "round"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "E79",
@@ -56846,6 +59302,20 @@ const cssData = {
             "name": "-webkit-mask-repeat-y",
             "status": "nonstandard",
             "syntax": "repeat | no-repeat | space | round",
+            "values": [
+                {
+                    "name": "repeat"
+                },
+                {
+                    "name": "no-repeat"
+                },
+                {
+                    "name": "space"
+                },
+                {
+                    "name": "round"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "E79",
@@ -56897,7 +59367,25 @@ const cssData = {
             "description": "The align-tracks CSS property sets the alignment in the masonry axis for grid containers that have masonry in their block axis."
         },
         {
+            "name": "animation-composition",
+            "status": "experimental",
+            "syntax": "<single-animation-composition>#",
+            "relevance": 50,
+            "browsers": [
+                "FF104",
+                "S16"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/animation-composition"
+                }
+            ],
+            "description": "The composite operation to use when multiple animations affect the same property."
+        },
+        {
             "name": "animation-timeline",
+            "status": "experimental",
             "syntax": "<single-animation-timeline>#",
             "relevance": 50,
             "browsers": [
@@ -56914,7 +59402,7 @@ const cssData = {
         {
             "name": "appearance",
             "syntax": "none | auto | textfield | menulist-button | <compat-auto>",
-            "relevance": 62,
+            "relevance": 63,
             "browsers": [
                 "E84",
                 "FF80",
@@ -56933,7 +59421,7 @@ const cssData = {
         {
             "name": "aspect-ratio",
             "syntax": "auto | <ratio>",
-            "relevance": 53,
+            "relevance": 57,
             "browsers": [
                 "E88",
                 "FF89",
@@ -56959,7 +59447,7 @@ const cssData = {
         {
             "name": "backdrop-filter",
             "syntax": "none | <filter-function-list>",
-            "relevance": 54,
+            "relevance": 58,
             "browsers": [
                 "E17",
                 "FF103",
@@ -57207,6 +59695,23 @@ const cssData = {
             "name": "box-align",
             "status": "obsolete",
             "syntax": "start | center | end | baseline | stretch",
+            "values": [
+                {
+                    "name": "start"
+                },
+                {
+                    "name": "center"
+                },
+                {
+                    "name": "end"
+                },
+                {
+                    "name": "baseline"
+                },
+                {
+                    "name": "stretch"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "E12",
@@ -57227,6 +59732,17 @@ const cssData = {
             "name": "box-direction",
             "status": "obsolete",
             "syntax": "normal | reverse | inherit",
+            "values": [
+                {
+                    "name": "normal"
+                },
+                {
+                    "name": "reverse"
+                },
+                {
+                    "name": "inherit"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "E12",
@@ -57285,6 +59801,14 @@ const cssData = {
             "name": "box-lines",
             "status": "obsolete",
             "syntax": "single | multiple",
+            "values": [
+                {
+                    "name": "single"
+                },
+                {
+                    "name": "multiple"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "S3",
@@ -57323,6 +59847,23 @@ const cssData = {
             "name": "box-orient",
             "status": "obsolete",
             "syntax": "horizontal | vertical | inline-axis | block-axis | inherit",
+            "values": [
+                {
+                    "name": "horizontal"
+                },
+                {
+                    "name": "vertical"
+                },
+                {
+                    "name": "inline-axis"
+                },
+                {
+                    "name": "block-axis"
+                },
+                {
+                    "name": "inherit"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "E12",
@@ -57343,6 +59884,20 @@ const cssData = {
             "name": "box-pack",
             "status": "obsolete",
             "syntax": "start | center | end | justify",
+            "values": [
+                {
+                    "name": "start"
+                },
+                {
+                    "name": "center"
+                },
+                {
+                    "name": "end"
+                },
+                {
+                    "name": "justify"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "E12",
@@ -57360,8 +59915,42 @@ const cssData = {
             "description": "The -moz-box-pack and -webkit-box-pack CSS properties specify how a -moz-box or -webkit-box packs its contents in the direction of its layout. The effect of this is only visible if there is extra space in the box."
         },
         {
+            "name": "caret",
+            "syntax": "<'caret-color'> || <'caret-shape'>",
+            "relevance": 50,
+            "description": "Shorthand for setting caret-color and caret-shape."
+        },
+        {
+            "name": "caret-shape",
+            "syntax": "auto | bar | block | underscore",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "bar"
+                },
+                {
+                    "name": "block"
+                },
+                {
+                    "name": "underscore"
+                }
+            ],
+            "relevance": 50,
+            "description": "Specifies the desired shape of the text insertion caret."
+        },
+        {
             "name": "print-color-adjust",
             "syntax": "economy | exact",
+            "values": [
+                {
+                    "name": "economy"
+                },
+                {
+                    "name": "exact"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E79",
@@ -57398,9 +59987,115 @@ const cssData = {
             "description": "The color-scheme CSS property allows an element to indicate which color schemes it can comfortably be rendered in."
         },
         {
+            "name": "contain-intrinsic-size",
+            "status": "experimental",
+            "syntax": "[ none | <length> | auto <length> ]{1,2}",
+            "relevance": 50,
+            "browsers": [
+                "E83",
+                "FF104",
+                "C83",
+                "O69"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-size"
+                }
+            ],
+            "description": "Size of an element when the element is subject to size containment."
+        },
+        {
+            "name": "contain-intrinsic-block-size",
+            "status": "experimental",
+            "syntax": "none | <length> | auto <length>",
+            "relevance": 50,
+            "browsers": [
+                "E95",
+                "FF104",
+                "C95",
+                "O81"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-block-size"
+                }
+            ],
+            "description": "Block size of an element when the element is subject to size containment."
+        },
+        {
+            "name": "contain-intrinsic-height",
+            "status": "experimental",
+            "syntax": "none | <length> | auto <length>",
+            "relevance": 50,
+            "browsers": [
+                "E83",
+                "FF104",
+                "C83",
+                "O69"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-height"
+                }
+            ],
+            "description": "Height of an element when the element is subject to size containment."
+        },
+        {
+            "name": "contain-intrinsic-inline-size",
+            "status": "experimental",
+            "syntax": "none | <length> | auto <length>",
+            "relevance": 50,
+            "browsers": [
+                "E95",
+                "FF104",
+                "C95",
+                "O81"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-inline-size"
+                }
+            ],
+            "description": "Inline size of an element when the element is subject to size containment."
+        },
+        {
+            "name": "contain-intrinsic-width",
+            "status": "experimental",
+            "syntax": "none | <length> | auto <length>",
+            "relevance": 50,
+            "browsers": [
+                "E83",
+                "FF104",
+                "C83",
+                "O69"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-width"
+                }
+            ],
+            "description": "Width of an element when the element is subject to size containment."
+        },
+        {
             "name": "content-visibility",
             "syntax": "visible | auto | hidden",
-            "relevance": 51,
+            "values": [
+                {
+                    "name": "visible"
+                },
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "hidden"
+                }
+            ],
+            "relevance": 52,
             "browsers": [
                 "E85",
                 "C85",
@@ -57435,6 +60130,14 @@ const cssData = {
         {
             "name": "font-optical-sizing",
             "syntax": "auto | none",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "none"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E17",
@@ -57493,7 +60196,15 @@ const cssData = {
         {
             "name": "forced-color-adjust",
             "syntax": "auto | none",
-            "relevance": 52,
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "none"
+                }
+            ],
+            "relevance": 57,
             "browsers": [
                 "E79",
                 "C89",
@@ -57510,7 +60221,7 @@ const cssData = {
         {
             "name": "gap",
             "syntax": "<'row-gap'> <'column-gap'>?",
-            "relevance": 57,
+            "relevance": 58,
             "browsers": [
                 "E16",
                 "FF52",
@@ -57546,11 +60257,11 @@ const cssData = {
             "syntax": "auto | <string>",
             "relevance": 50,
             "browsers": [
-                "E79",
+                "E106",
                 "FF98",
                 "S5.1",
-                "C6",
-                "O15"
+                "C106",
+                "O92"
             ],
             "references": [
                 {
@@ -57599,6 +60310,14 @@ const cssData = {
         {
             "name": "input-security",
             "syntax": "auto | none",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "none"
+                }
+            ],
             "relevance": 50,
             "description": "Enables or disables the obscuring a sensitive test input."
         },
@@ -57818,6 +60537,17 @@ const cssData = {
             "name": "margin-trim",
             "status": "experimental",
             "syntax": "none | in-flow | all",
+            "values": [
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "in-flow"
+                },
+                {
+                    "name": "all"
+                }
+            ],
             "relevance": 50,
             "references": [
                 {
@@ -57867,6 +60597,14 @@ const cssData = {
         {
             "name": "mask-border-mode",
             "syntax": "luminance | alpha",
+            "values": [
+                {
+                    "name": "luminance"
+                },
+                {
+                    "name": "alpha"
+                }
+            ],
             "relevance": 50,
             "description": "The mask-border-mode CSS property specifies the blending mode used in a mask border."
         },
@@ -58010,8 +60748,59 @@ const cssData = {
             "description": "The masonry-auto-flow CSS property modifies how items are placed when using masonry in CSS Grid Layout."
         },
         {
+            "name": "math-depth",
+            "syntax": "auto-add | add(<integer>) | <integer>",
+            "relevance": 50,
+            "browsers": [
+                "E87",
+                "FF83",
+                "C87",
+                "O73"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/math-depth"
+                }
+            ],
+            "description": "Describe a notion of \"depth\" for each element of a mathematical formula, with respect to the top-level container of that formula."
+        },
+        {
+            "name": "math-shift",
+            "syntax": "normal | compact",
+            "values": [
+                {
+                    "name": "normal"
+                },
+                {
+                    "name": "compact"
+                }
+            ],
+            "relevance": 50,
+            "browsers": [
+                "E87",
+                "C87",
+                "O73"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/math-shift"
+                }
+            ],
+            "description": "Used for positioning superscript during the layout of MathML scripted elements."
+        },
+        {
             "name": "math-style",
             "syntax": "normal | compact",
+            "values": [
+                {
+                    "name": "normal"
+                },
+                {
+                    "name": "compact"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E83",
@@ -58140,6 +60929,14 @@ const cssData = {
         {
             "name": "overflow-anchor",
             "syntax": "auto | none",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "none"
+                }
+            ],
             "relevance": 52,
             "browsers": [
                 "E79",
@@ -58158,6 +60955,23 @@ const cssData = {
         {
             "name": "overflow-block",
             "syntax": "visible | hidden | clip | scroll | auto",
+            "values": [
+                {
+                    "name": "visible"
+                },
+                {
+                    "name": "hidden"
+                },
+                {
+                    "name": "clip"
+                },
+                {
+                    "name": "scroll"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "FF69"
@@ -58174,6 +60988,14 @@ const cssData = {
             "name": "overflow-clip-box",
             "status": "nonstandard",
             "syntax": "padding-box | content-box",
+            "values": [
+                {
+                    "name": "padding-box"
+                },
+                {
+                    "name": "content-box"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF29"
@@ -58192,6 +61014,7 @@ const cssData = {
             "relevance": 50,
             "browsers": [
                 "E90",
+                "FF102",
                 "C90",
                 "O76"
             ],
@@ -58206,6 +61029,23 @@ const cssData = {
         {
             "name": "overflow-inline",
             "syntax": "visible | hidden | clip | scroll | auto",
+            "values": [
+                {
+                    "name": "visible"
+                },
+                {
+                    "name": "hidden"
+                },
+                {
+                    "name": "clip"
+                },
+                {
+                    "name": "scroll"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "FF69"
@@ -58240,6 +61080,17 @@ const cssData = {
         {
             "name": "overscroll-behavior-block",
             "syntax": "contain | none | auto",
+            "values": [
+                {
+                    "name": "contain"
+                },
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E79",
@@ -58259,6 +61110,17 @@ const cssData = {
         {
             "name": "overscroll-behavior-inline",
             "syntax": "contain | none | auto",
+            "values": [
+                {
+                    "name": "contain"
+                },
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E79",
@@ -58278,6 +61140,17 @@ const cssData = {
         {
             "name": "overscroll-behavior-x",
             "syntax": "contain | none | auto",
+            "values": [
+                {
+                    "name": "contain"
+                },
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E18",
@@ -58297,6 +61170,17 @@ const cssData = {
         {
             "name": "overscroll-behavior-y",
             "syntax": "contain | none | auto",
+            "values": [
+                {
+                    "name": "contain"
+                },
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E18",
@@ -58450,6 +61334,17 @@ const cssData = {
             "name": "ruby-merge",
             "status": "experimental",
             "syntax": "separate | collapse | auto",
+            "values": [
+                {
+                    "name": "separate"
+                },
+                {
+                    "name": "collapse"
+                },
+                {
+                    "name": "auto"
+                }
+            ],
             "relevance": 50,
             "description": "This property controls how ruby annotation boxes should be rendered when there are more than one in a ruby container box: whether each pair should be kept separate, the annotations should be collapsed and rendered as a group, or the separation should be determined based on the space available."
         },
@@ -58508,6 +61403,17 @@ const cssData = {
         {
             "name": "scrollbar-width",
             "syntax": "auto | thin | none",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "thin"
+                },
+                {
+                    "name": "none"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "FF64"
@@ -58922,7 +61828,7 @@ const cssData = {
         {
             "name": "scroll-padding-top",
             "syntax": "auto | <length-percentage>",
-            "relevance": 50,
+            "relevance": 51,
             "browsers": [
                 "E79",
                 "FF68",
@@ -58941,7 +61847,7 @@ const cssData = {
         {
             "name": "scroll-snap-align",
             "syntax": "[ none | start | end | center ]{1,2}",
-            "relevance": 52,
+            "relevance": 53,
             "browsers": [
                 "E79",
                 "FF68",
@@ -58960,6 +61866,14 @@ const cssData = {
         {
             "name": "scroll-snap-stop",
             "syntax": "normal | always",
+            "values": [
+                {
+                    "name": "normal"
+                },
+                {
+                    "name": "always"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E79",
@@ -58980,6 +61894,17 @@ const cssData = {
             "name": "scroll-snap-type-x",
             "status": "obsolete",
             "syntax": "none | mandatory | proximity",
+            "values": [
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "mandatory"
+                },
+                {
+                    "name": "proximity"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF39",
@@ -58997,6 +61922,17 @@ const cssData = {
             "name": "scroll-snap-type-y",
             "status": "obsolete",
             "syntax": "none | mandatory | proximity",
+            "values": [
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "mandatory"
+                },
+                {
+                    "name": "proximity"
+                }
+            ],
             "relevance": 0,
             "browsers": [
                 "FF39"
@@ -59010,9 +61946,79 @@ const cssData = {
             "description": "The scroll-snap-type-y CSS property defines how strictly snap points are enforced on the vertical axis of the scroll container in case there is one.\n\nSpecifying any precise animations or physics used to enforce those snap points is not covered by this property but instead left up to the user agent."
         },
         {
+            "name": "scroll-timeline",
+            "status": "experimental",
+            "syntax": "<scroll-timeline-name> || <scroll-timeline-axis>",
+            "relevance": 50,
+            "browsers": [
+                "FF103"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline"
+                }
+            ],
+            "description": "Defines a name that can be used to identify the source element of a scroll timeline, along with the scrollbar axis that should provide the timeline."
+        },
+        {
+            "name": "scroll-timeline-axis",
+            "status": "experimental",
+            "syntax": "block | inline | vertical | horizontal",
+            "values": [
+                {
+                    "name": "block"
+                },
+                {
+                    "name": "inline"
+                },
+                {
+                    "name": "vertical"
+                },
+                {
+                    "name": "horizontal"
+                }
+            ],
+            "relevance": 50,
+            "browsers": [
+                "FF103"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-axis"
+                }
+            ],
+            "description": "Specifies the scrollbar that will be used to provide the timeline for a scroll-timeline animation"
+        },
+        {
+            "name": "scroll-timeline-name",
+            "status": "experimental",
+            "syntax": "none | <custom-ident>",
+            "relevance": 50,
+            "browsers": [
+                "FF103"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-name"
+                }
+            ],
+            "description": "Defines a name that can be used to identify an element as the source of a scroll-timeline."
+        },
+        {
             "name": "text-combine-upright",
             "syntax": "none | all | [ digits <integer>? ]",
             "relevance": 50,
+            "browsers": [
+                "E15",
+                "FF48",
+                "S5.1",
+                "C48",
+                "IE11",
+                "O35"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59042,6 +62048,17 @@ const cssData = {
         {
             "name": "text-decoration-skip-ink",
             "syntax": "auto | all | none",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "all"
+                },
+                {
+                    "name": "none"
+                }
+            ],
             "relevance": 51,
             "browsers": [
                 "E79",
@@ -59157,7 +62174,7 @@ const cssData = {
             "name": "text-size-adjust",
             "status": "experimental",
             "syntax": "none | auto | <percentage>",
-            "relevance": 58,
+            "relevance": 60,
             "browsers": [
                 "E79",
                 "C54",
@@ -59193,6 +62210,23 @@ const cssData = {
         {
             "name": "transform-box",
             "syntax": "content-box | border-box | fill-box | stroke-box | view-box",
+            "values": [
+                {
+                    "name": "content-box"
+                },
+                {
+                    "name": "border-box"
+                },
+                {
+                    "name": "fill-box"
+                },
+                {
+                    "name": "stroke-box"
+                },
+                {
+                    "name": "view-box"
+                }
+            ],
             "relevance": 50,
             "browsers": [
                 "E79",
@@ -59231,7 +62265,35 @@ const cssData = {
         {
             "name": "white-space",
             "syntax": "normal | pre | nowrap | pre-wrap | pre-line | break-spaces",
-            "relevance": 89,
+            "values": [
+                {
+                    "name": "normal"
+                },
+                {
+                    "name": "pre"
+                },
+                {
+                    "name": "nowrap"
+                },
+                {
+                    "name": "pre-wrap"
+                },
+                {
+                    "name": "pre-line"
+                },
+                {
+                    "name": "break-spaces"
+                }
+            ],
+            "relevance": 90,
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O4"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59264,7 +62326,7 @@ const cssData = {
             "name": "font-display",
             "status": "experimental",
             "syntax": "[ auto | block | swap | fallback | optional ]",
-            "relevance": 71,
+            "relevance": 72,
             "description": "The font-display descriptor determines how a font face is displayed based on whether and when it is downloaded and ready to use."
         },
         {
@@ -59304,6 +62366,14 @@ const cssData = {
             "name": "inherits",
             "status": "experimental",
             "syntax": "true | false",
+            "values": [
+                {
+                    "name": "true"
+                },
+                {
+                    "name": "false"
+                }
+            ],
             "relevance": 50,
             "description": "Specifies the inherit flag of the custom property registration represented by the @property rule, controlling whether or not the property inherits by default."
         },
@@ -59329,18 +62399,48 @@ const cssData = {
         {
             "name": "orientation",
             "syntax": "auto | portrait | landscape",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "portrait"
+                },
+                {
+                    "name": "landscape"
+                }
+            ],
             "relevance": 50,
             "description": "The orientation CSS @media media feature can be used to apply styles based on the orientation of the viewport (or the page box, for paged media)."
         },
         {
             "name": "user-zoom",
             "syntax": "zoom | fixed",
+            "values": [
+                {
+                    "name": "zoom"
+                },
+                {
+                    "name": "fixed"
+                }
+            ],
             "relevance": 50,
             "description": "The user-zoom CSS descriptor controls whether or not the user can change the zoom factor of a document defined by @viewport."
         },
         {
             "name": "viewport-fit",
             "syntax": "auto | contain | cover",
+            "values": [
+                {
+                    "name": "auto"
+                },
+                {
+                    "name": "contain"
+                },
+                {
+                    "name": "cover"
+                }
+            ],
             "relevance": 50,
             "description": "The border-block-style CSS property defines the style of the logical block borders of an element, which maps to a physical border style depending on the element's writing mode, directionality, and text orientation."
         }
@@ -59348,6 +62448,14 @@ const cssData = {
     "atDirectives": [
         {
             "name": "@charset",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S4",
+                "C2",
+                "IE5.5",
+                "O9"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59374,6 +62482,14 @@ const cssData = {
         },
         {
             "name": "@font-face",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S3.1",
+                "C1",
+                "IE4",
+                "O10"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59398,6 +62514,14 @@ const cssData = {
         },
         {
             "name": "@import",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE5.5",
+                "O3.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59408,6 +62532,14 @@ const cssData = {
         },
         {
             "name": "@keyframes",
+            "browsers": [
+                "E12",
+                "FF16",
+                "S9",
+                "C43",
+                "IE10",
+                "O30"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59435,6 +62567,14 @@ const cssData = {
         },
         {
             "name": "@media",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3",
+                "C1",
+                "IE6",
+                "O9.2"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59467,6 +62607,14 @@ const cssData = {
         },
         {
             "name": "@namespace",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE9",
+                "O8"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59550,6 +62698,14 @@ const cssData = {
     "pseudoClasses": [
         {
             "name": ":active",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59577,6 +62733,14 @@ const cssData = {
         },
         {
             "name": ":checked",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59599,7 +62763,7 @@ const cssData = {
                 "C",
                 "S5"
             ],
-            "description": "Non-standard. Applies to buttons and track pieces. Indicates whether or not the button or track piece will decrement the view’s position when used."
+            "description": "Non-standard. Applies to buttons and track pieces. Indicates whether or not the button or track piece will decrement the view's position when used."
         },
         {
             "name": ":default",
@@ -59620,6 +62784,14 @@ const cssData = {
         },
         {
             "name": ":disabled",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59638,6 +62810,14 @@ const cssData = {
         },
         {
             "name": ":empty",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59648,6 +62828,14 @@ const cssData = {
         },
         {
             "name": ":enabled",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59683,6 +62871,14 @@ const cssData = {
         },
         {
             "name": ":first-child",
+            "browsers": [
+                "E12",
+                "FF3",
+                "S3.1",
+                "C4",
+                "IE7",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59693,6 +62889,14 @@ const cssData = {
         },
         {
             "name": ":first-of-type",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59703,6 +62907,14 @@ const cssData = {
         },
         {
             "name": ":focus",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE8",
+                "O7"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59713,6 +62925,14 @@ const cssData = {
         },
         {
             "name": ":fullscreen",
+            "browsers": [
+                "E12",
+                "FF64",
+                "S6",
+                "C71",
+                "IE11",
+                "O58"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59757,7 +62977,7 @@ const cssData = {
                     "url": "https://developer.mozilla.org/docs/Web/CSS/:host"
                 }
             ],
-            "description": "When evaluated in the context of a shadow tree, matches the shadow tree’s host element."
+            "description": "When evaluated in the context of a shadow tree, matches the shadow tree's host element."
         },
         {
             "name": ":host()",
@@ -59765,7 +62985,7 @@ const cssData = {
                 "C35",
                 "O22"
             ],
-            "description": "When evaluated in the context of a shadow tree, it matches the shadow tree’s host element if the host element, in its normal context, matches the selector argument."
+            "description": "When evaluated in the context of a shadow tree, it matches the shadow tree's host element if the host element, in its normal context, matches the selector argument."
         },
         {
             "name": ":host-context()",
@@ -59777,6 +62997,14 @@ const cssData = {
         },
         {
             "name": ":hover",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S2",
+                "C1",
+                "IE4",
+                "O4"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59791,10 +63019,18 @@ const cssData = {
                 "C",
                 "S5"
             ],
-            "description": "Non-standard. Applies to buttons and track pieces. Indicates whether or not the button or track piece will increment the view’s position when used."
+            "description": "Non-standard. Applies to buttons and track pieces. Indicates whether or not the button or track piece will increment the view's position when used."
         },
         {
             "name": ":indeterminate",
+            "browsers": [
+                "E12",
+                "FF2",
+                "S3",
+                "C1",
+                "IE10",
+                "O9"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59822,6 +63058,14 @@ const cssData = {
         },
         {
             "name": ":invalid",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C10",
+                "IE10",
+                "O10"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59844,6 +63088,14 @@ const cssData = {
         },
         {
             "name": ":last-child",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59854,6 +63106,14 @@ const cssData = {
         },
         {
             "name": ":last-of-type",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59866,7 +63126,7 @@ const cssData = {
             "name": ":left",
             "browsers": [
                 "E12",
-                "S5.1",
+                "S5",
                 "C6",
                 "IE8",
                 "O9.2"
@@ -59881,6 +63141,14 @@ const cssData = {
         },
         {
             "name": ":link",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE3",
+                "O3.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -59963,7 +63231,7 @@ const cssData = {
             "browsers": [
                 "FF3"
             ],
-            "description": "Non-standard. Matches elements, such as images, that haven’t started loading yet."
+            "description": "Non-standard. Matches elements, such as images, that haven't started loading yet."
         },
         {
             "name": ":-moz-only-whitespace",
@@ -60024,7 +63292,7 @@ const cssData = {
             "browsers": [
                 "FF3"
             ],
-            "description": "Non-standard. Matches elements representing images that have been disabled due to the user’s preferences."
+            "description": "Non-standard. Matches elements representing images that have been disabled due to the user's preferences."
         },
         {
             "name": ":-moz-window-inactive",
@@ -60138,6 +63406,14 @@ const cssData = {
         },
         {
             "name": ":only-child",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S3.1",
+                "C2",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60148,6 +63424,14 @@ const cssData = {
         },
         {
             "name": ":only-of-type",
+            "browsers": [
+                "E12",
+                "FF3.5",
+                "S3.1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60158,6 +63442,14 @@ const cssData = {
         },
         {
             "name": ":optional",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C10",
+                "IE10",
+                "O10"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60232,6 +63524,14 @@ const cssData = {
         },
         {
             "name": ":required",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C10",
+                "IE10",
+                "O10"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60244,7 +63544,7 @@ const cssData = {
             "name": ":right",
             "browsers": [
                 "E12",
-                "S5.1",
+                "S5",
                 "C6",
                 "IE8",
                 "O9.2"
@@ -60259,6 +63559,14 @@ const cssData = {
         },
         {
             "name": ":root",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60302,6 +63610,14 @@ const cssData = {
         },
         {
             "name": ":target",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1.3",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60312,6 +63628,14 @@ const cssData = {
         },
         {
             "name": ":valid",
+            "browsers": [
+                "E12",
+                "FF4",
+                "S5",
+                "C10",
+                "IE10",
+                "O10"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60330,6 +63654,14 @@ const cssData = {
         },
         {
             "name": ":visited",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE4",
+                "O3.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60511,6 +63843,14 @@ const cssData = {
         {
             "name": ":placeholder-shown",
             "status": "experimental",
+            "browsers": [
+                "E79",
+                "FF51",
+                "S9",
+                "C47",
+                "IE10",
+                "O34"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60610,16 +63950,32 @@ const cssData = {
     "pseudoElements": [
         {
             "name": "::after",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S4",
+                "C1",
+                "IE9",
+                "O7"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/::after"
                 }
             ],
-            "description": "Represents a styleable child pseudo-element immediately after the originating element’s actual content."
+            "description": "Represents a styleable child pseudo-element immediately after the originating element's actual content."
         },
         {
             "name": "::backdrop",
+            "browsers": [
+                "E79",
+                "FF47",
+                "S15.4",
+                "C37",
+                "IE11",
+                "O24"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60630,13 +63986,21 @@ const cssData = {
         },
         {
             "name": "::before",
+            "browsers": [
+                "E12",
+                "FF1.5",
+                "S4",
+                "C1",
+                "IE9",
+                "O7"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
                     "url": "https://developer.mozilla.org/docs/Web/CSS/::before"
                 }
             ],
-            "description": "Represents a styleable child pseudo-element immediately before the originating element’s actual content."
+            "description": "Represents a styleable child pseudo-element immediately before the originating element's actual content."
         },
         {
             "name": "::content",
@@ -60688,6 +64052,14 @@ const cssData = {
         },
         {
             "name": "::first-letter",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE9",
+                "O7"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60698,6 +64070,14 @@ const cssData = {
         },
         {
             "name": "::first-line",
+            "browsers": [
+                "E12",
+                "FF1",
+                "S1",
+                "C1",
+                "IE9",
+                "O7"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -60874,6 +64254,14 @@ const cssData = {
         },
         {
             "name": "::selection",
+            "browsers": [
+                "E12",
+                "FF62",
+                "S1.1",
+                "C1",
+                "IE9",
+                "O9.5"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -61602,10 +64990,10 @@ function getSelectionRanges(document, positions, stylesheet) {
         const applicableRanges = getApplicableRanges(position);
         let current = undefined;
         for (let index = applicableRanges.length - 1; index >= 0; index--) {
-            current = esm_main.SelectionRange.create(esm_main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+            current = main.SelectionRange.create(main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
         }
         if (!current) {
-            current = esm_main.SelectionRange.create(esm_main.Range.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     }
@@ -61756,6 +65144,7 @@ function createFacade(parser, completion, hover, navigation, codeActions, valida
         doCodeActions2: codeActions.doCodeActions2.bind(codeActions),
         findDocumentColors: navigation.findDocumentColors.bind(navigation),
         getColorPresentations: navigation.getColorPresentations.bind(navigation),
+        prepareRename: navigation.prepareRename.bind(navigation),
         doRename: navigation.doRename.bind(navigation),
         getFoldingRanges: getFoldingRanges,
         getSelectionRanges: getSelectionRanges
@@ -61788,52 +65177,52 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "Color": () => (/* reexport */ esm_main.Color),
-  "ColorInformation": () => (/* reexport */ esm_main.ColorInformation),
-  "ColorPresentation": () => (/* reexport */ esm_main.ColorPresentation),
-  "Command": () => (/* reexport */ esm_main.Command),
-  "CompletionItem": () => (/* reexport */ esm_main.CompletionItem),
-  "CompletionItemKind": () => (/* reexport */ esm_main.CompletionItemKind),
-  "CompletionItemTag": () => (/* reexport */ esm_main.CompletionItemTag),
-  "CompletionList": () => (/* reexport */ esm_main.CompletionList),
-  "Diagnostic": () => (/* reexport */ esm_main.Diagnostic),
-  "DocumentHighlight": () => (/* reexport */ esm_main.DocumentHighlight),
-  "DocumentHighlightKind": () => (/* reexport */ esm_main.DocumentHighlightKind),
-  "DocumentLink": () => (/* reexport */ esm_main.DocumentLink),
-  "DocumentUri": () => (/* reexport */ esm_main.DocumentUri),
+  "Color": () => (/* reexport */ main.Color),
+  "ColorInformation": () => (/* reexport */ main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
+  "Command": () => (/* reexport */ main.Command),
+  "CompletionItem": () => (/* reexport */ main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ main.CompletionList),
+  "Diagnostic": () => (/* reexport */ main.Diagnostic),
+  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ main.DocumentLink),
+  "DocumentUri": () => (/* reexport */ main.DocumentUri),
   "FileType": () => (/* reexport */ FileType),
-  "FoldingRange": () => (/* reexport */ esm_main.FoldingRange),
-  "FoldingRangeKind": () => (/* reexport */ esm_main.FoldingRangeKind),
-  "FormattingOptions": () => (/* reexport */ esm_main.FormattingOptions),
-  "Hover": () => (/* reexport */ esm_main.Hover),
-  "InsertReplaceEdit": () => (/* reexport */ esm_main.InsertReplaceEdit),
-  "InsertTextFormat": () => (/* reexport */ esm_main.InsertTextFormat),
-  "InsertTextMode": () => (/* reexport */ esm_main.InsertTextMode),
-  "Location": () => (/* reexport */ esm_main.Location),
-  "MarkedString": () => (/* reexport */ esm_main.MarkedString),
-  "MarkupContent": () => (/* reexport */ esm_main.MarkupContent),
-  "MarkupKind": () => (/* reexport */ esm_main.MarkupKind),
-  "Position": () => (/* reexport */ esm_main.Position),
-  "Range": () => (/* reexport */ esm_main.Range),
+  "FoldingRange": () => (/* reexport */ main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
+  "FormattingOptions": () => (/* reexport */ main.FormattingOptions),
+  "Hover": () => (/* reexport */ main.Hover),
+  "InsertReplaceEdit": () => (/* reexport */ main.InsertReplaceEdit),
+  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
+  "InsertTextMode": () => (/* reexport */ main.InsertTextMode),
+  "Location": () => (/* reexport */ main.Location),
+  "MarkedString": () => (/* reexport */ main.MarkedString),
+  "MarkupContent": () => (/* reexport */ main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ main.MarkupKind),
+  "Position": () => (/* reexport */ main.Position),
+  "Range": () => (/* reexport */ main.Range),
   "ScannerState": () => (/* reexport */ ScannerState),
-  "SelectionRange": () => (/* reexport */ esm_main.SelectionRange),
-  "SymbolInformation": () => (/* reexport */ esm_main.SymbolInformation),
-  "SymbolKind": () => (/* reexport */ esm_main.SymbolKind),
-  "TextDocument": () => (/* reexport */ lib_esm_main/* TextDocument */.n),
-  "TextEdit": () => (/* reexport */ esm_main.TextEdit),
+  "SelectionRange": () => (/* reexport */ main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ main.SymbolKind),
+  "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
+  "TextEdit": () => (/* reexport */ main.TextEdit),
   "TokenType": () => (/* reexport */ TokenType),
-  "WorkspaceEdit": () => (/* reexport */ esm_main.WorkspaceEdit),
+  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
   "getDefaultHTMLDataProvider": () => (/* binding */ getDefaultHTMLDataProvider),
   "getLanguageService": () => (/* binding */ getLanguageService),
   "newHTMLDataProvider": () => (/* binding */ newHTMLDataProvider)
 });
 
-// EXTERNAL MODULE: ./node_modules/vscode-nls/lib/browser/main.js
-var main = __webpack_require__(189);
+// EXTERNAL MODULE: ./node_modules/@vscode/l10n/dist/browser.esm.js
+var browser_esm = __webpack_require__(8482);
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-types/lib/esm/main.js
-var esm_main = __webpack_require__(1674);
+var main = __webpack_require__(1674);
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-textdocument/lib/esm/main.js
-var lib_esm_main = __webpack_require__(6813);
+var esm_main = __webpack_require__(6813);
 ;// CONCATENATED MODULE: ./node_modules/vscode-html-languageservice/lib/esm/htmlLanguageTypes.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -61887,11 +65276,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [esm_main.MarkupKind.Markdown, esm_main.MarkupKind.PlainText]
+                contentFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
             }
         }
     };
@@ -61923,7 +65312,6 @@ var FileType;
  *--------------------------------------------------------------------------------------------*/
 
 
-var localize = main.loadMessageBundle();
 var MultiLineStream = /** @class */ (function () {
     function MultiLineStream(source, position) {
         this.source = source;
@@ -62084,7 +65472,7 @@ function createScanner(input, initialOffset, initialState, emitPseudoCloseTags) 
         var oldState = state;
         var token = internalScan();
         if (token !== TokenType.EOS && offset === stream.pos() && !(emitPseudoCloseTags && (token === TokenType.StartTagClose || token === TokenType.EndTagClose))) {
-            console.log('Scanner.scan has not advanced at offset ' + offset + ', state before: ' + oldState + ' after: ' + state);
+            console.warn('Scanner.scan has not advanced at offset ' + offset + ', state before: ' + oldState + ' after: ' + state);
             stream.advance(1);
             return finishToken(offset, TokenType.Unknown);
         }
@@ -62139,12 +65527,12 @@ function createScanner(input, initialOffset, initialState, emitPseudoCloseTags) 
                     return finishToken(offset, TokenType.EndTag);
                 }
                 if (stream.skipWhitespace()) { // white space is not valid here
-                    return finishToken(offset, TokenType.Whitespace, localize('error.unexpectedWhitespace', 'Tag name must directly follow the open bracket.'));
+                    return finishToken(offset, TokenType.Whitespace, browser_esm.t('Tag name must directly follow the open bracket.'));
                 }
                 state = ScannerState.WithinEndTag;
                 stream.advanceUntilChar(_RAN);
                 if (offset < stream.pos()) {
-                    return finishToken(offset, TokenType.Unknown, localize('error.endTagNameExpected', 'End tag name expected.'));
+                    return finishToken(offset, TokenType.Unknown, browser_esm.t('End tag name expected.'));
                 }
                 return internalScan();
             case ScannerState.WithinEndTag:
@@ -62157,9 +65545,9 @@ function createScanner(input, initialOffset, initialState, emitPseudoCloseTags) 
                 }
                 if (emitPseudoCloseTags && stream.peekChar() === _LAN) { // <
                     state = ScannerState.WithinContent;
-                    return finishToken(offset, TokenType.EndTagClose, localize('error.closingBracketMissing', 'Closing bracket missing.'));
+                    return finishToken(offset, TokenType.EndTagClose, browser_esm.t('Closing bracket missing.'));
                 }
-                errorMessage = localize('error.closingBracketExpected', 'Closing bracket expected.');
+                errorMessage = browser_esm.t('Closing bracket expected.');
                 break;
             case ScannerState.AfterOpeningStartTag:
                 lastTag = nextElementName();
@@ -62171,12 +65559,12 @@ function createScanner(input, initialOffset, initialState, emitPseudoCloseTags) 
                     return finishToken(offset, TokenType.StartTag);
                 }
                 if (stream.skipWhitespace()) { // white space is not valid here
-                    return finishToken(offset, TokenType.Whitespace, localize('error.unexpectedWhitespace', 'Tag name must directly follow the open bracket.'));
+                    return finishToken(offset, TokenType.Whitespace, browser_esm.t('Tag name must directly follow the open bracket.'));
                 }
                 state = ScannerState.WithinTag;
                 stream.advanceUntilChar(_RAN);
                 if (offset < stream.pos()) {
-                    return finishToken(offset, TokenType.Unknown, localize('error.startTagNameExpected', 'Start tag name expected.'));
+                    return finishToken(offset, TokenType.Unknown, browser_esm.t('Start tag name expected.'));
                 }
                 return internalScan();
             case ScannerState.WithinTag:
@@ -62216,10 +65604,10 @@ function createScanner(input, initialOffset, initialState, emitPseudoCloseTags) 
                 }
                 if (emitPseudoCloseTags && stream.peekChar() === _LAN) { // <
                     state = ScannerState.WithinContent;
-                    return finishToken(offset, TokenType.StartTagClose, localize('error.closingBracketMissing', 'Closing bracket missing.'));
+                    return finishToken(offset, TokenType.StartTagClose, browser_esm.t('Closing bracket missing.'));
                 }
                 stream.advance(1);
-                return finishToken(offset, TokenType.Unknown, localize('error.unexpectedCharacterInTag', 'Unexpected character in tag.'));
+                return finishToken(offset, TokenType.Unknown, browser_esm.t('Unexpected character in tag.'));
             case ScannerState.AfterAttributeName:
                 if (stream.skipWhitespace()) {
                     hasSpaceAfterTag = true;
@@ -62239,14 +65627,16 @@ function createScanner(input, initialOffset, initialState, emitPseudoCloseTags) 
                 if (attributeValue.length > 0) {
                     if (stream.peekChar() === _RAN && stream.peekChar(-1) === _FSL) { // <foo bar=http://foo/>
                         stream.goBack(1);
-                        attributeValue = attributeValue.substr(0, attributeValue.length - 1);
+                        attributeValue = attributeValue.substring(0, attributeValue.length - 1);
                     }
                     if (lastAttributeName === 'type') {
                         lastTypeValue = attributeValue;
                     }
-                    state = ScannerState.WithinTag;
-                    hasSpaceAfterTag = false;
-                    return finishToken(offset, TokenType.AttributeValue);
+                    if (attributeValue.length > 0) {
+                        state = ScannerState.WithinTag;
+                        hasSpaceAfterTag = false;
+                        return finishToken(offset, TokenType.AttributeValue);
+                    }
                 }
                 var ch = stream.peekChar();
                 if (ch === _SQO || ch === _DQO) {
@@ -65026,7 +68416,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -65179,7 +68569,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, range) {
         else {
             endPos = shiftPosition(range.end, -1);
         }
-        replaceRange = esm_main.Range.create(startPos, endPos);
+        replaceRange = main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -65188,8 +68578,8 @@ function createCompletionItem(p, isDir, replaceRange) {
         p = p + '/';
         return {
             label: p,
-            kind: esm_main.CompletionItemKind.Folder,
-            textEdit: esm_main.TextEdit.replace(replaceRange, p),
+            kind: main.CompletionItemKind.Folder,
+            textEdit: main.TextEdit.replace(replaceRange, p),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -65199,18 +68589,18 @@ function createCompletionItem(p, isDir, replaceRange) {
     else {
         return {
             label: p,
-            kind: esm_main.CompletionItemKind.File,
-            textEdit: esm_main.TextEdit.replace(replaceRange, p)
+            kind: main.CompletionItemKind.File,
+            textEdit: main.TextEdit.replace(replaceRange, p)
         };
     }
 }
 function shiftPosition(pos, offset) {
-    return esm_main.Position.create(pos.line, pos.character + offset);
+    return main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     var start = shiftPosition(range.start, startOffset);
     var end = shiftPosition(range.end, endOffset);
-    return esm_main.Range.create(start, end);
+    return main.Range.create(start, end);
 }
 // Selected from https://stackoverflow.com/a/2725168/1780148
 var PATH_TAG_AND_ATTR = {
@@ -65259,7 +68649,7 @@ var htmlCompletion_generator = (undefined && undefined.__generator) || function 
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -65288,7 +68678,6 @@ var htmlCompletion_generator = (undefined && undefined.__generator) || function 
 
 
 
-var htmlCompletion_localize = main.loadMessageBundle();
 var HTMLCompletion = /** @class */ (function () {
     function HTMLCompletion(lsOptions, dataManager) {
         this.lsOptions = lsOptions;
@@ -65365,10 +68754,10 @@ var HTMLCompletion = /** @class */ (function () {
                 provider.provideTags().forEach(function (tag) {
                     result.items.push({
                         label: tag.name,
-                        kind: esm_main.CompletionItemKind.Property,
+                        kind: main.CompletionItemKind.Property,
                         documentation: generateDocumentation(tag, undefined, doesSupportMarkdown),
-                        textEdit: esm_main.TextEdit.replace(range, tag.name),
-                        insertTextFormat: esm_main.InsertTextFormat.PlainText
+                        textEdit: main.TextEdit.replace(range, tag.name),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -65401,16 +68790,16 @@ var HTMLCompletion = /** @class */ (function () {
                 if (tag && (!curr.closed || curr.endTagStart && (curr.endTagStart > offset))) {
                     var item = {
                         label: '/' + tag,
-                        kind: esm_main.CompletionItemKind.Property,
+                        kind: main.CompletionItemKind.Property,
                         filterText: '/' + tag,
-                        textEdit: esm_main.TextEdit.replace(range, '/' + tag + closeTag),
-                        insertTextFormat: esm_main.InsertTextFormat.PlainText
+                        textEdit: main.TextEdit.replace(range, '/' + tag + closeTag),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     };
                     var startIndent = getLineIndent(curr.start);
                     var endIndent = getLineIndent(afterOpenBracket - 1);
                     if (startIndent !== null && endIndent !== null && startIndent !== endIndent) {
                         var insertText = startIndent + '</' + tag + closeTag;
-                        item.textEdit = esm_main.TextEdit.replace(getReplaceRange(afterOpenBracket - 1 - endIndent.length), insertText);
+                        item.textEdit = main.TextEdit.replace(getReplaceRange(afterOpenBracket - 1 - endIndent.length), insertText);
                         item.filterText = endIndent + '</' + tag;
                     }
                     result.items.push(item);
@@ -65425,11 +68814,11 @@ var HTMLCompletion = /** @class */ (function () {
                 provider.provideTags().forEach(function (tag) {
                     result.items.push({
                         label: '/' + tag.name,
-                        kind: esm_main.CompletionItemKind.Property,
+                        kind: main.CompletionItemKind.Property,
                         documentation: generateDocumentation(tag, undefined, doesSupportMarkdown),
                         filterText: '/' + tag.name + closeTag,
-                        textEdit: esm_main.TextEdit.replace(range, '/' + tag.name + closeTag),
-                        insertTextFormat: esm_main.InsertTextFormat.PlainText
+                        textEdit: main.TextEdit.replace(range, '/' + tag.name + closeTag),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -65443,10 +68832,10 @@ var HTMLCompletion = /** @class */ (function () {
                 var pos = document.positionAt(tagCloseEnd);
                 result.items.push({
                     label: '</' + tag + '>',
-                    kind: esm_main.CompletionItemKind.Property,
+                    kind: main.CompletionItemKind.Property,
                     filterText: '</' + tag + '>',
-                    textEdit: esm_main.TextEdit.insert(pos, '$0</' + tag + '>'),
-                    insertTextFormat: esm_main.InsertTextFormat.Snippet
+                    textEdit: main.TextEdit.insert(pos, '$0</' + tag + '>'),
+                    insertTextFormat: main.InsertTextFormat.Snippet
                 });
             }
             return result;
@@ -65507,10 +68896,10 @@ var HTMLCompletion = /** @class */ (function () {
                     }
                     result.items.push({
                         label: attr.name,
-                        kind: attr.valueSet === 'handler' ? esm_main.CompletionItemKind.Function : esm_main.CompletionItemKind.Value,
+                        kind: attr.valueSet === 'handler' ? main.CompletionItemKind.Function : main.CompletionItemKind.Value,
                         documentation: generateDocumentation(attr, undefined, doesSupportMarkdown),
-                        textEdit: esm_main.TextEdit.replace(range, codeSnippet),
-                        insertTextFormat: esm_main.InsertTextFormat.Snippet,
+                        textEdit: main.TextEdit.replace(range, codeSnippet),
+                        insertTextFormat: main.InsertTextFormat.Snippet,
                         command: command
                     });
                 });
@@ -65535,9 +68924,9 @@ var HTMLCompletion = /** @class */ (function () {
             }
             Object.keys(dataAttributes).forEach(function (attr) { return result.items.push({
                 label: attr,
-                kind: esm_main.CompletionItemKind.Value,
-                textEdit: esm_main.TextEdit.replace(range, dataAttributes[attr]),
-                insertTextFormat: esm_main.InsertTextFormat.Snippet
+                kind: main.CompletionItemKind.Value,
+                textEdit: main.TextEdit.replace(range, dataAttributes[attr]),
+                insertTextFormat: main.InsertTextFormat.Snippet
             }); });
         }
         function collectAttributeValueSuggestions(valueStart, valueEnd) {
@@ -65581,10 +68970,10 @@ var HTMLCompletion = /** @class */ (function () {
                     result.items.push({
                         label: value.name,
                         filterText: insertText,
-                        kind: esm_main.CompletionItemKind.Unit,
+                        kind: main.CompletionItemKind.Unit,
                         documentation: generateDocumentation(value, undefined, doesSupportMarkdown),
-                        textEdit: esm_main.TextEdit.replace(range, insertText),
-                        insertTextFormat: esm_main.InsertTextFormat.PlainText
+                        textEdit: main.TextEdit.replace(range, insertText),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -65618,16 +69007,16 @@ var HTMLCompletion = /** @class */ (function () {
                 characterStart--;
             }
             if (k >= 0 && text[k] === '&') {
-                var range = esm_main.Range.create(esm_main.Position.create(position.line, characterStart - 1), position);
+                var range = main.Range.create(main.Position.create(position.line, characterStart - 1), position);
                 for (var entity in entities) {
                     if (endsWith(entity, ';')) {
                         var label = '&' + entity;
                         result.items.push({
                             label: label,
-                            kind: esm_main.CompletionItemKind.Keyword,
-                            documentation: htmlCompletion_localize('entity.propose', "Character entity representing '".concat(entities[entity], "'")),
-                            textEdit: esm_main.TextEdit.replace(range, label),
-                            insertTextFormat: esm_main.InsertTextFormat.PlainText
+                            kind: main.CompletionItemKind.Keyword,
+                            documentation: browser_esm.t("Character entity representing '".concat(entities[entity], "'")),
+                            textEdit: main.TextEdit.replace(range, label),
+                            insertTextFormat: main.InsertTextFormat.PlainText
                         });
                     }
                 }
@@ -65638,10 +69027,10 @@ var HTMLCompletion = /** @class */ (function () {
             var range = getReplaceRange(replaceStart, replaceEnd);
             result.items.push({
                 label: '!DOCTYPE',
-                kind: esm_main.CompletionItemKind.Property,
+                kind: main.CompletionItemKind.Property,
                 documentation: 'A preamble for an HTML document.',
-                textEdit: esm_main.TextEdit.replace(range, '!DOCTYPE html>'),
-                insertTextFormat: esm_main.InsertTextFormat.PlainText
+                textEdit: main.TextEdit.replace(range, '!DOCTYPE html>'),
+                insertTextFormat: main.InsertTextFormat.PlainText
             });
         }
         var token = scanner.scan();
@@ -65839,7 +69228,7 @@ var HTMLCompletion = /** @class */ (function () {
                 return this.supportsMarkdown;
             }
             var documentationFormat = (_c = (_b = (_a = this.lsOptions.clientCapabilities.textDocument) === null || _a === void 0 ? void 0 : _a.completion) === null || _b === void 0 ? void 0 : _b.completionItem) === null || _c === void 0 ? void 0 : _c.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -65885,7 +69274,6 @@ function getWordEnd(s, offset, limit) {
 
 
 
-var htmlHover_localize = main.loadMessageBundle();
 var HTMLHover = /** @class */ (function () {
     function HTMLHover(lsOptions, dataManager) {
         this.lsOptions = lsOptions;
@@ -66000,7 +69388,7 @@ var HTMLHover = /** @class */ (function () {
                         }
                     }
                     hex += code;
-                    var contentsDoc = htmlHover_localize('entity.propose', "Character entity representing '".concat(entities[entity], "', unicode equivalent '").concat(hex, "'"));
+                    var contentsDoc = browser_esm.t('Character entity representing \'{0}\', unicode equivalent \'{1}\'', entities[entity], hex);
                     if (contentsDoc) {
                         hover = { contents: contentsDoc, range: range };
                     }
@@ -66042,10 +69430,10 @@ var HTMLHover = /** @class */ (function () {
             if (k >= 0 && text[k] === '&') {
                 var range = null;
                 if (text[n] === ';') {
-                    range = esm_main.Range.create(esm_main.Position.create(position.line, characterStart), esm_main.Position.create(position.line, characterEnd + 1));
+                    range = main.Range.create(main.Position.create(position.line, characterStart), main.Position.create(position.line, characterEnd + 1));
                 }
                 else {
-                    range = esm_main.Range.create(esm_main.Position.create(position.line, characterStart), esm_main.Position.create(position.line, characterEnd));
+                    range = main.Range.create(main.Position.create(position.line, characterStart), main.Position.create(position.line, characterEnd));
                 }
                 return range;
             }
@@ -66142,7 +69530,7 @@ var HTMLHover = /** @class */ (function () {
                 return this.supportsMarkdown;
             }
             var contentFormat = (_c = (_b = (_a = this.lsOptions.clientCapabilities) === null || _a === void 0 ? void 0 : _a.textDocument) === null || _b === void 0 ? void 0 : _b.hover) === null || _c === void 0 ? void 0 : _c.contentFormat;
-            this.supportsMarkdown = Array.isArray(contentFormat) && contentFormat.indexOf(esm_main.MarkupKind.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(contentFormat) && contentFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -66177,7 +69565,7 @@ function js_beautify(js_source_text, options) {
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-css.js
 // copied from js-beautify/js/lib/beautify-css.js
-// version: 1.14.6
+// version: 1.14.7
 /* AUTO-GENERATED. DO NOT MODIFY. */
 /*
 
@@ -67832,7 +71220,7 @@ module.exports.Options = Options;
 var css_beautify = legacy_beautify_css;
 ;// CONCATENATED MODULE: ./node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-html.js
 // copied from js-beautify/js/lib/beautify-html.js
-// version: 1.14.6
+// version: 1.14.7
 /* AUTO-GENERATED. DO NOT MODIFY. */
 /*
 
@@ -70241,7 +73629,7 @@ Beautifier.prototype._get_tag_open_token = function(raw_token) { //function to g
 
   parser_token.is_unformatted = !parser_token.tag_complete && in_array(parser_token.tag_check, this._options.unformatted);
   parser_token.is_content_unformatted = !parser_token.is_empty_element && in_array(parser_token.tag_check, this._options.content_unformatted);
-  parser_token.is_inline_element = in_array(parser_token.tag_name, this._options.inline) || parser_token.tag_start_char === '{';
+  parser_token.is_inline_element = in_array(parser_token.tag_name, this._options.inline) || parser_token.tag_name.includes("-") || parser_token.tag_start_char === '{';
 
   return parser_token;
 };
@@ -70463,7 +73851,7 @@ module.exports.Beautifier = Beautifier;
 
 /***/ }),
 /* 20 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_90898__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_90937__) {
 
 /*jshint node:true */
 /*
@@ -70495,7 +73883,7 @@ module.exports.Beautifier = Beautifier;
 
 
 
-var BaseOptions = (__nested_webpack_require_90898__(6).Options);
+var BaseOptions = (__nested_webpack_require_90937__(6).Options);
 
 function Options(options) {
   BaseOptions.call(this, options, 'html');
@@ -70560,7 +73948,7 @@ module.exports.Options = Options;
 
 /***/ }),
 /* 21 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_95097__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_95136__) {
 
 /*jshint node:true */
 /*
@@ -70592,11 +73980,11 @@ module.exports.Options = Options;
 
 
 
-var BaseTokenizer = (__nested_webpack_require_95097__(9).Tokenizer);
-var BASETOKEN = (__nested_webpack_require_95097__(9).TOKEN);
-var Directives = (__nested_webpack_require_95097__(13).Directives);
-var TemplatablePattern = (__nested_webpack_require_95097__(14).TemplatablePattern);
-var Pattern = (__nested_webpack_require_95097__(12).Pattern);
+var BaseTokenizer = (__nested_webpack_require_95136__(9).Tokenizer);
+var BASETOKEN = (__nested_webpack_require_95136__(9).TOKEN);
+var Directives = (__nested_webpack_require_95136__(13).Directives);
+var TemplatablePattern = (__nested_webpack_require_95136__(14).TemplatablePattern);
+var Pattern = (__nested_webpack_require_95136__(12).Pattern);
 
 var TOKEN = {
   TAG_OPEN: 'TK_TAG_OPEN',
@@ -70903,7 +74291,7 @@ module.exports.TOKEN = TOKEN;
 /******/ 	var __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
-/******/ 	function __nested_webpack_require_106991__(moduleId) {
+/******/ 	function __nested_webpack_require_107030__(moduleId) {
 /******/ 		// Check if module is in cache
 /******/ 		var cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
@@ -70917,7 +74305,7 @@ module.exports.TOKEN = TOKEN;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_106991__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_107030__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -70928,7 +74316,7 @@ module.exports.TOKEN = TOKEN;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nested_webpack_require_106991__(18);
+/******/ 	var __webpack_exports__ = __nested_webpack_require_107030__(18);
 /******/ 	legacy_beautify_html = __webpack_exports__;
 /******/ 	
 /******/ })()
@@ -70975,7 +74363,7 @@ function format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = esm_main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Do not modify if substring starts in inside an element
         // Ending inside an element is fine as it doesn't cause formatting errors
         var firstHalf = value.substring(0, startOffset);
@@ -70990,12 +74378,12 @@ function format(document, range, options) {
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            var startOfLineOffset = document.offsetAt(esm_main.Position.create(range.start.line, 0));
+            var startOfLineOffset = document.offsetAt(main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
     }
     else {
-        range = esm_main.Range.create(esm_main.Position.create(0, 0), document.positionAt(value.length));
+        range = main.Range.create(main.Position.create(0, 0), document.positionAt(value.length));
     }
     var htmlOptions = {
         indent_size: tabSize,
@@ -71154,7 +74542,7 @@ function createLink(document, documentContext, attributeValue, startOffset, endO
         return undefined;
     }
     return {
-        range: esm_main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset)),
+        range: main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset)),
         target: workspaceUrl
     };
 }
@@ -71246,10 +74634,10 @@ function findDocumentHighlights(document, position, htmlDocument) {
     var endTagRange = typeof node.endTagStart === 'number' && getTagNameRange(TokenType.EndTag, document, node.endTagStart);
     if (startTagRange && covers(startTagRange, position) || endTagRange && covers(endTagRange, position)) {
         if (startTagRange) {
-            result.push({ kind: esm_main.DocumentHighlightKind.Read, range: startTagRange });
+            result.push({ kind: main.DocumentHighlightKind.Read, range: startTagRange });
         }
         if (endTagRange) {
-            result.push({ kind: esm_main.DocumentHighlightKind.Read, range: endTagRange });
+            result.push({ kind: main.DocumentHighlightKind.Read, range: endTagRange });
         }
     }
     return result;
@@ -71287,12 +74675,12 @@ function findDocumentSymbols(document, htmlDocument) {
 }
 function provideFileSymbolsInternal(document, node, container, symbols) {
     var name = nodeToName(node);
-    var location = esm_main.Location.create(document.uri, esm_main.Range.create(document.positionAt(node.start), document.positionAt(node.end)));
+    var location = main.Location.create(document.uri, main.Range.create(document.positionAt(node.start), document.positionAt(node.end)));
     var symbol = {
         name: name,
         location: location,
         containerName: container,
-        kind: esm_main.SymbolKind.Field
+        kind: main.SymbolKind.Field
     };
     symbols.push(symbol);
     node.children.forEach(function (child) {
@@ -71414,8 +74802,8 @@ function findLinkedEditingRanges(document, position, htmlDocument) {
         // Within closing tag, compute open tag
         node.endTagStart + '</'.length <= offset && offset <= node.endTagStart + '</'.length + tagLength) {
         return [
-            esm_main.Range.create(document.positionAt(node.start + '<'.length), document.positionAt(node.start + '<'.length + tagLength)),
-            esm_main.Range.create(document.positionAt(node.endTagStart + '</'.length), document.positionAt(node.endTagStart + '</'.length + tagLength))
+            main.Range.create(document.positionAt(node.start + '<'.length), document.positionAt(node.start + '<'.length + tagLength)),
+            main.Range.create(document.positionAt(node.endTagStart + '</'.length), document.positionAt(node.endTagStart + '</'.length + tagLength))
         ];
     }
     return null;
@@ -71569,7 +74957,7 @@ var HTMLFolding = /** @class */ (function () {
                                 var endLine = startLine;
                                 startLine = stackElement.startLine;
                                 if (endLine > startLine && prevStart !== startLine) {
-                                    addRange({ startLine: startLine, endLine: endLine, kind: esm_main.FoldingRangeKind.Region });
+                                    addRange({ startLine: startLine, endLine: endLine, kind: main.FoldingRangeKind.Region });
                                 }
                             }
                         }
@@ -71577,7 +74965,7 @@ var HTMLFolding = /** @class */ (function () {
                     else {
                         var endLine = document.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
                         if (startLine < endLine) {
-                            addRange({ startLine: startLine, endLine: endLine, kind: esm_main.FoldingRangeKind.Comment });
+                            addRange({ startLine: startLine, endLine: endLine, kind: main.FoldingRangeKind.Comment });
                         }
                     }
                     break;
@@ -71618,12 +75006,12 @@ var HTMLSelectionRange = /** @class */ (function () {
         for (var index = applicableRanges.length - 1; index >= 0; index--) {
             var range = applicableRanges[index];
             if (!prev || range[0] !== prev[0] || range[1] !== prev[1]) {
-                current = esm_main.SelectionRange.create(esm_main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+                current = main.SelectionRange.create(main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
             }
             prev = range;
         }
         if (!current) {
-            current = esm_main.SelectionRange.create(esm_main.Range.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     };
@@ -71637,7 +75025,7 @@ var HTMLSelectionRange = /** @class */ (function () {
             if (currNode.startTagEnd !== currNode.end) {
                 return [[currNode.start, currNode.end]];
             }
-            var closeRange = esm_main.Range.create(document.positionAt(currNode.startTagEnd - 2), document.positionAt(currNode.startTagEnd));
+            var closeRange = main.Range.create(document.positionAt(currNode.startTagEnd - 2), document.positionAt(currNode.startTagEnd));
             var closeText = document.getText(closeRange);
             // Self-closing element
             if (closeText === '/>') {
@@ -71708,7 +75096,7 @@ var HTMLSelectionRange = /** @class */ (function () {
     };
     ;
     HTMLSelectionRange.prototype.getAttributeLevelRanges = function (document, currNode, currOffset) {
-        var currNodeRange = esm_main.Range.create(document.positionAt(currNode.start), document.positionAt(currNode.end));
+        var currNodeRange = main.Range.create(document.positionAt(currNode.start), document.positionAt(currNode.end));
         var currNodeText = document.getText(currNodeRange);
         var relativeOffset = currOffset - currNode.start;
         /**
@@ -84371,61 +87759,83 @@ function getLanguageService(params) {
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-class FullTextDocument {
-    constructor(uri, languageId, version, content) {
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var FullTextDocument = /** @class */ (function () {
+    function FullTextDocument(uri, languageId, version, content) {
         this._uri = uri;
         this._languageId = languageId;
         this._version = version;
         this._content = content;
         this._lineOffsets = undefined;
     }
-    get uri() {
-        return this._uri;
-    }
-    get languageId() {
-        return this._languageId;
-    }
-    get version() {
-        return this._version;
-    }
-    getText(range) {
+    Object.defineProperty(FullTextDocument.prototype, "uri", {
+        get: function () {
+            return this._uri;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "languageId", {
+        get: function () {
+            return this._languageId;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "version", {
+        get: function () {
+            return this._version;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    FullTextDocument.prototype.getText = function (range) {
         if (range) {
-            const start = this.offsetAt(range.start);
-            const end = this.offsetAt(range.end);
+            var start = this.offsetAt(range.start);
+            var end = this.offsetAt(range.end);
             return this._content.substring(start, end);
         }
         return this._content;
-    }
-    update(changes, version) {
-        for (let change of changes) {
+    };
+    FullTextDocument.prototype.update = function (changes, version) {
+        for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
+            var change = changes_1[_i];
             if (FullTextDocument.isIncremental(change)) {
                 // makes sure start is before end
-                const range = getWellformedRange(change.range);
+                var range = getWellformedRange(change.range);
                 // update content
-                const startOffset = this.offsetAt(range.start);
-                const endOffset = this.offsetAt(range.end);
+                var startOffset = this.offsetAt(range.start);
+                var endOffset = this.offsetAt(range.end);
                 this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
                 // update the offsets
-                const startLine = Math.max(range.start.line, 0);
-                const endLine = Math.max(range.end.line, 0);
-                let lineOffsets = this._lineOffsets;
-                const addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
+                var startLine = Math.max(range.start.line, 0);
+                var endLine = Math.max(range.end.line, 0);
+                var lineOffsets = this._lineOffsets;
+                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
                 if (endLine - startLine === addedLineOffsets.length) {
-                    for (let i = 0, len = addedLineOffsets.length; i < len; i++) {
+                    for (var i = 0, len = addedLineOffsets.length; i < len; i++) {
                         lineOffsets[i + startLine + 1] = addedLineOffsets[i];
                     }
                 }
                 else {
                     if (addedLineOffsets.length < 10000) {
-                        lineOffsets.splice(startLine + 1, endLine - startLine, ...addedLineOffsets);
+                        lineOffsets.splice.apply(lineOffsets, __spreadArray([startLine + 1, endLine - startLine], addedLineOffsets, false));
                     }
                     else { // avoid too many arguments for splice
                         this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
                     }
                 }
-                const diff = change.text.length - (endOffset - startOffset);
+                var diff = change.text.length - (endOffset - startOffset);
                 if (diff !== 0) {
-                    for (let i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
+                    for (var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
                         lineOffsets[i] = lineOffsets[i] + diff;
                     }
                 }
@@ -84439,22 +87849,22 @@ class FullTextDocument {
             }
         }
         this._version = version;
-    }
-    getLineOffsets() {
+    };
+    FullTextDocument.prototype.getLineOffsets = function () {
         if (this._lineOffsets === undefined) {
             this._lineOffsets = computeLineOffsets(this._content, true);
         }
         return this._lineOffsets;
-    }
-    positionAt(offset) {
+    };
+    FullTextDocument.prototype.positionAt = function (offset) {
         offset = Math.max(Math.min(offset, this._content.length), 0);
-        let lineOffsets = this.getLineOffsets();
-        let low = 0, high = lineOffsets.length;
+        var lineOffsets = this.getLineOffsets();
+        var low = 0, high = lineOffsets.length;
         if (high === 0) {
             return { line: 0, character: offset };
         }
         while (low < high) {
-            let mid = Math.floor((low + high) / 2);
+            var mid = Math.floor((low + high) / 2);
             if (lineOffsets[mid] > offset) {
                 high = mid;
             }
@@ -84464,36 +87874,41 @@ class FullTextDocument {
         }
         // low is the least x for which the line offset is larger than the current offset
         // or array.length if no line offset is larger than the current offset
-        let line = low - 1;
-        return { line, character: offset - lineOffsets[line] };
-    }
-    offsetAt(position) {
-        let lineOffsets = this.getLineOffsets();
+        var line = low - 1;
+        return { line: line, character: offset - lineOffsets[line] };
+    };
+    FullTextDocument.prototype.offsetAt = function (position) {
+        var lineOffsets = this.getLineOffsets();
         if (position.line >= lineOffsets.length) {
             return this._content.length;
         }
         else if (position.line < 0) {
             return 0;
         }
-        let lineOffset = lineOffsets[position.line];
-        let nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
+        var lineOffset = lineOffsets[position.line];
+        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
         return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-    }
-    get lineCount() {
-        return this.getLineOffsets().length;
-    }
-    static isIncremental(event) {
-        let candidate = event;
+    };
+    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
+        get: function () {
+            return this.getLineOffsets().length;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    FullTextDocument.isIncremental = function (event) {
+        var candidate = event;
         return candidate !== undefined && candidate !== null &&
             typeof candidate.text === 'string' && candidate.range !== undefined &&
             (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
-    }
-    static isFull(event) {
-        let candidate = event;
+    };
+    FullTextDocument.isFull = function (event) {
+        var candidate = event;
         return candidate !== undefined && candidate !== null &&
             typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
-    }
-}
+    };
+    return FullTextDocument;
+}());
 var TextDocument;
 (function (TextDocument) {
     /**
@@ -84528,18 +87943,19 @@ var TextDocument;
     }
     TextDocument.update = update;
     function applyEdits(document, edits) {
-        let text = document.getText();
-        let sortedEdits = mergeSort(edits.map(getWellformedEdit), (a, b) => {
-            let diff = a.range.start.line - b.range.start.line;
+        var text = document.getText();
+        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function (a, b) {
+            var diff = a.range.start.line - b.range.start.line;
             if (diff === 0) {
                 return a.range.start.character - b.range.start.character;
             }
             return diff;
         });
-        let lastModifiedOffset = 0;
-        const spans = [];
-        for (const e of sortedEdits) {
-            let startOffset = document.offsetAt(e.range.start);
+        var lastModifiedOffset = 0;
+        var spans = [];
+        for (var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++) {
+            var e = sortedEdits_1[_i];
+            var startOffset = document.offsetAt(e.range.start);
             if (startOffset < lastModifiedOffset) {
                 throw new Error('Overlapping edit');
             }
@@ -84561,16 +87977,16 @@ function mergeSort(data, compare) {
         // sorted
         return data;
     }
-    const p = (data.length / 2) | 0;
-    const left = data.slice(0, p);
-    const right = data.slice(p);
+    var p = (data.length / 2) | 0;
+    var left = data.slice(0, p);
+    var right = data.slice(p);
     mergeSort(left, compare);
     mergeSort(right, compare);
-    let leftIdx = 0;
-    let rightIdx = 0;
-    let i = 0;
+    var leftIdx = 0;
+    var rightIdx = 0;
+    var i = 0;
     while (leftIdx < left.length && rightIdx < right.length) {
-        let ret = compare(left[leftIdx], right[rightIdx]);
+        var ret = compare(left[leftIdx], right[rightIdx]);
         if (ret <= 0) {
             // smaller_equal -> take left to preserve order
             data[i++] = left[leftIdx++];
@@ -84588,10 +88004,11 @@ function mergeSort(data, compare) {
     }
     return data;
 }
-function computeLineOffsets(text, isAtLineStart, textOffset = 0) {
-    const result = isAtLineStart ? [textOffset] : [];
-    for (let i = 0; i < text.length; i++) {
-        let ch = text.charCodeAt(i);
+function computeLineOffsets(text, isAtLineStart, textOffset) {
+    if (textOffset === void 0) { textOffset = 0; }
+    var result = isAtLineStart ? [textOffset] : [];
+    for (var i = 0; i < text.length; i++) {
+        var ch = text.charCodeAt(i);
         if (ch === 13 /* CharCode.CarriageReturn */ || ch === 10 /* CharCode.LineFeed */) {
             if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
                 i++;
@@ -84602,17 +88019,17 @@ function computeLineOffsets(text, isAtLineStart, textOffset = 0) {
     return result;
 }
 function getWellformedRange(range) {
-    const start = range.start;
-    const end = range.end;
+    var start = range.start;
+    var end = range.end;
     if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
         return { start: end, end: start };
     }
     return range;
 }
 function getWellformedEdit(textEdit) {
-    const range = getWellformedRange(textEdit.range);
+    var range = getWellformedRange(textEdit.range);
     if (range !== textEdit.range) {
-        return { newText: textEdit.newText, range };
+        return { newText: textEdit.newText, range: range };
     }
     return textEdit;
 }
@@ -87090,7 +90507,7 @@ exports["default"] = RAL;
 /* harmony export */   "c": () => (/* binding */ Utils),
 /* harmony export */   "o": () => (/* binding */ URI)
 /* harmony export */ });
-var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",o=0,i=-1,a=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(i===h-1||1===a);else if(i!==h-1&&2===a){if(n.length<2||2!==o||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var s=n.lastIndexOf("/");if(s!==n.length-1){-1===s?(n="",o=0):o=(n=n.slice(0,s)).length-1-n.lastIndexOf("/"),i=h,a=0;continue}}else if(2===n.length||1===n.length){n="",o=0,i=h,a=0;continue}e&&(n.length>0?n+="/..":n="..",o=2)}else n.length>0?n+="/"+t.slice(i+1,h):n=t.slice(i+1,h),o=h-i-1;i=h,a=0}else 46===r&&-1!==a?++a:a=-1}return n}var n={resolve:function(){for(var t,n="",o=!1,i=arguments.length-1;i>=-1&&!o;i--){var a;i>=0?a=arguments[i]:(void 0===t&&(t=process.cwd()),a=t),e(a),0!==a.length&&(n=a+"/"+n,o=47===a.charCodeAt(0))}return n=r(n,!o),o?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),o=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&o&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var o=arguments[r];e(o),o.length>0&&(void 0===t?t=o:t+="/"+o)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var o=1;o<t.length&&47===t.charCodeAt(o);++o);for(var i=t.length,a=i-o,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var s=r.length-h,c=a<s?a:s,f=-1,u=0;u<=c;++u){if(u===c){if(s>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else a>c&&(47===t.charCodeAt(o+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(o+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var p="";for(u=o+f+1;u<=i;++u)u!==i&&47!==t.charCodeAt(u)||(0===p.length?p+="..":p+="/..");return p.length>0?p+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,o=-1,i=!0,a=t.length-1;a>=1;--a)if(47===(r=t.charCodeAt(a))){if(!i){o=a;break}}else i=!1;return-1===o?n?"/":".":n&&1===o?"//":t.slice(0,o)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,o=0,i=-1,a=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,s=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!a){o=n+1;break}}else-1===s&&(a=!1,s=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(i=n):(h=-1,i=s))}return o===i?i=s:-1===i&&(i=t.length),t.slice(o,i)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!a){o=n+1;break}}else-1===i&&(a=!1,i=n+1);return-1===i?"":t.slice(o,i)},extname:function(t){e(t);for(var r=-1,n=0,o=-1,i=!0,a=0,h=t.length-1;h>=0;--h){var s=t.charCodeAt(h);if(47!==s)-1===o&&(i=!1,o=h+1),46===s?-1===r?r=h:1!==a&&(a=1):-1!==r&&(a=-1);else if(!i){n=h+1;break}}return-1===r||-1===o||0===a||1===a&&r===o-1&&r===n+1?"":t.slice(r,o)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,o=t.charCodeAt(0),i=47===o;i?(r.root="/",n=1):n=0;for(var a=-1,h=0,s=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(o=t.charCodeAt(f)))-1===s&&(c=!1,s=f+1),46===o?-1===a?a=f:1!==u&&(u=1):-1!==a&&(u=-1);else if(!c){h=f+1;break}return-1===a||-1===s||0===u||1===u&&a===s-1&&a===h+1?-1!==s&&(r.base=r.name=0===h&&i?t.slice(1,s):t.slice(h,s)):(0===h&&i?(r.name=t.slice(1,a),r.base=t.slice(1,s)):(r.name=t.slice(h,a),r.base=t.slice(h,s)),r.ext=t.slice(a,s)),h>0?r.dir=t.slice(0,h-1):i&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var o=e[n];if(void 0!==o)return o.exports;var i=e[n]={exports:{}};return t[n](i,i.exports,r),i.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};(()=>{var t;if(r.r(n),r.d(n,{URI:()=>p,Utils:()=>_}),"object"==typeof process)t="win32"===process.platform;else if("object"==typeof navigator){var e=navigator.userAgent;t=e.indexOf("Windows")>=0}var o,i,a=(o=function(t,e){return o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])},o(t,e)},function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}),h=/^\w[\w\d+.-]*$/,s=/^\//,c=/^\/\//,f="",u="/",l=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,p=function(){function e(t,e,r,n,o,i){void 0===i&&(i=!1),"object"==typeof t?(this.scheme=t.scheme||f,this.authority=t.authority||f,this.path=t.path||f,this.query=t.query||f,this.fragment=t.fragment||f):(this.scheme=function(t,e){return t||e?t:"file"}(t,i),this.authority=e||f,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==u&&(e=u+e):e=u}return e}(this.scheme,r||f),this.query=n||f,this.fragment=o||f,function(t,e){if(!t.scheme&&e)throw new Error('[UriError]: Scheme is missing: {scheme: "", authority: "'.concat(t.authority,'", path: "').concat(t.path,'", query: "').concat(t.query,'", fragment: "').concat(t.fragment,'"}'));if(t.scheme&&!h.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!s.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(c.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}(this,i))}return e.isUri=function(t){return t instanceof e||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString},Object.defineProperty(e.prototype,"fsPath",{get:function(){return b(this,!1)},enumerable:!1,configurable:!0}),e.prototype.with=function(t){if(!t)return this;var e=t.scheme,r=t.authority,n=t.path,o=t.query,i=t.fragment;return void 0===e?e=this.scheme:null===e&&(e=f),void 0===r?r=this.authority:null===r&&(r=f),void 0===n?n=this.path:null===n&&(n=f),void 0===o?o=this.query:null===o&&(o=f),void 0===i?i=this.fragment:null===i&&(i=f),e===this.scheme&&r===this.authority&&n===this.path&&o===this.query&&i===this.fragment?this:new d(e,r,n,o,i)},e.parse=function(t,e){void 0===e&&(e=!1);var r=l.exec(t);return r?new d(r[2]||f,x(r[4]||f),x(r[5]||f),x(r[7]||f),x(r[9]||f),e):new d(f,f,f,f,f)},e.file=function(e){var r=f;if(t&&(e=e.replace(/\\/g,u)),e[0]===u&&e[1]===u){var n=e.indexOf(u,2);-1===n?(r=e.substring(2),e=u):(r=e.substring(2,n),e=e.substring(n)||u)}return new d("file",r,e,f,f)},e.from=function(t){return new d(t.scheme,t.authority,t.path,t.query,t.fragment)},e.prototype.toString=function(t){return void 0===t&&(t=!1),C(this,t)},e.prototype.toJSON=function(){return this},e.revive=function(t){if(t){if(t instanceof e)return t;var r=new d(t);return r._formatted=t.external,r._fsPath=t._sep===g?t.fsPath:null,r}return t},e}(),g=t?1:void 0,d=function(t){function e(){var e=null!==t&&t.apply(this,arguments)||this;return e._formatted=null,e._fsPath=null,e}return a(e,t),Object.defineProperty(e.prototype,"fsPath",{get:function(){return this._fsPath||(this._fsPath=b(this,!1)),this._fsPath},enumerable:!1,configurable:!0}),e.prototype.toString=function(t){return void 0===t&&(t=!1),t?C(this,!0):(this._formatted||(this._formatted=C(this,!1)),this._formatted)},e.prototype.toJSON=function(){var t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=g),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t},e}(p),v=((i={})[58]="%3A",i[47]="%2F",i[63]="%3F",i[35]="%23",i[91]="%5B",i[93]="%5D",i[64]="%40",i[33]="%21",i[36]="%24",i[38]="%26",i[39]="%27",i[40]="%28",i[41]="%29",i[42]="%2A",i[43]="%2B",i[44]="%2C",i[59]="%3B",i[61]="%3D",i[32]="%20",i);function y(t,e){for(var r=void 0,n=-1,o=0;o<t.length;o++){var i=t.charCodeAt(o);if(i>=97&&i<=122||i>=65&&i<=90||i>=48&&i<=57||45===i||46===i||95===i||126===i||e&&47===i)-1!==n&&(r+=encodeURIComponent(t.substring(n,o)),n=-1),void 0!==r&&(r+=t.charAt(o));else{void 0===r&&(r=t.substr(0,o));var a=v[i];void 0!==a?(-1!==n&&(r+=encodeURIComponent(t.substring(n,o)),n=-1),r+=a):-1===n&&(n=o)}}return-1!==n&&(r+=encodeURIComponent(t.substring(n))),void 0!==r?r:t}function m(t){for(var e=void 0,r=0;r<t.length;r++){var n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=v[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function b(e,r){var n;return n=e.authority&&e.path.length>1&&"file"===e.scheme?"//".concat(e.authority).concat(e.path):47===e.path.charCodeAt(0)&&(e.path.charCodeAt(1)>=65&&e.path.charCodeAt(1)<=90||e.path.charCodeAt(1)>=97&&e.path.charCodeAt(1)<=122)&&58===e.path.charCodeAt(2)?r?e.path.substr(1):e.path[1].toLowerCase()+e.path.substr(2):e.path,t&&(n=n.replace(/\//g,"\\")),n}function C(t,e){var r=e?m:y,n="",o=t.scheme,i=t.authority,a=t.path,h=t.query,s=t.fragment;if(o&&(n+=o,n+=":"),(i||"file"===o)&&(n+=u,n+=u),i){var c=i.indexOf("@");if(-1!==c){var f=i.substr(0,c);i=i.substr(c+1),-1===(c=f.indexOf(":"))?n+=r(f,!1):(n+=r(f.substr(0,c),!1),n+=":",n+=r(f.substr(c+1),!1)),n+="@"}-1===(c=(i=i.toLowerCase()).indexOf(":"))?n+=r(i,!1):(n+=r(i.substr(0,c),!1),n+=i.substr(c))}if(a){if(a.length>=3&&47===a.charCodeAt(0)&&58===a.charCodeAt(2))(l=a.charCodeAt(1))>=65&&l<=90&&(a="/".concat(String.fromCharCode(l+32),":").concat(a.substr(3)));else if(a.length>=2&&58===a.charCodeAt(1)){var l;(l=a.charCodeAt(0))>=65&&l<=90&&(a="".concat(String.fromCharCode(l+32),":").concat(a.substr(2)))}n+=r(a,!0)}return h&&(n+="?",n+=r(h,!1)),s&&(n+="#",n+=e?s:y(s,!1)),n}function A(t){try{return decodeURIComponent(t)}catch(e){return t.length>3?t.substr(0,3)+A(t.substr(3)):t}}var w=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function x(t){return t.match(w)?t.replace(w,(function(t){return A(t)})):t}var _,O=r(470),P=function(t,e,r){if(r||2===arguments.length)for(var n,o=0,i=e.length;o<i;o++)!n&&o in e||(n||(n=Array.prototype.slice.call(e,0,o)),n[o]=e[o]);return t.concat(n||Array.prototype.slice.call(e))},j=O.posix||O,U="/";!function(t){t.joinPath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];return t.with({path:j.join.apply(j,P([t.path],e,!1))})},t.resolvePath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];var n=t.path,o=!1;n[0]!==U&&(n=U+n,o=!0);var i=j.resolve.apply(j,P([n],e,!1));return o&&i[0]===U&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===U)return t;var e=j.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return j.basename(t.path)},t.extname=function(t){return j.extname(t.path)}}(_||(_={}))})(),LIB=n})();const{URI,Utils}=LIB;
+var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",o=0,i=-1,a=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(i===h-1||1===a);else if(i!==h-1&&2===a){if(n.length<2||2!==o||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var s=n.lastIndexOf("/");if(s!==n.length-1){-1===s?(n="",o=0):o=(n=n.slice(0,s)).length-1-n.lastIndexOf("/"),i=h,a=0;continue}}else if(2===n.length||1===n.length){n="",o=0,i=h,a=0;continue}e&&(n.length>0?n+="/..":n="..",o=2)}else n.length>0?n+="/"+t.slice(i+1,h):n=t.slice(i+1,h),o=h-i-1;i=h,a=0}else 46===r&&-1!==a?++a:a=-1}return n}var n={resolve:function(){for(var t,n="",o=!1,i=arguments.length-1;i>=-1&&!o;i--){var a;i>=0?a=arguments[i]:(void 0===t&&(t=process.cwd()),a=t),e(a),0!==a.length&&(n=a+"/"+n,o=47===a.charCodeAt(0))}return n=r(n,!o),o?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),o=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&o&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var o=arguments[r];e(o),o.length>0&&(void 0===t?t=o:t+="/"+o)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var o=1;o<t.length&&47===t.charCodeAt(o);++o);for(var i=t.length,a=i-o,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var s=r.length-h,c=a<s?a:s,f=-1,u=0;u<=c;++u){if(u===c){if(s>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else a>c&&(47===t.charCodeAt(o+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(o+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var p="";for(u=o+f+1;u<=i;++u)u!==i&&47!==t.charCodeAt(u)||(0===p.length?p+="..":p+="/..");return p.length>0?p+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,o=-1,i=!0,a=t.length-1;a>=1;--a)if(47===(r=t.charCodeAt(a))){if(!i){o=a;break}}else i=!1;return-1===o?n?"/":".":n&&1===o?"//":t.slice(0,o)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,o=0,i=-1,a=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,s=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!a){o=n+1;break}}else-1===s&&(a=!1,s=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(i=n):(h=-1,i=s))}return o===i?i=s:-1===i&&(i=t.length),t.slice(o,i)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!a){o=n+1;break}}else-1===i&&(a=!1,i=n+1);return-1===i?"":t.slice(o,i)},extname:function(t){e(t);for(var r=-1,n=0,o=-1,i=!0,a=0,h=t.length-1;h>=0;--h){var s=t.charCodeAt(h);if(47!==s)-1===o&&(i=!1,o=h+1),46===s?-1===r?r=h:1!==a&&(a=1):-1!==r&&(a=-1);else if(!i){n=h+1;break}}return-1===r||-1===o||0===a||1===a&&r===o-1&&r===n+1?"":t.slice(r,o)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,o=t.charCodeAt(0),i=47===o;i?(r.root="/",n=1):n=0;for(var a=-1,h=0,s=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(o=t.charCodeAt(f)))-1===s&&(c=!1,s=f+1),46===o?-1===a?a=f:1!==u&&(u=1):-1!==a&&(u=-1);else if(!c){h=f+1;break}return-1===a||-1===s||0===u||1===u&&a===s-1&&a===h+1?-1!==s&&(r.base=r.name=0===h&&i?t.slice(1,s):t.slice(h,s)):(0===h&&i?(r.name=t.slice(1,a),r.base=t.slice(1,s)):(r.name=t.slice(h,a),r.base=t.slice(h,s)),r.ext=t.slice(a,s)),h>0?r.dir=t.slice(0,h-1):i&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var o=e[n];if(void 0!==o)return o.exports;var i=e[n]={exports:{}};return t[n](i,i.exports,r),i.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};(()=>{var t;if(r.r(n),r.d(n,{URI:()=>g,Utils:()=>O}),"object"==typeof process)t="win32"===process.platform;else if("object"==typeof navigator){var e=navigator.userAgent;t=e.indexOf("Windows")>=0}var o,i,a=(o=function(t,e){return o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])},o(t,e)},function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}),h=/^\w[\w\d+.-]*$/,s=/^\//,c=/^\/\//;function f(t,e){if(!t.scheme&&e)throw new Error('[UriError]: Scheme is missing: {scheme: "", authority: "'.concat(t.authority,'", path: "').concat(t.path,'", query: "').concat(t.query,'", fragment: "').concat(t.fragment,'"}'));if(t.scheme&&!h.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!s.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(c.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}var u="",l="/",p=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,g=function(){function e(t,e,r,n,o,i){void 0===i&&(i=!1),"object"==typeof t?(this.scheme=t.scheme||u,this.authority=t.authority||u,this.path=t.path||u,this.query=t.query||u,this.fragment=t.fragment||u):(this.scheme=function(t,e){return t||e?t:"file"}(t,i),this.authority=e||u,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==l&&(e=l+e):e=l}return e}(this.scheme,r||u),this.query=n||u,this.fragment=o||u,f(this,i))}return e.isUri=function(t){return t instanceof e||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString},Object.defineProperty(e.prototype,"fsPath",{get:function(){return C(this,!1)},enumerable:!1,configurable:!0}),e.prototype.with=function(t){if(!t)return this;var e=t.scheme,r=t.authority,n=t.path,o=t.query,i=t.fragment;return void 0===e?e=this.scheme:null===e&&(e=u),void 0===r?r=this.authority:null===r&&(r=u),void 0===n?n=this.path:null===n&&(n=u),void 0===o?o=this.query:null===o&&(o=u),void 0===i?i=this.fragment:null===i&&(i=u),e===this.scheme&&r===this.authority&&n===this.path&&o===this.query&&i===this.fragment?this:new v(e,r,n,o,i)},e.parse=function(t,e){void 0===e&&(e=!1);var r=p.exec(t);return r?new v(r[2]||u,_(r[4]||u),_(r[5]||u),_(r[7]||u),_(r[9]||u),e):new v(u,u,u,u,u)},e.file=function(e){var r=u;if(t&&(e=e.replace(/\\/g,l)),e[0]===l&&e[1]===l){var n=e.indexOf(l,2);-1===n?(r=e.substring(2),e=l):(r=e.substring(2,n),e=e.substring(n)||l)}return new v("file",r,e,u,u)},e.from=function(t){var e=new v(t.scheme,t.authority,t.path,t.query,t.fragment);return f(e,!0),e},e.prototype.toString=function(t){return void 0===t&&(t=!1),A(this,t)},e.prototype.toJSON=function(){return this},e.revive=function(t){if(t){if(t instanceof e)return t;var r=new v(t);return r._formatted=t.external,r._fsPath=t._sep===d?t.fsPath:null,r}return t},e}(),d=t?1:void 0,v=function(t){function e(){var e=null!==t&&t.apply(this,arguments)||this;return e._formatted=null,e._fsPath=null,e}return a(e,t),Object.defineProperty(e.prototype,"fsPath",{get:function(){return this._fsPath||(this._fsPath=C(this,!1)),this._fsPath},enumerable:!1,configurable:!0}),e.prototype.toString=function(t){return void 0===t&&(t=!1),t?A(this,!0):(this._formatted||(this._formatted=A(this,!1)),this._formatted)},e.prototype.toJSON=function(){var t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=d),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t},e}(g),y=((i={})[58]="%3A",i[47]="%2F",i[63]="%3F",i[35]="%23",i[91]="%5B",i[93]="%5D",i[64]="%40",i[33]="%21",i[36]="%24",i[38]="%26",i[39]="%27",i[40]="%28",i[41]="%29",i[42]="%2A",i[43]="%2B",i[44]="%2C",i[59]="%3B",i[61]="%3D",i[32]="%20",i);function m(t,e,r){for(var n=void 0,o=-1,i=0;i<t.length;i++){var a=t.charCodeAt(i);if(a>=97&&a<=122||a>=65&&a<=90||a>=48&&a<=57||45===a||46===a||95===a||126===a||e&&47===a||r&&91===a||r&&93===a||r&&58===a)-1!==o&&(n+=encodeURIComponent(t.substring(o,i)),o=-1),void 0!==n&&(n+=t.charAt(i));else{void 0===n&&(n=t.substr(0,i));var h=y[a];void 0!==h?(-1!==o&&(n+=encodeURIComponent(t.substring(o,i)),o=-1),n+=h):-1===o&&(o=i)}}return-1!==o&&(n+=encodeURIComponent(t.substring(o))),void 0!==n?n:t}function b(t){for(var e=void 0,r=0;r<t.length;r++){var n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=y[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function C(e,r){var n;return n=e.authority&&e.path.length>1&&"file"===e.scheme?"//".concat(e.authority).concat(e.path):47===e.path.charCodeAt(0)&&(e.path.charCodeAt(1)>=65&&e.path.charCodeAt(1)<=90||e.path.charCodeAt(1)>=97&&e.path.charCodeAt(1)<=122)&&58===e.path.charCodeAt(2)?r?e.path.substr(1):e.path[1].toLowerCase()+e.path.substr(2):e.path,t&&(n=n.replace(/\//g,"\\")),n}function A(t,e){var r=e?b:m,n="",o=t.scheme,i=t.authority,a=t.path,h=t.query,s=t.fragment;if(o&&(n+=o,n+=":"),(i||"file"===o)&&(n+=l,n+=l),i){var c=i.indexOf("@");if(-1!==c){var f=i.substr(0,c);i=i.substr(c+1),-1===(c=f.lastIndexOf(":"))?n+=r(f,!1,!1):(n+=r(f.substr(0,c),!1,!1),n+=":",n+=r(f.substr(c+1),!1,!0)),n+="@"}-1===(c=(i=i.toLowerCase()).lastIndexOf(":"))?n+=r(i,!1,!0):(n+=r(i.substr(0,c),!1,!0),n+=i.substr(c))}if(a){if(a.length>=3&&47===a.charCodeAt(0)&&58===a.charCodeAt(2))(u=a.charCodeAt(1))>=65&&u<=90&&(a="/".concat(String.fromCharCode(u+32),":").concat(a.substr(3)));else if(a.length>=2&&58===a.charCodeAt(1)){var u;(u=a.charCodeAt(0))>=65&&u<=90&&(a="".concat(String.fromCharCode(u+32),":").concat(a.substr(2)))}n+=r(a,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),s&&(n+="#",n+=e?s:m(s,!1,!1)),n}function w(t){try{return decodeURIComponent(t)}catch(e){return t.length>3?t.substr(0,3)+w(t.substr(3)):t}}var x=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function _(t){return t.match(x)?t.replace(x,(function(t){return w(t)})):t}var O,P=r(470),j=function(t,e,r){if(r||2===arguments.length)for(var n,o=0,i=e.length;o<i;o++)!n&&o in e||(n||(n=Array.prototype.slice.call(e,0,o)),n[o]=e[o]);return t.concat(n||Array.prototype.slice.call(e))},I=P.posix||P,U="/";!function(t){t.joinPath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];return t.with({path:I.join.apply(I,j([t.path],e,!1))})},t.resolvePath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];var n=t.path,o=!1;n[0]!==U&&(n=U+n,o=!0);var i=I.resolve.apply(I,j([n],e,!1));return o&&i[0]===U&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===U)return t;var e=I.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return I.basename(t.path)},t.extname=function(t){return I.extname(t.path)}}(O||(O={}))})(),LIB=n})();const{URI,Utils}=LIB;
 //# sourceMappingURL=index.js.map
 
 /***/ })

@@ -415,6 +415,21 @@ var dom = __webpack_require__(6359);
 var snippetManager = (__webpack_require__(6629)/* .snippetManager */ .w);
 var config = __webpack_require__(3188);
 
+/**
+ * Completion represents a text snippet that is proposed to complete text
+ * @typedef Completion
+ * @property {string} [value] - text that would be inserted when selecting this completion (if `type` is "value")
+ * @property {string} [snippet] - snippet that would be inserted, if completion's type is "snippet"
+ * @property {number} [score] - determine order in which completions would be displayed, less score - further from start
+ * @property {string} [meta] - small description of completion
+ * @property {string} [caption] - text that would be displayed in completion list, if omitted `value` or `snippet`
+ * would be shown instead
+ * @property {string} [docHTML] - html string that would be displayed as additional popup
+ * @property {string} [docText] - plain text that would be displayed as additional popup. If `docHtml` exists, it would
+ * be used instead of `docText`
+ * @property {string} [completerId] - completer's identifier
+ */
+
 var Autocomplete = function() {
     this.autoInsert = false;
     this.autoSelect = true;
@@ -565,9 +580,14 @@ var Autocomplete = function() {
                 }
             }
             if (data.snippet)
-                snippetManager.insertSnippet(this.editor, data.snippet);
-            else
-                this.editor.execCommand("insertstring", data.value || data);
+                snippetManager.insertSnippet(this.editor, data.snippet, data.range);
+            else {
+                this.$insertString(data);
+            }
+
+            if (data.command && data.command === "startAutocomplete") {
+                this.editor.execCommand(data.command);
+            }
         }
         // detach only if new popup was not opened while inserting match
         if (this.completions == completions)
@@ -575,6 +595,26 @@ var Autocomplete = function() {
         this.editor.endOperation();
     };
 
+    this.$insertString = function (data) {
+        var text = data.value || data;
+        if (data.range) {
+            if (this.editor.inVirtualSelectionMode) {
+                return this.editor.session.replace(data.range, text);
+            }
+            this.editor.forEachSelection(() => {
+                var range = this.editor.getSelectionRange();
+                if (data.range.compareRange(range) === 0) {
+                    this.editor.session.replace(data.range, text);
+                }
+                else {
+                    this.editor.insert(text);
+                }
+            }, null, {keepOrder: true});
+        }
+        else {
+            this.editor.execCommand("insertstring", text);
+        }
+    };
 
     this.commands = {
         "Up": function(editor) { editor.completer.goTo("up"); },
@@ -747,7 +787,7 @@ var Autocomplete = function() {
         if (!selected || !this.editor || !this.popup.isOpen)
             return this.hideDocTooltip();
         this.editor.completers.some(function(completer) {
-            if (completer.getDocTooltip)
+            if (completer.getDocTooltip && selected.completerId === completer.id)
                 doc = completer.getDocTooltip(selected);
             return doc;
         });
@@ -2945,6 +2985,10 @@ exports.C = [{
     scrollIntoView: "cursor",
     readOnly: true
 }, {
+    name: "openlink",
+    bindKey: bindKey("Ctrl+F3", "F3"),
+    exec: function(editor) { editor.openLink(); }
+}, {
     name: "joinlines",
     description: "Join lines",
     bindKey: bindKey(null, null),
@@ -3335,7 +3379,7 @@ var reportErrorIfPathIsNotConfigured = function() {
     }
 };
 
-exports.version = "1.12.1";
+exports.version = "1.13.1";
 
 
 
@@ -7225,17 +7269,21 @@ function BracketMatch() {
      * * one Range if there is only one bracket
      *
      * @param {Point} pos
+     * @param {boolean} [isBackwards]
      * @returns {null|Range[]}
      */
-    this.getMatchingBracketRanges = function(pos) {
+    this.getMatchingBracketRanges = function(pos, isBackwards) {
         var line = this.getLine(pos.row);
-
-        var chr = line.charAt(pos.column - 1);
-        var match = chr && chr.match(/([\(\[\{])|([\)\]\}])/);
+        var bracketsRegExp = /([\(\[\{])|([\)\]\}])/;
+        var chr = !isBackwards && line.charAt(pos.column - 1);
+        var match = chr && chr.match(bracketsRegExp);
         if (!match) {
-            chr = line.charAt(pos.column);
-            pos = {row: pos.row, column: pos.column + 1};
-            match = chr && chr.match(/([\(\[\{])|([\)\]\}])/);
+            chr = (isBackwards === undefined || isBackwards) && line.charAt(pos.column);
+            pos = {
+                row: pos.row,
+                column: pos.column + 1
+            };
+            match = chr && chr.match(bracketsRegExp);
         }
 
         if (!match)
@@ -9355,7 +9403,10 @@ Editor.$uid = 0;
                 session.$bracketHighlight = null;
             }
             var pos = self.getCursorPosition();
-            var ranges = session.getMatchingBracketRanges(pos);
+            var handler = self.getKeyboardHandler();
+            var isBackwards = handler && handler.$getDirectionForHighlight && handler.$getDirectionForHighlight(self);
+            var ranges = session.getMatchingBracketRanges(pos, isBackwards);
+
             if (!ranges) {
                 var iterator = new TokenIterator(session, pos.row, pos.column);
                 var token = iterator.getCurrentToken();
@@ -10575,6 +10626,41 @@ Editor.$uid = 0;
                 }
             }
         }
+    };
+
+    /**
+     * Finds link at defined {row} and {column}
+     * @returns {String}
+     **/
+    this.findLinkAt = function (row, column) {
+        var line = this.session.getLine(row);
+        var wordParts = line.split(/((?:https?|ftp):\/\/[\S]+)/);
+        var columnPosition = column;
+        if (columnPosition < 0) columnPosition = 0;
+        var previousPosition = 0, currentPosition = 0, match;
+        for (let item of wordParts) {
+            currentPosition = previousPosition + item.length;
+            if (columnPosition >= previousPosition && columnPosition <= currentPosition) {
+                if (item.match(/((?:https?|ftp):\/\/[\S]+)/)) {
+                    match = item.replace(/[\s:.,'";}\]]+$/, "");
+                    break;
+                }
+            }
+            previousPosition = currentPosition;
+        }
+        return match;
+    };
+
+    /**
+     * Open valid url under cursor in another tab
+     * @returns {Boolean}
+     **/
+    this.openLink = function () {
+        var cursor =  this.selection.getCursor();
+        var url = this.findLinkAt(cursor.row, cursor.column);
+        if (url)
+            window.open(url, '_blank');
+        return url != null;
     };
 
     /**
@@ -11946,8 +12032,10 @@ var keyWordCompleter = {
         }
         var state = editor.session.getState(pos.row);
         var completions = session.$mode.getCompletions(state, session, pos, prefix);
+        completions = completions.map((el) => el.completerId = keyWordCompleter.id);
         callback(null, completions);
-    }
+    },
+    id: "keywordCompleter"
 };
 
 var transformSnippetTooltip = function(str) {
@@ -11983,7 +12071,8 @@ var snippetCompleter = {
                     caption: caption,
                     snippet: s.content,
                     meta: s.tabTrigger && !s.name ? s.tabTrigger + "\u21E5 " : "snippet",
-                    type: "snippet"
+                    type: "snippet",
+                    completerId: snippetCompleter.id
                 });
             }
         }, this);
@@ -11996,7 +12085,8 @@ var snippetCompleter = {
                 lang.escapeHTML(transformSnippetTooltip(item.snippet))
             ].join("");
         }
-    }
+    },
+    id: "snippetCompleter"
 };
 
 var completers = [snippetCompleter, textCompleter, keyWordCompleter];
@@ -12094,10 +12184,12 @@ var Editor = (__webpack_require__(2880)/* .Editor */ .M);
         value: false
     },
     /**
-     * Enable live autocomplete. If the value is an array, it is assumed to be an array of completers
-     * and will use them instead of the default completers.
+     * Enable live autocompletion
      */
     enableLiveAutocompletion: {
+        /**
+         * @param {boolean} val
+         */
         set: function(val) {
             if (val) {
                 if (!this.completers)
@@ -13617,30 +13709,30 @@ var event = __webpack_require__(7989);
 var useragent = __webpack_require__(618);
 var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
-var CHAR_COUNT = 256;
+var DEFAULT_CHAR_COUNT = 250;
 var USE_OBSERVER = typeof ResizeObserver == "function";
 var L = 200;
 
-var FontMetrics = exports.c = function(parentEl) {
+var FontMetrics = exports.c = function(parentEl, charCount) {
+    this.charCount = charCount || DEFAULT_CHAR_COUNT;
+
     this.el = dom.createElement("div");
     this.$setMeasureNodeStyles(this.el.style, true);
-    
+
     this.$main = dom.createElement("div");
     this.$setMeasureNodeStyles(this.$main.style);
-    
+
     this.$measureNode = dom.createElement("div");
     this.$setMeasureNodeStyles(this.$measureNode.style);
-    
-    
+
     this.el.appendChild(this.$main);
     this.el.appendChild(this.$measureNode);
     parentEl.appendChild(this.el);
-    
-    this.$measureNode.textContent = lang.stringRepeat("X", CHAR_COUNT);
-    
+
+    this.$measureNode.textContent = lang.stringRepeat("X", this.charCount);
+
     this.$characterSize = {width: 0, height: 0};
-    
-    
+
     if (USE_OBSERVER)
         this.$addObserver();
     else
@@ -13650,9 +13742,9 @@ var FontMetrics = exports.c = function(parentEl) {
 (function() {
 
     oop.implement(this, EventEmitter);
-        
+
     this.$characterSize = {width: 0, height: 0};
-    
+
     this.$setMeasureNodeStyles = function(style, isRoot) {
         style.width = style.height = "auto";
         style.left = style.top = "0px";
@@ -13681,7 +13773,7 @@ var FontMetrics = exports.c = function(parentEl) {
             this._emit("changeCharacterSize", {data: size});
         }
     };
-    
+
     this.$addObserver = function() {
         var self = this;
         this.$observer = new window.ResizeObserver(function(e) {
@@ -13695,13 +13787,13 @@ var FontMetrics = exports.c = function(parentEl) {
         if (this.$pollSizeChangesTimer || this.$observer)
             return this.$pollSizeChangesTimer;
         var self = this;
-        
+
         return this.$pollSizeChangesTimer = event.onIdle(function cb() {
             self.checkForSizeChanges();
             event.onIdle(cb, 500);
         }, 500);
     };
-    
+
     this.setPolling = function(val) {
         if (val) {
             this.$pollSizeChanges();
@@ -13712,24 +13804,32 @@ var FontMetrics = exports.c = function(parentEl) {
     };
 
     this.$measureSizes = function(node) {
-        var size = {
-            height: (node || this.$measureNode).clientHeight,
-            width: (node || this.$measureNode).clientWidth / CHAR_COUNT
+        node = node || this.$measureNode;
+
+        // Avoid `Element.clientWidth` since it is rounded to an integer (see
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth).
+        // Using it here can result in a noticeable cursor offset for long lines.
+        const rect = node.getBoundingClientRect();
+        const charSize = {
+            height: rect.height,
+            width: rect.width / this.charCount
         };
-        
+
         // Size and width can be null if the editor is not visible or
         // detached from the document
-        if (size.width === 0 || size.height === 0)
+        if (charSize.width === 0 || charSize.height === 0)
             return null;
-        return size;
+        return charSize;
     };
 
     this.$measureCharWidth = function(ch) {
-        this.$main.textContent = lang.stringRepeat(ch, CHAR_COUNT);
+        this.$main.textContent = lang.stringRepeat(ch, this.charCount);
+        // Avoid `Element.clientWidth` since it is rounded to an integer (see
+        // https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth).
         var rect = this.$main.getBoundingClientRect();
-        return rect.width / CHAR_COUNT;
+        return rect.width / this.charCount;
     };
-    
+
     this.getCharacterWidth = function(ch) {
         var w = this.charSizes[ch];
         if (w === undefined) {
@@ -13746,7 +13846,7 @@ var FontMetrics = exports.c = function(parentEl) {
             this.el.parentNode.removeChild(this.el);
     };
 
-    
+
     this.$getZoom = function getZoom(element) {
         if (!element || !element.parentElement) return 1;
         return (window.getComputedStyle(element).zoom || 1) * getZoom(element.parentElement);
@@ -13783,7 +13883,7 @@ var FontMetrics = exports.c = function(parentEl) {
 
         if (!this.els)
             this.$initTransformMeasureNodes();
-        
+
         function p(el) {
             var r = el.getBoundingClientRect();
             return [r.left, r.top];
@@ -13798,7 +13898,7 @@ var FontMetrics = exports.c = function(parentEl) {
 
         var m1 = mul(1 + h[0], sub(b, a));
         var m2 = mul(1 + h[1], sub(c, a));
-        
+
         if (elPos) {
             var x = elPos;
             var k = h[0] * x[0] / L + h[1] * x[1] / L + 1;
@@ -13809,7 +13909,7 @@ var FontMetrics = exports.c = function(parentEl) {
         var f = solve(sub(m1, mul(h[0], u)), sub(m2, mul(h[1], u)), u);
         return mul(L, f);
     };
-    
+
 }).call(FontMetrics.prototype);
 
 
@@ -14647,6 +14747,8 @@ var Text = function(parentEl) {
     this.SPACE_CHAR = "\xB7";
     this.$padding = 0;
     this.MAX_LINE_LENGTH = 10000;
+    // Smaller chunks result in higher cursor precision at the cost of more DOM nodes
+    this.MAX_CHUNK_LENGTH = 250;
 
     this.$updateEolChar = function() {
         var doc = this.session.doc;
@@ -14940,6 +15042,19 @@ var Text = function(parentEl) {
         "lparen": true
     };
 
+    this.$renderTokenInChunks = function(parent, screenColumn, token, value) {
+        var newScreenColumn;
+        for (var i = 0; i < value.length; i += this.MAX_CHUNK_LENGTH) {
+            var valueChunk = value.substring(i, i + this.MAX_CHUNK_LENGTH);
+            var tokenChunk = {
+                type: token.type,
+                value: valueChunk
+            };
+            newScreenColumn = this.$renderToken(parent, screenColumn + i, tokenChunk, valueChunk);
+        }
+        return newScreenColumn;
+    };
+
     this.$renderToken = function(parent, screenColumn, token, value) {
         var self = this;
         var re = /(\t)|( +)|([\x00-\x1f\x80-\xa0\xad\u1680\u180E\u2000-\u200f\u2028\u2029\u202F\u205F\uFEFF\uFFF9-\uFFFC\u2066\u2067\u2068\u202A\u202B\u202D\u202E\u202C\u2069]+)|(\u3000)|([\u1100-\u115F\u11A3-\u11A7\u11FA-\u11FF\u2329-\u232A\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u2FF0-\u2FFB\u3001-\u303E\u3041-\u3096\u3099-\u30FF\u3105-\u312D\u3131-\u318E\u3190-\u31BA\u31C0-\u31E3\u31F0-\u321E\u3220-\u3247\u3250-\u32FE\u3300-\u4DBF\u4E00-\uA48C\uA490-\uA4C6\uA960-\uA97C\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFAFF\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE66\uFE68-\uFE6B\uFF01-\uFF60\uFFE0-\uFFE6]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g;
@@ -15005,20 +15120,16 @@ var Text = function(parentEl) {
 
         valueFragment.appendChild(this.dom.createTextNode(i ? value.slice(i) : value, this.element));
 
+        var span = this.dom.createElement("span");
         if (!this.$textToken[token.type]) {
             var classes = "ace_" + token.type.replace(/\./g, " ace_");
-            var span = this.dom.createElement("span");
             if (token.type == "fold")
                 span.style.width = (token.value.length * this.config.characterWidth) + "px";
 
             span.className = classes;
-            span.appendChild(valueFragment);
-
-            parent.appendChild(span);
         }
-        else {
-            parent.appendChild(valueFragment);
-        }
+        span.appendChild(valueFragment);
+        parent.appendChild(span);
 
         return screenColumn + value.length;
     };
@@ -15185,11 +15296,11 @@ var Text = function(parentEl) {
             }
 
             if (chars + value.length < splitChars) {
-                screenColumn = this.$renderToken(lineEl, screenColumn, token, value);
+                screenColumn = this.$renderTokenInChunks(lineEl, screenColumn, token, value);
                 chars += value.length;
             } else {
                 while (chars + value.length >= splitChars) {
-                    screenColumn = this.$renderToken(
+                    screenColumn = this.$renderTokenInChunks(
                         lineEl, screenColumn,
                         token, value.substring(0, splitChars - chars)
                     );
@@ -15207,7 +15318,7 @@ var Text = function(parentEl) {
                 }
                 if (value.length != 0) {
                     chars += value.length;
-                    screenColumn = this.$renderToken(
+                    screenColumn = this.$renderTokenInChunks(
                         lineEl, screenColumn, token, value
                     );
                 }
@@ -15229,15 +15340,23 @@ var Text = function(parentEl) {
                 if (!value)
                     continue;
             }
-            if (screenColumn + value.length > this.MAX_LINE_LENGTH)
-                return this.$renderOverflowMessage(parent, screenColumn, token, value);
-            screenColumn = this.$renderToken(parent, screenColumn, token, value);
+            if (screenColumn + value.length > this.MAX_LINE_LENGTH) {
+                this.$renderOverflowMessage(parent, screenColumn, token, value);
+                return;
+            }
+            screenColumn = this.$renderTokenInChunks(parent, screenColumn, token, value);
         }
     };
 
     this.$renderOverflowMessage = function(parent, screenColumn, token, value, hide) {
-        token && this.$renderToken(parent, screenColumn, token,
-            value.slice(0, this.MAX_LINE_LENGTH - screenColumn));
+        if (token) {
+            this.$renderTokenInChunks(
+                parent,
+                screenColumn,
+                token,
+                value.slice(0, this.MAX_LINE_LENGTH - screenColumn)
+            );
+        }
 
         var overflowEl = this.dom.createElement("span");
         overflowEl.className = "ace_inline_button ace_keyword ace_toggle_wrap";
@@ -16115,7 +16234,7 @@ exports.importCssString = importCssString;
 exports.importCssStylsheet = function(uri, doc) {
     exports.buildDom(["link", {rel: "stylesheet", href: uri}], exports.getDocumentHead(doc));
 };
-exports.scrollbarWidth = function(document) {
+exports.scrollbarWidth = function(doc) {
     var inner = exports.createElement("ace_inner");
     inner.style.width = "100%";
     inner.style.minWidth = "0px";
@@ -16135,7 +16254,9 @@ exports.scrollbarWidth = function(document) {
 
     outer.appendChild(inner);
 
-    var body = document.documentElement;
+    var body = (doc && doc.documentElement) || (document && document.documentElement);
+    if (!body) return 0;
+
     body.appendChild(outer);
 
     var noScrollbar = inner.offsetWidth;
@@ -16143,13 +16264,13 @@ exports.scrollbarWidth = function(document) {
     style.overflow = "scroll";
     var withScrollbar = inner.offsetWidth;
 
-    if (noScrollbar == withScrollbar) {
+    if (noScrollbar === withScrollbar) {
         withScrollbar = outer.clientWidth;
     }
 
     body.removeChild(outer);
 
-    return noScrollbar-withScrollbar;
+    return noScrollbar - withScrollbar;
 };
 
 exports.computedStyle = function(element, style) {
@@ -16789,6 +16910,9 @@ var Keys = (function() {
         }
     };
 
+    // workaround for firefox bug
+    ret.PRINTABLE_KEYS[173] = '-';
+
     // A reverse map of FUNCTION_KEYS
     var name, i;
     for (i in ret.FUNCTION_KEYS) {
@@ -16812,9 +16936,6 @@ var Keys = (function() {
     ret.enter = ret["return"];
     ret.escape = ret.esc;
     ret.del = ret["delete"];
-
-    // workaround for firefox bug
-    ret[173] = '-';
     
     (function() {
         var mods = ["cmd", "ctrl", "alt", "shift"];
@@ -25969,16 +26090,45 @@ var dom = __webpack_require__(6359);
 var event = __webpack_require__(7989);
 var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
-dom.importCssString('.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{\n' + '  position: absolute;\n'
-    + '  background: rgba(128, 128, 128, 0.6);\n' + '  -moz-box-sizing: border-box;\n' + '  box-sizing: border-box;\n'
-    + '  border: 1px solid #bbb;\n' + '  border-radius: 2px;\n' + '  z-index: 8;\n' + '}\n'
-    + '.ace_editor>.ace_sb-v, .ace_editor>.ace_sb-h {\n' + '  position: absolute;\n' + '  z-index: 6;\n'
-    + '  background: none;' + '  overflow: hidden!important;\n' + '}\n' + '.ace_editor>.ace_sb-v {\n'
-    + '  z-index: 6;\n' + '  right: 0;\n' + '  top: 0;\n' + '  width: 12px;\n' + '}' + '.ace_editor>.ace_sb-v div {\n'
-    + '  z-index: 8;\n' + '  right: 0;\n' + '  width: 100%;\n' + '}' + '.ace_editor>.ace_sb-h {\n' + '  bottom: 0;\n'
-    + '  left: 0;\n' + '  height: 12px;\n' + '}' + '.ace_editor>.ace_sb-h div {\n' + '  bottom: 0;\n'
-    + '  height: 100%;\n' + '}' + '.ace_editor>.ace_sb_grabbed {\n' + '  z-index: 8;\n' + '  background: #000;\n'
-    + '}');
+dom.importCssString(`.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{
+  position: absolute;
+  background: rgba(128, 128, 128, 0.6);
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #bbb;
+  border-radius: 2px;
+  z-index: 8;
+}
+.ace_editor>.ace_sb-v, .ace_editor>.ace_sb-h {
+  position: absolute;
+  z-index: 6;
+  background: none;
+  overflow: hidden!important;
+}
+.ace_editor>.ace_sb-v {
+  z-index: 6;
+  right: 0;
+  top: 0;
+  width: 12px;
+}
+.ace_editor>.ace_sb-v div {
+  z-index: 8;
+  right: 0;
+  width: 100%;
+}
+.ace_editor>.ace_sb-h {
+  bottom: 0;
+  left: 0;
+  height: 12px;
+}
+.ace_editor>.ace_sb-h div {
+  bottom: 0;
+  height: 100%;
+}
+.ace_editor>.ace_sb_grabbed {
+  z-index: 8;
+  background: #000;
+}`, "ace_scrollbar.css", false);
 
 /**
  * An abstract class representing a native scrollbar control.
@@ -26476,12 +26626,13 @@ var Search = function() {
 
         if (range) {
             var startColumn = range.start.column;
-            var endColumn = range.start.column;
+            var endColumn = range.end.column;
             var i = 0, j = ranges.length - 1;
-            while (i < j && ranges[i].start.column < startColumn && ranges[i].start.row == range.start.row)
+            while (i < j && ranges[i].start.column < startColumn && ranges[i].start.row == 0)
                 i++;
 
-            while (i < j && ranges[j].end.column > endColumn && ranges[j].end.row == range.end.row)
+            var endRow = range.end.row - range.start.row;
+            while (i < j && ranges[j].end.column > endColumn && ranges[j].end.row == endRow)
                 j--;
             
             ranges = ranges.slice(i, j + 1);
@@ -28036,7 +28187,7 @@ var SnippetManager = function() {
         return result;
     };
 
-    this.insertSnippetForSelection = function(editor, snippetText) {
+    this.insertSnippetForSelection = function(editor, snippetText, replaceRange) {
         var cursor = editor.getCursorPosition();
         var line = editor.session.getLine(cursor.row);
         var tabString = editor.session.getTabString();
@@ -28154,6 +28305,9 @@ var SnippetManager = function() {
             }
         });
         var range = editor.getSelectionRange();
+        if (replaceRange && replaceRange.compareRange(range) === 0) {
+            range = replaceRange;
+        }
         var end = editor.session.replace(range, text);
 
         var tabstopManager = new TabstopManager(editor);
@@ -28161,13 +28315,13 @@ var SnippetManager = function() {
         tabstopManager.addTabstops(tabstops, range.start, end, selectionId);
     };
     
-    this.insertSnippet = function(editor, snippetText) {
+    this.insertSnippet = function(editor, snippetText, replaceRange) {
         var self = this;
         if (editor.inVirtualSelectionMode)
-            return self.insertSnippetForSelection(editor, snippetText);
+            return self.insertSnippetForSelection(editor, snippetText, replaceRange);
         
         editor.forEachSelection(function() {
-            self.insertSnippetForSelection(editor, snippetText);
+            self.insertSnippetForSelection(editor, snippetText, replaceRange);
         }, null, {keepOrder: true});
         
         if (editor.tabstopManager)
@@ -30210,7 +30364,7 @@ var VirtualRenderer = function(container, theme) {
         column : 0
     };
 
-    this.$fontMetrics = new FontMetrics(this.container);
+    this.$fontMetrics = new FontMetrics(this.container, this.$textLayer.MAX_CHUNK_LENGTH);
     this.$textLayer.$setFontMetrics(this.$fontMetrics);
     this.$textLayer.on("changeCharacterSize", function(e) {
         _self.updateCharacterSize();
@@ -31344,6 +31498,10 @@ var VirtualRenderer = function(container, theme) {
         
         var topMargin = $viewMargin && $viewMargin.top || 0;
         var bottomMargin = $viewMargin && $viewMargin.bottom || 0;
+
+        if (this.$scrollAnimation) {
+            this.$stopAnimation = true;
+        }
         
         var scrollTop = this.$scrollAnimation ? this.session.getScrollTop() : this.scrollTop;
         
@@ -31490,7 +31648,20 @@ var VirtualRenderer = function(container, theme) {
         _self.session.setScrollTop(steps.shift());
         // trick session to think it's already scrolled to not loose toValue
         _self.session.$scrollTop = toValue;
+        
+        function endAnimation() {
+            _self.$timer = clearInterval(_self.$timer);
+            _self.$scrollAnimation = null;
+            _self.$stopAnimation = false;
+            callback && callback();
+        }
+        
         this.$timer = setInterval(function() {
+            if (_self.$stopAnimation) {
+                endAnimation();
+                return;
+            }
+
             if (!_self.session) 
                 return clearInterval(_self.$timer);
             if (steps.length) {
@@ -31502,9 +31673,7 @@ var VirtualRenderer = function(container, theme) {
                 toValue = null;
             } else {
                 // do this on separate step to not get spurious scroll event from scrollbar
-                _self.$timer = clearInterval(_self.$timer);
-                _self.$scrollAnimation = null;
-                callback && callback();
+                endAnimation();
             }
         }, 10);
     };
@@ -32079,7 +32248,7 @@ module.exports = webpackEmptyContext;
 
 /***/ }),
 
-/***/ 2969:
+/***/ 7040:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -32095,7 +32264,7 @@ module.exports = webpackEmptyContext;
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".ace_tooltip > p {\n    margin: 0;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}", "",{"version":3,"sources":["webpack://./css/linters.css"],"names":[],"mappings":"AAAA;IACI,SAAS;AACb;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB","sourcesContent":[".ace_tooltip > p {\n    margin: 0;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".ace_tooltip > p {\n    margin: 0;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}", "",{"version":3,"sources":["webpack://./packages/ace-linters/css/linters.css"],"names":[],"mappings":"AAAA;IACI,SAAS;AACb;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB","sourcesContent":[".ace_tooltip > p {\n    margin: 0;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -37379,7 +37548,7 @@ if (true) {
 
 /***/ }),
 
-/***/ 5563:
+/***/ 7263:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -37399,7 +37568,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(4589);
 /* harmony import */ var _node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_linters_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2969);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_linters_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7040);
 
       
       
@@ -37725,7 +37894,7 @@ module.exports = styleTagTransform;
 
 /***/ }),
 
-/***/ 4977:
+/***/ 6387:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -37864,110 +38033,7 @@ exports.DescriptionTooltip = DescriptionTooltip;
 
 /***/ }),
 
-/***/ 2078:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.cssContent = void 0;
-exports.cssContent = ".text-layer {\n    font: 12px Monaco, \"Courier New\", monospace;\n    font-size: 3vmin;\n    cursor: text;\n}\n\n.blinker {\n    animation: blink 1s linear infinite alternate;\n}\n\n@keyframes blink {\n    0%, 40% {\n        opacity: 0; /*\n        */\n        opacity: 1\n    }\n\n    40.5%, 100% {\n        opacity: 1\n    }\n}\n\n@document url(http://c9.io/), url-prefix(http://ace.c9.io/build/),\ndomain(c9.io), regexp(\"https:.*\") /**/\n{\n    /**/\n    img[title]:before\n    {\n        content: attr(title) \"AImage             retrieved from\"\n        attr(src); /*\n            */\n        white-space: pre;\n        display: block;\n        background: url(asdasd); \"err\n    }\n}\n\n@viewport {\n    min-zoom: 1;\nmax-zoom: 200%;\nuser-zoom: fixed;\n}\n";
-
-
-/***/ }),
-
-/***/ 3417:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.htmlContent = void 0;
-exports.htmlContent = "\n    <!DOCTYPE html>\n<html>\n    <head>\n\n    <style type=\"text/css\">\n        .text-layer {\n            font-family: Monaco, \"Courier New\", monospace;\n            font-size: 12px;\n            cursor: text;\n        }\n    </style>\n\n    </head>\n    <body>\n        <h1 style=\"color:red\">Juhu Kinners</h1>\n    </body>\n</html>\n    ";
-
-
-/***/ }),
-
-/***/ 1806:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.jsContent = void 0;
-exports.jsContent = "\nclass Point {\n  x;\n  y;\n \n  // Normal signature with defaults\n  constructor(x = 0, y = 0) {\n    this.x = x;\n    this.y = y;\n  }\n}\n";
-
-
-/***/ }),
-
-/***/ 7433:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.jsonSchema = exports.jsonContent = void 0;
-exports.jsonContent = "{\n       \"name\": 12\n       \"country\": \"Ireland\"\n    }";
-exports.jsonSchema = {
-    "type": "object",
-    "description": "a very special object",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Some name"
-        },
-        "country": {
-            "type": "string",
-            "enum": ["Ireland", "Iceland"],
-            "description": "Country name",
-        },
-        "age": {
-            "type": "number",
-            "description": "Age of object"
-        }
-    }
-};
-
-
-/***/ }),
-
-/***/ 1144:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.lessContent = void 0;
-exports.lessContent = "/* styles.less */\n\n@base: #f938ab;\n\n.box-shadow(@style, @c) when (iscolor(@c)) {\n    box-shadow:         @style @c;\n    -webkit-box-shadow: @style @c;\n    -moz-box-shadow:    @style @c;\n}\n.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {\n    .box-shadow(@style, rgba(0, 0, 0, @alpha));\n}\n\n// Box styles\n.box { \n    color: saturate(@base, 5%);\n    border-color: lighten(@base, 30%);\n    \n    div { .box-shadow(0 0 5px, 30%) }\n  \n    a {\n        color: @base;\n        \n        &:hover {\n            color: lighten(@base, 50%);\n        }\n    }\n}\n\n";
-
-
-/***/ }),
-
-/***/ 9925:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.scssContent = void 0;
-exports.scssContent = "/* style.scss */\n\n#navbar {\n    $navbar-width: 800px;\n    $items: 5;\n    $navbar-color: #ce4dd6;\n\n    width: $navbar-width;\n    border-bottom: 2px solid $navbar-color;\n\n    li {\n        float: left;\n        width: $navbar-width/$items - 10px;\n\n          background-color: lighten($navbar-color, 20%);\n        &:hover {\n            background-color: lighten($navbar-color, 10%);\n        }\n    }\n}\n";
-
-
-/***/ }),
-
-/***/ 3969:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.typescriptContent = void 0;
-exports.typescriptContent = "\nclass Greeter {\n  readonly name: string = \"world\";\n  doc: HTMLDocument;\n \n  constructor(otherName?: string) {\n    if (otherName !== undefined) {\n      this.name = otherName;\n    }\n  }\n \n  err() {\n    this.name = \"not ok\";\n  }\n}\nconst g = new Greeter();\ng.name = \"also not ok\";\n";
-
-
-/***/ }),
-
-/***/ 501:
+/***/ 6005:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -38011,9 +38077,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LanguageProvider = void 0;
 var ace_code_1 = __webpack_require__(9100);
-var message_controller_1 = __webpack_require__(4896);
-var description_tooltip_1 = __webpack_require__(4977);
-var common_converters_1 = __webpack_require__(5393);
+var message_controller_1 = __webpack_require__(1234);
+var description_tooltip_1 = __webpack_require__(6387);
+var common_converters_1 = __webpack_require__(8840);
 var showdown = __webpack_require__(3787);
 var LanguageProvider = /** @class */ (function () {
     function LanguageProvider(editor, options, markdownConverter) {
@@ -38160,21 +38226,21 @@ exports.LanguageProvider = LanguageProvider;
 
 /***/ }),
 
-/***/ 4896:
+/***/ 1234:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MessageController = void 0;
-var message_types_1 = __webpack_require__(6653);
+var message_types_1 = __webpack_require__(6885);
 var oop = __webpack_require__(9359);
 var event_emitter_1 = __webpack_require__(3056);
 var MessageController = /** @class */ (function () {
     function MessageController() {
         var _this = this;
         //@ts-ignore
-        this.$worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(411), __webpack_require__.b));
+        this.$worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(159), __webpack_require__.b));
         this.$worker.onmessage = function (e) {
             var message = e.data;
             var data = null;
@@ -38258,7 +38324,7 @@ oop.implement(MessageController.prototype, event_emitter_1.EventEmitter);
 
 /***/ }),
 
-/***/ 6653:
+/***/ 6885:
 /***/ (function(__unused_webpack_module, exports) {
 
 "use strict";
@@ -38405,7 +38471,7 @@ var MessageType;
 
 /***/ }),
 
-/***/ 5393:
+/***/ 8840:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38445,6 +38511,109 @@ var CommonConverter;
         TooltipType[TooltipType["markdown"] = 1] = "markdown";
     })(TooltipType = CommonConverter.TooltipType || (CommonConverter.TooltipType = {}));
 })(CommonConverter = exports.CommonConverter || (exports.CommonConverter = {}));
+
+
+/***/ }),
+
+/***/ 7887:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.cssContent = void 0;
+exports.cssContent = ".text-layer {\n    font: 12px Monaco, \"Courier New\", monospace;\n    font-size: 3vmin;\n    cursor: text;\n}\n\n.blinker {\n    animation: blink 1s linear infinite alternate;\n}\n\n@keyframes blink {\n    0%, 40% {\n        opacity: 0; /*\n        */\n        opacity: 1\n    }\n\n    40.5%, 100% {\n        opacity: 1\n    }\n}\n\n@document url(http://c9.io/), url-prefix(http://ace.c9.io/build/),\ndomain(c9.io), regexp(\"https:.*\") /**/\n{\n    /**/\n    img[title]:before\n    {\n        content: attr(title) \"AImage             retrieved from\"\n        attr(src); /*\n            */\n        white-space: pre;\n        display: block;\n        background: url(asdasd); \"err\n    }\n}\n\n@viewport {\n    min-zoom: 1;\nmax-zoom: 200%;\nuser-zoom: fixed;\n}\n";
+
+
+/***/ }),
+
+/***/ 6173:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.htmlContent = void 0;
+exports.htmlContent = "\n    <!DOCTYPE html>\n<html>\n    <head>\n\n    <style type=\"text/css\">\n        .text-layer {\n            font-family: Monaco, \"Courier New\", monospace;\n            font-size: 12px;\n            cursor: text;\n        }\n    </style>\n\n    </head>\n    <body>\n        <h1 style=\"color:red\">Juhu Kinners</h1>\n    </body>\n</html>\n    ";
+
+
+/***/ }),
+
+/***/ 3595:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.jsContent = void 0;
+exports.jsContent = "\nclass Point {\n  x;\n  y;\n \n  // Normal signature with defaults\n  constructor(x = 0, y = 0) {\n    this.x = x;\n    this.y = y;\n  }\n}\n";
+
+
+/***/ }),
+
+/***/ 4908:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.jsonSchema = exports.jsonContent = void 0;
+exports.jsonContent = "{\n       \"name\": 12\n       \"country\": \"Ireland\"\n    }";
+exports.jsonSchema = {
+    "type": "object",
+    "description": "a very special object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Some name"
+        },
+        "country": {
+            "type": "string",
+            "enum": ["Ireland", "Iceland"],
+            "description": "Country name",
+        },
+        "age": {
+            "type": "number",
+            "description": "Age of object"
+        }
+    }
+};
+
+
+/***/ }),
+
+/***/ 8370:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.lessContent = void 0;
+exports.lessContent = "/* styles.less */\n\n@base: #f938ab;\n\n.box-shadow(@style, @c) when (iscolor(@c)) {\n    box-shadow:         @style @c;\n    -webkit-box-shadow: @style @c;\n    -moz-box-shadow:    @style @c;\n}\n.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {\n    .box-shadow(@style, rgba(0, 0, 0, @alpha));\n}\n\n// Box styles\n.box { \n    color: saturate(@base, 5%);\n    border-color: lighten(@base, 30%);\n    \n    div { .box-shadow(0 0 5px, 30%) }\n  \n    a {\n        color: @base;\n        \n        &:hover {\n            color: lighten(@base, 50%);\n        }\n    }\n}\n\n";
+
+
+/***/ }),
+
+/***/ 4099:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.scssContent = void 0;
+exports.scssContent = "/* style.scss */\n\n#navbar {\n    $navbar-width: 800px;\n    $items: 5;\n    $navbar-color: #ce4dd6;\n\n    width: $navbar-width;\n    border-bottom: 2px solid $navbar-color;\n\n    li {\n        float: left;\n        width: $navbar-width/$items - 10px;\n\n          background-color: lighten($navbar-color, 20%);\n        &:hover {\n            background-color: lighten($navbar-color, 10%);\n        }\n    }\n}\n";
+
+
+/***/ }),
+
+/***/ 5373:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.typescriptContent = void 0;
+exports.typescriptContent = "\nclass Greeter {\n  readonly name: string = \"world\";\n  doc: HTMLDocument;\n \n  constructor(otherName?: string) {\n    if (otherName !== undefined) {\n      this.name = otherName;\n    }\n  }\n \n  err() {\n    this.name = \"not ok\";\n  }\n}\nconst g = new Greeter();\ng.name = \"also not ok\";\n";
 
 
 /***/ })
@@ -38602,7 +38771,7 @@ var __webpack_unused_export__;
 var _a;
 __webpack_unused_export__ = ({ value: true });
 __webpack_require__(1105);
-var html_example_1 = __webpack_require__(3417);
+var html_example_1 = __webpack_require__(6173);
 var event = __webpack_require__(7989);
 var HashHandler = (__webpack_require__(7116).HashHandler);
 var keyUtil = __webpack_require__(1797);
@@ -38615,15 +38784,15 @@ var typescript_1 = __webpack_require__(3123);
 var javascript_1 = __webpack_require__(8057);
 var theme = __webpack_require__(3687);
 var ace = __webpack_require__(9100);
-var css_example_1 = __webpack_require__(2078);
-var less_example_1 = __webpack_require__(1144);
-var scss_example_1 = __webpack_require__(9925);
-var typescript_example_1 = __webpack_require__(3969);
-var json_example_1 = __webpack_require__(7433);
-var javascript_example_1 = __webpack_require__(1806);
-var language_provider_1 = __webpack_require__(501);
+var css_example_1 = __webpack_require__(7887);
+var less_example_1 = __webpack_require__(8370);
+var scss_example_1 = __webpack_require__(4099);
+var typescript_example_1 = __webpack_require__(5373);
+var json_example_1 = __webpack_require__(4908);
+var javascript_example_1 = __webpack_require__(3595);
+var language_provider_1 = __webpack_require__(6005);
 //TODO:
-var lintersCSS = __webpack_require__(5563);
+var lintersCSS = __webpack_require__(7263);
 var dom = __webpack_require__(6359);
 dom.importCssString(lintersCSS, "linters.css");
 var modes = [
