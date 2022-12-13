@@ -13,7 +13,7 @@ import {
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {AceLinters} from "./services/language-service";
+import {AceLinters} from "./index";
 import {FormattingOptions} from "vscode-languageserver-types";
 
 export class MessageController {

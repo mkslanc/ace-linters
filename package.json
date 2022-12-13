@@ -1,17 +1,13 @@
 {
   "name": "ace-linters",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "latest",
-    "vscode-html-languageservice": "latest",
-    "vscode-css-languageservice": "latest",
-    "vscode-json-languageservice": "4.2.1",
-    "typescript": "latest",
-    "showdown": "latest"
+    "ace-code": "mkslanc/ace#completions-improvements",
+    "typescript": "latest"
   },
   "devDependencies": {
     "webpack": "latest",
@@ -23,5 +19,8 @@
     "css-loader": "^6.7.1",
     "style-loader": "^3.3.1"
   },
-  "main": "build/bundle.simple.js"
+  "main": "build/bundle.simple.js",
+  "workspaces": [
+    "./packages/*"
+  ]
 }

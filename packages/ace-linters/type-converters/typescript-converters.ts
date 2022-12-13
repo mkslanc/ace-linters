@@ -8,7 +8,7 @@ import {
 } from "../services/typescript/lib/typescriptServices";
 import {Ace, Range as AceRange} from "ace-code";
 import * as ts from "../services/typescript/lib/typescriptServices";
-import {AceLinters} from "../services/language-service";
+import {AceLinters} from "../index";
 import {CommonConverter} from "./common-converters";
 import Tooltip = AceLinters.Tooltip;
 

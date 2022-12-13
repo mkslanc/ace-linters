@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "./built",
+    "outDir": "./build",
     "allowJs": true,
     "target": "es5",
     "allowSyntheticDefaultImports": true,
@@ -8,7 +8,7 @@
     "module": "CommonJS"
   },
   "include": [
-    "./src/**/*"
+    "./packages/**/*"
   ],
   "exclude": [
     "node_modules"

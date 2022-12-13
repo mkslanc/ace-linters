@@ -1,0 +1,15 @@
+{
+  "name": "@ace-linters/core",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "vscode-html-languageservice": "latest",
+    "vscode-css-languageservice": "latest",
+    "vscode-json-languageservice": "4.2.1",
+    "showdown": "latest"
+  },
+  "main": "build/bundle.provider.js",
+  "types": "index.d.ts"
+}

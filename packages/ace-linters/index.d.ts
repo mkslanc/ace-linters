@@ -1,6 +1,6 @@
 import type {FormattingOptions} from "vscode-languageserver-types";
 import type {Ace} from "ace-code/ace";
-import {CommonConverter} from "../type-converters/common-converters";
+import {CommonConverter} from "./type-converters/common-converters";
 import {TextDocument} from "vscode-json-languageservice";
 
 export namespace AceLinters {
@@ -53,4 +53,3 @@ export namespace AceLinters {
         [name: string]: any
     }
 }
-

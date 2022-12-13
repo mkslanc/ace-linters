@@ -1,4 +1,5 @@
 import {Ace, Range as AceRange} from "ace-code";
+import {MarkDownConverter} from "./converters";
 
 export namespace CommonConverter {
     export function toCompletions(completions: Ace.Completion[], markdownConverter: MarkDownConverter): Ace.Completion[] {

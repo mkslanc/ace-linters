@@ -1,6 +1,4 @@
 "use strict";
-const CopyPlugin = require("copy-webpack-plugin");
-
 module.exports = (env, argv) => {
     let loader;
     loader = {
@@ -17,7 +15,7 @@ module.exports = (env, argv) => {
         cache: true,
         devtool: 'source-map',
         entry: {
-            simple: './packages/demo/demo.ts'
+            provider: './language-provider.ts'
         },
         mode: "production",
         module: {
@@ -41,27 +39,11 @@ module.exports = (env, argv) => {
         },
         output: {
             filename: 'bundle.[name].js',
-            path: __dirname + '/build'
+            path: __dirname + '/build',
+            libraryTarget: 'commonjs2'
         },
         optimization: {
             minimize: false
-        },
-        devServer: {
-            compress: true,
-            port: 9000,
-            client: {
-                overlay: false
-            }
-        },
-        plugins: [
-            new CopyPlugin({
-                patterns: [
-                    {
-                        from: "packages/demo/index.html",
-                        to: "."
-                    }
-                ]
-            })
-        ]
+        }
     };
 };
