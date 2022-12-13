@@ -37,8 +37,18 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         return this.getDocument(sessionID).getValue();
     }
 
+    private $setVersion(doc: Ace.Document) { //TODO: this is workaround for ts service
+        if (!doc["version"]) {
+            doc["version"] = 1;
+        } else {
+            doc["version"]++;
+        }
+    }
+
     setValue(sessionID: string, value: string) {
-        this.getDocument(sessionID).setValue(value);
+        let document = this.getDocument(sessionID);
+        this.$setVersion(document);
+        document.setValue(value);
     }
 
     setOptions(sessionID: string, options: OptionsType) {
@@ -48,6 +58,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     applyDeltas(sessionID: string, deltas: Ace.Delta[]) {
         let data = deltas;
         let document = this.getDocument(sessionID);
+        this.$setVersion(document);
         if (data[0].start) {
             document.applyDeltas(data);
         } else {

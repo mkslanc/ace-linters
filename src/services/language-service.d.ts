@@ -1,6 +1,6 @@
 import type {FormattingOptions} from "vscode-languageserver-types";
 import type {Ace} from "ace-code/ace";
-import {TooltipType} from "../type-converters/common-converters";
+import {CommonConverter} from "../type-converters/common-converters";
 import {TextDocument} from "vscode-json-languageservice";
 
 export namespace AceLinters {
@@ -35,7 +35,7 @@ export namespace AceLinters {
     }
 
     interface TooltipContent {
-        type: TooltipType,
+        type: CommonConverter.TooltipType,
         text: string
     }
 

@@ -9,18 +9,23 @@ import {Mode as CSSMode} from "ace-code/src/mode/css";
 import {Mode as LessMode} from "ace-code/src/mode/less";
 import {Mode as SCSSMode} from "ace-code/src/mode/scss";
 import {Mode as JsonMode} from "ace-code/src/mode/json";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
 
 let theme = require("ace-code/src/theme/textmate");
 import * as ace from "ace-code";
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
 import {scssContent} from "./docs-example/scss-example";
+import {typescriptContent} from "./docs-example/typescript-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
+import {jsContent} from "./docs-example/javascript-example";
 import {LanguageProvider} from "./language-provider";
 
 //TODO:
 import * as lintersCSS from "../css/linters.css";
 import * as dom from "ace-code/src/lib/dom";
+
 
 dom.importCssString(lintersCSS, "linters.css");
 
@@ -30,6 +35,8 @@ let modes = [
     {name: "css", mode: CSSMode, content: cssContent},
     {name: "less", mode: LessMode, content: lessContent},
     {name: "scss", mode: SCSSMode, content: scssContent},
+    {name: "typescript", mode: TypescriptMode, content: typescriptContent},
+    {name: "javascript", mode: JavascriptMode, content: jsContent}
 ]
 let i = 0;
 let activeProvider: LanguageProvider;

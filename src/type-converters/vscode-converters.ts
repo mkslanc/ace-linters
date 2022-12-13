@@ -12,7 +12,7 @@ import {RangeList} from "ace-code/src/range_list";
 import {AceLinters} from "../services/language-service";
 import Tooltip = AceLinters.Tooltip;
 import TooltipContent = AceLinters.TooltipContent;
-import {TooltipType} from "./common-converters";
+import {CommonConverter} from "./common-converters";
 
 export function fromRange(range: Ace.Range): Range | undefined {
     if (!range) {
@@ -71,7 +71,7 @@ export function toCompletions(completionList: CompletionList): Ace.Completion[] 
             };
             let doc = fromMarkupContent(item.documentation);
             if (doc) {
-                if (doc.type === TooltipType.markdown) {
+                if (doc.type === CommonConverter.TooltipType.markdown) {
                     completion["docMarkdown"] = doc.text;
                 } else {
                     completion["docText"] = doc.text;
@@ -110,7 +110,7 @@ export function toTooltip(hover: Hover): Tooltip {
     if (MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     } else if (MarkedString.is(hover.contents)) {
-        content = {type: TooltipType.markdown, text: "```" + (hover.contents as any).value + "```"};
+        content = {type: CommonConverter.TooltipType.markdown, text: "```" + (hover.contents as any).value + "```"};
     } else if (Array.isArray(hover.contents)) {
         let contents = hover.contents.map((el) => {
             if (typeof el !== "string") {
@@ -118,7 +118,7 @@ export function toTooltip(hover: Hover): Tooltip {
             }
             return el;
         });
-        content = {type: TooltipType.markdown, text: contents.join("\n\n")};
+        content = {type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n")};
     } else {
         return;
     }
@@ -129,12 +129,12 @@ export function fromMarkupContent(content?: string | MarkupContent): TooltipCont
     if (!content)
         return;
     if (typeof content === "string") {
-        return {type: TooltipType.plainText, text: content};
+        return {type: CommonConverter.TooltipType.plainText, text: content};
     }
     if (content.kind === MarkupKind.Markdown) {
-        return {type: TooltipType.markdown, text: content.value};
+        return {type: CommonConverter.TooltipType.markdown, text: content.value};
     } else {
-        return {type: TooltipType.plainText, text: content.value};
+        return {type: CommonConverter.TooltipType.plainText, text: content.value};
     }
 }
 

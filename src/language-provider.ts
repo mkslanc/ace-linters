@@ -5,7 +5,7 @@ import Tooltip = AceLinters.Tooltip;
 import {AceLinters} from "./services/language-service";
 import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-types";
-import {cleanHtml, toCompletions, TooltipType, toRange} from "./type-converters/common-converters";
+import {CommonConverter} from "./type-converters/common-converters";
 
 let showdown = require('showdown');
 
@@ -105,7 +105,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     getTooltipText(hover: Tooltip) {
         if (!hover)
             return;
-        let text = hover.content.type === TooltipType.markdown ? cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+        let text = hover.content.type === CommonConverter.TooltipType.markdown ? CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
         return {text: text, range: hover.range}
     }
 
@@ -124,7 +124,8 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
 
     private $applyFormat = (edits: TextEdit[]) => {
         for (let edit of edits) {
-            this.editor.session.doc.replace(toRange(edit.range), edit.newText); //we need this to mirror Range
+            this.editor.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
+            // mirror Range
         }
     }
 
@@ -138,7 +139,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
             {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
                     this.doComplete((completions) => {
-                        callback(null, toCompletions(completions, this.$markdownConverter));
+                        callback(null, CommonConverter.toCompletions(completions, this.$markdownConverter));
                     });
                 }
             }
