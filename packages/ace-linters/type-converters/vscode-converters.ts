@@ -9,7 +9,7 @@ import {
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
-import {AceLinters} from "../services/language-service";
+import {AceLinters} from "../index";
 import Tooltip = AceLinters.Tooltip;
 import TooltipContent = AceLinters.TooltipContent;
 import {CommonConverter} from "./common-converters";

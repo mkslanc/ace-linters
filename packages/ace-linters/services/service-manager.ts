@@ -1,4 +1,4 @@
-import {AceLinters} from "./language-service";
+import {AceLinters} from "../index";
 import LanguageService = AceLinters.LanguageService;
 import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";

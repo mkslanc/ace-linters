@@ -20,10 +20,10 @@ import {scssContent} from "./docs-example/scss-example";
 import {typescriptContent} from "./docs-example/typescript-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {jsContent} from "./docs-example/javascript-example";
-import {LanguageProvider} from "./language-provider";
+import {LanguageProvider} from "@ace-linters/core/language-provider";
 
 //TODO:
-import * as lintersCSS from "../css/linters.css";
+import * as lintersCSS from "@ace-linters/core/css/linters.css";
 import * as dom from "ace-code/src/lib/dom";
 
 
