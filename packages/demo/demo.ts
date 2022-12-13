@@ -11,6 +11,7 @@ import {Mode as SCSSMode} from "ace-code/src/mode/scss";
 import {Mode as JsonMode} from "ace-code/src/mode/json";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
 import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
+import {Mode as TSXMode} from "ace-code/src/mode/tsx";
 
 let theme = require("ace-code/src/theme/textmate");
 import * as ace from "ace-code";
@@ -25,6 +26,8 @@ import {LanguageProvider} from "@ace-linters/core/language-provider";
 //TODO:
 import * as lintersCSS from "@ace-linters/core/css/linters.css";
 import * as dom from "ace-code/src/lib/dom";
+import {tsxContent} from "./docs-example/tsx-example";
+import {jsxContent} from "./docs-example/jsx-example";
 
 
 dom.importCssString(lintersCSS, "linters.css");
@@ -36,7 +39,10 @@ let modes = [
     {name: "less", mode: LessMode, content: lessContent},
     {name: "scss", mode: SCSSMode, content: scssContent},
     {name: "typescript", mode: TypescriptMode, content: typescriptContent},
-    {name: "javascript", mode: JavascriptMode, content: jsContent}
+    {name: "javascript", mode: JavascriptMode, content: jsContent},
+    {name: "tsx", mode: TSXMode, content: tsxContent},
+    {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}} //TODO:
+
 ]
 let i = 0;
 let activeProvider: LanguageProvider;

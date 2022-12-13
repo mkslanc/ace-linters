@@ -24,7 +24,7 @@ export class ServiceManager {
         {
             module: import("./typescript/typescript-service"),
             name: "TypescriptService",
-            modes: "typescript|javascript"
+            modes: "typescript|javascript|tsx"
         }
     ];
     private $serviceInstances: { [mode: string]: LanguageService } = {};
