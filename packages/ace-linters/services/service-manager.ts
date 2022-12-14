@@ -74,12 +74,14 @@ export class ServiceManager {
     async changeDocumentMode(sessionID: string, mode: string, options: ServiceOptions) {
         let service = this.getServiceInstance(sessionID);
         let documentValue = service.getDocumentValue(sessionID);
-
-        service.removeDocument(sessionID);
-
-        delete this.$sessionIDToMode[sessionID];
-
+        this.removeDocument(sessionID);
         await this.addDocument(sessionID, documentValue, mode, options);
+    }
+
+    removeDocument(sessionID: string) {
+        let service = this.getServiceInstance(sessionID);
+        service.removeDocument(sessionID);
+        delete this.$sessionIDToMode[sessionID];
     }
 
     getServiceInstance(sessionID: string): LanguageService {
