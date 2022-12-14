@@ -18,7 +18,7 @@ import * as ace from "ace-code";
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
 import {scssContent} from "./docs-example/scss-example";
-import {typescriptContent} from "./docs-example/typescript-example";
+import {typescriptContent, typescriptContent1} from "./docs-example/typescript-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {jsContent} from "./docs-example/javascript-example";
 import {LanguageProvider} from "@ace-linters/core/language-provider";
@@ -39,6 +39,7 @@ let modes = [
     {name: "less", mode: LessMode, content: lessContent},
     {name: "scss", mode: SCSSMode, content: scssContent},
     {name: "typescript", mode: TypescriptMode, content: typescriptContent},
+    {name: "typescript", mode: TypescriptMode, content: typescriptContent1},
     {name: "javascript", mode: JavascriptMode, content: jsContent},
     {name: "tsx", mode: TSXMode, content: tsxContent},
     {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}} //TODO:
@@ -48,11 +49,8 @@ let i = 0;
 let activeProvider: LanguageProvider;
 for (let mode of modes) {
     let el = document.createElement("div");
-    let modeName = document.createElement("p");
-    modeName.innerText = mode.name;
-    modeName.style.margin = "0";
-    el.appendChild(modeName);
-
+    let modeName = createModeNameText(el, mode.name);
+    let closeButton = createCloseButton(el);
     let editorContainer = document.createElement("div");
     editorContainer.setAttribute("id", "container" + i);
     editorContainer.style.height = "300px";
@@ -76,7 +74,34 @@ for (let mode of modes) {
     editor.on("focus", () => {
         activeProvider = provider;
     });
+
+    closeButton.onclick = () => {
+        provider.dispose();
+        provider = null;
+        editor.destroy();
+        editor.container.remove();
+        modeName.remove();
+        closeButton.remove();
+    }
     i++;
+}
+
+function createCloseButton(el) {
+    let closeButton = document.createElement("span");
+    closeButton.innerText = "X";
+    closeButton.style.cursor = "pointer";
+    el.appendChild(closeButton);
+    return closeButton;
+}
+
+function createModeNameText(el, name) {
+    let modeName = document.createElement("p");
+    modeName.innerText = name;
+    modeName.style.margin = "0";
+    modeName.style.paddingRight = "10px";
+    modeName.style.float = "left";
+    el.appendChild(modeName);
+    return modeName;
 }
 
 let menuKb = new HashHandler([
