@@ -7,6 +7,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     mode: string;
     documents: {[sessionID: string]: Ace.Document} = {};
     options: {[sessionID: string]: OptionsType} = {};
+    globalOptions: OptionsType = {} as OptionsType;
 
     protected constructor(mode: string) {
         this.mode = mode;
@@ -51,8 +52,20 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         document.setValue(value);
     }
 
-    setOptions(sessionID: string, options: OptionsType) {
-        this.options[sessionID] = options;
+    setOptions(sessionID: string, options: OptionsType, isGlobal = false) {
+        if (isGlobal) {
+            this.globalOptions = options;
+        } else {
+            this.options[sessionID] = options;
+        }
+    }
+
+    getOption<T extends keyof OptionsType>(sessionID: string, optionName: T): OptionsType[T] {
+        if (this.options[sessionID] && this.options[sessionID][optionName]) {
+            return this.options[sessionID][optionName];
+        } else {
+            return this.globalOptions[optionName];
+        }
     }
 
     applyDeltas(sessionID: string, deltas: Ace.Delta[]) {
