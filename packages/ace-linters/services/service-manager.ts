@@ -3,9 +3,13 @@ import LanguageService = AceLinters.LanguageService;
 import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";
 
+interface ServiceData {
+    module: any, name: string, modes: string, serviceInstance?: LanguageService
+}
+
 export class ServiceManager {
     private static _instance: ServiceManager;
-    private $services: { module: any, name: string, modes: string }[] = [
+    private $services: ServiceData[] = [
         {
             module: import("./html/html-service"),
             name: "HtmlService",
@@ -14,7 +18,17 @@ export class ServiceManager {
         {
             module: import("./css/css-service"),
             name: "CssService",
-            modes: "css|less|scss"
+            modes: "css"
+        },
+        {
+            module: import("./css/css-service"),
+            name: "CssService",
+            modes: "less"
+        },
+        {
+            module: import("./css/css-service"),
+            name: "CssService",
+            modes: "scss"
         },
         {
             module: import("./json/json-service"),
@@ -27,7 +41,6 @@ export class ServiceManager {
             modes: "typescript|javascript|tsx"
         }
     ];
-    private $serviceInstances: { [mode: string]: LanguageService } = {};
     private $sessionIDToMode: {[sessionID: string]: string} = {};
 
     static get instance() {
@@ -37,31 +50,28 @@ export class ServiceManager {
         return ServiceManager._instance;
     }
 
-    private async $initServiceInstance(mode: string): Promise<LanguageService> {
-        let resolvedMode = mode?.replace("ace/mode/", "");
+    private async $initServiceInstance(service: ServiceData) {
         try {
-            let service = this.findServiceByMode(resolvedMode);
-            if (!service) {
-                console.log("No service registered for " + resolvedMode);
-                return;
-            }
-            this.$serviceInstances[mode] = new (await service.module)[service.name](mode);
-            return this.$serviceInstances[mode];
+            service.serviceInstance = new (await service.module)[service.name](service.modes);
         } catch (e) {
-            throw "Couldn't resolve language service for " + resolvedMode;
+            console.log("Couldn't resolve language service for " + service.modes);//TODO
         }
     }
 
     private async $getServiceInstanceByMode(mode: string): Promise<LanguageService> {
-        if (!this.$serviceInstances[mode]) {
-            await this.$initServiceInstance(mode);
-        }
-        return this.$serviceInstances[mode];
+        let service = this.findServiceByMode(mode);
+        if (!service)
+            return;
+        if (!service.serviceInstance)
+            await this.$initServiceInstance(service);
+        return service.serviceInstance;
     }
 
     async addDocument(sessionID: string, documentValue: string, mode: string, options: ServiceOptions) {
         if (!mode || !/^ace\/mode\//.test(mode))
             return;
+
+        mode = mode.replace("ace/mode/", "");
 
         let document = new Document(documentValue);
 
@@ -86,17 +96,18 @@ export class ServiceManager {
 
     getServiceInstance(sessionID: string): LanguageService {
         let mode = this.$sessionIDToMode[sessionID];
-        if (!mode || !this.$serviceInstances[mode]) {
+        let service = this.findServiceByMode(mode);
+        if (!mode || !service?.serviceInstance)
             throw Error("No registered service for " + sessionID);
-        }
-        return this.$serviceInstances[mode];
+
+        return service.serviceInstance;
     }
 
-    findServiceByMode(mode: string) {
+    findServiceByMode(mode: string): ServiceData {
         return this.$services.find((el) => {
             let extensions = el.modes.split('|');
-            if (extensions.indexOf(mode) !== -1)
+            if (extensions.includes(mode))
                 return el;
-        })
+        });
     }
 }

@@ -70,13 +70,13 @@ export class TypescriptService extends BaseService implements ts.LanguageService
         return text;
     }
 
-    getScriptKind?(fileName: string): ts.ScriptKind { //TODO: jsx?
+    getScriptKind?(fileName: string): ts.ScriptKind { //TODO:
         switch (this.mode) {
-            case "ace/mode/typescript":
+            case "typescript":
                 return ScriptKind.TS;
-            case "ace/mode/javascript":
+            case "javascript":
                 return ScriptKind.JS;
-            case "ace/mode/tsx":
+            case "tsx":
                 return ScriptKind.TSX;
             default:
                 return this.getCompilationSettings().allowJs ? ts.ScriptKind.JS : ts.ScriptKind.TS;
@@ -158,7 +158,6 @@ export class TypescriptService extends BaseService implements ts.LanguageService
             return null;
         }
         let hover = this.$service.getQuickInfoAtPosition(sessionID, toIndex(position, document))
-        //TODO: position is wrong in some cases
         return Promise.resolve(toTooltip(hover, document));
     }
 
