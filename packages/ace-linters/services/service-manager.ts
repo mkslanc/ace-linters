@@ -4,7 +4,7 @@ import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";
 
 interface ServiceData {
-    module: any, name: string, modes: string, serviceInstance?: LanguageService
+    module: any, name: string, modes: string, serviceInstance?: LanguageService, options?: ServiceOptions
 }
 
 export class ServiceManager {
@@ -33,7 +33,20 @@ export class ServiceManager {
         {
             module: import("./json/json-service"),
             name: "JsonService",
-            modes: "json"
+            modes: "json",
+            options: {
+                allowComments: false,
+                trailingCommas: false
+            }
+        },
+        {
+            module: import("./json/json-service"),
+            name: "JsonService",
+            modes: "json5",
+            options: {
+                allowComments: true,
+                trailingCommas: true
+            }
         },
         {
             module: import("./typescript/typescript-service"),
@@ -74,10 +87,9 @@ export class ServiceManager {
         mode = mode.replace("ace/mode/", "");
 
         let document = new Document(documentValue);
-
+        let service = this.findServiceByMode(mode);
         let serviceInstance = await this.$getServiceInstanceByMode(mode);
-        serviceInstance.addDocument(sessionID, document, options);
-
+        serviceInstance.addDocument(sessionID, document, {...service.options, ...options});
         this.$sessionIDToMode[sessionID] = mode;
     }
 

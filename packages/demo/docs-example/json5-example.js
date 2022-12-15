@@ -1,9 +1,9 @@
-export var jsonContent =  `{
-       "name": 12
-       "country": "Ireland"
+export var json5Content =  `{
+       "name": 12,
+       "country": "Ireland", //trailing comma + comment
     }`;
 
-export var jsonSchema = `{
+export var json5Schema = `{
     "type": "object",
     "description": "a very special object",
     "properties": {

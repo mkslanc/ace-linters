@@ -3,7 +3,7 @@ import {LanguageProvider} from "../language-provider";
 var event = require("ace-code/src/lib/event");
 var {Tooltip} = require("ace-code/src/tooltip");
 
-export class DescriptionTooltip extends Tooltip{
+export class DescriptionTooltip extends Tooltip {
     private provider: LanguageProvider;
 
     $timer: NodeJS.Timeout;
@@ -32,13 +32,12 @@ export class DescriptionTooltip extends Tooltip{
     }
 
     update () {
-        clearTimeout(this.$timer);
-
         var renderer = this.provider.editor.renderer;
         var screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
 
-
         this.provider.doHover(screenPos, (hover) => {
+            clearTimeout(this.$timer);
+
             let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();

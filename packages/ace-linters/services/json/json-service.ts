@@ -1,11 +1,17 @@
 import {
     FormattingOptions,
-    JSONSchema,
     LanguageService as VSLanguageService,
     SchemaConfiguration
 } from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAceTextEdits, toAnnotations, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
+import {
+    fromPoint,
+    fromRange,
+    toAceTextEdits,
+    toAnnotations,
+    toCompletions,
+    toTooltip
+} from "../../type-converters/vscode-converters";
 import {BaseService} from "../base-service";
 
 let jsonService = require('vscode-json-languageservice');
@@ -21,21 +27,20 @@ export class JsonService extends BaseService<JsonServiceOptions> {
                 uri = uri.replace("file:///", "");
                 let jsonSchema = this.$getJsonSchema(uri);
                 if (jsonSchema)
-                    return Promise.resolve(JSON.stringify(jsonSchema));
+                    return Promise.resolve(jsonSchema);
                 return Promise.reject(`Unable to load schema at ${uri}`);
             }
         });
-        this.$service.configure({allowComments: false})
     }
 
-    private $getJsonSchema(sessionID): JSONSchema {
+    private $getJsonSchema(sessionID): string {
         return this.getOption(sessionID, "jsonSchema");
     }
 
     addDocument(sessionID: string, document: Ace.Document, options?: JsonServiceOptions) {
         super.addDocument(sessionID, document, options);
         this.schemas.push({uri: sessionID, fileMatch: [sessionID]});
-        this.$service.configure({schemas: this.schemas});
+        this.$service.configure({schemas: this.schemas, allowComments: options.allowComments ?? false});
     }
 
     removeDocument(sessionID: string) {
@@ -79,7 +84,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
 
-        let diagnostics = this.$service.doValidation(document, jsonDocument, null, this.$getJsonSchema(sessionID));
+        let diagnostics = this.$service.doValidation(document, jsonDocument, {trailingCommas: this.getOption(sessionID, "trailingCommas") ? "ignore" : "error"});
         return toAnnotations(await diagnostics);
     }
 
@@ -95,5 +100,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
 }
 
 export interface JsonServiceOptions {
-    jsonSchema: JSONSchema
+    jsonSchema?: string,
+    allowComments?: boolean,
+    trailingCommas?: boolean
 }
