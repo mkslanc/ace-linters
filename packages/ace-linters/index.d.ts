@@ -66,7 +66,7 @@ export namespace AceLinters {
         compilerOptions?: ts.CompilerOptions
     }
 
-    export interface ServicesAvailableOptions {
+    export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         typescript: TsServiceOptions
     }

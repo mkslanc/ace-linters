@@ -15,7 +15,7 @@ import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {AceLinters} from "./index";
 import {FormattingOptions} from "vscode-languageserver-types";
-import ServicesAvailableOptions = AceLinters.ServicesAvailableOptions;
+import ServicesAvailableOptions = AceLinters.ServiceOptionsMap;
 
 export class MessageController {
     private static _instance: MessageController;
