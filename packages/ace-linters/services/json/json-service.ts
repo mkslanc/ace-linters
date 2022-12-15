@@ -1,6 +1,5 @@
 import {
     FormattingOptions,
-    JSONSchema,
     LanguageService as VSLanguageService,
     SchemaConfiguration
 } from "vscode-json-languageservice";
@@ -21,14 +20,14 @@ export class JsonService extends BaseService<JsonServiceOptions> {
                 uri = uri.replace("file:///", "");
                 let jsonSchema = this.$getJsonSchema(uri);
                 if (jsonSchema)
-                    return Promise.resolve(JSON.stringify(jsonSchema));
+                    return Promise.resolve(jsonSchema);
                 return Promise.reject(`Unable to load schema at ${uri}`);
             }
         });
         this.$service.configure({allowComments: false})
     }
 
-    private $getJsonSchema(sessionID): JSONSchema {
+    private $getJsonSchema(sessionID): string {
         return this.options[sessionID]?.jsonSchema;
     }
 
@@ -79,7 +78,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
 
-        let diagnostics = this.$service.doValidation(document, jsonDocument, null, this.$getJsonSchema(sessionID));
+        let diagnostics = this.$service.doValidation(document, jsonDocument, null);
         return toAnnotations(await diagnostics);
     }
 
@@ -95,5 +94,5 @@ export class JsonService extends BaseService<JsonServiceOptions> {
 }
 
 export interface JsonServiceOptions {
-    jsonSchema: JSONSchema
+    jsonSchema: string
 }

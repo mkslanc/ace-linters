@@ -3,7 +3,7 @@ export var jsonContent =  `{
        "country": "Ireland"
     }`;
 
-export var jsonSchema = {
+export var jsonSchema = `{
     "type": "object",
     "description": "a very special object",
     "properties": {
@@ -14,11 +14,11 @@ export var jsonSchema = {
         "country": {
             "type": "string",
             "enum": ["Ireland", "Iceland"],
-            "description": "Country name",
+            "description": "Country name"
         },
         "age": {
             "type": "number",
             "description": "Age of object"
         }
     }
-};
+}`;
