@@ -28,7 +28,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
     }
 
     private $getJsonSchema(sessionID): string {
-        return this.options[sessionID]?.jsonSchema;
+        return this.getOption(sessionID, "jsonSchema");
     }
 
     addDocument(sessionID: string, document: Ace.Document, options?: JsonServiceOptions) {

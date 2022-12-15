@@ -18,15 +18,15 @@ export class CssService extends BaseService {
 
     private $initLanguageService() {
         switch (this.mode) {
-            case "ace/mode/less":
+            case "less":
                 this.$languageId = "less";
                 this.$service = cssService.getLESSLanguageService();
                 break;
-            case "ace/mode/scss":
+            case "scss":
                 this.$languageId = "scss";
                 this.$service = cssService.getSCSSLanguageService();
                 break;
-            case "ace/mode/css":
+            case "css":
             default:
                 this.$languageId = "css";
                 this.$service = cssService.getCSSLanguageService();

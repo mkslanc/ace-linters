@@ -4,16 +4,20 @@ import * as ts from './lib/typescriptServices';
 import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
-    fromTsDiagnostics,
+    fromTsDiagnostics, JsxEmit,
+    ScriptKind,
     ScriptTarget,
-    toAceTextEdits, toIndex,
-    toTsOffset, toTooltip, toCompletions
+    toAceTextEdits,
+    toCompletions,
+    toIndex,
+    toTooltip,
+    toTsOffset
 } from "../../type-converters/typescript-converters";
 
 
 export class TypescriptService extends BaseService implements ts.LanguageServiceHost {
     $service: ts.LanguageService;
-    $compilerOptions = {allowNonTsExtensions: true, target: ScriptTarget.ESNext};
+    $compilerOptions = {allowJs: true, jsx: JsxEmit.Preserve, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
 
     constructor(mode: string) {
         super(mode);
@@ -66,8 +70,17 @@ export class TypescriptService extends BaseService implements ts.LanguageService
         return text;
     }
 
-    getScriptKind?(fileName: string): ts.ScriptKind { //TODO: get scriptkind by suffix or mode?
-        return this.getCompilationSettings().allowJs ? ts.ScriptKind.JS : ts.ScriptKind.TS;
+    getScriptKind?(fileName: string): ts.ScriptKind { //TODO:
+        switch (this.mode) {
+            case "typescript":
+                return ScriptKind.TS;
+            case "javascript":
+                return ScriptKind.JS;
+            case "tsx":
+                return ScriptKind.TSX;
+            default:
+                return this.getCompilationSettings().allowJs ? ts.ScriptKind.JS : ts.ScriptKind.TS;
+        }
     }
 
     getCurrentDirectory(): string {
@@ -145,7 +158,6 @@ export class TypescriptService extends BaseService implements ts.LanguageService
             return null;
         }
         let hover = this.$service.getQuickInfoAtPosition(sessionID, toIndex(position, document))
-        //TODO: position is wrong in some cases
         return Promise.resolve(toTooltip(hover, document));
     }
 

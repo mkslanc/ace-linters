@@ -146,4 +146,8 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
             }
         ];
     }
+
+    dispose() {
+        this.$message.dispose(this.editor.session["id"]);
+    }
 }
