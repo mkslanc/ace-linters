@@ -51,7 +51,7 @@ export class ServiceManager {
         {
             module: import("./typescript/typescript-service"),
             name: "TypescriptService",
-            modes: "typescript|javascript|tsx"
+            modes: "typescript|javascript|tsx|jsx"
         }
     ];
     private $sessionIDToMode: {[sessionID: string]: string} = {};

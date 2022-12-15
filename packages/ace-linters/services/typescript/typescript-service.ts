@@ -5,7 +5,6 @@ import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
     fromTsDiagnostics, JsxEmit,
-    ScriptKind,
     ScriptTarget,
     toAceTextEdits,
     toCompletions,
@@ -17,7 +16,7 @@ import {
 
 export class TypescriptService extends BaseService implements ts.LanguageServiceHost {
     $service: ts.LanguageService;
-    $compilerOptions = {allowJs: true, jsx: JsxEmit.Preserve, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
+    $compilerOptions = {allowJs: true, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
 
     constructor(mode: string) {
         super(mode);
@@ -70,14 +69,17 @@ export class TypescriptService extends BaseService implements ts.LanguageService
         return text;
     }
 
-    getScriptKind?(fileName: string): ts.ScriptKind { //TODO:
-        switch (this.mode) {
-            case "typescript":
-                return ScriptKind.TS;
-            case "javascript":
-                return ScriptKind.JS;
-            case "tsx":
-                return ScriptKind.TSX;
+    getScriptKind?(fileName: string): ts.ScriptKind {
+        const ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+        switch (ext) {
+            case 'ts':
+                return ts.ScriptKind.TS;
+            case 'tsx':
+                return ts.ScriptKind.TSX;
+            case 'js':
+                return ts.ScriptKind.JS;
+            case 'jsx':
+                return ts.ScriptKind.JSX;
             default:
                 return this.getCompilationSettings().allowJs ? ts.ScriptKind.JS : ts.ScriptKind.TS;
         }

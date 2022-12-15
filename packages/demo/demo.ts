@@ -34,12 +34,6 @@ import {json5Content, json5Schema} from "./docs-example/json5-example";
 
 dom.importCssString(lintersCSS, "linters.css");
 
-const context = require.context('/schemas', true, /\.json$/);
-console.log(context);
-//context.keys().forEach(key => context(key));
-
-
-
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchema: jsonSchema}},
     {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchema: json5Schema}},
