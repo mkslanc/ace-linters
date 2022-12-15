@@ -9,6 +9,7 @@ import {Mode as CSSMode} from "ace-code/src/mode/css";
 import {Mode as LessMode} from "ace-code/src/mode/less";
 import {Mode as SCSSMode} from "ace-code/src/mode/scss";
 import {Mode as JsonMode} from "ace-code/src/mode/json";
+import {Mode as Json5Mode} from "ace-code/src/mode/json5";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
 import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
 import {Mode as TSXMode} from "ace-code/src/mode/tsx";
@@ -28,12 +29,20 @@ import * as lintersCSS from "@ace-linters/core/css/linters.css";
 import * as dom from "ace-code/src/lib/dom";
 import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
+import {json5Content, json5Schema} from "./docs-example/json5-example";
 
 
 dom.importCssString(lintersCSS, "linters.css");
 
+const context = require.context('/schemas', true, /\.json$/);
+console.log(context);
+//context.keys().forEach(key => context(key));
+
+
+
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchema: jsonSchema}},
+    {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchema: json5Schema}},
     {name: "html", mode: HTMLMode, content: htmlContent},
     {name: "css", mode: CSSMode, content: cssContent},
     {name: "less", mode: LessMode, content: lessContent},

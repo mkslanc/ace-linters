@@ -4,7 +4,14 @@ import {
     SchemaConfiguration
 } from "vscode-json-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAceTextEdits, toAnnotations, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
+import {
+    fromPoint,
+    fromRange,
+    toAceTextEdits,
+    toAnnotations,
+    toCompletions,
+    toTooltip
+} from "../../type-converters/vscode-converters";
 import {BaseService} from "../base-service";
 
 let jsonService = require('vscode-json-languageservice');
@@ -24,7 +31,6 @@ export class JsonService extends BaseService<JsonServiceOptions> {
                 return Promise.reject(`Unable to load schema at ${uri}`);
             }
         });
-        this.$service.configure({allowComments: false})
     }
 
     private $getJsonSchema(sessionID): string {
@@ -34,7 +40,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
     addDocument(sessionID: string, document: Ace.Document, options?: JsonServiceOptions) {
         super.addDocument(sessionID, document, options);
         this.schemas.push({uri: sessionID, fileMatch: [sessionID]});
-        this.$service.configure({schemas: this.schemas});
+        this.$service.configure({schemas: this.schemas, allowComments: options.allowComments ?? false});
     }
 
     removeDocument(sessionID: string) {
@@ -78,7 +84,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
 
-        let diagnostics = this.$service.doValidation(document, jsonDocument, null);
+        let diagnostics = this.$service.doValidation(document, jsonDocument, {trailingCommas: this.getOption(sessionID, "trailingCommas") ? "ignore" : "error"});
         return toAnnotations(await diagnostics);
     }
 
@@ -94,5 +100,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
 }
 
 export interface JsonServiceOptions {
-    jsonSchema: string
+    jsonSchema?: string,
+    allowComments?: boolean,
+    trailingCommas?: boolean
 }
