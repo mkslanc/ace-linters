@@ -137,6 +137,21 @@ export function toCompletions(completionInfo: CompletionInfo, doc: Ace.Document)
     });
 }
 
+export enum ScriptKind {
+    Unknown = 0,
+    JS = 1,
+    JSX = 2,
+    TS = 3,
+    TSX = 4,
+    External = 5,
+    JSON = 6,
+    /**
+     * Used on extensions that doesn't define the ScriptKind but the content defines it.
+     * Deferred extensions are going to be included in all project contexts.
+     */
+    Deferred = 7
+}
+
 export enum ScriptTarget {
     ES3 = 0,
     ES5 = 1,
@@ -157,4 +172,13 @@ export enum DiagnosticCategory {
     Error = 1,
     Suggestion = 2,
     Message = 3
+}
+
+export enum JsxEmit {
+    None = 0,
+    Preserve = 1,
+    React = 2,
+    ReactNative = 3,
+    ReactJSX = 4,
+    ReactJSXDev = 5
 }

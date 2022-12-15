@@ -108,6 +108,14 @@ export class ChangeOptionsMessage extends BaseMessage {
     }
 }
 
+export class DisposeMessage extends BaseMessage {
+    type: MessageType = MessageType.dispose;
+
+    constructor(sessionId: string) {
+        super(sessionId);
+    }
+}
+
 export enum MessageType {
-    init, format, complete, change, hover, validate, applyDelta, changeMode, changeOptions
+    init, format, complete, change, hover, validate, applyDelta, changeMode, changeOptions, dispose
 }

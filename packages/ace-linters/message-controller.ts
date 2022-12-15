@@ -4,7 +4,7 @@ import {
     ChangeMessage,
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage,
+    DeltasMessage, DisposeMessage,
     FormatMessage,
     HoverMessage,
     InitMessage,
@@ -93,6 +93,10 @@ export class MessageController {
 
     changeOptions(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void) {
         this.postMessage(new ChangeOptionsMessage(sessionId, options), callback);
+    }
+
+    dispose(sessionId: string, callback?: () => void) {
+        this.postMessage(new DisposeMessage(sessionId), callback);
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {
