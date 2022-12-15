@@ -16,13 +16,25 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     private readonly $markdownConverter: MarkDownConverter;
     private $message: MessageController;
     private $options: OptionsType;
+    private readonly $fileName;
     deltaQueue: Ace.Delta[] = [];
+
+    private static extensions = {
+        "typescript": "ts",
+        "javascript": "js"
+    }
 
     constructor(editor: Ace.Editor, options: OptionsType, markdownConverter?: MarkDownConverter) {
         this.editor = editor;
         this.$options = options;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
+        this.$fileName = this.editor.session["id"] + "." + LanguageProvider.getExtension(this.$mode);
         this.$init();
+    }
+
+    private static getExtension(mode: string) {
+        mode = mode.replace("ace/mode/", "");
+        return this.extensions[mode] ?? mode;
     }
 
     set options(options: OptionsType) {
@@ -46,7 +58,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
         let deltas = this.deltaQueue;
         if (!deltas) return;
         this.deltaQueue = [];
-        this.$message.change(this.editor.session["id"], deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
+        this.$message.change(this.$fileName, deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
     };
 
     private get $editorOptions() {
@@ -67,7 +79,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
 
     private $init() {
         this.$message = MessageController.instance;
-        this.$message.init(this.editor.session["id"], this.editor.getValue(), this.$mode, this.$options, () => {
+        this.$message.init(this.$fileName, this.editor.getValue(), this.$mode, this.$options, () => {
             this.$descriptionTooltip = new DescriptionTooltip(this);
 
             this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
@@ -76,13 +88,13 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
 
             // @ts-ignore
             this.editor.on("changeMode", () => {
-                this.$message.changeMode(this.editor.session["id"], this.$mode, this.$options, this.$onInit);
+                this.$message.changeMode(this.$fileName, this.$mode, this.$options, this.$onInit);
             });
         });
     }
 
     private $changeOptions = () => {
-        this.$message.changeOptions(this.editor.session["id"], this.$options, this.$onInit);
+        this.$message.changeOptions(this.$fileName, this.$options, this.$onInit);
     }
 
     private $onInit = () => {
@@ -91,7 +103,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     }
 
     validate = () => {
-        this.$message.doValidation(this.editor.session["id"], (annotations: Ace.Annotation[]) => {
+        this.$message.doValidation(this.$fileName, (annotations: Ace.Annotation[]) => {
             this.editor.session.clearAnnotations();
             if (annotations && annotations.length > 0) {
                 this.editor.session.setAnnotations(annotations);
@@ -100,7 +112,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     }
 
     doHover(position: Ace.Point, callback?: (hover: Tooltip) => void) {
-        this.$message.doHover(this.editor.session["id"], position, callback);
+        this.$message.doHover(this.$fileName, position, callback);
     }
 
     getTooltipText(hover: Tooltip) {
@@ -119,7 +131,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
             selectionRanges = [new AceRange(0, 0, row, column)];
         }
         for (let range of selectionRanges) {
-            this.$message.format(this.editor.session["id"], range, $format, this.$applyFormat);
+            this.$message.format(this.$fileName, range, $format, this.$applyFormat);
         }
     }
 
@@ -132,7 +144,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
 
     doComplete(callback?: (CompletionList) => void) {
         let cursor = this.editor.getCursorPosition();
-        this.$message.doComplete(this.editor.session["id"], cursor, callback);
+        this.$message.doComplete(this.$fileName, cursor, callback);
     }
 
     registerCompleters() {
@@ -142,12 +154,14 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
                     this.doComplete((completions) => {
                         callback(null, CommonConverter.toCompletions(completions, this.$markdownConverter));
                     });
+                },
+                getDocTooltip(item: Ace.Completion) {
                 }
             }
         ];
     }
 
     dispose() {
-        this.$message.dispose(this.editor.session["id"]);
+        this.$message.dispose(this.$fileName);
     }
 }
