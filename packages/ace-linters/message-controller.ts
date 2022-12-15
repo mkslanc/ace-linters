@@ -5,7 +5,7 @@ import {
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
     DeltasMessage, DisposeMessage,
-    FormatMessage,
+    FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage,
     MessageType,
@@ -15,6 +15,7 @@ import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {AceLinters} from "./index";
 import {FormattingOptions} from "vscode-languageserver-types";
+import ServicesAvailableOptions = AceLinters.ServicesAvailableOptions;
 
 export class MessageController {
     private static _instance: MessageController;
@@ -97,6 +98,10 @@ export class MessageController {
 
     dispose(sessionId: string, callback?: () => void) {
         this.postMessage(new DisposeMessage(sessionId), callback);
+    }
+
+    setGlobalOptions<T extends keyof ServicesAvailableOptions>(serviceName: T, options: ServicesAvailableOptions[T]) {
+        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options));
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

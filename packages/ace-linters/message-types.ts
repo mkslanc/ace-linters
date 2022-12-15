@@ -116,6 +116,17 @@ export class DisposeMessage extends BaseMessage {
     }
 }
 
+export class GlobalOptionsMessage {
+    type: MessageType = MessageType.globalOptions;
+    serviceName: string
+    options: ServiceOptions;
+
+    constructor(serviceName: string, options: ServiceOptions) {
+        this.serviceName = serviceName;
+        this.options = options;
+    }
+}
+
 export enum MessageType {
-    init, format, complete, change, hover, validate, applyDelta, changeMode, changeOptions, dispose
+    init, format, complete, change, hover, validate, applyDelta, changeMode, changeOptions, dispose, globalOptions
 }

@@ -30,9 +30,18 @@ import * as dom from "ace-code/src/lib/dom";
 import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
-
+import {MessageController} from "@ace-linters/core/message-controller";
+import {JsxEmit, ScriptTarget} from "@ace-linters/core/type-converters/typescript-converters";
 
 dom.importCssString(lintersCSS, "linters.css");
+
+MessageController.instance.setGlobalOptions("typescript", {
+    compilerOptions: {
+        allowJs: true,
+        target: ScriptTarget.ESNext,
+        jsx: JsxEmit.Preserve
+    }
+});
 
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchema: jsonSchema}},

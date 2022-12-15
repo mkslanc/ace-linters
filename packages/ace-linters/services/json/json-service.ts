@@ -13,6 +13,8 @@ import {
     toTooltip
 } from "../../type-converters/vscode-converters";
 import {BaseService} from "../base-service";
+import {AceLinters} from "../../index";
+import JsonServiceOptions = AceLinters.JsonServiceOptions;
 
 let jsonService = require('vscode-json-languageservice');
 
@@ -97,10 +99,4 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
         return toCompletions(completions);
     }
-}
-
-export interface JsonServiceOptions {
-    jsonSchema?: string,
-    allowComments?: boolean,
-    trailingCommas?: boolean
 }

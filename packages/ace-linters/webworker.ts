@@ -42,6 +42,9 @@ ctx.onmessage = async (ev) => {
         case MessageType.dispose:
             manager.removeDocument(sessionID);
             break;
+        case MessageType.globalOptions:
+            manager.setGlobalOptions(message.serviceName, message.options);
+            break;
     }
 
     ctx.postMessage(postMessage);
