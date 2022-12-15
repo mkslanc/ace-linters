@@ -23,6 +23,7 @@ To use Ace linters, you will first need to include it in your project and create
 ```javascript
 import * as ace from "ace-code";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {LanguageProvider} from "@ace-linters/core/language-provider";
 
 let editor = ace.edit("container");
 editor.session.setMode(new TypescriptMode());
