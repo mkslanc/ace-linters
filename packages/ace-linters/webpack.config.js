@@ -43,7 +43,8 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.[name].js',
             path: __dirname + '/build',
-            libraryTarget: 'module'
+            libraryTarget: 'umd',
+            globalObject: "this"
         },
         optimization: {
             minimize: false

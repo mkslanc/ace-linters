@@ -1,4 +1,14 @@
-/******/ var __webpack_modules__ = ({
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
+})(this, () => {
+return /******/ var __webpack_modules__ = ({
 
 /***/ 8151:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
@@ -33019,28 +33029,25 @@ var __webpack_exports__ = {};
 (() => {
 var exports = __webpack_exports__;
 
-Object.defineProperty(exports, "X$", ({ value: true }));
-exports.iL = exports.hC = exports.XF = void 0;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LanguageProvider = exports.registerStyles = exports.setLanguageGlobalOptions = void 0;
 var message_controller_1 = __webpack_require__(9853);
 var lintersCSS = __webpack_require__(3989);
 var dom = __webpack_require__(5336);
 function setLanguageGlobalOptions(serviceName, options) {
     message_controller_1.MessageController.instance.setGlobalOptions(serviceName, options);
 }
-exports.XF = setLanguageGlobalOptions;
+exports.setLanguageGlobalOptions = setLanguageGlobalOptions;
 function registerStyles() {
     dom.importCssString(lintersCSS, "linters.css");
 }
-exports.hC = registerStyles;
+exports.registerStyles = registerStyles;
 var language_provider_1 = __webpack_require__(4365);
-Object.defineProperty(exports, "iL", ({ enumerable: true, get: function () { return language_provider_1.LanguageProvider; } }));
+Object.defineProperty(exports, "LanguageProvider", ({ enumerable: true, get: function () { return language_provider_1.LanguageProvider; } }));
 
 })();
 
-var __webpack_exports__LanguageProvider = __webpack_exports__.iL;
-var __webpack_exports___esModule = __webpack_exports__.X$;
-var __webpack_exports__registerStyles = __webpack_exports__.hC;
-var __webpack_exports__setLanguageGlobalOptions = __webpack_exports__.XF;
-export { __webpack_exports__LanguageProvider as LanguageProvider, __webpack_exports___esModule as __esModule, __webpack_exports__registerStyles as registerStyles, __webpack_exports__setLanguageGlobalOptions as setLanguageGlobalOptions };
-
+/******/ return __webpack_exports__;
+;
+})
 //# sourceMappingURL=bundle.ace-linters.js.map

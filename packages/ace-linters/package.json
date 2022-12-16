@@ -10,6 +10,6 @@
     "vscode-json-languageservice": "4.2.1",
     "showdown": "latest"
   },
-  "main": "build/bundle.index.js",
+  "main": "build/bundle.ace-linters.js",
   "types": "index.d.ts"
 }
