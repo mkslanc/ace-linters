@@ -22,20 +22,16 @@ import {scssContent} from "./docs-example/scss-example";
 import {typescriptContent, typescriptContent1} from "./docs-example/typescript-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {jsContent} from "./docs-example/javascript-example";
-import {LanguageProvider} from "@ace-linters/core/language-provider";
 
-//TODO:
-import * as lintersCSS from "@ace-linters/core/css/linters.css";
-import * as dom from "ace-code/src/lib/dom";
 import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
-import {MessageController} from "@ace-linters/core/message-controller";
 import {JsxEmit, ScriptTarget} from "@ace-linters/core/type-converters/typescript-converters";
 
-dom.importCssString(lintersCSS, "linters.css");
+import {registerStyles, LanguageProvider, setLanguageGlobalOptions} from "@ace-linters/core";
 
-MessageController.instance.setGlobalOptions("typescript", {
+registerStyles();
+setLanguageGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,
         target: ScriptTarget.ESNext,

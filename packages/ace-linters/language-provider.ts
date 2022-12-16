@@ -1,8 +1,8 @@
 import {Ace, Range as AceRange} from "ace-code";
 import {MessageController} from "./message-controller";
 import {DescriptionTooltip} from "./components/description-tooltip";
+import {AceLinters} from "./services/language-service";
 import Tooltip = AceLinters.Tooltip;
-import {AceLinters} from "./index";
 import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-types";
 import {CommonConverter} from "./type-converters/common-converters";

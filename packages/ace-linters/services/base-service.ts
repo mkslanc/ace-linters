@@ -1,6 +1,6 @@
 import {FormattingOptions} from "vscode-languageserver-types";
-import {AceLinters} from "../index";
 import {Ace} from "ace-code";
+import {AceLinters} from "./language-service";
 
 export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions = AceLinters.ServiceOptions> implements AceLinters.LanguageService {
     abstract $service;

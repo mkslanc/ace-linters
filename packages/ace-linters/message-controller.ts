@@ -13,9 +13,9 @@ import {
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {AceLinters} from "./index";
 import {FormattingOptions} from "vscode-languageserver-types";
-import ServicesAvailableOptions = AceLinters.ServiceOptionsMap;
+import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
+import {AceLinters} from "./services/language-service";
 
 export class MessageController {
     private static _instance: MessageController;
@@ -100,7 +100,7 @@ export class MessageController {
         this.postMessage(new DisposeMessage(sessionId), callback);
     }
 
-    setGlobalOptions<T extends keyof ServicesAvailableOptions>(serviceName: T, options: ServicesAvailableOptions[T]) {
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T]) {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options));
     }
 

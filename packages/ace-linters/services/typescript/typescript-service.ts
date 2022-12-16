@@ -12,8 +12,8 @@ import {
     toTooltip,
     toTsOffset
 } from "../../type-converters/typescript-converters";
-import {AceLinters} from "../../index";
 import TsServiceOptions = AceLinters.TsServiceOptions;
+import {AceLinters} from "../language-service";
 
 
 export class TypescriptService extends BaseService<TsServiceOptions>  implements ts.LanguageServiceHost {

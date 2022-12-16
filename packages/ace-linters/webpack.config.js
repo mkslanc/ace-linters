@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
         cache: true,
         devtool: 'source-map',
         entry: {
-            provider: './language-provider.ts'
+            provider: './index.ts'
         },
         mode: "production",
         module: {

@@ -1,7 +1,7 @@
-import {AceLinters} from "../index";
 import LanguageService = AceLinters.LanguageService;
 import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";
+import {AceLinters} from "./language-service";
 
 interface ServiceData {
     module: any, name: string, modes: string, serviceInstance?: LanguageService, options?: ServiceOptions
