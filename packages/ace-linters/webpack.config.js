@@ -12,6 +12,9 @@ module.exports = (env, argv) => {
         exclude: /node_modules/
     };
     return {
+        experiments: {
+            outputModule: true,
+        },
         cache: true,
         devtool: 'source-map',
         entry: {
@@ -40,7 +43,7 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.[name].js',
             path: __dirname + '/build',
-            libraryTarget: 'commonjs-static'
+            libraryTarget: 'module'
         },
         optimization: {
             minimize: false

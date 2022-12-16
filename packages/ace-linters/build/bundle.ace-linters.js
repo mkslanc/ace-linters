@@ -1,10 +1,8 @@
-/******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
+/******/ var __webpack_modules__ = ({
 
 /***/ 8151:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 /**
  * The main class required to set up an Ace instance in the browser.
  *
@@ -106,7 +104,6 @@ exports.version = exports.config.version;
 /***/ 8558:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -319,7 +316,6 @@ var Anchor = exports.e = function(doc, row, column) {
 /***/ 4096:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 function throwDeltaError(delta, errorText){
@@ -403,7 +399,6 @@ exports.B = function(docLines, delta, doNotValidate) {
 /***/ 3486:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -632,7 +627,6 @@ exports.V = BackgroundTokenizer;
 /***/ 9457:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var bidiUtil = __webpack_require__(7199);
@@ -999,7 +993,6 @@ exports.l = BidiHandler;
 /***/ 6514:
 /***/ ((module) => {
 
-"use strict";
 
 
 var $cancelT;
@@ -1021,7 +1014,6 @@ module.exports = {
 /***/ 4278:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -1150,7 +1142,6 @@ exports.f = CommandManager;
 /***/ 4922:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var lang = __webpack_require__(732);
@@ -2888,7 +2879,6 @@ styles.join("\\n")
 /***/ 4594:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -3564,7 +3554,6 @@ exports.Document = Document;
 /***/ 8827:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -6110,7 +6099,6 @@ exports.m = EditSession;
 /***/ 7799:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var TokenIterator = (__webpack_require__(7726)/* .TokenIterator */ .N);
@@ -6570,7 +6558,6 @@ exports.F = BracketMatch;
 /***/ 8363:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var RangeList = (__webpack_require__(9204).RangeList);
@@ -6686,7 +6673,6 @@ function restoreRange(range, anchor) {
 /***/ 4138:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var Range = (__webpack_require__(3069).Range);
@@ -6931,7 +6917,6 @@ exports.z = FoldLine;
 /***/ 2037:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var Range = (__webpack_require__(3069).Range);
@@ -7806,7 +7791,6 @@ exports.x = Folding;
 /***/ 7180:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -10736,7 +10720,6 @@ exports.M = Editor;
 /***/ 585:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 var LineWidgets = (__webpack_require__(1252)/* .LineWidgets */ .H);
 var dom = __webpack_require__(5336);
@@ -10928,7 +10911,6 @@ dom.importCssString(`
 /***/ 4739:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var keyUtil = __webpack_require__(1492);
@@ -11160,7 +11142,6 @@ exports.MultiHashHandler = MultiHashHandler;
 /***/ 1058:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var keyUtil  = __webpack_require__(1492);
@@ -11288,7 +11269,6 @@ exports.M = KeyBinding;
 /***/ 58:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 var __webpack_unused_export__;
 
 
@@ -12028,7 +12008,6 @@ __webpack_unused_export__ = function(_isMobile, _isIOS) {
 /***/ 1361:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var dom = __webpack_require__(5336);
@@ -12271,7 +12250,6 @@ exports.C = Cursor;
 /***/ 9945:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 var dom = __webpack_require__(5336);
 var oop = __webpack_require__(2011);
@@ -12623,7 +12601,6 @@ var FontMetrics = exports.c = function(parentEl, charCount) {
 /***/ 9749:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var dom = __webpack_require__(5336);
@@ -13052,7 +13029,6 @@ exports.T = Gutter;
 /***/ 5130:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var dom = __webpack_require__(5336);
@@ -13183,7 +13159,6 @@ exports.x = Lines;
 /***/ 8890:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var Range = (__webpack_require__(3069).Range);
@@ -13422,7 +13397,6 @@ exports.J = Marker;
 /***/ 8235:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -14333,7 +14307,6 @@ exports.X = AppConfig;
 /***/ 7199:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 var ArabicAlefBetIntervalsBegine = (/* unused pure expression or super */ null && (['\u0621', '\u0641']));
@@ -14719,7 +14692,6 @@ exports.getVisualFromLogicalIdx = function(logIdx, rowMap) {
 /***/ 5336:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var useragent = __webpack_require__(8057); 
@@ -15024,7 +14996,6 @@ if (exports.HAS_CSS_TRANSFORMS) {
 /***/ 8215:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var keys = __webpack_require__(1492);
@@ -15367,7 +15338,6 @@ else
 /***/ 7858:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 var EventEmitter = {};
@@ -15504,7 +15474,6 @@ exports.EventEmitter = EventEmitter;
 /***/ 1492:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 /*! @license
 ==========================================================================
 SproutCore -- JavaScript Application Framework
@@ -15672,7 +15641,6 @@ exports.keyCodeToString = function(keyCode) {
 /***/ 732:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 exports.last = function(a) {
@@ -15871,7 +15839,6 @@ exports.delayedCall = function(fcn, defaultTimeout) {
 /***/ 8999:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 /*
  * based on code from:
  *
@@ -15928,7 +15895,6 @@ exports.qualifyURL = function(url) {
 /***/ 2011:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 exports.inherits = function(ctor, superCtor) {
@@ -15960,7 +15926,6 @@ exports.implement = function(proto, mixin) {
 /***/ 8057:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 /*
@@ -16044,7 +16009,6 @@ exports.isMobile = exports.isIOS || exports.isAndroid;
 /***/ 1252:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var dom = __webpack_require__(5336);
@@ -16411,7 +16375,6 @@ exports.H = LineWidgets;
 /***/ 2463:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 var Behaviour = function() {
@@ -16477,7 +16440,6 @@ exports.T = Behaviour;
 /***/ 5478:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -16860,7 +16822,6 @@ exports.B = CstyleBehaviour;
 /***/ 9372:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var Range = (__webpack_require__(3069).Range);
@@ -16958,7 +16919,6 @@ var FoldMode = exports.FoldMode = function() {};
 /***/ 2113:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 var config = __webpack_require__(3294);
 
@@ -17325,7 +17285,6 @@ exports.A = Mode;
 /***/ 9697:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var lang = __webpack_require__(732);
@@ -17538,7 +17497,6 @@ exports.K = TextHighlightRules;
 /***/ 4334:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 var dom = __webpack_require__(5336);
 var oop = __webpack_require__(2011);
@@ -17702,7 +17660,6 @@ exports.d = GutterHandler;
 /***/ 6763:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var useragent = __webpack_require__(8057);
@@ -17992,7 +17949,6 @@ function calcRangeOrientation(range, cursor) {
 /***/ 2482:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var dom = __webpack_require__(5336);
@@ -18385,7 +18341,6 @@ exports.q = DragdropHandler;
 /***/ 6049:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 var dom = __webpack_require__(5336);
 
@@ -18462,7 +18417,6 @@ exports.z = FoldHandler;
 /***/ 7224:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var event = __webpack_require__(8215);
@@ -18566,7 +18520,6 @@ var MouseEvent = exports.T = function(domEvent, editor) {
 /***/ 6581:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var event = __webpack_require__(8215);
@@ -18946,7 +18899,6 @@ exports.P = onMouseDown;
 /***/ 461:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var MouseEvent = (__webpack_require__(7224)/* .MouseEvent */ .T);
@@ -20210,7 +20162,6 @@ exports.MultiSelect = MultiSelect;
 /***/ 8916:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var Range = (__webpack_require__(3069).Range);
@@ -20449,7 +20400,6 @@ exports.PlaceHolder = PlaceHolder;
 /***/ 3069:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 var comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
@@ -20922,7 +20872,6 @@ exports.Range = Range;
 /***/ 9204:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 var Range = (__webpack_require__(3069).Range);
 var comparePoints = Range.comparePoints;
@@ -21196,7 +21145,6 @@ exports.RangeList = RangeList;
 /***/ 9224:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var event = __webpack_require__(8215);
@@ -21261,7 +21209,6 @@ exports.d = RenderLoop;
 /***/ 6038:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 var __webpack_unused_export__;
 
 
@@ -21526,7 +21473,6 @@ exports.ii = HScrollBar;
 /***/ 9975:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 var __webpack_unused_export__;
 
 
@@ -21919,7 +21865,6 @@ exports.ii = HScrollBar;
 /***/ 3002:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var lang = __webpack_require__(732);
@@ -22303,7 +22248,6 @@ exports.o = Search;
 /***/ 349:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var lang = __webpack_require__(732);
@@ -22367,7 +22311,6 @@ exports.t = SearchHighlight;
 /***/ 2094:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -23446,7 +23389,6 @@ module.exports = `.ace-tm .ace_gutter {
 /***/ 9609:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 exports.isDark = false;
@@ -23463,7 +23405,6 @@ dom.importCssString(exports.cssText, exports.cssClass, false);
 /***/ 7726:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var Range = (__webpack_require__(3069).Range);
@@ -23607,7 +23548,6 @@ exports.N = TokenIterator;
 /***/ 9754:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var config = __webpack_require__(3294);
@@ -23954,7 +23894,6 @@ exports.d = Tokenizer;
 /***/ 1692:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -24078,7 +24017,6 @@ exports.u = Tooltip;
 /***/ 1966:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 /**
@@ -24655,7 +24593,6 @@ exports.H = UndoManager;
 /***/ 7913:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 // generated by tool/unicode.js
@@ -24677,7 +24614,6 @@ exports.wordChars = String.fromCharCode.apply(null, str);
 /***/ 8390:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 
 var oop = __webpack_require__(2011);
@@ -26665,7 +26601,6 @@ module.exports = webpackEmptyContext;
 /***/ 3763:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -26688,7 +26623,6 @@ ___CSS_LOADER_EXPORT___.push([module.id, ".ace_tooltip > p {\r\n    margin: 0;\r
 /***/ 2609:
 /***/ ((module) => {
 
-"use strict";
 
 
 /*
@@ -26780,7 +26714,6 @@ module.exports = function (cssWithMappingToString) {
 /***/ 272:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function (item) {
@@ -31965,7 +31898,6 @@ if (true) {
 /***/ 3989:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -32017,7 +31949,6 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 /***/ 6062:
 /***/ ((module) => {
 
-"use strict";
 
 
 var stylesInDOM = [];
@@ -32128,7 +32059,6 @@ module.exports = function (list, options) {
 /***/ 6793:
 /***/ ((module) => {
 
-"use strict";
 
 
 var memo = {};
@@ -32174,7 +32104,6 @@ module.exports = insertBySelector;
 /***/ 1173:
 /***/ ((module) => {
 
-"use strict";
 
 
 /* istanbul ignore next  */
@@ -32192,7 +32121,6 @@ module.exports = insertStyleElement;
 /***/ 7892:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-"use strict";
 
 
 /* istanbul ignore next  */
@@ -32211,7 +32139,6 @@ module.exports = setAttributesWithoutAttributes;
 /***/ 4036:
 /***/ ((module) => {
 
-"use strict";
 
 
 /* istanbul ignore next  */
@@ -32288,7 +32215,6 @@ module.exports = domAPI;
 /***/ 2464:
 /***/ ((module) => {
 
-"use strict";
 
 
 /* istanbul ignore next  */
@@ -32311,7 +32237,6 @@ module.exports = styleTagTransform;
 /***/ 2580:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-"use strict";
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -32450,7 +32375,6 @@ exports.DescriptionTooltip = DescriptionTooltip;
 /***/ 4365:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32658,7 +32582,6 @@ exports.LanguageProvider = LanguageProvider;
 /***/ 9853:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MessageController = void 0;
@@ -32669,7 +32592,7 @@ var MessageController = /** @class */ (function () {
     function MessageController() {
         var _this = this;
         //@ts-ignore
-        this.$worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(947), __webpack_require__.b));
+        this.$worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(947), __webpack_require__.b), { type: "module" });
         this.$worker.onmessage = function (e) {
             var message = e.data;
             var data = null;
@@ -32762,7 +32685,6 @@ oop.implement(MessageController.prototype, event_emitter_1.EventEmitter);
 /***/ 305:
 /***/ (function(__unused_webpack_module, exports) {
 
-"use strict";
 
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -32930,7 +32852,6 @@ var MessageType;
 /***/ 8299:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CommonConverter = void 0;
@@ -32971,178 +32892,155 @@ var CommonConverter;
 
 /***/ })
 
-/******/ 	});
+/******/ });
 /************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
 /******/ 	}
-/******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		id: moduleId,
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/******/ // expose the modules object (__webpack_modules__)
+/******/ __webpack_require__.m = __webpack_modules__;
+/******/ 
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	(() => {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = (chunkId) => {
-/******/ 			// return url for filenames based on template
-/******/ 			return "bundle." + chunkId + ".js";
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/publicPath */
-/******/ 	(() => {
-/******/ 		var scriptUrl;
-/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
-/******/ 		var document = __webpack_require__.g.document;
-/******/ 		if (!scriptUrl && document) {
-/******/ 			if (document.currentScript)
-/******/ 				scriptUrl = document.currentScript.src
-/******/ 			if (!scriptUrl) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ /* webpack/runtime/compat get default export */
+/******/ (() => {
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 			}
 /******/ 		}
-/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
-/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
-/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
-/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
-/******/ 		__webpack_require__.p = scriptUrl;
-/******/ 	})();
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/get javascript chunk filename */
+/******/ (() => {
+/******/ 	// This function allow to reference async chunks
+/******/ 	__webpack_require__.u = (chunkId) => {
+/******/ 		// return url for filenames based on template
+/******/ 		return "bundle." + chunkId + ".js";
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/publicPath */
+/******/ (() => {
+/******/ 	var scriptUrl;
+/******/ 	if (typeof import.meta.url === "string") scriptUrl = import.meta.url
+/******/ 	// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 	// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 	if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 	scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 	__webpack_require__.p = scriptUrl;
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/jsonp chunk loading */
+/******/ (() => {
+/******/ 	__webpack_require__.b = document.baseURI || self.location.href;
 /******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	(() => {
-/******/ 		__webpack_require__.b = document.baseURI || self.location.href;
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			747: 0
-/******/ 		};
-/******/ 		
-/******/ 		// no chunk on demand loading
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		// no on chunks loaded
-/******/ 		
-/******/ 		// no jsonp function
-/******/ 	})();
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		747: 0
+/******/ 	};
 /******/ 	
-/******/ 	/* webpack/runtime/nonce */
-/******/ 	(() => {
-/******/ 		__webpack_require__.nc = undefined;
-/******/ 	})();
+/******/ 	// no chunk on demand loading
 /******/ 	
+/******/ 	// no prefetching
+/******/ 	
+/******/ 	// no preloaded
+/******/ 	
+/******/ 	// no HMR
+/******/ 	
+/******/ 	// no HMR manifest
+/******/ 	
+/******/ 	// no on chunks loaded
+/******/ 	
+/******/ 	// no jsonp function
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/nonce */
+/******/ (() => {
+/******/ 	__webpack_require__.nc = undefined;
+/******/ })();
+/******/ 
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
 var exports = __webpack_exports__;
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LanguageProvider = exports.registerStyles = exports.setLanguageGlobalOptions = void 0;
+Object.defineProperty(exports, "X$", ({ value: true }));
+exports.iL = exports.hC = exports.XF = void 0;
 var message_controller_1 = __webpack_require__(9853);
 var lintersCSS = __webpack_require__(3989);
 var dom = __webpack_require__(5336);
 function setLanguageGlobalOptions(serviceName, options) {
     message_controller_1.MessageController.instance.setGlobalOptions(serviceName, options);
 }
-exports.setLanguageGlobalOptions = setLanguageGlobalOptions;
+exports.XF = setLanguageGlobalOptions;
 function registerStyles() {
     dom.importCssString(lintersCSS, "linters.css");
 }
-exports.registerStyles = registerStyles;
+exports.hC = registerStyles;
 var language_provider_1 = __webpack_require__(4365);
-Object.defineProperty(exports, "LanguageProvider", ({ enumerable: true, get: function () { return language_provider_1.LanguageProvider; } }));
+Object.defineProperty(exports, "iL", ({ enumerable: true, get: function () { return language_provider_1.LanguageProvider; } }));
 
 })();
 
-exports.LanguageProvider = __webpack_exports__.LanguageProvider;
-exports.__esModule = __webpack_exports__.__esModule;
-exports.registerStyles = __webpack_exports__.registerStyles;
-exports.setLanguageGlobalOptions = __webpack_exports__.setLanguageGlobalOptions;
-Object.defineProperty(exports, "__esModule", { value: true });
-/******/ })()
-;
+var __webpack_exports__LanguageProvider = __webpack_exports__.iL;
+var __webpack_exports___esModule = __webpack_exports__.X$;
+var __webpack_exports__registerStyles = __webpack_exports__.hC;
+var __webpack_exports__setLanguageGlobalOptions = __webpack_exports__.XF;
+export { __webpack_exports__LanguageProvider as LanguageProvider, __webpack_exports___esModule as __esModule, __webpack_exports__registerStyles as registerStyles, __webpack_exports__setLanguageGlobalOptions as setLanguageGlobalOptions };
+
 //# sourceMappingURL=bundle.ace-linters.js.map
