@@ -4,7 +4,7 @@ import * as ts from './lib/typescriptServices';
 import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
-    fromTsDiagnostics,
+    fromTsDiagnostics, JsxEmit,
     ScriptTarget,
     toAceTextEdits,
     toCompletions,
@@ -18,6 +18,7 @@ import {AceLinters} from "../language-service";
 
 export class TypescriptService extends BaseService<TsServiceOptions>  implements ts.LanguageServiceHost {
     $service: ts.LanguageService;
+    $defaultCompilerOptions = {allowJs: true, jsx: JsxEmit.Preserve, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
 
     constructor(mode: string) {
         super(mode);
@@ -25,7 +26,7 @@ export class TypescriptService extends BaseService<TsServiceOptions>  implements
     }
 
     getCompilationSettings(): ts.CompilerOptions {
-        return this.globalOptions["compilerOptions"];
+        return this.globalOptions["compilerOptions"] ?? this.$defaultCompilerOptions;
     }
 
     getScriptFileNames(): string[] {
