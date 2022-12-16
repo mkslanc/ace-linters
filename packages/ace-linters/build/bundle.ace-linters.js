@@ -33138,7 +33138,11 @@ Object.defineProperty(exports, "LanguageProvider", ({ enumerable: true, get: fun
 
 })();
 
-module.exports = __webpack_exports__;
+exports.LanguageProvider = __webpack_exports__.LanguageProvider;
+exports.__esModule = __webpack_exports__.__esModule;
+exports.registerStyles = __webpack_exports__.registerStyles;
+exports.setLanguageGlobalOptions = __webpack_exports__.setLanguageGlobalOptions;
+Object.defineProperty(exports, "__esModule", { value: true });
 /******/ })()
 ;
 //# sourceMappingURL=bundle.ace-linters.js.map

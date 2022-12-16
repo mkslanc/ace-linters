@@ -40,7 +40,7 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.[name].js',
             path: __dirname + '/build',
-            libraryTarget: 'commonjs2'
+            libraryTarget: 'commonjs-static'
         },
         optimization: {
             minimize: false
