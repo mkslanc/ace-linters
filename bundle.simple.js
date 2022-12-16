@@ -38169,6 +38169,30 @@ exports.DescriptionTooltip = DescriptionTooltip;
 
 /***/ }),
 
+/***/ 7974:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LanguageProvider = exports.registerStyles = exports.setLanguageGlobalOptions = void 0;
+var message_controller_1 = __webpack_require__(1234);
+var lintersCSS = __webpack_require__(7263);
+var dom = __webpack_require__(6359);
+function setLanguageGlobalOptions(serviceName, options) {
+    message_controller_1.MessageController.instance.setGlobalOptions(serviceName, options);
+}
+exports.setLanguageGlobalOptions = setLanguageGlobalOptions;
+function registerStyles() {
+    dom.importCssString(lintersCSS, "linters.css");
+}
+exports.registerStyles = registerStyles;
+var language_provider_1 = __webpack_require__(6005);
+Object.defineProperty(exports, "LanguageProvider", ({ enumerable: true, get: function () { return language_provider_1.LanguageProvider; } }));
+
+
+/***/ }),
+
 /***/ 6005:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -38458,6 +38482,9 @@ var MessageController = /** @class */ (function () {
     MessageController.prototype.dispose = function (sessionId, callback) {
         this.postMessage(new message_types_1.DisposeMessage(sessionId), callback);
     };
+    MessageController.prototype.setGlobalOptions = function (serviceName, options) {
+        this.$worker.postMessage(new message_types_1.GlobalOptionsMessage(serviceName, options));
+    };
     MessageController.prototype.postMessage = function (message, callback) {
         var _this = this;
         if (callback) {
@@ -38499,7 +38526,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.MessageType = exports.DisposeMessage = exports.ChangeOptionsMessage = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
+exports.MessageType = exports.GlobalOptionsMessage = exports.DisposeMessage = exports.ChangeOptionsMessage = exports.ChangeModeMessage = exports.DeltasMessage = exports.ChangeMessage = exports.ValidateMessage = exports.HoverMessage = exports.CompleteMessage = exports.FormatMessage = exports.InitMessage = exports.BaseMessage = void 0;
 var BaseMessage = /** @class */ (function () {
     function BaseMessage(sessionId) {
         this.sessionId = sessionId;
@@ -38619,6 +38646,15 @@ var DisposeMessage = /** @class */ (function (_super) {
     return DisposeMessage;
 }(BaseMessage));
 exports.DisposeMessage = DisposeMessage;
+var GlobalOptionsMessage = /** @class */ (function () {
+    function GlobalOptionsMessage(serviceName, options) {
+        this.type = MessageType.globalOptions;
+        this.serviceName = serviceName;
+        this.options = options;
+    }
+    return GlobalOptionsMessage;
+}());
+exports.GlobalOptionsMessage = GlobalOptionsMessage;
 var MessageType;
 (function (MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -38631,6 +38667,7 @@ var MessageType;
     MessageType[MessageType["changeMode"] = 7] = "changeMode";
     MessageType[MessageType["changeOptions"] = 8] = "changeOptions";
     MessageType[MessageType["dispose"] = 9] = "dispose";
+    MessageType[MessageType["globalOptions"] = 10] = "globalOptions";
 })(MessageType = exports.MessageType || (exports.MessageType = {}));
 
 
@@ -38676,6 +38713,192 @@ var CommonConverter;
         TooltipType[TooltipType["markdown"] = 1] = "markdown";
     })(TooltipType = CommonConverter.TooltipType || (CommonConverter.TooltipType = {}));
 })(CommonConverter = exports.CommonConverter || (exports.CommonConverter = {}));
+
+
+/***/ }),
+
+/***/ 1835:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JsxEmit = exports.DiagnosticCategory = exports.ScriptTarget = exports.ScriptKind = exports.toCompletions = exports.toTooltip = exports.toPoint = exports.toRange = exports.toAceTextEdits = exports.fromTsCategory = exports.parseMessageText = exports.toIndex = exports.toTsOffset = exports.fromTsDiagnostics = void 0;
+var ace_code_1 = __webpack_require__(9100);
+var common_converters_1 = __webpack_require__(8840);
+function fromTsDiagnostics(diagnostics, doc) {
+    return diagnostics && diagnostics.map(function (el) {
+        var _a, _b;
+        var start = (_a = el.start) !== null && _a !== void 0 ? _a : 0;
+        var length = (_b = el.length) !== null && _b !== void 0 ? _b : 1; //TODO:
+        var pos = doc.indexToPosition(start, 0);
+        return {
+            row: pos.row,
+            column: pos.column,
+            text: parseMessageText(el.messageText),
+            type: fromTsCategory(el.category)
+        };
+    });
+}
+exports.fromTsDiagnostics = fromTsDiagnostics;
+function toTsOffset(range, doc) {
+    return {
+        start: toIndex(range.start, doc),
+        end: toIndex(range.end, doc)
+    };
+}
+exports.toTsOffset = toTsOffset;
+function toIndex(point, doc) {
+    return doc.positionToIndex(point);
+}
+exports.toIndex = toIndex;
+function parseMessageText(diagnosticsText) {
+    if (typeof diagnosticsText === 'string') {
+        return diagnosticsText;
+    }
+    else if (diagnosticsText === undefined) {
+        return '';
+    }
+    var result = '';
+    result += diagnosticsText.messageText;
+    if (diagnosticsText.next) {
+        for (var _i = 0, _a = diagnosticsText.next; _i < _a.length; _i++) {
+            var next = _a[_i];
+            result += parseMessageText(next);
+        }
+    }
+    return result;
+}
+exports.parseMessageText = parseMessageText;
+function fromTsCategory(category) {
+    switch (category) {
+        case DiagnosticCategory.Error:
+            return "error";
+        case DiagnosticCategory.Suggestion:
+        case DiagnosticCategory.Message:
+            return "info";
+        case DiagnosticCategory.Warning:
+            return "warning";
+    }
+    return "info";
+}
+exports.fromTsCategory = fromTsCategory;
+function toAceTextEdits(textEdits, doc) {
+    return textEdits && textEdits.reverse().map(function (el) {
+        return {
+            range: toRange(el.span, doc),
+            newText: el.newText
+        };
+    });
+}
+exports.toAceTextEdits = toAceTextEdits;
+function toRange(textSpan, doc) {
+    if (!textSpan) {
+        return;
+    }
+    var start = doc.indexToPosition(textSpan.start, 0);
+    var end = doc.indexToPosition(textSpan.start + textSpan.length, 0);
+    return ace_code_1.Range.fromPoints(start, end);
+}
+exports.toRange = toRange;
+function toPoint(index, doc) {
+    return doc.indexToPosition(index, 0);
+}
+exports.toPoint = toPoint;
+function toTooltip(hover, doc) {
+    if (!hover) {
+        return;
+    }
+    var documentation = hover.documentation ? hover.documentation.map(function (displayPart) { return displayPart.text; }).join('') : "";
+    var tags = hover.tags ? hover.tags.map(function (tag) { return tagToString(tag); }).join('  \n') : "";
+    var displayParts = hover.displayParts ? hover.displayParts.map(function (displayPart) { return displayPart.text; }).join('') : "";
+    var contents = ['```typescript\n' + displayParts + '```\n',
+        (documentation + (tags ? '\n' + tags : '')).replace(/</g, "&lt;").replace(/>/g, "&gt;")];
+    return { content: { type: common_converters_1.CommonConverter.TooltipType.markdown, text: contents.join("\n") }, range: toRange(hover.textSpan, doc) };
+}
+exports.toTooltip = toTooltip;
+function tagToString(tag) {
+    var tagLabel = "*@".concat(tag.name, "*");
+    if (tag.name === 'param' && tag.text) {
+        var _a = tag.text, paramName = _a[0], rest = _a.slice(1);
+        tagLabel += "`".concat(paramName.text, "`");
+        if (rest.length > 0)
+            tagLabel += " \u2014 ".concat(rest.map(function (r) { return r.text; }).join(' '));
+    }
+    else if (Array.isArray(tag.text)) {
+        tagLabel += " \u2014 ".concat(tag.text.map(function (r) { return r.text; }).join(' '));
+    }
+    else if (tag.text) {
+        tagLabel += " \u2014 ".concat(tag.text);
+    }
+    return tagLabel;
+}
+function toCompletions(completionInfo, doc) {
+    return completionInfo && completionInfo.entries.map(function (entry) {
+        var range;
+        if (entry.replacementSpan) {
+            var p1 = toPoint(entry.replacementSpan.start, doc);
+            var p2 = toPoint(entry.replacementSpan.start + entry.replacementSpan.length, doc);
+            range = common_converters_1.CommonConverter.toRange({ start: p1, end: p2 });
+        }
+        var completion = {
+            meta: entry.kind,
+            caption: entry.name,
+            range: range,
+            value: "",
+            snippet: entry.name,
+            score: parseInt(entry.sortText)
+        };
+        return completion;
+    });
+}
+exports.toCompletions = toCompletions;
+var ScriptKind;
+(function (ScriptKind) {
+    ScriptKind[ScriptKind["Unknown"] = 0] = "Unknown";
+    ScriptKind[ScriptKind["JS"] = 1] = "JS";
+    ScriptKind[ScriptKind["JSX"] = 2] = "JSX";
+    ScriptKind[ScriptKind["TS"] = 3] = "TS";
+    ScriptKind[ScriptKind["TSX"] = 4] = "TSX";
+    ScriptKind[ScriptKind["External"] = 5] = "External";
+    ScriptKind[ScriptKind["JSON"] = 6] = "JSON";
+    /**
+     * Used on extensions that doesn't define the ScriptKind but the content defines it.
+     * Deferred extensions are going to be included in all project contexts.
+     */
+    ScriptKind[ScriptKind["Deferred"] = 7] = "Deferred";
+})(ScriptKind = exports.ScriptKind || (exports.ScriptKind = {}));
+var ScriptTarget;
+(function (ScriptTarget) {
+    ScriptTarget[ScriptTarget["ES3"] = 0] = "ES3";
+    ScriptTarget[ScriptTarget["ES5"] = 1] = "ES5";
+    ScriptTarget[ScriptTarget["ES2015"] = 2] = "ES2015";
+    ScriptTarget[ScriptTarget["ES2016"] = 3] = "ES2016";
+    ScriptTarget[ScriptTarget["ES2017"] = 4] = "ES2017";
+    ScriptTarget[ScriptTarget["ES2018"] = 5] = "ES2018";
+    ScriptTarget[ScriptTarget["ES2019"] = 6] = "ES2019";
+    ScriptTarget[ScriptTarget["ES2020"] = 7] = "ES2020";
+    ScriptTarget[ScriptTarget["ES2021"] = 8] = "ES2021";
+    ScriptTarget[ScriptTarget["ESNext"] = 99] = "ESNext";
+    ScriptTarget[ScriptTarget["JSON"] = 100] = "JSON";
+    ScriptTarget[ScriptTarget["Latest"] = 99] = "Latest";
+})(ScriptTarget = exports.ScriptTarget || (exports.ScriptTarget = {}));
+var DiagnosticCategory;
+(function (DiagnosticCategory) {
+    DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
+    DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
+    DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
+    DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
+})(DiagnosticCategory = exports.DiagnosticCategory || (exports.DiagnosticCategory = {}));
+var JsxEmit;
+(function (JsxEmit) {
+    JsxEmit[JsxEmit["None"] = 0] = "None";
+    JsxEmit[JsxEmit["Preserve"] = 1] = "Preserve";
+    JsxEmit[JsxEmit["React"] = 2] = "React";
+    JsxEmit[JsxEmit["ReactNative"] = 3] = "ReactNative";
+    JsxEmit[JsxEmit["ReactJSX"] = 4] = "ReactJSX";
+    JsxEmit[JsxEmit["ReactJSXDev"] = 5] = "ReactJSXDev";
+})(JsxEmit = exports.JsxEmit || (exports.JsxEmit = {}));
 
 
 /***/ }),
@@ -38977,14 +39200,19 @@ var scss_example_1 = __webpack_require__(4099);
 var typescript_example_1 = __webpack_require__(5373);
 var json_example_1 = __webpack_require__(4908);
 var javascript_example_1 = __webpack_require__(3595);
-var language_provider_1 = __webpack_require__(6005);
-//TODO:
-var lintersCSS = __webpack_require__(7263);
-var dom = __webpack_require__(6359);
 var tsx_example_1 = __webpack_require__(6060);
 var jsx_example_1 = __webpack_require__(4502);
 var json5_example_1 = __webpack_require__(2910);
-dom.importCssString(lintersCSS, "linters.css");
+var typescript_converters_1 = __webpack_require__(1835);
+var core_1 = __webpack_require__(7974);
+(0, core_1.registerStyles)();
+(0, core_1.setLanguageGlobalOptions)("typescript", {
+    compilerOptions: {
+        allowJs: true,
+        target: typescript_converters_1.ScriptTarget.ESNext,
+        jsx: typescript_converters_1.JsxEmit.Preserve
+    }
+});
 var modes = [
     { name: "json", mode: json_1.Mode, content: json_example_1.jsonContent, options: { jsonSchema: json_example_1.jsonSchema } },
     { name: "json5", mode: json5_1.Mode, content: json5_example_1.json5Content, options: { jsonSchema: json5_example_1.json5Schema } },
@@ -39021,7 +39249,7 @@ var _loop_1 = function (mode) {
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
     var options = (_a = mode.options) !== null && _a !== void 0 ? _a : {};
-    var provider = new language_provider_1.LanguageProvider(editor, options);
+    var provider = new core_1.LanguageProvider(editor, options);
     activeProvider !== null && activeProvider !== void 0 ? activeProvider : (activeProvider = provider);
     editor.on("focus", function () {
         activeProvider = provider;
