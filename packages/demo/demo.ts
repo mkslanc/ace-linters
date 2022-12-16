@@ -22,17 +22,22 @@ import {scssContent} from "./docs-example/scss-example";
 import {typescriptContent, typescriptContent1} from "./docs-example/typescript-example";
 import {jsonSchema, jsonContent} from "./docs-example/json-example";
 import {jsContent} from "./docs-example/javascript-example";
-import {LanguageProvider} from "@ace-linters/core/language-provider";
 
-//TODO:
-import * as lintersCSS from "@ace-linters/core/css/linters.css";
-import * as dom from "ace-code/src/lib/dom";
 import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
+import {JsxEmit, ScriptTarget} from "@ace-linters/core/type-converters/typescript-converters";
 
+import {registerStyles, LanguageProvider, setLanguageGlobalOptions} from "@ace-linters/core";
 
-dom.importCssString(lintersCSS, "linters.css");
+registerStyles();
+setLanguageGlobalOptions("typescript", {
+    compilerOptions: {
+        allowJs: true,
+        target: ScriptTarget.ESNext,
+        jsx: JsxEmit.Preserve
+    }
+});
 
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchema: jsonSchema}},

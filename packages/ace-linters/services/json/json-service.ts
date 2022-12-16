@@ -13,6 +13,8 @@ import {
     toTooltip
 } from "../../type-converters/vscode-converters";
 import {BaseService} from "../base-service";
+import JsonServiceOptions = AceLinters.JsonServiceOptions;
+import {AceLinters} from "../language-service";
 
 let jsonService = require('vscode-json-languageservice');
 
@@ -40,7 +42,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
     addDocument(sessionID: string, document: Ace.Document, options?: JsonServiceOptions) {
         super.addDocument(sessionID, document, options);
         this.schemas.push({uri: sessionID, fileMatch: [sessionID]});
-        this.$service.configure({schemas: this.schemas, allowComments: options.allowComments ?? false});
+        this.$service.configure({schemas: this.schemas, allowComments: this.getOption(sessionID, "allowComments") ?? false});
     }
 
     removeDocument(sessionID: string) {
@@ -97,10 +99,4 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
         return toCompletions(completions);
     }
-}
-
-export interface JsonServiceOptions {
-    jsonSchema?: string,
-    allowComments?: boolean,
-    trailingCommas?: boolean
 }
