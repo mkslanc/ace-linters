@@ -1,5 +1,5 @@
 {
-  "name": "ace-linters",
+  "name": "@ace-linters/root",
   "version": "0.0.1",
   "scripts": {
     "build": "webpack",

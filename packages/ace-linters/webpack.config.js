@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
         cache: true,
         devtool: 'source-map',
         entry: {
-            provider: './index.ts'
+            "ace-linters": './index.ts'
         },
         mode: "production",
         module: {
