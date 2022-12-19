@@ -26,7 +26,10 @@ export class TypescriptService extends BaseService<TsServiceOptions>  implements
     }
 
     getCompilationSettings(): ts.CompilerOptions {
-        return this.globalOptions["compilerOptions"] ?? this.$defaultCompilerOptions;
+        if (this.globalOptions && this.globalOptions["compilerOptions"]) {
+            return this.globalOptions["compilerOptions"]
+        }
+        return this.$defaultCompilerOptions;
     }
 
     getScriptFileNames(): string[] {

@@ -8,6 +8,7 @@
     "vscode-html-languageservice": "latest",
     "vscode-css-languageservice": "latest",
     "vscode-json-languageservice": "4.2.1",
+    "worker-loader": "^3.0.8",
     "showdown": "latest"
   },
   "main": "build/bundle.ace-linters.js",

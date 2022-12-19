@@ -1,5 +1,5 @@
 {
-  "name": "@ace-linters/root",
+  "name": "ace-linters",
   "version": "0.0.1",
   "scripts": {
     "build": "webpack",
@@ -10,14 +10,14 @@
     "typescript": "latest"
   },
   "devDependencies": {
-    "webpack": "latest",
-    "webpack-dev-server": "latest",
-    "webpack-cli": "^4.10.0",
-    "text-loader": "latest",
-    "ts-loader": "latest",
     "copy-webpack-plugin": "9.1.0",
     "css-loader": "^6.7.1",
-    "style-loader": "^3.3.1"
+    "style-loader": "^3.3.1",
+    "text-loader": "latest",
+    "ts-loader": "latest",
+    "webpack": "latest",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "latest"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

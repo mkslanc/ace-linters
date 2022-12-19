@@ -12,10 +12,7 @@ module.exports = (env, argv) => {
         exclude: /node_modules/
     };
     return {
-        experiments: {
-            outputModule: true,
-        },
-        cache: true,
+        cache: false,
         devtool: 'source-map',
         entry: {
             "ace-linters": './index.ts'
@@ -23,7 +20,13 @@ module.exports = (env, argv) => {
         mode: "production",
         module: {
             rules: [
-                loader, {
+                { // we need to use this deprecated in webpack5 loader due to https://github.com/webpack/webpack/issues/12719
+                    test: /\.worker\.ts$/,
+                    loader: 'worker-loader',
+                    options: {
+                        inline: 'no-fallback',
+                    }
+                }, loader, {
                     test: /\.css$/,
                     use: ["style-loader", "css-loader"]
                 }
@@ -43,11 +46,14 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.[name].js',
             path: __dirname + '/build',
-            libraryTarget: 'umd',
-            globalObject: "this"
+            publicPath: 'auto',
+            library: {
+                type: "umd2"
+            }
         },
         optimization: {
-            minimize: false
+            minimize: false,
+            splitChunks: false
         }
     };
 };
