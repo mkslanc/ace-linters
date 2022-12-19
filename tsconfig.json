@@ -5,7 +5,8 @@
     "target": "es5",
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "esModuleInterop": true
   },
   "include": [
     "./packages/**/*"

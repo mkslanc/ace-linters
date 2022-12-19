@@ -26,9 +26,9 @@ import {jsContent} from "./docs-example/javascript-example";
 import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
-import {JsxEmit, ScriptTarget} from "@ace-linters/core/type-converters/typescript-converters";
 
-import {registerStyles, LanguageProvider, setLanguageGlobalOptions} from "@ace-linters/core";
+import {registerStyles, LanguageProvider, setLanguageGlobalOptions, AceLinters} from "ace-linters";
+import { ScriptTarget,JsxEmit } from "ace-linters/type-converters/typescript-converters";
 
 registerStyles();
 setLanguageGlobalOptions("typescript", {
