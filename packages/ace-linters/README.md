@@ -25,6 +25,7 @@ To install Ace linters, you can use the following command:
 
 ```bash
 npm install ace-linters
+```
 
 ## Usage
 

@@ -1,5 +1,6 @@
 {
   "name": "ace-linters",
+  "author": "Azat Alimov <mkslanc@gmail.com>",
   "version": "0.0.1",
   "scripts": {
     "build": "webpack"

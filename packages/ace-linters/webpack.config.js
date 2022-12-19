@@ -13,7 +13,7 @@ module.exports = (env, argv) => {
     };
     return {
         cache: false,
-        devtool: 'source-map',
+        devtool: false,
         entry: {
             "ace-linters": './index.ts'
         },
@@ -52,7 +52,7 @@ module.exports = (env, argv) => {
             }
         },
         optimization: {
-            minimize: false,
+            minimize: true,
             splitChunks: false
         }
     };
