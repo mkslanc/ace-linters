@@ -5,7 +5,7 @@ import {
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
     DeltasMessage, DisposeMessage,
-    FormatMessage,
+    FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage,
     ResolveCompletionMessage,
@@ -13,8 +13,10 @@ import {
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {AceLinters} from "./index";
 import {FormattingOptions} from "vscode-languageserver-types";
+import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
+import {AceLinters} from "./services/language-service";
+import MyWorker from "./web.worker.ts";
 
 export class MessageController {
     private static _instance: MessageController;
@@ -29,8 +31,7 @@ export class MessageController {
     private $worker: Worker;
 
     constructor() {
-        //@ts-ignore
-        this.$worker = new Worker(new URL('./webworker.ts', import.meta.url));
+        this.$worker = new MyWorker();
 
         this.$worker.onmessage = (e) => {
             let message = e.data;
@@ -84,6 +85,10 @@ export class MessageController {
 
     dispose(sessionId: string, callback?: () => void) {
         this.postMessage(new DisposeMessage(sessionId), callback);
+    }
+
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T]) {
+        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options));
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

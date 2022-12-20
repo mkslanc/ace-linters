@@ -9,9 +9,9 @@ import {
 } from "../services/typescript/lib/typescriptServices";
 import {Ace, Range as AceRange} from "ace-code";
 import * as ts from "../services/typescript/lib/typescriptServices";
-import {AceLinters} from "../index";
 import {CommonConverter} from "./common-converters";
 import Tooltip = AceLinters.Tooltip;
+import {AceLinters} from "../services/language-service";
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: Ace.Document): Ace.Annotation[] {
     return diagnostics && diagnostics.map((el) => {

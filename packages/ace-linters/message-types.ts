@@ -1,6 +1,6 @@
 import {Ace} from "ace-code";
 import {FormattingOptions} from "vscode-languageserver-types";
-import {AceLinters} from "./index";
+import {AceLinters} from "./services/language-service";
 import ServiceOptions = AceLinters.ServiceOptions;
 
 export abstract class BaseMessage {
@@ -126,6 +126,17 @@ export class DisposeMessage extends BaseMessage {
     }
 }
 
+export class GlobalOptionsMessage {
+    type: MessageType = MessageType.globalOptions;
+    serviceName: string
+    options: ServiceOptions;
+
+    constructor(serviceName: string, options: ServiceOptions) {
+        this.serviceName = serviceName;
+        this.options = options;
+    }
+}
+
 export enum MessageType {
-    init, format, complete, resolveCompletion, change, hover, validate, applyDelta, changeMode, changeOptions, dispose
+    init, format, complete, resolveCompletion, change, hover, validate, applyDelta, changeMode, changeOptions, dispose, globalOptions
 }

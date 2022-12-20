@@ -12,15 +12,21 @@ module.exports = (env, argv) => {
         exclude: /node_modules/
     };
     return {
-        cache: true,
-        devtool: 'source-map',
+        cache: false,
+        devtool: false,
         entry: {
-            provider: './language-provider.ts'
+            "ace-linters": './index.ts'
         },
         mode: "production",
         module: {
             rules: [
-                loader, {
+                { // we need to use this deprecated in webpack5 loader due to https://github.com/webpack/webpack/issues/12719
+                    test: /\.worker\.ts$/,
+                    loader: 'worker-loader',
+                    options: {
+                        inline: 'no-fallback',
+                    }
+                }, loader, {
                     test: /\.css$/,
                     use: ["style-loader", "css-loader"]
                 }
@@ -40,10 +46,14 @@ module.exports = (env, argv) => {
         output: {
             filename: 'bundle.[name].js',
             path: __dirname + '/build',
-            libraryTarget: 'commonjs2'
+            publicPath: 'auto',
+            library: {
+                type: "umd2"
+            }
         },
         optimization: {
-            minimize: false
+            minimize: true,
+            splitChunks: false
         }
     };
 };

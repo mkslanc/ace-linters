@@ -12,11 +12,13 @@ import {
     toTooltip,
     toTsOffset
 } from "../../type-converters/typescript-converters";
+import TsServiceOptions = AceLinters.TsServiceOptions;
+import {AceLinters} from "../language-service";
 
 
-export class TypescriptService extends BaseService implements ts.LanguageServiceHost {
+export class TypescriptService extends BaseService<TsServiceOptions>  implements ts.LanguageServiceHost {
     $service: ts.LanguageService;
-    $compilerOptions = {allowJs: true, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
+    $defaultCompilerOptions = {allowJs: true, jsx: JsxEmit.Preserve, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
 
     constructor(mode: string) {
         super(mode);
@@ -24,7 +26,10 @@ export class TypescriptService extends BaseService implements ts.LanguageService
     }
 
     getCompilationSettings(): ts.CompilerOptions {
-        return this.$compilerOptions;
+        if (this.globalOptions && this.globalOptions["compilerOptions"]) {
+            return this.globalOptions["compilerOptions"]
+        }
+        return this.$defaultCompilerOptions;
     }
 
     getScriptFileNames(): string[] {
@@ -37,7 +42,7 @@ export class TypescriptService extends BaseService implements ts.LanguageService
             if (document["version"])
                 return document["version"].toString();
             else return "1";
-        } else if (fileName === this.getDefaultLibFileName(this.$compilerOptions)) {
+        } else if (fileName === this.getDefaultLibFileName(this.getCompilationSettings())) {
             return '1';
         }
         return '';
