@@ -1,6 +1,14 @@
 import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAceTextEdits, toAnnotations, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
+import {
+    fromPoint,
+    fromRange,
+    toAceTextEdits,
+    toAnnotations,
+    toCompletions,
+    toResolvedCompletion,
+    toTooltip
+} from "../../type-converters/vscode-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import {BaseService} from "../base-service";
 
@@ -78,5 +86,9 @@ export class CssService extends BaseService {
 
         let completions = this.$service.doComplete(document, fromPoint(position), cssDocument);
         return toCompletions(completions);
+    }
+
+    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
+        return toResolvedCompletion(completion, completion["item"]);
     }
 }

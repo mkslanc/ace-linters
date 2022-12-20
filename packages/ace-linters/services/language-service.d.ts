@@ -20,6 +20,8 @@ export declare namespace AceLinters {
 
         doComplete(sessionID: string, position: Ace.Point): Promise<Ace.Completion[]>;
 
+        resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion>;
+
         setValue(sessionID: string, value: string);
 
         applyDeltas(sessionID: string, delta: Ace.Delta[]);
