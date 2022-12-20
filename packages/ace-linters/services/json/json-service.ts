@@ -9,7 +9,7 @@ import {
     fromRange,
     toAceTextEdits,
     toAnnotations,
-    toCompletions,
+    toCompletions, toResolvedCompletion,
     toTooltip
 } from "../../type-converters/vscode-converters";
 import {BaseService} from "../base-service";
@@ -95,7 +95,14 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
         let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
+
         return toCompletions(completions);
+    }
+
+    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
+        let resolvedCompletion = await this.$service.doResolve(completion["item"]);
+
+        return toResolvedCompletion(completion, resolvedCompletion);
     }
 }
 

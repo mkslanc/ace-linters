@@ -114,4 +114,8 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     async doComplete(sessionID: string, position: Ace.Point): Promise<Ace.Completion[]> {
         return;
     }
+
+    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
+        return;
+    }
 }

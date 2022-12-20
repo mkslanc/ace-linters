@@ -1,13 +1,8 @@
 import {Ace, Range as AceRange} from "ace-code";
-import {MarkDownConverter} from "./converters";
 
 export namespace CommonConverter {
-    export function toCompletions(completions: Ace.Completion[], markdownConverter: MarkDownConverter): Ace.Completion[] {
+    export function normalizeRanges(completions: Ace.Completion[]): Ace.Completion[] {
         return completions && completions.map((el) => {
-            if (el["docMarkdown"]) {
-                el["docHTML"] = cleanHtml(markdownConverter.makeHtml(el["docMarkdown"]));
-                el["docMarkdown"] = undefined;
-            }
             if (el["range"]) {
                 el["range"] = toRange(el["range"]);
             }

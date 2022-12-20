@@ -4,6 +4,7 @@ import {
     Diagnostic,
     InsertTextFormat,
     CompletionList,
+    CompletionItem,
     CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind, TextEdit
 } from "vscode-languageserver-types";
 import type {Ace} from "ace-code";
@@ -67,16 +68,10 @@ export function toCompletions(completionList: CompletionList): Ace.Completion[] 
                 command: command,
                 range: range,
                 value: "",
-                score: null
+                score: null,
+                item: item
             };
-            let doc = fromMarkupContent(item.documentation);
-            if (doc) {
-                if (doc.type === CommonConverter.TooltipType.markdown) {
-                    completion["docMarkdown"] = doc.text;
-                } else {
-                    completion["docText"] = doc.text;
-                }
-            }
+
             if (item.insertTextFormat == InsertTextFormat.Snippet) {
                 completion["snippet"] = text;
             } else {
@@ -85,6 +80,18 @@ export function toCompletions(completionList: CompletionList): Ace.Completion[] 
             return completion;
         }
     );
+}
+
+export function toResolvedCompletion(completion: Ace.Completion, item: CompletionItem): Ace.Completion {
+    let doc = fromMarkupContent(item.documentation);
+    if (doc) {
+        if (doc.type === CommonConverter.TooltipType.markdown) {
+            completion["docMarkdown"] = doc.text;
+        } else {
+            completion["docText"] = doc.text;
+        }
+    }
+    return completion;
 }
 
 export function getTextEditRange(textEdit?): Ace.Range | undefined {

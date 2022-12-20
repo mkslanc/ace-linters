@@ -1,4 +1,5 @@
 import {
+    CompletionEntryDetails,
     CompletionInfo,
     Diagnostic,
     JSDocTagInfo,
@@ -116,25 +117,36 @@ function tagToString(tag: JSDocTagInfo): string {
     return tagLabel;
 }
 
-export function toCompletions(completionInfo: CompletionInfo, doc: Ace.Document): Ace.Completion[] {
+export function toCompletions(completionInfo: CompletionInfo, doc: Ace.Document, fileName: string, position: number): Ace.Completion[] {
     return completionInfo && completionInfo.entries.map((entry) => {
-        let range;
-        if (entry.replacementSpan) {
-            const p1 = toPoint(entry.replacementSpan.start, doc);
-            const p2 = toPoint(entry.replacementSpan.start + entry.replacementSpan.length, doc);
-            range = CommonConverter.toRange({start: p1, end: p2});
-        }
-
         let completion = {
             meta: entry.kind,
             caption: entry.name,
-            range: range,
             value: "",
             snippet: entry.name,
-            score: parseInt(entry.sortText)
+            score: parseInt(entry.sortText),
+            position: position,
+            entry: entry.name
         };
+
+        if (entry.replacementSpan) {
+            const p1 = toPoint(entry.replacementSpan.start, doc);
+            const p2 = toPoint(entry.replacementSpan.start + entry.replacementSpan.length, doc);
+            completion["range"] = CommonConverter.toRange({start: p1, end: p2});
+        }
+
         return  completion;
     });
+}
+
+export function toResolvedCompletion(entry: CompletionEntryDetails): Ace.Completion {
+    return {
+        meta: entry.kind,
+        caption: entry.name,
+        value: "",
+        snippet: entry.name,
+        docHTML: entry.displayParts.map((displayPart) => displayPart.text).join('')
+    };
 }
 
 export enum ScriptKind {

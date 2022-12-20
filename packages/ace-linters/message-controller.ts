@@ -8,7 +8,7 @@ import {
     FormatMessage,
     HoverMessage,
     InitMessage,
-    MessageType,
+    ResolveCompletionMessage,
     ValidateMessage
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
@@ -34,25 +34,8 @@ export class MessageController {
 
         this.$worker.onmessage = (e) => {
             let message = e.data;
-            let data = null;
-            switch (message.type as MessageType) {
-                case MessageType.format:
-                    data = message.edits;
-                    break;
-                case MessageType.complete:
-                    data = message.completions;
-                    break;
-                case MessageType.hover:
-                    data = message.hover;
-                    break;
-                case MessageType.validate:
-                    data = message.annotations;
-                    break;
-                default:
-                    break;
-            }
 
-            this["_signal"](message.type + "-" + message.sessionId, data);
+            this["_signal"](message.type + "-" + message.sessionId, message.value);
         };
     }
 
@@ -64,8 +47,12 @@ export class MessageController {
         this.postMessage(new ValidateMessage(sessionId), callback);
     }
 
-    doComplete(sessionId: string, position: Ace.Point, callback?: (CompletionList) => void) {
+    doComplete(sessionId: string, position: Ace.Point, callback?: (completionList: Ace.Completion[]) => void) {
         this.postMessage(new CompleteMessage(sessionId, position), callback);
+    }
+
+    doResolve(sessionId: string, completion: Ace.Completion, callback?: (completion: Ace.Completion) => void) {
+        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
     }
 
     format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: AceLinters.TextEdit[]) => void) {

@@ -13,10 +13,13 @@ ctx.onmessage = async (ev) => {
     };
     switch (message["type"] as MessageType) {
         case MessageType.format:
-            postMessage["edits"] = manager.getServiceInstance(sessionID).format(sessionID, message.value, message.format);
+            postMessage["value"] = manager.getServiceInstance(sessionID).format(sessionID, message.value, message.format);
             break;
         case MessageType.complete:
-            postMessage["completions"] = await manager.getServiceInstance(sessionID).doComplete(sessionID, message.value);
+            postMessage["value"] = await manager.getServiceInstance(sessionID).doComplete(sessionID, message.value);
+            break;
+        case MessageType.resolveCompletion:
+            postMessage["value"] = await manager.getServiceInstance(sessionID).resolveCompletion(sessionID, message.value);
             break;
         case MessageType.change:
             manager.getServiceInstance(sessionID).setValue(sessionID, message.value);
@@ -25,10 +28,10 @@ ctx.onmessage = async (ev) => {
             manager.getServiceInstance(sessionID).applyDeltas(sessionID, message.value);
             break;
         case MessageType.hover:
-            postMessage["hover"] = await manager.getServiceInstance(sessionID).doHover(sessionID, message.value);
+            postMessage["value"] = await manager.getServiceInstance(sessionID).doHover(sessionID, message.value);
             break;
         case MessageType.validate:
-            postMessage["annotations"] = await manager.getServiceInstance(sessionID).doValidation(sessionID);
+            postMessage["value"] = await manager.getServiceInstance(sessionID).doValidation(sessionID);
             break;
         case MessageType.init: //this should be first message
             await manager.addDocument(sessionID, message.value, message.mode, message.options);

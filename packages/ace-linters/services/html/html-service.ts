@@ -1,6 +1,13 @@
 import {LanguageService as VSLanguageService} from "vscode-html-languageservice";
 import {Ace} from "ace-code";
-import {fromPoint, fromRange, toAceTextEdits, toCompletions, toTooltip} from "../../type-converters/vscode-converters";
+import {
+    fromPoint,
+    fromRange,
+    toAceTextEdits,
+    toCompletions,
+    toResolvedCompletion,
+    toTooltip
+} from "../../type-converters/vscode-converters";
 import {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 import {BaseService} from "../base-service";
 
@@ -53,5 +60,9 @@ export class HtmlService extends BaseService {
 
         let completions = this.$service.doComplete(document, fromPoint(position), htmlDocument);
         return toCompletions(completions);
+    }
+
+    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
+        return toResolvedCompletion(completion, completion["item"]);
     }
 }

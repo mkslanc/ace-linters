@@ -48,6 +48,16 @@ export class CompleteMessage extends BaseMessage {
     }
 }
 
+export class ResolveCompletionMessage extends BaseMessage {
+    type: MessageType = MessageType.resolveCompletion;
+    value: Ace.Completion;
+
+    constructor(sessionId: string, value: Ace.Completion) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+
 export class HoverMessage extends BaseMessage {
     type: MessageType = MessageType.hover;
     value: Ace.Point;
@@ -117,5 +127,5 @@ export class DisposeMessage extends BaseMessage {
 }
 
 export enum MessageType {
-    init, format, complete, change, hover, validate, applyDelta, changeMode, changeOptions, dispose
+    init, format, complete, resolveCompletion, change, hover, validate, applyDelta, changeMode, changeOptions, dispose
 }

@@ -4,9 +4,9 @@ import * as ts from './lib/typescriptServices';
 import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
-    fromTsDiagnostics, JsxEmit,
+    fromTsDiagnostics,
     ScriptTarget,
-    toAceTextEdits,
+    toAceTextEdits, toResolvedCompletion,
     toCompletions,
     toIndex,
     toTooltip,
@@ -175,12 +175,27 @@ export class TypescriptService extends BaseService implements ts.LanguageService
         return fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], document);
     }
 
-    async doComplete(sessionID: string, position: Ace.Point) {
+    async doComplete(sessionID: string, point: Ace.Point) {
         let document = this.getDocument(sessionID);
         if (!document) {
             return null;
         }
-        let completions = this.$service.getCompletionsAtPosition(sessionID, toIndex(position, document), undefined);
-        return toCompletions(completions, document);
+        let position = toIndex(point, document);
+        let completions = this.$service.getCompletionsAtPosition(sessionID, position, undefined);
+        return toCompletions(completions, document, sessionID, position);
+    }
+
+    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
+        let resolvedCompletion = this.$service.getCompletionEntryDetails(
+            sessionID,
+            completion["position"],
+            completion["entry"],
+            undefined,
+            undefined,
+            undefined,
+            undefined
+        );
+
+        return toResolvedCompletion(resolvedCompletion);
     }
 }

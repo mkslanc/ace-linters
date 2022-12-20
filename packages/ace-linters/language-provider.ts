@@ -5,8 +5,8 @@ import Tooltip = AceLinters.Tooltip;
 import {AceLinters} from "./index";
 import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-types";
-import {CommonConverter} from "./type-converters/common-converters";
 import {MarkDownConverter} from "./type-converters/converters";
+import {CommonConverter} from "./type-converters/common-converters";
 
 let showdown = require('showdown');
 
@@ -152,10 +152,23 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
             {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
                     this.doComplete((completions) => {
-                        callback(null, CommonConverter.toCompletions(completions, this.$markdownConverter));
+                        callback(null, CommonConverter.normalizeRanges(completions));
                     });
                 },
-                getDocTooltip(item: Ace.Completion) {
+                getDocTooltip: (item) => {
+                    if (!item["isResolved"]) {
+                        this.$message.doResolve(this.$fileName, item, (completion) => {
+                            item["isResolved"]  = true;
+                            item.docText = completion.docText;
+                            if (completion.docHTML) {
+                                item.docHTML = completion.docHTML;
+                            } else if (completion["docMarkdown"]) {
+                                item.docHTML = CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
+                            }
+                            this.editor["completer"].updateDocTooltip();
+                        })
+                    }
+                    return item;
                 }
             }
         ];
