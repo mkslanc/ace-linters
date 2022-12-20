@@ -10,7 +10,7 @@ import {
     toCompletions,
     toIndex,
     toTooltip,
-    toTsOffset
+    toTsOffset, JsxEmit
 } from "../../type-converters/typescript-converters";
 import TsServiceOptions = AceLinters.TsServiceOptions;
 import {AceLinters} from "../language-service";
