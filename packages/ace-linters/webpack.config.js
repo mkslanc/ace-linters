@@ -1,5 +1,6 @@
 "use strict";
 module.exports = (env, argv) => {
+    const isProduction = argv.mode === 'production';
     let loader;
     loader = {
         test: /\.(t|j)sx?$/,
@@ -13,7 +14,7 @@ module.exports = (env, argv) => {
     };
     return {
         cache: false,
-        devtool: false,
+        devtool: isProduction ? false : 'inline-source-map',
         entry: {
             "ace-linters": './index.ts'
         },
@@ -24,7 +25,7 @@ module.exports = (env, argv) => {
                     test: /\.worker\.ts$/,
                     loader: 'worker-loader',
                     options: {
-                        inline: 'no-fallback',
+                        inline: 'no-fallback'
                     }
                 }, loader, {
                     test: /\.css$/,
@@ -52,7 +53,7 @@ module.exports = (env, argv) => {
             }
         },
         optimization: {
-            minimize: true,
+            minimize: isProduction,
             splitChunks: false
         }
     };
