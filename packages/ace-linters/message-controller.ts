@@ -75,8 +75,8 @@ export class MessageController {
         this.postMessage(message, callback)
     }
 
-    changeMode(sessionId: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void) {
-        this.postMessage(new ChangeModeMessage(sessionId, mode, options), callback);
+    changeMode(sessionId: string, value: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, mode, options), callback);
     }
 
     changeOptions(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void) {

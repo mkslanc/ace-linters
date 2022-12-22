@@ -100,9 +100,11 @@ export class ChangeModeMessage extends BaseMessage {
     type: MessageType = MessageType.changeMode;
     mode: string;
     options: ServiceOptions;
+    value: string;
 
-    constructor(sessionId: string, mode: string, options: ServiceOptions) {
+    constructor(sessionId: string, value: string, mode: string, options: ServiceOptions) {
         super(sessionId);
+        this.value = value;
         this.mode = mode;
         this.options = options;
     }

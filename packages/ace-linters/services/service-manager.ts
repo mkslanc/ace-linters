@@ -97,28 +97,30 @@ export class ServiceManager {
 
         let document = new Document(documentValue);
         let serviceInstance = await this.$getServiceInstanceByMode(mode);
+        if (!serviceInstance)
+            return;
         serviceInstance.addDocument(sessionID, document, options);
         this.$sessionIDToMode[sessionID] = mode;
     }
 
-    async changeDocumentMode(sessionID: string, mode: string, options: ServiceOptions) {
-        let service = this.getServiceInstance(sessionID);
-        let documentValue = service.getDocumentValue(sessionID);
+    async changeDocumentMode(sessionID: string, value: string, mode: string, options: ServiceOptions) {
         this.removeDocument(sessionID);
-        await this.addDocument(sessionID, documentValue, mode, options);
+        await this.addDocument(sessionID, value, mode, options);
     }
 
     removeDocument(sessionID: string) {
         let service = this.getServiceInstance(sessionID);
-        service.removeDocument(sessionID);
-        delete this.$sessionIDToMode[sessionID];
+        if (service) {
+            service.removeDocument(sessionID);
+            delete this.$sessionIDToMode[sessionID];
+        }
     }
 
     getServiceInstance(sessionID: string): LanguageService {
         let mode = this.$sessionIDToMode[sessionID];
         let service = this.findServiceByMode(mode);
         if (!mode || !service?.serviceInstance)
-            throw Error("No registered service for " + sessionID);
+            return; //TODO:
 
         return service.serviceInstance;
     }

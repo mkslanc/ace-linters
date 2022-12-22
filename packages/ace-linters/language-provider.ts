@@ -88,7 +88,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
 
             // @ts-ignore
             this.editor.on("changeMode", () => {
-                this.$message.changeMode(this.$fileName, this.$mode, this.$options, this.$onInit);
+                this.$message.changeMode(this.$fileName, this.editor.getValue(), this.$mode, this.$options, this.$onInit);
             });
         });
     }
