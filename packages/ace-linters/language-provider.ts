@@ -17,7 +17,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     private $message: MessageController;
     private $options: OptionsType;
     private readonly $fileName;
-    deltaQueue: Ace.Delta[] = [];
+    deltaQueue: Ace.Delta[];
 
     private static extensions = {
         "typescript": "ts",
@@ -48,16 +48,19 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     }
 
     private $changeListener(delta) {
+        if (!this.deltaQueue) {
+            this.deltaQueue = [];
+            setTimeout(this.$sendDeltaQueue, 0);
+        }
         if (delta.action == "insert")
             this.deltaQueue.push(delta.start, delta.lines);
         else this.deltaQueue.push(delta.start, delta.end);
-        this.$sendDeltaQueue();
     }
 
-    private $sendDeltaQueue() {
+    private $sendDeltaQueue = () => {
         let deltas = this.deltaQueue;
         if (!deltas) return;
-        this.deltaQueue = [];
+        this.deltaQueue = null;
         this.$message.change(this.$fileName, deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
     };
 
