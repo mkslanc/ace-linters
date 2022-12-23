@@ -87,8 +87,8 @@ export class MessageController {
         this.postMessage(new DisposeMessage(sessionId), callback);
     }
 
-    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T]) {
-        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options));
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
+        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

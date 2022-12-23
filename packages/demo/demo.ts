@@ -20,7 +20,7 @@ import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
 import {scssContent} from "./docs-example/scss-example";
 import {typescriptContent, typescriptContent1} from "./docs-example/typescript-example";
-import {jsonSchema, jsonContent} from "./docs-example/json-example";
+import {jsonSchema, jsonContent, jsonSchema2} from "./docs-example/json-example";
 import {jsContent} from "./docs-example/javascript-example";
 
 import {tsxContent} from "./docs-example/tsx-example";
@@ -28,7 +28,7 @@ import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
 import {registerStyles, LanguageProvider, setLanguageGlobalOptions, AceLinters} from "ace-linters";
-import { ScriptTarget,JsxEmit } from "ace-linters/type-converters/typescript-converters";
+import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 
 registerStyles();
 setLanguageGlobalOptions("typescript", {
@@ -39,9 +39,27 @@ setLanguageGlobalOptions("typescript", {
     }
 });
 
+setLanguageGlobalOptions("json", {
+    jsonSchemas: [
+        {
+            uri: "common-form.schema.json",
+            schema: jsonSchema2
+        }
+    ]
+});
+
+setLanguageGlobalOptions("json5", {
+    jsonSchemas: [
+        {
+            uri: "json5Schema",
+            schema: json5Schema
+        }
+    ]
+});
+
 let modes = [
-    {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchema: jsonSchema}},
-    {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchema: json5Schema}},
+    {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
+    {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchemaUri: "json5Schema"}},
     {name: "html", mode: HTMLMode, content: htmlContent},
     {name: "css", mode: CSSMode, content: cssContent},
     {name: "less", mode: LessMode, content: lessContent},
@@ -93,6 +111,13 @@ for (let mode of modes) {
     }
     i++;
 }
+
+setLanguageGlobalOptions("json", {
+    jsonSchemas: [{
+        uri: "colors.schema.json",
+        schema: jsonSchema
+    },]
+}, true);
 
 function createCloseButton(el) {
     let closeButton = document.createElement("span");

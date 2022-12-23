@@ -9,6 +9,7 @@ export declare namespace AceLinters {
         documents: { [sessionID: string]: Ace.Document };
         $service;
         mode: string;
+        globalOptions;
 
         $getDocument(sessionID: string): TextDocument;
 
@@ -59,7 +60,12 @@ export declare namespace AceLinters {
     }
 
     export interface JsonServiceOptions {
-        jsonSchema?: string,
+        jsonSchemas?: {
+            uri: string,
+            fileMatch?: string[],
+            schema: string,
+        }[],
+        jsonSchemaUri?: string,
         allowComments?: boolean,
         trailingCommas?: boolean
     }
@@ -70,6 +76,7 @@ export declare namespace AceLinters {
 
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
+        json5: JsonServiceOptions,
         typescript: TsServiceOptions
     }
 }

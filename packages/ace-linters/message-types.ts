@@ -132,10 +132,12 @@ export class GlobalOptionsMessage {
     type: MessageType = MessageType.globalOptions;
     serviceName: string
     options: ServiceOptions;
+    merge: boolean
 
-    constructor(serviceName: string, options: ServiceOptions) {
+    constructor(serviceName: string, options: ServiceOptions, merge: boolean) {
         this.serviceName = serviceName;
         this.options = options;
+        this.merge = merge;
     }
 }
 

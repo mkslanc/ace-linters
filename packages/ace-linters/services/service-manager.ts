@@ -2,6 +2,7 @@ import LanguageService = AceLinters.LanguageService;
 import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";
 import {AceLinters} from "./language-service";
+import {mergeObjects} from "../utils";
 
 interface ServiceData {
     module: any, name: string, modes: string, serviceInstance?: LanguageService, options?: ServiceOptions
@@ -33,19 +34,11 @@ export class ServiceManager {
             module: import("./json/json-service"),
             name: "JsonService",
             modes: "json",
-            options: {
-                allowComments: false,
-                trailingCommas: false
-            }
         },
         json5: {
             module: import("./json/json-service"),
             name: "JsonService",
             modes: "json5",
-            options: {
-                allowComments: true,
-                trailingCommas: true
-            }
         },
         typescript: {
             module: import("./typescript/typescript-service"),
@@ -80,13 +73,17 @@ export class ServiceManager {
         return service.serviceInstance;
     }
 
-    setGlobalOptions(serviceName: string, options: ServiceOptions) {
+    setGlobalOptions(serviceName: string, options: ServiceOptions, merge = false) {
         let service = this.$services[serviceName];
         if (!service)
             return;
         service.options = options;
-        if (service.serviceInstance)
+        if (service.serviceInstance) {
+            if (merge) {
+                options = mergeObjects(options, service.serviceInstance.globalOptions);
+            }
             service.serviceInstance.setGlobalOptions(options);
+        }
     }
 
     async addDocument(sessionID: string, documentValue: string, mode: string, options: ServiceOptions) {

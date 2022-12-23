@@ -53,7 +53,6 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     }
 
     setGlobalOptions(options: OptionsType) {
-
         this.globalOptions = options;
     }
 

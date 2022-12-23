@@ -46,7 +46,7 @@ ctx.onmessage = async (ev) => {
             manager.removeDocument(sessionID);
             break;
         case MessageType.globalOptions:
-            manager.setGlobalOptions(message.serviceName, message.options);
+            manager.setGlobalOptions(message.serviceName, message.options, message.merge);
             break;
     }
 

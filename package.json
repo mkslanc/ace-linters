@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server"
@@ -17,7 +17,12 @@
     "ts-loader": "latest",
     "webpack": "latest",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "latest"
+    "webpack-dev-server": "latest",
+    "vscode-html-languageservice": "latest",
+    "vscode-css-languageservice": "latest",
+    "vscode-json-languageservice": "4.2.1",
+    "worker-loader": "^3.0.8",
+    "showdown": "latest"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [
