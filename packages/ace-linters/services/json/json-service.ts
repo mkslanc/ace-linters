@@ -20,14 +20,14 @@ let jsonService = require('vscode-json-languageservice');
 
 export class JsonService extends BaseService<JsonServiceOptions> {
     $service: VSLanguageService;
-    schemas: SchemaConfiguration[] = [];
+    schemas: { [schemaUri: string]: string } = {};
 
     constructor(mode: string) {
         super(mode);
         this.$service = jsonService.getLanguageService({
             schemaRequestService: (uri) => {
                 uri = uri.replace("file:///", "");
-                let jsonSchema = this.$getJsonSchema(uri);
+                let jsonSchema = this.schemas[uri];
                 if (jsonSchema)
                     return Promise.resolve(jsonSchema);
                 return Promise.reject(`Unable to load schema at ${uri}`);
@@ -35,24 +35,58 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         });
     }
 
-    private $getJsonSchema(sessionID): string {
-        return this.getOption(sessionID, "jsonSchema");
+    private $getJsonSchemaUri(sessionID): string {
+        return this.getOption(sessionID, "jsonSchemaUri");
     }
 
     addDocument(sessionID: string, document: Ace.Document, options?: JsonServiceOptions) {
         super.addDocument(sessionID, document, options);
-        this.schemas.push({uri: sessionID, fileMatch: [sessionID]});
-        this.$service.configure({schemas: this.schemas, allowComments: this.getOption(sessionID, "allowComments") ?? false});
+        this.$configureService(sessionID);
+    }
+
+    private $configureService(sessionID?: string) {
+        if (!sessionID)
+            sessionID = "";
+        let schemas = this.getOption(sessionID, "jsonSchemas");
+        schemas?.forEach((el) => {
+            if (el.uri === this.$getJsonSchemaUri(sessionID)) {
+                el.fileMatch ??= [];
+                el.fileMatch.push(sessionID);
+            }
+            this.schemas[el.uri] = (el.schema) ? el.schema : (this.schemas[el.uri]) ? this.schemas[el.uri] : undefined;
+            this.$service.resetSchema(el.uri);
+            el.schema = undefined;
+        });
+
+        this.$service.configure({
+            schemas: schemas as SchemaConfiguration[],
+            allowComments: this.mode === "json5"
+        });
+
     }
 
     removeDocument(sessionID: string) {
         super.removeDocument(sessionID);
-        this.schemas = this.schemas.filter((schema) => schema.uri != sessionID);
+        let schemas = this.getOption(sessionID, "jsonSchemas");
+        schemas?.forEach((el) => {
+            if (el.uri === this.$getJsonSchemaUri(sessionID)) {
+                el.fileMatch = el.fileMatch.filter((pattern) => pattern != sessionID);
+            }
+        });
+        this.$service.configure({
+            schemas: schemas as SchemaConfiguration[],
+            allowComments: this.mode === "json5"
+        });
     }
 
     setOptions(sessionID: string, options: JsonServiceOptions) {
         super.setOptions(sessionID, options);
-        this.$service.resetSchema(sessionID);
+        this.$configureService(sessionID);
+    }
+
+    setGlobalOptions(options: JsonServiceOptions) {
+        super.setGlobalOptions(options);
+        this.$configureService();
     }
 
     $getDocument(sessionID: string) {
@@ -86,7 +120,7 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
 
-        let diagnostics = this.$service.doValidation(document, jsonDocument, {trailingCommas: this.getOption(sessionID, "trailingCommas") ? "ignore" : "error"});
+        let diagnostics = this.$service.doValidation(document, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
         return toAnnotations(await diagnostics);
     }
 
