@@ -15,5 +15,8 @@
     "showdown": "latest"
   },
   "main": "build/bundle.ace-linters.js",
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "repository": {
+    "url": "https://github.com/mkslanc/ace-linters"
+  }
 }
