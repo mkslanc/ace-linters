@@ -53,7 +53,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     }
 
     setGlobalOptions(options: OptionsType) {
-        this.globalOptions = options;
+        this.globalOptions = options ?? {} as OptionsType;
     }
 
     setOptions(sessionID: string, options: OptionsType) {
