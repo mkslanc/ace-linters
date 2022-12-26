@@ -13,6 +13,7 @@ import {Mode as Json5Mode} from "ace-code/src/mode/json5";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
 import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
 import {Mode as TSXMode} from "ace-code/src/mode/tsx";
+import {Mode as LuaMode} from "ace-code/src/mode/lua";
 
 let theme = require("ace-code/src/theme/textmate");
 import * as ace from "ace-code";
@@ -29,6 +30,7 @@ import {json5Content, json5Schema} from "./docs-example/json5-example";
 
 import {registerStyles, LanguageProvider, setLanguageGlobalOptions, AceLinters} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
+import {luaContent} from "./docs-example/lua-example";
 
 registerStyles();
 setLanguageGlobalOptions("typescript", {
@@ -68,7 +70,8 @@ let modes = [
     {name: "typescript", mode: TypescriptMode, content: typescriptContent1},
     {name: "javascript", mode: JavascriptMode, content: jsContent},
     {name: "tsx", mode: TSXMode, content: tsxContent},
-    {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}} //TODO:
+    {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}}, //TODO:
+    {name: "lua", mode: LuaMode, content: luaContent}
 
 ]
 let i = 0;
