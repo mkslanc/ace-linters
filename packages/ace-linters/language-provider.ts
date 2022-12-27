@@ -29,7 +29,6 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
         this.$options = options;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
         this.$fileName = this.editor.session["id"] + "." + LanguageProvider.getExtension(this.$mode);
-        this.$init();
     }
 
     private static getExtension(mode: string) {
@@ -80,20 +79,24 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
         }
     }
 
-    private $init() {
+    async init() {
         this.$message = MessageController.instance;
-        this.$message.init(this.$fileName, this.editor.getValue(), this.$mode, this.$options, () => {
-            this.$descriptionTooltip = new DescriptionTooltip(this);
+        await new Promise(
+            (resolve) => {
+                this.$message.init(this.$fileName, this.editor.getValue(), this.$mode, this.$options, () => {
+                    this.$descriptionTooltip = new DescriptionTooltip(this);
 
-            this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
+                    this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
 
-            this.$onInit();
+                    this.$onInit();
 
-            // @ts-ignore
-            this.editor.on("changeMode", () => {
-                this.$message.changeMode(this.$fileName, this.editor.getValue(), this.$mode, this.$options, this.$onInit);
+                    // @ts-ignore
+                    this.editor.on("changeMode", () => {
+                        this.$message.changeMode(this.$fileName, this.editor.getValue(), this.$mode, this.$options, this.$onInit);
+                    });
+                    resolve(true);
+                });
             });
-        });
     }
 
     private $changeOptions = () => {

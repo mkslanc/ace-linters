@@ -99,6 +99,7 @@ for (let mode of modes) {
     editor.session.setMode(new mode.mode());
     let options = mode.options ?? {};
     let provider = new LanguageProvider(editor, options);
+    provider.init();
     activeProvider ??= provider;
     editor.on("focus", () => {
         activeProvider = provider;

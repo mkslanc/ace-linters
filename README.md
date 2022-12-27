@@ -52,9 +52,13 @@ let editor = ace.edit("container");
 editor.session.setMode(new TypescriptMode());
 // Create Language Provider (you could pass options as second parameter) 
 let provider = new LanguageProvider(editor, {});
+// init is async, you could wait until it's finished if you need
+provider.init();
 ``` 
 
-Once you have created a language provider, you can use the Ace editor as you normally would, and the language-aware features provided by the service will be available.
+Once you have created a language provider, and called `init()` you can use the Ace editor as you normally would, and
+the
+language-aware features provided by the service will be available.
 
 ## License
 Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
