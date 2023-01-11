@@ -44,6 +44,11 @@ export class ServiceManager {
             module: import("./typescript/typescript-service"),
             name: "TypescriptService",
             modes: "typescript|javascript|tsx|jsx"
+        },
+        lua: {
+            module: import("./lua/lua-service"),
+            name: "LuaService",
+            modes: "lua"
         }
     };
     private $sessionIDToMode: {[sessionID: string]: string} = {};
