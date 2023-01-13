@@ -141,7 +141,7 @@ export function toCompletions(completionInfo: CompletionInfo, doc: Ace.Document,
 
 export function toResolvedCompletion(entry: CompletionEntryDetails): Ace.Completion {
     return {
-        meta: entry.kind,
+        meta: entry?.kind,
         caption: entry.name,
         value: "",
         snippet: entry.name,
