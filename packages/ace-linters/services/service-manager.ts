@@ -3,70 +3,78 @@ import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";
 import {AceLinters} from "./language-service";
 import {mergeObjects} from "../utils";
+import {MessageType} from "../message-types";
 
 interface ServiceData {
-    module: any, name: string, modes: string, serviceInstance?: LanguageService, options?: ServiceOptions
+    module: any,
+    className: string,
+    modes: string,
+    serviceInstance?: LanguageService,
+    options?: ServiceOptions
 }
-export class ServiceManager {
-    private static _instance: ServiceManager;
-    private $services: {[serviceName: string]: ServiceData } = {
-        html: {
-            module: import("./html/html-service"),
-            name: "HtmlService",
-            modes: "html"
-        },
-        css: {
-            module: import("./css/css-service"),
-            name: "CssService",
-            modes: "css"
-        },
-        less: {
-            module: import("./css/css-service"),
-            name: "CssService",
-            modes: "less"
-        },
-        scss: {
-            module: import("./css/css-service"),
-            name: "CssService",
-            modes: "scss"
-        },
-        json: {
-            module: import("./json/json-service"),
-            name: "JsonService",
-            modes: "json",
-        },
-        json5: {
-            module: import("./json/json-service"),
-            name: "JsonService",
-            modes: "json5",
-        },
-        typescript: {
-            module: import("./typescript/typescript-service"),
-            name: "TypescriptService",
-            modes: "typescript|javascript|tsx|jsx"
-        },
-        lua: {
-            module: import("./lua/lua-service"),
-            name: "LuaService",
-            modes: "lua"
-        }
-    };
-    private $sessionIDToMode: {[sessionID: string]: string} = {};
 
-    static get instance() {
-        if (!ServiceManager._instance) {
-            ServiceManager._instance = new ServiceManager();
-        }
-        return ServiceManager._instance;
+export class ServiceManager {
+    private $services: { [serviceName: string]: ServiceData } = {};
+    private $sessionIDToMode: { [sessionID: string]: string } = {};
+
+    constructor(ctx) {
+        ctx.addEventListener("message", async (ev) => {
+            let message = ev.data;
+            let sessionID = message.sessionId;
+            let postMessage = {
+                "type": message.type,
+                "sessionId": sessionID,
+            };
+            switch (message["type"] as MessageType) {
+                case MessageType.format:
+                    postMessage["value"] = this.getServiceInstance(sessionID)?.format(sessionID, message.value, message.format);
+                    break;
+                case MessageType.complete:
+                    postMessage["value"] = await this.getServiceInstance(sessionID)?.doComplete(sessionID, message.value);
+                    break;
+                case MessageType.resolveCompletion:
+                    postMessage["value"] = await this.getServiceInstance(sessionID)?.resolveCompletion(sessionID, message.value);
+                    break;
+                case MessageType.change:
+                    this.getServiceInstance(sessionID)?.setValue(sessionID, message.value);
+                    break;
+                case MessageType.applyDelta:
+                    this.getServiceInstance(sessionID)?.applyDeltas(sessionID, message.value);
+                    break;
+                case MessageType.hover:
+                    postMessage["value"] = await this.getServiceInstance(sessionID)?.doHover(sessionID, message.value);
+                    break;
+                case MessageType.validate:
+                    postMessage["value"] = await this.getServiceInstance(sessionID)?.doValidation(sessionID);
+                    break;
+                case MessageType.init: //this should be first message
+                    await this.addDocument(sessionID, message.value, message.mode, message.options);
+                    break;
+                case MessageType.changeMode:
+                    await this.changeDocumentMode(sessionID, message.value, message.mode, message.options);
+                    break;
+                case MessageType.changeOptions:
+                    this.getServiceInstance(sessionID)?.setOptions(sessionID, message.options);
+                    break;
+                case MessageType.dispose:
+                    this.removeDocument(sessionID);
+                    break;
+                case MessageType.globalOptions:
+                    this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                    break;
+            }
+
+            ctx.postMessage(postMessage);
+        })
     }
 
     private static async $initServiceInstance(service: ServiceData) {
         try {
-            service.serviceInstance = new (await service.module)[service.name](service.modes);
-            service.serviceInstance.setGlobalOptions(service.options);
+            service.serviceInstance = new (await service.module)[service.className](service.modes);
         } catch (e) {
             console.log("Couldn't resolve language service for " + service.modes);//TODO
         }
+        service.serviceInstance.setGlobalOptions(service.options);
     }
 
     private async $getServiceInstanceByMode(mode: string): Promise<LanguageService> {
@@ -133,5 +141,9 @@ export class ServiceManager {
             if (extensions.includes(mode))
                 return el;
         });
+    }
+
+    registerService(name: string, service: ServiceData) {
+        this.$services[name] = service;
     }
 }

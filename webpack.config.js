@@ -22,10 +22,7 @@ module.exports = (env, argv) => {
         mode: "production",
         module: {
             rules: [
-                { // we need to use this deprecated in webpack5 loader due to https://github.com/webpack/webpack/issues/12719
-                    test: /\.worker\.ts$/,
-                    loader: 'worker-loader'
-                }, loader, {
+                loader, {
                     test: /\.css$/,
                     use: ["style-loader", "css-loader"]
                 }
@@ -47,7 +44,7 @@ module.exports = (env, argv) => {
             path: __dirname + '/build'
         },
         optimization: {
-            minimize: true
+            minimize: false
         },
         devServer: {
             compress: true,

@@ -16,22 +16,12 @@ import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {FormattingOptions} from "vscode-languageserver-types";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {AceLinters} from "./services/language-service";
-import MyWorker from "./web.worker.ts";
 
 export class MessageController {
-    private static _instance: MessageController;
-
-    static get instance() {
-        if (!MessageController._instance) {
-            MessageController._instance = new MessageController();
-        }
-        return MessageController._instance;
-    }
-
     private $worker: Worker;
 
-    constructor() {
-        this.$worker = new MyWorker();
+    constructor(worker: Worker) {
+        this.$worker = worker;
 
         this.$worker.onmessage = (e) => {
             let message = e.data;

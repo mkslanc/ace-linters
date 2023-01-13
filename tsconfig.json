@@ -2,10 +2,11 @@
   "compilerOptions": {
     "outDir": "./build",
     "allowJs": true,
-    "target": "es5",
+    "target": "esnext",
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "module": "CommonJS",
+    "module": "esnext",
+    "moduleResolution": "node",
     "esModuleInterop": true
   },
   "include": [
