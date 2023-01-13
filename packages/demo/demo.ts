@@ -28,12 +28,13 @@ import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
-import {registerStyles, LanguageProvider, setLanguageGlobalOptions, AceLinters} from "ace-linters";
+import {registerStyles, LanguageProvider, MessageController} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {luaContent} from "./docs-example/lua-example";
 
-registerStyles();
-setLanguageGlobalOptions("typescript", {
+let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let messageController = new MessageController(worker);
+messageController.setGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,
         target: ScriptTarget.ESNext,
@@ -41,7 +42,7 @@ setLanguageGlobalOptions("typescript", {
     }
 });
 
-setLanguageGlobalOptions("json", {
+messageController.setGlobalOptions("json", {
     jsonSchemas: [
         {
             uri: "common-form.schema.json",
@@ -50,7 +51,7 @@ setLanguageGlobalOptions("json", {
     ]
 });
 
-setLanguageGlobalOptions("json5", {
+messageController.setGlobalOptions("json5", {
     jsonSchemas: [
         {
             uri: "json5Schema",
@@ -58,6 +59,8 @@ setLanguageGlobalOptions("json5", {
         }
     ]
 });
+
+registerStyles();
 
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
@@ -74,6 +77,7 @@ let modes = [
     {name: "lua", mode: LuaMode, content: luaContent}
 
 ]
+
 let i = 0;
 let activeProvider: LanguageProvider;
 for (let mode of modes) {
@@ -98,8 +102,8 @@ for (let mode of modes) {
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
     let options = mode.options ?? {};
-    let provider = new LanguageProvider(editor, options);
-    provider.init();
+    let provider = new LanguageProvider(editor, messageController, options);
+    provider.start();
     activeProvider ??= provider;
     editor.on("focus", () => {
         activeProvider = provider;
@@ -115,8 +119,7 @@ for (let mode of modes) {
     }
     i++;
 }
-
-setLanguageGlobalOptions("json", {
+messageController.setGlobalOptions("json", {
     jsonSchemas: [{
         uri: "colors.schema.json",
         schema: jsonSchema
