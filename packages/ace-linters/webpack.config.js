@@ -17,9 +17,12 @@ module.exports = (env, argv) => {
         devtool: isProduction ? false : 'inline-source-map',
         entry: {
             "ace-linters": './index.ts',
-            "service-manager": './services/service-manager.ts'
+            "service-manager": './services/service-manager.ts',
+            "html-service": './services/html/html-service.ts',
+            "json-service": './services/json/json-service.ts',
+            "lua-service": './services/lua/lua-service.ts',
+            "typescript-service": './services/typescript/typescript-service.ts'
         },
-        mode: "production",
         module: {
             rules: [
                 loader, {
@@ -40,7 +43,7 @@ module.exports = (env, argv) => {
             extensions: ['.tsx', '.ts', '.js']
         },
         output: {
-            filename: 'bundle.[name].js',
+            filename: '[name].js',
             path: __dirname + '/build',
             publicPath: 'auto',
             library: {

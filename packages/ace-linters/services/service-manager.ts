@@ -7,55 +7,14 @@ import {MessageType} from "../message-types";
 
 interface ServiceData {
     module: any,
-    name: string,
+    className: string,
     modes: string,
     serviceInstance?: LanguageService,
     options?: ServiceOptions
 }
 
 export class ServiceManager {
-    private $services: { [serviceName: string]: ServiceData } = {
-        html: {
-            module: import("./html/html-service"),
-            name: "HtmlService",
-            modes: "html"
-        },
-        css: {
-            module: import("./css/css-service"),
-            name: "CssService",
-            modes: "css"
-        },
-        less: {
-            module: import("./css/css-service"),
-            name: "CssService",
-            modes: "less"
-        },
-        scss: {
-            module: import("./css/css-service"),
-            name: "CssService",
-            modes: "scss"
-        },
-        json: {
-            module: import("./json/json-service"),
-            name: "JsonService",
-            modes: "json",
-        },
-        json5: {
-            module: import("./json/json-service"),
-            name: "JsonService",
-            modes: "json5",
-        },
-        typescript: {
-            module: import("./typescript/typescript-service"),
-            name: "TypescriptService",
-            modes: "typescript|javascript|tsx|jsx"
-        },
-        lua: {
-            module: import("./lua/lua-service"),
-            name: "LuaService",
-            modes: "lua"
-        }
-    };
+    private $services: { [serviceName: string]: ServiceData } = {};
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
@@ -111,11 +70,11 @@ export class ServiceManager {
 
     private static async $initServiceInstance(service: ServiceData) {
         try {
-            service.serviceInstance = new (await service.module)[service.name](service.modes);
-            service.serviceInstance.setGlobalOptions(service.options);
+            service.serviceInstance = new (await service.module)[service.className](service.modes);
         } catch (e) {
             console.log("Couldn't resolve language service for " + service.modes);//TODO
         }
+        service.serviceInstance.setGlobalOptions(service.options);
     }
 
     private async $getServiceInstanceByMode(mode: string): Promise<LanguageService> {
@@ -182,5 +141,9 @@ export class ServiceManager {
             if (extensions.includes(mode))
                 return el;
         });
+    }
+
+    registerService(name: string, service: ServiceData) {
+        this.$services[name] = service;
     }
 }

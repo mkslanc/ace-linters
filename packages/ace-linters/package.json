@@ -15,7 +15,7 @@
     "showdown": "latest",
     "luaparse": "latest"
   },
-  "main": "build/bundle.ace-linters.js",
+  "main": "build/ace-linters.js",
   "types": "index.d.ts",
   "repository": {
     "url": "https://github.com/mkslanc/ace-linters"
