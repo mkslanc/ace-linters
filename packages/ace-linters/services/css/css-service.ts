@@ -8,7 +8,7 @@ import {
     toCompletions,
     toResolvedCompletion,
     toTooltip
-} from "../../type-converters/vscode-converters";
+} from "../../type-converters/lsp-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import {BaseService} from "../base-service";
 

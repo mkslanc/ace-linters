@@ -11,10 +11,10 @@ import {
     toAnnotations,
     toCompletions, toResolvedCompletion,
     toTooltip
-} from "../../type-converters/vscode-converters";
+} from "../../type-converters/lsp-converters";
 import {BaseService} from "../base-service";
 import JsonServiceOptions = AceLinters.JsonServiceOptions;
-import {AceLinters} from "../language-service";
+import {AceLinters} from "../../types";
 
 let jsonService = require('vscode-json-languageservice');
 
@@ -119,7 +119,6 @@ export class JsonService extends BaseService<JsonServiceOptions> {
             return [];
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
-
         let diagnostics = this.$service.doValidation(document, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
         return toAnnotations(await diagnostics);
     }

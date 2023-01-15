@@ -13,7 +13,7 @@ import {
     toTsOffset, JsxEmit
 } from "../../type-converters/typescript-converters";
 import TsServiceOptions = AceLinters.TsServiceOptions;
-import {AceLinters} from "../language-service";
+import {AceLinters} from "../../types";
 
 
 export class TypescriptService extends BaseService<TsServiceOptions>  implements ts.LanguageServiceHost {

@@ -1,6 +1,6 @@
 import {Ace} from "ace-code";
 import {CommonConverter} from "../type-converters/common-converters";
-import * as ts from "./typescript/lib/typescriptServices";
+import * as ts from "../services/typescript/lib/typescriptServices";
 import type {FormattingOptions} from "vscode-languageserver-types";
 import {TextDocument} from "vscode-json-languageservice";
 

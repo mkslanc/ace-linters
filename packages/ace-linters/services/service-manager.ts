@@ -1,7 +1,7 @@
 import LanguageService = AceLinters.LanguageService;
 import ServiceOptions = AceLinters.ServiceOptions;
 import {Document} from "ace-code/src/document";
-import {AceLinters} from "./language-service";
+import {AceLinters} from "../types";
 import {mergeObjects} from "../utils";
 import {MessageType} from "../message-types";
 

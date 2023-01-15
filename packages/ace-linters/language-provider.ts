@@ -1,11 +1,11 @@
 import {Ace, Range as AceRange} from "ace-code";
 import {MessageController} from "./message-controller";
 import {DescriptionTooltip} from "./components/description-tooltip";
-import {AceLinters} from "./services/language-service";
+import {AceLinters} from "./types";
 import Tooltip = AceLinters.Tooltip;
 import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-types";
-import {MarkDownConverter} from "./type-converters/converters";
+import {MarkDownConverter} from "./types";
 import {CommonConverter} from "./type-converters/common-converters";
 
 let showdown = require('showdown');

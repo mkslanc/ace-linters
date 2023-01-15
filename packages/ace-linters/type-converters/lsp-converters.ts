@@ -10,7 +10,7 @@ import {
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
-import {AceLinters} from "../services/language-service";
+import {AceLinters} from "../types";
 import Tooltip = AceLinters.Tooltip;
 import TooltipContent = AceLinters.TooltipContent;
 import {CommonConverter} from "./common-converters";
@@ -57,8 +57,14 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
-export function toCompletions(completionList: CompletionList): Ace.Completion[] {
-    return completionList && completionList.items.map((item) => {
+export function toCompletions(completionList: CompletionList | CompletionItem[]): Ace.Completion[] {
+    if (!completionList) {
+        return;
+    }
+    if (!Array.isArray(completionList)) {
+        completionList = completionList.items;
+    }
+    return completionList && completionList.map((item) => {
             let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
             let text = item.textEdit?.newText ?? item.insertText ?? item.label;
             let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;

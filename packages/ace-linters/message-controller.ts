@@ -15,7 +15,7 @@ import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {FormattingOptions} from "vscode-languageserver-types";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
-import {AceLinters} from "./services/language-service";
+import {AceLinters} from "./types";
 
 export class MessageController {
     private $worker: Worker;
