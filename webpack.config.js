@@ -17,7 +17,8 @@ module.exports = (env, argv) => {
         cache: true,
         devtool: 'source-map',
         entry: {
-            simple: './packages/demo/demo.ts'
+            webworker_demo: './packages/demo/webworker-lsp/demo.ts',
+            websocket_demo: './packages/demo/websockets-lsp/client.ts'
         },
         mode: "production",
         module: {
@@ -58,6 +59,14 @@ module.exports = (env, argv) => {
                 patterns: [
                     {
                         from: "packages/demo/index.html",
+                        to: "."
+                    },
+                    {
+                        from: "packages/demo/webworker.html",
+                        to: "."
+                    },
+                    {
+                        from: "packages/demo/websocket.html",
                         to: "."
                     }
                 ]

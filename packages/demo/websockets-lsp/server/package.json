@@ -1,0 +1,12 @@
+{
+  "name": "sample-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start-server": "node --loader ts-node/esm server.ts"
+  },
+  "dependencies": {
+    "vscode-json-languageserver": "^1.3.4",
+    "ts-node": "^10.8.1"
+  },
+  "type": "module"
+}

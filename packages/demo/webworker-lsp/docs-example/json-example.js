@@ -14,6 +14,7 @@ export var jsonSchema = `{
 `;
 
 export var jsonSchema2 = `  {"type": "object",
+"description": "a very special object",
   "properties": {
     "name": {
       "type": "string",
