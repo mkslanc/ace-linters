@@ -3,7 +3,7 @@ import {DescriptionTooltip} from "./components/description-tooltip";
 import {AceLinters} from "./types";
 import Tooltip = AceLinters.Tooltip;
 import TextEdit = AceLinters.TextEdit;
-import {FormattingOptions} from "vscode-languageserver-types";
+import {FormattingOptions} from "vscode-languageserver-protocol";
 import {MarkDownConverter} from "./types";
 import {CommonConverter} from "./type-converters/common-converters";
 import {IMessageController} from "./types/message-controller-interface";

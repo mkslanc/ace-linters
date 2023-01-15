@@ -1,4 +1,4 @@
-import {FormattingOptions} from "vscode-languageserver-types";
+import {FormattingOptions} from "vscode-languageserver-protocol";
 import {Ace} from "ace-code";
 import {AceLinters} from "../types";
 

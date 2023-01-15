@@ -6,7 +6,7 @@ import {
     CompletionList,
     CompletionItem,
     CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind, TextEdit
-} from "vscode-languageserver-types";
+} from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";

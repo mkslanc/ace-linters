@@ -1,6 +1,6 @@
 import {Ace} from "ace-code";
 import {AceLinters} from "./language-service";
-import {FormattingOptions} from "vscode-languageserver-types";
+import {FormattingOptions} from "vscode-languageserver-protocol";
 
 export interface IMessageController {
     init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: Ace.Annotation[]) => void): void;

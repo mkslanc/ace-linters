@@ -13,7 +13,7 @@ import {
     TextDocumentItem,
     TextDocumentPositionParams,
     VersionedTextDocumentIdentifier,
-    WorkspaceClientCapabilities
+    WorkspaceClientCapabilities, TextEdit
 } from 'vscode-languageserver-protocol';
 import {IMessageController} from "./types/message-controller-interface";
 import {Ace} from "ace-code";
@@ -29,7 +29,6 @@ import {
 import {
     DocumentRangeFormattingParams
 } from "vscode-languageserver-protocol/lib/common/protocol";
-import {TextEdit} from "vscode-languageserver-types";
 
 export class MessageControllerWS extends events.EventEmitter implements IMessageController {
     private isConnected = false;

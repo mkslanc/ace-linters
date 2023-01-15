@@ -13,7 +13,7 @@ import {
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {FormattingOptions} from "vscode-languageserver-types";
+import {FormattingOptions} from "vscode-languageserver-protocol";
 import {IMessageController} from "./types/message-controller-interface";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {AceLinters} from "./types";

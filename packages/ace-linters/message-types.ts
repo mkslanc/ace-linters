@@ -1,5 +1,5 @@
 import {Ace} from "ace-code";
-import {FormattingOptions} from "vscode-languageserver-types";
+import {FormattingOptions} from "vscode-languageserver-protocol";
 import {AceLinters} from "./types";
 import ServiceOptions = AceLinters.ServiceOptions;
 
