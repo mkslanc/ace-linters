@@ -14,10 +14,11 @@ import {
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {FormattingOptions} from "vscode-languageserver-types";
+import {IMessageController} from "./types/message-controller-interface";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {AceLinters} from "./types";
 
-export class MessageController {
+export class MessageController implements IMessageController {
     private $worker: Worker;
 
     constructor(worker: Worker) {

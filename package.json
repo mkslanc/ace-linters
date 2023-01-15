@@ -21,8 +21,10 @@
     "vscode-html-languageservice": "latest",
     "vscode-css-languageservice": "latest",
     "vscode-json-languageservice": "4.2.1",
+    "vscode-languageserver-protocol": "^3.17.2",
     "showdown": "latest",
-    "luaparse": "latest"
+    "luaparse": "latest",
+    "vscode-ws-jsonrpc": "^2.0.1"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

@@ -1,5 +1,4 @@
 import {Ace, Range as AceRange} from "ace-code";
-import {MessageController} from "./message-controller";
 import {DescriptionTooltip} from "./components/description-tooltip";
 import {AceLinters} from "./types";
 import Tooltip = AceLinters.Tooltip;
@@ -7,6 +6,7 @@ import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-types";
 import {MarkDownConverter} from "./types";
 import {CommonConverter} from "./type-converters/common-converters";
+import {IMessageController} from "./types/message-controller-interface";
 
 let showdown = require('showdown');
 
@@ -14,7 +14,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
     editor: Ace.Editor;
     private $descriptionTooltip;
     private readonly $markdownConverter: MarkDownConverter;
-    private $messageController: MessageController;
+    private $messageController: IMessageController;
     private $options: OptionsType;
     private readonly $fileName;
     deltaQueue: Ace.Delta[];
@@ -24,7 +24,7 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
         "javascript": "js"
     }
 
-    constructor(editor: Ace.Editor, messageController: MessageController, options: OptionsType, markdownConverter?: MarkDownConverter) {
+    constructor(editor: Ace.Editor, messageController: IMessageController, options: OptionsType, markdownConverter?: MarkDownConverter) {
         this.editor = editor;
         this.$messageController = messageController;
         this.$options = options;
@@ -95,6 +95,11 @@ export class LanguageProvider<OptionsType = AceLinters.ServiceOptions> {
                         this.$messageController.changeMode(this.$fileName, this.editor.getValue(), this.$mode, this.$options, this.$onInit);
                     });
                     resolve(true);
+                }, (annotations: Ace.Annotation[]) => {
+                    this.editor.session.clearAnnotations();
+                    if (annotations && annotations.length > 0) {
+                        this.editor.session.setAnnotations(annotations);
+                    }
                 });
             });
     }
