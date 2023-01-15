@@ -13,7 +13,7 @@ import {
     TextDocumentItem,
     TextDocumentPositionParams,
     VersionedTextDocumentIdentifier,
-    WorkspaceClientCapabilities, TextEdit
+    WorkspaceClientCapabilities, TextEdit, DidCloseTextDocumentParams
 } from 'vscode-languageserver-protocol';
 import {IMessageController} from "./types/message-controller-interface";
 import {Ace} from "ace-code";
@@ -244,7 +244,12 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
     changeOptions(sessionId: string, options: any, callback?: () => void): void {//TODO:
     }
 
-    dispose(sessionId: string, callback?: () => void): void { //TODO:
+    dispose(sessionId: string, callback?: () => void): void {
+        this.connection.sendNotification('textDocument/didClose', {
+            textDocument: {
+                uri: sessionId
+            }
+        } as DidCloseTextDocumentParams);
     }
 
     doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void) {
