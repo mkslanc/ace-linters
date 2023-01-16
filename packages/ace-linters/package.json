@@ -7,7 +7,7 @@
     "build": "npm run clean && webpack --mode=production",
     "build-dev": "npm run clean && webpack --mode=development"
   },
-  "dev-dependencies": {
+  "dependencies": {
     "vscode-html-languageservice": "latest",
     "vscode-css-languageservice": "latest",
     "vscode-json-languageservice": "4.2.1",
