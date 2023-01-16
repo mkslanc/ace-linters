@@ -12,7 +12,10 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
-
+      - name: Install ace-linters dependencies
+        run: |
+          cd packages/ace-linters
+          npm ci
       - name: Install and Build
         run: |
           npm ci
