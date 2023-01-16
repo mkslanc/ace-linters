@@ -15,8 +15,6 @@ import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
 import {Mode as TSXMode} from "ace-code/src/mode/tsx";
 import {Mode as LuaMode} from "ace-code/src/mode/lua";
 
-let theme = require("ace-code/src/theme/textmate");
-import * as ace from "ace-code";
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
 import {scssContent} from "./docs-example/scss-example";
@@ -28,12 +26,14 @@ import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
-import {registerStyles, LanguageProvider, MessageController} from "ace-linters";
+import {registerStyles, MessageController} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {luaContent} from "./docs-example/lua-example";
+import {createEditorWithLSP} from "../utils";
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 let messageController = new MessageController(worker);
+
 messageController.setGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,
@@ -79,44 +79,8 @@ let modes = [
 ]
 
 let i = 0;
-let activeProvider: LanguageProvider;
 for (let mode of modes) {
-    let el = document.createElement("div");
-    let modeName = createModeNameText(el, mode.name);
-    let closeButton = createCloseButton(el);
-    let editorContainer = document.createElement("div");
-    editorContainer.setAttribute("id", "container" + i);
-    editorContainer.style.height = "300px";
-    el.appendChild(editorContainer);
-    el.style.width = "49%";
-    el.style.float = "left";
-    document.body.appendChild(el);
-
-    let editor = ace.edit("container" + i);
-    editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true
-    });
-    editor.setTheme(theme);
-    editor.setOptions({"customScrollbar": true})
-    editor.session.setValue(mode.content);
-    editor.session.setMode(new mode.mode());
-    let options = mode.options ?? {};
-    let provider = new LanguageProvider(editor, messageController, options);
-    provider.start();
-    activeProvider ??= provider;
-    editor.on("focus", () => {
-        activeProvider = provider;
-    });
-
-    closeButton.onclick = () => {
-        provider.dispose();
-        provider = null;
-        editor.destroy();
-        editor.container.remove();
-        modeName.remove();
-        closeButton.remove();
-    }
+    createEditorWithLSP(mode, i, messageController);
     i++;
 }
 messageController.setGlobalOptions("json", {
@@ -126,36 +90,17 @@ messageController.setGlobalOptions("json", {
     },]
 }, true);
 
-function createCloseButton(el) {
-    let closeButton = document.createElement("span");
-    closeButton.innerText = "X";
-    closeButton.style.cursor = "pointer";
-    el.appendChild(closeButton);
-    return closeButton;
-}
-
-function createModeNameText(el, name) {
-    let modeName = document.createElement("p");
-    modeName.innerText = name;
-    modeName.style.margin = "0";
-    modeName.style.paddingRight = "10px";
-    modeName.style.float = "left";
-    el.appendChild(modeName);
-    return modeName;
-}
-
 let menuKb = new HashHandler([
     {
         bindKey: "Ctrl-`",
         name: "format",
         exec: function () {
-            activeProvider.format();
+            window["provider"].format();
         }
     }
 ]);
 
 event.addCommandKeyListener(window, function (e, hashId, keyCode) {
-
     let keyString = keyUtil.keyCodeToString(keyCode);
     let command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
