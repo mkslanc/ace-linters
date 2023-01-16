@@ -22,43 +22,43 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "CodeAction": () => (/* reexport */ main/* CodeAction */.B2),
-  "CodeActionContext": () => (/* reexport */ main/* CodeActionContext */.IT),
-  "CodeActionKind": () => (/* reexport */ main/* CodeActionKind */.yN),
-  "Color": () => (/* reexport */ main/* Color */.Il),
-  "ColorInformation": () => (/* reexport */ main/* ColorInformation */.pr),
-  "ColorPresentation": () => (/* reexport */ main/* ColorPresentation */.oi),
-  "Command": () => (/* reexport */ main/* Command */.mY),
-  "CompletionItem": () => (/* reexport */ main/* CompletionItem */.FG),
-  "CompletionItemKind": () => (/* reexport */ main/* CompletionItemKind */.cm),
-  "CompletionItemTag": () => (/* reexport */ main/* CompletionItemTag */.we),
-  "CompletionList": () => (/* reexport */ main/* CompletionList */.Ub),
-  "Diagnostic": () => (/* reexport */ main/* Diagnostic */.R9),
-  "DiagnosticSeverity": () => (/* reexport */ main/* DiagnosticSeverity */.H_),
-  "DocumentHighlight": () => (/* reexport */ main/* DocumentHighlight */.eh),
-  "DocumentHighlightKind": () => (/* reexport */ main/* DocumentHighlightKind */.MY),
-  "DocumentLink": () => (/* reexport */ main/* DocumentLink */.jW),
-  "DocumentSymbol": () => (/* reexport */ main/* DocumentSymbol */.w6),
-  "DocumentUri": () => (/* reexport */ main/* DocumentUri */.Oj),
+  "CodeAction": () => (/* reexport */ main.CodeAction),
+  "CodeActionContext": () => (/* reexport */ main.CodeActionContext),
+  "CodeActionKind": () => (/* reexport */ main.CodeActionKind),
+  "Color": () => (/* reexport */ main.Color),
+  "ColorInformation": () => (/* reexport */ main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
+  "Command": () => (/* reexport */ main.Command),
+  "CompletionItem": () => (/* reexport */ main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ main.CompletionList),
+  "Diagnostic": () => (/* reexport */ main.Diagnostic),
+  "DiagnosticSeverity": () => (/* reexport */ main.DiagnosticSeverity),
+  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ main.DocumentLink),
+  "DocumentSymbol": () => (/* reexport */ main.DocumentSymbol),
+  "DocumentUri": () => (/* reexport */ main.DocumentUri),
   "FileType": () => (/* reexport */ FileType),
-  "FoldingRange": () => (/* reexport */ main/* FoldingRange */.so),
-  "FoldingRangeKind": () => (/* reexport */ main/* FoldingRangeKind */.AD),
-  "Hover": () => (/* reexport */ main/* Hover */.TM),
-  "InsertTextFormat": () => (/* reexport */ main/* InsertTextFormat */.lO),
-  "Location": () => (/* reexport */ main/* Location */.Ye),
-  "MarkedString": () => (/* reexport */ main/* MarkedString */.oB),
-  "MarkupContent": () => (/* reexport */ main/* MarkupContent */.A_),
-  "MarkupKind": () => (/* reexport */ main/* MarkupKind */.a4),
-  "Position": () => (/* reexport */ main/* Position */.Ly),
-  "Range": () => (/* reexport */ main/* Range */.e6),
-  "SelectionRange": () => (/* reexport */ main/* SelectionRange */.xm),
-  "SymbolInformation": () => (/* reexport */ main/* SymbolInformation */.JN),
-  "SymbolKind": () => (/* reexport */ main/* SymbolKind */.cR),
+  "FoldingRange": () => (/* reexport */ main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
+  "Hover": () => (/* reexport */ main.Hover),
+  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
+  "Location": () => (/* reexport */ main.Location),
+  "MarkedString": () => (/* reexport */ main.MarkedString),
+  "MarkupContent": () => (/* reexport */ main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ main.MarkupKind),
+  "Position": () => (/* reexport */ main.Position),
+  "Range": () => (/* reexport */ main.Range),
+  "SelectionRange": () => (/* reexport */ main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ main.SymbolKind),
   "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
-  "TextDocumentEdit": () => (/* reexport */ main/* TextDocumentEdit */.sx),
-  "TextEdit": () => (/* reexport */ main/* TextEdit */.PY),
-  "VersionedTextDocumentIdentifier": () => (/* reexport */ main/* VersionedTextDocumentIdentifier */.XL),
-  "WorkspaceEdit": () => (/* reexport */ main/* WorkspaceEdit */.Db),
+  "TextDocumentEdit": () => (/* reexport */ main.TextDocumentEdit),
+  "TextEdit": () => (/* reexport */ main.TextEdit),
+  "VersionedTextDocumentIdentifier": () => (/* reexport */ main.VersionedTextDocumentIdentifier),
+  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
   "getCSSLanguageService": () => (/* binding */ getCSSLanguageService),
   "getDefaultCSSDataProvider": () => (/* binding */ getDefaultCSSDataProvider),
   "getLESSLanguageService": () => (/* binding */ getLESSLanguageService),
@@ -2368,11 +2368,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [main/* MarkupKind.Markdown */.a4.Markdown, main/* MarkupKind.PlainText */.a4.PlainText]
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [main/* MarkupKind.Markdown */.a4.Markdown, main/* MarkupKind.PlainText */.a4.PlainText]
+                contentFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
             }
         }
     };
@@ -2491,7 +2491,7 @@ function getEntryMarkdownDescription(entry, settings) {
             result += textToMarkedString(entry.description);
         }
         else {
-            result += entry.description.kind === main/* MarkupKind.Markdown */.a4.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
+            result += entry.description.kind === main.MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
         }
         const browserLabel = getBrowserLabel(entry.browsers);
         if (browserLabel) {
@@ -5287,7 +5287,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, fullValueRange) {
         else {
             endPos = fullValueRange.end;
         }
-        replaceRange = main/* Range.create */.e6.create(startPos, endPos);
+        replaceRange = main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -5296,8 +5296,8 @@ function createCompletionItem(name, isDir, replaceRange) {
         name = name + '/';
         return {
             label: escapePath(name),
-            kind: main/* CompletionItemKind.Folder */.cm.Folder,
-            textEdit: main/* TextEdit.replace */.PY.replace(replaceRange, escapePath(name)),
+            kind: main.CompletionItemKind.Folder,
+            textEdit: main.TextEdit.replace(replaceRange, escapePath(name)),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -5307,8 +5307,8 @@ function createCompletionItem(name, isDir, replaceRange) {
     else {
         return {
             label: escapePath(name),
-            kind: main/* CompletionItemKind.File */.cm.File,
-            textEdit: main/* TextEdit.replace */.PY.replace(replaceRange, escapePath(name))
+            kind: main.CompletionItemKind.File,
+            textEdit: main.TextEdit.replace(replaceRange, escapePath(name))
         };
     }
 }
@@ -5317,12 +5317,12 @@ function escapePath(p) {
     return p.replace(/(\s|\(|\)|,|"|')/g, '\\$1');
 }
 function shiftPosition(pos, offset) {
-    return main/* Position.create */.Ly.create(pos.line, pos.character + offset);
+    return main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     const start = shiftPosition(range.start, startOffset);
     const end = shiftPosition(range.end, endOffset);
-    return main/* Range.create */.e6.create(start, end);
+    return main.Range.create(start, end);
 }
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-css-languageservice/lib/esm/services/cssCompletion.js
@@ -5339,7 +5339,7 @@ function shiftRange(range, startOffset, endOffset) {
 
 
 
-const SnippetFormat = main/* InsertTextFormat.Snippet */.lO.Snippet;
+const SnippetFormat = main.InsertTextFormat.Snippet;
 const retriggerCommand = {
     title: 'Suggest',
     command: 'editor.action.triggerSuggest'
@@ -5396,7 +5396,7 @@ class CSSCompletion {
         this.offset = document.offsetAt(position);
         this.position = position;
         this.currentWord = getCurrentWord(document, this.offset);
-        this.defaultReplaceRange = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+        this.defaultReplaceRange = main.Range.create(main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         this.textDocument = document;
         this.styleSheet = styleSheet;
         this.documentSettings = documentSettings;
@@ -5559,10 +5559,10 @@ class CSSCompletion {
             const item = {
                 label: entry.name,
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                textEdit: main/* TextEdit.replace */.PY.replace(range, insertText),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-                kind: main/* CompletionItemKind.Property */.cm.Property
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                textEdit: main.TextEdit.replace(range, insertText),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Property
             };
             if (!entry.restrictions) {
                 retrigger = false;
@@ -5654,8 +5654,8 @@ class CSSCompletion {
             for (const existingValue of existingValues.getEntries()) {
                 result.items.push({
                     label: existingValue,
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), existingValue),
-                    kind: main/* CompletionItemKind.Value */.cm.Value
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), existingValue),
+                    kind: main.CompletionItemKind.Value
                 });
             }
         }
@@ -5682,10 +5682,10 @@ class CSSCompletion {
                 const item = {
                     label: value.name,
                     documentation: getEntryDescription(value, this.doesSupportMarkdown()),
-                    tags: isDeprecated(entry) ? [main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertString),
+                    tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertString),
                     sortText,
-                    kind: main/* CompletionItemKind.Value */.cm.Value,
+                    kind: main.CompletionItemKind.Value,
                     insertTextFormat
                 };
                 result.items.push(item);
@@ -5698,8 +5698,8 @@ class CSSCompletion {
             result.items.push({
                 label: keywords,
                 documentation: cssWideKeywords[keywords],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), keywords),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), keywords),
+                kind: main.CompletionItemKind.Value
             });
         }
         for (const func in cssWideFunctions) {
@@ -5707,8 +5707,8 @@ class CSSCompletion {
             result.items.push({
                 label: func,
                 documentation: cssWideFunctions[func],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: SnippetFormat,
                 command: startsWith(func, 'var') ? retriggerCommand : undefined
             });
@@ -5728,12 +5728,12 @@ class CSSCompletion {
             const completionItem = {
                 label: symbol.name,
                 documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main/* CompletionItemKind.Variable */.cm.Variable,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Variable,
                 sortText: SortTexts.Variable
             };
             if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                completionItem.kind = main/* CompletionItemKind.Color */.cm.Color;
+                completionItem.kind = main.CompletionItemKind.Color;
             }
             if (symbol.node.type === NodeType.FunctionParameter) {
                 const mixinNode = (symbol.node.getParent());
@@ -5754,11 +5754,11 @@ class CSSCompletion {
                 const completionItem = {
                     label: symbol.name,
                     documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(null), symbol.name),
-                    kind: main/* CompletionItemKind.Variable */.cm.Variable
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(null), symbol.name),
+                    kind: main.CompletionItemKind.Variable
                 };
                 if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                    completionItem.kind = main/* CompletionItemKind.Color */.cm.Color;
+                    completionItem.kind = main.CompletionItemKind.Color;
                 }
                 result.items.push(completionItem);
             }
@@ -5768,8 +5768,8 @@ class CSSCompletion {
             if (startsWith(name, '--')) {
                 const completionItem = {
                     label: name,
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(null), name),
-                    kind: main/* CompletionItemKind.Variable */.cm.Variable
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(null), name),
+                    kind: main.CompletionItemKind.Variable
                 };
                 result.items.push(completionItem);
             }
@@ -5799,8 +5799,8 @@ class CSSCompletion {
                         const insertText = currentWord + unit;
                         result.items.push({
                             label: insertText,
-                            textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                            kind: main/* CompletionItemKind.Unit */.cm.Unit
+                            textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                            kind: main.CompletionItemKind.Unit
                         });
                     }
                 }
@@ -5813,7 +5813,7 @@ class CSSCompletion {
             const end = existingNode.end !== -1 ? this.textDocument.positionAt(existingNode.end) : this.position;
             const start = this.textDocument.positionAt(existingNode.offset);
             if (start.line === end.line) {
-                return main/* Range.create */.e6.create(start, end); // multi line edits are not allowed
+                return main.Range.create(start, end); // multi line edits are not allowed
             }
         }
         return this.defaultReplaceRange;
@@ -5823,16 +5823,16 @@ class CSSCompletion {
             result.items.push({
                 label: color,
                 documentation: colors[color],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), color),
-                kind: main/* CompletionItemKind.Color */.cm.Color
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Color
             });
         }
         for (const color in colorKeywords) {
             result.items.push({
                 label: color,
                 documentation: colorKeywords[color],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), color),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Value
             });
         }
         const colorValues = new cssCompletion_Set();
@@ -5840,8 +5840,8 @@ class CSSCompletion {
         for (const color of colorValues.getEntries()) {
             result.items.push({
                 label: color,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), color),
-                kind: main/* CompletionItemKind.Color */.cm.Color
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Color
             });
         }
         for (const p of colorFunctions) {
@@ -5852,9 +5852,9 @@ class CSSCompletion {
                 label: p.func.substr(0, p.func.indexOf('(')),
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 insertTextFormat: SnippetFormat,
-                kind: main/* CompletionItemKind.Function */.cm.Function
+                kind: main.CompletionItemKind.Function
             });
         }
         return result;
@@ -5864,8 +5864,8 @@ class CSSCompletion {
             result.items.push({
                 label: position,
                 documentation: positionKeywords[position],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), position),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), position),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -5875,8 +5875,8 @@ class CSSCompletion {
             result.items.push({
                 label: repeat,
                 documentation: repeatStyleKeywords[repeat],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), repeat),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), repeat),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -5886,8 +5886,8 @@ class CSSCompletion {
             result.items.push({
                 label: lineStyle,
                 documentation: lineStyleKeywords[lineStyle],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), lineStyle),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), lineStyle),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -5896,8 +5896,8 @@ class CSSCompletion {
         for (const lineWidth of lineWidthKeywords) {
             result.items.push({
                 label: lineWidth,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), lineWidth),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), lineWidth),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -5907,8 +5907,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: geometryBoxKeywords[box],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), box),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -5918,8 +5918,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: boxKeywords[box],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), box),
-                kind: main/* CompletionItemKind.Value */.cm.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -5930,8 +5930,8 @@ class CSSCompletion {
             result.items.push({
                 label: image,
                 documentation: imageFunctions[image],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: image !== insertText ? SnippetFormat : void 0
             });
         }
@@ -5943,8 +5943,8 @@ class CSSCompletion {
             result.items.push({
                 label: timing,
                 documentation: transitionTimingFunctions[timing],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: timing !== insertText ? SnippetFormat : void 0
             });
         }
@@ -5956,8 +5956,8 @@ class CSSCompletion {
             result.items.push({
                 label: shape,
                 documentation: basicShapeFunctions[shape],
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: shape !== insertText ? SnippetFormat : void 0
             });
         }
@@ -5980,10 +5980,10 @@ class CSSCompletion {
         this.cssDataManager.getAtDirectives().forEach(entry => {
             result.items.push({
                 label: entry.name,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(null), entry.name),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(null), entry.name),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Keyword
             });
         });
         this.getCompletionsForSelector(null, false, result);
@@ -6009,17 +6009,17 @@ class CSSCompletion {
             if (this.hasCharacterAtPosition(this.offset - this.currentWord.length - 1, ':')) {
                 this.currentWord = ':' + this.currentWord; // for '::'
             }
-            this.defaultReplaceRange = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+            this.defaultReplaceRange = main.Range.create(main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         }
         const pseudoClasses = this.cssDataManager.getPseudoClasses();
         pseudoClasses.forEach(entry => {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, ':-')) {
@@ -6032,10 +6032,10 @@ class CSSCompletion {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [main/* CompletionItemTag.Deprecated */.we.Deprecated] : [],
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, '::-')) {
@@ -6047,15 +6047,15 @@ class CSSCompletion {
             for (const entry of html5Tags) {
                 result.items.push({
                     label: entry,
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), entry),
-                    kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: main.CompletionItemKind.Keyword
                 });
             }
             for (const entry of svgElements) {
                 result.items.push({
                     label: entry,
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), entry),
-                    kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: main.CompletionItemKind.Keyword
                 });
             }
         }
@@ -6069,8 +6069,8 @@ class CSSCompletion {
                     visited[selector] = true;
                     result.items.push({
                         label: selector,
-                        textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), selector),
-                        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+                        textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), selector),
+                        kind: main.CompletionItemKind.Keyword
                     });
                 }
                 return false;
@@ -6200,9 +6200,9 @@ class CSSCompletion {
         return {
             label: symbol.name,
             detail: symbol.name + '(' + params.join(', ') + ')',
-            textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
+            textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
             insertTextFormat: SnippetFormat,
-            kind: main/* CompletionItemKind.Function */.cm.Function,
+            kind: main.CompletionItemKind.Function,
             sortText: SortTexts.Term
         };
     }
@@ -6250,7 +6250,7 @@ class CSSCompletion {
             uriValue = '';
             position = this.position;
             const emptyURIValuePosition = this.textDocument.positionAt(uriLiteralNode.offset + 'url('.length);
-            range = main/* Range.create */.e6.create(emptyURIValuePosition, emptyURIValuePosition);
+            range = main.Range.create(emptyURIValuePosition, emptyURIValuePosition);
         }
         else {
             const uriValueNode = uriLiteralNode.getChild(0);
@@ -6292,7 +6292,7 @@ class CSSCompletion {
                 return this.supportsMarkdown;
             }
             const documentationFormat = this.lsOptions.clientCapabilities.textDocument?.completion?.completionItem?.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -6906,7 +6906,7 @@ class CSSHover {
     }
     doHover(document, position, stylesheet, settings = this.defaultSettings) {
         function getRange(node) {
-            return main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.end));
+            return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
         }
         const offset = document.offsetAt(position);
         const nodepath = getNodePath(stylesheet, offset);
@@ -7027,7 +7027,7 @@ class CSSHover {
                 return this.supportsMarkdown;
             }
             const hover = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.hover;
-            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -7211,7 +7211,7 @@ class CSSNavigation {
             const entry = {
                 name,
                 kind,
-                location: main/* Location.create */.Ye.create(document.uri, range)
+                location: main.Location.create(document.uri, range)
             };
             result.push(entry);
         };
@@ -7223,7 +7223,7 @@ class CSSNavigation {
         const parents = [];
         const addDocumentSymbol = (name, kind, symbolNodeOrRange, nameNodeOrRange, bodyNode) => {
             const range = symbolNodeOrRange instanceof Node ? getRange(symbolNodeOrRange, document) : symbolNodeOrRange;
-            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? main/* Range.create */.e6.create(range.start, range.start);
+            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? main.Range.create(range.start, range.start);
             const entry = {
                 name,
                 kind,
@@ -7257,33 +7257,33 @@ class CSSNavigation {
             if (node instanceof RuleSet) {
                 for (const selector of node.getSelectors().getChildren()) {
                     if (selector instanceof Selector) {
-                        const range = main/* Range.create */.e6.create(document.positionAt(selector.offset), document.positionAt(node.end));
-                        collect(selector.getText(), main/* SymbolKind.Class */.cR.Class, range, selector, node.getDeclarations());
+                        const range = main.Range.create(document.positionAt(selector.offset), document.positionAt(node.end));
+                        collect(selector.getText(), main.SymbolKind.Class, range, selector, node.getDeclarations());
                     }
                 }
             }
             else if (node instanceof VariableDeclaration) {
-                collect(node.getName(), main/* SymbolKind.Variable */.cR.Variable, node, node.getVariable(), undefined);
+                collect(node.getName(), main.SymbolKind.Variable, node, node.getVariable(), undefined);
             }
             else if (node instanceof MixinDeclaration) {
-                collect(node.getName(), main/* SymbolKind.Method */.cR.Method, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), main.SymbolKind.Method, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FunctionDeclaration) {
-                collect(node.getName(), main/* SymbolKind.Function */.cR.Function, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), main.SymbolKind.Function, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof Keyframe) {
                 const name = browser_esm.t("@keyframes {0}", node.getName());
-                collect(name, main/* SymbolKind.Class */.cR.Class, node, node.getIdentifier(), node.getDeclarations());
+                collect(name, main.SymbolKind.Class, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FontFace) {
                 const name = browser_esm.t("@font-face");
-                collect(name, main/* SymbolKind.Class */.cR.Class, node, undefined, node.getDeclarations());
+                collect(name, main.SymbolKind.Class, node, undefined, node.getDeclarations());
             }
             else if (node instanceof Media) {
                 const mediaList = node.getChild(0);
                 if (mediaList instanceof Medialist) {
                     const name = '@media ' + mediaList.getText();
-                    collect(name, main/* SymbolKind.Module */.cR.Module, node, mediaList, node.getDeclarations());
+                    collect(name, main.SymbolKind.Module, node, mediaList, node.getDeclarations());
                 }
             }
             return true;
@@ -7310,14 +7310,14 @@ class CSSNavigation {
         else {
             label = `rgba(${red256}, ${green256}, ${blue256}, ${color.alpha})`;
         }
-        result.push({ label: label, textEdit: main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         if (color.alpha === 1) {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}`;
         }
         else {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}${toTwoDigitHex(Math.round(color.alpha * 255))}`;
         }
-        result.push({ label: label, textEdit: main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         const hsl = hslFromColor(color);
         if (hsl.a === 1) {
             label = `hsl(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%)`;
@@ -7325,7 +7325,7 @@ class CSSNavigation {
         else {
             label = `hsla(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%, ${hsl.a})`;
         }
-        result.push({ label: label, textEdit: main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         const hwb = hwbFromColor(color);
         if (hwb.a === 1) {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}%)`;
@@ -7333,18 +7333,18 @@ class CSSNavigation {
         else {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}% / ${hwb.a})`;
         }
-        result.push({ label: label, textEdit: main/* TextEdit.replace */.PY.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         return result;
     }
     prepareRename(document, position, stylesheet) {
         const node = this.getHighlightNode(document, position, stylesheet);
         if (node) {
-            return main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.end));
+            return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
         }
     }
     doRename(document, position, newName, stylesheet) {
         const highlights = this.findDocumentHighlights(document, position, stylesheet);
-        const edits = highlights.map(h => main/* TextEdit.replace */.PY.replace(h.range, newName));
+        const edits = highlights.map(h => main.TextEdit.replace(h.range, newName));
         return {
             changes: { [document.uri]: edits }
         };
@@ -7429,7 +7429,7 @@ function getColorInformation(node, document) {
     return null;
 }
 function getRange(node, document) {
-    return main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.end));
+    return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
 }
 /**
  * Test if `otherRange` is in `range`. If the ranges are equal, will return true.
@@ -7453,12 +7453,12 @@ function containsRange(range, otherRange) {
 }
 function getHighlightKind(node) {
     if (node.type === NodeType.Selector) {
-        return main/* DocumentHighlightKind.Write */.MY.Write;
+        return main.DocumentHighlightKind.Write;
     }
     if (node instanceof Identifier) {
         if (node.parent && node.parent instanceof Property) {
             if (node.isCustomProperty) {
-                return main/* DocumentHighlightKind.Write */.MY.Write;
+                return main.DocumentHighlightKind.Write;
             }
         }
     }
@@ -7469,10 +7469,10 @@ function getHighlightKind(node) {
             case NodeType.Keyframe:
             case NodeType.VariableDeclaration:
             case NodeType.FunctionParameter:
-                return main/* DocumentHighlightKind.Write */.MY.Write;
+                return main.DocumentHighlightKind.Write;
         }
     }
-    return main/* DocumentHighlightKind.Read */.MY.Read;
+    return main.DocumentHighlightKind.Read;
 }
 function toTwoDigitHex(n) {
     const r = n.toString(16);
@@ -7590,7 +7590,7 @@ class CSSCodeActions {
     doCodeActions(document, range, context, stylesheet) {
         return this.doCodeActions2(document, range, context, stylesheet).map(ca => {
             const textDocumentEdit = ca.edit && ca.edit.documentChanges && ca.edit.documentChanges[0];
-            return main/* Command.create */.mY.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
+            return main.Command.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
         });
     }
     doCodeActions2(document, range, context, stylesheet) {
@@ -7619,10 +7619,10 @@ class CSSCodeActions {
         for (const candidate of candidates) {
             const propertyName = candidate.property;
             const title = browser_esm.t("Rename to '{0}'", propertyName);
-            const edit = main/* TextEdit.replace */.PY.replace(marker.range, propertyName);
-            const documentIdentifier = main/* VersionedTextDocumentIdentifier.create */.XL.create(document.uri, document.version);
-            const workspaceEdit = { documentChanges: [main/* TextDocumentEdit.create */.sx.create(documentIdentifier, [edit])] };
-            const codeAction = main/* CodeAction.create */.B2.create(title, workspaceEdit, main/* CodeActionKind.QuickFix */.yN.QuickFix);
+            const edit = main.TextEdit.replace(marker.range, propertyName);
+            const documentIdentifier = main.VersionedTextDocumentIdentifier.create(document.uri, document.version);
+            const workspaceEdit = { documentChanges: [main.TextDocumentEdit.create(documentIdentifier, [edit])] };
+            const codeAction = main.CodeAction.create(title, workspaceEdit, main.CodeActionKind.QuickFix);
             codeAction.diagnostics = [marker];
             result.push(codeAction);
             if (--maxActions <= 0) {
@@ -8443,13 +8443,13 @@ class CSSValidation {
             ruleIds.push(Rules[r].id);
         }
         function toDiagnostic(marker) {
-            const range = main/* Range.create */.e6.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
+            const range = main.Range.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
             const source = document.languageId;
             return {
                 code: marker.getRule().id,
                 source: source,
                 message: marker.getMessage(),
-                severity: marker.getLevel() === Level.Warning ? main/* DiagnosticSeverity.Warning */.H_.Warning : main/* DiagnosticSeverity.Error */.H_.Error,
+                severity: marker.getLevel() === Level.Warning ? main.DiagnosticSeverity.Warning : main.DiagnosticSeverity.Error,
                 range: range
             };
         }
@@ -9414,8 +9414,8 @@ class SCSSCompletion extends CSSCompletion {
                 const item = {
                     label: p.label,
                     documentation: p.documentation,
-                    textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
-                    kind: main/* CompletionItemKind.Module */.cm.Module
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
+                    kind: main.CompletionItemKind.Module
                 };
                 result.items.push(item);
             }
@@ -9436,9 +9436,9 @@ class SCSSCompletion extends CSSCompletion {
                 label: label,
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), insertText),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-                kind: main/* CompletionItemKind.Function */.cm.Function
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -9473,8 +9473,8 @@ class SCSSCompletion extends CSSCompletion {
         for (const symbol of symbols) {
             const suggest = {
                 label: symbol.name,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), symbol.name),
-                kind: main/* CompletionItemKind.Function */.cm.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), symbol.name),
+                kind: main.CompletionItemKind.Function,
             };
             result.items.push(suggest);
         }
@@ -9598,72 +9598,72 @@ SCSSCompletion.scssAtDirectives = [
     {
         label: "@extend",
         documentation: browser_esm.t("Inherits the styles of another selector."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@at-root",
         documentation: browser_esm.t("Causes one or more rules to be emitted at the root of the document."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@debug",
         documentation: browser_esm.t("Prints the value of an expression to the standard error output stream. Useful for debugging complicated Sass files."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@warn",
         documentation: browser_esm.t("Prints the value of an expression to the standard error output stream. Useful for libraries that need to warn users of deprecations or recovering from minor mixin usage mistakes. Warnings can be turned off with the `--quiet` command-line option or the `:quiet` Sass option."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@error",
         documentation: browser_esm.t("Throws the value of an expression as a fatal error with stack trace. Useful for validating arguments to mixins and functions."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@if",
         documentation: browser_esm.t("Includes the body if the expression does not evaluate to `false` or `null`."),
         insertText: "@if ${1:expr} {\n\t$0\n}",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@for",
         documentation: browser_esm.t("For loop that repeatedly outputs a set of styles for each `$var` in the `from/through` or `from/to` clause."),
         insertText: "@for \\$${1:var} from ${2:start} ${3|to,through|} ${4:end} {\n\t$0\n}",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@each",
         documentation: browser_esm.t("Each loop that sets `$var` to each item in the list or map, then outputs the styles it contains using that value of `$var`."),
         insertText: "@each \\$${1:var} in ${2:list} {\n\t$0\n}",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@while",
         documentation: browser_esm.t("While loop that takes an expression and repeatedly outputs the nested styles until the statement evaluates to `false`."),
         insertText: "@while ${1:condition} {\n\t$0\n}",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@mixin",
         documentation: browser_esm.t("Defines styles that can be re-used throughout the stylesheet with `@include`."),
         insertText: "@mixin ${1:name} {\n\t$0\n}",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@include",
         documentation: browser_esm.t("Includes the styles defined by another mixin into the current rule."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@function",
         documentation: browser_esm.t("Defines complex operations that can be re-used throughout stylesheets."),
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        kind: main.CompletionItemKind.Keyword
     }
 ];
 SCSSCompletion.scssModuleLoaders = [
@@ -9672,16 +9672,16 @@ SCSSCompletion.scssModuleLoaders = [
         documentation: browser_esm.t("Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
         references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/at-rules/use' }],
         insertText: "@use $0;",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@forward",
         documentation: browser_esm.t("Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
         references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/at-rules/forward' }],
         insertText: "@forward $0;",
-        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-        kind: main/* CompletionItemKind.Keyword */.cm.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
 ];
 SCSSCompletion.scssModuleBuiltIns = [
@@ -10537,9 +10537,9 @@ class LESSCompletion extends CSSCompletion {
                 label: p.name,
                 detail: p.example,
                 documentation: p.description,
-                textEdit: main/* TextEdit.replace */.PY.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
-                kind: main/* CompletionItemKind.Function */.cm.Function
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -12783,13 +12783,13 @@ function format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = main/* Range.create */.e6.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Test if inside a rule
         inRule = isInRule(value, startOffset);
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            const startOfLineOffset = document.offsetAt(main/* Position.create */.Ly.create(range.start.line, 0));
+            const startOfLineOffset = document.offsetAt(main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
         if (inRule) {
@@ -12797,7 +12797,7 @@ function format(document, range, options) {
         }
     }
     else {
-        range = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(0, 0), document.positionAt(value.length));
+        range = main.Range.create(main.Position.create(0, 0), document.positionAt(value.length));
     }
     const cssOptions = {
         indent_size: tabSize,
@@ -38343,10 +38343,10 @@ function getSelectionRanges(document, positions, stylesheet) {
         const applicableRanges = getApplicableRanges(position);
         let current = undefined;
         for (let index = applicableRanges.length - 1; index >= 0; index--) {
-            current = main/* SelectionRange.create */.xm.create(main/* Range.create */.e6.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+            current = main.SelectionRange.create(main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
         }
         if (!current) {
-            current = main/* SelectionRange.create */.xm.create(main/* Range.create */.e6.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     }

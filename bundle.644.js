@@ -10,42 +10,42 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "CodeAction": () => (/* reexport */ main/* CodeAction */.B2),
-  "CodeActionContext": () => (/* reexport */ main/* CodeActionContext */.IT),
-  "CodeActionKind": () => (/* reexport */ main/* CodeActionKind */.yN),
-  "Color": () => (/* reexport */ main/* Color */.Il),
-  "ColorInformation": () => (/* reexport */ main/* ColorInformation */.pr),
-  "ColorPresentation": () => (/* reexport */ main/* ColorPresentation */.oi),
-  "Command": () => (/* reexport */ main/* Command */.mY),
-  "CompletionItem": () => (/* reexport */ main/* CompletionItem */.FG),
-  "CompletionItemKind": () => (/* reexport */ main/* CompletionItemKind */.cm),
-  "CompletionItemTag": () => (/* reexport */ main/* CompletionItemTag */.we),
-  "CompletionList": () => (/* reexport */ main/* CompletionList */.Ub),
-  "Diagnostic": () => (/* reexport */ main/* Diagnostic */.R9),
-  "DiagnosticSeverity": () => (/* reexport */ main/* DiagnosticSeverity */.H_),
-  "DocumentHighlight": () => (/* reexport */ main/* DocumentHighlight */.eh),
-  "DocumentHighlightKind": () => (/* reexport */ main/* DocumentHighlightKind */.MY),
-  "DocumentLink": () => (/* reexport */ main/* DocumentLink */.jW),
-  "DocumentSymbol": () => (/* reexport */ main/* DocumentSymbol */.w6),
+  "CodeAction": () => (/* reexport */ main.CodeAction),
+  "CodeActionContext": () => (/* reexport */ main.CodeActionContext),
+  "CodeActionKind": () => (/* reexport */ main.CodeActionKind),
+  "Color": () => (/* reexport */ main.Color),
+  "ColorInformation": () => (/* reexport */ main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
+  "Command": () => (/* reexport */ main.Command),
+  "CompletionItem": () => (/* reexport */ main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ main.CompletionList),
+  "Diagnostic": () => (/* reexport */ main.Diagnostic),
+  "DiagnosticSeverity": () => (/* reexport */ main.DiagnosticSeverity),
+  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ main.DocumentLink),
+  "DocumentSymbol": () => (/* reexport */ main.DocumentSymbol),
   "ErrorCode": () => (/* reexport */ ErrorCode),
-  "FoldingRange": () => (/* reexport */ main/* FoldingRange */.so),
-  "FoldingRangeKind": () => (/* reexport */ main/* FoldingRangeKind */.AD),
-  "Hover": () => (/* reexport */ main/* Hover */.TM),
-  "InsertTextFormat": () => (/* reexport */ main/* InsertTextFormat */.lO),
-  "Location": () => (/* reexport */ main/* Location */.Ye),
-  "MarkedString": () => (/* reexport */ main/* MarkedString */.oB),
-  "MarkupContent": () => (/* reexport */ main/* MarkupContent */.A_),
-  "MarkupKind": () => (/* reexport */ main/* MarkupKind */.a4),
-  "Position": () => (/* reexport */ main/* Position */.Ly),
-  "Range": () => (/* reexport */ main/* Range */.e6),
-  "SelectionRange": () => (/* reexport */ main/* SelectionRange */.xm),
-  "SymbolInformation": () => (/* reexport */ main/* SymbolInformation */.JN),
-  "SymbolKind": () => (/* reexport */ main/* SymbolKind */.cR),
+  "FoldingRange": () => (/* reexport */ main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
+  "Hover": () => (/* reexport */ main.Hover),
+  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
+  "Location": () => (/* reexport */ main.Location),
+  "MarkedString": () => (/* reexport */ main.MarkedString),
+  "MarkupContent": () => (/* reexport */ main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ main.MarkupKind),
+  "Position": () => (/* reexport */ main.Position),
+  "Range": () => (/* reexport */ main.Range),
+  "SelectionRange": () => (/* reexport */ main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ main.SymbolKind),
   "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
-  "TextDocumentEdit": () => (/* reexport */ main/* TextDocumentEdit */.sx),
-  "TextEdit": () => (/* reexport */ main/* TextEdit */.PY),
-  "VersionedTextDocumentIdentifier": () => (/* reexport */ main/* VersionedTextDocumentIdentifier */.XL),
-  "WorkspaceEdit": () => (/* reexport */ main/* WorkspaceEdit */.Db),
+  "TextDocumentEdit": () => (/* reexport */ main.TextDocumentEdit),
+  "TextEdit": () => (/* reexport */ main.TextEdit),
+  "VersionedTextDocumentIdentifier": () => (/* reexport */ main.VersionedTextDocumentIdentifier),
+  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
   "getLanguageService": () => (/* binding */ getLanguageService)
 });
 
@@ -1924,7 +1924,7 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [main/* MarkupKind.Markdown */.a4.Markdown, main/* MarkupKind.PlainText */.a4.PlainText],
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText],
                     commitCharactersSupport: true
                 }
             }
@@ -2243,14 +2243,14 @@ var JSONDocument = /** @class */ (function () {
         }
     };
     JSONDocument.prototype.validate = function (textDocument, schema, severity) {
-        if (severity === void 0) { severity = main/* DiagnosticSeverity.Warning */.H_.Warning; }
+        if (severity === void 0) { severity = main.DiagnosticSeverity.Warning; }
         if (this.root && schema) {
             var validationResult = new ValidationResult();
             validate(this.root, schema, validationResult, NoOpSchemaCollector.instance);
             return validationResult.problems.map(function (p) {
                 var _a;
-                var range = main/* Range.create */.e6.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
-                return main/* Diagnostic.create */.R9.create(range, p.message, (_a = p.severity) !== null && _a !== void 0 ? _a : severity, p.code);
+                var range = main.Range.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
+                return main.Diagnostic.create(range, p.message, (_a = p.severity) !== null && _a !== void 0 ? _a : severity, p.code);
             });
         }
         return undefined;
@@ -2455,7 +2455,7 @@ function validate(n, schema, validationResult, matchingSchemas) {
         if (schema.deprecationMessage && node.parent) {
             validationResult.problems.push({
                 location: { offset: node.parent.offset, length: node.parent.length },
-                severity: main/* DiagnosticSeverity.Warning */.H_.Warning,
+                severity: main.DiagnosticSeverity.Warning,
                 message: schema.deprecationMessage,
                 code: ErrorCode.Deprecated
             });
@@ -2881,7 +2881,7 @@ function jsonParser_parse(textDocument, config) {
                 case 12 /* LineCommentTrivia */:
                 case 13 /* BlockCommentTrivia */:
                     if (Array.isArray(commentRanges)) {
-                        commentRanges.push(main/* Range.create */.e6.create(textDocument.positionAt(scanner.getTokenOffset()), textDocument.positionAt(scanner.getTokenOffset() + scanner.getTokenLength())));
+                        commentRanges.push(main.Range.create(textDocument.positionAt(scanner.getTokenOffset()), textDocument.positionAt(scanner.getTokenOffset() + scanner.getTokenLength())));
                     }
                     break;
                 case 15 /* Trivia */:
@@ -2900,10 +2900,10 @@ function jsonParser_parse(textDocument, config) {
         return false;
     }
     function _errorAtRange(message, code, startOffset, endOffset, severity) {
-        if (severity === void 0) { severity = main/* DiagnosticSeverity.Error */.H_.Error; }
+        if (severity === void 0) { severity = main.DiagnosticSeverity.Error; }
         if (problems.length === 0 || startOffset !== lastProblemOffset) {
-            var range = main/* Range.create */.e6.create(textDocument.positionAt(startOffset), textDocument.positionAt(endOffset));
-            problems.push(main/* Diagnostic.create */.R9.create(range, message, severity, code, textDocument.languageId));
+            var range = main.Range.create(textDocument.positionAt(startOffset), textDocument.positionAt(endOffset));
+            problems.push(main.Diagnostic.create(range, message, severity, code, textDocument.languageId));
             lastProblemOffset = startOffset;
         }
     }
@@ -3028,9 +3028,9 @@ function jsonParser_parse(textDocument, config) {
         node.keyNode = key;
         var seen = keysSeen[key.value];
         if (seen) {
-            _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, node.keyNode.offset, node.keyNode.offset + node.keyNode.length, main/* DiagnosticSeverity.Warning */.H_.Warning);
+            _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, node.keyNode.offset, node.keyNode.offset + node.keyNode.length, main.DiagnosticSeverity.Warning);
             if (typeof seen === 'object') {
-                _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, seen.keyNode.offset, seen.keyNode.offset + seen.keyNode.length, main/* DiagnosticSeverity.Warning */.H_.Warning);
+                _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, seen.keyNode.offset, seen.keyNode.offset + seen.keyNode.length, main.DiagnosticSeverity.Warning);
             }
             keysSeen[key.value] = true; // if the same key is duplicate again, avoid duplicate error reporting
         }
@@ -3257,14 +3257,14 @@ var JSONCompletion = /** @class */ (function () {
         var currentWord = this.getCurrentWord(document, offset);
         var overwriteRange;
         if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
-            overwriteRange = main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+            overwriteRange = main.Range.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
         }
         else {
             var overwriteStart = offset - currentWord.length;
             if (overwriteStart > 0 && text[overwriteStart - 1] === '"') {
                 overwriteStart--;
             }
-            overwriteRange = main/* Range.create */.e6.create(document.positionAt(overwriteStart), position);
+            overwriteRange = main.Range.create(document.positionAt(overwriteStart), position);
         }
         var supportsCommitCharacters = false; //this.doesSupportsCommitCharacters(); disabled for now, waiting for new API: https://github.com/microsoft/vscode/issues/42544
         var proposed = {};
@@ -3281,10 +3281,10 @@ var JSONCompletion = /** @class */ (function () {
                         }
                     }
                     if (overwriteRange && suggestion.insertText !== undefined) {
-                        suggestion.textEdit = main/* TextEdit.replace */.PY.replace(overwriteRange, suggestion.insertText);
+                        suggestion.textEdit = main.TextEdit.replace(overwriteRange, suggestion.insertText);
                     }
                     if (supportsCommitCharacters) {
-                        suggestion.commitCharacters = suggestion.kind === main/* CompletionItemKind.Property */.cm.Property ? propertyCommitCharacters : valueCommitCharacters;
+                        suggestion.commitCharacters = suggestion.kind === main.CompletionItemKind.Property ? propertyCommitCharacters : valueCommitCharacters;
                     }
                     suggestion.label = label;
                     proposed[label] = suggestion;
@@ -3340,7 +3340,7 @@ var JSONCompletion = /** @class */ (function () {
                 var properties = node.properties;
                 properties.forEach(function (p) {
                     if (!currentProperty || currentProperty !== p) {
-                        proposed[p.keyNode.value] = main/* CompletionItem.create */.FG.create('__');
+                        proposed[p.keyNode.value] = main.CompletionItem.create('__');
                     }
                 });
                 var separatorAfter_1 = '';
@@ -3364,10 +3364,10 @@ var JSONCompletion = /** @class */ (function () {
                 });
                 if ((!schema && currentWord.length > 0 && text.charAt(offset - currentWord.length - 1) !== '"')) {
                     collector.add({
-                        kind: main/* CompletionItemKind.Property */.cm.Property,
+                        kind: main.CompletionItemKind.Property,
                         label: _this.getLabelForValue(currentWord),
                         insertText: _this.getInsertTextForProperty(currentWord, undefined, false, separatorAfter_1),
-                        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: '',
+                        insertTextFormat: main.InsertTextFormat.Snippet, documentation: '',
                     });
                     collector.setAsIncomplete();
                 }
@@ -3409,10 +3409,10 @@ var JSONCompletion = /** @class */ (function () {
                         var propertySchema = schemaProperties_1[key];
                         if (typeof propertySchema === 'object' && !propertySchema.deprecationMessage && !propertySchema.doNotSuggest) {
                             var proposal = {
-                                kind: main/* CompletionItemKind.Property */.cm.Property,
+                                kind: main.CompletionItemKind.Property,
                                 label: key,
                                 insertText: _this.getInsertTextForProperty(key, propertySchema, addValue, separatorAfter),
-                                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                                insertTextFormat: main.InsertTextFormat.Snippet,
                                 filterText: _this.getFilterTextForValue(key),
                                 documentation: _this.fromMarkup(propertySchema.markdownDescription) || propertySchema.description || '',
                             };
@@ -3434,10 +3434,10 @@ var JSONCompletion = /** @class */ (function () {
                     var propertyNameCompletionItem = function (name, enumDescription) {
                         if (enumDescription === void 0) { enumDescription = undefined; }
                         var proposal = {
-                            kind: main/* CompletionItemKind.Property */.cm.Property,
+                            kind: main.CompletionItemKind.Property,
                             label: name,
                             insertText: _this.getInsertTextForProperty(name, undefined, addValue, separatorAfter),
-                            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                            insertTextFormat: main.InsertTextFormat.Snippet,
                             filterText: _this.getFilterTextForValue(name),
                             documentation: enumDescription || _this.fromMarkup(schemaPropertyNames_1.markdownDescription) || schemaPropertyNames_1.description || '',
                         };
@@ -3477,10 +3477,10 @@ var JSONCompletion = /** @class */ (function () {
             obj.properties.forEach(function (p) {
                 var key = p.keyNode.value;
                 collector.add({
-                    kind: main/* CompletionItemKind.Property */.cm.Property,
+                    kind: main.CompletionItemKind.Property,
                     label: key,
                     insertText: _this.getInsertTextForValue(key, ''),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                    insertTextFormat: main.InsertTextFormat.Snippet,
                     filterText: _this.getFilterTextForValue(key),
                     documentation: ''
                 });
@@ -3508,10 +3508,10 @@ var JSONCompletion = /** @class */ (function () {
         }
         else if (node.type === 'object') {
             collector.add({
-                kind: main/* CompletionItemKind.Property */.cm.Property,
+                kind: main.CompletionItemKind.Property,
                 label: '$schema',
                 insertText: this.getInsertTextForProperty('$schema', undefined, true, ''),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: '',
+                insertTextFormat: main.InsertTextFormat.Snippet, documentation: '',
                 filterText: this.getFilterTextForValue("$schema")
             });
         }
@@ -3528,14 +3528,14 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind('object'),
                 label: 'Empty object',
                 insertText: this.getInsertTextForValue({}, ''),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 documentation: ''
             });
             collector.add({
                 kind: this.getSuggestionKind('array'),
                 label: 'Empty array',
                 insertText: this.getInsertTextForValue([], ''),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 documentation: ''
             });
             return;
@@ -3547,7 +3547,7 @@ var JSONCompletion = /** @class */ (function () {
                     kind: _this.getSuggestionKind(value.type),
                     label: _this.getLabelTextForMatchingNode(value, document),
                     insertText: _this.getInsertTextForMatchingNode(value, document, separatorAfter),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: ''
+                    insertTextFormat: main.InsertTextFormat.Snippet, documentation: ''
                 });
             }
             if (value.type === 'boolean') {
@@ -3727,7 +3727,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind(type),
                 label: this.getLabelForValue(value),
                 insertText: this.getInsertTextForValue(value, separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 detail: jsonCompletion_localize('json.suggest.default', 'Default value')
             });
             hasProposals = true;
@@ -3744,7 +3744,7 @@ var JSONCompletion = /** @class */ (function () {
                     kind: _this.getSuggestionKind(type),
                     label: _this.getLabelForValue(value),
                     insertText: _this.getInsertTextForValue(value, separatorAfter),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet
+                    insertTextFormat: main.InsertTextFormat.Snippet
                 });
                 hasProposals = true;
             });
@@ -3786,7 +3786,7 @@ var JSONCompletion = /** @class */ (function () {
                     label: label,
                     documentation: _this.fromMarkup(s.markdownDescription) || s.description,
                     insertText: insertText,
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                    insertTextFormat: main.InsertTextFormat.Snippet,
                     filterText: filterText
                 });
                 hasProposals = true;
@@ -3802,7 +3802,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind(schema.type),
                 label: this.getLabelForValue(schema.const),
                 insertText: this.getInsertTextForValue(schema.const, separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 documentation: this.fromMarkup(schema.markdownDescription) || schema.description
             });
         }
@@ -3820,7 +3820,7 @@ var JSONCompletion = /** @class */ (function () {
                     kind: this.getSuggestionKind(schema.type),
                     label: this.getLabelForValue(enm),
                     insertText: this.getInsertTextForValue(enm, separatorAfter),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                    insertTextFormat: main.InsertTextFormat.Snippet,
                     documentation: documentation
                 });
             }
@@ -3844,7 +3844,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind('object'),
                 label: '{}',
                 insertText: this.getInsertTextForGuessedValue({}, separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 detail: jsonCompletion_localize('defaults.object', 'New object'),
                 documentation: ''
             });
@@ -3854,7 +3854,7 @@ var JSONCompletion = /** @class */ (function () {
                 kind: this.getSuggestionKind('array'),
                 label: '[]',
                 insertText: this.getInsertTextForGuessedValue([], separatorAfter),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                insertTextFormat: main.InsertTextFormat.Snippet,
                 detail: jsonCompletion_localize('defaults.array', 'New array'),
                 documentation: ''
             });
@@ -3865,7 +3865,7 @@ var JSONCompletion = /** @class */ (function () {
             kind: this.getSuggestionKind('boolean'),
             label: value ? 'true' : 'false',
             insertText: this.getInsertTextForValue(value, separatorAfter),
-            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+            insertTextFormat: main.InsertTextFormat.Snippet,
             documentation: ''
         });
     };
@@ -3874,7 +3874,7 @@ var JSONCompletion = /** @class */ (function () {
             kind: this.getSuggestionKind('null'),
             label: 'null',
             insertText: 'null' + separatorAfter,
-            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+            insertTextFormat: main.InsertTextFormat.Snippet,
             documentation: ''
         });
     };
@@ -3882,11 +3882,11 @@ var JSONCompletion = /** @class */ (function () {
         var _this = this;
         var schemaIds = this.schemaService.getRegisteredSchemaIds(function (schema) { return schema === 'http' || schema === 'https'; });
         schemaIds.forEach(function (schemaId) { return collector.add({
-            kind: main/* CompletionItemKind.Module */.cm.Module,
+            kind: main.CompletionItemKind.Module,
             label: _this.getLabelForValue(schemaId),
             filterText: _this.getFilterTextForValue(schemaId),
             insertText: _this.getInsertTextForValue(schemaId, separatorAfter),
-            insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet, documentation: ''
+            insertTextFormat: main.InsertTextFormat.Snippet, documentation: ''
         }); });
     };
     JSONCompletion.prototype.getLabelForValue = function (value) {
@@ -3950,13 +3950,13 @@ var JSONCompletion = /** @class */ (function () {
             type = array.length > 0 ? array[0] : undefined;
         }
         if (!type) {
-            return main/* CompletionItemKind.Value */.cm.Value;
+            return main.CompletionItemKind.Value;
         }
         switch (type) {
-            case 'string': return main/* CompletionItemKind.Value */.cm.Value;
-            case 'object': return main/* CompletionItemKind.Module */.cm.Module;
-            case 'property': return main/* CompletionItemKind.Property */.cm.Property;
-            default: return main/* CompletionItemKind.Value */.cm.Value;
+            case 'string': return main.CompletionItemKind.Value;
+            case 'object': return main.CompletionItemKind.Module;
+            case 'property': return main.CompletionItemKind.Property;
+            default: return main.CompletionItemKind.Value;
         }
     };
     JSONCompletion.prototype.getLabelTextForMatchingNode = function (node, document) {
@@ -4110,7 +4110,7 @@ var JSONCompletion = /** @class */ (function () {
     JSONCompletion.prototype.fromMarkup = function (markupString) {
         if (markupString && this.doesSupportMarkdown()) {
             return {
-                kind: main/* MarkupKind.Markdown */.a4.Markdown,
+                kind: main.MarkupKind.Markdown,
                 value: markupString
             };
         }
@@ -4119,7 +4119,7 @@ var JSONCompletion = /** @class */ (function () {
     JSONCompletion.prototype.doesSupportMarkdown = function () {
         if (!isDefined(this.supportsMarkdown)) {
             var completion = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.completion;
-            this.supportsMarkdown = completion && completion.completionItem && Array.isArray(completion.completionItem.documentationFormat) && completion.completionItem.documentationFormat.indexOf(main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = completion && completion.completionItem && Array.isArray(completion.completionItem.documentationFormat) && completion.completionItem.documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -4165,7 +4165,7 @@ var JSONHover = /** @class */ (function () {
                 }
             }
         }
-        var hoverRange = main/* Range.create */.e6.create(document.positionAt(hoverRangeNode.offset), document.positionAt(hoverRangeNode.offset + hoverRangeNode.length));
+        var hoverRange = main.Range.create(document.positionAt(hoverRangeNode.offset), document.positionAt(hoverRangeNode.offset + hoverRangeNode.length));
         var createHover = function (contents) {
             var result = {
                 contents: contents,
@@ -4266,7 +4266,7 @@ var JSONValidation = /** @class */ (function () {
     JSONValidation.prototype.configure = function (raw) {
         if (raw) {
             this.validationEnabled = raw.validate !== false;
-            this.commentSeverity = raw.allowComments ? undefined : main/* DiagnosticSeverity.Error */.H_.Error;
+            this.commentSeverity = raw.allowComments ? undefined : main.DiagnosticSeverity.Error;
         }
     };
     JSONValidation.prototype.doValidation = function (textDocument, jsonDocument, documentSettings, schema) {
@@ -4285,22 +4285,22 @@ var JSONValidation = /** @class */ (function () {
             }
         };
         var getDiagnostics = function (schema) {
-            var trailingCommaSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.trailingCommas) ? toDiagnosticSeverity(documentSettings.trailingCommas) : main/* DiagnosticSeverity.Error */.H_.Error;
+            var trailingCommaSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.trailingCommas) ? toDiagnosticSeverity(documentSettings.trailingCommas) : main.DiagnosticSeverity.Error;
             var commentSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.comments) ? toDiagnosticSeverity(documentSettings.comments) : _this.commentSeverity;
-            var schemaValidation = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : main/* DiagnosticSeverity.Warning */.H_.Warning;
-            var schemaRequest = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : main/* DiagnosticSeverity.Warning */.H_.Warning;
+            var schemaValidation = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : main.DiagnosticSeverity.Warning;
+            var schemaRequest = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : main.DiagnosticSeverity.Warning;
             if (schema) {
                 if (schema.errors.length && jsonDocument.root && schemaRequest) {
                     var astRoot = jsonDocument.root;
                     var property = astRoot.type === 'object' ? astRoot.properties[0] : undefined;
                     if (property && property.keyNode.value === '$schema') {
                         var node = property.valueNode || property;
-                        var range = main/* Range.create */.e6.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
-                        addProblem(main/* Diagnostic.create */.R9.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
+                        var range = main.Range.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
+                        addProblem(main.Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
                     }
                     else {
-                        var range = main/* Range.create */.e6.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
-                        addProblem(main/* Diagnostic.create */.R9.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
+                        var range = main.Range.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
+                        addProblem(main.Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
                     }
                 }
                 else if (schemaValidation) {
@@ -4329,7 +4329,7 @@ var JSONValidation = /** @class */ (function () {
             if (typeof commentSeverity === 'number') {
                 var message_1 = jsonValidation_localize('InvalidCommentToken', 'Comments are not permitted in JSON.');
                 jsonDocument.comments.forEach(function (c) {
-                    addProblem(main/* Diagnostic.create */.R9.create(c, message_1, commentSeverity, ErrorCode.CommentNotPermitted));
+                    addProblem(main.Diagnostic.create(c, message_1, commentSeverity, ErrorCode.CommentNotPermitted));
                 });
             }
             return diagnostics;
@@ -4392,8 +4392,8 @@ function schemaAllowsTrailingCommas(schemaRef) {
 }
 function toDiagnosticSeverity(severityLevel) {
     switch (severityLevel) {
-        case 'error': return main/* DiagnosticSeverity.Error */.H_.Error;
-        case 'warning': return main/* DiagnosticSeverity.Warning */.H_.Warning;
+        case 'error': return main.DiagnosticSeverity.Error;
+        case 'warning': return main.DiagnosticSeverity.Warning;
         case 'ignore': return undefined;
     }
     return undefined;
@@ -4502,8 +4502,8 @@ var JSONDocumentSymbols = /** @class */ (function () {
                         for (var _b = 0, _c = item.properties; _b < _c.length; _b++) {
                             var property = _c[_b];
                             if (property.keyNode.value === 'key' && property.valueNode) {
-                                var location = main/* Location.create */.Ye.create(document.uri, getRange(document, item));
-                                result_1.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main/* SymbolKind.Function */.cR.Function, location: location });
+                                var location = main.Location.create(document.uri, getRange(document, item));
+                                result_1.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main.SymbolKind.Function, location: location });
                                 limit--;
                                 if (limit <= 0) {
                                     if (context && context.onResultLimitExceeded) {
@@ -4538,7 +4538,7 @@ var JSONDocumentSymbols = /** @class */ (function () {
                     if (valueNode) {
                         if (limit > 0) {
                             limit--;
-                            var location = main/* Location.create */.Ye.create(document.uri, getRange(document, property));
+                            var location = main.Location.create(document.uri, getRange(document, property));
                             var childContainerName = containerName ? containerName + '.' + property.keyNode.value : property.keyNode.value;
                             result.push({ name: _this.getKeyLabel(property), kind: _this.getSymbolKind(valueNode.type), location: location, containerName: containerName });
                             toVisit.push({ node: valueNode, containerName: childContainerName });
@@ -4581,7 +4581,7 @@ var JSONDocumentSymbols = /** @class */ (function () {
                             if (property.keyNode.value === 'key' && property.valueNode) {
                                 var range = getRange(document, item);
                                 var selectionRange = getRange(document, property.keyNode);
-                                result_2.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main/* SymbolKind.Function */.cR.Function, range: range, selectionRange: selectionRange });
+                                result_2.push({ name: jsonParser_getNodeValue(property.valueNode), kind: main.SymbolKind.Function, range: range, selectionRange: selectionRange });
                                 limit--;
                                 if (limit <= 0) {
                                     if (context && context.onResultLimitExceeded) {
@@ -4654,17 +4654,17 @@ var JSONDocumentSymbols = /** @class */ (function () {
     JSONDocumentSymbols.prototype.getSymbolKind = function (nodeType) {
         switch (nodeType) {
             case 'object':
-                return main/* SymbolKind.Module */.cR.Module;
+                return main.SymbolKind.Module;
             case 'string':
-                return main/* SymbolKind.String */.cR.String;
+                return main.SymbolKind.String;
             case 'number':
-                return main/* SymbolKind.Number */.cR.Number;
+                return main.SymbolKind.Number;
             case 'array':
-                return main/* SymbolKind.Array */.cR.Array;
+                return main.SymbolKind.Array;
             case 'boolean':
-                return main/* SymbolKind.Boolean */.cR.Boolean;
+                return main.SymbolKind.Boolean;
             default: // 'null'
-                return main/* SymbolKind.Variable */.cR.Variable;
+                return main.SymbolKind.Variable;
         }
     };
     JSONDocumentSymbols.prototype.getKeyLabel = function (property) {
@@ -4740,14 +4740,14 @@ var JSONDocumentSymbols = /** @class */ (function () {
         else {
             label = "#".concat(toTwoDigitHex(red256)).concat(toTwoDigitHex(green256)).concat(toTwoDigitHex(blue256)).concat(toTwoDigitHex(Math.round(color.alpha * 255)));
         }
-        result.push({ label: label, textEdit: main/* TextEdit.replace */.PY.replace(range, JSON.stringify(label)) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, JSON.stringify(label)) });
         return result;
     };
     return JSONDocumentSymbols;
 }());
 
 function getRange(document, node) {
-    return main/* Range.create */.e6.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
+    return main.Range.create(document.positionAt(node.offset), document.positionAt(node.offset + node.length));
 }
 
 ;// CONCATENATED MODULE: ./node_modules/vscode-json-languageservice/lib/esm/services/configuration.js
@@ -6060,11 +6060,11 @@ function getFoldingRanges(document, context) {
                 var startLine = document.positionAt(scanner.getTokenOffset()).line;
                 var endLine = document.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
                 if (scanner.getTokenError() === 1 /* UnexpectedEndOfComment */ && startLine + 1 < document.lineCount) {
-                    scanner.setPosition(document.offsetAt(main/* Position.create */.Ly.create(startLine + 1, 0)));
+                    scanner.setPosition(document.offsetAt(main.Position.create(startLine + 1, 0)));
                 }
                 else {
                     if (startLine < endLine) {
-                        addRange({ startLine: startLine, endLine: endLine, kind: main/* FoldingRangeKind.Comment */.AD.Comment });
+                        addRange({ startLine: startLine, endLine: endLine, kind: main.FoldingRangeKind.Comment });
                         prevStart = startLine;
                     }
                 }
@@ -6076,12 +6076,12 @@ function getFoldingRanges(document, context) {
                 if (m) {
                     var line = document.positionAt(scanner.getTokenOffset()).line;
                     if (m[1]) { // start pattern match
-                        var range = { startLine: line, endLine: line, kind: main/* FoldingRangeKind.Region */.AD.Region };
+                        var range = { startLine: line, endLine: line, kind: main.FoldingRangeKind.Region };
                         stack.push(range);
                     }
                     else {
                         var i = stack.length - 1;
-                        while (i >= 0 && stack[i].kind !== main/* FoldingRangeKind.Region */.AD.Region) {
+                        while (i >= 0 && stack[i].kind !== main.FoldingRangeKind.Region) {
                             i--;
                         }
                         if (i >= 0) {
@@ -6179,15 +6179,15 @@ function getSelectionRanges(document, positions, doc) {
         }
         var current = undefined;
         for (var index = result.length - 1; index >= 0; index--) {
-            current = main/* SelectionRange.create */.xm.create(result[index], current);
+            current = main.SelectionRange.create(result[index], current);
         }
         if (!current) {
-            current = main/* SelectionRange.create */.xm.create(main/* Range.create */.e6.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     }
     function newRange(start, end) {
-        return main/* Range.create */.e6.create(document.positionAt(start), document.positionAt(end));
+        return main.Range.create(document.positionAt(start), document.positionAt(end));
     }
     var scanner = main_createScanner(document.getText(), true);
     function getOffsetAfterNextToken(offset, expectedToken) {
@@ -6227,7 +6227,7 @@ function findLinks(document, doc) {
     return Promise.resolve(links);
 }
 function createRange(document, node) {
-    return main/* Range.create */.e6.create(document.positionAt(node.offset + 1), document.positionAt(node.offset + node.length - 1));
+    return main.Range.create(document.positionAt(node.offset + 1), document.positionAt(node.offset + node.length - 1));
 }
 function findTargetNode(doc, path) {
     var tokens = parseJSONPointer(path);
@@ -6338,7 +6338,7 @@ function getLanguageService(params) {
             }
             var options = { tabSize: o ? o.tabSize : 4, insertSpaces: (o === null || o === void 0 ? void 0 : o.insertSpaces) === true, insertFinalNewline: (o === null || o === void 0 ? void 0 : o.insertFinalNewline) === true, eol: '\n' };
             return main_format(d.getText(), range, options).map(function (e) {
-                return main/* TextEdit.replace */.PY.replace(main/* Range.create */.e6.create(d.positionAt(e.offset), d.positionAt(e.offset + e.length)), e.content);
+                return main.TextEdit.replace(main.Range.create(d.positionAt(e.offset), d.positionAt(e.offset + e.length)), e.content);
             });
         }
     };

@@ -22,41 +22,41 @@ __webpack_require__.r(__webpack_exports__);
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
   "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "Color": () => (/* reexport */ main/* Color */.Il),
-  "ColorInformation": () => (/* reexport */ main/* ColorInformation */.pr),
-  "ColorPresentation": () => (/* reexport */ main/* ColorPresentation */.oi),
-  "Command": () => (/* reexport */ main/* Command */.mY),
-  "CompletionItem": () => (/* reexport */ main/* CompletionItem */.FG),
-  "CompletionItemKind": () => (/* reexport */ main/* CompletionItemKind */.cm),
-  "CompletionItemTag": () => (/* reexport */ main/* CompletionItemTag */.we),
-  "CompletionList": () => (/* reexport */ main/* CompletionList */.Ub),
-  "Diagnostic": () => (/* reexport */ main/* Diagnostic */.R9),
-  "DocumentHighlight": () => (/* reexport */ main/* DocumentHighlight */.eh),
-  "DocumentHighlightKind": () => (/* reexport */ main/* DocumentHighlightKind */.MY),
-  "DocumentLink": () => (/* reexport */ main/* DocumentLink */.jW),
-  "DocumentUri": () => (/* reexport */ main/* DocumentUri */.Oj),
+  "Color": () => (/* reexport */ main.Color),
+  "ColorInformation": () => (/* reexport */ main.ColorInformation),
+  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
+  "Command": () => (/* reexport */ main.Command),
+  "CompletionItem": () => (/* reexport */ main.CompletionItem),
+  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
+  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
+  "CompletionList": () => (/* reexport */ main.CompletionList),
+  "Diagnostic": () => (/* reexport */ main.Diagnostic),
+  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
+  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
+  "DocumentLink": () => (/* reexport */ main.DocumentLink),
+  "DocumentUri": () => (/* reexport */ main.DocumentUri),
   "FileType": () => (/* reexport */ FileType),
-  "FoldingRange": () => (/* reexport */ main/* FoldingRange */.so),
-  "FoldingRangeKind": () => (/* reexport */ main/* FoldingRangeKind */.AD),
-  "FormattingOptions": () => (/* reexport */ main/* FormattingOptions */.Wy),
-  "Hover": () => (/* reexport */ main/* Hover */.TM),
-  "InsertReplaceEdit": () => (/* reexport */ main/* InsertReplaceEdit */.db),
-  "InsertTextFormat": () => (/* reexport */ main/* InsertTextFormat */.lO),
-  "InsertTextMode": () => (/* reexport */ main/* InsertTextMode */.DM),
-  "Location": () => (/* reexport */ main/* Location */.Ye),
-  "MarkedString": () => (/* reexport */ main/* MarkedString */.oB),
-  "MarkupContent": () => (/* reexport */ main/* MarkupContent */.A_),
-  "MarkupKind": () => (/* reexport */ main/* MarkupKind */.a4),
-  "Position": () => (/* reexport */ main/* Position */.Ly),
-  "Range": () => (/* reexport */ main/* Range */.e6),
+  "FoldingRange": () => (/* reexport */ main.FoldingRange),
+  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
+  "FormattingOptions": () => (/* reexport */ main.FormattingOptions),
+  "Hover": () => (/* reexport */ main.Hover),
+  "InsertReplaceEdit": () => (/* reexport */ main.InsertReplaceEdit),
+  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
+  "InsertTextMode": () => (/* reexport */ main.InsertTextMode),
+  "Location": () => (/* reexport */ main.Location),
+  "MarkedString": () => (/* reexport */ main.MarkedString),
+  "MarkupContent": () => (/* reexport */ main.MarkupContent),
+  "MarkupKind": () => (/* reexport */ main.MarkupKind),
+  "Position": () => (/* reexport */ main.Position),
+  "Range": () => (/* reexport */ main.Range),
   "ScannerState": () => (/* reexport */ ScannerState),
-  "SelectionRange": () => (/* reexport */ main/* SelectionRange */.xm),
-  "SymbolInformation": () => (/* reexport */ main/* SymbolInformation */.JN),
-  "SymbolKind": () => (/* reexport */ main/* SymbolKind */.cR),
+  "SelectionRange": () => (/* reexport */ main.SelectionRange),
+  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
+  "SymbolKind": () => (/* reexport */ main.SymbolKind),
   "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
-  "TextEdit": () => (/* reexport */ main/* TextEdit */.PY),
+  "TextEdit": () => (/* reexport */ main.TextEdit),
   "TokenType": () => (/* reexport */ TokenType),
-  "WorkspaceEdit": () => (/* reexport */ main/* WorkspaceEdit */.Db),
+  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
   "getDefaultHTMLDataProvider": () => (/* binding */ getDefaultHTMLDataProvider),
   "getLanguageService": () => (/* binding */ getLanguageService),
   "newHTMLDataProvider": () => (/* binding */ newHTMLDataProvider)
@@ -121,11 +121,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [main/* MarkupKind.Markdown */.a4.Markdown, main/* MarkupKind.PlainText */.a4.PlainText]
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [main/* MarkupKind.Markdown */.a4.Markdown, main/* MarkupKind.PlainText */.a4.PlainText]
+                contentFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
             }
         }
     };
@@ -3414,7 +3414,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, range) {
         else {
             endPos = shiftPosition(range.end, -1);
         }
-        replaceRange = main/* Range.create */.e6.create(startPos, endPos);
+        replaceRange = main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -3423,8 +3423,8 @@ function createCompletionItem(p, isDir, replaceRange) {
         p = p + '/';
         return {
             label: p,
-            kind: main/* CompletionItemKind.Folder */.cm.Folder,
-            textEdit: main/* TextEdit.replace */.PY.replace(replaceRange, p),
+            kind: main.CompletionItemKind.Folder,
+            textEdit: main.TextEdit.replace(replaceRange, p),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -3434,18 +3434,18 @@ function createCompletionItem(p, isDir, replaceRange) {
     else {
         return {
             label: p,
-            kind: main/* CompletionItemKind.File */.cm.File,
-            textEdit: main/* TextEdit.replace */.PY.replace(replaceRange, p)
+            kind: main.CompletionItemKind.File,
+            textEdit: main.TextEdit.replace(replaceRange, p)
         };
     }
 }
 function shiftPosition(pos, offset) {
-    return main/* Position.create */.Ly.create(pos.line, pos.character + offset);
+    return main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     var start = shiftPosition(range.start, startOffset);
     var end = shiftPosition(range.end, endOffset);
-    return main/* Range.create */.e6.create(start, end);
+    return main.Range.create(start, end);
 }
 // Selected from https://stackoverflow.com/a/2725168/1780148
 var PATH_TAG_AND_ATTR = {
@@ -3599,10 +3599,10 @@ var HTMLCompletion = /** @class */ (function () {
                 provider.provideTags().forEach(function (tag) {
                     result.items.push({
                         label: tag.name,
-                        kind: main/* CompletionItemKind.Property */.cm.Property,
+                        kind: main.CompletionItemKind.Property,
                         documentation: generateDocumentation(tag, undefined, doesSupportMarkdown),
-                        textEdit: main/* TextEdit.replace */.PY.replace(range, tag.name),
-                        insertTextFormat: main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: main.TextEdit.replace(range, tag.name),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -3635,16 +3635,16 @@ var HTMLCompletion = /** @class */ (function () {
                 if (tag && (!curr.closed || curr.endTagStart && (curr.endTagStart > offset))) {
                     var item = {
                         label: '/' + tag,
-                        kind: main/* CompletionItemKind.Property */.cm.Property,
+                        kind: main.CompletionItemKind.Property,
                         filterText: '/' + tag,
-                        textEdit: main/* TextEdit.replace */.PY.replace(range, '/' + tag + closeTag),
-                        insertTextFormat: main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: main.TextEdit.replace(range, '/' + tag + closeTag),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     };
                     var startIndent = getLineIndent(curr.start);
                     var endIndent = getLineIndent(afterOpenBracket - 1);
                     if (startIndent !== null && endIndent !== null && startIndent !== endIndent) {
                         var insertText = startIndent + '</' + tag + closeTag;
-                        item.textEdit = main/* TextEdit.replace */.PY.replace(getReplaceRange(afterOpenBracket - 1 - endIndent.length), insertText);
+                        item.textEdit = main.TextEdit.replace(getReplaceRange(afterOpenBracket - 1 - endIndent.length), insertText);
                         item.filterText = endIndent + '</' + tag;
                     }
                     result.items.push(item);
@@ -3659,11 +3659,11 @@ var HTMLCompletion = /** @class */ (function () {
                 provider.provideTags().forEach(function (tag) {
                     result.items.push({
                         label: '/' + tag.name,
-                        kind: main/* CompletionItemKind.Property */.cm.Property,
+                        kind: main.CompletionItemKind.Property,
                         documentation: generateDocumentation(tag, undefined, doesSupportMarkdown),
                         filterText: '/' + tag.name + closeTag,
-                        textEdit: main/* TextEdit.replace */.PY.replace(range, '/' + tag.name + closeTag),
-                        insertTextFormat: main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: main.TextEdit.replace(range, '/' + tag.name + closeTag),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -3677,10 +3677,10 @@ var HTMLCompletion = /** @class */ (function () {
                 var pos = document.positionAt(tagCloseEnd);
                 result.items.push({
                     label: '</' + tag + '>',
-                    kind: main/* CompletionItemKind.Property */.cm.Property,
+                    kind: main.CompletionItemKind.Property,
                     filterText: '</' + tag + '>',
-                    textEdit: main/* TextEdit.insert */.PY.insert(pos, '$0</' + tag + '>'),
-                    insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet
+                    textEdit: main.TextEdit.insert(pos, '$0</' + tag + '>'),
+                    insertTextFormat: main.InsertTextFormat.Snippet
                 });
             }
             return result;
@@ -3741,10 +3741,10 @@ var HTMLCompletion = /** @class */ (function () {
                     }
                     result.items.push({
                         label: attr.name,
-                        kind: attr.valueSet === 'handler' ? main/* CompletionItemKind.Function */.cm.Function : main/* CompletionItemKind.Value */.cm.Value,
+                        kind: attr.valueSet === 'handler' ? main.CompletionItemKind.Function : main.CompletionItemKind.Value,
                         documentation: generateDocumentation(attr, undefined, doesSupportMarkdown),
-                        textEdit: main/* TextEdit.replace */.PY.replace(range, codeSnippet),
-                        insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet,
+                        textEdit: main.TextEdit.replace(range, codeSnippet),
+                        insertTextFormat: main.InsertTextFormat.Snippet,
                         command: command
                     });
                 });
@@ -3769,9 +3769,9 @@ var HTMLCompletion = /** @class */ (function () {
             }
             Object.keys(dataAttributes).forEach(function (attr) { return result.items.push({
                 label: attr,
-                kind: main/* CompletionItemKind.Value */.cm.Value,
-                textEdit: main/* TextEdit.replace */.PY.replace(range, dataAttributes[attr]),
-                insertTextFormat: main/* InsertTextFormat.Snippet */.lO.Snippet
+                kind: main.CompletionItemKind.Value,
+                textEdit: main.TextEdit.replace(range, dataAttributes[attr]),
+                insertTextFormat: main.InsertTextFormat.Snippet
             }); });
         }
         function collectAttributeValueSuggestions(valueStart, valueEnd) {
@@ -3815,10 +3815,10 @@ var HTMLCompletion = /** @class */ (function () {
                     result.items.push({
                         label: value.name,
                         filterText: insertText,
-                        kind: main/* CompletionItemKind.Unit */.cm.Unit,
+                        kind: main.CompletionItemKind.Unit,
                         documentation: generateDocumentation(value, undefined, doesSupportMarkdown),
-                        textEdit: main/* TextEdit.replace */.PY.replace(range, insertText),
-                        insertTextFormat: main/* InsertTextFormat.PlainText */.lO.PlainText
+                        textEdit: main.TextEdit.replace(range, insertText),
+                        insertTextFormat: main.InsertTextFormat.PlainText
                     });
                 });
             });
@@ -3852,16 +3852,16 @@ var HTMLCompletion = /** @class */ (function () {
                 characterStart--;
             }
             if (k >= 0 && text[k] === '&') {
-                var range = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(position.line, characterStart - 1), position);
+                var range = main.Range.create(main.Position.create(position.line, characterStart - 1), position);
                 for (var entity in entities) {
                     if (endsWith(entity, ';')) {
                         var label = '&' + entity;
                         result.items.push({
                             label: label,
-                            kind: main/* CompletionItemKind.Keyword */.cm.Keyword,
+                            kind: main.CompletionItemKind.Keyword,
                             documentation: browser_esm.t("Character entity representing '".concat(entities[entity], "'")),
-                            textEdit: main/* TextEdit.replace */.PY.replace(range, label),
-                            insertTextFormat: main/* InsertTextFormat.PlainText */.lO.PlainText
+                            textEdit: main.TextEdit.replace(range, label),
+                            insertTextFormat: main.InsertTextFormat.PlainText
                         });
                     }
                 }
@@ -3872,10 +3872,10 @@ var HTMLCompletion = /** @class */ (function () {
             var range = getReplaceRange(replaceStart, replaceEnd);
             result.items.push({
                 label: '!DOCTYPE',
-                kind: main/* CompletionItemKind.Property */.cm.Property,
+                kind: main.CompletionItemKind.Property,
                 documentation: 'A preamble for an HTML document.',
-                textEdit: main/* TextEdit.replace */.PY.replace(range, '!DOCTYPE html>'),
-                insertTextFormat: main/* InsertTextFormat.PlainText */.lO.PlainText
+                textEdit: main.TextEdit.replace(range, '!DOCTYPE html>'),
+                insertTextFormat: main.InsertTextFormat.PlainText
             });
         }
         var token = scanner.scan();
@@ -4073,7 +4073,7 @@ var HTMLCompletion = /** @class */ (function () {
                 return this.supportsMarkdown;
             }
             var documentationFormat = (_c = (_b = (_a = this.lsOptions.clientCapabilities.textDocument) === null || _a === void 0 ? void 0 : _a.completion) === null || _b === void 0 ? void 0 : _b.completionItem) === null || _c === void 0 ? void 0 : _c.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -4275,10 +4275,10 @@ var HTMLHover = /** @class */ (function () {
             if (k >= 0 && text[k] === '&') {
                 var range = null;
                 if (text[n] === ';') {
-                    range = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(position.line, characterStart), main/* Position.create */.Ly.create(position.line, characterEnd + 1));
+                    range = main.Range.create(main.Position.create(position.line, characterStart), main.Position.create(position.line, characterEnd + 1));
                 }
                 else {
-                    range = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(position.line, characterStart), main/* Position.create */.Ly.create(position.line, characterEnd));
+                    range = main.Range.create(main.Position.create(position.line, characterStart), main.Position.create(position.line, characterEnd));
                 }
                 return range;
             }
@@ -4375,7 +4375,7 @@ var HTMLHover = /** @class */ (function () {
                 return this.supportsMarkdown;
             }
             var contentFormat = (_c = (_b = (_a = this.lsOptions.clientCapabilities) === null || _a === void 0 ? void 0 : _a.textDocument) === null || _b === void 0 ? void 0 : _b.hover) === null || _c === void 0 ? void 0 : _c.contentFormat;
-            this.supportsMarkdown = Array.isArray(contentFormat) && contentFormat.indexOf(main/* MarkupKind.Markdown */.a4.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(contentFormat) && contentFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     };
@@ -9208,7 +9208,7 @@ function format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = main/* Range.create */.e6.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Do not modify if substring starts in inside an element
         // Ending inside an element is fine as it doesn't cause formatting errors
         var firstHalf = value.substring(0, startOffset);
@@ -9223,12 +9223,12 @@ function format(document, range, options) {
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            var startOfLineOffset = document.offsetAt(main/* Position.create */.Ly.create(range.start.line, 0));
+            var startOfLineOffset = document.offsetAt(main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
     }
     else {
-        range = main/* Range.create */.e6.create(main/* Position.create */.Ly.create(0, 0), document.positionAt(value.length));
+        range = main.Range.create(main.Position.create(0, 0), document.positionAt(value.length));
     }
     var htmlOptions = {
         indent_size: tabSize,
@@ -9387,7 +9387,7 @@ function createLink(document, documentContext, attributeValue, startOffset, endO
         return undefined;
     }
     return {
-        range: main/* Range.create */.e6.create(document.positionAt(startOffset), document.positionAt(endOffset)),
+        range: main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset)),
         target: workspaceUrl
     };
 }
@@ -9479,10 +9479,10 @@ function findDocumentHighlights(document, position, htmlDocument) {
     var endTagRange = typeof node.endTagStart === 'number' && getTagNameRange(TokenType.EndTag, document, node.endTagStart);
     if (startTagRange && covers(startTagRange, position) || endTagRange && covers(endTagRange, position)) {
         if (startTagRange) {
-            result.push({ kind: main/* DocumentHighlightKind.Read */.MY.Read, range: startTagRange });
+            result.push({ kind: main.DocumentHighlightKind.Read, range: startTagRange });
         }
         if (endTagRange) {
-            result.push({ kind: main/* DocumentHighlightKind.Read */.MY.Read, range: endTagRange });
+            result.push({ kind: main.DocumentHighlightKind.Read, range: endTagRange });
         }
     }
     return result;
@@ -9520,12 +9520,12 @@ function findDocumentSymbols(document, htmlDocument) {
 }
 function provideFileSymbolsInternal(document, node, container, symbols) {
     var name = nodeToName(node);
-    var location = main/* Location.create */.Ye.create(document.uri, main/* Range.create */.e6.create(document.positionAt(node.start), document.positionAt(node.end)));
+    var location = main.Location.create(document.uri, main.Range.create(document.positionAt(node.start), document.positionAt(node.end)));
     var symbol = {
         name: name,
         location: location,
         containerName: container,
-        kind: main/* SymbolKind.Field */.cR.Field
+        kind: main.SymbolKind.Field
     };
     symbols.push(symbol);
     node.children.forEach(function (child) {
@@ -9647,8 +9647,8 @@ function findLinkedEditingRanges(document, position, htmlDocument) {
         // Within closing tag, compute open tag
         node.endTagStart + '</'.length <= offset && offset <= node.endTagStart + '</'.length + tagLength) {
         return [
-            main/* Range.create */.e6.create(document.positionAt(node.start + '<'.length), document.positionAt(node.start + '<'.length + tagLength)),
-            main/* Range.create */.e6.create(document.positionAt(node.endTagStart + '</'.length), document.positionAt(node.endTagStart + '</'.length + tagLength))
+            main.Range.create(document.positionAt(node.start + '<'.length), document.positionAt(node.start + '<'.length + tagLength)),
+            main.Range.create(document.positionAt(node.endTagStart + '</'.length), document.positionAt(node.endTagStart + '</'.length + tagLength))
         ];
     }
     return null;
@@ -9802,7 +9802,7 @@ var HTMLFolding = /** @class */ (function () {
                                 var endLine = startLine;
                                 startLine = stackElement.startLine;
                                 if (endLine > startLine && prevStart !== startLine) {
-                                    addRange({ startLine: startLine, endLine: endLine, kind: main/* FoldingRangeKind.Region */.AD.Region });
+                                    addRange({ startLine: startLine, endLine: endLine, kind: main.FoldingRangeKind.Region });
                                 }
                             }
                         }
@@ -9810,7 +9810,7 @@ var HTMLFolding = /** @class */ (function () {
                     else {
                         var endLine = document.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
                         if (startLine < endLine) {
-                            addRange({ startLine: startLine, endLine: endLine, kind: main/* FoldingRangeKind.Comment */.AD.Comment });
+                            addRange({ startLine: startLine, endLine: endLine, kind: main.FoldingRangeKind.Comment });
                         }
                     }
                     break;
@@ -9851,12 +9851,12 @@ var HTMLSelectionRange = /** @class */ (function () {
         for (var index = applicableRanges.length - 1; index >= 0; index--) {
             var range = applicableRanges[index];
             if (!prev || range[0] !== prev[0] || range[1] !== prev[1]) {
-                current = main/* SelectionRange.create */.xm.create(main/* Range.create */.e6.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+                current = main.SelectionRange.create(main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
             }
             prev = range;
         }
         if (!current) {
-            current = main/* SelectionRange.create */.xm.create(main/* Range.create */.e6.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     };
@@ -9870,7 +9870,7 @@ var HTMLSelectionRange = /** @class */ (function () {
             if (currNode.startTagEnd !== currNode.end) {
                 return [[currNode.start, currNode.end]];
             }
-            var closeRange = main/* Range.create */.e6.create(document.positionAt(currNode.startTagEnd - 2), document.positionAt(currNode.startTagEnd));
+            var closeRange = main.Range.create(document.positionAt(currNode.startTagEnd - 2), document.positionAt(currNode.startTagEnd));
             var closeText = document.getText(closeRange);
             // Self-closing element
             if (closeText === '/>') {
@@ -9941,7 +9941,7 @@ var HTMLSelectionRange = /** @class */ (function () {
     };
     ;
     HTMLSelectionRange.prototype.getAttributeLevelRanges = function (document, currNode, currOffset) {
-        var currNodeRange = main/* Range.create */.e6.create(document.positionAt(currNode.start), document.positionAt(currNode.end));
+        var currNodeRange = main.Range.create(document.positionAt(currNode.start), document.positionAt(currNode.end));
         var currNodeText = document.getText(currNodeRange);
         var relativeOffset = currOffset - currNode.start;
         /**

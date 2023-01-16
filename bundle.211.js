@@ -135,7 +135,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "JsonService": () => (/* binding */ JsonService)
 /* harmony export */ });
-/* harmony import */ var _type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8817);
+/* harmony import */ var _type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3561);
 /* harmony import */ var _base_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1378);
 
 
@@ -210,8 +210,8 @@ class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_1__/* .BaseServ
         if (!document) {
             return [];
         }
-        let textEdits = this.$service.format(document, (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .fromRange */ .zq)(range), format);
-        return (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .toAceTextEdits */ .Iw)(textEdits);
+        let textEdits = this.$service.format(document, (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .fromRange */ .zq)(range), format);
+        return (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .toAceTextEdits */ .Iw)(textEdits);
     }
     async doHover(sessionID, position) {
         let document = this.$getDocument(sessionID);
@@ -219,8 +219,8 @@ class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_1__/* .BaseServ
             return null;
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
-        let hover = await this.$service.doHover(document, (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .fromPoint */ .SN)(position), jsonDocument);
-        return (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .toTooltip */ .ph)(hover);
+        let hover = await this.$service.doHover(document, (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .fromPoint */ .SN)(position), jsonDocument);
+        return (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .toTooltip */ .ph)(hover);
     }
     async doValidation(sessionID) {
         let document = this.$getDocument(sessionID);
@@ -229,7 +229,7 @@ class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_1__/* .BaseServ
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
         let diagnostics = this.$service.doValidation(document, jsonDocument, { trailingCommas: this.mode === "json5" ? "ignore" : "error" });
-        return (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .toAnnotations */ .zn)(await diagnostics);
+        return (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .toAnnotations */ .zn)(await diagnostics);
     }
     async doComplete(sessionID, position) {
         let document = this.$getDocument(sessionID);
@@ -237,12 +237,12 @@ class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_1__/* .BaseServ
             return null;
         }
         let jsonDocument = this.$service.parseJSONDocument(document);
-        let completions = await this.$service.doComplete(document, (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .fromPoint */ .SN)(position), jsonDocument);
-        return (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .toCompletions */ .hW)(completions);
+        let completions = await this.$service.doComplete(document, (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .fromPoint */ .SN)(position), jsonDocument);
+        return (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .toCompletions */ .hW)(completions);
     }
     async resolveCompletion(sessionID, completion) {
         let resolvedCompletion = await this.$service.doResolve(completion["item"]);
-        return (0,_type_converters_vscode_converters__WEBPACK_IMPORTED_MODULE_0__/* .toResolvedCompletion */ .GC)(completion, resolvedCompletion);
+        return (0,_type_converters_lsp_converters__WEBPACK_IMPORTED_MODULE_0__/* .toResolvedCompletion */ .GC)(completion, resolvedCompletion);
     }
 }
 
@@ -290,7 +290,7 @@ var CommonConverter;
 
 /***/ }),
 
-/***/ 8817:
+/***/ 3561:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -304,7 +304,8 @@ var CommonConverter;
 /* harmony export */   "zq": () => (/* binding */ fromRange)
 /* harmony export */ });
 /* unused harmony exports toRange, toPoint, getTextEditRange, fromMarkupContent */
-/* harmony import */ var vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1674);
+/* harmony import */ var vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(152);
+/* harmony import */ var vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var ace_code_src_range__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9082);
 /* harmony import */ var ace_code_src_range_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6510);
 /* harmony import */ var _common_converters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8840);
@@ -351,8 +352,14 @@ function toAnnotations(diagnostics) {
     });
 }
 function toCompletions(completionList) {
-    return completionList && completionList.items.map((item) => {
-        let kind = Object.keys(vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__/* .CompletionItemKind */ .cm)[Object.values(vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__/* .CompletionItemKind */ .cm).indexOf(item.kind)];
+    if (!completionList) {
+        return;
+    }
+    if (!Array.isArray(completionList)) {
+        completionList = completionList.items;
+    }
+    return completionList && completionList.map((item) => {
+        let kind = Object.keys(vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.CompletionItemKind)[Object.values(vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.CompletionItemKind).indexOf(item.kind)];
         let text = item.textEdit?.newText ?? item.insertText ?? item.label;
         let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
         let range = getTextEditRange(item.textEdit);
@@ -365,7 +372,7 @@ function toCompletions(completionList) {
             score: null,
             item: item
         };
-        if (item.insertTextFormat == vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__/* .InsertTextFormat.Snippet */ .lO.Snippet) {
+        if (item.insertTextFormat == vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.InsertTextFormat.Snippet) {
             completion["snippet"] = text;
         }
         else {
@@ -405,10 +412,10 @@ function toTooltip(hover) {
     if (!hover) {
         return;
     }
-    if (vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__/* .MarkupContent.is */ .A_.is(hover.contents)) {
+    if (vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     }
-    else if (vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__/* .MarkedString.is */ .oB.is(hover.contents)) {
+    else if (vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.MarkedString.is(hover.contents)) {
         content = { type: _common_converters__WEBPACK_IMPORTED_MODULE_3__/* .CommonConverter.TooltipType.markdown */ .Z.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
     }
     else if (Array.isArray(hover.contents)) {
@@ -431,7 +438,7 @@ function fromMarkupContent(content) {
     if (typeof content === "string") {
         return { type: _common_converters__WEBPACK_IMPORTED_MODULE_3__/* .CommonConverter.TooltipType.plainText */ .Z.TooltipType.plainText, text: content };
     }
-    if (content.kind === vscode_languageserver_types__WEBPACK_IMPORTED_MODULE_0__/* .MarkupKind.Markdown */ .a4.Markdown) {
+    if (content.kind === vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.MarkupKind.Markdown) {
         return { type: _common_converters__WEBPACK_IMPORTED_MODULE_3__/* .CommonConverter.TooltipType.markdown */ .Z.TooltipType.markdown, text: content.value };
     }
     else {
