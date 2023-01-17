@@ -43438,6 +43438,7 @@ var jsonSchema2 = (/* unused pure expression or super */ null && (`  {"type": "o
       "format": "email"
     },
     "favoriteColor": {
+    "description": "Favorite color",
       "$ref": "colors.schema.json#/definitions/color"
     }
   },
@@ -43526,46 +43527,74 @@ var dom = __webpack_require__(6359);
 var ace = __webpack_require__(9100);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
 
-var description_tooltip_event = __webpack_require__(7989);
-var { Tooltip } = __webpack_require__(962);
+let description_tooltip_event = __webpack_require__(7989);
+let { Tooltip } = __webpack_require__(962);
 class DescriptionTooltip extends Tooltip {
     provider;
-    $timer;
+    $activeEditor;
+    $mouseMoveTimer;
+    $showTimer;
     row;
     column;
     constructor(provider) {
         super();
         this.provider = provider;
-        Tooltip.call(this, provider.editor.container);
-        this.onMouseMove = this.onMouseMove.bind(this);
-        this.onMouseOut = this.onMouseOut.bind(this);
-        this.$hide = this.$hide.bind(this);
-        this.onTooltipMouseOut = this.onTooltipMouseOut.bind(this);
-        description_tooltip_event.addListener(this.provider.editor.renderer.scroller, "mousemove", this.onMouseMove);
-        description_tooltip_event.addListener(this.provider.editor.renderer.scroller, "mouseout", this.onMouseOut);
-        description_tooltip_event.addListener(this.provider.editor.renderer.scroller, "mousedown", this.$hide);
+        Tooltip.call(this, document.body);
         description_tooltip_event.addListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
-        this.provider.editor.on("change", this.$hide);
-        this.provider.editor.on("mousewheel", this.$hide);
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
     }
-    update() {
-        var renderer = this.provider.editor.renderer;
-        var screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
-        this.provider.doHover(screenPos, (hover) => {
-            clearTimeout(this.$timer);
+    registerEditor(editor) {
+        editor.on("mousemove", this.onMouseMove);
+    }
+    $registerEditorEvents(editor) {
+        this.$activeEditor = editor;
+        editor.on("change", this.$hide);
+        editor.on("mousewheel", this.$hide);
+        //@ts-ignore
+        editor.on("mousedown", this.$hide);
+        editor.container.addEventListener("mouseout", this.onTooltipMouseOut);
+    }
+    $removeEditorEvents() {
+        this.$activeEditor.off("change", this.$hide);
+        this.$activeEditor.off("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.off("mousedown", this.$hide);
+        this.$activeEditor.container.removeEventListener("mouseout", this.onTooltipMouseOut);
+        this.$activeEditor = null;
+    }
+    update(editor) {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.doHover(editor);
+        }
+        else {
+            this.$mouseMoveTimer = setTimeout(() => {
+                this.doHover(editor);
+                this.$mouseMoveTimer = null;
+            }, 500);
+        }
+    }
+    ;
+    doHover = (editor) => {
+        if (!editor) {
+            console.log(editor);
+        }
+        let renderer = editor.renderer;
+        let screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
+        let session = editor.session;
+        this.provider.doHover(session, screenPos, (hover) => {
             let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();
                 return;
             }
-            var descriptionText = description.text;
-            var session = this.provider.editor.session;
-            var docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
-            var token = session.getTokenAt(docPos.row, docPos.column + 1);
-            var row = description.range?.start.row ?? docPos.row;
-            var column = description.range?.start.column ?? token.start;
+            let descriptionText = description.text;
+            let docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
+            let token = session.getTokenAt(docPos.row, docPos.column + 1);
+            let row = description.range?.start.row ?? docPos.row;
+            let column = description.range?.start.column ?? token.start;
             if (this.descriptionText != descriptionText) {
                 this.hide();
                 this.setHtml(descriptionText);
@@ -43576,64 +43605,72 @@ class DescriptionTooltip extends Tooltip {
             }
             this.row = row;
             this.column = column;
-            this.$timer = setTimeout(() => {
-                var position = renderer.textToScreenCoordinates(row, column);
-                var cursorPos = this.provider.editor.getCursorPosition();
-                this.show(null, position.pageX, position.pageY);
-                var labelHeight = this.getElement().getBoundingClientRect().height;
-                let rect = renderer.scroller.getBoundingClientRect();
-                var isTopdown = true;
-                if (row > cursorPos.row)
-                    // don't obscure cursor
-                    isTopdown = true;
-                else if (row < cursorPos.row)
-                    // don't obscure cursor
-                    isTopdown = false;
-                if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
-                    // not enough space above us
-                    isTopdown = true;
-                else if (position.pageY + labelHeight > rect.bottom)
-                    isTopdown = false;
-                if (!isTopdown)
-                    position.pageY -= labelHeight;
-                else
-                    position.pageY += renderer.lineHeight;
-                this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-                this.show(null, position.pageX, position.pageY);
-            }, 500);
+            if (this.$mouseMoveTimer) {
+                this.$show(editor);
+            }
+            else {
+                this.$showTimer = setTimeout(() => {
+                    this.$show(editor);
+                    this.$showTimer = null;
+                }, 500);
+            }
         });
-    }
-    ;
-    onMouseMove(e) {
+    };
+    $show = (editor) => {
+        let renderer = editor.renderer;
+        let position = renderer.textToScreenCoordinates(this.row, this.column);
+        let cursorPos = editor.getCursorPosition();
+        this.show(null, position.pageX, position.pageY);
+        let labelHeight = this.getElement().getBoundingClientRect().height;
+        let rect = renderer.scroller.getBoundingClientRect();
+        let isTopdown = true;
+        if (this.row > cursorPos.row)
+            // don't obscure cursor
+            isTopdown = true;
+        else if (this.row < cursorPos.row)
+            // don't obscure cursor
+            isTopdown = false;
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
+            // not enough space above us
+            isTopdown = true;
+        else if (position.pageY + labelHeight > rect.bottom)
+            isTopdown = false;
+        if (!isTopdown)
+            position.pageY -= labelHeight;
+        else
+            position.pageY += renderer.lineHeight;
+        this.$registerEditorEvents(editor);
+        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+        this.show(null, position.pageX, position.pageY);
+    };
+    onMouseMove = (e) => {
         this.x = e.clientX;
         this.y = e.clientY;
-        this.update();
-    }
-    ;
-    onMouseOut(e) {
+        this.update(e["editor"]);
+    };
+    onMouseOut = (e) => {
         if (e && e.relatedTarget == this.getElement())
             return;
         this.$hide();
-    }
-    ;
-    onTooltipMouseOut(e) {
+    };
+    onTooltipMouseOut = (e) => {
+        if (!e.relatedTarget || e.relatedTarget == this.getElement())
+            return;
         //@ts-ignore
         if (e && e.currentTarget.contains(e.relatedTarget))
             return;
-        this.onMouseMove(e);
-    }
-    $hide() {
+        //@ts-ignore
+        if (!e.relatedTarget.classList.contains("ace_content"))
+            this.$hide();
+    };
+    $hide = () => {
         clearTimeout(this.$timer);
+        this.$removeEditorEvents();
         this.hide();
-    }
+    };
     destroy() {
         this.$hide();
-        description_tooltip_event.removeListener(this.provider.editor.renderer.scroller, "mousemove", this.onMouseMove);
-        description_tooltip_event.removeListener(this.provider.editor.renderer.scroller, "mouseout", this.onMouseOut);
-        description_tooltip_event.removeListener(this.provider.editor.renderer.scroller, "mousedown", this.$hide);
         description_tooltip_event.removeListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
-        this.provider.editor.off("change", this.$hide);
-        this.provider.editor.off("mousewheel", this.$hide);
     }
     ;
 }
@@ -43675,102 +43712,50 @@ var CommonConverter;
 
 let showdown = __webpack_require__(3787);
 class LanguageProvider {
-    editor;
+    $activeEditor;
     $descriptionTooltip;
     $markdownConverter;
     $messageController;
-    $options;
-    $fileName;
-    deltaQueue;
-    static extensions = {
-        "typescript": "ts",
-        "javascript": "js"
-    };
-    constructor(editor, messageController, options, markdownConverter) {
-        this.editor = editor;
+    $sessionLanguageProviders = {};
+    $editors = [];
+    constructor(messageController, markdownConverter) {
         this.$messageController = messageController;
-        this.$options = options;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
-        this.$fileName = this.editor.session["id"] + "." + LanguageProvider.getExtension(this.$mode);
+        this.$descriptionTooltip = new DescriptionTooltip(this);
     }
-    static getExtension(mode) {
-        mode = mode.replace("ace/mode/", "");
-        return this.extensions[mode] ?? mode;
-    }
-    set options(options) {
-        this.$options = options;
-        this.$changeOptions();
-    }
-    setOption(optionName, optionValue) {
-        this.$options[optionName] = optionValue;
-        this.$changeOptions();
-    }
-    $changeListener(delta) {
-        if (!this.deltaQueue) {
-            this.deltaQueue = [];
-            setTimeout(this.$sendDeltaQueue, 0);
-        }
-        if (delta.action == "insert")
-            this.deltaQueue.push(delta.start, delta.lines);
-        else
-            this.deltaQueue.push(delta.start, delta.end);
-    }
-    $sendDeltaQueue = () => {
-        let deltas = this.deltaQueue;
-        if (!deltas)
+    $registerSession = (session, options) => {
+        if (!session)
             return;
-        this.deltaQueue = null;
-        this.$messageController.change(this.$fileName, deltas, this.editor.session.getValue(), this.editor.session.doc.getLength(), this.validate);
+        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
     };
-    get $editorOptions() {
-        return this.editor.getOptions();
+    $getSessionLanguageProvider(session) {
+        return this.$sessionLanguageProviders[session["id"]];
     }
-    get $mode() {
-        return this.$editorOptions.mode;
+    $getFileName(session) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        return sessionLanguageProvider.fileName;
     }
-    get $format() {
-        let editorOptions = this.$editorOptions;
-        return {
-            tabSize: editorOptions.tabSize,
-            insertSpaces: editorOptions.useSoftTabs
-        };
+    registerEditor(editor) {
+        if (!this.$editors.includes(editor))
+            this.$registerEditor(editor);
+        this.$registerSession(editor.session);
     }
-    async start() {
-        await new Promise((resolve) => {
-            this.$messageController.init(this.$fileName, this.editor.getValue(), this.$mode, this.$options, () => {
-                this.$descriptionTooltip = new DescriptionTooltip(this);
-                this.editor.session.doc.on("change", this.$changeListener.bind(this), true);
-                this.$onInit();
-                // @ts-ignore
-                this.editor.on("changeMode", () => {
-                    this.$messageController.changeMode(this.$fileName, this.editor.getValue(), this.$mode, this.$options, this.$onInit);
-                });
-                resolve(true);
-            }, (annotations) => {
-                this.editor.session.clearAnnotations();
-                if (annotations && annotations.length > 0) {
-                    this.editor.session.setAnnotations(annotations);
-                }
-            });
+    $registerEditor(editor) {
+        this.$editors.push(editor);
+        editor.on("changeSession", ({ session }) => this.$registerSession(session));
+        this.$registerCompleters(editor);
+        this.$descriptionTooltip.registerEditor(editor);
+        this.$activeEditor ??= editor;
+        editor.on("focus", () => {
+            this.$activeEditor = editor;
         });
     }
-    $changeOptions = () => {
-        this.$messageController.changeOptions(this.$fileName, this.$options, this.$onInit);
-    };
-    $onInit = () => {
-        this.validate();
-        this.registerCompleters();
-    };
-    validate = () => {
-        this.$messageController.doValidation(this.$fileName, (annotations) => {
-            this.editor.session.clearAnnotations();
-            if (annotations && annotations.length > 0) {
-                this.editor.session.setAnnotations(annotations);
-            }
-        });
-    };
-    doHover(position, callback) {
-        this.$messageController.doHover(this.$fileName, position, callback);
+    setOptions(session, options) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        sessionLanguageProvider.setOptions(options);
+    }
+    doHover(session, position, callback) {
+        this.$messageController.doHover(this.$getFileName(session), position, callback);
     }
     getTooltipText(hover) {
         if (!hover)
@@ -43779,38 +43764,26 @@ class LanguageProvider {
         return { text: text, range: hover.range };
     }
     format = () => {
-        let selectionRanges = this.editor.getSelection().getAllRanges();
-        let $format = this.$format;
-        if (!selectionRanges || selectionRanges[0].isEmpty()) {
-            let row = this.editor.session.getLength();
-            let column = this.editor.session.getLine(row).length - 1;
-            selectionRanges = [new ace.Range(0, 0, row, column)];
-        }
-        for (let range of selectionRanges) {
-            this.$messageController.format(this.$fileName, range, $format, this.$applyFormat);
-        }
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.$activeEditor.session);
+        sessionLanguageProvider.format();
     };
-    $applyFormat = (edits) => {
-        for (let edit of edits) {
-            this.editor.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
-            // mirror Range
-        }
-    };
-    doComplete(callback) {
-        let cursor = this.editor.getCursorPosition();
-        this.$messageController.doComplete(this.$fileName, cursor, callback);
+    doComplete(editor, session, callback) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doComplete(this.$getFileName(session), cursor, callback);
     }
-    registerCompleters() {
-        this.editor.completers = [
+    $registerCompleters(editor) {
+        editor.completers = [
             {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
-                    this.doComplete((completions) => {
+                    this.doComplete(editor, session, (completions) => {
+                        let fileName = this.$getFileName(session);
+                        completions.forEach((item) => item["fileName"] = fileName);
                         callback(null, CommonConverter.normalizeRanges(completions));
                     });
                 },
                 getDocTooltip: (item) => {
                     if (!item["isResolved"]) {
-                        this.$messageController.doResolve(this.$fileName, item, (completion) => {
+                        this.$messageController.doResolve(item["fileName"], item, (completion) => {
                             item["isResolved"] = true;
                             item.docText = completion.docText;
                             if (completion.docHTML) {
@@ -43819,7 +43792,7 @@ class LanguageProvider {
                             else if (completion["docMarkdown"]) {
                                 item.docHTML = CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
                             }
-                            this.editor["completer"].updateDocTooltip();
+                            editor["completer"].updateDocTooltip();
                         });
                     }
                     return item;
@@ -43828,7 +43801,118 @@ class LanguageProvider {
         ];
     }
     dispose() {
-        this.$messageController.dispose(this.$fileName);
+        // this.$messageController.dispose(this.$fileName);
+    }
+}
+class SessionLanguageProvider {
+    session;
+    fileName;
+    $messageController;
+    $deltaQueue;
+    $isConnected = false;
+    $modeIsChanged = false;
+    $options;
+    extensions = {
+        "typescript": "ts",
+        "javascript": "js"
+    };
+    constructor(session, messageController, options) {
+        this.$messageController = messageController;
+        this.session = session;
+        this.initFileName();
+        session.doc.on("change", this.$changeListener, true);
+        // @ts-ignore
+        session.on("changeMode", this.$changeMode);
+        this.$messageController.init(this.fileName, session.getValue(), this.$mode, options, this.$connected, this.$showAnnotations);
+    }
+    $connected = () => {
+        this.$isConnected = true;
+        if (this.$modeIsChanged)
+            this.$changeMode();
+        if (this.$deltaQueue)
+            this.$sendDeltaQueue();
+        if (this.$options)
+            this.setOptions(this.$options);
+    };
+    $changeMode = () => {
+        if (!this.$isConnected) {
+            this.$modeIsChanged = true;
+            return;
+        }
+        this.$deltaQueue = [];
+        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
+    };
+    initFileName() {
+        this.fileName = this.session["id"] + "." + this.$extension;
+    }
+    get $extension() {
+        let mode = this.$mode.replace("ace/mode/", "");
+        return this.extensions[mode] ?? mode;
+    }
+    get $mode() {
+        return this.session["$modeId"];
+    }
+    get $format() {
+        return {
+            tabSize: this.session.getTabSize(),
+            insertSpaces: this.session.getUseSoftTabs()
+        };
+    }
+    $changeListener = (delta) => {
+        if (!this.$deltaQueue) {
+            this.$deltaQueue = [];
+            setTimeout(this.$sendDeltaQueue, 0);
+        }
+        if (delta.action == "insert")
+            this.$deltaQueue.push(delta.start, delta.lines);
+        else
+            this.$deltaQueue.push(delta.start, delta.end);
+    };
+    $sendDeltaQueue = () => {
+        let deltas = this.$deltaQueue;
+        if (!deltas)
+            return;
+        this.$deltaQueue = null;
+        if (deltas.length)
+            this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
+    };
+    $showAnnotations = (annotations) => {
+        this.session.clearAnnotations();
+        if (annotations && annotations.length > 0) {
+            this.session.setAnnotations(annotations);
+        }
+    };
+    setOptions(options) {
+        if (!this.$isConnected) {
+            this.$options = options;
+            return;
+        }
+        this.$messageController.changeOptions(this.fileName, options);
+    }
+    validate = () => {
+        this.$messageController.doValidation(this.fileName, this.$showAnnotations);
+    };
+    format = () => {
+        let selectionRanges = this.session.getSelection().getAllRanges();
+        let $format = this.$format;
+        if (!selectionRanges || selectionRanges[0].isEmpty()) {
+            let row = this.session.getLength();
+            let column = this.session.getLine(row).length - 1;
+            selectionRanges = [new ace.Range(0, 0, row, column)];
+        }
+        for (let range of selectionRanges) {
+            this.$messageController.format(this.fileName, range, $format, this.$applyFormat);
+        }
+    };
+    $applyFormat = (edits) => {
+        for (let edit of edits) {
+            this.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
+            // mirror Range
+        }
+    };
+    doComplete(editor, callback) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doComplete(this.fileName, cursor, callback);
     }
 }
 
@@ -43910,21 +43994,21 @@ class DeltasMessage extends BaseMessage {
 class ChangeModeMessage extends BaseMessage {
     type = MessageType.changeMode;
     mode;
-    options;
     value;
-    constructor(sessionId, value, mode, options) {
+    constructor(sessionId, value, mode) {
         super(sessionId);
         this.value = value;
         this.mode = mode;
-        this.options = options;
     }
 }
 class ChangeOptionsMessage extends BaseMessage {
     type = MessageType.changeOptions;
     options;
-    constructor(sessionId, options) {
+    merge;
+    constructor(sessionId, options, merge = false) {
         super(sessionId);
         this.options = options;
+        this.merge = merge;
     }
 }
 class DisposeMessage extends BaseMessage {
@@ -43977,8 +44061,9 @@ class MessageController {
             this["_signal"](message.type + "-" + message.sessionId, message.value);
         };
     }
-    init(sessionId, value, mode, options, callback) {
-        this.postMessage(new InitMessage(sessionId, value, mode, options), callback);
+    init(sessionId, value, mode, options, initCallback, validationCallback) {
+        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+        this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
     }
     doValidation(sessionId, callback) {
         this.postMessage(new ValidateMessage(sessionId), callback);
@@ -44005,11 +44090,11 @@ class MessageController {
         }
         this.postMessage(message, callback);
     }
-    changeMode(sessionId, value, mode, options, callback) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode, options), callback);
+    changeMode(sessionId, value, mode, callback) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
     }
-    changeOptions(sessionId, options, callback) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options), callback);
+    changeOptions(sessionId, options, callback, merge = false) {
+        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
     }
     dispose(sessionId, callback) {
         this.postMessage(new DisposeMessage(sessionId), callback);
@@ -44617,7 +44702,7 @@ class MessageControllerWS extends events.EventEmitter {
         };
         this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
     }
-    changeMode(sessionId, value, mode, options, callback) {
+    changeMode(sessionId, value, mode, callback) {
     }
     changeOptions(sessionId, options, callback) {
     }
@@ -44671,7 +44756,6 @@ var textmate_namespaceObject = /*#__PURE__*/__webpack_require__.t(textmate, 2);
 
 
 
-
 function createCloseButton(el) {
     let closeButton = document.createElement("span");
     closeButton.innerText = "\u00D7";
@@ -44688,7 +44772,7 @@ function createModeNameText(el, name) {
     el.appendChild(modeName);
     return modeName;
 }
-function createEditorWithLSP(mode, i, messageController) {
+function createEditorWithLSP(mode, i, languageProvider) {
     let el = document.createElement("div");
     let modeName = createModeNameText(el, mode.name);
     let closeButton = createCloseButton(el);
@@ -44708,15 +44792,10 @@ function createEditorWithLSP(mode, i, messageController) {
     editor.setOptions({ "customScrollbar": true });
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
+    languageProvider.registerEditor(editor);
     let options = mode.options ?? {};
-    let provider = new LanguageProvider(editor, messageController, options);
-    provider.start();
-    editor.on("focus", () => {
-        window["provider"] = provider;
-    });
+    languageProvider.setOptions(editor.session, options);
     closeButton.onclick = () => {
-        provider.dispose();
-        provider = null;
         editor.destroy();
         editor.container.remove();
         modeName.remove();
@@ -44742,17 +44821,18 @@ let modes = [
     { name: "json", mode: json/* Mode */.A, content: jsonContent, options: { jsonSchemaUri: "common-form.schema.json" } },
     { name: "json5", mode: json5/* Mode */.A, content: json5Content, options: { jsonSchemaUri: "json5Schema" } },
 ];
+let languageProvider = new LanguageProvider(messageController);
 let i = 0;
 for (let mode of modes) {
-    createEditorWithLSP(mode, i, messageController);
+    createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
 let menuKb = new hash_handler.HashHandler([
     {
-        bindKey: "Ctrl-`",
+        bindKey: "Ctrl-Shift-B",
         name: "format",
         exec: function () {
-            window["provider"].format();
+            languageProvider.format();
         }
     }
 ]);
@@ -44761,6 +44841,7 @@ lib_event.addCommandKeyListener(window, function (e, hashId, keyCode) {
     let command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
         command.exec();
+        e.preventDefault();
     }
 });
 

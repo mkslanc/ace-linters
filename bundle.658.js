@@ -7,6 +7,8 @@
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "b": () => (/* binding */ BaseService)
 /* harmony export */ });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3357);
+
 class BaseService {
     mode;
     documents = {};
@@ -51,8 +53,8 @@ class BaseService {
     setGlobalOptions(options) {
         this.globalOptions = options ?? {};
     }
-    setOptions(sessionID, options) {
-        this.options[sessionID] = options;
+    setOptions(sessionID, options, merge = false) {
+        this.options[sessionID] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_0__/* .mergeObjects */ .P)(options, this.options[sessionID]) : options;
     }
     getOption(sessionID, optionName) {
         if (this.options[sessionID] && this.options[sessionID][optionName]) {
