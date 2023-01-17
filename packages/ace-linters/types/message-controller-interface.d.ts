@@ -17,7 +17,7 @@ export interface IMessageController {
 
     change(sessionId: string, deltas: any[], value: string, docLength: number, callback?: () => void): void;
 
-    changeMode(sessionId: string, value: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void);
+    changeMode(sessionId: string, value: string, mode: string, callback?: () => void);
 
     changeOptions(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void);
 

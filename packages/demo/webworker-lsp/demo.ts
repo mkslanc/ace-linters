@@ -26,7 +26,7 @@ import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
-import {registerStyles, MessageController} from "ace-linters";
+import {registerStyles, MessageController, LanguageProvider} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";
@@ -76,11 +76,12 @@ let modes = [
     {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}}, //TODO:
     {name: "lua", mode: LuaMode, content: luaContent}
 
-]
+];
 
+let languageProvider = new LanguageProvider(messageController);
 let i = 0;
 for (let mode of modes) {
-    createEditorWithLSP(mode, i, messageController);
+    createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
 messageController.setGlobalOptions("json", {
@@ -92,10 +93,10 @@ messageController.setGlobalOptions("json", {
 
 let menuKb = new HashHandler([
     {
-        bindKey: "Ctrl-`",
+        bindKey: "Ctrl-Shift-B",
         name: "format",
         exec: function () {
-            window["provider"].format();
+            languageProvider.format();
         }
     }
 ]);
@@ -105,5 +106,6 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
     let command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
         command.exec();
+        e.preventDefault();
     }
 });

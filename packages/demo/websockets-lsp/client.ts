@@ -7,7 +7,7 @@ import {jsonSchema, jsonContent, jsonSchema2} from "../webworker-lsp/docs-exampl
 
 import {json5Content, json5Schema} from "../webworker-lsp/docs-example/json5-example";
 
-import {registerStyles} from "ace-linters";
+import {LanguageProvider, registerStyles} from "ace-linters";
 import {MessageControllerWS} from "ace-linters/message-controller-ws";
 import {createEditorWithLSP} from "../utils";
 
@@ -21,18 +21,19 @@ let modes = [
     {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchemaUri: "json5Schema"}},
 ]
 
+let languageProvider = new LanguageProvider(messageController);
 let i = 0;
 for (let mode of modes) {
-    createEditorWithLSP(mode, i, messageController);
+    createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
 
 let menuKb = new HashHandler([
     {
-        bindKey: "Ctrl-`",
+        bindKey: "Ctrl-Shift-B",
         name: "format",
         exec: function () {
-            window["provider"].format();
+            languageProvider.format();
         }
     }
 ]);
@@ -42,5 +43,6 @@ event.addCommandKeyListener(window, function (e, hashId, keyCode) {
     let command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
         command.exec();
+        e.preventDefault();
     }
 });

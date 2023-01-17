@@ -19,6 +19,7 @@ module.exports = (env, argv) => {
             "ace-linters": './index.ts',
             "service-manager": './services/service-manager.ts',
             "html-service": './services/html/html-service.ts',
+            "css-service": './services/css/css-service.ts',
             "json-service": './services/json/json-service.ts',
             "lua-service": './services/lua/lua-service.ts',
             "typescript-service": './services/typescript/typescript-service.ts'

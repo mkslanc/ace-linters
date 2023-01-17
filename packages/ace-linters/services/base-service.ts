@@ -1,6 +1,7 @@
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {Ace} from "ace-code";
 import {AceLinters} from "../types";
+import {mergeObjects} from "../utils";
 
 export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions = AceLinters.ServiceOptions> implements AceLinters.LanguageService {
     abstract $service;
@@ -56,8 +57,8 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         this.globalOptions = options ?? {} as OptionsType;
     }
 
-    setOptions(sessionID: string, options: OptionsType) {
-        this.options[sessionID] = options;
+    setOptions(sessionID: string, options: OptionsType, merge = false) {
+        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
     }
 
     getOption<T extends keyof OptionsType>(sessionID: string, optionName: T): OptionsType[T] {

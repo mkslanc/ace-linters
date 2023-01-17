@@ -6,7 +6,7 @@ import {mergeObjects} from "../utils";
 import {MessageType} from "../message-types";
 
 interface ServiceData {
-    module: any,
+    module: () => any,
     className: string,
     modes: string,
     serviceInstance?: LanguageService,
@@ -18,6 +18,23 @@ export class ServiceManager {
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
+        let doValidation = (sessionID: string, serviceInstance?: LanguageService) => {
+            serviceInstance ??= this.getServiceInstance(sessionID);
+            if (!serviceInstance)
+                return;
+            let postMessage = {
+                "type": MessageType.validate,
+            };
+            let sessionIDList = Object.keys(serviceInstance.documents);
+            for (let sessionID of sessionIDList) {
+                serviceInstance.doValidation(sessionID).then((result) => {
+                    postMessage["sessionId"] = sessionID;
+                    postMessage["value"] = result;
+                    ctx.postMessage(postMessage);
+                });
+
+            }
+        }
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
             let sessionID = message.sessionId;
@@ -25,36 +42,42 @@ export class ServiceManager {
                 "type": message.type,
                 "sessionId": sessionID,
             };
+            let serviceInstance = this.getServiceInstance(sessionID);
             switch (message["type"] as MessageType) {
                 case MessageType.format:
-                    postMessage["value"] = this.getServiceInstance(sessionID)?.format(sessionID, message.value, message.format);
+                    postMessage["value"] = serviceInstance?.format(sessionID, message.value, message.format);
                     break;
                 case MessageType.complete:
-                    postMessage["value"] = await this.getServiceInstance(sessionID)?.doComplete(sessionID, message.value);
+                    postMessage["value"] = await serviceInstance?.doComplete(sessionID, message.value);
                     break;
                 case MessageType.resolveCompletion:
-                    postMessage["value"] = await this.getServiceInstance(sessionID)?.resolveCompletion(sessionID, message.value);
+                    postMessage["value"] = await serviceInstance?.resolveCompletion(sessionID, message.value);
                     break;
                 case MessageType.change:
-                    this.getServiceInstance(sessionID)?.setValue(sessionID, message.value);
+                    serviceInstance?.setValue(sessionID, message.value);
+                    doValidation(sessionID, serviceInstance);
                     break;
                 case MessageType.applyDelta:
-                    this.getServiceInstance(sessionID)?.applyDeltas(sessionID, message.value);
+                    serviceInstance?.applyDeltas(sessionID, message.value);
+                    doValidation(sessionID, serviceInstance);
                     break;
                 case MessageType.hover:
-                    postMessage["value"] = await this.getServiceInstance(sessionID)?.doHover(sessionID, message.value);
+                    postMessage["value"] = await serviceInstance?.doHover(sessionID, message.value);
                     break;
                 case MessageType.validate:
-                    postMessage["value"] = await this.getServiceInstance(sessionID)?.doValidation(sessionID);
+                    postMessage["value"] = await serviceInstance?.doValidation(sessionID);
                     break;
                 case MessageType.init: //this should be first message
                     await this.addDocument(sessionID, message.value, message.mode, message.options);
+                    doValidation(sessionID);
                     break;
                 case MessageType.changeMode:
                     await this.changeDocumentMode(sessionID, message.value, message.mode, message.options);
+                    doValidation(sessionID, serviceInstance);
                     break;
                 case MessageType.changeOptions:
-                    this.getServiceInstance(sessionID)?.setOptions(sessionID, message.options);
+                    serviceInstance?.setOptions(sessionID, message.options);
+                    doValidation(sessionID, serviceInstance);
                     break;
                 case MessageType.dispose:
                     this.removeDocument(sessionID);
@@ -70,7 +93,7 @@ export class ServiceManager {
 
     private static async $initServiceInstance(service: ServiceData) {
         try {
-            service.serviceInstance = new (await service.module)[service.className](service.modes);
+            service.serviceInstance = new (await service.module())[service.className](service.modes);
         } catch (e) {
             console.log("Couldn't resolve language service for " + service.modes);//TODO
         }
@@ -90,16 +113,13 @@ export class ServiceManager {
         let service = this.$services[serviceName];
         if (!service)
             return;
-        service.options = options;
+        service.options = merge ? mergeObjects(options, service.options) : options;
         if (service.serviceInstance) {
-            if (merge) {
-                options = mergeObjects(options, service.serviceInstance.globalOptions);
-            }
-            service.serviceInstance.setGlobalOptions(options);
+            service.serviceInstance.setGlobalOptions(service.options);
         }
     }
 
-    async addDocument(sessionID: string, documentValue: string, mode: string, options: ServiceOptions) {
+    async addDocument(sessionID: string, documentValue: string, mode: string, options?: ServiceOptions) {
         if (!mode || !/^ace\/mode\//.test(mode))
             return;
 

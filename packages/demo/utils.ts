@@ -23,7 +23,7 @@ export function createModeNameText(el, name) {
     return modeName;
 }
 
-export function createEditorWithLSP(mode, i, messageController) {
+export function createEditorWithLSP(mode, i: number, languageProvider: LanguageProvider) {
     let el = document.createElement("div");
     let modeName = createModeNameText(el, mode.name);
     let closeButton = createCloseButton(el);
@@ -44,16 +44,13 @@ export function createEditorWithLSP(mode, i, messageController) {
     editor.setOptions({"customScrollbar": true})
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
+
+    languageProvider.registerEditor(editor);
+
     let options = mode.options ?? {};
-    let provider = new LanguageProvider(editor, messageController, options);
-    provider.start();
-    editor.on("focus", () => {
-        window["provider"] = provider;
-    });
+    languageProvider.setOptions(editor.session, options);
 
     closeButton.onclick = () => {
-        provider.dispose();
-        provider = null;
         editor.destroy();
         editor.container.remove();
         modeName.remove();
