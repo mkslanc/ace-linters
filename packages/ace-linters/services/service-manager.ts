@@ -6,7 +6,7 @@ import {mergeObjects} from "../utils";
 import {MessageType} from "../message-types";
 
 interface ServiceData {
-    module: any,
+    module: () => any,
     className: string,
     modes: string,
     serviceInstance?: LanguageService,
@@ -93,7 +93,7 @@ export class ServiceManager {
 
     private static async $initServiceInstance(service: ServiceData) {
         try {
-            service.serviceInstance = new (await service.module)[service.className](service.modes);
+            service.serviceInstance = new (await service.module())[service.className](service.modes);
         } catch (e) {
             console.log("Couldn't resolve language service for " + service.modes);//TODO
         }
