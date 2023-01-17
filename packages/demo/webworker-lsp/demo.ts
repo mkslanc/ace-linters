@@ -26,41 +26,10 @@ import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
-import {registerStyles, MessageController, LanguageProvider} from "ace-linters";
+import {LanguageProvider} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";
-
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
-let messageController = new MessageController(worker);
-
-messageController.setGlobalOptions("typescript", {
-    compilerOptions: {
-        allowJs: true,
-        target: ScriptTarget.ESNext,
-        jsx: JsxEmit.Preserve
-    }
-});
-
-messageController.setGlobalOptions("json", {
-    jsonSchemas: [
-        {
-            uri: "common-form.schema.json",
-            schema: jsonSchema2
-        }
-    ]
-});
-
-messageController.setGlobalOptions("json5", {
-    jsonSchemas: [
-        {
-            uri: "json5Schema",
-            schema: json5Schema
-        }
-    ]
-});
-
-registerStyles();
 
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
@@ -77,14 +46,41 @@ let modes = [
     {name: "lua", mode: LuaMode, content: luaContent}
 
 ];
+let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = new LanguageProvider(messageController);
+let languageProvider = LanguageProvider.for(worker);
+languageProvider.setGlobalOptions("typescript", {
+    compilerOptions: {
+        allowJs: true,
+        target: ScriptTarget.ESNext,
+        jsx: JsxEmit.Preserve
+    }
+});
+
+languageProvider.setGlobalOptions("json", {
+    jsonSchemas: [
+        {
+            uri: "common-form.schema.json",
+            schema: jsonSchema2
+        }
+    ]
+});
+
+languageProvider.setGlobalOptions("json5", {
+    jsonSchemas: [
+        {
+            uri: "json5Schema",
+            schema: json5Schema
+        }
+    ]
+});
+
 let i = 0;
 for (let mode of modes) {
     createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
-messageController.setGlobalOptions("json", {
+languageProvider.setGlobalOptions("json", {
     jsonSchemas: [{
         uri: "colors.schema.json",
         schema: jsonSchema

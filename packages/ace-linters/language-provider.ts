@@ -12,6 +12,9 @@ import Editor = Ace.Editor;
 import EditSession = Ace.EditSession;
 import Completion = Ace.Completion;
 import Annotation = Ace.Annotation;
+import {MessageControllerWS} from "./message-controller-ws";
+import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
+import {MessageController} from "./message-controller";
 
 let showdown = require('showdown');
 
@@ -23,10 +26,20 @@ export class LanguageProvider {
     private $sessionLanguageProviders: {[sessionID: string]: SessionLanguageProvider} = {};
     private $editors: Editor[] = [];
 
-    constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
+    private constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
         this.$messageController = messageController;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
         this.$descriptionTooltip = new DescriptionTooltip(this);
+    }
+
+    static for(mode: Worker | WebSocket, markdownConverter?: MarkDownConverter) {
+        let messageController: IMessageController;
+        if (mode instanceof Worker) {
+            messageController = new MessageController(mode);
+        } else {
+            messageController = new MessageControllerWS(mode);
+        }
+        return new LanguageProvider(messageController, markdownConverter);
     }
 
     private $registerSession = (session?: EditSession, options?: ServiceOptions) => {
@@ -64,6 +77,10 @@ export class LanguageProvider {
     setOptions<OptionsType extends ServiceOptions>(session: EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
+    }
+
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
+        this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
     doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip) => void) {

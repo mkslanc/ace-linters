@@ -92,11 +92,8 @@ export class ServiceManager {
     }
 
     private static async $initServiceInstance(service: ServiceData) {
-        try {
-            service.serviceInstance = new (await service.module())[service.className](service.modes);
-        } catch (e) {
-            console.log("Couldn't resolve language service for " + service.modes);//TODO
-        }
+        let module = await service.module();
+        service.serviceInstance = new module[service.className](service.modes);
         service.serviceInstance.setGlobalOptions(service.options);
     }
 

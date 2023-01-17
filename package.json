@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "0.0.4",
+  "version": "0.1.1",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server"
