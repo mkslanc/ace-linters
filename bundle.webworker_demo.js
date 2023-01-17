@@ -32868,7 +32868,7 @@ module.exports = webpackEmptyContext;
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_sourceMaps_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".ace_tooltip > p {\n    margin: 0;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}", "",{"version":3,"sources":["webpack://./packages/ace-linters/css/linters.css"],"names":[],"mappings":"AAAA;IACI,SAAS;AACb;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB","sourcesContent":[".ace_tooltip > p {\n    margin: 0;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, ".ace_tooltip > p {\n    margin: 0;\n    font-size: 12px;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}\n", "",{"version":3,"sources":["webpack://./packages/ace-linters/css/linters.css"],"names":[],"mappings":"AAAA;IACI,SAAS;IACT,eAAe;AACnB;;AAEA;IACI,kBAAkB;IAClB,eAAe;AACnB","sourcesContent":[".ace_tooltip > p {\n    margin: 0;\n    font-size: 12px;\n}\n\n.ace_tooltip > code, .ace_tooltip > * > code {\n    font-style: italic;\n    font-size: 11px;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
