@@ -43706,425 +43706,6 @@ var CommonConverter;
     })(TooltipType = CommonConverter.TooltipType || (CommonConverter.TooltipType = {}));
 })(CommonConverter || (CommonConverter = {}));
 
-;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
-
-
-
-let showdown = __webpack_require__(3787);
-class LanguageProvider {
-    $activeEditor;
-    $descriptionTooltip;
-    $markdownConverter;
-    $messageController;
-    $sessionLanguageProviders = {};
-    $editors = [];
-    constructor(messageController, markdownConverter) {
-        this.$messageController = messageController;
-        this.$markdownConverter = markdownConverter ?? new showdown.Converter();
-        this.$descriptionTooltip = new DescriptionTooltip(this);
-    }
-    $registerSession = (session, options) => {
-        if (!session)
-            return;
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
-    };
-    $getSessionLanguageProvider(session) {
-        return this.$sessionLanguageProviders[session["id"]];
-    }
-    $getFileName(session) {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-        return sessionLanguageProvider.fileName;
-    }
-    registerEditor(editor) {
-        if (!this.$editors.includes(editor))
-            this.$registerEditor(editor);
-        this.$registerSession(editor.session);
-    }
-    $registerEditor(editor) {
-        this.$editors.push(editor);
-        editor.on("changeSession", ({ session }) => this.$registerSession(session));
-        this.$registerCompleters(editor);
-        this.$descriptionTooltip.registerEditor(editor);
-        this.$activeEditor ??= editor;
-        editor.on("focus", () => {
-            this.$activeEditor = editor;
-        });
-    }
-    setOptions(session, options) {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-        sessionLanguageProvider.setOptions(options);
-    }
-    doHover(session, position, callback) {
-        this.$messageController.doHover(this.$getFileName(session), position, callback);
-    }
-    getTooltipText(hover) {
-        if (!hover)
-            return;
-        let text = hover.content.type === CommonConverter.TooltipType.markdown ? CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
-        return { text: text, range: hover.range };
-    }
-    format = () => {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.$activeEditor.session);
-        sessionLanguageProvider.format();
-    };
-    doComplete(editor, session, callback) {
-        let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.$getFileName(session), cursor, callback);
-    }
-    $registerCompleters(editor) {
-        editor.completers = [
-            {
-                getCompletions: async (editor, session, pos, prefix, callback) => {
-                    this.doComplete(editor, session, (completions) => {
-                        let fileName = this.$getFileName(session);
-                        completions.forEach((item) => item["fileName"] = fileName);
-                        callback(null, CommonConverter.normalizeRanges(completions));
-                    });
-                },
-                getDocTooltip: (item) => {
-                    if (!item["isResolved"]) {
-                        this.$messageController.doResolve(item["fileName"], item, (completion) => {
-                            item["isResolved"] = true;
-                            item.docText = completion.docText;
-                            if (completion.docHTML) {
-                                item.docHTML = completion.docHTML;
-                            }
-                            else if (completion["docMarkdown"]) {
-                                item.docHTML = CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
-                            }
-                            editor["completer"].updateDocTooltip();
-                        });
-                    }
-                    return item;
-                }
-            }
-        ];
-    }
-    dispose() {
-        // this.$messageController.dispose(this.$fileName);
-    }
-}
-class SessionLanguageProvider {
-    session;
-    fileName;
-    $messageController;
-    $deltaQueue;
-    $isConnected = false;
-    $modeIsChanged = false;
-    $options;
-    extensions = {
-        "typescript": "ts",
-        "javascript": "js"
-    };
-    constructor(session, messageController, options) {
-        this.$messageController = messageController;
-        this.session = session;
-        this.initFileName();
-        session.doc.on("change", this.$changeListener, true);
-        // @ts-ignore
-        session.on("changeMode", this.$changeMode);
-        this.$messageController.init(this.fileName, session.getValue(), this.$mode, options, this.$connected, this.$showAnnotations);
-    }
-    $connected = () => {
-        this.$isConnected = true;
-        if (this.$modeIsChanged)
-            this.$changeMode();
-        if (this.$deltaQueue)
-            this.$sendDeltaQueue();
-        if (this.$options)
-            this.setOptions(this.$options);
-    };
-    $changeMode = () => {
-        if (!this.$isConnected) {
-            this.$modeIsChanged = true;
-            return;
-        }
-        this.$deltaQueue = [];
-        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
-    };
-    initFileName() {
-        this.fileName = this.session["id"] + "." + this.$extension;
-    }
-    get $extension() {
-        let mode = this.$mode.replace("ace/mode/", "");
-        return this.extensions[mode] ?? mode;
-    }
-    get $mode() {
-        return this.session["$modeId"];
-    }
-    get $format() {
-        return {
-            tabSize: this.session.getTabSize(),
-            insertSpaces: this.session.getUseSoftTabs()
-        };
-    }
-    $changeListener = (delta) => {
-        if (!this.$deltaQueue) {
-            this.$deltaQueue = [];
-            setTimeout(this.$sendDeltaQueue, 0);
-        }
-        if (delta.action == "insert")
-            this.$deltaQueue.push(delta.start, delta.lines);
-        else
-            this.$deltaQueue.push(delta.start, delta.end);
-    };
-    $sendDeltaQueue = () => {
-        let deltas = this.$deltaQueue;
-        if (!deltas)
-            return;
-        this.$deltaQueue = null;
-        if (deltas.length)
-            this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
-    };
-    $showAnnotations = (annotations) => {
-        this.session.clearAnnotations();
-        if (annotations && annotations.length > 0) {
-            this.session.setAnnotations(annotations);
-        }
-    };
-    setOptions(options) {
-        if (!this.$isConnected) {
-            this.$options = options;
-            return;
-        }
-        this.$messageController.changeOptions(this.fileName, options);
-    }
-    validate = () => {
-        this.$messageController.doValidation(this.fileName, this.$showAnnotations);
-    };
-    format = () => {
-        let selectionRanges = this.session.getSelection().getAllRanges();
-        let $format = this.$format;
-        if (!selectionRanges || selectionRanges[0].isEmpty()) {
-            let row = this.session.getLength();
-            let column = this.session.getLine(row).length - 1;
-            selectionRanges = [new ace.Range(0, 0, row, column)];
-        }
-        for (let range of selectionRanges) {
-            this.$messageController.format(this.fileName, range, $format, this.$applyFormat);
-        }
-    };
-    $applyFormat = (edits) => {
-        for (let edit of edits) {
-            this.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
-            // mirror Range
-        }
-    };
-    doComplete(editor, callback) {
-        let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.fileName, cursor, callback);
-    }
-}
-
-;// CONCATENATED MODULE: ./packages/ace-linters/message-types.ts
-class BaseMessage {
-    sessionId;
-    constructor(sessionId) {
-        this.sessionId = sessionId;
-    }
-}
-class InitMessage extends BaseMessage {
-    type = MessageType.init;
-    mode;
-    options;
-    value;
-    constructor(sessionId, value, mode, options) {
-        super(sessionId);
-        this.options = options;
-        this.mode = mode;
-        this.value = value;
-    }
-}
-class FormatMessage extends BaseMessage {
-    type = MessageType.format;
-    value;
-    format;
-    constructor(sessionId, value, format) {
-        super(sessionId);
-        this.value = value;
-        this.format = format;
-    }
-}
-class CompleteMessage extends BaseMessage {
-    type = MessageType.complete;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class ResolveCompletionMessage extends BaseMessage {
-    type = MessageType.resolveCompletion;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class HoverMessage extends BaseMessage {
-    type = MessageType.hover;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class ValidateMessage extends BaseMessage {
-    type = MessageType.validate;
-    constructor(sessionId) {
-        super(sessionId);
-    }
-}
-class ChangeMessage extends BaseMessage {
-    type = MessageType.change;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class DeltasMessage extends BaseMessage {
-    type = MessageType.applyDelta;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class ChangeModeMessage extends BaseMessage {
-    type = MessageType.changeMode;
-    mode;
-    value;
-    constructor(sessionId, value, mode) {
-        super(sessionId);
-        this.value = value;
-        this.mode = mode;
-    }
-}
-class ChangeOptionsMessage extends BaseMessage {
-    type = MessageType.changeOptions;
-    options;
-    merge;
-    constructor(sessionId, options, merge = false) {
-        super(sessionId);
-        this.options = options;
-        this.merge = merge;
-    }
-}
-class DisposeMessage extends BaseMessage {
-    type = MessageType.dispose;
-    constructor(sessionId) {
-        super(sessionId);
-    }
-}
-class GlobalOptionsMessage {
-    type = MessageType.globalOptions;
-    serviceName;
-    options;
-    merge;
-    constructor(serviceName, options, merge) {
-        this.serviceName = serviceName;
-        this.options = options;
-        this.merge = merge;
-    }
-}
-var MessageType;
-(function (MessageType) {
-    MessageType[MessageType["init"] = 0] = "init";
-    MessageType[MessageType["format"] = 1] = "format";
-    MessageType[MessageType["complete"] = 2] = "complete";
-    MessageType[MessageType["resolveCompletion"] = 3] = "resolveCompletion";
-    MessageType[MessageType["change"] = 4] = "change";
-    MessageType[MessageType["hover"] = 5] = "hover";
-    MessageType[MessageType["validate"] = 6] = "validate";
-    MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
-    MessageType[MessageType["changeMode"] = 8] = "changeMode";
-    MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
-    MessageType[MessageType["dispose"] = 10] = "dispose";
-    MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
-})(MessageType || (MessageType = {}));
-
-// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/oop.js
-var oop = __webpack_require__(9359);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event_emitter.js
-var event_emitter = __webpack_require__(3056);
-;// CONCATENATED MODULE: ./packages/ace-linters/message-controller.ts
-
-
-
-class MessageController {
-    $worker;
-    constructor(worker) {
-        this.$worker = worker;
-        this.$worker.onmessage = (e) => {
-            let message = e.data;
-            this["_signal"](message.type + "-" + message.sessionId, message.value);
-        };
-    }
-    init(sessionId, value, mode, options, initCallback, validationCallback) {
-        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
-        this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
-    }
-    doValidation(sessionId, callback) {
-        this.postMessage(new ValidateMessage(sessionId), callback);
-    }
-    doComplete(sessionId, position, callback) {
-        this.postMessage(new CompleteMessage(sessionId, position), callback);
-    }
-    doResolve(sessionId, completion, callback) {
-        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
-    }
-    format(sessionId, range, format, callback) {
-        this.postMessage(new FormatMessage(sessionId, range, format), callback);
-    }
-    doHover(sessionId, position, callback) {
-        this.postMessage(new HoverMessage(sessionId, position), callback);
-    }
-    change(sessionId, deltas, value, docLength, callback) {
-        let message;
-        if (deltas.length > 50 && deltas.length > docLength >> 1) {
-            message = new ChangeMessage(sessionId, value);
-        }
-        else {
-            message = new DeltasMessage(sessionId, deltas);
-        }
-        this.postMessage(message, callback);
-    }
-    changeMode(sessionId, value, mode, callback) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
-    }
-    changeOptions(sessionId, options, callback, merge = false) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
-    }
-    dispose(sessionId, callback) {
-        this.postMessage(new DisposeMessage(sessionId), callback);
-    }
-    setGlobalOptions(serviceName, options, merge = false) {
-        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
-    }
-    postMessage(message, callback) {
-        if (callback) {
-            let eventName = message.type.toString() + "-" + message.sessionId;
-            let callbackFunction = (data) => {
-                this["off"](eventName, callbackFunction);
-                callback(data);
-            };
-            this["on"](eventName, callbackFunction);
-        }
-        this.$worker.postMessage(message);
-    }
-}
-oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
-
-;// CONCATENATED MODULE: ./packages/ace-linters/index.ts
-
-
-function registerStyles() {
-    dom.importCssString(linters_namespaceObject, "linters.css");
-}
-
-
-
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/browser/main.js
 var main = __webpack_require__(9054);
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/common/messages.js
@@ -44747,6 +44328,438 @@ class MessageControllerWS extends events.EventEmitter {
     }
 }
 
+;// CONCATENATED MODULE: ./packages/ace-linters/message-types.ts
+class BaseMessage {
+    sessionId;
+    constructor(sessionId) {
+        this.sessionId = sessionId;
+    }
+}
+class InitMessage extends BaseMessage {
+    type = MessageType.init;
+    mode;
+    options;
+    value;
+    constructor(sessionId, value, mode, options) {
+        super(sessionId);
+        this.options = options;
+        this.mode = mode;
+        this.value = value;
+    }
+}
+class FormatMessage extends BaseMessage {
+    type = MessageType.format;
+    value;
+    format;
+    constructor(sessionId, value, format) {
+        super(sessionId);
+        this.value = value;
+        this.format = format;
+    }
+}
+class CompleteMessage extends BaseMessage {
+    type = MessageType.complete;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+class ResolveCompletionMessage extends BaseMessage {
+    type = MessageType.resolveCompletion;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+class HoverMessage extends BaseMessage {
+    type = MessageType.hover;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+class ValidateMessage extends BaseMessage {
+    type = MessageType.validate;
+    constructor(sessionId) {
+        super(sessionId);
+    }
+}
+class ChangeMessage extends BaseMessage {
+    type = MessageType.change;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+class DeltasMessage extends BaseMessage {
+    type = MessageType.applyDelta;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+class ChangeModeMessage extends BaseMessage {
+    type = MessageType.changeMode;
+    mode;
+    value;
+    constructor(sessionId, value, mode) {
+        super(sessionId);
+        this.value = value;
+        this.mode = mode;
+    }
+}
+class ChangeOptionsMessage extends BaseMessage {
+    type = MessageType.changeOptions;
+    options;
+    merge;
+    constructor(sessionId, options, merge = false) {
+        super(sessionId);
+        this.options = options;
+        this.merge = merge;
+    }
+}
+class DisposeMessage extends BaseMessage {
+    type = MessageType.dispose;
+    constructor(sessionId) {
+        super(sessionId);
+    }
+}
+class GlobalOptionsMessage {
+    type = MessageType.globalOptions;
+    serviceName;
+    options;
+    merge;
+    constructor(serviceName, options, merge) {
+        this.serviceName = serviceName;
+        this.options = options;
+        this.merge = merge;
+    }
+}
+var MessageType;
+(function (MessageType) {
+    MessageType[MessageType["init"] = 0] = "init";
+    MessageType[MessageType["format"] = 1] = "format";
+    MessageType[MessageType["complete"] = 2] = "complete";
+    MessageType[MessageType["resolveCompletion"] = 3] = "resolveCompletion";
+    MessageType[MessageType["change"] = 4] = "change";
+    MessageType[MessageType["hover"] = 5] = "hover";
+    MessageType[MessageType["validate"] = 6] = "validate";
+    MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
+    MessageType[MessageType["changeMode"] = 8] = "changeMode";
+    MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
+    MessageType[MessageType["dispose"] = 10] = "dispose";
+    MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
+})(MessageType || (MessageType = {}));
+
+// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/oop.js
+var oop = __webpack_require__(9359);
+// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event_emitter.js
+var event_emitter = __webpack_require__(3056);
+;// CONCATENATED MODULE: ./packages/ace-linters/message-controller.ts
+
+
+
+class MessageController {
+    $worker;
+    constructor(worker) {
+        this.$worker = worker;
+        this.$worker.onmessage = (e) => {
+            let message = e.data;
+            this["_signal"](message.type + "-" + message.sessionId, message.value);
+        };
+    }
+    init(sessionId, value, mode, options, initCallback, validationCallback) {
+        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+        this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
+    }
+    doValidation(sessionId, callback) {
+        this.postMessage(new ValidateMessage(sessionId), callback);
+    }
+    doComplete(sessionId, position, callback) {
+        this.postMessage(new CompleteMessage(sessionId, position), callback);
+    }
+    doResolve(sessionId, completion, callback) {
+        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
+    }
+    format(sessionId, range, format, callback) {
+        this.postMessage(new FormatMessage(sessionId, range, format), callback);
+    }
+    doHover(sessionId, position, callback) {
+        this.postMessage(new HoverMessage(sessionId, position), callback);
+    }
+    change(sessionId, deltas, value, docLength, callback) {
+        let message;
+        if (deltas.length > 50 && deltas.length > docLength >> 1) {
+            message = new ChangeMessage(sessionId, value);
+        }
+        else {
+            message = new DeltasMessage(sessionId, deltas);
+        }
+        this.postMessage(message, callback);
+    }
+    changeMode(sessionId, value, mode, callback) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
+    }
+    changeOptions(sessionId, options, callback, merge = false) {
+        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
+    }
+    dispose(sessionId, callback) {
+        this.postMessage(new DisposeMessage(sessionId), callback);
+    }
+    setGlobalOptions(serviceName, options, merge = false) {
+        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+    }
+    postMessage(message, callback) {
+        if (callback) {
+            let eventName = message.type.toString() + "-" + message.sessionId;
+            let callbackFunction = (data) => {
+                this["off"](eventName, callbackFunction);
+                callback(data);
+            };
+            this["on"](eventName, callbackFunction);
+        }
+        this.$worker.postMessage(message);
+    }
+}
+oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
+
+;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
+
+
+
+
+
+let showdown = __webpack_require__(3787);
+class LanguageProvider {
+    $activeEditor;
+    $descriptionTooltip;
+    $markdownConverter;
+    $messageController;
+    $sessionLanguageProviders = {};
+    $editors = [];
+    constructor(messageController, markdownConverter) {
+        this.$messageController = messageController;
+        this.$markdownConverter = markdownConverter ?? new showdown.Converter();
+        this.$descriptionTooltip = new DescriptionTooltip(this);
+    }
+    static for(mode, markdownConverter) {
+        let messageController;
+        if (mode instanceof Worker) {
+            messageController = new MessageController(mode);
+        }
+        else {
+            messageController = new MessageControllerWS(mode);
+        }
+        return new LanguageProvider(messageController, markdownConverter);
+    }
+    $registerSession = (session, options) => {
+        if (!session)
+            return;
+        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
+    };
+    $getSessionLanguageProvider(session) {
+        return this.$sessionLanguageProviders[session["id"]];
+    }
+    $getFileName(session) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        return sessionLanguageProvider.fileName;
+    }
+    registerEditor(editor) {
+        if (!this.$editors.includes(editor))
+            this.$registerEditor(editor);
+        this.$registerSession(editor.session);
+    }
+    $registerEditor(editor) {
+        this.$editors.push(editor);
+        editor.on("changeSession", ({ session }) => this.$registerSession(session));
+        this.$registerCompleters(editor);
+        this.$descriptionTooltip.registerEditor(editor);
+        this.$activeEditor ??= editor;
+        editor.on("focus", () => {
+            this.$activeEditor = editor;
+        });
+    }
+    setOptions(session, options) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        sessionLanguageProvider.setOptions(options);
+    }
+    setGlobalOptions(serviceName, options, merge = false) {
+        this.$messageController.setGlobalOptions(serviceName, options, merge);
+    }
+    doHover(session, position, callback) {
+        this.$messageController.doHover(this.$getFileName(session), position, callback);
+    }
+    getTooltipText(hover) {
+        if (!hover)
+            return;
+        let text = hover.content.type === CommonConverter.TooltipType.markdown ? CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+        return { text: text, range: hover.range };
+    }
+    format = () => {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.$activeEditor.session);
+        sessionLanguageProvider.format();
+    };
+    doComplete(editor, session, callback) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doComplete(this.$getFileName(session), cursor, callback);
+    }
+    $registerCompleters(editor) {
+        editor.completers = [
+            {
+                getCompletions: async (editor, session, pos, prefix, callback) => {
+                    this.doComplete(editor, session, (completions) => {
+                        let fileName = this.$getFileName(session);
+                        completions.forEach((item) => item["fileName"] = fileName);
+                        callback(null, CommonConverter.normalizeRanges(completions));
+                    });
+                },
+                getDocTooltip: (item) => {
+                    if (!item["isResolved"]) {
+                        this.$messageController.doResolve(item["fileName"], item, (completion) => {
+                            item["isResolved"] = true;
+                            item.docText = completion.docText;
+                            if (completion.docHTML) {
+                                item.docHTML = completion.docHTML;
+                            }
+                            else if (completion["docMarkdown"]) {
+                                item.docHTML = CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
+                            }
+                            editor["completer"].updateDocTooltip();
+                        });
+                    }
+                    return item;
+                }
+            }
+        ];
+    }
+    dispose() {
+        // this.$messageController.dispose(this.$fileName);
+    }
+}
+class SessionLanguageProvider {
+    session;
+    fileName;
+    $messageController;
+    $deltaQueue;
+    $isConnected = false;
+    $modeIsChanged = false;
+    $options;
+    extensions = {
+        "typescript": "ts",
+        "javascript": "js"
+    };
+    constructor(session, messageController, options) {
+        this.$messageController = messageController;
+        this.session = session;
+        this.initFileName();
+        session.doc.on("change", this.$changeListener, true);
+        // @ts-ignore
+        session.on("changeMode", this.$changeMode);
+        this.$messageController.init(this.fileName, session.getValue(), this.$mode, options, this.$connected, this.$showAnnotations);
+    }
+    $connected = () => {
+        this.$isConnected = true;
+        if (this.$modeIsChanged)
+            this.$changeMode();
+        if (this.$deltaQueue)
+            this.$sendDeltaQueue();
+        if (this.$options)
+            this.setOptions(this.$options);
+    };
+    $changeMode = () => {
+        if (!this.$isConnected) {
+            this.$modeIsChanged = true;
+            return;
+        }
+        this.$deltaQueue = [];
+        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
+    };
+    initFileName() {
+        this.fileName = this.session["id"] + "." + this.$extension;
+    }
+    get $extension() {
+        let mode = this.$mode.replace("ace/mode/", "");
+        return this.extensions[mode] ?? mode;
+    }
+    get $mode() {
+        return this.session["$modeId"];
+    }
+    get $format() {
+        return {
+            tabSize: this.session.getTabSize(),
+            insertSpaces: this.session.getUseSoftTabs()
+        };
+    }
+    $changeListener = (delta) => {
+        if (!this.$deltaQueue) {
+            this.$deltaQueue = [];
+            setTimeout(this.$sendDeltaQueue, 0);
+        }
+        if (delta.action == "insert")
+            this.$deltaQueue.push(delta.start, delta.lines);
+        else
+            this.$deltaQueue.push(delta.start, delta.end);
+    };
+    $sendDeltaQueue = () => {
+        let deltas = this.$deltaQueue;
+        if (!deltas)
+            return;
+        this.$deltaQueue = null;
+        if (deltas.length)
+            this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
+    };
+    $showAnnotations = (annotations) => {
+        this.session.clearAnnotations();
+        if (annotations && annotations.length > 0) {
+            this.session.setAnnotations(annotations);
+        }
+    };
+    setOptions(options) {
+        if (!this.$isConnected) {
+            this.$options = options;
+            return;
+        }
+        this.$messageController.changeOptions(this.fileName, options);
+    }
+    validate = () => {
+        this.$messageController.doValidation(this.fileName, this.$showAnnotations);
+    };
+    format = () => {
+        let selectionRanges = this.session.getSelection().getAllRanges();
+        let $format = this.$format;
+        if (!selectionRanges || selectionRanges[0].isEmpty()) {
+            let row = this.session.getLength();
+            let column = this.session.getLine(row).length - 1;
+            selectionRanges = [new ace.Range(0, 0, row, column)];
+        }
+        for (let range of selectionRanges) {
+            this.$messageController.format(this.fileName, range, $format, this.$applyFormat);
+        }
+    };
+    $applyFormat = (edits) => {
+        for (let edit of edits) {
+            this.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
+            // mirror Range
+        }
+    };
+    doComplete(editor, callback) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doComplete(this.fileName, cursor, callback);
+    }
+}
+
+;// CONCATENATED MODULE: ./packages/ace-linters/index.ts
+
+
+dom.importCssString(linters_namespaceObject, "linters.css");
+
+
+
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ext/language_tools.js
 var language_tools = __webpack_require__(1105);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/theme/textmate.js
@@ -44813,15 +44826,12 @@ function createEditorWithLSP(mode, i, languageProvider) {
 
 
 
-
 const webSocket = new WebSocket("ws://localhost:3000/exampleServer");
-let messageController = new MessageControllerWS(webSocket);
-registerStyles();
 let modes = [
     { name: "json", mode: json/* Mode */.A, content: jsonContent, options: { jsonSchemaUri: "common-form.schema.json" } },
     { name: "json5", mode: json5/* Mode */.A, content: json5Content, options: { jsonSchemaUri: "json5Schema" } },
 ];
-let languageProvider = new LanguageProvider(messageController);
+let languageProvider = LanguageProvider["for"](webSocket);
 let i = 0;
 for (let mode of modes) {
     createEditorWithLSP(mode, i, languageProvider);
