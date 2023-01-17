@@ -79,8 +79,8 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         });
     }
 
-    setOptions(sessionID: string, options: JsonServiceOptions) {
-        super.setOptions(sessionID, options);
+    setOptions(sessionID: string, options: JsonServiceOptions, merge = false) {
+        super.setOptions(sessionID, options, merge);
         this.$configureService(sessionID);
     }
 

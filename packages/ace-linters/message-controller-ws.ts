@@ -238,7 +238,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
     }
 
-    changeMode(sessionId: string, value: string, mode: string, options: any, callback?: () => void): void {
+    changeMode(sessionId: string, value: string, mode: string, callback?: () => void): void {
     }
 
     changeOptions(sessionId: string, options: any, callback?: () => void): void {//TODO:

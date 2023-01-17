@@ -31,6 +31,7 @@ export var jsonSchema2 = `  {"type": "object",
       "format": "email"
     },
     "favoriteColor": {
+    "description": "Favorite color",
       "$ref": "colors.schema.json#/definitions/color"
     }
   },

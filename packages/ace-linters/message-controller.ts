@@ -7,7 +7,7 @@ import {
     DeltasMessage, DisposeMessage,
     FormatMessage, GlobalOptionsMessage,
     HoverMessage,
-    InitMessage,
+    InitMessage, MessageType,
     ResolveCompletionMessage,
     ValidateMessage
 } from "./message-types";
@@ -31,8 +31,10 @@ export class MessageController implements IMessageController {
         };
     }
 
-    init(sessionId: string, value: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void) {
-        this.postMessage(new InitMessage(sessionId, value, mode, options), callback);
+    init(sessionId: string, value: string, mode: string, options?: AceLinters.ServiceOptions, initCallback?: () => void, validationCallback?: (annotations: Ace.Annotation[]) => void) {
+        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+
+        this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
     }
 
     doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void) {
@@ -66,12 +68,12 @@ export class MessageController implements IMessageController {
         this.postMessage(message, callback)
     }
 
-    changeMode(sessionId: string, value: string, mode: string, options: AceLinters.ServiceOptions, callback?: () => void) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode, options), callback);
+    changeMode(sessionId: string, value: string, mode: string, callback?: () => void) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
     }
 
-    changeOptions(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options), callback);
+    changeOptions(sessionId: string, options: AceLinters.ServiceOptions, callback?: () => void, merge = false) {
+        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
     }
 
     dispose(sessionId: string, callback?: () => void) {

@@ -15,10 +15,10 @@ export abstract class BaseMessage {
 export class InitMessage extends BaseMessage {
     type: MessageType = MessageType.init;
     mode: string;
-    options: { [key: string]: any };
+    options?: { [key: string]: any };
     value: string;
 
-    constructor(sessionId: string, value: string, mode: string, options: { [p: string]: any }) {
+    constructor(sessionId: string, value: string, mode: string, options?: { [p: string]: any }) {
         super(sessionId);
         this.options = options;
         this.mode = mode;
@@ -99,24 +99,24 @@ export class DeltasMessage extends BaseMessage {
 export class ChangeModeMessage extends BaseMessage {
     type: MessageType = MessageType.changeMode;
     mode: string;
-    options: ServiceOptions;
     value: string;
 
-    constructor(sessionId: string, value: string, mode: string, options: ServiceOptions) {
+    constructor(sessionId: string, value: string, mode: string) {
         super(sessionId);
         this.value = value;
         this.mode = mode;
-        this.options = options;
     }
 }
 
 export class ChangeOptionsMessage extends BaseMessage {
     type: MessageType = MessageType.changeOptions;
     options: ServiceOptions;
+    merge: boolean;
 
-    constructor(sessionId: string, options: ServiceOptions) {
+    constructor(sessionId: string, options: ServiceOptions, merge: boolean = false) {
         super(sessionId);
         this.options = options;
+        this.merge = merge;
     }
 }
 
@@ -130,9 +130,9 @@ export class DisposeMessage extends BaseMessage {
 
 export class GlobalOptionsMessage {
     type: MessageType = MessageType.globalOptions;
-    serviceName: string
+    serviceName: string;
     options: ServiceOptions;
-    merge: boolean
+    merge: boolean;
 
     constructor(serviceName: string, options: ServiceOptions, merge: boolean) {
         this.serviceName = serviceName;

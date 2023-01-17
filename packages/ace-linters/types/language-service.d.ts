@@ -26,9 +26,9 @@ export declare namespace AceLinters {
 
         applyDeltas(sessionID: string, delta: Ace.Delta[]);
 
-        addDocument(sessionID: string, document: Ace.Document, options: ServiceOptions);
+        addDocument(sessionID: string, document: Ace.Document, options?: ServiceOptions);
 
-        setOptions(sessionID: string, options: ServiceOptions);
+        setOptions(sessionID: string, options: ServiceOptions, merge?: boolean);
 
         setGlobalOptions(options: ServiceOptions);
 
