@@ -7,7 +7,9 @@
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "b": () => (/* binding */ BaseService)
 /* harmony export */ });
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3357);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3357);
+/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6813);
+
 
 class BaseService {
     mode;
@@ -17,44 +19,39 @@ class BaseService {
     constructor(mode) {
         this.mode = mode;
     }
-    $getDocument(sessionID) {
-        return null;
-    }
-    addDocument(sessionID, document, options) {
-        this.documents[sessionID] = document;
-        if (options)
-            this.setOptions(sessionID, options);
-    }
-    getDocument(sessionID) {
-        return this.documents[sessionID];
-    }
-    removeDocument(sessionID) {
-        delete this.documents[sessionID];
-        if (this.options[sessionID]) {
-            delete this.options[sessionID];
-        }
-    }
-    getDocumentValue(sessionID) {
-        return this.getDocument(sessionID).getValue();
-    }
-    $setVersion(doc) {
-        if (!doc["version"]) {
-            doc["version"] = 1;
+    addDocument(document) {
+        if (typeof document["getText"] == "function") {
+            this.documents[document.uri] = document;
         }
         else {
-            doc["version"]++;
+            this.documents[document.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument.create */ .n.create(document.uri, document.languageId, document.version, document.text);
+        }
+        //TODO:
+        /*if (options)
+            this.setOptions(sessionID, options);*/
+    }
+    getDocument(uri) {
+        return this.documents[uri];
+    }
+    removeDocument(document) {
+        delete this.documents[document.uri];
+        if (this.options[document.uri]) {
+            delete this.options[document.uri];
         }
     }
-    setValue(sessionID, value) {
-        let document = this.getDocument(sessionID);
-        this.$setVersion(document);
-        document.setValue(value);
+    getDocumentValue(uri) {
+        return this.getDocument(uri).getText();
+    }
+    setValue(uri, value) {
+        let document = this.getDocument(uri);
+        document = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument.create */ .n.create(document.uri, document.languageId, document.version + 1, value);
+        this.documents[document.uri] = document;
     }
     setGlobalOptions(options) {
         this.globalOptions = options ?? {};
     }
     setOptions(sessionID, options, merge = false) {
-        this.options[sessionID] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_0__/* .mergeObjects */ .P)(options, this.options[sessionID]) : options;
+        this.options[sessionID] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_1__/* .mergeObjects */ .P)(options, this.options[sessionID]) : options;
     }
     getOption(sessionID, optionName) {
         if (this.options[sessionID] && this.options[sessionID][optionName]) {
@@ -64,22 +61,22 @@ class BaseService {
             return this.globalOptions[optionName];
         }
     }
-    applyDeltas(sessionID, deltas) {
+    /*applyDeltas(sessionID: string, deltas: Ace.Delta[]) { //TODO:
         let data = deltas;
         let document = this.getDocument(sessionID);
+
         this.$setVersion(document);
         if (data[0].start) {
             document.applyDeltas(data);
-        }
-        else {
+        } else {
             for (let i = 0; i < data.length; i += 2) {
                 let d, err;
                 if (Array.isArray(data[i + 1])) {
-                    d = { action: "insert", start: data[i], lines: data[i + 1] };
+                    d = {action: "insert", start: data[i], lines: data[i + 1]};
+                } else {
+                    d = {action: "remove", start: data[i], end: data[i + 1]};
                 }
-                else {
-                    d = { action: "remove", start: data[i], end: data[i + 1] };
-                }
+
                 let linesLength = document["$lines"].length;
                 if ((d.action == "insert" ? d.start : d.end).row >= linesLength) {
                     err = new Error("Invalid delta");
@@ -90,24 +87,25 @@ class BaseService {
                     };
                     throw err;
                 }
+
                 document.applyDelta(d, true);
             }
         }
+    }*/
+    doComplete(document, position) {
+        return Promise.resolve(undefined);
     }
-    format(sessionID, range, format) {
-        return [];
+    doHover(document, position) {
+        return Promise.resolve(undefined);
     }
-    async doHover(sessionID, position) {
-        return null;
+    doResolve(item) {
+        return Promise.resolve(undefined);
     }
-    async doValidation(sessionID) {
-        return [];
+    doValidation(document) {
+        return Promise.resolve([]);
     }
-    async doComplete(sessionID, position) {
-        return;
-    }
-    async resolveCompletion(sessionID, completion) {
-        return;
+    format(document, range, options) {
+        return undefined;
     }
 }
 
@@ -121,37 +119,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LuaService": () => (/* binding */ LuaService)
 /* harmony export */ });
-/* harmony import */ var _base_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1378);
-/* harmony import */ var luaparse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5233);
-/* harmony import */ var luaparse__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(luaparse__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1378);
+/* harmony import */ var luaparse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5233);
+/* harmony import */ var luaparse__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(luaparse__WEBPACK_IMPORTED_MODULE_1__);
 
 
-class LuaService extends _base_service__WEBPACK_IMPORTED_MODULE_1__/* .BaseService */ .b {
+class LuaService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseService */ .b {
     $service;
     constructor(mode) {
         super(mode);
-        this.$service = luaparse__WEBPACK_IMPORTED_MODULE_0__;
+        this.$service = luaparse__WEBPACK_IMPORTED_MODULE_1__;
     }
-    $getDocument(sessionID) {
-        let documentValue = this.getDocumentValue(sessionID);
-        return documentValue;
-    }
-    async doValidation(sessionID) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doValidation(document) {
+        let value = this.getDocumentValue(document.uri);
+        if (!value) {
             return [];
         }
         let errors = [];
         try {
-            this.$service.parse(document);
+            this.$service.parse(value);
         }
         catch (e) {
             if (e instanceof this.$service.SyntaxError) {
                 errors.push({
-                    row: e.line - 1,
-                    column: e.column,
-                    text: e.message,
-                    type: "error"
+                    range: {
+                        start: {
+                            line: e.line - 1,
+                            character: e.column
+                        },
+                        end: {
+                            line: e.line - 1,
+                            character: e.column
+                        }
+                    },
+                    message: e.message,
+                    severity: 1
                 });
             }
         }

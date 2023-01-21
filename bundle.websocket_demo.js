@@ -38711,6 +38711,20 @@ exports.Semaphore = Semaphore;
 
 /***/ }),
 
+/***/ 5224:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ----------------------------------------------------------------------------------------- */
+
+
+module.exports = __webpack_require__(152);
+
+/***/ }),
+
 /***/ 152:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -43675,7 +43689,10 @@ class DescriptionTooltip extends Tooltip {
     ;
 }
 
+// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
+var main = __webpack_require__(152);
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/common-converters.ts
+
 
 var CommonConverter;
 (function (CommonConverter) {
@@ -43704,10 +43721,42 @@ var CommonConverter;
         TooltipType[TooltipType["plainText"] = 0] = "plainText";
         TooltipType[TooltipType["markdown"] = 1] = "markdown";
     })(TooltipType = CommonConverter.TooltipType || (CommonConverter.TooltipType = {}));
+    function convertKind(kind) {
+        switch (kind) {
+            case "primitiveType":
+            case "keyword":
+                return main.CompletionItemKind.Keyword;
+            case "variable":
+            case "localVariable":
+                return main.CompletionItemKind.Variable;
+            case "memberVariable":
+            case "memberGetAccessor":
+            case "memberSetAccessor":
+                return main.CompletionItemKind.Field;
+            case "function":
+            case "memberFunction":
+            case "constructSignature":
+            case "callSignature":
+            case "indexSignature":
+                return main.CompletionItemKind.Function;
+            case "enum":
+                return main.CompletionItemKind.Enum;
+            case "module":
+                return main.CompletionItemKind.Module;
+            case "class":
+                return main.CompletionItemKind.Class;
+            case "interface":
+                return main.CompletionItemKind.Interface;
+            case "warning":
+                return main.CompletionItemKind.File;
+        }
+        return main.CompletionItemKind.Property;
+    }
+    CommonConverter.convertKind = convertKind;
 })(CommonConverter || (CommonConverter = {}));
 
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/browser/main.js
-var main = __webpack_require__(9054);
+var browser_main = __webpack_require__(9054);
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/common/messages.js
 var messages = __webpack_require__(839);
 ;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/disposable.js
@@ -43860,7 +43909,7 @@ class WebSocketMessageWriter extends messageWriter.AbstractMessageWriter {
 function createWebSocketConnection(socket, logger) {
     const messageReader = new WebSocketMessageReader(socket);
     const messageWriter = new WebSocketMessageWriter(socket);
-    const connection = (0,main.createMessageConnection)(messageReader, messageWriter, logger);
+    const connection = (0,browser_main.createMessageConnection)(messageReader, messageWriter, logger);
     connection.onClose(() => connection.dispose());
     return connection;
 }
@@ -43944,158 +43993,8 @@ function toSocket(webSocket) {
 //# sourceMappingURL=index.js.map
 // EXTERNAL MODULE: ./node_modules/events/events.js
 var events = __webpack_require__(7187);
-// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
-var browser_main = __webpack_require__(152);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
-var src_range = __webpack_require__(9082);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/range_list.js
-var range_list = __webpack_require__(6510);
-;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/lsp-converters.ts
-
-
-
-
-function fromRange(range) {
-    if (!range) {
-        return;
-    }
-    return {
-        start: {
-            line: range.start.row,
-            character: range.start.column
-        },
-        end: { line: range.end.row, character: range.end.column }
-    };
-}
-function toRange(range) {
-    if (!range) {
-        return;
-    }
-    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
-}
-function fromPoint(point) {
-    if (!point)
-        return;
-    return { line: point.row, character: point.column };
-}
-function toPoint(position) {
-    if (!position)
-        return;
-    return { row: position.line, column: position.character };
-}
-function toAnnotations(diagnostics) {
-    return diagnostics && diagnostics.map((el) => {
-        return {
-            row: el.range.start.line,
-            column: el.range.start.character,
-            text: el.message,
-            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
-        };
-    });
-}
-function toCompletions(completionList) {
-    if (!completionList) {
-        return;
-    }
-    if (!Array.isArray(completionList)) {
-        completionList = completionList.items;
-    }
-    return completionList && completionList.map((item) => {
-        let kind = Object.keys(browser_main.CompletionItemKind)[Object.values(browser_main.CompletionItemKind).indexOf(item.kind)];
-        let text = item.textEdit?.newText ?? item.insertText ?? item.label;
-        let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-        let range = getTextEditRange(item.textEdit);
-        let completion = {
-            meta: kind,
-            caption: item.label,
-            command: command,
-            range: range,
-            value: "",
-            score: null,
-            item: item
-        };
-        if (item.insertTextFormat == browser_main.InsertTextFormat.Snippet) {
-            completion["snippet"] = text;
-        }
-        else {
-            completion["value"] = text;
-        }
-        return completion;
-    });
-}
-function toResolvedCompletion(completion, item) {
-    let doc = fromMarkupContent(item.documentation);
-    if (doc) {
-        if (doc.type === CommonConverter.TooltipType.markdown) {
-            completion["docMarkdown"] = doc.text;
-        }
-        else {
-            completion["docText"] = doc.text;
-        }
-    }
-    return completion;
-}
-function getTextEditRange(textEdit) {
-    if (!textEdit) {
-        return;
-    }
-    if (textEdit.insert != undefined && textEdit.replace != undefined) {
-        let rangeList = new range_list/* RangeList */.$();
-        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
-        rangeList.merge();
-        return rangeList[0];
-    }
-    if (textEdit.range) {
-        return toRange(textEdit.range);
-    }
-}
-function toTooltip(hover) {
-    let content;
-    if (!hover) {
-        return;
-    }
-    if (browser_main.MarkupContent.is(hover.contents)) {
-        content = fromMarkupContent(hover.contents);
-    }
-    else if (browser_main.MarkedString.is(hover.contents)) {
-        content = { type: CommonConverter.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
-    }
-    else if (Array.isArray(hover.contents)) {
-        let contents = hover.contents.map((el) => {
-            if (typeof el !== "string") {
-                return `\`\`\`${el.value}\`\`\``;
-            }
-            return el;
-        });
-        content = { type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n") };
-    }
-    else {
-        return;
-    }
-    return { content: content, range: toRange(hover.range) };
-}
-function fromMarkupContent(content) {
-    if (!content)
-        return;
-    if (typeof content === "string") {
-        return { type: CommonConverter.TooltipType.plainText, text: content };
-    }
-    if (content.kind === browser_main.MarkupKind.Markdown) {
-        return { type: CommonConverter.TooltipType.markdown, text: content.value };
-    }
-    else {
-        return { type: CommonConverter.TooltipType.plainText, text: content.value };
-    }
-}
-function toAceTextEdits(textEdits) {
-    return textEdits.reverse().map((el) => {
-        return {
-            range: toRange(el.range),
-            newText: el.newText
-        };
-    });
-}
-
+// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/browser.js
+var browser = __webpack_require__(5224);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller-ws.ts
 
 
@@ -44141,38 +44040,50 @@ class MessageControllerWS extends events.EventEmitter {
             },
         },
     };
-    constructor(socket) {
+    constructor(mode) {
         super();
-        this.socket = socket;
-        this.$connect();
+        if (mode instanceof Worker) {
+            this.$connectWorker(mode);
+        }
+        else {
+            this.socket = mode;
+            this.$connectSocket();
+        }
     }
-    $connect() {
+    $connectSocket() {
         listen({
             webSocket: this.socket,
             logger: new ConsoleLogger(),
             onConnection: (connection) => {
-                connection.listen();
-                this.isConnected = true;
-                this.connection = connection;
-                this.sendInitialize();
-                this.connection.onNotification('textDocument/publishDiagnostics', (result) => {
-                    this.emit("validate-" + result.uri, toAnnotations(result.diagnostics));
-                });
-                this.connection.onNotification('window/showMessage', (params) => {
-                    this.emit('logging', params);
-                });
-                this.connection.onRequest('window/showMessageRequest', (params) => {
-                    this.emit('logging', params);
-                });
-                this.connection.onError((e) => {
-                    this.emit('error', e);
-                });
-                this.connection.onClose(() => {
-                    this.isConnected = false;
-                });
-                this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
+                this.$connect(connection);
             },
         });
+    }
+    $connectWorker(worker) {
+        const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
+        this.$connect(connection);
+    }
+    $connect(connection) {
+        connection.listen();
+        this.isConnected = true;
+        this.connection = connection;
+        this.sendInitialize();
+        this.connection.onNotification('textDocument/publishDiagnostics', (result) => {
+            this.emit("validate-" + result.uri, result.diagnostics);
+        });
+        this.connection.onNotification('window/showMessage', (params) => {
+            this.emit('logging', params);
+        });
+        this.connection.onRequest('window/showMessageRequest', (params) => {
+            this.emit('logging', params);
+        });
+        this.connection.onError((e) => {
+            this.emit('error', e);
+        });
+        this.connection.onClose(() => {
+            this.isConnected = false;
+        });
+        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
     init(sessionId, value, mode, options, initCallback, validationCallback) {
         this["on"]("validate-" + sessionId, validationCallback);
@@ -44249,10 +44160,10 @@ class MessageControllerWS extends events.EventEmitter {
             textDocument: {
                 uri: sessionId,
             },
-            position: fromPoint(position),
+            position: position,
         };
         let hoverCallback = (result) => {
-            callback(toTooltip(result));
+            callback(result);
         };
         this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
     }
@@ -44267,10 +44178,10 @@ class MessageControllerWS extends events.EventEmitter {
             textDocument: {
                 uri: sessionId,
             },
-            position: fromPoint(position),
+            position: position,
         };
         let completionCallback = (result) => {
-            callback(toCompletions(result));
+            callback(result);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }
@@ -44279,7 +44190,7 @@ class MessageControllerWS extends events.EventEmitter {
             return;
         }
         let resolveCallback = (result) => {
-            callback(toResolvedCompletion(completion, result));
+            callback(result);
         };
         this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
     }
@@ -44295,7 +44206,7 @@ class MessageControllerWS extends events.EventEmitter {
         });
     }
     doValidation(sessionId, callback) {
-        //TODO:
+        //TODO: textDocument/diagnostic capability
     }
     format(sessionId, range, format, callback) {
         if (!this.isInitialized) {
@@ -44306,10 +44217,10 @@ class MessageControllerWS extends events.EventEmitter {
                 uri: sessionId,
             },
             options: format,
-            range: fromRange(range)
+            range: range
         };
         let formatCallback = (params) => {
-            callback(toAceTextEdits(params));
+            callback(params);
         };
         this.postMessage('textDocument/rangeFormatting', sessionId, options, formatCallback);
     }
@@ -44395,7 +44306,7 @@ class ChangeMessage extends BaseMessage {
         this.value = value;
     }
 }
-class DeltasMessage extends BaseMessage {
+class DeltasMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
     type = MessageType.applyDelta;
     value;
     constructor(sessionId, value) {
@@ -44493,13 +44404,12 @@ class MessageController {
         this.postMessage(new HoverMessage(sessionId, position), callback);
     }
     change(sessionId, deltas, value, docLength, callback) {
-        let message;
-        if (deltas.length > 50 && deltas.length > docLength >> 1) {
-            message = new ChangeMessage(sessionId, value);
-        }
-        else {
+        let message; //TODO: deltas in lsp
+        //if (deltas.length > 50 && deltas.length > docLength >> 1) {
+        message = new ChangeMessage(sessionId, value);
+        /*} else {
             message = new DeltasMessage(sessionId, deltas);
-        }
+        }*/
         this.postMessage(message, callback);
     }
     changeMode(sessionId, value, mode, callback) {
@@ -44528,7 +44438,176 @@ class MessageController {
 }
 oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
 
+// EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
+var src_range = __webpack_require__(9082);
+// EXTERNAL MODULE: ./node_modules/ace-code/src/range_list.js
+var range_list = __webpack_require__(6510);
+;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/lsp-converters.ts
+
+
+
+
+function fromRange(range) {
+    if (!range) {
+        return;
+    }
+    return {
+        start: {
+            line: range.start.row,
+            character: range.start.column
+        },
+        end: { line: range.end.row, character: range.end.column }
+    };
+}
+function toRange(range) {
+    if (!range) {
+        return;
+    }
+    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
+}
+function fromPoint(point) {
+    if (!point)
+        return;
+    return { line: point.row, character: point.column };
+}
+function toPoint(position) {
+    if (!position)
+        return;
+    return { row: position.line, column: position.character };
+}
+function toAnnotations(diagnostics) {
+    return diagnostics && diagnostics.map((el) => {
+        return {
+            row: el.range.start.line,
+            column: el.range.start.character,
+            text: el.message,
+            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
+        };
+    });
+}
+function toCompletion(item) {
+    let kind = Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(item.kind)];
+    let text = item.textEdit?.newText ?? item.insertText ?? item.label;
+    let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
+    let range = getTextEditRange(item.textEdit);
+    let completion = {
+        meta: kind,
+        caption: item.label,
+        command: command,
+        range: range,
+        value: "",
+        score: null,
+        item: item
+    };
+    if (item.insertTextFormat == main.InsertTextFormat.Snippet) {
+        completion["snippet"] = text;
+    }
+    else {
+        completion["value"] = text;
+    }
+    completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
+    completion["position"] = item["position"];
+    return completion;
+}
+function toCompletions(completionList) {
+    if (!completionList) {
+        return;
+    }
+    if (!Array.isArray(completionList)) {
+        completionList = completionList.items;
+    }
+    return completionList && completionList.map((item) => toCompletion(item));
+}
+function toResolvedCompletion(completion, item) {
+    let doc = fromMarkupContent(item.documentation);
+    if (doc) {
+        if (doc.type === CommonConverter.TooltipType.markdown) {
+            completion["docMarkdown"] = doc.text;
+        }
+        else {
+            completion["docText"] = doc.text;
+        }
+    }
+    return completion;
+}
+function toCompletionItem(completion) {
+    let command;
+    if (completion["command"]) {
+        command = {
+            title: "triggerSuggest",
+            command: completion["command"]
+        };
+    }
+    let completionItem = {
+        label: completion.caption,
+        kind: CommonConverter.convertKind(completion.meta),
+        command: command,
+        insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
+        textEdit: {
+            range: fromRange(completion["range"]),
+            newText: (completion.snippet) ? completion.snippet : completion.value
+        },
+        documentation: completion["documentation"],
+    };
+    completionItem["fileName"] = completion["fileName"];
+    completionItem["position"] = completion["position"];
+    return completionItem;
+}
+function getTextEditRange(textEdit) {
+    if (!textEdit) {
+        return;
+    }
+    if (textEdit.insert != undefined && textEdit.replace != undefined) {
+        let rangeList = new range_list/* RangeList */.$();
+        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
+        rangeList.merge();
+        return rangeList[0];
+    }
+    if (textEdit.range) {
+        return toRange(textEdit.range);
+    }
+}
+function toTooltip(hover) {
+    let content;
+    if (!hover) {
+        return;
+    }
+    if (main.MarkupContent.is(hover.contents)) {
+        content = fromMarkupContent(hover.contents);
+    }
+    else if (main.MarkedString.is(hover.contents)) {
+        content = { type: CommonConverter.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
+    }
+    else if (Array.isArray(hover.contents)) {
+        let contents = hover.contents.map((el) => {
+            if (typeof el !== "string") {
+                return `\`\`\`${el.value}\`\`\``;
+            }
+            return el;
+        });
+        content = { type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n") };
+    }
+    else {
+        return;
+    }
+    return { content: content, range: toRange(hover.range) };
+}
+function fromMarkupContent(content) {
+    if (!content)
+        return;
+    if (typeof content === "string") {
+        return { type: CommonConverter.TooltipType.plainText, text: content };
+    }
+    if (content.kind === main.MarkupKind.Markdown) {
+        return { type: CommonConverter.TooltipType.markdown, text: content.value };
+    }
+    else {
+        return { type: CommonConverter.TooltipType.plainText, text: content.value };
+    }
+}
+
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
+
 
 
 
@@ -44547,14 +44626,24 @@ class LanguageProvider {
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
+    /**
+     *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
+     * @param {Worker | WebSocket} mode
+     * @param markdownConverter
+     */
     static for(mode, markdownConverter) {
+        let messageController = new MessageControllerWS(mode);
+        return new LanguageProvider(messageController, markdownConverter);
+    }
+    /**
+     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  webworker
+     * @param {Worker} worker
+     * @param markdownConverter
+     */
+    static default(worker, markdownConverter) {
         let messageController;
-        if (mode instanceof Worker) {
-            messageController = new MessageController(mode);
-        }
-        else {
-            messageController = new MessageControllerWS(mode);
-        }
+        messageController = new MessageController(worker);
         return new LanguageProvider(messageController, markdownConverter);
     }
     $registerSession = (session, options) => {
@@ -44592,12 +44681,13 @@ class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
     doHover(session, position, callback) {
-        this.$messageController.doHover(this.$getFileName(session), position, callback);
+        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback(toTooltip(hover)));
     }
     getTooltipText(hover) {
         if (!hover)
             return;
-        let text = hover.content.type === CommonConverter.TooltipType.markdown ? CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+        let text = hover.content.type === CommonConverter.TooltipType.markdown ?
+            CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
         return { text: text, range: hover.range };
     }
     format = () => {
@@ -44606,7 +44696,7 @@ class LanguageProvider {
     };
     doComplete(editor, session, callback) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.$getFileName(session), cursor, callback);
+        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completionList) => callback(toCompletions(completionList)));
     }
     $registerCompleters(editor) {
         editor.completers = [
@@ -44614,14 +44704,17 @@ class LanguageProvider {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
                     this.doComplete(editor, session, (completions) => {
                         let fileName = this.$getFileName(session);
+                        if (!completions)
+                            return;
                         completions.forEach((item) => item["fileName"] = fileName);
                         callback(null, CommonConverter.normalizeRanges(completions));
                     });
                 },
                 getDocTooltip: (item) => {
                     if (!item["isResolved"]) {
-                        this.$messageController.doResolve(item["fileName"], item, (completion) => {
+                        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem) => {
                             item["isResolved"] = true;
+                            let completion = toResolvedCompletion(item, completionItem);
                             item.docText = completion.docText;
                             if (completion.docHTML) {
                                 item.docHTML = completion.docHTML;
@@ -44713,8 +44806,9 @@ class SessionLanguageProvider {
         if (deltas.length)
             this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
     };
-    $showAnnotations = (annotations) => {
+    $showAnnotations = (diagnostics) => {
         this.session.clearAnnotations();
+        let annotations = toAnnotations(diagnostics);
         if (annotations && annotations.length > 0) {
             this.session.setAnnotations(annotations);
         }
@@ -44738,18 +44832,17 @@ class SessionLanguageProvider {
             selectionRanges = [new ace.Range(0, 0, row, column)];
         }
         for (let range of selectionRanges) {
-            this.$messageController.format(this.fileName, range, $format, this.$applyFormat);
+            this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
         }
     };
     $applyFormat = (edits) => {
-        for (let edit of edits) {
-            this.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
-            // mirror Range
+        for (let edit of edits.reverse()) {
+            this.session.doc.replace(toRange(edit.range), edit.newText);
         }
     };
     doComplete(editor, callback) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.fileName, cursor, callback);
+        this.$messageController.doComplete(this.fileName, fromPoint(cursor), (completionList) => callback(toCompletions(completionList)));
     }
 }
 

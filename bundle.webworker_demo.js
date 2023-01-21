@@ -17770,104 +17770,6 @@ exports.T = Behaviour;
 
 /***/ }),
 
-/***/ 7853:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var Behaviour = (__webpack_require__(4708)/* .Behaviour */ .T);
-var CstyleBehaviour = (__webpack_require__(9414)/* .CstyleBehaviour */ .B);
-var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
-
-var CssBehaviour = function () {
-
-    this.inherit(CstyleBehaviour);
-
-    this.add("colon", "insertion", function (state, action, editor, session, text) {
-        if (text === ':' && editor.selection.isEmpty()) {
-            var cursor = editor.getCursorPosition();
-            var iterator = new TokenIterator(session, cursor.row, cursor.column);
-            var token = iterator.getCurrentToken();
-            if (token && token.value.match(/\s+/)) {
-                token = iterator.stepBackward();
-            }
-            if (token && token.type === 'support.type') {
-                var line = session.doc.getLine(cursor.row);
-                var rightChar = line.substring(cursor.column, cursor.column + 1);
-                if (rightChar === ':') {
-                    return {
-                       text: '',
-                       selection: [1, 1]
-                    };
-                }
-                if (/^(\s+[^;]|\s*$)/.test(line.substring(cursor.column))) {
-                    return {
-                       text: ':;',
-                       selection: [1, 1]
-                    };
-                }
-            }
-        }
-    });
-
-    this.add("colon", "deletion", function (state, action, editor, session, range) {
-        var selected = session.doc.getTextRange(range);
-        if (!range.isMultiLine() && selected === ':') {
-            var cursor = editor.getCursorPosition();
-            var iterator = new TokenIterator(session, cursor.row, cursor.column);
-            var token = iterator.getCurrentToken();
-            if (token && token.value.match(/\s+/)) {
-                token = iterator.stepBackward();
-            }
-            if (token && token.type === 'support.type') {
-                var line = session.doc.getLine(range.start.row);
-                var rightChar = line.substring(range.end.column, range.end.column + 1);
-                if (rightChar === ';') {
-                    range.end.column ++;
-                    return range;
-                }
-            }
-        }
-    });
-
-    this.add("semicolon", "insertion", function (state, action, editor, session, text) {
-        if (text === ';' && editor.selection.isEmpty()) {
-            var cursor = editor.getCursorPosition();
-            var line = session.doc.getLine(cursor.row);
-            var rightChar = line.substring(cursor.column, cursor.column + 1);
-            if (rightChar === ';') {
-                return {
-                   text: '',
-                   selection: [1, 1]
-                };
-            }
-        }
-    });
-
-    this.add("!important", "insertion", function (state, action, editor, session, text) {
-        if (text === '!' && editor.selection.isEmpty()) {
-            var cursor = editor.getCursorPosition();
-            var line = session.doc.getLine(cursor.row);
-
-            if (/^\s*(;|}|$)/.test(line.substring(cursor.column))) {
-                return {
-                    text: '!important',
-                    selection: [10, 10]
-                };
-            }
-        }
-    });
-
-};
-oop.inherits(CssBehaviour, CstyleBehaviour);
-
-exports.K = CssBehaviour;
-
-
-/***/ }),
-
 /***/ 9414:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -18251,727 +18153,6 @@ exports.B = CstyleBehaviour;
 
 /***/ }),
 
-/***/ 7809:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var Behaviour = (__webpack_require__(4708)/* .Behaviour */ .T);
-var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
-var lang = __webpack_require__(124);
-
-function is(token, type) {
-    return token && token.type.lastIndexOf(type + ".xml") > -1;
-}
-
-var XmlBehaviour = function () {
-
-    this.add("string_dquotes", "insertion", function (state, action, editor, session, text) {
-        if (text == '"' || text == "'") {
-            var quote = text;
-            var selected = session.doc.getTextRange(editor.getSelectionRange());
-            if (selected !== "" && selected !== "'" && selected != '"' && editor.getWrapBehavioursEnabled()) {
-                return {
-                    text: quote + selected + quote,
-                    selection: false
-                };
-            }
-
-            var cursor = editor.getCursorPosition();
-            var line = session.doc.getLine(cursor.row);
-            var rightChar = line.substring(cursor.column, cursor.column + 1);
-            var iterator = new TokenIterator(session, cursor.row, cursor.column);
-            var token = iterator.getCurrentToken();
-
-            if (rightChar == quote && (is(token, "attribute-value") || is(token, "string"))) {
-                // Ignore input and move right one if we're typing over the closing quote.
-                return {
-                    text: "",
-                    selection: [1, 1]
-                };
-            }
-
-            if (!token)
-                token = iterator.stepBackward();
-
-            if (!token)
-                return;
-
-            while (is(token, "tag-whitespace") || is(token, "whitespace")) {
-                token = iterator.stepBackward();
-            }
-            var rightSpace = !rightChar || rightChar.match(/\s/);
-            if (is(token, "attribute-equals") && (rightSpace || rightChar == '>') || (is(token, "decl-attribute-equals") && (rightSpace || rightChar == '?'))) {
-                return {
-                    text: quote + quote,
-                    selection: [1, 1]
-                };
-            }
-        }
-    });
-
-    this.add("string_dquotes", "deletion", function(state, action, editor, session, range) {
-        var selected = session.doc.getTextRange(range);
-        if (!range.isMultiLine() && (selected == '"' || selected == "'")) {
-            var line = session.doc.getLine(range.start.row);
-            var rightChar = line.substring(range.start.column + 1, range.start.column + 2);
-            if (rightChar == selected) {
-                range.end.column++;
-                return range;
-            }
-        }
-    });
-
-    this.add("autoclosing", "insertion", function (state, action, editor, session, text) {
-        if (text == '>') {
-            var position = editor.getSelectionRange().start;
-            var iterator = new TokenIterator(session, position.row, position.column);
-            var token = iterator.getCurrentToken() || iterator.stepBackward();
-
-            // exit if we're not in a tag
-            if (!token || !(is(token, "tag-name") || is(token, "tag-whitespace") || is(token, "attribute-name") || is(token, "attribute-equals") || is(token, "attribute-value")))
-                return;
-
-            // exit if we're inside of a quoted attribute value
-            if (is(token, "reference.attribute-value"))
-                return;
-            if (is(token, "attribute-value")) {
-                var tokenEndColumn = iterator.getCurrentTokenColumn() + token.value.length;
-                if (position.column < tokenEndColumn)
-                    return;
-                if (position.column == tokenEndColumn) {
-                    var nextToken = iterator.stepForward();
-                    // TODO also handle non-closed string at the end of the line
-                    if (nextToken && is(nextToken, "attribute-value"))
-                        return;
-                    iterator.stepBackward();
-                }
-            }
-            
-            if (/^\s*>/.test(session.getLine(position.row).slice(position.column)))
-                return;
-
-            // find tag name
-            while (!is(token, "tag-name")) {
-                token = iterator.stepBackward();
-                if (token.value == "<") {
-                    token = iterator.stepForward();
-                    break;
-                }
-            }
-
-            var tokenRow = iterator.getCurrentTokenRow();
-            var tokenColumn = iterator.getCurrentTokenColumn();
-
-            // exit if the tag is ending
-            if (is(iterator.stepBackward(), "end-tag-open"))
-                return;
-
-            var element = token.value;
-            if (tokenRow == position.row)
-                element = element.substring(0, position.column - tokenColumn);
-
-            if (this.voidElements.hasOwnProperty(element.toLowerCase()))
-                 return;
-
-            return {
-               text: ">" + "</" + element + ">",
-               selection: [1, 1]
-            };
-        }
-    });
-
-    this.add("autoindent", "insertion", function (state, action, editor, session, text) {
-        if (text == "\n") {
-            var cursor = editor.getCursorPosition();
-            var line = session.getLine(cursor.row);
-            var iterator = new TokenIterator(session, cursor.row, cursor.column);
-            var token = iterator.getCurrentToken();
-
-            if (token && token.type.indexOf("tag-close") !== -1) {
-                if (token.value == "/>")
-                    return;
-                //get tag name
-                while (token && token.type.indexOf("tag-name") === -1) {
-                    token = iterator.stepBackward();
-                }
-
-                if (!token) {
-                    return;
-                }
-
-                var tag = token.value;
-                var row = iterator.getCurrentTokenRow();
-
-                //don't indent after closing tag
-                token = iterator.stepBackward();
-                if (!token || token.type.indexOf("end-tag") !== -1) {
-                    return;
-                }
-
-                if (this.voidElements && !this.voidElements[tag]) {
-                    var nextToken = session.getTokenAt(cursor.row, cursor.column+1);
-                    var line = session.getLine(row);
-                    var nextIndent = this.$getIndent(line);
-                    var indent = nextIndent + session.getTabString();
-
-                    if (nextToken && nextToken.value === "</") {
-                        return {
-                            text: "\n" + indent + "\n" + nextIndent,
-                            selection: [1, indent.length, 1, indent.length]
-                        };
-                    } else {
-                        return {
-                            text: "\n" + indent
-                        };
-                    }
-                }
-            }
-        }
-    });
-
-};
-
-oop.inherits(XmlBehaviour, Behaviour);
-
-exports.D = XmlBehaviour;
-
-
-/***/ }),
-
-/***/ 8771:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var CssHighlightRules = (__webpack_require__(9301).CssHighlightRules);
-var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
-var WorkerClient = (__webpack_require__(1451).WorkerClient);
-var CssCompletions = (__webpack_require__(7237)/* .CssCompletions */ .A);
-var CssBehaviour = (__webpack_require__(7853)/* .CssBehaviour */ .K);
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-
-var Mode = function() {
-    this.HighlightRules = CssHighlightRules;
-    this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CssBehaviour();
-    this.$completer = new CssCompletions();
-    this.foldingRules = new CStyleFoldMode();
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-
-    this.foldingRules = "cStyle";
-    this.blockComment = {start: "/*", end: "*/"};
-
-    this.getNextLineIndent = function(state, line, tab) {
-        var indent = this.$getIndent(line);
-
-        // ignore braces in comments
-        var tokens = this.getTokenizer().getLineTokens(line, state).tokens;
-        if (tokens.length && tokens[tokens.length-1].type == "comment") {
-            return indent;
-        }
-
-        var match = line.match(/^.*\{\s*$/);
-        if (match) {
-            indent += tab;
-        }
-
-        return indent;
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        return this.$outdent.checkOutdent(line, input);
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-        this.$outdent.autoOutdent(doc, row);
-    };
-
-    this.getCompletions = function(state, session, pos, prefix) {
-        return this.$completer.getCompletions(state, session, pos, prefix);
-    };
-
-    this.createWorker = function(session) {
-        var worker = new WorkerClient(["ace"], "ace/mode/css_worker", "Worker");
-        worker.attachToDocument(session.getDocument());
-
-        worker.on("annotate", function(e) {
-            session.setAnnotations(e.data);
-        });
-
-        worker.on("terminate", function() {
-            session.clearAnnotations();
-        });
-
-        return worker;
-    };
-
-    this.$id = "ace/mode/css";
-    this.snippetFileId = "ace/snippets/css";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 7237:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-var propertyMap = {
-    "background": {"#$0": 1},
-    "background-color": {"#$0": 1, "transparent": 1, "fixed": 1},
-    "background-image": {"url('/$0')": 1},
-    "background-repeat": {"repeat": 1, "repeat-x": 1, "repeat-y": 1, "no-repeat": 1, "inherit": 1},
-    "background-position": {"bottom":2, "center":2, "left":2, "right":2, "top":2, "inherit":2},
-    "background-attachment": {"scroll": 1, "fixed": 1},
-    "background-size": {"cover": 1, "contain": 1},
-    "background-clip": {"border-box": 1, "padding-box": 1, "content-box": 1},
-    "background-origin": {"border-box": 1, "padding-box": 1, "content-box": 1},
-    "border": {"solid $0": 1, "dashed $0": 1, "dotted $0": 1, "#$0": 1},
-    "border-color": {"#$0": 1},
-    "border-style": {"solid":2, "dashed":2, "dotted":2, "double":2, "groove":2, "hidden":2, "inherit":2, "inset":2, "none":2, "outset":2, "ridged":2},
-    "border-collapse": {"collapse": 1, "separate": 1},
-    "bottom": {"px": 1, "em": 1, "%": 1},
-    "clear": {"left": 1, "right": 1, "both": 1, "none": 1},
-    "color": {"#$0": 1, "rgb(#$00,0,0)": 1},
-    "cursor": {"default": 1, "pointer": 1, "move": 1, "text": 1, "wait": 1, "help": 1, "progress": 1, "n-resize": 1, "ne-resize": 1, "e-resize": 1, "se-resize": 1, "s-resize": 1, "sw-resize": 1, "w-resize": 1, "nw-resize": 1},
-    "display": {"none": 1, "block": 1, "inline": 1, "inline-block": 1, "table-cell": 1},
-    "empty-cells": {"show": 1, "hide": 1},
-    "float": {"left": 1, "right": 1, "none": 1},
-    "font-family": {"Arial":2,"Comic Sans MS":2,"Consolas":2,"Courier New":2,"Courier":2,"Georgia":2,"Monospace":2,"Sans-Serif":2, "Segoe UI":2,"Tahoma":2,"Times New Roman":2,"Trebuchet MS":2,"Verdana": 1},
-    "font-size": {"px": 1, "em": 1, "%": 1},
-    "font-weight": {"bold": 1, "normal": 1},
-    "font-style": {"italic": 1, "normal": 1},
-    "font-variant": {"normal": 1, "small-caps": 1},
-    "height": {"px": 1, "em": 1, "%": 1},
-    "left": {"px": 1, "em": 1, "%": 1},
-    "letter-spacing": {"normal": 1},
-    "line-height": {"normal": 1},
-    "list-style-type": {"none": 1, "disc": 1, "circle": 1, "square": 1, "decimal": 1, "decimal-leading-zero": 1, "lower-roman": 1, "upper-roman": 1, "lower-greek": 1, "lower-latin": 1, "upper-latin": 1, "georgian": 1, "lower-alpha": 1, "upper-alpha": 1},
-    "margin": {"px": 1, "em": 1, "%": 1},
-    "margin-right": {"px": 1, "em": 1, "%": 1},
-    "margin-left": {"px": 1, "em": 1, "%": 1},
-    "margin-top": {"px": 1, "em": 1, "%": 1},
-    "margin-bottom": {"px": 1, "em": 1, "%": 1},
-    "max-height": {"px": 1, "em": 1, "%": 1},
-    "max-width": {"px": 1, "em": 1, "%": 1},
-    "min-height": {"px": 1, "em": 1, "%": 1},
-    "min-width": {"px": 1, "em": 1, "%": 1},
-    "overflow": {"hidden": 1, "visible": 1, "auto": 1, "scroll": 1},
-    "overflow-x": {"hidden": 1, "visible": 1, "auto": 1, "scroll": 1},
-    "overflow-y": {"hidden": 1, "visible": 1, "auto": 1, "scroll": 1},
-    "padding": {"px": 1, "em": 1, "%": 1},
-    "padding-top": {"px": 1, "em": 1, "%": 1},
-    "padding-right": {"px": 1, "em": 1, "%": 1},
-    "padding-bottom": {"px": 1, "em": 1, "%": 1},
-    "padding-left": {"px": 1, "em": 1, "%": 1},
-    "page-break-after": {"auto": 1, "always": 1, "avoid": 1, "left": 1, "right": 1},
-    "page-break-before": {"auto": 1, "always": 1, "avoid": 1, "left": 1, "right": 1},
-    "position": {"absolute": 1, "relative": 1, "fixed": 1, "static": 1},
-    "right": {"px": 1, "em": 1, "%": 1},
-    "table-layout": {"fixed": 1, "auto": 1},
-    "text-decoration": {"none": 1, "underline": 1, "line-through": 1, "blink": 1},
-    "text-align": {"left": 1, "right": 1, "center": 1, "justify": 1},
-    "text-transform": {"capitalize": 1, "uppercase": 1, "lowercase": 1, "none": 1},
-    "top": {"px": 1, "em": 1, "%": 1},
-    "vertical-align": {"top": 1, "bottom": 1},
-    "visibility": {"hidden": 1, "visible": 1},
-    "white-space": {"nowrap": 1, "normal": 1, "pre": 1, "pre-line": 1, "pre-wrap": 1},
-    "width": {"px": 1, "em": 1, "%": 1},
-    "word-spacing": {"normal": 1},
-
-    // opacity
-    "filter": {"alpha(opacity=$0100)": 1},
-
-    "text-shadow": {"$02px 2px 2px #777": 1},
-    "text-overflow": {"ellipsis-word": 1, "clip": 1, "ellipsis": 1},
-
-    // border radius
-    "-moz-border-radius": 1,
-    "-moz-border-radius-topright": 1,
-    "-moz-border-radius-bottomright": 1,
-    "-moz-border-radius-topleft": 1,
-    "-moz-border-radius-bottomleft": 1,
-    "-webkit-border-radius": 1,
-    "-webkit-border-top-right-radius": 1,
-    "-webkit-border-top-left-radius": 1,
-    "-webkit-border-bottom-right-radius": 1,
-    "-webkit-border-bottom-left-radius": 1,
-
-    // dropshadows
-    "-moz-box-shadow": 1,
-    "-webkit-box-shadow": 1,
-
-    // transformations
-    "transform": {"rotate($00deg)": 1, "skew($00deg)": 1},
-    "-moz-transform": {"rotate($00deg)": 1, "skew($00deg)": 1},
-    "-webkit-transform": {"rotate($00deg)": 1, "skew($00deg)": 1 }
-};
-
-var CssCompletions = function() {
-
-};
-
-(function() {
-
-    this.completionsDefined = false;
-
-    this.defineCompletions = function() {
-        //fill in missing properties
-        if (document) {
-            var style = document.createElement('c').style;
-
-            for (var i in style) {
-                if (typeof style[i] !== 'string')
-                    continue;
-
-                var name = i.replace(/[A-Z]/g, function(x) {
-                    return '-' + x.toLowerCase();
-                });
-
-                if (!propertyMap.hasOwnProperty(name))
-                    propertyMap[name] = 1;
-            }
-        }
-
-        this.completionsDefined = true;
-    };
-
-    this.getCompletions = function(state, session, pos, prefix) {
-        if (!this.completionsDefined) {
-            this.defineCompletions();
-        }
-
-        if (state==='ruleset' || session.$mode.$id == "ace/mode/scss") {
-            //css attribute value
-            var line = session.getLine(pos.row).substr(0, pos.column);
-            var inParens = /\([^)]*$/.test(line);
-            if (inParens) {
-                line = line.substr(line.lastIndexOf('(') + 1);
-            }
-            if (/:[^;]+$/.test(line)) {
-                /([\w\-]+):[^:]*$/.test(line);
-
-                return this.getPropertyValueCompletions(state, session, pos, prefix);
-            } else {
-                return this.getPropertyCompletions(state, session, pos, prefix, inParens);
-            }
-        }
-
-        return [];
-    };
-
-    this.getPropertyCompletions = function(state, session, pos, prefix, skipSemicolon) {
-        skipSemicolon = skipSemicolon || false;
-        var properties = Object.keys(propertyMap);
-        return properties.map(function(property){
-            return {
-                caption: property,
-                snippet: property + ': $0' + (skipSemicolon ? '' : ';'),
-                meta: "property",
-                score: 1000000
-            };
-        });
-    };
-
-    this.getPropertyValueCompletions = function(state, session, pos, prefix) {
-        var line = session.getLine(pos.row).substr(0, pos.column);
-        var property = (/([\w\-]+):[^:]*$/.exec(line) || {})[1];
-
-        if (!property)
-            return [];
-        var values = [];
-        if (property in propertyMap && typeof propertyMap[property] === "object") {
-            values = Object.keys(propertyMap[property]);
-        }
-        return values.map(function(value){
-            return {
-                caption: value,
-                snippet: value,
-                meta: "property value",
-                score: 1000000
-            };
-        });
-    };
-
-}).call(CssCompletions.prototype);
-
-exports.A = CssCompletions;
-
-
-/***/ }),
-
-/***/ 9301:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var lang = __webpack_require__(124);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-
-
-/* Exports are for Stylus and Less highlighters */
-var supportType = exports.supportType = "align-content|align-items|align-self|all|animation|animation-delay|animation-direction|animation-duration|animation-fill-mode|animation-iteration-count|animation-name|animation-play-state|animation-timing-function|backface-visibility|background|background-attachment|background-blend-mode|background-clip|background-color|background-image|background-origin|background-position|background-repeat|background-size|border|border-bottom|border-bottom-color|border-bottom-left-radius|border-bottom-right-radius|border-bottom-style|border-bottom-width|border-collapse|border-color|border-image|border-image-outset|border-image-repeat|border-image-slice|border-image-source|border-image-width|border-left|border-left-color|border-left-style|border-left-width|border-radius|border-right|border-right-color|border-right-style|border-right-width|border-spacing|border-style|border-top|border-top-color|border-top-left-radius|border-top-right-radius|border-top-style|border-top-width|border-width|bottom|box-shadow|box-sizing|caption-side|clear|clip|color|column-count|column-fill|column-gap|column-rule|column-rule-color|column-rule-style|column-rule-width|column-span|column-width|columns|content|counter-increment|counter-reset|cursor|direction|display|empty-cells|filter|flex|flex-basis|flex-direction|flex-flow|flex-grow|flex-shrink|flex-wrap|float|font|font-family|font-size|font-size-adjust|font-stretch|font-style|font-variant|font-weight|hanging-punctuation|height|justify-content|left|letter-spacing|line-height|list-style|list-style-image|list-style-position|list-style-type|margin|margin-bottom|margin-left|margin-right|margin-top|max-height|max-width|max-zoom|min-height|min-width|min-zoom|nav-down|nav-index|nav-left|nav-right|nav-up|opacity|order|outline|outline-color|outline-offset|outline-style|outline-width|overflow|overflow-x|overflow-y|padding|padding-bottom|padding-left|padding-right|padding-top|page-break-after|page-break-before|page-break-inside|perspective|perspective-origin|position|quotes|resize|right|tab-size|table-layout|text-align|text-align-last|text-decoration|text-decoration-color|text-decoration-line|text-decoration-style|text-indent|text-justify|text-overflow|text-shadow|text-transform|top|transform|transform-origin|transform-style|transition|transition-delay|transition-duration|transition-property|transition-timing-function|unicode-bidi|user-select|user-zoom|vertical-align|visibility|white-space|width|word-break|word-spacing|word-wrap|z-index";
-var supportFunction = exports.supportFunction = "rgb|rgba|url|attr|counter|counters";
-var supportConstant = exports.supportConstant = "absolute|after-edge|after|all-scroll|all|alphabetic|always|antialiased|armenian|auto|avoid-column|avoid-page|avoid|balance|baseline|before-edge|before|below|bidi-override|block-line-height|block|bold|bolder|border-box|both|bottom|box|break-all|break-word|capitalize|caps-height|caption|center|central|char|circle|cjk-ideographic|clone|close-quote|col-resize|collapse|column|consider-shifts|contain|content-box|cover|crosshair|cubic-bezier|dashed|decimal-leading-zero|decimal|default|disabled|disc|disregard-shifts|distribute-all-lines|distribute-letter|distribute-space|distribute|dotted|double|e-resize|ease-in|ease-in-out|ease-out|ease|ellipsis|end|exclude-ruby|flex-end|flex-start|fill|fixed|georgian|glyphs|grid-height|groove|hand|hanging|hebrew|help|hidden|hiragana-iroha|hiragana|horizontal|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographic|inactive|include-ruby|inherit|initial|inline-block|inline-box|inline-line-height|inline-table|inline|inset|inside|inter-ideograph|inter-word|invert|italic|justify|katakana-iroha|katakana|keep-all|last|left|lighter|line-edge|line-through|line|linear|list-item|local|loose|lower-alpha|lower-greek|lower-latin|lower-roman|lowercase|lr-tb|ltr|mathematical|max-height|max-size|medium|menu|message-box|middle|move|n-resize|ne-resize|newspaper|no-change|no-close-quote|no-drop|no-open-quote|no-repeat|none|normal|not-allowed|nowrap|nw-resize|oblique|open-quote|outset|outside|overline|padding-box|page|pointer|pre-line|pre-wrap|pre|preserve-3d|progress|relative|repeat-x|repeat-y|repeat|replaced|reset-size|ridge|right|round|row-resize|rtl|s-resize|scroll|se-resize|separate|slice|small-caps|small-caption|solid|space|square|start|static|status-bar|step-end|step-start|steps|stretch|strict|sub|super|sw-resize|table-caption|table-cell|table-column-group|table-column|table-footer-group|table-header-group|table-row-group|table-row|table|tb-rl|text-after-edge|text-before-edge|text-bottom|text-size|text-top|text|thick|thin|transparent|underline|upper-alpha|upper-latin|upper-roman|uppercase|use-script|vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|z-index|zero|zoom";
-var supportConstantColor = exports.supportConstantColor = "aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen";
-var supportConstantFonts = exports.supportConstantFonts = "arial|century|comic|courier|cursive|fantasy|garamond|georgia|helvetica|impact|lucida|symbol|system|tahoma|times|trebuchet|utopia|verdana|webdings|sans-serif|serif|monospace";
-
-var numRe = exports.numRe = "\\-?(?:(?:[0-9]+(?:\\.[0-9]+)?)|(?:\\.[0-9]+))";
-var pseudoElements = exports.pseudoElements = "(\\:+)\\b(after|before|first-letter|first-line|moz-selection|selection)\\b";
-var pseudoClasses  = exports.pseudoClasses =  "(:)\\b(active|checked|disabled|empty|enabled|first-child|first-of-type|focus|hover|indeterminate|invalid|last-child|last-of-type|link|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|only-child|only-of-type|required|root|target|valid|visited)\\b";
-
-var CssHighlightRules = function() {
-
-    var keywordMapper = this.createKeywordMapper({
-        "support.function": supportFunction,
-        "support.constant": supportConstant,
-        "support.type": supportType,
-        "support.constant.color": supportConstantColor,
-        "support.constant.fonts": supportConstantFonts
-    }, "text", true);
-
-    // regexp must not have capturing parentheses. Use (?:) instead.
-    // regexps are ordered -> the first match is used
-
-    this.$rules = {
-        "start" : [{
-            include : ["strings", "url", "comments"]
-        }, {
-            token: "paren.lparen",
-            regex: "\\{",
-            next:  "ruleset"
-        }, {
-            token: "paren.rparen",
-            regex: "\\}"
-        }, {
-            token: "string",
-            regex: "@(?!viewport)",
-            next:  "media"
-        }, {
-            token: "keyword",
-            regex: "#[a-z0-9-_]+"
-        }, {
-            token: "keyword",
-            regex: "%"
-        }, {
-            token: "variable",
-            regex: "\\.[a-z0-9-_]+"
-        }, {
-            token: "string",
-            regex: ":[a-z0-9-_]+"
-        }, {
-            token : "constant.numeric",
-            regex : numRe
-        }, {
-            token: "constant",
-            regex: "[a-z0-9-_]+"
-        }, {
-            caseInsensitive: true
-        }],
-
-        "media": [{
-            include : ["strings", "url", "comments"]
-        }, {
-            token: "paren.lparen",
-            regex: "\\{",
-            next:  "start"
-        }, {
-            token: "paren.rparen",
-            regex: "\\}",
-            next:  "start"
-        }, {
-            token: "string",
-            regex: ";",
-            next:  "start"
-        }, {
-            token: "keyword",
-            regex: "(?:media|supports|document|charset|import|namespace|media|supports|document"
-                + "|page|font|keyframes|viewport|counter-style|font-feature-values"
-                + "|swash|ornaments|annotation|stylistic|styleset|character-variant)"
-        }],
-
-        "comments" : [{
-            token: "comment", // multi line comment
-            regex: "\\/\\*",
-            push: [{
-                token : "comment",
-                regex : "\\*\\/",
-                next : "pop"
-            }, {
-                defaultToken : "comment"
-            }]
-        }],
-
-        "ruleset" : [{
-            regex : "-(webkit|ms|moz|o)-",
-            token : "text"
-        }, {
-            token : "punctuation.operator",
-            regex : "[:;]"
-        }, {
-            token : "paren.rparen",
-            regex : "\\}",
-            next : "start"
-        }, {
-            include : ["strings", "url", "comments"]
-        }, {
-            token : ["constant.numeric", "keyword"],
-            regex : "(" + numRe + ")(ch|cm|deg|em|ex|fr|gd|grad|Hz|in|kHz|mm|ms|pc|pt|px|rad|rem|s|turn|vh|vmax|vmin|vm|vw|%)"
-        }, {
-            token : "constant.numeric",
-            regex : numRe
-        }, {
-            token : "constant.numeric",  // hex6 color
-            regex : "#[a-f0-9]{6}"
-        }, {
-            token : "constant.numeric", // hex3 color
-            regex : "#[a-f0-9]{3}"
-        }, {
-            token : ["punctuation", "entity.other.attribute-name.pseudo-element.css"],
-            regex : pseudoElements
-        }, {
-            token : ["punctuation", "entity.other.attribute-name.pseudo-class.css"],
-            regex : pseudoClasses
-        }, {
-            include: "url"
-        }, {
-            token : keywordMapper,
-            regex : "\\-?[a-zA-Z_][a-zA-Z0-9_\\-]*"
-        }, {
-            caseInsensitive: true
-        }],
-
-        url: [{
-            token : "support.function",
-            regex : "(?:url(:?-prefix)?|domain|regexp)\\(",
-            push: [{
-                token : "support.function",
-                regex : "\\)",
-                next : "pop"
-            }, {
-                defaultToken: "string"
-            }]
-        }],
-
-        strings: [{
-            token : "string.start",
-            regex : "'",
-            push : [{
-                token : "string.end",
-                regex : "'|$",
-                next: "pop"
-            }, {
-                include : "escapes"
-            }, {
-                token : "constant.language.escape",
-                regex : /\\$/,
-                consumeLineEnd: true
-            }, {
-                defaultToken: "string"
-            }]
-        }, {
-            token : "string.start",
-            regex : '"',
-            push : [{
-                token : "string.end",
-                regex : '"|$',
-                next: "pop"
-            }, {
-                include : "escapes"
-            }, {
-                token : "constant.language.escape",
-                regex : /\\$/,
-                consumeLineEnd: true
-            }, {
-                defaultToken: "string"
-            }]
-        }],
-        escapes: [{
-            token : "constant.language.escape",
-            regex : /\\([a-fA-F\d]{1,6}|[^a-fA-F\d])/
-        }]
-
-    };
-
-    this.normalizeRules();
-};
-
-oop.inherits(CssHighlightRules, TextHighlightRules);
-
-exports.CssHighlightRules = CssHighlightRules;
-
-
-/***/ }),
-
-/***/ 2718:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-
-var DocCommentHighlightRules = function() {
-    this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
-    };
-};
-
-oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-
-DocCommentHighlightRules.getTagRule = function(start) {
-    return {
-        token : "comment.doc.tag.storage.type",
-        regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
-    };
-};
-
-DocCommentHighlightRules.getStartRule = function(start) {
-    return {
-        token : "comment.doc", // doc comment
-        regex : "\\/\\*(?=\\*)",
-        next  : start
-    };
-};
-
-DocCommentHighlightRules.getEndRule = function (start) {
-    return {
-        token : "comment.doc", // closing comment
-        regex : "\\*\\/",
-        next  : start
-    };
-};
-
-
-exports.c = DocCommentHighlightRules;
-
-
-/***/ }),
-
 /***/ 2764:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -19237,1460 +18418,6 @@ var FoldMode = exports.FoldMode = function() {};
 
 /***/ }),
 
-/***/ 4505:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var MixedFoldMode = (__webpack_require__(2974)/* .FoldMode */ .Z);
-var XmlFoldMode = (__webpack_require__(4631)/* .FoldMode */ .Z);
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-
-var FoldMode = exports.Z = function(voidElements, optionalTags) {
-    MixedFoldMode.call(this, new XmlFoldMode(voidElements, optionalTags), {
-        "js-": new CStyleFoldMode(),
-        "css-": new CStyleFoldMode()
-    });
-};
-
-oop.inherits(FoldMode, MixedFoldMode);
-
-
-/***/ }),
-
-/***/ 3298:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var BaseFoldMode = (__webpack_require__(5369).FoldMode);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
-var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
-
-
-var FoldMode = exports.Z = function() {};
-
-oop.inherits(FoldMode, BaseFoldMode);
-
-(function() {
-
-    this.foldingStartMarker = /\b(function|then|do|repeat)\b|{\s*$|(\[=*\[)/;
-    this.foldingStopMarker = /\bend\b|^\s*}|\]=*\]/;
-
-    this.getFoldWidget = function(session, foldStyle, row) {
-        var line = session.getLine(row);
-        var isStart = this.foldingStartMarker.test(line);
-        var isEnd = this.foldingStopMarker.test(line);
-
-        if (isStart && !isEnd) {
-            var match = line.match(this.foldingStartMarker);
-            if (match[1] == "then" && /\belseif\b/.test(line))
-                return;
-            if (match[1]) {
-                if (session.getTokenAt(row, match.index + 1).type === "keyword")
-                    return "start";
-            } else if (match[2]) {
-                var type = session.bgTokenizer.getState(row) || "";
-                if (type[0] == "bracketedComment" || type[0] == "bracketedString")
-                    return "start";
-            } else {
-                return "start";
-            }
-        }
-        if (foldStyle != "markbeginend" || !isEnd || isStart && isEnd)
-            return "";
-
-        var match = line.match(this.foldingStopMarker);
-        if (match[0] === "end") {
-            if (session.getTokenAt(row, match.index + 1).type === "keyword")
-                return "end";
-        } else if (match[0][0] === "]") {
-            var type = session.bgTokenizer.getState(row - 1) || "";
-            if (type[0] == "bracketedComment" || type[0] == "bracketedString")
-                return "end";
-        } else
-            return "end";
-    };
-
-    this.getFoldWidgetRange = function(session, foldStyle, row) {
-        var line = session.doc.getLine(row);
-        var match = this.foldingStartMarker.exec(line);
-        if (match) {
-            if (match[1])
-                return this.luaBlock(session, row, match.index + 1);
-
-            if (match[2])
-                return session.getCommentFoldRange(row, match.index + 1);
-
-            return this.openingBracketBlock(session, "{", row, match.index);
-        }
-
-        var match = this.foldingStopMarker.exec(line);
-        if (match) {
-            if (match[0] === "end") {
-                if (session.getTokenAt(row, match.index + 1).type === "keyword")
-                    return this.luaBlock(session, row, match.index + 1);
-            }
-
-            if (match[0][0] === "]")
-                return session.getCommentFoldRange(row, match.index + 1);
-
-            return this.closingBracketBlock(session, "}", row, match.index + match[0].length);
-        }
-    };
-
-    this.luaBlock = function(session, row, column, tokenRange) {
-        var stream = new TokenIterator(session, row, column);
-        var indentKeywords = {
-            "function": 1,
-            "do": 1,
-            "then": 1,
-            "elseif": -1,
-            "end": -1,
-            "repeat": 1,
-            "until": -1
-        };
-
-        var token = stream.getCurrentToken();
-        if (!token || token.type != "keyword")
-            return;
-
-        var val = token.value;
-        var stack = [val];
-        var dir = indentKeywords[val];
-
-        if (!dir)
-            return;
-
-        var startColumn = dir === -1 ? stream.getCurrentTokenColumn() : session.getLine(row).length;
-        var startRow = row;
-
-        stream.step = dir === -1 ? stream.stepBackward : stream.stepForward;
-        while(token = stream.step()) {
-            if (token.type !== "keyword")
-                continue;
-            var level = dir * indentKeywords[token.value];
-
-            if (level > 0) {
-                stack.unshift(token.value);
-            } else if (level <= 0) {
-                stack.shift();
-                if (!stack.length && token.value != "elseif")
-                    break;
-                if (level === 0)
-                    stack.unshift(token.value);
-            }
-        }
-
-        if (!token)
-            return null;
-
-        if (tokenRange)
-            return stream.getCurrentTokenRange();
-
-        var row = stream.getCurrentTokenRow();
-        if (dir === -1)
-            return new Range(row, session.getLine(row).length, startRow, startColumn);
-        else
-            return new Range(startRow, startColumn, row, stream.getCurrentTokenColumn());
-    };
-
-}).call(FoldMode.prototype);
-
-
-/***/ }),
-
-/***/ 2974:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var BaseFoldMode = (__webpack_require__(5369).FoldMode);
-
-var FoldMode = exports.Z = function(defaultMode, subModes) {
-    this.defaultMode = defaultMode;
-    this.subModes = subModes;
-};
-oop.inherits(FoldMode, BaseFoldMode);
-
-(function() {
-
-
-    this.$getMode = function(state) {
-        if (typeof state != "string") 
-            state = state[0];
-        for (var key in this.subModes) {
-            if (state.indexOf(key) === 0)
-                return this.subModes[key];
-        }
-        return null;
-    };
-    
-    this.$tryMode = function(state, session, foldStyle, row) {
-        var mode = this.$getMode(state);
-        return (mode ? mode.getFoldWidget(session, foldStyle, row) : "");
-    };
-
-    this.getFoldWidget = function(session, foldStyle, row) {
-        return (
-            this.$tryMode(session.getState(row-1), session, foldStyle, row) ||
-            this.$tryMode(session.getState(row), session, foldStyle, row) ||
-            this.defaultMode.getFoldWidget(session, foldStyle, row)
-        );
-    };
-
-    this.getFoldWidgetRange = function(session, foldStyle, row) {
-        var mode = this.$getMode(session.getState(row-1));
-        
-        if (!mode || !mode.getFoldWidget(session, foldStyle, row))
-            mode = this.$getMode(session.getState(row));
-        
-        if (!mode || !mode.getFoldWidget(session, foldStyle, row))
-            mode = this.defaultMode;
-        
-        return mode.getFoldWidgetRange(session, foldStyle, row);
-    };
-
-}).call(FoldMode.prototype);
-
-
-/***/ }),
-
-/***/ 4631:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
-var BaseFoldMode = (__webpack_require__(5369).FoldMode);
-
-var FoldMode = exports.Z = function(voidElements, optionalEndTags) {
-    BaseFoldMode.call(this);
-    this.voidElements = voidElements || {};
-    this.optionalEndTags = oop.mixin({}, this.voidElements);
-    if (optionalEndTags)
-        oop.mixin(this.optionalEndTags, optionalEndTags);
-    
-};
-oop.inherits(FoldMode, BaseFoldMode);
-
-var Tag = function() {
-    this.tagName = "";
-    this.closing = false;
-    this.selfClosing = false;
-    this.start = {row: 0, column: 0};
-    this.end = {row: 0, column: 0};
-};
-
-function is(token, type) {
-    return token.type.lastIndexOf(type + ".xml") > -1;
-}
-
-(function() {
-
-    this.getFoldWidget = function(session, foldStyle, row) {
-        var tag = this._getFirstTagInLine(session, row);
-
-        if (!tag)
-            return this.getCommentFoldWidget(session, row);
-
-        if (tag.closing || (!tag.tagName && tag.selfClosing))
-            return foldStyle === "markbeginend" ? "end" : "";
-
-        if (!tag.tagName || tag.selfClosing || this.voidElements.hasOwnProperty(tag.tagName.toLowerCase()))
-            return "";
-
-        if (this._findEndTagInLine(session, row, tag.tagName, tag.end.column))
-            return "";
-
-        return "start";
-    };
-    
-    this.getCommentFoldWidget = function(session, row) {
-        if (/comment/.test(session.getState(row)) && /<!-/.test(session.getLine(row)))
-            return "start";
-        return "";
-    };
-
-    /*
-     * returns a first tag (or a fragment) in a line
-     */
-    this._getFirstTagInLine = function(session, row) {
-        var tokens = session.getTokens(row);
-        var tag = new Tag();
-
-        for (var i = 0; i < tokens.length; i++) {
-            var token = tokens[i];
-            if (is(token, "tag-open")) {
-                tag.end.column = tag.start.column + token.value.length;
-                tag.closing = is(token, "end-tag-open");
-                token = tokens[++i];
-                if (!token)
-                    return null;
-                tag.tagName = token.value;
-                tag.end.column += token.value.length;
-                for (i++; i < tokens.length; i++) {
-                    token = tokens[i];
-                    tag.end.column += token.value.length;
-                    if (is(token, "tag-close")) {
-                        tag.selfClosing = token.value == '/>';
-                        break;
-                    }
-                }
-                return tag;
-            } else if (is(token, "tag-close")) {
-                tag.selfClosing = token.value == '/>';
-                return tag;
-            }
-            tag.start.column += token.value.length;
-        }
-
-        return null;
-    };
-
-    this._findEndTagInLine = function(session, row, tagName, startColumn) {
-        var tokens = session.getTokens(row);
-        var column = 0;
-        for (var i = 0; i < tokens.length; i++) {
-            var token = tokens[i];
-            column += token.value.length;
-            if (column < startColumn)
-                continue;
-            if (is(token, "end-tag-open")) {
-                token = tokens[i + 1];
-                if (token && token.value == tagName)
-                    return true;
-            }
-        }
-        return false;
-    };
-
-    this.getFoldWidgetRange = function(session, foldStyle, row) {
-        var tags = session.getMatchingTags({row: row, column: 0});
-        if (tags) {
-            return new Range(
-                tags.openTag.end.row, tags.openTag.end.column, tags.closeTag.start.row, tags.closeTag.start.column);
-        } else {
-            return this.getCommentFoldWidget(session, row)
-                && session.getCommentFoldRange(row, session.getLine(row).length);
-        }
-    };
-
-}).call(FoldMode.prototype);
-
-
-/***/ }),
-
-/***/ 5528:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var lang = __webpack_require__(124);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var JavaScriptMode = (__webpack_require__(8057)/* .Mode */ .A);
-var CssMode = (__webpack_require__(8771)/* .Mode */ .A);
-var HtmlHighlightRules = (__webpack_require__(2843)/* .HtmlHighlightRules */ .V);
-var XmlBehaviour = (__webpack_require__(7809)/* .XmlBehaviour */ .D);
-var HtmlFoldMode = (__webpack_require__(4505)/* .FoldMode */ .Z);
-var HtmlCompletions = (__webpack_require__(8439)/* .HtmlCompletions */ .A);
-var WorkerClient = (__webpack_require__(1451).WorkerClient);
-
-// http://www.w3.org/TR/html5/syntax.html#void-elements
-var voidElements = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "meta", "menuitem", "param", "source", "track", "wbr"];
-var optionalEndTags = ["li", "dt", "dd", "p", "rt", "rp", "optgroup", "option", "colgroup", "td", "th"];
-
-var Mode = function(options) {
-    this.fragmentContext = options && options.fragmentContext;
-    this.HighlightRules = HtmlHighlightRules;
-    this.$behaviour = new XmlBehaviour();
-    this.$completer = new HtmlCompletions();
-    
-    this.createModeDelegates({
-        "js-": JavaScriptMode,
-        "css-": CssMode
-    });
-    
-    this.foldingRules = new HtmlFoldMode(this.voidElements, lang.arrayToMap(optionalEndTags));
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-
-    this.blockComment = {start: "<!--", end: "-->"};
-
-    this.voidElements = lang.arrayToMap(voidElements);
-
-    this.getNextLineIndent = function(state, line, tab) {
-        return this.$getIndent(line);
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        return false;
-    };
-
-    this.getCompletions = function(state, session, pos, prefix) {
-        return this.$completer.getCompletions(state, session, pos, prefix);
-    };
-
-    this.createWorker = function(session) {
-        if (this.constructor != Mode)
-            return;
-        var worker = new WorkerClient(["ace"], "ace/mode/html_worker", "Worker");
-        worker.attachToDocument(session.getDocument());
-
-        if (this.fragmentContext)
-            worker.call("setOptions", [{context: this.fragmentContext}]);
-
-        worker.on("error", function(e) {
-            session.setAnnotations(e.data);
-        });
-
-        worker.on("terminate", function() {
-            session.clearAnnotations();
-        });
-
-        return worker;
-    };
-
-    this.$id = "ace/mode/html";
-    this.snippetFileId = "ace/snippets/html";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 8439:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
-
-var commonAttributes = [
-    "accesskey",
-    "class",
-    "contenteditable",
-    "contextmenu",
-    "dir",
-    "draggable",
-    "dropzone",
-    "hidden",
-    "id",
-    "inert",
-    "itemid",
-    "itemprop",
-    "itemref",
-    "itemscope",
-    "itemtype",
-    "lang",
-    "spellcheck",
-    "style",
-    "tabindex",
-    "title",
-    "translate"
-];
-
-var eventAttributes = [
-    "onabort",
-    "onblur",
-    "oncancel",
-    "oncanplay",
-    "oncanplaythrough",
-    "onchange",
-    "onclick",
-    "onclose",
-    "oncontextmenu",
-    "oncuechange",
-    "ondblclick",
-    "ondrag",
-    "ondragend",
-    "ondragenter",
-    "ondragleave",
-    "ondragover",
-    "ondragstart",
-    "ondrop",
-    "ondurationchange",
-    "onemptied",
-    "onended",
-    "onerror",
-    "onfocus",
-    "oninput",
-    "oninvalid",
-    "onkeydown",
-    "onkeypress",
-    "onkeyup",
-    "onload",
-    "onloadeddata",
-    "onloadedmetadata",
-    "onloadstart",
-    "onmousedown",
-    "onmousemove",
-    "onmouseout",
-    "onmouseover",
-    "onmouseup",
-    "onmousewheel",
-    "onpause",
-    "onplay",
-    "onplaying",
-    "onprogress",
-    "onratechange",
-    "onreset",
-    "onscroll",
-    "onseeked",
-    "onseeking",
-    "onselect",
-    "onshow",
-    "onstalled",
-    "onsubmit",
-    "onsuspend",
-    "ontimeupdate",
-    "onvolumechange",
-    "onwaiting"
-];
-
-var globalAttributes = commonAttributes.concat(eventAttributes);
-
-var attributeMap = {
-    "a": {"href": 1, "target": {"_blank": 1, "top": 1}, "ping": 1, "rel": {"nofollow": 1, "alternate": 1, "author": 1, "bookmark": 1, "help": 1, "license": 1, "next": 1, "noreferrer": 1, "prefetch": 1, "prev": 1, "search": 1, "tag": 1}, "media": 1, "hreflang": 1, "type": 1},
-    "abbr": {},
-    "address": {},
-    "area": {"shape": 1, "coords": 1, "href": 1, "hreflang": 1, "alt": 1, "target": 1, "media": 1, "rel": 1, "ping": 1, "type": 1},
-    "article": {"pubdate": 1},
-    "aside": {},
-    "audio": {"src": 1, "autobuffer": 1, "autoplay": {"autoplay": 1}, "loop": {"loop": 1}, "controls": {"controls": 1}, "muted": {"muted": 1}, "preload": {"auto": 1, "metadata": 1, "none": 1 }},
-    "b": {},
-    "base": {"href": 1, "target": 1},
-    "bdi": {},
-    "bdo": {},
-    "blockquote": {"cite": 1},
-    "body": {"onafterprint": 1, "onbeforeprint": 1, "onbeforeunload": 1, "onhashchange": 1, "onmessage": 1, "onoffline": 1, "onpopstate": 1, "onredo": 1, "onresize": 1, "onstorage": 1, "onundo": 1, "onunload": 1},
-    "br": {},
-    "button": {"autofocus": 1, "disabled": {"disabled": 1}, "form": 1, "formaction": 1, "formenctype": 1, "formmethod": 1, "formnovalidate": 1, "formtarget": 1, "name": 1, "value": 1, "type": {"button": 1, "submit": 1}},
-    "canvas": {"width": 1, "height": 1},
-    "caption": {},
-    "cite": {},
-    "code": {},
-    "col": {"span": 1},
-    "colgroup": {"span": 1},
-    "command": {"type": 1, "label": 1, "icon": 1, "disabled": 1, "checked": 1, "radiogroup": 1, "command": 1},
-    "data": {},
-    "datalist": {},
-    "dd": {},
-    "del": {"cite": 1, "datetime": 1},
-    "details": {"open": 1},
-    "dfn": {},
-    "dialog": {"open": 1},
-    "div": {},
-    "dl": {},
-    "dt": {},
-    "em": {},
-    "embed": {"src": 1, "height": 1, "width": 1, "type": 1},
-    "fieldset": {"disabled": 1, "form": 1, "name": 1},
-    "figcaption": {},
-    "figure": {},
-    "footer": {},
-    "form": {"accept-charset": 1, "action": 1, "autocomplete": 1, "enctype": {"multipart/form-data": 1, "application/x-www-form-urlencoded": 1}, "method": {"get": 1, "post": 1}, "name": 1, "novalidate": 1, "target": {"_blank": 1, "top": 1}},
-    "h1": {},
-    "h2": {},
-    "h3": {},
-    "h4": {},
-    "h5": {},
-    "h6": {},
-    "head": {},
-    "header": {},
-    "hr": {},
-    "html": {"manifest": 1},
-    "i": {},
-    "iframe": {"name": 1, "src": 1, "height": 1, "width": 1, "sandbox": {"allow-same-origin": 1, "allow-top-navigation": 1, "allow-forms": 1, "allow-scripts": 1}, "seamless": {"seamless": 1}},
-    "img": {"alt": 1, "src": 1, "height": 1, "width": 1, "usemap": 1, "ismap": 1},
-    "input": {
-        "type": {"text": 1, "password": 1, "hidden": 1, "checkbox": 1, "submit": 1, "radio": 1, "file": 1, "button": 1, "reset": 1, "image": 31, "color": 1, "date": 1, "datetime": 1, "datetime-local": 1, "email": 1, "month": 1, "number": 1, "range": 1, "search": 1, "tel": 1, "time": 1, "url": 1, "week": 1},
-        "accept": 1, "alt": 1, "autocomplete": {"on": 1, "off": 1}, "autofocus": {"autofocus": 1}, "checked": {"checked": 1}, "disabled": {"disabled": 1}, "form": 1, "formaction": 1, "formenctype": {"application/x-www-form-urlencoded": 1, "multipart/form-data": 1, "text/plain": 1}, "formmethod": {"get": 1, "post": 1}, "formnovalidate": {"formnovalidate": 1}, "formtarget": {"_blank": 1, "_self": 1, "_parent": 1, "_top": 1}, "height": 1, "list": 1, "max": 1, "maxlength": 1, "min": 1, "multiple": {"multiple": 1}, "name": 1, "pattern": 1, "placeholder": 1, "readonly": {"readonly": 1}, "required": {"required": 1}, "size": 1, "src": 1, "step": 1, "width": 1, "files": 1, "value": 1},
-    "ins": {"cite": 1, "datetime": 1},
-    "kbd": {},
-    "keygen": {"autofocus": 1, "challenge": {"challenge": 1}, "disabled": {"disabled": 1}, "form": 1, "keytype": {"rsa": 1, "dsa": 1, "ec": 1}, "name": 1},
-    "label": {"form": 1, "for": 1},
-    "legend": {},
-    "li": {"value": 1},
-    "link": {"href": 1, "hreflang": 1, "rel": {"stylesheet": 1, "icon": 1}, "media": {"all": 1, "screen": 1, "print": 1}, "type": {"text/css": 1, "image/png": 1, "image/jpeg": 1, "image/gif": 1}, "sizes": 1},
-    "main": {},
-    "map": {"name": 1},
-    "mark": {},
-    "math": {},
-    "menu": {"type": 1, "label": 1},
-    "meta": {"http-equiv": {"content-type": 1}, "name": {"description": 1, "keywords": 1}, "content": {"text/html; charset=UTF-8": 1}, "charset": 1},
-    "meter": {"value": 1, "min": 1, "max": 1, "low": 1, "high": 1, "optimum": 1},
-    "nav": {},
-    "noscript": {"href": 1},
-    "object": {"param": 1, "data": 1, "type": 1, "height" : 1, "width": 1, "usemap": 1, "name": 1, "form": 1, "classid": 1},
-    "ol": {"start": 1, "reversed": 1},
-    "optgroup": {"disabled": 1, "label": 1},
-    "option": {"disabled": 1, "selected": 1, "label": 1, "value": 1},
-    "output": {"for": 1, "form": 1, "name": 1},
-    "p": {},
-    "param": {"name": 1, "value": 1},
-    "pre": {},
-    "progress": {"value": 1, "max": 1},
-    "q": {"cite": 1},
-    "rp": {},
-    "rt": {},
-    "ruby": {},
-    "s": {},
-    "samp": {},
-    "script": {"charset": 1, "type": {"text/javascript": 1}, "src": 1, "defer": 1, "async": 1},
-    "select": {"autofocus": 1, "disabled": 1, "form": 1, "multiple": {"multiple": 1}, "name": 1, "size": 1, "readonly":{"readonly": 1}},
-    "small": {},
-    "source": {"src": 1, "type": 1, "media": 1},
-    "span": {},
-    "strong": {},
-    "style": {"type": 1, "media": {"all": 1, "screen": 1, "print": 1}, "scoped": 1},
-    "sub": {},
-    "sup": {},
-    "svg": {},
-    "table": {"summary": 1},
-    "tbody": {},
-    "td": {"headers": 1, "rowspan": 1, "colspan": 1},
-    "textarea": {"autofocus": {"autofocus": 1}, "disabled": {"disabled": 1}, "form": 1, "maxlength": 1, "name": 1, "placeholder": 1, "readonly": {"readonly": 1}, "required": {"required": 1}, "rows": 1, "cols": 1, "wrap": {"on": 1, "off": 1, "hard": 1, "soft": 1}},
-    "tfoot": {},
-    "th": {"headers": 1, "rowspan": 1, "colspan": 1, "scope": 1},
-    "thead": {},
-    "time": {"datetime": 1},
-    "title": {},
-    "tr": {},
-    "track": {"kind": 1, "src": 1, "srclang": 1, "label": 1, "default": 1},
-    "section": {},
-    "summary": {},
-    "u": {},
-    "ul": {},
-    "var": {},
-    "video": {"src": 1, "autobuffer": 1, "autoplay": {"autoplay": 1}, "loop": {"loop": 1}, "controls": {"controls": 1}, "width": 1, "height": 1, "poster": 1, "muted": {"muted": 1}, "preload": {"auto": 1, "metadata": 1, "none": 1}},
-    "wbr": {}
-};
-
-var elements = Object.keys(attributeMap);
-
-function is(token, type) {
-    return token.type.lastIndexOf(type + ".xml") > -1;
-}
-
-function findTagName(session, pos) {
-    var iterator = new TokenIterator(session, pos.row, pos.column);
-    var token = iterator.getCurrentToken();
-    while (token && !is(token, "tag-name")){
-        token = iterator.stepBackward();
-    }
-    if (token)
-        return token.value;
-}
-
-function findAttributeName(session, pos) {
-    var iterator = new TokenIterator(session, pos.row, pos.column);
-    var token = iterator.getCurrentToken();
-    while (token && !is(token, "attribute-name")){
-        token = iterator.stepBackward();
-    }
-    if (token)
-        return token.value;
-}
-
-var HtmlCompletions = function() {
-
-};
-
-(function() {
-
-    this.getCompletions = function(state, session, pos, prefix) {
-        var token = session.getTokenAt(pos.row, pos.column);
-
-        if (!token)
-            return [];
-
-        // tag name
-        if (is(token, "tag-name") || is(token, "tag-open") || is(token, "end-tag-open"))
-            return this.getTagCompletions(state, session, pos, prefix);
-
-        // tag attribute
-        if (is(token, "tag-whitespace") || is(token, "attribute-name"))
-            return this.getAttributeCompletions(state, session, pos, prefix);
-            
-        // tag attribute values
-        if (is(token, "attribute-value"))
-            return this.getAttributeValueCompletions(state, session, pos, prefix);
-            
-        // HTML entities
-        var line = session.getLine(pos.row).substr(0, pos.column);
-        if (/&[a-z]*$/i.test(line))
-            return this.getHTMLEntityCompletions(state, session, pos, prefix);
-
-        return [];
-    };
-
-    this.getTagCompletions = function(state, session, pos, prefix) {
-        return elements.map(function(element){
-            return {
-                value: element,
-                meta: "tag",
-                score: 1000000
-            };
-        });
-    };
-
-    this.getAttributeCompletions = function(state, session, pos, prefix) {
-        var tagName = findTagName(session, pos);
-        if (!tagName)
-            return [];
-        var attributes = globalAttributes;
-        if (tagName in attributeMap) {
-            attributes = attributes.concat(Object.keys(attributeMap[tagName]));
-        }
-        return attributes.map(function(attribute){
-            return {
-                caption: attribute,
-                snippet: attribute + '="$0"',
-                meta: "attribute",
-                score: 1000000
-            };
-        });
-    };
-
-    this.getAttributeValueCompletions = function(state, session, pos, prefix) {
-        var tagName = findTagName(session, pos);
-        var attributeName = findAttributeName(session, pos);
-        
-        if (!tagName)
-            return [];
-        var values = [];
-        if (tagName in attributeMap && attributeName in attributeMap[tagName] && typeof attributeMap[tagName][attributeName] === "object") {
-            values = Object.keys(attributeMap[tagName][attributeName]);
-        }
-        return values.map(function(value){
-            return {
-                caption: value,
-                snippet: value,
-                meta: "attribute value",
-                score: 1000000
-            };
-        });
-    };
-
-    this.getHTMLEntityCompletions = function(state, session, pos, prefix) {
-        var values = ['Aacute;', 'aacute;', 'Acirc;', 'acirc;', 'acute;', 'AElig;', 'aelig;', 'Agrave;', 'agrave;', 'alefsym;', 'Alpha;', 'alpha;', 'amp;', 'and;', 'ang;', 'Aring;', 'aring;', 'asymp;', 'Atilde;', 'atilde;', 'Auml;', 'auml;', 'bdquo;', 'Beta;', 'beta;', 'brvbar;', 'bull;', 'cap;', 'Ccedil;', 'ccedil;', 'cedil;', 'cent;', 'Chi;', 'chi;', 'circ;', 'clubs;', 'cong;', 'copy;', 'crarr;', 'cup;', 'curren;', 'Dagger;', 'dagger;', 'dArr;', 'darr;', 'deg;', 'Delta;', 'delta;', 'diams;', 'divide;', 'Eacute;', 'eacute;', 'Ecirc;', 'ecirc;', 'Egrave;', 'egrave;', 'empty;', 'emsp;', 'ensp;', 'Epsilon;', 'epsilon;', 'equiv;', 'Eta;', 'eta;', 'ETH;', 'eth;', 'Euml;', 'euml;', 'euro;', 'exist;', 'fnof;', 'forall;', 'frac12;', 'frac14;', 'frac34;', 'frasl;', 'Gamma;', 'gamma;', 'ge;', 'gt;', 'hArr;', 'harr;', 'hearts;', 'hellip;', 'Iacute;', 'iacute;', 'Icirc;', 'icirc;', 'iexcl;', 'Igrave;', 'igrave;', 'image;', 'infin;', 'int;', 'Iota;', 'iota;', 'iquest;', 'isin;', 'Iuml;', 'iuml;', 'Kappa;', 'kappa;', 'Lambda;', 'lambda;', 'lang;', 'laquo;', 'lArr;', 'larr;', 'lceil;', 'ldquo;', 'le;', 'lfloor;', 'lowast;', 'loz;', 'lrm;', 'lsaquo;', 'lsquo;', 'lt;', 'macr;', 'mdash;', 'micro;', 'middot;', 'minus;', 'Mu;', 'mu;', 'nabla;', 'nbsp;', 'ndash;', 'ne;', 'ni;', 'not;', 'notin;', 'nsub;', 'Ntilde;', 'ntilde;', 'Nu;', 'nu;', 'Oacute;', 'oacute;', 'Ocirc;', 'ocirc;', 'OElig;', 'oelig;', 'Ograve;', 'ograve;', 'oline;', 'Omega;', 'omega;', 'Omicron;', 'omicron;', 'oplus;', 'or;', 'ordf;', 'ordm;', 'Oslash;', 'oslash;', 'Otilde;', 'otilde;', 'otimes;', 'Ouml;', 'ouml;', 'para;', 'part;', 'permil;', 'perp;', 'Phi;', 'phi;', 'Pi;', 'pi;', 'piv;', 'plusmn;', 'pound;', 'Prime;', 'prime;', 'prod;', 'prop;', 'Psi;', 'psi;', 'quot;', 'radic;', 'rang;', 'raquo;', 'rArr;', 'rarr;', 'rceil;', 'rdquo;', 'real;', 'reg;', 'rfloor;', 'Rho;', 'rho;', 'rlm;', 'rsaquo;', 'rsquo;', 'sbquo;', 'Scaron;', 'scaron;', 'sdot;', 'sect;', 'shy;', 'Sigma;', 'sigma;', 'sigmaf;', 'sim;', 'spades;', 'sub;', 'sube;', 'sum;', 'sup;', 'sup1;', 'sup2;', 'sup3;', 'supe;', 'szlig;', 'Tau;', 'tau;', 'there4;', 'Theta;', 'theta;', 'thetasym;', 'thinsp;', 'THORN;', 'thorn;', 'tilde;', 'times;', 'trade;', 'Uacute;', 'uacute;', 'uArr;', 'uarr;', 'Ucirc;', 'ucirc;', 'Ugrave;', 'ugrave;', 'uml;', 'upsih;', 'Upsilon;', 'upsilon;', 'Uuml;', 'uuml;', 'weierp;', 'Xi;', 'xi;', 'Yacute;', 'yacute;', 'yen;', 'Yuml;', 'yuml;', 'Zeta;', 'zeta;', 'zwj;', 'zwnj;'];
-
-        return values.map(function(value){
-            return {
-                caption: value,
-                snippet: value,
-                meta: "html entity",
-                score: 1000000
-            };
-        });
-    };
-
-}).call(HtmlCompletions.prototype);
-
-exports.A = HtmlCompletions;
-
-
-/***/ }),
-
-/***/ 2843:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var lang = __webpack_require__(124);
-var CssHighlightRules = (__webpack_require__(9301).CssHighlightRules);
-var JavaScriptHighlightRules = (__webpack_require__(3801)/* .JavaScriptHighlightRules */ ._);
-var XmlHighlightRules = (__webpack_require__(5239)/* .XmlHighlightRules */ .U);
-
-var tagMap = lang.createMap({
-    a           : 'anchor',
-    button 	    : 'form',
-    form        : 'form',
-    img         : 'image',
-    input       : 'form',
-    label       : 'form',
-    option      : 'form',
-    script      : 'script',
-    select      : 'form',
-    textarea    : 'form',
-    style       : 'style',
-    table       : 'table',
-    tbody       : 'table',
-    td          : 'table',
-    tfoot       : 'table',
-    th          : 'table',
-    tr          : 'table'
-});
-
-var HtmlHighlightRules = function() {
-    XmlHighlightRules.call(this);
-
-    this.addRules({
-        attributes: [{
-            include : "tag_whitespace"
-        }, {
-            token : "entity.other.attribute-name.xml",
-            regex : "[-_a-zA-Z0-9:.]+"
-        }, {
-            token : "keyword.operator.attribute-equals.xml",
-            regex : "=",
-            push : [{
-                include: "tag_whitespace"
-            }, {
-                token : "string.unquoted.attribute-value.html",
-                regex : "[^<>='\"`\\s]+",
-                next : "pop"
-            }, {
-                token : "empty",
-                regex : "",
-                next : "pop"
-            }]
-        }, {
-            include : "attribute_value"
-        }],
-        tag: [{
-            token : function(start, tag) {
-                var group = tagMap[tag];
-                return ["meta.tag.punctuation." + (start == "<" ? "" : "end-") + "tag-open.xml",
-                    "meta.tag" + (group ? "." + group : "") + ".tag-name.xml"];
-            },
-            regex : "(</?)([-_a-zA-Z0-9:.]+)",
-            next: "tag_stuff"
-        }],
-        tag_stuff: [
-            {include : "attributes"},
-            {token : "meta.tag.punctuation.tag-close.xml", regex : "/?>", next : "start"}
-        ]
-    });
-
-    this.embedTagRules(CssHighlightRules, "css-", "style");
-    this.embedTagRules(new JavaScriptHighlightRules({jsx: false}).getRules(), "js-", "script");
-
-    if (this.constructor === HtmlHighlightRules)
-        this.normalizeRules();
-};
-
-oop.inherits(HtmlHighlightRules, XmlHighlightRules);
-
-exports.V = HtmlHighlightRules;
-
-
-/***/ }),
-
-/***/ 8057:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var JavaScriptHighlightRules = (__webpack_require__(3801)/* .JavaScriptHighlightRules */ ._);
-var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
-var WorkerClient = (__webpack_require__(1451).WorkerClient);
-var CstyleBehaviour = (__webpack_require__(9414)/* .CstyleBehaviour */ .B);
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-
-var Mode = function() {
-    this.HighlightRules = JavaScriptHighlightRules;
-    
-    this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
-    this.foldingRules = new CStyleFoldMode();
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-
-    this.lineCommentStart = "//";
-    this.blockComment = {start: "/*", end: "*/"};
-    this.$quotes = {'"': '"', "'": "'", "`": "`"};
-
-    this.getNextLineIndent = function(state, line, tab) {
-        var indent = this.$getIndent(line);
-
-        var tokenizedLine = this.getTokenizer().getLineTokens(line, state);
-        var tokens = tokenizedLine.tokens;
-        var endState = tokenizedLine.state;
-
-        if (tokens.length && tokens[tokens.length-1].type == "comment") {
-            return indent;
-        }
-
-        if (state == "start" || state == "no_regex") {
-            var match = line.match(/^.*(?:\bcase\b.*:|[\{\(\[])\s*$/);
-            if (match) {
-                indent += tab;
-            }
-        } else if (state == "doc-start") {
-            if (endState == "start" || endState == "no_regex") {
-                return "";
-            }
-            var match = line.match(/^\s*(\/?)\*/);
-            if (match) {
-                if (match[1]) {
-                    indent += " ";
-                }
-                indent += "* ";
-            }
-        }
-
-        return indent;
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        return this.$outdent.checkOutdent(line, input);
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-        this.$outdent.autoOutdent(doc, row);
-    };
-
-    this.createWorker = function(session) {
-        var worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
-        worker.attachToDocument(session.getDocument());
-
-        worker.on("annotate", function(results) {
-            session.setAnnotations(results.data);
-        });
-
-        worker.on("terminate", function() {
-            session.clearAnnotations();
-        });
-
-        return worker;
-    };
-
-    this.$id = "ace/mode/javascript";
-    this.snippetFileId = "ace/snippets/javascript";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 3801:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var DocCommentHighlightRules = (__webpack_require__(2718)/* .DocCommentHighlightRules */ .c);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-
-// TODO: Unicode escape sequences
-var identifierRe = "[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*";
-
-var JavaScriptHighlightRules = function(options) {
-    // see: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects
-    var keywordMapper = this.createKeywordMapper({
-        "variable.language":
-            "Array|Boolean|Date|Function|Iterator|Number|Object|RegExp|String|Proxy|"  + // Constructors
-            "Namespace|QName|XML|XMLList|"                                             + // E4X
-            "ArrayBuffer|Float32Array|Float64Array|Int16Array|Int32Array|Int8Array|"   +
-            "Uint16Array|Uint32Array|Uint8Array|Uint8ClampedArray|"                    +
-            "Error|EvalError|InternalError|RangeError|ReferenceError|StopIteration|"   + // Errors
-            "SyntaxError|TypeError|URIError|"                                          +
-            "decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|" + // Non-constructor functions
-            "isNaN|parseFloat|parseInt|"                                               +
-            "JSON|Math|"                                                               + // Other
-            "this|arguments|prototype|window|document"                                 , // Pseudo
-        "keyword":
-            "const|yield|import|get|set|async|await|" +
-            "break|case|catch|continue|default|delete|do|else|finally|for|function|" +
-            "if|in|of|instanceof|new|return|switch|throw|try|typeof|let|var|while|with|debugger|" +
-            // invalid or reserved
-            "__parent__|__count__|escape|unescape|with|__proto__|" +
-            "class|enum|extends|super|export|implements|private|public|interface|package|protected|static",
-        "storage.type":
-            "const|let|var|function",
-        "constant.language":
-            "null|Infinity|NaN|undefined",
-        "support.function":
-            "alert",
-        "constant.language.boolean": "true|false"
-    }, "identifier");
-
-    // keywords which can be followed by regular expressions
-    var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
-
-    var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
-        "u[0-9a-fA-F]{4}|" + // unicode
-        "u{[0-9a-fA-F]{1,6}}|" + // es6 unicode
-        "[0-2][0-7]{0,2}|" + // oct
-        "3[0-7][0-7]?|" + // oct
-        "[4-7][0-7]?|" + //oct
-        ".)";
-    // regexp must not have capturing parentheses. Use (?:) instead.
-    // regexps are ordered -> the first match is used
-
-    this.$rules = {
-        "no_regex" : [
-            DocCommentHighlightRules.getStartRule("doc-start"),
-            comments("no_regex"),
-            {
-                token : "string",
-                regex : "'(?=.)",
-                next  : "qstring"
-            }, {
-                token : "string",
-                regex : '"(?=.)',
-                next  : "qqstring"
-            }, {
-                token : "constant.numeric", // hexadecimal, octal and binary
-                regex : /0(?:[xX][0-9a-fA-F]+|[oO][0-7]+|[bB][01]+)\b/
-            }, {
-                token : "constant.numeric", // decimal integers and floats
-                regex : /(?:\d\d*(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+\b)?/
-            }, {
-                // Sound.prototype.play =
-                token : [
-                    "storage.type", "punctuation.operator", "support.function",
-                    "punctuation.operator", "entity.name.function", "text","keyword.operator"
-                ],
-                regex : "(" + identifierRe + ")(\\.)(prototype)(\\.)(" + identifierRe +")(\\s*)(=)",
-                next: "function_arguments"
-            }, {
-                // Sound.play = function() {  }
-                token : [
-                    "storage.type", "punctuation.operator", "entity.name.function", "text",
-                    "keyword.operator", "text", "storage.type", "text", "paren.lparen"
-                ],
-                regex : "(" + identifierRe + ")(\\.)(" + identifierRe +")(\\s*)(=)(\\s*)(function)(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                // play = function() {  }
-                token : [
-                    "entity.name.function", "text", "keyword.operator", "text", "storage.type",
-                    "text", "paren.lparen"
-                ],
-                regex : "(" + identifierRe +")(\\s*)(=)(\\s*)(function)(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                // Sound.play = function play() {  }
-                token : [
-                    "storage.type", "punctuation.operator", "entity.name.function", "text",
-                    "keyword.operator", "text",
-                    "storage.type", "text", "entity.name.function", "text", "paren.lparen"
-                ],
-                regex : "(" + identifierRe + ")(\\.)(" + identifierRe +")(\\s*)(=)(\\s*)(function)(\\s+)(\\w+)(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                // function myFunc(arg) { }
-                token : [
-                    "storage.type", "text", "entity.name.function", "text", "paren.lparen"
-                ],
-                regex : "(function)(\\s+)(" + identifierRe + ")(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                // foobar: function() { }
-                token : [
-                    "entity.name.function", "text", "punctuation.operator",
-                    "text", "storage.type", "text", "paren.lparen"
-                ],
-                regex : "(" + identifierRe + ")(\\s*)(:)(\\s*)(function)(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                // : function() { } (this is for issues with 'foo': function() { })
-                token : [
-                    "text", "text", "storage.type", "text", "paren.lparen"
-                ],
-                regex : "(:)(\\s*)(function)(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                // from "module-path" (this is the only case where 'from' should be a keyword)
-                token : "keyword",
-                regex : "from(?=\\s*('|\"))"
-            }, {
-                token : "keyword",
-                regex : "(?:" + kwBeforeRe + ")\\b",
-                next : "start"
-            }, {
-                token : ["support.constant"],
-                regex : /that\b/
-            }, {
-                token : ["storage.type", "punctuation.operator", "support.function.firebug"],
-                regex : /(console)(\.)(warn|info|log|error|time|trace|timeEnd|assert)\b/
-            }, {
-                token : keywordMapper,
-                regex : identifierRe
-            }, {
-                token : "punctuation.operator",
-                regex : /[.](?![.])/,
-                next  : "property"
-            }, {
-                token : "storage.type",
-                regex : /=>/,
-                next  : "start"
-            }, {
-                token : "keyword.operator",
-                regex : /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
-                next  : "start"
-            }, {
-                token : "punctuation.operator",
-                regex : /[?:,;.]/,
-                next  : "start"
-            }, {
-                token : "paren.lparen",
-                regex : /[\[({]/,
-                next  : "start"
-            }, {
-                token : "paren.rparen",
-                regex : /[\])}]/
-            }, {
-                token: "comment",
-                regex: /^#!.*$/
-            }
-        ],
-        property: [{
-                token : "text",
-                regex : "\\s+"
-            }, {
-                // Sound.play = function play() {  }
-                token : [
-                    "storage.type", "punctuation.operator", "entity.name.function", "text",
-                    "keyword.operator", "text",
-                    "storage.type", "text", "entity.name.function", "text", "paren.lparen"
-                ],
-                regex : "(" + identifierRe + ")(\\.)(" + identifierRe +")(\\s*)(=)(\\s*)(function)(?:(\\s+)(\\w+))?(\\s*)(\\()",
-                next: "function_arguments"
-            }, {
-                token : "punctuation.operator",
-                regex : /[.](?![.])/
-            }, {
-                token : "support.function",
-                regex : /(s(?:h(?:ift|ow(?:Mod(?:elessDialog|alDialog)|Help))|croll(?:X|By(?:Pages|Lines)?|Y|To)?|t(?:op|rike)|i(?:n|zeToContent|debar|gnText)|ort|u(?:p|b(?:str(?:ing)?)?)|pli(?:ce|t)|e(?:nd|t(?:Re(?:sizable|questHeader)|M(?:i(?:nutes|lliseconds)|onth)|Seconds|Ho(?:tKeys|urs)|Year|Cursor|Time(?:out)?|Interval|ZOptions|Date|UTC(?:M(?:i(?:nutes|lliseconds)|onth)|Seconds|Hours|Date|FullYear)|FullYear|Active)|arch)|qrt|lice|avePreferences|mall)|h(?:ome|andleEvent)|navigate|c(?:har(?:CodeAt|At)|o(?:s|n(?:cat|textual|firm)|mpile)|eil|lear(?:Timeout|Interval)?|a(?:ptureEvents|ll)|reate(?:StyleSheet|Popup|EventObject))|t(?:o(?:GMTString|S(?:tring|ource)|U(?:TCString|pperCase)|Lo(?:caleString|werCase))|est|a(?:n|int(?:Enabled)?))|i(?:s(?:NaN|Finite)|ndexOf|talics)|d(?:isableExternalCapture|ump|etachEvent)|u(?:n(?:shift|taint|escape|watch)|pdateCommands)|j(?:oin|avaEnabled)|p(?:o(?:p|w)|ush|lugins.refresh|a(?:ddings|rse(?:Int|Float)?)|r(?:int|ompt|eference))|e(?:scape|nableExternalCapture|val|lementFromPoint|x(?:p|ec(?:Script|Command)?))|valueOf|UTC|queryCommand(?:State|Indeterm|Enabled|Value)|f(?:i(?:nd|le(?:ModifiedDate|Size|CreatedDate|UpdatedDate)|xed)|o(?:nt(?:size|color)|rward)|loor|romCharCode)|watch|l(?:ink|o(?:ad|g)|astIndexOf)|a(?:sin|nchor|cos|t(?:tachEvent|ob|an(?:2)?)|pply|lert|b(?:s|ort))|r(?:ou(?:nd|teEvents)|e(?:size(?:By|To)|calc|turnValue|place|verse|l(?:oad|ease(?:Capture|Events)))|andom)|g(?:o|et(?:ResponseHeader|M(?:i(?:nutes|lliseconds)|onth)|Se(?:conds|lection)|Hours|Year|Time(?:zoneOffset)?|Da(?:y|te)|UTC(?:M(?:i(?:nutes|lliseconds)|onth)|Seconds|Hours|Da(?:y|te)|FullYear)|FullYear|A(?:ttention|llResponseHeaders)))|m(?:in|ove(?:B(?:y|elow)|To(?:Absolute)?|Above)|ergeAttributes|a(?:tch|rgins|x))|b(?:toa|ig|o(?:ld|rderWidths)|link|ack))\b(?=\()/
-            }, {
-                token : "support.function.dom",
-                regex : /(s(?:ub(?:stringData|mit)|plitText|e(?:t(?:NamedItem|Attribute(?:Node)?)|lect))|has(?:ChildNodes|Feature)|namedItem|c(?:l(?:ick|o(?:se|neNode))|reate(?:C(?:omment|DATASection|aption)|T(?:Head|extNode|Foot)|DocumentFragment|ProcessingInstruction|E(?:ntityReference|lement)|Attribute))|tabIndex|i(?:nsert(?:Row|Before|Cell|Data)|tem)|open|delete(?:Row|C(?:ell|aption)|T(?:Head|Foot)|Data)|focus|write(?:ln)?|a(?:dd|ppend(?:Child|Data))|re(?:set|place(?:Child|Data)|move(?:NamedItem|Child|Attribute(?:Node)?)?)|get(?:NamedItem|Element(?:sBy(?:Name|TagName|ClassName)|ById)|Attribute(?:Node)?)|blur)\b(?=\()/
-            }, {
-                token :  "support.constant",
-                regex : /(s(?:ystemLanguage|cr(?:ipts|ollbars|een(?:X|Y|Top|Left))|t(?:yle(?:Sheets)?|atus(?:Text|bar)?)|ibling(?:Below|Above)|ource|uffixes|e(?:curity(?:Policy)?|l(?:ection|f)))|h(?:istory|ost(?:name)?|as(?:h|Focus))|y|X(?:MLDocument|SLDocument)|n(?:ext|ame(?:space(?:s|URI)|Prop))|M(?:IN_VALUE|AX_VALUE)|c(?:haracterSet|o(?:n(?:structor|trollers)|okieEnabled|lorDepth|mp(?:onents|lete))|urrent|puClass|l(?:i(?:p(?:boardData)?|entInformation)|osed|asses)|alle(?:e|r)|rypto)|t(?:o(?:olbar|p)|ext(?:Transform|Indent|Decoration|Align)|ags)|SQRT(?:1_2|2)|i(?:n(?:ner(?:Height|Width)|put)|ds|gnoreCase)|zIndex|o(?:scpu|n(?:readystatechange|Line)|uter(?:Height|Width)|p(?:sProfile|ener)|ffscreenBuffering)|NEGATIVE_INFINITY|d(?:i(?:splay|alog(?:Height|Top|Width|Left|Arguments)|rectories)|e(?:scription|fault(?:Status|Ch(?:ecked|arset)|View)))|u(?:ser(?:Profile|Language|Agent)|n(?:iqueID|defined)|pdateInterval)|_content|p(?:ixelDepth|ort|ersonalbar|kcs11|l(?:ugins|atform)|a(?:thname|dding(?:Right|Bottom|Top|Left)|rent(?:Window|Layer)?|ge(?:X(?:Offset)?|Y(?:Offset)?))|r(?:o(?:to(?:col|type)|duct(?:Sub)?|mpter)|e(?:vious|fix)))|e(?:n(?:coding|abledPlugin)|x(?:ternal|pando)|mbeds)|v(?:isibility|endor(?:Sub)?|Linkcolor)|URLUnencoded|P(?:I|OSITIVE_INFINITY)|f(?:ilename|o(?:nt(?:Size|Family|Weight)|rmName)|rame(?:s|Element)|gColor)|E|whiteSpace|l(?:i(?:stStyleType|n(?:eHeight|kColor))|o(?:ca(?:tion(?:bar)?|lName)|wsrc)|e(?:ngth|ft(?:Context)?)|a(?:st(?:M(?:odified|atch)|Index|Paren)|yer(?:s|X)|nguage))|a(?:pp(?:MinorVersion|Name|Co(?:deName|re)|Version)|vail(?:Height|Top|Width|Left)|ll|r(?:ity|guments)|Linkcolor|bove)|r(?:ight(?:Context)?|e(?:sponse(?:XML|Text)|adyState))|global|x|m(?:imeTypes|ultiline|enubar|argin(?:Right|Bottom|Top|Left))|L(?:N(?:10|2)|OG(?:10E|2E))|b(?:o(?:ttom|rder(?:Width|RightWidth|BottomWidth|Style|Color|TopWidth|LeftWidth))|ufferDepth|elow|ackground(?:Color|Image)))\b/
-            }, {
-                token : "identifier",
-                regex : identifierRe
-            }, {
-                regex: "",
-                token: "empty",
-                next: "no_regex"
-            }
-        ],
-        // regular expressions are only allowed after certain tokens. This
-        // makes sure we don't mix up regexps with the divison operator
-        "start": [
-            DocCommentHighlightRules.getStartRule("doc-start"),
-            comments("start"),
-            {
-                token: "string.regexp",
-                regex: "\\/",
-                next: "regex"
-            }, {
-                token : "text",
-                regex : "\\s+|^$",
-                next : "start"
-            }, {
-                // immediately return to the start mode without matching
-                // anything
-                token: "empty",
-                regex: "",
-                next: "no_regex"
-            }
-        ],
-        "regex": [
-            {
-                // escapes
-                token: "regexp.keyword.operator",
-                regex: "\\\\(?:u[\\da-fA-F]{4}|x[\\da-fA-F]{2}|.)"
-            }, {
-                // flag
-                token: "string.regexp",
-                regex: "/[sxngimy]*",
-                next: "no_regex"
-            }, {
-                // invalid operators
-                token : "invalid",
-                regex: /\{\d+\b,?\d*\}[+*]|[+*$^?][+*]|[$^][?]|\?{3,}/
-            }, {
-                // operators
-                token : "constant.language.escape",
-                regex: /\(\?[:=!]|\)|\{\d+\b,?\d*\}|[+*]\?|[()$^+*?.]/
-            }, {
-                token : "constant.language.delimiter",
-                regex: /\|/
-            }, {
-                token: "constant.language.escape",
-                regex: /\[\^?/,
-                next: "regex_character_class"
-            }, {
-                token: "empty",
-                regex: "$",
-                next: "no_regex"
-            }, {
-                defaultToken: "string.regexp"
-            }
-        ],
-        "regex_character_class": [
-            {
-                token: "regexp.charclass.keyword.operator",
-                regex: "\\\\(?:u[\\da-fA-F]{4}|x[\\da-fA-F]{2}|.)"
-            }, {
-                token: "constant.language.escape",
-                regex: "]",
-                next: "regex"
-            }, {
-                token: "constant.language.escape",
-                regex: "-"
-            }, {
-                token: "empty",
-                regex: "$",
-                next: "no_regex"
-            }, {
-                defaultToken: "string.regexp.charachterclass"
-            }
-        ],
-        "function_arguments": [
-            {
-                token: "variable.parameter",
-                regex: identifierRe
-            }, {
-                token: "punctuation.operator",
-                regex: "[, ]+"
-            }, {
-                token: "punctuation.operator",
-                regex: "$"
-            }, {
-                token: "empty",
-                regex: "",
-                next: "no_regex"
-            }
-        ],
-        "qqstring" : [
-            {
-                token : "constant.language.escape",
-                regex : escapedRe
-            }, {
-                token : "string",
-                regex : "\\\\$",
-                consumeLineEnd  : true
-            }, {
-                token : "string",
-                regex : '"|$',
-                next  : "no_regex"
-            }, {
-                defaultToken: "string"
-            }
-        ],
-        "qstring" : [
-            {
-                token : "constant.language.escape",
-                regex : escapedRe
-            }, {
-                token : "string",
-                regex : "\\\\$",
-                consumeLineEnd  : true
-            }, {
-                token : "string",
-                regex : "'|$",
-                next  : "no_regex"
-            }, {
-                defaultToken: "string"
-            }
-        ]
-    };
-
-
-    if (!options || !options.noES6) {
-        this.$rules.no_regex.unshift({
-            regex: "[{}]", onMatch: function(val, state, stack) {
-                this.next = val == "{" ? this.nextState : "";
-                if (val == "{" && stack.length) {
-                    stack.unshift("start", state);
-                }
-                else if (val == "}" && stack.length) {
-                    stack.shift();
-                    this.next = stack.shift();
-                    if (this.next.indexOf("string") != -1 || this.next.indexOf("jsx") != -1)
-                        return "paren.quasi.end";
-                }
-                return val == "{" ? "paren.lparen" : "paren.rparen";
-            },
-            nextState: "start"
-        }, {
-            token : "string.quasi.start",
-            regex : /`/,
-            push  : [{
-                token : "constant.language.escape",
-                regex : escapedRe
-            }, {
-                token : "paren.quasi.start",
-                regex : /\${/,
-                push  : "start"
-            }, {
-                token : "string.quasi.end",
-                regex : /`/,
-                next  : "pop"
-            }, {
-                defaultToken: "string.quasi"
-            }]
-        });
-
-        if (!options || options.jsx != false)
-            JSX.call(this);
-    }
-
-    this.embedRules(DocCommentHighlightRules, "doc-",
-        [ DocCommentHighlightRules.getEndRule("no_regex") ]);
-
-    this.normalizeRules();
-};
-
-oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
-
-function JSX() {
-    var tagRegex = identifierRe.replace("\\d", "\\d\\-");
-    var jsxTag = {
-        onMatch : function(val, state, stack) {
-            var offset = val.charAt(1) == "/" ? 2 : 1;
-            if (offset == 1) {
-                if (state != this.nextState)
-                    stack.unshift(this.next, this.nextState, 0);
-                else
-                    stack.unshift(this.next);
-                stack[2]++;
-            } else if (offset == 2) {
-                if (state == this.nextState) {
-                    stack[1]--;
-                    if (!stack[1] || stack[1] < 0) {
-                        stack.shift();
-                        stack.shift();
-                    }
-                }
-            }
-            return [{
-                type: "meta.tag.punctuation." + (offset == 1 ? "" : "end-") + "tag-open.xml",
-                value: val.slice(0, offset)
-            }, {
-                type: "meta.tag.tag-name.xml",
-                value: val.substr(offset)
-            }];
-        },
-        regex : "</?" + tagRegex + "",
-        next: "jsxAttributes",
-        nextState: "jsx"
-    };
-    this.$rules.start.unshift(jsxTag);
-    var jsxJsRule = {
-        regex: "{",
-        token: "paren.quasi.start",
-        push: "start"
-    };
-    this.$rules.jsx = [
-        jsxJsRule,
-        jsxTag,
-        {include : "reference"},
-        {defaultToken: "string"}
-    ];
-    this.$rules.jsxAttributes = [{
-        token : "meta.tag.punctuation.tag-close.xml",
-        regex : "/?>",
-        onMatch : function(value, currentState, stack) {
-            if (currentState == stack[0])
-                stack.shift();
-            if (value.length == 2) {
-                if (stack[0] == this.nextState)
-                    stack[1]--;
-                if (!stack[1] || stack[1] < 0) {
-                    stack.splice(0, 2);
-                }
-            }
-            this.next = stack[0] || "start";
-            return [{type: this.token, value: value}];
-        },
-        nextState: "jsx"
-    },
-    jsxJsRule,
-    comments("jsxAttributes"),
-    {
-        token : "entity.other.attribute-name.xml",
-        regex : tagRegex
-    }, {
-        token : "keyword.operator.attribute-equals.xml",
-        regex : "="
-    }, {
-        token : "text.tag-whitespace.xml",
-        regex : "\\s+"
-    }, {
-        token : "string.attribute-value.xml",
-        regex : "'",
-        stateName : "jsx_attr_q",
-        push : [
-            {token : "string.attribute-value.xml", regex: "'", next: "pop"},
-            {include : "reference"},
-            {defaultToken : "string.attribute-value.xml"}
-        ]
-    }, {
-        token : "string.attribute-value.xml",
-        regex : '"',
-        stateName : "jsx_attr_qq",
-        push : [
-            {token : "string.attribute-value.xml", regex: '"', next: "pop"},
-            {include : "reference"},
-            {defaultToken : "string.attribute-value.xml"}
-        ]
-    },
-    jsxTag
-    ];
-    this.$rules.reference = [{
-        token : "constant.language.escape.reference.xml",
-        regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
-    }];
-}
-
-function comments(next) {
-    return [
-        {
-            token : "comment", // multi line comment
-            regex : /\/\*/,
-            next: [
-                DocCommentHighlightRules.getTagRule(),
-                {token : "comment", regex : "\\*\\/", next : next || "pop"},
-                {defaultToken : "comment", caseInsensitive: true}
-            ]
-        }, {
-            token : "comment",
-            regex : "\\/\\/",
-            next: [
-                DocCommentHighlightRules.getTagRule(),
-                {token : "comment", regex : "$|^", next : next || "pop"},
-                {defaultToken : "comment", caseInsensitive: true}
-            ]
-        }
-    ];
-}
-exports._ = JavaScriptHighlightRules;
-
-
-/***/ }),
-
 /***/ 5654:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -20759,114 +18486,6 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 9548:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var HighlightRules = (__webpack_require__(3662)/* .Json5HighlightRules */ .k);
-var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
-var CstyleBehaviour = (__webpack_require__(9414)/* .CstyleBehaviour */ .B);
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-
-var Mode = function() {
-    this.HighlightRules = HighlightRules;
-    this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
-    this.foldingRules = new CStyleFoldMode();
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-    this.lineCommentStart = "//";
-    this.blockComment = {start: "/*", end: "*/"};
-
-    this.checkOutdent = function(state, line, input) {
-        return this.$outdent.checkOutdent(line, input);
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-        this.$outdent.autoOutdent(doc, row);
-    };
-
-    this.$id = "ace/mode/json5";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 3662:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var JsonHighlightRules = (__webpack_require__(9467)/* .JsonHighlightRules */ .h);
-
-var Json5HighlightRules = function() {
-    JsonHighlightRules.call(this);
-
-    var startRules = [{
-        token : "variable",
-        regex : /[a-zA-Z$_\u00a1-\uffff][\w$\u00a1-\uffff]*\s*(?=:)/
-    }, {
-        token : "variable",
-        regex : /['](?:(?:\\.)|(?:[^'\\]))*?[']\s*(?=:)/
-    }, {
-        token : "constant.language.boolean",
-        regex : /(?:null)\b/
-    }, {
-        token : "string",
-        regex : /'/,
-        next  : [{
-            token : "constant.language.escape",
-            regex : /\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|["\/bfnrt]|$)/,
-            consumeLineEnd  : true
-        }, {
-            token : "string",
-            regex : /'|$/,
-            next  : "start"
-        }, {
-            defaultToken : "string"
-        }]
-    }, {
-        token : "string",
-        regex : /"(?![^"]*":)/,
-        next  : [{
-            token : "constant.language.escape",
-            regex : /\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|["\/bfnrt]|$)/,
-            consumeLineEnd  : true
-        }, {
-            token : "string",
-            regex : /"|$/,
-            next  : "start"
-        }, {
-            defaultToken : "string"
-        }]
-    }, {
-        token : "constant.numeric",
-        regex : /[+-]?(?:Infinity|NaN)\b/
-    }];
-
-    for (var key in this.$rules)
-        this.$rules[key].unshift.apply(this.$rules[key], startRules);
-
-    this.normalizeRules();
-};
-
-oop.inherits(Json5HighlightRules, JsonHighlightRules);
-
-exports.k = Json5HighlightRules;
 
 
 /***/ }),
@@ -20958,541 +18577,6 @@ exports.h = JsonHighlightRules;
 
 /***/ }),
 
-/***/ 4629:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var LessHighlightRules = (__webpack_require__(6761)/* .LessHighlightRules */ .q);
-var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
-var CssBehaviour = (__webpack_require__(7853)/* .CssBehaviour */ .K);
-var CssCompletions = (__webpack_require__(7237)/* .CssCompletions */ .A);
-
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-
-var Mode = function() {
-    this.HighlightRules = LessHighlightRules;
-    this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CssBehaviour();
-    this.$completer = new CssCompletions();
-    this.foldingRules = new CStyleFoldMode();
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-
-    this.lineCommentStart = "//";
-    this.blockComment = {start: "/*", end: "*/"};
-    
-    this.getNextLineIndent = function(state, line, tab) {
-        var indent = this.$getIndent(line);
-
-        // ignore braces in comments
-        var tokens = this.getTokenizer().getLineTokens(line, state).tokens;
-        if (tokens.length && tokens[tokens.length-1].type == "comment") {
-            return indent;
-        }
-
-        var match = line.match(/^.*\{\s*$/);
-        if (match) {
-            indent += tab;
-        }
-
-        return indent;
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        return this.$outdent.checkOutdent(line, input);
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-        this.$outdent.autoOutdent(doc, row);
-    };
-
-    this.getCompletions = function(state, session, pos, prefix) {
-        // CSS completions only work with single (not nested) rulesets
-        return this.$completer.getCompletions("ruleset", session, pos, prefix);
-    };
-
-    this.$id = "ace/mode/less";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 6761:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-var CssHighlightRules = __webpack_require__(9301);
-
-var LessHighlightRules = function() {
-
-
-    var keywordList = "@import|@media|@font-face|@keyframes|@-webkit-keyframes|@supports|" + 
-        "@charset|@plugin|@namespace|@document|@page|@viewport|@-ms-viewport|" +
-        "or|and|when|not";
-
-    var keywords = keywordList.split('|');
-
-    var properties = CssHighlightRules.supportType.split('|');
-
-    var keywordMapper = this.createKeywordMapper({
-        "support.constant": CssHighlightRules.supportConstant,
-        "keyword": keywordList,
-        "support.constant.color": CssHighlightRules.supportConstantColor,
-        "support.constant.fonts": CssHighlightRules.supportConstantFonts
-    }, "identifier", true);   
-
-    // regexp must not have capturing parentheses. Use (?:) instead.
-    // regexps are ordered -> the first match is used
-
-    var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
-
-    // regexp must not have capturing parentheses. Use (?:) instead.
-    // regexps are ordered -> the first match is used
-
-    this.$rules = {
-        "start" : [
-            {
-                token : "comment",
-                regex : "\\/\\/.*$"
-            },
-            {
-                token : "comment", // multi line comment
-                regex : "\\/\\*",
-                next : "comment"
-            }, {
-                token : "string", // single line
-                regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
-            }, {
-                token : "string", // single line
-                regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
-            }, {
-                token : ["constant.numeric", "keyword"],
-                regex : "(" + numRe + ")(ch|cm|deg|em|ex|fr|gd|grad|Hz|in|kHz|mm|ms|pc|pt|px|rad|rem|s|turn|vh|vm|vw|%)"
-            }, {
-                token : "constant.numeric", // hex6 color
-                regex : "#[a-f0-9]{6}"
-            }, {
-                token : "constant.numeric", // hex3 color
-                regex : "#[a-f0-9]{3}"
-            }, {
-                token : "constant.numeric",
-                regex : numRe
-            }, {
-                token : ["support.function", "paren.lparen", "string", "paren.rparen"],
-                regex : "(url)(\\()(.*)(\\))"
-            }, {
-                token : ["support.function", "paren.lparen"],
-                regex : "(:extend|[a-z0-9_\\-]+)(\\()"
-            }, {
-                token : function(value) {
-                    if (keywords.indexOf(value.toLowerCase()) > -1)
-                        return "keyword";
-                    else
-                        return "variable";
-                },
-                regex : "[@\\$][a-z0-9_\\-@\\$]*\\b"
-            }, {
-                token : "variable",
-                regex : "[@\\$]\\{[a-z0-9_\\-@\\$]*\\}"
-            }, {
-                token : function(first, second) {
-                    if(properties.indexOf(first.toLowerCase()) > -1) {
-                        return ["support.type.property", "text"];
-                    }
-                    else {
-                        return ["support.type.unknownProperty", "text"];
-                    }
-                },
-                regex : "([a-z0-9-_]+)(\\s*:)"
-            }, {
-                token : "keyword",
-                regex : "&"   // special case - always treat as keyword
-            }, {
-                token : keywordMapper,
-                regex : "\\-?[@a-z_][@a-z0-9_\\-]*"
-            }, {
-                token: "variable.language",
-                regex: "#[a-z0-9-_]+"
-            }, {
-                token: "variable.language",
-                regex: "\\.[a-z0-9-_]+"
-            }, {
-                token: "variable.language",
-                regex: ":[a-z_][a-z0-9-_]*"
-            }, {
-                token: "constant",
-                regex: "[a-z0-9-_]+"
-            }, {
-                token : "keyword.operator",
-                regex : "<|>|<=|>=|=|!=|-|%|\\+|\\*"
-            }, {
-                token : "paren.lparen",
-                regex : "[[({]"
-            }, {
-                token : "paren.rparen",
-                regex : "[\\])}]"
-            }, {
-                token : "text",
-                regex : "\\s+"
-            }, {
-                caseInsensitive: true
-            }
-        ],
-        "comment" : [
-            {
-                token : "comment", // closing comment
-                regex : "\\*\\/",
-                next : "start"
-            }, {
-                defaultToken : "comment"
-            }
-        ]
-    };
-    this.normalizeRules();
-};
-
-oop.inherits(LessHighlightRules, TextHighlightRules);
-
-exports.q = LessHighlightRules;
-
-
-/***/ }),
-
-/***/ 2585:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var LuaHighlightRules = (__webpack_require__(8092)/* .LuaHighlightRules */ .Q);
-var LuaFoldMode = (__webpack_require__(3298)/* .FoldMode */ .Z);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
-var WorkerClient = (__webpack_require__(1451).WorkerClient);
-
-var Mode = function() {
-    this.HighlightRules = LuaHighlightRules;
-    
-    this.foldingRules = new LuaFoldMode();
-    this.$behaviour = this.$defaultBehaviour;
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-   
-    this.lineCommentStart = "--";
-    this.blockComment = {start: "--[[", end: "--]]"};
-    
-    var indentKeywords = {
-        "function": 1,
-        "then": 1,
-        "do": 1,
-        "else": 1,
-        "elseif": 1,
-        "repeat": 1,
-        "end": -1,
-        "until": -1
-    };
-    var outdentKeywords = [
-        "else",
-        "elseif",
-        "end",
-        "until"
-    ];
-
-    function getNetIndentLevel(tokens) {
-        var level = 0;
-        // Support single-line blocks by decrementing the indent level if
-        // an ending token is found
-        for (var i = 0; i < tokens.length; i++) {
-            var token = tokens[i];
-            if (token.type == "keyword") {
-                if (token.value in indentKeywords) {
-                    level += indentKeywords[token.value];
-                }
-            } else if (token.type == "paren.lparen") {
-                level += token.value.length;
-            } else if (token.type == "paren.rparen") {
-                level -= token.value.length;
-            }
-        }
-        // Limit the level to +/- 1 since usually users only indent one level
-        // at a time regardless of the logical nesting level
-        if (level < 0) {
-            return -1;
-        } else if (level > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    this.getNextLineIndent = function(state, line, tab) {
-        var indent = this.$getIndent(line);
-        var level = 0;
-
-        var tokenizedLine = this.getTokenizer().getLineTokens(line, state);
-        var tokens = tokenizedLine.tokens;
-
-        if (state == "start") {
-            level = getNetIndentLevel(tokens);
-        }
-        if (level > 0) {
-            return indent + tab;
-        } else if (level < 0 && indent.substr(indent.length - tab.length) == tab) {
-            // Don't do a next-line outdent if we're going to do a real outdent of this line
-            if (!this.checkOutdent(state, line, "\n")) {
-                return indent.substr(0, indent.length - tab.length);
-            }
-        }
-        return indent;
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        if (input != "\n" && input != "\r" && input != "\r\n")
-            return false;
-
-        if (line.match(/^\s*[\)\}\]]$/))
-            return true;
-
-        var tokens = this.getTokenizer().getLineTokens(line.trim(), state).tokens;
-
-        if (!tokens || !tokens.length)
-            return false;
-
-        return (tokens[0].type == "keyword" && outdentKeywords.indexOf(tokens[0].value) != -1);
-    };
-
-    this.getMatching = function(session, row, column) {
-        if (row == undefined) {
-            var pos = session.selection.lead;
-            column = pos.column;
-            row = pos.row;
-        }
-
-        var startToken = session.getTokenAt(row, column);
-        if (startToken && startToken.value in indentKeywords)
-            return this.foldingRules.luaBlock(session, row, column, true);
-    };
-
-    this.autoOutdent = function(state, session, row) {
-        var line = session.getLine(row);
-        var column = line.match(/^\s*/)[0].length;
-        if (!column || !row) return;
-
-        var startRange = this.getMatching(session, row, column + 1);
-        if (!startRange || startRange.start.row == row)
-             return;
-        var indent = this.$getIndent(session.getLine(startRange.start.row));
-        if (indent.length != column) {
-            session.replace(new Range(row, 0, row, column), indent);
-            session.outdentRows(new Range(row + 1, 0, row + 1, 0));
-        }
-    };
-
-    this.createWorker = function(session) {
-        var worker = new WorkerClient(["ace"], "ace/mode/lua_worker", "Worker");
-        worker.attachToDocument(session.getDocument());
-        
-        worker.on("annotate", function(e) {
-            session.setAnnotations(e.data);
-        });
-        
-        worker.on("terminate", function() {
-            session.clearAnnotations();
-        });
-        
-        return worker;
-    };
-
-    this.$id = "ace/mode/lua";
-    this.snippetFileId = "ace/snippets/lua";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 8092:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-
-var LuaHighlightRules = function() {
-
-    var keywords = (
-        "break|do|else|elseif|end|for|function|if|in|local|repeat|"+
-         "return|then|until|while|or|and|not"
-    );
-
-    var builtinConstants = ("true|false|nil|_G|_VERSION");
-
-    var functions = (
-      // builtinFunctions
-        "string|xpcall|package|tostring|print|os|unpack|require|"+
-        "getfenv|setmetatable|next|assert|tonumber|io|rawequal|"+
-        "collectgarbage|getmetatable|module|rawset|math|debug|"+
-        "pcall|table|newproxy|type|coroutine|_G|select|gcinfo|"+
-        "pairs|rawget|loadstring|ipairs|_VERSION|dofile|setfenv|"+
-        "load|error|loadfile|"+
-
-        "sub|upper|len|gfind|rep|find|match|char|dump|gmatch|"+
-        "reverse|byte|format|gsub|lower|preload|loadlib|loaded|"+
-        "loaders|cpath|config|path|seeall|exit|setlocale|date|"+
-        "getenv|difftime|remove|time|clock|tmpname|rename|execute|"+
-        "lines|write|close|flush|open|output|type|read|stderr|"+
-        "stdin|input|stdout|popen|tmpfile|log|max|acos|huge|"+
-        "ldexp|pi|cos|tanh|pow|deg|tan|cosh|sinh|random|randomseed|"+
-        "frexp|ceil|floor|rad|abs|sqrt|modf|asin|min|mod|fmod|log10|"+
-        "atan2|exp|sin|atan|getupvalue|debug|sethook|getmetatable|"+
-        "gethook|setmetatable|setlocal|traceback|setfenv|getinfo|"+
-        "setupvalue|getlocal|getregistry|getfenv|setn|insert|getn|"+
-        "foreachi|maxn|foreach|concat|sort|remove|resume|yield|"+
-        "status|wrap|create|running|"+
-      // metatableMethods
-        "__add|__sub|__mod|__unm|__concat|__lt|__index|__call|__gc|__metatable|"+
-         "__mul|__div|__pow|__len|__eq|__le|__newindex|__tostring|__mode|__tonumber"
-    );
-
-    var stdLibaries = ("string|package|os|io|math|debug|table|coroutine");
-
-    var deprecatedIn5152 = ("setn|foreach|foreachi|gcinfo|log10|maxn");
-
-    var keywordMapper = this.createKeywordMapper({
-        "keyword": keywords,
-        "support.function": functions,
-        "keyword.deprecated": deprecatedIn5152,
-        "constant.library": stdLibaries,
-        "constant.language": builtinConstants,
-        "variable.language": "self"
-    }, "identifier");
-
-    var decimalInteger = "(?:(?:[1-9]\\d*)|(?:0))";
-    var hexInteger = "(?:0[xX][\\dA-Fa-f]+)";
-    var integer = "(?:" + decimalInteger + "|" + hexInteger + ")";
-
-    var fraction = "(?:\\.\\d+)";
-    var intPart = "(?:\\d+)";
-    var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
-    var floatNumber = "(?:" + pointFloat + ")";
-
-    this.$rules = {
-        "start" : [{
-            stateName: "bracketedComment",
-            onMatch : function(value, currentState, stack){
-                stack.unshift(this.next, value.length - 2, currentState);
-                return "comment";
-            },
-            regex : /\-\-\[=*\[/,
-            next  : [
-                {
-                    onMatch : function(value, currentState, stack) {
-                        if (value.length == stack[1]) {
-                            stack.shift();
-                            stack.shift();
-                            this.next = stack.shift();
-                        } else {
-                            this.next = "";
-                        }
-                        return "comment";
-                    },
-                    regex : /\]=*\]/,
-                    next  : "start"
-                }, {
-                    defaultToken : "comment"
-                }
-            ]
-        },
-
-        {
-            token : "comment",
-            regex : "\\-\\-.*$"
-        },
-        {
-            stateName: "bracketedString",
-            onMatch : function(value, currentState, stack){
-                stack.unshift(this.next, value.length, currentState);
-                return "string.start";
-            },
-            regex : /\[=*\[/,
-            next  : [
-                {
-                    onMatch : function(value, currentState, stack) {
-                        if (value.length == stack[1]) {
-                            stack.shift();
-                            stack.shift();
-                            this.next = stack.shift();
-                        } else {
-                            this.next = "";
-                        }
-                        return "string.end";
-                    },
-                    
-                    regex : /\]=*\]/,
-                    next  : "start"
-                }, {
-                    defaultToken : "string"
-                }
-            ]
-        },
-        {
-            token : "string",           // " string
-            regex : '"(?:[^\\\\]|\\\\.)*?"'
-        }, {
-            token : "string",           // ' string
-            regex : "'(?:[^\\\\]|\\\\.)*?'"
-        }, {
-            token : "constant.numeric", // float
-            regex : floatNumber
-        }, {
-            token : "constant.numeric", // integer
-            regex : integer + "\\b"
-        }, {
-            token : keywordMapper,
-            regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
-        }, {
-            token : "keyword.operator",
-            regex : "\\+|\\-|\\*|\\/|%|\\#|\\^|~|<|>|<=|=>|==|~=|=|\\:|\\.\\.\\.|\\.\\."
-        }, {
-            token : "paren.lparen",
-            regex : "[\\[\\(\\{]"
-        }, {
-            token : "paren.rparen",
-            regex : "[\\]\\)\\}]"
-        }, {
-            token : "text",
-            regex : "\\s+|\\w+"
-        } ]
-    };
-    
-    this.normalizeRules();
-};
-
-oop.inherits(LuaHighlightRules, TextHighlightRules);
-
-exports.Q = LuaHighlightRules;
-
-
-/***/ }),
-
 /***/ 1164:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -21534,251 +18618,6 @@ var MatchingBraceOutdent = function() {};
 }).call(MatchingBraceOutdent.prototype);
 
 exports.p = MatchingBraceOutdent;
-
-
-/***/ }),
-
-/***/ 6852:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var ScssHighlightRules = (__webpack_require__(1690)/* .ScssHighlightRules */ .m);
-var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
-var CssBehaviour = (__webpack_require__(7853)/* .CssBehaviour */ .K);
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-var CssCompletions = (__webpack_require__(7237)/* .CssCompletions */ .A);
-
-
-var Mode = function() {
-    this.HighlightRules = ScssHighlightRules;
-    this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CssBehaviour();
-    this.$completer = new CssCompletions();
-    this.foldingRules = new CStyleFoldMode();
-};
-oop.inherits(Mode, TextMode);
-
-(function() {
-   
-    this.lineCommentStart = "//";
-    this.blockComment = {start: "/*", end: "*/"};
-
-    this.getNextLineIndent = function(state, line, tab) {
-        var indent = this.$getIndent(line);
-
-        // ignore braces in comments
-        var tokens = this.getTokenizer().getLineTokens(line, state).tokens;
-        if (tokens.length && tokens[tokens.length-1].type == "comment") {
-            return indent;
-        }
-
-        var match = line.match(/^.*\{\s*$/);
-        if (match) {
-            indent += tab;
-        }
-
-        return indent;
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        return this.$outdent.checkOutdent(line, input);
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-        this.$outdent.autoOutdent(doc, row);
-    };
-    
-    this.getCompletions = function(state, session, pos, prefix) {
-        return this.$completer.getCompletions(state, session, pos, prefix);
-    };
-
-
-    this.$id = "ace/mode/scss";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 1690:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var lang = __webpack_require__(124);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-var CssHighlightRules = __webpack_require__(9301);
-
-var ScssHighlightRules = function() {
-    
-    var properties = lang.arrayToMap(CssHighlightRules.supportType.split("|"));
-
-    var functions = lang.arrayToMap(
-        ("hsl|hsla|rgb|rgba|url|attr|counter|counters|abs|adjust_color|adjust_hue|" +
-         "alpha|join|blue|ceil|change_color|comparable|complement|darken|desaturate|" + 
-         "floor|grayscale|green|hue|if|invert|join|length|lighten|lightness|mix|" + 
-         "nth|opacify|opacity|percentage|quote|red|round|saturate|saturation|" +
-         "scale_color|transparentize|type_of|unit|unitless|unquote").split("|")
-    );
-
-    var constants = lang.arrayToMap(CssHighlightRules.supportConstant.split("|"));
-
-    var colors = lang.arrayToMap(CssHighlightRules.supportConstantColor.split("|"));
-    
-    var keywords = lang.arrayToMap(
-        ("@mixin|@extend|@include|@import|@media|@debug|@warn|@if|@for|@each|@while|@else|@font-face|@-webkit-keyframes|if|and|!default|module|def|end|declare").split("|")
-    );
-    
-    var tags = lang.arrayToMap(
-        ("a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdo|" + 
-         "big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|" + 
-         "command|datalist|dd|del|details|dfn|dir|div|dl|dt|em|embed|fieldset|" + 
-         "figcaption|figure|font|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|" + 
-         "header|hgroup|hr|html|i|iframe|img|input|ins|keygen|kbd|label|legend|li|" + 
-         "link|map|mark|menu|meta|meter|nav|noframes|noscript|object|ol|optgroup|" + 
-         "option|output|p|param|pre|progress|q|rp|rt|ruby|s|samp|script|section|select|" + 
-         "small|source|span|strike|strong|style|sub|summary|sup|table|tbody|td|" + 
-         "textarea|tfoot|th|thead|time|title|tr|tt|u|ul|var|video|wbr|xmp").split("|")
-    );
-
-    // regexp must not have capturing parentheses. Use (?:) instead.
-    // regexps are ordered -> the first match is used
-
-    var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
-
-    // regexp must not have capturing parentheses. Use (?:) instead.
-    // regexps are ordered -> the first match is used
-
-    this.$rules = {
-        "start" : [
-            {
-                token : "comment",
-                regex : "\\/\\/.*$"
-            },
-            {
-                token : "comment", // multi line comment
-                regex : "\\/\\*",
-                next : "comment"
-            }, {
-                token : "string", // single line
-                regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
-            }, {
-                token : "string", // multi line string start
-                regex : '["].*\\\\$',
-                next : "qqstring"
-            }, {
-                token : "string", // single line
-                regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
-            }, {
-                token : "string", // multi line string start
-                regex : "['].*\\\\$",
-                next : "qstring"
-            }, {
-                token : "constant.numeric",
-                regex : numRe + "(?:ch|cm|deg|em|ex|fr|gd|grad|Hz|in|kHz|mm|ms|pc|pt|px|rad|rem|s|turn|vh|vmax|vmin|vm|vw|%)"
-            }, {
-                token : "constant.numeric", // hex6 color
-                regex : "#[a-f0-9]{6}"
-            }, {
-                token : "constant.numeric", // hex3 color
-                regex : "#[a-f0-9]{3}"
-            }, {
-                token : "constant.numeric",
-                regex : numRe
-            }, {
-                token : ["support.function", "string", "support.function"],
-                regex : "(url\\()(.*)(\\))"
-            }, {
-                token : function(value) {
-                    if (properties.hasOwnProperty(value.toLowerCase()))
-                        return "support.type";
-                    if (keywords.hasOwnProperty(value))
-                        return "keyword";
-                    else if (constants.hasOwnProperty(value))
-                        return "constant.language";
-                    else if (functions.hasOwnProperty(value))
-                        return "support.function";
-                    else if (colors.hasOwnProperty(value.toLowerCase()))
-                        return "support.constant.color";
-                    else if (tags.hasOwnProperty(value.toLowerCase()))
-                        return "variable.language";
-                    else
-                        return "text";
-                },
-                regex : "\\-?[@a-z_][@a-z0-9_\\-]*"
-            }, {
-                token : "variable",
-                regex : "[a-z_\\-$][a-z0-9_\\-$]*\\b"
-            }, {
-                token: "variable.language",
-                regex: "#[a-z0-9-_]+"
-            }, {
-                token: "variable.language",
-                regex: "\\.[a-z0-9-_]+"
-            }, {
-                token: "variable.language",
-                regex: ":[a-z0-9-_]+"
-            }, {
-                token: "constant",
-                regex: "[a-z0-9-_]+"
-            }, {
-                token : "keyword.operator",
-                regex : "<|>|<=|>=|==|!=|-|%|#|\\+|\\$|\\+|\\*"
-            }, {
-                token : "paren.lparen",
-                regex : "[[({]"
-            }, {
-                token : "paren.rparen",
-                regex : "[\\])}]"
-            }, {
-                token : "text",
-                regex : "\\s+"
-            }, {
-                caseInsensitive: true
-            }
-        ],
-        "comment" : [
-            {
-                token : "comment", // closing comment
-                regex : "\\*\\/",
-                next : "start"
-            }, {
-                defaultToken : "comment"
-            }
-        ],
-        "qqstring" : [
-            {
-                token : "string",
-                regex : '(?:(?:\\\\.)|(?:[^"\\\\]))*?"',
-                next : "start"
-            }, {
-                token : "string",
-                regex : '.+'
-            }
-        ],
-        "qstring" : [
-            {
-                token : "string",
-                regex : "(?:(?:\\\\.)|(?:[^'\\\\]))*?'",
-                next : "start"
-            }, {
-                token : "string",
-                regex : '.+'
-            }
-        ]
-    };
-};
-
-oop.inherits(ScssHighlightRules, TextHighlightRules);
-
-exports.m = ScssHighlightRules;
 
 
 /***/ }),
@@ -22359,337 +19198,6 @@ var TextHighlightRules = function() {
 }).call(TextHighlightRules.prototype);
 
 exports.K = TextHighlightRules;
-
-
-/***/ }),
-
-/***/ 300:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/*
-  THIS FILE WAS AUTOGENERATED BY mode.tmpl.js
-*/
-
-
-
-var oop = __webpack_require__(9359);
-var tsMode = (__webpack_require__(3123)/* .Mode */ .A);
-
-var Mode = function() {
-    tsMode.call(this);
-    this.$highlightRuleConfig = {jsx: true};
-};
-oop.inherits(Mode, tsMode);
-
-(function() {
-    this.$id = "ace/mode/tsx";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 3123:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/*
-  THIS FILE WAS AUTOGENERATED BY mode.tmpl.js
-*/
-
-
-
-var oop = __webpack_require__(9359);
-var jsMode = (__webpack_require__(8057)/* .Mode */ .A);
-var TypeScriptHighlightRules = (__webpack_require__(7419)/* .TypeScriptHighlightRules */ .x);
-var CstyleBehaviour = (__webpack_require__(9414)/* .CstyleBehaviour */ .B);
-var CStyleFoldMode = (__webpack_require__(2764)/* .FoldMode */ .Z);
-var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
-
-var Mode = function() {
-    this.HighlightRules = TypeScriptHighlightRules;
-    
-    this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
-    this.foldingRules = new CStyleFoldMode();
-};
-oop.inherits(Mode, jsMode);
-
-(function() {
-    this.createWorker = function(session) {
-        return null;
-    };
-    this.$id = "ace/mode/typescript";
-}).call(Mode.prototype);
-
-exports.A = Mode;
-
-
-/***/ }),
-
-/***/ 7419:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/*
-  THIS FILE WAS AUTOGENERATED BY mode_highlight_rules.tmpl.js (UUID: 21e323af-f665-4161-96e7-5087d262557e) */
-
-
-
-var oop = __webpack_require__(9359);
-var JavaScriptHighlightRules = (__webpack_require__(3801)/* .JavaScriptHighlightRules */ ._);
-
-var TypeScriptHighlightRules = function (options) {
-
-    var tsRules = [
-        // Match stuff like: function name: return type)
-        {
-            token: ["storage.type", "text", "entity.name.function.ts"],
-            regex: "(function)(\\s+)([a-zA-Z0-9\$_\u00a1-\uffff][a-zA-Z0-9\d\$_\u00a1-\uffff]*)"
-        },
-        {
-            token: "keyword",
-            regex: "(?:\\b(constructor|declare|interface|as|AS|public|private|extends|export|super|readonly|module|namespace|abstract|implements)\\b)"
-        },
-        {
-            token: ["keyword", "storage.type.variable.ts"],
-            regex: "(class|type)(\\s+[a-zA-Z0-9_?.$][\\w?.$]*)"
-         },
-        {
-            token: "keyword",
-            regex: "\\b(?:super|export|import|keyof|infer)\\b"
-        }, 
-        {
-            token: ["storage.type.variable.ts"],
-            regex: "(?:\\b(this\\.|string\\b|bool\\b|boolean\\b|number\\b|true\\b|false\\b|undefined\\b|any\\b|null\\b|(?:unique )?symbol\\b|object\\b|never\\b|enum\\b))"
-        }
-    ];
-
-    var JSRules = new JavaScriptHighlightRules({jsx: (options && options.jsx) == true}).getRules();
-    
-    JSRules.no_regex = tsRules.concat(JSRules.no_regex);
-    this.$rules = JSRules;
-};
-
-oop.inherits(TypeScriptHighlightRules, JavaScriptHighlightRules);
-
-exports.x = TypeScriptHighlightRules;
-
-
-/***/ }),
-
-/***/ 5239:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var oop = __webpack_require__(9359);
-var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
-
-var XmlHighlightRules = function(normalize) {
-    // http://www.w3.org/TR/REC-xml/#NT-NameChar
-    // NameStartChar	   ::=   	":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
-    // NameChar	   ::=   	NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
-    var tagRegex = "[_:a-zA-Z\xc0-\uffff][-_:.a-zA-Z0-9\xc0-\uffff]*";
-
-    this.$rules = {
-        start : [
-            {token : "string.cdata.xml", regex : "<\\!\\[CDATA\\[", next : "cdata"},
-            {
-                token : ["punctuation.instruction.xml", "keyword.instruction.xml"],
-                regex : "(<\\?)(" + tagRegex + ")", next : "processing_instruction"
-            },
-            {token : "comment.start.xml", regex : "<\\!--", next : "comment"},
-            {
-                token : ["xml-pe.doctype.xml", "xml-pe.doctype.xml"],
-                regex : "(<\\!)(DOCTYPE)(?=[\\s])", next : "doctype", caseInsensitive: true
-            },
-            {include : "tag"},
-            {token : "text.end-tag-open.xml", regex: "</"},
-            {token : "text.tag-open.xml", regex: "<"},
-            {include : "reference"},
-            {defaultToken : "text.xml"}
-        ],
-
-        processing_instruction : [{
-            token : "entity.other.attribute-name.decl-attribute-name.xml",
-            regex : tagRegex
-        }, {
-            token : "keyword.operator.decl-attribute-equals.xml",
-            regex : "="
-        }, {
-            include: "whitespace"
-        }, {
-            include: "string"
-        }, {
-            token : "punctuation.xml-decl.xml",
-            regex : "\\?>",
-            next : "start"
-        }],
-
-        doctype : [
-            {include : "whitespace"},
-            {include : "string"},
-            {token : "xml-pe.doctype.xml", regex : ">", next : "start"},
-            {token : "xml-pe.xml", regex : "[-_a-zA-Z0-9:]+"},
-            {token : "punctuation.int-subset", regex : "\\[", push : "int_subset"}
-        ],
-
-        int_subset : [{
-            token : "text.xml",
-            regex : "\\s+"
-        }, {
-            token: "punctuation.int-subset.xml",
-            regex: "]",
-            next: "pop"
-        }, {
-            token : ["punctuation.markup-decl.xml", "keyword.markup-decl.xml"],
-            regex : "(<\\!)(" + tagRegex + ")",
-            push : [{
-                token : "text",
-                regex : "\\s+"
-            },
-            {
-                token : "punctuation.markup-decl.xml",
-                regex : ">",
-                next : "pop"
-            },
-            {include : "string"}]
-        }],
-
-        cdata : [
-            {token : "string.cdata.xml", regex : "\\]\\]>", next : "start"},
-            {token : "text.xml", regex : "\\s+"},
-            {token : "text.xml", regex : "(?:[^\\]]|\\](?!\\]>))+"}
-        ],
-
-        comment : [
-            {token : "comment.end.xml", regex : "-->", next : "start"},
-            {defaultToken : "comment.xml"}
-        ],
-
-        reference : [{
-            token : "constant.language.escape.reference.xml",
-            regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
-        }],
-
-        attr_reference : [{
-            token : "constant.language.escape.reference.attribute-value.xml",
-            regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
-        }],
-
-        tag : [{
-            token : ["meta.tag.punctuation.tag-open.xml", "meta.tag.punctuation.end-tag-open.xml", "meta.tag.tag-name.xml"],
-            regex : "(?:(<)|(</))((?:" + tagRegex + ":)?" + tagRegex + ")",
-            next: [
-                {include : "attributes"},
-                {token : "meta.tag.punctuation.tag-close.xml", regex : "/?>", next : "start"}
-            ]
-        }],
-
-        tag_whitespace : [
-            {token : "text.tag-whitespace.xml", regex : "\\s+"}
-        ],
-        // for doctype and processing instructions
-        whitespace : [
-            {token : "text.whitespace.xml", regex : "\\s+"}
-        ],
-
-        // for doctype and processing instructions
-        string: [{
-            token : "string.xml",
-            regex : "'",
-            push : [
-                {token : "string.xml", regex: "'", next: "pop"},
-                {defaultToken : "string.xml"}
-            ]
-        }, {
-            token : "string.xml",
-            regex : '"',
-            push : [
-                {token : "string.xml", regex: '"', next: "pop"},
-                {defaultToken : "string.xml"}
-            ]
-        }],
-
-        attributes: [{
-            token : "entity.other.attribute-name.xml",
-            regex : tagRegex
-        }, {
-            token : "keyword.operator.attribute-equals.xml",
-            regex : "="
-        }, {
-            include: "tag_whitespace"
-        }, {
-            include: "attribute_value"
-        }],
-
-        attribute_value: [{
-            token : "string.attribute-value.xml",
-            regex : "'",
-            push : [
-                {token : "string.attribute-value.xml", regex: "'", next: "pop"},
-                {include : "attr_reference"},
-                {defaultToken : "string.attribute-value.xml"}
-            ]
-        }, {
-            token : "string.attribute-value.xml",
-            regex : '"',
-            push : [
-                {token : "string.attribute-value.xml", regex: '"', next: "pop"},
-                {include : "attr_reference"},
-                {defaultToken : "string.attribute-value.xml"}
-            ]
-        }]
-    };
-
-    if (this.constructor === XmlHighlightRules)
-        this.normalizeRules();
-};
-
-
-(function() {
-
-    this.embedTagRules = function(HighlightRules, prefix, tag){
-        this.$rules.tag.unshift({
-            token : ["meta.tag.punctuation.tag-open.xml", "meta.tag." + tag + ".tag-name.xml"],
-            regex : "(<)(" + tag + "(?=\\s|>|$))",
-            next: [
-                {include : "attributes"},
-                {token : "meta.tag.punctuation.tag-close.xml", regex : "/?>", next : prefix + "start"}
-            ]
-        });
-
-        this.$rules[tag + "-end"] = [
-            {include : "attributes"},
-            {token : "meta.tag.punctuation.tag-close.xml", regex : "/?>",  next: "start",
-                onMatch : function(value, currentState, stack) {
-                    stack.splice(0);
-                    return this.token;
-            }}
-        ];
-
-        this.embedRules(HighlightRules, prefix, [{
-            token: ["meta.tag.punctuation.end-tag-open.xml", "meta.tag." + tag + ".tag-name.xml"],
-            regex : "(</)(" + tag + "(?=\\s|>|$))",
-            next: tag + "-end"
-        }, {
-            token: "string.cdata.xml",
-            regex : "<\\!\\[CDATA\\["
-        }, {
-            token: "string.cdata.xml",
-            regex : "\\]\\]>"
-        }]);
-    };
-
-}).call(TextHighlightRules.prototype);
-
-oop.inherits(XmlHighlightRules, TextHighlightRules);
-
-exports.U = XmlHighlightRules;
 
 
 /***/ }),
@@ -42095,6 +38603,20 @@ exports.Semaphore = Semaphore;
 
 /***/ }),
 
+/***/ 5224:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ----------------------------------------------------------------------------------------- */
+
+
+module.exports = __webpack_require__(152);
+
+/***/ }),
+
 /***/ 152:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -46815,8 +43337,9 @@ var Is;
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			671: 0,
-/******/ 			100: 0,
-/******/ 			218: 0
+/******/ 			674: 0,
+/******/ 			152: 0,
+/******/ 			100: 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -46854,285 +43377,8 @@ __webpack_require__.d(linters_namespaceObject, {
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ext/language_tools.js
 var language_tools = __webpack_require__(1105);
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/html-example.js
-var htmlContent = `
-    <!DOCTYPE html>
-<html>
-    <head>
-
-    <style type="text/css">
-        .text-layer {
-            font-family: Monaco, "Courier New", monospace;
-            font-size: 12px;
-            cursor: text;
-        }
-    </style>
-
-    </head>
-    <body>
-        <h1 style="color:red">Juhu Kinners</h1>
-    </body>
-</html>
-    `;
-
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/html.js
-var html = __webpack_require__(5528);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/css.js
-var css = __webpack_require__(8771);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/less.js
-var less = __webpack_require__(4629);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/scss.js
-var scss = __webpack_require__(6852);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/mode/json.js
 var json = __webpack_require__(5654);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/json5.js
-var json5 = __webpack_require__(9548);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/typescript.js
-var typescript = __webpack_require__(3123);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/javascript.js
-var javascript = __webpack_require__(8057);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/tsx.js
-var tsx = __webpack_require__(300);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/lua.js
-var lua = __webpack_require__(2585);
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/css-example.js
-var cssContent = `.text-layer {
-    font: 12px Monaco, "Courier New", monospace;
-    font-size: 3vmin;
-    cursor: text;
-}
-
-.blinker {
-    animation: blink 1s linear infinite alternate;
-}
-
-@keyframes blink {
-    0%, 40% {
-        opacity: 0; /*
-        */
-        opacity: 1
-    }
-
-    40.5%, 100% {
-        opacity: 1
-    }
-}
-
-@document url(http://c9.io/), url-prefix(http://ace.c9.io/build/),
-domain(c9.io), regexp("https:.*") /**/
-{
-    /**/
-    img[title]:before
-    {
-        content: attr(title) "\AImage \
-            retrieved from"
-        attr(src); /*
-            */
-        white-space: pre;
-        display: block;
-        background: url(asdasd); "err
-    }
-}
-
-@viewport {
-    min-zoom: 1;
-max-zoom: 200%;
-user-zoom: fixed;
-}
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/less-example.js
-var lessContent = `/* styles.less */
-
-@base: #f938ab;
-
-.box-shadow(@style, @c) when (iscolor(@c)) {
-    box-shadow:         @style @c;
-    -webkit-box-shadow: @style @c;
-    -moz-box-shadow:    @style @c;
-}
-.box-shadow(@style, @alpha: 50%) when (isnumber(@alpha)) {
-    .box-shadow(@style, rgba(0, 0, 0, @alpha));
-}
-
-// Box styles
-.box { 
-    color: saturate(@base, 5%);
-    border-color: lighten(@base, 30%);
-    
-    div { .box-shadow(0 0 5px, 30%) }
-  
-    a {
-        color: @base;
-        
-        &:hover {
-            color: lighten(@base, 50%);
-        }
-    }
-}
-
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/scss-example.js
-var scssContent = `/* style.scss */
-
-#navbar {
-    $navbar-width: 800px;
-    $items: 5;
-    $navbar-color: #ce4dd6;
-
-    width: $navbar-width;
-    border-bottom: 2px solid $navbar-color;
-
-    li {
-        float: left;
-        width: $navbar-width/$items - 10px;
-
-          background-color: lighten($navbar-color, 20%);
-        &:hover {
-            background-color: lighten($navbar-color, 10%);
-        }
-    }
-}
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/typescript-example.js
-var typescriptContent = `
-class Greeter {
-  readonly name: string = "world";
-  doc: HTMLDocument;
-  someTest: SomeTestClassName;
- 
-  constructor(otherName?: string) {
-    if (otherName !== undefined) {
-      this.name = otherName;
-    }
-  }
- 
-  err() {
-    this.name = "not ok";
-  }
-}
-const g = new Greeter();
-g.name = "also not ok";
-`;
-var typescriptContent1 = `
-//This created only to show that docs are dependent on each other
-class SomeTestClassName {
-
-}
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json-example.js
-var jsonContent = `{
-       "name": 12
-       "country": "Ireland"
-    }`;
-var jsonSchema = `{
-  "definitions": {
-    "color": {
-      "type": "string",
-      "enum": ["red", "orange", "yellow", "green", "blue", "purple", "pink"]
-    }
-  }
-}
-`;
-var jsonSchema2 = `  {"type": "object",
-"description": "a very special object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 50
-    },
-    "age": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 120
-    },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
-    "favoriteColor": {
-    "description": "Favorite color",
-      "$ref": "colors.schema.json#/definitions/color"
-    }
-  },
-  "required": ["name", "age", "email", "favoriteColor"],
-  "additionalProperties": false
-  }
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/javascript-example.js
-var jsContent = `
-class Point {
-  x;
-  y;
- 
-  // Normal signature with defaults
-  constructor(x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-  }
-}
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/tsx-example.js
-var tsxContent = `
-var mode: HTMLElement = <div> 
-    Typescript + <b> JSX </b> 
-</div>;
-
-function test () {
-    return <Component/>
-}
-
-class Component extends HTMLFrameElement {
-    
-}
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/jsx-example.js
-var jsxContent = `
-var mode = <div> 
-    Javascript + <b> JSX </b> 
-</div>;
-
-function test () {
-    return <Component/>
-}
-
-class Component extends HTMLFrameElement {
-    
-}
-`;
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json5-example.js
-var json5Content = `{
-       "name": 12,
-       "country": "Ireland", //trailing comma + comment
-    }`;
-var json5Schema = `{
-    "type": "object",
-    "description": "a very special object",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Some name"
-        },
-        "country": {
-            "type": "string",
-            "enum": ["Ireland", "Iceland"],
-            "description": "Country name"
-        },
-        "age": {
-            "type": "number",
-            "description": "Age of object"
-        }
-    }
-}`;
-
 // EXTERNAL MODULE: ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js
 var injectStylesIntoStyleTag = __webpack_require__(3379);
 var injectStylesIntoStyleTag_default = /*#__PURE__*/__webpack_require__.n(injectStylesIntoStyleTag);
@@ -47336,9 +43582,12 @@ class DescriptionTooltip extends Tooltip {
     ;
 }
 
+// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
+var main = __webpack_require__(152);
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/common-converters.ts
 
-var common_converters_CommonConverter;
+
+var CommonConverter;
 (function (CommonConverter) {
     function normalizeRanges(completions) {
         return completions && completions.map((el) => {
@@ -47365,10 +43614,42 @@ var common_converters_CommonConverter;
         TooltipType[TooltipType["plainText"] = 0] = "plainText";
         TooltipType[TooltipType["markdown"] = 1] = "markdown";
     })(TooltipType = CommonConverter.TooltipType || (CommonConverter.TooltipType = {}));
-})(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
+    function convertKind(kind) {
+        switch (kind) {
+            case "primitiveType":
+            case "keyword":
+                return main.CompletionItemKind.Keyword;
+            case "variable":
+            case "localVariable":
+                return main.CompletionItemKind.Variable;
+            case "memberVariable":
+            case "memberGetAccessor":
+            case "memberSetAccessor":
+                return main.CompletionItemKind.Field;
+            case "function":
+            case "memberFunction":
+            case "constructSignature":
+            case "callSignature":
+            case "indexSignature":
+                return main.CompletionItemKind.Function;
+            case "enum":
+                return main.CompletionItemKind.Enum;
+            case "module":
+                return main.CompletionItemKind.Module;
+            case "class":
+                return main.CompletionItemKind.Class;
+            case "interface":
+                return main.CompletionItemKind.Interface;
+            case "warning":
+                return main.CompletionItemKind.File;
+        }
+        return main.CompletionItemKind.Property;
+    }
+    CommonConverter.convertKind = convertKind;
+})(CommonConverter || (CommonConverter = {}));
 
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/browser/main.js
-var main = __webpack_require__(9054);
+var browser_main = __webpack_require__(9054);
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/common/messages.js
 var messages = __webpack_require__(839);
 ;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/disposable.js
@@ -47521,7 +43802,7 @@ class WebSocketMessageWriter extends messageWriter.AbstractMessageWriter {
 function createWebSocketConnection(socket, logger) {
     const messageReader = new WebSocketMessageReader(socket);
     const messageWriter = new WebSocketMessageWriter(socket);
-    const connection = (0,main.createMessageConnection)(messageReader, messageWriter, logger);
+    const connection = (0,browser_main.createMessageConnection)(messageReader, messageWriter, logger);
     connection.onClose(() => connection.dispose());
     return connection;
 }
@@ -47605,158 +43886,8 @@ function toSocket(webSocket) {
 //# sourceMappingURL=index.js.map
 // EXTERNAL MODULE: ./node_modules/events/events.js
 var events = __webpack_require__(7187);
-// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
-var browser_main = __webpack_require__(152);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
-var src_range = __webpack_require__(9082);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/range_list.js
-var range_list = __webpack_require__(6510);
-;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/lsp-converters.ts
-
-
-
-
-function fromRange(range) {
-    if (!range) {
-        return;
-    }
-    return {
-        start: {
-            line: range.start.row,
-            character: range.start.column
-        },
-        end: { line: range.end.row, character: range.end.column }
-    };
-}
-function toRange(range) {
-    if (!range) {
-        return;
-    }
-    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
-}
-function fromPoint(point) {
-    if (!point)
-        return;
-    return { line: point.row, character: point.column };
-}
-function toPoint(position) {
-    if (!position)
-        return;
-    return { row: position.line, column: position.character };
-}
-function toAnnotations(diagnostics) {
-    return diagnostics && diagnostics.map((el) => {
-        return {
-            row: el.range.start.line,
-            column: el.range.start.character,
-            text: el.message,
-            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
-        };
-    });
-}
-function toCompletions(completionList) {
-    if (!completionList) {
-        return;
-    }
-    if (!Array.isArray(completionList)) {
-        completionList = completionList.items;
-    }
-    return completionList && completionList.map((item) => {
-        let kind = Object.keys(browser_main.CompletionItemKind)[Object.values(browser_main.CompletionItemKind).indexOf(item.kind)];
-        let text = item.textEdit?.newText ?? item.insertText ?? item.label;
-        let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-        let range = getTextEditRange(item.textEdit);
-        let completion = {
-            meta: kind,
-            caption: item.label,
-            command: command,
-            range: range,
-            value: "",
-            score: null,
-            item: item
-        };
-        if (item.insertTextFormat == browser_main.InsertTextFormat.Snippet) {
-            completion["snippet"] = text;
-        }
-        else {
-            completion["value"] = text;
-        }
-        return completion;
-    });
-}
-function toResolvedCompletion(completion, item) {
-    let doc = fromMarkupContent(item.documentation);
-    if (doc) {
-        if (doc.type === common_converters_CommonConverter.TooltipType.markdown) {
-            completion["docMarkdown"] = doc.text;
-        }
-        else {
-            completion["docText"] = doc.text;
-        }
-    }
-    return completion;
-}
-function getTextEditRange(textEdit) {
-    if (!textEdit) {
-        return;
-    }
-    if (textEdit.insert != undefined && textEdit.replace != undefined) {
-        let rangeList = new range_list/* RangeList */.$();
-        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
-        rangeList.merge();
-        return rangeList[0];
-    }
-    if (textEdit.range) {
-        return toRange(textEdit.range);
-    }
-}
-function toTooltip(hover) {
-    let content;
-    if (!hover) {
-        return;
-    }
-    if (browser_main.MarkupContent.is(hover.contents)) {
-        content = fromMarkupContent(hover.contents);
-    }
-    else if (browser_main.MarkedString.is(hover.contents)) {
-        content = { type: common_converters_CommonConverter.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
-    }
-    else if (Array.isArray(hover.contents)) {
-        let contents = hover.contents.map((el) => {
-            if (typeof el !== "string") {
-                return `\`\`\`${el.value}\`\`\``;
-            }
-            return el;
-        });
-        content = { type: common_converters_CommonConverter.TooltipType.markdown, text: contents.join("\n\n") };
-    }
-    else {
-        return;
-    }
-    return { content: content, range: toRange(hover.range) };
-}
-function fromMarkupContent(content) {
-    if (!content)
-        return;
-    if (typeof content === "string") {
-        return { type: common_converters_CommonConverter.TooltipType.plainText, text: content };
-    }
-    if (content.kind === browser_main.MarkupKind.Markdown) {
-        return { type: common_converters_CommonConverter.TooltipType.markdown, text: content.value };
-    }
-    else {
-        return { type: common_converters_CommonConverter.TooltipType.plainText, text: content.value };
-    }
-}
-function toAceTextEdits(textEdits) {
-    return textEdits.reverse().map((el) => {
-        return {
-            range: toRange(el.range),
-            newText: el.newText
-        };
-    });
-}
-
+// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/browser.js
+var browser = __webpack_require__(5224);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller-ws.ts
 
 
@@ -47802,38 +43933,50 @@ class MessageControllerWS extends events.EventEmitter {
             },
         },
     };
-    constructor(socket) {
+    constructor(mode) {
         super();
-        this.socket = socket;
-        this.$connect();
+        if (mode instanceof Worker) {
+            this.$connectWorker(mode);
+        }
+        else {
+            this.socket = mode;
+            this.$connectSocket();
+        }
     }
-    $connect() {
+    $connectSocket() {
         listen({
             webSocket: this.socket,
             logger: new ConsoleLogger(),
             onConnection: (connection) => {
-                connection.listen();
-                this.isConnected = true;
-                this.connection = connection;
-                this.sendInitialize();
-                this.connection.onNotification('textDocument/publishDiagnostics', (result) => {
-                    this.emit("validate-" + result.uri, toAnnotations(result.diagnostics));
-                });
-                this.connection.onNotification('window/showMessage', (params) => {
-                    this.emit('logging', params);
-                });
-                this.connection.onRequest('window/showMessageRequest', (params) => {
-                    this.emit('logging', params);
-                });
-                this.connection.onError((e) => {
-                    this.emit('error', e);
-                });
-                this.connection.onClose(() => {
-                    this.isConnected = false;
-                });
-                this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
+                this.$connect(connection);
             },
         });
+    }
+    $connectWorker(worker) {
+        const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
+        this.$connect(connection);
+    }
+    $connect(connection) {
+        connection.listen();
+        this.isConnected = true;
+        this.connection = connection;
+        this.sendInitialize();
+        this.connection.onNotification('textDocument/publishDiagnostics', (result) => {
+            this.emit("validate-" + result.uri, result.diagnostics);
+        });
+        this.connection.onNotification('window/showMessage', (params) => {
+            this.emit('logging', params);
+        });
+        this.connection.onRequest('window/showMessageRequest', (params) => {
+            this.emit('logging', params);
+        });
+        this.connection.onError((e) => {
+            this.emit('error', e);
+        });
+        this.connection.onClose(() => {
+            this.isConnected = false;
+        });
+        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
     init(sessionId, value, mode, options, initCallback, validationCallback) {
         this["on"]("validate-" + sessionId, validationCallback);
@@ -47910,10 +44053,10 @@ class MessageControllerWS extends events.EventEmitter {
             textDocument: {
                 uri: sessionId,
             },
-            position: fromPoint(position),
+            position: position,
         };
         let hoverCallback = (result) => {
-            callback(toTooltip(result));
+            callback(result);
         };
         this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
     }
@@ -47928,10 +44071,10 @@ class MessageControllerWS extends events.EventEmitter {
             textDocument: {
                 uri: sessionId,
             },
-            position: fromPoint(position),
+            position: position,
         };
         let completionCallback = (result) => {
-            callback(toCompletions(result));
+            callback(result);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }
@@ -47940,7 +44083,7 @@ class MessageControllerWS extends events.EventEmitter {
             return;
         }
         let resolveCallback = (result) => {
-            callback(toResolvedCompletion(completion, result));
+            callback(result);
         };
         this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
     }
@@ -47956,7 +44099,7 @@ class MessageControllerWS extends events.EventEmitter {
         });
     }
     doValidation(sessionId, callback) {
-        //TODO:
+        //TODO: textDocument/diagnostic capability
     }
     format(sessionId, range, format, callback) {
         if (!this.isInitialized) {
@@ -47967,10 +44110,10 @@ class MessageControllerWS extends events.EventEmitter {
                 uri: sessionId,
             },
             options: format,
-            range: fromRange(range)
+            range: range
         };
         let formatCallback = (params) => {
-            callback(toAceTextEdits(params));
+            callback(params);
         };
         this.postMessage('textDocument/rangeFormatting', sessionId, options, formatCallback);
     }
@@ -48056,7 +44199,7 @@ class ChangeMessage extends BaseMessage {
         this.value = value;
     }
 }
-class DeltasMessage extends BaseMessage {
+class DeltasMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
     type = MessageType.applyDelta;
     value;
     constructor(sessionId, value) {
@@ -48154,13 +44297,12 @@ class MessageController {
         this.postMessage(new HoverMessage(sessionId, position), callback);
     }
     change(sessionId, deltas, value, docLength, callback) {
-        let message;
-        if (deltas.length > 50 && deltas.length > docLength >> 1) {
-            message = new ChangeMessage(sessionId, value);
-        }
-        else {
+        let message; //TODO: deltas in lsp
+        //if (deltas.length > 50 && deltas.length > docLength >> 1) {
+        message = new ChangeMessage(sessionId, value);
+        /*} else {
             message = new DeltasMessage(sessionId, deltas);
-        }
+        }*/
         this.postMessage(message, callback);
     }
     changeMode(sessionId, value, mode, callback) {
@@ -48189,7 +44331,176 @@ class MessageController {
 }
 oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
 
+// EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
+var src_range = __webpack_require__(9082);
+// EXTERNAL MODULE: ./node_modules/ace-code/src/range_list.js
+var range_list = __webpack_require__(6510);
+;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/lsp-converters.ts
+
+
+
+
+function fromRange(range) {
+    if (!range) {
+        return;
+    }
+    return {
+        start: {
+            line: range.start.row,
+            character: range.start.column
+        },
+        end: { line: range.end.row, character: range.end.column }
+    };
+}
+function toRange(range) {
+    if (!range) {
+        return;
+    }
+    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
+}
+function fromPoint(point) {
+    if (!point)
+        return;
+    return { line: point.row, character: point.column };
+}
+function toPoint(position) {
+    if (!position)
+        return;
+    return { row: position.line, column: position.character };
+}
+function toAnnotations(diagnostics) {
+    return diagnostics && diagnostics.map((el) => {
+        return {
+            row: el.range.start.line,
+            column: el.range.start.character,
+            text: el.message,
+            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
+        };
+    });
+}
+function toCompletion(item) {
+    let kind = Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(item.kind)];
+    let text = item.textEdit?.newText ?? item.insertText ?? item.label;
+    let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
+    let range = getTextEditRange(item.textEdit);
+    let completion = {
+        meta: kind,
+        caption: item.label,
+        command: command,
+        range: range,
+        value: "",
+        score: null,
+        item: item
+    };
+    if (item.insertTextFormat == main.InsertTextFormat.Snippet) {
+        completion["snippet"] = text;
+    }
+    else {
+        completion["value"] = text;
+    }
+    completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
+    completion["position"] = item["position"];
+    return completion;
+}
+function toCompletions(completionList) {
+    if (!completionList) {
+        return;
+    }
+    if (!Array.isArray(completionList)) {
+        completionList = completionList.items;
+    }
+    return completionList && completionList.map((item) => toCompletion(item));
+}
+function toResolvedCompletion(completion, item) {
+    let doc = fromMarkupContent(item.documentation);
+    if (doc) {
+        if (doc.type === CommonConverter.TooltipType.markdown) {
+            completion["docMarkdown"] = doc.text;
+        }
+        else {
+            completion["docText"] = doc.text;
+        }
+    }
+    return completion;
+}
+function toCompletionItem(completion) {
+    let command;
+    if (completion["command"]) {
+        command = {
+            title: "triggerSuggest",
+            command: completion["command"]
+        };
+    }
+    let completionItem = {
+        label: completion.caption,
+        kind: CommonConverter.convertKind(completion.meta),
+        command: command,
+        insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
+        textEdit: {
+            range: fromRange(completion["range"]),
+            newText: (completion.snippet) ? completion.snippet : completion.value
+        },
+        documentation: completion["documentation"],
+    };
+    completionItem["fileName"] = completion["fileName"];
+    completionItem["position"] = completion["position"];
+    return completionItem;
+}
+function getTextEditRange(textEdit) {
+    if (!textEdit) {
+        return;
+    }
+    if (textEdit.insert != undefined && textEdit.replace != undefined) {
+        let rangeList = new range_list/* RangeList */.$();
+        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
+        rangeList.merge();
+        return rangeList[0];
+    }
+    if (textEdit.range) {
+        return toRange(textEdit.range);
+    }
+}
+function toTooltip(hover) {
+    let content;
+    if (!hover) {
+        return;
+    }
+    if (main.MarkupContent.is(hover.contents)) {
+        content = fromMarkupContent(hover.contents);
+    }
+    else if (main.MarkedString.is(hover.contents)) {
+        content = { type: CommonConverter.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
+    }
+    else if (Array.isArray(hover.contents)) {
+        let contents = hover.contents.map((el) => {
+            if (typeof el !== "string") {
+                return `\`\`\`${el.value}\`\`\``;
+            }
+            return el;
+        });
+        content = { type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n") };
+    }
+    else {
+        return;
+    }
+    return { content: content, range: toRange(hover.range) };
+}
+function fromMarkupContent(content) {
+    if (!content)
+        return;
+    if (typeof content === "string") {
+        return { type: CommonConverter.TooltipType.plainText, text: content };
+    }
+    if (content.kind === main.MarkupKind.Markdown) {
+        return { type: CommonConverter.TooltipType.markdown, text: content.value };
+    }
+    else {
+        return { type: CommonConverter.TooltipType.plainText, text: content.value };
+    }
+}
+
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
+
 
 
 
@@ -48208,14 +44519,24 @@ class LanguageProvider {
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
+    /**
+     *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
+     * @param {Worker | WebSocket} mode
+     * @param markdownConverter
+     */
     static for(mode, markdownConverter) {
+        let messageController = new MessageControllerWS(mode);
+        return new LanguageProvider(messageController, markdownConverter);
+    }
+    /**
+     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  webworker
+     * @param {Worker} worker
+     * @param markdownConverter
+     */
+    static default(worker, markdownConverter) {
         let messageController;
-        if (mode instanceof Worker) {
-            messageController = new MessageController(mode);
-        }
-        else {
-            messageController = new MessageControllerWS(mode);
-        }
+        messageController = new MessageController(worker);
         return new LanguageProvider(messageController, markdownConverter);
     }
     $registerSession = (session, options) => {
@@ -48253,12 +44574,13 @@ class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
     doHover(session, position, callback) {
-        this.$messageController.doHover(this.$getFileName(session), position, callback);
+        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback(toTooltip(hover)));
     }
     getTooltipText(hover) {
         if (!hover)
             return;
-        let text = hover.content.type === common_converters_CommonConverter.TooltipType.markdown ? common_converters_CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+        let text = hover.content.type === CommonConverter.TooltipType.markdown ?
+            CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
         return { text: text, range: hover.range };
     }
     format = () => {
@@ -48267,7 +44589,7 @@ class LanguageProvider {
     };
     doComplete(editor, session, callback) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.$getFileName(session), cursor, callback);
+        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completionList) => callback(toCompletions(completionList)));
     }
     $registerCompleters(editor) {
         editor.completers = [
@@ -48275,20 +44597,23 @@ class LanguageProvider {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
                     this.doComplete(editor, session, (completions) => {
                         let fileName = this.$getFileName(session);
+                        if (!completions)
+                            return;
                         completions.forEach((item) => item["fileName"] = fileName);
-                        callback(null, common_converters_CommonConverter.normalizeRanges(completions));
+                        callback(null, CommonConverter.normalizeRanges(completions));
                     });
                 },
                 getDocTooltip: (item) => {
                     if (!item["isResolved"]) {
-                        this.$messageController.doResolve(item["fileName"], item, (completion) => {
+                        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem) => {
                             item["isResolved"] = true;
+                            let completion = toResolvedCompletion(item, completionItem);
                             item.docText = completion.docText;
                             if (completion.docHTML) {
                                 item.docHTML = completion.docHTML;
                             }
                             else if (completion["docMarkdown"]) {
-                                item.docHTML = common_converters_CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
+                                item.docHTML = CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
                             }
                             editor["completer"].updateDocTooltip();
                         });
@@ -48374,8 +44699,9 @@ class SessionLanguageProvider {
         if (deltas.length)
             this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
     };
-    $showAnnotations = (annotations) => {
+    $showAnnotations = (diagnostics) => {
         this.session.clearAnnotations();
+        let annotations = toAnnotations(diagnostics);
         if (annotations && annotations.length > 0) {
             this.session.setAnnotations(annotations);
         }
@@ -48399,18 +44725,17 @@ class SessionLanguageProvider {
             selectionRanges = [new ace.Range(0, 0, row, column)];
         }
         for (let range of selectionRanges) {
-            this.$messageController.format(this.fileName, range, $format, this.$applyFormat);
+            this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
         }
     };
     $applyFormat = (edits) => {
-        for (let edit of edits) {
-            this.session.doc.replace(common_converters_CommonConverter.toRange(edit.range), edit.newText); //we need this to
-            // mirror Range
+        for (let edit of edits.reverse()) {
+            this.session.doc.replace(toRange(edit.range), edit.newText);
         }
     };
     doComplete(editor, callback) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.fileName, cursor, callback);
+        this.$messageController.doComplete(this.fileName, fromPoint(cursor), (completionList) => callback(toCompletions(completionList)));
     }
 }
 
@@ -48424,27 +44749,19 @@ dom.importCssString(linters_namespaceObject, "linters.css");
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/typescript-converters.ts
 
 
+var convertKind = CommonConverter.convertKind;
 function fromTsDiagnostics(diagnostics, doc) {
     return diagnostics && diagnostics.map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
-        let pos = doc.indexToPosition(start, 0);
-        return {
-            row: pos.row,
-            column: pos.column,
-            text: parseMessageText(el.messageText),
-            type: fromTsCategory(el.category)
-        };
+        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(length)), parseMessageText(el.messageText), fromTsCategory(el.category));
     });
 }
 function toTsOffset(range, doc) {
     return {
-        start: toIndex(range.start, doc),
-        end: toIndex(range.end, doc)
+        start: doc.offsetAt(range.start),
+        end: doc.offsetAt(range.end)
     };
-}
-function toIndex(point, doc) {
-    return doc.positionToIndex(point);
 }
 function parseMessageText(diagnosticsText) {
     if (typeof diagnosticsText === 'string') {
@@ -48465,17 +44782,17 @@ function parseMessageText(diagnosticsText) {
 function fromTsCategory(category) {
     switch (category) {
         case DiagnosticCategory.Error:
-            return "error";
+            return 1;
         case DiagnosticCategory.Suggestion:
         case DiagnosticCategory.Message:
-            return "info";
+            return 2;
         case DiagnosticCategory.Warning:
-            return "warning";
+            return 3;
     }
-    return "info";
+    return 4;
 }
-function typescript_converters_toAceTextEdits(textEdits, doc) {
-    return textEdits && textEdits.reverse().map((el) => {
+function toTextEdits(textEdits, doc) {
+    return textEdits && textEdits.map((el) => {
         return {
             range: typescript_converters_toRange(el.span, doc),
             newText: el.newText
@@ -48486,14 +44803,20 @@ function typescript_converters_toRange(textSpan, doc) {
     if (!textSpan) {
         return;
     }
-    let start = doc.indexToPosition(textSpan.start, 0);
-    let end = doc.indexToPosition(textSpan.start + textSpan.length, 0);
-    return AceRange.fromPoints(start, end);
+    let start = toPosition(textSpan.start, doc);
+    let end = toPosition(textSpan.start + textSpan.length, doc);
+    return createRangeFromPoints(start, end);
 }
-function typescript_converters_toPoint(index, doc) {
-    return doc.indexToPosition(index, 0);
+function createRangeFromPoints(start, end) {
+    return {
+        start: start,
+        end: end
+    };
 }
-function typescript_converters_toTooltip(hover, doc) {
+function toPosition(index, doc) {
+    return doc.positionAt(index);
+}
+function toHover(hover, doc) {
     if (!hover) {
         return;
     }
@@ -48502,7 +44825,10 @@ function typescript_converters_toTooltip(hover, doc) {
     let displayParts = hover.displayParts ? hover.displayParts.map((displayPart) => displayPart.text).join('') : "";
     let contents = ['```typescript\n' + displayParts + '```\n',
         (documentation + (tags ? '\n' + tags : '')).replace(/</g, "&lt;").replace(/>/g, "&gt;")];
-    return { content: { type: CommonConverter.TooltipType.markdown, text: contents.join("\n") }, range: typescript_converters_toRange(hover.textSpan, doc) };
+    return {
+        contents: { kind: "markdown", value: contents.join("\n") },
+        range: typescript_converters_toRange(hover.textSpan, doc)
+    };
 }
 function tagToString(tag) {
     let tagLabel = `*@${tag.name}*`;
@@ -48520,32 +44846,31 @@ function tagToString(tag) {
     }
     return tagLabel;
 }
-function typescript_converters_toCompletions(completionInfo, doc, fileName, position) {
+function typescript_converters_toCompletions(completionInfo, doc, position) {
     return completionInfo && completionInfo.entries.map((entry) => {
         let completion = {
-            meta: entry.kind,
-            caption: entry.name,
-            value: "",
-            snippet: entry.name,
-            score: parseInt(entry.sortText),
+            label: entry.name,
+            insertText: entry.name,
+            sortText: entry.sortText,
+            kind: convertKind(entry.kind),
             position: position,
             entry: entry.name
         };
         if (entry.replacementSpan) {
-            const p1 = typescript_converters_toPoint(entry.replacementSpan.start, doc);
-            const p2 = typescript_converters_toPoint(entry.replacementSpan.start + entry.replacementSpan.length, doc);
-            completion["range"] = CommonConverter.toRange({ start: p1, end: p2 });
+            const p1 = toPosition(entry.replacementSpan.start, doc);
+            const p2 = toPosition(entry.replacementSpan.start + entry.replacementSpan.length, doc);
+            completion["range"] = createRangeFromPoints(p1, p2);
         }
         return completion;
     });
 }
 function typescript_converters_toResolvedCompletion(entry) {
+    if (!entry)
+        return;
     return {
-        meta: entry?.kind,
-        caption: entry.name,
-        value: "",
-        snippet: entry.name,
-        docHTML: entry.displayParts.map((displayPart) => displayPart.text).join('')
+        label: entry.name,
+        kind: convertKind(entry.kind),
+        documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
     };
 }
 var ScriptKind;
@@ -48594,47 +44919,6 @@ var JsxEmit;
     JsxEmit[JsxEmit["ReactJSX"] = 4] = "ReactJSX";
     JsxEmit[JsxEmit["ReactJSXDev"] = 5] = "ReactJSXDev";
 })(JsxEmit || (JsxEmit = {}));
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/lua-example.js
-var luaContent = `--[[--
-num_args takes in 5.1 byte code and extracts the number of arguments
-from its function header.
---]]--
-
-function int(t)
-\treturn t:byte(1)+t:byte(2)*0x100+t:byte(3)*0x10000+t:byte(4)*0x1000000
-end
-
-function num_args(func)
-\tlocal dump = string.dump(func)
-\tlocal offset, cursor = int(dump:sub(13)), offset + 26
-\t--Get the params and var flag (whether there's a ... in the param)
-\treturn dump:sub(cursor):byte(), dump:sub(cursor+1):byte()
-end
-
--- Usage:
-num_args(function(a,b,c,d, ...) end) -- return 4, 7
-
--- Python styled string format operator
-local gm = debug.getmetatable("")
-
-gm.__mod=function(self, other)
-    if type(other) ~= "table" then other = {other} end
-    for i,v in ipairs(other) do other[i] = tostring(v) end
-    return self:format(unpack(other))
-end
-
-print([===[
-    blah blah %s, (%d %d)
-]===]%{"blah", num_args(int)})
-
---[=[--
-table.maxn is deprecated, use # instead.
---]=]--
-print(table.maxn{1,2,[4]=4,[8]=8) -- outputs 8 instead of 2
-
-print(5 --[[ blah ]])
-`;
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/theme/textmate.js
 var textmate = __webpack_require__(3687);
@@ -48690,8 +44974,48 @@ function createEditorWithLSP(mode, i, languageProvider) {
     };
 }
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/demo.ts
+;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json-example.js
+var jsonContent = `{
+       "name": 12
+       "country": "Ireland"
+    }`;
+var jsonSchema = `{
+  "definitions": {
+    "color": {
+      "type": "string",
+      "enum": ["red", "orange", "yellow", "green", "blue", "purple", "pink"]
+    }
+  }
+}
+`;
+var jsonSchema2 = `  {"type": "object",
+"description": "a very special object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "favoriteColor": {
+    "description": "Favorite color",
+      "$ref": "colors.schema.json#/definitions/color"
+    }
+  },
+  "required": ["name", "age", "email", "favoriteColor"],
+  "additionalProperties": false
+  }
+`;
 
+;// CONCATENATED MODULE: ./packages/demo/webworker-json-rpc/demo.ts
 
 let demo_event = __webpack_require__(7989);
 let { HashHandler } = __webpack_require__(7116);
@@ -48701,39 +45025,10 @@ let keyUtil = __webpack_require__(1797);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let modes = [
     { name: "json", mode: json/* Mode */.A, content: jsonContent, options: { jsonSchemaUri: "common-form.schema.json" } },
-    { name: "json5", mode: json5/* Mode */.A, content: json5Content, options: { jsonSchemaUri: "json5Schema" } },
-    { name: "html", mode: html/* Mode */.A, content: htmlContent },
-    { name: "css", mode: css/* Mode */.A, content: cssContent },
-    { name: "less", mode: less/* Mode */.A, content: lessContent },
-    { name: "scss", mode: scss/* Mode */.A, content: scssContent },
-    { name: "typescript", mode: typescript/* Mode */.A, content: typescriptContent },
-    { name: "typescript", mode: typescript/* Mode */.A, content: typescriptContent1 },
-    { name: "javascript", mode: javascript/* Mode */.A, content: jsContent },
-    { name: "tsx", mode: tsx/* Mode */.A, content: tsxContent },
-    { name: "jsx", mode: javascript/* Mode */.A, content: jsxContent, options: { jsx: true } },
-    { name: "lua", mode: lua/* Mode */.A, content: luaContent }
 ];
-let worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(227), __webpack_require__.b));
+let worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(816), __webpack_require__.b));
 let languageProvider = LanguageProvider["for"](worker);
 languageProvider.setGlobalOptions("typescript", {
     compilerOptions: {
@@ -48747,14 +45042,6 @@ languageProvider.setGlobalOptions("json", {
         {
             uri: "common-form.schema.json",
             schema: jsonSchema2
-        }
-    ]
-});
-languageProvider.setGlobalOptions("json5", {
-    jsonSchemas: [
-        {
-            uri: "json5Schema",
-            schema: json5Schema
         }
     ]
 });

@@ -4,50 +4,13 @@
 /***/ 8644:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "ClientCapabilities": () => (/* reexport */ ClientCapabilities),
-  "CodeAction": () => (/* reexport */ main.CodeAction),
-  "CodeActionContext": () => (/* reexport */ main.CodeActionContext),
-  "CodeActionKind": () => (/* reexport */ main.CodeActionKind),
-  "Color": () => (/* reexport */ main.Color),
-  "ColorInformation": () => (/* reexport */ main.ColorInformation),
-  "ColorPresentation": () => (/* reexport */ main.ColorPresentation),
-  "Command": () => (/* reexport */ main.Command),
-  "CompletionItem": () => (/* reexport */ main.CompletionItem),
-  "CompletionItemKind": () => (/* reexport */ main.CompletionItemKind),
-  "CompletionItemTag": () => (/* reexport */ main.CompletionItemTag),
-  "CompletionList": () => (/* reexport */ main.CompletionList),
-  "Diagnostic": () => (/* reexport */ main.Diagnostic),
-  "DiagnosticSeverity": () => (/* reexport */ main.DiagnosticSeverity),
-  "DocumentHighlight": () => (/* reexport */ main.DocumentHighlight),
-  "DocumentHighlightKind": () => (/* reexport */ main.DocumentHighlightKind),
-  "DocumentLink": () => (/* reexport */ main.DocumentLink),
-  "DocumentSymbol": () => (/* reexport */ main.DocumentSymbol),
-  "ErrorCode": () => (/* reexport */ ErrorCode),
-  "FoldingRange": () => (/* reexport */ main.FoldingRange),
-  "FoldingRangeKind": () => (/* reexport */ main.FoldingRangeKind),
-  "Hover": () => (/* reexport */ main.Hover),
-  "InsertTextFormat": () => (/* reexport */ main.InsertTextFormat),
-  "Location": () => (/* reexport */ main.Location),
-  "MarkedString": () => (/* reexport */ main.MarkedString),
-  "MarkupContent": () => (/* reexport */ main.MarkupContent),
-  "MarkupKind": () => (/* reexport */ main.MarkupKind),
-  "Position": () => (/* reexport */ main.Position),
-  "Range": () => (/* reexport */ main.Range),
-  "SelectionRange": () => (/* reexport */ main.SelectionRange),
-  "SymbolInformation": () => (/* reexport */ main.SymbolInformation),
-  "SymbolKind": () => (/* reexport */ main.SymbolKind),
-  "TextDocument": () => (/* reexport */ esm_main/* TextDocument */.n),
-  "TextDocumentEdit": () => (/* reexport */ main.TextDocumentEdit),
-  "TextEdit": () => (/* reexport */ main.TextEdit),
-  "VersionedTextDocumentIdentifier": () => (/* reexport */ main.VersionedTextDocumentIdentifier),
-  "WorkspaceEdit": () => (/* reexport */ main.WorkspaceEdit),
-  "getLanguageService": () => (/* binding */ getLanguageService)
+  "Oi": () => (/* binding */ getLanguageService)
 });
+
+// UNUSED EXPORTS: ClientCapabilities, CodeAction, CodeActionContext, CodeActionKind, Color, ColorInformation, ColorPresentation, Command, CompletionItem, CompletionItemKind, CompletionItemTag, CompletionList, Diagnostic, DiagnosticSeverity, DocumentHighlight, DocumentHighlightKind, DocumentLink, DocumentSymbol, ErrorCode, FoldingRange, FoldingRangeKind, Hover, InsertTextFormat, Location, MarkedString, MarkupContent, MarkupKind, Position, Range, SelectionRange, SymbolInformation, SymbolKind, TextDocument, TextDocumentEdit, TextEdit, VersionedTextDocumentIdentifier, WorkspaceEdit
 
 ;// CONCATENATED MODULE: ./node_modules/jsonc-parser/lib/esm/impl/scanner.js
 /*---------------------------------------------------------------------------------------------
