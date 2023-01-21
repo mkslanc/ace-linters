@@ -1,56 +1,50 @@
-import {FormattingOptions} from "vscode-languageserver-protocol";
-import {Ace} from "ace-code";
+import * as lsp from "vscode-languageserver-protocol";
 import {AceLinters} from "../types";
 import {mergeObjects} from "../utils";
+import {TextDocument} from "vscode-languageserver-textdocument";
+import {TextDocumentItem} from "vscode-languageserver-protocol";
 
 export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions = AceLinters.ServiceOptions> implements AceLinters.LanguageService {
     abstract $service;
     mode: string;
-    documents: {[sessionID: string]: Ace.Document} = {};
-    options: {[sessionID: string]: OptionsType} = {};
+    documents: { [sessionID: string]: TextDocument } = {};
+    options: { [sessionID: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
 
     protected constructor(mode: string) {
         this.mode = mode;
     }
 
-    $getDocument(sessionID: string) {
-        return null;
-    }
-
-    addDocument(sessionID: string, document: Ace.Document, options?: OptionsType) {
-        this.documents[sessionID] = document;
-        if (options)
-            this.setOptions(sessionID, options);
-    }
-
-    getDocument(sessionID: string): Ace.Document {
-        return this.documents[sessionID];
-    }
-
-    removeDocument(sessionID: string) {
-        delete this.documents[sessionID];
-        if (this.options[sessionID]) {
-            delete this.options[sessionID];
-        }
-    }
-
-    getDocumentValue(sessionID: string): string {
-        return this.getDocument(sessionID).getValue();
-    }
-
-    private $setVersion(doc: Ace.Document) { //TODO: this is workaround for ts service
-        if (!doc["version"]) {
-            doc["version"] = 1;
+    addDocument(document: TextDocument | TextDocumentItem) {
+        if (typeof document["getText"] == "function") {
+            this.documents[document.uri] = document as TextDocument;
         } else {
-            doc["version"]++;
+            this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, (document as TextDocumentItem).text)
+        }
+        //TODO:
+        /*if (options)
+            this.setOptions(sessionID, options);*/
+    }
+
+    getDocument(uri: string): TextDocument {
+        return this.documents[uri];
+    }
+
+    removeDocument(document: TextDocument) {
+        delete this.documents[document.uri];
+        if (this.options[document.uri]) {
+            delete this.options[document.uri];
         }
     }
 
-    setValue(sessionID: string, value: string) {
-        let document = this.getDocument(sessionID);
-        this.$setVersion(document);
-        document.setValue(value);
+    getDocumentValue(uri: string): string {
+        return this.getDocument(uri).getText();
+    }
+
+    setValue(uri: string, value: string) {
+        let document = this.getDocument(uri);
+        document = TextDocument.create(document.uri, document.languageId, document.version + 1, value);
+        this.documents[document.uri] = document;
     }
 
     setGlobalOptions(options: OptionsType) {
@@ -69,9 +63,10 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         }
     }
 
-    applyDeltas(sessionID: string, deltas: Ace.Delta[]) {
+    /*applyDeltas(sessionID: string, deltas: Ace.Delta[]) { //TODO:
         let data = deltas;
         let document = this.getDocument(sessionID);
+
         this.$setVersion(document);
         if (data[0].start) {
             document.applyDeltas(data);
@@ -98,25 +93,26 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
                 document.applyDelta(d, true);
             }
         }
+    }*/
+
+    doComplete(document, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+        return Promise.resolve(undefined);
     }
 
-    format(sessionID: string, range: Ace.Range, format: FormattingOptions): AceLinters.TextEdit[] {
-        return [];
+    doHover(document, position: lsp.Position): Promise<lsp.Hover | null> {
+        return Promise.resolve(undefined);
     }
 
-    async doHover(sessionID: string, position: Ace.Point) {
-        return null;
+    doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
+        return Promise.resolve(undefined);
     }
 
-    async doValidation(sessionID: string): Promise<Ace.Annotation[]> {
-        return [];
+    doValidation(document): Promise<lsp.Diagnostic[]> {
+        return Promise.resolve([]);
     }
 
-    async doComplete(sessionID: string, position: Ace.Point): Promise<Ace.Completion[]> {
-        return;
+    format(document, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null {
+        return undefined;
     }
 
-    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
-        return;
-    }
 }

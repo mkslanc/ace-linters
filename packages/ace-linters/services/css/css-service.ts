@@ -1,20 +1,12 @@
 import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
-import {Ace} from "ace-code";
-import {
-    fromPoint,
-    fromRange,
-    toAceTextEdits,
-    toAnnotations,
-    toCompletions,
-    toResolvedCompletion,
-    toTooltip
-} from "../../type-converters/lsp-converters";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import {BaseService} from "../base-service";
+import {AceLinters} from "../../types";
+import * as lsp from "vscode-languageserver-protocol";
 
-let cssService = require('vscode-css-languageservice');
+import * as cssService from 'vscode-css-languageservice';
 
-export class CssService extends BaseService {
+export class CssService extends BaseService implements AceLinters.LanguageService {
     $service: VSLanguageService;
     $languageId: string;
 
@@ -42,53 +34,48 @@ export class CssService extends BaseService {
         }
     }
 
-    $getDocument(sessionID: string) {
-        let documentValue = this.getDocumentValue(sessionID);
-        return cssService.TextDocument.create("file://test.html", this.$languageId, 1, documentValue);
-    }
-
-    format(sessionID: string, range: Ace.Range, format: CSSFormatConfiguration) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: CSSFormatConfiguration): lsp.TextEdit[] | null {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return [];
         }
-        let textEdits = this.$service.format(document, fromRange(range), format);
-        return toAceTextEdits(textEdits);
+        let textEdits = this.$service.format(fullDocument, range, options);
+        return textEdits;
     }
 
-    doHover(sessionID: string, position: Ace.Point) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let cssDocument = this.$service.parseStylesheet(document);
-        let hover = this.$service.doHover(document, fromPoint(position), cssDocument);
-        return Promise.resolve(toTooltip(hover));
+        let cssDocument = this.$service.parseStylesheet(fullDocument);
+        let hover = this.$service.doHover(fullDocument, position, cssDocument);
+        return Promise.resolve(hover);
     }
 
-    async doValidation(sessionID: string): Promise<Ace.Annotation[]> {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return [];
         }
-        let cssDocument = this.$service.parseStylesheet(document);
+        let cssDocument = this.$service.parseStylesheet(fullDocument);
 
-        let diagnostics = this.$service.doValidation(document, cssDocument);
-        return toAnnotations(diagnostics);
+        let diagnostics = this.$service.doValidation(fullDocument, cssDocument);
+        return Promise.resolve(diagnostics);
     }
 
-    async doComplete(sessionID: string, position: Ace.Point) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let cssDocument = this.$service.parseStylesheet(document);
+        let cssDocument = this.$service.parseStylesheet(fullDocument);
 
-        let completions = this.$service.doComplete(document, fromPoint(position), cssDocument);
-        return toCompletions(completions);
+        let completions = this.$service.doComplete(fullDocument, position, cssDocument);
+        return Promise.resolve(completions);
     }
 
-    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
-        return toResolvedCompletion(completion, completion["item"]);
+    async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
+        return Promise.resolve(item);
     }
 }

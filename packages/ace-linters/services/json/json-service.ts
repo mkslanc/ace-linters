@@ -1,24 +1,17 @@
 import {
-    FormattingOptions,
     LanguageService as VSLanguageService,
     SchemaConfiguration
 } from "vscode-json-languageservice";
-import {Ace} from "ace-code";
-import {
-    fromPoint,
-    fromRange,
-    toAceTextEdits,
-    toAnnotations,
-    toCompletions, toResolvedCompletion,
-    toTooltip
-} from "../../type-converters/lsp-converters";
 import {BaseService} from "../base-service";
 import JsonServiceOptions = AceLinters.JsonServiceOptions;
 import {AceLinters} from "../../types";
+import {TextDocument} from "vscode-languageserver-textdocument";
+import * as lsp from "vscode-languageserver-protocol";
 
-let jsonService = require('vscode-json-languageservice');
+import * as jsonService from 'vscode-json-languageservice';
+import {TextDocumentItem} from "vscode-languageserver-protocol";
 
-export class JsonService extends BaseService<JsonServiceOptions> {
+export class JsonService extends BaseService<JsonServiceOptions> implements AceLinters.LanguageService {
     $service: VSLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 
@@ -39,9 +32,9 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         return this.getOption(sessionID, "jsonSchemaUri");
     }
 
-    addDocument(sessionID: string, document: Ace.Document, options?: JsonServiceOptions) {
-        super.addDocument(sessionID, document, options);
-        this.$configureService(sessionID);
+    addDocument(document: TextDocument | TextDocumentItem) {
+        super.addDocument(document);
+        this.$configureService(document.uri);
     }
 
     private $configureService(sessionID?: string) {
@@ -65,12 +58,12 @@ export class JsonService extends BaseService<JsonServiceOptions> {
 
     }
 
-    removeDocument(sessionID: string) {
-        super.removeDocument(sessionID);
-        let schemas = this.getOption(sessionID, "jsonSchemas");
+    removeDocument(document: TextDocument) {
+        super.removeDocument(document);
+        let schemas = this.getOption(document.uri, "jsonSchemas");
         schemas?.forEach((el) => {
-            if (el.uri === this.$getJsonSchemaUri(sessionID)) {
-                el.fileMatch = el.fileMatch.filter((pattern) => pattern != sessionID);
+            if (el.uri === this.$getJsonSchemaUri(document.uri)) {
+                el.fileMatch = el.fileMatch.filter((pattern) => pattern != document.uri);
             }
         });
         this.$service.configure({
@@ -89,54 +82,49 @@ export class JsonService extends BaseService<JsonServiceOptions> {
         this.$configureService();
     }
 
-    $getDocument(sessionID: string) {
-        let documentValue = this.getDocumentValue(sessionID);
-        return jsonService.TextDocument.create(sessionID, "json", 1, documentValue);
-    }
-
-    format(sessionID: string, range: Ace.Range, format: FormattingOptions) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return [];
         }
-        let textEdits = this.$service.format(document, fromRange(range), format);
-        return toAceTextEdits(textEdits);
+        let textEdits = this.$service.format(fullDocument, range, options);
+        return textEdits;
     }
 
-    async doHover(sessionID: string, position: Ace.Point) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let jsonDocument = this.$service.parseJSONDocument(document);
-        let hover = await this.$service.doHover(document, fromPoint(position), jsonDocument);
-        return toTooltip(hover);
+        let jsonDocument = this.$service.parseJSONDocument(fullDocument);
+        let hover = this.$service.doHover(fullDocument, position, jsonDocument);
+        return hover;
     }
 
-    async doValidation(sessionID: string): Promise<Ace.Annotation[]> {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return [];
         }
-        let jsonDocument = this.$service.parseJSONDocument(document);
-        let diagnostics = this.$service.doValidation(document, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
-        return toAnnotations(await diagnostics);
+        let jsonDocument = this.$service.parseJSONDocument(fullDocument);
+        let diagnostics = await this.$service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
+        return diagnostics;
     }
 
-    async doComplete(sessionID: string, position: Ace.Point) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let jsonDocument = this.$service.parseJSONDocument(document);
-        let completions = await this.$service.doComplete(document, fromPoint(position), jsonDocument);
+        let jsonDocument = this.$service.parseJSONDocument(fullDocument);
+        let completions = await this.$service.doComplete(fullDocument, position, jsonDocument);
 
-        return toCompletions(completions);
+        return completions;
     }
 
-    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
-        let resolvedCompletion = await this.$service.doResolve(completion["item"]);
+    async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
+        let resolvedCompletion = await this.$service.doResolve(item);
 
-        return toResolvedCompletion(completion, resolvedCompletion);
+        return resolvedCompletion;
     }
 }

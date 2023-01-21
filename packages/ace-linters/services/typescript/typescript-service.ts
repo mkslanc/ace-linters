@@ -1,4 +1,3 @@
-import {Ace} from "ace-code";
 import {BaseService} from "../base-service";
 import * as ts from './lib/typescriptServices';
 import {Diagnostic} from './lib/typescriptServices';
@@ -6,19 +5,22 @@ import {libFileMap} from "./lib/lib";
 import {
     fromTsDiagnostics,
     ScriptTarget,
-    toAceTextEdits, toResolvedCompletion,
+    toResolvedCompletion,
     toCompletions,
-    toIndex,
-    toTooltip,
-    toTsOffset, JsxEmit
+    toTsOffset, JsxEmit, toTextEdits, toHover
 } from "../../type-converters/typescript-converters";
 import TsServiceOptions = AceLinters.TsServiceOptions;
 import {AceLinters} from "../../types";
+import * as lsp from "vscode-languageserver-protocol";
 
-
-export class TypescriptService extends BaseService<TsServiceOptions>  implements ts.LanguageServiceHost {
+export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, AceLinters.LanguageService {
     $service: ts.LanguageService;
-    $defaultCompilerOptions = {allowJs: true, jsx: JsxEmit.Preserve, allowNonTsExtensions: true, target: ScriptTarget.ESNext};
+    $defaultCompilerOptions = {
+        allowJs: true,
+        jsx: JsxEmit.Preserve,
+        allowNonTsExtensions: true,
+        target: ScriptTarget.ESNext
+    };
 
     constructor(mode: string) {
         super(mode);
@@ -39,7 +41,7 @@ export class TypescriptService extends BaseService<TsServiceOptions>  implements
     getScriptVersion(fileName: string): string {
         let document = this.getDocument(fileName);
         if (document) {
-            if (document["version"])
+            if (document.version)
                 return document["version"].toString();
             else return "1";
         } else if (fileName === this.getDefaultLibFileName(this.getCompilationSettings())) {
@@ -65,7 +67,7 @@ export class TypescriptService extends BaseService<TsServiceOptions>  implements
         let text: string;
         let document = this.getDocument(fileName);
         if (document) {
-            text = document.getValue();
+            text = document.getText();
         } else if (fileName in libFileMap) {
             text = libFileMap[fileName];
         } else {
@@ -133,13 +135,13 @@ export class TypescriptService extends BaseService<TsServiceOptions>  implements
         return diagnostics;
     }
 
-    format(sessionID: string, range: Ace.Range, format) {
-        let document = this.getDocument(sessionID);
-        if (!document || !range) {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument || !range) {
             return [];
         }
-        let offset = toTsOffset(range, document);
-        let textEdits = this.$service.getFormattingEditsForRange(sessionID, offset.start, offset.end, {
+        let offset = toTsOffset(range, fullDocument);
+        let textEdits = this.$service.getFormattingEditsForRange(document.uri, offset.start, offset.end, {
             PlaceOpenBraceOnNewLineForFunctions: false,
             InsertSpaceAfterFunctionKeywordForAnonymousFunctions: false,
             InsertSpaceAfterCommaDelimiter: false,
@@ -149,52 +151,52 @@ export class TypescriptService extends BaseService<TsServiceOptions>  implements
             InsertSpaceBeforeAndAfterBinaryOperators: false,
             PlaceOpenBraceOnNewLineForControlBlocks: false,
             InsertSpaceAfterKeywordsInControlFlowStatements: false,
-            ConvertTabsToSpaces: format.insertSpaces,
-            TabSize: format.tabSize,
+            ConvertTabsToSpaces: options.insertSpaces,
+            TabSize: options.tabSize,
             IndentStyle: undefined,
             InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
-            IndentSize: format.tabSize,
+            IndentSize: options.tabSize,
             NewLineCharacter: '\n'
         });//TODO: separate format options?
-        return toAceTextEdits(textEdits, document);
+        return toTextEdits(textEdits, fullDocument);
     }
 
-    async doHover(sessionID: string, position: Ace.Point) {
-        let document = this.getDocument(sessionID);
-        if (!document) {
+    async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let hover = this.$service.getQuickInfoAtPosition(sessionID, toIndex(position, document))
-        return Promise.resolve(toTooltip(hover, document));
+        let hover = this.$service.getQuickInfoAtPosition(document.uri, fullDocument.offsetAt(position))
+        return Promise.resolve(toHover(hover, fullDocument));
     }
 
     //TODO: more validators?
-    async doValidation(sessionID: string) {
-        let document = this.getDocument(sessionID);
-        if (!document) {
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let semanticDiagnostics = this.getSemanticDiagnostics(sessionID);
-        let syntacticDiagnostics = this.getSyntacticDiagnostics(sessionID);
+        let semanticDiagnostics = this.getSemanticDiagnostics(document.uri);
+        let syntacticDiagnostics = this.getSyntacticDiagnostics(document.uri);
 
-        return fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], document);
+        return Promise.resolve(fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument));
     }
 
-    async doComplete(sessionID: string, point: Ace.Point) {
-        let document = this.getDocument(sessionID);
-        if (!document) {
+    async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
             return null;
         }
-        let position = toIndex(point, document);
-        let completions = this.$service.getCompletionsAtPosition(sessionID, position, undefined);
-        return toCompletions(completions, document, sessionID, position);
+        let offset = fullDocument.offsetAt(position);
+        let completions = this.$service.getCompletionsAtPosition(document.uri, offset, undefined);
+        return toCompletions(completions, fullDocument, offset);
     }
 
-    async resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion> {
+    async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
         let resolvedCompletion = this.$service.getCompletionEntryDetails(
-            sessionID,
-            completion["position"],
-            completion["entry"],
+            item["fileName"],
+            item["position"],
+            item.label,
             undefined,
             undefined,
             undefined,

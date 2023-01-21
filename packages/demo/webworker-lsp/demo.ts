@@ -48,7 +48,7 @@ let modes = [
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = LanguageProvider.for(worker);
+let languageProvider = LanguageProvider.default(worker);
 languageProvider.setGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,

@@ -1,7 +1,9 @@
 import {BaseService} from "../base-service";
 import * as lua from "luaparse";
+import {AceLinters} from "../../types";
+import * as lsp from "vscode-languageserver-protocol";
 
-export class LuaService extends BaseService {
+export class LuaService extends BaseService implements AceLinters.LanguageService {
     $service;
 
     constructor(mode: string) {
@@ -9,26 +11,29 @@ export class LuaService extends BaseService {
         this.$service = lua;
     }
 
-    $getDocument(sessionID: string) {
-        let documentValue = this.getDocumentValue(sessionID);
-        return documentValue;
-    }
-
-    async doValidation(sessionID: string) {
-        let document = this.$getDocument(sessionID);
-        if (!document) {
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
+        let value = this.getDocumentValue(document.uri);
+        if (!value) {
             return [];
         }
         let errors = [];
         try {
-            this.$service.parse(document);
+            this.$service.parse(value);
         } catch (e) {
             if (e instanceof this.$service.SyntaxError) {
                 errors.push({
-                    row: e.line - 1,
-                    column: e.column,
-                    text: e.message,
-                    type: "error"
+                    range: {
+                        start: {
+                            line: e.line - 1,
+                            character: e.column
+                        },
+                        end: {
+                            line: e.line - 1,
+                            character: e.column
+                        }
+                    },
+                    message: e.message,
+                    severity: 1
                 });
             }
         }

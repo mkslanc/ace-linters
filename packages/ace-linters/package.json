@@ -12,6 +12,7 @@
     "vscode-css-languageservice": "latest",
     "vscode-json-languageservice": "4.2.1",
     "vscode-languageserver-protocol": "^3.17.2",
+    "vscode-languageserver-textdocument": "^1.0.8",
     "showdown": "latest",
     "luaparse": "latest",
     "vscode-ws-jsonrpc": "^2.0.1"

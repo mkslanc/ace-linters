@@ -1,19 +1,19 @@
 import {Ace} from "ace-code";
 import {AceLinters} from "./language-service";
-import {FormattingOptions} from "vscode-languageserver-protocol";
+import * as lsp from "vscode-languageserver-protocol";
 
 export interface IMessageController {
-    init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: Ace.Annotation[]) => void): void;
+    init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
 
-    doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void)
+    doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void)
 
-    doComplete(sessionId: string, position: Ace.Point, callback?: (completionList: Ace.Completion[]) => void);
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void);
 
-    doResolve(sessionId: string, completion: Ace.Completion, callback?: (completion: Ace.Completion) => void);
+    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem) => void);
 
-    format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: AceLinters.TextEdit[]) => void);
+    format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void);
 
-    doHover(sessionId: string, position: Ace.Point, callback?: (hover: AceLinters.Tooltip) => void);
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void);
 
     change(sessionId: string, deltas: any[], value: string, docLength: number, callback?: () => void): void;
 
