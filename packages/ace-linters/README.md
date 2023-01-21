@@ -35,7 +35,7 @@ To install Ace linters, you can use the following command:
 npm install ace-linters
 ```
 
-## Usage with WebWorker
+## Usage with WebWorker (JSON-RPC)
 
 To use Ace linters with WebWorker, you will first need to include it in your project and create an instance of the Ace
 editor and an instance of LanguageProvider.
@@ -89,11 +89,11 @@ manager.registerService("typescript", {
 });
 ```
 
-[Example client](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/demo.ts)
+[Example client](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/demo.ts)
 
-[Example web worker](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
+[Example web worker](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/webworker.ts)
 
-## Usage with WebSocket
+## Usage with WebSocket (JSON-RPC)
 
 In WebSockets mode, you need to start a language server on any port and connect to it.
 
@@ -123,6 +123,10 @@ languageProvider.registerEditor(editor);
 
 [Example server](https://github.com/mkslanc/ace-linters/tree/main/packages/demo/websockets-lsp/server)
 
+## Usage with WebWorker (other format)
+
+You can use Ace linters with pre-defined services by looking at the "Ace linters with WebWorker demo (with default services)" example on GitHub:
+[Example](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/)
 ## License
 
 Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).

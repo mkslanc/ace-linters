@@ -17,7 +17,8 @@ module.exports = (env, argv) => {
         cache: true,
         devtool: 'source-map',
         entry: {
-            webworker_demo: './packages/demo/webworker-lsp/demo.ts',
+            default_services_demo: './packages/demo/webworker-lsp/demo.ts',
+            webworker_demo: './packages/demo/webworker-json-rpc/demo.ts',
             websocket_demo: './packages/demo/websockets-lsp/client.ts'
         },
         mode: "production",
@@ -67,6 +68,10 @@ module.exports = (env, argv) => {
                     },
                     {
                         from: "packages/demo/websocket.html",
+                        to: "."
+                    },
+                    {
+                        from: "packages/demo/default_services.html",
                         to: "."
                     }
                 ]

@@ -1,42 +1,42 @@
-import {Ace} from "ace-code";
 import {CommonConverter} from "../type-converters/common-converters";
 import * as ts from "../services/typescript/lib/typescriptServices";
-import {TextDocument, FormattingOptions} from "vscode-languageserver-protocol";
+import * as lsp from "vscode-languageserver-protocol";
+import {TextDocument} from "vscode-languageserver-textdocument";
+import {Ace} from "ace-code";
+import {TextDocumentIdentifier, TextDocumentItem } from "vscode-languageserver-protocol";
 
 export declare namespace AceLinters {
     export interface LanguageService {
-        documents: { [sessionID: string]: Ace.Document };
+        documents: { [sessionID: string]: TextDocument };
         $service;
         mode: string;
         globalOptions;
 
-        $getDocument(sessionID: string): TextDocument;
+        format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null;
 
-        format(sessionID: string, range: Ace.Range, format: FormattingOptions): TextEdit[];
+        doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 
-        doHover(sessionID: string, position: Ace.Point): Promise<Tooltip>;
+        doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
 
-        doValidation(sessionID: string): Promise<Ace.Annotation[]>;
+        doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
 
-        doComplete(sessionID: string, position: Ace.Point): Promise<Ace.Completion[]>;
+        doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem>;
 
-        resolveCompletion(sessionID: string, completion: Ace.Completion): Promise<Ace.Completion>;
+        setValue(sessionID: string, value: string); //TODO:
 
-        setValue(sessionID: string, value: string);
+        /*applyDeltas(sessionID: string, delta: Ace.Delta[]);*/ //TODO:
 
-        applyDeltas(sessionID: string, delta: Ace.Delta[]);
+        addDocument(document: TextDocument | TextDocumentItem);
 
-        addDocument(sessionID: string, document: Ace.Document, options?: ServiceOptions);
+        setOptions(sessionID: string, options: ServiceOptions, merge?: boolean); //TODO:
 
-        setOptions(sessionID: string, options: ServiceOptions, merge?: boolean);
+        setGlobalOptions(options: ServiceOptions); //TODO:
 
-        setGlobalOptions(options: ServiceOptions);
+        getDocument(uri: string): TextDocument;
 
-        getDocument(sessionID: string): Ace.Document;
+        removeDocument(document: TextDocumentIdentifier);
 
-        removeDocument(sessionID: string);
-
-        getDocumentValue(sessionID: string): string;
+        getDocumentValue(uri: string): string;
     }
 
     interface TooltipContent {
@@ -49,7 +49,7 @@ export declare namespace AceLinters {
         range?: Ace.Range
     }
 
-    export interface TextEdit {
+    export interface TextChange {
         range: Ace.Range;
         newText: string;
     }

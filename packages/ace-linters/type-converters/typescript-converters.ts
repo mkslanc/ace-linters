@@ -7,35 +7,26 @@ import {
     TextChange,
     TextSpan
 } from "../services/typescript/lib/typescriptServices";
-import {Ace, Range as AceRange} from "ace-code";
 import * as ts from "../services/typescript/lib/typescriptServices";
+import * as lsp from "vscode-languageserver-protocol";
+import {TextDocument} from "vscode-languageserver-textdocument";
 import {CommonConverter} from "./common-converters";
-import Tooltip = AceLinters.Tooltip;
-import {AceLinters} from "../types/language-service";
+import convertKind = CommonConverter.convertKind;
 
-export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: Ace.Document): Ace.Annotation[] {
+export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument): lsp.Diagnostic[] {
     return diagnostics && diagnostics.map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
-        let pos = doc.indexToPosition(start, 0);
-        return {
-            row: pos.row,
-            column: pos.column,
-            text: parseMessageText(el.messageText),
-            type: fromTsCategory(el.category)
-        };
+        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(length)),
+            parseMessageText(el.messageText), fromTsCategory(el.category));
     });
 }
 
-export function toTsOffset(range: Ace.Range, doc: Ace.Document) {
+export function toTsOffset(range: lsp.Range, doc: TextDocument) {
     return {
-        start: toIndex(range.start, doc),
-        end: toIndex(range.end, doc)
+        start: doc.offsetAt(range.start),
+        end: doc.offsetAt(range.end)
     }
-}
-
-export function toIndex(point: Ace.Point, doc: Ace.Document) {
-    return doc.positionToIndex(point);
 }
 
 export function parseMessageText(
@@ -59,18 +50,18 @@ export function parseMessageText(
 export function fromTsCategory(category: ts.DiagnosticCategory) {
     switch (category as DiagnosticCategory) {
         case DiagnosticCategory.Error:
-            return "error";
+            return 1;
         case DiagnosticCategory.Suggestion:
         case DiagnosticCategory.Message:
-            return "info";
+            return 2;
         case DiagnosticCategory.Warning:
-            return "warning";
+            return 3;
     }
-    return "info";
+    return 4;
 }
 
-export function toAceTextEdits(textEdits: TextChange[], doc: Ace.Document): AceLinters.TextEdit[] {
-    return textEdits && textEdits.reverse().map((el) => {
+export function toTextEdits(textEdits: TextChange[], doc: TextDocument): lsp.TextEdit[] {
+    return textEdits && textEdits.map((el) => {
         return {
             range: toRange(el.span, doc),
             newText: el.newText
@@ -78,20 +69,27 @@ export function toAceTextEdits(textEdits: TextChange[], doc: Ace.Document): AceL
     })
 }
 
-export function toRange(textSpan: TextSpan, doc: Ace.Document): Ace.Range | undefined {
+export function toRange(textSpan: TextSpan, doc: TextDocument): lsp.Range | undefined {
     if (!textSpan) {
         return;
     }
-    let start = doc.indexToPosition(textSpan.start, 0);
-    let end = doc.indexToPosition(textSpan.start + textSpan.length, 0);
-    return AceRange.fromPoints(start, end);
+    let start = toPosition(textSpan.start, doc);
+    let end = toPosition(textSpan.start + textSpan.length, doc);
+    return createRangeFromPoints(start, end);
 }
 
-export function toPoint(index: number, doc: Ace.Document): Ace.Point {
-    return doc.indexToPosition(index, 0);
+export function createRangeFromPoints(start: lsp.Position, end: lsp.Position): lsp.Range {
+    return {
+        start: start,
+        end: end
+    }
 }
 
-export function toTooltip(hover: QuickInfo, doc: Ace.Document): Tooltip {
+export function toPosition(index: number, doc: TextDocument): lsp.Position {
+    return doc.positionAt(index);
+}
+
+export function toHover(hover: QuickInfo, doc: TextDocument): lsp.Hover {
     if (!hover) {
         return;
     }
@@ -100,7 +98,10 @@ export function toTooltip(hover: QuickInfo, doc: Ace.Document): Tooltip {
     let displayParts = hover.displayParts ? hover.displayParts.map((displayPart) => displayPart.text).join('') : "";
     let contents = ['```typescript\n' + displayParts + '```\n',
         (documentation + (tags ? '\n' + tags : '')).replace(/</g, "&lt;").replace(/>/g, "&gt;")];
-    return {content: {type: CommonConverter.TooltipType.markdown, text: contents.join("\n")}, range: toRange(hover.textSpan, doc)};
+    return {
+        contents: {kind: "markdown", value: contents.join("\n")},
+        range: toRange(hover.textSpan, doc)
+    };
 }
 
 function tagToString(tag: JSDocTagInfo): string {
@@ -117,35 +118,35 @@ function tagToString(tag: JSDocTagInfo): string {
     return tagLabel;
 }
 
-export function toCompletions(completionInfo: CompletionInfo, doc: Ace.Document, fileName: string, position: number): Ace.Completion[] {
+export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument, position: number):
+    lsp.CompletionItem[] {
     return completionInfo && completionInfo.entries.map((entry) => {
         let completion = {
-            meta: entry.kind,
-            caption: entry.name,
-            value: "",
-            snippet: entry.name,
-            score: parseInt(entry.sortText),
+            label: entry.name,
+            insertText: entry.name,
+            sortText: entry.sortText,
+            kind: convertKind(entry.kind),
             position: position,
             entry: entry.name
-        };
-
-        if (entry.replacementSpan) {
-            const p1 = toPoint(entry.replacementSpan.start, doc);
-            const p2 = toPoint(entry.replacementSpan.start + entry.replacementSpan.length, doc);
-            completion["range"] = CommonConverter.toRange({start: p1, end: p2});
         }
 
-        return  completion;
+        if (entry.replacementSpan) {
+            const p1 = toPosition(entry.replacementSpan.start, doc);
+            const p2 = toPosition(entry.replacementSpan.start + entry.replacementSpan.length, doc);
+            completion["range"] = createRangeFromPoints(p1, p2);
+        }
+
+        return completion;
     });
 }
 
-export function toResolvedCompletion(entry: CompletionEntryDetails): Ace.Completion {
+export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.CompletionItem {
+    if (!entry)
+        return;
     return {
-        meta: entry?.kind,
-        caption: entry.name,
-        value: "",
-        snippet: entry.name,
-        docHTML: entry.displayParts.map((displayPart) => displayPart.text).join('')
+        label: entry.name,
+        kind: convertKind(entry.kind),
+        documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
     };
 }
 
@@ -194,3 +195,4 @@ export enum JsxEmit {
     ReactJSX = 4,
     ReactJSXDev = 5
 }
+

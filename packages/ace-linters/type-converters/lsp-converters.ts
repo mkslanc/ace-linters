@@ -57,6 +57,31 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
+export function toCompletion(item: CompletionItem): Ace.Completion {
+    let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
+    let text = item.textEdit?.newText ?? item.insertText ?? item.label;
+    let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
+    let range = getTextEditRange(item.textEdit)
+    let completion = {
+        meta: kind,
+        caption: item.label,
+        command: command,
+        range: range,
+        value: "",
+        score: null,
+        item: item
+    };
+
+    if (item.insertTextFormat == InsertTextFormat.Snippet) {
+        completion["snippet"] = text;
+    } else {
+        completion["value"] = text;
+    }
+    completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
+    completion["position"] = item["position"];
+    return completion;
+}
+
 export function toCompletions(completionList: CompletionList | CompletionItem[]): Ace.Completion[] {
     if (!completionList) {
         return;
@@ -64,28 +89,7 @@ export function toCompletions(completionList: CompletionList | CompletionItem[])
     if (!Array.isArray(completionList)) {
         completionList = completionList.items;
     }
-    return completionList && completionList.map((item) => {
-            let kind = Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(item.kind)];
-            let text = item.textEdit?.newText ?? item.insertText ?? item.label;
-            let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-            let range = getTextEditRange(item.textEdit)
-            let completion = {
-                meta: kind,
-                caption: item.label,
-                command: command,
-                range: range,
-                value: "",
-                score: null,
-                item: item
-            };
-
-            if (item.insertTextFormat == InsertTextFormat.Snippet) {
-                completion["snippet"] = text;
-            } else {
-                completion["value"] = text;
-            }
-            return completion;
-        }
+    return completionList && completionList.map((item) => toCompletion(item)
     );
 }
 
@@ -99,6 +103,31 @@ export function toResolvedCompletion(completion: Ace.Completion, item: Completio
         }
     }
     return completion;
+}
+
+export function toCompletionItem(completion: Ace.Completion): CompletionItem {
+    let command;
+    if (completion["command"]) {
+        command = {
+            title: "triggerSuggest",
+            command: completion["command"]
+        }
+    }
+    let completionItem: CompletionItem = {
+        label: completion.caption,
+        kind: CommonConverter.convertKind(completion.meta),
+        command: command,
+        insertTextFormat: (completion.snippet) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
+        textEdit: {
+            range: fromRange(completion["range"]),
+            newText: (completion.snippet) ? completion.snippet : completion.value
+        },
+        documentation: completion["documentation"],
+    };
+    completionItem["fileName"] = completion["fileName"];
+    completionItem["position"] = completion["position"]
+
+    return completionItem;
 }
 
 export function getTextEditRange(textEdit?): Ace.Range | undefined {
@@ -151,13 +180,3 @@ export function fromMarkupContent(content?: string | MarkupContent): TooltipCont
         return {type: CommonConverter.TooltipType.plainText, text: content.value};
     }
 }
-
-export function toAceTextEdits(textEdits: TextEdit[]): AceLinters.TextEdit[] {
-    return textEdits.reverse().map((el) => {
-        return {
-            range: toRange(el.range),
-            newText: el.newText
-        };
-    })
-}
-

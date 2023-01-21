@@ -1,45 +1,23 @@
 import * as rpc from 'vscode-ws-jsonrpc';
 import * as events from 'events';
+import * as lsp from "vscode-languageserver-protocol";
 import {
-    ClientCapabilities, CompletionItem, CompletionList, CompletionParams,
-    DidChangeTextDocumentParams,
-    DidOpenTextDocumentParams, Hover,
-    InitializeParams,
-    InitializeResult,
-    PublishDiagnosticsParams,
-    ServerCapabilities,
-    ShowMessageParams,
-    ShowMessageRequestParams,
-    TextDocumentItem,
-    TextDocumentPositionParams,
-    VersionedTextDocumentIdentifier,
-    WorkspaceClientCapabilities, TextEdit, DidCloseTextDocumentParams
-} from 'vscode-languageserver-protocol';
+    BrowserMessageReader,
+    BrowserMessageWriter,
+    createProtocolConnection,
+} from "vscode-languageserver-protocol/browser";
 import {IMessageController} from "./types/message-controller-interface";
-import {Ace} from "ace-code";
-import {AceLinters} from "./types";
-import {
-    fromPoint,
-    fromRange,
-    toAceTextEdits, toAnnotations,
-    toCompletions,
-    toRange, toResolvedCompletion,
-    toTooltip
-} from "./type-converters/lsp-converters";
-import {
-    DocumentRangeFormattingParams
-} from "vscode-languageserver-protocol/lib/common/protocol";
 
 export class MessageControllerWS extends events.EventEmitter implements IMessageController {
     private isConnected = false;
     private isInitialized = false;
     private socket: WebSocket;
-    private serverCapabilities: ServerCapabilities;
+    private serverCapabilities: lsp.ServerCapabilities;
     private documentVersion = 0;
-    private connection: rpc.MessageConnection;
-    private initSessionQueue: {textDocumentMessage: DidOpenTextDocumentParams, initCallback: () => void}[] = [];
+    private connection: lsp.ProtocolConnection;
+    private initSessionQueue: { textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: () => void }[] = [];
 
-    clientCapabilities: ClientCapabilities = {
+    clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
             hover: {
                 dynamicRegistration: true,
@@ -70,63 +48,79 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             didChangeConfiguration: {
                 dynamicRegistration: true,
             },
-        } as WorkspaceClientCapabilities,
+        } as lsp.WorkspaceClientCapabilities,
     };
 
-    constructor(socket: WebSocket) {
+    constructor(mode: WebSocket | Worker) {
         super();
-        this.socket = socket;
-        this.$connect();
+        if (mode instanceof Worker) {
+            this.$connectWorker(mode);
+        } else {
+            this.socket = mode;
+            this.$connectSocket();
+        }
     }
 
-    private $connect() {
+    private $connectSocket() {
         rpc.listen({
             webSocket: this.socket,
             logger: new rpc.ConsoleLogger(),
             onConnection: (connection: rpc.MessageConnection) => {
-                connection.listen();
-                this.isConnected = true;
-
-                this.connection = connection;
-                this.sendInitialize();
-
-                this.connection.onNotification('textDocument/publishDiagnostics', (
-                    result: PublishDiagnosticsParams,
-                ) => {
-                    this.emit("validate-" + result.uri, toAnnotations(result.diagnostics));
-                });
-
-                this.connection.onNotification('window/showMessage', (params: ShowMessageParams) => {
-                    this.emit('logging', params);
-                });
-
-                this.connection.onRequest('window/showMessageRequest', (params: ShowMessageRequestParams) => {
-                    this.emit('logging', params);
-                });
-
-                this.connection.onError((e) => {
-                    this.emit('error', e);
-                });
-
-                this.connection.onClose(() => {
-                    this.isConnected = false;
-                });
-
-                this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
+                this.$connect(connection);
             },
         });
     }
 
-    init(sessionId: string, value: string, mode: string, options: AceLinters.ServiceOptions, initCallback: () => void, validationCallback: (annotations: Ace.Annotation[]) => void) {
+    private $connectWorker(worker: Worker) {
+        const connection = createProtocolConnection(
+            new BrowserMessageReader(worker),
+            new BrowserMessageWriter(worker)
+        );
+        this.$connect(connection);
+    }
+
+    private $connect(connection) {
+        connection.listen();
+        this.isConnected = true;
+
+        this.connection = connection;
+        this.sendInitialize();
+
+        this.connection.onNotification('textDocument/publishDiagnostics', (
+            result: lsp.PublishDiagnosticsParams,
+        ) => {
+            this.emit("validate-" + result.uri, result.diagnostics);
+        });
+
+        this.connection.onNotification('window/showMessage', (params: lsp.ShowMessageParams) => {
+            this.emit('logging', params);
+        });
+
+        this.connection.onRequest('window/showMessageRequest', (params: lsp.ShowMessageRequestParams) => {
+            this.emit('logging', params);
+        });
+
+        this.connection.onError((e) => {
+            this.emit('error', e);
+        });
+
+        this.connection.onClose(() => {
+            this.isConnected = false;
+        });
+
+        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
+    }
+
+    init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
         this["on"]("validate-" + sessionId, validationCallback);
 
-        const textDocumentMessage: DidOpenTextDocumentParams = {
+        const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: {
                 uri: sessionId,
                 languageId: mode,
                 text: value,
                 version: this.documentVersion,
-            } as TextDocumentItem,
+            } as lsp.TextDocumentItem,
         };
 
         if (!this.isConnected) {
@@ -136,7 +130,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         }
     }
 
-    initSession(textDocumentMessage: DidOpenTextDocumentParams, initCallback) {
+    initSession(textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback) {
         this.connection.sendNotification('textDocument/didOpen', textDocumentMessage);
         initCallback();
     }
@@ -152,7 +146,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         if (!this.isConnected) {
             return;
         }
-        const message: InitializeParams = {
+        const message: lsp.InitializeParams = {
             capabilities: this.clientCapabilities,
             initializationOptions: null,
             processId: null,
@@ -160,9 +154,9 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             workspaceFolders: null,
         };
 
-        this.connection.sendRequest("initialize", message).then((params: InitializeResult) => {
+        this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.isInitialized = true;
-            this.serverCapabilities = params.capabilities as ServerCapabilities;
+            this.serverCapabilities = params.capabilities as lsp.ServerCapabilities;
 
             this.connection.sendNotification('initialized');
             this.connection.sendNotification('workspace/didChangeConfiguration', {
@@ -171,16 +165,16 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         });
     }
 
-    change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number, callback?: () => void) {
+    change(sessionId: string, deltas: any[], value: string, docLength: number, callback?: () => void) {
         //TODO: incremental deltas
         if (!this.isConnected) {
             return;
         }
-        const textDocumentChange: DidChangeTextDocumentParams = {
+        const textDocumentChange: lsp.DidChangeTextDocumentParams = {
             textDocument: {
                 uri: sessionId,
                 version: this.documentVersion,
-            } as VersionedTextDocumentIdentifier,
+            } as lsp.VersionedTextDocumentIdentifier,
             contentChanges: [{
                 text: value,
             }],
@@ -189,26 +183,26 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.documentVersion++;
     }
 
-    doHover(sessionId: string, position: Ace.Point, callback?: (hover: AceLinters.Tooltip) => void) {
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void) {
         if (!this.isInitialized) {
             return;
         }
         if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
             return;
         }
-        let options: TextDocumentPositionParams = {
+        let options: lsp.TextDocumentPositionParams = {
             textDocument: {
                 uri: sessionId,
             },
-            position: fromPoint(position),
+            position: position,
         };
-        let hoverCallback = (result: Hover) => {
-            callback(toTooltip(result));
+        let hoverCallback = (result: lsp.Hover) => {
+            callback(result);
         };
         this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
     }
 
-    doComplete(sessionId: string, position: Ace.Point, callback?: (completionList: Ace.Completion[]) => void) {
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void) {
         if (!this.isInitialized) {
             return;
         }
@@ -216,24 +210,24 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             return;
         }
 
-        let options: CompletionParams = {
+        let options: lsp.CompletionParams = {
             textDocument: {
                 uri: sessionId,
             },
-            position: fromPoint(position),
+            position: position,
         };
-        let completionCallback = (result: CompletionList | CompletionItem[] | null) => {
-            callback(toCompletions(result));
+        let completionCallback = (result: lsp.CompletionList | lsp.CompletionItem[] | null) => {
+            callback(result);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }
 
-    doResolve(sessionId: string, completion: Ace.Completion, callback?: (completion: Ace.Completion) => void) {
+    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem) => void) {
         if (!this.isInitialized) {
             return;
         }
-        let resolveCallback = (result: CompletionItem) => {
-            callback(toResolvedCompletion(completion, result));
+        let resolveCallback = (result: lsp.CompletionItem) => {
+            callback(result);
         };
         this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
     }
@@ -249,26 +243,26 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             textDocument: {
                 uri: sessionId
             }
-        } as DidCloseTextDocumentParams);
+        } as lsp.DidCloseTextDocumentParams);
     }
 
-    doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void) {
-        //TODO:
+    doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void) {
+        //TODO: textDocument/diagnostic capability
     }
 
-    format(sessionId: string, range: Ace.Range, format: any, callback?: (edits: any[]) => void): void {
+    format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void) {
         if (!this.isInitialized) {
             return;
         }
-        let options: DocumentRangeFormattingParams = {
+        let options: lsp.DocumentRangeFormattingParams = {
             textDocument: {
                 uri: sessionId,
             },
             options: format,
-            range: fromRange(range)
+            range: range
         };
-        let formatCallback = (params: TextEdit[]) => {
-            callback(toAceTextEdits(params));
+        let formatCallback = (params: lsp.TextEdit[]) => {
+            callback(params);
         }
         this.postMessage('textDocument/rangeFormatting', sessionId, options, formatCallback);
     }

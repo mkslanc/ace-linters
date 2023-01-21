@@ -2,6 +2,7 @@ import {Ace} from "ace-code";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {AceLinters} from "./types";
 import ServiceOptions = AceLinters.ServiceOptions;
+import * as lsp from "vscode-languageserver-protocol";
 
 export abstract class BaseMessage {
     abstract type: MessageType;
@@ -28,10 +29,10 @@ export class InitMessage extends BaseMessage {
 
 export class FormatMessage extends BaseMessage {
     type: MessageType = MessageType.format;
-    value: Ace.Range;
+    value: lsp.Range;
     format: FormattingOptions;
 
-    constructor(sessionId: string, value: Ace.Range, format) {
+    constructor(sessionId: string, value: lsp.Range, format) {
         super(sessionId);
         this.value = value;
         this.format = format;
@@ -40,9 +41,9 @@ export class FormatMessage extends BaseMessage {
 
 export class CompleteMessage extends BaseMessage {
     type: MessageType = MessageType.complete;
-    value: Ace.Point;
+    value: lsp.Position;
 
-    constructor(sessionId: string, value: Ace.Point) {
+    constructor(sessionId: string, value: lsp.Position) {
         super(sessionId);
         this.value = value;
     }
@@ -50,9 +51,9 @@ export class CompleteMessage extends BaseMessage {
 
 export class ResolveCompletionMessage extends BaseMessage {
     type: MessageType = MessageType.resolveCompletion;
-    value: Ace.Completion;
+    value: lsp.CompletionItem;
 
-    constructor(sessionId: string, value: Ace.Completion) {
+    constructor(sessionId: string, value: lsp.CompletionItem) {
         super(sessionId);
         this.value = value;
     }
@@ -60,9 +61,9 @@ export class ResolveCompletionMessage extends BaseMessage {
 
 export class HoverMessage extends BaseMessage {
     type: MessageType = MessageType.hover;
-    value: Ace.Point;
+    value: lsp.Position;
 
-    constructor(sessionId: string, value: Ace.Point) {
+    constructor(sessionId: string, value: lsp.Position) {
         super(sessionId);
         this.value = value;
     }

@@ -2,7 +2,6 @@ import {Ace, Range as AceRange} from "ace-code";
 import {DescriptionTooltip} from "./components/description-tooltip";
 import {AceLinters} from "./types";
 import Tooltip = AceLinters.Tooltip;
-import TextEdit = AceLinters.TextEdit;
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {MarkDownConverter} from "./types";
 import {CommonConverter} from "./type-converters/common-converters";
@@ -11,10 +10,19 @@ import ServiceOptions = AceLinters.ServiceOptions;
 import Editor = Ace.Editor;
 import EditSession = Ace.EditSession;
 import Completion = Ace.Completion;
-import Annotation = Ace.Annotation;
 import {MessageControllerWS} from "./message-controller-ws";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {MessageController} from "./message-controller";
+import {
+    fromPoint,
+    fromRange,
+    toAnnotations,
+    toCompletionItem,
+    toCompletions,
+    toRange, toResolvedCompletion,
+    toTooltip
+} from "./type-converters/lsp-converters";
+import * as lsp from "vscode-languageserver-protocol";
 
 let showdown = require('showdown');
 
@@ -23,7 +31,7 @@ export class LanguageProvider {
     private $descriptionTooltip: DescriptionTooltip;
     private readonly $markdownConverter: MarkDownConverter;
     private readonly $messageController: IMessageController;
-    private $sessionLanguageProviders: {[sessionID: string]: SessionLanguageProvider} = {};
+    private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     private $editors: Editor[] = [];
 
     private constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
@@ -32,13 +40,25 @@ export class LanguageProvider {
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
 
-    static for(mode: Worker | WebSocket, markdownConverter?: MarkDownConverter) {
+    /**
+     *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
+     * @param {Worker | WebSocket} mode
+     * @param markdownConverter
+     */
+    static for(mode: Worker | WebSocket, markdownConverter?: MarkDownConverter) { //TODO:
+        let messageController = new MessageControllerWS(mode);
+        return new LanguageProvider(messageController, markdownConverter);
+    }
+
+    /**
+     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  webworker
+     * @param {Worker} worker
+     * @param markdownConverter
+     */
+    static default(worker: Worker, markdownConverter?: MarkDownConverter) {
         let messageController: IMessageController;
-        if (mode instanceof Worker) {
-            messageController = new MessageController(mode);
-        } else {
-            messageController = new MessageControllerWS(mode);
-        }
+        messageController = new MessageController(worker);
         return new LanguageProvider(messageController, markdownConverter);
     }
 
@@ -84,13 +104,14 @@ export class LanguageProvider {
     }
 
     doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip) => void) {
-        this.$messageController.doHover(this.$getFileName(session), position, callback);
+        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback(toTooltip(hover)));
     }
 
     getTooltipText(hover: Tooltip) {
         if (!hover)
             return;
-        let text = hover.content.type === CommonConverter.TooltipType.markdown ? CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+        let text = hover.content.type === CommonConverter.TooltipType.markdown ?
+            CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
         return {text: text, range: hover.range}
     }
 
@@ -99,9 +120,10 @@ export class LanguageProvider {
         sessionLanguageProvider.format();
     }
 
-    doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[]) => void) {
+    doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.$getFileName(session), cursor, callback);
+        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
+            (completionList) => callback(toCompletions(completionList)));
     }
 
     $registerCompleters(editor: Editor) {
@@ -110,14 +132,17 @@ export class LanguageProvider {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
                     this.doComplete(editor, session, (completions) => {
                         let fileName = this.$getFileName(session);
+                        if (!completions)
+                            return;
                         completions.forEach((item) => item["fileName"] = fileName);
                         callback(null, CommonConverter.normalizeRanges(completions));
                     });
                 },
                 getDocTooltip: (item) => {
                     if (!item["isResolved"]) {
-                        this.$messageController.doResolve(item["fileName"], item, (completion) => {
+                        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem) => {
                             item["isResolved"] = true;
+                            let completion = toResolvedCompletion(item, completionItem);
                             item.docText = completion.docText;
                             if (completion.docHTML) {
                                 item.docHTML = completion.docHTML;
@@ -221,8 +246,9 @@ class SessionLanguageProvider {
             this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
     };
 
-    private $showAnnotations = (annotations: Annotation[]) => {
+    private $showAnnotations = (diagnostics) => {
         this.session.clearAnnotations();
+        let annotations = toAnnotations(diagnostics)
         if (annotations && annotations.length > 0) {
             this.session.setAnnotations(annotations);
         }
@@ -249,19 +275,19 @@ class SessionLanguageProvider {
             selectionRanges = [new AceRange(0, 0, row, column)];
         }
         for (let range of selectionRanges) {
-            this.$messageController.format(this.fileName, range, $format, this.$applyFormat);
+            this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
         }
     }
 
-    private $applyFormat = (edits: TextEdit[]) => {
-        for (let edit of edits) {
-            this.session.doc.replace(CommonConverter.toRange(edit.range), edit.newText); //we need this to
-            // mirror Range
+    private $applyFormat = (edits: lsp.TextEdit[]) => {
+        for (let edit of edits.reverse()) {
+            this.session.doc.replace(toRange(edit.range), edit.newText);
         }
     }
 
     doComplete(editor: Editor, callback: (CompletionList) => void) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.fileName, cursor, callback);
+        this.$messageController.doComplete(this.fileName, fromPoint(cursor),
+            (completionList) => callback(toCompletions(completionList)));
     }
 }

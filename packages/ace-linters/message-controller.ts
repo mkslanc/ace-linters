@@ -13,10 +13,10 @@ import {
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
-import {FormattingOptions} from "vscode-languageserver-protocol";
 import {IMessageController} from "./types/message-controller-interface";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {AceLinters} from "./types";
+import * as lsp from "vscode-languageserver-protocol";
 
 export class MessageController implements IMessageController {
     private $worker: Worker;
@@ -31,39 +31,39 @@ export class MessageController implements IMessageController {
         };
     }
 
-    init(sessionId: string, value: string, mode: string, options?: AceLinters.ServiceOptions, initCallback?: () => void, validationCallback?: (annotations: Ace.Annotation[]) => void) {
+    init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
         this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
 
         this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
     }
 
-    doValidation(sessionId: string, callback?: (annotations: Ace.Annotation[]) => void) {
+    doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void) {
         this.postMessage(new ValidateMessage(sessionId), callback);
     }
 
-    doComplete(sessionId: string, position: Ace.Point, callback?: (completionList: Ace.Completion[]) => void) {
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void) {
         this.postMessage(new CompleteMessage(sessionId, position), callback);
     }
 
-    doResolve(sessionId: string, completion: Ace.Completion, callback?: (completion: Ace.Completion) => void) {
+    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem) => void) {
         this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
     }
 
-    format(sessionId: string, range: Ace.Range, format: FormattingOptions, callback?: (edits: AceLinters.TextEdit[]) => void) {
+    format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void) {
         this.postMessage(new FormatMessage(sessionId, range, format), callback);
     }
 
-    doHover(sessionId: string, position: Ace.Point, callback?: (hover: AceLinters.Tooltip) => void) {
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void) {
         this.postMessage(new HoverMessage(sessionId, position), callback)
     }
 
     change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number, callback?: () => void) {
-        let message: BaseMessage;
-        if (deltas.length > 50 && deltas.length > docLength >> 1) {
-            message = new ChangeMessage(sessionId, value);
-        } else {
+        let message: BaseMessage; //TODO: deltas in lsp
+        //if (deltas.length > 50 && deltas.length > docLength >> 1) {
+        message = new ChangeMessage(sessionId, value);
+        /*} else {
             message = new DeltasMessage(sessionId, deltas);
-        }
+        }*/
 
         this.postMessage(message, callback)
     }
