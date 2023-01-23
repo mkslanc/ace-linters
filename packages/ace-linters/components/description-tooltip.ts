@@ -20,7 +20,7 @@ export class DescriptionTooltip extends Tooltip {
         this.provider = provider;
         Tooltip.call(this, document.body);
 
-        event.addListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
+        event.addListener(this.getElement(), "mouseout", this.onMouseOut);
 
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
@@ -30,14 +30,25 @@ export class DescriptionTooltip extends Tooltip {
         editor.on("mousemove", this.onMouseMove);
     }
 
-    private $registerEditorEvents(editor: Ace.Editor) {
+    private $activateEditor(editor: Ace.Editor) {
         this.$activeEditor = editor;
-        editor.on("change", this.$hide);
-        editor.on("mousewheel", this.$hide);
-        //@ts-ignore
-        editor.on("mousedown", this.$hide);
 
-        editor.container.addEventListener("mouseout", this.onTooltipMouseOut);
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
+    }
+
+    private $inactivateEditor() {
+        if (!this.$activeEditor)
+            return;
+        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+
+        this.$activeEditor = null;
+    }
+
+    private $registerEditorEvents() {
+        this.$activeEditor.on("change", this.$hide);
+        this.$activeEditor.on("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.on("mousedown", this.$hide);
     }
 
     private $removeEditorEvents() {
@@ -46,7 +57,7 @@ export class DescriptionTooltip extends Tooltip {
         //@ts-ignore
         this.$activeEditor.off("mousedown", this.$hide);
 
-        this.$activeEditor.container.removeEventListener("mouseout", this.onTooltipMouseOut);
+        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
         this.$activeEditor = null;
     }
 
@@ -54,24 +65,23 @@ export class DescriptionTooltip extends Tooltip {
         clearTimeout(this.$mouseMoveTimer);
         clearTimeout(this.$showTimer);
         if (this.isOpen) {
-            this.doHover(editor);
+            this.doHover();
         } else {
             this.$mouseMoveTimer = setTimeout(() => {
-                this.doHover(editor);
+                this.$inactivateEditor();
+                this.$activateEditor(editor);
+                this.doHover();
                 this.$mouseMoveTimer = null;
             }, 500);
 
         }
     };
 
-    doHover = (editor) => {
-        if (!editor) {
-            console.log(editor);
-        }
-        let renderer = editor.renderer;
+    doHover = () => {
+        let renderer = this.$activeEditor.renderer;
         let screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
 
-        let session = editor.session;
+        let session = this.$activeEditor.session;
 
         this.provider.doHover(session, screenPos, (hover) => {
             let description = this.provider.getTooltipText(hover);
@@ -99,21 +109,21 @@ export class DescriptionTooltip extends Tooltip {
             this.column = column;
 
             if (this.$mouseMoveTimer) {
-                this.$show(editor);
+                this.$show();
             } else {
                 this.$showTimer = setTimeout(() => {
-                    this.$show(editor);
+                    this.$show();
                     this.$showTimer = null;
                 }, 500);
             }
         });
     }
 
-    $show = (editor: Editor) => {
-        let renderer = editor.renderer;
+    $show = () => {
+        let renderer = this.$activeEditor.renderer;
         let position = renderer.textToScreenCoordinates(this.row, this.column);
 
-        let cursorPos = editor.getCursorPosition();
+        let cursorPos = this.$activeEditor.getCursorPosition();
 
         this.show(null, position.pageX, position.pageY);
 
@@ -138,7 +148,7 @@ export class DescriptionTooltip extends Tooltip {
         else
             position.pageY += renderer.lineHeight;
 
-        this.$registerEditorEvents(editor);
+        this.$registerEditorEvents();
 
         this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
         this.show(null, position.pageX, position.pageY);
@@ -151,12 +161,8 @@ export class DescriptionTooltip extends Tooltip {
     };
 
     onMouseOut = (e: MouseEvent) => {
-        if (e && e.relatedTarget == this.getElement())
-            return;
-        this.$hide();
-    };
-
-    onTooltipMouseOut = (e: MouseEvent) => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
         if (!e.relatedTarget || e.relatedTarget == this.getElement())
             return;
 
@@ -169,14 +175,15 @@ export class DescriptionTooltip extends Tooltip {
     }
 
     $hide = () => {
-        clearTimeout(this.$timer);
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
         this.$removeEditorEvents();
         this.hide();
     }
 
     destroy() {
         this.$hide();
-        event.removeListener(this.getElement(), "mouseout", this.onTooltipMouseOut);
+        event.removeListener(this.getElement(), "mouseout", this.onMouseOut);
     };
 
 }
