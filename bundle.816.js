@@ -300,7 +300,7 @@ function sendDiagnostics(document, diagnostics) {
 /******/ 	__webpack_require__.x = () => {
 /******/ 		// Load entry module and return exports
 /******/ 		// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 		var __webpack_exports__ = __webpack_require__.O(undefined, [644,152,259], () => (__webpack_require__(8816)))
+/******/ 		var __webpack_exports__ = __webpack_require__.O(undefined, [152,644,259], () => (__webpack_require__(8816)))
 /******/ 		__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 		return __webpack_exports__;
 /******/ 	};
@@ -465,7 +465,7 @@ function sendDiagnostics(document, diagnostics) {
 /******/ 	(() => {
 /******/ 		var next = __webpack_require__.x;
 /******/ 		__webpack_require__.x = () => {
-/******/ 			return Promise.all([644,152,259].map(__webpack_require__.e, __webpack_require__)).then(next);
+/******/ 			return Promise.all([152,644,259].map(__webpack_require__.e, __webpack_require__)).then(next);
 /******/ 		};
 /******/ 	})();
 /******/ 	

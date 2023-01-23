@@ -44081,6 +44081,9 @@ class MessageControllerWS extends events.EventEmitter {
         if (!this.isInitialized) {
             return;
         }
+        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider.resolveProvider)) {
+            return;
+        }
         let resolveCallback = (result) => {
             callback(result);
         };
@@ -44102,6 +44105,9 @@ class MessageControllerWS extends events.EventEmitter {
     }
     format(sessionId, range, format, callback) {
         if (!this.isInitialized) {
+            return;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
             return;
         }
         let options = {
@@ -44456,6 +44462,7 @@ function toCompletionItem(completion) {
     };
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
+    completionItem["item"] = completion["item"];
     return completionItem;
 }
 function getTextEditRange(textEdit) {
