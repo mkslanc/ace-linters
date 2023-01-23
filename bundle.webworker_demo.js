@@ -43337,7 +43337,6 @@ var Is;
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			671: 0,
-/******/ 			674: 0,
 /******/ 			152: 0,
 /******/ 			100: 0
 /******/ 		};
@@ -43897,7 +43896,6 @@ class MessageControllerWS extends events.EventEmitter {
     isInitialized = false;
     socket;
     serverCapabilities;
-    documentVersion = 0;
     connection;
     initSessionQueue = [];
     clientCapabilities = {
@@ -43920,7 +43918,7 @@ class MessageControllerWS extends events.EventEmitter {
                 completionItem: {
                     snippetSupport: true,
                     commitCharactersSupport: false,
-                    documentationFormat: ['plaintext', 'markdown'],
+                    documentationFormat: ['markdown', 'plaintext'],
                     deprecatedSupport: false,
                     preselectSupport: false,
                 },
@@ -43978,14 +43976,14 @@ class MessageControllerWS extends events.EventEmitter {
         });
         this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
-    init(sessionId, value, mode, options, initCallback, validationCallback) {
+    init(sessionId, document, mode, options, initCallback, validationCallback) {
         this["on"]("validate-" + sessionId, validationCallback);
         const textDocumentMessage = {
             textDocument: {
                 uri: sessionId,
                 languageId: mode,
-                text: value,
-                version: this.documentVersion,
+                text: document.getValue(),
+                version: document["version"],
             },
         };
         if (!this.isConnected) {
@@ -44025,22 +44023,18 @@ class MessageControllerWS extends events.EventEmitter {
             });
         });
     }
-    change(sessionId, deltas, value, docLength, callback) {
-        //TODO: incremental deltas
+    change(sessionId, deltas, document, callback) {
         if (!this.isConnected) {
             return;
         }
         const textDocumentChange = {
             textDocument: {
                 uri: sessionId,
-                version: this.documentVersion,
+                version: document["version"],
             },
-            contentChanges: [{
-                    text: value,
-                }],
+            contentChanges: deltas,
         };
         this.connection.sendNotification('textDocument/didChange', textDocumentChange);
-        this.documentVersion++;
     }
     doHover(sessionId, position, callback) {
         if (!this.isInitialized) {
@@ -44144,8 +44138,10 @@ class InitMessage extends BaseMessage {
     mode;
     options;
     value;
-    constructor(sessionId, value, mode, options) {
+    version;
+    constructor(sessionId, value, version, mode, options) {
         super(sessionId);
+        this.version = version;
         this.options = options;
         this.mode = mode;
         this.value = value;
@@ -44194,17 +44190,21 @@ class ValidateMessage extends BaseMessage {
 class ChangeMessage extends BaseMessage {
     type = MessageType.change;
     value;
-    constructor(sessionId, value) {
+    version;
+    constructor(sessionId, value, version) {
         super(sessionId);
         this.value = value;
+        this.version = version;
     }
 }
-class DeltasMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+class DeltasMessage extends BaseMessage {
     type = MessageType.applyDelta;
     value;
-    constructor(sessionId, value) {
+    version;
+    constructor(sessionId, value, version) {
         super(sessionId);
         this.value = value;
+        this.version = version;
     }
 }
 class ChangeModeMessage extends BaseMessage {
@@ -44277,9 +44277,9 @@ class MessageController {
             this["_signal"](message.type + "-" + message.sessionId, message.value);
         };
     }
-    init(sessionId, value, mode, options, initCallback, validationCallback) {
+    init(sessionId, document, mode, options, initCallback, validationCallback) {
         this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
-        this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
+        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
     }
     doValidation(sessionId, callback) {
         this.postMessage(new ValidateMessage(sessionId), callback);
@@ -44296,13 +44296,14 @@ class MessageController {
     doHover(sessionId, position, callback) {
         this.postMessage(new HoverMessage(sessionId, position), callback);
     }
-    change(sessionId, deltas, value, docLength, callback) {
-        let message; //TODO: deltas in lsp
-        //if (deltas.length > 50 && deltas.length > docLength >> 1) {
-        message = new ChangeMessage(sessionId, value);
-        /*} else {
-            message = new DeltasMessage(sessionId, deltas);
-        }*/
+    change(sessionId, deltas, document, callback) {
+        let message;
+        if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
+            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+        }
+        else {
+            message = new DeltasMessage(sessionId, deltas, document["version"]);
+        }
         this.postMessage(message, callback);
     }
     changeMode(sessionId, value, mode, callback) {
@@ -44350,6 +44351,12 @@ function fromRange(range) {
             character: range.start.column
         },
         end: { line: range.end.row, character: range.end.column }
+    };
+}
+function rangeFromPositions(start, end) {
+    return {
+        start: start,
+        end: end
     };
 }
 function toRange(range) {
@@ -44498,6 +44505,15 @@ function fromMarkupContent(content) {
         return { type: CommonConverter.TooltipType.plainText, text: content.value };
     }
 }
+function fromAceDelta(delta, eol) {
+    const text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
+    return {
+        range: delta.action === "insert"
+            ? rangeFromPositions(fromPoint(delta.start), fromPoint(delta.start))
+            : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
+        text: delta.action === "insert" ? text : "",
+    };
+}
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
 
@@ -44643,10 +44659,11 @@ class SessionLanguageProvider {
         this.$messageController = messageController;
         this.session = session;
         this.initFileName();
+        session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
         // @ts-ignore
         session.on("changeMode", this.$changeMode);
-        this.$messageController.init(this.fileName, session.getValue(), this.$mode, options, this.$connected, this.$showAnnotations);
+        this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
     $connected = () => {
         this.$isConnected = true;
@@ -44682,14 +44699,12 @@ class SessionLanguageProvider {
         };
     }
     $changeListener = (delta) => {
+        this.session.doc["version"]++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
             setTimeout(this.$sendDeltaQueue, 0);
         }
-        if (delta.action == "insert")
-            this.$deltaQueue.push(delta.start, delta.lines);
-        else
-            this.$deltaQueue.push(delta.start, delta.end);
+        this.$deltaQueue.push(delta);
     };
     $sendDeltaQueue = () => {
         let deltas = this.$deltaQueue;
@@ -44697,7 +44712,7 @@ class SessionLanguageProvider {
             return;
         this.$deltaQueue = null;
         if (deltas.length)
-            this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
+            this.$messageController.change(this.fileName, deltas.map((delta) => fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc);
     };
     $showAnnotations = (diagnostics) => {
         this.session.clearAnnotations();

@@ -47,12 +47,7 @@ class BaseService {
         this.mode = mode;
     }
     addDocument(document) {
-        if (typeof document["getText"] == "function") {
-            this.documents[document.uri] = document;
-        }
-        else {
-            this.documents[document.uri] = esm_main/* TextDocument.create */.n.create(document.uri, document.languageId, document.version, document.text);
-        }
+        this.documents[document.uri] = esm_main/* TextDocument.create */.n.create(document.uri, document.languageId, document.version, document.text);
         //TODO:
         /*if (options)
             this.setOptions(sessionID, options);*/
@@ -69,10 +64,12 @@ class BaseService {
     getDocumentValue(uri) {
         return this.getDocument(uri).getText();
     }
-    setValue(uri, value) {
-        let document = this.getDocument(uri);
-        document = esm_main/* TextDocument.create */.n.create(document.uri, document.languageId, document.version + 1, value);
-        this.documents[document.uri] = document;
+    setValue(identifier, value) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            document = esm_main/* TextDocument.create */.n.create(document.uri, document.languageId, document.version, value);
+            this.documents[document.uri] = document;
+        }
     }
     setGlobalOptions(options) {
         this.globalOptions = options ?? {};
@@ -88,37 +85,12 @@ class BaseService {
             return this.globalOptions[optionName];
         }
     }
-    /*applyDeltas(sessionID: string, deltas: Ace.Delta[]) { //TODO:
-        let data = deltas;
-        let document = this.getDocument(sessionID);
-
-        this.$setVersion(document);
-        if (data[0].start) {
-            document.applyDeltas(data);
-        } else {
-            for (let i = 0; i < data.length; i += 2) {
-                let d, err;
-                if (Array.isArray(data[i + 1])) {
-                    d = {action: "insert", start: data[i], lines: data[i + 1]};
-                } else {
-                    d = {action: "remove", start: data[i], end: data[i + 1]};
-                }
-
-                let linesLength = document["$lines"].length;
-                if ((d.action == "insert" ? d.start : d.end).row >= linesLength) {
-                    err = new Error("Invalid delta");
-                    err.data = {
-                        linesLength: linesLength,
-                        start: d.start,
-                        end: d.end
-                    };
-                    throw err;
-                }
-
-                document.applyDelta(d, true);
-            }
+    applyDeltas(identifier, deltas) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            esm_main/* TextDocument.update */.n.update(document, deltas, identifier.version);
         }
-    }*/
+    }
     doComplete(document, position) {
         return Promise.resolve(undefined);
     }
@@ -266,7 +238,7 @@ conn.onNotification(main.DidOpenTextDocumentNotification.type, (params) => {
     doValidation(params.textDocument);
 });
 conn.onNotification(main.DidChangeTextDocumentNotification.type, (params) => {
-    jsonService.setValue(params.textDocument.uri, params.contentChanges[0].text); //TODO:
+    jsonService.applyDeltas(params.textDocument, params.contentChanges);
     doValidation(params.textDocument);
 });
 conn.onRequest(main.CompletionRequest.type, async (params) => {
