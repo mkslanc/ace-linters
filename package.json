@@ -17,7 +17,8 @@
     "ts-loader": "latest",
     "webpack": "latest",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "latest"
+    "webpack-dev-server": "latest",
+    "raw-loader": "^4.0.2"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

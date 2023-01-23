@@ -132,7 +132,8 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
         documentation: completion["documentation"],
     };
     completionItem["fileName"] = completion["fileName"];
-    completionItem["position"] = completion["position"]
+    completionItem["position"] = completion["position"];
+    completionItem["item"] = completion["item"];
 
     return completionItem;
 }
