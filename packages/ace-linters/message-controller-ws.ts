@@ -7,13 +7,13 @@ import {
     createProtocolConnection,
 } from "vscode-languageserver-protocol/browser";
 import {IMessageController} from "./types/message-controller-interface";
+import {Ace} from "ace-code";
 
 export class MessageControllerWS extends events.EventEmitter implements IMessageController {
     private isConnected = false;
     private isInitialized = false;
     private socket: WebSocket;
     private serverCapabilities: lsp.ServerCapabilities;
-    private documentVersion = 0;
     private connection: lsp.ProtocolConnection;
     private initSessionQueue: { textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: () => void }[] = [];
 
@@ -37,7 +37,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
                 completionItem: {
                     snippetSupport: true,
                     commitCharactersSupport: false,
-                    documentationFormat: ['plaintext', 'markdown'],
+                    documentationFormat: ['markdown', 'plaintext'],
                     deprecatedSupport: false,
                     preselectSupport: false,
                 },
@@ -111,15 +111,15 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
 
-    init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
         this["on"]("validate-" + sessionId, validationCallback);
 
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: {
                 uri: sessionId,
                 languageId: mode,
-                text: value,
-                version: this.documentVersion,
+                text: document.getValue(),
+                version: document["version"],
             } as lsp.TextDocumentItem,
         };
 
@@ -165,22 +165,18 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         });
     }
 
-    change(sessionId: string, deltas: any[], value: string, docLength: number, callback?: () => void) {
-        //TODO: incremental deltas
+    change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document, callback?: () => void) {
         if (!this.isConnected) {
             return;
         }
         const textDocumentChange: lsp.DidChangeTextDocumentParams = {
             textDocument: {
                 uri: sessionId,
-                version: this.documentVersion,
+                version: document["version"],
             } as lsp.VersionedTextDocumentIdentifier,
-            contentChanges: [{
-                text: value,
-            }],
+            contentChanges: deltas,
         };
         this.connection.sendNotification('textDocument/didChange', textDocumentChange);
-        this.documentVersion++;
     }
 
     doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void) {

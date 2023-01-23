@@ -31,10 +31,10 @@ export class MessageController implements IMessageController {
         };
     }
 
-    init(sessionId: string, value: string, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
         this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
 
-        this.postMessage(new InitMessage(sessionId, value, mode, options), initCallback);
+        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
     }
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void) {
@@ -57,13 +57,13 @@ export class MessageController implements IMessageController {
         this.postMessage(new HoverMessage(sessionId, position), callback)
     }
 
-    change(sessionId: string, deltas: Ace.Delta[], value: string, docLength: number, callback?: () => void) {
-        let message: BaseMessage; //TODO: deltas in lsp
-        //if (deltas.length > 50 && deltas.length > docLength >> 1) {
-        message = new ChangeMessage(sessionId, value);
-        /*} else {
-            message = new DeltasMessage(sessionId, deltas);
-        }*/
+    change(sessionId: string, deltas, document: Ace.Document, callback?: () => void) {
+        let message: BaseMessage;
+        if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
+            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+        } else {
+            message = new DeltasMessage(sessionId, deltas, document["version"]);
+        }
 
         this.postMessage(message, callback)
     }

@@ -20,7 +20,6 @@ import {
     DocumentRangeFormattingRequest,
     DocumentRangeFormattingParams,
     PublishDiagnosticsNotification,
-    PublishDiagnosticsParams,
     Diagnostic,
     TextDocument
 } from "vscode-languageserver-protocol";
@@ -54,7 +53,7 @@ conn.onNotification(
 conn.onNotification(
     DidChangeTextDocumentNotification.type,
     (params: DidChangeTextDocumentParams) => {
-        jsonService.setValue(params.textDocument.uri, params.contentChanges[0].text); //TODO:
+        jsonService.applyDeltas(params.textDocument, params.contentChanges);
         doValidation(params.textDocument);
     }
 );

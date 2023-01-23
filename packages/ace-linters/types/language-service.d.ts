@@ -3,7 +3,7 @@ import * as ts from "../services/typescript/lib/typescriptServices";
 import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {Ace} from "ace-code";
-import {TextDocumentIdentifier, TextDocumentItem } from "vscode-languageserver-protocol";
+import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 
 export declare namespace AceLinters {
     export interface LanguageService {
@@ -22,11 +22,11 @@ export declare namespace AceLinters {
 
         doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem>;
 
-        setValue(sessionID: string, value: string); //TODO:
+        setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
 
-        /*applyDeltas(sessionID: string, delta: Ace.Delta[]);*/ //TODO:
+        applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]);
 
-        addDocument(document: TextDocument | TextDocumentItem);
+        addDocument(document: TextDocumentItem);
 
         setOptions(sessionID: string, options: ServiceOptions, merge?: boolean); //TODO:
 

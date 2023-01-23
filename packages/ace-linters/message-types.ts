@@ -18,9 +18,11 @@ export class InitMessage extends BaseMessage {
     mode: string;
     options?: { [key: string]: any };
     value: string;
+    version: number;
 
-    constructor(sessionId: string, value: string, mode: string, options?: { [p: string]: any }) {
+    constructor(sessionId: string, value: string, version: number, mode: string, options?: { [p: string]: any }) {
         super(sessionId);
+        this.version = version;
         this.options = options;
         this.mode = mode;
         this.value = value;
@@ -80,20 +82,24 @@ export class ValidateMessage extends BaseMessage {
 export class ChangeMessage extends BaseMessage {
     type: MessageType = MessageType.change;
     value: string;
+    version: number
 
-    constructor(sessionId: string, value: string) {
+    constructor(sessionId: string, value: string, version: number) {
         super(sessionId);
         this.value = value;
+        this.version = version;
     }
 }
 
 export class DeltasMessage extends BaseMessage {
     type: MessageType = MessageType.applyDelta;
     value: Ace.Delta[];
+    version: number;
 
-    constructor(sessionId: string, value: Ace.Delta[]) {
+    constructor(sessionId: string, value: Ace.Delta[], version: number) {
         super(sessionId);
         this.value = value;
+        this.version = version;
     }
 }
 
@@ -143,5 +149,16 @@ export class GlobalOptionsMessage {
 }
 
 export enum MessageType {
-    init, format, complete, resolveCompletion, change, hover, validate, applyDelta, changeMode, changeOptions, dispose, globalOptions
+    init,
+    format,
+    complete,
+    resolveCompletion,
+    change,
+    hover,
+    validate,
+    applyDelta,
+    changeMode,
+    changeOptions,
+    dispose,
+    globalOptions
 }
