@@ -19,7 +19,8 @@ module.exports = (env, argv) => {
         entry: {
             default_services_demo: './packages/demo/webworker-lsp/demo.ts',
             webworker_demo: './packages/demo/webworker-json-rpc/demo.ts',
-            websocket_demo: './packages/demo/websockets-lsp/client.ts'
+            websocket_demo: './packages/demo/websockets-lsp/client.ts',
+            rust_demo: './packages/demo/rust-analyzer/demo.ts',
         },
         mode: "production",
         module: {
@@ -27,6 +28,9 @@ module.exports = (env, argv) => {
                 loader, {
                     test: /\.css$/,
                     use: ["style-loader", "css-loader"]
+                }, {
+                    test: /\.rs$/,
+                    use: ['raw-loader']
                 }
             ]
         },
@@ -53,7 +57,11 @@ module.exports = (env, argv) => {
             port: 9000,
             client: {
                 overlay: false
-            }
+            },
+            headers: {
+                'Cross-Origin-Embedder-Policy': 'require-corp',
+                'Cross-Origin-Opener-Policy': 'same-origin'
+            },
         },
         plugins: [
             new CopyPlugin({
@@ -61,17 +69,17 @@ module.exports = (env, argv) => {
                     {
                         from: "packages/demo/index.html",
                         to: "."
-                    },
-                    {
+                    }, {
                         from: "packages/demo/webworker.html",
                         to: "."
-                    },
-                    {
+                    }, {
                         from: "packages/demo/websocket.html",
                         to: "."
-                    },
-                    {
+                    }, {
                         from: "packages/demo/default_services.html",
+                        to: "."
+                    }, {
+                        from: "packages/demo/rust_analyzer.html",
                         to: "."
                     }
                 ]
