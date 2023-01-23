@@ -222,6 +222,9 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         if (!this.isInitialized) {
             return;
         }
+        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider.resolveProvider)) {
+            return;
+        }
         let resolveCallback = (result: lsp.CompletionItem) => {
             callback(result);
         };
@@ -248,6 +251,9 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
 
     format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void) {
         if (!this.isInitialized) {
+            return;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
             return;
         }
         let options: lsp.DocumentRangeFormattingParams = {

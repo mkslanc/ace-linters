@@ -32,7 +32,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
         return this.getOption(sessionID, "jsonSchemaUri");
     }
 
-    addDocument(document: TextDocument | TextDocumentItem) {
+    addDocument(document: TextDocumentItem) {
         super.addDocument(document);
         this.$configureService(document.uri);
     }
