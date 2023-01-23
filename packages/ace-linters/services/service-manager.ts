@@ -3,8 +3,7 @@ import ServiceOptions = AceLinters.ServiceOptions;
 import {AceLinters} from "../types";
 import {mergeObjects} from "../utils";
 import {MessageType} from "../message-types";
-import {TextDocument} from "vscode-languageserver-textdocument";
-import {TextDocumentIdentifier} from "vscode-languageserver-protocol";
+import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 
 interface ServiceData {
     module: () => any,
@@ -39,52 +38,54 @@ export class ServiceManager {
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
             let sessionID = message.sessionId as string;
+            let version = message.version;
             let postMessage = {
                 "type": message.type,
                 "sessionId": sessionID,
             };
             let serviceInstance = this.getServiceInstance(sessionID);
-            let document = serviceInstance?.getDocument(sessionID) ?? {
-                uri: sessionID
+            let documentIdentifier = {
+                uri: sessionID,
+                version: version
             };
             switch (message["type"] as MessageType) {
                 case MessageType.format:
-                    postMessage["value"] = serviceInstance?.format(document, message.value, message.format);
+                    postMessage["value"] = serviceInstance?.format(documentIdentifier, message.value, message.format);
                     break;
                 case MessageType.complete:
-                    postMessage["value"] = await serviceInstance?.doComplete(document, message.value);
+                    postMessage["value"] = await serviceInstance?.doComplete(documentIdentifier, message.value);
                     break;
                 case MessageType.resolveCompletion:
                     postMessage["value"] = await serviceInstance?.doResolve(message.value);
                     break;
                 case MessageType.change:
-                    serviceInstance?.setValue(sessionID, message.value);
-                    doValidation(document, serviceInstance);
+                    serviceInstance?.setValue(documentIdentifier, message.value);
+                    doValidation(documentIdentifier, serviceInstance);
                     break;
                 case MessageType.applyDelta:
-                    serviceInstance?.applyDeltas(sessionID, message.value);
-                    doValidation(document, serviceInstance);
+                    serviceInstance?.applyDeltas(documentIdentifier, message.value);
+                    doValidation(documentIdentifier, serviceInstance);
                     break;
                 case MessageType.hover:
-                    postMessage["value"] = await serviceInstance?.doHover(document, message.value);
+                    postMessage["value"] = await serviceInstance?.doHover(documentIdentifier, message.value);
                     break;
                 case MessageType.validate:
-                    postMessage["value"] = await serviceInstance?.doValidation(document);
+                    postMessage["value"] = await serviceInstance?.doValidation(documentIdentifier);
                     break;
                 case MessageType.init: //this should be first message
-                    await this.addDocument(sessionID, message.value, message.mode, message.options);
-                    doValidation(document);
+                    await this.addDocument(documentIdentifier, message.value, message.mode, message.options);
+                    doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
-                    await this.changeDocumentMode(document, message.value, message.mode, message.options);
-                    doValidation(document, serviceInstance);
+                    await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options);
+                    doValidation(documentIdentifier, serviceInstance);
                     break;
                 case MessageType.changeOptions:
                     serviceInstance?.setOptions(sessionID, message.options);
-                    doValidation(document, serviceInstance);
+                    doValidation(documentIdentifier, serviceInstance);
                     break;
                 case MessageType.dispose:
-                    this.removeDocument(document);
+                    this.removeDocument(documentIdentifier);
                     break;
                 case MessageType.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
@@ -120,23 +121,26 @@ export class ServiceManager {
         }
     }
 
-    async addDocument(sessionID: string, documentValue: string, mode: string, options?: ServiceOptions) {
+    async addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions) {
         if (!mode || !/^ace\/mode\//.test(mode))
             return;
-
         mode = mode.replace("ace/mode/", "");
-
-        let document = TextDocument.create(sessionID, mode, 1, documentValue);
         let serviceInstance = await this.$getServiceInstanceByMode(mode);
         if (!serviceInstance)
             return;
-        serviceInstance.addDocument(document);
-        this.$sessionIDToMode[sessionID] = mode;
+        let documentItem = {
+            uri: documentIdentifier.uri,
+            version: documentIdentifier.version,
+            languageId: mode,
+            text: documentValue
+        }
+        serviceInstance.addDocument(documentItem);
+        this.$sessionIDToMode[documentIdentifier.uri] = mode;
     }
 
-    async changeDocumentMode(document: TextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) {
-        this.removeDocument(document);
-        await this.addDocument(document.uri, value, mode, options);
+    async changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) {
+        this.removeDocument(documentIdentifier);
+        await this.addDocument(documentIdentifier, value, mode, options);
     }
 
     removeDocument(document: TextDocumentIdentifier) {

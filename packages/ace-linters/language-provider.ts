@@ -14,6 +14,7 @@ import {MessageControllerWS} from "./message-controller-ws";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {MessageController} from "./message-controller";
 import {
+    fromAceDelta,
     fromPoint,
     fromRange,
     toAnnotations,
@@ -181,12 +182,14 @@ class SessionLanguageProvider {
         this.$messageController = messageController;
         this.session = session;
         this.initFileName();
+
+        session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
 
         // @ts-ignore
         session.on("changeMode", this.$changeMode);
 
-        this.$messageController.init(this.fileName, session.getValue(), this.$mode, options, this.$connected, this.$showAnnotations);
+        this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 
     private $connected = () => {
@@ -229,13 +232,12 @@ class SessionLanguageProvider {
     }
 
     private $changeListener = (delta) => {
+        this.session.doc["version"]++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
             setTimeout(this.$sendDeltaQueue, 0);
         }
-        if (delta.action == "insert")
-            this.$deltaQueue.push(delta.start, delta.lines);
-        else this.$deltaQueue.push(delta.start, delta.end);
+        this.$deltaQueue.push(delta);
     }
 
     private $sendDeltaQueue = () => {
@@ -243,7 +245,8 @@ class SessionLanguageProvider {
         if (!deltas) return;
         this.$deltaQueue = null;
         if (deltas.length)
-            this.$messageController.change(this.fileName, deltas, this.session.getValue(), this.session.doc.getLength());
+            this.$messageController.change(this.fileName, deltas.map((delta) =>
+                fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc);
     };
 
     private $showAnnotations = (diagnostics) => {

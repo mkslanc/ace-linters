@@ -5,7 +5,7 @@ import {
     InsertTextFormat,
     CompletionList,
     CompletionItem,
-    CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind, TextEdit
+    CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind, TextEdit, TextDocumentContentChangeEvent
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
@@ -27,6 +27,13 @@ export function fromRange(range: Ace.Range): Range | undefined {
         },
         end: {line: range.end.row, character: range.end.column}
     };
+}
+
+export function rangeFromPositions(start: Position, end: Position): Range {
+    return {
+        start: start,
+        end: end
+    }
 }
 
 export function toRange(range: Range): Ace.Range | undefined {
@@ -179,4 +186,15 @@ export function fromMarkupContent(content?: string | MarkupContent): TooltipCont
     } else {
         return {type: CommonConverter.TooltipType.plainText, text: content.value};
     }
+}
+
+export function fromAceDelta(delta: Ace.Delta, eol: string): TextDocumentContentChangeEvent {
+    const text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
+    return {
+        range:
+            delta.action === "insert"
+                ? rangeFromPositions(fromPoint(delta.start), fromPoint(delta.start))
+                : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
+        text: delta.action === "insert" ? text : "",
+    };
 }

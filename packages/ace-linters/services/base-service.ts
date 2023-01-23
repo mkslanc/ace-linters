@@ -15,12 +15,8 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         this.mode = mode;
     }
 
-    addDocument(document: TextDocument | TextDocumentItem) {
-        if (typeof document["getText"] == "function") {
-            this.documents[document.uri] = document as TextDocument;
-        } else {
-            this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, (document as TextDocumentItem).text)
-        }
+    addDocument(document: TextDocumentItem) {
+        this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, (document as TextDocumentItem).text)
         //TODO:
         /*if (options)
             this.setOptions(sessionID, options);*/
@@ -41,10 +37,12 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         return this.getDocument(uri).getText();
     }
 
-    setValue(uri: string, value: string) {
-        let document = this.getDocument(uri);
-        document = TextDocument.create(document.uri, document.languageId, document.version + 1, value);
-        this.documents[document.uri] = document;
+    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            document = TextDocument.create(document.uri, document.languageId, document.version, value);
+            this.documents[document.uri] = document;
+        }
     }
 
     setGlobalOptions(options: OptionsType) {
@@ -63,37 +61,12 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         }
     }
 
-    /*applyDeltas(sessionID: string, deltas: Ace.Delta[]) { //TODO:
-        let data = deltas;
-        let document = this.getDocument(sessionID);
-
-        this.$setVersion(document);
-        if (data[0].start) {
-            document.applyDeltas(data);
-        } else {
-            for (let i = 0; i < data.length; i += 2) {
-                let d, err;
-                if (Array.isArray(data[i + 1])) {
-                    d = {action: "insert", start: data[i], lines: data[i + 1]};
-                } else {
-                    d = {action: "remove", start: data[i], end: data[i + 1]};
-                }
-
-                let linesLength = document["$lines"].length;
-                if ((d.action == "insert" ? d.start : d.end).row >= linesLength) {
-                    err = new Error("Invalid delta");
-                    err.data = {
-                        linesLength: linesLength,
-                        start: d.start,
-                        end: d.end
-                    };
-                    throw err;
-                }
-
-                document.applyDelta(d, true);
-            }
+    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            TextDocument.update(document, deltas, identifier.version);
         }
-    }*/
+    }
 
     doComplete(document, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
         return Promise.resolve(undefined);
