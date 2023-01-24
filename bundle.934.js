@@ -60,24 +60,23 @@ class BaseService {
     }
     applyDeltas(identifier, deltas) {
         let document = this.getDocument(identifier.uri);
-        if (document) {
+        if (document)
             vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument.update */ .n.update(document, deltas, identifier.version);
-        }
     }
-    doComplete(document, position) {
-        return Promise.resolve(undefined);
+    async doComplete(document, position) {
+        return null;
     }
-    doHover(document, position) {
-        return Promise.resolve(undefined);
+    async doHover(document, position) {
+        return null;
     }
-    doResolve(item) {
-        return Promise.resolve(undefined);
+    async doResolve(item) {
+        return null;
     }
-    doValidation(document) {
-        return Promise.resolve([]);
+    async doValidation(document) {
+        return [];
     }
     format(document, range, options) {
-        return undefined;
+        return [];
     }
 }
 
@@ -103,20 +102,16 @@ class HtmlService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServ
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
-        let textEdits = this.$service.format(fullDocument, range, options);
-        return textEdits;
+        return this.$service.format(fullDocument, range, options);
     }
     async doHover(document, position) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
         let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
-        let hover = this.$service.doHover(fullDocument, position, htmlDocument);
-        return Promise.resolve(hover);
+        return this.$service.doHover(fullDocument, position, htmlDocument);
     }
     //TODO: separate validator for HTML
     async doValidation(document) {
@@ -124,12 +119,10 @@ class HtmlService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServ
     }
     async doComplete(document, position) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
         let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
-        let completions = this.$service.doComplete(fullDocument, position, htmlDocument);
-        return Promise.resolve(completions);
+        return this.$service.doComplete(fullDocument, position, htmlDocument);
     }
     async doResolve(item) {
         return item;

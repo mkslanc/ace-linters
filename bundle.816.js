@@ -87,24 +87,23 @@ class BaseService {
     }
     applyDeltas(identifier, deltas) {
         let document = this.getDocument(identifier.uri);
-        if (document) {
+        if (document)
             esm_main/* TextDocument.update */.n.update(document, deltas, identifier.version);
-        }
     }
-    doComplete(document, position) {
-        return Promise.resolve(undefined);
+    async doComplete(document, position) {
+        return null;
     }
-    doHover(document, position) {
-        return Promise.resolve(undefined);
+    async doHover(document, position) {
+        return null;
     }
-    doResolve(item) {
-        return Promise.resolve(undefined);
+    async doResolve(item) {
+        return null;
     }
-    doValidation(document) {
-        return Promise.resolve([]);
+    async doValidation(document) {
+        return [];
     }
     format(document, range, options) {
-        return undefined;
+        return [];
     }
 }
 
@@ -136,15 +135,15 @@ class JsonService extends BaseService {
         this.$configureService(document.uri);
     }
     $configureService(sessionID) {
-        if (!sessionID)
-            sessionID = "";
         let schemas = this.getOption(sessionID, "jsonSchemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getJsonSchemaUri(sessionID)) {
                 el.fileMatch ??= [];
                 el.fileMatch.push(sessionID);
             }
-            this.schemas[el.uri] = (el.schema) ? el.schema : (this.schemas[el.uri]) ? this.schemas[el.uri] : undefined;
+            let schema = el.schema ?? this.schemas[el.uri];
+            if (schema)
+                this.schemas[el.uri] = schema;
             this.$service.resetSchema(el.uri);
             el.schema = undefined;
         });
@@ -158,7 +157,7 @@ class JsonService extends BaseService {
         let schemas = this.getOption(document.uri, "jsonSchemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getJsonSchemaUri(document.uri)) {
-                el.fileMatch = el.fileMatch.filter((pattern) => pattern != document.uri);
+                el.fileMatch = el.fileMatch?.filter((pattern) => pattern != document.uri);
             }
         });
         this.$service.configure({
@@ -172,46 +171,37 @@ class JsonService extends BaseService {
     }
     setGlobalOptions(options) {
         super.setGlobalOptions(options);
-        this.$configureService();
+        this.$configureService("");
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
-        let textEdits = this.$service.format(fullDocument, range, options);
-        return textEdits;
+        return this.$service.format(fullDocument, range, options);
     }
     async doHover(document, position) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
         let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        let hover = this.$service.doHover(fullDocument, position, jsonDocument);
-        return hover;
+        return this.$service.doHover(fullDocument, position, jsonDocument);
     }
     async doValidation(document) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
         let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        let diagnostics = await this.$service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.mode === "json5" ? "ignore" : "error" });
-        return diagnostics;
+        return this.$service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.mode === "json5" ? "ignore" : "error" });
     }
     async doComplete(document, position) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
         let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        let completions = await this.$service.doComplete(fullDocument, position, jsonDocument);
-        return completions;
+        return this.$service.doComplete(fullDocument, position, jsonDocument);
     }
     async doResolve(item) {
-        let resolvedCompletion = await this.$service.doResolve(item);
-        return resolvedCompletion;
+        return this.$service.doResolve(item);
     }
 }
 

@@ -60,24 +60,23 @@ class BaseService {
     }
     applyDeltas(identifier, deltas) {
         let document = this.getDocument(identifier.uri);
-        if (document) {
+        if (document)
             vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument.update */ .n.update(document, deltas, identifier.version);
-        }
     }
-    doComplete(document, position) {
-        return Promise.resolve(undefined);
+    async doComplete(document, position) {
+        return null;
     }
-    doHover(document, position) {
-        return Promise.resolve(undefined);
+    async doHover(document, position) {
+        return null;
     }
-    doResolve(item) {
-        return Promise.resolve(undefined);
+    async doResolve(item) {
+        return null;
     }
-    doValidation(document) {
-        return Promise.resolve([]);
+    async doValidation(document) {
+        return [];
     }
     format(document, range, options) {
-        return undefined;
+        return [];
     }
 }
 
@@ -104,9 +103,8 @@ class LuaService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServi
     }
     async doValidation(document) {
         let value = this.getDocumentValue(document.uri);
-        if (!value) {
+        if (!value)
             return [];
-        }
         let errors = [];
         try {
             this.$service.parse(value);

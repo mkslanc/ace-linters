@@ -43437,7 +43437,10 @@ let description_tooltip_event = __webpack_require__(7989);
 let { Tooltip } = __webpack_require__(962);
 class DescriptionTooltip extends Tooltip {
     provider;
-    $activeEditor;
+    _activeEditor;
+    get $activeEditor() {
+        return this._activeEditor;
+    }
     $mouseMoveTimer;
     $showTimer;
     row;
@@ -43454,14 +43457,14 @@ class DescriptionTooltip extends Tooltip {
         editor.on("mousemove", this.onMouseMove);
     }
     $activateEditor(editor) {
-        this.$activeEditor = editor;
+        this._activeEditor = editor;
         this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
     $inactivateEditor() {
         if (!this.$activeEditor)
             return;
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = null;
+        this._activeEditor = undefined;
     }
     $registerEditorEvents() {
         this.$activeEditor.on("change", this.$hide);
@@ -43475,7 +43478,7 @@ class DescriptionTooltip extends Tooltip {
         //@ts-ignore
         this.$activeEditor.off("mousedown", this.$hide);
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = null;
+        this._activeEditor = undefined;
     }
     update(editor) {
         clearTimeout(this.$mouseMoveTimer);
@@ -43488,7 +43491,7 @@ class DescriptionTooltip extends Tooltip {
                 this.$inactivateEditor();
                 this.$activateEditor(editor);
                 this.doHover();
-                this.$mouseMoveTimer = null;
+                this.$mouseMoveTimer = undefined;
             }, 500);
         }
     }
@@ -43507,7 +43510,7 @@ class DescriptionTooltip extends Tooltip {
             let docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
             let token = session.getTokenAt(docPos.row, docPos.column + 1);
             let row = description.range?.start.row ?? docPos.row;
-            let column = description.range?.start.column ?? token.start;
+            let column = description.range?.start.column ?? token?.start ?? 0;
             if (this.descriptionText != descriptionText) {
                 this.hide();
                 this.setHtml(descriptionText);
@@ -43524,7 +43527,7 @@ class DescriptionTooltip extends Tooltip {
             else {
                 this.$showTimer = setTimeout(() => {
                     this.$show();
-                    this.$showTimer = null;
+                    this.$showTimer = undefined;
                 }, 500);
             }
         });
@@ -44055,7 +44058,7 @@ class MessageControllerWS extends events.EventEmitter {
             position: position,
         };
         let hoverCallback = (result) => {
-            callback(result);
+            callback && callback(result);
         };
         this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
     }
@@ -44073,21 +44076,18 @@ class MessageControllerWS extends events.EventEmitter {
             position: position,
         };
         let completionCallback = (result) => {
-            callback(result);
+            callback && callback(result);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }
     doResolve(sessionId, completion, callback) {
-        if (!this.isInitialized) {
+        if (!this.isInitialized)
             return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider.resolveProvider)) {
+        if (!this.serverCapabilities?.completionProvider?.resolveProvider)
             return;
-        }
-        let resolveCallback = (result) => {
-            callback(result);
-        };
-        this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
+        this.postMessage('completionItem/resolve', sessionId, completion["item"], (result) => {
+            callback && callback(result);
+        });
     }
     changeMode(sessionId, value, mode, callback) {
     }
@@ -44117,10 +44117,9 @@ class MessageControllerWS extends events.EventEmitter {
             options: format,
             range: range
         };
-        let formatCallback = (params) => {
-            callback(params);
-        };
-        this.postMessage('textDocument/rangeFormatting', sessionId, options, formatCallback);
+        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params) => {
+            callback && callback(params);
+        });
     }
     setGlobalOptions(serviceName, options, merge) {
     }
@@ -44353,9 +44352,6 @@ var range_list = __webpack_require__(6510);
 
 
 function fromRange(range) {
-    if (!range) {
-        return;
-    }
     return {
         start: {
             line: range.start.row,
@@ -44371,23 +44367,16 @@ function rangeFromPositions(start, end) {
     };
 }
 function toRange(range) {
-    if (!range) {
-        return;
-    }
     return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
 }
 function fromPoint(point) {
-    if (!point)
-        return;
     return { line: point.row, character: point.column };
 }
 function toPoint(position) {
-    if (!position)
-        return;
     return { row: position.line, column: position.character };
 }
 function toAnnotations(diagnostics) {
-    return diagnostics && diagnostics.map((el) => {
+    return diagnostics.map((el) => {
         return {
             row: el.range.start.line,
             column: el.range.start.character,
@@ -44397,17 +44386,18 @@ function toAnnotations(diagnostics) {
     });
 }
 function toCompletion(item) {
-    let kind = Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(item.kind)];
+    let itemKind = item.kind;
+    let kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
     let text = item.textEdit?.newText ?? item.insertText ?? item.label;
     let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-    let range = getTextEditRange(item.textEdit);
+    let range = item.textEdit ? getTextEditRange(item.textEdit) : null;
     let completion = {
         meta: kind,
         caption: item.label,
         command: command,
         range: range,
         value: "",
-        score: null,
+        score: undefined,
         item: item
     };
     if (item.insertTextFormat == main.InsertTextFormat.Snippet) {
@@ -44421,12 +44411,8 @@ function toCompletion(item) {
     return completion;
 }
 function toCompletions(completionList) {
-    if (!completionList) {
-        return;
-    }
-    if (!Array.isArray(completionList)) {
+    if (!Array.isArray(completionList))
         completionList = completionList.items;
-    }
     return completionList && completionList.map((item) => toCompletion(item));
 }
 function toResolvedCompletion(completion, item) {
@@ -44450,13 +44436,13 @@ function toCompletionItem(completion) {
         };
     }
     let completionItem = {
-        label: completion.caption,
+        label: completion.caption ?? "",
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
         insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
         textEdit: {
             range: fromRange(completion["range"]),
-            newText: (completion.snippet) ? completion.snippet : completion.value
+            newText: (completion.snippet ?? completion.value)
         },
         documentation: completion["documentation"],
     };
@@ -44466,43 +44452,38 @@ function toCompletionItem(completion) {
     return completionItem;
 }
 function getTextEditRange(textEdit) {
-    if (!textEdit) {
-        return;
-    }
-    if (textEdit.insert != undefined && textEdit.replace != undefined) {
+    if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
+        textEdit = textEdit;
         let rangeList = new range_list/* RangeList */.$();
         rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
         rangeList.merge();
         return rangeList[0];
     }
-    if (textEdit.range) {
+    else {
+        textEdit = textEdit;
         return toRange(textEdit.range);
     }
 }
 function toTooltip(hover) {
     let content;
-    if (!hover) {
-        return;
-    }
     if (main.MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     }
     else if (main.MarkedString.is(hover.contents)) {
         content = { type: CommonConverter.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
     }
-    else if (Array.isArray(hover.contents)) {
+    else {
         let contents = hover.contents.map((el) => {
             if (typeof el !== "string") {
                 return `\`\`\`${el.value}\`\`\``;
             }
-            return el;
+            else {
+                return el;
+            }
         });
         content = { type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n") };
     }
-    else {
-        return;
-    }
-    return { content: content, range: toRange(hover.range) };
+    return { content: content, range: hover.range && toRange(hover.range) };
 }
 function fromMarkupContent(content) {
     if (!content)
@@ -44510,7 +44491,7 @@ function fromMarkupContent(content) {
     if (typeof content === "string") {
         return { type: CommonConverter.TooltipType.plainText, text: content };
     }
-    if (content.kind === main.MarkupKind.Markdown) {
+    else if (content.kind === main.MarkupKind.Markdown) {
         return { type: CommonConverter.TooltipType.markdown, text: content.value };
     }
     else {
@@ -44602,7 +44583,7 @@ class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
     doHover(session, position, callback) {
-        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback(toTooltip(hover)));
+        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
     getTooltipText(hover) {
         if (!hover)
@@ -44617,7 +44598,7 @@ class LanguageProvider {
     };
     doComplete(editor, session, callback) {
         let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completionList) => callback(toCompletions(completionList)));
+        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completionList) => completionList && callback(toCompletions(completionList)));
     }
     $registerCompleters(editor) {
         editor.completers = [
@@ -44760,10 +44741,6 @@ class SessionLanguageProvider {
             this.session.doc.replace(toRange(edit.range), edit.newText);
         }
     };
-    doComplete(editor, callback) {
-        let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.fileName, fromPoint(cursor), (completionList) => callback(toCompletions(completionList)));
-    }
 }
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/index.ts
@@ -44778,7 +44755,7 @@ dom.importCssString(linters_namespaceObject, "linters.css");
 
 var convertKind = CommonConverter.convertKind;
 function fromTsDiagnostics(diagnostics, doc) {
-    return diagnostics && diagnostics.map((el) => {
+    return diagnostics.map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(length)), parseMessageText(el.messageText), fromTsCategory(el.category));
@@ -44819,7 +44796,7 @@ function fromTsCategory(category) {
     return 4;
 }
 function toTextEdits(textEdits, doc) {
-    return textEdits && textEdits.map((el) => {
+    return textEdits.map((el) => {
         return {
             range: typescript_converters_toRange(el.span, doc),
             newText: el.newText
@@ -44845,7 +44822,7 @@ function toPosition(index, doc) {
 }
 function toHover(hover, doc) {
     if (!hover) {
-        return;
+        return null;
     }
     let documentation = hover.documentation ? hover.documentation.map((displayPart) => displayPart.text).join('') : "";
     let tags = hover.tags ? hover.tags.map((tag) => tagToString(tag)).join('  \n') : "";
@@ -44874,7 +44851,7 @@ function tagToString(tag) {
     return tagLabel;
 }
 function typescript_converters_toCompletions(completionInfo, doc, position) {
-    return completionInfo && completionInfo.entries.map((entry) => {
+    return completionInfo.entries.map((entry) => {
         let completion = {
             label: entry.name,
             insertText: entry.name,

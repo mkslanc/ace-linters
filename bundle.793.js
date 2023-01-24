@@ -60,24 +60,23 @@ class BaseService {
     }
     applyDeltas(identifier, deltas) {
         let document = this.getDocument(identifier.uri);
-        if (document) {
+        if (document)
             vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument.update */ .n.update(document, deltas, identifier.version);
-        }
     }
-    doComplete(document, position) {
-        return Promise.resolve(undefined);
+    async doComplete(document, position) {
+        return null;
     }
-    doHover(document, position) {
-        return Promise.resolve(undefined);
+    async doHover(document, position) {
+        return null;
     }
-    doResolve(item) {
-        return Promise.resolve(undefined);
+    async doResolve(item) {
+        return null;
     }
-    doValidation(document) {
-        return Promise.resolve([]);
+    async doValidation(document) {
+        return [];
     }
     format(document, range, options) {
-        return undefined;
+        return [];
     }
 }
 
@@ -122,41 +121,33 @@ class CssService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServi
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
-        let textEdits = this.$service.format(fullDocument, range, options);
-        return textEdits;
+        return this.$service.format(fullDocument, range, options);
     }
     async doHover(document, position) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
         let cssDocument = this.$service.parseStylesheet(fullDocument);
-        let hover = this.$service.doHover(fullDocument, position, cssDocument);
-        return Promise.resolve(hover);
+        return this.$service.doHover(fullDocument, position, cssDocument);
     }
     async doValidation(document) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
         let cssDocument = this.$service.parseStylesheet(fullDocument);
-        let diagnostics = this.$service.doValidation(fullDocument, cssDocument);
-        return Promise.resolve(diagnostics);
+        return this.$service.doValidation(fullDocument, cssDocument);
     }
     async doComplete(document, position) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
         let cssDocument = this.$service.parseStylesheet(fullDocument);
-        let completions = this.$service.doComplete(fullDocument, position, cssDocument);
-        return Promise.resolve(completions);
+        return this.$service.doComplete(fullDocument, position, cssDocument);
     }
     async doResolve(item) {
-        return Promise.resolve(item);
+        return item;
     }
 }
 

@@ -436,7 +436,8 @@ class ServiceManager {
     static async $initServiceInstance(service) {
         let module = await service.module();
         service.serviceInstance = new module[service.className](service.modes);
-        service.serviceInstance.setGlobalOptions(service.options);
+        if (service.options)
+            service.serviceInstance.setGlobalOptions(service.options);
     }
     async $getServiceInstanceByMode(mode) {
         let service = this.findServiceByMode(mode);
