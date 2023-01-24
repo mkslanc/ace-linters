@@ -63,29 +63,28 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
 
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]) {
         let document = this.getDocument(identifier.uri);
-        if (document) {
+        if (document)
             TextDocument.update(document, deltas, identifier.version);
-        }
     }
 
-    doComplete(document, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
-        return Promise.resolve(undefined);
+    async doComplete(document, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+        return null;
     }
 
-    doHover(document, position: lsp.Position): Promise<lsp.Hover | null> {
-        return Promise.resolve(undefined);
+    async doHover(document, position: lsp.Position): Promise<lsp.Hover | null> {
+        return null;
     }
 
-    doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
-        return Promise.resolve(undefined);
+    async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null> {
+        return null;
     }
 
-    doValidation(document): Promise<lsp.Diagnostic[]> {
-        return Promise.resolve([]);
+    async doValidation(document): Promise<lsp.Diagnostic[]> {
+        return [];
     }
 
-    format(document, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null {
-        return undefined;
+    format(document, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
+        return [];
     }
 
 }

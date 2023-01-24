@@ -14,7 +14,7 @@ import {CommonConverter} from "./common-converters";
 import convertKind = CommonConverter.convertKind;
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument): lsp.Diagnostic[] {
-    return diagnostics && diagnostics.map((el) => {
+    return diagnostics.map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(length)),
@@ -61,15 +61,15 @@ export function fromTsCategory(category: ts.DiagnosticCategory) {
 }
 
 export function toTextEdits(textEdits: TextChange[], doc: TextDocument): lsp.TextEdit[] {
-    return textEdits && textEdits.map((el) => {
+    return textEdits.map((el): lsp.TextEdit => {
         return {
-            range: toRange(el.span, doc),
+            range: toRange(el.span!, doc)!,
             newText: el.newText
         };
     })
 }
 
-export function toRange(textSpan: TextSpan, doc: TextDocument): lsp.Range | undefined {
+export function toRange(textSpan: TextSpan | undefined, doc: TextDocument): lsp.Range | undefined {
     if (!textSpan) {
         return;
     }
@@ -89,9 +89,9 @@ export function toPosition(index: number, doc: TextDocument): lsp.Position {
     return doc.positionAt(index);
 }
 
-export function toHover(hover: QuickInfo, doc: TextDocument): lsp.Hover {
+export function toHover(hover: QuickInfo | undefined, doc: TextDocument): lsp.Hover | null {
     if (!hover) {
-        return;
+        return null;
     }
     let documentation = hover.documentation ? hover.documentation.map((displayPart) => displayPart.text).join('') : "";
     let tags = hover.tags ? hover.tags.map((tag) => tagToString(tag)).join('  \n') : "";
@@ -118,9 +118,8 @@ function tagToString(tag: JSDocTagInfo): string {
     return tagLabel;
 }
 
-export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument, position: number):
-    lsp.CompletionItem[] {
-    return completionInfo && completionInfo.entries.map((entry) => {
+export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument, position: number): lsp.CompletionItem[] {
+    return completionInfo.entries.map((entry) => {
         let completion = {
             label: entry.name,
             insertText: entry.name,
@@ -140,7 +139,7 @@ export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument,
     });
 }
 
-export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.CompletionItem {
+export function toResolvedCompletion(entry?: CompletionEntryDetails): lsp.CompletionItem | undefined {
     if (!entry)
         return;
     return {

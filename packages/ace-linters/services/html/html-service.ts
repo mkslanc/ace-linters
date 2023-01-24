@@ -14,24 +14,21 @@ export class HtmlService extends BaseService implements AceLinters.LanguageServi
         this.$service = htmlService.getLanguageService();
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[] | null {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[] {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
 
-        let textEdits = this.$service.format(fullDocument, range, options);
-        return textEdits;
+        return this.$service.format(fullDocument, range, options);
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
+
         let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
-        let hover = this.$service.doHover(fullDocument, position, htmlDocument);
-        return Promise.resolve(hover);
+        return this.$service.doHover(fullDocument, position, htmlDocument);
     }
 
     //TODO: separate validator for HTML
@@ -41,13 +38,11 @@ export class HtmlService extends BaseService implements AceLinters.LanguageServi
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
-        let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
 
-        let completions = this.$service.doComplete(fullDocument, position, htmlDocument);
-        return Promise.resolve(completions);
+        let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
+        return this.$service.doComplete(fullDocument, position, htmlDocument);
     }
 
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {

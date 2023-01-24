@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "./out",
+    "allowJs": true,
+    "strictNullChecks": true,
+    "target": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

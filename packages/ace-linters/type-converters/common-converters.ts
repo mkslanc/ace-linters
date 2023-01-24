@@ -27,7 +27,7 @@ export namespace CommonConverter {
         markdown
     }
 
-    export function convertKind(kind: string): CompletionItemKind {
+    export function convertKind(kind?: string): CompletionItemKind {
         switch (kind) {
             case "primitiveType":
             case "keyword":
