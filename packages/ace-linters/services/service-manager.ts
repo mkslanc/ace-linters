@@ -99,16 +99,17 @@ export class ServiceManager {
     private static async $initServiceInstance(service: ServiceData) {
         let module = await service.module();
         service.serviceInstance = new module[service.className](service.modes);
-        service.serviceInstance.setGlobalOptions(service.options);
+        if (service.options)
+            service.serviceInstance!.setGlobalOptions(service.options);
     }
 
-    private async $getServiceInstanceByMode(mode: string): Promise<LanguageService> {
+    private async $getServiceInstanceByMode(mode: string): Promise<LanguageService | undefined> {
         let service = this.findServiceByMode(mode);
         if (!service)
             return;
         if (!service.serviceInstance)
             await ServiceManager.$initServiceInstance(service);
-        return service.serviceInstance;
+        return service.serviceInstance!;
     }
 
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge = false) {
@@ -117,7 +118,7 @@ export class ServiceManager {
             return;
         service.options = merge ? mergeObjects(options, service.options) : options;
         if (service.serviceInstance) {
-            service.serviceInstance.setGlobalOptions(service.options);
+            service.serviceInstance.setGlobalOptions(service.options!);
         }
     }
 
@@ -151,7 +152,7 @@ export class ServiceManager {
         }
     }
 
-    getServiceInstance(sessionID: string): LanguageService {
+    getServiceInstance(sessionID: string): LanguageService | undefined {
         let mode = this.$sessionIDToMode[sessionID];
         let service = this.findServiceByMode(mode);
         if (!mode || !service?.serviceInstance)
@@ -160,7 +161,7 @@ export class ServiceManager {
         return service.serviceInstance;
     }
 
-    findServiceByMode(mode: string): ServiceData {
+    findServiceByMode(mode: string): ServiceData | undefined {
         return Object.values(this.$services).find((el) => {
             let extensions = el.modes.split('|');
             if (extensions.includes(mode))

@@ -34,48 +34,42 @@ export class CssService extends BaseService implements AceLinters.LanguageServic
         }
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: CSSFormatConfiguration): lsp.TextEdit[] | null {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: CSSFormatConfiguration): lsp.TextEdit[] {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
-        let textEdits = this.$service.format(fullDocument, range, options);
-        return textEdits;
+
+        return this.$service.format(fullDocument, range, options);
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
+
         let cssDocument = this.$service.parseStylesheet(fullDocument);
-        let hover = this.$service.doHover(fullDocument, position, cssDocument);
-        return Promise.resolve(hover);
+        return this.$service.doHover(fullDocument, position, cssDocument);
     }
 
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return [];
-        }
-        let cssDocument = this.$service.parseStylesheet(fullDocument);
 
-        let diagnostics = this.$service.doValidation(fullDocument, cssDocument);
-        return Promise.resolve(diagnostics);
+        let cssDocument = this.$service.parseStylesheet(fullDocument);
+        return this.$service.doValidation(fullDocument, cssDocument);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
-        let cssDocument = this.$service.parseStylesheet(fullDocument);
 
-        let completions = this.$service.doComplete(fullDocument, position, cssDocument);
-        return Promise.resolve(completions);
+        let cssDocument = this.$service.parseStylesheet(fullDocument);
+        return this.$service.doComplete(fullDocument, position, cssDocument);
     }
 
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
-        return Promise.resolve(item);
+        return item;
     }
 }

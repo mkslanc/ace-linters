@@ -13,10 +13,10 @@ export class LuaService extends BaseService implements AceLinters.LanguageServic
 
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
         let value = this.getDocumentValue(document.uri);
-        if (!value) {
+        if (!value)
             return [];
-        }
-        let errors = [];
+
+        let errors: lsp.Diagnostic[] = [];
         try {
             this.$service.parse(value);
         } catch (e) {

@@ -105,7 +105,7 @@ export class LanguageProvider {
     }
 
     doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip) => void) {
-        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback(toTooltip(hover)));
+        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
 
     getTooltipText(hover: Tooltip) {
@@ -124,7 +124,7 @@ export class LanguageProvider {
     doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
-            (completionList) => callback(toCompletions(completionList)));
+            (completionList) => completionList && callback(toCompletions(completionList)));
     }
 
     $registerCompleters(editor: Editor) {
@@ -168,7 +168,7 @@ class SessionLanguageProvider {
     session: EditSession;
     fileName: string;
     private $messageController: IMessageController;
-    private $deltaQueue: Ace.Delta[];
+    private $deltaQueue: Ace.Delta[] | null;
     private $isConnected = false;
     private $modeIsChanged = false;
     private $options: ServiceOptions;
@@ -286,11 +286,5 @@ class SessionLanguageProvider {
         for (let edit of edits.reverse()) {
             this.session.doc.replace(toRange(edit.range), edit.newText);
         }
-    }
-
-    doComplete(editor: Editor, callback: (CompletionList) => void) {
-        let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.fileName, fromPoint(cursor),
-            (completionList) => callback(toCompletions(completionList)));
     }
 }

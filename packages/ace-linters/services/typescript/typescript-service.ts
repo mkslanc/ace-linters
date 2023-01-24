@@ -50,7 +50,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return '';
     }
 
-    getScriptSnapshot(fileName: string): ts.IScriptSnapshot {
+    getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
         const text = this.$getDocument(fileName);
         if (text === undefined) {
             return;
@@ -126,20 +126,18 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
     }
 
     getSyntacticDiagnostics(fileName: string): Diagnostic[] {
-        const diagnostics = this.$service.getSyntacticDiagnostics(fileName);
-        return diagnostics;
+        return this.$service.getSyntacticDiagnostics(fileName);
     }
 
     getSemanticDiagnostics(fileName: string): Diagnostic[] {
-        const diagnostics = this.$service.getSemanticDiagnostics(fileName);
-        return diagnostics;
+        return this.$service.getSemanticDiagnostics(fileName);
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument || !range) {
+        if (!fullDocument || !range)
             return [];
-        }
+
         let offset = toTsOffset(range, fullDocument);
         let textEdits = this.$service.getFormattingEditsForRange(document.uri, offset.start, offset.end, {
             PlaceOpenBraceOnNewLineForFunctions: false,
@@ -153,7 +151,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
             InsertSpaceAfterKeywordsInControlFlowStatements: false,
             ConvertTabsToSpaces: options.insertSpaces,
             TabSize: options.tabSize,
-            IndentStyle: undefined,
+            IndentStyle: 0,
             InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
             IndentSize: options.tabSize,
             NewLineCharacter: '\n'
@@ -163,36 +161,39 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
+
         let hover = this.$service.getQuickInfoAtPosition(document.uri, fullDocument.offsetAt(position))
-        return Promise.resolve(toHover(hover, fullDocument));
+        return toHover(hover, fullDocument);
     }
 
     //TODO: more validators?
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
-            return null;
-        }
+        if (!fullDocument)
+            return [];
+
         let semanticDiagnostics = this.getSemanticDiagnostics(document.uri);
         let syntacticDiagnostics = this.getSyntacticDiagnostics(document.uri);
 
-        return Promise.resolve(fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument));
+        return fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) {
+        if (!fullDocument)
             return null;
-        }
+
         let offset = fullDocument.offsetAt(position);
         let completions = this.$service.getCompletionsAtPosition(document.uri, offset, undefined);
+        if (!completions)
+            return null;
+
         return toCompletions(completions, fullDocument, offset);
     }
 
-    async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
+    async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null> {
         let resolvedCompletion = this.$service.getCompletionEntryDetails(
             item["fileName"],
             item["position"],
@@ -203,6 +204,6 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
             undefined
         );
 
-        return toResolvedCompletion(resolvedCompletion);
+        return toResolvedCompletion(resolvedCompletion) ?? null;
     }
 }

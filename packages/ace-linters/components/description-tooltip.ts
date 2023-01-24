@@ -8,12 +8,15 @@ let {Tooltip} = require("ace-code/src/tooltip");
 
 export class DescriptionTooltip extends Tooltip {
     private provider: LanguageProvider;
-    private $activeEditor: Editor;
+    private _activeEditor?: Editor;
+    private get $activeEditor(): Editor {
+        return this._activeEditor!;
+    }
 
-    $mouseMoveTimer: NodeJS.Timeout;
-    $showTimer: NodeJS.Timeout;
-    row?: number;
-    column?: number;
+    $mouseMoveTimer?: NodeJS.Timeout;
+    $showTimer?: NodeJS.Timeout;
+    row: number;
+    column: number;
 
     constructor(provider: LanguageProvider) {
         super();
@@ -31,7 +34,7 @@ export class DescriptionTooltip extends Tooltip {
     }
 
     private $activateEditor(editor: Ace.Editor) {
-        this.$activeEditor = editor;
+        this._activeEditor = editor;
 
         this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
@@ -41,7 +44,7 @@ export class DescriptionTooltip extends Tooltip {
             return;
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
 
-        this.$activeEditor = null;
+        this._activeEditor = undefined;
     }
 
     private $registerEditorEvents() {
@@ -58,7 +61,7 @@ export class DescriptionTooltip extends Tooltip {
         this.$activeEditor.off("mousedown", this.$hide);
 
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = null;
+        this._activeEditor = undefined;
     }
 
     update (editor: Ace.Editor) {
@@ -71,7 +74,7 @@ export class DescriptionTooltip extends Tooltip {
                 this.$inactivateEditor();
                 this.$activateEditor(editor);
                 this.doHover();
-                this.$mouseMoveTimer = null;
+                this.$mouseMoveTimer = undefined;
             }, 500);
 
         }
@@ -95,7 +98,7 @@ export class DescriptionTooltip extends Tooltip {
             let token = session.getTokenAt(docPos.row, docPos.column + 1);
 
             let row = description.range?.start.row ?? docPos.row;
-            let column = description.range?.start.column ?? token.start;
+            let column = description.range?.start.column ?? token?.start ?? 0;
 
             if (this.descriptionText != descriptionText) {
                 this.hide();
@@ -113,7 +116,7 @@ export class DescriptionTooltip extends Tooltip {
             } else {
                 this.$showTimer = setTimeout(() => {
                     this.$show();
-                    this.$showTimer = null;
+                    this.$showTimer = undefined;
                 }, 500);
             }
         });

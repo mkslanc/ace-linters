@@ -12,7 +12,7 @@ export declare namespace AceLinters {
         mode: string;
         globalOptions;
 
-        format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] | null;
+        format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
 
         doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 
@@ -20,7 +20,7 @@ export declare namespace AceLinters {
 
         doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
 
-        doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem>;
+        doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 
         setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
 
@@ -45,7 +45,7 @@ export declare namespace AceLinters {
     }
 
     export interface Tooltip {
-        content: TooltipContent
+        content: TooltipContent,
         range?: Ace.Range
     }
 
@@ -62,7 +62,7 @@ export declare namespace AceLinters {
         jsonSchemas?: {
             uri: string,
             fileMatch?: string[],
-            schema: string,
+            schema?: string,
         }[],
         jsonSchemaUri?: string,
         allowComments?: boolean,

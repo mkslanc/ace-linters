@@ -12,7 +12,7 @@ import {Ace} from "ace-code";
 export class MessageControllerWS extends events.EventEmitter implements IMessageController {
     private isConnected = false;
     private isInitialized = false;
-    private socket: WebSocket;
+    private readonly socket: WebSocket;
     private serverCapabilities: lsp.ServerCapabilities;
     private connection: lsp.ProtocolConnection;
     private initSessionQueue: { textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: () => void }[] = [];
@@ -193,7 +193,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             position: position,
         };
         let hoverCallback = (result: lsp.Hover) => {
-            callback(result);
+            callback && callback(result);
         };
         this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
     }
@@ -213,22 +213,19 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             position: position,
         };
         let completionCallback = (result: lsp.CompletionList | lsp.CompletionItem[] | null) => {
-            callback(result);
+            callback && callback(result);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }
 
     doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem) => void) {
-        if (!this.isInitialized) {
+        if (!this.isInitialized)
             return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider.resolveProvider)) {
+        if (!this.serverCapabilities?.completionProvider?.resolveProvider)
             return;
-        }
-        let resolveCallback = (result: lsp.CompletionItem) => {
-            callback(result);
-        };
-        this.postMessage('completionItem/resolve', sessionId, completion["item"], resolveCallback);
+        this.postMessage('completionItem/resolve', sessionId, completion["item"], (result: lsp.CompletionItem) => {
+            callback && callback(result);
+        });
     }
 
     changeMode(sessionId: string, value: string, mode: string, callback?: () => void): void {
@@ -263,10 +260,9 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             options: format,
             range: range
         };
-        let formatCallback = (params: lsp.TextEdit[]) => {
-            callback(params);
-        }
-        this.postMessage('textDocument/rangeFormatting', sessionId, options, formatCallback);
+        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params: lsp.TextEdit[]) => {
+            callback && callback(params);
+        });
     }
 
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void { //TODO: ?
