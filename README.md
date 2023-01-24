@@ -73,19 +73,60 @@ languageProvider.registerEditor(editor);
 
 ``` 
 
-In WebWorkers mode, you need to register
-services on the webworker side. Like this:
+In WebWorkers mode, you need to describe server
+on the webworker side. Like this:
 
 *webworker.js*
 
 ```javascript
-import {ServiceManager} from "ace-linters/services/service-manager";
+import {
+    createProtocolConnection,
+    BrowserMessageReader,
+    BrowserMessageWriter,
+} from "vscode-languageserver-protocol/browser";
+import {
+    CompletionRequest,
+    DidChangeTextDocumentNotification,
+    DidOpenTextDocumentNotification,
+    InitializeRequest,
+    TextDocumentSyncKind
+} from "vscode-languageserver-protocol";
+import {JsonService} from "ace-linters/build/json-service";
 
-let manager = new ServiceManager(self);
-manager.registerService("typescript", {
-    module: () => import("ace-linters/services/typescript/typescript-service"),
-    className: "TypescriptService",
-    modes: "typescript|javascript|tsx|jsx",
+const worker = self;
+const conn = createProtocolConnection(
+    new BrowserMessageReader(worker),
+    new BrowserMessageWriter(worker)
+);
+
+let jsonService = new JsonService("json");
+conn.onRequest(InitializeRequest.type, (_params) => {
+    return {
+        capabilities: {
+            textDocumentSync: TextDocumentSyncKind.Incremental,
+            completionProvider: {
+                resolveProvider: false,
+            },
+            hoverProvider: false,
+        },
+    };
+});
+conn.onNotification(
+    DidOpenTextDocumentNotification.type,
+    (params) => {
+        jsonService.addDocument(params.textDocument);
+    }
+);
+conn.onNotification(
+    DidChangeTextDocumentNotification.type,
+    (params) => {
+        jsonService.applyDeltas(params.textDocument, params.contentChanges);
+    }
+);
+conn.onRequest(CompletionRequest.type, async (params) => {
+    return jsonService.doComplete(
+        params.textDocument, params.position
+    );
 });
 ```
 
@@ -127,6 +168,21 @@ languageProvider.registerEditor(editor);
 
 You can use Ace linters with pre-defined services by looking at the "Ace linters with WebWorker demo (with default services)" example on GitHub:
 [Example](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/)
+
+Little example, describing registering of Typescript service:
+
+*webworker.js*
+
+```javascript
+import {ServiceManager} from "ace-linters/build/service-manager";
+
+let manager = new ServiceManager(self);
+manager.registerService("typescript", {
+    module: () => import("ace-linters/build/typescript-service"),
+    className: "TypescriptService",
+    modes: "typescript|javascript|tsx|jsx",
+});
+```
 ## License
 
 Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
