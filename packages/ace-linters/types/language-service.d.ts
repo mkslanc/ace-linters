@@ -73,9 +73,14 @@ export declare namespace AceLinters {
         compilerOptions?: ts.CompilerOptions
     }
 
+    export interface HtmlServiceOptions {
+        validationOptions?: { [option: string]: boolean }
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
-        typescript: TsServiceOptions
+        typescript: TsServiceOptions,
+        html: HtmlServiceOptions
     }
 }
