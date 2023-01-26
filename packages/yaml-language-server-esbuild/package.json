@@ -1,0 +1,20 @@
+{
+  "name": "@ace-linters/yaml-language-server-esbuild",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rimraf dist && node ./build.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "jsonc-parser": "^3.0.0",
+    "path-browserify": "^1.0.0",
+    "prettier": "^2.0.0",
+    "vscode-languageserver-textdocument": "^1.0.0"
+  },
+  "devDependencies": {
+    "yaml-language-server": "^1.11.0",
+    "esbuild": "^0.17.4"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js"
+}
