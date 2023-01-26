@@ -19,11 +19,12 @@ With Ace linters, you can easily add the following language-aware features to yo
 
 Ace linters supports the following languages by default with webworkers approach:
 
-- JSON, JSON5 (with JsonService)
-- HTML (with HtmlService)
-- CSS, SCSS, LESS (with CssService)
-- Typescript, Javascript, JSX, TSX (with TypescriptService)
-- Lua (with LuaService)
+- JSON, JSON5 *powered by* [vscode-json-languageservice](https://github.com/Microsoft/vscode-json-languageservice)
+- HTML *powered by* [vscode-html-languageservice](https://github.com/Microsoft/vscode-html-languageservice)
+- CSS, SCSS, LESS *powered by* [vscode-css-languageservice](https://github.com/Microsoft/vscode-css-languageservice)
+- Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
+- Lua *powered by* [luaparse](https://github.com/fstirlitz/luaparse)
+- YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
 
 For WebSockets you could connect any of your Language Server folowing LSP
 
@@ -73,8 +74,8 @@ languageProvider.registerEditor(editor);
 
 ``` 
 
-In WebWorkers mode, you need to implement server
-on the WebWorker side. Like this:
+In WebWorkers mode, you need to describe server
+on the webworker side. Like this:
 
 *webworker.js*
 
