@@ -5,7 +5,14 @@ import {
     InsertTextFormat,
     CompletionList,
     CompletionItem,
-    CompletionItemKind, Hover, MarkupContent, MarkedString, MarkupKind, TextEdit, InsertReplaceEdit, TextDocumentContentChangeEvent
+    CompletionItemKind,
+    Hover,
+    MarkupContent,
+    MarkedString,
+    MarkupKind,
+    TextEdit,
+    InsertReplaceEdit,
+    TextDocumentContentChangeEvent
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
@@ -113,12 +120,16 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
         insertTextFormat: (completion.snippet) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
-        textEdit: {
-            range: fromRange(completion["range"]),
-            newText: (completion.snippet ?? completion.value)!
-        },
         documentation: completion["documentation"],
     };
+    if (completion["range"]) {
+        completionItem.textEdit = {
+            range: fromRange(completion["range"]),
+            newText: (completion.snippet ?? completion.value)!
+        }
+    } else {
+        completionItem.insertText = (completion.snippet ?? completion.value)!
+    }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
     completionItem["item"] = completion["item"];
@@ -139,8 +150,10 @@ export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): Ace.Ra
     }
 }
 
-export function toTooltip(hover: Hover): Tooltip {
+export function toTooltip(hover: Hover | undefined): Tooltip | undefined {
     let content;
+    if (!hover)
+        return;
     if (MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     } else if (MarkedString.is(hover.contents)) {

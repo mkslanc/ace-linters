@@ -5,11 +5,10 @@ import {
 import {BaseService} from "../base-service";
 import JsonServiceOptions = AceLinters.JsonServiceOptions;
 import {AceLinters} from "../../types";
-import {TextDocument} from "vscode-languageserver-textdocument";
 import * as lsp from "vscode-languageserver-protocol";
 
 import * as jsonService from 'vscode-json-languageservice';
-import {TextDocumentItem} from "vscode-languageserver-protocol";
+import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 
 export class JsonService extends BaseService<JsonServiceOptions> implements AceLinters.LanguageService {
     $service: VSLanguageService;
@@ -58,7 +57,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
 
     }
 
-    removeDocument(document: TextDocument) {
+    removeDocument(document: TextDocumentIdentifier) {
         super.removeDocument(document);
         let schemas = this.getOption(document.uri, "jsonSchemas");
         schemas?.forEach((el) => {
