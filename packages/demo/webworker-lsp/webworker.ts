@@ -41,3 +41,8 @@ manager.registerService("lua", {
     className: "LuaService",
     modes: "lua",
 });
+manager.registerService("yaml", {
+    module: () => import("ace-linters/services/yaml/yaml-service"),
+    className: "YamlService",
+    modes: "yaml",
+});

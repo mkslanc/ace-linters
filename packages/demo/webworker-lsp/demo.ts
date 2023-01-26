@@ -14,6 +14,7 @@ import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
 import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
 import {Mode as TSXMode} from "ace-code/src/mode/tsx";
 import {Mode as LuaMode} from "ace-code/src/mode/lua";
+import {Mode as YamlMode} from "ace-code/src/mode/yaml";
 
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
@@ -30,6 +31,7 @@ import {LanguageProvider} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";
+import {yamlContent, yamlSchema} from "./docs-example/yaml-example";
 
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
@@ -43,8 +45,8 @@ let modes = [
     {name: "javascript", mode: JavascriptMode, content: jsContent},
     {name: "tsx", mode: TSXMode, content: tsxContent},
     {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}}, //TODO:
-    {name: "lua", mode: LuaMode, content: luaContent}
-
+    {name: "lua", mode: LuaMode, content: luaContent},
+    {name: "yaml", mode: YamlMode, content: yamlContent, options:{yamlSchemaUri: "yamlSchema.json"}}
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
@@ -71,6 +73,15 @@ languageProvider.setGlobalOptions("json5", {
         {
             uri: "json5Schema",
             schema: json5Schema
+        }
+    ]
+});
+
+languageProvider.setGlobalOptions("yaml", {
+    yamlSchemas: [
+        {
+            uri: "yamlSchema.json",
+            schema: yamlSchema
         }
     ]
 });
