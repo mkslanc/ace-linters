@@ -4,8 +4,9 @@
   "version": "0.2.3",
   "scripts": {
     "clean": "rimraf build",
-    "build": "npm run clean && webpack --mode=production",
-    "build-dev": "npm run clean && webpack --mode=development"
+    "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
+    "build": "npm run clean && npm run build:yaml-language-server && webpack --mode=production",
+    "build-dev": "npm run clean && npm run build:yaml-language-server && webpack --mode=development"
   },
   "dependencies": {
     "vscode-html-languageservice": "latest",

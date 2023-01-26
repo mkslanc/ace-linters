@@ -2,8 +2,9 @@
   "name": "ace-linters-root",
   "version": "0.2.3",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack-dev-server"
+    "build:yaml-language-server": "cd packages/yaml-language-server-esbuild && npm run build",
+    "build": "npm run build:yaml-language-server && webpack",
+    "start": "npm run build:yaml-language-server && webpack-dev-server"
   },
   "dependencies": {
     "ace-code": "mkslanc/ace#completions-improvements",

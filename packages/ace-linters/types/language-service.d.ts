@@ -69,6 +69,15 @@ export declare namespace AceLinters {
         trailingCommas?: boolean
     }
 
+    export interface YamlServiceOptions {
+        yamlSchemas?: {
+            uri: string,
+            fileMatch?: string[],
+            schema?: string,
+        }[],
+        yamlSchemaUri?: string,
+    }
+
     export interface TsServiceOptions {
         compilerOptions?: ts.CompilerOptions
     }
@@ -76,6 +85,7 @@ export declare namespace AceLinters {
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
-        typescript: TsServiceOptions
+        typescript: TsServiceOptions,
+        yaml: YamlServiceOptions
     }
 }
