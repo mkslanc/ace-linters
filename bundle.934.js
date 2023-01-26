@@ -91,14 +91,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "HtmlService": () => (/* binding */ HtmlService)
 /* harmony export */ });
 /* harmony import */ var _base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1378);
-/* harmony import */ var vscode_html_languageservice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(132);
+/* harmony import */ var htmlhint__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9357);
+/* harmony import */ var vscode_html_languageservice__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(132);
+
 
 
 class HtmlService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseService */ .b {
     $service;
+    defaultValidationOptions = {
+        "attr-no-duplication": true,
+        "body-no-duplicates": true,
+        "head-body-descendents-html": true,
+        "head-no-duplicates": true,
+        "head-valid-children": true,
+        "html-no-duplicates": true,
+        "html-root-node": true,
+        "html-valid-children": true,
+        "html-valid-children-order": true,
+        "img-src-required": true,
+        "invalid-attribute-char": true,
+        "nested-paragraphs": true,
+        "spec-char-escape": true,
+        "src-not-empty": true,
+        "tag-pair": true
+    };
     constructor(mode) {
         super(mode);
-        this.$service = vscode_html_languageservice__WEBPACK_IMPORTED_MODULE_1__/* .getLanguageService */ .Oi();
+        this.$service = vscode_html_languageservice__WEBPACK_IMPORTED_MODULE_2__/* .getLanguageService */ .Oi();
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
@@ -113,9 +132,28 @@ class HtmlService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServ
         let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
         return this.$service.doHover(fullDocument, position, htmlDocument);
     }
-    //TODO: separate validator for HTML
     async doValidation(document) {
-        return [];
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) {
+            return [];
+        }
+        let options = this.getOption(document.uri, "validationOptions") ?? this.defaultValidationOptions;
+        return htmlhint__WEBPACK_IMPORTED_MODULE_1__/* .HTMLHint.verify */ .WH.verify(fullDocument.getText(), options).map(el => {
+            return {
+                range: {
+                    start: {
+                        line: el.line - 1,
+                        character: el.col - 1
+                    },
+                    end: {
+                        line: el.line - 1,
+                        character: el.col - 1
+                    }
+                },
+                severity: el.type === "error" ? 1 : el.type === "warning" ? 2 : 3,
+                message: el.message
+            };
+        });
     }
     async doComplete(document, position) {
         let fullDocument = this.getDocument(document.uri);

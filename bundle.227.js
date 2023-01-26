@@ -506,7 +506,7 @@ class ServiceManager {
 
 let manager = new ServiceManager(self);
 manager.registerService("html", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(132), __webpack_require__.e(934)]).then(__webpack_require__.bind(__webpack_require__, 9934)),
+    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(230), __webpack_require__.e(934)]).then(__webpack_require__.bind(__webpack_require__, 9934)),
     className: "HtmlService",
     modes: "html"
 });
