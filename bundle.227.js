@@ -78,6 +78,36 @@ function mergeObjects(obj1, obj2) {
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	(() => {
+/******/ 		var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 		var leafPrototypes;
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 16: return value when it's Promise-like
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if(typeof value === 'object' && value) {
+/******/ 				if((mode & 4) && value.__esModule) return value;
+/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 			}
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			var def = {};
+/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 			for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 			}
+/******/ 			def['default'] = () => (value);
+/******/ 			__webpack_require__.d(ns, def);
+/******/ 			return ns;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -526,12 +556,12 @@ manager.registerService("scss", {
     modes: "scss"
 });
 manager.registerService("json", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(644), __webpack_require__.e(144)]).then(__webpack_require__.bind(__webpack_require__, 8411)),
+    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(516), __webpack_require__.e(2), __webpack_require__.e(144)]).then(__webpack_require__.bind(__webpack_require__, 8411)),
     className: "JsonService",
     modes: "json",
 });
 manager.registerService("json5", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(644), __webpack_require__.e(144)]).then(__webpack_require__.bind(__webpack_require__, 8411)),
+    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(516), __webpack_require__.e(2), __webpack_require__.e(144)]).then(__webpack_require__.bind(__webpack_require__, 8411)),
     className: "JsonService",
     modes: "json5",
 });
@@ -544,6 +574,11 @@ manager.registerService("lua", {
     module: () => Promise.all(/* import() */[__webpack_require__.e(37), __webpack_require__.e(658)]).then(__webpack_require__.bind(__webpack_require__, 5658)),
     className: "LuaService",
     modes: "lua",
+});
+manager.registerService("yaml", {
+    module: () => Promise.all(/* import() */[__webpack_require__.e(516), __webpack_require__.e(332), __webpack_require__.e(549)]).then(__webpack_require__.bind(__webpack_require__, 9549)),
+    className: "YamlService",
+    modes: "yaml",
 });
 
 })();

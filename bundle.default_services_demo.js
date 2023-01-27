@@ -18972,6 +18972,101 @@ exports.c = DocCommentHighlightRules;
 
 /***/ }),
 
+/***/ 5090:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var oop = __webpack_require__(9359);
+var BaseFoldMode = (__webpack_require__(5369).FoldMode);
+var Range = (__webpack_require__(9082)/* .Range */ .e);
+
+var FoldMode = exports.Z = function() {};
+oop.inherits(FoldMode, BaseFoldMode);
+
+(function() {
+
+    this.getFoldWidgetRange = function(session, foldStyle, row) {
+        var range = this.indentationBlock(session, row);
+        if (range)
+            return range;
+
+        var re = /\S/;
+        var line = session.getLine(row);
+        var startLevel = line.search(re);
+        if (startLevel == -1 || line[startLevel] != "#")
+            return;
+
+        var startColumn = line.length;
+        var maxRow = session.getLength();
+        var startRow = row;
+        var endRow = row;
+
+        while (++row < maxRow) {
+            line = session.getLine(row);
+            var level = line.search(re);
+
+            if (level == -1)
+                continue;
+
+            if (line[level] != "#")
+                break;
+
+            endRow = row;
+        }
+
+        if (endRow > startRow) {
+            var endColumn = session.getLine(endRow).length;
+            return new Range(startRow, startColumn, endRow, endColumn);
+        }
+    };
+
+    // must return "" if there's no fold, to enable caching
+    this.getFoldWidget = function(session, foldStyle, row) {
+        var line = session.getLine(row);
+        var indent = line.search(/\S/);
+        var next = session.getLine(row + 1);
+        var prev = session.getLine(row - 1);
+        var prevIndent = prev.search(/\S/);
+        var nextIndent = next.search(/\S/);
+
+        if (indent == -1) {
+            session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
+            return "";
+        }
+
+        // documentation comments
+        if (prevIndent == -1) {
+            if (indent == nextIndent && line[indent] == "#" && next[indent] == "#") {
+                session.foldWidgets[row - 1] = "";
+                session.foldWidgets[row + 1] = "";
+                return "start";
+            }
+        } else if (prevIndent == indent && line[indent] == "#" && prev[indent] == "#") {
+            if (session.getLine(row - 2).search(/\S/) == -1) {
+                session.foldWidgets[row - 1] = "start";
+                session.foldWidgets[row + 1] = "";
+                return "";
+            }
+        }
+
+        if (prevIndent!= -1 && prevIndent < indent)
+            session.foldWidgets[row - 1] = "start";
+        else
+            session.foldWidgets[row - 1] = "";
+
+        if (indent < nextIndent)
+            return "start";
+        else
+            return "";
+    };
+
+}).call(FoldMode.prototype);
+
+
+/***/ }),
+
 /***/ 2764:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -22690,6 +22785,231 @@ var XmlHighlightRules = function(normalize) {
 oop.inherits(XmlHighlightRules, TextHighlightRules);
 
 exports.U = XmlHighlightRules;
+
+
+/***/ }),
+
+/***/ 3348:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var oop = __webpack_require__(9359);
+var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
+var YamlHighlightRules = (__webpack_require__(6672)/* .YamlHighlightRules */ .A);
+var MatchingBraceOutdent = (__webpack_require__(1164)/* .MatchingBraceOutdent */ .p);
+var FoldMode = (__webpack_require__(5090)/* .FoldMode */ .Z);
+var WorkerClient = (__webpack_require__(1451).WorkerClient);
+
+var Mode = function() {
+    this.HighlightRules = YamlHighlightRules;
+    this.$outdent = new MatchingBraceOutdent();
+    this.foldingRules = new FoldMode();
+    this.$behaviour = this.$defaultBehaviour;
+};
+oop.inherits(Mode, TextMode);
+
+(function() {
+
+    this.lineCommentStart = ["#"];
+    
+    this.getNextLineIndent = function(state, line, tab) {
+        var indent = this.$getIndent(line);
+
+        if (state == "start") {
+            var match = line.match(/^.*[\{\(\[]\s*$/);
+            if (match) {
+                indent += tab;
+            }
+        }
+
+        return indent;
+    };
+
+    this.checkOutdent = function(state, line, input) {
+        return this.$outdent.checkOutdent(line, input);
+    };
+
+    this.autoOutdent = function(state, doc, row) {
+        this.$outdent.autoOutdent(doc, row);
+    };
+
+    this.createWorker = function(session) {
+        var worker = new WorkerClient(["ace"], "ace/mode/yaml_worker", "YamlWorker");
+        worker.attachToDocument(session.getDocument());
+
+        worker.on("annotate", function(results) {
+            session.setAnnotations(results.data);
+        });
+
+        worker.on("terminate", function() {
+            session.clearAnnotations();
+        });
+
+        return worker;
+    };
+
+
+    this.$id = "ace/mode/yaml";
+}).call(Mode.prototype);
+
+exports.A = Mode;
+
+
+/***/ }),
+
+/***/ 6672:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var oop = __webpack_require__(9359);
+var TextHighlightRules = (__webpack_require__(8053)/* .TextHighlightRules */ .K);
+
+var YamlHighlightRules = function() {
+
+    // regexp must not have capturing parentheses. Use (?:) instead.
+    // regexps are ordered -> the first match is used
+    this.$rules = {
+        "start" : [
+            {
+                token : "comment",
+                regex : "#.*$"
+            }, {
+                token : "list.markup",
+                regex : /^(?:-{3}|\.{3})\s*(?=#|$)/
+            },  {
+                token : "list.markup",
+                regex : /^\s*[\-?](?:$|\s)/
+            }, {
+                token: "constant",
+                regex: "!![\\w//]+"
+            }, {
+                token: "constant.language",
+                regex: "[&\\*][a-zA-Z0-9-_]+"
+            }, {
+                token: ["meta.tag", "keyword"],
+                regex: /^(\s*\w[^\s:]*?)(:(?=\s|$))/
+            },{
+                token: ["meta.tag", "keyword"],
+                regex: /(\w[^\s:]*?)(\s*:(?=\s|$))/
+            }, {
+                token : "keyword.operator",
+                regex : "<<\\w*:\\w*"
+            }, {
+                token : "keyword.operator",
+                regex : "-\\s*(?=[{])"
+            }, {
+                token : "string", // single line
+                regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
+            }, {
+                token : "string", // multi line string start
+                regex : /[|>][-+\d]*(?:$|\s+(?:$|#))/,
+                onMatch: function(val, state, stack, line) {
+                    line = line.replace(/ #.*/, "");
+                    var indent = /^ *((:\s*)?-(\s*[^|>])?)?/.exec(line)[0]
+                        .replace(/\S\s*$/, "").length;
+                    var indentationIndicator = parseInt(/\d+[\s+-]*$/.exec(line));
+                    
+                    if (indentationIndicator) {
+                        indent += indentationIndicator - 1;
+                        this.next = "mlString";
+                    } else {
+                        this.next = "mlStringPre";
+                    }
+                    if (!stack.length) {
+                        stack.push(this.next);
+                        stack.push(indent);
+                    } else {
+                        stack[0] = this.next;
+                        stack[1] = indent;
+                    }
+                    return this.token;
+                },
+                next : "mlString"
+            }, {
+                token : "string", // single quoted string
+                regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
+            }, {
+                token : "constant.numeric", // float
+                regex : /(\b|[+\-\.])[\d_]+(?:(?:\.[\d_]*)?(?:[eE][+\-]?[\d_]+)?)(?=[^\d-\w]|$)$/
+            }, {
+                token : "constant.numeric", // other number
+                regex : /[+\-]?\.inf\b|NaN\b|0x[\dA-Fa-f_]+|0b[10_]+/
+            }, {
+                token : "constant.language.boolean",
+                regex : "\\b(?:true|false|TRUE|FALSE|True|False|yes|no)\\b"
+            }, {
+                token : "paren.lparen",
+                regex : "[[({]"
+            }, {
+                token : "paren.rparen",
+                regex : "[\\])}]"
+            }, {
+                token : "text",
+                regex : /[^\s,:\[\]\{\}]+/
+            }
+        ],
+        "mlStringPre" : [
+            {
+                token : "indent",
+                regex : /^ *$/
+            }, {
+                token : "indent",
+                regex : /^ */,
+                onMatch: function(val, state, stack) {
+                    var curIndent = stack[1];
+
+                    if (curIndent >= val.length) {
+                        this.next = "start";
+                        stack.shift();
+                        stack.shift();
+                    }
+                    else {
+                        stack[1] = val.length - 1;
+                        this.next = stack[0] = "mlString";
+                    }
+                    return this.token;
+                },
+                next : "mlString"
+            }, {
+                defaultToken : "string"
+            }
+        ],
+        "mlString" : [
+            {
+                token : "indent",
+                regex : /^ *$/
+            }, {
+                token : "indent",
+                regex : /^ */,
+                onMatch: function(val, state, stack) {
+                    var curIndent = stack[1];
+
+                    if (curIndent >= val.length) {
+                        this.next = "start";
+                        stack.splice(0);
+                    }
+                    else {
+                        this.next = "mlString";
+                    }
+                    return this.token;
+                },
+                next : "mlString"
+            }, {
+                token : "string",
+                regex : '.+'
+            }
+        ]};
+    this.normalizeRules();
+
+};
+
+oop.inherits(YamlHighlightRules, TextHighlightRules);
+
+exports.A = YamlHighlightRules;
 
 
 /***/ }),
@@ -46909,6 +47229,8 @@ var javascript = __webpack_require__(8057);
 var tsx = __webpack_require__(300);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/mode/lua.js
 var lua = __webpack_require__(2585);
+// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/yaml.js
+var yaml = __webpack_require__(3348);
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/css-example.js
 var cssContent = `.text-layer {
     font: 12px Monaco, "Courier New", monospace;
@@ -48209,12 +48531,17 @@ function toCompletionItem(completion) {
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
         insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
-        textEdit: {
-            range: fromRange(completion["range"]),
-            newText: (completion.snippet ?? completion.value)
-        },
         documentation: completion["documentation"],
     };
+    if (completion["range"]) {
+        completionItem.textEdit = {
+            range: fromRange(completion["range"]),
+            newText: (completion.snippet ?? completion.value)
+        };
+    }
+    else {
+        completionItem.insertText = (completion.snippet ?? completion.value);
+    }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
     completionItem["item"] = completion["item"];
@@ -48235,6 +48562,8 @@ function getTextEditRange(textEdit) {
 }
 function toTooltip(hover) {
     let content;
+    if (!hover)
+        return;
     if (main.MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     }
@@ -48788,12 +49117,173 @@ function createEditorWithLSP(mode, i, languageProvider) {
     };
 }
 
+;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/yaml-example.js
+var yamlContent = `
+---
+product_name: Super Mobile Phone
+manufacturer: Somewhere
+price: 1
+color: 
+camera:
+  resolution: 12MP
+  zoom: 3x optical
+    features: [Dual SIM, Night mode, Deep Fusion]
+display:
+  size: 6.1 inches
+  resolution: 2778 x 1284
+  technology: OLED
+battery:
+  capacity: 2815mAh
+  fast_charge: Yes
+operating_system: Perpertum 14
+`;
+var yamlSchema = `{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "product_name": {
+      "type": "string",
+      "description": "The name of the product"
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "The company that manufactures the product"
+    },
+    "price": {
+      "type": "number",
+      "description": "The price of the product in USD"
+    },
+    "color": {
+      "type": "string",
+      "description": "The color of the product",
+      "enum": [
+        "Gold",
+        "Silver",
+        "Space Gray",
+        "Pacific Blue",
+        "Graphite"
+      ]
+    },
+    "storage": {
+      "type": "string",
+      "description": "The storage capacity of the product",
+      "enum": [
+        "64GB",
+        "128GB",
+        "256GB",
+        "512GB",
+        "1TB"
+      ]
+    },
+    "camera": {
+      "type": "object",
+      "properties": {
+        "resolution": {
+          "type": "string",
+          "description": "The camera resolution in megapixels"
+        },
+        "zoom": {
+          "type": "string",
+          "description": "The camera zoom capabilities"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional camera features"
+        }
+      },
+      "required": [
+        "resolution",
+        "zoom",
+        "features"
+      ],
+      "description": "Details about the camera"
+    },
+    "display": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "string",
+          "description": "The size of the display in inches"
+        },
+        "resolution": {
+          "type": "string",
+          "description": "The resolution of the display"
+        },
+        "technology": {
+          "type": "string",
+          "description": "The display technology used",
+          "enum": [
+            "OLED",
+            "LCD",
+            "AMOLED"
+          ]
+        }
+      },
+      "required": [
+        "size",
+        "resolution",
+        "technology"
+      ],
+      "description": "Details about the display"
+    },
+    "battery": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "type": "string",
+          "description": "The battery capacity in mAh"
+        },
+        "fast_charge": {
+          "type": "string",
+          "description": "Whether the device supports fast charging or not",
+          "enum": [
+            "Yes",
+            "No"
+          ]
+        }
+      },
+      "required": [
+        "capacity",
+        "fast_charge"
+      ],
+      "description": "Details about the battery"
+    },
+    "operating_system": {
+      "type": "string",
+      "description": "The operating system of the device",
+      "enum": [
+        "iOS",
+        "Android",
+        "Windows"
+      ]
+    }
+  },
+  "required": [
+    "product_name",
+    "manufacturer",
+    "price",
+    "color",
+    "storage",
+    "camera",
+    "display",
+    "battery",
+    "operating_system"
+  ],
+  "description": "A product listing object"
+}
+`;
+
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/demo.ts
 
 
 let demo_event = __webpack_require__(7989);
 let { HashHandler } = __webpack_require__(7116);
 let keyUtil = __webpack_require__(1797);
+
+
 
 
 
@@ -48829,7 +49319,8 @@ let modes = [
     { name: "javascript", mode: javascript/* Mode */.A, content: jsContent },
     { name: "tsx", mode: tsx/* Mode */.A, content: tsxContent },
     { name: "jsx", mode: javascript/* Mode */.A, content: jsxContent, options: { jsx: true } },
-    { name: "lua", mode: lua/* Mode */.A, content: luaContent }
+    { name: "lua", mode: lua/* Mode */.A, content: luaContent },
+    { name: "yaml", mode: yaml/* Mode */.A, content: yamlContent, options: { yamlSchemaUri: "yamlSchema.json" } }
 ];
 let worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(227), __webpack_require__.b));
 let languageProvider = LanguageProvider["default"](worker);
@@ -48853,6 +49344,14 @@ languageProvider.setGlobalOptions("json5", {
         {
             uri: "json5Schema",
             schema: json5Schema
+        }
+    ]
+});
+languageProvider.setGlobalOptions("yaml", {
+    yamlSchemas: [
+        {
+            uri: "yamlSchema.json",
+            schema: yamlSchema
         }
     ]
 });

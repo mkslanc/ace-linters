@@ -91,7 +91,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "JsonService": () => (/* binding */ JsonService)
 /* harmony export */ });
 /* harmony import */ var _base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1378);
-/* harmony import */ var vscode_json_languageservice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8644);
+/* harmony import */ var vscode_json_languageservice__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3002);
 
 
 class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseService */ .b {

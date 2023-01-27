@@ -44548,12 +44548,17 @@ function toCompletionItem(completion) {
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
         insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
-        textEdit: {
-            range: fromRange(completion["range"]),
-            newText: (completion.snippet ?? completion.value)
-        },
         documentation: completion["documentation"],
     };
+    if (completion["range"]) {
+        completionItem.textEdit = {
+            range: fromRange(completion["range"]),
+            newText: (completion.snippet ?? completion.value)
+        };
+    }
+    else {
+        completionItem.insertText = (completion.snippet ?? completion.value);
+    }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
     completionItem["item"] = completion["item"];
@@ -44574,6 +44579,8 @@ function getTextEditRange(textEdit) {
 }
 function toTooltip(hover) {
     let content;
+    if (!hover)
+        return;
     if (main.MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     }
