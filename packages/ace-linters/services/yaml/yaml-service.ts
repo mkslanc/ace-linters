@@ -1,34 +1,29 @@
-import {
-    LanguageService as VSLanguageService,
-    SchemaConfiguration
-} from "vscode-json-languageservice";
 import {BaseService} from "../base-service";
-import JsonServiceOptions = AceLinters.JsonServiceOptions;
 import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
-
-import * as jsonService from 'vscode-json-languageservice';
+import {getLanguageService} from "@ace-linters/yaml-language-server-esbuild";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 
-export class JsonService extends BaseService<JsonServiceOptions> implements AceLinters.LanguageService {
-    $service: VSLanguageService;
+type YamlServiceOptions = AceLinters.YamlServiceOptions;
+
+export class YamlService extends BaseService<YamlServiceOptions> implements AceLinters.LanguageService {
+    $service;
     schemas: { [schemaUri: string]: string } = {};
 
     constructor(mode: string) {
         super(mode);
-        this.$service = jsonService.getLanguageService({
-            schemaRequestService: (uri) => {
-                uri = uri.replace("file:///", "");
-                let jsonSchema = this.schemas[uri];
-                if (jsonSchema)
-                    return Promise.resolve(jsonSchema);
-                return Promise.reject(`Unable to load schema at ${uri}`);
-            }
-        });
+
+        this.$service = getLanguageService((uri) => {
+            uri = uri.replace("file:///", "");
+            let jsonSchema = this.schemas[uri];
+            if (jsonSchema)
+                return Promise.resolve(jsonSchema);
+            return Promise.reject(`Unable to load schema at ${uri}`);
+        }, null, null, null, null);
     }
 
-    private $getJsonSchemaUri(sessionID): string | undefined {
-        return this.getOption(sessionID, "jsonSchemaUri");
+    private $getYamlSchemaUri(sessionID): string | undefined {
+        return this.getOption(sessionID, "yamlSchemaUri");
     }
 
     addDocument(document: TextDocumentItem) {
@@ -37,9 +32,9 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
     }
 
     private $configureService(sessionID: string) {
-        let schemas = this.getOption(sessionID, "jsonSchemas");
+        let schemas = this.getOption(sessionID, "yamlSchemas");
         schemas?.forEach((el) => {
-            if (el.uri === this.$getJsonSchemaUri(sessionID)) {
+            if (el.uri === this.$getYamlSchemaUri(sessionID)) {
                 el.fileMatch ??= [];
                 el.fileMatch.push(sessionID);
             }
@@ -51,32 +46,34 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
         });
 
         this.$service.configure({
-            schemas: schemas as SchemaConfiguration[],
-            allowComments: this.mode === "json5"
+            schemas: schemas,
+            hover: true,
+            validate: true,
+            completion: true,
+            format: true,
+            customTags: false
         });
-
     }
 
     removeDocument(document: TextDocumentIdentifier) {
         super.removeDocument(document);
-        let schemas = this.getOption(document.uri, "jsonSchemas");
+        let schemas = this.getOption(document.uri, "yamlSchemas");
         schemas?.forEach((el) => {
-            if (el.uri === this.$getJsonSchemaUri(document.uri)) {
+            if (el.uri === this.$getYamlSchemaUri(document.uri)) {
                 el.fileMatch = el.fileMatch?.filter((pattern) => pattern != document.uri);
             }
         });
         this.$service.configure({
-            schemas: schemas as SchemaConfiguration[],
-            allowComments: this.mode === "json5"
+            schemas: schemas
         });
     }
 
-    setOptions(sessionID: string, options: JsonServiceOptions, merge = false) {
+    setOptions(sessionID: string, options: YamlServiceOptions, merge = false) {
         super.setOptions(sessionID, options, merge);
         this.$configureService(sessionID);
     }
 
-    setGlobalOptions(options: JsonServiceOptions) {
+    setGlobalOptions(options: YamlServiceOptions) {
         super.setGlobalOptions(options);
         this.$configureService("");
     }
@@ -86,16 +83,14 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
         if (!fullDocument)
             return [];
 
-        return this.$service.format(fullDocument, range, options);
+        return this.$service.doFormat(fullDocument, {}); //TODO: options?
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return null;
-
-        let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        return this.$service.doHover(fullDocument, position, jsonDocument);
+        return this.$service.doHover(fullDocument, position);
     }
 
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
@@ -103,8 +98,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
         if (!fullDocument)
             return [];
 
-        let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        return this.$service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
+        return this.$service.doValidation(fullDocument, false);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
@@ -112,11 +106,10 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
         if (!fullDocument)
             return null;
 
-        let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        return this.$service.doComplete(fullDocument, position, jsonDocument);
+        return this.$service.doComplete(fullDocument, position, false);
     }
 
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
-        return this.$service.doResolve(item);
+        return item;
     }
 }

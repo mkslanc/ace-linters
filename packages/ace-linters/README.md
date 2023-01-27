@@ -19,11 +19,12 @@ With Ace linters, you can easily add the following language-aware features to yo
 
 Ace linters supports the following languages by default with webworkers approach:
 
-- JSON, JSON5 (with JsonService)
-- HTML (with HtmlService)
-- CSS, SCSS, LESS (with CssService)
-- Typescript, Javascript, JSX, TSX (with TypescriptService)
-- Lua (with LuaService)
+- JSON, JSON5 *powered by* [vscode-json-languageservice](https://github.com/Microsoft/vscode-json-languageservice)
+- HTML *powered by* [vscode-html-languageservice](https://github.com/Microsoft/vscode-html-languageservice)
+- CSS, SCSS, LESS *powered by* [vscode-css-languageservice](https://github.com/Microsoft/vscode-css-languageservice)
+- Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
+- Lua *powered by* [luaparse](https://github.com/fstirlitz/luaparse)
+- YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
 
 For WebSockets you could connect any of your Language Server folowing LSP
 
@@ -44,37 +45,27 @@ editor and an instance of LanguageProvider.
 
 ```javascript
 import * as ace from "ace-code";
-import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {Mode as JsonMode} from "ace-code/src/mode/json";
 import {registerStyles, LanguageProvider} from "ace-linters";
-import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+    mode: new JsonMode() // Set the mode of the editor to JSON
 });
 
 // Create a language provider for web worker
 let languageProvider = LanguageProvider.for(worker);
-
-// Set global options for the Typescript service
-languageProvider.setGlobalOptions("typescript", {
-    compilerOptions: {
-        allowJs: true,
-        target: ScriptTarget.ESNext,
-        jsx: JsxEmit.Preserve
-    }
-});
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
 
 ``` 
 
-In WebWorkers mode, you need to implement server
-on the WebWorker side. Like this:
+In WebWorkers mode, you need to describe server
+on the webworker side. Like this:
 
 *webworker.js*
 

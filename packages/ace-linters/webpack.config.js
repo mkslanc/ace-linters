@@ -14,7 +14,7 @@ module.exports = (env, argv) => {
     };
     return {
         cache: false,
-        devtool: isProduction ? false : 'inline-source-map',
+        devtool: isProduction ? "source-map" : 'inline-source-map',
         entry: {
             "ace-linters": './index.ts',
             "service-manager": './services/service-manager.ts',
@@ -22,7 +22,8 @@ module.exports = (env, argv) => {
             "css-service": './services/css/css-service.ts',
             "json-service": './services/json/json-service.ts',
             "lua-service": './services/lua/lua-service.ts',
-            "typescript-service": './services/typescript/typescript-service.ts'
+            "typescript-service": './services/typescript/typescript-service.ts',
+            "yaml-service": './services/yaml/yaml-service.ts'
         },
         module: {
             rules: [
@@ -41,7 +42,10 @@ module.exports = (env, argv) => {
             ]
         },
         resolve: {
-            extensions: ['.tsx', '.ts', '.js']
+            extensions: ['.tsx', '.ts', '.js'],
+            fallback: {
+                "path": false
+            }
         },
         output: {
             filename: '[name].js',
@@ -52,7 +56,7 @@ module.exports = (env, argv) => {
             }
         },
         optimization: {
-            minimize: false //isProduction // runtimeChunk: 'single',
+            minimize: isProduction
         }
     };
 };

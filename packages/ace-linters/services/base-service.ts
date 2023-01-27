@@ -2,7 +2,6 @@ import * as lsp from "vscode-languageserver-protocol";
 import {AceLinters} from "../types";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
-import {TextDocumentItem} from "vscode-languageserver-protocol";
 
 export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions = AceLinters.ServiceOptions> implements AceLinters.LanguageService {
     abstract $service;
@@ -15,8 +14,9 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         this.mode = mode;
     }
 
-    addDocument(document: TextDocumentItem) {
-        this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, (document as TextDocumentItem).text)
+    addDocument(document: lsp.TextDocumentItem) {
+        this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version,
+            (document as lsp.TextDocumentItem).text)
         //TODO:
         /*if (options)
             this.setOptions(sessionID, options);*/
@@ -26,7 +26,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         return this.documents[uri];
     }
 
-    removeDocument(document: TextDocument) {
+    removeDocument(document: lsp.TextDocumentIdentifier) {
         delete this.documents[document.uri];
         if (this.options[document.uri]) {
             delete this.options[document.uri];

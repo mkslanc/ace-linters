@@ -104,7 +104,7 @@ export class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
-    doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip) => void) {
+    doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
 
