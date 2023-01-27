@@ -6,7 +6,7 @@ import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-pr
 
 type YamlServiceOptions = AceLinters.YamlServiceOptions;
 
-export class YamlService extends BaseService implements AceLinters.LanguageService {
+export class YamlService extends BaseService<YamlServiceOptions> implements AceLinters.LanguageService {
     $service;
     schemas: { [schemaUri: string]: string } = {};
 
