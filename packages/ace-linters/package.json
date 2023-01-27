@@ -16,7 +16,8 @@
     "vscode-languageserver-textdocument": "^1.0.8",
     "showdown": "latest",
     "luaparse": "latest",
-    "vscode-ws-jsonrpc": "^2.0.1"
+    "vscode-ws-jsonrpc": "^2.0.1",
+    "htmlhint": "^1.1.4"
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
