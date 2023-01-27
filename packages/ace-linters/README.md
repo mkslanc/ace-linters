@@ -45,29 +45,19 @@ editor and an instance of LanguageProvider.
 
 ```javascript
 import * as ace from "ace-code";
-import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {Mode as JsonMode} from "ace-code/src/mode/json";
 import {registerStyles, LanguageProvider} from "ace-linters";
-import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+    mode: new JsonMode() // Set the mode of the editor to JSON
 });
 
 // Create a language provider for web worker
 let languageProvider = LanguageProvider.for(worker);
-
-// Set global options for the Typescript service
-languageProvider.setGlobalOptions("typescript", {
-    compilerOptions: {
-        allowJs: true,
-        target: ScriptTarget.ESNext,
-        jsx: JsxEmit.Preserve
-    }
-});
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
