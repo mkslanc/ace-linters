@@ -86,11 +86,16 @@ export declare namespace AceLinters {
         validationOptions?: { [option: string]: boolean }
     }
 
+    export interface PhpServiceOptions {
+        inline: boolean
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
         typescript: TsServiceOptions,
         html: HtmlServiceOptions,
-        yaml: YamlServiceOptions
+        yaml: YamlServiceOptions,
+        php: PhpServiceOptions
     }
 }
