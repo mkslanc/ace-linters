@@ -25,6 +25,7 @@ Ace linters supports the following languages by default with webworkers approach
 - Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
 - Lua *powered by* [luaparse](https://github.com/fstirlitz/luaparse)
 - YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
+- XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
 
 For WebSockets you could connect any of your Language Server folowing LSP
 
@@ -45,19 +46,29 @@ editor and an instance of LanguageProvider.
 
 ```javascript
 import * as ace from "ace-code";
-import {Mode as JsonMode} from "ace-code/src/mode/json";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
 import {registerStyles, LanguageProvider} from "ace-linters";
+import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new JsonMode() // Set the mode of the editor to JSON
+    mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
 // Create a language provider for web worker
 let languageProvider = LanguageProvider.for(worker);
+
+// Set global options for the Typescript service
+languageProvider.setGlobalOptions("typescript", {
+    compilerOptions: {
+        allowJs: true,
+        target: ScriptTarget.ESNext,
+        jsx: JsxEmit.Preserve
+    }
+});
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);

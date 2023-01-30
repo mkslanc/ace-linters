@@ -46,3 +46,8 @@ manager.registerService("yaml", {
     className: "YamlService",
     modes: "yaml",
 });
+manager.registerService("xml", {
+    module: () => import("ace-linters/services/xml/xml-service"),
+    className: "XmlService",
+    modes: "xml",
+});

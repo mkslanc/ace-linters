@@ -86,11 +86,21 @@ export declare namespace AceLinters {
         validationOptions?: { [option: string]: boolean }
     }
 
+    export interface XmlServiceOptions {
+        schemas?: {
+            uri: string,
+            fileMatch?: string[],
+            schema?: string,
+        }[],
+        schemaUri?: string,
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
         typescript: TsServiceOptions,
         html: HtmlServiceOptions,
-        yaml: YamlServiceOptions
+        yaml: YamlServiceOptions,
+        xml: XmlServiceOptions
     }
 }

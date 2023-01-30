@@ -25,6 +25,7 @@ Ace linters supports the following languages by default with webworkers approach
 - Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
 - Lua *powered by* [luaparse](https://github.com/fstirlitz/luaparse)
 - YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
+- XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
 
 For WebSockets you could connect any of your Language Server folowing LSP
 
