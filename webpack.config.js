@@ -81,6 +81,9 @@ module.exports = (env, argv) => {
                     }, {
                         from: "packages/demo/rust_analyzer.html",
                         to: "."
+                    }, {
+                        from: "packages/demo/enable-threads.js",
+                        to: "."
                     }
                 ]
             })
