@@ -110,14 +110,14 @@ class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServ
         });
     }
     $getJsonSchemaUri(sessionID) {
-        return this.getOption(sessionID, "jsonSchemaUri");
+        return this.getOption(sessionID, "schemaUri");
     }
     addDocument(document) {
         super.addDocument(document);
         this.$configureService(document.uri);
     }
     $configureService(sessionID) {
-        let schemas = this.getOption(sessionID, "jsonSchemas");
+        let schemas = this.getOption(sessionID, "schemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getJsonSchemaUri(sessionID)) {
                 el.fileMatch ??= [];
@@ -136,7 +136,7 @@ class JsonService extends _base_service__WEBPACK_IMPORTED_MODULE_0__/* .BaseServ
     }
     removeDocument(document) {
         super.removeDocument(document);
-        let schemas = this.getOption(document.uri, "jsonSchemas");
+        let schemas = this.getOption(document.uri, "schemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getJsonSchemaUri(document.uri)) {
                 el.fileMatch = el.fileMatch?.filter((pattern) => pattern != document.uri);

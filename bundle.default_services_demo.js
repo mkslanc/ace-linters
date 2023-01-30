@@ -22575,6 +22575,57 @@ exports.x = TypeScriptHighlightRules;
 
 /***/ }),
 
+/***/ 4268:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var oop = __webpack_require__(9359);
+var lang = __webpack_require__(124);
+var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
+var XmlHighlightRules = (__webpack_require__(5239)/* .XmlHighlightRules */ .U);
+var XmlBehaviour = (__webpack_require__(7809)/* .XmlBehaviour */ .D);
+var XmlFoldMode = (__webpack_require__(4631)/* .FoldMode */ .Z);
+var WorkerClient = (__webpack_require__(1451).WorkerClient);
+
+var Mode = function() {
+   this.HighlightRules = XmlHighlightRules;
+   this.$behaviour = new XmlBehaviour();
+   this.foldingRules = new XmlFoldMode();
+};
+
+oop.inherits(Mode, TextMode);
+
+(function() {
+
+    this.voidElements = lang.arrayToMap([]);
+
+    this.blockComment = {start: "<!--", end: "-->"};
+
+    this.createWorker = function(session) {
+        var worker = new WorkerClient(["ace"], "ace/mode/xml_worker", "Worker");
+        worker.attachToDocument(session.getDocument());
+
+        worker.on("error", function(e) {
+            session.setAnnotations(e.data);
+        });
+
+        worker.on("terminate", function() {
+            session.clearAnnotations();
+        });
+
+        return worker;
+    };
+    
+    this.$id = "ace/mode/xml";
+}).call(Mode.prototype);
+
+exports.A = Mode;
+
+
+/***/ }),
+
 /***/ 5239:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -47231,6 +47282,8 @@ var tsx = __webpack_require__(300);
 var lua = __webpack_require__(2585);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/mode/yaml.js
 var yaml = __webpack_require__(3348);
+// EXTERNAL MODULE: ./node_modules/ace-code/src/mode/xml.js
+var xml = __webpack_require__(4268);
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/css-example.js
 var cssContent = `.text-layer {
     font: 12px Monaco, "Courier New", monospace;
@@ -49276,6 +49329,45 @@ var yamlSchema = `{
 }
 `;
 
+;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/xml-example.js
+var xmlContent = `
+<people>
+   <person eyeColor="violet">
+     <name>Daenerys Targaryen</name>
+   </person>
+</people>
+`;
+var xmlSchema = `{
+  "name": "people",
+  "required": true,
+  "cardinality": "single",
+  "attributes": {},
+  "elements": {
+    "person": {
+      "name": "person",
+      "required": false,
+      "cardinality": "many",
+      "attributes": {
+        "eyeColor": {
+          "key": "eyeColor",
+          "required": false,
+          "value": ["grey", "blue", "green", "red"]
+        }
+      },
+      "elements": {
+        "name": {
+          "cardinality": "single",
+          "required": true,
+          "name": "name",
+          "attributes": {},
+          "elements": {}
+        }
+      }
+    }
+  }
+}
+`;
+
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/demo.ts
 
 
@@ -49307,9 +49399,11 @@ let keyUtil = __webpack_require__(1797);
 
 
 
+
+
 let modes = [
-    { name: "json", mode: json/* Mode */.A, content: jsonContent, options: { jsonSchemaUri: "common-form.schema.json" } },
-    { name: "json5", mode: json5/* Mode */.A, content: json5Content, options: { jsonSchemaUri: "json5Schema" } },
+    { name: "json", mode: json/* Mode */.A, content: jsonContent, options: { schemaUri: "common-form.schema.json" } },
+    { name: "json5", mode: json5/* Mode */.A, content: json5Content, options: { schemaUri: "json5Schema" } },
     { name: "html", mode: html/* Mode */.A, content: htmlContent },
     { name: "css", mode: css/* Mode */.A, content: cssContent },
     { name: "less", mode: less/* Mode */.A, content: lessContent },
@@ -49320,7 +49414,8 @@ let modes = [
     { name: "tsx", mode: tsx/* Mode */.A, content: tsxContent },
     { name: "jsx", mode: javascript/* Mode */.A, content: jsxContent, options: { jsx: true } },
     { name: "lua", mode: lua/* Mode */.A, content: luaContent },
-    { name: "yaml", mode: yaml/* Mode */.A, content: yamlContent, options: { yamlSchemaUri: "yamlSchema.json" } }
+    { name: "yaml", mode: yaml/* Mode */.A, content: yamlContent, options: { schemaUri: "yamlSchema.json" } },
+    { name: "xml", mode: xml/* Mode */.A, content: xmlContent, options: { schemaUri: "xmlSchema.json" } }
 ];
 let worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(227), __webpack_require__.b));
 let languageProvider = LanguageProvider["default"](worker);
@@ -49332,7 +49427,7 @@ languageProvider.setGlobalOptions("typescript", {
     }
 });
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [
+    schemas: [
         {
             uri: "common-form.schema.json",
             schema: jsonSchema2
@@ -49340,7 +49435,7 @@ languageProvider.setGlobalOptions("json", {
     ]
 });
 languageProvider.setGlobalOptions("json5", {
-    jsonSchemas: [
+    schemas: [
         {
             uri: "json5Schema",
             schema: json5Schema
@@ -49348,10 +49443,18 @@ languageProvider.setGlobalOptions("json5", {
     ]
 });
 languageProvider.setGlobalOptions("yaml", {
-    yamlSchemas: [
+    schemas: [
         {
             uri: "yamlSchema.json",
             schema: yamlSchema
+        }
+    ]
+});
+languageProvider.setGlobalOptions("xml", {
+    schemas: [
+        {
+            uri: "xmlSchema.json",
+            schema: xmlSchema
         }
     ]
 });
@@ -49361,7 +49464,7 @@ for (let mode of modes) {
     i++;
 }
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [{
+    schemas: [{
             uri: "colors.schema.json",
             schema: jsonSchema
         },]

@@ -580,6 +580,11 @@ manager.registerService("yaml", {
     className: "YamlService",
     modes: "yaml",
 });
+manager.registerService("xml", {
+    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(152), __webpack_require__.e(113), __webpack_require__.e(753)]).then(__webpack_require__.bind(__webpack_require__, 4753)),
+    className: "XmlService",
+    modes: "xml",
+});
 
 })();
 
