@@ -28,7 +28,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
     }
 
     private $getJsonSchemaUri(sessionID): string | undefined {
-        return this.getOption(sessionID, "jsonSchemaUri");
+        return this.getOption(sessionID, "schemaUri");
     }
 
     addDocument(document: TextDocumentItem) {
@@ -37,7 +37,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
     }
 
     private $configureService(sessionID: string) {
-        let schemas = this.getOption(sessionID, "jsonSchemas");
+        let schemas = this.getOption(sessionID, "schemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getJsonSchemaUri(sessionID)) {
                 el.fileMatch ??= [];
@@ -59,7 +59,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
 
     removeDocument(document: TextDocumentIdentifier) {
         super.removeDocument(document);
-        let schemas = this.getOption(document.uri, "jsonSchemas");
+        let schemas = this.getOption(document.uri, "schemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getJsonSchemaUri(document.uri)) {
                 el.fileMatch = el.fileMatch?.filter((pattern) => pattern != document.uri);
