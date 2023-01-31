@@ -15,6 +15,7 @@ import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
 import {Mode as TSXMode} from "ace-code/src/mode/tsx";
 import {Mode as LuaMode} from "ace-code/src/mode/lua";
 import {Mode as YamlMode} from "ace-code/src/mode/yaml";
+import {Mode as PhpMode} from "ace-code/src/mode/php";
 import {Mode as XmlMode} from "ace-code/src/mode/xml";
 
 import {cssContent} from "./docs-example/css-example";
@@ -33,6 +34,7 @@ import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-conv
 import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";
 import {yamlContent, yamlSchema} from "./docs-example/yaml-example";
+import {phpContent} from "./docs-example/php-example";
 import {xmlContent, xmlSchema} from "./docs-example/xml-example";
 
 let modes = [
@@ -49,7 +51,8 @@ let modes = [
     {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}}, //TODO:
     {name: "lua", mode: LuaMode, content: luaContent},
     {name: "yaml", mode: YamlMode, content: yamlContent, options: {schemaUri: "yamlSchema.json"}},
-    {name: "xml", mode: XmlMode, content: xmlContent, options: {schemaUri: "xmlSchema.json"}}
+    {name: "xml", mode: XmlMode, content: xmlContent, options: {schemaUri: "xmlSchema.json"}},
+    {name: "php", mode: PhpMode, content: phpContent}
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 

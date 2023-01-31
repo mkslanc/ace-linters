@@ -95,12 +95,17 @@ export declare namespace AceLinters {
         schemaUri?: string,
     }
 
+    export interface PhpServiceOptions {
+        inline: boolean
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
         typescript: TsServiceOptions,
         html: HtmlServiceOptions,
         yaml: YamlServiceOptions,
+        php: PhpServiceOptions,
         xml: XmlServiceOptions
     }
 }
