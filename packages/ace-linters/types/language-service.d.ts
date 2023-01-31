@@ -59,23 +59,23 @@ export declare namespace AceLinters {
     }
 
     export interface JsonServiceOptions {
-        jsonSchemas?: {
+        schemas?: {
             uri: string,
             fileMatch?: string[],
             schema?: string,
         }[],
-        jsonSchemaUri?: string,
+        schemaUri?: string,
         allowComments?: boolean,
         trailingCommas?: boolean
     }
 
     export interface YamlServiceOptions {
-        yamlSchemas?: {
+        schemas?: {
             uri: string,
             fileMatch?: string[],
             schema?: string,
         }[],
-        yamlSchemaUri?: string,
+        schemaUri?: string,
     }
 
     export interface TsServiceOptions {
@@ -84,6 +84,15 @@ export declare namespace AceLinters {
 
     export interface HtmlServiceOptions {
         validationOptions?: { [option: string]: boolean }
+    }
+
+    export interface XmlServiceOptions {
+        schemas?: {
+            uri: string,
+            fileMatch?: string[],
+            schema?: string,
+        }[],
+        schemaUri?: string,
     }
 
     export interface PhpServiceOptions {
@@ -96,6 +105,7 @@ export declare namespace AceLinters {
         typescript: TsServiceOptions,
         html: HtmlServiceOptions,
         yaml: YamlServiceOptions,
-        php: PhpServiceOptions
+        php: PhpServiceOptions,
+        xml: XmlServiceOptions
     }
 }

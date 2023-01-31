@@ -7,7 +7,6 @@ manager.registerService("html", {
     className: "HtmlService",
     modes: "html"
 });
-
 manager.registerService("css", {
     module: () => import("ace-linters/services/css/css-service"),
     className: "CssService",
@@ -47,6 +46,11 @@ manager.registerService("yaml", {
     module: () => import("ace-linters/services/yaml/yaml-service"),
     className: "YamlService",
     modes: "yaml",
+});
+manager.registerService("xml", {
+    module: () => import("ace-linters/services/xml/xml-service"),
+    className: "XmlService",
+    modes: "xml",
 });
 manager.registerService("php", {
     module: () => import("ace-linters/services/php/php-service"),

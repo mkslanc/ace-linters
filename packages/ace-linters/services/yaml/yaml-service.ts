@@ -23,7 +23,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements AceL
     }
 
     private $getYamlSchemaUri(sessionID): string | undefined {
-        return this.getOption(sessionID, "yamlSchemaUri");
+        return this.getOption(sessionID, "schemaUri");
     }
 
     addDocument(document: TextDocumentItem) {
@@ -32,7 +32,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements AceL
     }
 
     private $configureService(sessionID: string) {
-        let schemas = this.getOption(sessionID, "yamlSchemas");
+        let schemas = this.getOption(sessionID, "schemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getYamlSchemaUri(sessionID)) {
                 el.fileMatch ??= [];
@@ -57,7 +57,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements AceL
 
     removeDocument(document: TextDocumentIdentifier) {
         super.removeDocument(document);
-        let schemas = this.getOption(document.uri, "yamlSchemas");
+        let schemas = this.getOption(document.uri, "schemas");
         schemas?.forEach((el) => {
             if (el.uri === this.$getYamlSchemaUri(document.uri)) {
                 el.fileMatch = el.fileMatch?.filter((pattern) => pattern != document.uri);

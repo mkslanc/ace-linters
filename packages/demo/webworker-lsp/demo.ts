@@ -16,6 +16,7 @@ import {Mode as TSXMode} from "ace-code/src/mode/tsx";
 import {Mode as LuaMode} from "ace-code/src/mode/lua";
 import {Mode as YamlMode} from "ace-code/src/mode/yaml";
 import {Mode as PhpMode} from "ace-code/src/mode/php";
+import {Mode as XmlMode} from "ace-code/src/mode/xml";
 
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
@@ -34,10 +35,11 @@ import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";
 import {yamlContent, yamlSchema} from "./docs-example/yaml-example";
 import {phpContent} from "./docs-example/php-example";
+import {xmlContent, xmlSchema} from "./docs-example/xml-example";
 
 let modes = [
-    {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
-    {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchemaUri: "json5Schema"}},
+    {name: "json", mode: JsonMode, content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
+    {name: "json5", mode: Json5Mode, content: json5Content, options: {schemaUri: "json5Schema"}},
     {name: "html", mode: HTMLMode, content: htmlContent},
     {name: "css", mode: CSSMode, content: cssContent},
     {name: "less", mode: LessMode, content: lessContent},
@@ -48,7 +50,8 @@ let modes = [
     {name: "tsx", mode: TSXMode, content: tsxContent},
     {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}}, //TODO:
     {name: "lua", mode: LuaMode, content: luaContent},
-    {name: "yaml", mode: YamlMode, content: yamlContent, options:{yamlSchemaUri: "yamlSchema.json"}},
+    {name: "yaml", mode: YamlMode, content: yamlContent, options: {schemaUri: "yamlSchema.json"}},
+    {name: "xml", mode: XmlMode, content: xmlContent, options: {schemaUri: "xmlSchema.json"}},
     {name: "php", mode: PhpMode, content: phpContent}
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
@@ -63,7 +66,7 @@ languageProvider.setGlobalOptions("typescript", {
 });
 
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [
+    schemas: [
         {
             uri: "common-form.schema.json",
             schema: jsonSchema2
@@ -72,7 +75,7 @@ languageProvider.setGlobalOptions("json", {
 });
 
 languageProvider.setGlobalOptions("json5", {
-    jsonSchemas: [
+    schemas: [
         {
             uri: "json5Schema",
             schema: json5Schema
@@ -81,10 +84,19 @@ languageProvider.setGlobalOptions("json5", {
 });
 
 languageProvider.setGlobalOptions("yaml", {
-    yamlSchemas: [
+    schemas: [
         {
             uri: "yamlSchema.json",
             schema: yamlSchema
+        }
+    ]
+});
+
+languageProvider.setGlobalOptions("xml", {
+    schemas: [
+        {
+            uri: "xmlSchema.json",
+            schema: xmlSchema
         }
     ]
 });
@@ -95,7 +107,7 @@ for (let mode of modes) {
     i++;
 }
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [{
+    schemas: [{
         uri: "colors.schema.json",
         schema: jsonSchema
     },]
