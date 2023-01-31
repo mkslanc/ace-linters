@@ -139,9 +139,7 @@ export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument,
     });
 }
 
-export function toResolvedCompletion(entry?: CompletionEntryDetails): lsp.CompletionItem | undefined {
-    if (!entry)
-        return;
+export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.CompletionItem {
     return {
         label: entry.name,
         kind: convertKind(entry.kind),

@@ -45,7 +45,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new CompleteMessage(sessionId, position), callback);
     }
 
-    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem) => void) {
+    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void) {
         this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
     }
 

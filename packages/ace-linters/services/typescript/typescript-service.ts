@@ -214,6 +214,9 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
             undefined
         );
 
-        return toResolvedCompletion(resolvedCompletion) ?? null;
+        if (!resolvedCompletion)
+            return null;
+
+        return toResolvedCompletion(resolvedCompletion);
     }
 }

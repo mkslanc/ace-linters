@@ -141,8 +141,10 @@ export class LanguageProvider {
                 },
                 getDocTooltip: (item) => {
                     if (!item["isResolved"]) {
-                        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem) => {
+                        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem?) => {
                             item["isResolved"] = true;
+                            if (!completionItem)
+                                return;
                             let completion = toResolvedCompletion(item, completionItem);
                             item.docText = completion.docText;
                             if (completion.docHTML) {

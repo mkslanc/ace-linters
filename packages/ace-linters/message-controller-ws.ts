@@ -218,7 +218,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }
 
-    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem) => void) {
+    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void) {
         if (!this.isInitialized)
             return;
         if (!this.serverCapabilities?.completionProvider?.resolveProvider)
