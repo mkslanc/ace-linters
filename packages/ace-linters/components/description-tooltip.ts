@@ -87,6 +87,8 @@ export class DescriptionTooltip extends Tooltip {
         let session = this.$activeEditor.session;
 
         this.provider.doHover(session, screenPos, (hover) => {
+            if (!hover)
+                return;
             let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();

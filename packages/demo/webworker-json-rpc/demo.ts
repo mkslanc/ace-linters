@@ -27,7 +27,7 @@ languageProvider.setGlobalOptions("typescript", {
 });
 
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [
+    schemas: [
         {
             uri: "common-form.schema.json",
             schema: jsonSchema2
@@ -41,7 +41,7 @@ for (let mode of modes) {
     i++;
 }
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [{
+    schemas: [{
         uri: "colors.schema.json",
         schema: jsonSchema
     },]
