@@ -60451,6 +60451,8 @@ class LanguageProvider {
                     if (!item["isResolved"]) {
                         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem) => {
                             item["isResolved"] = true;
+                            if (!completionItem)
+                                return;
                             let completion = toResolvedCompletion(item, completionItem);
                             item.docText = completion.docText;
                             if (completion.docHTML) {
@@ -60704,8 +60706,6 @@ function typescript_converters_toCompletions(completionInfo, doc, position) {
     });
 }
 function typescript_converters_toResolvedCompletion(entry) {
-    if (!entry)
-        return;
     return {
         label: entry.name,
         kind: convertKind(entry.kind),
