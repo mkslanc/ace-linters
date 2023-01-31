@@ -19,7 +19,10 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         allowJs: true,
         jsx: JsxEmit.Preserve,
         allowNonTsExtensions: true,
-        target: ScriptTarget.ESNext
+        target: ScriptTarget.ESNext,
+        noSemanticValidation: true,
+        noSyntaxValidation: false,
+        onlyVisible: false
     };
 
     constructor(mode: string) {
@@ -35,7 +38,12 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
     }
 
     getScriptFileNames(): string[] {
-        return Object.keys(this.documents);
+        let fileNames = Object.keys(this.documents);
+        return fileNames.concat(Object.keys(this.$extraLibs));
+    }
+
+    private get $extraLibs() {
+        return this.globalOptions["extraLibs"] ?? [];
     }
 
     getScriptVersion(fileName: string): string {
@@ -70,6 +78,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
             text = document.getText();
         } else if (fileName in libFileMap) {
             text = libFileMap[fileName];
+        } else if (fileName in this.$extraLibs) {
+            text = this.$extraLibs[fileName].content;
         } else {
             return;
         }
