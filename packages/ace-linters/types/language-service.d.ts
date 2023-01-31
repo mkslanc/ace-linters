@@ -78,8 +78,16 @@ export declare namespace AceLinters {
         schemaUri?: string,
     }
 
+    interface ExtraLib {
+        content: string;
+        version: number;
+    }
+
     export interface TsServiceOptions {
-        compilerOptions?: ts.CompilerOptions
+        compilerOptions?: ts.CompilerOptions,
+        extraLibs?: {
+            [path: string]: ExtraLib;
+        }
     }
 
     export interface HtmlServiceOptions {
