@@ -82,25 +82,22 @@ export class DescriptionTooltip extends Tooltip {
 
     doHover = () => {
         let renderer = this.$activeEditor.renderer;
-        let screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
+        let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
 
         let session = this.$activeEditor.session;
+        let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
 
-        this.provider.doHover(session, screenPos, (hover) => {
-            if (!hover)
-                return;
-            let description = this.provider.getTooltipText(hover);
-            if (!description || !description.text) {
+        this.provider.doHover(session, docPos, (hover) => {
+            let descriptionText = hover ? this.provider.getTooltipText(hover) : null;
+            if (!hover || !descriptionText) {
                 this.hide();
                 return;
             }
-            let descriptionText = description.text;
 
-            let docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
             let token = session.getTokenAt(docPos.row, docPos.column + 1);
 
-            let row = description.range?.start.row ?? docPos.row;
-            let column = description.range?.start.column ?? token?.start ?? 0;
+            let row = hover.range?.start.row ?? docPos.row;
+            let column = hover.range?.start.column ?? token?.start ?? 0;
 
             if (this.descriptionText != descriptionText) {
                 this.hide();

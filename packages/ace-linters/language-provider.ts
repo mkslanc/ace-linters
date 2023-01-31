@@ -108,12 +108,9 @@ export class LanguageProvider {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
 
-    getTooltipText(hover: Tooltip) {
-        if (!hover)
-            return;
-        let text = hover.content.type === CommonConverter.TooltipType.markdown ?
+    getTooltipText(hover: Tooltip): string | undefined {
+        return hover.content.type === CommonConverter.TooltipType.markdown ?
             CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
-        return {text: text, range: hover.range}
     }
 
     format = () => {
