@@ -585,6 +585,11 @@ manager.registerService("xml", {
     className: "XmlService",
     modes: "xml",
 });
+manager.registerService("php", {
+    module: () => __webpack_require__.e(/* import() */ 313).then(__webpack_require__.bind(__webpack_require__, 3313)),
+    className: "PhpService",
+    modes: "php"
+});
 
 })();
 

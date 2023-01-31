@@ -43609,6 +43609,8 @@ class DescriptionTooltip extends Tooltip {
         let screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
         let session = this.$activeEditor.session;
         this.provider.doHover(session, screenPos, (hover) => {
+            if (!hover)
+                return;
             let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();

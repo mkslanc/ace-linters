@@ -43501,6 +43501,8 @@ class DescriptionTooltip extends Tooltip {
         let screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
         let session = this.$activeEditor.session;
         this.provider.doHover(session, screenPos, (hover) => {
+            if (!hover)
+                return;
             let description = this.provider.getTooltipText(hover);
             if (!description || !description.text) {
                 this.hide();
@@ -45049,7 +45051,7 @@ languageProvider.setGlobalOptions("typescript", {
     }
 });
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [
+    schemas: [
         {
             uri: "common-form.schema.json",
             schema: jsonSchema2
@@ -45062,7 +45064,7 @@ for (let mode of modes) {
     i++;
 }
 languageProvider.setGlobalOptions("json", {
-    jsonSchemas: [{
+    schemas: [{
             uri: "colors.schema.json",
             schema: jsonSchema
         },]
