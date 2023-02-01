@@ -59324,21 +59324,18 @@ class DescriptionTooltip extends Tooltip {
     ;
     doHover = () => {
         let renderer = this.$activeEditor.renderer;
-        let screenPos = renderer.pixelToScreenCoordinates(this.x, this.y);
+        let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
         let session = this.$activeEditor.session;
-        this.provider.doHover(session, screenPos, (hover) => {
-            if (!hover)
-                return;
-            let description = this.provider.getTooltipText(hover);
-            if (!description || !description.text) {
+        let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
+        this.provider.doHover(session, docPos, (hover) => {
+            let descriptionText = hover ? this.provider.getTooltipText(hover) : null;
+            if (!hover || !descriptionText) {
                 this.hide();
                 return;
             }
-            let descriptionText = description.text;
-            let docPos = session.screenToDocumentPosition(screenPos.row, screenPos.column);
             let token = session.getTokenAt(docPos.row, docPos.column + 1);
-            let row = description.range?.start.row ?? docPos.row;
-            let column = description.range?.start.column ?? token?.start ?? 0;
+            let row = hover.range?.start.row ?? docPos.row;
+            let column = hover.range?.start.column ?? token?.start ?? 0;
             if (this.descriptionText != descriptionText) {
                 this.hide();
                 this.setHtml(descriptionText);
@@ -60421,11 +60418,8 @@ class LanguageProvider {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
     getTooltipText(hover) {
-        if (!hover)
-            return;
-        let text = hover.content.type === CommonConverter.TooltipType.markdown ?
+        return hover.content.type === CommonConverter.TooltipType.markdown ?
             CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
-        return { text: text, range: hover.range };
     }
     format = () => {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(this.$activeEditor.session);
