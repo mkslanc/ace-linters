@@ -35,9 +35,6 @@ module.exports = (env, argv) => {
             ]
         },
         resolveLoader: {
-            alias: {
-                "ace-code/src/requirejs/text": __dirname + "/node_modules/text-loader"
-            },
             modules: [
                 "node_modules", __dirname + "/node_modules"
             ]

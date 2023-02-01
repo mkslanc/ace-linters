@@ -24,7 +24,8 @@ module.exports = (env, argv) => {
             "lua-service": './services/lua/lua-service.ts',
             "typescript-service": './services/typescript/typescript-service.ts',
             "yaml-service": './services/yaml/yaml-service.ts',
-            "xml-service": './services/xml/xml-service.ts'
+            "xml-service": './services/xml/xml-service.ts',
+            "php-service": './services/php/php-service.ts'
         },
         module: {
             rules: [
