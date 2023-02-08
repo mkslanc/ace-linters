@@ -25,7 +25,7 @@ import {
 } from "./type-converters/lsp-converters";
 import * as lsp from "vscode-languageserver-protocol";
 
-let showdown = require('showdown');
+import showdown from "showdown";
 
 export class LanguageProvider {
     private $activeEditor: Editor;
@@ -109,7 +109,7 @@ export class LanguageProvider {
     }
 
     getTooltipText(hover: Tooltip): string | undefined {
-        return hover.content.type === CommonConverter.TooltipType.markdown ?
+        return hover.content.type === "markdown" ?
             CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
     }
 

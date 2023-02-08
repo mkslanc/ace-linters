@@ -1,14 +1,17 @@
-"use strict";
 import {LanguageProvider} from "../language-provider";
 import {Ace} from "ace-code";
+import event from "ace-code/src/lib/event";
+import {Tooltip} from "ace-code/src/tooltip";
 import Editor = Ace.Editor;
-
-let event = require("ace-code/src/lib/event");
-let {Tooltip} = require("ace-code/src/tooltip");
 
 export class DescriptionTooltip extends Tooltip {
     private provider: LanguageProvider;
     private _activeEditor?: Editor;
+    private descriptionText: string;
+    private isOpen: boolean;
+    private x: number;
+    private y: number;
+
     private get $activeEditor(): Editor {
         return this._activeEditor!;
     }
@@ -64,7 +67,7 @@ export class DescriptionTooltip extends Tooltip {
         this._activeEditor = undefined;
     }
 
-    update (editor: Ace.Editor) {
+    update(editor: Ace.Editor) {
         clearTimeout(this.$mouseMoveTimer);
         clearTimeout(this.$showTimer);
         if (this.isOpen) {
@@ -188,4 +191,19 @@ export class DescriptionTooltip extends Tooltip {
         event.removeListener(this.getElement(), "mouseout", this.onMouseOut);
     };
 
+    private getElement() {
+        return super.getElement();
+    }
+
+    private hide() {
+        super.hide();
+    }
+
+    private show(param, pageX: number, pageY: number) {
+        super.show(param, pageX, pageY);
+    }
+
+    private setHtml(descriptionText: string) {
+        super.setHtml(descriptionText);
+    }
 }
