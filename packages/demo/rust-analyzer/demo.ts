@@ -3,14 +3,14 @@ import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 import * as keyUtil from "ace-code/src/lib/keys";
 import {Mode as RustMode} from "ace-code/src/mode/rust"
 
-import {LanguageProvider} from "ace-linters";
+import {AceLanguageClient} from "ace-linters";
 import {createEditorWithLSP} from "../utils";
 import {rustContent} from "../webworker-lsp/docs-example/rust-example";
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 let mode = {name: "rust", mode: RustMode, content: rustContent};
 
-let languageProvider = LanguageProvider.for(worker);
+let languageProvider = AceLanguageClient.for(worker);
 createEditorWithLSP(mode, 0, languageProvider);
 
 let menuKb = new HashHandler([

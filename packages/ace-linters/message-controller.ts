@@ -24,11 +24,11 @@ export class MessageController implements IMessageController {
     constructor(worker: Worker) {
         this.$worker = worker;
 
-        this.$worker.onmessage = (e) => {
+        this.$worker.addEventListener("message", (e) => {
             let message = e.data;
-
             this["_signal"](message.type + "-" + message.sessionId, message.value);
-        };
+        });
+
     }
 
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {

@@ -6,10 +6,21 @@
     "target": "esnext",
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "module": "commonjs",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "esModuleInterop": true
   },
+  "ts-node": {
+    "transpileOnly": true
+  },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "build",
+    "out",
+    "coverage",
+    "tests"
+  ],
+  "include": [
+    "./**/*.ts"
   ]
 }

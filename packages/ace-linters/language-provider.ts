@@ -10,7 +10,6 @@ import ServiceOptions = AceLinters.ServiceOptions;
 import Editor = Ace.Editor;
 import EditSession = Ace.EditSession;
 import Completion = Ace.Completion;
-import {MessageControllerWS} from "./message-controller-ws";
 import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {MessageController} from "./message-controller";
 import {
@@ -35,20 +34,10 @@ export class LanguageProvider {
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     private $editors: Editor[] = [];
 
-    private constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
+    constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
         this.$messageController = messageController;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
         this.$descriptionTooltip = new DescriptionTooltip(this);
-    }
-
-    /**
-     *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
-     * @param {Worker | WebSocket} mode
-     * @param markdownConverter
-     */
-    static for(mode: Worker | WebSocket, markdownConverter?: MarkDownConverter) { //TODO:
-        let messageController = new MessageControllerWS(mode);
-        return new LanguageProvider(messageController, markdownConverter);
     }
 
     /**
@@ -57,7 +46,7 @@ export class LanguageProvider {
      * @param {Worker} worker
      * @param markdownConverter
      */
-    static default(worker: Worker, markdownConverter?: MarkDownConverter) {
+    static create(worker: Worker, markdownConverter?: MarkDownConverter) {
         let messageController: IMessageController;
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, markdownConverter);

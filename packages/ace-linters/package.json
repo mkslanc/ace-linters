@@ -7,7 +7,7 @@
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
     "build": "npm run clean && npm run build:yaml-language-server && webpack --mode=production",
     "build-dev": "npm run clean && npm run build:yaml-language-server && webpack --mode=development",
-    "test": "mocha -r ts-node/register tests/*.ts",
+    "test": "mocha --exit",
     "test:coverage": "nyc npm run test"
   },
   "dependencies": {

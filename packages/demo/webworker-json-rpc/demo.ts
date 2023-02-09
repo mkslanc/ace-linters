@@ -6,7 +6,7 @@ let keyUtil = require("ace-code/src/lib/keys");
 
 import {Mode as JsonMode} from "ace-code/src/mode/json";
 
-import {LanguageProvider} from "ace-linters";
+import {AceLanguageClient} from "ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {createEditorWithLSP} from "../utils";
 import {jsonContent, jsonSchema, jsonSchema2} from "../webworker-lsp/docs-example/json-example";
@@ -17,7 +17,7 @@ let modes = [
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = LanguageProvider.for(worker);
+let languageProvider = AceLanguageClient.for(worker);
 languageProvider.setGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,
