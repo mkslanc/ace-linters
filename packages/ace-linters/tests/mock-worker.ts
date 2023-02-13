@@ -26,7 +26,6 @@ export class MockWorker extends EventEmitter {
 
     postMessage(data, transfer) {
         setTimeout(() => {
-            console.log(data);
             this.$emitter.emit("message", {data: data});
         }, 0);
 

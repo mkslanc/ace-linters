@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "build:yaml-language-server": "cd packages/yaml-language-server-esbuild && npm run build",
     "build": "npm run build:yaml-language-server && webpack",

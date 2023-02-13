@@ -5,4 +5,3 @@ dom.importCssString(lintersCSS, "linters.css");
 
 export {LanguageProvider} from "./language-provider";
 export {MessageController} from "./message-controller";
-export {AceLanguageClient} from "./ace-language-client";

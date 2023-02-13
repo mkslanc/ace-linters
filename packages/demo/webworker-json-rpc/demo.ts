@@ -6,7 +6,7 @@ let keyUtil = require("ace-code/src/lib/keys");
 
 import {Mode as JsonMode} from "ace-code/src/mode/json";
 
-import {AceLanguageClient} from "ace-linters";
+import {AceLanguageClient} from "ace-linters/ace-language-client";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {createEditorWithLSP} from "../utils";
 import {jsonContent, jsonSchema, jsonSchema2} from "../webworker-lsp/docs-example/json-example";

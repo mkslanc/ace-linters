@@ -39,16 +39,12 @@ npm install ace-linters
 
 ## Usage with WebWorker (JSON-RPC)
 
-To use Ace linters with WebWorker, you will first need to include it in your project and create an instance of the Ace
-editor and an instance of LanguageProvider. 
-
 *client.js*:
 
 ```javascript
 import * as ace from "ace-code";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
-import {registerStyles, LanguageProvider} from "ace-linters";
-import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
@@ -58,25 +54,15 @@ let editor = ace.edit("container", {
     mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
-// Create a language provider for web worker
-let languageProvider = LanguageProvider.for(worker);
-
-// Set global options for the Typescript service
-languageProvider.setGlobalOptions("typescript", {
-    compilerOptions: {
-        allowJs: true,
-        target: ScriptTarget.ESNext,
-        jsx: JsxEmit.Preserve
-    }
-});
+// Create a language provider for web worker (
+let languageProvider = AceLanguageClient.for(worker);
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
 
 ``` 
 
-In WebWorkers mode, you need to describe server
-on the webworker side. Like this:
+You need to describe server, similar to this:
 
 *webworker.js*
 
@@ -145,10 +131,10 @@ Here's an example client:
 ```javascript
 import * as ace from "ace-code";
 import {Mode as JSONMode} from "ace-code/src/mode/json"; //any mode you want
-import {LanguageProvider} from "ace-linters";
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web socket
-const webSocket = new WebSocket("ws://localhost:3000/exampleServer"); // adress of your websocket server
+const webSocket = new WebSocket("ws://localhost:3000/exampleServer"); // address of your websocket server
 
 // Create an Ace editor
 let editor = ace.edit("container", {
@@ -156,7 +142,7 @@ let editor = ace.edit("container", {
 });
 
 // Create a language provider for web socket
-let languageProvider = LanguageProvider.for(webSocket);
+let languageProvider = AceLanguageClient.for(webSocket);
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
