@@ -7,7 +7,7 @@ import {jsonContent} from "../webworker-lsp/docs-example/json-example";
 
 import {json5Content, json5Schema} from "../webworker-lsp/docs-example/json5-example";
 
-import {LanguageProvider} from "ace-linters";
+import {AceLanguageClient} from "ace-linters/ace-language-client";
 import {createEditorWithLSP} from "../utils";
 
 const webSocket = new WebSocket("ws://localhost:3000/exampleServer");
@@ -17,7 +17,7 @@ let modes = [
     {name: "json5", mode: Json5Mode, content: json5Content, options: {jsonSchemaUri: "json5Schema"}},
 ]
 
-let languageProvider = LanguageProvider.for(webSocket);
+let languageProvider = AceLanguageClient.for(webSocket);
 let i = 0;
 for (let mode of modes) {
     createEditorWithLSP(mode, i, languageProvider);

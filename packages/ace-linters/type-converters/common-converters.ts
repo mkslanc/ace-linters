@@ -22,10 +22,7 @@ export namespace CommonConverter {
         return AceRange.fromPoints(range.start, range.end);
     }
 
-    export enum TooltipType {
-        plainText,
-        markdown
-    }
+    export declare type TooltipType = 'plaintext' | 'markdown';
 
     export function convertKind(kind?: string): CompletionItemKind {
         switch (kind) {

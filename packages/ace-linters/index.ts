@@ -1,4 +1,3 @@
-import {MessageController} from "./message-controller";
 import * as lintersCSS from "./css/linters.css";
 import * as dom from "ace-code/src/lib/dom";
 

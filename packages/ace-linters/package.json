@@ -1,12 +1,14 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "clean": "rimraf build",
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
     "build": "npm run clean && npm run build:yaml-language-server && webpack --mode=production",
-    "build-dev": "npm run clean && npm run build:yaml-language-server && webpack --mode=development"
+    "build-dev": "npm run clean && npm run build:yaml-language-server && webpack --mode=development",
+    "test": "mocha --exit",
+    "test:coverage": "nyc npm run test"
   },
   "dependencies": {
     "vscode-html-languageservice": "latest",
@@ -23,11 +25,35 @@
     "@xml-tools/parser": "^1.0.11",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/simple-schema": "^3.0.5"
-
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@types/mocha": "^5.2.7",
+    "@types/chai": "^4.3.4",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.9.1"
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
   "repository": {
     "url": "https://github.com/mkslanc/ace-linters"
+  },
+  "nyc": {
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": false,
+    "exclude": [
+      "build/*.*",
+      "tests/*.*",
+      "coverage/**/*.*"
+    ],
+    "reporter": [
+      "html",
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "report-dir": "coverage"
   }
 }

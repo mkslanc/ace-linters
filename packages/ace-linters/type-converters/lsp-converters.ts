@@ -68,7 +68,7 @@ export function toCompletion(item: CompletionItem): Ace.Completion {
     let kind = itemKind ? Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(itemKind)] : undefined;
     let text = item.textEdit?.newText ?? item.insertText ?? item.label;
     let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-    let range = item.textEdit ? getTextEditRange(item.textEdit) : null;
+    let range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
     let completion = {
         meta: kind,
         caption: item.label,
@@ -98,7 +98,7 @@ export function toCompletions(completionList: CompletionList | CompletionItem[])
 export function toResolvedCompletion(completion: Ace.Completion, item: CompletionItem): Ace.Completion {
     let doc = fromMarkupContent(item.documentation);
     if (doc) {
-        if (doc.type === CommonConverter.TooltipType.markdown) {
+        if (doc.type === "markdown") {
             completion["docMarkdown"] = doc.text;
         } else {
             completion["docText"] = doc.text;
@@ -157,7 +157,7 @@ export function toTooltip(hover: Hover | undefined): Tooltip | undefined {
     if (MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     } else if (MarkedString.is(hover.contents)) {
-        content = {type: CommonConverter.TooltipType.markdown, text: "```" + (hover.contents as any).value + "```"};
+        content = {type: "markdown", text: "```" + (hover.contents as any).value + "```"};
     } else {
         let contents = hover.contents.map((el) => {
             if (typeof el !== "string") {
@@ -166,7 +166,7 @@ export function toTooltip(hover: Hover | undefined): Tooltip | undefined {
                 return el;
             }
         });
-        content = {type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n")};
+        content = {type: "markdown", text: contents.join("\n\n")};
     }
     return {content: content, range: hover.range && toRange(hover.range)};
 }
@@ -176,11 +176,11 @@ export function fromMarkupContent(content?: string | MarkupContent): TooltipCont
         return;
 
     if (typeof content === "string") {
-        return {type: CommonConverter.TooltipType.plainText, text: content};
+        return {type: "plaintext", text: content};
     } else if (content.kind === MarkupKind.Markdown) {
-        return {type: CommonConverter.TooltipType.markdown, text: content.value};
+        return {type: "markdown", text: content.value};
     } else {
-        return {type: CommonConverter.TooltipType.plainText, text: content.value};
+        return {type: "plaintext", text: content.value};
     }
 }
 
