@@ -19314,7 +19314,7 @@ exports.K = TextHighlightRules;
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(9359);
 var event = __webpack_require__(7989);
-var Tooltip = (__webpack_require__(962).Tooltip);
+var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
 
 function GutterHandler(mouseHandler) {
     var editor = mouseHandler.editor;
@@ -26872,7 +26872,7 @@ function Tooltip (parentNode) {
 
 }).call(Tooltip.prototype);
 
-exports.Tooltip = Tooltip;
+exports.u = Tooltip;
 
 
 /***/ }),
@@ -29602,511 +29602,6 @@ module.exports = function (item) {
   }
   return [content].join("\n");
 };
-
-/***/ }),
-
-/***/ 7187:
-/***/ ((module) => {
-
-"use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-var R = typeof Reflect === 'object' ? Reflect : null
-var ReflectApply = R && typeof R.apply === 'function'
-  ? R.apply
-  : function ReflectApply(target, receiver, args) {
-    return Function.prototype.apply.call(target, receiver, args);
-  }
-
-var ReflectOwnKeys
-if (R && typeof R.ownKeys === 'function') {
-  ReflectOwnKeys = R.ownKeys
-} else if (Object.getOwnPropertySymbols) {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target)
-      .concat(Object.getOwnPropertySymbols(target));
-  };
-} else {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target);
-  };
-}
-
-function ProcessEmitWarning(warning) {
-  if (console && console.warn) console.warn(warning);
-}
-
-var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
-  return value !== value;
-}
-
-function EventEmitter() {
-  EventEmitter.init.call(this);
-}
-module.exports = EventEmitter;
-module.exports.once = once;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._eventsCount = 0;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-var defaultMaxListeners = 10;
-
-function checkListener(listener) {
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
-}
-
-Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
-  enumerable: true,
-  get: function() {
-    return defaultMaxListeners;
-  },
-  set: function(arg) {
-    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
-      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
-    }
-    defaultMaxListeners = arg;
-  }
-});
-
-EventEmitter.init = function() {
-
-  if (this._events === undefined ||
-      this._events === Object.getPrototypeOf(this)._events) {
-    this._events = Object.create(null);
-    this._eventsCount = 0;
-  }
-
-  this._maxListeners = this._maxListeners || undefined;
-};
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
-  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
-    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
-  }
-  this._maxListeners = n;
-  return this;
-};
-
-function _getMaxListeners(that) {
-  if (that._maxListeners === undefined)
-    return EventEmitter.defaultMaxListeners;
-  return that._maxListeners;
-}
-
-EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return _getMaxListeners(this);
-};
-
-EventEmitter.prototype.emit = function emit(type) {
-  var args = [];
-  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
-  var doError = (type === 'error');
-
-  var events = this._events;
-  if (events !== undefined)
-    doError = (doError && events.error === undefined);
-  else if (!doError)
-    return false;
-
-  // If there is no 'error' event listener then throw.
-  if (doError) {
-    var er;
-    if (args.length > 0)
-      er = args[0];
-    if (er instanceof Error) {
-      // Note: The comments on the `throw` lines are intentional, they show
-      // up in Node's output if this results in an unhandled exception.
-      throw er; // Unhandled 'error' event
-    }
-    // At least give some kind of context to the user
-    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
-    err.context = er;
-    throw err; // Unhandled 'error' event
-  }
-
-  var handler = events[type];
-
-  if (handler === undefined)
-    return false;
-
-  if (typeof handler === 'function') {
-    ReflectApply(handler, this, args);
-  } else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      ReflectApply(listeners[i], this, args);
-  }
-
-  return true;
-};
-
-function _addListener(target, type, listener, prepend) {
-  var m;
-  var events;
-  var existing;
-
-  checkListener(listener);
-
-  events = target._events;
-  if (events === undefined) {
-    events = target._events = Object.create(null);
-    target._eventsCount = 0;
-  } else {
-    // To avoid recursion in the case that type === "newListener"! Before
-    // adding it to the listeners, first emit "newListener".
-    if (events.newListener !== undefined) {
-      target.emit('newListener', type,
-                  listener.listener ? listener.listener : listener);
-
-      // Re-assign `events` because a newListener handler could have caused the
-      // this._events to be assigned to a new object
-      events = target._events;
-    }
-    existing = events[type];
-  }
-
-  if (existing === undefined) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    existing = events[type] = listener;
-    ++target._eventsCount;
-  } else {
-    if (typeof existing === 'function') {
-      // Adding the second element, need to change to array.
-      existing = events[type] =
-        prepend ? [listener, existing] : [existing, listener];
-      // If we've already got an array, just append.
-    } else if (prepend) {
-      existing.unshift(listener);
-    } else {
-      existing.push(listener);
-    }
-
-    // Check for listener leak
-    m = _getMaxListeners(target);
-    if (m > 0 && existing.length > m && !existing.warned) {
-      existing.warned = true;
-      // No error code for this since it is a Warning
-      // eslint-disable-next-line no-restricted-syntax
-      var w = new Error('Possible EventEmitter memory leak detected. ' +
-                          existing.length + ' ' + String(type) + ' listeners ' +
-                          'added. Use emitter.setMaxListeners() to ' +
-                          'increase limit');
-      w.name = 'MaxListenersExceededWarning';
-      w.emitter = target;
-      w.type = type;
-      w.count = existing.length;
-      ProcessEmitWarning(w);
-    }
-  }
-
-  return target;
-}
-
-EventEmitter.prototype.addListener = function addListener(type, listener) {
-  return _addListener(this, type, listener, false);
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.prependListener =
-    function prependListener(type, listener) {
-      return _addListener(this, type, listener, true);
-    };
-
-function onceWrapper() {
-  if (!this.fired) {
-    this.target.removeListener(this.type, this.wrapFn);
-    this.fired = true;
-    if (arguments.length === 0)
-      return this.listener.call(this.target);
-    return this.listener.apply(this.target, arguments);
-  }
-}
-
-function _onceWrap(target, type, listener) {
-  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
-  var wrapped = onceWrapper.bind(state);
-  wrapped.listener = listener;
-  state.wrapFn = wrapped;
-  return wrapped;
-}
-
-EventEmitter.prototype.once = function once(type, listener) {
-  checkListener(listener);
-  this.on(type, _onceWrap(this, type, listener));
-  return this;
-};
-
-EventEmitter.prototype.prependOnceListener =
-    function prependOnceListener(type, listener) {
-      checkListener(listener);
-      this.prependListener(type, _onceWrap(this, type, listener));
-      return this;
-    };
-
-// Emits a 'removeListener' event if and only if the listener was removed.
-EventEmitter.prototype.removeListener =
-    function removeListener(type, listener) {
-      var list, events, position, i, originalListener;
-
-      checkListener(listener);
-
-      events = this._events;
-      if (events === undefined)
-        return this;
-
-      list = events[type];
-      if (list === undefined)
-        return this;
-
-      if (list === listener || list.listener === listener) {
-        if (--this._eventsCount === 0)
-          this._events = Object.create(null);
-        else {
-          delete events[type];
-          if (events.removeListener)
-            this.emit('removeListener', type, list.listener || listener);
-        }
-      } else if (typeof list !== 'function') {
-        position = -1;
-
-        for (i = list.length - 1; i >= 0; i--) {
-          if (list[i] === listener || list[i].listener === listener) {
-            originalListener = list[i].listener;
-            position = i;
-            break;
-          }
-        }
-
-        if (position < 0)
-          return this;
-
-        if (position === 0)
-          list.shift();
-        else {
-          spliceOne(list, position);
-        }
-
-        if (list.length === 1)
-          events[type] = list[0];
-
-        if (events.removeListener !== undefined)
-          this.emit('removeListener', type, originalListener || listener);
-      }
-
-      return this;
-    };
-
-EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-
-EventEmitter.prototype.removeAllListeners =
-    function removeAllListeners(type) {
-      var listeners, events, i;
-
-      events = this._events;
-      if (events === undefined)
-        return this;
-
-      // not listening for removeListener, no need to emit
-      if (events.removeListener === undefined) {
-        if (arguments.length === 0) {
-          this._events = Object.create(null);
-          this._eventsCount = 0;
-        } else if (events[type] !== undefined) {
-          if (--this._eventsCount === 0)
-            this._events = Object.create(null);
-          else
-            delete events[type];
-        }
-        return this;
-      }
-
-      // emit removeListener for all listeners on all events
-      if (arguments.length === 0) {
-        var keys = Object.keys(events);
-        var key;
-        for (i = 0; i < keys.length; ++i) {
-          key = keys[i];
-          if (key === 'removeListener') continue;
-          this.removeAllListeners(key);
-        }
-        this.removeAllListeners('removeListener');
-        this._events = Object.create(null);
-        this._eventsCount = 0;
-        return this;
-      }
-
-      listeners = events[type];
-
-      if (typeof listeners === 'function') {
-        this.removeListener(type, listeners);
-      } else if (listeners !== undefined) {
-        // LIFO order
-        for (i = listeners.length - 1; i >= 0; i--) {
-          this.removeListener(type, listeners[i]);
-        }
-      }
-
-      return this;
-    };
-
-function _listeners(target, type, unwrap) {
-  var events = target._events;
-
-  if (events === undefined)
-    return [];
-
-  var evlistener = events[type];
-  if (evlistener === undefined)
-    return [];
-
-  if (typeof evlistener === 'function')
-    return unwrap ? [evlistener.listener || evlistener] : [evlistener];
-
-  return unwrap ?
-    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
-}
-
-EventEmitter.prototype.listeners = function listeners(type) {
-  return _listeners(this, type, true);
-};
-
-EventEmitter.prototype.rawListeners = function rawListeners(type) {
-  return _listeners(this, type, false);
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  if (typeof emitter.listenerCount === 'function') {
-    return emitter.listenerCount(type);
-  } else {
-    return listenerCount.call(emitter, type);
-  }
-};
-
-EventEmitter.prototype.listenerCount = listenerCount;
-function listenerCount(type) {
-  var events = this._events;
-
-  if (events !== undefined) {
-    var evlistener = events[type];
-
-    if (typeof evlistener === 'function') {
-      return 1;
-    } else if (evlistener !== undefined) {
-      return evlistener.length;
-    }
-  }
-
-  return 0;
-}
-
-EventEmitter.prototype.eventNames = function eventNames() {
-  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
-};
-
-function arrayClone(arr, n) {
-  var copy = new Array(n);
-  for (var i = 0; i < n; ++i)
-    copy[i] = arr[i];
-  return copy;
-}
-
-function spliceOne(list, index) {
-  for (; index + 1 < list.length; index++)
-    list[index] = list[index + 1];
-  list.pop();
-}
-
-function unwrapListeners(arr) {
-  var ret = new Array(arr.length);
-  for (var i = 0; i < ret.length; ++i) {
-    ret[i] = arr[i].listener || arr[i];
-  }
-  return ret;
-}
-
-function once(emitter, name) {
-  return new Promise(function (resolve, reject) {
-    function errorListener(err) {
-      emitter.removeListener(name, resolver);
-      reject(err);
-    }
-
-    function resolver() {
-      if (typeof emitter.removeListener === 'function') {
-        emitter.removeListener('error', errorListener);
-      }
-      resolve([].slice.call(arguments));
-    };
-
-    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
-    if (name !== 'error') {
-      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
-    }
-  });
-}
-
-function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
-  if (typeof emitter.on === 'function') {
-    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
-  }
-}
-
-function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
-  if (typeof emitter.on === 'function') {
-    if (flags.once) {
-      emitter.once(name, listener);
-    } else {
-      emitter.on(name, listener);
-    }
-  } else if (typeof emitter.addEventListener === 'function') {
-    // EventTarget does not have `error` event semantics like Node
-    // EventEmitters, we do not listen for `error` events here.
-    emitter.addEventListener(name, function wrapListener(arg) {
-      // IE does not have builtin `{ once: true }` support so we
-      // have to do it manually.
-      if (flags.once) {
-        emitter.removeEventListener(name, wrapListener);
-      }
-      listener(arg);
-    });
-  } else {
-    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
-  }
-}
-
 
 /***/ }),
 
@@ -38707,20 +38202,6 @@ exports.Semaphore = Semaphore;
 
 /***/ }),
 
-/***/ 5224:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ----------------------------------------------------------------------------------------- */
-
-
-module.exports = __webpack_require__(152);
-
-/***/ }),
-
 /***/ 152:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -43478,6 +42959,10 @@ __webpack_require__.d(linters_namespaceObject, {
   "default": () => (css_linters)
 });
 
+// NAMESPACE OBJECT: ./packages/ace-linters/index.ts
+var ace_linters_namespaceObject = {};
+__webpack_require__.r(ace_linters_namespaceObject);
+
 // EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event.js
 var lib_event = __webpack_require__(7989);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/keyboard/hash_handler.js
@@ -43539,13 +43024,18 @@ var update = injectStylesIntoStyleTag_default()(linters/* default */.Z, options)
 var dom = __webpack_require__(6359);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ace.js
 var ace = __webpack_require__(9100);
+// EXTERNAL MODULE: ./node_modules/ace-code/src/tooltip.js
+var tooltip = __webpack_require__(962);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
 
-let description_tooltip_event = __webpack_require__(7989);
-let { Tooltip } = __webpack_require__(962);
-class DescriptionTooltip extends Tooltip {
+
+class description_tooltip_DescriptionTooltip extends (/* unused pure expression or super */ null && (Tooltip)) {
     provider;
     _activeEditor;
+    descriptionText;
+    isOpen;
+    x;
+    y;
     get $activeEditor() {
         return this._activeEditor;
     }
@@ -43557,7 +43047,7 @@ class DescriptionTooltip extends Tooltip {
         super();
         this.provider = provider;
         Tooltip.call(this, document.body);
-        description_tooltip_event.addListener(this.getElement(), "mouseout", this.onMouseOut);
+        event.addListener(this.getElement(), "mouseout", this.onMouseOut);
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
     }
@@ -43691,9 +43181,21 @@ class DescriptionTooltip extends Tooltip {
     };
     destroy() {
         this.$hide();
-        description_tooltip_event.removeListener(this.getElement(), "mouseout", this.onMouseOut);
+        event.removeListener(this.getElement(), "mouseout", this.onMouseOut);
     }
     ;
+    getElement() {
+        return super.getElement();
+    }
+    hide() {
+        super.hide();
+    }
+    show(param, pageX, pageY) {
+        super.show(param, pageX, pageY);
+    }
+    setHtml(descriptionText) {
+        super.setHtml(descriptionText);
+    }
 }
 
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
@@ -43701,7 +43203,7 @@ var main = __webpack_require__(152);
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/common-converters.ts
 
 
-var CommonConverter;
+var common_converters_CommonConverter;
 (function (CommonConverter) {
     function normalizeRanges(completions) {
         return completions && completions.map((el) => {
@@ -43723,11 +43225,6 @@ var CommonConverter;
         return ace.Range.fromPoints(range.start, range.end);
     }
     CommonConverter.toRange = toRange;
-    let TooltipType;
-    (function (TooltipType) {
-        TooltipType[TooltipType["plainText"] = 0] = "plainText";
-        TooltipType[TooltipType["markdown"] = 1] = "markdown";
-    })(TooltipType = CommonConverter.TooltipType || (CommonConverter.TooltipType = {}));
     function convertKind(kind) {
         switch (kind) {
             case "primitiveType":
@@ -43760,488 +43257,7 @@ var CommonConverter;
         return main.CompletionItemKind.Property;
     }
     CommonConverter.convertKind = convertKind;
-})(CommonConverter || (CommonConverter = {}));
-
-// EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/browser/main.js
-var browser_main = __webpack_require__(9054);
-// EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/common/messages.js
-var messages = __webpack_require__(839);
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/disposable.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-class DisposableCollection {
-    disposables = [];
-    dispose() {
-        while (this.disposables.length !== 0) {
-            this.disposables.pop().dispose();
-        }
-    }
-    push(disposable) {
-        const disposables = this.disposables;
-        disposables.push(disposable);
-        return {
-            dispose() {
-                const index = disposables.indexOf(disposable);
-                if (index !== -1) {
-                    disposables.splice(index, 1);
-                }
-            }
-        };
-    }
-}
-
-//# sourceMappingURL=disposable.js.map
-// EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/common/messageReader.js
-var messageReader = __webpack_require__(6525);
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/socket/reader.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-class WebSocketMessageReader extends messageReader.AbstractMessageReader {
-    socket;
-    state = 'initial';
-    callback;
-    events = [];
-    constructor(socket) {
-        super();
-        this.socket = socket;
-        this.socket.onMessage(message => this.readMessage(message));
-        this.socket.onError(error => this.fireError(error));
-        this.socket.onClose((code, reason) => {
-            if (code !== 1000) {
-                const error = {
-                    name: '' + code,
-                    message: `Error during socket reconnect: code = ${code}, reason = ${reason}`
-                };
-                this.fireError(error);
-            }
-            this.fireClose();
-        });
-    }
-    listen(callback) {
-        if (this.state === 'initial') {
-            this.state = 'listening';
-            this.callback = callback;
-            while (this.events.length !== 0) {
-                const event = this.events.pop();
-                if (event.message) {
-                    this.readMessage(event.message);
-                }
-                else if (event.error) {
-                    this.fireError(event.error);
-                }
-                else {
-                    this.fireClose();
-                }
-            }
-        }
-        return {
-            dispose: () => {
-                if (this.callback === callback) {
-                    this.callback = undefined;
-                }
-            }
-        };
-    }
-    readMessage(message) {
-        if (this.state === 'initial') {
-            this.events.splice(0, 0, { message });
-        }
-        else if (this.state === 'listening') {
-            const data = JSON.parse(message);
-            this.callback(data);
-        }
-    }
-    fireError(error) {
-        if (this.state === 'initial') {
-            this.events.splice(0, 0, { error });
-        }
-        else if (this.state === 'listening') {
-            super.fireError(error);
-        }
-    }
-    fireClose() {
-        if (this.state === 'initial') {
-            this.events.splice(0, 0, {});
-        }
-        else if (this.state === 'listening') {
-            super.fireClose();
-        }
-        this.state = 'closed';
-    }
-}
-//# sourceMappingURL=reader.js.map
-// EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/common/messageWriter.js
-var messageWriter = __webpack_require__(6654);
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/socket/writer.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-class WebSocketMessageWriter extends messageWriter.AbstractMessageWriter {
-    socket;
-    errorCount = 0;
-    constructor(socket) {
-        super();
-        this.socket = socket;
-    }
-    end() {
-    }
-    async write(msg) {
-        try {
-            const content = JSON.stringify(msg);
-            this.socket.send(content);
-        }
-        catch (e) {
-            this.errorCount++;
-            this.fireError(e, msg, this.errorCount);
-        }
-    }
-}
-//# sourceMappingURL=writer.js.map
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/socket/connection.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-
-function createWebSocketConnection(socket, logger) {
-    const messageReader = new WebSocketMessageReader(socket);
-    const messageWriter = new WebSocketMessageWriter(socket);
-    const connection = (0,browser_main.createMessageConnection)(messageReader, messageWriter, logger);
-    connection.onClose(() => connection.dispose());
-    return connection;
-}
-//# sourceMappingURL=connection.js.map
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/socket/index.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-
-
-//# sourceMappingURL=index.js.map
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/logger.js
-class ConsoleLogger {
-    error(message) {
-        console.error(message);
-    }
-    warn(message) {
-        console.warn(message);
-    }
-    info(message) {
-        console.info(message);
-    }
-    log(message) {
-        console.log(message);
-    }
-    debug(message) {
-        console.debug(message);
-    }
-}
-//# sourceMappingURL=logger.js.map
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/connection.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-function listen(options) {
-    const { webSocket, onConnection } = options;
-    const logger = options.logger || new ConsoleLogger();
-    webSocket.onopen = () => {
-        const socket = toSocket(webSocket);
-        const connection = createWebSocketConnection(socket, logger);
-        onConnection(connection);
-    };
-}
-function toSocket(webSocket) {
-    return {
-        send: content => webSocket.send(content),
-        onMessage: cb => {
-            webSocket.onmessage = event => cb(event.data);
-        },
-        onError: cb => {
-            webSocket.onerror = event => {
-                if ('message' in event) {
-                    cb(event.message);
-                }
-            };
-        },
-        onClose: cb => {
-            webSocket.onclose = event => cb(event.code, event.reason);
-        },
-        dispose: () => webSocket.close()
-    };
-}
-//# sourceMappingURL=connection.js.map
-;// CONCATENATED MODULE: ./node_modules/vscode-ws-jsonrpc/lib/index.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-
-
-
-
-//# sourceMappingURL=index.js.map
-// EXTERNAL MODULE: ./node_modules/events/events.js
-var events = __webpack_require__(7187);
-// EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/browser.js
-var browser = __webpack_require__(5224);
-;// CONCATENATED MODULE: ./packages/ace-linters/message-controller-ws.ts
-
-
-
-class MessageControllerWS extends events.EventEmitter {
-    isConnected = false;
-    isInitialized = false;
-    socket;
-    serverCapabilities;
-    connection;
-    initSessionQueue = [];
-    clientCapabilities = {
-        textDocument: {
-            hover: {
-                dynamicRegistration: true,
-                contentFormat: ['markdown', 'plaintext'],
-            },
-            synchronization: {
-                dynamicRegistration: true,
-                willSave: false,
-                didSave: false,
-                willSaveWaitUntil: false,
-            },
-            formatting: {
-                dynamicRegistration: true
-            },
-            completion: {
-                dynamicRegistration: true,
-                completionItem: {
-                    snippetSupport: true,
-                    commitCharactersSupport: false,
-                    documentationFormat: ['markdown', 'plaintext'],
-                    deprecatedSupport: false,
-                    preselectSupport: false,
-                },
-                contextSupport: false,
-            }
-        },
-        workspace: {
-            didChangeConfiguration: {
-                dynamicRegistration: true,
-            },
-        },
-    };
-    constructor(mode) {
-        super();
-        if (mode instanceof Worker) {
-            this.$connectWorker(mode);
-        }
-        else {
-            this.socket = mode;
-            this.$connectSocket();
-        }
-    }
-    $connectSocket() {
-        listen({
-            webSocket: this.socket,
-            logger: new ConsoleLogger(),
-            onConnection: (connection) => {
-                this.$connect(connection);
-            },
-        });
-    }
-    $connectWorker(worker) {
-        const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
-        this.$connect(connection);
-    }
-    $connect(connection) {
-        connection.listen();
-        this.isConnected = true;
-        this.connection = connection;
-        this.sendInitialize();
-        this.connection.onNotification('textDocument/publishDiagnostics', (result) => {
-            this.emit("validate-" + result.uri, result.diagnostics);
-        });
-        this.connection.onNotification('window/showMessage', (params) => {
-            this.emit('logging', params);
-        });
-        this.connection.onRequest('window/showMessageRequest', (params) => {
-            this.emit('logging', params);
-        });
-        this.connection.onError((e) => {
-            this.emit('error', e);
-        });
-        this.connection.onClose(() => {
-            this.isConnected = false;
-        });
-        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
-    }
-    init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this["on"]("validate-" + sessionId, validationCallback);
-        const textDocumentMessage = {
-            textDocument: {
-                uri: sessionId,
-                languageId: mode,
-                text: document.getValue(),
-                version: document["version"],
-            },
-        };
-        if (!this.isConnected) {
-            this.initSessionQueue.push({ textDocumentMessage: textDocumentMessage, initCallback: initCallback });
-        }
-        else {
-            this.initSession(textDocumentMessage, initCallback);
-        }
-    }
-    initSession(textDocumentMessage, initCallback) {
-        this.connection.sendNotification('textDocument/didOpen', textDocumentMessage);
-        initCallback();
-    }
-    close() {
-        if (this.connection) {
-            this.connection.dispose();
-        }
-        this.socket.close();
-    }
-    sendInitialize() {
-        if (!this.isConnected) {
-            return;
-        }
-        const message = {
-            capabilities: this.clientCapabilities,
-            initializationOptions: null,
-            processId: null,
-            rootUri: "",
-            workspaceFolders: null,
-        };
-        this.connection.sendRequest("initialize", message).then((params) => {
-            this.isInitialized = true;
-            this.serverCapabilities = params.capabilities;
-            this.connection.sendNotification('initialized');
-            this.connection.sendNotification('workspace/didChangeConfiguration', {
-                settings: {},
-            });
-        });
-    }
-    change(sessionId, deltas, document, callback) {
-        if (!this.isConnected) {
-            return;
-        }
-        const textDocumentChange = {
-            textDocument: {
-                uri: sessionId,
-                version: document["version"],
-            },
-            contentChanges: deltas,
-        };
-        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
-    }
-    doHover(sessionId, position, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            position: position,
-        };
-        let hoverCallback = (result) => {
-            callback && callback(result);
-        };
-        this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
-    }
-    doComplete(sessionId, position, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            position: position,
-        };
-        let completionCallback = (result) => {
-            callback && callback(result);
-        };
-        this.postMessage('textDocument/completion', sessionId, options, completionCallback);
-    }
-    doResolve(sessionId, completion, callback) {
-        if (!this.isInitialized)
-            return;
-        if (!this.serverCapabilities?.completionProvider?.resolveProvider)
-            return;
-        this.postMessage('completionItem/resolve', sessionId, completion["item"], (result) => {
-            callback && callback(result);
-        });
-    }
-    changeMode(sessionId, value, mode, callback) {
-    }
-    changeOptions(sessionId, options, callback) {
-    }
-    dispose(sessionId, callback) {
-        this.connection.sendNotification('textDocument/didClose', {
-            textDocument: {
-                uri: sessionId
-            }
-        });
-    }
-    doValidation(sessionId, callback) {
-        //TODO: textDocument/diagnostic capability
-    }
-    format(sessionId, range, format, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            options: format,
-            range: range
-        };
-        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params) => {
-            callback && callback(params);
-        });
-    }
-    setGlobalOptions(serviceName, options, merge) {
-    }
-    postMessage(name, sessionId, options, callback) {
-        let eventName = name + "-" + sessionId;
-        let callbackFunction = (data) => {
-            this["off"](eventName, callbackFunction);
-            callback(data);
-        };
-        this["on"](eventName, callbackFunction);
-        this.connection.sendRequest(name, options).then((params) => {
-            this.emit(eventName, params);
-        });
-    }
-}
+})(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-types.ts
 class BaseMessage {
@@ -44385,14 +43401,14 @@ var event_emitter = __webpack_require__(3056);
 
 
 
-class MessageController {
+class message_controller_MessageController {
     $worker;
     constructor(worker) {
         this.$worker = worker;
-        this.$worker.onmessage = (e) => {
+        this.$worker.addEventListener("message", (e) => {
             let message = e.data;
             this["_signal"](message.type + "-" + message.sessionId, message.value);
-        };
+        });
     }
     init(sessionId, document, mode, options, initCallback, validationCallback) {
         this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
@@ -44447,10 +43463,10 @@ class MessageController {
         this.$worker.postMessage(message);
     }
 }
-oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
+oop.implement(message_controller_MessageController.prototype, event_emitter/* EventEmitter */.v);
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
-var src_range = __webpack_require__(9082);
+var range = __webpack_require__(9082);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/range_list.js
 var range_list = __webpack_require__(6510);
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/lsp-converters.ts
@@ -44458,7 +43474,7 @@ var range_list = __webpack_require__(6510);
 
 
 
-function fromRange(range) {
+function lsp_converters_fromRange(range) {
     return {
         start: {
             line: range.start.row,
@@ -44473,16 +43489,16 @@ function rangeFromPositions(start, end) {
         end: end
     };
 }
-function toRange(range) {
-    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
+function lsp_converters_toRange(range) {
+    return new AceRange(range.start.line, range.start.character, range.end.line, range.end.character);
 }
-function fromPoint(point) {
+function lsp_converters_fromPoint(point) {
     return { line: point.row, character: point.column };
 }
 function toPoint(position) {
     return { row: position.line, column: position.character };
 }
-function toAnnotations(diagnostics) {
+function lsp_converters_toAnnotations(diagnostics) {
     return diagnostics.map((el) => {
         return {
             row: el.range.start.line,
@@ -44494,10 +43510,10 @@ function toAnnotations(diagnostics) {
 }
 function toCompletion(item) {
     let itemKind = item.kind;
-    let kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
+    let kind = itemKind ? Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(itemKind)] : undefined;
     let text = item.textEdit?.newText ?? item.insertText ?? item.label;
     let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-    let range = item.textEdit ? getTextEditRange(item.textEdit) : null;
+    let range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
     let completion = {
         meta: kind,
         caption: item.label,
@@ -44507,7 +43523,7 @@ function toCompletion(item) {
         score: undefined,
         item: item
     };
-    if (item.insertTextFormat == main.InsertTextFormat.Snippet) {
+    if (item.insertTextFormat == InsertTextFormat.Snippet) {
         completion["snippet"] = text;
     }
     else {
@@ -44517,15 +43533,15 @@ function toCompletion(item) {
     completion["position"] = item["position"];
     return completion;
 }
-function toCompletions(completionList) {
+function lsp_converters_toCompletions(completionList) {
     if (!Array.isArray(completionList))
         completionList = completionList.items;
     return completionList && completionList.map((item) => toCompletion(item));
 }
-function toResolvedCompletion(completion, item) {
+function lsp_converters_toResolvedCompletion(completion, item) {
     let doc = fromMarkupContent(item.documentation);
     if (doc) {
-        if (doc.type === CommonConverter.TooltipType.markdown) {
+        if (doc.type === "markdown") {
             completion["docMarkdown"] = doc.text;
         }
         else {
@@ -44534,7 +43550,7 @@ function toResolvedCompletion(completion, item) {
     }
     return completion;
 }
-function toCompletionItem(completion) {
+function lsp_converters_toCompletionItem(completion) {
     let command;
     if (completion["command"]) {
         command = {
@@ -44546,12 +43562,12 @@ function toCompletionItem(completion) {
         label: completion.caption ?? "",
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
-        insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
+        insertTextFormat: (completion.snippet) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
         documentation: completion["documentation"],
     };
     if (completion["range"]) {
         completionItem.textEdit = {
-            range: fromRange(completion["range"]),
+            range: lsp_converters_fromRange(completion["range"]),
             newText: (completion.snippet ?? completion.value)
         };
     }
@@ -44566,25 +43582,25 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        let rangeList = new range_list/* RangeList */.$();
-        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
+        let rangeList = new RangeList();
+        rangeList.ranges = [lsp_converters_toRange(textEdit.insert), lsp_converters_toRange(textEdit.replace)];
         rangeList.merge();
         return rangeList[0];
     }
     else {
         textEdit = textEdit;
-        return toRange(textEdit.range);
+        return lsp_converters_toRange(textEdit.range);
     }
 }
-function toTooltip(hover) {
+function lsp_converters_toTooltip(hover) {
     let content;
     if (!hover)
         return;
-    if (main.MarkupContent.is(hover.contents)) {
+    if (MarkupContent.is(hover.contents)) {
         content = fromMarkupContent(hover.contents);
     }
-    else if (main.MarkedString.is(hover.contents)) {
-        content = { type: CommonConverter.TooltipType.markdown, text: "```" + hover.contents.value + "```" };
+    else if (MarkedString.is(hover.contents)) {
+        content = { type: "markdown", text: "```" + hover.contents.value + "```" };
     }
     else {
         let contents = hover.contents.map((el) => {
@@ -44595,33 +43611,35 @@ function toTooltip(hover) {
                 return el;
             }
         });
-        content = { type: CommonConverter.TooltipType.markdown, text: contents.join("\n\n") };
+        content = { type: "markdown", text: contents.join("\n\n") };
     }
-    return { content: content, range: hover.range && toRange(hover.range) };
+    return { content: content, range: hover.range && lsp_converters_toRange(hover.range) };
 }
 function fromMarkupContent(content) {
     if (!content)
         return;
     if (typeof content === "string") {
-        return { type: CommonConverter.TooltipType.plainText, text: content };
+        return { type: "plaintext", text: content };
     }
-    else if (content.kind === main.MarkupKind.Markdown) {
-        return { type: CommonConverter.TooltipType.markdown, text: content.value };
+    else if (content.kind === MarkupKind.Markdown) {
+        return { type: "markdown", text: content.value };
     }
     else {
-        return { type: CommonConverter.TooltipType.plainText, text: content.value };
+        return { type: "plaintext", text: content.value };
     }
 }
-function fromAceDelta(delta, eol) {
+function lsp_converters_fromAceDelta(delta, eol) {
     const text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
     return {
         range: delta.action === "insert"
-            ? rangeFromPositions(fromPoint(delta.start), fromPoint(delta.start))
-            : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
+            ? rangeFromPositions(lsp_converters_fromPoint(delta.start), lsp_converters_fromPoint(delta.start))
+            : rangeFromPositions(lsp_converters_fromPoint(delta.start), lsp_converters_fromPoint(delta.end)),
         text: delta.action === "insert" ? text : "",
     };
 }
 
+// EXTERNAL MODULE: ./node_modules/showdown/dist/showdown.js
+var dist_showdown = __webpack_require__(3787);
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
 
 
@@ -44629,7 +43647,6 @@ function fromAceDelta(delta, eol) {
 
 
 
-let showdown = __webpack_require__(3787);
 class LanguageProvider {
     $activeEditor;
     $descriptionTooltip;
@@ -44643,21 +43660,12 @@ class LanguageProvider {
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
     /**
-     *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
-     * @param {Worker | WebSocket} mode
-     * @param markdownConverter
-     */
-    static for(mode, markdownConverter) {
-        let messageController = new MessageControllerWS(mode);
-        return new LanguageProvider(messageController, markdownConverter);
-    }
-    /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
      * @param {Worker} worker
      * @param markdownConverter
      */
-    static default(worker, markdownConverter) {
+    static create(worker, markdownConverter) {
         let messageController;
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, markdownConverter);
@@ -44700,7 +43708,7 @@ class LanguageProvider {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
     getTooltipText(hover) {
-        return hover.content.type === CommonConverter.TooltipType.markdown ?
+        return hover.content.type === "markdown" ?
             CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
     }
     format = () => {
@@ -44843,7 +43851,7 @@ class SessionLanguageProvider {
         if (!selectionRanges || selectionRanges[0].isEmpty()) {
             let row = this.session.getLength();
             let column = this.session.getLine(row).length - 1;
-            selectionRanges = [new ace.Range(0, 0, row, column)];
+            selectionRanges = [new AceRange(0, 0, row, column)];
         }
         for (let range of selectionRanges) {
             this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
@@ -44960,7 +43968,7 @@ fn main() {
 
 let worker = new Worker(new URL(/* worker import */ __webpack_require__.p + __webpack_require__.u(108), __webpack_require__.b));
 let mode = { name: "rust", mode: rust/* Mode */.A, content: rustContent };
-let languageProvider = LanguageProvider["for"](worker);
+let languageProvider = ace_linters_namespaceObject.AceLanguageClient["for"](worker);
 createEditorWithLSP(mode, 0, languageProvider);
 let menuKb = new hash_handler.HashHandler([
     {

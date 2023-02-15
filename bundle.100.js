@@ -17542,7 +17542,7 @@ exports.K = TextHighlightRules;
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(9359);
 var event = __webpack_require__(7989);
-var Tooltip = (__webpack_require__(962).Tooltip);
+var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
 
 function GutterHandler(mouseHandler) {
     var editor = mouseHandler.editor;
@@ -24069,7 +24069,7 @@ function Tooltip (parentNode) {
 
 }).call(Tooltip.prototype);
 
-exports.Tooltip = Tooltip;
+exports.u = Tooltip;
 
 
 /***/ }),
