@@ -107,6 +107,21 @@ export declare namespace AceLinters {
         inline: boolean
     }
 
+    export interface JavascriptServiceOptions {
+        env?: { [name: string]: boolean } | undefined;
+        extends?: string | string[] | undefined;
+        globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
+        noInlineConfig?: boolean | undefined;
+        overrides?: Array<any> | undefined;
+        parser?: string | undefined;
+        parserOptions?: { [option: string]: any } | undefined;
+        plugins?: string[] | undefined;
+        processor?: string | undefined;
+        reportUnusedDisableDirectives?: boolean | undefined;
+        settings?: { [name: string]: any } | undefined;
+        rules?: { [rule: string]: any };
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
@@ -114,6 +129,7 @@ export declare namespace AceLinters {
         html: HtmlServiceOptions,
         yaml: YamlServiceOptions,
         php: PhpServiceOptions,
-        xml: XmlServiceOptions
+        xml: XmlServiceOptions,
+        javascript: JavascriptServiceOptions
     }
 }

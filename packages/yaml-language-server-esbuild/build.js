@@ -1,17 +1,15 @@
 import {fileURLToPath} from 'url';
 
 import {build} from 'esbuild';
+import {copyFile} from "fs";
 
 await build({
-    entryPoints: ['src/index.ts'],
+    entryPoints: ['src/index.js'],
     bundle: true,
-    external: [
-        "jsonc-parser", "path-browserify", "prettier", "vscode-languageserver-textdocument"
-    ],
     logLevel: 'info',
     outdir: './dist',
-    sourcemap: true,
     format: 'esm',
+    sourcemap: false,
     target: ['es2019'],
     plugins: [
         {
@@ -21,23 +19,23 @@ await build({
                       resolve
                   }) {
                 onResolve({filter: /\/schemaSelectionHandlers$/}, () => ({
-                    path: fileURLToPath(new URL('src/fillers/schemaSelectionHandlers.ts', import.meta.url))
+                    path: fileURLToPath(new URL('src/fillers/schemaSelectionHandlers.js', import.meta.url))
                 }));
                 onResolve({filter: /^ajv$/}, () => ({
-                    path: fileURLToPath(new URL('src/fillers/ajv.ts', import.meta.url))
+                    path: fileURLToPath(new URL('src/fillers/ajv.js', import.meta.url))
                 }));
                 onResolve({filter: /^path$/}, () => ({
-                    path: 'path-browserify',
-                    external: true,
+                    path: fileURLToPath(new URL('../../node_modules/path-browserify/index.js', import.meta.url)),
+                    external: false,
                     sideEffects: false
                 }));
                 onResolve({filter: /^prettier/}, ({path}) => ({
-                    path: path === 'prettier' ? 'prettier/standalone.js' : `${path}.js`,
-                    external: true,
+                    path: path === 'prettier' ? fileURLToPath(new URL('../../node_modules/prettier/standalone.js', import.meta.url)) : fileURLToPath(new URL('../../node_modules/' + path + '.js', import.meta.url)), //path === 'prettier' ? 'prettier/standalone.js' : `${path}.js`,
+                    external: false,
                     sideEffects: false
                 }));
                 onResolve({filter: /vscode-nls/}, () => ({
-                    path: fileURLToPath(new URL('src/fillers/vscode-nls.ts', import.meta.url)),
+                    path: fileURLToPath(new URL('src/fillers/vscode-nls.js', import.meta.url)),
                     sideEffects: false
                 }));
                 onResolve({filter: /\/umd\//}, ({
@@ -48,4 +46,8 @@ await build({
             }
         }
     ]
+});
+
+await copyFile(fileURLToPath(new URL("dist/index.js", import.meta.url)), fileURLToPath(new URL("../ace-linters/services/yaml/lib/index.js", import.meta.url)), (err) => {
+    if (err) throw err;
 });

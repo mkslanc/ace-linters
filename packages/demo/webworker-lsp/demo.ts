@@ -29,7 +29,7 @@ import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
-import {LanguageProvider} from "ace-linters";
+import {LanguageProvider} from "ace-linters/build/ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";

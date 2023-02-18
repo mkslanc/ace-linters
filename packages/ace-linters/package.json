@@ -5,8 +5,10 @@
   "scripts": {
     "clean": "rimraf build",
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
-    "build": "npm run clean && npm run build:yaml-language-server && webpack --mode=production",
-    "build-dev": "npm run clean && npm run build:yaml-language-server && webpack --mode=development",
+    "build:eslint-linter-bundle": "cd ../eslint-linter-bundle && npm run build",
+    "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
+    "build": "npm run clean && npm run build:dependencies && webpack --mode=production",
+    "build-dev": "npm run clean && npm run build:dependencies && webpack --mode=development",
     "test": "mocha --exit",
     "test:coverage": "nyc npm run test"
   },
@@ -30,6 +32,7 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/mocha": "^5.2.7",
     "@types/chai": "^4.3.4",
+    "@types/eslint": "^8.21.1",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",

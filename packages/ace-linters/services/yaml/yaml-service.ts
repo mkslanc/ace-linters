@@ -1,7 +1,7 @@
 import {BaseService} from "../base-service";
 import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
-import {getLanguageService} from "@ace-linters/yaml-language-server-esbuild";
+import {getLanguageService} from "./lib";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 
 type YamlServiceOptions = AceLinters.YamlServiceOptions;
@@ -19,6 +19,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements AceL
             if (jsonSchema)
                 return Promise.resolve(jsonSchema);
             return Promise.reject(`Unable to load schema at ${uri}`);
+            //@ts-ignore
         }, null, null, null, null);
     }
 
