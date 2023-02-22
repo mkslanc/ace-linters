@@ -59,7 +59,7 @@ waitForMsgType(self, 'wasm_bindgen_worker_init').then(async (data) => {
     // OTOH, even though it can't be inlined, it should be still reasonably
     // cheap since the requested file is already in cache (it was loaded by
     // the main thread).
-    const pkg = await __webpack_require__.e(/* import() */ 3).then(__webpack_require__.bind(__webpack_require__, 1227));
+    const pkg = await __webpack_require__.e(/* import() */ 227).then(__webpack_require__.bind(__webpack_require__, 1227));
     await pkg.default(data.module, data.memory);
     postMessage({ type: 'wasm_bindgen_worker_ready' });
     pkg.wbg_rayon_start_worker(data.receiver);

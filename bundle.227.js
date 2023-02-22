@@ -1,598 +1,587 @@
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+"use strict";
+(self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[227],{
 
-/***/ 3357:
+/***/ 1227:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+__webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "P": () => (/* binding */ mergeObjects)
+/* harmony export */   "WorldState": () => (/* binding */ WorldState),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "initThreadPool": () => (/* binding */ initThreadPool),
+/* harmony export */   "start": () => (/* binding */ start),
+/* harmony export */   "wbg_rayon_PoolBuilder": () => (/* binding */ wbg_rayon_PoolBuilder),
+/* harmony export */   "wbg_rayon_start_worker": () => (/* binding */ wbg_rayon_start_worker)
 /* harmony export */ });
-function mergeObjects(obj1, obj2) {
-    if (!obj1)
-        return obj2;
-    if (!obj2)
-        return obj1;
-    const mergedObjects = {};
-    for (const key of [...Object.keys(obj1), ...Object.keys(obj2)]) {
-        if (obj1[key] && obj2[key]) {
-            if (Array.isArray(obj1[key])) {
-                mergedObjects[key] = obj1[key].concat(obj2[key]);
-            }
-            else {
-                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-            }
+/* harmony import */ var _snippets_wasm_bindgen_rayon_7afa899f36665473_src_workerHelpers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1984);
+
+let wasm;
+const heap = new Array(32).fill(undefined);
+heap.push(undefined, null, true, false);
+function getObject(idx) { return heap[idx]; }
+let heap_next = heap.length;
+function dropObject(idx) {
+    if (idx < 36)
+        return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+}
+function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
+}
+let cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
+cachedTextDecoder.decode();
+let cachegetUint8Memory0 = null;
+function getUint8Memory0() {
+    if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== wasm.memory.buffer) {
+        cachegetUint8Memory0 = new Uint8Array(wasm.memory.buffer);
+    }
+    return cachegetUint8Memory0;
+}
+function getStringFromWasm0(ptr, len) {
+    return cachedTextDecoder.decode(getUint8Memory0().slice(ptr, ptr + len));
+}
+function addHeapObject(obj) {
+    if (heap_next === heap.length)
+        heap.push(heap.length + 1);
+    const idx = heap_next;
+    heap_next = heap[idx];
+    heap[idx] = obj;
+    return idx;
+}
+function debugString(val) {
+    // primitive types
+    const type = typeof val;
+    if (type == 'number' || type == 'boolean' || val == null) {
+        return `${val}`;
+    }
+    if (type == 'string') {
+        return `"${val}"`;
+    }
+    if (type == 'symbol') {
+        const description = val.description;
+        if (description == null) {
+            return 'Symbol';
         }
         else {
-            mergedObjects[key] = obj1[key] ?? obj2[key];
+            return `Symbol(${description})`;
         }
     }
-    return mergedObjects;
+    if (type == 'function') {
+        const name = val.name;
+        if (typeof name == 'string' && name.length > 0) {
+            return `Function(${name})`;
+        }
+        else {
+            return 'Function';
+        }
+    }
+    // objects
+    if (Array.isArray(val)) {
+        const length = val.length;
+        let debug = '[';
+        if (length > 0) {
+            debug += debugString(val[0]);
+        }
+        for (let i = 1; i < length; i++) {
+            debug += ', ' + debugString(val[i]);
+        }
+        debug += ']';
+        return debug;
+    }
+    // Test for built-in
+    const builtInMatches = /\[object ([^\]]+)\]/.exec(toString.call(val));
+    let className;
+    if (builtInMatches.length > 1) {
+        className = builtInMatches[1];
+    }
+    else {
+        // Failed to match the standard '[object ClassName]'
+        return toString.call(val);
+    }
+    if (className == 'Object') {
+        // we're a user defined class or Object
+        // JSON.stringify avoids problems with cycles, and is generally much
+        // easier than looping through ownProperties of `val`.
+        try {
+            return 'Object(' + JSON.stringify(val) + ')';
+        }
+        catch (_) {
+            return 'Object';
+        }
+    }
+    // errors
+    if (val instanceof Error) {
+        return `${val.name}: ${val.message}\n${val.stack}`;
+    }
+    // TODO we could test for more things here, like `Set`s and `Map`s.
+    return className;
 }
+let WASM_VECTOR_LEN = 0;
+let cachedTextEncoder = new TextEncoder('utf-8');
+const encodeString = function (arg, view) {
+    const buf = cachedTextEncoder.encode(arg);
+    view.set(buf);
+    return {
+        read: arg.length,
+        written: buf.length
+    };
+};
+function passStringToWasm0(arg, malloc, realloc) {
+    if (realloc === undefined) {
+        const buf = cachedTextEncoder.encode(arg);
+        const ptr = malloc(buf.length);
+        getUint8Memory0().subarray(ptr, ptr + buf.length).set(buf);
+        WASM_VECTOR_LEN = buf.length;
+        return ptr;
+    }
+    let len = arg.length;
+    let ptr = malloc(len);
+    const mem = getUint8Memory0();
+    let offset = 0;
+    for (; offset < len; offset++) {
+        const code = arg.charCodeAt(offset);
+        if (code > 0x7F)
+            break;
+        mem[ptr + offset] = code;
+    }
+    if (offset !== len) {
+        if (offset !== 0) {
+            arg = arg.slice(offset);
+        }
+        ptr = realloc(ptr, len, len = offset + arg.length * 3);
+        const view = getUint8Memory0().subarray(ptr + offset, ptr + len);
+        const ret = encodeString(arg, view);
+        offset += ret.written;
+    }
+    WASM_VECTOR_LEN = offset;
+    return ptr;
+}
+let cachegetInt32Memory0 = null;
+function getInt32Memory0() {
+    if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== wasm.memory.buffer) {
+        cachegetInt32Memory0 = new Int32Array(wasm.memory.buffer);
+    }
+    return cachegetInt32Memory0;
+}
+/**
+*/
+function start() {
+    wasm.start();
+}
+function handleError(f, args) {
+    try {
+        return f.apply(this, args);
+    }
+    catch (e) {
+        wasm.__wbindgen_exn_store(addHeapObject(e));
+    }
+}
+/**
+* @param {number} num_threads
+* @returns {Promise<any>}
+*/
+function initThreadPool(num_threads) {
+    var ret = wasm.initThreadPool(num_threads);
+    return takeObject(ret);
+}
+/**
+* @param {number} receiver
+*/
+function wbg_rayon_start_worker(receiver) {
+    wasm.wbg_rayon_start_worker(receiver);
+}
+/**
+*/
+class WorldState {
+    static __wrap(ptr) {
+        const obj = Object.create(WorldState.prototype);
+        obj.ptr = ptr;
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_worldstate_free(ptr);
+    }
+    /**
+    */
+    constructor() {
+        var ret = wasm.worldstate_new();
+        return WorldState.__wrap(ret);
+    }
+    /**
+    * @param {string} code
+    * @param {string} fake_std
+    * @param {string} fake_core
+    * @param {string} fake_alloc
+    */
+    init(code, fake_std, fake_core, fake_alloc) {
+        var ptr0 = passStringToWasm0(code, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ptr1 = passStringToWasm0(fake_std, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len1 = WASM_VECTOR_LEN;
+        var ptr2 = passStringToWasm0(fake_core, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len2 = WASM_VECTOR_LEN;
+        var ptr3 = passStringToWasm0(fake_alloc, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len3 = WASM_VECTOR_LEN;
+        wasm.worldstate_init(this.ptr, ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3);
+    }
+    /**
+    * @param {string} code
+    * @returns {any}
+    */
+    update(code) {
+        var ptr0 = passStringToWasm0(code, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.worldstate_update(this.ptr, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {any}
+    */
+    inlay_hints() {
+        var ret = wasm.worldstate_inlay_hints(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    completions(line_number, column) {
+        var ret = wasm.worldstate_completions(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    hover(line_number, column) {
+        var ret = wasm.worldstate_hover(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {any}
+    */
+    code_lenses() {
+        var ret = wasm.worldstate_code_lenses(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @param {boolean} include_declaration
+    * @returns {any}
+    */
+    references(line_number, column, include_declaration) {
+        var ret = wasm.worldstate_references(this.ptr, line_number, column, include_declaration);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    prepare_rename(line_number, column) {
+        var ret = wasm.worldstate_prepare_rename(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @param {string} new_name
+    * @returns {any}
+    */
+    rename(line_number, column, new_name) {
+        var ptr0 = passStringToWasm0(new_name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        var ret = wasm.worldstate_rename(this.ptr, line_number, column, ptr0, len0);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    signature_help(line_number, column) {
+        var ret = wasm.worldstate_signature_help(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    definition(line_number, column) {
+        var ret = wasm.worldstate_definition(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    type_definition(line_number, column) {
+        var ret = wasm.worldstate_type_definition(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {any}
+    */
+    document_symbols() {
+        var ret = wasm.worldstate_document_symbols(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @param {string} ch
+    * @returns {any}
+    */
+    type_formatting(line_number, column, ch) {
+        var ret = wasm.worldstate_type_formatting(this.ptr, line_number, column, ch.codePointAt(0));
+        return takeObject(ret);
+    }
+    /**
+    * @returns {any}
+    */
+    folding_ranges() {
+        var ret = wasm.worldstate_folding_ranges(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @param {number} line_number
+    * @param {number} column
+    * @returns {any}
+    */
+    goto_implementation(line_number, column) {
+        var ret = wasm.worldstate_goto_implementation(this.ptr, line_number, column);
+        return takeObject(ret);
+    }
+}
+/**
+*/
+class wbg_rayon_PoolBuilder {
+    static __wrap(ptr) {
+        const obj = Object.create(wbg_rayon_PoolBuilder.prototype);
+        obj.ptr = ptr;
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_wbg_rayon_poolbuilder_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    numThreads() {
+        var ret = wasm.wbg_rayon_poolbuilder_numThreads(this.ptr);
+        return ret >>> 0;
+    }
+    /**
+    * @returns {number}
+    */
+    receiver() {
+        var ret = wasm.wbg_rayon_poolbuilder_receiver(this.ptr);
+        return ret;
+    }
+    /**
+    */
+    build() {
+        wasm.wbg_rayon_poolbuilder_build(this.ptr);
+    }
+}
+async function load(module, imports) {
+    if (typeof Response === 'function' && module instanceof Response) {
+        if (typeof WebAssembly.instantiateStreaming === 'function') {
+            try {
+                return await WebAssembly.instantiateStreaming(module, imports);
+            }
+            catch (e) {
+                if (module.headers.get('Content-Type') != 'application/wasm') {
+                    console.warn("`WebAssembly.instantiateStreaming` failed because your server does not serve wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n", e);
+                }
+                else {
+                    throw e;
+                }
+            }
+        }
+        const bytes = await module.arrayBuffer();
+        return await WebAssembly.instantiate(bytes, imports);
+    }
+    else {
+        const instance = await WebAssembly.instantiate(module, imports);
+        if (instance instanceof WebAssembly.Instance) {
+            return { instance, module };
+        }
+        else {
+            return instance;
+        }
+    }
+}
+async function init(input, maybe_memory) {
+    if (typeof input === 'undefined') {
+        input = new URL(/* asset import */ __webpack_require__(8991), __webpack_require__.b);
+    }
+    const imports = {};
+    imports.wbg = {};
+    imports.wbg.__wbindgen_object_drop_ref = function (arg0) {
+        takeObject(arg0);
+    };
+    imports.wbg.__wbindgen_string_new = function (arg0, arg1) {
+        var ret = getStringFromWasm0(arg0, arg1);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_object_clone_ref = function (arg0) {
+        var ret = getObject(arg0);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_new_68adb0d58759a4ed = function () {
+        var ret = new Object();
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_number_new = function (arg0) {
+        var ret = arg0;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_is_undefined = function (arg0) {
+        var ret = getObject(arg0) === undefined;
+        return ret;
+    };
+    imports.wbg.__wbg_set_2e79e744454afade = function (arg0, arg1, arg2) {
+        getObject(arg0)[takeObject(arg1)] = takeObject(arg2);
+    };
+    imports.wbg.__wbg_new_693216e109162396 = function () {
+        var ret = new Error();
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_stack_0ddaca5d1abfb52f = function (arg0, arg1) {
+        var ret = getObject(arg1).stack;
+        var ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        getInt32Memory0()[arg0 / 4 + 1] = len0;
+        getInt32Memory0()[arg0 / 4 + 0] = ptr0;
+    };
+    imports.wbg.__wbg_error_09919627ac0992f5 = function (arg0, arg1) {
+        try {
+            console.error(getStringFromWasm0(arg0, arg1));
+        }
+        finally {
+            wasm.__wbindgen_free(arg0, arg1);
+        }
+    };
+    imports.wbg.__wbg_now_559193109055ebad = function (arg0) {
+        var ret = getObject(arg0).now();
+        return ret;
+    };
+    imports.wbg.__wbg_new_949bbc1147195c4e = function () {
+        var ret = new Array();
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_newnoargs_be86524d73f67598 = function (arg0, arg1) {
+        var ret = new Function(getStringFromWasm0(arg0, arg1));
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_get_4d0f21c2f823742e = function () {
+        return handleError(function (arg0, arg1) {
+            var ret = Reflect.get(getObject(arg0), getObject(arg1));
+            return addHeapObject(ret);
+        }, arguments);
+    };
+    imports.wbg.__wbg_call_888d259a5fefc347 = function () {
+        return handleError(function (arg0, arg1) {
+            var ret = getObject(arg0).call(getObject(arg1));
+            return addHeapObject(ret);
+        }, arguments);
+    };
+    imports.wbg.__wbg_self_c6fbdfc2918d5e58 = function () {
+        return handleError(function () {
+            var ret = self.self;
+            return addHeapObject(ret);
+        }, arguments);
+    };
+    imports.wbg.__wbg_window_baec038b5ab35c54 = function () {
+        return handleError(function () {
+            var ret = window.window;
+            return addHeapObject(ret);
+        }, arguments);
+    };
+    imports.wbg.__wbg_globalThis_3f735a5746d41fbd = function () {
+        return handleError(function () {
+            var ret = globalThis.globalThis;
+            return addHeapObject(ret);
+        }, arguments);
+    };
+    imports.wbg.__wbg_global_1bc0b39582740e95 = function () {
+        return handleError(function () {
+            var ret = __webpack_require__.g.global;
+            return addHeapObject(ret);
+        }, arguments);
+    };
+    imports.wbg.__wbg_push_284486ca27c6aa8b = function (arg0, arg1) {
+        var ret = getObject(arg0).push(getObject(arg1));
+        return ret;
+    };
+    imports.wbg.__wbg_new_342a24ca698edd87 = function (arg0, arg1) {
+        var ret = new Error(getStringFromWasm0(arg0, arg1));
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_debug_string = function (arg0, arg1) {
+        var ret = debugString(getObject(arg1));
+        var ptr0 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        getInt32Memory0()[arg0 / 4 + 1] = len0;
+        getInt32Memory0()[arg0 / 4 + 0] = ptr0;
+    };
+    imports.wbg.__wbindgen_throw = function (arg0, arg1) {
+        throw new Error(getStringFromWasm0(arg0, arg1));
+    };
+    imports.wbg.__wbindgen_module = function () {
+        var ret = init.__wbindgen_wasm_module;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_memory = function () {
+        var ret = wasm.memory;
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_startWorkers_04f63eca19916b8f = function (arg0, arg1, arg2) {
+        var ret = (0,_snippets_wasm_bindgen_rayon_7afa899f36665473_src_workerHelpers_js__WEBPACK_IMPORTED_MODULE_0__/* .startWorkers */ .Q)(takeObject(arg0), takeObject(arg1), wbg_rayon_PoolBuilder.__wrap(arg2));
+        return addHeapObject(ret);
+    };
+    if (typeof input === 'string' || (typeof Request === 'function' && input instanceof Request) || (typeof URL === 'function' && input instanceof URL)) {
+        input = fetch(input);
+    }
+    imports.wbg.memory = maybe_memory || new WebAssembly.Memory({ initial: 35, maximum: 16384, shared: true });
+    const { instance, module } = await load(await input, imports);
+    wasm = instance.exports;
+    init.__wbindgen_wasm_module = module;
+    wasm.__wbindgen_start();
+    return wasm;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (init);
 
+
+/***/ }),
+
+/***/ 8991:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+module.exports = __webpack_require__.p + "ea9a9febd6c8fd542e30.wasm";
 
 /***/ })
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			loaded: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/create fake namespace object */
-/******/ 	(() => {
-/******/ 		var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
-/******/ 		var leafPrototypes;
-/******/ 		// create a fake namespace object
-/******/ 		// mode & 1: value is a module id, require it
-/******/ 		// mode & 2: merge all properties of value into the ns
-/******/ 		// mode & 4: return value when already ns object
-/******/ 		// mode & 16: return value when it's Promise-like
-/******/ 		// mode & 8|1: behave like require
-/******/ 		__webpack_require__.t = function(value, mode) {
-/******/ 			if(mode & 1) value = this(value);
-/******/ 			if(mode & 8) return value;
-/******/ 			if(typeof value === 'object' && value) {
-/******/ 				if((mode & 4) && value.__esModule) return value;
-/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
-/******/ 			}
-/******/ 			var ns = Object.create(null);
-/******/ 			__webpack_require__.r(ns);
-/******/ 			var def = {};
-/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
-/******/ 			for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
-/******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
-/******/ 			}
-/******/ 			def['default'] = () => (value);
-/******/ 			__webpack_require__.d(ns, def);
-/******/ 			return ns;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/ensure chunk */
-/******/ 	(() => {
-/******/ 		__webpack_require__.f = {};
-/******/ 		// This file contains only the entry chunk.
-/******/ 		// The chunk loading function for additional chunks
-/******/ 		__webpack_require__.e = (chunkId) => {
-/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
-/******/ 				__webpack_require__.f[key](chunkId, promises);
-/******/ 				return promises;
-/******/ 			}, []));
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	(() => {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = (chunkId) => {
-/******/ 			// return url for filenames based on template
-/******/ 			return "bundle." + chunkId + ".js";
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/node module decorator */
-/******/ 	(() => {
-/******/ 		__webpack_require__.nmd = (module) => {
-/******/ 			module.paths = [];
-/******/ 			if (!module.children) module.children = [];
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/publicPath */
-/******/ 	(() => {
-/******/ 		var scriptUrl;
-/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
-/******/ 		var document = __webpack_require__.g.document;
-/******/ 		if (!scriptUrl && document) {
-/******/ 			if (document.currentScript)
-/******/ 				scriptUrl = document.currentScript.src
-/******/ 			if (!scriptUrl) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
-/******/ 			}
-/******/ 		}
-/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
-/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
-/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
-/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
-/******/ 		__webpack_require__.p = scriptUrl;
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/importScripts chunk loading */
-/******/ 	(() => {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded chunks
-/******/ 		// "1" means "already loaded"
-/******/ 		var installedChunks = {
-/******/ 			227: 1
-/******/ 		};
-/******/ 		
-/******/ 		// importScripts chunk loading
-/******/ 		var installChunk = (data) => {
-/******/ 			var [chunkIds, moreModules, runtime] = data;
-/******/ 			for(var moduleId in moreModules) {
-/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 				}
-/******/ 			}
-/******/ 			if(runtime) runtime(__webpack_require__);
-/******/ 			while(chunkIds.length)
-/******/ 				installedChunks[chunkIds.pop()] = 1;
-/******/ 			parentChunkLoadingFunction(data);
-/******/ 		};
-/******/ 		__webpack_require__.f.i = (chunkId, promises) => {
-/******/ 			// "1" is the signal for "already loaded"
-/******/ 			if(!installedChunks[chunkId]) {
-/******/ 				if(true) { // all chunks have JS
-/******/ 					importScripts(__webpack_require__.p + __webpack_require__.u(chunkId));
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || [];
-/******/ 		var parentChunkLoadingFunction = chunkLoadingGlobal.push.bind(chunkLoadingGlobal);
-/******/ 		chunkLoadingGlobal.push = installChunk;
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
-
-// EXTERNAL MODULE: ./packages/ace-linters/utils.ts
-var utils = __webpack_require__(3357);
-;// CONCATENATED MODULE: ./packages/ace-linters/message-types.ts
-class BaseMessage {
-    sessionId;
-    constructor(sessionId) {
-        this.sessionId = sessionId;
-    }
-}
-class InitMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.init;
-    mode;
-    options;
-    value;
-    version;
-    constructor(sessionId, value, version, mode, options) {
-        super(sessionId);
-        this.version = version;
-        this.options = options;
-        this.mode = mode;
-        this.value = value;
-    }
-}
-class FormatMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.format;
-    value;
-    format;
-    constructor(sessionId, value, format) {
-        super(sessionId);
-        this.value = value;
-        this.format = format;
-    }
-}
-class CompleteMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.complete;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class ResolveCompletionMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.resolveCompletion;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class HoverMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.hover;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
-    }
-}
-class ValidateMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.validate;
-    constructor(sessionId) {
-        super(sessionId);
-    }
-}
-class ChangeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.change;
-    value;
-    version;
-    constructor(sessionId, value, version) {
-        super(sessionId);
-        this.value = value;
-        this.version = version;
-    }
-}
-class DeltasMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.applyDelta;
-    value;
-    version;
-    constructor(sessionId, value, version) {
-        super(sessionId);
-        this.value = value;
-        this.version = version;
-    }
-}
-class ChangeModeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.changeMode;
-    mode;
-    value;
-    constructor(sessionId, value, mode) {
-        super(sessionId);
-        this.value = value;
-        this.mode = mode;
-    }
-}
-class ChangeOptionsMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.changeOptions;
-    options;
-    merge;
-    constructor(sessionId, options, merge = false) {
-        super(sessionId);
-        this.options = options;
-        this.merge = merge;
-    }
-}
-class DisposeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    type = MessageType.dispose;
-    constructor(sessionId) {
-        super(sessionId);
-    }
-}
-class GlobalOptionsMessage {
-    type = MessageType.globalOptions;
-    serviceName;
-    options;
-    merge;
-    constructor(serviceName, options, merge) {
-        this.serviceName = serviceName;
-        this.options = options;
-        this.merge = merge;
-    }
-}
-var MessageType;
-(function (MessageType) {
-    MessageType[MessageType["init"] = 0] = "init";
-    MessageType[MessageType["format"] = 1] = "format";
-    MessageType[MessageType["complete"] = 2] = "complete";
-    MessageType[MessageType["resolveCompletion"] = 3] = "resolveCompletion";
-    MessageType[MessageType["change"] = 4] = "change";
-    MessageType[MessageType["hover"] = 5] = "hover";
-    MessageType[MessageType["validate"] = 6] = "validate";
-    MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
-    MessageType[MessageType["changeMode"] = 8] = "changeMode";
-    MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
-    MessageType[MessageType["dispose"] = 10] = "dispose";
-    MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
-})(MessageType || (MessageType = {}));
-
-;// CONCATENATED MODULE: ./packages/ace-linters/services/service-manager.ts
-
-
-class ServiceManager {
-    $services = {};
-    $sessionIDToMode = {};
-    constructor(ctx) {
-        let doValidation = (document, serviceInstance) => {
-            serviceInstance ??= this.getServiceInstance(document.uri);
-            if (!serviceInstance)
-                return;
-            let postMessage = {
-                "type": MessageType.validate,
-            };
-            let sessionIDList = Object.keys(serviceInstance.documents);
-            for (let sessionID of sessionIDList) {
-                serviceInstance.doValidation({ uri: sessionID }).then((result) => {
-                    postMessage["sessionId"] = sessionID;
-                    postMessage["value"] = result;
-                    ctx.postMessage(postMessage);
-                });
-            }
-        };
-        ctx.addEventListener("message", async (ev) => {
-            let message = ev.data;
-            let sessionID = message.sessionId;
-            let version = message.version;
-            let postMessage = {
-                "type": message.type,
-                "sessionId": sessionID,
-            };
-            let serviceInstance = this.getServiceInstance(sessionID);
-            let documentIdentifier = {
-                uri: sessionID,
-                version: version
-            };
-            switch (message["type"]) {
-                case MessageType.format:
-                    postMessage["value"] = serviceInstance?.format(documentIdentifier, message.value, message.format);
-                    break;
-                case MessageType.complete:
-                    postMessage["value"] = await serviceInstance?.doComplete(documentIdentifier, message.value);
-                    break;
-                case MessageType.resolveCompletion:
-                    postMessage["value"] = await serviceInstance?.doResolve(message.value);
-                    break;
-                case MessageType.change:
-                    serviceInstance?.setValue(documentIdentifier, message.value);
-                    doValidation(documentIdentifier, serviceInstance);
-                    break;
-                case MessageType.applyDelta:
-                    serviceInstance?.applyDeltas(documentIdentifier, message.value);
-                    doValidation(documentIdentifier, serviceInstance);
-                    break;
-                case MessageType.hover:
-                    postMessage["value"] = await serviceInstance?.doHover(documentIdentifier, message.value);
-                    break;
-                case MessageType.validate:
-                    postMessage["value"] = await serviceInstance?.doValidation(documentIdentifier);
-                    break;
-                case MessageType.init: //this should be first message
-                    await this.addDocument(documentIdentifier, message.value, message.mode, message.options);
-                    doValidation(documentIdentifier);
-                    break;
-                case MessageType.changeMode:
-                    await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options);
-                    doValidation(documentIdentifier, serviceInstance);
-                    break;
-                case MessageType.changeOptions:
-                    serviceInstance?.setOptions(sessionID, message.options);
-                    doValidation(documentIdentifier, serviceInstance);
-                    break;
-                case MessageType.dispose:
-                    this.removeDocument(documentIdentifier);
-                    break;
-                case MessageType.globalOptions:
-                    this.setGlobalOptions(message.serviceName, message.options, message.merge);
-                    break;
-            }
-            ctx.postMessage(postMessage);
-        });
-    }
-    static async $initServiceInstance(service) {
-        let module = await service.module();
-        service.serviceInstance = new module[service.className](service.modes);
-        if (service.options)
-            service.serviceInstance.setGlobalOptions(service.options);
-    }
-    async $getServiceInstanceByMode(mode) {
-        let service = this.findServiceByMode(mode);
-        if (!service)
-            return;
-        if (!service.serviceInstance)
-            await ServiceManager.$initServiceInstance(service);
-        return service.serviceInstance;
-    }
-    setGlobalOptions(serviceName, options, merge = false) {
-        let service = this.$services[serviceName];
-        if (!service)
-            return;
-        service.options = merge ? (0,utils/* mergeObjects */.P)(options, service.options) : options;
-        if (service.serviceInstance) {
-            service.serviceInstance.setGlobalOptions(service.options);
-        }
-    }
-    async addDocument(documentIdentifier, documentValue, mode, options) {
-        if (!mode || !/^ace\/mode\//.test(mode))
-            return;
-        mode = mode.replace("ace/mode/", "");
-        let serviceInstance = await this.$getServiceInstanceByMode(mode);
-        if (!serviceInstance)
-            return;
-        let documentItem = {
-            uri: documentIdentifier.uri,
-            version: documentIdentifier.version,
-            languageId: mode,
-            text: documentValue
-        };
-        serviceInstance.addDocument(documentItem);
-        this.$sessionIDToMode[documentIdentifier.uri] = mode;
-    }
-    async changeDocumentMode(documentIdentifier, value, mode, options) {
-        this.removeDocument(documentIdentifier);
-        await this.addDocument(documentIdentifier, value, mode, options);
-    }
-    removeDocument(document) {
-        let service = this.getServiceInstance(document.uri);
-        if (service) {
-            service.removeDocument(document);
-            delete this.$sessionIDToMode[document.uri];
-        }
-    }
-    getServiceInstance(sessionID) {
-        let mode = this.$sessionIDToMode[sessionID];
-        let service = this.findServiceByMode(mode);
-        if (!mode || !service?.serviceInstance)
-            return; //TODO:
-        return service.serviceInstance;
-    }
-    findServiceByMode(mode) {
-        return Object.values(this.$services).find((el) => {
-            let extensions = el.modes.split('|');
-            if (extensions.includes(mode))
-                return el;
-        });
-    }
-    registerService(name, service) {
-        this.$services[name] = service;
-    }
-}
-
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/webworker.ts
-
-let manager = new ServiceManager(self);
-manager.registerService("html", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(230), __webpack_require__.e(934)]).then(__webpack_require__.bind(__webpack_require__, 9934)),
-    className: "HtmlService",
-    modes: "html"
-});
-manager.registerService("css", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(535), __webpack_require__.e(793)]).then(__webpack_require__.bind(__webpack_require__, 6793)),
-    className: "CssService",
-    modes: "css"
-});
-manager.registerService("less", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(535), __webpack_require__.e(793)]).then(__webpack_require__.bind(__webpack_require__, 6793)),
-    className: "CssService",
-    modes: "less"
-});
-manager.registerService("scss", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(535), __webpack_require__.e(793)]).then(__webpack_require__.bind(__webpack_require__, 6793)),
-    className: "CssService",
-    modes: "scss"
-});
-manager.registerService("json", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(516), __webpack_require__.e(2), __webpack_require__.e(144)]).then(__webpack_require__.bind(__webpack_require__, 8411)),
-    className: "JsonService",
-    modes: "json",
-});
-manager.registerService("json5", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(516), __webpack_require__.e(2), __webpack_require__.e(144)]).then(__webpack_require__.bind(__webpack_require__, 8411)),
-    className: "JsonService",
-    modes: "json5",
-});
-manager.registerService("typescript", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(152), __webpack_require__.e(100), __webpack_require__.e(277)]).then(__webpack_require__.bind(__webpack_require__, 6263)),
-    className: "TypescriptService",
-    modes: "typescript|javascript|tsx|jsx",
-});
-manager.registerService("lua", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(37), __webpack_require__.e(658)]).then(__webpack_require__.bind(__webpack_require__, 5658)),
-    className: "LuaService",
-    modes: "lua",
-});
-manager.registerService("yaml", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(516), __webpack_require__.e(332), __webpack_require__.e(549)]).then(__webpack_require__.bind(__webpack_require__, 9549)),
-    className: "YamlService",
-    modes: "yaml",
-});
-manager.registerService("xml", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(63), __webpack_require__.e(152), __webpack_require__.e(113), __webpack_require__.e(753)]).then(__webpack_require__.bind(__webpack_require__, 4753)),
-    className: "XmlService",
-    modes: "xml",
-});
-manager.registerService("php", {
-    module: () => __webpack_require__.e(/* import() */ 313).then(__webpack_require__.bind(__webpack_require__, 3313)),
-    className: "PhpService",
-    modes: "php"
-});
-
-})();
-
-/******/ })()
-;
+}]);
 //# sourceMappingURL=bundle.227.js.map
