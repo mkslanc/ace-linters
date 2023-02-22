@@ -1,4 +1,6 @@
 "use strict";
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
     let loader;
@@ -26,7 +28,8 @@ module.exports = (env, argv) => {
             "yaml-service": './services/yaml/yaml-service.ts',
             "xml-service": './services/xml/xml-service.ts',
             "php-service": './services/php/php-service.ts',
-            "ace-language-client": './ace-language-client.ts'
+            "ace-language-client": './ace-language-client.ts',
+            "javascript-service": './services/javascript/javascript-service.ts'
         },
         module: {
             rules: [
@@ -45,10 +48,7 @@ module.exports = (env, argv) => {
             ]
         },
         resolve: {
-            extensions: ['.tsx', '.ts', '.js'],
-            fallback: {
-                "path": false
-            }
+            extensions: ['.tsx', '.ts', '.js']
         },
         output: {
             filename: '[name].js',
@@ -60,6 +60,9 @@ module.exports = (env, argv) => {
         },
         optimization: {
             minimize: isProduction
-        }
+        },
+        plugins: [
+            new NodePolyfillPlugin()
+        ]
     };
 };
