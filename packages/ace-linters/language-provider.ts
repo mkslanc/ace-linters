@@ -109,6 +109,7 @@ export class LanguageProvider {
 
     doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
+        cursor.column--;
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completionList) => completionList && callback(toCompletions(completionList)));
     }
