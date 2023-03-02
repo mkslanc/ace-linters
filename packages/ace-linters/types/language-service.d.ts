@@ -56,7 +56,7 @@ export declare namespace AceLinters {
     }
 
     export interface CompletionService {
-        completions: lsp.CompletionItem[] | lsp.CompletionList,
+        completions: lsp.CompletionItem[] | lsp.CompletionList | null,
         service: string
     }
 
