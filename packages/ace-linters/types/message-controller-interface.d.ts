@@ -7,13 +7,13 @@ export interface IMessageController {
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void)
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void);
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: AceLinters.CompletionService[]) => void);
 
     doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void);
 
     format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void);
 
-    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void);
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void);
 
     change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void): void;
 

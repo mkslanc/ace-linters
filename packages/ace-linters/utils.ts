@@ -15,3 +15,7 @@ export function mergeObjects(obj1, obj2) {
     }
     return mergedObjects;
 }
+
+export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+    return value !== null && value !== undefined;
+}

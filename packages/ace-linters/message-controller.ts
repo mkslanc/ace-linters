@@ -41,7 +41,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new ValidateMessage(sessionId), callback);
     }
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void) {
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: AceLinters.CompletionService[]) => void) {
         this.postMessage(new CompleteMessage(sessionId, position), callback);
     }
 
@@ -53,7 +53,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new FormatMessage(sessionId, range, format), callback);
     }
 
-    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void) {
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void) {
         this.postMessage(new HoverMessage(sessionId, position), callback)
     }
 

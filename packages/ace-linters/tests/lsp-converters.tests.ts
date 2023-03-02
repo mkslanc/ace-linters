@@ -199,6 +199,15 @@ describe('Converters from/to Language Server Protocol', () => {
                 }
             ];
 
+            let expectedFirstCompletionItem = JSON.parse(JSON.stringify(completionItems[0]));
+            expectedFirstCompletionItem.service = "test";
+            let expectedSecondCompletionItem = JSON.parse(JSON.stringify(completionItems[1]));
+            expectedSecondCompletionItem.service = "test";
+            let expectedThirdCompletionItem = JSON.parse(JSON.stringify(completionItems[0]));
+            expectedThirdCompletionItem.service = "test1";
+            let expectedFourthCompletionItem = JSON.parse(JSON.stringify(completionItems[1]));
+            expectedFourthCompletionItem.service = "test1";
+
             const expectedCompletions = [{
                 meta: 'Function',
                 caption: 'html',
@@ -209,70 +218,68 @@ describe('Converters from/to Language Server Protocol', () => {
                     value: "Test value"
                 },
                 command: "startAutocomplete",
-                item: completionItems[0],
+                item: expectedFirstCompletionItem,
                 value: "",
                 score: undefined,
-                position: undefined
+                position: undefined,
+                service: "test"
             }, {
                 meta: 'Color',
                 caption: 'TestCompletionItem2',
                 documentation: 'Test documentation',
-                item: completionItems[1],
+                item: expectedSecondCompletionItem,
                 value: "TestInsertText",
                 score: undefined,
                 position: undefined,
                 range: undefined,
-                command: undefined
+                command: undefined,
+                service: "test"
+            }, {
+                meta: 'Function',
+                caption: 'html',
+                snippet: "Test text",
+                range: new AceRange(0, 1, 0, 5),
+                documentation: {
+                    kind: "markdown",
+                    value: "Test value"
+                },
+                command: "startAutocomplete",
+                item: expectedThirdCompletionItem,
+                value: "",
+                score: undefined,
+                position: undefined,
+                service: "test1"
+            }, {
+                meta: 'Color',
+                caption: 'TestCompletionItem2',
+                documentation: 'Test documentation',
+                item: expectedFourthCompletionItem,
+                value: "TestInsertText",
+                score: undefined,
+                position: undefined,
+                range: undefined,
+                command: undefined,
+                service: "test1"
             }
             ];
             let completionList = {
                 isIncomplete: false,
-                items: completionItems
+                items: JSON.parse(JSON.stringify(completionItems))
             }
-            expect(toCompletions(completionItems)).to.have.deep.members(expectedCompletions);
-            expect(toCompletions(completionList)).to.have.deep.members(expectedCompletions);
+
+            let completionsService: AceLinters.CompletionService = {
+                service: "test",
+                completions: completionItems
+            }
+            let completionsService1: AceLinters.CompletionService = {
+                service: "test1",
+                completions: completionList
+            }
+            expect(toCompletions([completionsService, completionsService1])).to.have.deep.members(expectedCompletions);
         });
     });
 
     describe('toResolvedCompletion', () => {
-        it('converts a resolved completion from LSP format to Ace format (Plain Text)', () => {
-            const aceCompletion = {
-                value: 'value',
-                snippet: 'snippet',
-                score: 10,
-                meta: 'meta',
-                caption: 'caption'
-            };
-
-            const item: CompletionItem = {
-                label: 'value',
-                documentation: 'Test documentation',
-                insertText: 'TestInsertText',
-                insertTextFormat: InsertTextFormat.PlainText
-            }
-
-            const item1: CompletionItem = {
-                label: 'value',
-                documentation: {
-                    kind: "plaintext",
-                    value: 'Test documentation'
-                },
-                insertText: 'TestInsertText',
-                insertTextFormat: InsertTextFormat.PlainText
-            }
-
-            const expectedAceCompletion = {
-                value: 'value',
-                snippet: 'snippet',
-                score: 10,
-                meta: 'meta',
-                caption: 'caption',
-                docText: 'Test documentation'
-            };
-
-            expect(toResolvedCompletion(aceCompletion, item)).to.deep.equal(expectedAceCompletion);
-            expect(toResolvedCompletion(aceCompletion, item1)).to.deep.equal(expectedAceCompletion);
-        });
 
         it('converts a resolved completion from LSP format to Ace format (Markdown Text)', () => {
             const aceCompletion = {
@@ -339,6 +346,7 @@ describe('Converters from/to Language Server Protocol', () => {
             expected["fileName"] = "session1.text";
             expected["position"] = 5;
             expected["item"] = undefined;
+            expected["service"] = undefined;
             expect(toCompletionItem(aceCompletion)).to.deep.equal(expected);
         });
 
@@ -359,14 +367,21 @@ describe('Converters from/to Language Server Protocol', () => {
                     end: {line: 1, character: 1}
                 }
             };
+            const anotherHover: Hover = {
+                contents: [
+                    {
+                        language: "plainText",
+                        value: "This is a another plain text hover."
+                    }
+                ]
+            }
             const expected: Tooltip = {
                 content: {
                     type: "markdown",
-                    "text": "```This is a *markdown* hover.```\n\nPlain text hover."
-                },
-                range: new AceRange(0, 0, 1, 1)
+                    "text": "```This is a *markdown* hover.```\n\nPlain text hover.\n\n```This is a another plain text hover.```"
+                }
             };
-            expect(toTooltip(hover)).to.deep.equal(expected);
+            expect(toTooltip([hover, anotherHover])).to.deep.equal(expected);
         });
     });
 

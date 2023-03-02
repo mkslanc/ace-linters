@@ -25,29 +25,37 @@ describe('ServiceManager tests', () => {
             className: "CssService",
             modes: "css"
         };
+        const htmlService = {
+            module: () => import("../services/html/html-service"),
+            className: "HtmlService",
+            modes: "css"
+        };
 
         manager.registerService("css", cssService);
+        manager.registerService("html", htmlService);
 
         expect(manager["$services"]["css"]).contains(cssService);
+        expect(manager["$services"]["html"]).contains(htmlService);
     });
 
     describe('initialisation of service', () => {
         it('should correctly initialise service', async () => {
-            await manager["$getServiceInstanceByMode"]("css");
+            await manager["$getServicesInstancesByMode"]("css");
             expect(manager["$services"]["css"].serviceInstance).instanceOf(BaseService);
         });
         it('should not init non registered service', async () => {
-            await manager["$getServiceInstanceByMode"]("php");
+            await manager["$getServicesInstancesByMode"]("php");
             expect(manager["$services"]).not.haveOwnProperty("php");
         });
     });
 
     describe('addDocument', () => {
 
-        it('should correctly add document', async () => {
+        it('should correctly add document to all linked services', async () => {
             await manager.addDocument(doc, doc.value, "ace/mode/css");
             expect(manager["$sessionIDToMode"][doc.uri]).equal("css");
             expect(manager["$services"]["css"].serviceInstance.getDocument(doc.uri).getText()).equal(doc.value);
+            expect(manager["$services"]["html"].serviceInstance.getDocument(doc.uri).getText()).equal(doc.value);
         });
 
         it('should not add document with wrong mode', async () => {
@@ -62,8 +70,9 @@ describe('ServiceManager tests', () => {
     });
 
     describe('changeDocumentMode', () => {
-        it('should remove document from one service and add to another', async () => {
+        it('should remove document from linked services and add to another', async () => {
             expect(manager["$services"]["css"].serviceInstance.getDocument(doc.uri)).exist;
+            expect(manager["$services"]["html"].serviceInstance.getDocument(doc.uri)).exist;
 
             const jsonService = {
                 module: () => import("../services/json/json-service"),
@@ -74,6 +83,7 @@ describe('ServiceManager tests', () => {
 
             await manager.changeDocumentMode(doc, doc.value, "ace/mode/json", {});
             expect(manager["$services"]["css"].serviceInstance.getDocument(doc.uri)).not.exist;
+            expect(manager["$services"]["html"].serviceInstance.getDocument(doc.uri)).not.exist;
             expect(manager["$services"]["json"].serviceInstance.getDocument(doc.uri)).exist;
         });
     });

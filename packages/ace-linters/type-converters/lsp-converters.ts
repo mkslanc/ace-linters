@@ -19,7 +19,6 @@ import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
 import {AceLinters} from "../types";
 import Tooltip = AceLinters.Tooltip;
-import TooltipContent = AceLinters.TooltipContent;
 import {CommonConverter} from "./common-converters";
 
 
@@ -86,24 +85,35 @@ export function toCompletion(item: CompletionItem): Ace.Completion {
     }
     completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
     completion["position"] = item["position"];
+    completion["service"] = item["service"]; //TODO: since we have multiple servers, we need to determine which
+    // server to use for resolving
     return completion;
 }
 
-export function toCompletions(completionList: CompletionList | CompletionItem[]): Ace.Completion[] {
-    if (!Array.isArray(completionList))
-        completionList = completionList.items;
-    return completionList && completionList.map((item) => toCompletion(item));
+
+export function toCompletions(completions: AceLinters.CompletionService[]): Ace.Completion[] {
+    if (completions.length > 0) {
+        let combinedCompletions = completions.map((el) => {
+            if (Array.isArray(el.completions)) {
+                return el.completions.map((item) => {
+                    item["service"] = el.service;
+                    return item;
+                })
+            } else {
+                return el.completions.items.map((item) => {
+                    item["service"] = el.service;
+                    return item;
+                });
+            }
+        }).flat();
+
+        return combinedCompletions.map((item) => toCompletion(item))
+    }
+    return [];
 }
 
 export function toResolvedCompletion(completion: Ace.Completion, item: CompletionItem): Ace.Completion {
-    let doc = fromMarkupContent(item.documentation);
-    if (doc) {
-        if (doc.type === "markdown") {
-            completion["docMarkdown"] = doc.text;
-        } else {
-            completion["docText"] = doc.text;
-        }
-    }
+    completion["docMarkdown"] = fromMarkupContent(item.documentation);
     return completion;
 }
 
@@ -133,6 +143,7 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
     completionItem["item"] = completion["item"];
+    completionItem["service"] = completion["service"]; //TODO:
 
     return completionItem;
 }
@@ -150,37 +161,43 @@ export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): Ace.Ra
     }
 }
 
-export function toTooltip(hover: Hover | undefined): Tooltip | undefined {
-    let content;
+export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
     if (!hover)
         return;
-    if (MarkupContent.is(hover.contents)) {
-        content = fromMarkupContent(hover.contents);
-    } else if (MarkedString.is(hover.contents)) {
-        content = {type: "markdown", text: "```" + (hover.contents as any).value + "```"};
-    } else {
-        let contents = hover.contents.map((el) => {
-            if (typeof el !== "string") {
-                return `\`\`\`${el.value}\`\`\``;
-            } else {
-                return el;
-            }
-        });
-        content = {type: "markdown", text: contents.join("\n\n")};
-    }
-    return {content: content, range: hover.range && toRange(hover.range)};
+    let content = hover.map((el) => {
+        if (MarkupContent.is(el.contents)) {
+            return fromMarkupContent(el.contents);
+        } else if (MarkedString.is(el.contents)) {
+            return "```" + (el.contents as any).value + "```";
+        } else {
+            let contents = el.contents.map((el) => {
+                if (typeof el !== "string") {
+                    return `\`\`\`${el.value}\`\`\``;
+                } else {
+                    return el;
+                }
+            });
+            return contents.join("\n\n");
+        }
+    });
+
+    //TODO: not to forget about `range` when we will have this feature in editor
+    return {
+        content: {
+            type: "markdown",
+            text: content.join("\n\n")
+        }
+    };
 }
 
-export function fromMarkupContent(content?: string | MarkupContent): TooltipContent | undefined {
+export function fromMarkupContent(content?: string | MarkupContent): string | undefined {
     if (!content)
         return;
 
     if (typeof content === "string") {
-        return {type: "plaintext", text: content};
-    } else if (content.kind === MarkupKind.Markdown) {
-        return {type: "markdown", text: content.value};
+        return content;
     } else {
-        return {type: "plaintext", text: content.value};
+        return content.value;
     }
 }
 
