@@ -26,6 +26,28 @@ languageProvider.registerEditor(editor);
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
 
+## Example using script tag from CDN
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/ext-language_tools.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/mode-css.min.js"></script>
+<script src="https://www.unpkg.com/ace-linters@0.6.0/build/ace-linters.js"></script>
+<div id="editor" style="height: 100px">some text</div>
+
+<script>
+    ace.require("ace/ext/language_tools"); //To allow autocompletion
+    var CssMode = ace.require("ace/mode/css").Mode;
+    var editor = ace.edit("editor", {
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        mode: new CssMode()
+    });
+
+    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@0.6.0/build/");
+    provider.registerEditor(editor);
+</script>
+```
+
 
 Ace linters works in two modes: **WebSockets** and **WebWorkers**.
 
@@ -90,16 +112,25 @@ languageProvider.registerEditor(editor);
 [Example server](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/webworker.ts)
 
 ## Supported LSP capabilities:
- - Text Document Synchronization (with incremental changes)
- - Hover
- - Diagnostics
- - Formatting
- - Completions
+- Text Document Synchronization (with incremental changes)
+- Hover
+- Diagnostics
+- Formatting
+- Completions
 
 [Full list of capabilities](https://github.com/mkslanc/ace-linters/blob/main/Capabilities.md)
 
 ## Supported languages
-[List of implemented language services](https://github.com/mkslanc/ace-linters/blob/main/SupportedLanguages.md)
+Ace linters supports the following languages by default with webworkers approach:
+
+- JSON, JSON5 *powered by* [vscode-json-languageservice](https://github.com/Microsoft/vscode-json-languageservice)
+- HTML *powered by* [vscode-html-languageservice](https://github.com/Microsoft/vscode-html-languageservice)
+- CSS, SCSS, LESS *powered by* [vscode-css-languageservice](https://github.com/Microsoft/vscode-css-languageservice)
+- Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
+- Lua *powered by* [luaparse](https://github.com/fstirlitz/luaparse)
+- YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
+- XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
+- Javascript, JSX *powered by* [Eslint](https://github.com/eslint/eslint)
 
 ## Installation
 
