@@ -44995,10 +44995,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             this.charWidths[i.L] = this.charWidths[i.EN] = this.charWidths[i.ON_R] = t, this.charWidths[i.R] = this.charWidths[i.AN] = n, this.charWidths[i.R_H] = .45 * n, this.charWidths[i.B] = this.charWidths[i.RLE] = 0, this.currentRow = null;
         } }, this.setShowInvisibles = function (e) { this.showInvisibles = e, this.currentRow = null; }, this.setEolChar = function (e) { this.EOL = e; }, this.setContentWidth = function (e) { this.contentWidth = e; }, this.isRtlLine = function (e) { return !!this.$isRtl || (null != e ? this.session.getLine(e).charAt(0) == this.RLE : this.isRtlDir); }, this.setRtlDirection = function (e, t) { for (var n = e.getCursorPosition(), i = e.selection.getSelectionAnchor().row; i <= n.row; i++)
             t || e.session.getLine(i).charAt(0) !== e.session.$bidiHandler.RLE ? t && e.session.getLine(i).charAt(0) !== e.session.$bidiHandler.RLE && e.session.doc.insert({ column: 0, row: i }, e.session.$bidiHandler.RLE) : e.session.doc.removeInLine(i, 0, 1); }, this.getPosLeft = function (e) { e -= this.wrapIndent; var t = this.line.charAt(0) === this.RLE ? 1 : 0, n = e > t ? this.session.getOverwrite() ? e : e - 1 : t, r = i.getVisualFromLogicalIdx(n, this.bidiMap), o = this.bidiMap.bidiLevels, s = 0; !this.session.getOverwrite() && e <= t && o[r] % 2 != 0 && r++; for (var a = 0; a < r; a++)
-            s += this.charWidths[o[a]]; return !this.session.getOverwrite() && e > t && o[r] % 2 == 0 && (s += this.charWidths[o[r]]), this.wrapIndent && (s += this.isRtlDir ? -1 * this.wrapOffset : this.wrapOffset), this.isRtlDir && (s += this.rtlLineOffset), s; }, this.getSelections = function (e, t) { var n, i = this.bidiMap, r = i.bidiLevels, o = [], s = 0, a = Math.min(e, t) - this.wrapIndent, c = Math.max(e, t) - this.wrapIndent, l = !1, h = !1, u = 0; this.wrapIndent && (s += this.isRtlDir ? -1 * this.wrapOffset : this.wrapOffset); for (var d, f = 0; f < r.length; f++)
-            d = i.logicalFromVisual[f], n = r[f], (l = d >= a && d < c) && !h ? u = s : !l && h && o.push({ left: u, width: s - u }), s += this.charWidths[n], h = l; if (l && f === r.length && o.push({ left: u, width: s - u }), this.isRtlDir)
-            for (var g = 0; g < o.length; g++)
-                o[g].left += this.rtlLineOffset; return o; }, this.offsetToCol = function (e) { this.isRtlDir && (e -= this.rtlLineOffset); var t = 0, n = (e = Math.max(e, 0), 0), i = 0, r = this.bidiMap.bidiLevels, o = this.charWidths[r[i]]; for (this.wrapIndent && (e -= this.isRtlDir ? -1 * this.wrapOffset : this.wrapOffset); e > n + o / 2;) {
+            s += this.charWidths[o[a]]; return !this.session.getOverwrite() && e > t && o[r] % 2 == 0 && (s += this.charWidths[o[r]]), this.wrapIndent && (s += this.isRtlDir ? -1 * this.wrapOffset : this.wrapOffset), this.isRtlDir && (s += this.rtlLineOffset), s; }, this.getSelections = function (e, t) { var n, i = this.bidiMap, r = i.bidiLevels, o = [], s = 0, a = Math.min(e, t) - this.wrapIndent, c = Math.max(e, t) - this.wrapIndent, l = !1, h = !1, u = 0; this.wrapIndent && (s += this.isRtlDir ? -1 * this.wrapOffset : this.wrapOffset); for (var d, g = 0; g < r.length; g++)
+            d = i.logicalFromVisual[g], n = r[g], (l = d >= a && d < c) && !h ? u = s : !l && h && o.push({ left: u, width: s - u }), s += this.charWidths[n], h = l; if (l && g === r.length && o.push({ left: u, width: s - u }), this.isRtlDir)
+            for (var f = 0; f < o.length; f++)
+                o[f].left += this.rtlLineOffset; return o; }, this.offsetToCol = function (e) { this.isRtlDir && (e -= this.rtlLineOffset); var t = 0, n = (e = Math.max(e, 0), 0), i = 0, r = this.bidiMap.bidiLevels, o = this.charWidths[r[i]]; for (this.wrapIndent && (e -= this.isRtlDir ? -1 * this.wrapOffset : this.wrapOffset); e > n + o / 2;) {
             if (n += o, i === r.length - 1) {
                 o = 0;
                 break;
@@ -45086,7 +45086,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             r += n[s].length + i; return r + e.column; }; }).call(l.prototype), t.B = l;
     }, 8827: (e, t, n) => {
         "use strict";
-        var i = n(3716), r = n(2011), o = n(732), s = n(9457).l, a = n(3294), c = n(7858).EventEmitter, l = n(4720).Y, h = n(2113).A, u = n(3069).Range, d = n(4594).B, f = n(3486).V, g = n(349).t, p = function (e, t) { this.$breakpoints = [], this.$decorations = [], this.$frontMarkers = {}, this.$backMarkers = {}, this.$markerId = 1, this.$undoSelect = !0, this.$foldData = [], this.id = "session" + ++p.$uid, this.$foldData.toString = function () { return this.join("\n"); }, this.bgTokenizer = new f((new h).getTokenizer(), this); var n = this; this.bgTokenizer.on("update", (function (e) { n._signal("tokenizerUpdate", e); })), this.on("changeFold", this.onChangeFold.bind(this)), this.$onChange = this.onChange.bind(this), "object" == typeof e && e.getLine || (e = new d(e)), this.setDocument(e), this.selection = new l(this), this.$bidiHandler = new s(this), a.resetOptions(this), this.setMode(t), a._signal("session", this), this.destroyed = !1; };
+        var i = n(3716), r = n(2011), o = n(732), s = n(9457).l, a = n(3294), c = n(7858).EventEmitter, l = n(4720).Y, h = n(2113).A, u = n(3069).Range, d = n(4594).B, g = n(3486).V, f = n(349).t, p = function (e, t) { this.$breakpoints = [], this.$decorations = [], this.$frontMarkers = {}, this.$backMarkers = {}, this.$markerId = 1, this.$undoSelect = !0, this.$foldData = [], this.id = "session" + ++p.$uid, this.$foldData.toString = function () { return this.join("\n"); }, this.bgTokenizer = new g((new h).getTokenizer(), this); var n = this; this.bgTokenizer.on("update", (function (e) { n._signal("tokenizerUpdate", e); })), this.on("changeFold", this.onChangeFold.bind(this)), this.$onChange = this.onChange.bind(this), "object" == typeof e && e.getLine || (e = new d(e)), this.setDocument(e), this.selection = new l(this), this.$bidiHandler = new s(this), a.resetOptions(this), this.setMode(t), a._signal("session", this), this.destroyed = !1; };
         p.$uid = 0, function () { r.implement(this, c), this.setDocument = function (e) { this.doc && this.doc.off("change", this.$onChange), this.doc = e, e.on("change", this.$onChange, !0), this.bgTokenizer.setDocument(this.getDocument()), this.resetCaches(); }, this.getDocument = function () { return this.doc; }, this.$resetRowCache = function (e) { if (!e)
             return this.$docRowCache = [], void (this.$screenRowCache = []); var t = this.$docRowCache.length, n = this.$getRowCacheIndex(this.$docRowCache, e) + 1; t > n && (this.$docRowCache.splice(n, t), this.$screenRowCache.splice(n, t)); }, this.$getRowCacheIndex = function (e, t) { for (var n = 0, i = e.length - 1; n <= i;) {
             var r = n + i >> 1, o = e[r];
@@ -45113,7 +45113,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var n = this.$markerId++;
             return e.id = n, e.inFront = !!t, t ? (this.$frontMarkers[n] = e, this._signal("changeFrontMarker")) : (this.$backMarkers[n] = e, this._signal("changeBackMarker")), e;
         } }, this.removeMarker = function (e) { var t = this.$frontMarkers[e] || this.$backMarkers[e]; t && (delete (t.inFront ? this.$frontMarkers : this.$backMarkers)[e], this._signal(t.inFront ? "changeFrontMarker" : "changeBackMarker")); }, this.getMarkers = function (e) { return e ? this.$frontMarkers : this.$backMarkers; }, this.highlight = function (e) { if (!this.$searchHighlight) {
-            var t = new g(null, "ace_selected-word", "text");
+            var t = new f(null, "ace_selected-word", "text");
             this.$searchHighlight = this.addDynamicMarker(t);
         } this.$searchHighlight.setRegexp(e); }, this.highlightLines = function (e, t, n, i) { "number" != typeof t && (n = t, t = e), n || (n = "ace_step"); var r = new u(e, 0, t, 1 / 0); return r.id = this.addMarker(r, n, "fullLine", i), r; }, this.setAnnotations = function (e) { this.$annotations = e, this._signal("changeAnnotation", {}); }, this.getAnnotations = function () { return this.$annotations || []; }, this.clearAnnotations = function () { this.setAnnotations([]); }, this.$detectNewLine = function (e) { var t = e.match(/^.*?(\r?\n)/m); this.$autoNewLine = t ? t[1] : "\n"; }, this.getWordRange = function (e, t) { var n = this.getLine(e), i = !1; if (t > 0 && (i = !!n.charAt(t - 1).match(this.tokenRe)), i || (i = !!n.charAt(t).match(this.tokenRe)), i)
             var r = this.tokenRe;
@@ -45230,10 +45230,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 a = s;
             }
             else {
-                var f = Array(c);
-                f.unshift(s, 0);
-                var g = t ? this.$wrapData : this.$rowLengthCache;
-                if (g.splice.apply(g, f), h = this.$foldData, u = 0, m = this.getFoldLine(s)) {
+                var g = Array(c);
+                g.unshift(s, 0);
+                var f = t ? this.$wrapData : this.$rowLengthCache;
+                if (f.splice.apply(f, g), h = this.$foldData, u = 0, m = this.getFoldLine(s)) {
                     var p = m.range.compareInside(r.row, r.column);
                     0 == p ? (m = m.split(r.row, r.column)) && (m.shiftRow(c), m.addRemoveChars(a, 0, o.column - r.column)) : -1 == p && (m.addRemoveChars(s, 0, o.column - r.column), m.shiftRow(c)), u = h.indexOf(m) + 1;
                 }
@@ -45254,7 +45254,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             return []; var o = [], s = n.length, a = 0, c = 0, l = this.$wrapAsCode, h = this.$indentedSoftWrap, u = i <= Math.max(2 * r, 8) || !1 === h ? 0 : Math.floor(i / 2); function d(e) { for (var t = e - a, i = a; i < e; i++) {
             var s = n[i];
             12 !== s && 2 !== s || (t -= 1);
-        } o.length || (f = function () { var e = 0; if (0 === u)
+        } o.length || (g = function () { var e = 0; if (0 === u)
             return e; if (h)
             for (var t = 0; t < n.length; t++) {
                 var i = n[t];
@@ -45268,36 +45268,36 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     }
                     e += r;
                 }
-            } return l && !1 !== h && (e += r), Math.min(e, u); }(), o.indent = f), c += t, o.push(c), a = e; } for (var f = 0; s - a > i - f;) {
-            var g = a + i - f;
-            if (n[g - 1] >= 10 && n[g] >= 10)
-                d(g);
-            else if (n[g] != e && n[g] != t) {
-                for (var p = Math.max(g - (i - (i >> 2)), a - 1); g > p && n[g] < e;)
-                    g--;
+            } return l && !1 !== h && (e += r), Math.min(e, u); }(), o.indent = g), c += t, o.push(c), a = e; } for (var g = 0; s - a > i - g;) {
+            var f = a + i - g;
+            if (n[f - 1] >= 10 && n[f] >= 10)
+                d(f);
+            else if (n[f] != e && n[f] != t) {
+                for (var p = Math.max(f - (i - (i >> 2)), a - 1); f > p && n[f] < e;)
+                    f--;
                 if (l) {
-                    for (; g > p && n[g] < e;)
-                        g--;
-                    for (; g > p && 9 == n[g];)
-                        g--;
+                    for (; f > p && n[f] < e;)
+                        f--;
+                    for (; f > p && 9 == n[f];)
+                        f--;
                 }
                 else
-                    for (; g > p && n[g] < 10;)
-                        g--;
-                g > p ? d(++g) : (2 == n[g = a + i] && g--, d(g - f));
+                    for (; f > p && n[f] < 10;)
+                        f--;
+                f > p ? d(++f) : (2 == n[f = a + i] && f--, d(f - g));
             }
             else {
-                for (; g != a - 1 && n[g] != e; g--)
+                for (; f != a - 1 && n[f] != e; f--)
                     ;
-                if (g > a) {
-                    d(g);
+                if (f > a) {
+                    d(f);
                     continue;
                 }
-                for (g = a + i; g < n.length && n[g] == t; g++)
+                for (f = a + i; f < n.length && n[f] == t; f++)
                     ;
-                if (g == n.length)
+                if (f == n.length)
                     break;
-                d(g);
+                d(f);
             }
         } return o; }, this.$getDisplayTokens = function (e, t) { var i, r = []; t = t || 0; for (var o = 0; o < e.length; o++) {
             var s = e.charCodeAt(o);
@@ -45319,17 +45319,17 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var d = e > l[u - 1];
         }
         else
-            d = !u; for (var f = this.getLength() - 1, g = this.getNextFoldLine(o), p = g ? g.start.row : 1 / 0; a <= e && !(a + (c = this.getRowLength(o)) > e || o >= f);)
-            a += c, ++o > p && (o = g.end.row + 1, p = (g = this.getNextFoldLine(o, g)) ? g.start.row : 1 / 0), d && (this.$docRowCache.push(o), this.$screenRowCache.push(a)); if (g && g.start.row <= o)
-            i = this.getFoldDisplayLine(g), o = g.start.row;
+            d = !u; for (var g = this.getLength() - 1, f = this.getNextFoldLine(o), p = f ? f.start.row : 1 / 0; a <= e && !(a + (c = this.getRowLength(o)) > e || o >= g);)
+            a += c, ++o > p && (o = f.end.row + 1, p = (f = this.getNextFoldLine(o, f)) ? f.start.row : 1 / 0), d && (this.$docRowCache.push(o), this.$screenRowCache.push(a)); if (f && f.start.row <= o)
+            i = this.getFoldDisplayLine(f), o = f.start.row;
         else {
-            if (a + c <= e || o > f)
-                return { row: f, column: this.getLine(f).length };
-            i = this.getLine(o), g = null;
+            if (a + c <= e || o > g)
+                return { row: g, column: this.getLine(g).length };
+            i = this.getLine(o), f = null;
         } var m = 0, v = Math.floor(e - a); if (this.$useWrapMode) {
             var w = this.$wrapData[o];
             w && (r = w[v], v > 0 && w.length && (m = w.indent, s = w[v - 1] || w[w.length - 1], i = i.substring(s)));
-        } return void 0 !== n && this.$bidiHandler.isBidiRow(a + v, o, v) && (t = this.$bidiHandler.offsetToCol(n)), s += this.$getStringScreenWidth(i, t - m)[1], this.$useWrapMode && s >= r && (s = r - 1), g ? g.idxToPosition(s) : { row: o, column: s }; }, this.documentToScreenPosition = function (e, t) { if (void 0 === t)
+        } return void 0 !== n && this.$bidiHandler.isBidiRow(a + v, o, v) && (t = this.$bidiHandler.offsetToCol(n)), s += this.$getStringScreenWidth(i, t - m)[1], this.$useWrapMode && s >= r && (s = r - 1), f ? f.idxToPosition(s) : { row: o, column: s }; }, this.documentToScreenPosition = function (e, t) { if (void 0 === t)
             var n = this.$clipPositionToDocument(e.row, e.column);
         else
             n = this.$clipPositionToDocument(e, t); e = n.row, t = n.column; var i, r = 0, o = null; (i = this.getFoldAt(e, t, 1)) && (e = i.start.row, t = i.start.column); var s, a = 0, c = this.$docRowCache, l = this.$getRowCacheIndex(c, e), h = c.length; if (h && l >= 0) {
@@ -45337,23 +45337,23 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var u = e > c[h - 1];
         }
         else
-            u = !h; for (var d = this.getNextFoldLine(a), f = d ? d.start.row : 1 / 0; a < e;) {
-            if (a >= f) {
+            u = !h; for (var d = this.getNextFoldLine(a), g = d ? d.start.row : 1 / 0; a < e;) {
+            if (a >= g) {
                 if ((s = d.end.row + 1) > e)
                     break;
-                f = (d = this.getNextFoldLine(s, d)) ? d.start.row : 1 / 0;
+                g = (d = this.getNextFoldLine(s, d)) ? d.start.row : 1 / 0;
             }
             else
                 s = a + 1;
             r += this.getRowLength(a), a = s, u && (this.$docRowCache.push(a), this.$screenRowCache.push(r));
-        } var g = ""; d && a >= f ? (g = this.getFoldDisplayLine(d, e, t), o = d.start.row) : (g = this.getLine(e).substring(0, t), o = e); var p = 0; if (this.$useWrapMode) {
+        } var f = ""; d && a >= g ? (f = this.getFoldDisplayLine(d, e, t), o = d.start.row) : (f = this.getLine(e).substring(0, t), o = e); var p = 0; if (this.$useWrapMode) {
             var m = this.$wrapData[o];
             if (m) {
-                for (var v = 0; g.length >= m[v];)
+                for (var v = 0; f.length >= m[v];)
                     r++, v++;
-                g = g.substring(m[v - 1] || 0, g.length), p = v > 0 ? m.indent : 0;
+                f = f.substring(m[v - 1] || 0, f.length), p = v > 0 ? m.indent : 0;
             }
-        } return this.lineWidgets && this.lineWidgets[a] && this.lineWidgets[a].rowsAbove && (r += this.lineWidgets[a].rowsAbove), { row: r, column: p + this.$getStringScreenWidth(g)[0] }; }, this.documentToScreenColumn = function (e, t) { return this.documentToScreenPosition(e, t).column; }, this.documentToScreenRow = function (e, t) { return this.documentToScreenPosition(e, t).row; }, this.getScreenLength = function () { var e = 0, t = null; if (this.$useWrapMode)
+        } return this.lineWidgets && this.lineWidgets[a] && this.lineWidgets[a].rowsAbove && (r += this.lineWidgets[a].rowsAbove), { row: r, column: p + this.$getStringScreenWidth(f)[0] }; }, this.documentToScreenColumn = function (e, t) { return this.documentToScreenPosition(e, t).column; }, this.documentToScreenRow = function (e, t) { return this.documentToScreenPosition(e, t).row; }, this.getScreenLength = function () { var e = 0, t = null; if (this.$useWrapMode)
             for (var n = this.$wrapData.length, i = 0, r = (a = 0, (t = this.$foldData[a++]) ? t.start.row : 1 / 0); i < n;) {
                 var o = this.$wrapData[i];
                 e += o ? o.length + 1 : 1, ++i > r && (i = t.end.row + 1, r = (t = this.$foldData[a++]) ? t.start.row : 1 / 0);
@@ -45451,14 +45451,14 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                             var d = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + t.value.length);
                             if (!(t = e.stepForward()) || ">" !== t.value)
                                 return;
-                            var f = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
+                            var g = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
                         }
                 }
                 else
-                    o === i && "/>" === t.value && --s < 0 && (f = d = u = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 2), h = new r(c.end.row, c.end.column, c.end.row, c.end.column + 1));
+                    o === i && "/>" === t.value && --s < 0 && (g = d = u = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 2), h = new r(c.end.row, c.end.column, c.end.row, c.end.column + 1));
             }
-        } while (t && s >= 0); if (a && h && u && f && c && d)
-            return { openTag: new r(a.start.row, a.start.column, h.end.row, h.end.column), closeTag: new r(u.start.row, u.start.column, f.end.row, f.end.column), openTagName: c, closeTagName: d }; }, this.$findOpeningTag = function (e, t) { var n = e.getCurrentToken(), i = t.value, o = 0, s = e.getCurrentTokenRow(), a = e.getCurrentTokenColumn(), c = a + 2, l = new r(s, a, s, c); e.stepForward(); var h = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + t.value.length); if ((t = e.stepForward()) && ">" === t.value) {
+        } while (t && s >= 0); if (a && h && u && g && c && d)
+            return { openTag: new r(a.start.row, a.start.column, h.end.row, h.end.column), closeTag: new r(u.start.row, u.start.column, g.end.row, g.end.column), openTagName: c, closeTagName: d }; }, this.$findOpeningTag = function (e, t) { var n = e.getCurrentToken(), i = t.value, o = 0, s = e.getCurrentTokenRow(), a = e.getCurrentTokenColumn(), c = a + 2, l = new r(s, a, s, c); e.stepForward(); var h = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + t.value.length); if ((t = e.stepForward()) && ">" === t.value) {
             var u = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
             e.stepBackward(), e.stepBackward();
             do {
@@ -45467,11 +45467,11 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                         if (i === t.value)
                             if ("<" === n.value) {
                                 if (++o > 0) {
-                                    var d = new r(s, a, s, c), f = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
+                                    var d = new r(s, a, s, c), g = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
                                     do {
                                         t = e.stepForward();
                                     } while (t && ">" !== t.value);
-                                    var g = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
+                                    var f = new r(e.getCurrentTokenRow(), e.getCurrentTokenColumn(), e.getCurrentTokenRow(), e.getCurrentTokenColumn() + 1);
                                 }
                             }
                             else
@@ -45491,7 +45491,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                             e.stepForward();
                     }
             } while (n && o <= 0);
-            return f && g && l && u && d && h ? { openTag: new r(f.start.row, f.start.column, g.end.row, g.end.column), closeTag: new r(l.start.row, l.start.column, u.end.row, u.end.column), openTagName: d, closeTagName: h } : void 0;
+            return g && f && l && u && d && h ? { openTag: new r(g.start.row, g.start.column, f.end.row, f.end.column), closeTag: new r(l.start.row, l.start.column, u.end.row, u.end.column), openTagName: d, closeTagName: h } : void 0;
         } }; };
     }, 8363: (e, t, n) => {
         "use strict";
@@ -45514,8 +45514,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             for (a = -1; h < this.subFolds.length && 1 == (a = this.subFolds[h].range.compare(i, r)); h++)
                 ;
             0 == a && h++;
-            for (var u = this.subFolds.splice(o, h - o, e), d = 0 == a ? u.length - 1 : u.length, f = l; f < d; f++)
-                e.addSubFold(u[f]);
+            for (var u = this.subFolds.splice(o, h - o, e), d = 0 == a ? u.length - 1 : u.length, g = l; g < d; g++)
+                e.addSubFold(u[g]);
             return e.setFoldLine(this.foldLine), e;
         } }, this.restoreRange = function (e) { return function (e, t) { a(e.start, t), a(e.end, t); }(e, this.start); }; }.call(o.prototype);
     }, 4138: (e, t, n) => {
@@ -45629,15 +45629,15 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
             s >= e && (i -= a >= e ? s - a : s - e + 1);
         } return i; }, this.$addFoldLine = function (e) { return this.$foldData.push(e), this.$foldData.sort((function (e, t) { return e.start.row - t.start.row; })), e; }, this.addFold = function (e, t) { var n, i = this.$foldData, s = !1; e instanceof o ? n = e : (n = new o(t, e)).collapseChildren = t.collapseChildren, this.$clipRangeToDocument(n.range); var a = n.start.row, c = n.start.column, l = n.end.row, h = n.end.column, u = this.getFoldAt(a, c, 1), d = this.getFoldAt(l, h, -1); if (u && d == u)
-            return u.addSubFold(n); u && !u.range.isStart(a, c) && this.removeFold(u), d && !d.range.isEnd(l, h) && this.removeFold(d); var f = this.getFoldsInRange(n.range); f.length > 0 && (this.removeFolds(f), n.collapseChildren || f.forEach((function (e) { n.addSubFold(e); }))); for (var g = 0; g < i.length; g++) {
-            var p = i[g];
+            return u.addSubFold(n); u && !u.range.isStart(a, c) && this.removeFold(u), d && !d.range.isEnd(l, h) && this.removeFold(d); var g = this.getFoldsInRange(n.range); g.length > 0 && (this.removeFolds(g), n.collapseChildren || g.forEach((function (e) { n.addSubFold(e); }))); for (var f = 0; f < i.length; f++) {
+            var p = i[f];
             if (l == p.start.row) {
                 p.addFold(n), s = !0;
                 break;
             }
             if (a == p.end.row) {
                 if (p.addFold(n), s = !0, !n.sameRow) {
-                    var m = i[g + 1];
+                    var m = i[f + 1];
                     if (m && m.start.row == l) {
                         p.merge(m);
                         break;
@@ -45785,8 +45785,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         } }, this.tokenizerUpdateFoldWidgets = function (e) { var t = e.data; t.first != t.last && this.foldWidgets.length > t.first && this.foldWidgets.splice(t.first, this.foldWidgets.length); }; };
     }, 7180: (e, t, n) => {
         "use strict";
-        var i = n(2011), r = n(5336), o = n(732), s = n(8057), a = n(58).o, c = n(6581).S, l = n(6049).z, h = n(1058).M, u = n(8827).m, d = n(3002).o, f = n(3069).Range, g = n(7858).EventEmitter, p = n(4278).f, m = n(4922).C, v = n(3294), w = n(7726).N, y = n(6514), b = function (e, t, n) { this.$toDestroy = []; var i = e.getContainerElement(); this.container = i, this.renderer = e, this.id = "editor" + ++b.$uid, this.commands = new p(s.isMac ? "mac" : "win", m), "object" == typeof document && (this.textInput = new a(e.getTextAreaContainer(), this), this.renderer.textarea = this.textInput.getElement(), this.$mouseHandler = new c(this), new l(this)), this.keyBinding = new h(this), this.$search = (new d).set({ wrap: !0 }), this.$historyTracker = this.$historyTracker.bind(this), this.commands.on("exec", this.$historyTracker), this.$initOperationListeners(), this._$emitInputEvent = o.delayedCall(function () { this._signal("input", {}), this.session && !this.session.destroyed && this.session.bgTokenizer.scheduleStart(); }.bind(this)), this.on("change", (function (e, t) { t._$emitInputEvent.schedule(31); })), this.setSession(t || n && n.session || new u("")), v.resetOptions(this), n && this.setOptions(n), v._signal("editor", this); };
-        b.$uid = 0, function () { i.implement(this, g), this.$initOperationListeners = function () { this.commands.on("exec", this.startOperation.bind(this), !0), this.commands.on("afterExec", this.endOperation.bind(this), !0), this.$opResetTimer = o.delayedCall(this.endOperation.bind(this, !0)), this.on("change", function () { this.curOp || (this.startOperation(), this.curOp.selectionBefore = this.$lastSel), this.curOp.docChanged = !0; }.bind(this), !0), this.on("changeSelection", function () { this.curOp || (this.startOperation(), this.curOp.selectionBefore = this.$lastSel), this.curOp.selectionChanged = !0; }.bind(this), !0); }, this.curOp = null, this.prevOp = {}, this.startOperation = function (e) { if (this.curOp) {
+        var i = n(2011), r = n(5336), o = n(732), s = n(8057), a = n(58).o, c = n(6581).S, l = n(6049).z, h = n(1058).M, u = n(8827).m, d = n(3002).o, g = n(3069).Range, f = n(7858).EventEmitter, p = n(4278).f, m = n(4922).C, v = n(3294), w = n(7726).N, y = n(6514), b = function (e, t, n) { this.$toDestroy = []; var i = e.getContainerElement(); this.container = i, this.renderer = e, this.id = "editor" + ++b.$uid, this.commands = new p(s.isMac ? "mac" : "win", m), "object" == typeof document && (this.textInput = new a(e.getTextAreaContainer(), this), this.renderer.textarea = this.textInput.getElement(), this.$mouseHandler = new c(this), new l(this)), this.keyBinding = new h(this), this.$search = (new d).set({ wrap: !0 }), this.$historyTracker = this.$historyTracker.bind(this), this.commands.on("exec", this.$historyTracker), this.$initOperationListeners(), this._$emitInputEvent = o.delayedCall(function () { this._signal("input", {}), this.session && !this.session.destroyed && this.session.bgTokenizer.scheduleStart(); }.bind(this)), this.on("change", (function (e, t) { t._$emitInputEvent.schedule(31); })), this.setSession(t || n && n.session || new u("")), v.resetOptions(this), n && this.setOptions(n), v._signal("editor", this); };
+        b.$uid = 0, function () { i.implement(this, f), this.$initOperationListeners = function () { this.commands.on("exec", this.startOperation.bind(this), !0), this.commands.on("afterExec", this.endOperation.bind(this), !0), this.$opResetTimer = o.delayedCall(this.endOperation.bind(this, !0)), this.on("change", function () { this.curOp || (this.startOperation(), this.curOp.selectionBefore = this.$lastSel), this.curOp.docChanged = !0; }.bind(this), !0), this.on("changeSelection", function () { this.curOp || (this.startOperation(), this.curOp.selectionBefore = this.$lastSel), this.curOp.selectionChanged = !0; }.bind(this), !0); }, this.curOp = null, this.prevOp = {}, this.startOperation = function (e) { if (this.curOp) {
             if (!e || this.curOp.command)
                 return;
             this.prevOp = this.curOp;
@@ -45854,7 +45854,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 }
                 if (!o && t.$mode.getMatching && (o = t.$mode.getMatching(e.session)), o) {
                     var c = "ace_bracket";
-                    Array.isArray(o) ? 1 == o.length && (c = "ace_error_bracket") : o = [o], 2 == o.length && (0 == f.comparePoints(o[0].end, o[1].start) ? o = [f.fromPoints(o[0].start, o[1].end)] : 0 == f.comparePoints(o[0].start, o[1].end) && (o = [f.fromPoints(o[1].start, o[0].end)])), t.$bracketHighlight = { ranges: o, markerIds: o.map((function (e) { return t.addMarker(e, c, "text"); })) }, e.getHighlightIndentGuides() && e.renderer.$textLayer.$highlightIndentGuide();
+                    Array.isArray(o) ? 1 == o.length && (c = "ace_error_bracket") : o = [o], 2 == o.length && (0 == g.comparePoints(o[0].end, o[1].start) ? o = [g.fromPoints(o[0].start, o[1].end)] : 0 == g.comparePoints(o[0].start, o[1].end) && (o = [g.fromPoints(o[1].start, o[0].end)])), t.$bracketHighlight = { ranges: o, markerIds: o.map((function (e) { return t.addMarker(e, c, "text"); })) }, e.getHighlightIndentGuides() && e.renderer.$textLayer.$highlightIndentGuide();
                 }
                 else
                     e.getHighlightIndentGuides() && e.renderer.$textLayer.$highlightIndentGuide();
@@ -45862,7 +45862,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         } }, this.focus = function () { this.textInput.focus(); }, this.isFocused = function () { return this.textInput.isFocused(); }, this.blur = function () { this.textInput.blur(); }, this.onFocus = function (e) { this.$isFocused || (this.$isFocused = !0, this.renderer.showCursor(), this.renderer.visualizeFocus(), this._emit("focus", e)); }, this.onBlur = function (e) { this.$isFocused && (this.$isFocused = !1, this.renderer.hideCursor(), this.renderer.visualizeBlur(), this._emit("blur", e)); }, this.$cursorChange = function () { this.renderer.updateCursor(), this.$highlightBrackets(), this.$updateHighlightActiveLine(); }, this.onDocumentChange = function (e) { var t = this.session.$useWrapMode, n = e.start.row == e.end.row ? e.end.row : 1 / 0; this.renderer.updateLines(e.start.row, n, t), this._signal("change", e), this.$cursorChange(); }, this.onTokenizerUpdate = function (e) { var t = e.data; this.renderer.updateLines(t.first, t.last); }, this.onScrollTopChange = function () { this.renderer.scrollToY(this.session.getScrollTop()); }, this.onScrollLeftChange = function () { this.renderer.scrollToX(this.session.getScrollLeft()); }, this.onCursorChange = function () { this.$cursorChange(), this._signal("changeSelection"); }, this.$updateHighlightActiveLine = function () { var e, t = this.getSession(); if (this.$highlightActiveLine && ("line" == this.$selectionStyle && this.selection.isMultiLine() || (e = this.getCursorPosition()), this.renderer.theme && this.renderer.theme.$selectionColorConflict && !this.selection.isEmpty() && (e = !1), !this.renderer.$maxLines || 1 !== this.session.getLength() || this.renderer.$minLines > 1 || (e = !1)), t.$highlightLineMarker && !e)
             t.removeMarker(t.$highlightLineMarker.id), t.$highlightLineMarker = null;
         else if (!t.$highlightLineMarker && e) {
-            var n = new f(e.row, e.column, e.row, 1 / 0);
+            var n = new g(e.row, e.column, e.row, 1 / 0);
             n.id = t.addMarker(n, "ace_active-line", "screenLine"), t.$highlightLineMarker = n;
         }
         else
@@ -45900,7 +45900,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var o = i.transformAction(n.getState(r.row), "insertion", this, n, e);
             o && (e !== o.text && (this.inVirtualSelectionMode || (this.session.mergeUndoDeltas = !1, this.mergeNextCommand = !1)), e = o.text);
         } if ("\t" == e && (e = this.session.getTabString()), this.selection.isEmpty())
-            this.session.getOverwrite() && -1 == e.indexOf("\n") && ((s = new f.fromPoints(r, r)).end.column += e.length, this.session.remove(s));
+            this.session.getOverwrite() && -1 == e.indexOf("\n") && ((s = new g.fromPoints(r, r)).end.column += e.length, this.session.remove(s));
         else {
             var s = this.getSelectionRange();
             r = this.session.remove(s), this.clearSelection();
@@ -45910,7 +45910,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 var c = a.substr(r.column).search(/\S|$/);
                 n.doc.removeInLine(r.row, r.column, r.column + c);
             }
-        } this.clearSelection(); var l = r.column, h = n.getState(r.row), u = (a = n.getLine(r.row), i.checkOutdent(h, a, e)); if (n.insert(r, e), o && o.selection && (2 == o.selection.length ? this.selection.setSelectionRange(new f(r.row, l + o.selection[0], r.row, l + o.selection[1])) : this.selection.setSelectionRange(new f(r.row + o.selection[0], o.selection[1], r.row + o.selection[2], o.selection[3]))), this.$enableAutoIndent) {
+        } this.clearSelection(); var l = r.column, h = n.getState(r.row), u = (a = n.getLine(r.row), i.checkOutdent(h, a, e)); if (n.insert(r, e), o && o.selection && (2 == o.selection.length ? this.selection.setSelectionRange(new g(r.row, l + o.selection[0], r.row, l + o.selection[1])) : this.selection.setSelectionRange(new g(r.row + o.selection[0], o.selection[1], r.row + o.selection[2], o.selection[3]))), this.$enableAutoIndent) {
             if (n.getDocument().isNewLine(e)) {
                 var d = i.getNextLineIndent(h, a.slice(0, r.column), n.getTabString());
                 n.insert({ row: r.row + 1, column: 0 }, d);
@@ -45922,7 +45922,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var r = this.getSelectionRange();
             e = r.start.row, t = r.end.row;
         } for (var o, s, a, c = "", l = "", h = "", u = n.getTabString(), d = e; d <= t; d++)
-            d > 0 && (c = n.getState(d - 1), l = n.getLine(d - 1), h = i.getNextLineIndent(c, l, u)), o = n.getLine(d), h !== (s = i.$getIndent(o)) && (s.length > 0 && (a = new f(d, 0, d, s.length), n.remove(a)), h.length > 0 && n.insert({ row: d, column: 0 }, h)), i.autoOutdent(c, n, d); }, this.onTextInput = function (e, t) { if (!t)
+            d > 0 && (c = n.getState(d - 1), l = n.getLine(d - 1), h = i.getNextLineIndent(c, l, u)), o = n.getLine(d), h !== (s = i.$getIndent(o)) && (s.length > 0 && (a = new g(d, 0, d, s.length), n.remove(a)), h.length > 0 && n.insert({ row: d, column: 0 }, h)), i.autoOutdent(c, n, d); }, this.onTextInput = function (e, t) { if (!t)
             return this.keyBinding.onTextInput(e); this.startOperation({ command: { name: "insertstring" } }); var n = this.applyComposition.bind(this, e, t); this.selection.rangeCount ? this.forEachSelection(n) : n(), this.endOperation(); }, this.applyComposition = function (e, t) { var n; (t.extendLeft || t.extendRight) && ((n = this.selection.getRange()).start.column -= t.extendLeft, n.end.column += t.extendRight, n.start.column < 0 && (n.start.row--, n.start.column += this.session.getLine(n.start.row).length + 1), this.selection.setRange(n), e || n.isEmpty() || this.remove()), !e && this.selection.isEmpty() || this.insert(e, !0), (t.restoreStart || t.restoreEnd) && ((n = this.selection.getRange()).start.column -= t.restoreStart, n.end.column -= t.restoreEnd, this.selection.setRange(n)); }, this.onCommandKey = function (e, t, n) { return this.keyBinding.onCommandKey(e, t, n); }, this.setOverwrite = function (e) { this.session.setOverwrite(e); }, this.getOverwrite = function () { return this.session.getOverwrite(); }, this.toggleOverwrite = function () { this.session.toggleOverwrite(); }, this.setScrollSpeed = function (e) { this.setOption("scrollSpeed", e); }, this.getScrollSpeed = function () { return this.getOption("scrollSpeed"); }, this.setDragDelay = function (e) { this.setOption("dragDelay", e); }, this.getDragDelay = function () { return this.getOption("dragDelay"); }, this.setSelectionStyle = function (e) { this.setOption("selectionStyle", e); }, this.getSelectionStyle = function () { return this.getOption("selectionStyle"); }, this.setHighlightActiveLine = function (e) { this.setOption("highlightActiveLine", e); }, this.getHighlightActiveLine = function () { return this.getOption("highlightActiveLine"); }, this.setHighlightGutterLine = function (e) { this.setOption("highlightGutterLine", e); }, this.getHighlightGutterLine = function () { return this.getOption("highlightGutterLine"); }, this.setHighlightSelectedWord = function (e) { this.setOption("highlightSelectedWord", e); }, this.getHighlightSelectedWord = function () { return this.$highlightSelectedWord; }, this.setAnimatedScroll = function (e) { this.renderer.setAnimatedScroll(e); }, this.getAnimatedScroll = function () { return this.renderer.getAnimatedScroll(); }, this.setShowInvisibles = function (e) { this.renderer.setShowInvisibles(e); }, this.getShowInvisibles = function () { return this.renderer.getShowInvisibles(); }, this.setDisplayIndentGuides = function (e) { this.renderer.setDisplayIndentGuides(e); }, this.getDisplayIndentGuides = function () { return this.renderer.getDisplayIndentGuides(); }, this.setHighlightIndentGuides = function (e) { this.renderer.setHighlightIndentGuides(e); }, this.getHighlightIndentGuides = function () { return this.renderer.getHighlightIndentGuides(); }, this.setShowPrintMargin = function (e) { this.renderer.setShowPrintMargin(e); }, this.getShowPrintMargin = function () { return this.renderer.getShowPrintMargin(); }, this.setPrintMarginColumn = function (e) { this.renderer.setPrintMarginColumn(e); }, this.getPrintMarginColumn = function () { return this.renderer.getPrintMarginColumn(); }, this.setReadOnly = function (e) { this.setOption("readOnly", e); }, this.getReadOnly = function () { return this.getOption("readOnly"); }, this.setBehavioursEnabled = function (e) { this.setOption("behavioursEnabled", e); }, this.getBehavioursEnabled = function () { return this.getOption("behavioursEnabled"); }, this.setWrapBehavioursEnabled = function (e) { this.setOption("wrapBehavioursEnabled", e); }, this.getWrapBehavioursEnabled = function () { return this.getOption("wrapBehavioursEnabled"); }, this.setShowFoldWidgets = function (e) { this.setOption("showFoldWidgets", e); }, this.getShowFoldWidgets = function () { return this.getOption("showFoldWidgets"); }, this.setFadeFoldWidgets = function (e) { this.setOption("fadeFoldWidgets", e); }, this.getFadeFoldWidgets = function () { return this.getOption("fadeFoldWidgets"); }, this.remove = function (e) { this.selection.isEmpty() && ("left" == e ? this.selection.selectLeft() : this.selection.selectRight()); var t = this.getSelectionRange(); if (this.getBehavioursEnabled()) {
             var n = this.session, i = n.getState(t.start.row), r = n.getMode().transformAction(i, "deletion", this, n, t);
             if (0 === t.end.column) {
@@ -45937,7 +45937,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var e = this.getCursorPosition(), t = e.column;
             if (0 !== t) {
                 var n, i, r = this.session.getLine(e.row);
-                t < r.length ? (n = r.charAt(t) + r.charAt(t - 1), i = new f(e.row, t - 1, e.row, t + 1)) : (n = r.charAt(t - 1) + r.charAt(t - 2), i = new f(e.row, t - 2, e.row, t)), this.session.replace(i, n), this.session.selection.moveToPosition(i.end);
+                t < r.length ? (n = r.charAt(t) + r.charAt(t - 1), i = new g(e.row, t - 1, e.row, t + 1)) : (n = r.charAt(t - 1) + r.charAt(t - 2), i = new g(e.row, t - 2, e.row, t)), this.session.replace(i, n), this.session.selection.moveToPosition(i.end);
             }
         } }, this.toLowerCase = function () { var e = this.getSelectionRange(); this.selection.isEmpty() && this.selection.selectWord(); var t = this.getSelectionRange(), n = this.session.getTextRange(t); this.session.replace(t, n.toLowerCase()), this.selection.setSelectionRange(e); }, this.toUpperCase = function () { var e = this.getSelectionRange(); this.selection.isEmpty() && this.selection.selectWord(); var t = this.getSelectionRange(), n = this.session.getTextRange(t); this.session.replace(t, n.toUpperCase()), this.selection.setSelectionRange(e); }, this.indent = function () { var e = this.session, t = this.getSelectionRange(); if (!(t.start.row < t.end.row)) {
             if (t.start.column < t.end.column) {
@@ -45955,27 +45955,27 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
             return this.insert(l);
         } var h = this.$getSelectedRows(); e.indentRows(h.first, h.last, "\t"); }, this.blockIndent = function () { var e = this.$getSelectedRows(); this.session.indentRows(e.first, e.last, "\t"); }, this.blockOutdent = function () { var e = this.session.getSelection(); this.session.outdentRows(e.getRange()); }, this.sortLines = function () { for (var e = this.$getSelectedRows(), t = this.session, n = [], i = e.first; i <= e.last; i++)
-            n.push(t.getLine(i)); n.sort((function (e, t) { return e.toLowerCase() < t.toLowerCase() ? -1 : e.toLowerCase() > t.toLowerCase() ? 1 : 0; })); var r = new f(0, 0, 0, 0); for (i = e.first; i <= e.last; i++) {
+            n.push(t.getLine(i)); n.sort((function (e, t) { return e.toLowerCase() < t.toLowerCase() ? -1 : e.toLowerCase() > t.toLowerCase() ? 1 : 0; })); var r = new g(0, 0, 0, 0); for (i = e.first; i <= e.last; i++) {
             var o = t.getLine(i);
             r.start.row = i, r.end.row = i, r.end.column = o.length, t.replace(r, n[i - e.first]);
         } }, this.toggleCommentLines = function () { var e = this.session.getState(this.getCursorPosition().row), t = this.$getSelectedRows(); this.session.getMode().toggleCommentLines(e, this.session, t.first, t.last); }, this.toggleBlockComment = function () { var e = this.getCursorPosition(), t = this.session.getState(e.row), n = this.getSelectionRange(); this.session.getMode().toggleBlockComment(t, this.session, n, e); }, this.getNumberAt = function (e, t) { var n = /[\-]?[0-9]+(?:\.[0-9]+)?/g; n.lastIndex = 0; for (var i = this.session.getLine(e); n.lastIndex < t;) {
             var r = n.exec(i);
             if (r.index <= t && r.index + r[0].length >= t)
                 return { value: r[0], start: r.index, end: r.index + r[0].length };
-        } return null; }, this.modifyNumber = function (e) { var t = this.selection.getCursor().row, n = this.selection.getCursor().column, i = new f(t, n - 1, t, n), r = this.session.getTextRange(i); if (!isNaN(parseFloat(r)) && isFinite(r)) {
+        } return null; }, this.modifyNumber = function (e) { var t = this.selection.getCursor().row, n = this.selection.getCursor().column, i = new g(t, n - 1, t, n), r = this.session.getTextRange(i); if (!isNaN(parseFloat(r)) && isFinite(r)) {
             var o = this.getNumberAt(t, n);
             if (o) {
                 var s = o.value.indexOf(".") >= 0 ? o.start + o.value.indexOf(".") + 1 : o.end, a = o.start + o.value.length - s, c = parseFloat(o.value);
                 c *= Math.pow(10, a), s !== o.end && n < s ? e *= Math.pow(10, o.end - n - 1) : e *= Math.pow(10, o.end - n), c += e;
-                var l = (c /= Math.pow(10, a)).toFixed(a), h = new f(t, o.start, t, o.end);
+                var l = (c /= Math.pow(10, a)).toFixed(a), h = new g(t, o.start, t, o.end);
                 this.session.replace(h, l), this.moveCursorTo(t, Math.max(o.start + 1, n + l.length - o.value.length));
             }
         }
         else
             this.toggleWord(); }, this.$toggleWordPairs = [["first", "last"], ["true", "false"], ["yes", "no"], ["width", "height"], ["top", "bottom"], ["right", "left"], ["on", "off"], ["x", "y"], ["get", "set"], ["max", "min"], ["horizontal", "vertical"], ["show", "hide"], ["add", "remove"], ["up", "down"], ["before", "after"], ["even", "odd"], ["in", "out"], ["inside", "outside"], ["next", "previous"], ["increase", "decrease"], ["attach", "detach"], ["&&", "||"], ["==", "!="]], this.toggleWord = function () { var e = this.selection.getCursor().row, t = this.selection.getCursor().column; this.selection.selectWord(); var n = this.getSelectedText(), i = this.selection.getWordRange().start.column, r = n.replace(/([a-z]+|[A-Z]+)(?=[A-Z_]|$)/g, "$1 ").split(/\s/), s = t - i - 1; s < 0 && (s = 0); var a = 0, c = 0, l = this; n.match(/[A-Za-z0-9_]+/) && r.forEach((function (t, r) { c = a + t.length, s >= a && s <= c && (n = t, l.selection.clearSelection(), l.moveCursorTo(e, a + i), l.selection.selectTo(e, c + i)), a = c; })); for (var h, u = this.$toggleWordPairs, d = 0; d < u.length; d++)
-            for (var f = u[d], g = 0; g <= 1; g++) {
-                var p = +!g, m = n.match(new RegExp("^\\s?_?(" + o.escapeRegExp(f[g]) + ")\\s?$", "i"));
-                m && n.match(new RegExp("([_]|^|\\s)(" + o.escapeRegExp(m[1]) + ")($|\\s)", "g")) && (h = n.replace(new RegExp(o.escapeRegExp(f[g]), "i"), (function (e) { var t = f[p]; return e.toUpperCase() == e ? t = t.toUpperCase() : e.charAt(0).toUpperCase() == e.charAt(0) && (t = t.substr(0, 0) + f[p].charAt(0).toUpperCase() + t.substr(1)), t; })), this.insert(h), h = "");
+            for (var g = u[d], f = 0; f <= 1; f++) {
+                var p = +!f, m = n.match(new RegExp("^\\s?_?(" + o.escapeRegExp(g[f]) + ")\\s?$", "i"));
+                m && n.match(new RegExp("([_]|^|\\s)(" + o.escapeRegExp(m[1]) + ")($|\\s)", "g")) && (h = n.replace(new RegExp(o.escapeRegExp(g[f]), "i"), (function (e) { var t = g[p]; return e.toUpperCase() == e ? t = t.toUpperCase() : e.charAt(0).toUpperCase() == e.charAt(0) && (t = t.substr(0, 0) + g[p].charAt(0).toUpperCase() + t.substr(1)), t; })), this.insert(h), h = "");
             } }, this.findLinkAt = function (e, t) { var n = this.session.getLine(e).split(/((?:https?|ftp):\/\/[\S]+)/), i = t; i < 0 && (i = 0); var r, o = 0, s = 0; for (let e of n) {
             if (s = o + e.length, i >= o && i <= s && e.match(/((?:https?|ftp):\/\/[\S]+)/)) {
                 r = e.replace(/[\s:.,'";}\]]+$/, "");
@@ -45999,16 +45999,16 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             for (var a = 0, c = 0, l = s.length, h = 0; h < l; h++) {
                 var u = h;
                 s[h].moveBy(a, 0);
-                for (var d = (n = this.$getSelectedRows(s[h])).first, f = n.last; ++h < l;) {
+                for (var d = (n = this.$getSelectedRows(s[h])).first, g = n.last; ++h < l;) {
                     c && s[h].moveBy(c, 0);
-                    var g = this.$getSelectedRows(s[h]);
-                    if (t && g.first != f)
+                    var f = this.$getSelectedRows(s[h]);
+                    if (t && f.first != g)
                         break;
-                    if (!t && g.first > f + 1)
+                    if (!t && f.first > g + 1)
                         break;
-                    f = g.last;
+                    g = f.last;
                 }
-                for (h--, a = this.session.$moveLines(d, f, t ? 0 : e), t && -1 == e && (u = h + 1); u <= h;)
+                for (h--, a = this.session.$moveLines(d, g, t ? 0 : e), t && -1 == e && (u = h + 1); u <= h;)
                     s[u].moveBy(a, 0), u++;
                 t || (a = 0), c += a;
             }
@@ -46035,19 +46035,19 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 l || (r = s, o++, s = i.stepForward(), u = 0);
             } while (s && !l);
             if (a) {
-                var g, p;
+                var f, p;
                 if ("bracket" === a)
-                    (g = this.session.getBracketRange(n)) || (p = (g = new f(i.getCurrentTokenRow(), i.getCurrentTokenColumn() + u - 1, i.getCurrentTokenRow(), i.getCurrentTokenColumn() + u - 1)).start, (t || p.row === n.row && Math.abs(p.column - n.column) < 2) && (g = this.session.getBracketRange(p)));
+                    (f = this.session.getBracketRange(n)) || (p = (f = new g(i.getCurrentTokenRow(), i.getCurrentTokenColumn() + u - 1, i.getCurrentTokenRow(), i.getCurrentTokenColumn() + u - 1)).start, (t || p.row === n.row && Math.abs(p.column - n.column) < 2) && (f = this.session.getBracketRange(p)));
                 else if ("tag" === a) {
                     if (!s || -1 === s.type.indexOf("tag-name"))
                         return;
-                    if (0 === (g = new f(i.getCurrentTokenRow(), i.getCurrentTokenColumn() - 2, i.getCurrentTokenRow(), i.getCurrentTokenColumn() - 2)).compare(n.row, n.column)) {
+                    if (0 === (f = new g(i.getCurrentTokenRow(), i.getCurrentTokenColumn() - 2, i.getCurrentTokenRow(), i.getCurrentTokenColumn() - 2)).compare(n.row, n.column)) {
                         var m = this.session.getMatchingTags(n);
-                        m && (m.openTag.contains(n.row, n.column) ? p = (g = m.closeTag).start : (g = m.openTag, p = m.closeTag.start.row === n.row && m.closeTag.start.column === n.column ? g.end : g.start));
+                        m && (m.openTag.contains(n.row, n.column) ? p = (f = m.closeTag).start : (f = m.openTag, p = m.closeTag.start.row === n.row && m.closeTag.start.column === n.column ? f.end : f.start));
                     }
-                    p = p || g.start;
+                    p = p || f.start;
                 }
-                (p = g && g.cursor || p) && (e ? g && t ? this.selection.setRange(g) : g && g.isEqual(this.getSelectionRange()) ? this.clearSelection() : this.selection.selectTo(p.row, p.column) : this.selection.moveTo(p.row, p.column));
+                (p = f && f.cursor || p) && (e ? f && t ? this.selection.setRange(f) : f && f.isEqual(this.getSelectionRange()) ? this.clearSelection() : this.selection.selectTo(p.row, p.column) : this.selection.moveTo(p.row, p.column));
             }
         } }, this.gotoLine = function (e, t, n) { this.selection.clearSelection(), this.session.unfold({ row: e - 1, column: t || 0 }), this.exitMultiSelectMode && this.exitMultiSelectMode(), this.moveCursorTo(e - 1, t || 0), this.isRowFullyVisible(e - 1) || this.scrollToLine(e - 1, !0, n); }, this.navigateTo = function (e, t) { this.selection.moveTo(e, t); }, this.navigateUp = function (e) { if (this.selection.isMultiLine() && !this.selection.isBackwards()) {
             var t = this.selection.anchor.getPosition();
@@ -46129,7 +46129,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if (c)
                 return;
             l = { text: ["Looks good!"], className: "ace_ok" };
-        } e.session.unfold(s.row), e.selection.moveToPosition(s); var d = { row: s.row, fixedWidth: !0, coverGutter: !0, el: r.createElement("div"), type: "errorMarker" }, f = d.el.appendChild(r.createElement("div")), g = d.el.appendChild(r.createElement("div")); g.className = "error_widget_arrow " + l.className; var p = e.renderer.$cursorLayer.getPixelPosition(s).left; g.style.left = p + e.renderer.gutterWidth - 5 + "px", d.el.className = "error_widget_wrapper", f.className = "error_widget " + l.className, f.innerHTML = l.text.join("<br>"), f.appendChild(r.createElement("div")); var m = function (e, t, n) { if (0 === t && ("esc" === n || "return" === n))
+        } e.session.unfold(s.row), e.selection.moveToPosition(s); var d = { row: s.row, fixedWidth: !0, coverGutter: !0, el: r.createElement("div"), type: "errorMarker" }, g = d.el.appendChild(r.createElement("div")), f = d.el.appendChild(r.createElement("div")); f.className = "error_widget_arrow " + l.className; var p = e.renderer.$cursorLayer.getPixelPosition(s).left; f.style.left = p + e.renderer.gutterWidth - 5 + "px", d.el.className = "error_widget_wrapper", g.className = "error_widget " + l.className, g.innerHTML = l.text.join("<br>"), g.appendChild(r.createElement("div")); var m = function (e, t, n) { if (0 === t && ("esc" === n || "return" === n))
             return d.destroy(), { command: "null" }; }; d.destroy = function () { e.$mouseHandler.isMousePressed || (e.keyBinding.removeKeyboardHandler(m), n.widgetManager.removeLineWidget(d), e.off("changeSelection", d.destroy), e.off("changeSession", d.destroy), e.off("mouseup", d.destroy), e.off("change", d.destroy)); }, e.keyBinding.addKeyboardHandler(m), e.on("changeSelection", d.destroy), e.on("changeSession", d.destroy), e.on("mouseup", d.destroy), e.on("change", d.destroy), e.session.widgetManager.addLineWidget(d), d.el.onmousedown = e.focus.bind(e), e.renderer.scrollCursorIntoView(null, .5, { bottom: d.el.offsetHeight }); }, r.importCssString("\n    .error_widget_wrapper {\n        background: inherit;\n        color: inherit;\n        border:none\n    }\n    .error_widget {\n        border-top: solid 2px;\n        border-bottom: solid 2px;\n        margin: 5px 0;\n        padding: 10px 40px;\n        white-space: pre-wrap;\n    }\n    .error_widget.ace_error, .error_widget_arrow.ace_error{\n        border-color: #ff5a5a\n    }\n    .error_widget.ace_warning, .error_widget_arrow.ace_warning{\n        border-color: #F1D817\n    }\n    .error_widget.ace_info, .error_widget_arrow.ace_info{\n        border-color: #5a5a5a\n    }\n    .error_widget.ace_ok, .error_widget_arrow.ace_ok{\n        border-color: #5aaa5a\n    }\n    .error_widget_arrow {\n        position: absolute;\n        border: solid 5px;\n        border-top-color: transparent!important;\n        border-right-color: transparent!important;\n        border-left-color: transparent!important;\n        top: -5px;\n    }\n", "error_marker.css", !1);
     }, 4739: (e, t, n) => {
         "use strict";
@@ -46194,7 +46194,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             ; return s || -1 != e || (o = { command: "insertstring" }, s = a.exec("insertstring", this.$editor, t)), s && this.$editor._signal && this.$editor._signal("keyboardActivity", o), s; }, this.onCommandKey = function (e, t, n) { var r = i.keyCodeToString(n); return this.$callKeyboardHandlers(t, r, n, e); }, this.onTextInput = function (e) { return this.$callKeyboardHandlers(-1, e); }; }).call(o.prototype), t.M = o;
     }, 58: (e, t, n) => {
         "use strict";
-        var i = n(8215), r = n(8057), o = n(5336), s = n(732), a = n(6514), c = r.isChrome < 18, l = r.isIE, h = r.isChrome > 63, u = 400, d = n(1492), f = d.KEY_MODS, g = r.isIOS, p = g ? /\s/ : /\n/, m = r.isMobile;
+        var i = n(8215), r = n(8057), o = n(5336), s = n(732), a = n(6514), c = r.isChrome < 18, l = r.isIE, h = r.isChrome > 63, u = 400, d = n(1492), g = d.KEY_MODS, f = r.isIOS, p = f ? /\s/ : /\n/, m = r.isMobile;
         t.o = function (e, t) { var n = o.createElement("textarea"); n.className = "ace_text-input", n.setAttribute("wrap", "off"), n.setAttribute("autocorrect", "off"), n.setAttribute("autocapitalize", "off"), n.setAttribute("spellcheck", !1), n.style.opacity = "0", e.insertBefore(n, e.firstChild); var v = !1, w = !1, y = !1, b = !1, S = ""; m || (n.style.fontSize = "1px"); var C = !1, k = !1, _ = "", $ = 0, R = 0, x = 0; try {
             var T = document.activeElement === n;
         }
@@ -46217,7 +46217,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 i.push(r), r.setAttribute("ace_nocontext", !0), r = !r.parentElement && r.getRootNode ? r.getRootNode().host : r.parentElement; n.focus({ preventScroll: !0 }), t && i.forEach((function (e) { e.removeAttribute("ace_nocontext"); })), setTimeout((function () { n.style.position = "", "0px" == n.style.top && (n.style.top = e); }), 0); }, this.blur = function () { n.blur(); }, this.isFocused = function () { return T; }, t.on("beforeEndOperation", (function () { var e = t.curOp, i = e && e.command && e.command.name; if ("insertstring" != i) {
             var r = i && (e.docChanged || e.selectionChanged);
             y && r && (_ = n.value = "", W()), A();
-        } })); var A = g ? function (e) { if (T && (!v || e) && !b) {
+        } })); var A = f ? function (e) { if (T && (!v || e) && !b) {
             e || (e = "");
             var i = "\n ab" + e + "cde fg\n";
             i != n.value && (n.value = _ = i);
@@ -46250,8 +46250,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         } }; this.resetSelection = A, T && t.onFocus(); var E = null; this.setInputHandler = function (e) { E = e; }, this.getInputHandler = function () { return E; }; var M = !1, L = function (e, i) { if (M && (M = !1), w)
             return A(), e && t.onPaste(e), w = !1, ""; for (var o = n.selectionStart, s = n.selectionEnd, a = $, c = _.length - R, l = e, h = e.length - o, u = e.length - s, d = 0; a > 0 && _[d] == e[d];)
             d++, a--; for (l = l.slice(d), d = 1; c > 0 && _.length - d > $ - 1 && _[_.length - d] == e[e.length - d];)
-            d++, c--; h -= d - 1, u -= d - 1; var f = l.length - d + 1; if (f < 0 && (a = -f, f = 0), l = l.slice(0, f), !(i || l || h || a || c || u))
-            return ""; b = !0; var g = !1; return r.isAndroid && ". " == l && (l = "  ", g = !0), l && !a && !c && !h && !u || C ? t.onTextInput(l) : t.onTextInput(l, { extendLeft: a, extendRight: c, restoreStart: h, restoreEnd: u }), b = !1, _ = e, $ = o, R = s, x = u, g ? "\n" : l; }, P = function (e) { if (y)
+            d++, c--; h -= d - 1, u -= d - 1; var g = l.length - d + 1; if (g < 0 && (a = -g, g = 0), l = l.slice(0, g), !(i || l || h || a || c || u))
+            return ""; b = !0; var f = !1; return r.isAndroid && ". " == l && (l = "  ", f = !0), l && !a && !c && !h && !u || C ? t.onTextInput(l) : t.onTextInput(l, { extendLeft: a, extendRight: c, restoreStart: h, restoreEnd: u }), b = !1, _ = e, $ = o, R = s, x = u, f ? "\n" : l; }, P = function (e) { if (y)
             return j(); if (e && e.inputType) {
             if ("historyUndo" == e.inputType)
                 return t.execCommand("undo");
@@ -46267,7 +46267,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     return D(e, t, !0);
             }
         } }, O = function (e, r) { var o = t.getCopyText(); if (!o)
-            return i.preventDefault(e); D(e, o) ? (g && (A(o), v = o, setTimeout((function () { v = !1; }), 10)), r ? t.onCut() : t.onCopy(), i.preventDefault(e)) : (v = !0, n.value = o, n.select(), setTimeout((function () { v = !1, A(), r ? t.onCut() : t.onCopy(); }))); }, I = function (e) { O(e, !0); }, N = function (e) { O(e, !1); }, F = function (e) { var o = D(e); a.pasteCancelled() || ("string" == typeof o ? (o && t.onPaste(o, e), r.isIE && setTimeout(A), i.preventDefault(e)) : (n.value = "", w = !0)); }; i.addCommandKeyListener(n, t.onCommandKey.bind(t), t), i.addListener(n, "select", (function (e) { y || (v ? v = !1 : function (e) { return 0 === e.selectionStart && e.selectionEnd >= _.length && e.value === _ && _ && e.selectionEnd !== R; }(n) ? (t.selectAll(), A()) : m && n.selectionStart != $ && A()); }), t), i.addListener(n, "input", P, t), i.addListener(n, "cut", I, t), i.addListener(n, "copy", N, t), i.addListener(n, "paste", F, t), "oncut" in n && "oncopy" in n && "onpaste" in n || i.addListener(e, "keydown", (function (e) { if ((!r.isMac || e.metaKey) && e.ctrlKey)
+            return i.preventDefault(e); D(e, o) ? (f && (A(o), v = o, setTimeout((function () { v = !1; }), 10)), r ? t.onCut() : t.onCopy(), i.preventDefault(e)) : (v = !0, n.value = o, n.select(), setTimeout((function () { v = !1, A(), r ? t.onCut() : t.onCopy(); }))); }, I = function (e) { O(e, !0); }, N = function (e) { O(e, !1); }, F = function (e) { var o = D(e); a.pasteCancelled() || ("string" == typeof o ? (o && t.onPaste(o, e), r.isIE && setTimeout(A), i.preventDefault(e)) : (n.value = "", w = !0)); }; i.addCommandKeyListener(n, t.onCommandKey.bind(t), t), i.addListener(n, "select", (function (e) { y || (v ? v = !1 : function (e) { return 0 === e.selectionStart && e.selectionEnd >= _.length && e.value === _ && _ && e.selectionEnd !== R; }(n) ? (t.selectAll(), A()) : m && n.selectionStart != $ && A()); }), t), i.addListener(n, "input", P, t), i.addListener(n, "cut", I, t), i.addListener(n, "copy", N, t), i.addListener(n, "paste", F, t), "oncut" in n && "oncopy" in n && "onpaste" in n || i.addListener(e, "keydown", (function (e) { if ((!r.isMac || e.metaKey) && e.ctrlKey)
             switch (e.keyCode) {
                 case 67:
                     N(e);
@@ -46289,9 +46289,9 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             e.data && (y.useTextareaForIME = !1), setTimeout(j, 0), t._signal("compositionStart"), t.on("mousedown", H);
             var i = t.getSelectionRange();
             i.end.row = i.start.row, i.end.column = i.start.column, y.markerRange = i, y.selectionStart = $, t.onCompositionStart(y), y.useTextareaForIME ? (_ = n.value = "", $ = 0, R = 0) : (n.msGetInputContext && (y.context = n.msGetInputContext()), n.getInputContext && (y.context = n.getInputContext()));
-        } }), t), i.addListener(n, "compositionupdate", j, t), i.addListener(n, "keyup", (function (e) { 27 == e.keyCode && n.value.length < n.selectionStart && (y || (_ = n.value), $ = R = -1, A()), z(); }), t), i.addListener(n, "keydown", z, t), i.addListener(n, "compositionend", W, t), this.getElement = function () { return n; }, this.setCommandMode = function (e) { C = e, n.readOnly = !1; }, this.setReadOnly = function (e) { C || (n.readOnly = e); }, this.setCopyWithEmptySelection = function (e) { }, this.onContextMenu = function (e) { M = !0, A(), t._emit("nativecontextmenu", { target: t, domEvent: e }), this.moveToMouse(e, !0); }, this.moveToMouse = function (e, s) { S || (S = n.style.cssText), n.style.cssText = (s ? "z-index:100000;" : "") + (r.isIE ? "opacity:0.1;" : "") + "text-indent: -" + ($ + R) * t.renderer.characterWidth * .5 + "px;"; var a = t.container.getBoundingClientRect(), c = o.computedStyle(t.container), l = a.top + (parseInt(c.borderTopWidth) || 0), h = a.left + (parseInt(a.borderLeftWidth) || 0), u = a.bottom - l - n.clientHeight - 2, d = function (e) { o.translate(n, e.clientX - h - 2, Math.min(e.clientY - l - 2, u)); }; d(e), "mousedown" == e.type && (t.renderer.$isMousePressed = !0, clearTimeout(B), r.isWin && i.capture(t.container, d, q)); }, this.onContextMenuClose = q; var V = function (e) { t.textInput.onContextMenu(e), q(); }; i.addListener(n, "mouseup", V, t), i.addListener(n, "mousedown", (function (e) { e.preventDefault(), q(); }), t), i.addListener(t.renderer.scroller, "contextmenu", V, t), i.addListener(n, "contextmenu", V, t), g && function (e, t, n) { var i = null, r = !1; n.addEventListener("keydown", (function (e) { i && clearTimeout(i), r = !0; }), !0), n.addEventListener("keyup", (function (e) { i = setTimeout((function () { r = !1; }), 100); }), !0); var o = function (e) { if (document.activeElement === n && !(r || y || t.$mouseHandler.isMousePressed || v)) {
+        } }), t), i.addListener(n, "compositionupdate", j, t), i.addListener(n, "keyup", (function (e) { 27 == e.keyCode && n.value.length < n.selectionStart && (y || (_ = n.value), $ = R = -1, A()), z(); }), t), i.addListener(n, "keydown", z, t), i.addListener(n, "compositionend", W, t), this.getElement = function () { return n; }, this.setCommandMode = function (e) { C = e, n.readOnly = !1; }, this.setReadOnly = function (e) { C || (n.readOnly = e); }, this.setCopyWithEmptySelection = function (e) { }, this.onContextMenu = function (e) { M = !0, A(), t._emit("nativecontextmenu", { target: t, domEvent: e }), this.moveToMouse(e, !0); }, this.moveToMouse = function (e, s) { S || (S = n.style.cssText), n.style.cssText = (s ? "z-index:100000;" : "") + (r.isIE ? "opacity:0.1;" : "") + "text-indent: -" + ($ + R) * t.renderer.characterWidth * .5 + "px;"; var a = t.container.getBoundingClientRect(), c = o.computedStyle(t.container), l = a.top + (parseInt(c.borderTopWidth) || 0), h = a.left + (parseInt(a.borderLeftWidth) || 0), u = a.bottom - l - n.clientHeight - 2, d = function (e) { o.translate(n, e.clientX - h - 2, Math.min(e.clientY - l - 2, u)); }; d(e), "mousedown" == e.type && (t.renderer.$isMousePressed = !0, clearTimeout(B), r.isWin && i.capture(t.container, d, q)); }, this.onContextMenuClose = q; var V = function (e) { t.textInput.onContextMenu(e), q(); }; i.addListener(n, "mouseup", V, t), i.addListener(n, "mousedown", (function (e) { e.preventDefault(), q(); }), t), i.addListener(t.renderer.scroller, "contextmenu", V, t), i.addListener(n, "contextmenu", V, t), f && function (e, t, n) { var i = null, r = !1; n.addEventListener("keydown", (function (e) { i && clearTimeout(i), r = !0; }), !0), n.addEventListener("keyup", (function (e) { i = setTimeout((function () { r = !1; }), 100); }), !0); var o = function (e) { if (document.activeElement === n && !(r || y || t.$mouseHandler.isMousePressed || v)) {
             var i = n.selectionStart, o = n.selectionEnd, s = null, a = 0;
-            if (0 == i ? s = d.up : 1 == i ? s = d.home : o > R && "\n" == _[o] ? s = d.end : i < $ && " " == _[i - 1] ? (s = d.left, a = f.option) : i < $ || i == $ && R != $ && i == o ? s = d.left : o > R && _.slice(0, o).split("\n").length > 2 ? s = d.down : o > R && " " == _[o - 1] ? (s = d.right, a = f.option) : (o > R || o == R && R != $ && i == o) && (s = d.right), i !== o && (a |= f.shift), s) {
+            if (0 == i ? s = d.up : 1 == i ? s = d.home : o > R && "\n" == _[o] ? s = d.end : i < $ && " " == _[i - 1] ? (s = d.left, a = g.option) : i < $ || i == $ && R != $ && i == o ? s = d.left : o > R && _.slice(0, o).split("\n").length > 2 ? s = d.down : o > R && " " == _[o - 1] ? (s = d.right, a = g.option) : (o > R || o == R && R != $ && i == o) && (s = d.right), i !== o && (a |= g.shift), s) {
                 if (!t.onCommandKey({}, a, s) && t.commands) {
                     s = d.keyCodeToString(s);
                     var c = t.commands.findKeyCommand(a, s);
@@ -46351,10 +46351,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         var t = this.$measureSizes();
         this.$measureNode.style.fontWeight = "", this.$characterSize = e, this.charSizes = Object.create(null), this.allowBoldFonts = t && t.width === e.width && t.height === e.height, this._emit("changeCharacterSize", { data: e });
     } }, this.$addObserver = function () { var e = this; this.$observer = new window.ResizeObserver((function (t) { e.checkForSizeChanges(); })), this.$observer.observe(this.$measureNode); }, this.$pollSizeChanges = function () { if (this.$pollSizeChangesTimer || this.$observer)
-        return this.$pollSizeChangesTimer; var e = this; return this.$pollSizeChangesTimer = s.onIdle((function t() { e.checkForSizeChanges(), s.onIdle(t, 500); }), 500); }, this.setPolling = function (e) { e ? this.$pollSizeChanges() : this.$pollSizeChangesTimer && (clearInterval(this.$pollSizeChangesTimer), this.$pollSizeChangesTimer = 0); }, this.$measureSizes = function (e) { const t = (e = e || this.$measureNode).getBoundingClientRect(), n = { height: t.height, width: t.width / this.charCount }; return 0 === n.width || 0 === n.height ? null : n; }, this.$measureCharWidth = function (e) { return this.$main.textContent = o.stringRepeat(e, this.charCount), this.$main.getBoundingClientRect().width / this.charCount; }, this.getCharacterWidth = function (e) { var t = this.charSizes[e]; return void 0 === t && (t = this.charSizes[e] = this.$measureCharWidth(e) / this.$characterSize.width), t; }, this.destroy = function () { clearInterval(this.$pollSizeChangesTimer), this.$observer && this.$observer.disconnect(), this.el && this.el.parentNode && this.el.parentNode.removeChild(this.el); }, this.$getZoom = function e(t) { return t && t.parentElement ? (window.getComputedStyle(t).zoom || 1) * e(t.parentElement) : 1; }, this.$initTransformMeasureNodes = function () { var e = function (e, t) { return ["div", { style: "position: absolute;top:" + e + "px;left:" + t + "px;" }]; }; this.els = r.buildDom([e(0, 0), e(h, 0), e(0, h), e(h, h)], this.el); }, this.transformCoordinates = function (e, t) { function n(e, t, n) { var i = e[1] * t[0] - e[0] * t[1]; return [(-t[1] * n[0] + t[0] * n[1]) / i, (+e[1] * n[0] - e[0] * n[1]) / i]; } function i(e, t) { return [e[0] - t[0], e[1] - t[1]]; } function r(e, t) { return [e[0] + t[0], e[1] + t[1]]; } function o(e, t) { return [e * t[0], e * t[1]]; } function s(e) { var t = e.getBoundingClientRect(); return [t.left, t.top]; } e && (e = o(1 / this.$getZoom(this.el), e)), this.els || this.$initTransformMeasureNodes(); var a = s(this.els[0]), c = s(this.els[1]), l = s(this.els[2]), u = s(this.els[3]), d = n(i(u, c), i(u, l), i(r(c, l), r(u, a))), f = o(1 + d[0], i(c, a)), g = o(1 + d[1], i(l, a)); if (t) {
-        var p = t, m = d[0] * p[0] / h + d[1] * p[1] / h + 1, v = r(o(p[0], f), o(p[1], g));
+        return this.$pollSizeChangesTimer; var e = this; return this.$pollSizeChangesTimer = s.onIdle((function t() { e.checkForSizeChanges(), s.onIdle(t, 500); }), 500); }, this.setPolling = function (e) { e ? this.$pollSizeChanges() : this.$pollSizeChangesTimer && (clearInterval(this.$pollSizeChangesTimer), this.$pollSizeChangesTimer = 0); }, this.$measureSizes = function (e) { const t = (e = e || this.$measureNode).getBoundingClientRect(), n = { height: t.height, width: t.width / this.charCount }; return 0 === n.width || 0 === n.height ? null : n; }, this.$measureCharWidth = function (e) { return this.$main.textContent = o.stringRepeat(e, this.charCount), this.$main.getBoundingClientRect().width / this.charCount; }, this.getCharacterWidth = function (e) { var t = this.charSizes[e]; return void 0 === t && (t = this.charSizes[e] = this.$measureCharWidth(e) / this.$characterSize.width), t; }, this.destroy = function () { clearInterval(this.$pollSizeChangesTimer), this.$observer && this.$observer.disconnect(), this.el && this.el.parentNode && this.el.parentNode.removeChild(this.el); }, this.$getZoom = function e(t) { return t && t.parentElement ? (window.getComputedStyle(t).zoom || 1) * e(t.parentElement) : 1; }, this.$initTransformMeasureNodes = function () { var e = function (e, t) { return ["div", { style: "position: absolute;top:" + e + "px;left:" + t + "px;" }]; }; this.els = r.buildDom([e(0, 0), e(h, 0), e(0, h), e(h, h)], this.el); }, this.transformCoordinates = function (e, t) { function n(e, t, n) { var i = e[1] * t[0] - e[0] * t[1]; return [(-t[1] * n[0] + t[0] * n[1]) / i, (+e[1] * n[0] - e[0] * n[1]) / i]; } function i(e, t) { return [e[0] - t[0], e[1] - t[1]]; } function r(e, t) { return [e[0] + t[0], e[1] + t[1]]; } function o(e, t) { return [e * t[0], e * t[1]]; } function s(e) { var t = e.getBoundingClientRect(); return [t.left, t.top]; } e && (e = o(1 / this.$getZoom(this.el), e)), this.els || this.$initTransformMeasureNodes(); var a = s(this.els[0]), c = s(this.els[1]), l = s(this.els[2]), u = s(this.els[3]), d = n(i(u, c), i(u, l), i(r(c, l), r(u, a))), g = o(1 + d[0], i(c, a)), f = o(1 + d[1], i(l, a)); if (t) {
+        var p = t, m = d[0] * p[0] / h + d[1] * p[1] / h + 1, v = r(o(p[0], g), o(p[1], f));
         return r(o(1 / m / h, v), a);
-    } var w = i(e, a), y = n(i(f, o(d[0], w)), i(g, o(d[1], w)), w); return o(h, y); }; }).call(u.prototype); }, 9749: (e, t, n) => {
+    } var w = i(e, a), y = n(i(g, o(d[0], w)), i(f, o(d[1], w)), w); return o(h, y); }; }).call(u.prototype); }, 9749: (e, t, n) => {
         "use strict";
         var i = n(3716), r = n(5336), o = n(2011), s = n(732), a = n(7858).EventEmitter, c = n(5130).x, l = function (e) { this.element = r.createElement("div"), this.element.className = "ace_layer ace_gutter-layer", e.appendChild(this.element), this.setShowFoldWidgets(this.$showFoldWidgets), this.gutterWidth = 0, this.$annotations = [], this.$updateAnnotations = this.$updateAnnotations.bind(this), this.$lines = new c(this.element), this.$lines.$offsetCoefficient = 1; };
         function h(e) { var t = document.createTextNode(""); e.appendChild(t); var n = r.createElement("span"); return e.appendChild(n), e; }
@@ -46415,11 +46415,11 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 this.$lines.pop(); e.firstRow < t.firstRow && this.$lines.unshift(this.$renderLines(e, e.firstRow, t.firstRow - 1)), n > i && this.$lines.push(this.$renderLines(e, i + 1, n)), this.updateLineHighlight(), this._signal("afterRender"), this.$updateGutterWidth(e); }, this.$renderLines = function (e, t, n) { for (var i = [], r = t, o = this.session.getNextFoldLine(r), s = o ? o.start.row : 1 / 0; r > s && (r = o.end.row + 1, s = (o = this.session.getNextFoldLine(r, o)) ? o.start.row : 1 / 0), !(r > n);) {
             var a = this.$lines.createCell(r, e, this.session, h);
             this.$renderCell(a, e, o, r), i.push(a), r++;
-        } return i; }, this.$renderCell = function (e, t, n, i) { var o = e.element, s = this.session, a = o.childNodes[0], c = o.childNodes[1], l = s.$firstLineNumber, h = s.$breakpoints, u = s.$decorations, d = s.gutterRenderer || this.$renderer, f = this.$showFoldWidgets && s.foldWidgets, g = n ? n.start.row : Number.MAX_VALUE, p = "ace_gutter-cell "; if (this.$highlightGutterLine && (i == this.$cursorRow || n && i < this.$cursorRow && i >= g && this.$cursorRow <= n.end.row) && (p += "ace_gutter-active-line ", this.$cursorCell != e && (this.$cursorCell && (this.$cursorCell.element.className = this.$cursorCell.element.className.replace("ace_gutter-active-line ", "")), this.$cursorCell = e)), h[i] && (p += h[i]), u[i] && (p += u[i]), this.$annotations[i] && (p += this.$annotations[i].className), o.className != p && (o.className = p), f) {
-            var m = f[i];
-            null == m && (m = f[i] = s.getFoldWidget(i));
+        } return i; }, this.$renderCell = function (e, t, n, i) { var o = e.element, s = this.session, a = o.childNodes[0], c = o.childNodes[1], l = s.$firstLineNumber, h = s.$breakpoints, u = s.$decorations, d = s.gutterRenderer || this.$renderer, g = this.$showFoldWidgets && s.foldWidgets, f = n ? n.start.row : Number.MAX_VALUE, p = "ace_gutter-cell "; if (this.$highlightGutterLine && (i == this.$cursorRow || n && i < this.$cursorRow && i >= f && this.$cursorRow <= n.end.row) && (p += "ace_gutter-active-line ", this.$cursorCell != e && (this.$cursorCell && (this.$cursorCell.element.className = this.$cursorCell.element.className.replace("ace_gutter-active-line ", "")), this.$cursorCell = e)), h[i] && (p += h[i]), u[i] && (p += u[i]), this.$annotations[i] && (p += this.$annotations[i].className), o.className != p && (o.className = p), g) {
+            var m = g[i];
+            null == m && (m = g[i] = s.getFoldWidget(i));
         } if (m) {
-            p = "ace_fold-widget ace_" + m, "start" == m && i == g && i < n.end.row ? p += " ace_closed" : p += " ace_open", c.className != p && (c.className = p);
+            p = "ace_fold-widget ace_" + m, "start" == m && i == f && i < n.end.row ? p += " ace_closed" : p += " ace_open", c.className != p && (c.className = p);
             var v = t.lineHeight + "px";
             r.setStyle(c.style, "height", v), r.setStyle(c.style, "display", "inline-block");
         }
@@ -46470,8 +46470,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if (-1 != this.i)
                 for (; this.i < this.element.childElementCount;)
                     this.element.removeChild(this.element.lastChild);
-        } }, this.$getTop = function (e, t) { return (e - t.firstRowScreen) * t.lineHeight; }, this.drawTextMarker = function (e, t, n, r, o) { for (var s = this.session, a = t.start.row, c = t.end.row, l = a, h = 0, u = 0, d = s.getScreenLastRowColumn(l), f = new i(l, t.start.column, l, u); l <= c; l++)
-            f.start.row = f.end.row = l, f.start.column = l == a ? t.start.column : s.getRowWrapIndent(l), f.end.column = d, h = u, u = d, d = l + 1 < c ? s.getScreenLastRowColumn(l + 1) : l == c ? 0 : t.end.column, this.drawSingleLineMarker(e, f, n + (l == a ? " ace_start" : "") + " ace_br" + ((l == a || l == a + 1 && t.start.column ? 1 : 0) | (h < u ? 2 : 0) | (u > d ? 4 : 0) | (l == c ? 8 : 0)), r, l == c ? 0 : 1, o); }, this.drawMultiLineMarker = function (e, t, n, i, r) { var o = this.$padding, s = i.lineHeight, a = this.$getTop(t.start.row, i), c = o + t.start.column * i.characterWidth; if (r = r || "", this.session.$bidiHandler.isBidiRow(t.start.row) ? ((l = t.clone()).end.row = l.start.row, l.end.column = this.session.getLine(l.start.row).length, this.drawBidiSingleLineMarker(e, l, n + " ace_br1 ace_start", i, null, r)) : this.elt(n + " ace_br1 ace_start", "height:" + s + "px;right:0;top:" + a + "px;left:" + c + "px;" + (r || "")), this.session.$bidiHandler.isBidiRow(t.end.row)) {
+        } }, this.$getTop = function (e, t) { return (e - t.firstRowScreen) * t.lineHeight; }, this.drawTextMarker = function (e, t, n, r, o) { for (var s = this.session, a = t.start.row, c = t.end.row, l = a, h = 0, u = 0, d = s.getScreenLastRowColumn(l), g = new i(l, t.start.column, l, u); l <= c; l++)
+            g.start.row = g.end.row = l, g.start.column = l == a ? t.start.column : s.getRowWrapIndent(l), g.end.column = d, h = u, u = d, d = l + 1 < c ? s.getScreenLastRowColumn(l + 1) : l == c ? 0 : t.end.column, this.drawSingleLineMarker(e, g, n + (l == a ? " ace_start" : "") + " ace_br" + ((l == a || l == a + 1 && t.start.column ? 1 : 0) | (h < u ? 2 : 0) | (u > d ? 4 : 0) | (l == c ? 8 : 0)), r, l == c ? 0 : 1, o); }, this.drawMultiLineMarker = function (e, t, n, i, r) { var o = this.$padding, s = i.lineHeight, a = this.$getTop(t.start.row, i), c = o + t.start.column * i.characterWidth; if (r = r || "", this.session.$bidiHandler.isBidiRow(t.start.row) ? ((l = t.clone()).end.row = l.start.row, l.end.column = this.session.getLine(l.start.row).length, this.drawBidiSingleLineMarker(e, l, n + " ace_br1 ace_start", i, null, r)) : this.elt(n + " ace_br1 ace_start", "height:" + s + "px;right:0;top:" + a + "px;left:" + c + "px;" + (r || "")), this.session.$bidiHandler.isBidiRow(t.end.row)) {
             var l;
             (l = t.clone()).start.row = l.end.row, l.start.column = 0, this.drawBidiSingleLineMarker(e, l, n + " ace_br12", i, null, r);
         }
@@ -46514,8 +46514,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             a++;
         } if (l)
             for (; s < this.$lines.cells.length;) {
-                var f = this.$lines.cells[s++];
-                f.element.style.top = this.$lines.computeLineTop(f.row, e, this.session) + "px";
+                var g = this.$lines.cells[s++];
+                g.element.style.top = this.$lines.computeLineTop(g.row, e, this.session) + "px";
             } }, this.scrollLines = function (e) { var t = this.config; if (this.config = e, this.$lines.pageChanged(t, e))
             return this.update(e); this.$lines.moveContainer(e); var n = e.lastRow, i = t ? t.lastRow : -1; if (!t || i < e.firstRow)
             return this.update(e); if (n < t.firstRow)
@@ -46533,7 +46533,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var s = i.substring(o, o + this.MAX_CHUNK_LENGTH), a = { type: n.type, value: s };
             r = this.$renderToken(e, t + o, a, s);
         } return r; }, this.$renderToken = function (e, t, n, i) { for (var r, s = this, a = /(\t)|( +)|([\x00-\x1f\x80-\xa0\xad\u1680\u180E\u2000-\u200f\u2028\u2029\u202F\u205F\uFEFF\uFFF9-\uFFFC\u2066\u2067\u2068\u202A\u202B\u202D\u202E\u202C\u2069]+)|(\u3000)|([\u1100-\u115F\u11A3-\u11A7\u11FA-\u11FF\u2329-\u232A\u2E80-\u2E99\u2E9B-\u2EF3\u2F00-\u2FD5\u2FF0-\u2FFB\u3001-\u303E\u3041-\u3096\u3099-\u30FF\u3105-\u312D\u3131-\u318E\u3190-\u31BA\u31C0-\u31E3\u31F0-\u321E\u3220-\u3247\u3250-\u32FE\u3300-\u4DBF\u4E00-\uA48C\uA490-\uA4C6\uA960-\uA97C\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFAFF\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE66\uFE68-\uFE6B\uFF01-\uFF60\uFFE0-\uFFE6]|[\uD800-\uDBFF][\uDC00-\uDFFF])/g, c = this.dom.createFragment(this.element), l = 0; r = a.exec(i);) {
-            var h = r[1], u = r[2], d = r[3], f = r[4], g = r[5];
+            var h = r[1], u = r[2], d = r[3], g = r[4], f = r[5];
             if (s.showSpaces || !u) {
                 var p = l != r.index ? i.slice(l, r.index) : "";
                 if (l = r.index + r[0].length, p && c.appendChild(this.dom.createTextNode(p, this.element)), h) {
@@ -46541,7 +46541,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     c.appendChild(s.$tabStrings[m].cloneNode(!0)), t += m - 1;
                 }
                 else
-                    u ? s.showSpaces ? ((v = this.dom.createElement("span")).className = "ace_invisible ace_invisible_space", v.textContent = o.stringRepeat(s.SPACE_CHAR, u.length), c.appendChild(v)) : c.appendChild(this.com.createTextNode(u, this.element)) : d ? ((v = this.dom.createElement("span")).className = "ace_invisible ace_invisible_space ace_invalid", v.textContent = o.stringRepeat(s.SPACE_CHAR, d.length), c.appendChild(v)) : f ? (t += 1, (v = this.dom.createElement("span")).style.width = 2 * s.config.characterWidth + "px", v.className = s.showSpaces ? "ace_cjk ace_invisible ace_invisible_space" : "ace_cjk", v.textContent = s.showSpaces ? s.SPACE_CHAR : f, c.appendChild(v)) : g && (t += 1, (v = this.dom.createElement("span")).style.width = 2 * s.config.characterWidth + "px", v.className = "ace_cjk", v.textContent = g, c.appendChild(v));
+                    u ? s.showSpaces ? ((v = this.dom.createElement("span")).className = "ace_invisible ace_invisible_space", v.textContent = o.stringRepeat(s.SPACE_CHAR, u.length), c.appendChild(v)) : c.appendChild(this.com.createTextNode(u, this.element)) : d ? ((v = this.dom.createElement("span")).className = "ace_invisible ace_invisible_space ace_invalid", v.textContent = o.stringRepeat(s.SPACE_CHAR, d.length), c.appendChild(v)) : g ? (t += 1, (v = this.dom.createElement("span")).style.width = 2 * s.config.characterWidth + "px", v.className = s.showSpaces ? "ace_cjk ace_invisible ace_invisible_space" : "ace_cjk", v.textContent = s.showSpaces ? s.SPACE_CHAR : g, c.appendChild(v)) : f && (t += 1, (v = this.dom.createElement("span")).style.width = 2 * s.config.characterWidth + "px", v.className = "ace_cjk", v.textContent = f, c.appendChild(v));
             }
         } c.appendChild(this.dom.createTextNode(l ? i.slice(l) : i, this.element)); var v = this.dom.createElement("span"); if (!this.$textToken[n.type]) {
             var w = "ace_" + n.type.replace(/\./g, " ace_");
@@ -46669,7 +46669,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     } var i = this.$defaultOptions[e] || (this.$defaultOptions[e] = {}); i[t] && (i.forwardTo ? this.setDefaultValue(i.forwardTo, t, n) : i[t].value = n); }, this.setDefaultValues = function (e, t) { Object.keys(t).forEach((function (n) { this.setDefaultValue(e, n, t[n]); }), this); }, this.warn = a, this.reportError = c; }).call(l.prototype), t.X = l; }, 7199: (e, t) => {
         "use strict";
         var n = 0, i = 0, r = !1, o = !1, s = !1, a = [[0, 3, 0, 1, 0, 0, 0], [0, 3, 0, 1, 2, 2, 0], [0, 3, 0, 17, 2, 0, 1], [0, 3, 5, 5, 4, 1, 0], [0, 3, 21, 21, 4, 0, 1], [0, 3, 5, 5, 4, 2, 0]], c = [[2, 0, 1, 1, 0, 1, 0], [2, 0, 1, 1, 0, 2, 0], [2, 0, 2, 1, 3, 2, 0], [2, 0, 2, 33, 3, 1, 1]], l = 11, h = 18, u = [h, h, h, h, h, h, h, h, h, 6, 5, 6, 8, 5, h, h, h, h, h, h, h, h, h, h, h, h, h, h, 5, 5, 5, 6, 8, 4, 4, l, l, l, 4, 4, 4, 4, 4, 10, 9, 10, 9, 9, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 9, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, h, h, h, h, h, h, 5, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, h, 9, 4, l, l, l, l, 4, 4, 4, 4, 0, 4, 4, h, 4, 4, l, l, 2, 2, 4, 0, 4, 4, 4, 2, 0, 4, 4, 4, 4, 4], d = [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, h, h, h, 0, 1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 5, 13, 14, 15, 16, 17, 9, l, l, l, l, l, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 9, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8];
-        function f(e, t, r) { if (!(i < e))
+        function g(e, t, r) { if (!(i < e))
             if (1 != e || 1 != n || o)
                 for (var s, a, c, l, h = r.length, u = 0; u < h;) {
                     if (t[u] >= e) {
@@ -46683,11 +46683,11 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 }
             else
                 r.reverse(); }
-        function g(e, t, i, a) { var c, u, d, f, g = t[a]; switch (g) {
+        function f(e, t, i, a) { var c, u, d, g, f = t[a]; switch (f) {
             case 0:
             case 1: r = !1;
             case 4:
-            case 3: return g;
+            case 3: return f;
             case 2: return r ? 3 : 2;
             case 7: return r = !0, 1;
             case 8: return 4;
@@ -46698,15 +46698,15 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     return 2;
                 if (r)
                     return 4;
-                for (f = a + 1, d = t.length; f < d && t[f] == l;)
-                    f++;
-                return f < d && 2 == t[f] ? 2 : 4;
+                for (g = a + 1, d = t.length; g < d && t[g] == l;)
+                    g++;
+                return g < d && 2 == t[g] ? 2 : 4;
             case 12:
-                for (d = t.length, f = a + 1; f < d && 12 == t[f];)
-                    f++;
-                if (f < d) {
+                for (d = t.length, g = a + 1; g < d && 12 == t[g];)
+                    g++;
+                if (g < d) {
                     var p = e[a], m = p >= 1425 && p <= 2303 || 64286 == p;
-                    if (c = t[f], m && (1 == c || 7 == c))
+                    if (c = t[g], m && (1 == c || 7 == c))
                         return 1;
                 }
                 return a < 1 || 5 == (c = t[a - 1]) ? 4 : i[a - 1];
@@ -46721,10 +46721,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         } }
         function p(e) { var t = e.charCodeAt(0), n = t >> 8; return 0 == n ? t > 191 ? 0 : u[t] : 5 == n ? /[\u0591-\u05f4]/.test(e) ? 1 : 0 : 6 == n ? /[\u0610-\u061a\u064b-\u065f\u06d6-\u06e4\u06e7-\u06ed]/.test(e) ? 12 : /[\u0660-\u0669\u066b-\u066c]/.test(e) ? 3 : 1642 == t ? l : /[\u06f0-\u06f9]/.test(e) ? 2 : 7 : 32 == n && t <= 8287 ? d[255 & t] : 254 == n && t >= 65136 ? 7 : 4; }
         t.L = 0, t.R = 1, t.EN = 2, t.ON_R = 3, t.AN = 4, t.R_H = 5, t.B = 6, t.RLE = 7, t.DOT = "·", t.doBidiReorder = function (e, l, u) { if (e.length < 2)
-            return {}; var d = e.split(""), m = new Array(d.length), v = new Array(d.length), w = []; n = u ? 1 : 0, function (e, t, l, h) { var u = n ? c : a, d = null, f = null, m = null, v = 0, w = null, y = -1, b = null, S = null, C = []; if (!h)
+            return {}; var d = e.split(""), m = new Array(d.length), v = new Array(d.length), w = []; n = u ? 1 : 0, function (e, t, l, h) { var u = n ? c : a, d = null, g = null, m = null, v = 0, w = null, y = -1, b = null, S = null, C = []; if (!h)
             for (b = 0, h = []; b < l; b++)
                 h[b] = p(e[b]); for (i = n, r = !1, o = !1, s = !1, S = 0; S < l; S++) {
-            if (d = v, C[S] = f = g(e, h, C, S), w = 240 & (v = u[d][f]), v &= 15, t[S] = m = u[v][5], w > 0)
+            if (d = v, C[S] = g = f(e, h, C, S), w = 240 & (v = u[d][g]), v &= 15, t[S] = m = u[v][5], w > 0)
                 if (16 == w) {
                     for (b = y; b < S; b++)
                         t[b] = 1;
@@ -46747,7 +46747,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     for (var k = b - 1; k >= 0 && 8 == h[k]; k--)
                         t[k] = n;
                 } }(d, w, d.length, l); for (var y = 0; y < m.length; m[y] = y, y++)
-            ; for (f(2, w, m), f(1, w, m), y = 0; y < m.length - 1; y++)
+            ; for (g(2, w, m), g(1, w, m), y = 0; y < m.length - 1; y++)
             3 === l[y] ? w[y] = t.AN : 1 === w[y] && (l[y] > 7 && l[y] < 13 || 4 === l[y] || l[y] === h) ? w[y] = t.ON_R : y > 0 && "ل" === d[y - 1] && /\u0622|\u0623|\u0625|\u0627/.test(d[y]) && (w[y - 1] = w[y] = t.R_H, y++); for (d[d.length - 1] === t.DOT && (w[d.length - 1] = t.B), "‫" === d[0] && (w[0] = t.RLE), y = 0; y < m.length; y++)
             v[y] = w[m[y]]; return { logicalFromVisual: m, bidiLevels: v }; }, t.hasBidiCharacters = function (e, t) { for (var n = !1, i = 0; i < e.length; i++)
             t[i] = p(e.charAt(i)), n || 1 != t[i] && 7 != t[i] && 3 != t[i] || (n = !0); return n; }, t.getVisualFromLogicalIdx = function (e, t) { for (var n = 0; n < t.logicalFromVisual.length; n++)
@@ -46824,15 +46824,15 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 e.wheelX = 15 * n, e.wheelY = 15 * i;
                 break;
             case e.DOM_DELTA_PAGE: e.wheelX = 150 * n, e.wheelY = 150 * i;
-        } t(e); }), n); }, t.addMultiMouseDownListener = function (e, n, i, r, s) { var a, c, l, u = 0, d = { 2: "dblclick", 3: "tripleclick", 4: "quadclick" }; function f(e) { if (0 !== t.getButton(e) ? u = 0 : e.detail > 1 ? ++u > 4 && (u = 1) : u = 1, o.isIE) {
+        } t(e); }), n); }, t.addMultiMouseDownListener = function (e, n, i, r, s) { var a, c, l, u = 0, d = { 2: "dblclick", 3: "tripleclick", 4: "quadclick" }; function g(e) { if (0 !== t.getButton(e) ? u = 0 : e.detail > 1 ? ++u > 4 && (u = 1) : u = 1, o.isIE) {
             var s = Math.abs(e.clientX - a) > 5 || Math.abs(e.clientY - c) > 5;
             l && !s || (u = 1), l && clearTimeout(l), l = setTimeout((function () { l = null; }), n[u - 1] || 600), 1 == u && (a = e.clientX, c = e.clientY);
         } if (e._clicks = u, i[r]("mousedown", e), u > 4)
             u = 0;
         else if (u > 1)
-            return i[r](d[u], e); } Array.isArray(e) || (e = [e]), e.forEach((function (e) { h(e, "mousedown", f, s); })); };
+            return i[r](d[u], e); } Array.isArray(e) || (e = [e]), e.forEach((function (e) { h(e, "mousedown", g, s); })); };
         var d = function (e) { return 0 | (e.ctrlKey ? 1 : 0) | (e.altKey ? 2 : 0) | (e.shiftKey ? 4 : 0) | (e.metaKey ? 8 : 0); };
-        function f(e, t, n) { var i = d(t); if (!o.isMac && s) {
+        function g(e, t, n) { var i = d(t); if (!o.isMac && s) {
             if (t.getModifierState && (t.getModifierState("OS") || t.getModifierState("Win")) && (i |= 8), s.altGr) {
                 if (3 == (3 & i))
                     return;
@@ -46850,14 +46850,14 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
             return !!(i || n in r.FUNCTION_KEYS || n in r.PRINTABLE_KEYS) && e(t, i, n);
         } }
-        function g() { s = Object.create(null); }
+        function f() { s = Object.create(null); }
         if (t.getModifierString = function (e) { return r.KEY_MODS[d(e)]; }, t.addCommandKeyListener = function (e, n, i) { if (o.isOldGecko || o.isOpera && !("KeyboardEvent" in window)) {
             var r = null;
-            h(e, "keydown", (function (e) { r = e.keyCode; }), i), h(e, "keypress", (function (e) { return f(n, e, r); }), i);
+            h(e, "keydown", (function (e) { r = e.keyCode; }), i), h(e, "keypress", (function (e) { return g(n, e, r); }), i);
         }
         else {
             var a = null;
-            h(e, "keydown", (function (e) { s[e.keyCode] = (s[e.keyCode] || 0) + 1; var t = f(n, e, e.keyCode); return a = e.defaultPrevented, t; }), i), h(e, "keypress", (function (e) { a && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) && (t.stopEvent(e), a = null); }), i), h(e, "keyup", (function (e) { s[e.keyCode] = null; }), i), s || (g(), h(window, "focus", g));
+            h(e, "keydown", (function (e) { s[e.keyCode] = (s[e.keyCode] || 0) + 1; var t = g(n, e, e.keyCode); return a = e.defaultPrevented, t; }), i), h(e, "keypress", (function (e) { a && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) && (t.stopEvent(e), a = null); }), i), h(e, "keyup", (function (e) { s[e.keyCode] = null; }), i), s || (f(), h(window, "focus", f));
         } }, "object" == typeof window && window.postMessage && !o.isOldIE) {
             var p = 1;
             t.nextTick = function (e, n) { n = n || window; var i = "zero-timeout-message-" + p++, r = function (o) { o.data == i && (t.stopPropagation(o), u(n, "message", r), e()); }; h(n, "message", r), n.postMessage(i, "*"); };
@@ -47034,23 +47034,23 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     }, 5478: (e, t, n) => {
         "use strict";
         var i, r = n(2011), o = n(2463).T, s = n(7726).N, a = n(732), c = ["text", "paren.rparen", "rparen", "paren", "punctuation.operator"], l = ["text", "paren.rparen", "rparen", "paren", "punctuation.operator", "comment"], h = {}, u = { '"': '"', "'": "'" }, d = function (e) { var t = -1; if (e.multiSelect && (t = e.selection.index, h.rangeCount != e.multiSelect.rangeCount && (h = { rangeCount: e.multiSelect.rangeCount })), h[t])
-            return i = h[t]; i = h[t] = { autoInsertedBrackets: 0, autoInsertedRow: -1, autoInsertedLineEnd: "", maybeInsertedBrackets: 0, maybeInsertedRow: -1, maybeInsertedLineStart: "", maybeInsertedLineEnd: "" }; }, f = function (e, t, n, i) { var r = e.end.row - e.start.row; return { text: n + t + i, selection: [0, e.start.column + 1, r, e.end.column + (r ? 0 : 1)] }; }, g = function (e) { this.add("braces", "insertion", (function (t, n, r, o, s) { var c = r.getCursorPosition(), l = o.doc.getLine(c.row); if ("{" == s) {
+            return i = h[t]; i = h[t] = { autoInsertedBrackets: 0, autoInsertedRow: -1, autoInsertedLineEnd: "", maybeInsertedBrackets: 0, maybeInsertedRow: -1, maybeInsertedLineStart: "", maybeInsertedLineEnd: "" }; }, g = function (e, t, n, i) { var r = e.end.row - e.start.row; return { text: n + t + i, selection: [0, e.start.column + 1, r, e.end.column + (r ? 0 : 1)] }; }, f = function (e) { this.add("braces", "insertion", (function (t, n, r, o, s) { var c = r.getCursorPosition(), l = o.doc.getLine(c.row); if ("{" == s) {
             d(r);
             var h = r.getSelectionRange(), u = o.doc.getTextRange(h);
             if ("" !== u && "{" !== u && r.getWrapBehavioursEnabled())
-                return f(h, u, "{", "}");
-            if (g.isSaneInsertion(r, o))
-                return /[\]\}\)]/.test(l[c.column]) || r.inMultiSelectMode || e && e.braces ? (g.recordAutoInsert(r, o, "}"), { text: "{}", selection: [1, 1] }) : (g.recordMaybeInsert(r, o, "{"), { text: "{", selection: [1, 1] });
+                return g(h, u, "{", "}");
+            if (f.isSaneInsertion(r, o))
+                return /[\]\}\)]/.test(l[c.column]) || r.inMultiSelectMode || e && e.braces ? (f.recordAutoInsert(r, o, "}"), { text: "{}", selection: [1, 1] }) : (f.recordMaybeInsert(r, o, "{"), { text: "{", selection: [1, 1] });
         }
         else if ("}" == s) {
-            if (d(r), "}" == l.substring(c.column, c.column + 1) && null !== o.$findOpeningBracket("}", { column: c.column + 1, row: c.row }) && g.isAutoInsertedClosing(c, l, s))
-                return g.popAutoInsertedClosing(), { text: "", selection: [1, 1] };
+            if (d(r), "}" == l.substring(c.column, c.column + 1) && null !== o.$findOpeningBracket("}", { column: c.column + 1, row: c.row }) && f.isAutoInsertedClosing(c, l, s))
+                return f.popAutoInsertedClosing(), { text: "", selection: [1, 1] };
         }
         else {
             if ("\n" == s || "\r\n" == s) {
                 d(r);
                 var p = "";
-                if (g.isMaybeInsertedClosing(c, l) && (p = a.stringRepeat("}", i.maybeInsertedBrackets), g.clearMaybeInsertedClosing()), "}" === l.substring(c.column, c.column + 1)) {
+                if (f.isMaybeInsertedClosing(c, l) && (p = a.stringRepeat("}", i.maybeInsertedBrackets), f.clearMaybeInsertedClosing()), "}" === l.substring(c.column, c.column + 1)) {
                     var m = o.findMatchingBracket({ row: c.row, column: c.column + 1 }, "}");
                     if (!m)
                         return null;
@@ -47058,13 +47058,13 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 }
                 else {
                     if (!p)
-                        return void g.clearMaybeInsertedClosing();
+                        return void f.clearMaybeInsertedClosing();
                     v = this.$getIndent(l);
                 }
                 var w = v + o.getTabString();
                 return { text: "\n" + w + "\n" + v + p, selection: [1, w.length, 1, w.length] };
             }
-            g.clearMaybeInsertedClosing();
+            f.clearMaybeInsertedClosing();
         } })), this.add("braces", "deletion", (function (e, t, n, r, o) { var s = r.doc.getTextRange(o); if (!o.isMultiLine() && "{" == s) {
             if (d(n), "}" == r.doc.getLine(o.start.row).substring(o.end.column, o.end.column + 1))
                 return o.end.column++, o;
@@ -47073,29 +47073,29 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             d(n);
             var o = n.getSelectionRange(), s = i.doc.getTextRange(o);
             if ("" !== s && n.getWrapBehavioursEnabled())
-                return f(o, s, "(", ")");
-            if (g.isSaneInsertion(n, i))
-                return g.recordAutoInsert(n, i, ")"), { text: "()", selection: [1, 1] };
+                return g(o, s, "(", ")");
+            if (f.isSaneInsertion(n, i))
+                return f.recordAutoInsert(n, i, ")"), { text: "()", selection: [1, 1] };
         }
         else if (")" == r) {
             d(n);
             var a = n.getCursorPosition(), c = i.doc.getLine(a.row);
-            if (")" == c.substring(a.column, a.column + 1) && null !== i.$findOpeningBracket(")", { column: a.column + 1, row: a.row }) && g.isAutoInsertedClosing(a, c, r))
-                return g.popAutoInsertedClosing(), { text: "", selection: [1, 1] };
+            if (")" == c.substring(a.column, a.column + 1) && null !== i.$findOpeningBracket(")", { column: a.column + 1, row: a.row }) && f.isAutoInsertedClosing(a, c, r))
+                return f.popAutoInsertedClosing(), { text: "", selection: [1, 1] };
         } })), this.add("parens", "deletion", (function (e, t, n, i, r) { var o = i.doc.getTextRange(r); if (!r.isMultiLine() && "(" == o && (d(n), ")" == i.doc.getLine(r.start.row).substring(r.start.column + 1, r.start.column + 2)))
             return r.end.column++, r; })), this.add("brackets", "insertion", (function (e, t, n, i, r) { if ("[" == r) {
             d(n);
             var o = n.getSelectionRange(), s = i.doc.getTextRange(o);
             if ("" !== s && n.getWrapBehavioursEnabled())
-                return f(o, s, "[", "]");
-            if (g.isSaneInsertion(n, i))
-                return g.recordAutoInsert(n, i, "]"), { text: "[]", selection: [1, 1] };
+                return g(o, s, "[", "]");
+            if (f.isSaneInsertion(n, i))
+                return f.recordAutoInsert(n, i, "]"), { text: "[]", selection: [1, 1] };
         }
         else if ("]" == r) {
             d(n);
             var a = n.getCursorPosition(), c = i.doc.getLine(a.row);
-            if ("]" == c.substring(a.column, a.column + 1) && null !== i.$findOpeningBracket("]", { column: a.column + 1, row: a.row }) && g.isAutoInsertedClosing(a, c, r))
-                return g.popAutoInsertedClosing(), { text: "", selection: [1, 1] };
+            if ("]" == c.substring(a.column, a.column + 1) && null !== i.$findOpeningBracket("]", { column: a.column + 1, row: a.row }) && f.isAutoInsertedClosing(a, c, r))
+                return f.popAutoInsertedClosing(), { text: "", selection: [1, 1] };
         } })), this.add("brackets", "deletion", (function (e, t, n, i, r) { var o = i.doc.getTextRange(r); if (!r.isMultiLine() && "[" == o && (d(n), "]" == i.doc.getLine(r.start.row).substring(r.start.column + 1, r.start.column + 2)))
             return r.end.column++, r; })), this.add("string_dquotes", "insertion", (function (e, t, n, i, r) { var o = i.$mode.$quotes || u; if (1 == r.length && o[r]) {
             if (this.lineCommentStart && -1 != this.lineCommentStart.indexOf(r))
@@ -47103,10 +47103,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             d(n);
             var s = r, a = n.getSelectionRange(), c = i.doc.getTextRange(a);
             if (!("" === c || 1 == c.length && o[c]) && n.getWrapBehavioursEnabled())
-                return f(a, c, s, s);
+                return g(a, c, s, s);
             if (!c) {
-                var l = n.getCursorPosition(), h = i.doc.getLine(l.row), g = h.substring(l.column - 1, l.column), p = h.substring(l.column, l.column + 1), m = i.getTokenAt(l.row, l.column), v = i.getTokenAt(l.row, l.column + 1);
-                if ("\\" == g && m && /escape/.test(m.type))
+                var l = n.getCursorPosition(), h = i.doc.getLine(l.row), f = h.substring(l.column - 1, l.column), p = h.substring(l.column, l.column + 1), m = i.getTokenAt(l.row, l.column), v = i.getTokenAt(l.row, l.column + 1);
+                if ("\\" == f && m && /escape/.test(m.type))
                     return null;
                 var w, y = m && /string|escape/.test(m.type), b = !v || /string|escape/.test(v.type);
                 if (p == s)
@@ -47118,15 +47118,15 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                         return null;
                     var S = i.$mode.tokenRe;
                     S.lastIndex = 0;
-                    var C = S.test(g);
+                    var C = S.test(f);
                     S.lastIndex = 0;
-                    var k = S.test(g);
+                    var k = S.test(f);
                     if (C || k)
                         return null;
                     if (p && !/[\s;,.})\]\\]/.test(p))
                         return null;
                     var _ = h[l.column - 2];
-                    if (g == s && (_ == s || S.test(_)))
+                    if (f == s && (_ == s || S.test(_)))
                         return null;
                     w = !0;
                 }
@@ -47134,13 +47134,13 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
         } })), this.add("string_dquotes", "deletion", (function (e, t, n, i, r) { var o = i.$mode.$quotes || u, s = i.doc.getTextRange(r); if (!r.isMultiLine() && o.hasOwnProperty(s) && (d(n), i.doc.getLine(r.start.row).substring(r.start.column + 1, r.start.column + 2) == s))
             return r.end.column++, r; })); };
-        g.isSaneInsertion = function (e, t) { var n = e.getCursorPosition(), i = new s(t, n.row, n.column); if (!this.$matchTokenType(i.getCurrentToken() || "text", c)) {
+        f.isSaneInsertion = function (e, t) { var n = e.getCursorPosition(), i = new s(t, n.row, n.column); if (!this.$matchTokenType(i.getCurrentToken() || "text", c)) {
             if (/[)}\]]/.test(e.session.getLine(n.row)[n.column]))
                 return !0;
             var r = new s(t, n.row, n.column + 1);
             if (!this.$matchTokenType(r.getCurrentToken() || "text", c))
                 return !1;
-        } return i.stepForward(), i.getCurrentTokenRow() !== n.row || this.$matchTokenType(i.getCurrentToken() || "text", l); }, g.$matchTokenType = function (e, t) { return t.indexOf(e.type || e) > -1; }, g.recordAutoInsert = function (e, t, n) { var r = e.getCursorPosition(), o = t.doc.getLine(r.row); this.isAutoInsertedClosing(r, o, i.autoInsertedLineEnd[0]) || (i.autoInsertedBrackets = 0), i.autoInsertedRow = r.row, i.autoInsertedLineEnd = n + o.substr(r.column), i.autoInsertedBrackets++; }, g.recordMaybeInsert = function (e, t, n) { var r = e.getCursorPosition(), o = t.doc.getLine(r.row); this.isMaybeInsertedClosing(r, o) || (i.maybeInsertedBrackets = 0), i.maybeInsertedRow = r.row, i.maybeInsertedLineStart = o.substr(0, r.column) + n, i.maybeInsertedLineEnd = o.substr(r.column), i.maybeInsertedBrackets++; }, g.isAutoInsertedClosing = function (e, t, n) { return i.autoInsertedBrackets > 0 && e.row === i.autoInsertedRow && n === i.autoInsertedLineEnd[0] && t.substr(e.column) === i.autoInsertedLineEnd; }, g.isMaybeInsertedClosing = function (e, t) { return i.maybeInsertedBrackets > 0 && e.row === i.maybeInsertedRow && t.substr(e.column) === i.maybeInsertedLineEnd && t.substr(0, e.column) == i.maybeInsertedLineStart; }, g.popAutoInsertedClosing = function () { i.autoInsertedLineEnd = i.autoInsertedLineEnd.substr(1), i.autoInsertedBrackets--; }, g.clearMaybeInsertedClosing = function () { i && (i.maybeInsertedBrackets = 0, i.maybeInsertedRow = -1); }, r.inherits(g, o), t.B = g;
+        } return i.stepForward(), i.getCurrentTokenRow() !== n.row || this.$matchTokenType(i.getCurrentToken() || "text", l); }, f.$matchTokenType = function (e, t) { return t.indexOf(e.type || e) > -1; }, f.recordAutoInsert = function (e, t, n) { var r = e.getCursorPosition(), o = t.doc.getLine(r.row); this.isAutoInsertedClosing(r, o, i.autoInsertedLineEnd[0]) || (i.autoInsertedBrackets = 0), i.autoInsertedRow = r.row, i.autoInsertedLineEnd = n + o.substr(r.column), i.autoInsertedBrackets++; }, f.recordMaybeInsert = function (e, t, n) { var r = e.getCursorPosition(), o = t.doc.getLine(r.row); this.isMaybeInsertedClosing(r, o) || (i.maybeInsertedBrackets = 0), i.maybeInsertedRow = r.row, i.maybeInsertedLineStart = o.substr(0, r.column) + n, i.maybeInsertedLineEnd = o.substr(r.column), i.maybeInsertedBrackets++; }, f.isAutoInsertedClosing = function (e, t, n) { return i.autoInsertedBrackets > 0 && e.row === i.autoInsertedRow && n === i.autoInsertedLineEnd[0] && t.substr(e.column) === i.autoInsertedLineEnd; }, f.isMaybeInsertedClosing = function (e, t) { return i.maybeInsertedBrackets > 0 && e.row === i.maybeInsertedRow && t.substr(e.column) === i.maybeInsertedLineEnd && t.substr(0, e.column) == i.maybeInsertedLineStart; }, f.popAutoInsertedClosing = function () { i.autoInsertedLineEnd = i.autoInsertedLineEnd.substr(1), i.autoInsertedBrackets--; }, f.clearMaybeInsertedClosing = function () { i && (i.maybeInsertedBrackets = 0, i.maybeInsertedRow = -1); }, r.inherits(f, o), t.B = f;
     }, 9372: (e, t, n) => {
         "use strict";
         var i = n(3069).Range, r = t.FoldMode = function () { };
@@ -47157,8 +47157,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 }
             }
             if (h > l) {
-                var f = e.getLine(h).length;
-                return new i(l, a, h, f);
+                var g = e.getLine(h).length;
+                return new i(l, a, h, g);
             }
         } }, this.openingBracketBlock = function (e, t, n, r, o) { var s = { row: n, column: r + 1 }, a = e.$findClosingBracket(t, s, o); if (a) {
             var c = e.foldWidgets[a.row];
@@ -47169,11 +47169,11 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         var i = n(3294), r = n(9754).d, o = n(9697).K, s = n(5478).B, a = n(7913), c = n(732), l = n(7726).N, h = n(3069).Range, u = function () { this.HighlightRules = o; };
         (function () { this.$defaultBehaviour = new s, this.tokenRe = new RegExp("^[" + a.wordChars + "\\$_]+", "g"), this.nonTokenRe = new RegExp("^(?:[^" + a.wordChars + "\\$_]|\\s])+", "g"), this.getTokenizer = function () { return this.$tokenizer || (this.$highlightRules = this.$highlightRules || new this.HighlightRules(this.$highlightRuleConfig), this.$tokenizer = new r(this.$highlightRules.getRules())), this.$tokenizer; }, this.lineCommentStart = "", this.blockComment = "", this.toggleCommentLines = function (e, t, n, i) { var r = t.doc, o = !0, s = !0, a = 1 / 0, l = t.getTabSize(), h = !1; if (this.lineCommentStart) {
-            Array.isArray(this.lineCommentStart) ? (p = this.lineCommentStart.map(c.escapeRegExp).join("|"), f = this.lineCommentStart[0]) : (p = c.escapeRegExp(this.lineCommentStart), f = this.lineCommentStart), p = new RegExp("^(\\s*)(?:" + p + ") ?"), h = t.getUseSoftTabs(), w = function (e, t) { var n = e.match(p); if (n) {
+            Array.isArray(this.lineCommentStart) ? (p = this.lineCommentStart.map(c.escapeRegExp).join("|"), g = this.lineCommentStart[0]) : (p = c.escapeRegExp(this.lineCommentStart), g = this.lineCommentStart), p = new RegExp("^(\\s*)(?:" + p + ") ?"), h = t.getUseSoftTabs(), w = function (e, t) { var n = e.match(p); if (n) {
                 var i = n[1].length, o = n[0].length;
                 d(e, i, o) || " " != n[0][o - 1] || o--, r.removeInLine(t, i, o);
             } };
-            var u = f + " ", d = (v = function (e, t) { o && !/\S/.test(e) || (d(e, a, a) ? r.insertInLine({ row: t, column: a }, u) : r.insertInLine({ row: t, column: a }, f)); }, y = function (e, t) { return p.test(e); }, function (e, t, n) { for (var i = 0; t-- && " " == e.charAt(t);)
+            var u = g + " ", d = (v = function (e, t) { o && !/\S/.test(e) || (d(e, a, a) ? r.insertInLine({ row: t, column: a }, u) : r.insertInLine({ row: t, column: a }, g)); }, y = function (e, t) { return p.test(e); }, function (e, t, n) { for (var i = 0; t-- && " " == e.charAt(t);)
                 i++; if (i % l != 0)
                 return !1; for (i = 0; " " == e.charAt(n++);)
                 i++; return l > 2 ? i % l != l - 1 : i % l == 0; });
@@ -47181,7 +47181,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         else {
             if (!this.blockComment)
                 return !1;
-            var f = this.blockComment.start, g = this.blockComment.end, p = new RegExp("^(\\s*)(?:" + c.escapeRegExp(f) + ")"), m = new RegExp("(?:" + c.escapeRegExp(g) + ")\\s*$"), v = function (e, t) { y(e, t) || o && !/\S/.test(e) || (r.insertInLine({ row: t, column: e.length }, g), r.insertInLine({ row: t, column: a }, f)); }, w = function (e, t) { var n; (n = e.match(m)) && r.removeInLine(t, e.length - n[0].length, e.length), (n = e.match(p)) && r.removeInLine(t, n[1].length, n[0].length); }, y = function (e, n) { if (p.test(e))
+            var g = this.blockComment.start, f = this.blockComment.end, p = new RegExp("^(\\s*)(?:" + c.escapeRegExp(g) + ")"), m = new RegExp("(?:" + c.escapeRegExp(f) + ")\\s*$"), v = function (e, t) { y(e, t) || o && !/\S/.test(e) || (r.insertInLine({ row: t, column: e.length }, f), r.insertInLine({ row: t, column: a }, g)); }, w = function (e, t) { var n; (n = e.match(m)) && r.removeInLine(t, e.length - n[0].length, e.length), (n = e.match(p)) && r.removeInLine(t, n[1].length, n[0].length); }, y = function (e, n) { if (p.test(e))
                 return !0; for (var i = t.getTokens(n), r = 0; r < i.length; r++)
                 if ("comment" === i[r].type)
                     return !0; };
@@ -47192,8 +47192,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if (a && /comment/.test(a.type)) {
                 for (var u, d; a && /comment/.test(a.type);) {
                     if (-1 != (m = a.value.indexOf(r.start))) {
-                        var f = p.getCurrentTokenRow(), g = p.getCurrentTokenColumn() + m;
-                        u = new h(f, g, f, g + r.start.length);
+                        var g = p.getCurrentTokenRow(), f = p.getCurrentTokenColumn() + m;
+                        u = new h(g, f, g, f + r.start.length);
                         break;
                     }
                     a = p.stepBackward();
@@ -47202,7 +47202,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 for (a = (p = new l(t, i.row, i.column)).getCurrentToken(); a && /comment/.test(a.type);) {
                     var m;
                     if (-1 != (m = a.value.indexOf(r.end))) {
-                        f = p.getCurrentTokenRow(), g = p.getCurrentTokenColumn() + m, d = new h(f, g, f, g + r.end.length);
+                        g = p.getCurrentTokenRow(), f = p.getCurrentTokenColumn() + m, d = new h(g, f, g, f + r.end.length);
                         break;
                     }
                     a = p.stepForward();
@@ -47283,10 +47283,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if (c.push && (c.nextState = c.next || c.push, c.next = e, delete c.push), c.rules)
                 for (var d in c.rules)
                     i[d] ? i[d].push && i[d].push.apply(i[d], c.rules[d]) : i[d] = c.rules[d];
-            var f = "string" == typeof c ? c : c.include;
-            if (f && (l = Array.isArray(f) ? f.map((function (e) { return i[e]; })) : i[f]), l) {
-                var g = [a, 1].concat(l);
-                c.noEscape && (g = g.filter((function (e) { return !e.next; }))), s.splice.apply(s, g), a--;
+            var g = "string" == typeof c ? c : c.include;
+            if (g && (l = Array.isArray(g) ? g.map((function (e) { return i[e]; })) : i[g]), l) {
+                var f = [a, 1].concat(l);
+                c.noEscape && (f = f.filter((function (e) { return !e.next; }))), s.splice.apply(s, f), a--;
             }
             c.keywordMap && (c.token = this.createKeywordMapper(c.keywordMap, c.defaultToken || "text", c.caseInsensitive), delete c.defaultToken);
         } }), this); }, this.createKeywordMapper = function (e, t, n, i) { var r = Object.create(null); return this.$keywordList = [], Object.keys(e).forEach((function (t) { for (var o = e[t].split(i || "|"), s = o.length; s--;) {
@@ -47319,8 +47319,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if (d && l.setClassName(d.trim()), l.show(), s._signal("showGutterTooltip", l), s.on("mousewheel", h), e.$tooltipFollowsMouse)
                 u(n);
             else {
-                var f = n.domEvent.target.getBoundingClientRect(), g = l.getElement().style;
-                g.left = f.right + "px", g.top = f.bottom + "px";
+                var g = n.domEvent.target.getBoundingClientRect(), f = l.getElement().style;
+                f.left = g.right + "px", f.top = g.bottom + "px";
             }
         } }() : h(); }), 50)); })), o.addListener(s.renderer.$gutter, "mouseout", (function (e) { n = null, r && !t && (t = setTimeout((function () { t = null, h(); }), 50)); }), s), s.on("changeSession", h); };
     }, 6763: (e, t, n) => {
@@ -47369,19 +47369,19 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     }, 2482: (e, t, n) => {
         "use strict";
         var i = n(5336), r = n(8215), o = n(8057);
-        function s(e) { var t = e.editor, n = i.createElement("div"); n.style.cssText = "top:-100px;position:absolute;z-index:2147483647;opacity:0.5", n.textContent = " ", ["dragWait", "dragWaitEnd", "startDrag", "dragReadyEnd", "onMouseDrag"].forEach((function (t) { e[t] = this[t]; }), this), t.on("mousedown", this.onMouseDown.bind(e)); var s, c, l, h, u, d, f, g, p, m, v, w = t.container, y = 0; function b() { var e = d; (function (e, n) { var i = Date.now(), r = !n || e.row != n.row, o = !n || e.column != n.column; !m || r || o ? (t.moveCursorToPosition(e), m = i, v = { x: c, y: l }) : a(v.x, v.y, c, l) > 5 ? m = null : i - m >= 200 && (t.renderer.scrollCursorIntoView(), m = null); })(d = t.renderer.screenToTextCoordinates(c, l), e), function (e, n) { var i = Date.now(), r = t.renderer.layerConfig.lineHeight, o = t.renderer.layerConfig.characterWidth, s = t.renderer.scroller.getBoundingClientRect(), a = { x: { left: c - s.left, right: s.right - c }, y: { top: l - s.top, bottom: s.bottom - l } }, h = Math.min(a.x.left, a.x.right), u = Math.min(a.y.top, a.y.bottom), d = { row: e.row, column: e.column }; h / o <= 2 && (d.column += a.x.left < a.x.right ? -3 : 2), u / r <= 1 && (d.row += a.y.top < a.y.bottom ? -1 : 1); var f = e.row != d.row, g = e.column != d.column, m = !n || e.row != n.row; f || g && !m ? p ? i - p >= 200 && t.renderer.scrollCursorIntoView(d) : p = i : p = null; }(d, e); } function S() { u = t.selection.toOrientedRange(), s = t.session.addMarker(u, "ace_selection", t.getSelectionStyle()), t.clearSelection(), t.isFocused() && t.renderer.$cursorLayer.setBlinking(!1), clearInterval(h), b(), h = setInterval(b, 20), y = 0, r.addListener(document, "mousemove", _); } function C() { clearInterval(h), t.session.removeMarker(s), s = null, t.selection.fromOrientedRange(u), t.isFocused() && !g && t.$resetCursorStyle(), u = null, d = null, y = 0, p = null, m = null, r.removeListener(document, "mousemove", _); } this.onDragStart = function (e) { if (this.cancelDrag || !w.draggable) {
+        function s(e) { var t = e.editor, n = i.createElement("div"); n.style.cssText = "top:-100px;position:absolute;z-index:2147483647;opacity:0.5", n.textContent = " ", ["dragWait", "dragWaitEnd", "startDrag", "dragReadyEnd", "onMouseDrag"].forEach((function (t) { e[t] = this[t]; }), this), t.on("mousedown", this.onMouseDown.bind(e)); var s, c, l, h, u, d, g, f, p, m, v, w = t.container, y = 0; function b() { var e = d; (function (e, n) { var i = Date.now(), r = !n || e.row != n.row, o = !n || e.column != n.column; !m || r || o ? (t.moveCursorToPosition(e), m = i, v = { x: c, y: l }) : a(v.x, v.y, c, l) > 5 ? m = null : i - m >= 200 && (t.renderer.scrollCursorIntoView(), m = null); })(d = t.renderer.screenToTextCoordinates(c, l), e), function (e, n) { var i = Date.now(), r = t.renderer.layerConfig.lineHeight, o = t.renderer.layerConfig.characterWidth, s = t.renderer.scroller.getBoundingClientRect(), a = { x: { left: c - s.left, right: s.right - c }, y: { top: l - s.top, bottom: s.bottom - l } }, h = Math.min(a.x.left, a.x.right), u = Math.min(a.y.top, a.y.bottom), d = { row: e.row, column: e.column }; h / o <= 2 && (d.column += a.x.left < a.x.right ? -3 : 2), u / r <= 1 && (d.row += a.y.top < a.y.bottom ? -1 : 1); var g = e.row != d.row, f = e.column != d.column, m = !n || e.row != n.row; g || f && !m ? p ? i - p >= 200 && t.renderer.scrollCursorIntoView(d) : p = i : p = null; }(d, e); } function S() { u = t.selection.toOrientedRange(), s = t.session.addMarker(u, "ace_selection", t.getSelectionStyle()), t.clearSelection(), t.isFocused() && t.renderer.$cursorLayer.setBlinking(!1), clearInterval(h), b(), h = setInterval(b, 20), y = 0, r.addListener(document, "mousemove", _); } function C() { clearInterval(h), t.session.removeMarker(s), s = null, t.selection.fromOrientedRange(u), t.isFocused() && !f && t.$resetCursorStyle(), u = null, d = null, y = 0, p = null, m = null, r.removeListener(document, "mousemove", _); } this.onDragStart = function (e) { if (this.cancelDrag || !w.draggable) {
             var i = this;
             return setTimeout((function () { i.startSelect(), i.captureMouse(e); }), 0), e.preventDefault();
-        } u = t.getSelectionRange(); var r = e.dataTransfer; r.effectAllowed = t.getReadOnly() ? "copy" : "copyMove", t.container.appendChild(n), r.setDragImage && r.setDragImage(n, 0, 0), setTimeout((function () { t.container.removeChild(n); })), r.clearData(), r.setData("Text", t.session.getTextRange()), g = !0, this.setState("drag"); }, this.onDragEnd = function (e) { if (w.draggable = !1, g = !1, this.setState(null), !t.getReadOnly()) {
+        } u = t.getSelectionRange(); var r = e.dataTransfer; r.effectAllowed = t.getReadOnly() ? "copy" : "copyMove", t.container.appendChild(n), r.setDragImage && r.setDragImage(n, 0, 0), setTimeout((function () { t.container.removeChild(n); })), r.clearData(), r.setData("Text", t.session.getTextRange()), f = !0, this.setState("drag"); }, this.onDragEnd = function (e) { if (w.draggable = !1, f = !1, this.setState(null), !t.getReadOnly()) {
             var n = e.dataTransfer.dropEffect;
-            f || "move" != n || t.session.remove(t.getSelectionRange()), t.$resetCursorStyle();
+            g || "move" != n || t.session.remove(t.getSelectionRange()), t.$resetCursorStyle();
         } this.editor.unsetStyle("ace_dragging"), this.editor.renderer.setCursorStyle(""); }, this.onDragEnter = function (e) { if (!t.getReadOnly() && $(e.dataTransfer))
-            return c = e.clientX, l = e.clientY, s || S(), y++, e.dataTransfer.dropEffect = f = R(e), r.preventDefault(e); }, this.onDragOver = function (e) { if (!t.getReadOnly() && $(e.dataTransfer))
-            return c = e.clientX, l = e.clientY, s || (S(), y++), null !== k && (k = null), e.dataTransfer.dropEffect = f = R(e), r.preventDefault(e); }, this.onDragLeave = function (e) { if (--y <= 0 && s)
-            return C(), f = null, r.preventDefault(e); }, this.onDrop = function (e) { if (d) {
+            return c = e.clientX, l = e.clientY, s || S(), y++, e.dataTransfer.dropEffect = g = R(e), r.preventDefault(e); }, this.onDragOver = function (e) { if (!t.getReadOnly() && $(e.dataTransfer))
+            return c = e.clientX, l = e.clientY, s || (S(), y++), null !== k && (k = null), e.dataTransfer.dropEffect = g = R(e), r.preventDefault(e); }, this.onDragLeave = function (e) { if (--y <= 0 && s)
+            return C(), g = null, r.preventDefault(e); }, this.onDrop = function (e) { if (d) {
             var n = e.dataTransfer;
-            if (g)
-                switch (f) {
+            if (f)
+                switch (g) {
                     case "move":
                         u = u.contains(d.row, d.column) ? { start: d, end: d } : t.moveText(u, d);
                         break;
@@ -47389,7 +47389,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 }
             else {
                 var i = n.getData("Text");
-                u = { start: d, end: t.session.insert(d, i) }, t.focus(), f = null;
+                u = { start: d, end: t.session.insert(d, i) }, t.focus(), g = null;
             }
             return C(), r.preventDefault(e);
         } }, r.addListener(w, "dragstart", this.onDragStart.bind(e), t), r.addListener(w, "dragend", this.onDragEnd.bind(e), t), r.addListener(w, "dragenter", this.onDragEnter.bind(e), t), r.addListener(w, "dragover", this.onDragOver.bind(e), t), r.addListener(w, "dragleave", this.onDragLeave.bind(e), t), r.addListener(w, "drop", this.onDrop.bind(e), t); var k = null; function _() { null == k && (k = setTimeout((function () { null != k && s && C(); }), 20)); } function $(e) { var t = e.types; return !t || Array.prototype.some.call(t, (function (e) { return "text/plain" == e || "Text" == e; })); } function R(e) { var t = ["copy", "copymove", "all", "uninitialized"], n = o.isMac ? e.altKey : e.ctrlKey, i = "uninitialized"; try {
@@ -47449,30 +47449,30 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         e.editor.textInput.onContextMenu(e.domEvent);
     else if (a || n || c) {
         if (0 === l) {
-            var h, u = e.editor, d = u.selection, f = u.inMultiSelectMode, g = e.getDocumentPosition(), p = d.getCursor(), m = e.inSelection() || d.isEmpty() && o(g, p), v = e.x, w = e.y, y = u.session, b = u.renderer.pixelToScreenCoordinates(v, w), S = b;
+            var h, u = e.editor, d = u.selection, g = u.inMultiSelectMode, f = e.getDocumentPosition(), p = d.getCursor(), m = e.inSelection() || d.isEmpty() && o(f, p), v = e.x, w = e.y, y = u.session, b = u.renderer.pixelToScreenCoordinates(v, w), S = b;
             if (u.$mouseHandler.$enableJumpToDef)
                 a && n || c && n ? h = s ? "block" : "add" : n && u.$blockSelectEnabled && (h = "block");
             else if (c && !n) {
-                if (h = "add", !f && s)
+                if (h = "add", !g && s)
                     return;
             }
             else
                 n && u.$blockSelectEnabled && (h = "block");
             if (h && r.isMac && t.ctrlKey && u.$mouseHandler.cancelContextMenu(), "add" == h) {
-                if (!f && m)
+                if (!g && m)
                     return;
-                if (!f) {
+                if (!g) {
                     var C = d.toOrientedRange();
                     u.addSelectionMarker(C);
                 }
-                var k = d.rangeList.rangeAtPoint(g);
+                var k = d.rangeList.rangeAtPoint(f);
                 u.inVirtualSelectionMode = !0, s && (k = null, C = d.ranges[0] || C, u.removeSelectionMarker(C)), u.once("mouseup", (function () { var e = d.toOrientedRange(); k && e.isEmpty() && o(k.cursor, e.cursor) ? d.substractPoint(e.cursor) : (s ? d.substractPoint(C.cursor) : C && (u.removeSelectionMarker(C), d.addRange(C)), d.addRange(e)), u.inVirtualSelectionMode = !1; }));
             }
             else if ("block" == h) {
                 var _;
                 e.stop(), u.inVirtualSelectionMode = !0;
                 var $ = [], R = function () { var e = u.renderer.pixelToScreenCoordinates(v, w), t = y.screenToDocumentPosition(e.row, e.column, e.offsetX); o(S, e) && o(t, d.lead) || (S = e, u.selection.moveToPosition(t), u.renderer.scrollCursorIntoView(), u.removeSelectionMarkers($), $ = d.rectangularRangeBlock(S, b), u.$mouseHandler.$clickSelection && 1 == $.length && $[0].isEmpty() && ($[0] = u.$mouseHandler.$clickSelection.clone()), $.forEach(u.addSelectionMarker, u), u.updateSelectionMarkers()); };
-                f && !c ? d.toSingleRange() : !f && c && (_ = d.toOrientedRange(), u.addSelectionMarker(_)), s ? b = y.documentToScreenPosition(d.lead) : d.moveToPosition(g), S = { row: -1, column: -1 };
+                g && !c ? d.toSingleRange() : !g && c && (_ = d.toOrientedRange(), u.addSelectionMarker(_)), s ? b = y.documentToScreenPosition(d.lead) : d.moveToPosition(f), S = { row: -1, column: -1 };
                 var x = R;
                 i.capture(u.container, (function (e) { v = e.clientX, w = e.clientY; }), (function (e) { R(), clearInterval(T), u.removeSelectionMarkers($), $.length || ($ = [d.toOrientedRange()]), _ && (u.removeSelectionMarker(_), d.toSingleRange(_)); for (var t = 0; t < $.length; t++)
                     d.addRange($[t]); u.inVirtualSelectionMode = !1, u.$mouseHandler.$clickSelection = null; }));
@@ -47485,33 +47485,33 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         0 === l && e.editor.inMultiSelectMode && e.editor.exitMultiSelectMode(); }; }, 461: (e, t, n) => {
         "use strict";
         var i = n(7224).T, r = n(8215), o = n(5336);
-        t.W = function (e, t) { var n, s, a, c, l, h, u, d, f, g = "scroll", p = 0, m = 0, v = 0, w = 0; function y() { var e, n, i; f || (e = window.navigator && window.navigator.clipboard, n = !1, i = function (i) { var r, s, a = i.target.getAttribute("action"); if ("more" == a || !n)
-            return n = !n, r = t.getCopyText(), s = t.session.getUndoManager().hasUndo(), void f.replaceChild(o.buildDom(n ? ["span", !r && ["span", { class: "ace_mobile-button", action: "selectall" }, "Select All"], r && ["span", { class: "ace_mobile-button", action: "copy" }, "Copy"], r && ["span", { class: "ace_mobile-button", action: "cut" }, "Cut"], e && ["span", { class: "ace_mobile-button", action: "paste" }, "Paste"], s && ["span", { class: "ace_mobile-button", action: "undo" }, "Undo"], ["span", { class: "ace_mobile-button", action: "find" }, "Find"], ["span", { class: "ace_mobile-button", action: "openCommandPallete" }, "Palette"]] : ["span"]), f.firstChild); "paste" == a ? e.readText().then((function (e) { t.execCommand(a, e); })) : a && ("cut" != a && "copy" != a || (e ? e.writeText(t.getCopyText()) : document.execCommand("copy")), t.execCommand(a)), f.firstChild.style.display = "none", n = !1, "openCommandPallete" != a && t.focus(); }, f = o.buildDom(["div", { class: "ace_mobile-menu", ontouchstart: function (e) { g = "menu", e.stopPropagation(), e.preventDefault(), t.textInput.focus(); }, ontouchend: function (e) { e.stopPropagation(), e.preventDefault(), i(e); }, onclick: i }, ["span"], ["span", { class: "ace_mobile-button", action: "more" }, "..."]], t.container)); var r = t.selection.cursor, s = t.renderer.textToScreenCoordinates(r.row, r.column), a = t.renderer.textToScreenCoordinates(0, 0).pageX, c = t.renderer.scrollLeft, l = t.container.getBoundingClientRect(); f.style.top = s.pageY - l.top - 3 + "px", s.pageX - l.left < l.width - 70 ? (f.style.left = "", f.style.right = "10px") : (f.style.right = "", f.style.left = a + c - l.left + "px"), f.style.display = "", f.firstChild.style.display = "none", t.on("input", b); } function b(e) { f && (f.style.display = "none"), t.off("input", b); } function S() { l = null, clearTimeout(l); var e = t.selection.getRange(), n = e.contains(u.row, u.column); !e.isEmpty() && n || (t.selection.moveToPosition(u), t.selection.selectWord()), g = "wait", y(); } r.addListener(e, "contextmenu", (function (e) { d && t.textInput.getElement().focus(); }), t), r.addListener(e, "touchstart", (function (e) { var r = e.touches; if (l || r.length > 1)
-            return clearTimeout(l), l = null, a = -1, void (g = "zoom"); d = t.$mouseHandler.isMousePressed = !0; var o = t.renderer.layerConfig.lineHeight, h = t.renderer.layerConfig.lineHeight, f = e.timeStamp; c = f; var y = r[0], b = y.clientX, C = y.clientY; Math.abs(n - b) + Math.abs(s - C) > o && (a = -1), n = e.clientX = b, s = e.clientY = C, v = w = 0; var k = new i(e, t); if (u = k.getDocumentPosition(), f - a < 500 && 1 == r.length && !p)
-            m++, e.preventDefault(), e.button = 0, function () { l = null, clearTimeout(l), t.selection.moveToPosition(u); var e = m >= 2 ? t.selection.getLineRange(u.row) : t.session.getBracketRange(u); e && !e.isEmpty() ? t.selection.setRange(e) : t.selection.selectWord(), g = "wait"; }();
+        t.W = function (e, t) { var n, s, a, c, l, h, u, d, g, f = "scroll", p = 0, m = 0, v = 0, w = 0; function y() { var e, n, i; g || (e = window.navigator && window.navigator.clipboard, n = !1, i = function (i) { var r, s, a = i.target.getAttribute("action"); if ("more" == a || !n)
+            return n = !n, r = t.getCopyText(), s = t.session.getUndoManager().hasUndo(), void g.replaceChild(o.buildDom(n ? ["span", !r && ["span", { class: "ace_mobile-button", action: "selectall" }, "Select All"], r && ["span", { class: "ace_mobile-button", action: "copy" }, "Copy"], r && ["span", { class: "ace_mobile-button", action: "cut" }, "Cut"], e && ["span", { class: "ace_mobile-button", action: "paste" }, "Paste"], s && ["span", { class: "ace_mobile-button", action: "undo" }, "Undo"], ["span", { class: "ace_mobile-button", action: "find" }, "Find"], ["span", { class: "ace_mobile-button", action: "openCommandPallete" }, "Palette"]] : ["span"]), g.firstChild); "paste" == a ? e.readText().then((function (e) { t.execCommand(a, e); })) : a && ("cut" != a && "copy" != a || (e ? e.writeText(t.getCopyText()) : document.execCommand("copy")), t.execCommand(a)), g.firstChild.style.display = "none", n = !1, "openCommandPallete" != a && t.focus(); }, g = o.buildDom(["div", { class: "ace_mobile-menu", ontouchstart: function (e) { f = "menu", e.stopPropagation(), e.preventDefault(), t.textInput.focus(); }, ontouchend: function (e) { e.stopPropagation(), e.preventDefault(), i(e); }, onclick: i }, ["span"], ["span", { class: "ace_mobile-button", action: "more" }, "..."]], t.container)); var r = t.selection.cursor, s = t.renderer.textToScreenCoordinates(r.row, r.column), a = t.renderer.textToScreenCoordinates(0, 0).pageX, c = t.renderer.scrollLeft, l = t.container.getBoundingClientRect(); g.style.top = s.pageY - l.top - 3 + "px", s.pageX - l.left < l.width - 70 ? (g.style.left = "", g.style.right = "10px") : (g.style.right = "", g.style.left = a + c - l.left + "px"), g.style.display = "", g.firstChild.style.display = "none", t.on("input", b); } function b(e) { g && (g.style.display = "none"), t.off("input", b); } function S() { l = null, clearTimeout(l); var e = t.selection.getRange(), n = e.contains(u.row, u.column); !e.isEmpty() && n || (t.selection.moveToPosition(u), t.selection.selectWord()), f = "wait", y(); } r.addListener(e, "contextmenu", (function (e) { d && t.textInput.getElement().focus(); }), t), r.addListener(e, "touchstart", (function (e) { var r = e.touches; if (l || r.length > 1)
+            return clearTimeout(l), l = null, a = -1, void (f = "zoom"); d = t.$mouseHandler.isMousePressed = !0; var o = t.renderer.layerConfig.lineHeight, h = t.renderer.layerConfig.lineHeight, g = e.timeStamp; c = g; var y = r[0], b = y.clientX, C = y.clientY; Math.abs(n - b) + Math.abs(s - C) > o && (a = -1), n = e.clientX = b, s = e.clientY = C, v = w = 0; var k = new i(e, t); if (u = k.getDocumentPosition(), g - a < 500 && 1 == r.length && !p)
+            m++, e.preventDefault(), e.button = 0, function () { l = null, clearTimeout(l), t.selection.moveToPosition(u); var e = m >= 2 ? t.selection.getLineRange(u.row) : t.session.getBracketRange(u); e && !e.isEmpty() ? t.selection.setRange(e) : t.selection.selectWord(), f = "wait"; }();
         else {
             m = 0;
             var _ = t.selection.cursor, $ = t.selection.isEmpty() ? _ : t.selection.anchor, R = t.renderer.$cursorLayer.getPixelPosition(_, !0), x = t.renderer.$cursorLayer.getPixelPosition($, !0), T = t.renderer.scroller.getBoundingClientRect(), A = t.renderer.layerConfig.offset, E = t.renderer.scrollLeft, M = function (e, t) { return (e /= h) * e + (t = t / o - .75) * t; };
             if (e.clientX < T.left)
-                return void (g = "zoom");
+                return void (f = "zoom");
             var L = M(e.clientX - T.left - R.left + E, e.clientY - T.top - R.top + A), P = M(e.clientX - T.left - x.left + E, e.clientY - T.top - x.top + A);
-            L < 3.5 && P < 3.5 && (g = L > P ? "cursor" : "anchor"), g = P < 3.5 ? "anchor" : L < 3.5 ? "cursor" : "scroll", l = setTimeout(S, 450);
-        } a = f; }), t), r.addListener(e, "touchend", (function (e) { d = t.$mouseHandler.isMousePressed = !1, h && clearInterval(h), "zoom" == g ? (g = "", p = 0) : l ? (t.selection.moveToPosition(u), p = 0, y()) : "scroll" == g ? (p += 60, h = setInterval((function () { p-- <= 0 && (clearInterval(h), h = null), Math.abs(v) < .01 && (v = 0), Math.abs(w) < .01 && (w = 0), p < 20 && (v *= .9), p < 20 && (w *= .9); var e = t.session.getScrollTop(); t.renderer.scrollBy(10 * v, 10 * w), e == t.session.getScrollTop() && (p = 0); }), 10), b()) : y(), clearTimeout(l), l = null; }), t), r.addListener(e, "touchmove", (function (e) { l && (clearTimeout(l), l = null); var r = e.touches; if (!(r.length > 1 || "zoom" == g)) {
+            L < 3.5 && P < 3.5 && (f = L > P ? "cursor" : "anchor"), f = P < 3.5 ? "anchor" : L < 3.5 ? "cursor" : "scroll", l = setTimeout(S, 450);
+        } a = g; }), t), r.addListener(e, "touchend", (function (e) { d = t.$mouseHandler.isMousePressed = !1, h && clearInterval(h), "zoom" == f ? (f = "", p = 0) : l ? (t.selection.moveToPosition(u), p = 0, y()) : "scroll" == f ? (p += 60, h = setInterval((function () { p-- <= 0 && (clearInterval(h), h = null), Math.abs(v) < .01 && (v = 0), Math.abs(w) < .01 && (w = 0), p < 20 && (v *= .9), p < 20 && (w *= .9); var e = t.session.getScrollTop(); t.renderer.scrollBy(10 * v, 10 * w), e == t.session.getScrollTop() && (p = 0); }), 10), b()) : y(), clearTimeout(l), l = null; }), t), r.addListener(e, "touchmove", (function (e) { l && (clearTimeout(l), l = null); var r = e.touches; if (!(r.length > 1 || "zoom" == f)) {
             var o = r[0], a = n - o.clientX, h = s - o.clientY;
-            if ("wait" == g) {
+            if ("wait" == f) {
                 if (!(a * a + h * h > 4))
                     return e.preventDefault();
-                g = "cursor";
+                f = "cursor";
             }
             n = o.clientX, s = o.clientY, e.clientX = o.clientX, e.clientY = o.clientY;
             var u = e.timeStamp, d = u - c;
-            if (c = u, "scroll" == g) {
-                var f = new i(e, t);
-                f.speed = 1, f.wheelX = a, f.wheelY = h, 10 * Math.abs(a) < Math.abs(h) && (a = 0), 10 * Math.abs(h) < Math.abs(a) && (h = 0), 0 != d && (v = a / d, w = h / d), t._emit("mousewheel", f), f.propagationStopped || (v = w = 0);
+            if (c = u, "scroll" == f) {
+                var g = new i(e, t);
+                g.speed = 1, g.wheelX = a, g.wheelY = h, 10 * Math.abs(a) < Math.abs(h) && (a = 0), 10 * Math.abs(h) < Math.abs(a) && (h = 0), 0 != d && (v = a / d, w = h / d), t._emit("mousewheel", g), g.propagationStopped || (v = w = 0);
             }
             else {
                 var p = new i(e, t).getDocumentPosition();
-                "cursor" == g ? t.selection.moveCursorToPosition(p) : "anchor" == g && t.selection.setSelectionAnchor(p.row, p.column), t.renderer.scrollCursorIntoView(p), e.preventDefault();
+                "cursor" == f ? t.selection.moveCursorToPosition(p) : "anchor" == f && t.selection.setSelectionAnchor(p.row, p.column), t.renderer.scrollCursorIntoView(p), e.preventDefault();
             }
         } }), t); };
     }, 5403: (e, t, n) => { var i = n(9204).RangeList, r = n(3069).Range, o = n(4720).Y, s = n(4486).P, a = n(8215), c = n(732), l = n(2051); t.commands = l.defaultCommands.concat(l.multiSelectCommands); var h = new (0, n(3002).o), u = n(8827).m; (function () { this.getSelectionMarkers = function () { return this.$selectionMarkers; }; }).call(u.prototype), function () { this.ranges = null, this.rangeList = null, this.addRange = function (e, t) { if (e) {
@@ -47552,10 +47552,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     } }, this.rectangularRangeBlock = function (e, t, n) { var i = [], o = e.column < t.column; if (o)
         var s = e.column, a = t.column, c = e.offsetX, l = t.offsetX;
     else
-        s = t.column, a = e.column, c = t.offsetX, l = e.offsetX; var h, u, d, f = e.row < t.row; if (f)
-        var g = e.row, p = t.row;
+        s = t.column, a = e.column, c = t.offsetX, l = e.offsetX; var h, u, d, g = e.row < t.row; if (g)
+        var f = e.row, p = t.row;
     else
-        g = t.row, p = e.row; s < 0 && (s = 0), g < 0 && (g = 0), g == p && (n = !0); for (var m = g; m <= p; m++) {
+        f = t.row, p = e.row; s < 0 && (s = 0), f < 0 && (f = 0), f == p && (n = !0); for (var m = f; m <= p; m++) {
         var v = r.fromPoints(this.session.screenToDocumentPosition(m, s, c), this.session.screenToDocumentPosition(m, a, l));
         if (v.isEmpty()) {
             if (h && (d = h, (u = v.end).row == d.row && u.column == d.column))
@@ -47563,7 +47563,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             h = v.end;
         }
         v.cursor = o ? v.start : v.end, i.push(v);
-    } if (f && i.reverse(), !n) {
+    } if (g && i.reverse(), !n) {
         for (var w = i.length - 1; i[w].isEmpty() && w > 0;)
             w--;
         if (w > 0)
@@ -47571,7 +47571,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 y++;
         for (var b = w; b >= y; b--)
             i[b].isEmpty() && i.splice(b, 1);
-    } return i; }; }.call(o.prototype); var d = n(7180).M; function f(e) { e.$multiselectOnSessionChange || (e.$onAddRange = e.$onAddRange.bind(e), e.$onRemoveRange = e.$onRemoveRange.bind(e), e.$onMultiSelect = e.$onMultiSelect.bind(e), e.$onSingleSelect = e.$onSingleSelect.bind(e), e.$multiselectOnSessionChange = t.onSessionChange.bind(e), e.$checkMultiselectChange = e.$checkMultiselectChange.bind(e), e.$multiselectOnSessionChange(e), e.on("changeSession", e.$multiselectOnSessionChange), e.on("mousedown", s), e.commands.addCommands(l.defaultCommands), function (e) { if (e.textInput) {
+    } return i; }; }.call(o.prototype); var d = n(7180).M; function g(e) { e.$multiselectOnSessionChange || (e.$onAddRange = e.$onAddRange.bind(e), e.$onRemoveRange = e.$onRemoveRange.bind(e), e.$onMultiSelect = e.$onMultiSelect.bind(e), e.$onSingleSelect = e.$onSingleSelect.bind(e), e.$multiselectOnSessionChange = t.onSessionChange.bind(e), e.$checkMultiselectChange = e.$checkMultiselectChange.bind(e), e.$multiselectOnSessionChange(e), e.on("changeSession", e.$multiselectOnSessionChange), e.on("mousedown", s), e.commands.addCommands(l.defaultCommands), function (e) { if (e.textInput) {
         var t = e.textInput.getElement(), n = !1;
         a.addListener(t, "keydown", (function (t) { var r = 18 == t.keyCode && !(t.ctrlKey || t.shiftKey || t.metaKey); e.$blockSelectEnabled && r ? n || (e.renderer.setMouseCursor("crosshair"), n = !0) : n && i(); }), e), a.addListener(t, "keyup", i, e), a.addListener(t, "blur", i, e);
     } function i(t) { n && (e.renderer.setMouseCursor(""), n = !1); } }(e)); } (function () { this.updateSelectionMarkers = function () { this.renderer.updateCursor(), this.renderer.updateBackMarkers(); }, this.addSelectionMarker = function (e) { e.cursor || (e.cursor = e.end); var t = this.getSelectionStyle(); return e.marker = this.session.addMarker(e, "ace_selection", t), this.session.$selectionMarkers.push(e), this.session.selectionMarkerCount = this.session.$selectionMarkers.length, e; }, this.removeSelectionMarker = function (e) { if (e.marker) {
@@ -47601,13 +47601,13 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         c._eventRegistry = {};
         var d = new o(a);
         this.inVirtualSelectionMode = !0;
-        for (var f = h.length; f--;) {
+        for (var g = h.length; g--;) {
             if (s)
-                for (; f > 0 && h[f].start.row == h[f - 1].end.row;)
-                    f--;
-            d.fromOrientedRange(h[f]), d.index = f, this.selection = a.selection = d;
-            var g = e.exec ? e.exec(this, t || {}) : e(this, t || {});
-            i || void 0 === g || (i = g), d.toOrientedRange(h[f]);
+                for (; g > 0 && h[g].start.row == h[g - 1].end.row;)
+                    g--;
+            d.fromOrientedRange(h[g]), d.index = g, this.selection = a.selection = d;
+            var f = e.exec ? e.exec(this, t || {}) : e(this, t || {});
+            i || void 0 === f || (i = f), d.toOrientedRange(h[g]);
         }
         d.detach(), this.selection = a.selection = c, this.inVirtualSelectionMode = !1, c._eventRegistry = u, c.mergeOverlappingRanges(), c.ranges[0] && c.fromOrientedRange(c.ranges[0]);
         var p = this.renderer.$scrollAnimation;
@@ -47656,20 +47656,20 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         n.forEach((function (t, n) { var i = t.cursor, o = s - i.column, h = l[n] - a; o > h ? e.insert(i, c.stringRepeat(" ", o - h)) : e.remove(new r(i.row, i.column, i.row, i.column - o + h)), t.start.column = t.end.column = s, t.start.row = t.end.row = i.row, t.cursor = t.end; })), t.fromOrientedRange(n[0]), this.renderer.updateCursor(), this.renderer.updateBackMarkers();
     }
     else {
-        var h = this.selection.getRange(), u = h.start.row, d = h.end.row, f = u == d;
-        if (f) {
-            var g, p = this.session.getLength();
+        var h = this.selection.getRange(), u = h.start.row, d = h.end.row, g = u == d;
+        if (g) {
+            var f, p = this.session.getLength();
             do {
-                g = this.session.getLine(d);
-            } while (/[=:]/.test(g) && ++d < p);
+                f = this.session.getLine(d);
+            } while (/[=:]/.test(f) && ++d < p);
             do {
-                g = this.session.getLine(u);
-            } while (/[=:]/.test(g) && --u > 0);
+                f = this.session.getLine(u);
+            } while (/[=:]/.test(f) && --u > 0);
             u < 0 && (u = 0), d >= p && (d = p - 1);
         }
         var m = this.session.removeFullLines(u, d);
-        m = this.$reAlignText(m, f), this.session.insert({ row: u, column: 0 }, m.join("\n") + "\n"), f || (h.start.column = 0, h.end.column = m[m.length - 1].length), this.selection.setRange(h);
-    } }, this.$reAlignText = function (e, t) { var n, i, r, o = !0, s = !0; return e.map((function (e) { var t = e.match(/(\s*)(.*?)(\s*)([=:].*)/); return t ? null == n ? (n = t[1].length, i = t[2].length, r = t[3].length, t) : (n + i + r != t[1].length + t[2].length + t[3].length && (s = !1), n != t[1].length && (o = !1), n > t[1].length && (n = t[1].length), i < t[2].length && (i = t[2].length), r > t[3].length && (r = t[3].length), t) : [e]; })).map(t ? l : o ? s ? function (e) { return e[2] ? a(n + i - e[2].length) + e[2] + a(r) + e[4].replace(/^([=:])\s+/, "$1 ") : e[0]; } : l : function (e) { return e[2] ? a(n) + e[2] + a(r) + e[4].replace(/^([=:])\s+/, "$1 ") : e[0]; }); function a(e) { return c.stringRepeat(" ", e); } function l(e) { return e[2] ? a(n) + e[2] + a(i - e[2].length + r) + e[4].replace(/^([=:])\s+/, "$1 ") : e[0]; } }; }).call(d.prototype), t.onSessionChange = function (e) { var t = e.session; t && !t.multiSelect && (t.$selectionMarkers = [], t.selection.$initRangeList(), t.multiSelect = t.selection), this.multiSelect = t && t.multiSelect; var n = e.oldSession; n && (n.multiSelect.off("addRange", this.$onAddRange), n.multiSelect.off("removeRange", this.$onRemoveRange), n.multiSelect.off("multiSelect", this.$onMultiSelect), n.multiSelect.off("singleSelect", this.$onSingleSelect), n.multiSelect.lead.off("change", this.$checkMultiselectChange), n.multiSelect.anchor.off("change", this.$checkMultiselectChange)), t && (t.multiSelect.on("addRange", this.$onAddRange), t.multiSelect.on("removeRange", this.$onRemoveRange), t.multiSelect.on("multiSelect", this.$onMultiSelect), t.multiSelect.on("singleSelect", this.$onSingleSelect), t.multiSelect.lead.on("change", this.$checkMultiselectChange), t.multiSelect.anchor.on("change", this.$checkMultiselectChange)), t && this.inMultiSelectMode != t.selection.inMultiSelectMode && (t.selection.inMultiSelectMode ? this.$onMultiSelect() : this.$onSingleSelect()); }, t.MultiSelect = f, n(3294).defineOptions(d.prototype, "editor", { enableMultiselect: { set: function (e) { f(this), e ? (this.on("changeSession", this.$multiselectOnSessionChange), this.on("mousedown", s)) : (this.off("changeSession", this.$multiselectOnSessionChange), this.off("mousedown", s)); }, value: !0 }, enableBlockSelect: { set: function (e) { this.$blockSelectEnabled = e; }, value: !0 } }); }, 8916: (e, t, n) => {
+        m = this.$reAlignText(m, g), this.session.insert({ row: u, column: 0 }, m.join("\n") + "\n"), g || (h.start.column = 0, h.end.column = m[m.length - 1].length), this.selection.setRange(h);
+    } }, this.$reAlignText = function (e, t) { var n, i, r, o = !0, s = !0; return e.map((function (e) { var t = e.match(/(\s*)(.*?)(\s*)([=:].*)/); return t ? null == n ? (n = t[1].length, i = t[2].length, r = t[3].length, t) : (n + i + r != t[1].length + t[2].length + t[3].length && (s = !1), n != t[1].length && (o = !1), n > t[1].length && (n = t[1].length), i < t[2].length && (i = t[2].length), r > t[3].length && (r = t[3].length), t) : [e]; })).map(t ? l : o ? s ? function (e) { return e[2] ? a(n + i - e[2].length) + e[2] + a(r) + e[4].replace(/^([=:])\s+/, "$1 ") : e[0]; } : l : function (e) { return e[2] ? a(n) + e[2] + a(r) + e[4].replace(/^([=:])\s+/, "$1 ") : e[0]; }); function a(e) { return c.stringRepeat(" ", e); } function l(e) { return e[2] ? a(n) + e[2] + a(i - e[2].length + r) + e[4].replace(/^([=:])\s+/, "$1 ") : e[0]; } }; }).call(d.prototype), t.onSessionChange = function (e) { var t = e.session; t && !t.multiSelect && (t.$selectionMarkers = [], t.selection.$initRangeList(), t.multiSelect = t.selection), this.multiSelect = t && t.multiSelect; var n = e.oldSession; n && (n.multiSelect.off("addRange", this.$onAddRange), n.multiSelect.off("removeRange", this.$onRemoveRange), n.multiSelect.off("multiSelect", this.$onMultiSelect), n.multiSelect.off("singleSelect", this.$onSingleSelect), n.multiSelect.lead.off("change", this.$checkMultiselectChange), n.multiSelect.anchor.off("change", this.$checkMultiselectChange)), t && (t.multiSelect.on("addRange", this.$onAddRange), t.multiSelect.on("removeRange", this.$onRemoveRange), t.multiSelect.on("multiSelect", this.$onMultiSelect), t.multiSelect.on("singleSelect", this.$onSingleSelect), t.multiSelect.lead.on("change", this.$checkMultiselectChange), t.multiSelect.anchor.on("change", this.$checkMultiselectChange)), t && this.inMultiSelectMode != t.selection.inMultiSelectMode && (t.selection.inMultiSelectMode ? this.$onMultiSelect() : this.$onSingleSelect()); }, t.MultiSelect = g, n(3294).defineOptions(d.prototype, "editor", { enableMultiselect: { set: function (e) { g(this), e ? (this.on("changeSession", this.$multiselectOnSessionChange), this.on("mousedown", s)) : (this.off("changeSession", this.$multiselectOnSessionChange), this.off("mousedown", s)); }, value: !0 }, enableBlockSelect: { set: function (e) { this.$blockSelectEnabled = e; }, value: !0 } }); }, 8916: (e, t, n) => {
         "use strict";
         var i = n(3069).Range, r = n(7858).EventEmitter, o = n(2011), s = function (e, t, n, i, r, o) { var s = this; this.length = t, this.session = e, this.doc = e.getDocument(), this.mainClass = r, this.othersClass = o, this.$onUpdate = this.onUpdate.bind(this), this.doc.on("change", this.$onUpdate, !0), this.$others = i, this.$onCursorChange = function () { setTimeout((function () { s.onCursorChange(); })); }, this.$pos = n; var a = e.getUndoManager().$undoStack || e.getUndoManager().$undostack || { length: -1 }; this.$undoStackDepth = a.length, this.setup(), e.selection.on("changeCursor", this.$onCursorChange); };
         (function () { o.implement(this, r), this.setup = function () { var e = this, t = this.doc, n = this.session; this.selectionBefore = n.selection.toJSON(), n.selection.inMultiSelectMode && n.selection.toSingleRange(), this.pos = t.createAnchor(this.$pos.row, this.$pos.column); var r = this.pos; r.$insertRight = !0, r.detach(), r.markerId = n.addMarker(new i(r.row, r.column, r.row, r.column + this.length), this.mainClass, null, !1), this.others = [], this.$others.forEach((function (n) { var i = t.createAnchor(n.row, n.column); i.$insertRight = !0, i.detach(), e.others.push(i); })), n.setUndoSelect(!1); }, this.showOtherMarkers = function () { if (!this.othersActive) {
@@ -47826,7 +47826,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 for (var d = 0; d < l; d++)
                     if (-1 == r[u + d].search(a[d]))
                         continue e;
-                var f = r[u], g = r[u + l - 1], p = f.length - f.match(a[0])[0].length, m = g.match(a[l - 1])[0].length;
+                var g = r[u], f = r[u + l - 1], p = g.length - g.match(a[0])[0].length, m = f.match(a[l - 1])[0].length;
                 c && c.end.row === u && c.end.column > p || (s.push(c = new o(u, p, u + l - 1, m)), l > 2 && (u = u + l - 2));
             }
         }
@@ -47935,8 +47935,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 var h = this.cache[l];
                 null == h && ((h = i.getMatchOffsets(n.getLine(l), this.regExp)).length > this.MAX_RANGES && (h = h.slice(0, this.MAX_RANGES)), h = h.map((function (e) { return new r(l, e.offset, l, e.offset + e.length); })), this.cache[l] = h.length ? h : "");
                 for (var u = h.length; u--;) {
-                    var d = h[u].toScreenRange(n), f = d.toString();
-                    c[f] || (c[f] = !0, t.drawSingleLineMarker(e, d, this.clazz, o));
+                    var d = h[u].toScreenRange(n), g = d.toString();
+                    c[g] || (c[g] = !0, t.drawSingleLineMarker(e, d, this.clazz, o));
                 }
             } }; }).call(o.prototype), t.t = o;
     }, 4720: (e, t, n) => {
@@ -48088,22 +48088,22 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         }
         else
             n = []; var i = t || "start", o = this.states[i]; o || (i = "start", o = this.states[i]); var s = this.matchMappings[i], a = this.regExps[i]; a.lastIndex = 0; for (var c, l = [], h = 0, u = 0, d = { type: null, value: "" }; c = a.exec(e);) {
-            var f = s.defaultToken, g = null, p = c[0], m = a.lastIndex;
+            var g = s.defaultToken, f = null, p = c[0], m = a.lastIndex;
             if (m - p.length > h) {
                 var v = e.substring(h, m - p.length);
-                d.type == f ? d.value += v : (d.type && l.push(d), d = { type: f, value: v });
+                d.type == g ? d.value += v : (d.type && l.push(d), d = { type: g, value: v });
             }
             for (var w = 0; w < c.length - 2; w++)
                 if (void 0 !== c[w + 1]) {
-                    f = (g = o[s[w]]).onMatch ? g.onMatch(p, i, n, e) : g.token, g.next && (i = "string" == typeof g.next ? g.next : g.next(i, n), (o = this.states[i]) || (this.reportError("state doesn't exist", i), i = "start", o = this.states[i]), s = this.matchMappings[i], h = m, (a = this.regExps[i]).lastIndex = m), g.consumeLineEnd && (h = m);
+                    g = (f = o[s[w]]).onMatch ? f.onMatch(p, i, n, e) : f.token, f.next && (i = "string" == typeof f.next ? f.next : f.next(i, n), (o = this.states[i]) || (this.reportError("state doesn't exist", i), i = "start", o = this.states[i]), s = this.matchMappings[i], h = m, (a = this.regExps[i]).lastIndex = m), f.consumeLineEnd && (h = m);
                     break;
                 }
             if (p)
-                if ("string" == typeof f)
-                    g && !1 === g.merge || d.type !== f ? (d.type && l.push(d), d = { type: f, value: p }) : d.value += p;
-                else if (f)
-                    for (d.type && l.push(d), d = { type: null, value: "" }, w = 0; w < f.length; w++)
-                        l.push(f[w]);
+                if ("string" == typeof g)
+                    f && !1 === f.merge || d.type !== g ? (d.type && l.push(d), d = { type: g, value: p }) : d.value += p;
+                else if (g)
+                    for (d.type && l.push(d), d = { type: null, value: "" }, w = 0; w < g.length; w++)
+                        l.push(g[w]);
             if (h == e.length)
                 break;
             if (h = m, u++ > r) {
@@ -48222,12 +48222,12 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             else {
                 var s, a;
                 if (!(o(t.end, e.start) <= 0))
-                    return o(e.start, t.start) < 0 && (s = e, e = g(e, t.start)), o(e.end, t.end) > 0 && (a = g(e, t.end)), f(t.end, e.start, e.end, -1), a && !s && (e.lines = a.lines, e.start = a.start, e.end = a.end, a = e), [t, s, a].filter(Boolean);
+                    return o(e.start, t.start) < 0 && (s = e, e = f(e, t.start)), o(e.end, t.end) > 0 && (a = f(e, t.end)), g(t.end, e.start, e.end, -1), a && !s && (e.lines = a.lines, e.start = a.start, e.end = a.end, a = e), [t, s, a].filter(Boolean);
                 d(e, t, -1);
             } return [t, e]; }
-        function d(e, t, n) { f(e.start, t.start, t.end, n), f(e.end, t.start, t.end, n); }
-        function f(e, t, n, i) { e.row == (1 == i ? t : n).row && (e.column += i * (n.column - t.column)), e.row += i * (n.row - t.row); }
-        function g(e, t) { var n = e.lines, i = e.end; e.end = s(t); var r = e.end.row - e.start.row, o = n.splice(r, n.length), a = r ? t.column : t.column - e.start.column; return n.push(o[0].substring(0, a)), o[0] = o[0].substr(a), { start: s(t), end: i, lines: o, action: e.action }; }
+        function d(e, t, n) { g(e.start, t.start, t.end, n), g(e.end, t.start, t.end, n); }
+        function g(e, t, n, i) { e.row == (1 == i ? t : n).row && (e.column += i * (n.column - t.column)), e.row += i * (n.row - t.row); }
+        function f(e, t) { var n = e.lines, i = e.end; e.end = s(t); var r = e.end.row - e.start.row, o = n.splice(r, n.length), a = r ? t.column : t.column - e.start.column; return n.push(o[0].substring(0, a)), o[0] = o[0].substr(a), { start: s(t), end: i, lines: o, action: e.action }; }
         function p(e, t) { t = function (e) { return { start: s(e.start), end: s(e.end), action: e.action, lines: e.lines.slice() }; }(t); for (var n = e.length; n--;) {
             for (var i = e[n], r = 0; r < i.length; r++) {
                 var o = u(i[r], t);
@@ -48243,9 +48243,9 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         t.wordChars = String.fromCharCode.apply(null, r);
     }, 8390: (e, t, n) => {
         "use strict";
-        var i = n(2011), r = n(5336), o = n(3294), s = n(9749).T, a = n(8890).J, c = n(8235).x, l = n(1361).C, h = n(6038).ii, u = n(6038).oX, d = n(9975).ii, f = n(9975).oX, g = n(9224).d, p = n(342).c, m = n(7858).EventEmitter, v = n(5043), w = n(9945).S, y = n(8057), b = y.isIE;
+        var i = n(2011), r = n(5336), o = n(3294), s = n(9749).T, a = n(8890).J, c = n(8235).x, l = n(1361).C, h = n(6038).ii, u = n(6038).oX, d = n(9975).ii, g = n(9975).oX, f = n(9224).d, p = n(342).c, m = n(7858).EventEmitter, v = n(5043), w = n(9945).S, y = n(8057), b = y.isIE;
         r.importCssString(v, "ace_editor.css", !1);
-        var S = function (e, t) { var n = this; this.container = e || r.createElement("div"), r.addCssClass(this.container, "ace_editor"), r.HI_DPI && r.addCssClass(this.container, "ace_hidpi"), this.setTheme(t), null == o.get("useStrictCSP") && o.set("useStrictCSP", !1), this.$gutter = r.createElement("div"), this.$gutter.className = "ace_gutter", this.container.appendChild(this.$gutter), this.$gutter.setAttribute("aria-hidden", !0), this.scroller = r.createElement("div"), this.scroller.className = "ace_scroller", this.container.appendChild(this.scroller), this.content = r.createElement("div"), this.content.className = "ace_content", this.scroller.appendChild(this.content), this.$gutterLayer = new s(this.$gutter), this.$gutterLayer.on("changeGutterWidth", this.onGutterResize.bind(this)), this.$markerBack = new a(this.content); var i = this.$textLayer = new c(this.content); this.canvas = i.element, this.$markerFront = new a(this.content), this.$cursorLayer = new l(this.content), this.$horizScroll = !1, this.$vScroll = !1, this.scrollBar = this.scrollBarV = new u(this.container, this), this.scrollBarH = new h(this.container, this), this.scrollBarV.on("scroll", (function (e) { n.$scrollAnimation || n.session.setScrollTop(e.data - n.scrollMargin.top); })), this.scrollBarH.on("scroll", (function (e) { n.$scrollAnimation || n.session.setScrollLeft(e.data - n.scrollMargin.left); })), this.scrollTop = 0, this.scrollLeft = 0, this.cursorPos = { row: 0, column: 0 }, this.$fontMetrics = new p(this.container, this.$textLayer.MAX_CHUNK_LENGTH), this.$textLayer.$setFontMetrics(this.$fontMetrics), this.$textLayer.on("changeCharacterSize", (function (e) { n.updateCharacterSize(), n.onResize(!0, n.gutterWidth, n.$size.width, n.$size.height), n._signal("changeCharacterSize", e); })), this.$size = { width: 0, height: 0, scrollerHeight: 0, scrollerWidth: 0, $dirty: !0 }, this.layerConfig = { width: 1, padding: 0, firstRow: 0, firstRowScreen: 0, lastRow: 0, lineHeight: 0, characterWidth: 0, minHeight: 1, maxHeight: 1, offset: 0, height: 1, gutterOffset: 1 }, this.scrollMargin = { left: 0, right: 0, top: 0, bottom: 0, v: 0, h: 0 }, this.margin = { left: 0, right: 0, top: 0, bottom: 0, v: 0, h: 0 }, this.$keepTextAreaAtCursor = !y.isIOS, this.$loop = new g(this.$renderChanges.bind(this), this.container.ownerDocument.defaultView), this.$loop.schedule(this.CHANGE_FULL), this.updateCharacterSize(), this.setPadding(4), o.resetOptions(this), o._signal("renderer", this); };
+        var S = function (e, t) { var n = this; this.container = e || r.createElement("div"), r.addCssClass(this.container, "ace_editor"), r.HI_DPI && r.addCssClass(this.container, "ace_hidpi"), this.setTheme(t), null == o.get("useStrictCSP") && o.set("useStrictCSP", !1), this.$gutter = r.createElement("div"), this.$gutter.className = "ace_gutter", this.container.appendChild(this.$gutter), this.$gutter.setAttribute("aria-hidden", !0), this.scroller = r.createElement("div"), this.scroller.className = "ace_scroller", this.container.appendChild(this.scroller), this.content = r.createElement("div"), this.content.className = "ace_content", this.scroller.appendChild(this.content), this.$gutterLayer = new s(this.$gutter), this.$gutterLayer.on("changeGutterWidth", this.onGutterResize.bind(this)), this.$markerBack = new a(this.content); var i = this.$textLayer = new c(this.content); this.canvas = i.element, this.$markerFront = new a(this.content), this.$cursorLayer = new l(this.content), this.$horizScroll = !1, this.$vScroll = !1, this.scrollBar = this.scrollBarV = new u(this.container, this), this.scrollBarH = new h(this.container, this), this.scrollBarV.on("scroll", (function (e) { n.$scrollAnimation || n.session.setScrollTop(e.data - n.scrollMargin.top); })), this.scrollBarH.on("scroll", (function (e) { n.$scrollAnimation || n.session.setScrollLeft(e.data - n.scrollMargin.left); })), this.scrollTop = 0, this.scrollLeft = 0, this.cursorPos = { row: 0, column: 0 }, this.$fontMetrics = new p(this.container, this.$textLayer.MAX_CHUNK_LENGTH), this.$textLayer.$setFontMetrics(this.$fontMetrics), this.$textLayer.on("changeCharacterSize", (function (e) { n.updateCharacterSize(), n.onResize(!0, n.gutterWidth, n.$size.width, n.$size.height), n._signal("changeCharacterSize", e); })), this.$size = { width: 0, height: 0, scrollerHeight: 0, scrollerWidth: 0, $dirty: !0 }, this.layerConfig = { width: 1, padding: 0, firstRow: 0, firstRowScreen: 0, lastRow: 0, lineHeight: 0, characterWidth: 0, minHeight: 1, maxHeight: 1, offset: 0, height: 1, gutterOffset: 1 }, this.scrollMargin = { left: 0, right: 0, top: 0, bottom: 0, v: 0, h: 0 }, this.margin = { left: 0, right: 0, top: 0, bottom: 0, v: 0, h: 0 }, this.$keepTextAreaAtCursor = !y.isIOS, this.$loop = new f(this.$renderChanges.bind(this), this.container.ownerDocument.defaultView), this.$loop.schedule(this.CHANGE_FULL), this.updateCharacterSize(), this.setPadding(4), o.resetOptions(this), o._signal("renderer", this); };
         (function () { this.CHANGE_CURSOR = 1, this.CHANGE_MARKER = 2, this.CHANGE_GUTTER = 4, this.CHANGE_SCROLL = 8, this.CHANGE_LINES = 16, this.CHANGE_TEXT = 32, this.CHANGE_SIZE = 64, this.CHANGE_MARKER_BACK = 128, this.CHANGE_MARKER_FRONT = 256, this.CHANGE_FULL = 512, this.CHANGE_H_SCROLL = 1024, i.implement(this, m), this.updateCharacterSize = function () { this.$textLayer.allowBoldFonts != this.$allowBoldFonts && (this.$allowBoldFonts = this.$textLayer.allowBoldFonts, this.setStyle("ace_nobold", !this.$allowBoldFonts)), this.layerConfig.characterWidth = this.characterWidth = this.$textLayer.getCharacterWidth(), this.layerConfig.lineHeight = this.lineHeight = this.$textLayer.getLineHeight(), this.$updatePrintMargin(), r.setStyle(this.scroller.style, "line-height", this.lineHeight + "px"); }, this.setSession = function (e) { this.session && this.session.doc.off("changeNewLineMode", this.onChangeNewLineMode), this.session = e, e && this.scrollMargin.top && e.getScrollTop() <= 0 && e.setScrollTop(-this.scrollMargin.top), this.$cursorLayer.setSession(e), this.$markerBack.setSession(e), this.$markerFront.setSession(e), this.$gutterLayer.setSession(e), this.$textLayer.setSession(e), e && (this.$loop.schedule(this.CHANGE_FULL), this.session.$setFontMetrics(this.$fontMetrics), this.scrollBarH.scrollLeft = this.scrollBarV.scrollTop = null, this.onChangeNewLineMode = this.onChangeNewLineMode.bind(this), this.onChangeNewLineMode(), this.session.doc.on("changeNewLineMode", this.onChangeNewLineMode)); }, this.updateLines = function (e, t, n) { if (void 0 === t && (t = 1 / 0), this.$changedLines ? (this.$changedLines.firstRow > e && (this.$changedLines.firstRow = e), this.$changedLines.lastRow < t && (this.$changedLines.lastRow = t)) : this.$changedLines = { firstRow: e, lastRow: t }, this.$changedLines.lastRow < this.layerConfig.firstRow) {
             if (!n)
                 return;
@@ -48322,7 +48322,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             i != this.$vScroll && (this.$vScroll = i, this.scrollBarV.setVisible(i));
             var r = this.container.clientWidth;
             this.container.style.height = n + "px", this.$updateCachedSize(!0, this.$gutterWidth, r, n), this.desiredHeight = n, this._signal("autosize");
-        } }, this.$computeLayerConfig = function () { var e = this.session, t = this.$size, n = t.height <= 2 * this.lineHeight, i = this.session.getScreenLength() * this.lineHeight, r = this.$getLongestLine(), o = !n && (this.$hScrollBarAlwaysVisible || t.scrollerWidth - r - 2 * this.$padding < 0), s = this.$horizScroll !== o; s && (this.$horizScroll = o, this.scrollBarH.setVisible(o)); var a = this.$vScroll; this.$maxLines && this.lineHeight > 1 && this.$autosize(); var c = t.scrollerHeight + this.lineHeight, l = !this.$maxLines && this.$scrollPastEnd ? (t.scrollerHeight - this.lineHeight) * this.$scrollPastEnd : 0; i += l; var h = this.scrollMargin; this.session.setScrollTop(Math.max(-h.top, Math.min(this.scrollTop, i - t.scrollerHeight + h.bottom))), this.session.setScrollLeft(Math.max(-h.left, Math.min(this.scrollLeft, r + 2 * this.$padding - t.scrollerWidth + h.right))); var u = !n && (this.$vScrollBarAlwaysVisible || t.scrollerHeight - i + l < 0 || this.scrollTop > h.top), d = a !== u; d && (this.$vScroll = u, this.scrollBarV.setVisible(u)); var f, g, p = this.scrollTop % this.lineHeight, m = Math.ceil(c / this.lineHeight) - 1, v = Math.max(0, Math.round((this.scrollTop - p) / this.lineHeight)), w = v + m, y = this.lineHeight; v = e.screenToDocumentRow(v, 0); var b = e.getFoldLine(v); b && (v = b.start.row), f = e.documentToScreenRow(v, 0), g = e.getRowLength(v) * y, w = Math.min(e.screenToDocumentRow(w, 0), e.getLength() - 1), c = t.scrollerHeight + e.getRowLength(w) * y + g, p = this.scrollTop - f * y; var S = 0; return (this.layerConfig.width != r || s) && (S = this.CHANGE_H_SCROLL), (s || d) && (S |= this.$updateCachedSize(!0, this.gutterWidth, t.width, t.height), this._signal("scrollbarVisibilityChanged"), d && (r = this.$getLongestLine())), this.layerConfig = { width: r, padding: this.$padding, firstRow: v, firstRowScreen: f, lastRow: w, lineHeight: y, characterWidth: this.characterWidth, minHeight: c, maxHeight: i, offset: p, gutterOffset: y ? Math.max(0, Math.ceil((p + t.height - t.scrollerHeight) / y)) : 0, height: this.$size.scrollerHeight }, this.session.$bidiHandler && this.session.$bidiHandler.setContentWidth(r - this.$padding), S; }, this.$updateLines = function () { if (this.$changedLines) {
+        } }, this.$computeLayerConfig = function () { var e = this.session, t = this.$size, n = t.height <= 2 * this.lineHeight, i = this.session.getScreenLength() * this.lineHeight, r = this.$getLongestLine(), o = !n && (this.$hScrollBarAlwaysVisible || t.scrollerWidth - r - 2 * this.$padding < 0), s = this.$horizScroll !== o; s && (this.$horizScroll = o, this.scrollBarH.setVisible(o)); var a = this.$vScroll; this.$maxLines && this.lineHeight > 1 && this.$autosize(); var c = t.scrollerHeight + this.lineHeight, l = !this.$maxLines && this.$scrollPastEnd ? (t.scrollerHeight - this.lineHeight) * this.$scrollPastEnd : 0; i += l; var h = this.scrollMargin; this.session.setScrollTop(Math.max(-h.top, Math.min(this.scrollTop, i - t.scrollerHeight + h.bottom))), this.session.setScrollLeft(Math.max(-h.left, Math.min(this.scrollLeft, r + 2 * this.$padding - t.scrollerWidth + h.right))); var u = !n && (this.$vScrollBarAlwaysVisible || t.scrollerHeight - i + l < 0 || this.scrollTop > h.top), d = a !== u; d && (this.$vScroll = u, this.scrollBarV.setVisible(u)); var g, f, p = this.scrollTop % this.lineHeight, m = Math.ceil(c / this.lineHeight) - 1, v = Math.max(0, Math.round((this.scrollTop - p) / this.lineHeight)), w = v + m, y = this.lineHeight; v = e.screenToDocumentRow(v, 0); var b = e.getFoldLine(v); b && (v = b.start.row), g = e.documentToScreenRow(v, 0), f = e.getRowLength(v) * y, w = Math.min(e.screenToDocumentRow(w, 0), e.getLength() - 1), c = t.scrollerHeight + e.getRowLength(w) * y + f, p = this.scrollTop - g * y; var S = 0; return (this.layerConfig.width != r || s) && (S = this.CHANGE_H_SCROLL), (s || d) && (S |= this.$updateCachedSize(!0, this.gutterWidth, t.width, t.height), this._signal("scrollbarVisibilityChanged"), d && (r = this.$getLongestLine())), this.layerConfig = { width: r, padding: this.$padding, firstRow: v, firstRowScreen: g, lastRow: w, lineHeight: y, characterWidth: this.characterWidth, minHeight: c, maxHeight: i, offset: p, gutterOffset: y ? Math.max(0, Math.ceil((p + t.height - t.scrollerHeight) / y)) : 0, height: this.$size.scrollerHeight }, this.session.$bidiHandler && this.session.$bidiHandler.setContentWidth(r - this.$padding), S; }, this.$updateLines = function () { if (this.$changedLines) {
             var e = this.$changedLines.firstRow, t = this.$changedLines.lastRow;
             this.$changedLines = null;
             var n = this.layerConfig;
@@ -48381,24 +48381,24 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             o.loadModule(["theme", i], s);
         } function s(i) { if (n.$themeId != e)
             return t && t(); if (!i || !i.cssClass)
-            throw new Error("couldn't load module " + e + " or it didn't call define"); i.$id && (n.$themeId = i.$id), r.importCssString(i.cssText, i.cssClass, n.container), n.theme && r.removeCssClass(n.container, n.theme.cssClass); var o = "padding" in i ? i.padding : "padding" in (n.theme || {}) ? 4 : n.$padding; n.$padding && o != n.$padding && n.setPadding(o), n.$theme = i.cssClass, n.theme = i, r.addCssClass(n.container, i.cssClass), r.setCssClass(n.container, "ace_dark", i.isDark), n.$size && (n.$size.width = 0, n.$updateSizeAsync()), n._dispatchEvent("themeLoaded", { theme: i }), t && t(); } }, this.getTheme = function () { return this.$themeId; }, this.setStyle = function (e, t) { r.setCssClass(this.container, e, !1 !== t); }, this.unsetStyle = function (e) { r.removeCssClass(this.container, e); }, this.setCursorStyle = function (e) { r.setStyle(this.scroller.style, "cursor", e); }, this.setMouseCursor = function (e) { r.setStyle(this.scroller.style, "cursor", e); }, this.attachToShadowRoot = function () { r.importCssString(v, "ace_editor.css", this.container); }, this.destroy = function () { this.freeze(), this.$fontMetrics.destroy(), this.$cursorLayer.destroy(), this.removeAllListeners(), this.container.textContent = ""; }, this.$updateCustomScrollbar = function (e) { var t = this; this.$horizScroll = this.$vScroll = null, this.scrollBarV.element.remove(), this.scrollBarH.element.remove(), this.$scrollDecorator && delete this.$scrollDecorator, !0 === e ? (this.scrollBarV = new f(this.container, this), this.scrollBarH = new d(this.container, this), this.scrollBarV.setHeight(this.$size.scrollerHeight), this.scrollBarH.setWidth(this.$size.scrollerWidth), this.scrollBarV.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollTop(e.data - t.scrollMargin.top); })), this.scrollBarH.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollLeft(e.data - t.scrollMargin.left); })), this.$scrollDecorator = new w(this.scrollBarV, this), this.$scrollDecorator.$updateDecorators()) : (this.scrollBarV = new u(this.container, this), this.scrollBarH = new h(this.container, this), this.scrollBarV.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollTop(e.data - t.scrollMargin.top); })), this.scrollBarH.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollLeft(e.data - t.scrollMargin.left); }))); }; }).call(S.prototype), o.defineOptions(S.prototype, "renderer", { animatedScroll: { initialValue: !1 }, showInvisibles: { set: function (e) { this.$textLayer.setShowInvisibles(e) && this.$loop.schedule(this.CHANGE_TEXT); }, initialValue: !1 }, showPrintMargin: { set: function () { this.$updatePrintMargin(); }, initialValue: !0 }, printMarginColumn: { set: function () { this.$updatePrintMargin(); }, initialValue: 80 }, printMargin: { set: function (e) { "number" == typeof e && (this.$printMarginColumn = e), this.$showPrintMargin = !!e, this.$updatePrintMargin(); }, get: function () { return this.$showPrintMargin && this.$printMarginColumn; } }, showGutter: { set: function (e) { this.$gutter.style.display = e ? "block" : "none", this.$loop.schedule(this.CHANGE_FULL), this.onGutterResize(); }, initialValue: !0 }, fadeFoldWidgets: { set: function (e) { r.setCssClass(this.$gutter, "ace_fade-fold-widgets", e); }, initialValue: !1 }, showFoldWidgets: { set: function (e) { this.$gutterLayer.setShowFoldWidgets(e), this.$loop.schedule(this.CHANGE_GUTTER); }, initialValue: !0 }, displayIndentGuides: { set: function (e) { this.$textLayer.setDisplayIndentGuides(e) && this.$loop.schedule(this.CHANGE_TEXT); }, initialValue: !0 }, highlightIndentGuides: { set: function (e) { 1 == this.$textLayer.setHighlightIndentGuides(e) ? this.$textLayer.$highlightIndentGuide() : this.$textLayer.$clearActiveIndentGuide(this.$textLayer.$lines.cells); }, initialValue: !0 }, highlightGutterLine: { set: function (e) { this.$gutterLayer.setHighlightGutterLine(e), this.$loop.schedule(this.CHANGE_GUTTER); }, initialValue: !0 }, hScrollBarAlwaysVisible: { set: function (e) { this.$hScrollBarAlwaysVisible && this.$horizScroll || this.$loop.schedule(this.CHANGE_SCROLL); }, initialValue: !1 }, vScrollBarAlwaysVisible: { set: function (e) { this.$vScrollBarAlwaysVisible && this.$vScroll || this.$loop.schedule(this.CHANGE_SCROLL); }, initialValue: !1 }, fontSize: { set: function (e) { "number" == typeof e && (e += "px"), this.container.style.fontSize = e, this.updateFontSize(); }, initialValue: 12 }, fontFamily: { set: function (e) { this.container.style.fontFamily = e, this.updateFontSize(); } }, maxLines: { set: function (e) { this.updateFull(); } }, minLines: { set: function (e) { this.$minLines < 562949953421311 || (this.$minLines = 0), this.updateFull(); } }, maxPixelHeight: { set: function (e) { this.updateFull(); }, initialValue: 0 }, scrollPastEnd: { set: function (e) { e = +e || 0, this.$scrollPastEnd != e && (this.$scrollPastEnd = e, this.$loop.schedule(this.CHANGE_SCROLL)); }, initialValue: 0, handlesSet: !0 }, fixedWidthGutter: { set: function (e) { this.$gutterLayer.$fixedWidth = !!e, this.$loop.schedule(this.CHANGE_GUTTER); } }, customScrollbar: { set: function (e) { this.$updateCustomScrollbar(e); }, initialValue: !1 }, theme: { set: function (e) { this.setTheme(e); }, get: function () { return this.$themeId || this.theme; }, initialValue: "./theme/textmate", handlesSet: !0 }, hasCssTransforms: {}, useTextareaForIME: { initialValue: !y.isMobile && !y.isIE } }), t._ = S;
+            throw new Error("couldn't load module " + e + " or it didn't call define"); i.$id && (n.$themeId = i.$id), r.importCssString(i.cssText, i.cssClass, n.container), n.theme && r.removeCssClass(n.container, n.theme.cssClass); var o = "padding" in i ? i.padding : "padding" in (n.theme || {}) ? 4 : n.$padding; n.$padding && o != n.$padding && n.setPadding(o), n.$theme = i.cssClass, n.theme = i, r.addCssClass(n.container, i.cssClass), r.setCssClass(n.container, "ace_dark", i.isDark), n.$size && (n.$size.width = 0, n.$updateSizeAsync()), n._dispatchEvent("themeLoaded", { theme: i }), t && t(); } }, this.getTheme = function () { return this.$themeId; }, this.setStyle = function (e, t) { r.setCssClass(this.container, e, !1 !== t); }, this.unsetStyle = function (e) { r.removeCssClass(this.container, e); }, this.setCursorStyle = function (e) { r.setStyle(this.scroller.style, "cursor", e); }, this.setMouseCursor = function (e) { r.setStyle(this.scroller.style, "cursor", e); }, this.attachToShadowRoot = function () { r.importCssString(v, "ace_editor.css", this.container); }, this.destroy = function () { this.freeze(), this.$fontMetrics.destroy(), this.$cursorLayer.destroy(), this.removeAllListeners(), this.container.textContent = ""; }, this.$updateCustomScrollbar = function (e) { var t = this; this.$horizScroll = this.$vScroll = null, this.scrollBarV.element.remove(), this.scrollBarH.element.remove(), this.$scrollDecorator && delete this.$scrollDecorator, !0 === e ? (this.scrollBarV = new g(this.container, this), this.scrollBarH = new d(this.container, this), this.scrollBarV.setHeight(this.$size.scrollerHeight), this.scrollBarH.setWidth(this.$size.scrollerWidth), this.scrollBarV.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollTop(e.data - t.scrollMargin.top); })), this.scrollBarH.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollLeft(e.data - t.scrollMargin.left); })), this.$scrollDecorator = new w(this.scrollBarV, this), this.$scrollDecorator.$updateDecorators()) : (this.scrollBarV = new u(this.container, this), this.scrollBarH = new h(this.container, this), this.scrollBarV.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollTop(e.data - t.scrollMargin.top); })), this.scrollBarH.addEventListener("scroll", (function (e) { t.$scrollAnimation || t.session.setScrollLeft(e.data - t.scrollMargin.left); }))); }; }).call(S.prototype), o.defineOptions(S.prototype, "renderer", { animatedScroll: { initialValue: !1 }, showInvisibles: { set: function (e) { this.$textLayer.setShowInvisibles(e) && this.$loop.schedule(this.CHANGE_TEXT); }, initialValue: !1 }, showPrintMargin: { set: function () { this.$updatePrintMargin(); }, initialValue: !0 }, printMarginColumn: { set: function () { this.$updatePrintMargin(); }, initialValue: 80 }, printMargin: { set: function (e) { "number" == typeof e && (this.$printMarginColumn = e), this.$showPrintMargin = !!e, this.$updatePrintMargin(); }, get: function () { return this.$showPrintMargin && this.$printMarginColumn; } }, showGutter: { set: function (e) { this.$gutter.style.display = e ? "block" : "none", this.$loop.schedule(this.CHANGE_FULL), this.onGutterResize(); }, initialValue: !0 }, fadeFoldWidgets: { set: function (e) { r.setCssClass(this.$gutter, "ace_fade-fold-widgets", e); }, initialValue: !1 }, showFoldWidgets: { set: function (e) { this.$gutterLayer.setShowFoldWidgets(e), this.$loop.schedule(this.CHANGE_GUTTER); }, initialValue: !0 }, displayIndentGuides: { set: function (e) { this.$textLayer.setDisplayIndentGuides(e) && this.$loop.schedule(this.CHANGE_TEXT); }, initialValue: !0 }, highlightIndentGuides: { set: function (e) { 1 == this.$textLayer.setHighlightIndentGuides(e) ? this.$textLayer.$highlightIndentGuide() : this.$textLayer.$clearActiveIndentGuide(this.$textLayer.$lines.cells); }, initialValue: !0 }, highlightGutterLine: { set: function (e) { this.$gutterLayer.setHighlightGutterLine(e), this.$loop.schedule(this.CHANGE_GUTTER); }, initialValue: !0 }, hScrollBarAlwaysVisible: { set: function (e) { this.$hScrollBarAlwaysVisible && this.$horizScroll || this.$loop.schedule(this.CHANGE_SCROLL); }, initialValue: !1 }, vScrollBarAlwaysVisible: { set: function (e) { this.$vScrollBarAlwaysVisible && this.$vScroll || this.$loop.schedule(this.CHANGE_SCROLL); }, initialValue: !1 }, fontSize: { set: function (e) { "number" == typeof e && (e += "px"), this.container.style.fontSize = e, this.updateFontSize(); }, initialValue: 12 }, fontFamily: { set: function (e) { this.container.style.fontFamily = e, this.updateFontSize(); } }, maxLines: { set: function (e) { this.updateFull(); } }, minLines: { set: function (e) { this.$minLines < 562949953421311 || (this.$minLines = 0), this.updateFull(); } }, maxPixelHeight: { set: function (e) { this.updateFull(); }, initialValue: 0 }, scrollPastEnd: { set: function (e) { e = +e || 0, this.$scrollPastEnd != e && (this.$scrollPastEnd = e, this.$loop.schedule(this.CHANGE_SCROLL)); }, initialValue: 0, handlesSet: !0 }, fixedWidthGutter: { set: function (e) { this.$gutterLayer.$fixedWidth = !!e, this.$loop.schedule(this.CHANGE_GUTTER); } }, customScrollbar: { set: function (e) { this.$updateCustomScrollbar(e); }, initialValue: !1 }, theme: { set: function (e) { this.setTheme(e); }, get: function () { return this.$themeId || this.theme; }, initialValue: "./theme/textmate", handlesSet: !0 }, hasCssTransforms: {}, useTextareaForIME: { initialValue: !y.isMobile && !y.isIE } }), t._ = S;
     }, 1583: (e, t) => { t.WorkerClient = function () { this.attachToDocument = function () { }, this.on = function () { }, this.terminate = function () { }; }; }, 5267: e => { function t(e) { var t = new Error("Cannot find module '" + e + "'"); throw t.code = "MODULE_NOT_FOUND", t; } t.keys = () => [], t.resolve = t, t.id = 5267, e.exports = t; }, 1696: (e, t, n) => {
         "use strict";
         var i = n(4406), r = n(3716);
         function o(e) { return o = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) { return typeof e; } : function (e) { return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e; }, o(e); }
-        var s, a, c = n(7515).codes, l = c.ERR_AMBIGUOUS_ARGUMENT, h = c.ERR_INVALID_ARG_TYPE, u = c.ERR_INVALID_ARG_VALUE, d = c.ERR_INVALID_RETURN_VALUE, f = c.ERR_MISSING_ARGS, g = n(4082), p = n(3335).inspect, m = n(3335).types, v = m.isPromise, w = m.isRegExp, y = Object.assign ? Object.assign : n(4956).assign, b = Object.is ? Object.is : n(4679);
+        var s, a, c = n(7515).codes, l = c.ERR_AMBIGUOUS_ARGUMENT, h = c.ERR_INVALID_ARG_TYPE, u = c.ERR_INVALID_ARG_VALUE, d = c.ERR_INVALID_RETURN_VALUE, g = c.ERR_MISSING_ARGS, f = n(4082), p = n(3335).inspect, m = n(3335).types, v = m.isPromise, w = m.isRegExp, y = Object.assign ? Object.assign : n(4956).assign, b = Object.is ? Object.is : n(4679);
         function S() { var e = n(6796); s = e.isDeepEqual, a = e.isDeepStrictEqual; }
         new Map;
         var C = !1, k = e.exports = x, _ = {};
         function $(e) { if (e.message instanceof Error)
-            throw e.message; throw new g(e); }
+            throw e.message; throw new f(e); }
         function R(e, t, n, i) { if (!n) {
             var r = !1;
             if (0 === t)
                 r = !0, i = "No value argument passed to `assert.ok()`";
             else if (i instanceof Error)
                 throw i;
-            var o = new g({ actual: n, expected: !0, message: i, operator: "==", stackStartFn: e });
+            var o = new f({ actual: n, expected: !0, message: i, operator: "==", stackStartFn: e });
             throw o.generatedMessage = r, o;
         } }
         function x() { for (var e = arguments.length, t = new Array(e), n = 0; n < e; n++)
@@ -48415,20 +48415,20 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
             2 === l && (s = "!=");
         } if (o instanceof Error)
-            throw o; var u = { actual: t, expected: n, operator: void 0 === s ? "fail" : s, stackStartFn: a || e }; void 0 !== o && (u.message = o); var d = new g(u); throw c && (d.message = c, d.generatedMessage = !0), d; }, k.AssertionError = g, k.ok = x, k.equal = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); t != n && $({ actual: t, expected: n, message: i, operator: "==", stackStartFn: e }); }, k.notEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); t == n && $({ actual: t, expected: n, message: i, operator: "!=", stackStartFn: e }); }, k.deepEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); void 0 === s && S(), s(t, n) || $({ actual: t, expected: n, message: i, operator: "deepEqual", stackStartFn: e }); }, k.notDeepEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); void 0 === s && S(), s(t, n) && $({ actual: t, expected: n, message: i, operator: "notDeepEqual", stackStartFn: e }); }, k.deepStrictEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); void 0 === s && S(), a(t, n) || $({ actual: t, expected: n, message: i, operator: "deepStrictEqual", stackStartFn: e }); }, k.notDeepStrictEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); void 0 === s && S(), a(t, n) && $({ actual: t, expected: n, message: i, operator: "notDeepStrictEqual", stackStartFn: e }); }, k.strictEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); b(t, n) || $({ actual: t, expected: n, message: i, operator: "strictEqual", stackStartFn: e }); }, k.notStrictEqual = function e(t, n, i) { if (arguments.length < 2)
-            throw new f("actual", "expected"); b(t, n) && $({ actual: t, expected: n, message: i, operator: "notStrictEqual", stackStartFn: e }); };
+            throw o; var u = { actual: t, expected: n, operator: void 0 === s ? "fail" : s, stackStartFn: a || e }; void 0 !== o && (u.message = o); var d = new f(u); throw c && (d.message = c, d.generatedMessage = !0), d; }, k.AssertionError = f, k.ok = x, k.equal = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); t != n && $({ actual: t, expected: n, message: i, operator: "==", stackStartFn: e }); }, k.notEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); t == n && $({ actual: t, expected: n, message: i, operator: "!=", stackStartFn: e }); }, k.deepEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); void 0 === s && S(), s(t, n) || $({ actual: t, expected: n, message: i, operator: "deepEqual", stackStartFn: e }); }, k.notDeepEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); void 0 === s && S(), s(t, n) && $({ actual: t, expected: n, message: i, operator: "notDeepEqual", stackStartFn: e }); }, k.deepStrictEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); void 0 === s && S(), a(t, n) || $({ actual: t, expected: n, message: i, operator: "deepStrictEqual", stackStartFn: e }); }, k.notDeepStrictEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); void 0 === s && S(), a(t, n) && $({ actual: t, expected: n, message: i, operator: "notDeepStrictEqual", stackStartFn: e }); }, k.strictEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); b(t, n) || $({ actual: t, expected: n, message: i, operator: "strictEqual", stackStartFn: e }); }, k.notStrictEqual = function e(t, n, i) { if (arguments.length < 2)
+            throw new g("actual", "expected"); b(t, n) && $({ actual: t, expected: n, message: i, operator: "notStrictEqual", stackStartFn: e }); };
         var T = function e(t, n, i) { var r = this; !function (e, t) { if (!(e instanceof t))
             throw new TypeError("Cannot call a class as a function"); }(this, e), n.forEach((function (e) { e in t && (void 0 !== i && "string" == typeof i[e] && w(t[e]) && t[e].test(i[e]) ? r[e] = i[e] : r[e] = t[e]); })); };
         function A(e, t, n, i, r, o) { if (!(n in e) || !a(e[n], t[n])) {
             if (!i) {
-                var s = new T(e, r), c = new T(t, r, e), l = new g({ actual: s, expected: c, operator: "deepStrictEqual", stackStartFn: o });
+                var s = new T(e, r), c = new T(t, r, e), l = new f({ actual: s, expected: c, operator: "deepStrictEqual", stackStartFn: o });
                 throw l.actual = e, l.expected = t, l.operator = o.name, l;
             }
             $({ actual: e, expected: t, message: i, operator: o.name, stackStartFn: o });
@@ -48439,7 +48439,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if (2 === arguments.length)
                 throw new h("expected", ["Function", "RegExp"], t);
             if ("object" !== o(e) || null === e) {
-                var r = new g({ actual: e, expected: t, message: n, operator: "deepStrictEqual", stackStartFn: i });
+                var r = new f({ actual: e, expected: t, message: n, operator: "deepStrictEqual", stackStartFn: i });
                 throw r.operator = i.name, r;
             }
             var a = Object.keys(t);
@@ -48501,7 +48501,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             i[r - 1] = arguments[r]; return P(t).then((function (t) { return O.apply(void 0, [e, t].concat(i)); })); }, k.ifError = function e(t) { if (null != t) {
             var n = "ifError got unwanted exception: ";
             "object" === o(t) && "string" == typeof t.message ? 0 === t.message.length && t.constructor ? n += t.constructor.name : n += t.message : n += p(t);
-            var i = new g({ actual: t, expected: null, operator: "ifError", message: n, stackStartFn: e }), r = t.stack;
+            var i = new f({ actual: t, expected: null, operator: "ifError", message: n, stackStartFn: e }), r = t.stack;
             if ("string" == typeof r) {
                 var s = r.split("\n");
                 s.shift();
@@ -48524,7 +48524,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var i = t[n];
             i.enumerable = i.enumerable || !1, i.configurable = !0, "value" in i && (i.writable = !0), Object.defineProperty(e, i.key, i);
         } }
-        function s(e, t) { return !t || "object" !== f(t) && "function" != typeof t ? a(e) : t; }
+        function s(e, t) { return !t || "object" !== g(t) && "function" != typeof t ? a(e) : t; }
         function a(e) { if (void 0 === e)
             throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
         function c(e) { var t = "function" == typeof Map ? new Map : void 0; return c = function (e) { if (null === e || (n = e, -1 === Function.toString.call(n).indexOf("[native code]")))
@@ -48546,27 +48546,27 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         function h(e, t, n) { return h = l() ? Reflect.construct : function (e, t, n) { var i = [null]; i.push.apply(i, t); var r = new (Function.bind.apply(e, i)); return n && u(r, n.prototype), r; }, h.apply(null, arguments); }
         function u(e, t) { return u = Object.setPrototypeOf || function (e, t) { return e.__proto__ = t, e; }, u(e, t); }
         function d(e) { return d = Object.setPrototypeOf ? Object.getPrototypeOf : function (e) { return e.__proto__ || Object.getPrototypeOf(e); }, d(e); }
-        function f(e) { return f = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) { return typeof e; } : function (e) { return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e; }, f(e); }
-        var g = n(3335).inspect, p = n(7515).codes.ERR_INVALID_ARG_TYPE;
+        function g(e) { return g = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) { return typeof e; } : function (e) { return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e; }, g(e); }
+        var f = n(3335).inspect, p = n(7515).codes.ERR_INVALID_ARG_TYPE;
         function m(e, t, n) { return (void 0 === n || n > e.length) && (n = e.length), e.substring(n - t.length, n) === t; }
         var v = "", w = "", y = "", b = "", S = { deepStrictEqual: "Expected values to be strictly deep-equal:", strictEqual: "Expected values to be strictly equal:", strictEqualObject: 'Expected "actual" to be reference-equal to "expected":', deepEqual: "Expected values to be loosely deep-equal:", equal: "Expected values to be loosely equal:", notDeepStrictEqual: 'Expected "actual" not to be strictly deep-equal to:', notStrictEqual: 'Expected "actual" to be strictly unequal to:', notStrictEqualObject: 'Expected "actual" not to be reference-equal to "expected":', notDeepEqual: 'Expected "actual" not to be loosely deep-equal to:', notEqual: 'Expected "actual" to be loosely unequal to:', notIdentical: "Values identical but not reference-equal:" };
         function C(e) { var t = Object.keys(e), n = Object.create(Object.getPrototypeOf(e)); return t.forEach((function (t) { n[t] = e[t]; })), Object.defineProperty(n, "message", { value: e.message }), n; }
-        function k(e) { return g(e, { compact: !1, customInspect: !1, depth: 1e3, maxArrayLength: 1 / 0, showHidden: !1, breakLength: 1 / 0, showProxy: !1, sorted: !0, getters: !0 }); }
+        function k(e) { return f(e, { compact: !1, customInspect: !1, depth: 1e3, maxArrayLength: 1 / 0, showHidden: !1, breakLength: 1 / 0, showProxy: !1, sorted: !0, getters: !0 }); }
         var _ = function (e) { function t(e) { var n; if (function (e, t) { if (!(e instanceof t))
-            throw new TypeError("Cannot call a class as a function"); }(this, t), "object" !== f(e) || null === e)
+            throw new TypeError("Cannot call a class as a function"); }(this, t), "object" !== g(e) || null === e)
             throw new p("options", "Object", e); var r = e.message, o = e.operator, c = e.stackStartFn, l = e.actual, h = e.expected, u = Error.stackTraceLimit; if (Error.stackTraceLimit = 0, null != r)
             n = s(this, d(t).call(this, String(r)));
-        else if (i.stderr && i.stderr.isTTY && (i.stderr && i.stderr.getColorDepth && 1 !== i.stderr.getColorDepth() ? (v = "[34m", w = "[32m", b = "[39m", y = "[31m") : (v = "", w = "", b = "", y = "")), "object" === f(l) && null !== l && "object" === f(h) && null !== h && "stack" in l && l instanceof Error && "stack" in h && h instanceof Error && (l = C(l), h = C(h)), "deepStrictEqual" === o || "strictEqual" === o)
-            n = s(this, d(t).call(this, function (e, t, n) { var r = "", o = "", s = 0, a = "", c = !1, l = k(e), h = l.split("\n"), u = k(t).split("\n"), d = 0, g = ""; if ("strictEqual" === n && "object" === f(e) && "object" === f(t) && null !== e && null !== t && (n = "strictEqualObject"), 1 === h.length && 1 === u.length && h[0] !== u[0]) {
+        else if (i.stderr && i.stderr.isTTY && (i.stderr && i.stderr.getColorDepth && 1 !== i.stderr.getColorDepth() ? (v = "[34m", w = "[32m", b = "[39m", y = "[31m") : (v = "", w = "", b = "", y = "")), "object" === g(l) && null !== l && "object" === g(h) && null !== h && "stack" in l && l instanceof Error && "stack" in h && h instanceof Error && (l = C(l), h = C(h)), "deepStrictEqual" === o || "strictEqual" === o)
+            n = s(this, d(t).call(this, function (e, t, n) { var r = "", o = "", s = 0, a = "", c = !1, l = k(e), h = l.split("\n"), u = k(t).split("\n"), d = 0, f = ""; if ("strictEqual" === n && "object" === g(e) && "object" === g(t) && null !== e && null !== t && (n = "strictEqualObject"), 1 === h.length && 1 === u.length && h[0] !== u[0]) {
                 var p = h[0].length + u[0].length;
                 if (p <= 10) {
-                    if (!("object" === f(e) && null !== e || "object" === f(t) && null !== t || 0 === e && 0 === t))
+                    if (!("object" === g(e) && null !== e || "object" === g(t) && null !== t || 0 === e && 0 === t))
                         return "".concat(S[n], "\n\n") + "".concat(h[0], " !== ").concat(u[0], "\n");
                 }
                 else if ("strictEqualObject" !== n && p < (i.stderr && i.stderr.isTTY ? i.stderr.columns : 80)) {
                     for (; h[0][d] === u[0][d];)
                         d++;
-                    d > 2 && (g = "\n  ".concat(function (e, t) { if (t = Math.floor(t), 0 == e.length || 0 == t)
+                    d > 2 && (f = "\n  ".concat(function (e, t) { if (t = Math.floor(t), 0 == e.length || 0 == t)
                         return ""; var n = e.length * t; for (t = Math.floor(Math.log(t) / Math.log(2)); t;)
                         e += e, t--; return e + e.substring(0, n - e.length); }(" ", d), "^"), d = 0);
                 }
@@ -48589,19 +48589,19 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 }
                 if (x > 20 && d < $ - 2)
                     return "".concat(T).concat(A, "\n").concat(o, "\n").concat(v, "...").concat(b).concat(r, "\n") + "".concat(v, "...").concat(b);
-            } return "".concat(T).concat(c ? A : "", "\n").concat(o).concat(r).concat(a).concat(g); }(l, h, o)));
+            } return "".concat(T).concat(c ? A : "", "\n").concat(o).concat(r).concat(a).concat(f); }(l, h, o)));
         else if ("notDeepStrictEqual" === o || "notStrictEqual" === o) {
-            var g = S[o], _ = k(l).split("\n");
-            if ("notStrictEqual" === o && "object" === f(l) && null !== l && (g = S.notStrictEqualObject), _.length > 30)
+            var f = S[o], _ = k(l).split("\n");
+            if ("notStrictEqual" === o && "object" === g(l) && null !== l && (f = S.notStrictEqualObject), _.length > 30)
                 for (_[26] = "".concat(v, "...").concat(b); _.length > 27;)
                     _.pop();
-            n = 1 === _.length ? s(this, d(t).call(this, "".concat(g, " ").concat(_[0]))) : s(this, d(t).call(this, "".concat(g, "\n\n").concat(_.join("\n"), "\n")));
+            n = 1 === _.length ? s(this, d(t).call(this, "".concat(f, " ").concat(_[0]))) : s(this, d(t).call(this, "".concat(f, "\n\n").concat(_.join("\n"), "\n")));
         }
         else {
             var $ = k(l), R = "", x = S[o];
             "notDeepEqual" === o || "notEqual" === o ? ($ = "".concat(S[o], "\n\n").concat($)).length > 1024 && ($ = "".concat($.slice(0, 1021), "...")) : (R = "".concat(k(h)), $.length > 512 && ($ = "".concat($.slice(0, 509), "...")), R.length > 512 && (R = "".concat(R.slice(0, 509), "...")), "deepEqual" === o || "equal" === o ? $ = "".concat(x, "\n\n").concat($, "\n\nshould equal\n\n") : R = " ".concat(o, " ").concat(R)), n = s(this, d(t).call(this, "".concat($).concat(R)));
         } return Error.stackTraceLimit = u, n.generatedMessage = !r, Object.defineProperty(a(n), "name", { value: "AssertionError [ERR_ASSERTION]", enumerable: !1, writable: !0, configurable: !0 }), n.code = "ERR_ASSERTION", n.actual = l, n.expected = h, n.operator = o, Error.captureStackTrace && Error.captureStackTrace(a(n), c), n.stack, n.name = "AssertionError", s(n); } var n, c; return function (e, t) { if ("function" != typeof t && null !== t)
-            throw new TypeError("Super expression must either be null or a function"); e.prototype = Object.create(t && t.prototype, { constructor: { value: e, writable: !0, configurable: !0 } }), t && u(e, t); }(t, e), n = t, c = [{ key: "toString", value: function () { return "".concat(this.name, " [").concat(this.code, "]: ").concat(this.message); } }, { key: g.custom, value: function (e, t) { return g(this, function (e) { for (var t = 1; t < arguments.length; t++) {
+            throw new TypeError("Super expression must either be null or a function"); e.prototype = Object.create(t && t.prototype, { constructor: { value: e, writable: !0, configurable: !0 } }), t && u(e, t); }(t, e), n = t, c = [{ key: "toString", value: function () { return "".concat(this.name, " [").concat(this.code, "]: ").concat(this.message); } }, { key: f.custom, value: function (e, t) { return f(this, function (e) { for (var t = 1; t < arguments.length; t++) {
                     var n = null != arguments[t] ? arguments[t] : {}, i = Object.keys(n);
                     "function" == typeof Object.getOwnPropertySymbols && (i = i.concat(Object.getOwnPropertySymbols(n).filter((function (e) { return Object.getOwnPropertyDescriptor(n, e).enumerable; })))), i.forEach((function (t) { r(e, t, n[t]); }));
                 } return e; }({}, t, { customInspect: !1, depth: 0 })); } }], c && o(n.prototype, c), t; }(c(Error));
@@ -48657,7 +48657,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         function r(e) { return r = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (e) { return typeof e; } : function (e) { return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e; }, r(e); }
         var o = void 0 !== /a/g.flags, s = function (e) { var t = []; return e.forEach((function (e) { return t.push(e); })), t; }, a = function (e) { var t = []; return e.forEach((function (e, n) { return t.push([n, e]); })), t; }, c = Object.is ? Object.is : n(4679), l = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : function () { return []; }, h = Number.isNaN ? Number.isNaN : n(4782);
         function u(e) { return e.call.bind(e); }
-        var d = u(Object.prototype.hasOwnProperty), f = u(Object.prototype.propertyIsEnumerable), g = u(Object.prototype.toString), p = n(3335).types, m = p.isAnyArrayBuffer, v = p.isArrayBufferView, w = p.isDate, y = p.isMap, b = p.isRegExp, S = p.isSet, C = p.isNativeError, k = p.isBoxedPrimitive, _ = p.isNumberObject, $ = p.isStringObject, R = p.isBooleanObject, x = p.isBigIntObject, T = p.isSymbolObject, A = p.isFloat32Array, E = p.isFloat64Array;
+        var d = u(Object.prototype.hasOwnProperty), g = u(Object.prototype.propertyIsEnumerable), f = u(Object.prototype.toString), p = n(3335).types, m = p.isAnyArrayBuffer, v = p.isArrayBufferView, w = p.isDate, y = p.isMap, b = p.isRegExp, S = p.isSet, C = p.isNativeError, k = p.isBoxedPrimitive, _ = p.isNumberObject, $ = p.isStringObject, R = p.isBooleanObject, x = p.isBigIntObject, T = p.isSymbolObject, A = p.isFloat32Array, E = p.isFloat64Array;
         function M(e) { if (0 === e.length || e.length > 10)
             return !0; for (var t = 0; t < e.length; t++) {
             var n = e.charCodeAt(t);
@@ -48685,12 +48685,12 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 return (null === t || "object" !== r(t)) && e == t;
             if (null === t || "object" !== r(t))
                 return !1;
-        } var s, a, l, u, d = g(e); if (d !== g(t))
+        } var s, a, l, u, d = f(e); if (d !== f(t))
             return !1; if (Array.isArray(e)) {
             if (e.length !== t.length)
                 return !1;
-            var f = L(e), p = L(t);
-            return f.length === p.length && I(e, t, n, i, 1, f);
+            var g = L(e), p = L(t);
+            return g.length === p.length && I(e, t, n, i, 1, g);
         } if ("[object Object]" === d && (!y(e) && y(t) || !S(e) && S(t)))
             return !1; if (w(e)) {
             if (!w(t) || Date.prototype.getTime.call(e) !== Date.prototype.getTime.call(t))
@@ -48729,7 +48729,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             else if (k(e) && !function (e, t) { return _(e) ? _(t) && c(Number.prototype.valueOf.call(e), Number.prototype.valueOf.call(t)) : $(e) ? $(t) && String.prototype.valueOf.call(e) === String.prototype.valueOf.call(t) : R(e) ? R(t) && Boolean.prototype.valueOf.call(e) === Boolean.prototype.valueOf.call(t) : x(e) ? x(t) && BigInt.prototype.valueOf.call(e) === BigInt.prototype.valueOf.call(t) : T(t) && Symbol.prototype.valueOf.call(e) === Symbol.prototype.valueOf.call(t); }(e, t))
                 return !1;
         } return I(e, t, n, i, 0); }
-        function O(e, t) { return t.filter((function (t) { return f(e, t); })); }
+        function O(e, t) { return t.filter((function (t) { return g(e, t); })); }
         function I(e, t, n, i, r, o) { if (5 === arguments.length) {
             o = Object.keys(e);
             var s = Object.keys(t);
@@ -48743,16 +48743,16 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 var h = 0;
                 for (a = 0; a < c.length; a++) {
                     var u = c[a];
-                    if (f(e, u)) {
-                        if (!f(t, u))
+                    if (g(e, u)) {
+                        if (!g(t, u))
                             return !1;
                         o.push(u), h++;
                     }
-                    else if (f(t, u))
+                    else if (g(t, u))
                         return !1;
                 }
-                var g = l(t);
-                if (c.length !== g.length && O(t, g).length !== h)
+                var f = l(t);
+                if (c.length !== f.length && O(t, f).length !== h)
                     return !1;
             }
             else {
@@ -48825,8 +48825,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 if ("object" === r(u) && null !== u)
                     null === s && (s = new Set), s.add(u);
                 else {
-                    var f = t.get(u);
-                    if (void 0 === f && !t.has(u) || !D(d, f, n, o)) {
+                    var g = t.get(u);
+                    if (void 0 === g && !t.has(u) || !D(d, g, n, o)) {
                         if (n)
                             return !1;
                         if (!W(e, t, u, d, o))
@@ -48835,8 +48835,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     }
                 }
             } if (null !== s) {
-                for (var g = a(t), p = 0; p < g.length; p++) {
-                    var m = i(g[p], 2), v = (u = m[0], m[1]);
+                for (var f = a(t), p = 0; p < f.length; p++) {
+                    var m = i(f[p], 2), v = (u = m[0], m[1]);
                     if ("object" === r(u) && null !== u) {
                         if (!H(s, e, u, v, n, o))
                             return !1;
@@ -48854,8 +48854,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     if (d(t, h))
                         return !1;
                     for (var u = Object.keys(e); h < u.length; h++) {
-                        var f = u[h];
-                        if (!d(t, f) || !D(e[f], t[f], n, c))
+                        var g = u[h];
+                        if (!d(t, g) || !D(e[g], t[g], n, c))
                             return !1;
                     }
                     return u.length === Object.keys(t).length;
@@ -48863,8 +48863,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 if (!d(t, h) || !D(e[h], t[h], n, c))
                     return !1;
             } for (h = 0; h < o.length; h++) {
-            var g = o[h];
-            if (!D(e[g], t[g], n, c))
+            var f = o[h];
+            if (!D(e[f], t[f], n, c))
                 return !1;
         } return !0; }
         e.exports = { isDeepEqual: function (e, t) { return D(e, t, !1); }, isDeepStrictEqual: function (e, t) { return D(e, t, !0); } };
@@ -48893,8 +48893,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 var t = a.call(arguments, 1);
                 r.ok(!1, i.format.apply(null, t));
             } }, "assert"]], h = 0; h < l.length; h++) {
-        var u = l[h], d = u[0], f = u[1];
-        s[f] || (s[f] = d);
+        var u = l[h], d = u[0], g = u[1];
+        s[g] || (s[g] = d);
     } e.exports = s; }, 3763: (e, t, n) => {
         "use strict";
         n.d(t, { Z: () => a });
@@ -48988,7 +48988,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             catch (e) {
                 return l;
             }
-        } }() : l, u = n(2636)(), d = Object.getPrototypeOf || function (e) { return e.__proto__; }, f = {}, g = "undefined" == typeof Uint8Array ? i : d(Uint8Array), p = { "%AggregateError%": "undefined" == typeof AggregateError ? i : AggregateError, "%Array%": Array, "%ArrayBuffer%": "undefined" == typeof ArrayBuffer ? i : ArrayBuffer, "%ArrayIteratorPrototype%": u ? d([][Symbol.iterator]()) : i, "%AsyncFromSyncIteratorPrototype%": i, "%AsyncFunction%": f, "%AsyncGenerator%": f, "%AsyncGeneratorFunction%": f, "%AsyncIteratorPrototype%": f, "%Atomics%": "undefined" == typeof Atomics ? i : Atomics, "%BigInt%": "undefined" == typeof BigInt ? i : BigInt, "%Boolean%": Boolean, "%DataView%": "undefined" == typeof DataView ? i : DataView, "%Date%": Date, "%decodeURI%": decodeURI, "%decodeURIComponent%": decodeURIComponent, "%encodeURI%": encodeURI, "%encodeURIComponent%": encodeURIComponent, "%Error%": Error, "%eval%": eval, "%EvalError%": EvalError, "%Float32Array%": "undefined" == typeof Float32Array ? i : Float32Array, "%Float64Array%": "undefined" == typeof Float64Array ? i : Float64Array, "%FinalizationRegistry%": "undefined" == typeof FinalizationRegistry ? i : FinalizationRegistry, "%Function%": o, "%GeneratorFunction%": f, "%Int8Array%": "undefined" == typeof Int8Array ? i : Int8Array, "%Int16Array%": "undefined" == typeof Int16Array ? i : Int16Array, "%Int32Array%": "undefined" == typeof Int32Array ? i : Int32Array, "%isFinite%": isFinite, "%isNaN%": isNaN, "%IteratorPrototype%": u ? d(d([][Symbol.iterator]())) : i, "%JSON%": "object" == typeof JSON ? JSON : i, "%Map%": "undefined" == typeof Map ? i : Map, "%MapIteratorPrototype%": "undefined" != typeof Map && u ? d((new Map)[Symbol.iterator]()) : i, "%Math%": Math, "%Number%": Number, "%Object%": Object, "%parseFloat%": parseFloat, "%parseInt%": parseInt, "%Promise%": "undefined" == typeof Promise ? i : Promise, "%Proxy%": "undefined" == typeof Proxy ? i : Proxy, "%RangeError%": RangeError, "%ReferenceError%": ReferenceError, "%Reflect%": "undefined" == typeof Reflect ? i : Reflect, "%RegExp%": RegExp, "%Set%": "undefined" == typeof Set ? i : Set, "%SetIteratorPrototype%": "undefined" != typeof Set && u ? d((new Set)[Symbol.iterator]()) : i, "%SharedArrayBuffer%": "undefined" == typeof SharedArrayBuffer ? i : SharedArrayBuffer, "%String%": String, "%StringIteratorPrototype%": u ? d(""[Symbol.iterator]()) : i, "%Symbol%": u ? Symbol : i, "%SyntaxError%": r, "%ThrowTypeError%": h, "%TypedArray%": g, "%TypeError%": s, "%Uint8Array%": "undefined" == typeof Uint8Array ? i : Uint8Array, "%Uint8ClampedArray%": "undefined" == typeof Uint8ClampedArray ? i : Uint8ClampedArray, "%Uint16Array%": "undefined" == typeof Uint16Array ? i : Uint16Array, "%Uint32Array%": "undefined" == typeof Uint32Array ? i : Uint32Array, "%URIError%": URIError, "%WeakMap%": "undefined" == typeof WeakMap ? i : WeakMap, "%WeakRef%": "undefined" == typeof WeakRef ? i : WeakRef, "%WeakSet%": "undefined" == typeof WeakSet ? i : WeakSet }, m = function e(t) { var n; if ("%AsyncFunction%" === t)
+        } }() : l, u = n(2636)(), d = Object.getPrototypeOf || function (e) { return e.__proto__; }, g = {}, f = "undefined" == typeof Uint8Array ? i : d(Uint8Array), p = { "%AggregateError%": "undefined" == typeof AggregateError ? i : AggregateError, "%Array%": Array, "%ArrayBuffer%": "undefined" == typeof ArrayBuffer ? i : ArrayBuffer, "%ArrayIteratorPrototype%": u ? d([][Symbol.iterator]()) : i, "%AsyncFromSyncIteratorPrototype%": i, "%AsyncFunction%": g, "%AsyncGenerator%": g, "%AsyncGeneratorFunction%": g, "%AsyncIteratorPrototype%": g, "%Atomics%": "undefined" == typeof Atomics ? i : Atomics, "%BigInt%": "undefined" == typeof BigInt ? i : BigInt, "%Boolean%": Boolean, "%DataView%": "undefined" == typeof DataView ? i : DataView, "%Date%": Date, "%decodeURI%": decodeURI, "%decodeURIComponent%": decodeURIComponent, "%encodeURI%": encodeURI, "%encodeURIComponent%": encodeURIComponent, "%Error%": Error, "%eval%": eval, "%EvalError%": EvalError, "%Float32Array%": "undefined" == typeof Float32Array ? i : Float32Array, "%Float64Array%": "undefined" == typeof Float64Array ? i : Float64Array, "%FinalizationRegistry%": "undefined" == typeof FinalizationRegistry ? i : FinalizationRegistry, "%Function%": o, "%GeneratorFunction%": g, "%Int8Array%": "undefined" == typeof Int8Array ? i : Int8Array, "%Int16Array%": "undefined" == typeof Int16Array ? i : Int16Array, "%Int32Array%": "undefined" == typeof Int32Array ? i : Int32Array, "%isFinite%": isFinite, "%isNaN%": isNaN, "%IteratorPrototype%": u ? d(d([][Symbol.iterator]())) : i, "%JSON%": "object" == typeof JSON ? JSON : i, "%Map%": "undefined" == typeof Map ? i : Map, "%MapIteratorPrototype%": "undefined" != typeof Map && u ? d((new Map)[Symbol.iterator]()) : i, "%Math%": Math, "%Number%": Number, "%Object%": Object, "%parseFloat%": parseFloat, "%parseInt%": parseInt, "%Promise%": "undefined" == typeof Promise ? i : Promise, "%Proxy%": "undefined" == typeof Proxy ? i : Proxy, "%RangeError%": RangeError, "%ReferenceError%": ReferenceError, "%Reflect%": "undefined" == typeof Reflect ? i : Reflect, "%RegExp%": RegExp, "%Set%": "undefined" == typeof Set ? i : Set, "%SetIteratorPrototype%": "undefined" != typeof Set && u ? d((new Set)[Symbol.iterator]()) : i, "%SharedArrayBuffer%": "undefined" == typeof SharedArrayBuffer ? i : SharedArrayBuffer, "%String%": String, "%StringIteratorPrototype%": u ? d(""[Symbol.iterator]()) : i, "%Symbol%": u ? Symbol : i, "%SyntaxError%": r, "%ThrowTypeError%": h, "%TypedArray%": f, "%TypeError%": s, "%Uint8Array%": "undefined" == typeof Uint8Array ? i : Uint8Array, "%Uint8ClampedArray%": "undefined" == typeof Uint8ClampedArray ? i : Uint8ClampedArray, "%Uint16Array%": "undefined" == typeof Uint16Array ? i : Uint16Array, "%Uint32Array%": "undefined" == typeof Uint32Array ? i : Uint32Array, "%URIError%": URIError, "%WeakMap%": "undefined" == typeof WeakMap ? i : WeakMap, "%WeakRef%": "undefined" == typeof WeakRef ? i : WeakRef, "%WeakSet%": "undefined" == typeof WeakSet ? i : WeakSet }, m = function e(t) { var n; if ("%AsyncFunction%" === t)
             n = a("async function () {}");
         else if ("%GeneratorFunction%" === t)
             n = a("function* () {}");
@@ -49005,32 +49005,32 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             throw new r("invalid intrinsic syntax, expected closing `%`"); if ("%" === n && "%" !== t)
             throw new r("invalid intrinsic syntax, expected opening `%`"); var i = []; return C(e, $, (function (e, t, n, r) { i[i.length] = n ? C(r, R, "$1") : t || e; })), i; }, T = function (e, t) { var n, i = e; if (y(v, i) && (i = "%" + (n = v[i])[0] + "%"), y(p, i)) {
             var o = p[i];
-            if (o === f && (o = m(i)), void 0 === o && !t)
+            if (o === g && (o = m(i)), void 0 === o && !t)
                 throw new s("intrinsic " + e + " exists, but is not available. Please file an issue!");
             return { alias: n, name: i, value: o };
         } throw new r("intrinsic " + e + " does not exist!"); };
         e.exports = function (e, t) { if ("string" != typeof e || 0 === e.length)
             throw new s("intrinsic name must be a non-empty string"); if (arguments.length > 1 && "boolean" != typeof t)
             throw new s('"allowMissing" argument must be a boolean'); if (null === _(/^%?[^%]*%?$/, e))
-            throw new r("`%` may not be present anywhere but at the beginning and end of the intrinsic name"); var n = x(e), i = n.length > 0 ? n[0] : "", o = T("%" + i + "%", t), a = o.name, l = o.value, h = !1, u = o.alias; u && (i = u[0], S(n, b([0, 1], u))); for (var d = 1, f = !0; d < n.length; d += 1) {
-            var g = n[d], m = k(g, 0, 1), v = k(g, -1);
+            throw new r("`%` may not be present anywhere but at the beginning and end of the intrinsic name"); var n = x(e), i = n.length > 0 ? n[0] : "", o = T("%" + i + "%", t), a = o.name, l = o.value, h = !1, u = o.alias; u && (i = u[0], S(n, b([0, 1], u))); for (var d = 1, g = !0; d < n.length; d += 1) {
+            var f = n[d], m = k(f, 0, 1), v = k(f, -1);
             if (('"' === m || "'" === m || "`" === m || '"' === v || "'" === v || "`" === v) && m !== v)
                 throw new r("property names with quotes must have matching quotes");
-            if ("constructor" !== g && f || (h = !0), y(p, a = "%" + (i += "." + g) + "%"))
+            if ("constructor" !== f && g || (h = !0), y(p, a = "%" + (i += "." + f) + "%"))
                 l = p[a];
             else if (null != l) {
-                if (!(g in l)) {
+                if (!(f in l)) {
                     if (!t)
                         throw new s("base intrinsic for " + e + " exists, but the property is not available.");
                     return;
                 }
                 if (c && d + 1 >= n.length) {
-                    var w = c(l, g);
-                    l = (f = !!w) && "get" in w && !("originalValue" in w.get) ? w.get : l[g];
+                    var w = c(l, f);
+                    l = (g = !!w) && "get" in w && !("originalValue" in w.get) ? w.get : l[f];
                 }
                 else
-                    f = y(l, g), l = l[g];
-                f && !h && (p[a] = l);
+                    g = y(l, f), l = l[f];
+                g && !h && (p[a] = l);
             }
         } return l; };
     }, 326: (e, t, n) => {
@@ -49179,19 +49179,19 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         var i = n(3243), r = n(2191), o = n(2680), s = o("Object.prototype.toString"), a = n(7226)(), c = n(326), l = "undefined" == typeof globalThis ? n.g : globalThis, h = r(), u = o("Array.prototype.indexOf", !0) || function (e, t) { for (var n = 0; n < e.length; n += 1)
             if (e[n] === t)
-                return n; return -1; }, d = o("String.prototype.slice"), f = {}, g = Object.getPrototypeOf;
-        a && c && g && i(h, (function (e) { var t = new l[e]; if (Symbol.toStringTag in t) {
-            var n = g(t), i = c(n, Symbol.toStringTag);
+                return n; return -1; }, d = o("String.prototype.slice"), g = {}, f = Object.getPrototypeOf;
+        a && c && f && i(h, (function (e) { var t = new l[e]; if (Symbol.toStringTag in t) {
+            var n = f(t), i = c(n, Symbol.toStringTag);
             if (!i) {
-                var r = g(n);
+                var r = f(n);
                 i = c(r, Symbol.toStringTag);
             }
-            f[e] = i.get;
+            g[e] = i.get;
         } })), e.exports = function (e) { if (!e || "object" != typeof e)
             return !1; if (!a || !(Symbol.toStringTag in e)) {
             var t = d(s(e), 8, -1);
             return u(h, t) > -1;
-        } return !!c && function (e) { var t = !1; return i(f, (function (n, i) { if (!t)
+        } return !!c && function (e) { var t = !1; return i(g, (function (n, i) { if (!t)
             try {
                 t = n.call(e) === i;
             }
@@ -49216,7 +49216,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         var i;
         if (!Object.keys) {
-            var r = Object.prototype.hasOwnProperty, o = Object.prototype.toString, s = n(801), a = Object.prototype.propertyIsEnumerable, c = !a.call({ toString: null }, "toString"), l = a.call((function () { }), "prototype"), h = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "constructor"], u = function (e) { var t = e.constructor; return t && t.prototype === e; }, d = { $applicationCache: !0, $console: !0, $external: !0, $frame: !0, $frameElement: !0, $frames: !0, $innerHeight: !0, $innerWidth: !0, $onmozfullscreenchange: !0, $onmozfullscreenerror: !0, $outerHeight: !0, $outerWidth: !0, $pageXOffset: !0, $pageYOffset: !0, $parent: !0, $scrollLeft: !0, $scrollTop: !0, $scrollX: !0, $scrollY: !0, $self: !0, $webkitIndexedDB: !0, $webkitStorageInfo: !0, $window: !0 }, f = function () { if ("undefined" == typeof window)
+            var r = Object.prototype.hasOwnProperty, o = Object.prototype.toString, s = n(801), a = Object.prototype.propertyIsEnumerable, c = !a.call({ toString: null }, "toString"), l = a.call((function () { }), "prototype"), h = ["toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "constructor"], u = function (e) { var t = e.constructor; return t && t.prototype === e; }, d = { $applicationCache: !0, $console: !0, $external: !0, $frame: !0, $frameElement: !0, $frames: !0, $innerHeight: !0, $innerWidth: !0, $onmozfullscreenchange: !0, $onmozfullscreenerror: !0, $outerHeight: !0, $outerWidth: !0, $pageXOffset: !0, $pageYOffset: !0, $parent: !0, $scrollLeft: !0, $scrollTop: !0, $scrollX: !0, $scrollY: !0, $self: !0, $webkitIndexedDB: !0, $webkitStorageInfo: !0, $window: !0 }, g = function () { if ("undefined" == typeof window)
                 return !1; for (var e in window)
                 try {
                     if (!d["$" + e] && r.call(window, e) && null !== window[e] && "object" == typeof window[e])
@@ -49231,15 +49231,15 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     return !0;
                 } return !1; }();
             i = function (e) { var t = null !== e && "object" == typeof e, n = "[object Function]" === o.call(e), i = s(e), a = t && "[object String]" === o.call(e), d = []; if (!t && !n && !i)
-                throw new TypeError("Object.keys called on a non-object"); var g = l && n; if (a && e.length > 0 && !r.call(e, 0))
+                throw new TypeError("Object.keys called on a non-object"); var f = l && n; if (a && e.length > 0 && !r.call(e, 0))
                 for (var p = 0; p < e.length; ++p)
                     d.push(String(p)); if (i && e.length > 0)
                 for (var m = 0; m < e.length; ++m)
                     d.push(String(m));
             else
                 for (var v in e)
-                    g && "prototype" === v || !r.call(e, v) || d.push(String(v)); if (c)
-                for (var w = function (e) { if ("undefined" == typeof window || !f)
+                    f && "prototype" === v || !r.call(e, v) || d.push(String(v)); if (c)
+                for (var w = function (e) { if ("undefined" == typeof window || !g)
                     return u(e); try {
                     return u(e);
                 }
@@ -49305,9 +49305,9 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 return n.call(this, e);
             }
         } }(e);
-    } } function f(e, t) { this.fun = e, this.array = t; } function g() { } i.nextTick = function (e) { var t = new Array(arguments.length - 1); if (arguments.length > 1)
+    } } function g(e, t) { this.fun = e, this.array = t; } function f() { } i.nextTick = function (e) { var t = new Array(arguments.length - 1); if (arguments.length > 1)
         for (var n = 1; n < arguments.length; n++)
-            t[n - 1] = arguments[n]; c.push(new f(e, t)), 1 !== c.length || l || s(d); }, f.prototype.run = function () { this.fun.apply(null, this.array); }, i.title = "browser", i.browser = !0, i.env = {}, i.argv = [], i.version = "", i.versions = {}, i.on = g, i.addListener = g, i.once = g, i.off = g, i.removeListener = g, i.removeAllListeners = g, i.emit = g, i.prependListener = g, i.prependOnceListener = g, i.listeners = function (e) { return []; }, i.binding = function (e) { throw new Error("process.binding is not supported"); }, i.cwd = function () { return "/"; }, i.chdir = function (e) { throw new Error("process.chdir is not supported"); }, i.umask = function () { return 0; }; }, 6006: function (e, t, n) { var i, r = n(3716); (function () { function o(e) {
+            t[n - 1] = arguments[n]; c.push(new g(e, t)), 1 !== c.length || l || s(d); }, g.prototype.run = function () { this.fun.apply(null, this.array); }, i.title = "browser", i.browser = !0, i.env = {}, i.argv = [], i.version = "", i.versions = {}, i.on = f, i.addListener = f, i.once = f, i.off = f, i.removeListener = f, i.removeAllListeners = f, i.emit = f, i.prependListener = f, i.prependOnceListener = f, i.listeners = function (e) { return []; }, i.binding = function (e) { throw new Error("process.binding is not supported"); }, i.cwd = function () { return "/"; }, i.chdir = function (e) { throw new Error("process.chdir is not supported"); }, i.umask = function () { return 0; }; }, 6006: function (e, t, n) { var i, r = n(3716); (function () { function o(e) {
         "use strict";
         var t = { omitExtraWLInCodeBlocks: { defaultValue: !1, describe: "Omit the default extra whiteline added to code blocks", type: "boolean" }, noHeaderId: { defaultValue: !1, describe: "Turn on/off generated header id", type: "boolean" }, prefixHeaderId: { defaultValue: !1, describe: "Add a prefix to the generated header ids. Passing a string will prefix that string to the header id. Setting to true will add a generic 'section-' prefix", type: "string" }, rawPrefixHeaderId: { defaultValue: !1, describe: 'Setting this option to true will prevent showdown from modifying the prefix. This might result in malformed IDs (if, for instance, the " char is used in the prefix)', type: "boolean" }, ghCompatibleHeaderId: { defaultValue: !1, describe: "Generate header ids compatible with github style (spaces are replaced with dashes, a bunch of non alphanumeric chars are removed)", type: "boolean" }, rawHeaderId: { defaultValue: !1, describe: "Remove only spaces, ' and \" from generated header ids (including prefixes), replacing them with dashes (-). WARNING: This might result in malformed ids", type: "boolean" }, headerLevelStart: { defaultValue: !1, describe: "The header blocks level start", type: "integer" }, parseImgDimensions: { defaultValue: !1, describe: "Turn on/off image dimension parsing", type: "boolean" }, simplifiedAutoLink: { defaultValue: !1, describe: "Turn on/off GFM autolink style", type: "boolean" }, excludeTrailingPunctuationFromURLs: { defaultValue: !1, describe: "Excludes trailing punctuation from links generated with autoLinking", type: "boolean" }, literalMidWordUnderscores: { defaultValue: !1, describe: "Parse midword underscores as literal underscores", type: "boolean" }, literalMidWordAsterisks: { defaultValue: !1, describe: "Parse midword asterisks as literal asterisks", type: "boolean" }, strikethrough: { defaultValue: !1, describe: "Turn on/off strikethrough support", type: "boolean" }, tables: { defaultValue: !1, describe: "Turn on/off tables support", type: "boolean" }, tablesHeaderId: { defaultValue: !1, describe: "Add an id to table headers", type: "boolean" }, ghCodeBlocks: { defaultValue: !0, describe: "Turn on/off GFM fenced code blocks support", type: "boolean" }, tasklists: { defaultValue: !1, describe: "Turn on/off GFM tasklist support", type: "boolean" }, smoothLivePreview: { defaultValue: !1, describe: "Prevents weird effects in live previews due to incomplete input", type: "boolean" }, smartIndentationFix: { defaultValue: !1, describe: "Tries to smartly fix indentation in es6 strings", type: "boolean" }, disableForced4SpacesIndentedSublists: { defaultValue: !1, describe: "Disables the requirement of indenting nested sublists by 4 spaces", type: "boolean" }, simpleLineBreaks: { defaultValue: !1, describe: "Parses simple line breaks as <br> (GFM Style)", type: "boolean" }, requireSpaceBeforeHeadingText: { defaultValue: !1, describe: "Makes adding a space between `#` and the header text mandatory (GFM Style)", type: "boolean" }, ghMentions: { defaultValue: !1, describe: "Enables github @mentions", type: "boolean" }, ghMentionsLink: { defaultValue: "https://github.com/{u}", describe: "Changes the link generated by @mentions. Only applies if ghMentions option is enabled.", type: "string" }, encodeEmails: { defaultValue: !0, describe: "Encode e-mail addresses through the use of Character Entities, transforming ASCII e-mail addresses into its equivalent decimal entities", type: "boolean" }, openLinksInNewWindow: { defaultValue: !1, describe: "Open all links in new windows", type: "boolean" }, backslashEscapesHTMLTags: { defaultValue: !1, describe: "Support for HTML Tag escaping. ex: <div>foo</div>", type: "boolean" }, emoji: { defaultValue: !1, describe: "Enable emoji support. Ex: `this is a :smile: emoji`", type: "boolean" }, underline: { defaultValue: !1, describe: "Enable support for underline. Syntax is double or triple underscores: `__underline word__`. With this option enabled, underscores no longer parses into `<em>` and `<strong>`", type: "boolean" }, ellipsis: { defaultValue: !0, describe: "Replaces three dots with the ellipsis unicode character", type: "boolean" }, completeHTMLDocument: { defaultValue: !1, describe: "Outputs a complete html document, including `<html>`, `<head>` and `<body>` tags", type: "boolean" }, metadata: { defaultValue: !1, describe: "Enable support for document metadata (defined at the top of the document between `«««` and `»»»` or between `---` and `---`).", type: "boolean" }, splitAdjacentBlockquotes: { defaultValue: !1, describe: "Split adjacent blockquote blocks", type: "boolean" } };
         if (!1 === e)
@@ -49360,7 +49360,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
         }
         return i;
-    } function f(e, t) {
+    } function g(e, t) {
         "use strict";
         return "¨E" + t.charCodeAt(0) + "E";
     } s.helper = {}, s.extensions = {}, s.setOption = function (e, t) {
@@ -49464,33 +49464,33 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     }, s.helper.stdExtName = function (e) {
         "use strict";
         return e.replace(/[_?*+\/\\.^-]/g, "").replace(/\s/g, "").toLowerCase();
-    }, s.helper.escapeCharactersCallback = f, s.helper.escapeCharacters = function (e, t, n) {
+    }, s.helper.escapeCharactersCallback = g, s.helper.escapeCharacters = function (e, t, n) {
         "use strict";
         var i = "([" + t.replace(/([\[\]\\])/g, "\\$1") + "])";
         n && (i = "\\\\" + i);
         var r = new RegExp(i, "g");
-        return e.replace(r, f);
+        return e.replace(r, g);
     }, s.helper.unescapeHTMLEntities = function (e) {
         "use strict";
         return e.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-    }; var g = function (e, t, n, i) {
+    }; var f = function (e, t, n, i) {
         "use strict";
-        var r, o, s, a, c, l = i || "", h = l.indexOf("g") > -1, u = new RegExp(t + "|" + n, "g" + l.replace(/g/g, "")), d = new RegExp(t, l.replace(/g/g, "")), f = [];
+        var r, o, s, a, c, l = i || "", h = l.indexOf("g") > -1, u = new RegExp(t + "|" + n, "g" + l.replace(/g/g, "")), d = new RegExp(t, l.replace(/g/g, "")), g = [];
         do {
             for (r = 0; s = u.exec(e);)
                 if (d.test(s[0]))
                     r++ || (a = (o = u.lastIndex) - s[0].length);
                 else if (r && !--r) {
                     c = s.index + s[0].length;
-                    var g = { left: { start: a, end: o }, match: { start: o, end: s.index }, right: { start: s.index, end: c }, wholeMatch: { start: a, end: c } };
-                    if (f.push(g), !h)
-                        return f;
+                    var f = { left: { start: a, end: o }, match: { start: o, end: s.index }, right: { start: s.index, end: c }, wholeMatch: { start: a, end: c } };
+                    if (g.push(f), !h)
+                        return g;
                 }
         } while (r && (u.lastIndex = o));
-        return f;
+        return g;
     }; s.helper.matchRecursiveRegExp = function (e, t, n, i) {
         "use strict";
-        for (var r = g(e, t, n, i), o = [], s = 0; s < r.length; ++s)
+        for (var r = f(e, t, n, i), o = [], s = 0; s < r.length; ++s)
             o.push([e.slice(r[s].wholeMatch.start, r[s].wholeMatch.end), e.slice(r[s].match.start, r[s].match.end), e.slice(r[s].left.start, r[s].left.end), e.slice(r[s].right.start, r[s].right.end)]);
         return o;
     }, s.helper.replaceRecursiveRegExp = function (e, t, n, i, r) {
@@ -49499,7 +49499,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var o = t;
             t = function () { return o; };
         }
-        var a = g(e, n, i, r), c = e, l = a.length;
+        var a = f(e, n, i, r), c = e, l = a.length;
         if (l > 0) {
             var h = [];
             0 !== a[0].wholeMatch.start && h.push(e.slice(0, a[0].wholeMatch.start));
@@ -49544,8 +49544,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             throw e;
         } }), s.helper.regexes = { asteriskDashAndColon: /([*_:~])/g }, s.helper.emojis = { "+1": "👍", "-1": "👎", 100: "💯", 1234: "🔢", "1st_place_medal": "🥇", "2nd_place_medal": "🥈", "3rd_place_medal": "🥉", "8ball": "🎱", a: "🅰️", ab: "🆎", abc: "🔤", abcd: "🔡", accept: "🉑", aerial_tramway: "🚡", airplane: "✈️", alarm_clock: "⏰", alembic: "⚗️", alien: "👽", ambulance: "🚑", amphora: "🏺", anchor: "⚓️", angel: "👼", anger: "💢", angry: "😠", anguished: "😧", ant: "🐜", apple: "🍎", aquarius: "♒️", aries: "♈️", arrow_backward: "◀️", arrow_double_down: "⏬", arrow_double_up: "⏫", arrow_down: "⬇️", arrow_down_small: "🔽", arrow_forward: "▶️", arrow_heading_down: "⤵️", arrow_heading_up: "⤴️", arrow_left: "⬅️", arrow_lower_left: "↙️", arrow_lower_right: "↘️", arrow_right: "➡️", arrow_right_hook: "↪️", arrow_up: "⬆️", arrow_up_down: "↕️", arrow_up_small: "🔼", arrow_upper_left: "↖️", arrow_upper_right: "↗️", arrows_clockwise: "🔃", arrows_counterclockwise: "🔄", art: "🎨", articulated_lorry: "🚛", artificial_satellite: "🛰", astonished: "😲", athletic_shoe: "👟", atm: "🏧", atom_symbol: "⚛️", avocado: "🥑", b: "🅱️", baby: "👶", baby_bottle: "🍼", baby_chick: "🐤", baby_symbol: "🚼", back: "🔙", bacon: "🥓", badminton: "🏸", baggage_claim: "🛄", baguette_bread: "🥖", balance_scale: "⚖️", balloon: "🎈", ballot_box: "🗳", ballot_box_with_check: "☑️", bamboo: "🎍", banana: "🍌", bangbang: "‼️", bank: "🏦", bar_chart: "📊", barber: "💈", baseball: "⚾️", basketball: "🏀", basketball_man: "⛹️", basketball_woman: "⛹️&zwj;♀️", bat: "🦇", bath: "🛀", bathtub: "🛁", battery: "🔋", beach_umbrella: "🏖", bear: "🐻", bed: "🛏", bee: "🐝", beer: "🍺", beers: "🍻", beetle: "🐞", beginner: "🔰", bell: "🔔", bellhop_bell: "🛎", bento: "🍱", biking_man: "🚴", bike: "🚲", biking_woman: "🚴&zwj;♀️", bikini: "👙", biohazard: "☣️", bird: "🐦", birthday: "🎂", black_circle: "⚫️", black_flag: "🏴", black_heart: "🖤", black_joker: "🃏", black_large_square: "⬛️", black_medium_small_square: "◾️", black_medium_square: "◼️", black_nib: "✒️", black_small_square: "▪️", black_square_button: "🔲", blonde_man: "👱", blonde_woman: "👱&zwj;♀️", blossom: "🌼", blowfish: "🐡", blue_book: "📘", blue_car: "🚙", blue_heart: "💙", blush: "😊", boar: "🐗", boat: "⛵️", bomb: "💣", book: "📖", bookmark: "🔖", bookmark_tabs: "📑", books: "📚", boom: "💥", boot: "👢", bouquet: "💐", bowing_man: "🙇", bow_and_arrow: "🏹", bowing_woman: "🙇&zwj;♀️", bowling: "🎳", boxing_glove: "🥊", boy: "👦", bread: "🍞", bride_with_veil: "👰", bridge_at_night: "🌉", briefcase: "💼", broken_heart: "💔", bug: "🐛", building_construction: "🏗", bulb: "💡", bullettrain_front: "🚅", bullettrain_side: "🚄", burrito: "🌯", bus: "🚌", business_suit_levitating: "🕴", busstop: "🚏", bust_in_silhouette: "👤", busts_in_silhouette: "👥", butterfly: "🦋", cactus: "🌵", cake: "🍰", calendar: "📆", call_me_hand: "🤙", calling: "📲", camel: "🐫", camera: "📷", camera_flash: "📸", camping: "🏕", cancer: "♋️", candle: "🕯", candy: "🍬", canoe: "🛶", capital_abcd: "🔠", capricorn: "♑️", car: "🚗", card_file_box: "🗃", card_index: "📇", card_index_dividers: "🗂", carousel_horse: "🎠", carrot: "🥕", cat: "🐱", cat2: "🐈", cd: "💿", chains: "⛓", champagne: "🍾", chart: "💹", chart_with_downwards_trend: "📉", chart_with_upwards_trend: "📈", checkered_flag: "🏁", cheese: "🧀", cherries: "🍒", cherry_blossom: "🌸", chestnut: "🌰", chicken: "🐔", children_crossing: "🚸", chipmunk: "🐿", chocolate_bar: "🍫", christmas_tree: "🎄", church: "⛪️", cinema: "🎦", circus_tent: "🎪", city_sunrise: "🌇", city_sunset: "🌆", cityscape: "🏙", cl: "🆑", clamp: "🗜", clap: "👏", clapper: "🎬", classical_building: "🏛", clinking_glasses: "🥂", clipboard: "📋", clock1: "🕐", clock10: "🕙", clock1030: "🕥", clock11: "🕚", clock1130: "🕦", clock12: "🕛", clock1230: "🕧", clock130: "🕜", clock2: "🕑", clock230: "🕝", clock3: "🕒", clock330: "🕞", clock4: "🕓", clock430: "🕟", clock5: "🕔", clock530: "🕠", clock6: "🕕", clock630: "🕡", clock7: "🕖", clock730: "🕢", clock8: "🕗", clock830: "🕣", clock9: "🕘", clock930: "🕤", closed_book: "📕", closed_lock_with_key: "🔐", closed_umbrella: "🌂", cloud: "☁️", cloud_with_lightning: "🌩", cloud_with_lightning_and_rain: "⛈", cloud_with_rain: "🌧", cloud_with_snow: "🌨", clown_face: "🤡", clubs: "♣️", cocktail: "🍸", coffee: "☕️", coffin: "⚰️", cold_sweat: "😰", comet: "☄️", computer: "💻", computer_mouse: "🖱", confetti_ball: "🎊", confounded: "😖", confused: "😕", congratulations: "㊗️", construction: "🚧", construction_worker_man: "👷", construction_worker_woman: "👷&zwj;♀️", control_knobs: "🎛", convenience_store: "🏪", cookie: "🍪", cool: "🆒", policeman: "👮", copyright: "©️", corn: "🌽", couch_and_lamp: "🛋", couple: "👫", couple_with_heart_woman_man: "💑", couple_with_heart_man_man: "👨&zwj;❤️&zwj;👨", couple_with_heart_woman_woman: "👩&zwj;❤️&zwj;👩", couplekiss_man_man: "👨&zwj;❤️&zwj;💋&zwj;👨", couplekiss_man_woman: "💏", couplekiss_woman_woman: "👩&zwj;❤️&zwj;💋&zwj;👩", cow: "🐮", cow2: "🐄", cowboy_hat_face: "🤠", crab: "🦀", crayon: "🖍", credit_card: "💳", crescent_moon: "🌙", cricket: "🏏", crocodile: "🐊", croissant: "🥐", crossed_fingers: "🤞", crossed_flags: "🎌", crossed_swords: "⚔️", crown: "👑", cry: "😢", crying_cat_face: "😿", crystal_ball: "🔮", cucumber: "🥒", cupid: "💘", curly_loop: "➰", currency_exchange: "💱", curry: "🍛", custard: "🍮", customs: "🛃", cyclone: "🌀", dagger: "🗡", dancer: "💃", dancing_women: "👯", dancing_men: "👯&zwj;♂️", dango: "🍡", dark_sunglasses: "🕶", dart: "🎯", dash: "💨", date: "📅", deciduous_tree: "🌳", deer: "🦌", department_store: "🏬", derelict_house: "🏚", desert: "🏜", desert_island: "🏝", desktop_computer: "🖥", male_detective: "🕵️", diamond_shape_with_a_dot_inside: "💠", diamonds: "♦️", disappointed: "😞", disappointed_relieved: "😥", dizzy: "💫", dizzy_face: "😵", do_not_litter: "🚯", dog: "🐶", dog2: "🐕", dollar: "💵", dolls: "🎎", dolphin: "🐬", door: "🚪", doughnut: "🍩", dove: "🕊", dragon: "🐉", dragon_face: "🐲", dress: "👗", dromedary_camel: "🐪", drooling_face: "🤤", droplet: "💧", drum: "🥁", duck: "🦆", dvd: "📀", "e-mail": "📧", eagle: "🦅", ear: "👂", ear_of_rice: "🌾", earth_africa: "🌍", earth_americas: "🌎", earth_asia: "🌏", egg: "🥚", eggplant: "🍆", eight_pointed_black_star: "✴️", eight_spoked_asterisk: "✳️", electric_plug: "🔌", elephant: "🐘", email: "✉️", end: "🔚", envelope_with_arrow: "📩", euro: "💶", european_castle: "🏰", european_post_office: "🏤", evergreen_tree: "🌲", exclamation: "❗️", expressionless: "😑", eye: "👁", eye_speech_bubble: "👁&zwj;🗨", eyeglasses: "👓", eyes: "👀", face_with_head_bandage: "🤕", face_with_thermometer: "🤒", fist_oncoming: "👊", factory: "🏭", fallen_leaf: "🍂", family_man_woman_boy: "👪", family_man_boy: "👨&zwj;👦", family_man_boy_boy: "👨&zwj;👦&zwj;👦", family_man_girl: "👨&zwj;👧", family_man_girl_boy: "👨&zwj;👧&zwj;👦", family_man_girl_girl: "👨&zwj;👧&zwj;👧", family_man_man_boy: "👨&zwj;👨&zwj;👦", family_man_man_boy_boy: "👨&zwj;👨&zwj;👦&zwj;👦", family_man_man_girl: "👨&zwj;👨&zwj;👧", family_man_man_girl_boy: "👨&zwj;👨&zwj;👧&zwj;👦", family_man_man_girl_girl: "👨&zwj;👨&zwj;👧&zwj;👧", family_man_woman_boy_boy: "👨&zwj;👩&zwj;👦&zwj;👦", family_man_woman_girl: "👨&zwj;👩&zwj;👧", family_man_woman_girl_boy: "👨&zwj;👩&zwj;👧&zwj;👦", family_man_woman_girl_girl: "👨&zwj;👩&zwj;👧&zwj;👧", family_woman_boy: "👩&zwj;👦", family_woman_boy_boy: "👩&zwj;👦&zwj;👦", family_woman_girl: "👩&zwj;👧", family_woman_girl_boy: "👩&zwj;👧&zwj;👦", family_woman_girl_girl: "👩&zwj;👧&zwj;👧", family_woman_woman_boy: "👩&zwj;👩&zwj;👦", family_woman_woman_boy_boy: "👩&zwj;👩&zwj;👦&zwj;👦", family_woman_woman_girl: "👩&zwj;👩&zwj;👧", family_woman_woman_girl_boy: "👩&zwj;👩&zwj;👧&zwj;👦", family_woman_woman_girl_girl: "👩&zwj;👩&zwj;👧&zwj;👧", fast_forward: "⏩", fax: "📠", fearful: "😨", feet: "🐾", female_detective: "🕵️&zwj;♀️", ferris_wheel: "🎡", ferry: "⛴", field_hockey: "🏑", file_cabinet: "🗄", file_folder: "📁", film_projector: "📽", film_strip: "🎞", fire: "🔥", fire_engine: "🚒", fireworks: "🎆", first_quarter_moon: "🌓", first_quarter_moon_with_face: "🌛", fish: "🐟", fish_cake: "🍥", fishing_pole_and_fish: "🎣", fist_raised: "✊", fist_left: "🤛", fist_right: "🤜", flags: "🎏", flashlight: "🔦", fleur_de_lis: "⚜️", flight_arrival: "🛬", flight_departure: "🛫", floppy_disk: "💾", flower_playing_cards: "🎴", flushed: "😳", fog: "🌫", foggy: "🌁", football: "🏈", footprints: "👣", fork_and_knife: "🍴", fountain: "⛲️", fountain_pen: "🖋", four_leaf_clover: "🍀", fox_face: "🦊", framed_picture: "🖼", free: "🆓", fried_egg: "🍳", fried_shrimp: "🍤", fries: "🍟", frog: "🐸", frowning: "😦", frowning_face: "☹️", frowning_man: "🙍&zwj;♂️", frowning_woman: "🙍", middle_finger: "🖕", fuelpump: "⛽️", full_moon: "🌕", full_moon_with_face: "🌝", funeral_urn: "⚱️", game_die: "🎲", gear: "⚙️", gem: "💎", gemini: "♊️", ghost: "👻", gift: "🎁", gift_heart: "💝", girl: "👧", globe_with_meridians: "🌐", goal_net: "🥅", goat: "🐐", golf: "⛳️", golfing_man: "🏌️", golfing_woman: "🏌️&zwj;♀️", gorilla: "🦍", grapes: "🍇", green_apple: "🍏", green_book: "📗", green_heart: "💚", green_salad: "🥗", grey_exclamation: "❕", grey_question: "❔", grimacing: "😬", grin: "😁", grinning: "😀", guardsman: "💂", guardswoman: "💂&zwj;♀️", guitar: "🎸", gun: "🔫", haircut_woman: "💇", haircut_man: "💇&zwj;♂️", hamburger: "🍔", hammer: "🔨", hammer_and_pick: "⚒", hammer_and_wrench: "🛠", hamster: "🐹", hand: "✋", handbag: "👜", handshake: "🤝", hankey: "💩", hatched_chick: "🐥", hatching_chick: "🐣", headphones: "🎧", hear_no_evil: "🙉", heart: "❤️", heart_decoration: "💟", heart_eyes: "😍", heart_eyes_cat: "😻", heartbeat: "💓", heartpulse: "💗", hearts: "♥️", heavy_check_mark: "✔️", heavy_division_sign: "➗", heavy_dollar_sign: "💲", heavy_heart_exclamation: "❣️", heavy_minus_sign: "➖", heavy_multiplication_x: "✖️", heavy_plus_sign: "➕", helicopter: "🚁", herb: "🌿", hibiscus: "🌺", high_brightness: "🔆", high_heel: "👠", hocho: "🔪", hole: "🕳", honey_pot: "🍯", horse: "🐴", horse_racing: "🏇", hospital: "🏥", hot_pepper: "🌶", hotdog: "🌭", hotel: "🏨", hotsprings: "♨️", hourglass: "⌛️", hourglass_flowing_sand: "⏳", house: "🏠", house_with_garden: "🏡", houses: "🏘", hugs: "🤗", hushed: "😯", ice_cream: "🍨", ice_hockey: "🏒", ice_skate: "⛸", icecream: "🍦", id: "🆔", ideograph_advantage: "🉐", imp: "👿", inbox_tray: "📥", incoming_envelope: "📨", tipping_hand_woman: "💁", information_source: "ℹ️", innocent: "😇", interrobang: "⁉️", iphone: "📱", izakaya_lantern: "🏮", jack_o_lantern: "🎃", japan: "🗾", japanese_castle: "🏯", japanese_goblin: "👺", japanese_ogre: "👹", jeans: "👖", joy: "😂", joy_cat: "😹", joystick: "🕹", kaaba: "🕋", key: "🔑", keyboard: "⌨️", keycap_ten: "🔟", kick_scooter: "🛴", kimono: "👘", kiss: "💋", kissing: "😗", kissing_cat: "😽", kissing_closed_eyes: "😚", kissing_heart: "😘", kissing_smiling_eyes: "😙", kiwi_fruit: "🥝", koala: "🐨", koko: "🈁", label: "🏷", large_blue_circle: "🔵", large_blue_diamond: "🔷", large_orange_diamond: "🔶", last_quarter_moon: "🌗", last_quarter_moon_with_face: "🌜", latin_cross: "✝️", laughing: "😆", leaves: "🍃", ledger: "📒", left_luggage: "🛅", left_right_arrow: "↔️", leftwards_arrow_with_hook: "↩️", lemon: "🍋", leo: "♌️", leopard: "🐆", level_slider: "🎚", libra: "♎️", light_rail: "🚈", link: "🔗", lion: "🦁", lips: "👄", lipstick: "💄", lizard: "🦎", lock: "🔒", lock_with_ink_pen: "🔏", lollipop: "🍭", loop: "➿", loud_sound: "🔊", loudspeaker: "📢", love_hotel: "🏩", love_letter: "💌", low_brightness: "🔅", lying_face: "🤥", m: "Ⓜ️", mag: "🔍", mag_right: "🔎", mahjong: "🀄️", mailbox: "📫", mailbox_closed: "📪", mailbox_with_mail: "📬", mailbox_with_no_mail: "📭", man: "👨", man_artist: "👨&zwj;🎨", man_astronaut: "👨&zwj;🚀", man_cartwheeling: "🤸&zwj;♂️", man_cook: "👨&zwj;🍳", man_dancing: "🕺", man_facepalming: "🤦&zwj;♂️", man_factory_worker: "👨&zwj;🏭", man_farmer: "👨&zwj;🌾", man_firefighter: "👨&zwj;🚒", man_health_worker: "👨&zwj;⚕️", man_in_tuxedo: "🤵", man_judge: "👨&zwj;⚖️", man_juggling: "🤹&zwj;♂️", man_mechanic: "👨&zwj;🔧", man_office_worker: "👨&zwj;💼", man_pilot: "👨&zwj;✈️", man_playing_handball: "🤾&zwj;♂️", man_playing_water_polo: "🤽&zwj;♂️", man_scientist: "👨&zwj;🔬", man_shrugging: "🤷&zwj;♂️", man_singer: "👨&zwj;🎤", man_student: "👨&zwj;🎓", man_teacher: "👨&zwj;🏫", man_technologist: "👨&zwj;💻", man_with_gua_pi_mao: "👲", man_with_turban: "👳", tangerine: "🍊", mans_shoe: "👞", mantelpiece_clock: "🕰", maple_leaf: "🍁", martial_arts_uniform: "🥋", mask: "😷", massage_woman: "💆", massage_man: "💆&zwj;♂️", meat_on_bone: "🍖", medal_military: "🎖", medal_sports: "🏅", mega: "📣", melon: "🍈", memo: "📝", men_wrestling: "🤼&zwj;♂️", menorah: "🕎", mens: "🚹", metal: "🤘", metro: "🚇", microphone: "🎤", microscope: "🔬", milk_glass: "🥛", milky_way: "🌌", minibus: "🚐", minidisc: "💽", mobile_phone_off: "📴", money_mouth_face: "🤑", money_with_wings: "💸", moneybag: "💰", monkey: "🐒", monkey_face: "🐵", monorail: "🚝", moon: "🌔", mortar_board: "🎓", mosque: "🕌", motor_boat: "🛥", motor_scooter: "🛵", motorcycle: "🏍", motorway: "🛣", mount_fuji: "🗻", mountain: "⛰", mountain_biking_man: "🚵", mountain_biking_woman: "🚵&zwj;♀️", mountain_cableway: "🚠", mountain_railway: "🚞", mountain_snow: "🏔", mouse: "🐭", mouse2: "🐁", movie_camera: "🎥", moyai: "🗿", mrs_claus: "🤶", muscle: "💪", mushroom: "🍄", musical_keyboard: "🎹", musical_note: "🎵", musical_score: "🎼", mute: "🔇", nail_care: "💅", name_badge: "📛", national_park: "🏞", nauseated_face: "🤢", necktie: "👔", negative_squared_cross_mark: "❎", nerd_face: "🤓", neutral_face: "😐", new: "🆕", new_moon: "🌑", new_moon_with_face: "🌚", newspaper: "📰", newspaper_roll: "🗞", next_track_button: "⏭", ng: "🆖", no_good_man: "🙅&zwj;♂️", no_good_woman: "🙅", night_with_stars: "🌃", no_bell: "🔕", no_bicycles: "🚳", no_entry: "⛔️", no_entry_sign: "🚫", no_mobile_phones: "📵", no_mouth: "😶", no_pedestrians: "🚷", no_smoking: "🚭", "non-potable_water": "🚱", nose: "👃", notebook: "📓", notebook_with_decorative_cover: "📔", notes: "🎶", nut_and_bolt: "🔩", o: "⭕️", o2: "🅾️", ocean: "🌊", octopus: "🐙", oden: "🍢", office: "🏢", oil_drum: "🛢", ok: "🆗", ok_hand: "👌", ok_man: "🙆&zwj;♂️", ok_woman: "🙆", old_key: "🗝", older_man: "👴", older_woman: "👵", om: "🕉", on: "🔛", oncoming_automobile: "🚘", oncoming_bus: "🚍", oncoming_police_car: "🚔", oncoming_taxi: "🚖", open_file_folder: "📂", open_hands: "👐", open_mouth: "😮", open_umbrella: "☂️", ophiuchus: "⛎", orange_book: "📙", orthodox_cross: "☦️", outbox_tray: "📤", owl: "🦉", ox: "🐂", package: "📦", page_facing_up: "📄", page_with_curl: "📃", pager: "📟", paintbrush: "🖌", palm_tree: "🌴", pancakes: "🥞", panda_face: "🐼", paperclip: "📎", paperclips: "🖇", parasol_on_ground: "⛱", parking: "🅿️", part_alternation_mark: "〽️", partly_sunny: "⛅️", passenger_ship: "🛳", passport_control: "🛂", pause_button: "⏸", peace_symbol: "☮️", peach: "🍑", peanuts: "🥜", pear: "🍐", pen: "🖊", pencil2: "✏️", penguin: "🐧", pensive: "😔", performing_arts: "🎭", persevere: "😣", person_fencing: "🤺", pouting_woman: "🙎", phone: "☎️", pick: "⛏", pig: "🐷", pig2: "🐖", pig_nose: "🐽", pill: "💊", pineapple: "🍍", ping_pong: "🏓", pisces: "♓️", pizza: "🍕", place_of_worship: "🛐", plate_with_cutlery: "🍽", play_or_pause_button: "⏯", point_down: "👇", point_left: "👈", point_right: "👉", point_up: "☝️", point_up_2: "👆", police_car: "🚓", policewoman: "👮&zwj;♀️", poodle: "🐩", popcorn: "🍿", post_office: "🏣", postal_horn: "📯", postbox: "📮", potable_water: "🚰", potato: "🥔", pouch: "👝", poultry_leg: "🍗", pound: "💷", rage: "😡", pouting_cat: "😾", pouting_man: "🙎&zwj;♂️", pray: "🙏", prayer_beads: "📿", pregnant_woman: "🤰", previous_track_button: "⏮", prince: "🤴", princess: "👸", printer: "🖨", purple_heart: "💜", purse: "👛", pushpin: "📌", put_litter_in_its_place: "🚮", question: "❓", rabbit: "🐰", rabbit2: "🐇", racehorse: "🐎", racing_car: "🏎", radio: "📻", radio_button: "🔘", radioactive: "☢️", railway_car: "🚃", railway_track: "🛤", rainbow: "🌈", rainbow_flag: "🏳️&zwj;🌈", raised_back_of_hand: "🤚", raised_hand_with_fingers_splayed: "🖐", raised_hands: "🙌", raising_hand_woman: "🙋", raising_hand_man: "🙋&zwj;♂️", ram: "🐏", ramen: "🍜", rat: "🐀", record_button: "⏺", recycle: "♻️", red_circle: "🔴", registered: "®️", relaxed: "☺️", relieved: "😌", reminder_ribbon: "🎗", repeat: "🔁", repeat_one: "🔂", rescue_worker_helmet: "⛑", restroom: "🚻", revolving_hearts: "💞", rewind: "⏪", rhinoceros: "🦏", ribbon: "🎀", rice: "🍚", rice_ball: "🍙", rice_cracker: "🍘", rice_scene: "🎑", right_anger_bubble: "🗯", ring: "💍", robot: "🤖", rocket: "🚀", rofl: "🤣", roll_eyes: "🙄", roller_coaster: "🎢", rooster: "🐓", rose: "🌹", rosette: "🏵", rotating_light: "🚨", round_pushpin: "📍", rowing_man: "🚣", rowing_woman: "🚣&zwj;♀️", rugby_football: "🏉", running_man: "🏃", running_shirt_with_sash: "🎽", running_woman: "🏃&zwj;♀️", sa: "🈂️", sagittarius: "♐️", sake: "🍶", sandal: "👡", santa: "🎅", satellite: "📡", saxophone: "🎷", school: "🏫", school_satchel: "🎒", scissors: "✂️", scorpion: "🦂", scorpius: "♏️", scream: "😱", scream_cat: "🙀", scroll: "📜", seat: "💺", secret: "㊙️", see_no_evil: "🙈", seedling: "🌱", selfie: "🤳", shallow_pan_of_food: "🥘", shamrock: "☘️", shark: "🦈", shaved_ice: "🍧", sheep: "🐑", shell: "🐚", shield: "🛡", shinto_shrine: "⛩", ship: "🚢", shirt: "👕", shopping: "🛍", shopping_cart: "🛒", shower: "🚿", shrimp: "🦐", signal_strength: "📶", six_pointed_star: "🔯", ski: "🎿", skier: "⛷", skull: "💀", skull_and_crossbones: "☠️", sleeping: "😴", sleeping_bed: "🛌", sleepy: "😪", slightly_frowning_face: "🙁", slightly_smiling_face: "🙂", slot_machine: "🎰", small_airplane: "🛩", small_blue_diamond: "🔹", small_orange_diamond: "🔸", small_red_triangle: "🔺", small_red_triangle_down: "🔻", smile: "😄", smile_cat: "😸", smiley: "😃", smiley_cat: "😺", smiling_imp: "😈", smirk: "😏", smirk_cat: "😼", smoking: "🚬", snail: "🐌", snake: "🐍", sneezing_face: "🤧", snowboarder: "🏂", snowflake: "❄️", snowman: "⛄️", snowman_with_snow: "☃️", sob: "😭", soccer: "⚽️", soon: "🔜", sos: "🆘", sound: "🔉", space_invader: "👾", spades: "♠️", spaghetti: "🍝", sparkle: "❇️", sparkler: "🎇", sparkles: "✨", sparkling_heart: "💖", speak_no_evil: "🙊", speaker: "🔈", speaking_head: "🗣", speech_balloon: "💬", speedboat: "🚤", spider: "🕷", spider_web: "🕸", spiral_calendar: "🗓", spiral_notepad: "🗒", spoon: "🥄", squid: "🦑", stadium: "🏟", star: "⭐️", star2: "🌟", star_and_crescent: "☪️", star_of_david: "✡️", stars: "🌠", station: "🚉", statue_of_liberty: "🗽", steam_locomotive: "🚂", stew: "🍲", stop_button: "⏹", stop_sign: "🛑", stopwatch: "⏱", straight_ruler: "📏", strawberry: "🍓", stuck_out_tongue: "😛", stuck_out_tongue_closed_eyes: "😝", stuck_out_tongue_winking_eye: "😜", studio_microphone: "🎙", stuffed_flatbread: "🥙", sun_behind_large_cloud: "🌥", sun_behind_rain_cloud: "🌦", sun_behind_small_cloud: "🌤", sun_with_face: "🌞", sunflower: "🌻", sunglasses: "😎", sunny: "☀️", sunrise: "🌅", sunrise_over_mountains: "🌄", surfing_man: "🏄", surfing_woman: "🏄&zwj;♀️", sushi: "🍣", suspension_railway: "🚟", sweat: "😓", sweat_drops: "💦", sweat_smile: "😅", sweet_potato: "🍠", swimming_man: "🏊", swimming_woman: "🏊&zwj;♀️", symbols: "🔣", synagogue: "🕍", syringe: "💉", taco: "🌮", tada: "🎉", tanabata_tree: "🎋", taurus: "♉️", taxi: "🚕", tea: "🍵", telephone_receiver: "📞", telescope: "🔭", tennis: "🎾", tent: "⛺️", thermometer: "🌡", thinking: "🤔", thought_balloon: "💭", ticket: "🎫", tickets: "🎟", tiger: "🐯", tiger2: "🐅", timer_clock: "⏲", tipping_hand_man: "💁&zwj;♂️", tired_face: "😫", tm: "™️", toilet: "🚽", tokyo_tower: "🗼", tomato: "🍅", tongue: "👅", top: "🔝", tophat: "🎩", tornado: "🌪", trackball: "🖲", tractor: "🚜", traffic_light: "🚥", train: "🚋", train2: "🚆", tram: "🚊", triangular_flag_on_post: "🚩", triangular_ruler: "📐", trident: "🔱", triumph: "😤", trolleybus: "🚎", trophy: "🏆", tropical_drink: "🍹", tropical_fish: "🐠", truck: "🚚", trumpet: "🎺", tulip: "🌷", tumbler_glass: "🥃", turkey: "🦃", turtle: "🐢", tv: "📺", twisted_rightwards_arrows: "🔀", two_hearts: "💕", two_men_holding_hands: "👬", two_women_holding_hands: "👭", u5272: "🈹", u5408: "🈴", u55b6: "🈺", u6307: "🈯️", u6708: "🈷️", u6709: "🈶", u6e80: "🈵", u7121: "🈚️", u7533: "🈸", u7981: "🈲", u7a7a: "🈳", umbrella: "☔️", unamused: "😒", underage: "🔞", unicorn: "🦄", unlock: "🔓", up: "🆙", upside_down_face: "🙃", v: "✌️", vertical_traffic_light: "🚦", vhs: "📼", vibration_mode: "📳", video_camera: "📹", video_game: "🎮", violin: "🎻", virgo: "♍️", volcano: "🌋", volleyball: "🏐", vs: "🆚", vulcan_salute: "🖖", walking_man: "🚶", walking_woman: "🚶&zwj;♀️", waning_crescent_moon: "🌘", waning_gibbous_moon: "🌖", warning: "⚠️", wastebasket: "🗑", watch: "⌚️", water_buffalo: "🐃", watermelon: "🍉", wave: "👋", wavy_dash: "〰️", waxing_crescent_moon: "🌒", wc: "🚾", weary: "😩", wedding: "💒", weight_lifting_man: "🏋️", weight_lifting_woman: "🏋️&zwj;♀️", whale: "🐳", whale2: "🐋", wheel_of_dharma: "☸️", wheelchair: "♿️", white_check_mark: "✅", white_circle: "⚪️", white_flag: "🏳️", white_flower: "💮", white_large_square: "⬜️", white_medium_small_square: "◽️", white_medium_square: "◻️", white_small_square: "▫️", white_square_button: "🔳", wilted_flower: "🥀", wind_chime: "🎐", wind_face: "🌬", wine_glass: "🍷", wink: "😉", wolf: "🐺", woman: "👩", woman_artist: "👩&zwj;🎨", woman_astronaut: "👩&zwj;🚀", woman_cartwheeling: "🤸&zwj;♀️", woman_cook: "👩&zwj;🍳", woman_facepalming: "🤦&zwj;♀️", woman_factory_worker: "👩&zwj;🏭", woman_farmer: "👩&zwj;🌾", woman_firefighter: "👩&zwj;🚒", woman_health_worker: "👩&zwj;⚕️", woman_judge: "👩&zwj;⚖️", woman_juggling: "🤹&zwj;♀️", woman_mechanic: "👩&zwj;🔧", woman_office_worker: "👩&zwj;💼", woman_pilot: "👩&zwj;✈️", woman_playing_handball: "🤾&zwj;♀️", woman_playing_water_polo: "🤽&zwj;♀️", woman_scientist: "👩&zwj;🔬", woman_shrugging: "🤷&zwj;♀️", woman_singer: "👩&zwj;🎤", woman_student: "👩&zwj;🎓", woman_teacher: "👩&zwj;🏫", woman_technologist: "👩&zwj;💻", woman_with_turban: "👳&zwj;♀️", womans_clothes: "👚", womans_hat: "👒", women_wrestling: "🤼&zwj;♀️", womens: "🚺", world_map: "🗺", worried: "😟", wrench: "🔧", writing_hand: "✍️", x: "❌", yellow_heart: "💛", yen: "💴", yin_yang: "☯️", yum: "😋", zap: "⚡️", zipper_mouth_face: "🤐", zzz: "💤", octocat: '<img alt=":octocat:" height="20" width="20" align="absmiddle" src="https://assets-cdn.github.com/images/icons/emoji/octocat.png">', showdown: "<span style=\"font-family: 'Anonymous Pro', monospace; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: #3e8b8a;text-underline-position: under;\">S</span>" }, s.Converter = function (e) {
         "use strict";
-        var t = {}, n = [], i = [], o = {}, a = h, f = { parsed: {}, raw: "", format: "" };
-        function g(e, t) { if (t = t || null, s.helper.isString(e)) {
+        var t = {}, n = [], i = [], o = {}, a = h, g = { parsed: {}, raw: "", format: "" };
+        function f(e, t) { if (t = t || null, s.helper.isString(e)) {
             if (t = e = s.helper.stdExtName(e), s.extensions[e])
                 return r.warn("DEPRECATION WARNING: " + e + " is an old extension that uses a deprecated loading method.Please inform the developer that the extension should be updated!"), void function (e, t) { "function" == typeof e && (e = e(new s.Converter)), s.helper.isArray(e) || (e = [e]); var r = d(e, t); if (!r.valid)
                     throw Error(r.error); for (var o = 0; o < e.length; ++o)
@@ -49579,12 +49579,12 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         !function () { for (var n in e = e || {}, l)
             l.hasOwnProperty(n) && (t[n] = l[n]); if ("object" != typeof e)
             throw Error("Converter expects the passed parameter to be an object, but " + typeof e + " was passed instead."); for (var i in e)
-            e.hasOwnProperty(i) && (t[i] = e[i]); t.extensions && s.helper.forEach(t.extensions, g); }(), this._dispatch = function (e, t, n, i) { if (o.hasOwnProperty(e))
+            e.hasOwnProperty(i) && (t[i] = e[i]); t.extensions && s.helper.forEach(t.extensions, f); }(), this._dispatch = function (e, t, n, i) { if (o.hasOwnProperty(e))
             for (var r = 0; r < o[e].length; ++r) {
                 var s = o[e][r](e, t, this, n, i);
                 s && void 0 !== s && (t = s);
             } return t; }, this.listen = function (e, t) { return p(e, t), this; }, this.makeHtml = function (e) { if (!e)
-            return e; var r = { gHtmlBlocks: [], gHtmlMdBlocks: [], gHtmlSpans: [], gUrls: {}, gTitles: {}, gDimensions: {}, gListLevel: 0, hashLinkCounts: {}, langExtensions: n, outputModifiers: i, converter: this, ghCodeBlocks: [], metadata: { parsed: {}, raw: "", format: "" } }; return e = (e = (e = (e = (e = e.replace(/¨/g, "¨T")).replace(/\$/g, "¨D")).replace(/\r\n/g, "\n")).replace(/\r/g, "\n")).replace(/\u00A0/g, "&nbsp;"), t.smartIndentationFix && (e = function (e) { var t = e.match(/^\s*/)[0].length, n = new RegExp("^\\s{0," + t + "}", "gm"); return e.replace(n, ""); }(e)), e = "\n\n" + e + "\n\n", e = (e = s.subParser("detab")(e, t, r)).replace(/^[ \t]+$/gm, ""), s.helper.forEach(n, (function (n) { e = s.subParser("runExtension")(n, e, t, r); })), e = s.subParser("metadata")(e, t, r), e = s.subParser("hashPreCodeTags")(e, t, r), e = s.subParser("githubCodeBlocks")(e, t, r), e = s.subParser("hashHTMLBlocks")(e, t, r), e = s.subParser("hashCodeTags")(e, t, r), e = s.subParser("stripLinkDefinitions")(e, t, r), e = s.subParser("blockGamut")(e, t, r), e = s.subParser("unhashHTMLSpans")(e, t, r), e = (e = (e = s.subParser("unescapeSpecialChars")(e, t, r)).replace(/¨D/g, "$$")).replace(/¨T/g, "¨"), e = s.subParser("completeHTMLDocument")(e, t, r), s.helper.forEach(i, (function (n) { e = s.subParser("runExtension")(n, e, t, r); })), f = r.metadata, e; }, this.makeMarkdown = this.makeMd = function (e, t) { if (e = (e = (e = e.replace(/\r\n/g, "\n")).replace(/\r/g, "\n")).replace(/>[ \t]+</, ">¨NBSP;<"), !t) {
+            return e; var r = { gHtmlBlocks: [], gHtmlMdBlocks: [], gHtmlSpans: [], gUrls: {}, gTitles: {}, gDimensions: {}, gListLevel: 0, hashLinkCounts: {}, langExtensions: n, outputModifiers: i, converter: this, ghCodeBlocks: [], metadata: { parsed: {}, raw: "", format: "" } }; return e = (e = (e = (e = (e = e.replace(/¨/g, "¨T")).replace(/\$/g, "¨D")).replace(/\r\n/g, "\n")).replace(/\r/g, "\n")).replace(/\u00A0/g, "&nbsp;"), t.smartIndentationFix && (e = function (e) { var t = e.match(/^\s*/)[0].length, n = new RegExp("^\\s{0," + t + "}", "gm"); return e.replace(n, ""); }(e)), e = "\n\n" + e + "\n\n", e = (e = s.subParser("detab")(e, t, r)).replace(/^[ \t]+$/gm, ""), s.helper.forEach(n, (function (n) { e = s.subParser("runExtension")(n, e, t, r); })), e = s.subParser("metadata")(e, t, r), e = s.subParser("hashPreCodeTags")(e, t, r), e = s.subParser("githubCodeBlocks")(e, t, r), e = s.subParser("hashHTMLBlocks")(e, t, r), e = s.subParser("hashCodeTags")(e, t, r), e = s.subParser("stripLinkDefinitions")(e, t, r), e = s.subParser("blockGamut")(e, t, r), e = s.subParser("unhashHTMLSpans")(e, t, r), e = (e = (e = s.subParser("unescapeSpecialChars")(e, t, r)).replace(/¨D/g, "$$")).replace(/¨T/g, "¨"), e = s.subParser("completeHTMLDocument")(e, t, r), s.helper.forEach(i, (function (n) { e = s.subParser("runExtension")(n, e, t, r); })), g = r.metadata, e; }, this.makeMarkdown = this.makeMd = function (e, t) { if (e = (e = (e = e.replace(/\r\n/g, "\n")).replace(/\r/g, "\n")).replace(/>[ \t]+</, ">¨NBSP;<"), !t) {
             if (!window || !window.document)
                 throw new Error("HTMLParser is undefined. If in a webworker or nodejs environment, you need to provide a WHATWG DOM and HTML such as JSDOM");
             t = window.document;
@@ -49606,14 +49606,14 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             var i = t.childNodes[n];
             3 === i.nodeType ? /\S/.test(i.nodeValue) || /^[ ]+$/.test(i.nodeValue) ? (i.nodeValue = i.nodeValue.split("\n").join(" "), i.nodeValue = i.nodeValue.replace(/(\s)+/g, "$1")) : (t.removeChild(i), --n) : 1 === i.nodeType && e(i);
         } }(n); for (var r = n.childNodes, o = "", a = 0; a < r.length; a++)
-            o += s.subParser("makeMarkdown.node")(r[a], i); return o; }, this.setOption = function (e, n) { t[e] = n; }, this.getOption = function (e) { return t[e]; }, this.getOptions = function () { return t; }, this.addExtension = function (e, t) { g(e, t = t || null); }, this.useExtension = function (e) { g(e); }, this.setFlavor = function (e) { if (!u.hasOwnProperty(e))
+            o += s.subParser("makeMarkdown.node")(r[a], i); return o; }, this.setOption = function (e, n) { t[e] = n; }, this.getOption = function (e) { return t[e]; }, this.getOptions = function () { return t; }, this.addExtension = function (e, t) { f(e, t = t || null); }, this.useExtension = function (e) { f(e); }, this.setFlavor = function (e) { if (!u.hasOwnProperty(e))
             throw Error(e + " flavor was not found"); var n = u[e]; for (var i in a = e, n)
             n.hasOwnProperty(i) && (t[i] = n[i]); }, this.getFlavor = function () { return a; }, this.removeExtension = function (e) { s.helper.isArray(e) || (e = [e]); for (var t = 0; t < e.length; ++t) {
             for (var r = e[t], o = 0; o < n.length; ++o)
                 n[o] === r && n.splice(o, 1);
             for (var a = 0; a < i.length; ++a)
                 i[a] === r && i.splice(a, 1);
-        } }, this.getAllExtensions = function () { return { language: n, output: i }; }, this.getMetadata = function (e) { return e ? f.raw : f.parsed; }, this.getMetadataFormat = function () { return f.format; }, this._setMetadataPair = function (e, t) { f.parsed[e] = t; }, this._setMetadataFormat = function (e) { f.format = e; }, this._setMetadataRaw = function (e) { f.raw = e; };
+        } }, this.getAllExtensions = function () { return { language: n, output: i }; }, this.getMetadata = function (e) { return e ? g.raw : g.parsed; }, this.getMetadataFormat = function () { return g.format; }, this._setMetadataPair = function (e, t) { g.parsed[e] = t; }, this._setMetadataFormat = function (e) { g.format = e; }, this._setMetadataRaw = function (e) { g.raw = e; };
     }, s.subParser("anchors", (function (e, t, n) {
         "use strict";
         var i = function (e, i, r, o, a, c, l) { if (s.helper.isUndefined(l) && (l = ""), r = r.toLowerCase(), e.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1)
@@ -49628,7 +49628,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             throw new Error("ghMentionsLink option must be a string"); var a = t.ghMentionsLink.replace(/\{u}/g, o), c = ""; return t.openLinksInNewWindow && (c = ' rel="noopener noreferrer" target="¨E95Eblank"'), n + '<a href="' + a + '"' + c + ">" + r + "</a>"; }))), n.converter._dispatch("anchors.after", e, t, n);
     })); var p = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+?\.[^'">\s]+?)()(\1)?(?=\s|$)(?!["<>])/gi, m = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+\.[^'">\s]+?)([.!?,()\[\]])?(\1)?(?=\s|$)(?!["<>])/gi, v = /()<(((https?|ftp|dict):\/\/|www\.)[^'">\s]+)()>()/gi, w = /(^|\s)(?:mailto:)?([A-Za-z0-9!#$%&'*+-/=?^_`{|}~.]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)(?=$|\s)/gim, y = /<()(?:mailto:)?([-.\w]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)>/gi, b = function (e) {
         "use strict";
-        return function (t, n, i, r, o, a, c) { var l = i = i.replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback), h = "", u = "", d = n || "", f = c || ""; return /^www\./i.test(i) && (i = i.replace(/^www\./i, "http://www.")), e.excludeTrailingPunctuationFromURLs && a && (h = a), e.openLinksInNewWindow && (u = ' rel="noopener noreferrer" target="¨E95Eblank"'), d + '<a href="' + i + '"' + u + ">" + l + "</a>" + h + f; };
+        return function (t, n, i, r, o, a, c) { var l = i = i.replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback), h = "", u = "", d = n || "", g = c || ""; return /^www\./i.test(i) && (i = i.replace(/^www\./i, "http://www.")), e.excludeTrailingPunctuationFromURLs && a && (h = a), e.openLinksInNewWindow && (u = ' rel="noopener noreferrer" target="¨E95Eblank"'), d + '<a href="' + i + '"' + u + ">" + l + "</a>" + h + g; };
     }, S = function (e, t) {
         "use strict";
         return function (n, i, r) { var o = "mailto:"; return i = i || "", r = s.subParser("unescapeSpecialChars")(r, e, t), e.encodeEmails ? (o = s.helper.encodeEmailAddress(o + r), r = s.helper.encodeEmailAddress(r)) : o += r, i + '<a href="' + o + '">' + r + "</a>"; };
@@ -49768,7 +49768,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             if ("" !== i && null !== i || (i = t.toLowerCase().replace(/ ?\n/g, " ")), r = "#" + i, s.helper.isUndefined(h[i]))
                 return e;
             r = h[i], s.helper.isUndefined(u[i]) || (l = u[i]), s.helper.isUndefined(d[i]) || (o = d[i].width, a = d[i].height);
-        } t = t.replace(/"/g, "&quot;").replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback); var f = '<img src="' + (r = r.replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback)) + '" alt="' + t + '"'; return l && s.helper.isString(l) && (f += ' title="' + (l = l.replace(/"/g, "&quot;").replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback)) + '"'), o && a && (f += ' width="' + (o = "*" === o ? "auto" : o) + '"', f += ' height="' + (a = "*" === a ? "auto" : a) + '"'), f + " />"; }
+        } t = t.replace(/"/g, "&quot;").replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback); var g = '<img src="' + (r = r.replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback)) + '" alt="' + t + '"'; return l && s.helper.isString(l) && (g += ' title="' + (l = l.replace(/"/g, "&quot;").replace(s.helper.regexes.asteriskDashAndColon, s.helper.escapeCharactersCallback)) + '"'), o && a && (g += ' width="' + (o = "*" === o ? "auto" : o) + '"', g += ' height="' + (a = "*" === a ? "auto" : a) + '"'), g + " />"; }
         return e = (e = (e = (e = (e = (e = n.converter._dispatch("images.before", e, t, n)).replace(/!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g, i)).replace(/!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, (function (e, t, n, r, o, s, a, c) { return i(e, t, n, r = r.replace(/\s/g, ""), o, s, 0, c); }))).replace(/!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g, i)).replace(/!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, i)).replace(/!\[([^\[\]]+)]()()()()()/g, i), n.converter._dispatch("images.after", e, t, n);
     })), s.subParser("italicsAndBold", (function (e, t, n) {
         "use strict";
@@ -49806,8 +49806,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         }
         for (o = r.length, a = 0; a < o; a++) {
             for (var l = "", h = r[a], u = !1; /¨(K|G)(\d+)\1/.test(h);) {
-                var d = RegExp.$1, f = RegExp.$2;
-                l = (l = "K" === d ? n.gHtmlBlocks[f] : u ? s.subParser("encodeCode")(n.ghCodeBlocks[f].text, t, n) : n.ghCodeBlocks[f].codeblock).replace(/\$/g, "$$$$"), h = h.replace(/(\n\n)?¨(K|G)\d+\2(\n\n)?/, l), /^<pre\b[^>]*>\s*<code\b[^>]*>/.test(h) && (u = !0);
+                var d = RegExp.$1, g = RegExp.$2;
+                l = (l = "K" === d ? n.gHtmlBlocks[g] : u ? s.subParser("encodeCode")(n.ghCodeBlocks[g].text, t, n) : n.ghCodeBlocks[g].codeblock).replace(/\$/g, "$$$$"), h = h.replace(/(\n\n)?¨(K|G)\d+\2(\n\n)?/, l), /^<pre\b[^>]*>\s*<code\b[^>]*>/.test(h) && (u = !0);
             }
             r[a] = h;
         }
@@ -49837,13 +49837,13 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             return e;
         function i(e, i) { return "<td" + i + ">" + s.subParser("spanGamut")(e, t, n) + "</td>\n"; }
         function r(e) { var r, o = e.split("\n"); for (r = 0; r < o.length; ++r)
-            /^ {0,3}\|/.test(o[r]) && (o[r] = o[r].replace(/^ {0,3}\|/, "")), /\|[ \t]*$/.test(o[r]) && (o[r] = o[r].replace(/\|[ \t]*$/, "")), o[r] = s.subParser("codeSpans")(o[r], t, n); var a, c, l, h, u = o[0].split("|").map((function (e) { return e.trim(); })), d = o[1].split("|").map((function (e) { return e.trim(); })), f = [], g = [], p = [], m = []; for (o.shift(), o.shift(), r = 0; r < o.length; ++r)
-            "" !== o[r].trim() && f.push(o[r].split("|").map((function (e) { return e.trim(); }))); if (u.length < d.length)
+            /^ {0,3}\|/.test(o[r]) && (o[r] = o[r].replace(/^ {0,3}\|/, "")), /\|[ \t]*$/.test(o[r]) && (o[r] = o[r].replace(/\|[ \t]*$/, "")), o[r] = s.subParser("codeSpans")(o[r], t, n); var a, c, l, h, u = o[0].split("|").map((function (e) { return e.trim(); })), d = o[1].split("|").map((function (e) { return e.trim(); })), g = [], f = [], p = [], m = []; for (o.shift(), o.shift(), r = 0; r < o.length; ++r)
+            "" !== o[r].trim() && g.push(o[r].split("|").map((function (e) { return e.trim(); }))); if (u.length < d.length)
             return e; for (r = 0; r < d.length; ++r)
             p.push((a = d[r], /^:[ \t]*--*$/.test(a) ? ' style="text-align:left;"' : /^--*[ \t]*:[ \t]*$/.test(a) ? ' style="text-align:right;"' : /^:[ \t]*--*[ \t]*:$/.test(a) ? ' style="text-align:center;"' : "")); for (r = 0; r < u.length; ++r)
-            s.helper.isUndefined(p[r]) && (p[r] = ""), g.push((c = u[r], l = p[r], h = void 0, h = "", c = c.trim(), (t.tablesHeaderId || t.tableHeaderId) && (h = ' id="' + c.replace(/ /g, "_").toLowerCase() + '"'), "<th" + h + l + ">" + (c = s.subParser("spanGamut")(c, t, n)) + "</th>\n")); for (r = 0; r < f.length; ++r) {
-            for (var v = [], w = 0; w < g.length; ++w)
-                s.helper.isUndefined(f[r][w]), v.push(i(f[r][w], p[w]));
+            s.helper.isUndefined(p[r]) && (p[r] = ""), f.push((c = u[r], l = p[r], h = void 0, h = "", c = c.trim(), (t.tablesHeaderId || t.tableHeaderId) && (h = ' id="' + c.replace(/ /g, "_").toLowerCase() + '"'), "<th" + h + l + ">" + (c = s.subParser("spanGamut")(c, t, n)) + "</th>\n")); for (r = 0; r < g.length; ++r) {
+            for (var v = [], w = 0; w < f.length; ++w)
+                s.helper.isUndefined(g[r][w]), v.push(i(g[r][w], p[w]));
             m.push(v);
         } return function (e, t) { for (var n = "<table>\n<thead>\n<tr>\n", i = e.length, r = 0; r < i; ++r)
             n += e[r]; for (n += "</tr>\n</thead>\n<tbody>\n", r = 0; r < t.length; ++r) {
@@ -49851,7 +49851,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             for (var o = 0; o < i; ++o)
                 n += t[r][o];
             n += "</tr>\n";
-        } return n + "</tbody>\n</table>\n"; }(g, m); }
+        } return n + "</tbody>\n</table>\n"; }(f, m); }
         return e = (e = (e = (e = n.converter._dispatch("tables.before", e, t, n)).replace(/\\(\|)/g, s.helper.escapeCharactersCallback)).replace(/^ {0,3}\|?.+\|.+\n {0,3}\|?[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*:?[ \t]*(?:[-=]){2,}[\s\S]+?(?:\n\n|¨0)/gm, r)).replace(/^ {0,3}\|.+\|[ \t]*\n {0,3}\|[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*\n( {0,3}\|.+\|[ \t]*\n)*(?:\n|¨0)/gm, r), n.converter._dispatch("tables.after", e, t, n);
     })), s.subParser("underline", (function (e, t, n) {
         "use strict";
@@ -50052,19 +50052,19 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         for (n = 0; n < c.length; ++n) {
             var u = o.push([]) - 1, d = c[n].getElementsByTagName("td");
             for (i = 0; i < a.length; ++i) {
-                var f = " ";
-                void 0 !== d[i] && (f = s.subParser("makeMarkdown.tableCell")(d[i], t)), o[u].push(f);
+                var g = " ";
+                void 0 !== d[i] && (g = s.subParser("makeMarkdown.tableCell")(d[i], t)), o[u].push(g);
             }
         }
-        var g = 3;
+        var f = 3;
         for (n = 0; n < o.length; ++n)
             for (i = 0; i < o[n].length; ++i) {
                 var p = o[n][i].length;
-                p > g && (g = p);
+                p > f && (f = p);
             }
         for (n = 0; n < o.length; ++n) {
             for (i = 0; i < o[n].length; ++i)
-                1 === n ? ":" === o[n][i].slice(-1) ? o[n][i] = s.helper.padEnd(o[n][i].slice(-1), g - 1, "-") + ":" : o[n][i] = s.helper.padEnd(o[n][i], g, "-") : o[n][i] = s.helper.padEnd(o[n][i], g);
+                1 === n ? ":" === o[n][i].slice(-1) ? o[n][i] = s.helper.padEnd(o[n][i].slice(-1), f - 1, "-") + ":" : o[n][i] = s.helper.padEnd(o[n][i], f, "-") : o[n][i] = s.helper.padEnd(o[n][i], f);
             r += "| " + o[n].join(" | ") + " |\n";
         }
         return r.trim();
@@ -50086,8 +50086,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     }.call(t, n, t, e)) || (e.exports = i); }).call(this); }, 3989: (e, t, n) => {
         "use strict";
         n.r(t), n.d(t, { default: () => v });
-        var i = n(6062), r = n.n(i), o = n(4036), s = n.n(o), a = n(6793), c = n.n(a), l = n(7892), h = n.n(l), u = n(1173), d = n.n(u), f = n(2464), g = n.n(f), p = n(3763), m = {};
-        m.styleTagTransform = g(), m.setAttributes = h(), m.insert = c().bind(null, "head"), m.domAPI = s(), m.insertStyleElement = d(), r()(p.Z, m);
+        var i = n(6062), r = n.n(i), o = n(4036), s = n.n(o), a = n(6793), c = n.n(a), l = n(7892), h = n.n(l), u = n(1173), d = n.n(u), g = n(2464), f = n.n(g), p = n(3763), m = {};
+        m.styleTagTransform = f(), m.setAttributes = h(), m.insert = c().bind(null, "head"), m.domAPI = s(), m.insertStyleElement = d(), r()(p.Z, m);
         const v = p.Z && p.Z.locals ? p.Z.locals : void 0;
     }, 6062: e => {
         "use strict";
@@ -50100,12 +50100,12 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         function i(e, i) { for (var o = {}, s = [], a = 0; a < e.length; a++) {
             var c = e[a], l = i.base ? c[0] + i.base : c[0], h = o[l] || 0, u = "".concat(l, " ").concat(h);
             o[l] = h + 1;
-            var d = n(u), f = { css: c[1], media: c[2], sourceMap: c[3], supports: c[4], layer: c[5] };
+            var d = n(u), g = { css: c[1], media: c[2], sourceMap: c[3], supports: c[4], layer: c[5] };
             if (-1 !== d)
-                t[d].references++, t[d].updater(f);
+                t[d].references++, t[d].updater(g);
             else {
-                var g = r(f, i);
-                i.byIndex = a, t.splice(a, 0, { identifier: u, updater: g, references: 1 });
+                var f = r(g, i);
+                i.byIndex = a, t.splice(a, 0, { identifier: u, updater: f, references: 1 });
             }
             s.push(u);
         } return s; }
@@ -50157,6 +50157,44 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 t.removeChild(t.firstChild);
             t.appendChild(document.createTextNode(e));
         } };
+    }, 1395: (e, t) => {
+        "use strict";
+        Object.defineProperty(t, "__esModule", { value: !0 }), t.createWorker = void 0, t.createWorker = function (e, t) { if ("undefined" == typeof Worker)
+            return { postMessage: function () { }, terminate: function () { } }; var n, i = (n = function (e, t) { const n = `manager.registerService("json", {\n        module: () => {\n            importScripts("${e}/json-service.js");\n            return {JsonService};\n        },\n        className: "JsonService",\n        modes: "json|json5"\n    });`, i = `manager.registerService("html", {\n        module: () => {\n            importScripts("${e}/html-service.js");\n            return {HtmlService};\n        },\n        className: "HtmlService",\n        modes: "html"\n    });`, r = `manager.registerService("css", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "css"\n    });`, o = `manager.registerService("less", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "less"\n    });`, s = `manager.registerService("scss", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "scss"\n    });`, a = `manager.registerService("typescript", {\n        module: () => {\n            importScripts("${e}/typescript-service.js");\n            return {TypescriptService};\n        },\n        className: "TypescriptService",\n        modes: "typescript|tsx",\n    });`, c = `manager.registerService("lua", {\n        module: () => {\n            importScripts("${e}/lua-service.js");\n            return {LuaService};\n        },\n        className: "LuaService",\n        modes: "lua",\n    });`, l = `manager.registerService("yaml", {\n        module: () => {\n            importScripts("${e}/yaml-service.js");\n            return {YamlService};\n        },\n        className: "YamlService",\n        modes: "yaml",\n    });`, h = `manager.registerService("xml", {\n        module: () => {\n            importScripts("${e}/xml-service.js");\n            return {XmlService};\n        },\n        className: "XmlService",\n        modes: "xml",\n    });`, u = `manager.registerService("php", {\n        module: () => {\n            importScripts("${e}/xml-service.js");\n            return {PhpService};\n        },\n        className: "PhpService",\n        modes: "php"\n    });`, d = `manager.registerService("javascript", {\n        module: () => {\n            importScripts("${e}/javascript-service.js");\n            return {JavascriptService};\n        },\n        className: "JavascriptService",\n        modes: "javascript",\n    });`; if (!t)
+            return `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${[n, i, r, o, s, a, c, l, h, u, d].join("\n")}\n}()`; let g = []; return Object.entries(t).forEach((([e, t]) => { if (t)
+            switch (e) {
+                case "javascript":
+                    g.push(d);
+                    break;
+                case "css":
+                    g.push(r);
+                    break;
+                case "html":
+                    g.push(i);
+                    break;
+                case "json":
+                    g.push(n);
+                    break;
+                case "less":
+                    g.push(o);
+                    break;
+                case "lua":
+                    g.push(c);
+                    break;
+                case "typescript":
+                    g.push(a);
+                    break;
+                case "php":
+                    g.push(u);
+                    break;
+                case "scss":
+                    g.push(s);
+                    break;
+                case "xml":
+                    g.push(h);
+                    break;
+                case "yaml": g.push(l);
+            } })), `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${g.join("\n")}\n}()`; }(e, t), new Blob([n.toString()], { type: "application/javascript" })), r = (window.URL || window.webkitURL).createObjectURL(i); return new Worker(r); };
     }, 2580: function (e, t, n) {
         "use strict";
         var i = this && this.__importDefault || function (e) { return e && e.__esModule ? e : { default: e }; };
@@ -50214,8 +50252,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         var i = this && this.__importDefault || function (e) { return e && e.__esModule ? e : { default: e }; };
         Object.defineProperty(t, "__esModule", { value: !0 }), t.LanguageProvider = void 0;
-        const r = n(8151), o = n(2580), s = n(8299), a = n(9853), c = n(8458), l = i(n(6006));
-        class h {
+        const r = n(8151), o = n(2580), s = n(8299), a = n(9853), c = n(8458), l = i(n(6006)), h = n(1395);
+        class u {
             $activeEditor;
             $descriptionTooltip;
             $markdownConverter;
@@ -50223,12 +50261,14 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             $sessionLanguageProviders = {};
             $editors = [];
             constructor(e, t) { this.$messageController = e, this.$markdownConverter = t ?? new l.default.Converter, this.$descriptionTooltip = new o.DescriptionTooltip(this); }
-            static create(e, t) { let n; return n = new a.MessageController(e), new h(n, t); }
-            $registerSession = (e, t) => { e && (this.$sessionLanguageProviders[e.id] ??= new u(e, this.$messageController, t)); };
+            static create(e, t) { let n; return n = new a.MessageController(e), new u(n, t); }
+            static fromCdn(e) { let t; if ("" == e || !/^http(s)?:/.test(e))
+                throw "Url is not valid"; "/" == e[e.length - 1] && (e = e.substring(0, e.length - 1)); let n = (0, h.createWorker)(e); return t = new a.MessageController(n), new u(t); }
+            $registerSession = (e, t) => { e && (this.$sessionLanguageProviders[e.id] ??= new d(e, this.$messageController, t)); };
             $getSessionLanguageProvider(e) { return this.$sessionLanguageProviders[e.id]; }
             $getFileName(e) { return this.$getSessionLanguageProvider(e).fileName; }
             registerEditor(e) { this.$editors.includes(e) || this.$registerEditor(e), this.$registerSession(e.session); }
-            $registerEditor(e) { this.$editors.push(e), e.on("changeSession", (({ session: e }) => this.$registerSession(e))), this.$registerCompleters(e), this.$descriptionTooltip.registerEditor(e), this.$activeEditor ??= e, e.on("focus", (() => { this.$activeEditor = e; })); }
+            $registerEditor(e) { this.$editors.push(e), e.setOption("useWorker", !1), e.on("changeSession", (({ session: e }) => this.$registerSession(e))), this.$registerCompleters(e), this.$descriptionTooltip.registerEditor(e), this.$activeEditor ??= e, e.on("focus", (() => { this.$activeEditor = e; })); }
             setOptions(e, t) { this.$getSessionLanguageProvider(e).setOptions(t); }
             setGlobalOptions(e, t, n = !1) { this.$messageController.setGlobalOptions(e, t, n); }
             doHover(e, t, n) { this.$messageController.doHover(this.$getFileName(e), (0, c.fromPoint)(t), (e => n && n((0, c.toTooltip)(e)))); }
@@ -50239,8 +50279,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                         return; let i = (0, c.toResolvedCompletion)(t, n); t.docText = i.docText, i.docHTML ? t.docHTML = i.docHTML : i.docMarkdown && (t.docHTML = s.CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(i.docMarkdown))), e.completer.updateDocTooltip(); })), t) }]; }
             dispose() { }
         }
-        t.LanguageProvider = h;
-        class u {
+        t.LanguageProvider = u;
+        class d {
             session;
             fileName;
             $messageController;
@@ -50399,17 +50439,17 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             let t = new o.RangeList;
             return t.ranges = [l(e.insert), l(e.replace)], t.merge(), t[0];
         } return l(e.range); }
-        function f(e) { if (e)
+        function g(e) { if (e)
             return "string" == typeof e ? { type: "plaintext", text: e } : e.kind === i.MarkupKind.Markdown ? { type: "markdown", text: e.value } : { type: "plaintext", text: e.value }; }
-        t.fromRange = a, t.rangeFromPositions = c, t.toRange = l, t.fromPoint = h, t.toPoint = function (e) { return { row: e.line, column: e.character }; }, t.toAnnotations = function (e) { return e.map((e => ({ row: e.range.start.line, column: e.range.start.character, text: e.message, type: 1 === e.severity ? "error" : 2 === e.severity ? "warning" : "info" }))); }, t.toCompletion = u, t.toCompletions = function (e) { return Array.isArray(e) || (e = e.items), e && e.map((e => u(e))); }, t.toResolvedCompletion = function (e, t) { let n = f(t.documentation); return n && ("markdown" === n.type ? e.docMarkdown = n.text : e.docText = n.text), e; }, t.toCompletionItem = function (e) { let t; e.command && (t = { title: "triggerSuggest", command: e.command }); let n = { label: e.caption ?? "", kind: s.CommonConverter.convertKind(e.meta), command: t, insertTextFormat: e.snippet ? i.InsertTextFormat.Snippet : i.InsertTextFormat.PlainText, documentation: e.documentation }; return e.range ? n.textEdit = { range: a(e.range), newText: e.snippet ?? e.value } : n.insertText = e.snippet ?? e.value, n.fileName = e.fileName, n.position = e.position, n.item = e.item, n; }, t.getTextEditRange = d, t.toTooltip = function (e) { let t; if (e)
-            return t = i.MarkupContent.is(e.contents) ? f(e.contents) : i.MarkedString.is(e.contents) ? { type: "markdown", text: "```" + e.contents.value + "```" } : { type: "markdown", text: e.contents.map((e => "string" != typeof e ? `\`\`\`${e.value}\`\`\`` : e)).join("\n\n") }, { content: t, range: e.range && l(e.range) }; }, t.fromMarkupContent = f, t.fromAceDelta = function (e, t) { const n = e.lines.length > 1 ? e.lines.join(t) : e.lines[0]; return { range: "insert" === e.action ? c(h(e.start), h(e.start)) : c(h(e.start), h(e.end)), text: "insert" === e.action ? n : "" }; };
+        t.fromRange = a, t.rangeFromPositions = c, t.toRange = l, t.fromPoint = h, t.toPoint = function (e) { return { row: e.line, column: e.character }; }, t.toAnnotations = function (e) { return e.map((e => ({ row: e.range.start.line, column: e.range.start.character, text: e.message, type: 1 === e.severity ? "error" : 2 === e.severity ? "warning" : "info" }))); }, t.toCompletion = u, t.toCompletions = function (e) { return Array.isArray(e) || (e = e.items), e && e.map((e => u(e))); }, t.toResolvedCompletion = function (e, t) { let n = g(t.documentation); return n && ("markdown" === n.type ? e.docMarkdown = n.text : e.docText = n.text), e; }, t.toCompletionItem = function (e) { let t; e.command && (t = { title: "triggerSuggest", command: e.command }); let n = { label: e.caption ?? "", kind: s.CommonConverter.convertKind(e.meta), command: t, insertTextFormat: e.snippet ? i.InsertTextFormat.Snippet : i.InsertTextFormat.PlainText, documentation: e.documentation }; return e.range ? n.textEdit = { range: a(e.range), newText: e.snippet ?? e.value } : n.insertText = e.snippet ?? e.value, n.fileName = e.fileName, n.position = e.position, n.item = e.item, n; }, t.getTextEditRange = d, t.toTooltip = function (e) { let t; if (e)
+            return t = i.MarkupContent.is(e.contents) ? g(e.contents) : i.MarkedString.is(e.contents) ? { type: "markdown", text: "```" + e.contents.value + "```" } : { type: "markdown", text: e.contents.map((e => "string" != typeof e ? `\`\`\`${e.value}\`\`\`` : e)).join("\n\n") }, { content: t, range: e.range && l(e.range) }; }, t.fromMarkupContent = g, t.fromAceDelta = function (e, t) { const n = e.lines.length > 1 ? e.lines.join(t) : e.lines[0]; return { range: "insert" === e.action ? c(h(e.start), h(e.start)) : c(h(e.start), h(e.end)), text: "insert" === e.action ? n : "" }; };
     }, 82: e => { e.exports = function (e) { return e && "object" == typeof e && "function" == typeof e.copy && "function" == typeof e.fill && "function" == typeof e.readUInt8; }; }, 4895: (e, t, n) => {
         "use strict";
         var i = n(2635), r = n(3138), o = n(2094), s = n(198);
         function a(e) { return e.call.bind(e); }
-        var c = "undefined" != typeof BigInt, l = "undefined" != typeof Symbol, h = a(Object.prototype.toString), u = a(Number.prototype.valueOf), d = a(String.prototype.valueOf), f = a(Boolean.prototype.valueOf);
+        var c = "undefined" != typeof BigInt, l = "undefined" != typeof Symbol, h = a(Object.prototype.toString), u = a(Number.prototype.valueOf), d = a(String.prototype.valueOf), g = a(Boolean.prototype.valueOf);
         if (c)
-            var g = a(BigInt.prototype.valueOf);
+            var f = a(BigInt.prototype.valueOf);
         if (l)
             var p = a(Symbol.prototype.valueOf);
         function m(e, t) { if ("object" != typeof e)
@@ -50433,8 +50473,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         function x(e) { return void 0 !== $ && (void 0 === R.working && (R.working = R(new $)), R.working ? R(e) : e instanceof $); }
         function T(e) { return m(e, u); }
         function A(e) { return m(e, d); }
-        function E(e) { return m(e, f); }
-        function M(e) { return c && m(e, g); }
+        function E(e) { return m(e, g); }
+        function M(e) { return c && m(e, f); }
         function L(e) { return l && m(e, p); }
         t.isSharedArrayBuffer = x, t.isAsyncFunction = function (e) { return "[object AsyncFunction]" === h(e); }, t.isMapIterator = function (e) { return "[object Map Iterator]" === h(e); }, t.isSetIterator = function (e) { return "[object Set Iterator]" === h(e); }, t.isGeneratorObject = function (e) { return "[object Generator]" === h(e); }, t.isWebAssemblyCompiledModule = function (e) { return "[object WebAssembly.Module]" === h(e); }, t.isNumberObject = T, t.isStringObject = A, t.isBooleanObject = E, t.isBigIntObject = M, t.isSymbolObject = L, t.isBoxedPrimitive = function (e) { return T(e) || A(e) || E(e) || M(e) || L(e); }, t.isAnyArrayBuffer = function (e) { return "undefined" != typeof Uint8Array && (C(e) || x(e)); }, ["isProxy", "isExternal", "isModuleNamespaceObject"].forEach((function (e) { Object.defineProperty(t, e, { enumerable: !1, value: function () { throw new Error(e + " is not supported in userland"); } }); }));
     }, 3335: (e, t, n) => { var i = n(4406), r = n(3716), o = Object.getOwnPropertyDescriptors || function (e) { for (var t = Object.keys(e), n = {}, i = 0; i < t.length; i++)
@@ -50464,16 +50504,16 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     } return e.apply(this, arguments); }; }; var a = {}, c = /^$/; if (i.env.NODE_DEBUG) {
         var l = i.env.NODE_DEBUG;
         l = l.replace(/[|\\{}()[\]^$+?.]/g, "\\$&").replace(/\*/g, ".*").replace(/,/g, "$|^").toUpperCase(), c = new RegExp("^" + l + "$", "i");
-    } function h(e, n) { var i = { seen: [], stylize: d }; return arguments.length >= 3 && (i.depth = arguments[2]), arguments.length >= 4 && (i.colors = arguments[3]), v(n) ? i.showHidden = n : n && t._extend(i, n), S(i.showHidden) && (i.showHidden = !1), S(i.depth) && (i.depth = 2), S(i.colors) && (i.colors = !1), S(i.customInspect) && (i.customInspect = !0), i.colors && (i.stylize = u), f(i, e, i.depth); } function u(e, t) { var n = h.styles[t]; return n ? "[" + h.colors[n][0] + "m" + e + "[" + h.colors[n][1] + "m" : e; } function d(e, t) { return e; } function f(e, n, i) { if (e.customInspect && n && R(n.inspect) && n.inspect !== t.inspect && (!n.constructor || n.constructor.prototype !== n)) {
+    } function h(e, n) { var i = { seen: [], stylize: d }; return arguments.length >= 3 && (i.depth = arguments[2]), arguments.length >= 4 && (i.colors = arguments[3]), v(n) ? i.showHidden = n : n && t._extend(i, n), S(i.showHidden) && (i.showHidden = !1), S(i.depth) && (i.depth = 2), S(i.colors) && (i.colors = !1), S(i.customInspect) && (i.customInspect = !0), i.colors && (i.stylize = u), g(i, e, i.depth); } function u(e, t) { var n = h.styles[t]; return n ? "[" + h.colors[n][0] + "m" + e + "[" + h.colors[n][1] + "m" : e; } function d(e, t) { return e; } function g(e, n, i) { if (e.customInspect && n && R(n.inspect) && n.inspect !== t.inspect && (!n.constructor || n.constructor.prototype !== n)) {
         var r = n.inspect(i, e);
-        return b(r) || (r = f(e, r, i)), r;
+        return b(r) || (r = g(e, r, i)), r;
     } var o = function (e, t) { if (S(t))
         return e.stylize("undefined", "undefined"); if (b(t)) {
         var n = "'" + JSON.stringify(t).replace(/^"|"$/g, "").replace(/'/g, "\\'").replace(/\\"/g, '"') + "'";
         return e.stylize(n, "string");
     } return y(t) ? e.stylize("" + t, "number") : v(t) ? e.stylize("" + t, "boolean") : w(t) ? e.stylize("null", "null") : void 0; }(e, n); if (o)
         return o; var s = Object.keys(n), a = function (e) { var t = {}; return e.forEach((function (e, n) { t[e] = !0; })), t; }(s); if (e.showHidden && (s = Object.getOwnPropertyNames(n)), $(n) && (s.indexOf("message") >= 0 || s.indexOf("description") >= 0))
-        return g(n); if (0 === s.length) {
+        return f(n); if (0 === s.length) {
         if (R(n)) {
             var c = n.name ? ": " + n.name : "";
             return e.stylize("[Function" + c + "]", "special");
@@ -50483,9 +50523,9 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         if (_(n))
             return e.stylize(Date.prototype.toString.call(n), "date");
         if ($(n))
-            return g(n);
-    } var l, h = "", u = !1, d = ["{", "}"]; return m(n) && (u = !0, d = ["[", "]"]), R(n) && (h = " [Function" + (n.name ? ": " + n.name : "") + "]"), C(n) && (h = " " + RegExp.prototype.toString.call(n)), _(n) && (h = " " + Date.prototype.toUTCString.call(n)), $(n) && (h = " " + g(n)), 0 !== s.length || u && 0 != n.length ? i < 0 ? C(n) ? e.stylize(RegExp.prototype.toString.call(n), "regexp") : e.stylize("[Object]", "special") : (e.seen.push(n), l = u ? function (e, t, n, i, r) { for (var o = [], s = 0, a = t.length; s < a; ++s)
-        M(t, String(s)) ? o.push(p(e, t, n, i, String(s), !0)) : o.push(""); return r.forEach((function (r) { r.match(/^\d+$/) || o.push(p(e, t, n, i, r, !0)); })), o; }(e, n, i, a, s) : s.map((function (t) { return p(e, n, i, a, t, u); })), e.seen.pop(), function (e, t, n) { return e.reduce((function (e, t) { return t.indexOf("\n"), e + t.replace(/\u001b\[\d\d?m/g, "").length + 1; }), 0) > 60 ? n[0] + ("" === t ? "" : t + "\n ") + " " + e.join(",\n  ") + " " + n[1] : n[0] + t + " " + e.join(", ") + " " + n[1]; }(l, h, d)) : d[0] + h + d[1]; } function g(e) { return "[" + Error.prototype.toString.call(e) + "]"; } function p(e, t, n, i, r, o) { var s, a, c; if ((c = Object.getOwnPropertyDescriptor(t, r) || { value: t[r] }).get ? a = c.set ? e.stylize("[Getter/Setter]", "special") : e.stylize("[Getter]", "special") : c.set && (a = e.stylize("[Setter]", "special")), M(i, r) || (s = "[" + r + "]"), a || (e.seen.indexOf(c.value) < 0 ? (a = w(n) ? f(e, c.value, null) : f(e, c.value, n - 1)).indexOf("\n") > -1 && (a = o ? a.split("\n").map((function (e) { return "  " + e; })).join("\n").slice(2) : "\n" + a.split("\n").map((function (e) { return "   " + e; })).join("\n")) : a = e.stylize("[Circular]", "special")), S(s)) {
+            return f(n);
+    } var l, h = "", u = !1, d = ["{", "}"]; return m(n) && (u = !0, d = ["[", "]"]), R(n) && (h = " [Function" + (n.name ? ": " + n.name : "") + "]"), C(n) && (h = " " + RegExp.prototype.toString.call(n)), _(n) && (h = " " + Date.prototype.toUTCString.call(n)), $(n) && (h = " " + f(n)), 0 !== s.length || u && 0 != n.length ? i < 0 ? C(n) ? e.stylize(RegExp.prototype.toString.call(n), "regexp") : e.stylize("[Object]", "special") : (e.seen.push(n), l = u ? function (e, t, n, i, r) { for (var o = [], s = 0, a = t.length; s < a; ++s)
+        M(t, String(s)) ? o.push(p(e, t, n, i, String(s), !0)) : o.push(""); return r.forEach((function (r) { r.match(/^\d+$/) || o.push(p(e, t, n, i, r, !0)); })), o; }(e, n, i, a, s) : s.map((function (t) { return p(e, n, i, a, t, u); })), e.seen.pop(), function (e, t, n) { return e.reduce((function (e, t) { return t.indexOf("\n"), e + t.replace(/\u001b\[\d\d?m/g, "").length + 1; }), 0) > 60 ? n[0] + ("" === t ? "" : t + "\n ") + " " + e.join(",\n  ") + " " + n[1] : n[0] + t + " " + e.join(", ") + " " + n[1]; }(l, h, d)) : d[0] + h + d[1]; } function f(e) { return "[" + Error.prototype.toString.call(e) + "]"; } function p(e, t, n, i, r, o) { var s, a, c; if ((c = Object.getOwnPropertyDescriptor(t, r) || { value: t[r] }).get ? a = c.set ? e.stylize("[Getter/Setter]", "special") : e.stylize("[Getter]", "special") : c.set && (a = e.stylize("[Setter]", "special")), M(i, r) || (s = "[" + r + "]"), a || (e.seen.indexOf(c.value) < 0 ? (a = w(n) ? g(e, c.value, null) : g(e, c.value, n - 1)).indexOf("\n") > -1 && (a = o ? a.split("\n").map((function (e) { return "  " + e; })).join("\n").slice(2) : "\n" + a.split("\n").map((function (e) { return "   " + e; })).join("\n")) : a = e.stylize("[Circular]", "special")), S(s)) {
         if (o && r.match(/^\d+$/))
             return a;
         (s = JSON.stringify("" + r)).match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/) ? (s = s.slice(1, -1), s = e.stylize(s, "name")) : (s = s.replace(/'/g, "\\'").replace(/\\"/g, '"').replace(/(^"|"$)/g, "'"), s = e.stylize(s, "string"));
@@ -50580,8 +50620,8 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         const u = new TextEncoder, d = Object.freeze({ messageBuffer: Object.freeze({ create: e => new c(e) }), applicationJson: Object.freeze({ encoder: Object.freeze({ name: "application/json", encode: (e, t) => { if ("utf-8" !== t.charset)
                         throw new Error(`In a Browser environments only utf-8 text encoding is supported. But got encoding: ${t.charset}`); return Promise.resolve(u.encode(JSON.stringify(e, void 0, 0))); } }), decoder: Object.freeze({ name: "application/json", decode: (e, t) => { if (!(e instanceof Uint8Array))
                         throw new Error("In a Browser environments only Uint8Arrays are supported."); return Promise.resolve(JSON.parse(new TextDecoder(t.charset).decode(e))); } }) }), stream: Object.freeze({ asReadableStream: e => new l(e), asWritableStream: e => new h(e) }), console: i, timer: Object.freeze({ setTimeout(e, t, ...n) { const i = setTimeout(e, t, ...n); return { dispose: () => clearTimeout(i) }; }, setImmediate(e, ...t) { const n = setTimeout(e, 0, ...t); return { dispose: () => clearTimeout(n) }; }, setInterval(e, t, ...n) { const i = setInterval(e, t, ...n); return { dispose: () => clearInterval(i) }; } }) });
-        function f() { return d; }
-        !function (e) { e.install = function () { r.default.install(d); }; }(f || (f = {})), t.default = f;
+        function g() { return d; }
+        !function (e) { e.install = function () { r.default.install(d); }; }(g || (g = {})), t.default = g;
     }, 5247: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.TraceFormat = t.TraceValues = t.Trace = t.ProgressType = t.ProgressToken = t.createMessageConnection = t.NullLogger = t.ConnectionOptions = t.ConnectionStrategy = t.WriteableStreamMessageWriter = t.AbstractMessageWriter = t.MessageWriter = t.ReadableStreamMessageReader = t.AbstractMessageReader = t.MessageReader = t.CancellationToken = t.CancellationTokenSource = t.Emitter = t.Event = t.Disposable = t.LRUCache = t.Touch = t.LinkedMap = t.ParameterStructures = t.NotificationType9 = t.NotificationType8 = t.NotificationType7 = t.NotificationType6 = t.NotificationType5 = t.NotificationType4 = t.NotificationType3 = t.NotificationType2 = t.NotificationType1 = t.NotificationType0 = t.NotificationType = t.ErrorCodes = t.ResponseError = t.RequestType9 = t.RequestType8 = t.RequestType7 = t.RequestType6 = t.RequestType5 = t.RequestType4 = t.RequestType3 = t.RequestType2 = t.RequestType1 = t.RequestType0 = t.RequestType = t.Message = t.RAL = void 0, t.CancellationStrategy = t.CancellationSenderStrategy = t.CancellationReceiverStrategy = t.ConnectionError = t.ConnectionErrors = t.LogTraceNotification = t.SetTraceNotification = void 0;
@@ -50626,10 +50666,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.createMessageConnection = t.ConnectionOptions = t.CancellationStrategy = t.CancellationSenderStrategy = t.CancellationReceiverStrategy = t.ConnectionStrategy = t.ConnectionError = t.ConnectionErrors = t.LogTraceNotification = t.SetTraceNotification = t.TraceFormat = t.TraceValues = t.Trace = t.NullLogger = t.ProgressType = t.ProgressToken = void 0;
         const i = n(5706), r = n(8811), o = n(9141), s = n(7040), a = n(5165), c = n(415);
-        var l, h, u, d, f, g, p, m, v, w, y, b, S, C, k;
+        var l, h, u, d, g, f, p, m, v, w, y, b, S, C, k;
         !function (e) { e.type = new o.NotificationType("$/cancelRequest"); }(l || (l = {})), function (e) { e.is = function (e) { return "string" == typeof e || "number" == typeof e; }; }(h = t.ProgressToken || (t.ProgressToken = {})), function (e) { e.type = new o.NotificationType("$/progress"); }(u || (u = {})), t.ProgressType = class {
             constructor() { }
-        }, function (e) { e.is = function (e) { return r.func(e); }; }(d || (d = {})), t.NullLogger = Object.freeze({ error: () => { }, warn: () => { }, info: () => { }, log: () => { } }), function (e) { e[e.Off = 0] = "Off", e[e.Messages = 1] = "Messages", e[e.Compact = 2] = "Compact", e[e.Verbose = 3] = "Verbose"; }(f = t.Trace || (t.Trace = {})), (k = t.TraceValues || (t.TraceValues = {})).Off = "off", k.Messages = "messages", k.Compact = "compact", k.Verbose = "verbose", function (e) { e.fromString = function (t) { if (!r.string(t))
+        }, function (e) { e.is = function (e) { return r.func(e); }; }(d || (d = {})), t.NullLogger = Object.freeze({ error: () => { }, warn: () => { }, info: () => { }, log: () => { } }), function (e) { e[e.Off = 0] = "Off", e[e.Messages = 1] = "Messages", e[e.Compact = 2] = "Compact", e[e.Verbose = 3] = "Verbose"; }(g = t.Trace || (t.Trace = {})), (k = t.TraceValues || (t.TraceValues = {})).Off = "off", k.Messages = "messages", k.Compact = "compact", k.Verbose = "verbose", function (e) { e.fromString = function (t) { if (!r.string(t))
             return e.Off; switch (t = t.toLowerCase()) {
             case "off":
             default: return e.Off;
@@ -50642,18 +50682,18 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             case e.Compact: return "compact";
             case e.Verbose: return "verbose";
             default: return "off";
-        } }; }(f = t.Trace || (t.Trace = {})), function (e) { e.Text = "text", e.JSON = "json"; }(t.TraceFormat || (t.TraceFormat = {})), function (e) { e.fromString = function (t) { return r.string(t) && "json" === (t = t.toLowerCase()) ? e.JSON : e.Text; }; }(g = t.TraceFormat || (t.TraceFormat = {})), function (e) { e.type = new o.NotificationType("$/setTrace"); }(p = t.SetTraceNotification || (t.SetTraceNotification = {})), function (e) { e.type = new o.NotificationType("$/logTrace"); }(m = t.LogTraceNotification || (t.LogTraceNotification = {})), function (e) { e[e.Closed = 1] = "Closed", e[e.Disposed = 2] = "Disposed", e[e.AlreadyListening = 3] = "AlreadyListening"; }(v = t.ConnectionErrors || (t.ConnectionErrors = {}));
+        } }; }(g = t.Trace || (t.Trace = {})), function (e) { e.Text = "text", e.JSON = "json"; }(t.TraceFormat || (t.TraceFormat = {})), function (e) { e.fromString = function (t) { return r.string(t) && "json" === (t = t.toLowerCase()) ? e.JSON : e.Text; }; }(f = t.TraceFormat || (t.TraceFormat = {})), function (e) { e.type = new o.NotificationType("$/setTrace"); }(p = t.SetTraceNotification || (t.SetTraceNotification = {})), function (e) { e.type = new o.NotificationType("$/logTrace"); }(m = t.LogTraceNotification || (t.LogTraceNotification = {})), function (e) { e[e.Closed = 1] = "Closed", e[e.Disposed = 2] = "Disposed", e[e.AlreadyListening = 3] = "AlreadyListening"; }(v = t.ConnectionErrors || (t.ConnectionErrors = {}));
         class _ extends Error {
             constructor(e, t) { super(t), this.code = e, Object.setPrototypeOf(this, _.prototype); }
         }
-        t.ConnectionError = _, function (e) { e.is = function (e) { const t = e; return t && r.func(t.cancelUndispatched); }; }(w = t.ConnectionStrategy || (t.ConnectionStrategy = {})), function (e) { e.Message = Object.freeze({ createCancellationTokenSource: e => new c.CancellationTokenSource }), e.is = function (e) { const t = e; return t && r.func(t.createCancellationTokenSource); }; }(y = t.CancellationReceiverStrategy || (t.CancellationReceiverStrategy = {})), function (e) { e.Message = Object.freeze({ sendCancellation: (e, t) => e.sendNotification(l.type, { id: t }), cleanup(e) { } }), e.is = function (e) { const t = e; return t && r.func(t.sendCancellation) && r.func(t.cleanup); }; }(b = t.CancellationSenderStrategy || (t.CancellationSenderStrategy = {})), function (e) { e.Message = Object.freeze({ receiver: y.Message, sender: b.Message }), e.is = function (e) { const t = e; return t && y.is(t.receiver) && b.is(t.sender); }; }(S = t.CancellationStrategy || (t.CancellationStrategy = {})), (t.ConnectionOptions || (t.ConnectionOptions = {})).is = function (e) { const t = e; return t && (S.is(t.cancellationStrategy) || w.is(t.connectionStrategy)); }, function (e) { e[e.New = 1] = "New", e[e.Listening = 2] = "Listening", e[e.Closed = 3] = "Closed", e[e.Disposed = 4] = "Disposed"; }(C || (C = {})), t.createMessageConnection = function (e, n, w, y) { const b = void 0 !== w ? w : t.NullLogger; let k = 0, $ = 0, R = 0; const x = "2.0"; let T; const A = new Map; let E; const M = new Map, L = new Map; let P, D, O = new s.LinkedMap, I = new Map, N = new Set, F = new Map, j = f.Off, W = g.Text, H = C.New; const B = new a.Emitter, z = new a.Emitter, q = new a.Emitter, V = new a.Emitter, U = new a.Emitter, G = y && y.cancellationStrategy ? y.cancellationStrategy : S.Message; function K(e) { if (null === e)
+        t.ConnectionError = _, function (e) { e.is = function (e) { const t = e; return t && r.func(t.cancelUndispatched); }; }(w = t.ConnectionStrategy || (t.ConnectionStrategy = {})), function (e) { e.Message = Object.freeze({ createCancellationTokenSource: e => new c.CancellationTokenSource }), e.is = function (e) { const t = e; return t && r.func(t.createCancellationTokenSource); }; }(y = t.CancellationReceiverStrategy || (t.CancellationReceiverStrategy = {})), function (e) { e.Message = Object.freeze({ sendCancellation: (e, t) => e.sendNotification(l.type, { id: t }), cleanup(e) { } }), e.is = function (e) { const t = e; return t && r.func(t.sendCancellation) && r.func(t.cleanup); }; }(b = t.CancellationSenderStrategy || (t.CancellationSenderStrategy = {})), function (e) { e.Message = Object.freeze({ receiver: y.Message, sender: b.Message }), e.is = function (e) { const t = e; return t && y.is(t.receiver) && b.is(t.sender); }; }(S = t.CancellationStrategy || (t.CancellationStrategy = {})), (t.ConnectionOptions || (t.ConnectionOptions = {})).is = function (e) { const t = e; return t && (S.is(t.cancellationStrategy) || w.is(t.connectionStrategy)); }, function (e) { e[e.New = 1] = "New", e[e.Listening = 2] = "Listening", e[e.Closed = 3] = "Closed", e[e.Disposed = 4] = "Disposed"; }(C || (C = {})), t.createMessageConnection = function (e, n, w, y) { const b = void 0 !== w ? w : t.NullLogger; let k = 0, $ = 0, R = 0; const x = "2.0"; let T; const A = new Map; let E; const M = new Map, L = new Map; let P, D, O = new s.LinkedMap, I = new Map, N = new Set, F = new Map, j = g.Off, W = f.Text, H = C.New; const B = new a.Emitter, z = new a.Emitter, q = new a.Emitter, V = new a.Emitter, U = new a.Emitter, G = y && y.cancellationStrategy ? y.cancellationStrategy : S.Message; function K(e) { if (null === e)
             throw new Error("Can't send requests with id null since the response can't be correlated."); return "req-" + e.toString(); } function X(e) { } function Y() { return H === C.Listening; } function J() { return H === C.Closed; } function Q() { return H === C.Disposed; } function Z() { H !== C.New && H !== C.Listening || (H = C.Closed, z.fire(void 0)); } function ee() { P || 0 === O.size || (P = (0, i.default)().timer.setImmediate((() => { P = void 0, function () { if (0 === O.size)
             return; const e = O.shift(); try {
             o.Message.isRequest(e) ? function (e) { if (Q())
-                return; function t(t, i, r) { const s = { jsonrpc: x, id: e.id }; t instanceof o.ResponseError ? s.error = t.toJson() : s.result = void 0 === t ? null : t, ie(s, i, r), n.write(s).catch((() => b.error("Sending response failed."))); } function i(t, i, r) { const o = { jsonrpc: x, id: e.id, error: t.toJson() }; ie(o, i, r), n.write(o).catch((() => b.error("Sending response failed."))); } !function (e) { if (j !== f.Off && D)
-                if (W === g.Text) {
+                return; function t(t, i, r) { const s = { jsonrpc: x, id: e.id }; t instanceof o.ResponseError ? s.error = t.toJson() : s.result = void 0 === t ? null : t, ie(s, i, r), n.write(s).catch((() => b.error("Sending response failed."))); } function i(t, i, r) { const o = { jsonrpc: x, id: e.id, error: t.toJson() }; ie(o, i, r), n.write(o).catch((() => b.error("Sending response failed."))); } !function (e) { if (j !== g.Off && D)
+                if (W === f.Text) {
                     let t;
-                    j !== f.Verbose && j !== f.Compact || !e.params || (t = `Params: ${ne(e.params)}\n\n`), D.log(`Received request '${e.method} - (${e.id})'.`, t);
+                    j !== g.Verbose && j !== g.Compact || !e.params || (t = `Params: ${ne(e.params)}\n\n`), D.log(`Received request '${e.method} - (${e.id})'.`, t);
                 }
                 else
                     oe("receive-request", e); }(e); const s = A.get(e.method); let a, c; s && (a = s.type, c = s.handler); const l = Date.now(); if (c || T) {
@@ -50717,10 +50757,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     e.error ? b.error(`Received response message without id: Error is: \n${JSON.stringify(e.error, void 0, 4)}`) : b.error("Received response message without id. No further error information provided.");
                 else {
                     const t = e.id, n = I.get(t);
-                    if (function (e, t) { if (j !== f.Off && D)
-                        if (W === g.Text) {
+                    if (function (e, t) { if (j !== g.Off && D)
+                        if (W === f.Text) {
                             let n;
-                            if (j !== f.Verbose && j !== f.Compact || (e.error && e.error.data ? n = `Error data: ${ne(e.error.data)}\n\n` : e.result ? n = `Result: ${ne(e.result)}\n\n` : void 0 === e.error && (n = "No result returned.\n\n")), t) {
+                            if (j !== g.Verbose && j !== g.Compact || (e.error && e.error.data ? n = `Error data: ${ne(e.error.data)}\n\n` : e.result ? n = `Result: ${ne(e.result)}\n\n` : void 0 === e.error && (n = "No result returned.\n\n")), t) {
                                 const i = e.error ? ` Request failed: ${e.error.message} (${e.error.code}).` : "";
                                 D.log(`Received response '${t.method} - (${e.id})' in ${Date.now() - t.timerStart}ms.${i}`, n);
                             }
@@ -50772,22 +50812,22 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             ee();
         } }; function ne(e) { if (null != e)
             switch (j) {
-                case f.Verbose: return JSON.stringify(e, null, 4);
-                case f.Compact: return JSON.stringify(e);
+                case g.Verbose: return JSON.stringify(e, null, 4);
+                case g.Compact: return JSON.stringify(e);
                 default: return;
-            } } function ie(e, t, n) { if (j !== f.Off && D)
-            if (W === g.Text) {
+            } } function ie(e, t, n) { if (j !== g.Off && D)
+            if (W === f.Text) {
                 let i;
-                j !== f.Verbose && j !== f.Compact || (e.error && e.error.data ? i = `Error data: ${ne(e.error.data)}\n\n` : e.result ? i = `Result: ${ne(e.result)}\n\n` : void 0 === e.error && (i = "No result returned.\n\n")), D.log(`Sending response '${t} - (${e.id})'. Processing request took ${Date.now() - n}ms`, i);
+                j !== g.Verbose && j !== g.Compact || (e.error && e.error.data ? i = `Error data: ${ne(e.error.data)}\n\n` : e.result ? i = `Result: ${ne(e.result)}\n\n` : void 0 === e.error && (i = "No result returned.\n\n")), D.log(`Sending response '${t} - (${e.id})'. Processing request took ${Date.now() - n}ms`, i);
             }
             else
-                oe("send-response", e); } function re(e) { if (j !== f.Off && D && e.method !== m.type.method)
-            if (W === g.Text) {
+                oe("send-response", e); } function re(e) { if (j !== g.Off && D && e.method !== m.type.method)
+            if (W === f.Text) {
                 let t;
-                j !== f.Verbose && j !== f.Compact || (t = e.params ? `Params: ${ne(e.params)}\n\n` : "No parameters provided.\n\n"), D.log(`Received notification '${e.method}'.`, t);
+                j !== g.Verbose && j !== g.Compact || (t = e.params ? `Params: ${ne(e.params)}\n\n` : "No parameters provided.\n\n"), D.log(`Received notification '${e.method}'.`, t);
             }
             else
-                oe("receive-notification", e); } function oe(e, t) { if (!D || j === f.Off)
+                oe("receive-notification", e); } function oe(e, t) { if (!D || j === g.Off)
             return; const n = { isLSPMessage: !0, type: e, message: t, timestamp: Date.now() }; D.log(n); } function se() { if (J())
             throw new _(v.Closed, "Connection is closed."); if (Q())
             throw new _(v.Disposed, "Connection is disposed."); } function ae(e) { return void 0 === e ? null : e; } function ce(e) { return null === e ? void 0 : e; } function le(e) { return null != e && !Array.isArray(e) && "object" == typeof e; } function he(e, t) { switch (e) {
@@ -50835,10 +50875,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             else {
                 const n = t;
                 i = e.method, s = ue(e, n);
-            } const a = { jsonrpc: x, method: i, params: s }; return function (e) { if (j !== f.Off && D)
-                if (W === g.Text) {
+            } const a = { jsonrpc: x, method: i, params: s }; return function (e) { if (j !== g.Off && D)
+                if (W === f.Text) {
                     let t;
-                    j !== f.Verbose && j !== f.Compact || (t = e.params ? `Params: ${ne(e.params)}\n\n` : "No parameters provided.\n\n"), D.log(`Sending notification '${e.method}'.`, t);
+                    j !== g.Verbose && j !== g.Compact || (t = e.params ? `Params: ${ne(e.params)}\n\n` : "No parameters provided.\n\n"), D.log(`Sending notification '${e.method}'.`, t);
                 }
                 else
                     oe("send-notification", e); }(a), n.write(a).catch((() => b.error("Sending notification failed."))); }, onNotification: (e, t) => { let n; return se(), r.func(e) ? E = e : t && (r.string(e) ? (n = e, M.set(e, { type: void 0, handler: t })) : (n = e.method, M.set(e.method, { type: e, handler: t }))), { dispose: () => { void 0 !== n ? M.delete(n) : E = void 0; } }; }, onProgress: (e, t, n) => { if (L.has(t))
@@ -50869,10 +50909,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 i = e.method, s = ue(e, n);
                 const r = e.numberOfParams;
                 a = c.CancellationToken.is(n[r]) ? n[r] : void 0;
-            } const l = k++; let h; return a && (h = a.onCancellationRequested((() => { const e = G.sender.sendCancellation(de, l); return void 0 === e ? (b.log(`Received no promise from cancellation strategy when cancelling id ${l}`), Promise.resolve()) : e.catch((() => { b.log(`Sending cancellation messages for id ${l} failed`); })); }))), new Promise(((e, t) => { const r = { jsonrpc: x, id: l, method: i, params: s }; let a = { method: i, timerStart: Date.now(), resolve: t => { e(t), G.sender.cleanup(l), h?.dispose(); }, reject: e => { t(e), G.sender.cleanup(l), h?.dispose(); } }; !function (e) { if (j !== f.Off && D)
-                if (W === g.Text) {
+            } const l = k++; let h; return a && (h = a.onCancellationRequested((() => { const e = G.sender.sendCancellation(de, l); return void 0 === e ? (b.log(`Received no promise from cancellation strategy when cancelling id ${l}`), Promise.resolve()) : e.catch((() => { b.log(`Sending cancellation messages for id ${l} failed`); })); }))), new Promise(((e, t) => { const r = { jsonrpc: x, id: l, method: i, params: s }; let a = { method: i, timerStart: Date.now(), resolve: t => { e(t), G.sender.cleanup(l), h?.dispose(); }, reject: e => { t(e), G.sender.cleanup(l), h?.dispose(); } }; !function (e) { if (j !== g.Off && D)
+                if (W === f.Text) {
                     let t;
-                    j !== f.Verbose && j !== f.Compact || !e.params || (t = `Params: ${ne(e.params)}\n\n`), D.log(`Sending request '${e.method} - (${e.id})'.`, t);
+                    j !== g.Verbose && j !== g.Compact || !e.params || (t = `Params: ${ne(e.params)}\n\n`), D.log(`Sending request '${e.method} - (${e.id})'.`, t);
                 }
                 else
                     oe("send-request", e); }(r); try {
@@ -50880,11 +50920,11 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             }
             catch (e) {
                 a.reject(new o.ResponseError(o.ErrorCodes.MessageWriteError, e.message ? e.message : "Unknown reason")), a = null;
-            } a && I.set(l, a); })); }, onRequest: (e, t) => { se(); let n = null; return d.is(e) ? (n = void 0, T = e) : r.string(e) ? (n = null, void 0 !== t && (n = e, A.set(e, { handler: t, type: void 0 }))) : void 0 !== t && (n = e.method, A.set(e.method, { type: e, handler: t })), { dispose: () => { null !== n && (void 0 !== n ? A.delete(n) : T = void 0); } }; }, hasPendingResponse: () => I.size > 0, trace: async (e, t, n) => { let i = !1, o = g.Text; void 0 !== n && (r.boolean(n) ? i = n : (i = n.sendNotification || !1, o = n.traceFormat || g.Text)), j = e, W = o, D = j === f.Off ? void 0 : t, !i || J() || Q() || await de.sendNotification(p.type, { value: f.toString(e) }); }, onError: B.event, onClose: z.event, onUnhandledNotification: q.event, onDispose: U.event, end: () => { n.end(); }, dispose: () => { if (Q())
+            } a && I.set(l, a); })); }, onRequest: (e, t) => { se(); let n = null; return d.is(e) ? (n = void 0, T = e) : r.string(e) ? (n = null, void 0 !== t && (n = e, A.set(e, { handler: t, type: void 0 }))) : void 0 !== t && (n = e.method, A.set(e.method, { type: e, handler: t })), { dispose: () => { null !== n && (void 0 !== n ? A.delete(n) : T = void 0); } }; }, hasPendingResponse: () => I.size > 0, trace: async (e, t, n) => { let i = !1, o = f.Text; void 0 !== n && (r.boolean(n) ? i = n : (i = n.sendNotification || !1, o = n.traceFormat || f.Text)), j = e, W = o, D = j === g.Off ? void 0 : t, !i || J() || Q() || await de.sendNotification(p.type, { value: g.toString(e) }); }, onError: B.event, onClose: z.event, onUnhandledNotification: q.event, onDispose: U.event, end: () => { n.end(); }, dispose: () => { if (Q())
                 return; H = C.Disposed, U.fire(void 0); const t = new o.ResponseError(o.ErrorCodes.PendingResponseRejected, "Pending response rejected since connection got disposed"); for (const e of I.values())
                 e.reject(t); I = new Map, F = new Map, N = new Set, O = new s.LinkedMap, r.func(n.dispose) && n.dispose(), r.func(e.dispose) && e.dispose(); }, listen: () => { se(), function () { if (Y())
-                throw new _(v.AlreadyListening, "Connection is already listening"); }(), H = C.Listening, e.listen(te); }, inspect: () => { (0, i.default)().console.log("inspect"); } }; return de.onNotification(m.type, (e => { if (j === f.Off || !D)
-            return; const t = j === f.Verbose || j === f.Compact; D.log(e.message, t ? e.verbose : void 0); })), de.onNotification(u.type, (e => { const t = L.get(e.token); t ? t(e.value) : V.fire(e); })), de; };
+                throw new _(v.AlreadyListening, "Connection is already listening"); }(), H = C.Listening, e.listen(te); }, inspect: () => { (0, i.default)().console.log("inspect"); } }; return de.onNotification(m.type, (e => { if (j === g.Off || !D)
+            return; const t = j === g.Verbose || j === g.Compact; D.log(e.message, t ? e.verbose : void 0); })), de.onNotification(u.type, (e => { const t = L.get(e.token); t ? t(e.value) : V.fire(e); })), de; };
     }, 8437: (e, t) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.Disposable = void 0, (t.Disposable || (t.Disposable = {})).create = function (e) { return { dispose: e }; };
@@ -51412,10 +51452,10 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         Object.defineProperty(t, "FoldingRangeRequest", { enumerable: !0, get: function () { return u.FoldingRangeRequest; } });
         const d = n(7210);
         Object.defineProperty(t, "DeclarationRequest", { enumerable: !0, get: function () { return d.DeclarationRequest; } });
-        const f = n(2392);
-        Object.defineProperty(t, "SelectionRangeRequest", { enumerable: !0, get: function () { return f.SelectionRangeRequest; } });
-        const g = n(7895);
-        Object.defineProperty(t, "WorkDoneProgress", { enumerable: !0, get: function () { return g.WorkDoneProgress; } }), Object.defineProperty(t, "WorkDoneProgressCreateRequest", { enumerable: !0, get: function () { return g.WorkDoneProgressCreateRequest; } }), Object.defineProperty(t, "WorkDoneProgressCancelNotification", { enumerable: !0, get: function () { return g.WorkDoneProgressCancelNotification; } });
+        const g = n(2392);
+        Object.defineProperty(t, "SelectionRangeRequest", { enumerable: !0, get: function () { return g.SelectionRangeRequest; } });
+        const f = n(7895);
+        Object.defineProperty(t, "WorkDoneProgress", { enumerable: !0, get: function () { return f.WorkDoneProgress; } }), Object.defineProperty(t, "WorkDoneProgressCreateRequest", { enumerable: !0, get: function () { return f.WorkDoneProgressCreateRequest; } }), Object.defineProperty(t, "WorkDoneProgressCancelNotification", { enumerable: !0, get: function () { return f.WorkDoneProgressCancelNotification; } });
         const p = n(4434);
         Object.defineProperty(t, "CallHierarchyIncomingCallsRequest", { enumerable: !0, get: function () { return p.CallHierarchyIncomingCallsRequest; } }), Object.defineProperty(t, "CallHierarchyOutgoingCallsRequest", { enumerable: !0, get: function () { return p.CallHierarchyOutgoingCallsRequest; } }), Object.defineProperty(t, "CallHierarchyPrepareRequest", { enumerable: !0, get: function () { return p.CallHierarchyPrepareRequest; } });
         const m = n(8489);
@@ -51437,11 +51477,11 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         const _ = n(5692);
         Object.defineProperty(t, "DiagnosticServerCancellationData", { enumerable: !0, get: function () { return _.DiagnosticServerCancellationData; } }), Object.defineProperty(t, "DocumentDiagnosticReportKind", { enumerable: !0, get: function () { return _.DocumentDiagnosticReportKind; } }), Object.defineProperty(t, "DocumentDiagnosticRequest", { enumerable: !0, get: function () { return _.DocumentDiagnosticRequest; } }), Object.defineProperty(t, "WorkspaceDiagnosticRequest", { enumerable: !0, get: function () { return _.WorkspaceDiagnosticRequest; } }), Object.defineProperty(t, "DiagnosticRefreshRequest", { enumerable: !0, get: function () { return _.DiagnosticRefreshRequest; } });
         const $ = n(4460);
-        var R, x, T, A, E, M, L, P, D, O, I, N, F, j, W, H, B, z, q, V, U, G, K, X, Y, J, Q, Z, ee, te, ne, ie, re, oe, se, ae, ce, le, he, ue, de, fe, ge, pe, me, ve, we, ye, be, Se, Ce, ke, _e, $e, Re, xe, Te, Ae, Ee;
+        var R, x, T, A, E, M, L, P, D, O, I, N, F, j, W, H, B, z, q, V, U, G, K, X, Y, J, Q, Z, ee, te, ne, ie, re, oe, se, ae, ce, le, he, ue, de, ge, fe, pe, me, ve, we, ye, be, Se, Ce, ke, _e, $e, Re, xe, Te, Ae, Ee;
         Object.defineProperty(t, "NotebookCellKind", { enumerable: !0, get: function () { return $.NotebookCellKind; } }), Object.defineProperty(t, "ExecutionSummary", { enumerable: !0, get: function () { return $.ExecutionSummary; } }), Object.defineProperty(t, "NotebookCell", { enumerable: !0, get: function () { return $.NotebookCell; } }), Object.defineProperty(t, "NotebookDocument", { enumerable: !0, get: function () { return $.NotebookDocument; } }), Object.defineProperty(t, "NotebookDocumentSyncRegistrationType", { enumerable: !0, get: function () { return $.NotebookDocumentSyncRegistrationType; } }), Object.defineProperty(t, "DidOpenNotebookDocumentNotification", { enumerable: !0, get: function () { return $.DidOpenNotebookDocumentNotification; } }), Object.defineProperty(t, "NotebookCellArrayChange", { enumerable: !0, get: function () { return $.NotebookCellArrayChange; } }), Object.defineProperty(t, "DidChangeNotebookDocumentNotification", { enumerable: !0, get: function () { return $.DidChangeNotebookDocumentNotification; } }), Object.defineProperty(t, "DidSaveNotebookDocumentNotification", { enumerable: !0, get: function () { return $.DidSaveNotebookDocumentNotification; } }), Object.defineProperty(t, "DidCloseNotebookDocumentNotification", { enumerable: !0, get: function () { return $.DidCloseNotebookDocumentNotification; } }), function (e) { e.is = function (e) { const t = e; return o.string(t.language) || o.string(t.scheme) || o.string(t.pattern); }; }(R = t.TextDocumentFilter || (t.TextDocumentFilter = {})), function (e) { e.is = function (e) { const t = e; return o.objectLiteral(t) && (o.string(t.notebookType) || o.string(t.scheme) || o.string(t.pattern)); }; }(x = t.NotebookDocumentFilter || (t.NotebookDocumentFilter = {})), function (e) { e.is = function (e) { const t = e; return o.objectLiteral(t) && (o.string(t.notebook) || x.is(t.notebook)) && (void 0 === t.language || o.string(t.language)); }; }(T = t.NotebookCellTextDocumentFilter || (t.NotebookCellTextDocumentFilter = {})), function (e) { e.is = function (e) { if (!Array.isArray(e))
             return !1; for (let t of e)
             if (!o.string(t) && !R.is(t) && !T.is(t))
-                return !1; return !0; }; }(A = t.DocumentSelector || (t.DocumentSelector = {})), (Ee = t.RegistrationRequest || (t.RegistrationRequest = {})).method = "client/registerCapability", Ee.messageDirection = i.MessageDirection.serverToClient, Ee.type = new i.ProtocolRequestType(Ee.method), (Ae = t.UnregistrationRequest || (t.UnregistrationRequest = {})).method = "client/unregisterCapability", Ae.messageDirection = i.MessageDirection.serverToClient, Ae.type = new i.ProtocolRequestType(Ae.method), (Te = t.ResourceOperationKind || (t.ResourceOperationKind = {})).Create = "create", Te.Rename = "rename", Te.Delete = "delete", (xe = t.FailureHandlingKind || (t.FailureHandlingKind = {})).Abort = "abort", xe.Transactional = "transactional", xe.TextOnlyTransactional = "textOnlyTransactional", xe.Undo = "undo", (Re = t.PositionEncodingKind || (t.PositionEncodingKind = {})).UTF8 = "utf-8", Re.UTF16 = "utf-16", Re.UTF32 = "utf-32", (t.StaticRegistrationOptions || (t.StaticRegistrationOptions = {})).hasId = function (e) { const t = e; return t && o.string(t.id) && t.id.length > 0; }, (t.TextDocumentRegistrationOptions || (t.TextDocumentRegistrationOptions = {})).is = function (e) { const t = e; return t && (null === t.documentSelector || A.is(t.documentSelector)); }, ($e = t.WorkDoneProgressOptions || (t.WorkDoneProgressOptions = {})).is = function (e) { const t = e; return o.objectLiteral(t) && (void 0 === t.workDoneProgress || o.boolean(t.workDoneProgress)); }, $e.hasWorkDoneProgress = function (e) { const t = e; return t && o.boolean(t.workDoneProgress); }, (_e = t.InitializeRequest || (t.InitializeRequest = {})).method = "initialize", _e.messageDirection = i.MessageDirection.clientToServer, _e.type = new i.ProtocolRequestType(_e.method), (t.InitializeErrorCodes || (t.InitializeErrorCodes = {})).unknownProtocolVersion = 1, (ke = t.InitializedNotification || (t.InitializedNotification = {})).method = "initialized", ke.messageDirection = i.MessageDirection.clientToServer, ke.type = new i.ProtocolNotificationType(ke.method), (Ce = t.ShutdownRequest || (t.ShutdownRequest = {})).method = "shutdown", Ce.messageDirection = i.MessageDirection.clientToServer, Ce.type = new i.ProtocolRequestType0(Ce.method), (Se = t.ExitNotification || (t.ExitNotification = {})).method = "exit", Se.messageDirection = i.MessageDirection.clientToServer, Se.type = new i.ProtocolNotificationType0(Se.method), (be = t.DidChangeConfigurationNotification || (t.DidChangeConfigurationNotification = {})).method = "workspace/didChangeConfiguration", be.messageDirection = i.MessageDirection.clientToServer, be.type = new i.ProtocolNotificationType(be.method), (ye = t.MessageType || (t.MessageType = {})).Error = 1, ye.Warning = 2, ye.Info = 3, ye.Log = 4, (we = t.ShowMessageNotification || (t.ShowMessageNotification = {})).method = "window/showMessage", we.messageDirection = i.MessageDirection.serverToClient, we.type = new i.ProtocolNotificationType(we.method), (ve = t.ShowMessageRequest || (t.ShowMessageRequest = {})).method = "window/showMessageRequest", ve.messageDirection = i.MessageDirection.serverToClient, ve.type = new i.ProtocolRequestType(ve.method), (me = t.LogMessageNotification || (t.LogMessageNotification = {})).method = "window/logMessage", me.messageDirection = i.MessageDirection.serverToClient, me.type = new i.ProtocolNotificationType(me.method), (pe = t.TelemetryEventNotification || (t.TelemetryEventNotification = {})).method = "telemetry/event", pe.messageDirection = i.MessageDirection.serverToClient, pe.type = new i.ProtocolNotificationType(pe.method), (ge = t.TextDocumentSyncKind || (t.TextDocumentSyncKind = {})).None = 0, ge.Full = 1, ge.Incremental = 2, (fe = t.DidOpenTextDocumentNotification || (t.DidOpenTextDocumentNotification = {})).method = "textDocument/didOpen", fe.messageDirection = i.MessageDirection.clientToServer, fe.type = new i.ProtocolNotificationType(fe.method), (de = t.TextDocumentContentChangeEvent || (t.TextDocumentContentChangeEvent = {})).isIncremental = function (e) { let t = e; return null != t && "string" == typeof t.text && void 0 !== t.range && (void 0 === t.rangeLength || "number" == typeof t.rangeLength); }, de.isFull = function (e) { let t = e; return null != t && "string" == typeof t.text && void 0 === t.range && void 0 === t.rangeLength; }, (ue = t.DidChangeTextDocumentNotification || (t.DidChangeTextDocumentNotification = {})).method = "textDocument/didChange", ue.messageDirection = i.MessageDirection.clientToServer, ue.type = new i.ProtocolNotificationType(ue.method), (he = t.DidCloseTextDocumentNotification || (t.DidCloseTextDocumentNotification = {})).method = "textDocument/didClose", he.messageDirection = i.MessageDirection.clientToServer, he.type = new i.ProtocolNotificationType(he.method), (le = t.DidSaveTextDocumentNotification || (t.DidSaveTextDocumentNotification = {})).method = "textDocument/didSave", le.messageDirection = i.MessageDirection.clientToServer, le.type = new i.ProtocolNotificationType(le.method), (ce = t.TextDocumentSaveReason || (t.TextDocumentSaveReason = {})).Manual = 1, ce.AfterDelay = 2, ce.FocusOut = 3, (ae = t.WillSaveTextDocumentNotification || (t.WillSaveTextDocumentNotification = {})).method = "textDocument/willSave", ae.messageDirection = i.MessageDirection.clientToServer, ae.type = new i.ProtocolNotificationType(ae.method), (se = t.WillSaveTextDocumentWaitUntilRequest || (t.WillSaveTextDocumentWaitUntilRequest = {})).method = "textDocument/willSaveWaitUntil", se.messageDirection = i.MessageDirection.clientToServer, se.type = new i.ProtocolRequestType(se.method), (oe = t.DidChangeWatchedFilesNotification || (t.DidChangeWatchedFilesNotification = {})).method = "workspace/didChangeWatchedFiles", oe.messageDirection = i.MessageDirection.clientToServer, oe.type = new i.ProtocolNotificationType(oe.method), (re = t.FileChangeType || (t.FileChangeType = {})).Created = 1, re.Changed = 2, re.Deleted = 3, (t.RelativePattern || (t.RelativePattern = {})).is = function (e) { const t = e; return o.objectLiteral(t) && (r.URI.is(t.baseUri) || r.WorkspaceFolder.is(t.baseUri)) && o.string(t.pattern); }, (ie = t.WatchKind || (t.WatchKind = {})).Create = 1, ie.Change = 2, ie.Delete = 4, (ne = t.PublishDiagnosticsNotification || (t.PublishDiagnosticsNotification = {})).method = "textDocument/publishDiagnostics", ne.messageDirection = i.MessageDirection.serverToClient, ne.type = new i.ProtocolNotificationType(ne.method), (te = t.CompletionTriggerKind || (t.CompletionTriggerKind = {})).Invoked = 1, te.TriggerCharacter = 2, te.TriggerForIncompleteCompletions = 3, (ee = t.CompletionRequest || (t.CompletionRequest = {})).method = "textDocument/completion", ee.messageDirection = i.MessageDirection.clientToServer, ee.type = new i.ProtocolRequestType(ee.method), (Z = t.CompletionResolveRequest || (t.CompletionResolveRequest = {})).method = "completionItem/resolve", Z.messageDirection = i.MessageDirection.clientToServer, Z.type = new i.ProtocolRequestType(Z.method), (Q = t.HoverRequest || (t.HoverRequest = {})).method = "textDocument/hover", Q.messageDirection = i.MessageDirection.clientToServer, Q.type = new i.ProtocolRequestType(Q.method), (J = t.SignatureHelpTriggerKind || (t.SignatureHelpTriggerKind = {})).Invoked = 1, J.TriggerCharacter = 2, J.ContentChange = 3, (Y = t.SignatureHelpRequest || (t.SignatureHelpRequest = {})).method = "textDocument/signatureHelp", Y.messageDirection = i.MessageDirection.clientToServer, Y.type = new i.ProtocolRequestType(Y.method), (X = t.DefinitionRequest || (t.DefinitionRequest = {})).method = "textDocument/definition", X.messageDirection = i.MessageDirection.clientToServer, X.type = new i.ProtocolRequestType(X.method), (K = t.ReferencesRequest || (t.ReferencesRequest = {})).method = "textDocument/references", K.messageDirection = i.MessageDirection.clientToServer, K.type = new i.ProtocolRequestType(K.method), (G = t.DocumentHighlightRequest || (t.DocumentHighlightRequest = {})).method = "textDocument/documentHighlight", G.messageDirection = i.MessageDirection.clientToServer, G.type = new i.ProtocolRequestType(G.method), (U = t.DocumentSymbolRequest || (t.DocumentSymbolRequest = {})).method = "textDocument/documentSymbol", U.messageDirection = i.MessageDirection.clientToServer, U.type = new i.ProtocolRequestType(U.method), (V = t.CodeActionRequest || (t.CodeActionRequest = {})).method = "textDocument/codeAction", V.messageDirection = i.MessageDirection.clientToServer, V.type = new i.ProtocolRequestType(V.method), (q = t.CodeActionResolveRequest || (t.CodeActionResolveRequest = {})).method = "codeAction/resolve", q.messageDirection = i.MessageDirection.clientToServer, q.type = new i.ProtocolRequestType(q.method), (z = t.WorkspaceSymbolRequest || (t.WorkspaceSymbolRequest = {})).method = "workspace/symbol", z.messageDirection = i.MessageDirection.clientToServer, z.type = new i.ProtocolRequestType(z.method), (B = t.WorkspaceSymbolResolveRequest || (t.WorkspaceSymbolResolveRequest = {})).method = "workspaceSymbol/resolve", B.messageDirection = i.MessageDirection.clientToServer, B.type = new i.ProtocolRequestType(B.method), (H = t.CodeLensRequest || (t.CodeLensRequest = {})).method = "textDocument/codeLens", H.messageDirection = i.MessageDirection.clientToServer, H.type = new i.ProtocolRequestType(H.method), (W = t.CodeLensResolveRequest || (t.CodeLensResolveRequest = {})).method = "codeLens/resolve", W.messageDirection = i.MessageDirection.clientToServer, W.type = new i.ProtocolRequestType(W.method), (j = t.CodeLensRefreshRequest || (t.CodeLensRefreshRequest = {})).method = "workspace/codeLens/refresh", j.messageDirection = i.MessageDirection.serverToClient, j.type = new i.ProtocolRequestType0(j.method), (F = t.DocumentLinkRequest || (t.DocumentLinkRequest = {})).method = "textDocument/documentLink", F.messageDirection = i.MessageDirection.clientToServer, F.type = new i.ProtocolRequestType(F.method), (N = t.DocumentLinkResolveRequest || (t.DocumentLinkResolveRequest = {})).method = "documentLink/resolve", N.messageDirection = i.MessageDirection.clientToServer, N.type = new i.ProtocolRequestType(N.method), (I = t.DocumentFormattingRequest || (t.DocumentFormattingRequest = {})).method = "textDocument/formatting", I.messageDirection = i.MessageDirection.clientToServer, I.type = new i.ProtocolRequestType(I.method), (O = t.DocumentRangeFormattingRequest || (t.DocumentRangeFormattingRequest = {})).method = "textDocument/rangeFormatting", O.messageDirection = i.MessageDirection.clientToServer, O.type = new i.ProtocolRequestType(O.method), (D = t.DocumentOnTypeFormattingRequest || (t.DocumentOnTypeFormattingRequest = {})).method = "textDocument/onTypeFormatting", D.messageDirection = i.MessageDirection.clientToServer, D.type = new i.ProtocolRequestType(D.method), (t.PrepareSupportDefaultBehavior || (t.PrepareSupportDefaultBehavior = {})).Identifier = 1, (P = t.RenameRequest || (t.RenameRequest = {})).method = "textDocument/rename", P.messageDirection = i.MessageDirection.clientToServer, P.type = new i.ProtocolRequestType(P.method), (L = t.PrepareRenameRequest || (t.PrepareRenameRequest = {})).method = "textDocument/prepareRename", L.messageDirection = i.MessageDirection.clientToServer, L.type = new i.ProtocolRequestType(L.method), (M = t.ExecuteCommandRequest || (t.ExecuteCommandRequest = {})).method = "workspace/executeCommand", M.messageDirection = i.MessageDirection.clientToServer, M.type = new i.ProtocolRequestType(M.method), (E = t.ApplyWorkspaceEditRequest || (t.ApplyWorkspaceEditRequest = {})).method = "workspace/applyEdit", E.messageDirection = i.MessageDirection.serverToClient, E.type = new i.ProtocolRequestType("workspace/applyEdit");
+                return !1; return !0; }; }(A = t.DocumentSelector || (t.DocumentSelector = {})), (Ee = t.RegistrationRequest || (t.RegistrationRequest = {})).method = "client/registerCapability", Ee.messageDirection = i.MessageDirection.serverToClient, Ee.type = new i.ProtocolRequestType(Ee.method), (Ae = t.UnregistrationRequest || (t.UnregistrationRequest = {})).method = "client/unregisterCapability", Ae.messageDirection = i.MessageDirection.serverToClient, Ae.type = new i.ProtocolRequestType(Ae.method), (Te = t.ResourceOperationKind || (t.ResourceOperationKind = {})).Create = "create", Te.Rename = "rename", Te.Delete = "delete", (xe = t.FailureHandlingKind || (t.FailureHandlingKind = {})).Abort = "abort", xe.Transactional = "transactional", xe.TextOnlyTransactional = "textOnlyTransactional", xe.Undo = "undo", (Re = t.PositionEncodingKind || (t.PositionEncodingKind = {})).UTF8 = "utf-8", Re.UTF16 = "utf-16", Re.UTF32 = "utf-32", (t.StaticRegistrationOptions || (t.StaticRegistrationOptions = {})).hasId = function (e) { const t = e; return t && o.string(t.id) && t.id.length > 0; }, (t.TextDocumentRegistrationOptions || (t.TextDocumentRegistrationOptions = {})).is = function (e) { const t = e; return t && (null === t.documentSelector || A.is(t.documentSelector)); }, ($e = t.WorkDoneProgressOptions || (t.WorkDoneProgressOptions = {})).is = function (e) { const t = e; return o.objectLiteral(t) && (void 0 === t.workDoneProgress || o.boolean(t.workDoneProgress)); }, $e.hasWorkDoneProgress = function (e) { const t = e; return t && o.boolean(t.workDoneProgress); }, (_e = t.InitializeRequest || (t.InitializeRequest = {})).method = "initialize", _e.messageDirection = i.MessageDirection.clientToServer, _e.type = new i.ProtocolRequestType(_e.method), (t.InitializeErrorCodes || (t.InitializeErrorCodes = {})).unknownProtocolVersion = 1, (ke = t.InitializedNotification || (t.InitializedNotification = {})).method = "initialized", ke.messageDirection = i.MessageDirection.clientToServer, ke.type = new i.ProtocolNotificationType(ke.method), (Ce = t.ShutdownRequest || (t.ShutdownRequest = {})).method = "shutdown", Ce.messageDirection = i.MessageDirection.clientToServer, Ce.type = new i.ProtocolRequestType0(Ce.method), (Se = t.ExitNotification || (t.ExitNotification = {})).method = "exit", Se.messageDirection = i.MessageDirection.clientToServer, Se.type = new i.ProtocolNotificationType0(Se.method), (be = t.DidChangeConfigurationNotification || (t.DidChangeConfigurationNotification = {})).method = "workspace/didChangeConfiguration", be.messageDirection = i.MessageDirection.clientToServer, be.type = new i.ProtocolNotificationType(be.method), (ye = t.MessageType || (t.MessageType = {})).Error = 1, ye.Warning = 2, ye.Info = 3, ye.Log = 4, (we = t.ShowMessageNotification || (t.ShowMessageNotification = {})).method = "window/showMessage", we.messageDirection = i.MessageDirection.serverToClient, we.type = new i.ProtocolNotificationType(we.method), (ve = t.ShowMessageRequest || (t.ShowMessageRequest = {})).method = "window/showMessageRequest", ve.messageDirection = i.MessageDirection.serverToClient, ve.type = new i.ProtocolRequestType(ve.method), (me = t.LogMessageNotification || (t.LogMessageNotification = {})).method = "window/logMessage", me.messageDirection = i.MessageDirection.serverToClient, me.type = new i.ProtocolNotificationType(me.method), (pe = t.TelemetryEventNotification || (t.TelemetryEventNotification = {})).method = "telemetry/event", pe.messageDirection = i.MessageDirection.serverToClient, pe.type = new i.ProtocolNotificationType(pe.method), (fe = t.TextDocumentSyncKind || (t.TextDocumentSyncKind = {})).None = 0, fe.Full = 1, fe.Incremental = 2, (ge = t.DidOpenTextDocumentNotification || (t.DidOpenTextDocumentNotification = {})).method = "textDocument/didOpen", ge.messageDirection = i.MessageDirection.clientToServer, ge.type = new i.ProtocolNotificationType(ge.method), (de = t.TextDocumentContentChangeEvent || (t.TextDocumentContentChangeEvent = {})).isIncremental = function (e) { let t = e; return null != t && "string" == typeof t.text && void 0 !== t.range && (void 0 === t.rangeLength || "number" == typeof t.rangeLength); }, de.isFull = function (e) { let t = e; return null != t && "string" == typeof t.text && void 0 === t.range && void 0 === t.rangeLength; }, (ue = t.DidChangeTextDocumentNotification || (t.DidChangeTextDocumentNotification = {})).method = "textDocument/didChange", ue.messageDirection = i.MessageDirection.clientToServer, ue.type = new i.ProtocolNotificationType(ue.method), (he = t.DidCloseTextDocumentNotification || (t.DidCloseTextDocumentNotification = {})).method = "textDocument/didClose", he.messageDirection = i.MessageDirection.clientToServer, he.type = new i.ProtocolNotificationType(he.method), (le = t.DidSaveTextDocumentNotification || (t.DidSaveTextDocumentNotification = {})).method = "textDocument/didSave", le.messageDirection = i.MessageDirection.clientToServer, le.type = new i.ProtocolNotificationType(le.method), (ce = t.TextDocumentSaveReason || (t.TextDocumentSaveReason = {})).Manual = 1, ce.AfterDelay = 2, ce.FocusOut = 3, (ae = t.WillSaveTextDocumentNotification || (t.WillSaveTextDocumentNotification = {})).method = "textDocument/willSave", ae.messageDirection = i.MessageDirection.clientToServer, ae.type = new i.ProtocolNotificationType(ae.method), (se = t.WillSaveTextDocumentWaitUntilRequest || (t.WillSaveTextDocumentWaitUntilRequest = {})).method = "textDocument/willSaveWaitUntil", se.messageDirection = i.MessageDirection.clientToServer, se.type = new i.ProtocolRequestType(se.method), (oe = t.DidChangeWatchedFilesNotification || (t.DidChangeWatchedFilesNotification = {})).method = "workspace/didChangeWatchedFiles", oe.messageDirection = i.MessageDirection.clientToServer, oe.type = new i.ProtocolNotificationType(oe.method), (re = t.FileChangeType || (t.FileChangeType = {})).Created = 1, re.Changed = 2, re.Deleted = 3, (t.RelativePattern || (t.RelativePattern = {})).is = function (e) { const t = e; return o.objectLiteral(t) && (r.URI.is(t.baseUri) || r.WorkspaceFolder.is(t.baseUri)) && o.string(t.pattern); }, (ie = t.WatchKind || (t.WatchKind = {})).Create = 1, ie.Change = 2, ie.Delete = 4, (ne = t.PublishDiagnosticsNotification || (t.PublishDiagnosticsNotification = {})).method = "textDocument/publishDiagnostics", ne.messageDirection = i.MessageDirection.serverToClient, ne.type = new i.ProtocolNotificationType(ne.method), (te = t.CompletionTriggerKind || (t.CompletionTriggerKind = {})).Invoked = 1, te.TriggerCharacter = 2, te.TriggerForIncompleteCompletions = 3, (ee = t.CompletionRequest || (t.CompletionRequest = {})).method = "textDocument/completion", ee.messageDirection = i.MessageDirection.clientToServer, ee.type = new i.ProtocolRequestType(ee.method), (Z = t.CompletionResolveRequest || (t.CompletionResolveRequest = {})).method = "completionItem/resolve", Z.messageDirection = i.MessageDirection.clientToServer, Z.type = new i.ProtocolRequestType(Z.method), (Q = t.HoverRequest || (t.HoverRequest = {})).method = "textDocument/hover", Q.messageDirection = i.MessageDirection.clientToServer, Q.type = new i.ProtocolRequestType(Q.method), (J = t.SignatureHelpTriggerKind || (t.SignatureHelpTriggerKind = {})).Invoked = 1, J.TriggerCharacter = 2, J.ContentChange = 3, (Y = t.SignatureHelpRequest || (t.SignatureHelpRequest = {})).method = "textDocument/signatureHelp", Y.messageDirection = i.MessageDirection.clientToServer, Y.type = new i.ProtocolRequestType(Y.method), (X = t.DefinitionRequest || (t.DefinitionRequest = {})).method = "textDocument/definition", X.messageDirection = i.MessageDirection.clientToServer, X.type = new i.ProtocolRequestType(X.method), (K = t.ReferencesRequest || (t.ReferencesRequest = {})).method = "textDocument/references", K.messageDirection = i.MessageDirection.clientToServer, K.type = new i.ProtocolRequestType(K.method), (G = t.DocumentHighlightRequest || (t.DocumentHighlightRequest = {})).method = "textDocument/documentHighlight", G.messageDirection = i.MessageDirection.clientToServer, G.type = new i.ProtocolRequestType(G.method), (U = t.DocumentSymbolRequest || (t.DocumentSymbolRequest = {})).method = "textDocument/documentSymbol", U.messageDirection = i.MessageDirection.clientToServer, U.type = new i.ProtocolRequestType(U.method), (V = t.CodeActionRequest || (t.CodeActionRequest = {})).method = "textDocument/codeAction", V.messageDirection = i.MessageDirection.clientToServer, V.type = new i.ProtocolRequestType(V.method), (q = t.CodeActionResolveRequest || (t.CodeActionResolveRequest = {})).method = "codeAction/resolve", q.messageDirection = i.MessageDirection.clientToServer, q.type = new i.ProtocolRequestType(q.method), (z = t.WorkspaceSymbolRequest || (t.WorkspaceSymbolRequest = {})).method = "workspace/symbol", z.messageDirection = i.MessageDirection.clientToServer, z.type = new i.ProtocolRequestType(z.method), (B = t.WorkspaceSymbolResolveRequest || (t.WorkspaceSymbolResolveRequest = {})).method = "workspaceSymbol/resolve", B.messageDirection = i.MessageDirection.clientToServer, B.type = new i.ProtocolRequestType(B.method), (H = t.CodeLensRequest || (t.CodeLensRequest = {})).method = "textDocument/codeLens", H.messageDirection = i.MessageDirection.clientToServer, H.type = new i.ProtocolRequestType(H.method), (W = t.CodeLensResolveRequest || (t.CodeLensResolveRequest = {})).method = "codeLens/resolve", W.messageDirection = i.MessageDirection.clientToServer, W.type = new i.ProtocolRequestType(W.method), (j = t.CodeLensRefreshRequest || (t.CodeLensRefreshRequest = {})).method = "workspace/codeLens/refresh", j.messageDirection = i.MessageDirection.serverToClient, j.type = new i.ProtocolRequestType0(j.method), (F = t.DocumentLinkRequest || (t.DocumentLinkRequest = {})).method = "textDocument/documentLink", F.messageDirection = i.MessageDirection.clientToServer, F.type = new i.ProtocolRequestType(F.method), (N = t.DocumentLinkResolveRequest || (t.DocumentLinkResolveRequest = {})).method = "documentLink/resolve", N.messageDirection = i.MessageDirection.clientToServer, N.type = new i.ProtocolRequestType(N.method), (I = t.DocumentFormattingRequest || (t.DocumentFormattingRequest = {})).method = "textDocument/formatting", I.messageDirection = i.MessageDirection.clientToServer, I.type = new i.ProtocolRequestType(I.method), (O = t.DocumentRangeFormattingRequest || (t.DocumentRangeFormattingRequest = {})).method = "textDocument/rangeFormatting", O.messageDirection = i.MessageDirection.clientToServer, O.type = new i.ProtocolRequestType(O.method), (D = t.DocumentOnTypeFormattingRequest || (t.DocumentOnTypeFormattingRequest = {})).method = "textDocument/onTypeFormatting", D.messageDirection = i.MessageDirection.clientToServer, D.type = new i.ProtocolRequestType(D.method), (t.PrepareSupportDefaultBehavior || (t.PrepareSupportDefaultBehavior = {})).Identifier = 1, (P = t.RenameRequest || (t.RenameRequest = {})).method = "textDocument/rename", P.messageDirection = i.MessageDirection.clientToServer, P.type = new i.ProtocolRequestType(P.method), (L = t.PrepareRenameRequest || (t.PrepareRenameRequest = {})).method = "textDocument/prepareRename", L.messageDirection = i.MessageDirection.clientToServer, L.type = new i.ProtocolRequestType(L.method), (M = t.ExecuteCommandRequest || (t.ExecuteCommandRequest = {})).method = "workspace/executeCommand", M.messageDirection = i.MessageDirection.clientToServer, M.type = new i.ProtocolRequestType(M.method), (E = t.ApplyWorkspaceEditRequest || (t.ApplyWorkspaceEditRequest = {})).method = "workspace/applyEdit", E.messageDirection = i.MessageDirection.serverToClient, E.type = new i.ProtocolRequestType("workspace/applyEdit");
     }, 527: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.LinkedEditingRangeRequest = void 0;
@@ -51458,7 +51498,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.DidCloseNotebookDocumentNotification = t.DidSaveNotebookDocumentNotification = t.DidChangeNotebookDocumentNotification = t.NotebookCellArrayChange = t.DidOpenNotebookDocumentNotification = t.NotebookDocumentSyncRegistrationType = t.NotebookDocument = t.NotebookCell = t.ExecutionSummary = t.NotebookCellKind = void 0;
         const i = n(4767), r = n(2523), o = n(8599);
-        var s, a, c, l, h, u, d, f, g, p;
+        var s, a, c, l, h, u, d, g, f, p;
         !function (e) { e.Markup = 1, e.Code = 2, e.is = function (e) { return 1 === e || 2 === e; }; }(s = t.NotebookCellKind || (t.NotebookCellKind = {})), function (e) { e.create = function (e, t) { const n = { executionOrder: e }; return !0 !== t && !1 !== t || (n.success = t), n; }, e.is = function (e) { const t = e; return r.objectLiteral(t) && i.uinteger.is(t.executionOrder) && (void 0 === t.success || r.boolean(t.success)); }, e.equals = function (e, t) { return e === t || null != e && null != t && e.executionOrder === t.executionOrder && e.success === t.success; }; }(a = t.ExecutionSummary || (t.ExecutionSummary = {})), function (e) { function t(e, n) { if (e === n)
             return !0; if (null == e || null == n)
             return !1; if (typeof e != typeof n)
@@ -51481,7 +51521,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 if (!t(e[o], n[o]))
                     return !1;
             }
-        } return !0; } e.create = function (e, t) { return { kind: e, document: t }; }, e.is = function (e) { const t = e; return r.objectLiteral(t) && s.is(t.kind) && i.DocumentUri.is(t.document) && (void 0 === t.metadata || r.objectLiteral(t.metadata)); }, e.diff = function (e, n) { const i = new Set; return e.document !== n.document && i.add("document"), e.kind !== n.kind && i.add("kind"), e.executionSummary !== n.executionSummary && i.add("executionSummary"), void 0 === e.metadata && void 0 === n.metadata || t(e.metadata, n.metadata) || i.add("metadata"), void 0 === e.executionSummary && void 0 === n.executionSummary || a.equals(e.executionSummary, n.executionSummary) || i.add("executionSummary"), i; }; }(c = t.NotebookCell || (t.NotebookCell = {})), (p = t.NotebookDocument || (t.NotebookDocument = {})).create = function (e, t, n, i) { return { uri: e, notebookType: t, version: n, cells: i }; }, p.is = function (e) { const t = e; return r.objectLiteral(t) && r.string(t.uri) && i.integer.is(t.version) && r.typedArray(t.cells, c.is); }, function (e) { e.method = "notebookDocument/sync", e.messageDirection = o.MessageDirection.clientToServer, e.type = new o.RegistrationType(e.method); }(l = t.NotebookDocumentSyncRegistrationType || (t.NotebookDocumentSyncRegistrationType = {})), (g = t.DidOpenNotebookDocumentNotification || (t.DidOpenNotebookDocumentNotification = {})).method = "notebookDocument/didOpen", g.messageDirection = o.MessageDirection.clientToServer, g.type = new o.ProtocolNotificationType(g.method), g.registrationMethod = l.method, (f = t.NotebookCellArrayChange || (t.NotebookCellArrayChange = {})).is = function (e) { const t = e; return r.objectLiteral(t) && i.uinteger.is(t.start) && i.uinteger.is(t.deleteCount) && (void 0 === t.cells || r.typedArray(t.cells, c.is)); }, f.create = function (e, t, n) { const i = { start: e, deleteCount: t }; return void 0 !== n && (i.cells = n), i; }, (d = t.DidChangeNotebookDocumentNotification || (t.DidChangeNotebookDocumentNotification = {})).method = "notebookDocument/didChange", d.messageDirection = o.MessageDirection.clientToServer, d.type = new o.ProtocolNotificationType(d.method), d.registrationMethod = l.method, (u = t.DidSaveNotebookDocumentNotification || (t.DidSaveNotebookDocumentNotification = {})).method = "notebookDocument/didSave", u.messageDirection = o.MessageDirection.clientToServer, u.type = new o.ProtocolNotificationType(u.method), u.registrationMethod = l.method, (h = t.DidCloseNotebookDocumentNotification || (t.DidCloseNotebookDocumentNotification = {})).method = "notebookDocument/didClose", h.messageDirection = o.MessageDirection.clientToServer, h.type = new o.ProtocolNotificationType(h.method), h.registrationMethod = l.method;
+        } return !0; } e.create = function (e, t) { return { kind: e, document: t }; }, e.is = function (e) { const t = e; return r.objectLiteral(t) && s.is(t.kind) && i.DocumentUri.is(t.document) && (void 0 === t.metadata || r.objectLiteral(t.metadata)); }, e.diff = function (e, n) { const i = new Set; return e.document !== n.document && i.add("document"), e.kind !== n.kind && i.add("kind"), e.executionSummary !== n.executionSummary && i.add("executionSummary"), void 0 === e.metadata && void 0 === n.metadata || t(e.metadata, n.metadata) || i.add("metadata"), void 0 === e.executionSummary && void 0 === n.executionSummary || a.equals(e.executionSummary, n.executionSummary) || i.add("executionSummary"), i; }; }(c = t.NotebookCell || (t.NotebookCell = {})), (p = t.NotebookDocument || (t.NotebookDocument = {})).create = function (e, t, n, i) { return { uri: e, notebookType: t, version: n, cells: i }; }, p.is = function (e) { const t = e; return r.objectLiteral(t) && r.string(t.uri) && i.integer.is(t.version) && r.typedArray(t.cells, c.is); }, function (e) { e.method = "notebookDocument/sync", e.messageDirection = o.MessageDirection.clientToServer, e.type = new o.RegistrationType(e.method); }(l = t.NotebookDocumentSyncRegistrationType || (t.NotebookDocumentSyncRegistrationType = {})), (f = t.DidOpenNotebookDocumentNotification || (t.DidOpenNotebookDocumentNotification = {})).method = "notebookDocument/didOpen", f.messageDirection = o.MessageDirection.clientToServer, f.type = new o.ProtocolNotificationType(f.method), f.registrationMethod = l.method, (g = t.NotebookCellArrayChange || (t.NotebookCellArrayChange = {})).is = function (e) { const t = e; return r.objectLiteral(t) && i.uinteger.is(t.start) && i.uinteger.is(t.deleteCount) && (void 0 === t.cells || r.typedArray(t.cells, c.is)); }, g.create = function (e, t, n) { const i = { start: e, deleteCount: t }; return void 0 !== n && (i.cells = n), i; }, (d = t.DidChangeNotebookDocumentNotification || (t.DidChangeNotebookDocumentNotification = {})).method = "notebookDocument/didChange", d.messageDirection = o.MessageDirection.clientToServer, d.type = new o.ProtocolNotificationType(d.method), d.registrationMethod = l.method, (u = t.DidSaveNotebookDocumentNotification || (t.DidSaveNotebookDocumentNotification = {})).method = "notebookDocument/didSave", u.messageDirection = o.MessageDirection.clientToServer, u.type = new o.ProtocolNotificationType(u.method), u.registrationMethod = l.method, (h = t.DidCloseNotebookDocumentNotification || (t.DidCloseNotebookDocumentNotification = {})).method = "notebookDocument/didClose", h.messageDirection = o.MessageDirection.clientToServer, h.type = new o.ProtocolNotificationType(h.method), h.registrationMethod = l.method;
     }, 7895: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.WorkDoneProgressCancelNotification = t.WorkDoneProgressCreateRequest = t.WorkDoneProgress = void 0;
@@ -51531,12 +51571,12 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         Object.defineProperty(t, "__esModule", { value: !0 }), t.objectLiteral = t.typedArray = t.stringArray = t.array = t.func = t.error = t.number = t.string = t.boolean = void 0, t.boolean = function (e) { return !0 === e || !1 === e; }, t.string = n, t.number = function (e) { return "number" == typeof e || e instanceof Number; }, t.error = function (e) { return e instanceof Error; }, t.func = function (e) { return "function" == typeof e; }, t.array = i, t.stringArray = function (e) { return i(e) && e.every((e => n(e))); }, t.typedArray = function (e, t) { return Array.isArray(e) && e.every(t); }, t.objectLiteral = function (e) { return null !== e && "object" == typeof e; };
     }, 4767: (e, t, n) => {
         "use strict";
-        var i, r, o, s, a, c, l, h, u, d, f, g, p, m, v, w, y, b, S, C, k, _, $, R, x, T, A, E;
-        n.r(t), n.d(t, { AnnotatedTextEdit: () => $, ChangeAnnotation: () => k, ChangeAnnotationIdentifier: () => _, CodeAction: () => oe, CodeActionContext: () => re, CodeActionKind: () => ne, CodeActionTriggerKind: () => ie, CodeDescription: () => y, CodeLens: () => se, Color: () => u, ColorInformation: () => d, ColorPresentation: () => f, Command: () => S, CompletionItem: () => z, CompletionItemKind: () => N, CompletionItemLabelDetails: () => B, CompletionItemTag: () => j, CompletionList: () => q, CreateFile: () => x, DeleteFile: () => A, Diagnostic: () => b, DiagnosticRelatedInformation: () => m, DiagnosticSeverity: () => v, DiagnosticTag: () => w, DocumentHighlight: () => Y, DocumentHighlightKind: () => X, DocumentLink: () => ce, DocumentSymbol: () => te, DocumentUri: () => i, EOL: () => $e, FoldingRange: () => p, FoldingRangeKind: () => g, FormattingOptions: () => ae, Hover: () => U, InlayHint: () => ye, InlayHintKind: () => ve, InlayHintLabelPart: () => we, InlineValueContext: () => me, InlineValueEvaluatableExpression: () => pe, InlineValueText: () => fe, InlineValueVariableLookup: () => ge, InsertReplaceEdit: () => W, InsertTextFormat: () => F, InsertTextMode: () => H, Location: () => l, LocationLink: () => h, MarkedString: () => V, MarkupContent: () => I, MarkupKind: () => O, OptionalVersionedTextDocumentIdentifier: () => P, ParameterInformation: () => G, Position: () => a, Range: () => c, RenameFile: () => T, SelectionRange: () => le, SemanticTokenModifiers: () => ue, SemanticTokenTypes: () => he, SemanticTokens: () => de, SignatureInformation: () => K, SymbolInformation: () => Z, SymbolKind: () => J, SymbolTag: () => Q, TextDocument: () => _e, TextDocumentEdit: () => R, TextDocumentIdentifier: () => M, TextDocumentItem: () => D, TextEdit: () => C, URI: () => r, VersionedTextDocumentIdentifier: () => L, WorkspaceChange: () => ke, WorkspaceEdit: () => E, WorkspaceFolder: () => be, WorkspaceSymbol: () => ee, integer: () => o, uinteger: () => s }), function (e) { e.is = function (e) { return "string" == typeof e; }; }(i || (i = {})), function (e) { e.is = function (e) { return "string" == typeof e; }; }(r || (r = {})), function (e) { e.MIN_VALUE = -2147483648, e.MAX_VALUE = 2147483647, e.is = function (t) { return "number" == typeof t && e.MIN_VALUE <= t && t <= e.MAX_VALUE; }; }(o || (o = {})), function (e) { e.MIN_VALUE = 0, e.MAX_VALUE = 2147483647, e.is = function (t) { return "number" == typeof t && e.MIN_VALUE <= t && t <= e.MAX_VALUE; }; }(s || (s = {})), function (e) { e.create = function (e, t) { return e === Number.MAX_VALUE && (e = s.MAX_VALUE), t === Number.MAX_VALUE && (t = s.MAX_VALUE), { line: e, character: t }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.uinteger(t.line) && Re.uinteger(t.character); }; }(a || (a = {})), function (e) { e.create = function (e, t, n, i) { if (Re.uinteger(e) && Re.uinteger(t) && Re.uinteger(n) && Re.uinteger(i))
+        var i, r, o, s, a, c, l, h, u, d, g, f, p, m, v, w, y, b, S, C, k, _, $, R, x, T, A, E;
+        n.r(t), n.d(t, { AnnotatedTextEdit: () => $, ChangeAnnotation: () => k, ChangeAnnotationIdentifier: () => _, CodeAction: () => oe, CodeActionContext: () => re, CodeActionKind: () => ne, CodeActionTriggerKind: () => ie, CodeDescription: () => y, CodeLens: () => se, Color: () => u, ColorInformation: () => d, ColorPresentation: () => g, Command: () => S, CompletionItem: () => z, CompletionItemKind: () => N, CompletionItemLabelDetails: () => B, CompletionItemTag: () => j, CompletionList: () => q, CreateFile: () => x, DeleteFile: () => A, Diagnostic: () => b, DiagnosticRelatedInformation: () => m, DiagnosticSeverity: () => v, DiagnosticTag: () => w, DocumentHighlight: () => Y, DocumentHighlightKind: () => X, DocumentLink: () => ce, DocumentSymbol: () => te, DocumentUri: () => i, EOL: () => $e, FoldingRange: () => p, FoldingRangeKind: () => f, FormattingOptions: () => ae, Hover: () => U, InlayHint: () => ye, InlayHintKind: () => ve, InlayHintLabelPart: () => we, InlineValueContext: () => me, InlineValueEvaluatableExpression: () => pe, InlineValueText: () => ge, InlineValueVariableLookup: () => fe, InsertReplaceEdit: () => W, InsertTextFormat: () => F, InsertTextMode: () => H, Location: () => l, LocationLink: () => h, MarkedString: () => V, MarkupContent: () => I, MarkupKind: () => O, OptionalVersionedTextDocumentIdentifier: () => P, ParameterInformation: () => G, Position: () => a, Range: () => c, RenameFile: () => T, SelectionRange: () => le, SemanticTokenModifiers: () => ue, SemanticTokenTypes: () => he, SemanticTokens: () => de, SignatureInformation: () => K, SymbolInformation: () => Z, SymbolKind: () => J, SymbolTag: () => Q, TextDocument: () => _e, TextDocumentEdit: () => R, TextDocumentIdentifier: () => M, TextDocumentItem: () => D, TextEdit: () => C, URI: () => r, VersionedTextDocumentIdentifier: () => L, WorkspaceChange: () => ke, WorkspaceEdit: () => E, WorkspaceFolder: () => be, WorkspaceSymbol: () => ee, integer: () => o, uinteger: () => s }), function (e) { e.is = function (e) { return "string" == typeof e; }; }(i || (i = {})), function (e) { e.is = function (e) { return "string" == typeof e; }; }(r || (r = {})), function (e) { e.MIN_VALUE = -2147483648, e.MAX_VALUE = 2147483647, e.is = function (t) { return "number" == typeof t && e.MIN_VALUE <= t && t <= e.MAX_VALUE; }; }(o || (o = {})), function (e) { e.MIN_VALUE = 0, e.MAX_VALUE = 2147483647, e.is = function (t) { return "number" == typeof t && e.MIN_VALUE <= t && t <= e.MAX_VALUE; }; }(s || (s = {})), function (e) { e.create = function (e, t) { return e === Number.MAX_VALUE && (e = s.MAX_VALUE), t === Number.MAX_VALUE && (t = s.MAX_VALUE), { line: e, character: t }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.uinteger(t.line) && Re.uinteger(t.character); }; }(a || (a = {})), function (e) { e.create = function (e, t, n, i) { if (Re.uinteger(e) && Re.uinteger(t) && Re.uinteger(n) && Re.uinteger(i))
             return { start: a.create(e, t), end: a.create(n, i) }; if (a.is(e) && a.is(t))
-            return { start: e, end: t }; throw new Error("Range#create called with invalid arguments[".concat(e, ", ").concat(t, ", ").concat(n, ", ").concat(i, "]")); }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && a.is(t.start) && a.is(t.end); }; }(c || (c = {})), function (e) { e.create = function (e, t) { return { uri: e, range: t }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && c.is(t.range) && (Re.string(t.uri) || Re.undefined(t.uri)); }; }(l || (l = {})), function (e) { e.create = function (e, t, n, i) { return { targetUri: e, targetRange: t, targetSelectionRange: n, originSelectionRange: i }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && c.is(t.targetRange) && Re.string(t.targetUri) && c.is(t.targetSelectionRange) && (c.is(t.originSelectionRange) || Re.undefined(t.originSelectionRange)); }; }(h || (h = {})), function (e) { e.create = function (e, t, n, i) { return { red: e, green: t, blue: n, alpha: i }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.numberRange(t.red, 0, 1) && Re.numberRange(t.green, 0, 1) && Re.numberRange(t.blue, 0, 1) && Re.numberRange(t.alpha, 0, 1); }; }(u || (u = {})), function (e) { e.create = function (e, t) { return { range: e, color: t }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && c.is(t.range) && u.is(t.color); }; }(d || (d = {})), function (e) { e.create = function (e, t, n) { return { label: e, textEdit: t, additionalTextEdits: n }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.string(t.label) && (Re.undefined(t.textEdit) || C.is(t)) && (Re.undefined(t.additionalTextEdits) || Re.typedArray(t.additionalTextEdits, C.is)); }; }(f || (f = {})), function (e) { e.Comment = "comment", e.Imports = "imports", e.Region = "region"; }(g || (g = {})), function (e) { e.create = function (e, t, n, i, r, o) { var s = { startLine: e, endLine: t }; return Re.defined(n) && (s.startCharacter = n), Re.defined(i) && (s.endCharacter = i), Re.defined(r) && (s.kind = r), Re.defined(o) && (s.collapsedText = o), s; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.uinteger(t.startLine) && Re.uinteger(t.startLine) && (Re.undefined(t.startCharacter) || Re.uinteger(t.startCharacter)) && (Re.undefined(t.endCharacter) || Re.uinteger(t.endCharacter)) && (Re.undefined(t.kind) || Re.string(t.kind)); }; }(p || (p = {})), function (e) { e.create = function (e, t) { return { location: e, message: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && l.is(t.location) && Re.string(t.message); }; }(m || (m = {})), function (e) { e.Error = 1, e.Warning = 2, e.Information = 3, e.Hint = 4; }(v || (v = {})), function (e) { e.Unnecessary = 1, e.Deprecated = 2; }(w || (w = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.string(t.href); }; }(y || (y = {})), function (e) { e.create = function (e, t, n, i, r, o) { var s = { range: e, message: t }; return Re.defined(n) && (s.severity = n), Re.defined(i) && (s.code = i), Re.defined(r) && (s.source = r), Re.defined(o) && (s.relatedInformation = o), s; }, e.is = function (e) { var t, n = e; return Re.defined(n) && c.is(n.range) && Re.string(n.message) && (Re.number(n.severity) || Re.undefined(n.severity)) && (Re.integer(n.code) || Re.string(n.code) || Re.undefined(n.code)) && (Re.undefined(n.codeDescription) || Re.string(null === (t = n.codeDescription) || void 0 === t ? void 0 : t.href)) && (Re.string(n.source) || Re.undefined(n.source)) && (Re.undefined(n.relatedInformation) || Re.typedArray(n.relatedInformation, m.is)); }; }(b || (b = {})), function (e) { e.create = function (e, t) { for (var n = [], i = 2; i < arguments.length; i++)
+            return { start: e, end: t }; throw new Error("Range#create called with invalid arguments[".concat(e, ", ").concat(t, ", ").concat(n, ", ").concat(i, "]")); }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && a.is(t.start) && a.is(t.end); }; }(c || (c = {})), function (e) { e.create = function (e, t) { return { uri: e, range: t }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && c.is(t.range) && (Re.string(t.uri) || Re.undefined(t.uri)); }; }(l || (l = {})), function (e) { e.create = function (e, t, n, i) { return { targetUri: e, targetRange: t, targetSelectionRange: n, originSelectionRange: i }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && c.is(t.targetRange) && Re.string(t.targetUri) && c.is(t.targetSelectionRange) && (c.is(t.originSelectionRange) || Re.undefined(t.originSelectionRange)); }; }(h || (h = {})), function (e) { e.create = function (e, t, n, i) { return { red: e, green: t, blue: n, alpha: i }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.numberRange(t.red, 0, 1) && Re.numberRange(t.green, 0, 1) && Re.numberRange(t.blue, 0, 1) && Re.numberRange(t.alpha, 0, 1); }; }(u || (u = {})), function (e) { e.create = function (e, t) { return { range: e, color: t }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && c.is(t.range) && u.is(t.color); }; }(d || (d = {})), function (e) { e.create = function (e, t, n) { return { label: e, textEdit: t, additionalTextEdits: n }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.string(t.label) && (Re.undefined(t.textEdit) || C.is(t)) && (Re.undefined(t.additionalTextEdits) || Re.typedArray(t.additionalTextEdits, C.is)); }; }(g || (g = {})), function (e) { e.Comment = "comment", e.Imports = "imports", e.Region = "region"; }(f || (f = {})), function (e) { e.create = function (e, t, n, i, r, o) { var s = { startLine: e, endLine: t }; return Re.defined(n) && (s.startCharacter = n), Re.defined(i) && (s.endCharacter = i), Re.defined(r) && (s.kind = r), Re.defined(o) && (s.collapsedText = o), s; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.uinteger(t.startLine) && Re.uinteger(t.startLine) && (Re.undefined(t.startCharacter) || Re.uinteger(t.startCharacter)) && (Re.undefined(t.endCharacter) || Re.uinteger(t.endCharacter)) && (Re.undefined(t.kind) || Re.string(t.kind)); }; }(p || (p = {})), function (e) { e.create = function (e, t) { return { location: e, message: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && l.is(t.location) && Re.string(t.message); }; }(m || (m = {})), function (e) { e.Error = 1, e.Warning = 2, e.Information = 3, e.Hint = 4; }(v || (v = {})), function (e) { e.Unnecessary = 1, e.Deprecated = 2; }(w || (w = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.string(t.href); }; }(y || (y = {})), function (e) { e.create = function (e, t, n, i, r, o) { var s = { range: e, message: t }; return Re.defined(n) && (s.severity = n), Re.defined(i) && (s.code = i), Re.defined(r) && (s.source = r), Re.defined(o) && (s.relatedInformation = o), s; }, e.is = function (e) { var t, n = e; return Re.defined(n) && c.is(n.range) && Re.string(n.message) && (Re.number(n.severity) || Re.undefined(n.severity)) && (Re.integer(n.code) || Re.string(n.code) || Re.undefined(n.code)) && (Re.undefined(n.codeDescription) || Re.string(null === (t = n.codeDescription) || void 0 === t ? void 0 : t.href)) && (Re.string(n.source) || Re.undefined(n.source)) && (Re.undefined(n.relatedInformation) || Re.typedArray(n.relatedInformation, m.is)); }; }(b || (b = {})), function (e) { e.create = function (e, t) { for (var n = [], i = 2; i < arguments.length; i++)
             n[i - 2] = arguments[i]; var r = { title: e, command: t }; return Re.defined(n) && n.length > 0 && (r.arguments = n), r; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.string(t.title) && Re.string(t.command); }; }(S || (S = {})), function (e) { e.replace = function (e, t) { return { range: e, newText: t }; }, e.insert = function (e, t) { return { range: { start: e, end: e }, newText: t }; }, e.del = function (e) { return { range: e, newText: "" }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.string(t.newText) && c.is(t.range); }; }(C || (C = {})), function (e) { e.create = function (e, t, n) { var i = { label: e }; return void 0 !== t && (i.needsConfirmation = t), void 0 !== n && (i.description = n), i; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && Re.string(t.label) && (Re.boolean(t.needsConfirmation) || void 0 === t.needsConfirmation) && (Re.string(t.description) || void 0 === t.description); }; }(k || (k = {})), function (e) { e.is = function (e) { var t = e; return Re.string(t); }; }(_ || (_ = {})), function (e) { e.replace = function (e, t, n) { return { range: e, newText: t, annotationId: n }; }, e.insert = function (e, t, n) { return { range: { start: e, end: e }, newText: t, annotationId: n }; }, e.del = function (e, t) { return { range: e, newText: "", annotationId: t }; }, e.is = function (e) { var t = e; return C.is(t) && (k.is(t.annotationId) || _.is(t.annotationId)); }; }($ || ($ = {})), function (e) { e.create = function (e, t) { return { textDocument: e, edits: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && P.is(t.textDocument) && Array.isArray(t.edits); }; }(R || (R = {})), function (e) { e.create = function (e, t, n) { var i = { kind: "create", uri: e }; return void 0 === t || void 0 === t.overwrite && void 0 === t.ignoreIfExists || (i.options = t), void 0 !== n && (i.annotationId = n), i; }, e.is = function (e) { var t = e; return t && "create" === t.kind && Re.string(t.uri) && (void 0 === t.options || (void 0 === t.options.overwrite || Re.boolean(t.options.overwrite)) && (void 0 === t.options.ignoreIfExists || Re.boolean(t.options.ignoreIfExists))) && (void 0 === t.annotationId || _.is(t.annotationId)); }; }(x || (x = {})), function (e) { e.create = function (e, t, n, i) { var r = { kind: "rename", oldUri: e, newUri: t }; return void 0 === n || void 0 === n.overwrite && void 0 === n.ignoreIfExists || (r.options = n), void 0 !== i && (r.annotationId = i), r; }, e.is = function (e) { var t = e; return t && "rename" === t.kind && Re.string(t.oldUri) && Re.string(t.newUri) && (void 0 === t.options || (void 0 === t.options.overwrite || Re.boolean(t.options.overwrite)) && (void 0 === t.options.ignoreIfExists || Re.boolean(t.options.ignoreIfExists))) && (void 0 === t.annotationId || _.is(t.annotationId)); }; }(T || (T = {})), function (e) { e.create = function (e, t, n) { var i = { kind: "delete", uri: e }; return void 0 === t || void 0 === t.recursive && void 0 === t.ignoreIfNotExists || (i.options = t), void 0 !== n && (i.annotationId = n), i; }, e.is = function (e) { var t = e; return t && "delete" === t.kind && Re.string(t.uri) && (void 0 === t.options || (void 0 === t.options.recursive || Re.boolean(t.options.recursive)) && (void 0 === t.options.ignoreIfNotExists || Re.boolean(t.options.ignoreIfNotExists))) && (void 0 === t.annotationId || _.is(t.annotationId)); }; }(A || (A = {})), function (e) { e.is = function (e) { var t = e; return t && (void 0 !== t.changes || void 0 !== t.documentChanges) && (void 0 === t.documentChanges || t.documentChanges.every((function (e) { return Re.string(e.kind) ? x.is(e) || T.is(e) || A.is(e) : R.is(e); }))); }; }(E || (E = {}));
-        var M, L, P, D, O, I, N, F, j, W, H, B, z, q, V, U, G, K, X, Y, J, Q, Z, ee, te, ne, ie, re, oe, se, ae, ce, le, he, ue, de, fe, ge, pe, me, ve, we, ye, be, Se = function () { function e(e, t) { this.edits = e, this.changeAnnotations = t; } return e.prototype.insert = function (e, t, n) { var i, r; if (void 0 === n ? i = C.insert(e, t) : _.is(n) ? (r = n, i = $.insert(e, t, n)) : (this.assertChangeAnnotations(this.changeAnnotations), r = this.changeAnnotations.manage(n), i = $.insert(e, t, r)), this.edits.push(i), void 0 !== r)
+        var M, L, P, D, O, I, N, F, j, W, H, B, z, q, V, U, G, K, X, Y, J, Q, Z, ee, te, ne, ie, re, oe, se, ae, ce, le, he, ue, de, ge, fe, pe, me, ve, we, ye, be, Se = function () { function e(e, t) { this.edits = e, this.changeAnnotations = t; } return e.prototype.insert = function (e, t, n) { var i, r; if (void 0 === n ? i = C.insert(e, t) : _.is(n) ? (r = n, i = $.insert(e, t, n)) : (this.assertChangeAnnotations(this.changeAnnotations), r = this.changeAnnotations.manage(n), i = $.insert(e, t, r)), this.edits.push(i), void 0 !== r)
             return r; }, e.prototype.replace = function (e, t, n) { var i, r; if (void 0 === n ? i = C.replace(e, t) : _.is(n) ? (r = n, i = $.replace(e, t, n)) : (this.assertChangeAnnotations(this.changeAnnotations), r = this.changeAnnotations.manage(n), i = $.replace(e, t, r)), this.edits.push(i), void 0 !== r)
             return r; }, e.prototype.delete = function (e, t) { var n, i; if (void 0 === t ? n = C.del(e) : _.is(t) ? (i = t, n = $.del(e, t)) : (this.assertChangeAnnotations(this.changeAnnotations), i = this.changeAnnotations.manage(t), n = $.del(e, i)), this.edits.push(n), void 0 !== i)
             return i; }, e.prototype.add = function (e) { this.edits.push(e); }, e.prototype.all = function () { return this.edits; }, e.prototype.clear = function () { this.edits.splice(0, this.edits.length); }, e.prototype.assertChangeAnnotations = function (e) { if (void 0 === e)
@@ -51566,7 +51606,7 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             throw new Error("Workspace edit is not configured for document changes."); var i, r, o; if (k.is(t) || _.is(t) ? i = t : n = t, void 0 === i ? r = A.create(e, n) : (o = _.is(i) ? i : this._changeAnnotations.manage(i), r = A.create(e, n, o)), this._workspaceEdit.documentChanges.push(r), void 0 !== o)
             return o; }, e; }();
         !function (e) { e.create = function (e) { return { uri: e }; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.string(t.uri); }; }(M || (M = {})), function (e) { e.create = function (e, t) { return { uri: e, version: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.string(t.uri) && Re.integer(t.version); }; }(L || (L = {})), function (e) { e.create = function (e, t) { return { uri: e, version: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.string(t.uri) && (null === t.version || Re.integer(t.version)); }; }(P || (P = {})), function (e) { e.create = function (e, t, n, i) { return { uri: e, languageId: t, version: n, text: i }; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.string(t.uri) && Re.string(t.languageId) && Re.integer(t.version) && Re.string(t.text); }; }(D || (D = {})), function (e) { e.PlainText = "plaintext", e.Markdown = "markdown", e.is = function (t) { var n = t; return n === e.PlainText || n === e.Markdown; }; }(O || (O = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(e) && O.is(t.kind) && Re.string(t.value); }; }(I || (I = {})), function (e) { e.Text = 1, e.Method = 2, e.Function = 3, e.Constructor = 4, e.Field = 5, e.Variable = 6, e.Class = 7, e.Interface = 8, e.Module = 9, e.Property = 10, e.Unit = 11, e.Value = 12, e.Enum = 13, e.Keyword = 14, e.Snippet = 15, e.Color = 16, e.File = 17, e.Reference = 18, e.Folder = 19, e.EnumMember = 20, e.Constant = 21, e.Struct = 22, e.Event = 23, e.Operator = 24, e.TypeParameter = 25; }(N || (N = {})), function (e) { e.PlainText = 1, e.Snippet = 2; }(F || (F = {})), function (e) { e.Deprecated = 1; }(j || (j = {})), function (e) { e.create = function (e, t, n) { return { newText: e, insert: t, replace: n }; }, e.is = function (e) { var t = e; return t && Re.string(t.newText) && c.is(t.insert) && c.is(t.replace); }; }(W || (W = {})), function (e) { e.asIs = 1, e.adjustIndentation = 2; }(H || (H = {})), function (e) { e.is = function (e) { var t = e; return t && (Re.string(t.detail) || void 0 === t.detail) && (Re.string(t.description) || void 0 === t.description); }; }(B || (B = {})), function (e) { e.create = function (e) { return { label: e }; }; }(z || (z = {})), function (e) { e.create = function (e, t) { return { items: e || [], isIncomplete: !!t }; }; }(q || (q = {})), function (e) { e.fromPlainText = function (e) { return e.replace(/[\\`*_{}[\]()#+\-.!]/g, "\\$&"); }, e.is = function (e) { var t = e; return Re.string(t) || Re.objectLiteral(t) && Re.string(t.language) && Re.string(t.value); }; }(V || (V = {})), function (e) { e.is = function (e) { var t = e; return !!t && Re.objectLiteral(t) && (I.is(t.contents) || V.is(t.contents) || Re.typedArray(t.contents, V.is)) && (void 0 === e.range || c.is(e.range)); }; }(U || (U = {})), function (e) { e.create = function (e, t) { return t ? { label: e, documentation: t } : { label: e }; }; }(G || (G = {})), function (e) { e.create = function (e, t) { for (var n = [], i = 2; i < arguments.length; i++)
-            n[i - 2] = arguments[i]; var r = { label: e }; return Re.defined(t) && (r.documentation = t), Re.defined(n) ? r.parameters = n : r.parameters = [], r; }; }(K || (K = {})), function (e) { e.Text = 1, e.Read = 2, e.Write = 3; }(X || (X = {})), function (e) { e.create = function (e, t) { var n = { range: e }; return Re.number(t) && (n.kind = t), n; }; }(Y || (Y = {})), function (e) { e.File = 1, e.Module = 2, e.Namespace = 3, e.Package = 4, e.Class = 5, e.Method = 6, e.Property = 7, e.Field = 8, e.Constructor = 9, e.Enum = 10, e.Interface = 11, e.Function = 12, e.Variable = 13, e.Constant = 14, e.String = 15, e.Number = 16, e.Boolean = 17, e.Array = 18, e.Object = 19, e.Key = 20, e.Null = 21, e.EnumMember = 22, e.Struct = 23, e.Event = 24, e.Operator = 25, e.TypeParameter = 26; }(J || (J = {})), function (e) { e.Deprecated = 1; }(Q || (Q = {})), function (e) { e.create = function (e, t, n, i, r) { var o = { name: e, kind: t, location: { uri: i, range: n } }; return r && (o.containerName = r), o; }; }(Z || (Z = {})), function (e) { e.create = function (e, t, n, i) { return void 0 !== i ? { name: e, kind: t, location: { uri: n, range: i } } : { name: e, kind: t, location: { uri: n } }; }; }(ee || (ee = {})), function (e) { e.create = function (e, t, n, i, r, o) { var s = { name: e, detail: t, kind: n, range: i, selectionRange: r }; return void 0 !== o && (s.children = o), s; }, e.is = function (e) { var t = e; return t && Re.string(t.name) && Re.number(t.kind) && c.is(t.range) && c.is(t.selectionRange) && (void 0 === t.detail || Re.string(t.detail)) && (void 0 === t.deprecated || Re.boolean(t.deprecated)) && (void 0 === t.children || Array.isArray(t.children)) && (void 0 === t.tags || Array.isArray(t.tags)); }; }(te || (te = {})), function (e) { e.Empty = "", e.QuickFix = "quickfix", e.Refactor = "refactor", e.RefactorExtract = "refactor.extract", e.RefactorInline = "refactor.inline", e.RefactorRewrite = "refactor.rewrite", e.Source = "source", e.SourceOrganizeImports = "source.organizeImports", e.SourceFixAll = "source.fixAll"; }(ne || (ne = {})), function (e) { e.Invoked = 1, e.Automatic = 2; }(ie || (ie = {})), function (e) { e.create = function (e, t, n) { var i = { diagnostics: e }; return null != t && (i.only = t), null != n && (i.triggerKind = n), i; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.typedArray(t.diagnostics, b.is) && (void 0 === t.only || Re.typedArray(t.only, Re.string)) && (void 0 === t.triggerKind || t.triggerKind === ie.Invoked || t.triggerKind === ie.Automatic); }; }(re || (re = {})), function (e) { e.create = function (e, t, n) { var i = { title: e }, r = !0; return "string" == typeof t ? (r = !1, i.kind = t) : S.is(t) ? i.command = t : i.edit = t, r && void 0 !== n && (i.kind = n), i; }, e.is = function (e) { var t = e; return t && Re.string(t.title) && (void 0 === t.diagnostics || Re.typedArray(t.diagnostics, b.is)) && (void 0 === t.kind || Re.string(t.kind)) && (void 0 !== t.edit || void 0 !== t.command) && (void 0 === t.command || S.is(t.command)) && (void 0 === t.isPreferred || Re.boolean(t.isPreferred)) && (void 0 === t.edit || E.is(t.edit)); }; }(oe || (oe = {})), function (e) { e.create = function (e, t) { var n = { range: e }; return Re.defined(t) && (n.data = t), n; }, e.is = function (e) { var t = e; return Re.defined(t) && c.is(t.range) && (Re.undefined(t.command) || S.is(t.command)); }; }(se || (se = {})), function (e) { e.create = function (e, t) { return { tabSize: e, insertSpaces: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.uinteger(t.tabSize) && Re.boolean(t.insertSpaces); }; }(ae || (ae = {})), function (e) { e.create = function (e, t, n) { return { range: e, target: t, data: n }; }, e.is = function (e) { var t = e; return Re.defined(t) && c.is(t.range) && (Re.undefined(t.target) || Re.string(t.target)); }; }(ce || (ce = {})), function (e) { e.create = function (e, t) { return { range: e, parent: t }; }, e.is = function (t) { var n = t; return Re.objectLiteral(n) && c.is(n.range) && (void 0 === n.parent || e.is(n.parent)); }; }(le || (le = {})), function (e) { e.namespace = "namespace", e.type = "type", e.class = "class", e.enum = "enum", e.interface = "interface", e.struct = "struct", e.typeParameter = "typeParameter", e.parameter = "parameter", e.variable = "variable", e.property = "property", e.enumMember = "enumMember", e.event = "event", e.function = "function", e.method = "method", e.macro = "macro", e.keyword = "keyword", e.modifier = "modifier", e.comment = "comment", e.string = "string", e.number = "number", e.regexp = "regexp", e.operator = "operator", e.decorator = "decorator"; }(he || (he = {})), function (e) { e.declaration = "declaration", e.definition = "definition", e.readonly = "readonly", e.static = "static", e.deprecated = "deprecated", e.abstract = "abstract", e.async = "async", e.modification = "modification", e.documentation = "documentation", e.defaultLibrary = "defaultLibrary"; }(ue || (ue = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(t) && (void 0 === t.resultId || "string" == typeof t.resultId) && Array.isArray(t.data) && (0 === t.data.length || "number" == typeof t.data[0]); }; }(de || (de = {})), function (e) { e.create = function (e, t) { return { range: e, text: t }; }, e.is = function (e) { var t = e; return null != t && c.is(t.range) && Re.string(t.text); }; }(fe || (fe = {})), function (e) { e.create = function (e, t, n) { return { range: e, variableName: t, caseSensitiveLookup: n }; }, e.is = function (e) { var t = e; return null != t && c.is(t.range) && Re.boolean(t.caseSensitiveLookup) && (Re.string(t.variableName) || void 0 === t.variableName); }; }(ge || (ge = {})), function (e) { e.create = function (e, t) { return { range: e, expression: t }; }, e.is = function (e) { var t = e; return null != t && c.is(t.range) && (Re.string(t.expression) || void 0 === t.expression); }; }(pe || (pe = {})), function (e) { e.create = function (e, t) { return { frameId: e, stoppedLocation: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && c.is(e.stoppedLocation); }; }(me || (me = {})), function (e) { e.Type = 1, e.Parameter = 2, e.is = function (e) { return 1 === e || 2 === e; }; }(ve || (ve = {})), function (e) { e.create = function (e) { return { value: e }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && (void 0 === t.tooltip || Re.string(t.tooltip) || I.is(t.tooltip)) && (void 0 === t.location || l.is(t.location)) && (void 0 === t.command || S.is(t.command)); }; }(we || (we = {})), function (e) { e.create = function (e, t, n) { var i = { position: e, label: t }; return void 0 !== n && (i.kind = n), i; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && a.is(t.position) && (Re.string(t.label) || Re.typedArray(t.label, we.is)) && (void 0 === t.kind || ve.is(t.kind)) && void 0 === t.textEdits || Re.typedArray(t.textEdits, C.is) && (void 0 === t.tooltip || Re.string(t.tooltip) || I.is(t.tooltip)) && (void 0 === t.paddingLeft || Re.boolean(t.paddingLeft)) && (void 0 === t.paddingRight || Re.boolean(t.paddingRight)); }; }(ye || (ye = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(t) && r.is(t.uri) && Re.string(t.name); }; }(be || (be = {}));
+            n[i - 2] = arguments[i]; var r = { label: e }; return Re.defined(t) && (r.documentation = t), Re.defined(n) ? r.parameters = n : r.parameters = [], r; }; }(K || (K = {})), function (e) { e.Text = 1, e.Read = 2, e.Write = 3; }(X || (X = {})), function (e) { e.create = function (e, t) { var n = { range: e }; return Re.number(t) && (n.kind = t), n; }; }(Y || (Y = {})), function (e) { e.File = 1, e.Module = 2, e.Namespace = 3, e.Package = 4, e.Class = 5, e.Method = 6, e.Property = 7, e.Field = 8, e.Constructor = 9, e.Enum = 10, e.Interface = 11, e.Function = 12, e.Variable = 13, e.Constant = 14, e.String = 15, e.Number = 16, e.Boolean = 17, e.Array = 18, e.Object = 19, e.Key = 20, e.Null = 21, e.EnumMember = 22, e.Struct = 23, e.Event = 24, e.Operator = 25, e.TypeParameter = 26; }(J || (J = {})), function (e) { e.Deprecated = 1; }(Q || (Q = {})), function (e) { e.create = function (e, t, n, i, r) { var o = { name: e, kind: t, location: { uri: i, range: n } }; return r && (o.containerName = r), o; }; }(Z || (Z = {})), function (e) { e.create = function (e, t, n, i) { return void 0 !== i ? { name: e, kind: t, location: { uri: n, range: i } } : { name: e, kind: t, location: { uri: n } }; }; }(ee || (ee = {})), function (e) { e.create = function (e, t, n, i, r, o) { var s = { name: e, detail: t, kind: n, range: i, selectionRange: r }; return void 0 !== o && (s.children = o), s; }, e.is = function (e) { var t = e; return t && Re.string(t.name) && Re.number(t.kind) && c.is(t.range) && c.is(t.selectionRange) && (void 0 === t.detail || Re.string(t.detail)) && (void 0 === t.deprecated || Re.boolean(t.deprecated)) && (void 0 === t.children || Array.isArray(t.children)) && (void 0 === t.tags || Array.isArray(t.tags)); }; }(te || (te = {})), function (e) { e.Empty = "", e.QuickFix = "quickfix", e.Refactor = "refactor", e.RefactorExtract = "refactor.extract", e.RefactorInline = "refactor.inline", e.RefactorRewrite = "refactor.rewrite", e.Source = "source", e.SourceOrganizeImports = "source.organizeImports", e.SourceFixAll = "source.fixAll"; }(ne || (ne = {})), function (e) { e.Invoked = 1, e.Automatic = 2; }(ie || (ie = {})), function (e) { e.create = function (e, t, n) { var i = { diagnostics: e }; return null != t && (i.only = t), null != n && (i.triggerKind = n), i; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.typedArray(t.diagnostics, b.is) && (void 0 === t.only || Re.typedArray(t.only, Re.string)) && (void 0 === t.triggerKind || t.triggerKind === ie.Invoked || t.triggerKind === ie.Automatic); }; }(re || (re = {})), function (e) { e.create = function (e, t, n) { var i = { title: e }, r = !0; return "string" == typeof t ? (r = !1, i.kind = t) : S.is(t) ? i.command = t : i.edit = t, r && void 0 !== n && (i.kind = n), i; }, e.is = function (e) { var t = e; return t && Re.string(t.title) && (void 0 === t.diagnostics || Re.typedArray(t.diagnostics, b.is)) && (void 0 === t.kind || Re.string(t.kind)) && (void 0 !== t.edit || void 0 !== t.command) && (void 0 === t.command || S.is(t.command)) && (void 0 === t.isPreferred || Re.boolean(t.isPreferred)) && (void 0 === t.edit || E.is(t.edit)); }; }(oe || (oe = {})), function (e) { e.create = function (e, t) { var n = { range: e }; return Re.defined(t) && (n.data = t), n; }, e.is = function (e) { var t = e; return Re.defined(t) && c.is(t.range) && (Re.undefined(t.command) || S.is(t.command)); }; }(se || (se = {})), function (e) { e.create = function (e, t) { return { tabSize: e, insertSpaces: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && Re.uinteger(t.tabSize) && Re.boolean(t.insertSpaces); }; }(ae || (ae = {})), function (e) { e.create = function (e, t, n) { return { range: e, target: t, data: n }; }, e.is = function (e) { var t = e; return Re.defined(t) && c.is(t.range) && (Re.undefined(t.target) || Re.string(t.target)); }; }(ce || (ce = {})), function (e) { e.create = function (e, t) { return { range: e, parent: t }; }, e.is = function (t) { var n = t; return Re.objectLiteral(n) && c.is(n.range) && (void 0 === n.parent || e.is(n.parent)); }; }(le || (le = {})), function (e) { e.namespace = "namespace", e.type = "type", e.class = "class", e.enum = "enum", e.interface = "interface", e.struct = "struct", e.typeParameter = "typeParameter", e.parameter = "parameter", e.variable = "variable", e.property = "property", e.enumMember = "enumMember", e.event = "event", e.function = "function", e.method = "method", e.macro = "macro", e.keyword = "keyword", e.modifier = "modifier", e.comment = "comment", e.string = "string", e.number = "number", e.regexp = "regexp", e.operator = "operator", e.decorator = "decorator"; }(he || (he = {})), function (e) { e.declaration = "declaration", e.definition = "definition", e.readonly = "readonly", e.static = "static", e.deprecated = "deprecated", e.abstract = "abstract", e.async = "async", e.modification = "modification", e.documentation = "documentation", e.defaultLibrary = "defaultLibrary"; }(ue || (ue = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(t) && (void 0 === t.resultId || "string" == typeof t.resultId) && Array.isArray(t.data) && (0 === t.data.length || "number" == typeof t.data[0]); }; }(de || (de = {})), function (e) { e.create = function (e, t) { return { range: e, text: t }; }, e.is = function (e) { var t = e; return null != t && c.is(t.range) && Re.string(t.text); }; }(ge || (ge = {})), function (e) { e.create = function (e, t, n) { return { range: e, variableName: t, caseSensitiveLookup: n }; }, e.is = function (e) { var t = e; return null != t && c.is(t.range) && Re.boolean(t.caseSensitiveLookup) && (Re.string(t.variableName) || void 0 === t.variableName); }; }(fe || (fe = {})), function (e) { e.create = function (e, t) { return { range: e, expression: t }; }, e.is = function (e) { var t = e; return null != t && c.is(t.range) && (Re.string(t.expression) || void 0 === t.expression); }; }(pe || (pe = {})), function (e) { e.create = function (e, t) { return { frameId: e, stoppedLocation: t }; }, e.is = function (e) { var t = e; return Re.defined(t) && c.is(e.stoppedLocation); }; }(me || (me = {})), function (e) { e.Type = 1, e.Parameter = 2, e.is = function (e) { return 1 === e || 2 === e; }; }(ve || (ve = {})), function (e) { e.create = function (e) { return { value: e }; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && (void 0 === t.tooltip || Re.string(t.tooltip) || I.is(t.tooltip)) && (void 0 === t.location || l.is(t.location)) && (void 0 === t.command || S.is(t.command)); }; }(we || (we = {})), function (e) { e.create = function (e, t, n) { var i = { position: e, label: t }; return void 0 !== n && (i.kind = n), i; }, e.is = function (e) { var t = e; return Re.objectLiteral(t) && a.is(t.position) && (Re.string(t.label) || Re.typedArray(t.label, we.is)) && (void 0 === t.kind || ve.is(t.kind)) && void 0 === t.textEdits || Re.typedArray(t.textEdits, C.is) && (void 0 === t.tooltip || Re.string(t.tooltip) || I.is(t.tooltip)) && (void 0 === t.paddingLeft || Re.boolean(t.paddingLeft)) && (void 0 === t.paddingRight || Re.boolean(t.paddingRight)); }; }(ye || (ye = {})), function (e) { e.is = function (e) { var t = e; return Re.objectLiteral(t) && r.is(t.uri) && Re.string(t.name); }; }(be || (be = {}));
         var _e, $e = ["\n", "\r\n", "\r"];
         !function (e) { function t(e, n) { if (e.length <= 1)
             return e; var i = e.length / 2 | 0, r = e.slice(0, i), o = e.slice(i); t(r, n), t(o, n); for (var s = 0, a = 0, c = 0; s < r.length && a < o.length;) {
@@ -51600,20 +51640,20 @@ else { var i, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         !function (e) { var t = Object.prototype.toString; e.defined = function (e) { return void 0 !== e; }, e.undefined = function (e) { return void 0 === e; }, e.boolean = function (e) { return !0 === e || !1 === e; }, e.string = function (e) { return "[object String]" === t.call(e); }, e.number = function (e) { return "[object Number]" === t.call(e); }, e.numberRange = function (e, n, i) { return "[object Number]" === t.call(e) && n <= e && e <= i; }, e.integer = function (e) { return "[object Number]" === t.call(e) && -2147483648 <= e && e <= 2147483647; }, e.uinteger = function (e) { return "[object Number]" === t.call(e) && 0 <= e && e <= 2147483647; }, e.func = function (e) { return "[object Function]" === t.call(e); }, e.objectLiteral = function (e) { return null !== e && "object" == typeof e; }, e.typedArray = function (e, t) { return Array.isArray(e) && e.every(t); }; }(Re || (Re = {}));
     }, 2094: (e, t, n) => {
         "use strict";
-        var i = n(3243), r = n(2191), o = n(2680), s = n(326), a = o("Object.prototype.toString"), c = n(7226)(), l = "undefined" == typeof globalThis ? n.g : globalThis, h = r(), u = o("String.prototype.slice"), d = {}, f = Object.getPrototypeOf;
-        c && s && f && i(h, (function (e) { if ("function" == typeof l[e]) {
+        var i = n(3243), r = n(2191), o = n(2680), s = n(326), a = o("Object.prototype.toString"), c = n(7226)(), l = "undefined" == typeof globalThis ? n.g : globalThis, h = r(), u = o("String.prototype.slice"), d = {}, g = Object.getPrototypeOf;
+        c && s && g && i(h, (function (e) { if ("function" == typeof l[e]) {
             var t = new l[e];
             if (Symbol.toStringTag in t) {
-                var n = f(t), i = s(n, Symbol.toStringTag);
+                var n = g(t), i = s(n, Symbol.toStringTag);
                 if (!i) {
-                    var r = f(n);
+                    var r = g(n);
                     i = s(r, Symbol.toStringTag);
                 }
                 d[e] = i.get;
             }
         } }));
-        var g = n(198);
-        e.exports = function (e) { return !!g(e) && (c && Symbol.toStringTag in e ? function (e) { var t = !1; return i(d, (function (n, i) { if (!t)
+        var f = n(198);
+        e.exports = function (e) { return !!f(e) && (c && Symbol.toStringTag in e ? function (e) { var t = !1; return i(d, (function (n, i) { if (!t)
             try {
                 var r = n.call(e);
                 r === i && (t = r);
