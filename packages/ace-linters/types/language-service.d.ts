@@ -132,4 +132,6 @@ export declare namespace AceLinters {
         xml: XmlServiceOptions,
         javascript: JavascriptServiceOptions
     }
+    
+    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss";
 }
