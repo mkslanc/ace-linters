@@ -30,9 +30,7 @@ languageProvider.registerEditor(editor);
 ```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/ace.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/ext-language_tools.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/mode-css.min.js"></script>
 <script src="https://www.unpkg.com/ace-linters@0.6.0/build/ace-linters.js"></script>
-<script src="http://itfactrn.bget.ru/linters/ace-linters.js"></script>
 <div id="editor" style="height: 100px">some text</div>
 
 <script>
