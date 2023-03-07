@@ -25,6 +25,7 @@ import {
 import * as lsp from "vscode-languageserver-protocol";
 
 import showdown from "showdown";
+import {createWorker} from "./cdn-worker";
 
 export class LanguageProvider {
     private $activeEditor: Editor;
@@ -52,6 +53,20 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, markdownConverter);
     }
 
+    static fromCdn(cdnUrl: string) {
+        let messageController: IMessageController;
+        if (cdnUrl == "" || !(/^http(s)?:/.test(cdnUrl))) {
+            throw "Url is not valid";
+        }
+        if (cdnUrl[cdnUrl.length - 1] == "/") {
+            cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
+        }
+        let worker = createWorker(cdnUrl);
+        // @ts-ignore
+        messageController = new MessageController(worker);
+        return new LanguageProvider(messageController);
+    }
+
     private $registerSession = (session?: EditSession, options?: ServiceOptions) => {
         if (!session)
             return;
@@ -75,6 +90,7 @@ export class LanguageProvider {
 
     $registerEditor(editor: Editor) {
         this.$editors.push(editor);
+        editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session));
         this.$registerCompleters(editor);
         this.$descriptionTooltip.registerEditor(editor);

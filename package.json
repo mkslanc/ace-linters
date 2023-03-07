@@ -1,10 +1,11 @@
 {
   "name": "ace-linters-root",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
-    "build": "npm run build:ace-linters && webpack",
-    "start": "npm run build:ace-linters && webpack-dev-server"
+    "build": "webpack",
+    "start": "npm run build:ace-linters && webpack-dev-server",
+    "start-dev": "webpack-dev-server"
   },
   "dependencies": {
     "ace-code": "mkslanc/ace#completions-improvements",
