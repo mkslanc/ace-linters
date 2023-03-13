@@ -25,4 +25,6 @@ export interface IMessageController {
 
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
 
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void);
+
 }

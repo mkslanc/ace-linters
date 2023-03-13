@@ -3,7 +3,7 @@ import {
     CompletionInfo,
     Diagnostic,
     JSDocTagInfo,
-    QuickInfo,
+    QuickInfo, SignatureHelpItems,
     TextChange,
     TextSpan
 } from "../services/typescript/lib/typescriptServices";
@@ -145,6 +145,51 @@ export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.Complet
         kind: convertKind(entry.kind),
         documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
     };
+}
+
+export function toSignatureHelp(signatureItems: SignatureHelpItems | undefined): lsp.SignatureHelp | null {
+    if (!signatureItems) {
+        return null;
+    }
+    let signatureHelp: lsp.SignatureHelp = {
+        signatures: [],
+        activeSignature: signatureItems.selectedItemIndex,
+        activeParameter: signatureItems.argumentIndex,
+    }
+    
+    signatureItems.items.forEach((item) => {
+        let signature = {
+            label: '',
+            parameters: [],
+            documentation: displayPartsToString(item.documentation)
+        };
+        signature.label += displayPartsToString(item.prefixDisplayParts);
+        item.parameters.forEach((p, i, a) => {
+            const label = displayPartsToString(p.displayParts);
+            const parameter = {
+                label: label,
+                documentation: {
+                    value: displayPartsToString(p.documentation)
+                }
+            };
+            signature.label += label;
+            // @ts-ignore
+            signature.parameters.push(parameter);
+            if (i < a.length - 1) {
+                signature.label += displayPartsToString(item.separatorDisplayParts);
+            }
+        });
+        signature.label += displayPartsToString(item.suffixDisplayParts);
+        signatureHelp.signatures.push(signature);
+    });
+    return signatureHelp;
+}
+
+function displayPartsToString(displayParts: ts.SymbolDisplayPart[] | undefined): string {
+    if (displayParts) {
+        return displayParts.map((displayPart) => displayPart.text).join('');
+    }
+    return '';
 }
 
 export enum ScriptKind {

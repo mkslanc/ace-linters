@@ -7,7 +7,7 @@ import {
     ScriptTarget,
     toResolvedCompletion,
     toCompletions,
-    toTsOffset, JsxEmit, toTextEdits, toHover
+    toTsOffset, JsxEmit, toTextEdits, toHover, toSignatureHelp
 } from "../../type-converters/typescript-converters";
 import TsServiceOptions = AceLinters.TsServiceOptions;
 import {AceLinters} from "../../types";
@@ -219,4 +219,13 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
         return toResolvedCompletion(resolvedCompletion);
     }
+
+    async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position ): Promise<lsp.SignatureHelp | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return null;
+        let offset = fullDocument.offsetAt(position);
+        //TODO: options
+        return toSignatureHelp(this.$service.getSignatureHelpItems(document.uri, offset, undefined));
+    };
 }

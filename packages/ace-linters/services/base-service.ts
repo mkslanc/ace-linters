@@ -87,4 +87,8 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         return [];
     }
 
+    async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null> {
+        return null;
+    }
+
 }

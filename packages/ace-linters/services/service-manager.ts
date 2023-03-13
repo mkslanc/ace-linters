@@ -90,6 +90,9 @@ export class ServiceManager {
                 case MessageType.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
                     break;
+                case MessageType.signatureHelp:
+                    postMessage["value"] = await serviceInstance?.provideSignatureHelp(documentIdentifier, message.value);
+                    break;
             }
 
             ctx.postMessage(postMessage);
