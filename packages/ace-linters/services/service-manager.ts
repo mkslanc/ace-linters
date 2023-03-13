@@ -18,8 +18,8 @@ export class ServiceManager {
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
-        let doValidation = (document: TextDocumentIdentifier, serviceInstance?: LanguageService) => {
-            serviceInstance ??= this.getServiceInstance(document.uri);
+        let doValidation = (document?: TextDocumentIdentifier, serviceInstance?: LanguageService) => {
+            serviceInstance ??= this.getServiceInstance(document!.uri);
             if (!serviceInstance)
                 return;
             let postMessage = {
@@ -37,7 +37,7 @@ export class ServiceManager {
         }
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
-            let sessionID = message.sessionId as string;
+            let sessionID = message.sessionId ?? "";
             let version = message.version;
             let postMessage = {
                 "type": message.type,
@@ -88,7 +88,10 @@ export class ServiceManager {
                     this.removeDocument(documentIdentifier);
                     break;
                 case MessageType.globalOptions:
+                    serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                    if (serviceInstance)
+                        doValidation(undefined, serviceInstance);
                     break;
             }
 
