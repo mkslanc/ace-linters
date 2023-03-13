@@ -42932,23 +42932,17 @@ var language_tools = __webpack_require__(1105);
 var json = __webpack_require__(5654);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ace.js
 var ace = __webpack_require__(9100);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event.js
-var lib_event = __webpack_require__(7989);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/tooltip.js
 var tooltip = __webpack_require__(962);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
 
-
 class DescriptionTooltip extends tooltip/* Tooltip */.u {
     provider;
-    _activeEditor;
+    $activeEditor;
     descriptionText;
     isOpen;
     x;
     y;
-    get $activeEditor() {
-        return this._activeEditor;
-    }
     $mouseMoveTimer;
     $showTimer;
     row;
@@ -42957,22 +42951,24 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
         super();
         this.provider = provider;
         tooltip/* Tooltip.call */.u.call(this, document.body);
-        lib_event.addListener(this.getElement(), "mouseout", this.onMouseOut);
+        this.getElement().addEventListener("mouseout", this.onMouseOut);
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
     }
     registerEditor(editor) {
         editor.on("mousemove", this.onMouseMove);
     }
-    $activateEditor(editor) {
-        this._activeEditor = editor;
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
-    }
     $inactivateEditor() {
         if (!this.$activeEditor)
             return;
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this._activeEditor = undefined;
+        this.$activeEditor = undefined;
+    }
+    $activateEditor(editor) {
+        if (this.$activeEditor == editor)
+            return;
+        this.$activeEditor = editor;
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
     $registerEditorEvents() {
         this.$activeEditor.on("change", this.$hide);
@@ -42985,8 +42981,6 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
         this.$activeEditor.off("mousewheel", this.$hide);
         //@ts-ignore
         this.$activeEditor.off("mousedown", this.$hide);
-        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this._activeEditor = undefined;
     }
     update(editor) {
         clearTimeout(this.$mouseMoveTimer);
@@ -42996,7 +42990,6 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
         }
         else {
             this.$mouseMoveTimer = setTimeout(() => {
-                this.$inactivateEditor();
                 this.$activateEditor(editor);
                 this.doHover();
                 this.$mouseMoveTimer = undefined;
@@ -43040,6 +43033,8 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
         });
     };
     $show = () => {
+        if (!this.$activeEditor)
+            return;
         let renderer = this.$activeEditor.renderer;
         let position = renderer.textToScreenCoordinates(this.row, this.column);
         let cursorPos = this.$activeEditor.getCursorPosition();
@@ -43086,12 +43081,15 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
     $hide = () => {
         clearTimeout(this.$mouseMoveTimer);
         clearTimeout(this.$showTimer);
-        this.$removeEditorEvents();
-        this.hide();
+        if (this.isOpen) {
+            this.$removeEditorEvents();
+            this.hide();
+        }
+        this.$inactivateEditor();
     };
     destroy() {
         this.$hide();
-        lib_event.removeListener(this.getElement(), "mouseout", this.onMouseOut);
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
     }
     ;
     getElement() {
