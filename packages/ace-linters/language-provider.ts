@@ -255,11 +255,8 @@ class SessionLanguageProvider {
     };
 
     private $showAnnotations = (diagnostics) => {
-        this.session.clearAnnotations();
         let annotations = toAnnotations(diagnostics)
-        if (annotations && annotations.length > 0) {
-            this.session.setAnnotations(annotations);
-        }
+        this.session.setAnnotations(annotations);
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
