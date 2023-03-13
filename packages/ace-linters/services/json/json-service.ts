@@ -36,12 +36,17 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
         this.$configureService(document.uri);
     }
 
-    private $configureService(sessionID: string) {
-        let schemas = this.getOption(sessionID, "schemas");
+    private $configureService(sessionID?: string) {
+        let schemas = this.getOption(sessionID ?? "", "schemas");
+        let sessionIDs = sessionID ? [] : Object.keys(this.documents);
         schemas?.forEach((el) => {
-            if (el.uri === this.$getJsonSchemaUri(sessionID)) {
-                el.fileMatch ??= [];
-                el.fileMatch.push(sessionID);
+            if (sessionID) {
+                if (this.$getJsonSchemaUri(sessionID) == el.uri) {
+                    el.fileMatch ??= [];
+                    el.fileMatch.push(sessionID);
+                }
+            } else {
+                el.fileMatch = sessionIDs.filter(sessionID => this.$getJsonSchemaUri(sessionID) == el.uri);
             }
             let schema = el.schema ?? this.schemas[el.uri];
             if (schema)
@@ -78,7 +83,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements AceL
 
     setGlobalOptions(options: JsonServiceOptions) {
         super.setGlobalOptions(options);
-        this.$configureService("");
+        this.$configureService();
     }
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
