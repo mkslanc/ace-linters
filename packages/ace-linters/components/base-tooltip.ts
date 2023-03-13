@@ -5,15 +5,11 @@ import Editor = Ace.Editor;
 
 export class BaseTooltip extends Tooltip {
     provider: LanguageProvider;
-    _activeEditor?: Editor;
+    $activeEditor?: Editor;
     descriptionText: string;
     isOpen: boolean;
     x: number;
     y: number;
-
-    get $activeEditor(): Editor {
-        return this._activeEditor!;
-    }
 
     $mouseMoveTimer?: NodeJS.Timeout;
     $showTimer?: NodeJS.Timeout;
@@ -27,20 +23,12 @@ export class BaseTooltip extends Tooltip {
         
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
-    }
-
-    $activateEditor(editor: Ace.Editor) {
-        this._activeEditor = editor;
-    }
-
-    $inactivateEditor() {
-        if (!this.$activeEditor)
-            return;
-
-        this._activeEditor = undefined;
+        this.getElement().addEventListener("mouseout", this.onMouseOut);
     }
     
     $show() {
+        if (!this.$activeEditor)
+            return;
         let renderer = this.$activeEditor.renderer;
         let position = renderer.textToScreenCoordinates(this.row, this.column);
 
@@ -83,9 +71,68 @@ export class BaseTooltip extends Tooltip {
 
     show(param, pageX: number, pageY: number) {
         super.show(param, pageX, pageY);
+        this.$registerEditorEvents();
     }
 
     setHtml(descriptionText: string) {
         super.setHtml(descriptionText);
+    }
+
+    $hide = () => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.$removeEditorEvents();
+            this.hide();
+        }
+        this.$inactivateEditor();
+    }
+
+    destroy() {
+        this.$hide();
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
+    };
+
+    onMouseOut = (e: MouseEvent) => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (!e.relatedTarget || e.relatedTarget == this.getElement())
+            return;
+
+        //@ts-ignore
+        if (e && e.currentTarget.contains(e.relatedTarget))
+            return;
+        //@ts-ignore
+        if (!e.relatedTarget.classList.contains("ace_content"))
+            this.$hide();
+    }
+
+    $registerEditorEvents() {
+        this.$activeEditor!.on("change", this.$hide);
+        this.$activeEditor!.on("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor!.on("mousedown", this.$hide);
+    }
+
+    $removeEditorEvents() {
+        this.$activeEditor!.off("change", this.$hide);
+        this.$activeEditor!.off("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor!.off("mousedown", this.$hide);
+    }
+
+    $inactivateEditor() {
+        if (!this.$activeEditor)
+            return;
+        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+        this.$activeEditor = undefined;
+    }
+
+    $activateEditor(editor: Ace.Editor) {
+        if (this.$activeEditor == editor)
+            return;
+
+        this.$activeEditor = editor;
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
 }
