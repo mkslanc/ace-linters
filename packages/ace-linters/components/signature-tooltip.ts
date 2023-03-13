@@ -3,15 +3,17 @@ import {Ace} from "ace-code";
 import event from "ace-code/src/lib/event";
 import {BaseTooltip} from "./base-tooltip";
 
-export class DescriptionTooltip extends BaseTooltip {
-    
+export class SignatureTooltip extends BaseTooltip {
+
     constructor(provider: LanguageProvider) {
         super(provider);
         event.addListener(this.getElement(), "mouseout", this.onMouseOut);
     }
 
     registerEditor(editor: Ace.Editor) {
-        editor.on("mousemove", this.onMouseMove);
+        this.$activateEditor(editor);
+        // @ts-ignore
+        editor.on("changeSelection", () => this.onChangeSelection(editor));
     }
 
     $activateEditor(editor: Ace.Editor) {
@@ -39,6 +41,8 @@ export class DescriptionTooltip extends BaseTooltip {
         this.$activeEditor.off("mousewheel", this.$hide);
         //@ts-ignore
         this.$activeEditor.off("mousedown", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.off("changeSelection", () => this.onChangeSelection(this.$activeEditor));
 
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
         this._activeEditor = undefined;
@@ -48,36 +52,34 @@ export class DescriptionTooltip extends BaseTooltip {
         clearTimeout(this.$mouseMoveTimer);
         clearTimeout(this.$showTimer);
         if (this.isOpen) {
-            this.doHover();
+            this.provideSignatureHelp();
         } else {
             this.$mouseMoveTimer = setTimeout(() => {
                 this.$inactivateEditor();
                 this.$activateEditor(editor);
-                this.doHover();
+                this.provideSignatureHelp();
                 this.$mouseMoveTimer = undefined;
             }, 500);
 
         }
     };
 
-    doHover = () => {
-        let renderer = this.$activeEditor.renderer;
-        let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
-
+    provideSignatureHelp = () => {
+        let cursor = this.$activeEditor.getCursorPosition();
         let session = this.$activeEditor.session;
-        let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
+        let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
 
-        this.provider.doHover(session, docPos, (hover) => {
-            let descriptionText = hover ? this.provider.getTooltipText(hover) : null;
-            if (!hover || !descriptionText) {
+        this.provider.provideSignatureHelp(session, docPos, (tooltip) => {
+            let descriptionText = tooltip ? this.provider.getTooltipText(tooltip) : null;
+            if (!tooltip || !descriptionText) {
                 this.hide();
                 return;
             }
 
-            let token = session.getTokenAt(docPos.row, docPos.column + 1);
+            let token = session.getTokenAt(docPos.row, docPos.column);
 
-            let row = hover.range?.start.row ?? docPos.row;
-            let column = hover.range?.start.column ?? token?.start ?? 0;
+            let row = tooltip.range?.start.row ?? docPos.row;
+            let column = tooltip.range?.start.column ?? token?.start ?? 0;
 
             if (this.descriptionText != descriptionText) {
                 this.hide();
@@ -106,10 +108,8 @@ export class DescriptionTooltip extends BaseTooltip {
         this.$registerEditorEvents();
     }
 
-    onMouseMove = (e: MouseEvent) => {
-        this.x = e.clientX;
-        this.y = e.clientY;
-        this.update(e["editor"]);
+    onChangeSelection = (editor: Ace.Editor) => {
+        this.update(editor);
     };
 
     onMouseOut = (e: MouseEvent) => {

@@ -15,7 +15,7 @@ import {MessageController} from "./message-controller";
 import {
     fromAceDelta,
     fromPoint,
-    fromRange,
+    fromRange, fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
     toCompletions,
@@ -26,10 +26,12 @@ import * as lsp from "vscode-languageserver-protocol";
 
 import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
+import {SignatureTooltip} from "./components/signature-tooltip";
 
 export class LanguageProvider {
-    private $activeEditor: Editor;
+    $activeEditor: Editor;
     private $descriptionTooltip: DescriptionTooltip;
+    private $signatureTooltip: SignatureTooltip;
     private readonly $markdownConverter: MarkDownConverter;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
@@ -38,6 +40,7 @@ export class LanguageProvider {
     constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
         this.$messageController = messageController;
         this.$markdownConverter = markdownConverter ?? new showdown.Converter();
+        this.$signatureTooltip = new SignatureTooltip(this);
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
 
@@ -93,11 +96,12 @@ export class LanguageProvider {
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session));
         this.$registerCompleters(editor);
-        this.$descriptionTooltip.registerEditor(editor);
         this.$activeEditor ??= editor;
         editor.on("focus", () => {
             this.$activeEditor = editor;
         });
+        this.$descriptionTooltip.registerEditor(editor);
+        this.$signatureTooltip.registerEditor(editor);
     }
 
     setOptions<OptionsType extends ServiceOptions>(session: EditSession, options: OptionsType) {
@@ -111,6 +115,10 @@ export class LanguageProvider {
 
     doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
+    }
+
+    provideSignatureHelp(session: EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void) {
+        this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 
     getTooltipText(hover: Tooltip): string | undefined {
