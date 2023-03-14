@@ -4,7 +4,7 @@ import {
     ChangeMessage,
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, DisposeMessage,
+    DeltasMessage, DisposeMessage, DocumentHighlightMessage,
     FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage, MessageType,
@@ -86,6 +86,10 @@ export class MessageController implements IMessageController {
 
     provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
         this.postMessage(new SignatureHelpMessage(sessionId, position), callback)
+    }
+
+    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void) {
+        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback)
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

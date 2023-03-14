@@ -91,4 +91,8 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         return null;
     }
 
+    async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]> {
+        return [];
+    }
+
 }

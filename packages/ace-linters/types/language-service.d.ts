@@ -39,6 +39,8 @@ export declare namespace AceLinters {
         getDocumentValue(uri: string): string;
 
         provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position ): Promise<lsp.SignatureHelp | null>
+        
+        findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
     }
 
     interface TooltipContent {

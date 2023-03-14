@@ -192,6 +192,20 @@ function displayPartsToString(displayParts: ts.SymbolDisplayPart[] | undefined):
     return '';
 }
 
+export function toDocumentHighlights(highlights: ts.DocumentHighlights[] | undefined, doc: TextDocument): lsp.DocumentHighlight[] {
+    if (!highlights)
+        return [];
+    return highlights.flatMap(highlight => highlight.highlightSpans.map((highlightSpans) => {
+        return <lsp.DocumentHighlight>{
+            range: toRange(highlightSpans.textSpan, doc),
+            kind:
+                highlightSpans.kind === 'writtenReference'
+                    ? lsp.DocumentHighlightKind.Write
+                    : lsp.DocumentHighlightKind.Text
+        }
+    }));
+} 
+
 export enum ScriptKind {
     Unknown = 0,
     JS = 1,

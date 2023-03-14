@@ -7,7 +7,7 @@ import {
     ScriptTarget,
     toResolvedCompletion,
     toCompletions,
-    toTsOffset, JsxEmit, toTextEdits, toHover, toSignatureHelp
+    toTsOffset, JsxEmit, toTextEdits, toHover, toSignatureHelp, toDocumentHighlights
 } from "../../type-converters/typescript-converters";
 import TsServiceOptions = AceLinters.TsServiceOptions;
 import {AceLinters} from "../../types";
@@ -228,4 +228,14 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         //TODO: options
         return toSignatureHelp(this.$service.getSignatureHelpItems(document.uri, offset, undefined));
     };
+
+    async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return [];
+        let offset = fullDocument.offsetAt(position);
+        //TODO: this could work with all opened documents
+        let highlights = this.$service.getDocumentHighlights(document.uri, offset, [document.uri]);
+        return toDocumentHighlights(highlights, fullDocument);
+    }
 }
