@@ -122,6 +122,10 @@ export declare namespace AceLinters {
         rules?: { [rule: string]: any };
     }
 
+    export interface PythonServiceOptions {
+        configuration: { [name: string]: any }
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
@@ -130,8 +134,9 @@ export declare namespace AceLinters {
         yaml: YamlServiceOptions,
         php: PhpServiceOptions,
         xml: XmlServiceOptions,
-        javascript: JavascriptServiceOptions
+        javascript: JavascriptServiceOptions,
+        python: PythonServiceOptions
     }
     
-    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss";
+    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss" | "python";
 }

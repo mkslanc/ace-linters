@@ -61,3 +61,8 @@ manager.registerService("javascript", {
     className: "JavascriptService",
     modes: "javascript",
 });
+manager.registerService("python", {
+    module: () => import("ace-linters/build/python-service"),
+    className: "PythonService",
+    modes: "python",
+});
