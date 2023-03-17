@@ -400,6 +400,11 @@ manager.registerService("javascript", {
     className: "JavascriptService",
     modes: "javascript",
 });
+manager.registerService("python", {
+    module: () => __webpack_require__.e(/* import() */ 492).then(__webpack_require__.t.bind(__webpack_require__, 492, 23)),
+    className: "PythonService",
+    modes: "python",
+});
 
 })();
 

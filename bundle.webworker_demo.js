@@ -43656,11 +43656,19 @@ function generateLintersImport(cdnUrl, includeLinters) {
         className: "JavascriptService",
         modes: "javascript",
     });`;
+    const pythonService = `manager.registerService("python", {
+        module: () => {
+            importScripts("${cdnUrl}/python-service.js");
+            return {PythonService};
+        },
+        className: "PythonService",
+        modes: "python",
+    });`;
     if (!includeLinters) {
         return `!function () {
     importScripts("${cdnUrl}/service-manager.js");
     let manager = new ServiceManager(self);
-    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, javascriptService].join("\n")}
+    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, javascriptService, pythonService].join("\n")}
 }()`;
     }
     let services = [];
@@ -43699,6 +43707,9 @@ function generateLintersImport(cdnUrl, includeLinters) {
                     break;
                 case "yaml":
                     services.push(yamlService);
+                    break;
+                case "python":
+                    services.push(pythonService);
                     break;
             }
         }
