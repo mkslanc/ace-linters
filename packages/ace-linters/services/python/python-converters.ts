@@ -7,11 +7,11 @@ import {DiagnosticSeverity} from "vscode-languageserver-protocol";
 export function toRange(location: { row: number, column: number }, endLocation: { row: number, column: number }): lsp.Range {
     return {
         start: {
-            line: location.row - 1 || 0,
+            line: Math.max(location.row - 1, 0),
             character: location.column
         },
         end: {
-            line: endLocation.row - 1 || 0,
+            line: Math.max(endLocation.row - 1, 0),
             character: endLocation.column
         }
     }

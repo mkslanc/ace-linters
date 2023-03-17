@@ -24,9 +24,10 @@ export class PythonService extends BaseService<PythonServiceOptions> implements 
         let value = this.getDocumentValue(document.uri);
         if (!value)
             return [];
-        if (!this.initOutput) {
-            await init();
-        }
+        
+        if (!this.initOutput)
+            await this.init();
+        
         let options = this.getOption(document.uri, "configuration") ?? defaultSettings();
         let diagnostics = check(value, options);
         return toDiagnostics(diagnostics);
