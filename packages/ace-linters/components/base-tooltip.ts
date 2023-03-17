@@ -122,9 +122,7 @@ export class BaseTooltip extends Tooltip {
     }
 
     $inactivateEditor() {
-        if (!this.$activeEditor)
-            return;
-        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+        this.$activeEditor?.container.removeEventListener("mouseout", this.onMouseOut);
         this.$activeEditor = undefined;
     }
 
@@ -132,6 +130,7 @@ export class BaseTooltip extends Tooltip {
         if (this.$activeEditor == editor)
             return;
 
+        this.$inactivateEditor();
         this.$activeEditor = editor;
         this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
