@@ -12,6 +12,7 @@ import {Mode as JsonMode} from "ace-code/src/mode/json";
 import {Mode as Json5Mode} from "ace-code/src/mode/json5";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
 import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
+import {Mode as PythonMode} from "ace-code/src/mode/python";
 import {Mode as TSXMode} from "ace-code/src/mode/tsx";
 import {Mode as LuaMode} from "ace-code/src/mode/lua";
 import {Mode as YamlMode} from "ace-code/src/mode/yaml";
@@ -36,6 +37,7 @@ import {createEditorWithLSP} from "../utils";
 import {yamlContent, yamlSchema} from "./docs-example/yaml-example";
 import {phpContent} from "./docs-example/php-example";
 import {xmlContent, xmlSchema} from "./docs-example/xml-example";
+import {pythonContent} from "./docs-example/python-example";
 
 let modes = [
     {name: "json", mode: JsonMode, content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
@@ -45,6 +47,7 @@ let modes = [
     {name: "less", mode: LessMode, content: lessContent},
     {name: "scss", mode: SCSSMode, content: scssContent},
     {name: "typescript", mode: TypescriptMode, content: typescriptContent},
+    {name: "python", mode: PythonMode, content: pythonContent},
     {name: "typescript", mode: TypescriptMode, content: typescriptContent1},
     {name: "javascript", mode: JavascriptMode, content: jsContent},
     {name: "tsx", mode: TSXMode, content: tsxContent},
