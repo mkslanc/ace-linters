@@ -60452,8 +60452,8 @@ function fromTsDiagnostics(diagnostics, doc) {
 }
 function toTsOffset(range, doc) {
     return {
-        start: doc.offsetAt(range.start),
-        end: doc.offsetAt(range.end)
+        start: doc.offsetAt(range.start) + 1,
+        end: doc.offsetAt(range.end) + 1
     };
 }
 function parseMessageText(diagnosticsText) {
