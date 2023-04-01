@@ -36,30 +36,16 @@ export class LanguageProvider {
 
     constructor(messageController: IMessageController, options?: AceLinters.ProviderOptions) {
         this.$messageController = messageController;
-        if (options) {
-            if (!options.functionality) {
-                options.functionality = {
-                    hover: true,
-                    completion: {
-                        overwriteCompleters: true
-                    },
-                    completionResolve: true,
-                    format: true
-                }
-            }
-            this.options = options;
-        } else {
-            this.options = {
-                functionality: {
-                    hover: true,
-                    completion: {
-                        overwriteCompleters: true
-                    },
-                    completionResolve: true,
-                    format: true
-                }
-            };
-        }
+
+        this.options = options ?? {} as AceLinters.ProviderOptions;
+        this.options.functionality ??= {
+            hover: true,
+            completion: {
+                overwriteCompleters: true
+            },
+            completionResolve: true,
+            format: true
+        };
         this.options.markdownConverter ??= new showdown.Converter();
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
