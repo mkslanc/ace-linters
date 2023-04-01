@@ -17,9 +17,8 @@ export class DescriptionTooltip extends Tooltip {
     column: number;
 
     constructor(provider: LanguageProvider) {
-        super();
+        super(document.body);
         this.provider = provider;
-        Tooltip.call(this, document.body);
 
         this.getElement().addEventListener("mouseout", this.onMouseOut);
 
@@ -75,6 +74,9 @@ export class DescriptionTooltip extends Tooltip {
     };
 
     doHover = () => {
+        if (!this.provider.options.functionality.hover) 
+            return;
+        
         let renderer = this.$activeEditor!.renderer;
         let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
 

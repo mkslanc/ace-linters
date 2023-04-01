@@ -7,7 +7,7 @@ import {toDiagnostics} from "./eslint-converters";
 export class JavascriptService extends BaseService<AceLinters.JavascriptServiceOptions> implements AceLinters.LanguageService {
     $service;
     $defaultEnv = {
-        browser: false,
+        browser: true,
         amd: true,
         builtin: true,
         node: true,

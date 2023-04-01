@@ -19,7 +19,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
             (document as lsp.TextDocumentItem).text)
         //TODO:
         /*if (options)
-            this.setOptions(sessionID, options);*/
+            this.setSessionOptions(sessionID, options);*/
     }
 
     getDocument(uri: string): TextDocument {
