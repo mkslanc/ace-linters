@@ -11855,7 +11855,7 @@ catch (e) {
     const o = r(3401), s = r(5427), i = r(7085);
     class a extends o.BaseService {
         $service;
-        $defaultEnv = { browser: !1, amd: !0, builtin: !0, node: !0, jasmine: !1, mocha: !0, es6: !0, jquery: !1, meteor: !1 };
+        $defaultEnv = { browser: !0, amd: !0, builtin: !0, node: !0, jasmine: !1, mocha: !0, es6: !0, jquery: !1, meteor: !1 };
         $defaultParserOptions = { ecmaFeatures: { globalReturn: !0, jsx: !0, experimentalObjectRestSpread: !0 }, allowImportExportEverywhere: !0, allowAwaitOutsideFunction: !0, ecmaVersion: 12 };
         $defaultRules = { "handle-callback-err": 1, "no-debugger": 3, "no-undef": 1, "no-inner-declarations": [1, "functions"], "no-native-reassign": 1, "no-new-func": 1, "no-new-wrappers": 1, "no-cond-assign": [1, "except-parens"], "no-dupe-keys": 3, "no-eval": 1, "no-func-assign": 1, "no-extra-semi": 3, "no-invalid-regexp": 1, "no-irregular-whitespace": 3, "no-negated-in-lhs": 1, "no-regex-spaces": 3, "quote-props": 0, "no-unreachable": 1, "use-isnan": 2, "valid-typeof": 1, "no-redeclare": 3, "no-with": 1, radix: 3, "no-delete-var": 2, "no-label-var": 3, "no-console": 0, "no-shadow-restricted-names": 2, "no-new-require": 2 };
         constructor(e) { super(e), this.$service = new s.Linter; }
