@@ -45,7 +45,7 @@ describe('LanguageProvider tests', () => {
             expect(editor.session.$annotations.length).to.equal(1);
             done()
         }, 1000);
-        languageProvider.setOptions(editor.session, {schemaUri: "basicSchema.json"});
+        languageProvider.setSessionOptions(editor.session, {schemaUri: "basicSchema.json"});
         languageProvider.setGlobalOptions("json", {
             schemas: [
                 {

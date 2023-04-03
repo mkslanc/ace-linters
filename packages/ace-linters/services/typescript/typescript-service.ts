@@ -174,7 +174,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         if (!fullDocument)
             return null;
 
-        let hover = this.$service.getQuickInfoAtPosition(document.uri, fullDocument.offsetAt(position))
+        let hover = this.$service.getQuickInfoAtPosition(document.uri, fullDocument.offsetAt(position) + 1)
         return toHover(hover, fullDocument);
     }
 
@@ -194,9 +194,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return null;
-
         let offset = fullDocument.offsetAt(position);
-        let completions = this.$service.getCompletionsAtPosition(document.uri, offset, undefined);
+        let completions = this.$service.getCompletionsAtPosition(document.uri, offset + 1, undefined);
         if (!completions)
             return null;
 
