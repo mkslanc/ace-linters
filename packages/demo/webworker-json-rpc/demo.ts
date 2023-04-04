@@ -1,10 +1,8 @@
-import "ace-code/src/ext/language_tools";
+import "ace-code/esm-resolver";
 
 let event = require("ace-code/src/lib/event");
 let {HashHandler} = require("ace-code/src/keyboard/hash_handler");
 let keyUtil = require("ace-code/src/lib/keys");
-
-import {Mode as JsonMode} from "ace-code/src/mode/json";
 
 import {AceLanguageClient} from "ace-linters/ace-language-client";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
@@ -12,7 +10,7 @@ import {createEditorWithLSP} from "../utils";
 import {jsonContent, jsonSchema, jsonSchema2} from "../webworker-lsp/docs-example/json-example";
 
 let modes = [
-    {name: "json", mode: JsonMode, content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
+    {name: "json", mode: "ace/mode/json", content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
 
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
