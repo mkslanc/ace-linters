@@ -1,20 +1,15 @@
 import {LanguageProvider} from "../language-provider";
 import {Ace} from "ace-code";
-import event from "ace-code/src/lib/event";
 import {Tooltip} from "ace-code/src/tooltip";
 import Editor = Ace.Editor;
 
 export class DescriptionTooltip extends Tooltip {
     private provider: LanguageProvider;
-    private _activeEditor?: Editor;
+    private $activeEditor?: Editor;
     private descriptionText: string;
     private isOpen: boolean;
     private x: number;
     private y: number;
-
-    private get $activeEditor(): Editor {
-        return this._activeEditor!;
-    }
 
     $mouseMoveTimer?: NodeJS.Timeout;
     $showTimer?: NodeJS.Timeout;
@@ -22,11 +17,10 @@ export class DescriptionTooltip extends Tooltip {
     column: number;
 
     constructor(provider: LanguageProvider) {
-        super();
+        super(document.body);
         this.provider = provider;
-        Tooltip.call(this, document.body);
 
-        event.addListener(this.getElement(), "mouseout", this.onMouseOut);
+        this.getElement().addEventListener("mouseout", this.onMouseOut);
 
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
@@ -36,35 +30,33 @@ export class DescriptionTooltip extends Tooltip {
         editor.on("mousemove", this.onMouseMove);
     }
 
-    private $activateEditor(editor: Ace.Editor) {
-        this._activeEditor = editor;
-
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
-    }
-
     private $inactivateEditor() {
         if (!this.$activeEditor)
             return;
         this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+        this.$activeEditor = undefined;
+    }
 
-        this._activeEditor = undefined;
+    private $activateEditor(editor: Ace.Editor) {
+        if (this.$activeEditor == editor)
+            return;
+
+        this.$activeEditor = editor;
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
 
     private $registerEditorEvents() {
-        this.$activeEditor.on("change", this.$hide);
-        this.$activeEditor.on("mousewheel", this.$hide);
+        this.$activeEditor!.on("change", this.$hide);
+        this.$activeEditor!.on("mousewheel", this.$hide);
         //@ts-ignore
-        this.$activeEditor.on("mousedown", this.$hide);
+        this.$activeEditor!.on("mousedown", this.$hide);
     }
 
     private $removeEditorEvents() {
-        this.$activeEditor.off("change", this.$hide);
-        this.$activeEditor.off("mousewheel", this.$hide);
+        this.$activeEditor!.off("change", this.$hide);
+        this.$activeEditor!.off("mousewheel", this.$hide);
         //@ts-ignore
-        this.$activeEditor.off("mousedown", this.$hide);
-
-        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this._activeEditor = undefined;
+        this.$activeEditor!.off("mousedown", this.$hide);
     }
 
     update(editor: Ace.Editor) {
@@ -74,20 +66,21 @@ export class DescriptionTooltip extends Tooltip {
             this.doHover();
         } else {
             this.$mouseMoveTimer = setTimeout(() => {
-                this.$inactivateEditor();
                 this.$activateEditor(editor);
                 this.doHover();
                 this.$mouseMoveTimer = undefined;
             }, 500);
-
         }
     };
 
     doHover = () => {
-        let renderer = this.$activeEditor.renderer;
+        if (!this.provider.options.functionality.hover) 
+            return;
+        
+        let renderer = this.$activeEditor!.renderer;
         let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
 
-        let session = this.$activeEditor.session;
+        let session = this.$activeEditor!.session;
         let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
 
         this.provider.doHover(session, docPos, (hover) => {
@@ -125,6 +118,8 @@ export class DescriptionTooltip extends Tooltip {
     }
 
     $show = () => {
+        if (!this.$activeEditor)
+            return;
         let renderer = this.$activeEditor.renderer;
         let position = renderer.textToScreenCoordinates(this.row, this.column);
 
@@ -182,13 +177,16 @@ export class DescriptionTooltip extends Tooltip {
     $hide = () => {
         clearTimeout(this.$mouseMoveTimer);
         clearTimeout(this.$showTimer);
-        this.$removeEditorEvents();
-        this.hide();
+        if (this.isOpen) {
+            this.$removeEditorEvents();
+            this.hide();
+        }
+        this.$inactivateEditor();
     }
 
     destroy() {
         this.$hide();
-        event.removeListener(this.getElement(), "mouseout", this.onMouseOut);
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
     };
 
     private getElement() {

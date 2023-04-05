@@ -34,7 +34,7 @@ manager.registerService("json5", {
 manager.registerService("typescript", {
     module: () => import("ace-linters/build/typescript-service"),
     className: "TypescriptService",
-    modes: "typescript|tsx",
+    modes: "typescript|tsx|javascript|jsx",
 });
 manager.registerService("lua", {
     module: () => import("ace-linters/build/lua-service"),
@@ -56,8 +56,13 @@ manager.registerService("php", {
     className: "PhpService",
     modes: "php"
 });
-manager.registerService("javascript", {
+/*manager.registerService("javascript", {
     module: () => import("ace-linters/build/javascript-service"),
     className: "JavascriptService",
     modes: "javascript",
+});*/
+manager.registerService("python", {
+    module: () => import("ace-linters/build/python-service"),
+    className: "PythonService",
+    modes: "python",
 });

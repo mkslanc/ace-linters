@@ -24,8 +24,8 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument):
 
 export function toTsOffset(range: lsp.Range, doc: TextDocument) {
     return {
-        start: doc.offsetAt(range.start),
-        end: doc.offsetAt(range.end)
+        start: doc.offsetAt(range.start) + 1,
+        end: doc.offsetAt(range.end) + 1
     }
 }
 
