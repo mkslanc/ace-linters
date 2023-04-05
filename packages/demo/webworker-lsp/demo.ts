@@ -1,9 +1,23 @@
-import "ace-code/esm-resolver";
+import "ace-code/src/ext/language_tools";
 import {htmlContent} from "./docs-example/html-example";
 
 let event = require("ace-code/src/lib/event");
 let {HashHandler} = require("ace-code/src/keyboard/hash_handler");
 let keyUtil = require("ace-code/src/lib/keys");
+import {Mode as HTMLMode} from "ace-code/src/mode/html";
+import {Mode as CSSMode} from "ace-code/src/mode/css";
+import {Mode as LessMode} from "ace-code/src/mode/less";
+import {Mode as SCSSMode} from "ace-code/src/mode/scss";
+import {Mode as JsonMode} from "ace-code/src/mode/json";
+import {Mode as Json5Mode} from "ace-code/src/mode/json5";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
+import {Mode as PythonMode} from "ace-code/src/mode/python";
+import {Mode as TSXMode} from "ace-code/src/mode/tsx";
+import {Mode as LuaMode} from "ace-code/src/mode/lua";
+import {Mode as YamlMode} from "ace-code/src/mode/yaml";
+import {Mode as PhpMode} from "ace-code/src/mode/php";
+import {Mode as XmlMode} from "ace-code/src/mode/xml";
 
 import {cssContent} from "./docs-example/css-example";
 import {lessContent} from "./docs-example/less-example";
@@ -26,22 +40,22 @@ import {xmlContent, xmlSchema} from "./docs-example/xml-example";
 import {pythonContent} from "./docs-example/python-example";
 
 let modes = [
-    {name: "json", mode: "ace/mode/json", content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
-    {name: "json5", mode: "ace/mode/json5", content: json5Content, options: {schemaUri: "json5Schema"}},
-    {name: "html", mode: "ace/mode/html", content: htmlContent},
-    {name: "css", mode: "ace/mode/css", content: cssContent},
-    {name: "less", mode: "ace/mode/less", content: lessContent},
-    {name: "scss", mode: "ace/mode/scss", content: scssContent},
-    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent},
-    {name: "python", mode: "ace/mode/python", content: pythonContent},
-    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent1},
-    {name: "javascript", mode: "ace/mode/javascript", content: jsContent},
-    {name: "tsx", mode: "ace/mode/tsx", content: tsxContent},
-    {name: "jsx", mode: "ace/mode/javascript", content: jsxContent, options: {jsx: true}}, //TODO:
-    {name: "lua", mode: "ace/mode/lua", content: luaContent},
-    {name: "yaml", mode: "ace/mode/yaml", content: yamlContent, options: {schemaUri: "yamlSchema.json"}},
-    {name: "xml", mode: "ace/mode/xml", content: xmlContent, options: {schemaUri: "xmlSchema.json"}},
-    {name: "php", mode: "ace/mode/php", content: phpContent}
+    {name: "json", mode: JsonMode, content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
+    {name: "json5", mode: Json5Mode, content: json5Content, options: {schemaUri: "json5Schema"}},
+    {name: "html", mode: HTMLMode, content: htmlContent},
+    {name: "css", mode: CSSMode, content: cssContent},
+    {name: "less", mode: LessMode, content: lessContent},
+    {name: "scss", mode: SCSSMode, content: scssContent},
+    {name: "typescript", mode: TypescriptMode, content: typescriptContent},
+    {name: "python", mode: PythonMode, content: pythonContent},
+    {name: "typescript", mode: TypescriptMode, content: typescriptContent1},
+    {name: "javascript", mode: JavascriptMode, content: jsContent},
+    {name: "tsx", mode: TSXMode, content: tsxContent},
+    {name: "jsx", mode: JavascriptMode, content: jsxContent, options: {jsx: true}}, //TODO:
+    {name: "lua", mode: LuaMode, content: luaContent},
+    {name: "yaml", mode: YamlMode, content: yamlContent, options: {schemaUri: "yamlSchema.json"}},
+    {name: "xml", mode: XmlMode, content: xmlContent, options: {schemaUri: "xmlSchema.json"}},
+    {name: "php", mode: PhpMode, content: phpContent}
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
