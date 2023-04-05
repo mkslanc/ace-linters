@@ -44041,7 +44041,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
             return {TypescriptService};
         },
         className: "TypescriptService",
-        modes: "typescript|tsx",
+        modes: "typescript|tsx|javascript|jsx",
     });`;
     const luaService = `manager.registerService("lua", {
         module: () => {
@@ -44075,14 +44075,14 @@ function generateLintersImport(cdnUrl, includeLinters) {
         className: "PhpService",
         modes: "php"
     });`;
-    const javascriptService = `manager.registerService("javascript", {
+    /*const javascriptService = `manager.registerService("javascript", {
         module: () => {
             importScripts("${cdnUrl}/javascript-service.js");
             return {JavascriptService};
         },
         className: "JavascriptService",
         modes: "javascript",
-    });`;
+    });`;*/
     const pythonService = `manager.registerService("python", {
         module: () => {
             importScripts("${cdnUrl}/python-service.js");
@@ -44102,9 +44102,9 @@ function generateLintersImport(cdnUrl, includeLinters) {
     Object.entries(includeLinters).forEach(([key, value]) => {
         if (value) {
             switch (key) {
-                case "javascript":
+                /*case "javascript":
                     services.push(javascriptService);
-                    break;
+                    break;*/
                 case "css":
                     services.push(cssService);
                     break;

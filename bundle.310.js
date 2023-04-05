@@ -373,7 +373,7 @@ manager.registerService("json5", {
 manager.registerService("typescript", {
     module: () => __webpack_require__.e(/* import() */ 275).then(__webpack_require__.t.bind(__webpack_require__, 8275, 23)),
     className: "TypescriptService",
-    modes: "typescript|tsx",
+    modes: "typescript|tsx|javascript|jsx",
 });
 manager.registerService("lua", {
     module: () => __webpack_require__.e(/* import() */ 922).then(__webpack_require__.t.bind(__webpack_require__, 6922, 23)),
@@ -395,11 +395,11 @@ manager.registerService("php", {
     className: "PhpService",
     modes: "php"
 });
-manager.registerService("javascript", {
-    module: () => __webpack_require__.e(/* import() */ 144).then(__webpack_require__.t.bind(__webpack_require__, 8138, 23)),
+/*manager.registerService("javascript", {
+    module: () => import("ace-linters/build/javascript-service"),
     className: "JavascriptService",
     modes: "javascript",
-});
+});*/
 manager.registerService("python", {
     module: () => __webpack_require__.e(/* import() */ 492).then(__webpack_require__.t.bind(__webpack_require__, 492, 23)),
     className: "PythonService",

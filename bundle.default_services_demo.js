@@ -52096,44 +52096,41 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
     }, 1395: (e, t) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.createWorker = void 0, t.createWorker = function (e, t) { if ("undefined" == typeof Worker)
-            return { postMessage: function () { }, terminate: function () { } }; var n, r = (n = function (e, t) { const n = `manager.registerService("json", {\n        module: () => {\n            importScripts("${e}/json-service.js");\n            return {JsonService};\n        },\n        className: "JsonService",\n        modes: "json|json5"\n    });`, r = `manager.registerService("html", {\n        module: () => {\n            importScripts("${e}/html-service.js");\n            return {HtmlService};\n        },\n        className: "HtmlService",\n        modes: "html"\n    });`, i = `manager.registerService("css", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "css"\n    });`, o = `manager.registerService("less", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "less"\n    });`, s = `manager.registerService("scss", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "scss"\n    });`, a = `manager.registerService("typescript", {\n        module: () => {\n            importScripts("${e}/typescript-service.js");\n            return {TypescriptService};\n        },\n        className: "TypescriptService",\n        modes: "typescript|tsx",\n    });`, l = `manager.registerService("lua", {\n        module: () => {\n            importScripts("${e}/lua-service.js");\n            return {LuaService};\n        },\n        className: "LuaService",\n        modes: "lua",\n    });`, c = `manager.registerService("yaml", {\n        module: () => {\n            importScripts("${e}/yaml-service.js");\n            return {YamlService};\n        },\n        className: "YamlService",\n        modes: "yaml",\n    });`, h = `manager.registerService("xml", {\n        module: () => {\n            importScripts("${e}/xml-service.js");\n            return {XmlService};\n        },\n        className: "XmlService",\n        modes: "xml",\n    });`, u = `manager.registerService("php", {\n        module: () => {\n            importScripts("${e}/xml-service.js");\n            return {PhpService};\n        },\n        className: "PhpService",\n        modes: "php"\n    });`, d = `manager.registerService("javascript", {\n        module: () => {\n            importScripts("${e}/javascript-service.js");\n            return {JavascriptService};\n        },\n        className: "JavascriptService",\n        modes: "javascript",\n    });`, g = `manager.registerService("python", {\n        module: () => {\n            importScripts("${e}/python-service.js");\n            return {PythonService};\n        },\n        className: "PythonService",\n        modes: "python",\n    });`; if (!t)
-            return `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${[n, r, i, o, s, a, l, c, h, u, d, g].join("\n")}\n}()`; let p = []; return Object.entries(t).forEach((([e, t]) => { if (t)
+            return { postMessage: function () { }, terminate: function () { } }; var n, r = (n = function (e, t) { const n = `manager.registerService("json", {\n        module: () => {\n            importScripts("${e}/json-service.js");\n            return {JsonService};\n        },\n        className: "JsonService",\n        modes: "json|json5"\n    });`, r = `manager.registerService("html", {\n        module: () => {\n            importScripts("${e}/html-service.js");\n            return {HtmlService};\n        },\n        className: "HtmlService",\n        modes: "html"\n    });`, i = `manager.registerService("css", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "css"\n    });`, o = `manager.registerService("less", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "less"\n    });`, s = `manager.registerService("scss", {\n        module: () => {\n            importScripts("${e}/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "scss"\n    });`, a = `manager.registerService("typescript", {\n        module: () => {\n            importScripts("${e}/typescript-service.js");\n            return {TypescriptService};\n        },\n        className: "TypescriptService",\n        modes: "typescript|tsx|javascript|jsx",\n    });`, l = `manager.registerService("lua", {\n        module: () => {\n            importScripts("${e}/lua-service.js");\n            return {LuaService};\n        },\n        className: "LuaService",\n        modes: "lua",\n    });`, c = `manager.registerService("yaml", {\n        module: () => {\n            importScripts("${e}/yaml-service.js");\n            return {YamlService};\n        },\n        className: "YamlService",\n        modes: "yaml",\n    });`, h = `manager.registerService("xml", {\n        module: () => {\n            importScripts("${e}/xml-service.js");\n            return {XmlService};\n        },\n        className: "XmlService",\n        modes: "xml",\n    });`, u = `manager.registerService("php", {\n        module: () => {\n            importScripts("${e}/xml-service.js");\n            return {PhpService};\n        },\n        className: "PhpService",\n        modes: "php"\n    });`, d = `manager.registerService("python", {\n        module: () => {\n            importScripts("${e}/python-service.js");\n            return {PythonService};\n        },\n        className: "PythonService",\n        modes: "python",\n    });`; if (!t)
+            return `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${[n, r, i, o, s, a, l, c, h, u, javascriptService, d].join("\n")}\n}()`; let g = []; return Object.entries(t).forEach((([e, t]) => { if (t)
             switch (e) {
-                case "javascript":
-                    p.push(d);
-                    break;
                 case "css":
-                    p.push(i);
+                    g.push(i);
                     break;
                 case "html":
-                    p.push(r);
+                    g.push(r);
                     break;
                 case "json":
-                    p.push(n);
+                    g.push(n);
                     break;
                 case "less":
-                    p.push(o);
+                    g.push(o);
                     break;
                 case "lua":
-                    p.push(l);
+                    g.push(l);
                     break;
                 case "typescript":
-                    p.push(a);
+                    g.push(a);
                     break;
                 case "php":
-                    p.push(u);
+                    g.push(u);
                     break;
                 case "scss":
-                    p.push(s);
+                    g.push(s);
                     break;
                 case "xml":
-                    p.push(h);
+                    g.push(h);
                     break;
                 case "yaml":
-                    p.push(c);
+                    g.push(c);
                     break;
-                case "python": p.push(g);
-            } })), `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${p.join("\n")}\n}()`; }(e, t), new Blob([n.toString()], { type: "application/javascript" })), i = (window.URL || window.webkitURL).createObjectURL(r); return new Worker(i); };
+                case "python": g.push(d);
+            } })), `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${g.join("\n")}\n}()`; }(e, t), new Blob([n.toString()], { type: "application/javascript" })), i = (window.URL || window.webkitURL).createObjectURL(r); return new Worker(i); };
     }, 2580: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.DescriptionTooltip = void 0;
