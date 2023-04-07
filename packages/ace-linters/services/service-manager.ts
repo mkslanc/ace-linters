@@ -18,7 +18,11 @@ export class ServiceManager {
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
-        let doValidation = (document?: TextDocumentIdentifier, serviceInstance?: LanguageService) => {
+        type Validation = {
+            (document: TextDocumentIdentifier, serviceInstance?: LanguageService): void;
+            (document: TextDocumentIdentifier | undefined, serviceInstance: LanguageService): void;
+        }
+        let doValidation: Validation = (document?: TextDocumentIdentifier, serviceInstance?: LanguageService) => {
             serviceInstance ??= this.getServiceInstance(document!.uri);
             if (!serviceInstance)
                 return;
