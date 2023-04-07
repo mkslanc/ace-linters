@@ -195,7 +195,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         if (!fullDocument)
             return null;
         let offset = fullDocument.offsetAt(position);
-        let completions = this.$service.getCompletionsAtPosition(document.uri, offset + 1, undefined);
+        let completions = this.$service.getCompletionsAtPosition(document.uri, offset, undefined);
         if (!completions)
             return null;
 
