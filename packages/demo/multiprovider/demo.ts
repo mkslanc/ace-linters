@@ -12,7 +12,7 @@ import {createEditorWithLSP} from "../utils";
 import {jsContent} from "../webworker-lsp/docs-example/javascript-example";
 
 let modes = [
-    {name: "javascript validated by Typescript Services and EsLint", mode: JavascriptMode, content: jsContent},
+    {name: "javascript validated by EsLint, with hover, autocompletion and format of Typescript", mode: JavascriptMode, content: jsContent},
 ];
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));

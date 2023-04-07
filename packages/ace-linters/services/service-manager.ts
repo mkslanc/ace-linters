@@ -10,7 +10,8 @@ interface ServiceData {
     className: string,
     modes: string,
     serviceInstance?: LanguageService,
-    options?: ServiceOptions
+    options?: ServiceOptions,
+    features: AceLinters.ServiceFeatures
 }
 
 export class ServiceManager {
@@ -36,6 +37,7 @@ export class ServiceManager {
                 ctx.postMessage(postMessage);
             }
         }
+
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
             let sessionID = message.sessionId as string;
@@ -44,7 +46,9 @@ export class ServiceManager {
                 "type": message.type,
                 "sessionId": sessionID,
             };
-            let serviceInstances = this.getServicesInstances(sessionID);
+
+            const feature = this.getFeatureByMessageType(message["type"]);
+            let serviceInstances = this.getServicesInstances(sessionID, feature);
             let documentIdentifier = {
                 uri: sessionID,
                 version: version
@@ -111,6 +115,9 @@ export class ServiceManager {
                     break;
                 case MessageType.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                    break;
+                case MessageType.featuresToggle:
+                    this.toggleFeatures(message.serviceName, message.options);
                     break;
             }
 
@@ -180,11 +187,35 @@ export class ServiceManager {
         }
     }
 
-    getServicesInstances(sessionID: string): LanguageService[] {
+    getServicesInstances(sessionID: string, feature?: string): LanguageService[] {
         let mode = this.$sessionIDToMode[sessionID];
         if (!mode)
             return []; //TODO:
-        return this.findServicesByMode(mode).map((el) => el.serviceInstance).filter(notEmpty);
+        let services = this.findServicesByMode(mode);
+        if (feature) {
+            services = services.filter((el) => el.features[feature] === true);
+        }
+        return services.map((el) => el.serviceInstance).filter(notEmpty);
+    }
+
+    getFeatureByMessageType(messageType: MessageType) {
+        switch (messageType) {
+            case MessageType.complete:
+                return "completion";
+            case MessageType.format:
+                return "format";
+            case MessageType.hover:
+                return "hover";
+            case MessageType.resolveCompletion:
+                return "completionResolve"
+            case MessageType.validate:
+            case MessageType.init:
+            case MessageType.applyDelta:
+            case MessageType.change:
+            case MessageType.changeMode:
+            case MessageType.changeOptions:
+                return "diagnostics"
+        }
     }
 
     findServicesByMode(mode: string): ServiceData[] {
@@ -196,6 +227,24 @@ export class ServiceManager {
     }
 
     registerService(name: string, service: ServiceData) {
+        service.features ??= {
+            hover: true,
+            completion: true,
+            completionResolve: true,
+            format: true,
+            diagnostics: true
+        }
         this.$services[name] = service;
+    }
+
+    toggleFeatures(name: string, features: AceLinters.ServiceFeatures) {
+        features ??= {
+            hover: true,
+            completion: true,
+            completionResolve: true,
+            format: true,
+            diagnostics: true
+        }
+        this.$services[name].features = features;
     }
 }

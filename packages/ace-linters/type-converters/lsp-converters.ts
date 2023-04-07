@@ -3,13 +3,11 @@ import {
     Position,
     Diagnostic,
     InsertTextFormat,
-    CompletionList,
     CompletionItem,
     CompletionItemKind,
     Hover,
     MarkupContent,
     MarkedString,
-    MarkupKind,
     TextEdit,
     InsertReplaceEdit,
     TextDocumentContentChangeEvent
@@ -132,16 +130,16 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
         label: completion.caption ?? "",
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
-        insertTextFormat: (completion.snippet) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
+        insertTextFormat: (completion["snippet"]) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
         documentation: completion["documentation"],
     };
     if (completion["range"]) {
         completionItem.textEdit = {
             range: fromRange(completion["range"]),
-            newText: (completion.snippet ?? completion.value)!
+            newText: (completion["snippet"] ?? completion["value"])!
         }
     } else {
-        completionItem.insertText = (completion.snippet ?? completion.value)!
+        completionItem.insertText = (completion["snippet"] ?? completion["value"])!
     }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];

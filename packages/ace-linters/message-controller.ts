@@ -4,7 +4,7 @@ import {
     ChangeMessage,
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, DisposeMessage,
+    DeltasMessage, DisposeMessage, FeaturesToggleMessage,
     FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage, MessageType,
@@ -30,7 +30,7 @@ export class MessageController implements IMessageController {
         });
 
     }
-
+    
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
         this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
 
@@ -82,6 +82,10 @@ export class MessageController implements IMessageController {
 
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+    }
+
+    toggleFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void {
+        this.$worker.postMessage(new FeaturesToggleMessage(serviceName, features));
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

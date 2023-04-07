@@ -103,6 +103,9 @@ languageProvider.setGlobalOptions("xml", {
         }
     ]
 });
+languageProvider.toggleServiceFeatures("json", {
+    completion: true, completionResolve: true, diagnostics: false, format: true, hover: true
+})
 
 let i = 0;
 for (let mode of modes) {

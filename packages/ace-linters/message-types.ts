@@ -137,14 +137,25 @@ export class DisposeMessage extends BaseMessage {
 
 export class GlobalOptionsMessage {
     type: MessageType = MessageType.globalOptions;
-    serviceName: string;
+    serviceName: AceLinters.SupportedServices;
     options: ServiceOptions;
     merge: boolean;
 
-    constructor(serviceName: string, options: ServiceOptions, merge: boolean) {
+    constructor(serviceName: AceLinters.SupportedServices, options: ServiceOptions, merge: boolean) {
         this.serviceName = serviceName;
         this.options = options;
         this.merge = merge;
+    }
+}
+
+export class FeaturesToggleMessage {
+    type: MessageType = MessageType.featuresToggle;
+    serviceName: AceLinters.SupportedServices;
+    options: AceLinters.ServiceFeatures;
+
+    constructor(serviceName: AceLinters.SupportedServices, options: AceLinters.ServiceFeatures) {
+        this.serviceName = serviceName;
+        this.options = options;
     }
 }
 
@@ -160,5 +171,6 @@ export enum MessageType {
     changeMode,
     changeOptions,
     dispose,
-    globalOptions
+    globalOptions,
+    featuresToggle
 }

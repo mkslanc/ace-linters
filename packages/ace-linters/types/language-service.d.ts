@@ -145,7 +145,7 @@ export declare namespace AceLinters {
         python: PythonServiceOptions
     }
     
-    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss" | "python";
+    export type SupportedServices = "json" | "json5" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss" | "python";
 
     export interface ProviderOptions {
         functionality: {
@@ -157,5 +157,13 @@ export declare namespace AceLinters {
             format: boolean
         },
         markdownConverter?: MarkDownConverter
+    }
+
+    export interface ServiceFeatures {
+        hover: boolean,
+        completion: boolean,
+        completionResolve: boolean,
+        format: boolean,
+        diagnostics: boolean
     }
 }

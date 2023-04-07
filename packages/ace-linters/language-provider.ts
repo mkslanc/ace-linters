@@ -120,6 +120,10 @@ export class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
+    toggleServiceFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures) {
+        this.$messageController.toggleFeatures(serviceName, features);
+    }
+
     doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
