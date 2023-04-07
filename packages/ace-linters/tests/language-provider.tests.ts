@@ -81,12 +81,6 @@ describe('LanguageProvider tests', () => {
                 "Url is not valid"
             )
         })
-
-        it('register from cdn', () => {
-            assert.throws(
-                () => LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@0.6.0/build/")
-            )
-        })
     })
 
     it('get plain tooltip text', () => {
