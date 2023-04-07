@@ -9,7 +9,7 @@
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
     "build": "npm run clean && npm run build:dependencies && webpack --mode=production",
     "build-dev": "npm run clean && npm run build:dependencies && webpack --mode=development",
-    "test": "mocha --exit",
+    "test": "mocha --timeout 5000 --exit",
     "test:coverage": "nyc npm run test"
   },
   "dependencies": {

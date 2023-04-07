@@ -19,8 +19,12 @@ export class ServiceManager {
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
-        const doValidation = async (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
-            servicesInstances ??= this.getServicesInstances(document.uri);
+        type Validation = {
+            (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): void;
+            (document: TextDocumentIdentifier | undefined, servicesInstances: LanguageService[]): void;
+        }
+        const doValidation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
+            serviceInstances ??= this.getServicesInstances(document!.uri);
             if (servicesInstances.length === 0)
                 return;
             let postMessage = {
@@ -40,7 +44,7 @@ export class ServiceManager {
 
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
-            let sessionID = message.sessionId as string;
+            let sessionID = message.sessionId ?? "";
             let version = message.version;
             let postMessage = {
                 "type": message.type,
@@ -114,7 +118,10 @@ export class ServiceManager {
                     this.removeDocument(documentIdentifier);
                     break;
                 case MessageType.globalOptions:
+                    serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                    if (serviceInstance)
+                        doValidation(undefined, serviceInstance);
                     break;
                 case MessageType.featuresToggle:
                     this.toggleFeatures(message.serviceName, message.options);

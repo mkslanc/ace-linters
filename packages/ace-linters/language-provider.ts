@@ -27,11 +27,11 @@ import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 
 export class LanguageProvider {
-    private $activeEditor: Editor;
+    activeEditor: Editor;
     private $descriptionTooltip: DescriptionTooltip;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
-    private $editors: Editor[] = [];
+    editors: Editor[] = [];
     options: AceLinters.ProviderOptions;
 
     constructor(messageController: IMessageController, options?: AceLinters.ProviderOptions) {
@@ -76,9 +76,7 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
-    private $registerSession = (session?: EditSession, options?: ServiceOptions) => {
-        if (!session)
-            return;
+    private $registerSession = (session: EditSession, options?: ServiceOptions) => {
         this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
     }
 
@@ -92,22 +90,22 @@ export class LanguageProvider {
     }
 
     registerEditor(editor: Editor) {
-        if (!this.$editors.includes(editor))
+        if (!this.editors.includes(editor))
             this.$registerEditor(editor);
         this.$registerSession(editor.session);
     }
 
     $registerEditor(editor: Editor) {
-        this.$editors.push(editor);
+        this.editors.push(editor);
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session));
         if (this.options.functionality.completion) {
             this.$registerCompleters(editor);
         }
         this.$descriptionTooltip.registerEditor(editor);
-        this.$activeEditor ??= editor;
+        this.activeEditor ??= editor;
         editor.on("focus", () => {
-            this.$activeEditor = editor;
+            this.activeEditor = editor;
         });
     }
 
@@ -136,35 +134,41 @@ export class LanguageProvider {
     format = () => {
         if (!this.options.functionality.format)
             return;
-        
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.$activeEditor.session);
-        sessionLanguageProvider.format();
+
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+        sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
     }
 
     doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
-        cursor.column--;
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completions) => completions && callback(toCompletions(completions)));
     }
 
+    doResolve(item: Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
+        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
+    }
+
+
     $registerCompleters(editor: Editor) {
         let completer = {
             getCompletions: async (editor, session, pos, prefix, callback) => {
-                this.doComplete(editor, session, (completions) => {
-                    let fileName = this.$getFileName(session);
-                    if (!completions)
-                        return;
-                    completions.forEach((item) => {
-                        item.completerId = completer.id;
-                        item["fileName"] = fileName
+                this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
+                    this.doComplete(editor, session, (completions) => {
+                        let fileName = this.$getFileName(session);
+                        if (!completions)
+                            return;
+                        completions.forEach((item) => {
+                            item.completerId = completer.id;
+                            item["fileName"] = fileName
+                        });
+                        callback(null, CommonConverter.normalizeRanges(completions));
                     });
-                    callback(null, CommonConverter.normalizeRanges(completions));
                 });
             },
-            getDocTooltip: (item) => {
+            getDocTooltip: (item: Completion) => {
                 if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
-                    this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem?) => {
+                    this.doResolve(item, (completionItem?) => {
                         item["isResolved"] = true;
                         if (!completionItem)
                             return;
@@ -178,7 +182,7 @@ export class LanguageProvider {
                         if (editor["completer"]) {
                             editor["completer"].updateDocTooltip();
                         }
-                        
+
                     })
                 }
                 return item;
@@ -275,21 +279,18 @@ class SessionLanguageProvider {
         this.$deltaQueue.push(delta);
     }
 
-    private $sendDeltaQueue = () => {
+    $sendDeltaQueue = (callback?) => {
         let deltas = this.$deltaQueue;
-        if (!deltas) return;
+        if (!deltas) return callback && callback();
         this.$deltaQueue = null;
         if (deltas.length)
             this.$messageController.change(this.fileName, deltas.map((delta) =>
-                fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc);
+                fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
     };
 
     private $showAnnotations = (diagnostics) => {
-        this.session.clearAnnotations();
         let annotations = toAnnotations(diagnostics)
-        if (annotations && annotations.length > 0) {
-            this.session.setAnnotations(annotations);
-        }
+        this.session.setAnnotations(annotations);
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
@@ -319,7 +320,7 @@ class SessionLanguageProvider {
 
     private $applyFormat = (edits: lsp.TextEdit[]) => {
         for (let edit of edits.reverse()) {
-            this.session.doc.replace(toRange(edit.range), edit.newText);
+            this.session.replace(toRange(edit.range), edit.newText);
         }
     }
 }
