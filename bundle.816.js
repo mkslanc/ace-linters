@@ -135,11 +135,17 @@ class JsonService extends BaseService {
         this.$configureService(document.uri);
     }
     $configureService(sessionID) {
-        let schemas = this.getOption(sessionID, "schemas");
+        let schemas = this.getOption(sessionID ?? "", "schemas");
+        let sessionIDs = sessionID ? [] : Object.keys(this.documents);
         schemas?.forEach((el) => {
-            if (el.uri === this.$getJsonSchemaUri(sessionID)) {
-                el.fileMatch ??= [];
-                el.fileMatch.push(sessionID);
+            if (sessionID) {
+                if (this.$getJsonSchemaUri(sessionID) == el.uri) {
+                    el.fileMatch ??= [];
+                    el.fileMatch.push(sessionID);
+                }
+            }
+            else {
+                el.fileMatch = sessionIDs.filter(sessionID => this.$getJsonSchemaUri(sessionID) == el.uri);
             }
             let schema = el.schema ?? this.schemas[el.uri];
             if (schema)
@@ -171,7 +177,7 @@ class JsonService extends BaseService {
     }
     setGlobalOptions(options) {
         super.setGlobalOptions(options);
-        this.$configureService("");
+        this.$configureService();
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);

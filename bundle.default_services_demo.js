@@ -52190,28 +52190,30 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         Object.defineProperty(t, "__esModule", { value: !0 }), t.LanguageProvider = void 0;
         const i = n(8151), o = n(2580), s = n(8299), a = n(9853), l = n(8458), c = r(n(6006)), h = n(1395);
         class u {
-            $activeEditor;
+            activeEditor;
             $descriptionTooltip;
             $messageController;
             $sessionLanguageProviders = {};
-            $editors = [];
+            editors = [];
             options;
             constructor(e, t) { this.$messageController = e, this.options = t ?? {}, this.options.functionality ??= { hover: !0, completion: { overwriteCompleters: !0 }, completionResolve: !0, format: !0 }, this.options.markdownConverter ??= new c.default.Converter, this.$descriptionTooltip = new o.DescriptionTooltip(this); }
             static create(e, t) { let n; return n = new a.MessageController(e), new u(n, t); }
             static fromCdn(e, t) { let n; if ("" == e || !/^http(s)?:/.test(e))
                 throw "Url is not valid"; "/" == e[e.length - 1] && (e = e.substring(0, e.length - 1)); let r = (0, h.createWorker)(e); return n = new a.MessageController(r), new u(n, t); }
-            $registerSession = (e, t) => { e && (this.$sessionLanguageProviders[e.id] ??= new d(e, this.$messageController, t)); };
+            $registerSession = (e, t) => { this.$sessionLanguageProviders[e.id] ??= new d(e, this.$messageController, t); };
             $getSessionLanguageProvider(e) { return this.$sessionLanguageProviders[e.id]; }
             $getFileName(e) { return this.$getSessionLanguageProvider(e).fileName; }
-            registerEditor(e) { this.$editors.includes(e) || this.$registerEditor(e), this.$registerSession(e.session); }
-            $registerEditor(e) { this.$editors.push(e), e.setOption("useWorker", !1), e.on("changeSession", (({ session: e }) => this.$registerSession(e))), this.options.functionality.completion && this.$registerCompleters(e), this.$descriptionTooltip.registerEditor(e), this.$activeEditor ??= e, e.on("focus", (() => { this.$activeEditor = e; })); }
+            registerEditor(e) { this.editors.includes(e) || this.$registerEditor(e), this.$registerSession(e.session); }
+            $registerEditor(e) { this.editors.push(e), e.setOption("useWorker", !1), e.on("changeSession", (({ session: e }) => this.$registerSession(e))), this.options.functionality.completion && this.$registerCompleters(e), this.$descriptionTooltip.registerEditor(e), this.activeEditor ??= e, e.on("focus", (() => { this.activeEditor = e; })); }
             setSessionOptions(e, t) { this.$getSessionLanguageProvider(e).setOptions(t); }
             setGlobalOptions(e, t, n = !1) { this.$messageController.setGlobalOptions(e, t, n); }
             doHover(e, t, n) { this.$messageController.doHover(this.$getFileName(e), (0, l.fromPoint)(t), (e => n && n((0, l.toTooltip)(e)))); }
             getTooltipText(e) { return "markdown" === e.content.type ? s.CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(e.content.text)) : e.content.text; }
-            format = () => { this.options.functionality.format && this.$getSessionLanguageProvider(this.$activeEditor.session).format(); };
-            doComplete(e, t, n) { let r = e.getCursorPosition(); r.column--, this.$messageController.doComplete(this.$getFileName(t), (0, l.fromPoint)(r), (e => e && n((0, l.toCompletions)(e)))); }
-            $registerCompleters(e) { let t = { getCompletions: async (e, n, r, i, o) => { this.doComplete(e, n, (e => { let r = this.$getFileName(n); e && (e.forEach((e => { e.completerId = t.id, e.fileName = r; })), o(null, s.CommonConverter.normalizeRanges(e))); })); }, getDocTooltip: n => (this.options.functionality.completionResolve && !n.isResolved && n.completerId === t.id && this.$messageController.doResolve(n.fileName, (0, l.toCompletionItem)(n), (t => { if (n.isResolved = !0, !t)
+            format = () => { if (!this.options.functionality.format)
+                return; let e = this.$getSessionLanguageProvider(this.activeEditor.session); e.$sendDeltaQueue(e.format); };
+            doComplete(e, t, n) { let r = e.getCursorPosition(); this.$messageController.doComplete(this.$getFileName(t), (0, l.fromPoint)(r), (e => e && n((0, l.toCompletions)(e)))); }
+            doResolve(e, t) { this.$messageController.doResolve(e.fileName, (0, l.toCompletionItem)(e), t); }
+            $registerCompleters(e) { let t = { getCompletions: async (e, n, r, i, o) => { this.$getSessionLanguageProvider(n).$sendDeltaQueue((() => { this.doComplete(e, n, (e => { let r = this.$getFileName(n); e && (e.forEach((e => { e.completerId = t.id, e.fileName = r; })), o(null, s.CommonConverter.normalizeRanges(e))); })); })); }, getDocTooltip: n => (this.options.functionality.completionResolve && !n.isResolved && n.completerId === t.id && this.doResolve(n, (t => { if (n.isResolved = !0, !t)
                     return; let r = (0, l.toResolvedCompletion)(n, t); n.docText = r.docText, r.docHTML ? n.docHTML = r.docHTML : r.docMarkdown && (n.docHTML = s.CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(r.docMarkdown))), e.completer && e.completer.updateDocTooltip(); })), n), id: "lspCompleters" }; this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters ? e.completers = [t] : e.completers.push(t); }
             dispose() { }
         }
@@ -52233,8 +52235,9 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             get $mode() { return this.session.$modeId; }
             get $format() { return { tabSize: this.session.getTabSize(), insertSpaces: this.session.getUseSoftTabs() }; }
             $changeListener = e => { this.session.doc.version++, this.$deltaQueue || (this.$deltaQueue = [], setTimeout(this.$sendDeltaQueue, 0)), this.$deltaQueue.push(e); };
-            $sendDeltaQueue = () => { let e = this.$deltaQueue; e && (this.$deltaQueue = null, e.length && this.$messageController.change(this.fileName, e.map((e => (0, l.fromAceDelta)(e, this.session.doc.getNewLineCharacter()))), this.session.doc)); };
-            $showAnnotations = e => { this.session.clearAnnotations(); let t = (0, l.toAnnotations)(e); t && t.length > 0 && this.session.setAnnotations(t); };
+            $sendDeltaQueue = e => { let t = this.$deltaQueue; if (!t)
+                return e && e(); this.$deltaQueue = null, t.length && this.$messageController.change(this.fileName, t.map((e => (0, l.fromAceDelta)(e, this.session.doc.getNewLineCharacter()))), this.session.doc, e); };
+            $showAnnotations = e => { let t = (0, l.toAnnotations)(e); this.session.setAnnotations(t); };
             setOptions(e) { this.$isConnected ? this.$messageController.changeOptions(this.fileName, e) : this.$options = e; }
             validate = () => { this.$messageController.doValidation(this.fileName, this.$showAnnotations); };
             format = () => { let e = this.session.getSelection().getAllRanges(), t = this.$format; if (!e || e[0].isEmpty()) {
@@ -52243,7 +52246,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             } for (let n of e)
                 this.$messageController.format(this.fileName, (0, l.fromRange)(n), t, this.$applyFormat); };
             $applyFormat = e => { for (let t of e.reverse())
-                this.session.doc.replace((0, l.toRange)(t.range), t.newText); };
+                this.session.replace((0, l.toRange)(t.range), t.newText); };
         }
     }, 9853: function (e, t, n) {
         "use strict";

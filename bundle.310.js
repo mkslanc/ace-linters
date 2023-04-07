@@ -79,7 +79,7 @@ else { var a, t; } }(self, (() => (() => {
         $sessionIDToMode = {};
         constructor(e) { let s = (s, t) => { if (t ??= this.getServiceInstance(s.uri), !t)
             return; let a = { type: o.MessageType.validate }, i = Object.keys(t.documents); for (let s of i)
-            t.doValidation({ uri: s }).then((t => { a.sessionId = s, a.value = t, e.postMessage(a); })); }; e.addEventListener("message", (async (t) => { let a = t.data, i = a.sessionId, n = a.version, r = { type: a.type, sessionId: i }, c = this.getServiceInstance(i), l = { uri: i, version: n }; switch (a.type) {
+            t.doValidation({ uri: s }).then((t => { a.sessionId = s, a.value = t, e.postMessage(a); })); }; e.addEventListener("message", (async (t) => { let a = t.data, i = a.sessionId ?? "", n = a.version, r = { type: a.type, sessionId: i }, c = this.getServiceInstance(i), l = { uri: i, version: n }; switch (a.type) {
             case o.MessageType.format:
                 r.value = c?.format(l, a.value, a.format);
                 break;
@@ -113,7 +113,7 @@ else { var a, t; } }(self, (() => (() => {
             case o.MessageType.dispose:
                 this.removeDocument(l);
                 break;
-            case o.MessageType.globalOptions: this.setGlobalOptions(a.serviceName, a.options, a.merge);
+            case o.MessageType.globalOptions: c = this.$services[a.serviceName].serviceInstance, this.setGlobalOptions(a.serviceName, a.options, a.merge), c && s(void 0, c);
         } e.postMessage(r); })); }
         static async $initServiceInstance(e) { let s = await e.module(); e.serviceInstance = new s[e.className](e.modes), e.options && e.serviceInstance.setGlobalOptions(e.options); }
         async $getServiceInstanceByMode(e) { let s = this.findServiceByMode(e); if (s)
