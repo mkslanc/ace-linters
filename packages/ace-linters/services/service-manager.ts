@@ -5,33 +5,37 @@ import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 
-interface ServiceData {
-    module: () => any,
-    className: string,
-    modes: string,
-    serviceInstance?: LanguageService,
-    options?: ServiceOptions,
-    features: AceLinters.ServiceFeatures
+type Validation = {
+    (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): Promise<void>;
+    (document: TextDocumentIdentifier | undefined, servicesInstances: LanguageService[]): Promise<void>;
 }
 
 export class ServiceManager {
-    private $services: { [serviceName: string]: ServiceData } = {};
+    $services: { [serviceName: string]: AceLinters.ServiceData } = {};
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
-        type Validation = {
-            (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): void;
-            (document: TextDocumentIdentifier | undefined, servicesInstances: LanguageService[]): void;
-        }
-        const doValidation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
-            serviceInstances ??= this.getServicesInstances(document!.uri);
-            if (servicesInstances.length === 0)
-                return;
+
+        let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
+            servicesInstances ??= this.getServicesInstances(document!.uri);
+            //this is list of documents linked to services
+            let sessionIDList = Object.keys(servicesInstances[0].documents);
+            servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
             let postMessage = {
                 "type": MessageType.validate,
             };
+            
+            if (servicesInstances.length === 0) {
+                //we are sending clearing diagnostics message, just in case
+                
+                for (let sessionID of sessionIDList) {
+                    postMessage["sessionId"] = sessionID;
+                    postMessage["value"] = [];
+                    ctx.postMessage(postMessage);
+                }
+                return;
+            }
 
-            let sessionIDList = Object.keys(servicesInstances[0].documents);
             for (let sessionID of sessionIDList) {
                 let diagnostics = await Promise.all(servicesInstances.map((el) => {
                     return el.doValidation({uri: sessionID});
@@ -51,31 +55,31 @@ export class ServiceManager {
                 "sessionId": sessionID,
             };
 
-            const feature = this.getFeatureByMessageType(message["type"]);
-            let serviceInstances = this.getServicesInstances(sessionID, feature);
+            let serviceInstances = this.getServicesInstances(sessionID);
             let documentIdentifier = {
                 uri: sessionID,
                 version: version
             };
             switch (message["type"] as MessageType) {
                 case MessageType.format:
+                    serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
                         //we will use only first service to format
                         postMessage["value"] = serviceInstances[0].format(documentIdentifier, message.value, message.format);
                     }
                     break;
                 case MessageType.complete:
-                    postMessage["value"] = (await Promise.all(serviceInstances.map(async (service) => {
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service) => {
                         return {
                             completions: await service.doComplete(documentIdentifier, message.value),
-                            service: service.constructor.name
+                            service: service.serviceData.className
                         };
                     }))).filter(notEmpty);
                     break;
                 case MessageType.resolveCompletion:
                     let serviceName = message.value.service;
-                    postMessage["value"] = await serviceInstances.find((service) => {
-                        if (service.constructor.name === serviceName) {
+                    postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
+                        if (service.serviceData.className === serviceName) {
                             return service;
                         }
                     })?.doResolve(message.value);
@@ -93,7 +97,7 @@ export class ServiceManager {
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.hover:
-                    postMessage["value"] = (await Promise.all(serviceInstances.map(async (service) => {
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service) => {
                         return service.doHover(documentIdentifier, message.value);
                     }))).filter(notEmpty);
                     break;
@@ -118,13 +122,16 @@ export class ServiceManager {
                     this.removeDocument(documentIdentifier);
                     break;
                 case MessageType.globalOptions:
-                    serviceInstance = this.$services[message.serviceName].serviceInstance;
+                    var serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
                     if (serviceInstance)
-                        doValidation(undefined, serviceInstance);
+                        await doValidation(undefined, [serviceInstance]);
                     break;
                 case MessageType.featuresToggle:
+                    var serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.toggleFeatures(message.serviceName, message.options);
+                    if (serviceInstance)
+                        await doValidation(undefined, [serviceInstance]);
                     break;
             }
 
@@ -132,11 +139,12 @@ export class ServiceManager {
         })
     }
 
-    private static async $initServiceInstance(service: ServiceData): Promise<LanguageService> {
+    private static async $initServiceInstance(service: AceLinters.ServiceData): Promise<LanguageService> {
         let module = await service.module();
         service.serviceInstance = new module[service.className](service.modes);
         if (service.options)
             service.serviceInstance!.setGlobalOptions(service.options);
+        service.serviceInstance!.serviceData = service;
         return service.serviceInstance!;
     }
 
@@ -194,38 +202,19 @@ export class ServiceManager {
         }
     }
 
-    getServicesInstances(sessionID: string, feature?: string): LanguageService[] {
+    getServicesInstances(sessionID: string): LanguageService[] {
         let mode = this.$sessionIDToMode[sessionID];
         if (!mode)
             return []; //TODO:
         let services = this.findServicesByMode(mode);
-        if (feature) {
-            services = services.filter((el) => el.features[feature] === true);
-        }
         return services.map((el) => el.serviceInstance).filter(notEmpty);
     }
 
-    getFeatureByMessageType(messageType: MessageType) {
-        switch (messageType) {
-            case MessageType.complete:
-                return "completion";
-            case MessageType.format:
-                return "format";
-            case MessageType.hover:
-                return "hover";
-            case MessageType.resolveCompletion:
-                return "completionResolve"
-            case MessageType.validate:
-            case MessageType.init:
-            case MessageType.applyDelta:
-            case MessageType.change:
-            case MessageType.changeMode:
-            case MessageType.changeOptions:
-                return "diagnostics"
-        }
+    filterByFeature(serviceInstances: LanguageService[], feature: AceLinters.SupportedFeatures): LanguageService[] {
+        return serviceInstances.filter((el) => el.serviceData.features[feature] === true);
     }
 
-    findServicesByMode(mode: string): ServiceData[] {
+    findServicesByMode(mode: string): AceLinters.ServiceData[] {
         return Object.values(this.$services).filter((el) => {
             let extensions = el.modes.split('|');
             if (extensions.includes(mode))
@@ -233,7 +222,7 @@ export class ServiceManager {
         });
     }
 
-    registerService(name: string, service: ServiceData) {
+    registerService(name: string, service: AceLinters.ServiceData) {
         service.features ??= {
             hover: true,
             completion: true,

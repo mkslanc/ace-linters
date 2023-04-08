@@ -1,4 +1,5 @@
-import ace, {Ace} from "ace-code";
+import * as ace from "ace-code";
+import {Ace} from "ace-code";
 import "ace-code/src/test/mockdom";
 //@ts-ignore
 window["self"] = {};
@@ -62,6 +63,7 @@ describe('LanguageProvider tests', () => {
 
         manager = new ServiceManager(ctx);
         manager.registerService("html", {
+            features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
             module: () => import("../services/html/html-service"),
             className: "HtmlService",
             modes: "html"
@@ -148,6 +150,7 @@ describe('LanguageProvider tests', () => {
             ctx.setEmitter(client);
 
             manager.registerService("json", {
+                features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
                 module: () => import("../services/json/json-service"),
                 className: "JsonService",
                 modes: "json"

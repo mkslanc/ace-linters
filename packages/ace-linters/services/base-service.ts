@@ -9,6 +9,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     documents: { [sessionID: string]: TextDocument } = {};
     options: { [sessionID: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
+    serviceData: AceLinters.ServiceData;
 
     protected constructor(mode: string) {
         this.mode = mode;

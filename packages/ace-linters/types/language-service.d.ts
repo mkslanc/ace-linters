@@ -13,6 +13,7 @@ export declare namespace AceLinters {
         $service;
         mode: string;
         globalOptions;
+        serviceData: ServiceData;
 
         format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
 
@@ -159,11 +160,18 @@ export declare namespace AceLinters {
         markdownConverter?: MarkDownConverter
     }
 
-    export interface ServiceFeatures {
-        hover: boolean,
-        completion: boolean,
-        completionResolve: boolean,
-        format: boolean,
-        diagnostics: boolean
+    export type ServiceFeatures = {
+        [feature in SupportedFeatures]: boolean;
+    };
+    
+    export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics";
+
+    export interface ServiceData {
+        module: () => any,
+        className: string,
+        modes: string,
+        serviceInstance?: LanguageService,
+        options?: ServiceOptions,
+        features: AceLinters.ServiceFeatures
     }
 }

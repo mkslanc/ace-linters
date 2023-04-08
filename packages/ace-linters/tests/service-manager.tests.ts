@@ -21,11 +21,13 @@ describe('ServiceManager tests', () => {
         manager = new ServiceManager(ctx);
 
         const cssService = {
+            features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
             module: () => import("../services/css/css-service"),
             className: "CssService",
             modes: "css"
         };
         const htmlService = {
+            features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
             module: () => import("../services/html/html-service"),
             className: "HtmlService",
             modes: "css"
@@ -75,6 +77,7 @@ describe('ServiceManager tests', () => {
             expect(manager["$services"]["html"].serviceInstance.getDocument(doc.uri)).exist;
 
             const jsonService = {
+                features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
                 module: () => import("../services/json/json-service"),
                 className: "JsonService",
                 modes: "json"
@@ -85,6 +88,37 @@ describe('ServiceManager tests', () => {
             expect(manager["$services"]["css"].serviceInstance.getDocument(doc.uri)).not.exist;
             expect(manager["$services"]["html"].serviceInstance.getDocument(doc.uri)).not.exist;
             expect(manager["$services"]["json"].serviceInstance.getDocument(doc.uri)).exist;
+        });
+    });
+
+
+    describe('toggle features', () => {
+        it('should enable all default features', () => {
+            const expectedFeatures = {
+                hover: true,
+                completion: true,
+                completionResolve: true,
+                format: true,
+                diagnostics: true
+            };
+            
+            //@ts-ignore;
+            manager.toggleFeatures("css");
+            let features = manager.$services["css"].features;
+            expect(features).deep.equal(expectedFeatures);
+        });
+
+        it('should set specific features', () => {
+            const featuresToSet = {
+                hover: false,
+                completion: false,
+                completionResolve: true,
+                format: true,
+                diagnostics: true
+            };
+            manager.toggleFeatures("css", featuresToSet);
+            let features = manager.$services["css"].features;
+            expect(features).deep.equal(featuresToSet);
         });
     });
 
