@@ -90,12 +90,25 @@ describe('LanguageProvider tests', () => {
         expect(hoverText).to.equal("Plain text");
     })
 
-    it('do hover', (done) => {
+    it('do hover or not, depending on service feature state', (done) => {
         languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
             let hoverText = languageProvider.getTooltipText(hover);
             expect(hoverText).to.equal(`<p>The html element represents the root of an HTML document.</p>
 <p><a target='_blank' href="https://developer.mozilla.org/docs/Web/HTML/Element/html">MDN Reference</a></p>`);
-            done();
+            languageProvider.setServiceFeaturesState("html", {
+                hover: false,
+                format: true,
+                diagnostics: false,
+                completionResolve: true,
+                completion: true
+            });
+            
+            languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
+                let hoverText = languageProvider.getTooltipText(hover);
+                expect(hoverText).to.equal("");
+
+                done();
+            })
         })
     })
 

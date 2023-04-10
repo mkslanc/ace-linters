@@ -92,7 +92,7 @@ describe('ServiceManager tests', () => {
     });
 
 
-    describe('toggle features', () => {
+    describe('set features state', () => {
         it('should enable all default features', () => {
             const expectedFeatures = {
                 hover: true,
@@ -103,7 +103,7 @@ describe('ServiceManager tests', () => {
             };
             
             //@ts-ignore;
-            manager.toggleFeatures("css");
+            manager.setFeaturesState("css");
             let features = manager.$services["css"].features;
             expect(features).deep.equal(expectedFeatures);
         });
@@ -116,7 +116,7 @@ describe('ServiceManager tests', () => {
                 format: true,
                 diagnostics: true
             };
-            manager.toggleFeatures("css", featuresToSet);
+            manager.setFeaturesState("css", featuresToSet);
             let features = manager.$services["css"].features;
             expect(features).deep.equal(featuresToSet);
         });

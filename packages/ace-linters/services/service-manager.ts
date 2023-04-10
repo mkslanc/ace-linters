@@ -127,9 +127,9 @@ export class ServiceManager {
                     if (serviceInstance)
                         await doValidation(undefined, [serviceInstance]);
                     break;
-                case MessageType.featuresToggle:
+                case MessageType.setFeaturesState:
                     var serviceInstance = this.$services[message.serviceName].serviceInstance;
-                    this.toggleFeatures(message.serviceName, message.options);
+                    this.setFeaturesState(message.serviceName, message.options);
                     if (serviceInstance)
                         await doValidation(undefined, [serviceInstance]);
                     break;
@@ -233,7 +233,7 @@ export class ServiceManager {
         this.$services[name] = service;
     }
 
-    toggleFeatures(name: string, features: AceLinters.ServiceFeatures) {
+    setFeaturesState(name: string, features: AceLinters.ServiceFeatures) {
         features ??= {
             hover: true,
             completion: true,

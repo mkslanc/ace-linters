@@ -4,11 +4,11 @@ import {
     ChangeMessage,
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, DisposeMessage, FeaturesToggleMessage,
+    DeltasMessage, DisposeMessage,
     FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage, MessageType,
-    ResolveCompletionMessage,
+    ResolveCompletionMessage, SetFeaturesStateMessage,
     ValidateMessage
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
@@ -84,8 +84,8 @@ export class MessageController implements IMessageController {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
 
-    toggleFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void {
-        this.$worker.postMessage(new FeaturesToggleMessage(serviceName, features));
+    setFeaturesState(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void {
+        this.$worker.postMessage(new SetFeaturesStateMessage(serviceName, features));
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {
