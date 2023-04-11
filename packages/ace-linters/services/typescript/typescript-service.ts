@@ -12,6 +12,7 @@ import {
 import TsServiceOptions = AceLinters.TsServiceOptions;
 import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
+import {mergeObjects} from "../../utils";
 
 export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, AceLinters.LanguageService {
     $service: ts.LanguageService;
@@ -24,6 +25,29 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         noSyntaxValidation: false,
         onlyVisible: false
     };
+    
+    $defaultFormatOptions = {
+        insertSpaceAfterCommaDelimiter: true,
+        insertSpaceAfterSemicolonInForStatements: true,
+        insertSpaceBeforeAndAfterBinaryOperators: true,
+        insertSpaceAfterConstructor: false,
+        insertSpaceAfterKeywordsInControlFlowStatements: true,
+        insertSpaceAfterFunctionKeywordForAnonymousFunctions: true,
+        insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
+        insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
+        insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: true,
+        insertSpaceAfterOpeningAndBeforeClosingEmptyBraces: true,
+        insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
+        insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces: false,
+        insertSpaceAfterTypeAssertion: false,
+        insertSpaceBeforeFunctionParenthesis: false,
+        placeOpenBraceOnNewLineForFunctions: false,
+        placeOpenBraceOnNewLineForControlBlocks: false,
+        indentSize: 4,
+        tabSize: 4,
+        newLineCharacter: "\n",
+        convertTabsToSpaces: true,
+    }
 
     constructor(mode: string) {
         super(mode);
@@ -143,29 +167,23 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return this.$service.getSemanticDiagnostics(fileName);
     }
 
+    getFormattingOptions(options: lsp.FormattingOptions): ts.FormatCodeSettings {
+        this.$defaultFormatOptions.convertTabsToSpaces = options.insertSpaces;
+        this.$defaultFormatOptions.tabSize = options.tabSize;
+        this.$defaultFormatOptions.indentSize = options.tabSize
+        if (this.globalOptions && this.globalOptions["formatOptions"]) {
+            return mergeObjects(this.globalOptions["formatOptions"], this.$defaultFormatOptions);
+        }
+        return this.$defaultFormatOptions;
+    }
+
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument || !range)
             return [];
 
         let offset = toTsOffset(range, fullDocument);
-        let textEdits = this.$service.getFormattingEditsForRange(document.uri, offset.start, offset.end, {
-            PlaceOpenBraceOnNewLineForFunctions: false,
-            InsertSpaceAfterFunctionKeywordForAnonymousFunctions: false,
-            InsertSpaceAfterCommaDelimiter: false,
-            InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: false,
-            InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: false,
-            InsertSpaceAfterSemicolonInForStatements: false,
-            InsertSpaceBeforeAndAfterBinaryOperators: false,
-            PlaceOpenBraceOnNewLineForControlBlocks: false,
-            InsertSpaceAfterKeywordsInControlFlowStatements: false,
-            ConvertTabsToSpaces: options.insertSpaces,
-            TabSize: options.tabSize,
-            IndentStyle: 0,
-            InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: false,
-            IndentSize: options.tabSize,
-            NewLineCharacter: '\n'
-        });//TODO: separate format options?
+        let textEdits = this.$service.getFormattingEditsForRange(document.uri, offset.start, offset.end, this.getFormattingOptions(options));
         return toTextEdits(textEdits, fullDocument);
     }
 
