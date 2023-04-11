@@ -17,10 +17,15 @@ export class BaseTooltip extends Tooltip {
     column: number;
 
     constructor(provider: LanguageProvider) {
-        super();
+        super(document.body);
         this.provider = provider;
-        Tooltip.call(this, document.body);
-        
+        //this is for ace-code version < 1.16.0
+        try {
+            Tooltip.call(this, document.body);
+        } catch (e) {
+            
+        }
+            
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
         this.getElement().addEventListener("mouseout", this.onMouseOut);

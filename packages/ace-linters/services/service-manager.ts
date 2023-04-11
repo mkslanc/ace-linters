@@ -95,7 +95,6 @@ export class ServiceManager {
                     break;
                 case MessageType.documentHighlight:
                     postMessage["value"] = await serviceInstance?.findDocumentHighlights(documentIdentifier, message.value);
-                    console.log(postMessage["value"]);
                     break;
             }
 

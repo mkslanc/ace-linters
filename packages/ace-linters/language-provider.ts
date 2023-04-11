@@ -100,17 +100,19 @@ export class LanguageProvider {
         editor.on("focus", () => {
             this.$activeEditor = editor;
         });
+        
+        var $timer
         // @ts-ignore
-        editor.on("click", () => {
-            let cursor = editor.getCursorPosition();
-            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), (documentHighlights) => {
-                //TODO: this is test code
-                editor.clearSelection();
-                documentHighlights.forEach((el) => {
-                    editor.selection.addRange(toRange(el.range));
-                })
-                editor.setHighlightSelectedWord(true)
-            })
+        editor.on("changeSelection", () => {
+            if (!$timer)
+                $timer =
+                    setTimeout(() => {
+                        let cursor = editor.getCursorPosition();
+                        let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+
+                        this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                        $timer = undefined;
+                    }, 50);
         });
         this.$descriptionTooltip.registerEditor(editor);
         this.$signatureTooltip.registerEditor(editor);
@@ -312,4 +314,8 @@ class SessionLanguageProvider {
             this.session.doc.replace(toRange(edit.range), edit.newText);
         }
     }
+    
+    $applyDocumentHiglight = (documentHighlights) => {
+        //TODO: place for your code
+    };
 }
