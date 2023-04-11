@@ -44178,7 +44178,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
     });`;
     const phpService = `manager.registerService("php", {
         module: () => {
-            importScripts("${cdnUrl}/xml-service.js");
+            importScripts("${cdnUrl}/php-service.js");
             return {PhpService};
         },
         className: "PhpService",
