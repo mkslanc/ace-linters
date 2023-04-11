@@ -43468,9 +43468,9 @@ var rust = __webpack_require__(5727);
 var ace = __webpack_require__(9100);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/tooltip.js
 var tooltip = __webpack_require__(962);
-;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
+;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
 
-class DescriptionTooltip extends tooltip/* Tooltip */.u {
+class BaseTooltip extends tooltip/* Tooltip */.u {
     provider;
     $activeEditor;
     descriptionText;
@@ -43484,25 +43484,83 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
     constructor(provider) {
         super(document.body);
         this.provider = provider;
-        this.getElement().addEventListener("mouseout", this.onMouseOut);
+        //this is for ace-code version < 1.16.0
+        try {
+            tooltip/* Tooltip.call */.u.call(this, document.body);
+        }
+        catch (e) {
+        }
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
+        this.getElement().addEventListener("mouseout", this.onMouseOut);
     }
-    registerEditor(editor) {
-        editor.on("mousemove", this.onMouseMove);
-    }
-    $inactivateEditor() {
+    $show() {
         if (!this.$activeEditor)
             return;
-        this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = undefined;
+        let renderer = this.$activeEditor.renderer;
+        let position = renderer.textToScreenCoordinates(this.row, this.column);
+        let cursorPos = this.$activeEditor.getCursorPosition();
+        this.show(null, position.pageX, position.pageY);
+        let labelHeight = this.getElement().getBoundingClientRect().height;
+        let rect = renderer.scroller.getBoundingClientRect();
+        let isTopdown = true;
+        if (this.row > cursorPos.row)
+            // don't obscure cursor
+            isTopdown = true;
+        else if (this.row < cursorPos.row)
+            // don't obscure cursor
+            isTopdown = false;
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
+            // not enough space above us
+            isTopdown = true;
+        else if (position.pageY + labelHeight > rect.bottom)
+            isTopdown = false;
+        if (!isTopdown)
+            position.pageY -= labelHeight;
+        else
+            position.pageY += renderer.lineHeight;
+        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+        this.show(null, position.pageX, position.pageY);
     }
-    $activateEditor(editor) {
-        if (this.$activeEditor == editor)
+    getElement() {
+        return super.getElement();
+    }
+    hide() {
+        super.hide();
+    }
+    show(param, pageX, pageY) {
+        super.show(param, pageX, pageY);
+        this.$registerEditorEvents();
+    }
+    setHtml(descriptionText) {
+        super.setHtml(descriptionText);
+    }
+    $hide = () => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.$removeEditorEvents();
+            this.hide();
+        }
+        this.$inactivateEditor();
+    };
+    destroy() {
+        this.$hide();
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
+    }
+    ;
+    onMouseOut = (e) => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (!e.relatedTarget || e.relatedTarget == this.getElement())
             return;
-        this.$activeEditor = editor;
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
-    }
+        //@ts-ignore
+        if (e && e.currentTarget.contains(e.relatedTarget))
+            return;
+        //@ts-ignore
+        if (!e.relatedTarget.classList.contains("ace_content"))
+            this.$hide();
+    };
     $registerEditorEvents() {
         this.$activeEditor.on("change", this.$hide);
         this.$activeEditor.on("mousewheel", this.$hide);
@@ -43514,6 +43572,25 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
         this.$activeEditor.off("mousewheel", this.$hide);
         //@ts-ignore
         this.$activeEditor.off("mousedown", this.$hide);
+    }
+    $inactivateEditor() {
+        this.$activeEditor?.container.removeEventListener("mouseout", this.onMouseOut);
+        this.$activeEditor = undefined;
+    }
+    $activateEditor(editor) {
+        if (this.$activeEditor == editor)
+            return;
+        this.$inactivateEditor();
+        this.$activeEditor = editor;
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
+    }
+}
+
+;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
+
+class DescriptionTooltip extends BaseTooltip {
+    registerEditor(editor) {
+        editor.on("mousemove", this.onMouseMove);
     }
     update(editor) {
         clearTimeout(this.$mouseMoveTimer);
@@ -43567,78 +43644,11 @@ class DescriptionTooltip extends tooltip/* Tooltip */.u {
             }
         });
     };
-    $show = () => {
-        if (!this.$activeEditor)
-            return;
-        let renderer = this.$activeEditor.renderer;
-        let position = renderer.textToScreenCoordinates(this.row, this.column);
-        let cursorPos = this.$activeEditor.getCursorPosition();
-        this.show(null, position.pageX, position.pageY);
-        let labelHeight = this.getElement().getBoundingClientRect().height;
-        let rect = renderer.scroller.getBoundingClientRect();
-        let isTopdown = true;
-        if (this.row > cursorPos.row)
-            // don't obscure cursor
-            isTopdown = true;
-        else if (this.row < cursorPos.row)
-            // don't obscure cursor
-            isTopdown = false;
-        if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
-            // not enough space above us
-            isTopdown = true;
-        else if (position.pageY + labelHeight > rect.bottom)
-            isTopdown = false;
-        if (!isTopdown)
-            position.pageY -= labelHeight;
-        else
-            position.pageY += renderer.lineHeight;
-        this.$registerEditorEvents();
-        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-        this.show(null, position.pageX, position.pageY);
-    };
     onMouseMove = (e) => {
         this.x = e.clientX;
         this.y = e.clientY;
         this.update(e["editor"]);
     };
-    onMouseOut = (e) => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (!e.relatedTarget || e.relatedTarget == this.getElement())
-            return;
-        //@ts-ignore
-        if (e && e.currentTarget.contains(e.relatedTarget))
-            return;
-        //@ts-ignore
-        if (!e.relatedTarget.classList.contains("ace_content"))
-            this.$hide();
-    };
-    $hide = () => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.$removeEditorEvents();
-            this.hide();
-        }
-        this.$inactivateEditor();
-    };
-    destroy() {
-        this.$hide();
-        this.getElement().removeEventListener("mouseout", this.onMouseOut);
-    }
-    ;
-    getElement() {
-        return super.getElement();
-    }
-    hide() {
-        super.hide();
-    }
-    show(param, pageX, pageY) {
-        super.show(param, pageX, pageY);
-    }
-    setHtml(descriptionText) {
-        super.setHtml(descriptionText);
-    }
 }
 
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
@@ -43820,6 +43830,22 @@ class GlobalOptionsMessage {
         this.merge = merge;
     }
 }
+class SignatureHelpMessage extends BaseMessage {
+    type = MessageType.signatureHelp;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+class DocumentHighlightMessage extends BaseMessage {
+    type = MessageType.documentHighlight;
+    value;
+    constructor(sessionId, value) {
+        super(sessionId);
+        this.value = value;
+    }
+}
 var MessageType;
 (function (MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -43834,6 +43860,8 @@ var MessageType;
     MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
     MessageType[MessageType["dispose"] = 10] = "dispose";
     MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
+    MessageType[MessageType["signatureHelp"] = 12] = "signatureHelp";
+    MessageType[MessageType["documentHighlight"] = 13] = "documentHighlight";
 })(MessageType || (MessageType = {}));
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/lib/oop.js
@@ -43893,6 +43921,12 @@ class MessageController {
     }
     setGlobalOptions(serviceName, options, merge = false) {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+    }
+    provideSignatureHelp(sessionId, position, callback) {
+        this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
+    }
+    findDocumentHighlights(sessionId, position, callback) {
+        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
     }
     postMessage(message, callback) {
         if (callback) {
@@ -44057,6 +44091,35 @@ function toTooltip(hover) {
         content = { type: "markdown", text: contents.join("\n\n") };
     }
     return { content: content, range: hover.range && toRange(hover.range) };
+}
+function fromSignatureHelp(signatureHelp) {
+    let content;
+    if (!signatureHelp)
+        return;
+    let signatureIndex = signatureHelp?.activeSignature || 0;
+    let activeSignature = signatureHelp.signatures[signatureIndex];
+    let activeParam = signatureHelp?.activeParameter;
+    let contents = activeSignature.label;
+    if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
+        let param = activeSignature.parameters[activeParam].label;
+        if (typeof param == "string") {
+            contents = contents.replace(param, `**${param}**`);
+        }
+    }
+    if (activeSignature.documentation) {
+        if (main.MarkupContent.is(activeSignature.documentation)) {
+            content = fromMarkupContent(activeSignature.documentation);
+            content.text = contents + "\n\n" + content.text;
+        }
+        else {
+            contents += "\n\n" + activeSignature.documentation;
+            content = { type: "markdown", text: contents };
+        }
+    }
+    else {
+        content = { type: "markdown", text: contents };
+    }
+    return { content: content };
 }
 function fromMarkupContent(content) {
     if (!content)
@@ -44256,7 +44319,71 @@ function generateLintersImport(cdnUrl, includeLinters) {
 }()`;
 }
 
+;// CONCATENATED MODULE: ./packages/ace-linters/components/signature-tooltip.ts
+
+class SignatureTooltip extends BaseTooltip {
+    registerEditor(editor) {
+        // @ts-ignore
+        editor.on("changeSelection", () => this.onChangeSelection(editor));
+    }
+    update(editor) {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.provideSignatureHelp();
+        }
+        else {
+            this.$mouseMoveTimer = setTimeout(() => {
+                this.$activateEditor(editor);
+                this.provideSignatureHelp();
+                this.$mouseMoveTimer = undefined;
+            }, 500);
+        }
+    }
+    ;
+    provideSignatureHelp = () => {
+        if (!this.provider.options.functionality.signatureHelp)
+            return;
+        let cursor = this.$activeEditor.getCursorPosition();
+        let session = this.$activeEditor.session;
+        let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
+        this.provider.provideSignatureHelp(session, docPos, (tooltip) => {
+            let descriptionText = tooltip ? this.provider.getTooltipText(tooltip) : null;
+            if (!tooltip || !descriptionText) {
+                this.hide();
+                return;
+            }
+            let token = session.getTokenAt(docPos.row, docPos.column);
+            let row = tooltip.range?.start.row ?? docPos.row;
+            let column = tooltip.range?.start.column ?? token?.start ?? 0;
+            if (this.descriptionText != descriptionText) {
+                this.hide();
+                this.setHtml(descriptionText);
+                this.descriptionText = descriptionText;
+            }
+            else if (this.row == row && this.column == column && this.isOpen) {
+                return;
+            }
+            this.row = row;
+            this.column = column;
+            if (this.$mouseMoveTimer) {
+                this.$show();
+            }
+            else {
+                this.$showTimer = setTimeout(() => {
+                    this.$show();
+                    this.$showTimer = undefined;
+                }, 500);
+            }
+        });
+    };
+    onChangeSelection = (editor) => {
+        this.update(editor);
+    };
+}
+
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
+
 
 
 
@@ -44267,6 +44394,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
 class LanguageProvider {
     activeEditor;
     $descriptionTooltip;
+    $signatureTooltip;
     $messageController;
     $sessionLanguageProviders = {};
     editors = [];
@@ -44280,9 +44408,12 @@ class LanguageProvider {
                 overwriteCompleters: true
             },
             completionResolve: true,
-            format: true
+            format: true,
+            documentHighlights: false,
+            signatureHelp: true
         };
         this.options.markdownConverter ??= new (showdown_default()).Converter();
+        this.$signatureTooltip = new SignatureTooltip(this);
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
     /**
@@ -44331,11 +44462,26 @@ class LanguageProvider {
         if (this.options.functionality.completion) {
             this.$registerCompleters(editor);
         }
-        this.$descriptionTooltip.registerEditor(editor);
         this.activeEditor ??= editor;
         editor.on("focus", () => {
             this.activeEditor = editor;
         });
+        if (this.options.functionality.documentHighlights) {
+            var $timer;
+            // @ts-ignore
+            editor.on("changeSelection", () => {
+                if (!$timer)
+                    $timer =
+                        setTimeout(() => {
+                            let cursor = editor.getCursorPosition();
+                            let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+                            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                            $timer = undefined;
+                        }, 50);
+            });
+        }
+        this.$descriptionTooltip.registerEditor(editor);
+        this.$signatureTooltip.registerEditor(editor);
     }
     setSessionOptions(session, options) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
@@ -44346,6 +44492,9 @@ class LanguageProvider {
     }
     doHover(session, position, callback) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
+    }
+    provideSignatureHelp(session, position, callback) {
+        this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
     getTooltipText(hover) {
         return hover.content.type === "markdown" ?
@@ -44517,6 +44666,9 @@ class SessionLanguageProvider {
         for (let edit of edits.reverse()) {
             this.session.replace(toRange(edit.range), edit.newText);
         }
+    };
+    $applyDocumentHiglight = (documentHighlights) => {
+        //TODO: place for your code
     };
 }
 
@@ -44796,6 +44948,15 @@ class MessageControllerWS extends events.EventEmitter {
                     preselectSupport: false,
                 },
                 contextSupport: false,
+            },
+            signatureHelp: {
+                signatureInformation: {
+                    documentationFormat: ['markdown', 'plaintext'],
+                    activeParameterSupport: true
+                }
+            },
+            documentHighlight: {
+                dynamicRegistration: true
             }
         },
         workspace: {
@@ -44998,6 +45159,38 @@ class MessageControllerWS extends events.EventEmitter {
         this.connection.sendRequest(name, options).then((params) => {
             this.emit(eventName, params);
         });
+    }
+    findDocumentHighlights(sessionId, position, callback) {
+        if (!this.isInitialized)
+            return;
+        if (!this.serverCapabilities?.documentHighlightProvider)
+            return;
+        let options = {
+            textDocument: {
+                uri: sessionId,
+            },
+            position: position,
+        };
+        let documentHighlightCallback = (result) => {
+            callback && callback(result);
+        };
+        this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
+    }
+    provideSignatureHelp(sessionId, position, callback) {
+        if (!this.isInitialized)
+            return;
+        if (!this.serverCapabilities?.signatureHelpProvider)
+            return;
+        let options = {
+            textDocument: {
+                uri: sessionId,
+            },
+            position: position,
+        };
+        let signatureHelpCallback = (result) => {
+            callback && callback(result);
+        };
+        this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
     }
 }
 

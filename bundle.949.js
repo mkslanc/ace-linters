@@ -3095,6 +3095,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 6066: (e, t, n) => { const 
             async doResolve(e) { return null; }
             async doValidation(e) { return []; }
             format(e, t, n) { return []; }
+            async provideSignatureHelp(e, t) { return null; }
+            async findDocumentHighlights(e, t) { return []; }
         };
     }, 9939: (e, t, n) => {
         "use strict";

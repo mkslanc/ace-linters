@@ -8,7 +8,7 @@
     module.exports = s();
 else { var a, t; } }(self, (() => (() => {
     "use strict";
-    var e = { 305: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.MessageType = s.GlobalOptionsMessage = s.DisposeMessage = s.ChangeOptionsMessage = s.ChangeModeMessage = s.DeltasMessage = s.ChangeMessage = s.ValidateMessage = s.HoverMessage = s.ResolveCompletionMessage = s.CompleteMessage = s.FormatMessage = s.InitMessage = s.BaseMessage = void 0; class t {
+    var e = { 305: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.MessageType = s.DocumentHighlightMessage = s.SignatureHelpMessage = s.GlobalOptionsMessage = s.DisposeMessage = s.ChangeOptionsMessage = s.ChangeModeMessage = s.DeltasMessage = s.ChangeMessage = s.ValidateMessage = s.HoverMessage = s.ResolveCompletionMessage = s.CompleteMessage = s.FormatMessage = s.InitMessage = s.BaseMessage = void 0; class t {
             sessionId;
             constructor(e) { this.sessionId = e; }
         } var a; s.BaseMessage = t, s.InitMessage = class extends t {
@@ -67,7 +67,15 @@ else { var a, t; } }(self, (() => (() => {
             options;
             merge;
             constructor(e, s, t) { this.serviceName = e, this.options = s, this.merge = t; }
-        }, function (e) { e[e.init = 0] = "init", e[e.format = 1] = "format", e[e.complete = 2] = "complete", e[e.resolveCompletion = 3] = "resolveCompletion", e[e.change = 4] = "change", e[e.hover = 5] = "hover", e[e.validate = 6] = "validate", e[e.applyDelta = 7] = "applyDelta", e[e.changeMode = 8] = "changeMode", e[e.changeOptions = 9] = "changeOptions", e[e.dispose = 10] = "dispose", e[e.globalOptions = 11] = "globalOptions"; }(a = s.MessageType || (s.MessageType = {})); }, 6508: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.mergeObjects = void 0, s.mergeObjects = function e(s, t) { if (!s)
+        }, s.SignatureHelpMessage = class extends t {
+            type = a.signatureHelp;
+            value;
+            constructor(e, s) { super(e), this.value = s; }
+        }, s.DocumentHighlightMessage = class extends t {
+            type = a.documentHighlight;
+            value;
+            constructor(e, s) { super(e), this.value = s; }
+        }, function (e) { e[e.init = 0] = "init", e[e.format = 1] = "format", e[e.complete = 2] = "complete", e[e.resolveCompletion = 3] = "resolveCompletion", e[e.change = 4] = "change", e[e.hover = 5] = "hover", e[e.validate = 6] = "validate", e[e.applyDelta = 7] = "applyDelta", e[e.changeMode = 8] = "changeMode", e[e.changeOptions = 9] = "changeOptions", e[e.dispose = 10] = "dispose", e[e.globalOptions = 11] = "globalOptions", e[e.signatureHelp = 12] = "signatureHelp", e[e.documentHighlight = 13] = "documentHighlight"; }(a = s.MessageType || (s.MessageType = {})); }, 6508: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.mergeObjects = void 0, s.mergeObjects = function e(s, t) { if (!s)
             return t; if (!t)
             return s; const a = {}; for (const o of [...Object.keys(s), ...Object.keys(t)])
             s[o] && t[o] ? Array.isArray(s[o]) ? a[o] = s[o].concat(t[o]) : a[o] = e(s[o], t[o]) : a[o] = s[o] ?? t[o]; return a; }; } }, s = {};
@@ -113,7 +121,13 @@ else { var a, t; } }(self, (() => (() => {
             case o.MessageType.dispose:
                 this.removeDocument(l);
                 break;
-            case o.MessageType.globalOptions: c = this.$services[a.serviceName].serviceInstance, this.setGlobalOptions(a.serviceName, a.options, a.merge), c && s(void 0, c);
+            case o.MessageType.globalOptions:
+                c = this.$services[a.serviceName].serviceInstance, this.setGlobalOptions(a.serviceName, a.options, a.merge), c && s(void 0, c);
+                break;
+            case o.MessageType.signatureHelp:
+                r.value = await (c?.provideSignatureHelp(l, a.value));
+                break;
+            case o.MessageType.documentHighlight: r.value = await (c?.findDocumentHighlights(l, a.value));
         } e.postMessage(r); })); }
         static async $initServiceInstance(e) { let s = await e.module(); e.serviceInstance = new s[e.className](e.modes), e.options && e.serviceInstance.setGlobalOptions(e.options); }
         async $getServiceInstanceByMode(e) { let s = this.findServiceByMode(e); if (s)

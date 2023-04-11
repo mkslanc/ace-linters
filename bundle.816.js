@@ -105,6 +105,12 @@ class BaseService {
     format(document, range, options) {
         return [];
     }
+    async provideSignatureHelp(document, position) {
+        return null;
+    }
+    async findDocumentHighlights(document, position) {
+        return [];
+    }
 }
 
 // EXTERNAL MODULE: ./node_modules/vscode-json-languageservice/lib/esm/jsonLanguageService.js + 22 modules

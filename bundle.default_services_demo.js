@@ -52131,9 +52131,9 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     break;
                 case "python": g.push(d);
             } })), `!function () {\n    importScripts("${e}/service-manager.js");\n    let manager = new ServiceManager(self);\n    ${g.join("\n")}\n}()`; }(e, t), new Blob([n.toString()], { type: "application/javascript" })), i = (window.URL || window.webkitURL).createObjectURL(r); return new Worker(i); };
-    }, 2580: (e, t, n) => {
+    }, 8605: (e, t, n) => {
         "use strict";
-        Object.defineProperty(t, "__esModule", { value: !0 }), t.DescriptionTooltip = void 0;
+        Object.defineProperty(t, "__esModule", { value: !0 }), t.BaseTooltip = void 0;
         const r = n(1692);
         class i extends r.Tooltip {
             provider;
@@ -52146,12 +52146,31 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             $showTimer;
             row;
             column;
-            constructor(e) { super(document.body), this.provider = e, this.getElement().addEventListener("mouseout", this.onMouseOut), this.getElement().style.pointerEvents = "auto", this.getElement().style.whiteSpace = "pre-wrap"; }
-            registerEditor(e) { e.on("mousemove", this.onMouseMove); }
-            $inactivateEditor() { this.$activeEditor && (this.$activeEditor.container.removeEventListener("mouseout", this.onMouseOut), this.$activeEditor = void 0); }
-            $activateEditor(e) { this.$activeEditor != e && (this.$activeEditor = e, this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut)); }
+            constructor(e) { super(document.body), this.provider = e; try {
+                r.Tooltip.call(this, document.body);
+            }
+            catch (e) { } this.getElement().style.pointerEvents = "auto", this.getElement().style.whiteSpace = "pre-wrap", this.getElement().addEventListener("mouseout", this.onMouseOut); }
+            $show() { if (!this.$activeEditor)
+                return; let e = this.$activeEditor.renderer, t = e.textToScreenCoordinates(this.row, this.column), n = this.$activeEditor.getCursorPosition(); this.show(null, t.pageX, t.pageY); let r = this.getElement().getBoundingClientRect().height, i = e.scroller.getBoundingClientRect(), o = !0; this.row > n.row ? o = !0 : this.row < n.row && (o = !1), t.pageY - r + e.lineHeight < i.top ? o = !0 : t.pageY + r > i.bottom && (o = !1), o ? t.pageY += e.lineHeight : t.pageY -= r, this.getElement().style.maxWidth = i.width - (t.pageX - i.left) + "px", this.show(null, t.pageX, t.pageY); }
+            getElement() { return super.getElement(); }
+            hide() { super.hide(); }
+            show(e, t, n) { super.show(e, t, n), this.$registerEditorEvents(); }
+            setHtml(e) { super.setHtml(e); }
+            $hide = () => { clearTimeout(this.$mouseMoveTimer), clearTimeout(this.$showTimer), this.isOpen && (this.$removeEditorEvents(), this.hide()), this.$inactivateEditor(); };
+            destroy() { this.$hide(), this.getElement().removeEventListener("mouseout", this.onMouseOut); }
+            onMouseOut = e => { clearTimeout(this.$mouseMoveTimer), clearTimeout(this.$showTimer), e.relatedTarget && e.relatedTarget != this.getElement() && (e && e.currentTarget.contains(e.relatedTarget) || e.relatedTarget.classList.contains("ace_content") || this.$hide()); };
             $registerEditorEvents() { this.$activeEditor.on("change", this.$hide), this.$activeEditor.on("mousewheel", this.$hide), this.$activeEditor.on("mousedown", this.$hide); }
             $removeEditorEvents() { this.$activeEditor.off("change", this.$hide), this.$activeEditor.off("mousewheel", this.$hide), this.$activeEditor.off("mousedown", this.$hide); }
+            $inactivateEditor() { this.$activeEditor?.container.removeEventListener("mouseout", this.onMouseOut), this.$activeEditor = void 0; }
+            $activateEditor(e) { this.$activeEditor != e && (this.$inactivateEditor(), this.$activeEditor = e, this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut)); }
+        }
+        t.BaseTooltip = i;
+    }, 2580: (e, t, n) => {
+        "use strict";
+        Object.defineProperty(t, "__esModule", { value: !0 }), t.DescriptionTooltip = void 0;
+        const r = n(8605);
+        class i extends r.BaseTooltip {
+            registerEditor(e) { e.on("mousemove", this.onMouseMove); }
             update(e) { clearTimeout(this.$mouseMoveTimer), clearTimeout(this.$showTimer), this.isOpen ? this.doHover() : this.$mouseMoveTimer = setTimeout((() => { this.$activateEditor(e), this.doHover(), this.$mouseMoveTimer = void 0; }), 500); }
             doHover = () => { if (!this.provider.options.functionality.hover)
                 return; let e = this.$activeEditor.renderer.pixelToScreenCoordinates(this.x, this.y), t = this.$activeEditor.session, n = t.screenToDocumentPosition(e.row, e.column); this.provider.doHover(t, n, (e => { let r = e ? this.provider.getTooltipText(e) : null; if (!e || !r)
@@ -52159,18 +52178,25 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 this.hide(), this.setHtml(r), this.descriptionText = r;
             else if (this.row == o && this.column == s && this.isOpen)
                 return; this.row = o, this.column = s, this.$mouseMoveTimer ? this.$show() : this.$showTimer = setTimeout((() => { this.$show(), this.$showTimer = void 0; }), 500); })); };
-            $show = () => { if (!this.$activeEditor)
-                return; let e = this.$activeEditor.renderer, t = e.textToScreenCoordinates(this.row, this.column), n = this.$activeEditor.getCursorPosition(); this.show(null, t.pageX, t.pageY); let r = this.getElement().getBoundingClientRect().height, i = e.scroller.getBoundingClientRect(), o = !0; this.row > n.row ? o = !0 : this.row < n.row && (o = !1), t.pageY - r + e.lineHeight < i.top ? o = !0 : t.pageY + r > i.bottom && (o = !1), o ? t.pageY += e.lineHeight : t.pageY -= r, this.$registerEditorEvents(), this.getElement().style.maxWidth = i.width - (t.pageX - i.left) + "px", this.show(null, t.pageX, t.pageY); };
             onMouseMove = e => { this.x = e.clientX, this.y = e.clientY, this.update(e.editor); };
-            onMouseOut = e => { clearTimeout(this.$mouseMoveTimer), clearTimeout(this.$showTimer), e.relatedTarget && e.relatedTarget != this.getElement() && (e && e.currentTarget.contains(e.relatedTarget) || e.relatedTarget.classList.contains("ace_content") || this.$hide()); };
-            $hide = () => { clearTimeout(this.$mouseMoveTimer), clearTimeout(this.$showTimer), this.isOpen && (this.$removeEditorEvents(), this.hide()), this.$inactivateEditor(); };
-            destroy() { this.$hide(), this.getElement().removeEventListener("mouseout", this.onMouseOut); }
-            getElement() { return super.getElement(); }
-            hide() { super.hide(); }
-            show(e, t, n) { super.show(e, t, n); }
-            setHtml(e) { super.setHtml(e); }
         }
         t.DescriptionTooltip = i;
+    }, 5327: (e, t, n) => {
+        "use strict";
+        Object.defineProperty(t, "__esModule", { value: !0 }), t.SignatureTooltip = void 0;
+        const r = n(8605);
+        class i extends r.BaseTooltip {
+            registerEditor(e) { e.on("changeSelection", (() => this.onChangeSelection(e))); }
+            update(e) { clearTimeout(this.$mouseMoveTimer), clearTimeout(this.$showTimer), this.isOpen ? this.provideSignatureHelp() : this.$mouseMoveTimer = setTimeout((() => { this.$activateEditor(e), this.provideSignatureHelp(), this.$mouseMoveTimer = void 0; }), 500); }
+            provideSignatureHelp = () => { if (!this.provider.options.functionality.signatureHelp)
+                return; let e = this.$activeEditor.getCursorPosition(), t = this.$activeEditor.session, n = t.screenToDocumentPosition(e.row, e.column); this.provider.provideSignatureHelp(t, n, (e => { let r = e ? this.provider.getTooltipText(e) : null; if (!e || !r)
+                return void this.hide(); let i = t.getTokenAt(n.row, n.column), o = e.range?.start.row ?? n.row, s = e.range?.start.column ?? i?.start ?? 0; if (this.descriptionText != r)
+                this.hide(), this.setHtml(r), this.descriptionText = r;
+            else if (this.row == o && this.column == s && this.isOpen)
+                return; this.row = o, this.column = s, this.$mouseMoveTimer ? this.$show() : this.$showTimer = setTimeout((() => { this.$show(), this.$showTimer = void 0; }), 500); })); };
+            onChangeSelection = e => { this.update(e); };
+        }
+        t.SignatureTooltip = i;
     }, 707: function (e, t, n) {
         "use strict";
         var r = this && this.__createBinding || (Object.create ? function (e, t, n, r) { void 0 === r && (r = n); var i = Object.getOwnPropertyDescriptor(t, n); i && !("get" in i ? !t.__esModule : i.writable || i.configurable) || (i = { enumerable: !0, get: function () { return t[n]; } }), Object.defineProperty(e, r, i); } : function (e, t, n, r) { void 0 === r && (r = n), e[r] = t[n]; }), i = this && this.__setModuleDefault || (Object.create ? function (e, t) { Object.defineProperty(e, "default", { enumerable: !0, value: t }); } : function (e, t) { e.default = t; }), o = this && this.__importStar || function (e) { if (e && e.__esModule)
@@ -52188,26 +52214,28 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         "use strict";
         var r = this && this.__importDefault || function (e) { return e && e.__esModule ? e : { default: e }; };
         Object.defineProperty(t, "__esModule", { value: !0 }), t.LanguageProvider = void 0;
-        const i = n(8151), o = n(2580), s = n(8299), a = n(9853), l = n(8458), c = r(n(6006)), h = n(1395);
-        class u {
+        const i = n(8151), o = n(2580), s = n(8299), a = n(9853), l = n(8458), c = r(n(6006)), h = n(1395), u = n(5327);
+        class d {
             activeEditor;
             $descriptionTooltip;
+            $signatureTooltip;
             $messageController;
             $sessionLanguageProviders = {};
             editors = [];
             options;
-            constructor(e, t) { this.$messageController = e, this.options = t ?? {}, this.options.functionality ??= { hover: !0, completion: { overwriteCompleters: !0 }, completionResolve: !0, format: !0 }, this.options.markdownConverter ??= new c.default.Converter, this.$descriptionTooltip = new o.DescriptionTooltip(this); }
-            static create(e, t) { let n; return n = new a.MessageController(e), new u(n, t); }
+            constructor(e, t) { this.$messageController = e, this.options = t ?? {}, this.options.functionality ??= { hover: !0, completion: { overwriteCompleters: !0 }, completionResolve: !0, format: !0, documentHighlights: !1, signatureHelp: !0 }, this.options.markdownConverter ??= new c.default.Converter, this.$signatureTooltip = new u.SignatureTooltip(this), this.$descriptionTooltip = new o.DescriptionTooltip(this); }
+            static create(e, t) { let n; return n = new a.MessageController(e), new d(n, t); }
             static fromCdn(e, t) { let n; if ("" == e || !/^http(s)?:/.test(e))
-                throw "Url is not valid"; "/" == e[e.length - 1] && (e = e.substring(0, e.length - 1)); let r = (0, h.createWorker)(e); return n = new a.MessageController(r), new u(n, t); }
-            $registerSession = (e, t) => { this.$sessionLanguageProviders[e.id] ??= new d(e, this.$messageController, t); };
+                throw "Url is not valid"; "/" == e[e.length - 1] && (e = e.substring(0, e.length - 1)); let r = (0, h.createWorker)(e); return n = new a.MessageController(r), new d(n, t); }
+            $registerSession = (e, t) => { this.$sessionLanguageProviders[e.id] ??= new g(e, this.$messageController, t); };
             $getSessionLanguageProvider(e) { return this.$sessionLanguageProviders[e.id]; }
             $getFileName(e) { return this.$getSessionLanguageProvider(e).fileName; }
             registerEditor(e) { this.editors.includes(e) || this.$registerEditor(e), this.$registerSession(e.session); }
-            $registerEditor(e) { this.editors.push(e), e.setOption("useWorker", !1), e.on("changeSession", (({ session: e }) => this.$registerSession(e))), this.options.functionality.completion && this.$registerCompleters(e), this.$descriptionTooltip.registerEditor(e), this.activeEditor ??= e, e.on("focus", (() => { this.activeEditor = e; })); }
+            $registerEditor(e) { var t; this.editors.push(e), e.setOption("useWorker", !1), e.on("changeSession", (({ session: e }) => this.$registerSession(e))), this.options.functionality.completion && this.$registerCompleters(e), this.activeEditor ??= e, e.on("focus", (() => { this.activeEditor = e; })), this.options.functionality.documentHighlights && e.on("changeSelection", (() => { t || (t = setTimeout((() => { let n = e.getCursorPosition(), r = this.$getSessionLanguageProvider(e.session); this.$messageController.findDocumentHighlights(this.$getFileName(e.session), (0, l.fromPoint)(n), r.$applyDocumentHiglight), t = void 0; }), 50)); })), this.$descriptionTooltip.registerEditor(e), this.$signatureTooltip.registerEditor(e); }
             setSessionOptions(e, t) { this.$getSessionLanguageProvider(e).setOptions(t); }
             setGlobalOptions(e, t, n = !1) { this.$messageController.setGlobalOptions(e, t, n); }
             doHover(e, t, n) { this.$messageController.doHover(this.$getFileName(e), (0, l.fromPoint)(t), (e => n && n((0, l.toTooltip)(e)))); }
+            provideSignatureHelp(e, t, n) { this.$messageController.provideSignatureHelp(this.$getFileName(e), (0, l.fromPoint)(t), (e => n && n((0, l.fromSignatureHelp)(e)))); }
             getTooltipText(e) { return "markdown" === e.content.type ? s.CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(e.content.text)) : e.content.text; }
             format = () => { if (!this.options.functionality.format)
                 return; let e = this.$getSessionLanguageProvider(this.activeEditor.session); e.$sendDeltaQueue(e.format); };
@@ -52217,8 +52245,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                     return; let r = (0, l.toResolvedCompletion)(n, t); n.docText = r.docText, r.docHTML ? n.docHTML = r.docHTML : r.docMarkdown && (n.docHTML = s.CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(r.docMarkdown))), e.completer && e.completer.updateDocTooltip(); })), n), id: "lspCompleters" }; this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters ? e.completers = [t] : e.completers.push(t); }
             dispose() { }
         }
-        t.LanguageProvider = u;
-        class d {
+        t.LanguageProvider = d;
+        class g {
             session;
             fileName;
             $messageController;
@@ -52247,6 +52275,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
                 this.$messageController.format(this.fileName, (0, l.fromRange)(n), t, this.$applyFormat); };
             $applyFormat = e => { for (let t of e.reverse())
                 this.session.replace((0, l.toRange)(t.range), t.newText); };
+            $applyDocumentHiglight = e => { };
         }
     }, 9853: function (e, t, n) {
         "use strict";
@@ -52270,6 +52299,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             changeOptions(e, t, n, r = !1) { this.postMessage(new s.ChangeOptionsMessage(e, t, r), n); }
             dispose(e, t) { this.postMessage(new s.DisposeMessage(e), t); }
             setGlobalOptions(e, t, n = !1) { this.$worker.postMessage(new s.GlobalOptionsMessage(e, t, n)); }
+            provideSignatureHelp(e, t, n) { this.postMessage(new s.SignatureHelpMessage(e, t), n); }
+            findDocumentHighlights(e, t, n) { this.postMessage(new s.DocumentHighlightMessage(e, t), n); }
             postMessage(e, t) { if (t) {
                 let n = e.type.toString() + "-" + e.sessionId, r = e => { this.off(n, r), t(e); };
                 this.on(n, r);
@@ -52278,7 +52309,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         t.MessageController = c, a.implement(c.prototype, l.EventEmitter);
     }, 305: (e, t) => {
         "use strict";
-        Object.defineProperty(t, "__esModule", { value: !0 }), t.MessageType = t.GlobalOptionsMessage = t.DisposeMessage = t.ChangeOptionsMessage = t.ChangeModeMessage = t.DeltasMessage = t.ChangeMessage = t.ValidateMessage = t.HoverMessage = t.ResolveCompletionMessage = t.CompleteMessage = t.FormatMessage = t.InitMessage = t.BaseMessage = void 0;
+        Object.defineProperty(t, "__esModule", { value: !0 }), t.MessageType = t.DocumentHighlightMessage = t.SignatureHelpMessage = t.GlobalOptionsMessage = t.DisposeMessage = t.ChangeOptionsMessage = t.ChangeModeMessage = t.DeltasMessage = t.ChangeMessage = t.ValidateMessage = t.HoverMessage = t.ResolveCompletionMessage = t.CompleteMessage = t.FormatMessage = t.InitMessage = t.BaseMessage = void 0;
         class n {
             sessionId;
             constructor(e) { this.sessionId = e; }
@@ -52340,7 +52371,15 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
             options;
             merge;
             constructor(e, t, n) { this.serviceName = e, this.options = t, this.merge = n; }
-        }, function (e) { e[e.init = 0] = "init", e[e.format = 1] = "format", e[e.complete = 2] = "complete", e[e.resolveCompletion = 3] = "resolveCompletion", e[e.change = 4] = "change", e[e.hover = 5] = "hover", e[e.validate = 6] = "validate", e[e.applyDelta = 7] = "applyDelta", e[e.changeMode = 8] = "changeMode", e[e.changeOptions = 9] = "changeOptions", e[e.dispose = 10] = "dispose", e[e.globalOptions = 11] = "globalOptions"; }(r = t.MessageType || (t.MessageType = {}));
+        }, t.SignatureHelpMessage = class extends n {
+            type = r.signatureHelp;
+            value;
+            constructor(e, t) { super(e), this.value = t; }
+        }, t.DocumentHighlightMessage = class extends n {
+            type = r.documentHighlight;
+            value;
+            constructor(e, t) { super(e), this.value = t; }
+        }, function (e) { e[e.init = 0] = "init", e[e.format = 1] = "format", e[e.complete = 2] = "complete", e[e.resolveCompletion = 3] = "resolveCompletion", e[e.change = 4] = "change", e[e.hover = 5] = "hover", e[e.validate = 6] = "validate", e[e.applyDelta = 7] = "applyDelta", e[e.changeMode = 8] = "changeMode", e[e.changeOptions = 9] = "changeOptions", e[e.dispose = 10] = "dispose", e[e.globalOptions = 11] = "globalOptions", e[e.signatureHelp = 12] = "signatureHelp", e[e.documentHighlight = 13] = "documentHighlight"; }(r = t.MessageType || (t.MessageType = {}));
     }, 8299: (e, t, n) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.CommonConverter = void 0;
@@ -52367,7 +52406,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         } return i.CompletionItemKind.Property; }; }(t.CommonConverter || (t.CommonConverter = {}));
     }, 8458: (e, t, n) => {
         "use strict";
-        Object.defineProperty(t, "__esModule", { value: !0 }), t.fromAceDelta = t.fromMarkupContent = t.toTooltip = t.getTextEditRange = t.toCompletionItem = t.toResolvedCompletion = t.toCompletions = t.toCompletion = t.toAnnotations = t.toPoint = t.fromPoint = t.toRange = t.rangeFromPositions = t.fromRange = void 0;
+        Object.defineProperty(t, "__esModule", { value: !0 }), t.fromAceDelta = t.fromMarkupContent = t.fromSignatureHelp = t.toTooltip = t.getTextEditRange = t.toCompletionItem = t.toResolvedCompletion = t.toCompletions = t.toCompletion = t.toAnnotations = t.toPoint = t.fromPoint = t.toRange = t.rangeFromPositions = t.fromRange = void 0;
         const r = n(294), i = n(3069), o = n(9204), s = n(8299);
         function a(e) { return { start: { line: e.start.row, character: e.start.column }, end: { line: e.end.row, character: e.end.column } }; }
         function l(e, t) { return { start: e, end: t }; }
@@ -52381,7 +52420,11 @@ else { var r, n; } }(self, (() => (() => { var e = { 8151: (e, t, n) => {
         function g(e) { if (e)
             return "string" == typeof e ? { type: "plaintext", text: e } : e.kind === r.MarkupKind.Markdown ? { type: "markdown", text: e.value } : { type: "plaintext", text: e.value }; }
         t.fromRange = a, t.rangeFromPositions = l, t.toRange = c, t.fromPoint = h, t.toPoint = function (e) { return { row: e.line, column: e.character }; }, t.toAnnotations = function (e) { return e.map((e => ({ row: e.range.start.line, column: e.range.start.character, text: e.message, type: 1 === e.severity ? "error" : 2 === e.severity ? "warning" : "info" }))); }, t.toCompletion = u, t.toCompletions = function (e) { return Array.isArray(e) || (e = e.items), e && e.map((e => u(e))); }, t.toResolvedCompletion = function (e, t) { let n = g(t.documentation); return n && ("markdown" === n.type ? e.docMarkdown = n.text : e.docText = n.text), e; }, t.toCompletionItem = function (e) { let t; e.command && (t = { title: "triggerSuggest", command: e.command }); let n = { label: e.caption ?? "", kind: s.CommonConverter.convertKind(e.meta), command: t, insertTextFormat: e.snippet ? r.InsertTextFormat.Snippet : r.InsertTextFormat.PlainText, documentation: e.documentation }; return e.range ? n.textEdit = { range: a(e.range), newText: e.snippet ?? e.value } : n.insertText = e.snippet ?? e.value, n.fileName = e.fileName, n.position = e.position, n.item = e.item, n; }, t.getTextEditRange = d, t.toTooltip = function (e) { let t; if (e)
-            return t = r.MarkupContent.is(e.contents) ? g(e.contents) : r.MarkedString.is(e.contents) ? { type: "markdown", text: "```" + e.contents.value + "```" } : { type: "markdown", text: e.contents.map((e => "string" != typeof e ? `\`\`\`${e.value}\`\`\`` : e)).join("\n\n") }, { content: t, range: e.range && c(e.range) }; }, t.fromMarkupContent = g, t.fromAceDelta = function (e, t) { const n = e.lines.length > 1 ? e.lines.join(t) : e.lines[0]; return { range: "insert" === e.action ? l(h(e.start), h(e.start)) : l(h(e.start), h(e.end)), text: "insert" === e.action ? n : "" }; };
+            return t = r.MarkupContent.is(e.contents) ? g(e.contents) : r.MarkedString.is(e.contents) ? { type: "markdown", text: "```" + e.contents.value + "```" } : { type: "markdown", text: e.contents.map((e => "string" != typeof e ? `\`\`\`${e.value}\`\`\`` : e)).join("\n\n") }, { content: t, range: e.range && c(e.range) }; }, t.fromSignatureHelp = function (e) { let t; if (!e)
+            return; let n = e?.activeSignature || 0, i = e.signatures[n], o = e?.activeParameter, s = i.label; if (null != o && i.parameters && i.parameters[o]) {
+            let e = i.parameters[o].label;
+            "string" == typeof e && (s = s.replace(e, `**${e}**`));
+        } return i.documentation ? r.MarkupContent.is(i.documentation) ? (t = g(i.documentation), t.text = s + "\n\n" + t.text) : (s += "\n\n" + i.documentation, t = { type: "markdown", text: s }) : t = { type: "markdown", text: s }, { content: t }; }, t.fromMarkupContent = g, t.fromAceDelta = function (e, t) { const n = e.lines.length > 1 ? e.lines.join(t) : e.lines[0]; return { range: "insert" === e.action ? l(h(e.start), h(e.start)) : l(h(e.start), h(e.end)), text: "insert" === e.action ? n : "" }; };
     }, 82: e => { e.exports = function (e) { return e && "object" == typeof e && "function" == typeof e.copy && "function" == typeof e.fill && "function" == typeof e.readUInt8; }; }, 4895: (e, t, n) => {
         "use strict";
         var r = n(2635), i = n(3138), o = n(2094), s = n(198);
@@ -61971,6 +62014,60 @@ function toResolvedCompletion(entry) {
         kind: convertKind(entry.kind),
         documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
     };
+}
+function toSignatureHelp(signatureItems) {
+    if (!signatureItems) {
+        return null;
+    }
+    let signatureHelp = {
+        signatures: [],
+        activeSignature: signatureItems.selectedItemIndex,
+        activeParameter: signatureItems.argumentIndex,
+    };
+    signatureItems.items.forEach((item) => {
+        let signature = {
+            label: '',
+            parameters: [],
+            documentation: displayPartsToString(item.documentation)
+        };
+        signature.label += displayPartsToString(item.prefixDisplayParts);
+        item.parameters.forEach((p, i, a) => {
+            const label = displayPartsToString(p.displayParts);
+            const parameter = {
+                label: label,
+                documentation: {
+                    value: displayPartsToString(p.documentation)
+                }
+            };
+            signature.label += label;
+            // @ts-ignore
+            signature.parameters.push(parameter);
+            if (i < a.length - 1) {
+                signature.label += displayPartsToString(item.separatorDisplayParts);
+            }
+        });
+        signature.label += displayPartsToString(item.suffixDisplayParts);
+        signatureHelp.signatures.push(signature);
+    });
+    return signatureHelp;
+}
+function displayPartsToString(displayParts) {
+    if (displayParts) {
+        return displayParts.map((displayPart) => displayPart.text).join('');
+    }
+    return '';
+}
+function toDocumentHighlights(highlights, doc) {
+    if (!highlights)
+        return [];
+    return highlights.flatMap(highlight => highlight.highlightSpans.map((highlightSpans) => {
+        return {
+            range: toRange(highlightSpans.textSpan, doc),
+            kind: highlightSpans.kind === 'writtenReference'
+                ? lsp.DocumentHighlightKind.Write
+                : lsp.DocumentHighlightKind.Text
+        };
+    }));
 }
 var ScriptKind;
 (function (ScriptKind) {

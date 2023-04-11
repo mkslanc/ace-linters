@@ -77,7 +77,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             } return !1; }(e = a.fixup(t.slice(O, b))) ? "true" === e || "false" === e ? (n = 64, e = "true" === e) : "nil" === e ? (n = p, e = null) : n = 8 : n = 4, { type: n, value: e, line: A, lineStart: E, range: [O, b] }; }(); switch (s) {
             case 39:
             case 34: return function () { for (var e, n = t.charCodeAt(b++), o = A, i = E, s = b, c = a.discardStrings ? null : ""; n !== (e = t.charCodeAt(b++));)
-                if ((b > r || q(e)) && (c += t.slice(s, b - 1), T(null, d.unfinishedString, t.slice(O, b - 1))), 92 === e) {
+                if ((b > r || R(e)) && (c += t.slice(s, b - 1), T(null, d.unfinishedString, t.slice(O, b - 1))), 92 === e) {
                     if (!a.discardStrings) {
                         var u = t.slice(s, b - 1);
                         c += a.fixup(u);
@@ -95,7 +95,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             case 55:
             case 56:
             case 57: return F();
-            case 46: return z(c) ? F() : 46 === c ? 46 === t.charCodeAt(b + 2) ? { type: f, value: "...", line: A, lineStart: E, range: [O, b += 3] } : B("..") : B(".");
+            case 46: return q(c) ? F() : 46 === c ? 46 === t.charCodeAt(b + 2) ? { type: f, value: "...", line: A, lineStart: E, range: [O, b += 3] } : B("..") : B(".");
             case 61: return B(61 === c ? "==" : "=");
             case 62: return o.bitwiseOperators && 62 === c ? B(">>") : B(61 === c ? ">=" : ">");
             case 60: return o.bitwiseOperators && 60 === c ? B("<<") : B(61 === c ? "<=" : "<");
@@ -125,27 +125,27 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             case 45:
             case 43: return B(t.charAt(b));
         } return N(t.charAt(b)); }
-        function V() { var e = t.charCodeAt(b), n = t.charCodeAt(b + 1); return !!q(e) && (10 === e && 13 === n && ++b, 13 === e && 10 === n && ++b, ++A, E = ++b, !0); }
+        function V() { var e = t.charCodeAt(b), n = t.charCodeAt(b + 1); return !!R(e) && (10 === e && 13 === n && ++b, 13 === e && 10 === n && ++b, ++A, E = ++b, !0); }
         function G() { for (; b < r;)
             if (9 === (e = t.charCodeAt(b)) || 32 === e || 11 === e || 12 === e)
                 ++b;
             else if (!V())
                 break; var e; }
         function B(e) { return b += e.length, { type: l, value: e, line: A, lineStart: E, range: [O, b] }; }
-        function F() { var e = t.charAt(b), n = t.charAt(b + 1), r = "0" === e && "xX".indexOf(n || null) >= 0 ? function () { var e, n, r, o, a = 0, i = 1, s = 1; for (o = b += 2, H(t.charCodeAt(b)) || T(null, d.malformedNumber, t.slice(O, b)); H(t.charCodeAt(b));)
+        function F() { var e = t.charAt(b), n = t.charAt(b + 1), r = "0" === e && "xX".indexOf(n || null) >= 0 ? function () { var e, n, r, o, a = 0, i = 1, s = 1; for (o = b += 2, z(t.charCodeAt(b)) || T(null, d.malformedNumber, t.slice(O, b)); z(t.charCodeAt(b));)
             ++b; e = parseInt(t.slice(o, b), 16); var c = !1; if ("." === t.charAt(b)) {
-            for (c = !0, n = ++b; H(t.charCodeAt(b));)
+            for (c = !0, n = ++b; z(t.charCodeAt(b));)
                 ++b;
             a = t.slice(n, b), a = n === b ? 0 : parseInt(a, 16) / Math.pow(16, b - n);
         } var u = !1; if ("pP".indexOf(t.charAt(b) || null) >= 0) {
-            for (u = !0, ++b, "+-".indexOf(t.charAt(b) || null) >= 0 && (s = "+" === t.charAt(b++) ? 1 : -1), r = b, z(t.charCodeAt(b)) || T(null, d.malformedNumber, t.slice(O, b)); z(t.charCodeAt(b));)
+            for (u = !0, ++b, "+-".indexOf(t.charAt(b) || null) >= 0 && (s = "+" === t.charAt(b++) ? 1 : -1), r = b, q(t.charCodeAt(b)) || T(null, d.malformedNumber, t.slice(O, b)); q(t.charCodeAt(b));)
                 ++b;
             i = t.slice(r, b), i = Math.pow(2, i * s);
-        } return { value: (e + a) * i, hasFractionPart: c || u }; }() : function () { for (; z(t.charCodeAt(b));)
+        } return { value: (e + a) * i, hasFractionPart: c || u }; }() : function () { for (; q(t.charCodeAt(b));)
             ++b; var e = !1; if ("." === t.charAt(b))
-            for (e = !0, ++b; z(t.charCodeAt(b));)
+            for (e = !0, ++b; q(t.charCodeAt(b));)
                 ++b; var n = !1; if ("eE".indexOf(t.charAt(b) || null) >= 0)
-            for (n = !0, ++b, "+-".indexOf(t.charAt(b) || null) >= 0 && ++b, z(t.charCodeAt(b)) || T(null, d.malformedNumber, t.slice(O, b)); z(t.charCodeAt(b));)
+            for (n = !0, ++b, "+-".indexOf(t.charAt(b) || null) >= 0 && ++b, q(t.charCodeAt(b)) || T(null, d.malformedNumber, t.slice(O, b)); q(t.charCodeAt(b));)
                 ++b; return { value: parseFloat(t.slice(O, b)), hasFractionPart: e || n }; }(), a = function () { if (o.imaginaryNumbers)
             return "iI".indexOf(t.charAt(b) || null) >= 0 && (++b, !0); }(); return function () { if (o.integerSuffixes)
             if ("uU".indexOf(t.charAt(b) || null) >= 0)
@@ -181,7 +181,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             case "7":
             case "8":
             case "9":
-                for (; z(t.charCodeAt(b)) && b - e < 3;)
+                for (; q(t.charCodeAt(b)) && b - e < 3;)
                     ++b;
                 var n = t.slice(e, b), r = parseInt(n, 10);
                 return r > 255 && T(null, d.decimalEscapeTooLarge, "\\" + r), a.encodeByte(r, "\\" + n);
@@ -191,15 +191,15 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 break;
             case "x":
                 if (o.hexEscapes) {
-                    if (H(t.charCodeAt(b + 1)) && H(t.charCodeAt(b + 2)))
+                    if (z(t.charCodeAt(b + 1)) && z(t.charCodeAt(b + 2)))
                         return b += 3, a.encodeByte(parseInt(t.slice(e + 1, b), 16), "\\" + t.slice(e, b));
                     T(null, d.hexadecimalDigitExpected, "\\" + t.slice(e, b + 2));
                 }
                 break;
             case "u":
                 if (o.unicodeEscapes)
-                    return function () { var e = b++; for ("{" !== t.charAt(b++) && T(null, d.braceExpected, "{", "\\" + t.slice(e, b)), H(t.charCodeAt(b)) || T(null, d.hexadecimalDigitExpected, "\\" + t.slice(e, b)); 48 === t.charCodeAt(b);)
-                        ++b; for (var n = b; H(t.charCodeAt(b));)
+                    return function () { var e = b++; for ("{" !== t.charAt(b++) && T(null, d.braceExpected, "{", "\\" + t.slice(e, b)), z(t.charCodeAt(b)) || T(null, d.hexadecimalDigitExpected, "\\" + t.slice(e, b)); 48 === t.charCodeAt(b);)
+                        ++b; for (var n = b; z(t.charCodeAt(b));)
                         ++b - n > 6 && T(null, d.tooLargeCodepoint, "\\" + t.slice(e, b)); var r = t.charAt(b++); "}" !== r && ('"' === r || "'" === r ? T(null, d.braceExpected, "}", "\\" + t.slice(e, b--)) : T(null, d.hexadecimalDigitExpected, "\\" + t.slice(e, b))); var o = parseInt(t.slice(n, b - 1) || "0", 16), i = "\\" + t.slice(e, b); return o > 1114111 && T(null, d.tooLargeCodepoint, i), a.encodeUTF8(o, i); }();
                 break;
             case "\\":
@@ -207,7 +207,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             case "'": return t.charAt(b++);
         } return o.strictEscapes && T(null, d.invalidEscape, "\\" + t.slice(e, b + 1)), t.charAt(b++); }
         function K() { O = b, b += 2; var e = t.charAt(b), o = "", a = !1, i = b, s = E, c = A; if ("[" === e && (!1 === (o = W(!0)) ? o = e : a = !0), !a) {
-            for (; b < r && !q(t.charCodeAt(b));)
+            for (; b < r && !R(t.charCodeAt(b));)
                 ++b;
             n.comments && (o = t.slice(i, b));
         } if (n.comments) {
@@ -216,8 +216,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
         } }
         function W(e) { var n, o = 0, a = "", i = !1, s = A; for (++b; "=" === t.charAt(b + o);)
             ++o; if ("[" !== t.charAt(b + o))
-            return !1; for (b += o + 1, q(t.charCodeAt(b)) && V(), n = b; b < r;) {
-            for (; q(t.charCodeAt(b));)
+            return !1; for (b += o + 1, R(t.charCodeAt(b)) && V(), n = b; b < r;) {
+            for (; R(t.charCodeAt(b));)
                 V();
             if ("]" === t.charAt(b++)) {
                 i = !0;
@@ -229,11 +229,11 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 return a += t.slice(n, b - 1), b += o + 1, a;
         } T(null, e ? d.unfinishedLongComment : d.unfinishedLongString, s, "<eof>"); }
         function $() { S = x, x = C, C = M(); }
-        function J(e) { return e === x.value && ($(), !0); }
-        function R(e) { e === x.value ? $() : T(x, d.expected, e, I(x)); }
-        function q(e) { return 10 === e || 13 === e; }
-        function z(e) { return e >= 48 && e <= 57; }
-        function H(e) { return e >= 48 && e <= 57 || e >= 97 && e <= 102 || e >= 65 && e <= 70; }
+        function H(e) { return e === x.value && ($(), !0); }
+        function J(e) { e === x.value ? $() : T(x, d.expected, e, I(x)); }
+        function R(e) { return 10 === e || 13 === e; }
+        function q(e) { return e >= 48 && e <= 57; }
+        function z(e) { return e >= 48 && e <= 57 || e >= 97 && e <= 102 || e >= 65 && e <= 70; }
         function X(e) { return e >= 65 && e <= 90 || e >= 97 && e <= 122 || 95 === e || e >= 48 && e <= 57 || !!(o.extendedIdentifiers && e >= 128); }
         function Q(e) { if (1 === e.type)
             return !0; if (4 !== e.type)
@@ -266,52 +266,52 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 n.push(he(e));
                 break;
             }
-            t = he(e), J(";"), t && n.push(t);
+            t = he(e), H(";"), t && n.push(t);
         } return n; }
-        function he(e) { if (ce(), l === x.type && J("::"))
-            return function (e) { var t = x, r = ve(); return n.scope && (ee("::" + t.value + "::"), ne(r, !0)), R("::"), e.addLabel(t.value, t), g(h.labelStatement(r)); }(e); if (!o.emptyStatement || !J(";")) {
+        function he(e) { if (ce(), l === x.type && H("::"))
+            return function (e) { var t = x, r = ve(); return n.scope && (ee("::" + t.value + "::"), ne(r, !0)), J("::"), e.addLabel(t.value, t), g(h.labelStatement(r)); }(e); if (!o.emptyStatement || !H(";")) {
             if (e.raiseDeferredErrors(), 4 === x.type)
                 switch (x.value) {
                     case "local": return $(), function (e) { var t, r = S; if (8 === x.type) {
                         var o = [], a = [];
                         do {
                             t = ve(), o.push(t), e.addLocal(t.name, r);
-                        } while (J(","));
-                        if (J("="))
+                        } while (H(","));
+                        if (H("="))
                             do {
                                 var i = xe(e);
                                 a.push(i);
-                            } while (J(","));
+                            } while (H(","));
                         if (n.scope)
                             for (var s = 0, c = o.length; s < c; ++s)
                                 te(o[s]);
                         return g(h.localStatement(o, a));
-                    } if (J("function"))
+                    } if (H("function"))
                         return t = ve(), e.addLocal(t.name, r), n.scope && (te(t), Y()), me(t, !0); P("<name>", x); }(e);
-                    case "if": return $(), function (e) { var t, r, o, a = []; for (oe && (o = ae[ae.length - 1], ae.push(o)), t = xe(e), R("then"), n.scope && Y(), e.pushScope(), r = de(e), e.popScope(), n.scope && Z(), a.push(g(h.ifClause(t, r))), oe && (o = ie()); J("elseif");)
-                        ue(o), t = xe(e), R("then"), n.scope && Y(), e.pushScope(), r = de(e), e.popScope(), n.scope && Z(), a.push(g(h.elseifClause(t, r))), oe && (o = ie()); return J("else") && (oe && (o = new se(S), ae.push(o)), n.scope && Y(), e.pushScope(), r = de(e), e.popScope(), n.scope && Z(), a.push(g(h.elseClause(r)))), R("end"), g(h.ifStatement(a)); }(e);
+                    case "if": return $(), function (e) { var t, r, o, a = []; for (oe && (o = ae[ae.length - 1], ae.push(o)), t = xe(e), J("then"), n.scope && Y(), e.pushScope(), r = de(e), e.popScope(), n.scope && Z(), a.push(g(h.ifClause(t, r))), oe && (o = ie()); H("elseif");)
+                        ue(o), t = xe(e), J("then"), n.scope && Y(), e.pushScope(), r = de(e), e.popScope(), n.scope && Z(), a.push(g(h.elseifClause(t, r))), oe && (o = ie()); return H("else") && (oe && (o = new se(S), ae.push(o)), n.scope && Y(), e.pushScope(), r = de(e), e.popScope(), n.scope && Z(), a.push(g(h.elseClause(r)))), J("end"), g(h.ifStatement(a)); }(e);
                     case "return": return $(), function (e) { var t = []; if ("end" !== x.value) {
                         var n = be(e);
-                        for (null != n && t.push(n); J(",");)
+                        for (null != n && t.push(n); H(",");)
                             n = xe(e), t.push(n);
-                        J(";");
+                        H(";");
                     } return g(h.returnStatement(t)); }(e);
-                    case "function": return $(), me(function () { var e, t, r; for (oe && (r = ie()), e = ve(), n.scope && (ne(e, re(e.name)), Y()); J(".");)
-                        ue(r), t = ve(), e = g(h.memberExpression(e, ".", t)); return J(":") && (ue(r), t = ve(), e = g(h.memberExpression(e, ":", t)), n.scope && ee("self")), e; }());
-                    case "while": return $(), function (e) { var t = xe(e); R("do"), n.scope && Y(), e.pushScope(!0); var r = de(e); return e.popScope(), n.scope && Z(), R("end"), g(h.whileStatement(t, r)); }(e);
-                    case "for": return $(), function (e) { var t, r = ve(); if (n.scope && (Y(), te(r)), J("=")) {
+                    case "function": return $(), me(function () { var e, t, r; for (oe && (r = ie()), e = ve(), n.scope && (ne(e, re(e.name)), Y()); H(".");)
+                        ue(r), t = ve(), e = g(h.memberExpression(e, ".", t)); return H(":") && (ue(r), t = ve(), e = g(h.memberExpression(e, ":", t)), n.scope && ee("self")), e; }());
+                    case "while": return $(), function (e) { var t = xe(e); J("do"), n.scope && Y(), e.pushScope(!0); var r = de(e); return e.popScope(), n.scope && Z(), J("end"), g(h.whileStatement(t, r)); }(e);
+                    case "for": return $(), function (e) { var t, r = ve(); if (n.scope && (Y(), te(r)), H("=")) {
                         var o = xe(e);
-                        R(",");
-                        var a = xe(e), i = J(",") ? xe(e) : null;
-                        return R("do"), e.pushScope(!0), t = de(e), e.popScope(), R("end"), n.scope && Z(), g(h.forNumericStatement(r, o, a, i, t));
-                    } for (var s = [r]; J(",");)
-                        r = ve(), n.scope && te(r), s.push(r); R("in"); var c = []; do {
+                        J(",");
+                        var a = xe(e), i = H(",") ? xe(e) : null;
+                        return J("do"), e.pushScope(!0), t = de(e), e.popScope(), J("end"), n.scope && Z(), g(h.forNumericStatement(r, o, a, i, t));
+                    } for (var s = [r]; H(",");)
+                        r = ve(), n.scope && te(r), s.push(r); J("in"); var c = []; do {
                         var u = xe(e);
                         c.push(u);
-                    } while (J(",")); return R("do"), e.pushScope(!0), t = de(e), e.popScope(), R("end"), n.scope && Z(), g(h.forGenericStatement(s, c, t)); }(e);
-                    case "repeat": return $(), function (e) { n.scope && Y(), e.pushScope(!0); var t = de(e); R("until"), e.raiseDeferredErrors(); var r = xe(e); return e.popScope(), n.scope && Z(), g(h.repeatStatement(r, t)); }(e);
+                    } while (H(",")); return J("do"), e.pushScope(!0), t = de(e), e.popScope(), J("end"), n.scope && Z(), g(h.forGenericStatement(s, c, t)); }(e);
+                    case "repeat": return $(), function (e) { n.scope && Y(), e.pushScope(!0); var t = de(e); J("until"), e.raiseDeferredErrors(); var r = xe(e); return e.popScope(), n.scope && Z(), g(h.repeatStatement(r, t)); }(e);
                     case "break": return $(), e.isInLoop() || T(x, d.noLoopToBreak, x.value), g(h.breakStatement());
-                    case "do": return $(), function (e) { n.scope && Y(), e.pushScope(); var t = de(e); return e.popScope(), n.scope && Z(), R("end"), g(h.doStatement(t)); }(e);
+                    case "do": return $(), function (e) { n.scope && Y(), e.pushScope(); var t = de(e); return e.popScope(), n.scope && Z(), J("end"), g(h.doStatement(t)); }(e);
                     case "goto": return $(), ge(e);
                 }
             return o.contextualGoto && 8 === x.type && "goto" === x.value && 8 === C.type && "goto" !== C.value ? ($(), ge(e)) : (oe && ae.pop(), function (e) { var t, r, o, a, i, s = []; for (oe && (r = ie());;) {
@@ -320,7 +320,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 else {
                     if ("(" !== x.value)
                         return N(x);
-                    $(), a = xe(e), R(")"), o = !1;
+                    $(), a = xe(e), J(")"), o = !1;
                 }
                 e: for (;;) {
                     switch (2 === x.type ? '"' : x.value) {
@@ -345,27 +345,27 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 $();
             } if (1 === s.length && null === o)
                 return ue(t), g(h.callStatement(s[0])); if (!o)
-                return N(x); R("="); var c = []; do {
+                return N(x); J("="); var c = []; do {
                 c.push(xe(e));
-            } while (J(",")); return ue(r), g(h.assignmentStatement(s, c)); }(e));
+            } while (H(",")); return ue(r), g(h.assignmentStatement(s, c)); }(e));
         } oe && ae.pop(); }
         function ge(e) { var t = x.value, n = S, r = ve(); return e.addGoto(t, n), g(h.gotoStatement(r)); }
         function ve() { ce(); var e = x.value; return 8 !== x.type && P("<name>", x), $(), g(h.identifier(e)); }
-        function me(e, t) { var r = fe(); r.pushScope(); var o = []; if (R("("), !J(")"))
+        function me(e, t) { var r = fe(); r.pushScope(); var o = []; if (J("("), !H(")"))
             for (;;) {
                 if (8 === x.type) {
                     var a = ve();
-                    if (n.scope && te(a), o.push(a), J(","))
+                    if (n.scope && te(a), o.push(a), H(","))
                         continue;
                 }
                 else
                     f === x.type ? (r.allowVararg = !0, o.push(Ae(r))) : P("<name> or '...'", x);
-                R(")");
+                J(")");
                 break;
-            } var i = de(r); return r.popScope(), R("end"), n.scope && Z(), t = t || !1, g(h.functionStatement(e, o, t, i)); }
+            } var i = de(r); return r.popScope(), J("end"), n.scope && Z(), t = t || !1, g(h.functionStatement(e, o, t, i)); }
         function ye(e) { for (var t, n, r = [];;) {
-            if (ce(), l === x.type && J("["))
-                t = xe(e), R("]"), R("="), n = xe(e), r.push(g(h.tableKey(t, n)));
+            if (ce(), l === x.type && H("["))
+                t = xe(e), J("]"), J("="), n = xe(e), r.push(g(h.tableKey(t, n)));
             else if (8 === x.type)
                 "=" === C.value ? (t = ve(), $(), n = xe(e), r.push(g(h.tableKeyString(t, n)))) : (n = xe(e), r.push(g(h.tableValue(n))));
             else {
@@ -378,7 +378,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             if (!(",;".indexOf(x.value) >= 0))
                 break;
             $();
-        } return R("}"), g(h.tableConstructorExpression(r)); }
+        } return J("}"), g(h.tableConstructorExpression(r)); }
         function be(e) { return Ce(0, e); }
         function xe(e) { var t = be(e); if (null != t)
             return t; P("<expression>", x); }
@@ -415,9 +415,9 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
         } if (null == r && null == (r = Ae(t)) && (r = function (e) { var t, r, o; if (oe && (o = ie()), 8 === x.type)
             r = x.value, t = ve(), n.scope && ne(t, re(r));
         else {
-            if (!J("("))
+            if (!H("("))
                 return null;
-            t = xe(e), R(")");
+            t = xe(e), J(")");
         } for (;;) {
             var a = we(t, o, e);
             if (null === a)
@@ -431,7 +431,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
         } return r; }
         function we(e, t, n) { var r, o; if (l === x.type)
             switch (x.value) {
-                case "[": return ue(t), $(), r = xe(n), R("]"), g(h.indexExpression(e, r));
+                case "[": return ue(t), $(), r = xe(n), J("]"), g(h.indexExpression(e, r));
                 case ".": return ue(t), $(), o = ve(), g(h.memberExpression(e, ".", o));
                 case ":": return ue(t), $(), o = ve(), e = g(h.memberExpression(e, ":", o)), ue(t), Oe(e, n);
                 case "(":
@@ -444,9 +444,9 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 case "(":
                     o.emptyStatement || x.line !== S.line && T(null, d.ambiguousSyntax, x.value), $();
                     var n = [], r = be(t);
-                    for (null != r && n.push(r); J(",");)
+                    for (null != r && n.push(r); H(",");)
                         r = xe(t), n.push(r);
-                    return R(")"), g(h.callExpression(e, n));
+                    return J(")"), g(h.callExpression(e, n));
                 case "{":
                     ce(), $();
                     var a = ye(t);
@@ -458,7 +458,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             ue(r);
             var i = t.slice(x.range[0], x.range[1]);
             return $(), g(h.literal(a, o, i));
-        } return 4 === a && "function" === o ? (ue(r), $(), n.scope && Y(), me(null)) : J("{") ? (ue(r), ye(e)) : void 0; }
+        } return 4 === a && "function" === o ? (ue(r), $(), n.scope && Y(), me(null)) : H("{") ? (ue(r), ye(e)) : void 0; }
         se.prototype.complete = function () { n.locations && (this.loc.end.line = S.lastLine || S.line, this.loc.end.column = S.range[1] - (S.lastLineStart || S.lineStart)), n.ranges && (this.range[1] = S.range[1]); }, se.prototype.bless = function (e) { if (this.loc) {
             var t = this.loc;
             e.loc = { start: { line: t.start.line, column: t.start.column }, end: { line: t.end.line, column: t.end.column } };
@@ -514,6 +514,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
             async doResolve(e) { return null; }
             async doValidation(e) { return []; }
             format(e, t, n) { return []; }
+            async provideSignatureHelp(e, t) { return null; }
+            async findDocumentHighlights(e, t) { return []; }
         };
     }, 6086: function (e, t, n) {
         "use strict";
