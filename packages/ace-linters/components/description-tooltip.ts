@@ -23,6 +23,9 @@ export class DescriptionTooltip extends BaseTooltip {
     };
 
     doHover = () => {
+        if (!this.provider.options.functionality.hover) 
+            return;
+        
         let renderer = this.$activeEditor!.renderer;
         let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
 

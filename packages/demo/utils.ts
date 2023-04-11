@@ -38,17 +38,18 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
     let editor = ace.edit("container" + i);
     editor.setOptions({
         enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true
+        enableLiveAutocompletion: true,
+        enableSnippets: true
     });
     editor.setTheme(theme);
     editor.setOptions({"customScrollbar": true})
     editor.session.setValue(mode.content);
     editor.session.setMode(new mode.mode());
-
+    
     languageProvider.registerEditor(editor);
 
     let options = mode.options ?? {};
-    languageProvider.setOptions(editor.session, options);
+    languageProvider.setSessionOptions(editor.session, options);
 
     closeButton.onclick = () => {
         editor.destroy();

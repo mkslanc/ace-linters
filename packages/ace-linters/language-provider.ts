@@ -3,7 +3,6 @@ import {DescriptionTooltip} from "./components/description-tooltip";
 import {AceLinters} from "./types";
 import Tooltip = AceLinters.Tooltip;
 import {FormattingOptions} from "vscode-languageserver-protocol";
-import {MarkDownConverter} from "./types";
 import {CommonConverter} from "./type-converters/common-converters";
 import {IMessageController} from "./types/message-controller-interface";
 import ServiceOptions = AceLinters.ServiceOptions;
@@ -29,17 +28,28 @@ import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
 
 export class LanguageProvider {
-    $activeEditor: Editor;
+    activeEditor: Editor;
     private $descriptionTooltip: DescriptionTooltip;
     private $signatureTooltip: SignatureTooltip;
     private readonly $markdownConverter: MarkDownConverter;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
-    private $editors: Editor[] = [];
+    editors: Editor[] = [];
+    options: AceLinters.ProviderOptions;
 
-    constructor(messageController: IMessageController, markdownConverter?: MarkDownConverter) {
+    constructor(messageController: IMessageController, options?: AceLinters.ProviderOptions) {
         this.$messageController = messageController;
-        this.$markdownConverter = markdownConverter ?? new showdown.Converter();
+
+        this.options = options ?? {} as AceLinters.ProviderOptions;
+        this.options.functionality ??= {
+            hover: true,
+            completion: {
+                overwriteCompleters: true
+            },
+            completionResolve: true,
+            format: true
+        };
+        this.options.markdownConverter ??= new showdown.Converter();
         this.$signatureTooltip = new SignatureTooltip(this);
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
@@ -48,15 +58,15 @@ export class LanguageProvider {
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
      * @param {Worker} worker
-     * @param markdownConverter
+     * @param {AceLinters.ProviderOptions} options
      */
-    static create(worker: Worker, markdownConverter?: MarkDownConverter) {
+    static create(worker: Worker, options?: AceLinters.ProviderOptions) {
         let messageController: IMessageController;
         messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, markdownConverter);
+        return new LanguageProvider(messageController, options);
     }
 
-    static fromCdn(cdnUrl: string) {
+    static fromCdn(cdnUrl: string, options?: AceLinters.ProviderOptions) {
         let messageController: IMessageController;
         if (cdnUrl == "" || !(/^http(s)?:/.test(cdnUrl))) {
             throw "Url is not valid";
@@ -67,12 +77,10 @@ export class LanguageProvider {
         let worker = createWorker(cdnUrl);
         // @ts-ignore
         messageController = new MessageController(worker);
-        return new LanguageProvider(messageController);
+        return new LanguageProvider(messageController, options);
     }
 
-    private $registerSession = (session?: EditSession, options?: ServiceOptions) => {
-        if (!session)
-            return;
+    private $registerSession = (session: EditSession, options?: ServiceOptions) => {
         this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
     }
 
@@ -86,19 +94,21 @@ export class LanguageProvider {
     }
 
     registerEditor(editor: Editor) {
-        if (!this.$editors.includes(editor))
+        if (!this.editors.includes(editor))
             this.$registerEditor(editor);
         this.$registerSession(editor.session);
     }
 
     $registerEditor(editor: Editor) {
-        this.$editors.push(editor);
+        this.editors.push(editor);
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session));
-        this.$registerCompleters(editor);
-        this.$activeEditor ??= editor;
+        if (this.options.functionality.completion) {
+            this.$registerCompleters(editor);
+        }
+        this.activeEditor ??= editor;
         editor.on("focus", () => {
-            this.$activeEditor = editor;
+            this.activeEditor = editor;
         });
         
         var $timer
@@ -118,7 +128,7 @@ export class LanguageProvider {
         this.$signatureTooltip.registerEditor(editor);
     }
 
-    setOptions<OptionsType extends ServiceOptions>(session: EditSession, options: OptionsType) {
+    setSessionOptions<OptionsType extends ServiceOptions>(session: EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
     }
@@ -137,53 +147,74 @@ export class LanguageProvider {
 
     getTooltipText(hover: Tooltip): string | undefined {
         return hover.content.type === "markdown" ?
-            CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+            CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(hover.content.text)) : hover.content.text;
     }
 
     format = () => {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.$activeEditor.session);
-        sessionLanguageProvider.format();
+        if (!this.options.functionality.format)
+            return;
+
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+        sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
     }
 
     doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
-        cursor.column--;
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completionList) => completionList && callback(toCompletions(completionList)));
     }
 
+    doResolve(item: Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
+        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
+    }
+
+
     $registerCompleters(editor: Editor) {
-        editor.completers = [
-            {
-                getCompletions: async (editor, session, pos, prefix, callback) => {
+        let completer = {
+            getCompletions: async (editor, session, pos, prefix, callback) => {
+                this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
                     this.doComplete(editor, session, (completions) => {
                         let fileName = this.$getFileName(session);
                         if (!completions)
                             return;
-                        completions.forEach((item) => item["fileName"] = fileName);
+                        completions.forEach((item) => {
+                            item.completerId = completer.id;
+                            item["fileName"] = fileName
+                        });
                         callback(null, CommonConverter.normalizeRanges(completions));
                     });
-                },
-                getDocTooltip: (item) => {
-                    if (!item["isResolved"]) {
-                        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), (completionItem?) => {
-                            item["isResolved"] = true;
-                            if (!completionItem)
-                                return;
-                            let completion = toResolvedCompletion(item, completionItem);
-                            item.docText = completion.docText;
-                            if (completion.docHTML) {
-                                item.docHTML = completion.docHTML;
-                            } else if (completion["docMarkdown"]) {
-                                item.docHTML = CommonConverter.cleanHtml(this.$markdownConverter.makeHtml(completion["docMarkdown"]));
-                            }
+                });
+            },
+            getDocTooltip: (item: Completion) => {
+                if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                    this.doResolve(item, (completionItem?) => {
+                        item["isResolved"] = true;
+                        if (!completionItem)
+                            return;
+                        let completion = toResolvedCompletion(item, completionItem);
+                        item.docText = completion.docText;
+                        if (completion.docHTML) {
+                            item.docHTML = completion.docHTML;
+                        } else if (completion["docMarkdown"]) {
+                            item.docHTML = CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(completion["docMarkdown"]));
+                        }
+                        if (editor["completer"]) {
                             editor["completer"].updateDocTooltip();
-                        })
-                    }
-                    return item;
+                        }
+
+                    })
                 }
-            }
-        ];
+                return item;
+            },
+            id: "lspCompleters"
+        }
+        if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
+            editor.completers = [
+                completer
+            ];
+        } else {
+            editor.completers.push(completer);
+        }
     }
 
     dispose() {
@@ -267,21 +298,18 @@ class SessionLanguageProvider {
         this.$deltaQueue.push(delta);
     }
 
-    private $sendDeltaQueue = () => {
+    $sendDeltaQueue = (callback?) => {
         let deltas = this.$deltaQueue;
-        if (!deltas) return;
+        if (!deltas) return callback && callback();
         this.$deltaQueue = null;
         if (deltas.length)
             this.$messageController.change(this.fileName, deltas.map((delta) =>
-                fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc);
+                fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
     };
 
     private $showAnnotations = (diagnostics) => {
-        this.session.clearAnnotations();
         let annotations = toAnnotations(diagnostics)
-        if (annotations && annotations.length > 0) {
-            this.session.setAnnotations(annotations);
-        }
+        this.session.setAnnotations(annotations);
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
@@ -311,7 +339,7 @@ class SessionLanguageProvider {
 
     private $applyFormat = (edits: lsp.TextEdit[]) => {
         for (let edit of edits.reverse()) {
-            this.session.doc.replace(toRange(edit.range), edit.newText);
+            this.session.replace(toRange(edit.range), edit.newText);
         }
     }
     

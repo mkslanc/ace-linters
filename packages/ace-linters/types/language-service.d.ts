@@ -4,6 +4,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {Ace} from "ace-code";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
+import {MarkDownConverter} from "./converters";
 
 export declare namespace AceLinters {
     export interface LanguageService {
@@ -126,6 +127,10 @@ export declare namespace AceLinters {
         rules?: { [rule: string]: any };
     }
 
+    export interface PythonServiceOptions {
+        configuration: { [name: string]: any }
+    }
+
     export interface ServiceOptionsMap {
         json: JsonServiceOptions,
         json5: JsonServiceOptions,
@@ -134,8 +139,21 @@ export declare namespace AceLinters {
         yaml: YamlServiceOptions,
         php: PhpServiceOptions,
         xml: XmlServiceOptions,
-        javascript: JavascriptServiceOptions
+        javascript: JavascriptServiceOptions,
+        python: PythonServiceOptions
     }
     
-    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss";
+    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss" | "python";
+
+    export interface ProviderOptions {
+        functionality: {
+            hover: boolean,
+            completion: {
+                overwriteCompleters: boolean    
+            } | false,
+            completionResolve: boolean,
+            format: boolean
+        },
+        markdownConverter?: MarkDownConverter
+    }
 }

@@ -29,14 +29,21 @@ module.exports = (env, argv) => {
             "xml-service": './services/xml/xml-service.ts',
             "php-service": './services/php/php-service.ts',
             "ace-language-client": './ace-language-client.ts',
-            "javascript-service": './services/javascript/javascript-service.ts'
+            "javascript-service": './services/javascript/javascript-service.ts',
+            "python-service": {
+                chunkLoading: "import-scripts",
+                import: './services/python/python-service.ts'
+            }
         },
         module: {
             rules: [
                 loader, {
                     test: /\.css$/,
                     use: ["style-loader", "css-loader"]
-                }
+                },{
+                    test: /\.wasm$/,
+                    type: "asset/inline",
+                },
             ]
         },
         resolveLoader: {

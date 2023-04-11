@@ -66,7 +66,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
             return {TypescriptService};
         },
         className: "TypescriptService",
-        modes: "typescript|tsx",
+        modes: "typescript|tsx|javascript|jsx",
     });`;
     const luaService = `manager.registerService("lua", {
         module: () => {
@@ -100,29 +100,37 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         className: "PhpService",
         modes: "php"
     });`;
-    const javascriptService = `manager.registerService("javascript", {
+    /*const javascriptService = `manager.registerService("javascript", {
         module: () => {
             importScripts("${cdnUrl}/javascript-service.js");
             return {JavascriptService};
         },
         className: "JavascriptService",
         modes: "javascript",
+    });`;*/
+    const pythonService = `manager.registerService("python", {
+        module: () => {
+            importScripts("${cdnUrl}/python-service.js");
+            return {PythonService};
+        },
+        className: "PythonService",
+        modes: "python",
     });`;
 
     if (!includeLinters) {
         return `!function () {
     importScripts("${cdnUrl}/service-manager.js");
     let manager = new ServiceManager(self);
-    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, javascriptService].join("\n")}
+    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, pythonService].join("\n")}
 }()`;
     }
     let services: Array<string> = [];
     Object.entries(includeLinters).forEach(([key, value]) => {
         if (value) {
             switch (key as AceLinters.SupportedServices) {
-                case "javascript":
+                /*case "javascript":
                     services.push(javascriptService);
-                    break;
+                    break;*/
                 case "css":
                     services.push(cssService);
                     break;
@@ -152,6 +160,9 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
                     break;
                 case "yaml":
                     services.push(yamlService);
+                    break;
+                case "python":
+                    services.push(pythonService);
                     break;
             }
         }

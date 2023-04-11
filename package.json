@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "0.6.0",
+  "version": "0.7.3",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
     "build": "npm run build:ace-linters && webpack",
@@ -9,20 +9,20 @@
   },
   "dependencies": {
     "ace-code": "mkslanc/ace#completions-improvements",
-    "typescript": "latest",
-    "jsonc-parser": "latest"
+    "jsonc-parser": "latest",
+    "typescript": "latest"
   },
   "devDependencies": {
     "copy-webpack-plugin": "9.1.0",
     "css-loader": "^6.7.1",
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "raw-loader": "^4.0.2",
     "style-loader": "^3.3.1",
     "text-loader": "latest",
     "ts-loader": "latest",
     "webpack": "latest",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "latest",
-    "raw-loader": "^4.0.2",
-    "node-polyfill-webpack-plugin": "^1.1.4"
+    "webpack-dev-server": "latest"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

@@ -131,7 +131,7 @@ Ace linters supports the following languages by default with webworkers approach
 - YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
 - XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
 - Javascript, JSX *powered by* [Eslint](https://github.com/eslint/eslint)
-
+- Python *powered by* [Ruff](https://github.com/charliermarsh/ruff)
 ## Installation
 
 To install Ace linters, you can use the following command:
