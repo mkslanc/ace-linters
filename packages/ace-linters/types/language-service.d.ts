@@ -152,7 +152,9 @@ export declare namespace AceLinters {
                 overwriteCompleters: boolean    
             } | false,
             completionResolve: boolean,
-            format: boolean
+            format: boolean,
+            documentHighlights: boolean,
+            signatureHelp: boolean
         },
         markdownConverter?: MarkDownConverter
     }

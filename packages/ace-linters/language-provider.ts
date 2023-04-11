@@ -31,7 +31,6 @@ export class LanguageProvider {
     activeEditor: Editor;
     private $descriptionTooltip: DescriptionTooltip;
     private $signatureTooltip: SignatureTooltip;
-    private readonly $markdownConverter: MarkDownConverter;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     editors: Editor[] = [];
@@ -47,7 +46,9 @@ export class LanguageProvider {
                 overwriteCompleters: true
             },
             completionResolve: true,
-            format: true
+            format: true,
+            documentHighlights: false,
+            signatureHelp: true
         };
         this.options.markdownConverter ??= new showdown.Converter();
         this.$signatureTooltip = new SignatureTooltip(this);
@@ -110,20 +111,22 @@ export class LanguageProvider {
         editor.on("focus", () => {
             this.activeEditor = editor;
         });
-        
-        var $timer
-        // @ts-ignore
-        editor.on("changeSelection", () => {
-            if (!$timer)
-                $timer =
-                    setTimeout(() => {
-                        let cursor = editor.getCursorPosition();
-                        let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
 
-                        this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
-                        $timer = undefined;
-                    }, 50);
-        });
+        if (this.options.functionality.documentHighlights) {
+            var $timer
+            // @ts-ignore
+            editor.on("changeSelection", () => {
+                if (!$timer)
+                    $timer =
+                        setTimeout(() => {
+                            let cursor = editor.getCursorPosition();
+                            let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+
+                            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                            $timer = undefined;
+                        }, 50);
+            });
+        }
         this.$descriptionTooltip.registerEditor(editor);
         this.$signatureTooltip.registerEditor(editor);
     }
