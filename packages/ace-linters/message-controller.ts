@@ -4,11 +4,11 @@ import {
     ChangeMessage,
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, DisposeMessage,
+    DeltasMessage, DisposeMessage, DocumentHighlightMessage,
     FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage, MessageType,
-    ResolveCompletionMessage,
+    ResolveCompletionMessage, SignatureHelpMessage,
     ValidateMessage
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
@@ -82,6 +82,14 @@ export class MessageController implements IMessageController {
 
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+    }
+
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
+        this.postMessage(new SignatureHelpMessage(sessionId, position), callback)
+    }
+
+    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void) {
+        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback)
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

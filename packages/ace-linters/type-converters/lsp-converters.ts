@@ -12,7 +12,8 @@ import {
     MarkupKind,
     TextEdit,
     InsertReplaceEdit,
-    TextDocumentContentChangeEvent
+    TextDocumentContentChangeEvent,
+    SignatureHelp
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
@@ -169,6 +170,35 @@ export function toTooltip(hover: Hover | undefined): Tooltip | undefined {
         content = {type: "markdown", text: contents.join("\n\n")};
     }
     return {content: content, range: hover.range && toRange(hover.range)};
+}
+
+export function fromSignatureHelp(signatureHelp: SignatureHelp | undefined): Tooltip | undefined {
+    let content;
+    if (!signatureHelp)
+        return;
+    let signatureIndex = signatureHelp?.activeSignature || 0;
+    let activeSignature = signatureHelp.signatures[signatureIndex];
+    let activeParam = signatureHelp?.activeParameter;
+    let contents = activeSignature.label;
+    if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
+        let param = activeSignature.parameters[activeParam].label;
+        if (typeof param == "string") {
+            contents = contents.replace(param, `**${param}**`);
+        }
+    }
+    if (activeSignature.documentation) {
+        if (MarkupContent.is(activeSignature.documentation)) {
+            content = fromMarkupContent(activeSignature.documentation);
+            content.text = contents + "\n\n" + content.text;
+        } else {
+            contents += "\n\n" + activeSignature.documentation;
+            content = {type: "markdown", text: contents};
+        }
+    } else {
+        content = {type: "markdown", text: contents};
+    }
+
+    return {content: content};
 }
 
 export function fromMarkupContent(content?: string | MarkupContent): TooltipContent | undefined {

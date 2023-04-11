@@ -116,6 +116,7 @@ languageProvider.registerEditor(editor);
 - Diagnostics
 - Formatting
 - Completions
+- Signature Help
 
 [Full list of capabilities](https://github.com/mkslanc/ace-linters/blob/main/Capabilities.md)
 

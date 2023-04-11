@@ -97,6 +97,12 @@ export class ServiceManager {
                     if (serviceInstance)
                         doValidation(undefined, serviceInstance);
                     break;
+                case MessageType.signatureHelp:
+                    postMessage["value"] = await serviceInstance?.provideSignatureHelp(documentIdentifier, message.value);
+                    break;
+                case MessageType.documentHighlight:
+                    postMessage["value"] = await serviceInstance?.findDocumentHighlights(documentIdentifier, message.value);
+                    break;
             }
 
             ctx.postMessage(postMessage);

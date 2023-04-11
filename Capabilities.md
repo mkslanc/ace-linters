@@ -22,3 +22,6 @@
     - rangeFormatting
     - ~~onTypeFormatting~~
 - pullDiagnostics
+- Signature Help
+  - activeParameterSupport
+- Document Highlight (experimental)
