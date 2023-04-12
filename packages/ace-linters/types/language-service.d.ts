@@ -40,6 +40,10 @@ export declare namespace AceLinters {
         removeDocument(document: TextDocumentIdentifier);
 
         getDocumentValue(uri: string): string;
+
+        provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position ): Promise<lsp.SignatureHelp | null>
+        
+        findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
     }
 
     interface TooltipContent {
@@ -155,7 +159,9 @@ export declare namespace AceLinters {
                 overwriteCompleters: boolean    
             } | false,
             completionResolve: boolean,
-            format: boolean
+            format: boolean,
+            documentHighlights: boolean,
+            signatureHelp: boolean
         },
         markdownConverter?: MarkDownConverter
     }

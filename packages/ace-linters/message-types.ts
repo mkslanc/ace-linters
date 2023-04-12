@@ -159,6 +159,26 @@ export class ConfigureFeaturesMessage {
     }
 }
 
+export class SignatureHelpMessage extends BaseMessage {
+    type: MessageType = MessageType.signatureHelp;
+    value: lsp.Position;
+
+    constructor(sessionId: string, value: lsp.Position) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+
+export class DocumentHighlightMessage extends BaseMessage {
+    type: MessageType = MessageType.documentHighlight;
+    value: lsp.Position;
+
+    constructor(sessionId: string, value: lsp.Position) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -172,5 +192,7 @@ export enum MessageType {
     changeOptions,
     dispose,
     globalOptions,
-    configureFeatures
+    configureFeatures,
+    signatureHelp,
+    documentHighlight
 }

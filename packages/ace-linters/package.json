@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "0.7.3",
+  "version": "0.8.3",
   "scripts": {
     "clean": "rimraf build",
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
@@ -58,5 +58,17 @@
       "text-summary"
     ],
     "report-dir": "coverage"
-  }
+  },
+  "license": "MIT",
+  "keywords": [
+    "language server protocol",
+    "lsp",
+    "language client",
+    "ace-editor",
+    "linting",
+    "code-completion",
+    "code-formatting",
+    "error-checking",
+    "intellisense"
+  ]
 }

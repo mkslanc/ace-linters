@@ -43,6 +43,15 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
                     preselectSupport: false,
                 },
                 contextSupport: false,
+            },
+            signatureHelp: {
+                signatureInformation: {
+                    documentationFormat: ['markdown', 'plaintext'],
+                    activeParameterSupport: true
+                }
+            },
+            documentHighlight: {
+                dynamicRegistration: true
             }
         },
         workspace: {
@@ -283,5 +292,39 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.connection.sendRequest(name, options).then((params) => {
             this.emit(eventName, params);
         })
+    }
+
+    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void) {
+        if (!this.isInitialized)
+            return;
+        if (!this.serverCapabilities?.documentHighlightProvider)
+            return;
+        let options: lsp.DocumentHighlightParams = {
+            textDocument: {
+                uri: sessionId,
+            },
+            position: position,
+        };
+        let documentHighlightCallback = (result: lsp.DocumentHighlight[]) => {
+            callback && callback(result);
+        };
+        this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
+    }
+
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
+        if (!this.isInitialized)
+            return;
+        if (!this.serverCapabilities?.signatureHelpProvider)
+            return;
+        let options: lsp.SignatureHelpParams = {
+            textDocument: {
+                uri: sessionId,
+            },
+            position: position,
+        };
+        let signatureHelpCallback = (result: lsp.SignatureHelp) => {
+            callback && callback(result);
+        };
+        this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
     }
 }

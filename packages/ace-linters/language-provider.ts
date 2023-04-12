@@ -14,7 +14,7 @@ import {MessageController} from "./message-controller";
 import {
     fromAceDelta,
     fromPoint,
-    fromRange,
+    fromRange, fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
     toCompletions,
@@ -25,10 +25,12 @@ import * as lsp from "vscode-languageserver-protocol";
 
 import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
+import {SignatureTooltip} from "./components/signature-tooltip";
 
 export class LanguageProvider {
     activeEditor: Editor;
     private $descriptionTooltip: DescriptionTooltip;
+    private $signatureTooltip: SignatureTooltip;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     editors: Editor[] = [];
@@ -44,9 +46,12 @@ export class LanguageProvider {
                 overwriteCompleters: true
             },
             completionResolve: true,
-            format: true
+            format: true,
+            documentHighlights: false,
+            signatureHelp: true
         };
         this.options.markdownConverter ??= new showdown.Converter();
+        this.$signatureTooltip = new SignatureTooltip(this);
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
 
@@ -102,11 +107,28 @@ export class LanguageProvider {
         if (this.options.functionality.completion) {
             this.$registerCompleters(editor);
         }
-        this.$descriptionTooltip.registerEditor(editor);
         this.activeEditor ??= editor;
         editor.on("focus", () => {
             this.activeEditor = editor;
         });
+
+        if (this.options.functionality.documentHighlights) {
+            var $timer
+            // @ts-ignore
+            editor.on("changeSelection", () => {
+                if (!$timer)
+                    $timer =
+                        setTimeout(() => {
+                            let cursor = editor.getCursorPosition();
+                            let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+
+                            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                            $timer = undefined;
+                        }, 50);
+            });
+        }
+        this.$descriptionTooltip.registerEditor(editor);
+        this.$signatureTooltip.registerEditor(editor);
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: EditSession, options: OptionsType) {
@@ -124,6 +146,10 @@ export class LanguageProvider {
 
     doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
+    }
+
+    provideSignatureHelp(session: EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void) {
+        this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 
     getTooltipText(hover: Tooltip): string | undefined {
@@ -323,4 +349,8 @@ class SessionLanguageProvider {
             this.session.replace(toRange(edit.range), edit.newText);
         }
     }
+    
+    $applyDocumentHiglight = (documentHighlights) => {
+        //TODO: place for your code
+    };
 }

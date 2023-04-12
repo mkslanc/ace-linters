@@ -9,9 +9,11 @@ import {
     Diagnostic,
     DiagnosticSeverity,
     Hover,
-    InsertTextFormat
+    InsertTextFormat,
+    MarkupKind
 } from "vscode-languageserver-protocol";
 import {
+    fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
     toCompletions,
@@ -383,6 +385,79 @@ describe('Converters from/to Language Server Protocol', () => {
             };
             expect(toTooltip([hover, anotherHover])).to.deep.equal(expected);
         });
+    });
+
+    describe('fromSignatureHelp', () => {
+        it('should return undefined when no signature help is provided', () => {
+            const signatureHelp = undefined;
+            const result = fromSignatureHelp(signatureHelp);
+            expect(result).to.be.undefined;
+        });
+
+        it('should return a tooltip with markdown content when signature help is provided', () => {
+            const signatureHelp = {
+                activeSignature: 0,
+                activeParameter: 0,
+                signatures: [{
+                    label: 'method(param: string)',
+                    documentation: 'This is a documentation string',
+                    parameters: [
+                        {label: 'param: string'},
+                        {label: 'param2'}
+                    ]
+                }]
+            };
+            const result = fromSignatureHelp(signatureHelp);
+            expect(result).to.deep.equal({
+                content: {
+                    type: 'markdown',
+                    text: 'method(**param: string**)\n\nThis is a documentation string'
+                }
+            });
+        });
+
+        it('should highlight the active parameter in the tooltip content', () => {
+            const signatureHelp = {
+                activeSignature: 0,
+                activeParameter: 1,
+                signatures: [{
+                    label: 'method(param1: string, param2: number)',
+                    parameters: [
+                        {label: 'param1: string'},
+                        {label: 'param2: number'}
+                    ]
+                }]
+            };
+            const result = fromSignatureHelp(signatureHelp);
+            expect(result).to.deep.equal({
+                content: {
+                    type: 'markdown',
+                    text: 'method(param1: string, **param2: number**)'
+                }
+            });
+        });
+
+        it('should handle MarkupContent documentation in the signature', () => {
+            const signatureHelp = {
+                activeSignature: 0,
+                activeParameter: 0,
+                signatures: [{
+                    label: 'method(param: string)',
+                    documentation: {
+                        kind: MarkupKind.Markdown,
+                        value: 'This is a **documentation** string'
+                    }
+                }]
+            };
+            const result = fromSignatureHelp(signatureHelp);
+            expect(result).to.deep.equal({
+                content: {
+                    type: 'markdown',
+                    text: 'method(param: string)\n\nThis is a **documentation** string'
+                }
+            });
+        });
+
     });
 
 });

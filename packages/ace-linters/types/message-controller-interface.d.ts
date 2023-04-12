@@ -26,4 +26,8 @@ export interface IMessageController {
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
 
     configureFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void;
+    
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void);
+
+    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void)
 }

@@ -3,7 +3,7 @@ import {
     CompletionInfo,
     Diagnostic,
     JSDocTagInfo,
-    QuickInfo,
+    QuickInfo, SignatureHelpItems,
     TextChange,
     TextSpan
 } from "../services/typescript/lib/typescriptServices";
@@ -17,7 +17,7 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument):
     return diagnostics.map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
-        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(length)),
+        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
             parseMessageText(el.messageText), fromTsCategory(el.category));
     });
 }
@@ -146,6 +146,65 @@ export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.Complet
         documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
     };
 }
+
+export function toSignatureHelp(signatureItems: SignatureHelpItems | undefined): lsp.SignatureHelp | null {
+    if (!signatureItems) {
+        return null;
+    }
+    let signatureHelp: lsp.SignatureHelp = {
+        signatures: [],
+        activeSignature: signatureItems.selectedItemIndex,
+        activeParameter: signatureItems.argumentIndex,
+    }
+    
+    signatureItems.items.forEach((item) => {
+        let signature = {
+            label: '',
+            parameters: [],
+            documentation: displayPartsToString(item.documentation)
+        };
+        signature.label += displayPartsToString(item.prefixDisplayParts);
+        item.parameters.forEach((p, i, a) => {
+            const label = displayPartsToString(p.displayParts);
+            const parameter = {
+                label: label,
+                documentation: {
+                    value: displayPartsToString(p.documentation)
+                }
+            };
+            signature.label += label;
+            // @ts-ignore
+            signature.parameters.push(parameter);
+            if (i < a.length - 1) {
+                signature.label += displayPartsToString(item.separatorDisplayParts);
+            }
+        });
+        signature.label += displayPartsToString(item.suffixDisplayParts);
+        signatureHelp.signatures.push(signature);
+    });
+    return signatureHelp;
+}
+
+function displayPartsToString(displayParts: ts.SymbolDisplayPart[] | undefined): string {
+    if (displayParts) {
+        return displayParts.map((displayPart) => displayPart.text).join('');
+    }
+    return '';
+}
+
+export function toDocumentHighlights(highlights: ts.DocumentHighlights[] | undefined, doc: TextDocument): lsp.DocumentHighlight[] {
+    if (!highlights)
+        return [];
+    return highlights.flatMap(highlight => highlight.highlightSpans.map((highlightSpans) => {
+        return <lsp.DocumentHighlight>{
+            range: toRange(highlightSpans.textSpan, doc),
+            kind:
+                highlightSpans.kind === 'writtenReference'
+                    ? lsp.DocumentHighlightKind.Write
+                    : lsp.DocumentHighlightKind.Text
+        }
+    }));
+} 
 
 export enum ScriptKind {
     Unknown = 0,

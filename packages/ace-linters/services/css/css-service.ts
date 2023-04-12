@@ -72,4 +72,13 @@ export class CssService extends BaseService implements AceLinters.LanguageServic
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
         return item;
     }
+
+    async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return [];
+        const cssDocument = this.$service.parseStylesheet(fullDocument);
+        const highlights = this.$service.findDocumentHighlights(fullDocument, position, cssDocument);
+        return Promise.resolve(highlights);
+    }
 }
