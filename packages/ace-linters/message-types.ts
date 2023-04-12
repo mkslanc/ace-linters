@@ -148,8 +148,8 @@ export class GlobalOptionsMessage {
     }
 }
 
-export class SetFeaturesStateMessage {
-    type: MessageType = MessageType.setFeaturesState;
+export class ConfigureFeaturesMessage {
+    type: MessageType = MessageType.configureFeatures;
     serviceName: AceLinters.SupportedServices;
     options: AceLinters.ServiceFeatures;
 
@@ -172,5 +172,5 @@ export enum MessageType {
     changeOptions,
     dispose,
     globalOptions,
-    setFeaturesState
+    configureFeatures
 }

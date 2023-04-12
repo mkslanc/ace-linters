@@ -3,7 +3,7 @@ import {ServiceManager} from "ace-linters/build/service-manager";
 let manager = new ServiceManager(self);
 
 manager.registerService("typescript", {
-    features: {completion: true, completionResolve: true, diagnostics: false, format: true, hover: true},
+    features: {diagnostics: false},
     module: () => import("ace-linters/build/typescript-service"),
     className: "TypescriptService",
     modes: "javascript",

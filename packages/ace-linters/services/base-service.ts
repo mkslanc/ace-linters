@@ -35,7 +35,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
     }
 
     getDocumentValue(uri: string): string {
-        return this.getDocument(uri).getText();
+        return this.getDocument(uri)?.getText();
     }
 
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string) {

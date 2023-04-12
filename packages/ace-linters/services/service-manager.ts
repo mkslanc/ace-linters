@@ -18,6 +18,9 @@ export class ServiceManager {
 
         let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
             servicesInstances ??= this.getServicesInstances(document!.uri);
+            if (servicesInstances.length === 0) {
+                return;
+            }
             //this is list of documents linked to services
             let sessionIDList = Object.keys(servicesInstances[0].documents);
             servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
@@ -127,9 +130,9 @@ export class ServiceManager {
                     if (serviceInstance)
                         await doValidation(undefined, [serviceInstance]);
                     break;
-                case MessageType.setFeaturesState:
+                case MessageType.configureFeatures:
                     var serviceInstance = this.$services[message.serviceName].serviceInstance;
-                    this.setFeaturesState(message.serviceName, message.options);
+                    this.configureFeatures(message.serviceName, message.options);
                     if (serviceInstance)
                         await doValidation(undefined, [serviceInstance]);
                     break;
@@ -211,7 +214,7 @@ export class ServiceManager {
     }
 
     filterByFeature(serviceInstances: LanguageService[], feature: AceLinters.SupportedFeatures): LanguageService[] {
-        return serviceInstances.filter((el) => el.serviceData.features[feature] === true);
+        return serviceInstances.filter((el) => el.serviceData.features![feature] === true);
     }
 
     findServicesByMode(mode: string): AceLinters.ServiceData[] {
@@ -223,24 +226,22 @@ export class ServiceManager {
     }
 
     registerService(name: string, service: AceLinters.ServiceData) {
-        service.features ??= {
-            hover: true,
-            completion: true,
-            completionResolve: true,
-            format: true,
-            diagnostics: true
-        }
+        service.features = this.setDefaultFeaturesState(service.features);
         this.$services[name] = service;
     }
 
-    setFeaturesState(name: string, features: AceLinters.ServiceFeatures) {
-        features ??= {
-            hover: true,
-            completion: true,
-            completionResolve: true,
-            format: true,
-            diagnostics: true
-        }
+    configureFeatures(name: string, features: AceLinters.ServiceFeatures) {
+        features = this.setDefaultFeaturesState(features);
         this.$services[name].features = features;
+    }
+
+    setDefaultFeaturesState(serviceFeatures?: AceLinters.ServiceFeatures) {
+        let features = serviceFeatures ?? {} as AceLinters.ServiceFeatures;
+        features.hover ??= true;
+        features.completion ??= true;
+        features.completionResolve ??= true;
+        features.format ??= true;
+        features.diagnostics ??= true;
+        return features;
     }
 }

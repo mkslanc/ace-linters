@@ -103,7 +103,7 @@ describe('ServiceManager tests', () => {
             };
             
             //@ts-ignore;
-            manager.setFeaturesState("css");
+            manager.configureFeatures("css");
             let features = manager.$services["css"].features;
             expect(features).deep.equal(expectedFeatures);
         });
@@ -116,7 +116,7 @@ describe('ServiceManager tests', () => {
                 format: true,
                 diagnostics: true
             };
-            manager.setFeaturesState("css", featuresToSet);
+            manager.configureFeatures("css", featuresToSet);
             let features = manager.$services["css"].features;
             expect(features).deep.equal(featuresToSet);
         });

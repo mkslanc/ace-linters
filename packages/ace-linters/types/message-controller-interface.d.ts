@@ -25,5 +25,5 @@ export interface IMessageController {
 
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
 
-    setFeaturesState(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void;
+    configureFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void;
 }

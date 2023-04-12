@@ -62,7 +62,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         }
     }
 
-    setFeaturesState(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void {
+    configureFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void {
         throw new Error('Method not implemented.');
     }
 

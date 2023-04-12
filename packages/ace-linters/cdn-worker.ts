@@ -29,7 +29,6 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "json|json5"
     });`;
     const htmlService = `manager.registerService("html", {
-        features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
         module: () => {
             importScripts("${cdnUrl}/html-service.js");
             return {HtmlService};
@@ -38,7 +37,6 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "html"
     });`;
     const cssService = `manager.registerService("css", {
-        features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -47,7 +45,6 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "css"
     });`;
     const lessService = `manager.registerService("less", {
-        features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -56,7 +53,6 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "less"
     });`;
     const scssService = `manager.registerService("scss", {
-        features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -65,7 +61,6 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "scss"
     });`;
     const typeScriptService = `manager.registerService("typescript", {
-        features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
         module: () => {
             importScripts("${cdnUrl}/typescript-service.js");
             return {TypescriptService};

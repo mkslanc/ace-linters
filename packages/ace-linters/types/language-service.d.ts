@@ -161,7 +161,7 @@ export declare namespace AceLinters {
     }
 
     export type ServiceFeatures = {
-        [feature in SupportedFeatures]: boolean;
+        [feature in SupportedFeatures]?: boolean;
     };
     
     export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics";
@@ -172,6 +172,6 @@ export declare namespace AceLinters {
         modes: string,
         serviceInstance?: LanguageService,
         options?: ServiceOptions,
-        features: AceLinters.ServiceFeatures
+        features?: AceLinters.ServiceFeatures
     }
 }

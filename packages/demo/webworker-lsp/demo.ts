@@ -103,7 +103,7 @@ languageProvider.setGlobalOptions("xml", {
         }
     ]
 });
-languageProvider.toggleServiceFeatures("json", {
+languageProvider.configureServiceFeatures("json", {
     completion: true, completionResolve: true, diagnostics: false, format: true, hover: true
 })
 
