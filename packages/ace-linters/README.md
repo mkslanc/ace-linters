@@ -28,8 +28,8 @@ languageProvider.registerEditor(editor);
 
 ## Example using script tag from CDN
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/ace.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.15.3/ext-language_tools.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.16.0/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.16.0/ext-language_tools.min.js"></script>
 <script src="https://www.unpkg.com/ace-linters@0.6.0/build/ace-linters.js"></script>
 <div id="editor" style="height: 100px">some text</div>
 
@@ -42,7 +42,7 @@ languageProvider.registerEditor(editor);
         mode: new CssMode()
     });
 
-    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@0.6.0/build/");
+    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@0.8.2/build/");
     provider.registerEditor(editor);
 </script>
 ```
