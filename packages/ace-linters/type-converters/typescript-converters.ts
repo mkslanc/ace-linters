@@ -17,7 +17,7 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument):
     return diagnostics.map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
-        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(length)),
+        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
             parseMessageText(el.messageText), fromTsCategory(el.category));
     });
 }
