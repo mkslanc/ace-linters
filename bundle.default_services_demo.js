@@ -61967,7 +61967,7 @@ function toHover(hover, doc) {
     let documentation = hover.documentation ? hover.documentation.map((displayPart) => displayPart.text).join('') : "";
     let tags = hover.tags ? hover.tags.map((tag) => tagToString(tag)).join('  \n') : "";
     let displayParts = hover.displayParts ? hover.displayParts.map((displayPart) => displayPart.text).join('') : "";
-    let contents = ['```typescript\n' + displayParts + '```\n',
+    let contents = ['```typescript\n' + displayParts + '\n```\n',
         (documentation + (tags ? '\n' + tags : '')).replace(/</g, "&lt;").replace(/>/g, "&gt;")];
     return {
         contents: { kind: "markdown", value: contents.join("\n") },
