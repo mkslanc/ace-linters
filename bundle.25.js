@@ -967,8 +967,8 @@ else { var n, r; } }(self, (() => (() => { var e = { 1696: (e, t, r) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.mergeObjects = void 0, t.mergeObjects = function e(t, r) { if (!t)
             return r; if (!r)
-            return t; const n = {}; for (const o of [...Object.keys(t), ...Object.keys(r)])
-            t[o] && r[o] ? Array.isArray(t[o]) ? n[o] = t[o].concat(r[o]) : n[o] = e(t[o], r[o]) : n[o] = t[o] ?? r[o]; return n; };
+            return t; const n = { ...r, ...t }; for (const o of Object.keys(n))
+            t[o] && r[o] && (Array.isArray(t[o]) ? n[o] = t[o].concat(r[o]) : Array.isArray(r[o]) ? n[o] = r[o].concat(t[o]) : "object" == typeof t[o] && "object" == typeof r[o] && (n[o] = e(t[o], r[o]))); return n; };
     }, 82: e => { e.exports = function (e) { return e && "object" == typeof e && "function" == typeof e.copy && "function" == typeof e.fill && "function" == typeof e.readUInt8; }; }, 4895: (e, t, r) => {
         "use strict";
         var n = r(2635), o = r(3138), i = r(2094), a = r(198);

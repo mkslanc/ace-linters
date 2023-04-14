@@ -62529,9 +62529,18 @@ languageProvider.setGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,
         target: ScriptTarget.ESNext,
-        jsx: JsxEmit.Preserve
+        jsx: JsxEmit.Preserve,
+        moduleResolution: 99
     }
 });
+languageProvider.setGlobalOptions("typescript", {
+    compilerOptions: {
+        module: 6
+    },
+    formatOptions: {
+        indentSize: 2
+    }
+}, true);
 languageProvider.setGlobalOptions("json", {
     schemas: [
         {

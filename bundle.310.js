@@ -77,8 +77,8 @@ else { var a, t; } }(self, (() => (() => {
             constructor(e, s) { super(e), this.value = s; }
         }, function (e) { e[e.init = 0] = "init", e[e.format = 1] = "format", e[e.complete = 2] = "complete", e[e.resolveCompletion = 3] = "resolveCompletion", e[e.change = 4] = "change", e[e.hover = 5] = "hover", e[e.validate = 6] = "validate", e[e.applyDelta = 7] = "applyDelta", e[e.changeMode = 8] = "changeMode", e[e.changeOptions = 9] = "changeOptions", e[e.dispose = 10] = "dispose", e[e.globalOptions = 11] = "globalOptions", e[e.signatureHelp = 12] = "signatureHelp", e[e.documentHighlight = 13] = "documentHighlight"; }(a = s.MessageType || (s.MessageType = {})); }, 6508: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.mergeObjects = void 0, s.mergeObjects = function e(s, t) { if (!s)
             return t; if (!t)
-            return s; const a = {}; for (const o of [...Object.keys(s), ...Object.keys(t)])
-            s[o] && t[o] ? Array.isArray(s[o]) ? a[o] = s[o].concat(t[o]) : a[o] = e(s[o], t[o]) : a[o] = s[o] ?? t[o]; return a; }; } }, s = {};
+            return s; const a = { ...t, ...s }; for (const o of Object.keys(a))
+            s[o] && t[o] && (Array.isArray(s[o]) ? a[o] = s[o].concat(t[o]) : Array.isArray(t[o]) ? a[o] = t[o].concat(s[o]) : "object" == typeof s[o] && "object" == typeof t[o] && (a[o] = e(s[o], t[o]))); return a; }; } }, s = {};
     function t(a) { var o = s[a]; if (void 0 !== o)
         return o.exports; var i = s[a] = { exports: {} }; return e[a](i, i.exports, t), i.exports; }
     var a = {};

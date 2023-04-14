@@ -30,7 +30,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
                 return n; return -1; });
         function y(e) { var t = v.call(arguments, 1); return e = e.replace(/%(\d)/g, (function (e, n) { return "" + t[n - 1] || ""; })), e; }
         Array.prototype.indexOf && (m = function (e, t) { return e.indexOf(t); });
-        var b, x, S, C, w, O, A, E, L, k, _, j = function (e) { for (var t, n, r = v.call(arguments, 1), o = 0, a = r.length; o < a; ++o)
+        var b, x, S, C, w, O, A, E, L, k, j, _ = function (e) { for (var t, n, r = v.call(arguments, 1), o = 0, a = r.length; o < a; ++o)
             for (n in t = r[o])
                 Object.prototype.hasOwnProperty.call(t, n) && (e[n] = t[n]); return e; };
         function D(e) { return Object.create ? Object.create(e, { line: { writable: !0, value: e.line }, index: { writable: !0, value: e.index }, column: { writable: !0, value: e.column } }) : e; }
@@ -250,9 +250,9 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
         function te(e) { ee(e.name), ne(e, !0); }
         function ne(e, t) { t || -1 !== function (e, t, n) { for (var r = 0, o = e.length; r < o; ++r)
             if (e[r].name === n)
-                return r; return -1; }(_, 0, e.name) || _.push(e), e.isLocal = t; }
+                return r; return -1; }(j, 0, e.name) || j.push(e), e.isLocal = t; }
         function re(e) { return -1 !== m(L[k], e); }
-        Object.assign && (j = Object.assign), e.SyntaxError = SyntaxError, e.lex = M;
+        Object.assign && (_ = Object.assign), e.SyntaxError = SyntaxError, e.lex = M;
         var oe, ae = [];
         function ie() { return new se(x); }
         function se(e) { n.locations && (this.loc = { start: { line: e.line, column: e.range[0] - e.lineStart }, end: { line: 0, column: 0 } }), n.ranges && (this.range = [e.range[0], 0]); }
@@ -482,12 +482,12 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
         } n.labels[e] = { localCount: n.locals.length, line: t.line }; }, le.prototype.addLocal = function (e, t) { this.currentScope().locals.push({ name: e, token: t }); }, le.prototype.currentScope = function () { return this.scopes[this.scopes.length - 1]; }, le.prototype.raiseDeferredErrors = function () { for (var e = this.currentScope(), t = e.deferredGotos, n = 0; n < t.length; ++n) {
             var r = t[n];
             T(r.token, d.gotoJumpInLocalScope, r.target, e.locals[r.localCounts[this.scopes.length - 1]].name);
-        } }, pe.prototype.isInLoop = function () { return !!this.loopLevels.length; }, pe.prototype.pushScope = function (e) { ++this.level, e && this.loopLevels.push(this.level); }, pe.prototype.popScope = function () { var e = this.loopLevels, t = e.length; t && e[t - 1] === this.level && e.pop(), --this.level; }, pe.prototype.addGoto = pe.prototype.addLabel = function () { throw new Error("This should never happen"); }, pe.prototype.addLocal = pe.prototype.raiseDeferredErrors = function () { }, e.parse = function (s, c) { if (void 0 === c && "object" == typeof s && (c = s, s = void 0), c || (c = {}), t = s || "", n = j({}, i, c), b = 0, A = 1, E = 0, r = t.length, L = [[]], k = 0, _ = [], ae = [], !Object.prototype.hasOwnProperty.call(Ee, n.luaVersion))
-            throw new Error(y("Lua version '%1' not supported", n.luaVersion)); if (o = j({}, Ee[n.luaVersion]), void 0 !== n.extendedIdentifiers && (o.extendedIdentifiers = !!n.extendedIdentifiers), !Object.prototype.hasOwnProperty.call(u, n.encodingMode))
+        } }, pe.prototype.isInLoop = function () { return !!this.loopLevels.length; }, pe.prototype.pushScope = function (e) { ++this.level, e && this.loopLevels.push(this.level); }, pe.prototype.popScope = function () { var e = this.loopLevels, t = e.length; t && e[t - 1] === this.level && e.pop(), --this.level; }, pe.prototype.addGoto = pe.prototype.addLabel = function () { throw new Error("This should never happen"); }, pe.prototype.addLocal = pe.prototype.raiseDeferredErrors = function () { }, e.parse = function (s, c) { if (void 0 === c && "object" == typeof s && (c = s, s = void 0), c || (c = {}), t = s || "", n = _({}, i, c), b = 0, A = 1, E = 0, r = t.length, L = [[]], k = 0, j = [], ae = [], !Object.prototype.hasOwnProperty.call(Ee, n.luaVersion))
+            throw new Error(y("Lua version '%1' not supported", n.luaVersion)); if (o = _({}, Ee[n.luaVersion]), void 0 !== n.extendedIdentifiers && (o.extendedIdentifiers = !!n.extendedIdentifiers), !Object.prototype.hasOwnProperty.call(u, n.encodingMode))
             throw new Error(y("Encoding mode '%1' not supported", n.encodingMode)); return a = u[n.encodingMode], n.comments && (w = []), n.wait ? e : ke(); };
         var Ee = { 5.1: {}, 5.2: { labels: !0, emptyStatement: !0, hexEscapes: !0, skipWhitespaceEscape: !0, strictEscapes: !0, relaxedBreak: !0 }, 5.3: { labels: !0, emptyStatement: !0, hexEscapes: !0, skipWhitespaceEscape: !0, strictEscapes: !0, unicodeEscapes: !0, bitwiseOperators: !0, integerDivision: !0, relaxedBreak: !0 }, LuaJIT: { labels: !0, contextualGoto: !0, hexEscapes: !0, skipWhitespaceEscape: !0, strictEscapes: !0, unicodeEscapes: !0, imaginaryNumbers: !0, integerSuffixes: !0 } };
         function Le(n) { return t += String(n), r = t.length, e; }
-        function ke(e) { void 0 !== e && Le(e), t && "#!" === t.substr(0, 2) && (t = t.replace(/^.*/, (function (e) { return e.replace(/./g, " "); }))), r = t.length, oe = n.locations || n.ranges, C = M(); var o = function () { $(), ce(), n.scope && Y(); var e = fe(); e.allowVararg = !0, e.pushScope(); var t = de(e); return e.popScope(), n.scope && Z(), 1 !== x.type && N(x), oe && !t.length && (S = x), g(h.chunk(t)); }(); if (n.comments && (o.comments = w), n.scope && (o.globals = _), ae.length > 0)
+        function ke(e) { void 0 !== e && Le(e), t && "#!" === t.substr(0, 2) && (t = t.replace(/^.*/, (function (e) { return e.replace(/./g, " "); }))), r = t.length, oe = n.locations || n.ranges, C = M(); var o = function () { $(), ce(), n.scope && Y(); var e = fe(); e.allowVararg = !0, e.pushScope(); var t = de(e); return e.popScope(), n.scope && Z(), 1 !== x.type && N(x), oe && !t.length && (S = x), g(h.chunk(t)); }(); if (n.comments && (o.comments = w), n.scope && (o.globals = j), ae.length > 0)
             throw new Error("Location tracking failed. This is most likely a bug in luaparse"); return o; }
         e.write = Le, e.end = ke;
     })); }, 3401: (e, t, n) => {
@@ -541,8 +541,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 7438: function (e, t, n) { 
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.mergeObjects = void 0, t.mergeObjects = function e(t, n) { if (!t)
             return n; if (!n)
-            return t; const r = {}; for (const o of [...Object.keys(t), ...Object.keys(n)])
-            t[o] && n[o] ? Array.isArray(t[o]) ? r[o] = t[o].concat(n[o]) : r[o] = e(t[o], n[o]) : r[o] = t[o] ?? n[o]; return r; };
+            return t; const r = { ...n, ...t }; for (const o of Object.keys(r))
+            t[o] && n[o] && (Array.isArray(t[o]) ? r[o] = t[o].concat(n[o]) : Array.isArray(n[o]) ? r[o] = n[o].concat(t[o]) : "object" == typeof t[o] && "object" == typeof n[o] && (r[o] = e(t[o], n[o]))); return r; };
     }, 4881: (e, t, n) => {
         "use strict";
         n.r(t), n.d(t, { TextDocument: () => r });
