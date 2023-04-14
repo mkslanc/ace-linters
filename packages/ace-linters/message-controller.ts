@@ -85,7 +85,7 @@ export class MessageController implements IMessageController {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
 
-    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void) {
         this.postMessage(new SignatureHelpMessage(sessionId, position), callback)
     }
 

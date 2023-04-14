@@ -311,7 +311,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
     }
 
-    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void) {
         if (!this.isInitialized)
             return;
         if (!this.serverCapabilities?.signatureHelpProvider)
@@ -323,7 +323,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             position: position,
         };
         let signatureHelpCallback = (result: lsp.SignatureHelp) => {
-            callback && callback(result);
+            callback && callback([result]);
         };
         this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
     }

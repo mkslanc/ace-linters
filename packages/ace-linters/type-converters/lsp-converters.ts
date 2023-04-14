@@ -192,33 +192,39 @@ export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
     };
 }
 
-export function fromSignatureHelp(signatureHelp: SignatureHelp | undefined): Tooltip | undefined {
-    let content;
+export function fromSignatureHelp(signatureHelp: SignatureHelp[] | undefined): Tooltip | undefined {
     if (!signatureHelp)
         return;
-    let signatureIndex = signatureHelp?.activeSignature || 0;
-    let activeSignature = signatureHelp.signatures[signatureIndex];
-    let activeParam = signatureHelp?.activeParameter;
-    let contents = activeSignature.label;
-    if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
-        let param = activeSignature.parameters[activeParam].label;
-        if (typeof param == "string") {
-            contents = contents.replace(param, `**${param}**`);
+    let content = signatureHelp.map((el) => {
+        let signatureIndex = el?.activeSignature || 0;
+        let activeSignature = el.signatures[signatureIndex];
+        let activeParam = el?.activeParameter;
+        let contents = activeSignature.label;
+        if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
+            let param = activeSignature.parameters[activeParam].label;
+            if (typeof param == "string") {
+                contents = contents.replace(param, `**${param}**`);
+            }
         }
-    }
-    if (activeSignature.documentation) {
-        if (MarkupContent.is(activeSignature.documentation)) {
-            content = fromMarkupContent(activeSignature.documentation);
-            content.text = contents + "\n\n" + content.text;
+        if (activeSignature.documentation) {
+            if (MarkupContent.is(activeSignature.documentation)) {
+                return contents + "\n\n" + fromMarkupContent(activeSignature.documentation)
+            } else {
+                contents += "\n\n" + activeSignature.documentation;
+                return contents;
+            }
         } else {
-            contents += "\n\n" + activeSignature.documentation;
-            content = {type: "markdown", text: contents};
+            return contents;
         }
-    } else {
-        content = {type: "markdown", text: contents};
-    }
+    });
 
-    return {content: content};
+
+    return {
+        content: {
+            type: "markdown",
+            text: content.join("\n\n")
+        }
+    };
 }
 
 export function fromMarkupContent(content?: string | MarkupContent): string | undefined {

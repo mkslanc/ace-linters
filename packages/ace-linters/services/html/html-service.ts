@@ -87,4 +87,12 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements AceL
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
         return item;
     }
+
+    async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return [];
+        let htmlDocument = this.$service.parseHTMLDocument(fullDocument);
+        return this.$service.findDocumentHighlights(fullDocument, position, htmlDocument);
+    }
 }

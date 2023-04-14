@@ -29,6 +29,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "json|json5"
     });`;
     const htmlService = `manager.registerService("html", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/html-service.js");
             return {HtmlService};
@@ -37,6 +38,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "html"
     });`;
     const cssService = `manager.registerService("css", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -45,6 +47,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "css"
     });`;
     const lessService = `manager.registerService("less", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -53,6 +56,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "less"
     });`;
     const scssService = `manager.registerService("scss", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -69,7 +73,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "typescript|tsx|javascript|jsx",
     });`;
     const luaService = `manager.registerService("lua", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false},
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/lua-service.js");
             return {LuaService};
@@ -78,7 +82,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "lua",
     });`;
     const yamlService = `manager.registerService("yaml", {
-        features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
+        features: {signatureHelp: false, documentHighlight: false},
         module: () => {
             importScripts("${cdnUrl}/yaml-service.js");
             return {YamlService};
@@ -87,7 +91,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "yaml",
     });`;
     const xmlService = `manager.registerService("xml", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false},
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/xml-service.js");
             return {XmlService};
@@ -96,7 +100,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "xml",
     });`;
     const phpService = `manager.registerService("php", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false},
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/php-service.js");
             return {PhpService};
@@ -105,7 +109,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "php"
     });`;
     const javascriptService = `manager.registerService("javascript", {
-        features: {completion: false, completionResolve: false, diagnostics: false, format: false, hover: false},
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/javascript-service.js");
             return {JavascriptService};
@@ -114,7 +118,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
         modes: "javascript",
     });`;
     const pythonService = `manager.registerService("python", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false},
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/python-service.js");
             return {PythonService};

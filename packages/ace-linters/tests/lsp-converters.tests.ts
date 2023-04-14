@@ -407,7 +407,7 @@ describe('Converters from/to Language Server Protocol', () => {
                     ]
                 }]
             };
-            const result = fromSignatureHelp(signatureHelp);
+            const result = fromSignatureHelp([signatureHelp]);
             expect(result).to.deep.equal({
                 content: {
                     type: 'markdown',
@@ -428,7 +428,7 @@ describe('Converters from/to Language Server Protocol', () => {
                     ]
                 }]
             };
-            const result = fromSignatureHelp(signatureHelp);
+            const result = fromSignatureHelp([signatureHelp]);
             expect(result).to.deep.equal({
                 content: {
                     type: 'markdown',
@@ -449,7 +449,7 @@ describe('Converters from/to Language Server Protocol', () => {
                     }
                 }]
             };
-            const result = fromSignatureHelp(signatureHelp);
+            const result = fromSignatureHelp([signatureHelp]);
             expect(result).to.deep.equal({
                 content: {
                     type: 'markdown',

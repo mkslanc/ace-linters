@@ -170,7 +170,7 @@ export declare namespace AceLinters {
         [feature in SupportedFeatures]?: boolean;
     };
     
-    export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics";
+    export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight"
 
     export interface ServiceData {
         module: () => any,

@@ -137,10 +137,15 @@ export class ServiceManager {
                         await doValidation(undefined, [serviceInstance]);
                     break;
                 case MessageType.signatureHelp:
-                    postMessage["value"] = await serviceInstance?.provideSignatureHelp(documentIdentifier, message.value);
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service) => {
+                        return service.provideSignatureHelp(documentIdentifier, message.value);
+                    }))).filter(notEmpty);
                     break;
                 case MessageType.documentHighlight:
-                    postMessage["value"] = await serviceInstance?.findDocumentHighlights(documentIdentifier, message.value);
+                    let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service) => {
+                        return service.findDocumentHighlights(documentIdentifier, message.value);
+                    }))).filter(notEmpty);
+                    postMessage["value"] = highlights.flat();
                     break;
             }
 
@@ -248,6 +253,8 @@ export class ServiceManager {
         features.completionResolve ??= true;
         features.format ??= true;
         features.diagnostics ??= true;
+        features.signatureHelp ??= true;
+        features.documentHighlight ??= true;
         return features;
     }
 }

@@ -99,7 +99,9 @@ describe('ServiceManager tests', () => {
                 completion: true,
                 completionResolve: true,
                 format: true,
-                diagnostics: true
+                diagnostics: true,
+                documentHighlight: true,
+                signatureHelp: true
             };
             
             //@ts-ignore;
