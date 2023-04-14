@@ -92,7 +92,8 @@ export declare namespace AceLinters {
         compilerOptions?: ts.CompilerOptions,
         extraLibs?: {
             [path: string]: ExtraLib;
-        }
+        },
+        formatOptions?: ts.FormatCodeSettings
     }
 
     export interface HtmlServiceOptions {
@@ -142,14 +143,26 @@ export declare namespace AceLinters {
         javascript: JavascriptServiceOptions,
         python: PythonServiceOptions
     }
-    
-    export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss" | "python";
+
+    export type SupportedServices =
+        "json"
+        | "typescript"
+        | "css"
+        | "html"
+        | "yaml"
+        | "php"
+        | "xml"
+        | "javascript"
+        | "lua"
+        | "less"
+        | "scss"
+        | "python";
 
     export interface ProviderOptions {
         functionality: {
             hover: boolean,
             completion: {
-                overwriteCompleters: boolean    
+                overwriteCompleters: boolean
             } | false,
             completionResolve: boolean,
             format: boolean,
