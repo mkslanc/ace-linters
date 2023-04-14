@@ -7,6 +7,7 @@ import {HTMLHint} from 'htmlhint';
 
 import * as htmlService from 'vscode-html-languageservice';
 import HtmlServiceOptions = AceLinters.HtmlServiceOptions;
+import {mergeObjects} from "../../utils";
 
 export class HtmlService extends BaseService<HtmlServiceOptions> implements AceLinters.LanguageService {
     $service: VSLanguageService;
@@ -29,9 +30,23 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements AceL
         "tag-pair": true
     }
 
+    $defaultFormatOptions: HTMLFormatConfiguration = {
+        wrapAttributes: "auto",
+        wrapAttributesIndentSize: 120
+    }
+
     constructor(mode: string) {
         super(mode);
         this.$service = htmlService.getLanguageService();
+    }
+
+    getFormattingOptions(options: HTMLFormatConfiguration): HTMLFormatConfiguration {
+        this.$defaultFormatOptions.tabSize = options.tabSize;
+        this.$defaultFormatOptions.insertSpaces = options.insertSpaces;
+        if (this.globalOptions && this.globalOptions["formatOptions"]) {
+            return mergeObjects(this.globalOptions["formatOptions"], this.$defaultFormatOptions);
+        }
+        return this.$defaultFormatOptions;
     }
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[] {
@@ -39,7 +54,7 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements AceL
         if (!fullDocument)
             return [];
 
-        return this.$service.format(fullDocument, range, options);
+        return this.$service.format(fullDocument, range, this.getFormattingOptions(options));
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {

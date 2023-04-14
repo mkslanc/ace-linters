@@ -4,10 +4,15 @@ import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
     fromTsDiagnostics,
+    JsxEmit,
     ScriptTarget,
-    toResolvedCompletion,
     toCompletions,
-    toTsOffset, JsxEmit, toTextEdits, toHover, toSignatureHelp, toDocumentHighlights
+    toDocumentHighlights,
+    toHover,
+    toResolvedCompletion,
+    toSignatureHelp,
+    toTextEdits,
+    toTsOffset
 } from "../../type-converters/typescript-converters";
 import TsServiceOptions = AceLinters.TsServiceOptions;
 import {AceLinters} from "../../types";
@@ -16,14 +21,18 @@ import {mergeObjects} from "../../utils";
 
 export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, AceLinters.LanguageService {
     $service: ts.LanguageService;
-    $defaultCompilerOptions = {
+    $defaultCompilerOptions: ts.CompilerOptions = {
         allowJs: true,
+        checkJs: true,
         jsx: JsxEmit.Preserve,
         allowNonTsExtensions: true,
-        target: ScriptTarget.ESNext,
+        target: ScriptTarget.ES2020,
         noSemanticValidation: true,
         noSyntaxValidation: false,
-        onlyVisible: false
+        onlyVisible: false,
+        module: 99,
+        moduleResolution: 99,
+        allowSyntheticDefaultImports: true
     };
     
     $defaultFormatOptions = {
@@ -56,7 +65,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     getCompilationSettings(): ts.CompilerOptions {
         if (this.globalOptions && this.globalOptions["compilerOptions"]) {
-            return this.globalOptions["compilerOptions"]
+            return mergeObjects(this.globalOptions["compilerOptions"], this.$defaultCompilerOptions);
         }
         return this.$defaultCompilerOptions;
     }
