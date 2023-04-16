@@ -97,7 +97,8 @@ export declare namespace AceLinters {
     }
 
     export interface HtmlServiceOptions {
-        validationOptions?: { [option: string]: boolean }
+        validationOptions?: { [option: string]: boolean },
+        formatOptions?: {}
     }
 
     export interface XmlServiceOptions {

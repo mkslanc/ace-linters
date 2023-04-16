@@ -5,11 +5,19 @@ import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
 
 import * as cssService from 'vscode-css-languageservice';
+import {mergeObjects} from "../../utils";
 
 export class CssService extends BaseService implements AceLinters.LanguageService {
     $service: VSLanguageService;
     $languageId: string;
-
+    $defaultFormatOptions: CSSFormatConfiguration = {
+        newlineBetweenRules: true,
+        newlineBetweenSelectors: true,
+        preserveNewLines: true,
+        spaceAroundSelectorSeparator: false,
+        braceStyle: "collapse"
+    }
+    
     constructor(mode: string) {
         super(mode);
         this.$initLanguageService();
@@ -34,12 +42,18 @@ export class CssService extends BaseService implements AceLinters.LanguageServic
         }
     }
 
+    getFormattingOptions(options: CSSFormatConfiguration): CSSFormatConfiguration {
+        this.$defaultFormatOptions.tabSize = options.tabSize;
+        this.$defaultFormatOptions.insertSpaces = options.insertSpaces;
+        return mergeObjects(this.globalOptions?.formatOptions, this.$defaultFormatOptions);
+    }
+
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: CSSFormatConfiguration): lsp.TextEdit[] {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return [];
 
-        return this.$service.format(fullDocument, range, options);
+        return this.$service.format(fullDocument, range, this.getFormattingOptions(options));
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
