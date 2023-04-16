@@ -43,10 +43,7 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements AceL
     getFormattingOptions(options: HTMLFormatConfiguration): HTMLFormatConfiguration {
         this.$defaultFormatOptions.tabSize = options.tabSize;
         this.$defaultFormatOptions.insertSpaces = options.insertSpaces;
-        if (this.globalOptions && this.globalOptions["formatOptions"]) {
-            return mergeObjects(this.globalOptions["formatOptions"], this.$defaultFormatOptions);
-        }
-        return this.$defaultFormatOptions;
+        return mergeObjects(this.globalOptions?.formatOptions, this.$defaultFormatOptions);
     }
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[] {

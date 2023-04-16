@@ -45,10 +45,7 @@ export class CssService extends BaseService implements AceLinters.LanguageServic
     getFormattingOptions(options: CSSFormatConfiguration): CSSFormatConfiguration {
         this.$defaultFormatOptions.tabSize = options.tabSize;
         this.$defaultFormatOptions.insertSpaces = options.insertSpaces;
-        if (this.globalOptions && this.globalOptions["formatOptions"]) {
-            return mergeObjects(this.globalOptions["formatOptions"], this.$defaultFormatOptions);
-        }
-        return this.$defaultFormatOptions;
+        return mergeObjects(this.globalOptions?.formatOptions, this.$defaultFormatOptions);
     }
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: CSSFormatConfiguration): lsp.TextEdit[] {
