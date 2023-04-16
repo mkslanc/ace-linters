@@ -84,10 +84,11 @@ else { var r, n; } }(self, (() => (() => { var e = { 4406: e => { var t, n, r = 
             for (var n in e)
                 "default" !== n && Object.prototype.hasOwnProperty.call(e, n) && r(t, e, n); return i(t, e), t; };
         Object.defineProperty(t, "__esModule", { value: !0 }), t.CssService = void 0;
-        const o = n(3401), a = s(n(2620));
-        class l extends o.BaseService {
+        const o = n(3401), a = s(n(2620)), l = n(6508);
+        class c extends o.BaseService {
             $service;
             $languageId;
+            $defaultFormatOptions = { newlineBetweenRules: !0, newlineBetweenSelectors: !0, preserveNewLines: !0, spaceAroundSelectorSeparator: !1, braceStyle: "collapse" };
             constructor(e) { super(e), this.$initLanguageService(), this.$service.configure(); }
             $initLanguageService() { switch (this.mode) {
                 case "less":
@@ -98,7 +99,8 @@ else { var r, n; } }(self, (() => (() => { var e = { 4406: e => { var t, n, r = 
                     break;
                 default: this.$languageId = "css", this.$service = a.getCSSLanguageService();
             } }
-            format(e, t, n) { let r = this.getDocument(e.uri); return r ? this.$service.format(r, t, n) : []; }
+            getFormattingOptions(e) { return this.$defaultFormatOptions.tabSize = e.tabSize, this.$defaultFormatOptions.insertSpaces = e.insertSpaces, (0, l.mergeObjects)(this.globalOptions?.formatOptions, this.$defaultFormatOptions); }
+            format(e, t, n) { let r = this.getDocument(e.uri); return r ? this.$service.format(r, t, this.getFormattingOptions(n)) : []; }
             async doHover(e, t) { let n = this.getDocument(e.uri); if (!n)
                 return null; let r = this.$service.parseStylesheet(n); return this.$service.doHover(n, t, r); }
             async doValidation(e) { let t = this.getDocument(e.uri); if (!t)
@@ -109,7 +111,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 4406: e => { var t, n, r = 
             async findDocumentHighlights(e, t) { let n = this.getDocument(e.uri); if (!n)
                 return []; const r = this.$service.parseStylesheet(n), i = this.$service.findDocumentHighlights(n, t, r); return Promise.resolve(i); }
         }
-        t.CssService = l;
+        t.CssService = c;
     }, 6508: (e, t) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.mergeObjects = void 0, t.mergeObjects = function e(t, n) { if (!t)

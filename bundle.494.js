@@ -1265,12 +1265,14 @@ else { var r, n; } }(self, (() => (() => { var e = { 1696: (e, t, n) => {
             for (var n in e)
                 "default" !== n && Object.prototype.hasOwnProperty.call(e, n) && r(t, e, n); return i(t, e), t; };
         Object.defineProperty(t, "__esModule", { value: !0 }), t.HtmlService = void 0;
-        const o = n(3401), s = n(7574), l = a(n(891));
-        class c extends o.BaseService {
+        const o = n(3401), s = n(7574), l = a(n(891)), c = n(6508);
+        class d extends o.BaseService {
             $service;
             defaultValidationOptions = { "attr-no-duplication": !0, "body-no-duplicates": !0, "head-body-descendents-html": !0, "head-no-duplicates": !0, "head-valid-children": !0, "html-no-duplicates": !0, "html-root-node": !0, "html-valid-children": !0, "html-valid-children-order": !0, "img-src-required": !0, "invalid-attribute-char": !0, "nested-paragraphs": !0, "spec-char-escape": !0, "src-not-empty": !0, "tag-pair": !0 };
+            $defaultFormatOptions = { wrapAttributes: "auto", wrapAttributesIndentSize: 120 };
             constructor(e) { super(e), this.$service = l.getLanguageService(); }
-            format(e, t, n) { let r = this.getDocument(e.uri); return r ? this.$service.format(r, t, n) : []; }
+            getFormattingOptions(e) { return this.$defaultFormatOptions.tabSize = e.tabSize, this.$defaultFormatOptions.insertSpaces = e.insertSpaces, (0, c.mergeObjects)(this.globalOptions?.formatOptions, this.$defaultFormatOptions); }
+            format(e, t, n) { let r = this.getDocument(e.uri); return r ? this.$service.format(r, t, this.getFormattingOptions(n)) : []; }
             async doHover(e, t) { let n = this.getDocument(e.uri); if (!n)
                 return null; let r = this.$service.parseHTMLDocument(n); return this.$service.doHover(n, t, r); }
             async doValidation(e) { let t = this.getDocument(e.uri); if (!t)
@@ -1279,7 +1281,7 @@ else { var r, n; } }(self, (() => (() => { var e = { 1696: (e, t, n) => {
                 return null; let r = this.$service.parseHTMLDocument(n); return this.$service.doComplete(n, t, r); }
             async doResolve(e) { return e; }
         }
-        t.HtmlService = c;
+        t.HtmlService = d;
     }, 6508: (e, t) => {
         "use strict";
         Object.defineProperty(t, "__esModule", { value: !0 }), t.mergeObjects = void 0, t.mergeObjects = function e(t, n) { if (!t)
