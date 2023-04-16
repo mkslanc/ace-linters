@@ -373,14 +373,14 @@ describe('Converters from/to Language Server Protocol', () => {
                 contents: [
                     {
                         language: "plainText",
-                        value: "This is a another plain text hover."
+                        value: "This is another plain text hover."
                     }
                 ]
             }
             const expected: Tooltip = {
                 content: {
                     type: "markdown",
-                    "text": "```This is a *markdown* hover.```\n\nPlain text hover.\n\n```This is a another plain text hover.```"
+                    "text": "```This is a *markdown* hover.```\n\nPlain text hover.\n\n```This is another plain text hover.```"
                 }
             };
             expect(toTooltip([hover, anotherHover])).to.deep.equal(expected);
