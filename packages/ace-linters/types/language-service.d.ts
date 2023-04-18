@@ -39,7 +39,7 @@ export declare namespace AceLinters {
 
         removeDocument(document: TextDocumentIdentifier);
 
-        getDocumentValue(uri: string): string;
+        getDocumentValue(uri: string): string | undefined;
 
         provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position ): Promise<lsp.SignatureHelp | null>
         

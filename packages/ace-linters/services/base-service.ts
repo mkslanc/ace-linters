@@ -34,7 +34,7 @@ export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions 
         }
     }
 
-    getDocumentValue(uri: string): string {
+    getDocumentValue(uri: string): string | undefined {
         return this.getDocument(uri)?.getText();
     }
 

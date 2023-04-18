@@ -28,27 +28,22 @@ export class ServiceManager {
                 "type": MessageType.validate,
             };
             
-            if (servicesInstances.length === 0) {
-                //we are sending clearing diagnostics message, just in case
-                
-                for (let sessionID of sessionIDList) {
-                    postMessage["sessionId"] = sessionID;
-                    postMessage["value"] = [];
-                    ctx.postMessage(postMessage);
-                }
-                return;
-            }
-
             for (let sessionID of sessionIDList) {
                 let diagnostics = await Promise.all(servicesInstances.map((el) => {
                     return el.doValidation({uri: sessionID});
-                }));
+                })) ?? [];
                 postMessage["sessionId"] = sessionID;
                 postMessage["value"] = diagnostics.flat();
                 ctx.postMessage(postMessage);
             }
         }
-
+        
+        let provideValidationForServiceInstance = async (serviceName) => {
+            var serviceInstance = this.$services[serviceName].serviceInstance;
+            if (serviceInstance)
+                await doValidation(undefined, [serviceInstance]);
+        }
+        
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
             let sessionID = message.sessionId ?? "";
@@ -125,16 +120,12 @@ export class ServiceManager {
                     this.removeDocument(documentIdentifier);
                     break;
                 case MessageType.globalOptions:
-                    var serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
-                    if (serviceInstance)
-                        await doValidation(undefined, [serviceInstance]);
+                    await provideValidationForServiceInstance(message.serviceName);
                     break;
                 case MessageType.configureFeatures:
-                    var serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.configureFeatures(message.serviceName, message.options);
-                    if (serviceInstance)
-                        await doValidation(undefined, [serviceInstance]);
+                    await provideValidationForServiceInstance(message.serviceName);
                     break;
                 case MessageType.signatureHelp:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service) => {
@@ -211,7 +202,7 @@ export class ServiceManager {
     removeDocument(document: TextDocumentIdentifier) {
         let services = this.getServicesInstances(document.uri);
         if (services.length > 0) {
-            services.map((el) => el.removeDocument(document));
+            services.forEach((el) => el.removeDocument(document));
             delete this.$sessionIDToMode[document.uri];
         }
     }

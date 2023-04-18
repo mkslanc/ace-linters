@@ -96,17 +96,16 @@ export function toCompletions(completions: AceLinters.CompletionService[]): Ace.
             if (!el.completions) {
                 return [];
             }
+            let allCompletions;
             if (Array.isArray(el.completions)) {
-                return el.completions.map((item) => {
-                    item["service"] = el.service;
-                    return item;
-                })
+                allCompletions = el.completions;
             } else {
-                return el.completions.items.map((item) => {
-                    item["service"] = el.service;
-                    return item;
-                });
+                allCompletions = el.completions.items;
             }
+            return allCompletions.map((item) => {
+                item["service"] = el.service;
+                return item;
+            });
         }).flat();
 
         return combinedCompletions.map((item) => toCompletion(item))
