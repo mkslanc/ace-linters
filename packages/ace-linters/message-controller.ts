@@ -16,7 +16,7 @@ import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import {ServiceOptions, ServiceOptionsMap} from "./types";
+import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types";
 
 export class MessageController implements IMessageController {
     private $worker: Worker;
@@ -41,7 +41,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new ValidateMessage(sessionId), callback);
     }
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: AceLinters.CompletionService[]) => void) {
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void) {
         this.postMessage(new CompleteMessage(sessionId, position), callback);
     }
 
@@ -92,7 +92,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new DocumentHighlightMessage(sessionId, position), callback)
     }
 
-    configureFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void {
+    configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
     }
 

@@ -19,7 +19,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
-import {ProviderOptions, ServiceOptions, ServiceOptionsMap, Tooltip} from "./types";
+import {ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices, Tooltip} from "./types";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;

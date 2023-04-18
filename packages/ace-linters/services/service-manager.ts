@@ -1,7 +1,7 @@
 import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
-import {LanguageService, ServiceOptions} from "../types";
+import {LanguageService, ServiceData, ServiceFeatures, ServiceOptions, SupportedFeatures} from "../types";
 
 type Validation = {
     (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): Promise<void>;
@@ -142,7 +142,7 @@ export class ServiceManager {
         })
     }
 
-    private static async $initServiceInstance(service: AceLinters.ServiceData): Promise<LanguageService> {
+    private static async $initServiceInstance(service: ServiceData): Promise<LanguageService> {
         let module = await service.module();
         service.serviceInstance = new module[service.className](service.modes);
         if (service.options)
@@ -213,11 +213,11 @@ export class ServiceManager {
         return services.map((el) => el.serviceInstance).filter(notEmpty);
     }
 
-    filterByFeature(serviceInstances: LanguageService[], feature: AceLinters.SupportedFeatures): LanguageService[] {
+    filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
         return serviceInstances.filter((el) => el.serviceData.features![feature] === true);
     }
 
-    findServicesByMode(mode: string): AceLinters.ServiceData[] {
+    findServicesByMode(mode: string): ServiceData[] {
         return Object.values(this.$services).filter((el) => {
             let extensions = el.modes.split('|');
             if (extensions.includes(mode))
@@ -225,18 +225,18 @@ export class ServiceManager {
         });
     }
 
-    registerService(name: string, service: AceLinters.ServiceData) {
+    registerService(name: string, service: ServiceData) {
         service.features = this.setDefaultFeaturesState(service.features);
         this.$services[name] = service;
     }
 
-    configureFeatures(name: string, features: AceLinters.ServiceFeatures) {
+    configureFeatures(name: string, features: ServiceFeatures) {
         features = this.setDefaultFeaturesState(features);
         this.$services[name].features = features;
     }
 
-    setDefaultFeaturesState(serviceFeatures?: AceLinters.ServiceFeatures) {
-        let features = serviceFeatures ?? {} as AceLinters.ServiceFeatures;
+    setDefaultFeaturesState(serviceFeatures?: ServiceFeatures) {
+        let features = serviceFeatures ?? {} as ServiceFeatures;
         features.hover ??= true;
         features.completion ??= true;
         features.completionResolve ??= true;

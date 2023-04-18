@@ -1,13 +1,13 @@
 import {Ace} from "ace-code";
 import * as lsp from "vscode-languageserver-protocol";
-import {ServiceOptions} from "./language-service";
+import {CompletionService, ServiceFeatures, ServiceOptions, SupportedServices} from "./language-service";
 
 export interface IMessageController {
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void)
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: AceLinters.CompletionService[]) => void);
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void);
 
     doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void);
 
@@ -25,7 +25,7 @@ export interface IMessageController {
 
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
 
-    configureFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures): void;
+    configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
     
     provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void);
 

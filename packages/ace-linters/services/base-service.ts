@@ -1,7 +1,7 @@
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
-import {LanguageService, ServiceOptions} from "../types";
+import {LanguageService, ServiceData, ServiceOptions} from "../types";
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service;
@@ -9,7 +9,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     documents: { [sessionID: string]: TextDocument } = {};
     options: { [sessionID: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
-    serviceData: AceLinters.ServiceData;
+    serviceData: ServiceData;
 
     protected constructor(mode: string) {
         this.mode = mode;

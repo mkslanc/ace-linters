@@ -17,7 +17,7 @@ import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
 import {CommonConverter} from "./common-converters";
-import {Tooltip, TooltipContent} from "../types";
+import {CompletionService, Tooltip} from "../types";
 
 
 export function fromRange(range: Ace.Range): Range {
@@ -89,7 +89,7 @@ export function toCompletion(item: CompletionItem): Ace.Completion {
 }
 
 
-export function toCompletions(completions: AceLinters.CompletionService[]): Ace.Completion[] {
+export function toCompletions(completions: CompletionService[]): Ace.Completion[] {
     if (completions.length > 0) {
         let combinedCompletions = completions.map((el) => {
             if (!el.completions) {

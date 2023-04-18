@@ -1,7 +1,7 @@
 import {Ace} from "ace-code";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import * as lsp from "vscode-languageserver-protocol";
-import {ServiceOptions} from "./types";
+import {ServiceFeatures, ServiceOptions, SupportedServices} from "./types";
 
 export abstract class BaseMessage {
     abstract type: MessageType;
@@ -136,11 +136,11 @@ export class DisposeMessage extends BaseMessage {
 
 export class GlobalOptionsMessage {
     type: MessageType = MessageType.globalOptions;
-    serviceName: AceLinters.SupportedServices;
+    serviceName: SupportedServices;
     options: ServiceOptions;
     merge: boolean;
 
-    constructor(serviceName: AceLinters.SupportedServices, options: ServiceOptions, merge: boolean) {
+    constructor(serviceName: SupportedServices, options: ServiceOptions, merge: boolean) {
         this.serviceName = serviceName;
         this.options = options;
         this.merge = merge;
@@ -149,10 +149,10 @@ export class GlobalOptionsMessage {
 
 export class ConfigureFeaturesMessage {
     type: MessageType = MessageType.configureFeatures;
-    serviceName: AceLinters.SupportedServices;
-    options: AceLinters.ServiceFeatures;
+    serviceName: SupportedServices;
+    options: ServiceFeatures;
 
-    constructor(serviceName: AceLinters.SupportedServices, options: AceLinters.ServiceFeatures) {
+    constructor(serviceName: SupportedServices, options: ServiceFeatures) {
         this.serviceName = serviceName;
         this.options = options;
     }
