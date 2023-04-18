@@ -4,148 +4,370 @@
 /***/ 2298:
 /***/ ((module) => {
 
-!function (e, s) { if (true)
-    module.exports = s();
-else { var a, t; } }(self, (() => (() => {
-    "use strict";
-    var e = { 305: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.MessageType = s.DocumentHighlightMessage = s.SignatureHelpMessage = s.GlobalOptionsMessage = s.DisposeMessage = s.ChangeOptionsMessage = s.ChangeModeMessage = s.DeltasMessage = s.ChangeMessage = s.ValidateMessage = s.HoverMessage = s.ResolveCompletionMessage = s.CompleteMessage = s.FormatMessage = s.InitMessage = s.BaseMessage = void 0; class t {
-            sessionId;
-            constructor(e) { this.sessionId = e; }
-        } var a; s.BaseMessage = t, s.InitMessage = class extends t {
-            type = a.init;
-            mode;
-            options;
-            value;
-            version;
-            constructor(e, s, t, a, o) { super(e), this.version = t, this.options = o, this.mode = a, this.value = s; }
-        }, s.FormatMessage = class extends t {
-            type = a.format;
-            value;
-            format;
-            constructor(e, s, t) { super(e), this.value = s, this.format = t; }
-        }, s.CompleteMessage = class extends t {
-            type = a.complete;
-            value;
-            constructor(e, s) { super(e), this.value = s; }
-        }, s.ResolveCompletionMessage = class extends t {
-            type = a.resolveCompletion;
-            value;
-            constructor(e, s) { super(e), this.value = s; }
-        }, s.HoverMessage = class extends t {
-            type = a.hover;
-            value;
-            constructor(e, s) { super(e), this.value = s; }
-        }, s.ValidateMessage = class extends t {
-            type = a.validate;
-            constructor(e) { super(e); }
-        }, s.ChangeMessage = class extends t {
-            type = a.change;
-            value;
-            version;
-            constructor(e, s, t) { super(e), this.value = s, this.version = t; }
-        }, s.DeltasMessage = class extends t {
-            type = a.applyDelta;
-            value;
-            version;
-            constructor(e, s, t) { super(e), this.value = s, this.version = t; }
-        }, s.ChangeModeMessage = class extends t {
-            type = a.changeMode;
-            mode;
-            value;
-            constructor(e, s, t) { super(e), this.value = s, this.mode = t; }
-        }, s.ChangeOptionsMessage = class extends t {
-            type = a.changeOptions;
-            options;
-            merge;
-            constructor(e, s, t = !1) { super(e), this.options = s, this.merge = t; }
-        }, s.DisposeMessage = class extends t {
-            type = a.dispose;
-            constructor(e) { super(e); }
-        }, s.GlobalOptionsMessage = class {
-            type = a.globalOptions;
-            serviceName;
-            options;
-            merge;
-            constructor(e, s, t) { this.serviceName = e, this.options = s, this.merge = t; }
-        }, s.SignatureHelpMessage = class extends t {
-            type = a.signatureHelp;
-            value;
-            constructor(e, s) { super(e), this.value = s; }
-        }, s.DocumentHighlightMessage = class extends t {
-            type = a.documentHighlight;
-            value;
-            constructor(e, s) { super(e), this.value = s; }
-        }, function (e) { e[e.init = 0] = "init", e[e.format = 1] = "format", e[e.complete = 2] = "complete", e[e.resolveCompletion = 3] = "resolveCompletion", e[e.change = 4] = "change", e[e.hover = 5] = "hover", e[e.validate = 6] = "validate", e[e.applyDelta = 7] = "applyDelta", e[e.changeMode = 8] = "changeMode", e[e.changeOptions = 9] = "changeOptions", e[e.dispose = 10] = "dispose", e[e.globalOptions = 11] = "globalOptions", e[e.signatureHelp = 12] = "signatureHelp", e[e.documentHighlight = 13] = "documentHighlight"; }(a = s.MessageType || (s.MessageType = {})); }, 6508: (e, s) => { Object.defineProperty(s, "__esModule", { value: !0 }), s.mergeObjects = void 0, s.mergeObjects = function e(s, t) { if (!s)
-            return t; if (!t)
-            return s; const a = { ...t, ...s }; for (const o of Object.keys(a))
-            s[o] && t[o] && (Array.isArray(s[o]) ? a[o] = s[o].concat(t[o]) : Array.isArray(t[o]) ? a[o] = t[o].concat(s[o]) : "object" == typeof s[o] && "object" == typeof t[o] && (a[o] = e(s[o], t[o]))); return a; }; } }, s = {};
-    function t(a) { var o = s[a]; if (void 0 !== o)
-        return o.exports; var i = s[a] = { exports: {} }; return e[a](i, i.exports, t), i.exports; }
-    var a = {};
-    return (() => { var e = a; Object.defineProperty(e, "__esModule", { value: !0 }), e.ServiceManager = void 0; const s = t(6508), o = t(305); class i {
-        $services = {};
-        $sessionIDToMode = {};
-        constructor(e) { let s = (s, t) => { if (t ??= this.getServiceInstance(s.uri), !t)
-            return; let a = { type: o.MessageType.validate }, i = Object.keys(t.documents); for (let s of i)
-            t.doValidation({ uri: s }).then((t => { a.sessionId = s, a.value = t, e.postMessage(a); })); }; e.addEventListener("message", (async (t) => { let a = t.data, i = a.sessionId ?? "", n = a.version, r = { type: a.type, sessionId: i }, c = this.getServiceInstance(i), l = { uri: i, version: n }; switch (a.type) {
-            case o.MessageType.format:
-                r.value = c?.format(l, a.value, a.format);
-                break;
-            case o.MessageType.complete:
-                r.value = await (c?.doComplete(l, a.value));
-                break;
-            case o.MessageType.resolveCompletion:
-                r.value = await (c?.doResolve(a.value));
-                break;
-            case o.MessageType.change:
-                c?.setValue(l, a.value), s(l, c);
-                break;
-            case o.MessageType.applyDelta:
-                c?.applyDeltas(l, a.value), s(l, c);
-                break;
-            case o.MessageType.hover:
-                r.value = await (c?.doHover(l, a.value));
-                break;
-            case o.MessageType.validate:
-                r.value = await (c?.doValidation(l));
-                break;
-            case o.MessageType.init:
-                await this.addDocument(l, a.value, a.mode, a.options), s(l);
-                break;
-            case o.MessageType.changeMode:
-                await this.changeDocumentMode(l, a.value, a.mode, a.options), s(l, c);
-                break;
-            case o.MessageType.changeOptions:
-                c?.setOptions(i, a.options), s(l, c);
-                break;
-            case o.MessageType.dispose:
-                this.removeDocument(l);
-                break;
-            case o.MessageType.globalOptions:
-                c = this.$services[a.serviceName].serviceInstance, this.setGlobalOptions(a.serviceName, a.options, a.merge), c && s(void 0, c);
-                break;
-            case o.MessageType.signatureHelp:
-                r.value = await (c?.provideSignatureHelp(l, a.value));
-                break;
-            case o.MessageType.documentHighlight: r.value = await (c?.findDocumentHighlights(l, a.value));
-        } e.postMessage(r); })); }
-        static async $initServiceInstance(e) { let s = await e.module(); e.serviceInstance = new s[e.className](e.modes), e.options && e.serviceInstance.setGlobalOptions(e.options); }
-        async $getServiceInstanceByMode(e) { let s = this.findServiceByMode(e); if (s)
-            return s.serviceInstance || await i.$initServiceInstance(s), s.serviceInstance; }
-        setGlobalOptions(e, t, a = !1) { let o = this.$services[e]; o && (o.options = a ? (0, s.mergeObjects)(t, o.options) : t, o.serviceInstance && o.serviceInstance.setGlobalOptions(o.options)); }
-        async addDocument(e, s, t, a) { if (!t || !/^ace\/mode\//.test(t))
-            return; t = t.replace("ace/mode/", ""); let o = await this.$getServiceInstanceByMode(t); if (!o)
-            return; let i = { uri: e.uri, version: e.version, languageId: t, text: s }; o.addDocument(i), this.$sessionIDToMode[e.uri] = t; }
-        async changeDocumentMode(e, s, t, a) { this.removeDocument(e), await this.addDocument(e, s, t, a); }
-        removeDocument(e) { let s = this.getServiceInstance(e.uri); s && (s.removeDocument(e), delete this.$sessionIDToMode[e.uri]); }
-        getServiceInstance(e) { let s = this.$sessionIDToMode[e], t = this.findServiceByMode(s); if (s && t?.serviceInstance)
-            return t.serviceInstance; }
-        findServiceByMode(e) { return Object.values(this.$services).find((s => { if (s.modes.split("|").includes(e))
-            return s; })); }
-        registerService(e, s) { this.$services[e] = s; }
-    } e.ServiceManager = i; })(), a;
-})()));
-
+(function webpackUniversalModuleDefinition(root, factory) {
+    if (true)
+        module.exports = factory();
+    else { var i, a; }
+})(self, () => {
+    return /******/ (() => {
+        /******/ "use strict";
+        /******/ // The require scope
+        /******/ var __nested_webpack_require_524__ = {};
+        /******/
+        /************************************************************************/
+        /******/ /* webpack/runtime/define property getters */
+        /******/ (() => {
+            /******/ // define getter functions for harmony exports
+            /******/ __nested_webpack_require_524__.d = (exports, definition) => {
+                /******/ for (var key in definition) {
+                    /******/ if (__nested_webpack_require_524__.o(definition, key) && !__nested_webpack_require_524__.o(exports, key)) {
+                        /******/ Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+                        /******/ }
+                    /******/ }
+                /******/ 
+            };
+            /******/ 
+        })();
+        /******/
+        /******/ /* webpack/runtime/hasOwnProperty shorthand */
+        /******/ (() => {
+            /******/ __nested_webpack_require_524__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop));
+            /******/ 
+        })();
+        /******/
+        /******/ /* webpack/runtime/make namespace object */
+        /******/ (() => {
+            /******/ // define __esModule on exports
+            /******/ __nested_webpack_require_524__.r = (exports) => {
+                /******/ if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+                    /******/ Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+                    /******/ }
+                /******/ Object.defineProperty(exports, '__esModule', { value: true });
+                /******/ 
+            };
+            /******/ 
+        })();
+        /******/
+        /************************************************************************/
+        var __webpack_exports__ = {};
+        // ESM COMPAT FLAG
+        __nested_webpack_require_524__.r(__webpack_exports__);
+        // EXPORTS
+        __nested_webpack_require_524__.d(__webpack_exports__, {
+            "ServiceManager": () => ( /* binding */ServiceManager)
+        });
+        ; // CONCATENATED MODULE: ./utils.ts
+        function mergeObjects(obj1, obj2) {
+            if (!obj1)
+                return obj2;
+            if (!obj2)
+                return obj1;
+            const mergedObjects = { ...obj2, ...obj1 };
+            for (const key of Object.keys(mergedObjects)) {
+                if (obj1[key] && obj2[key]) {
+                    if (Array.isArray(obj1[key])) {
+                        mergedObjects[key] = obj1[key].concat(obj2[key]);
+                    }
+                    else if (Array.isArray(obj2[key])) {
+                        mergedObjects[key] = obj2[key].concat(obj1[key]);
+                    }
+                    else if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
+                        mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+                    }
+                }
+            }
+            return mergedObjects;
+        }
+        ; // CONCATENATED MODULE: ./message-types.ts
+        class BaseMessage {
+            constructor(sessionId) {
+                this.sessionId = sessionId;
+            }
+        }
+        class InitMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value, version, mode, options) {
+                super(sessionId);
+                this.type = 0 /* init */;
+                this.version = version;
+                this.options = options;
+                this.mode = mode;
+                this.value = value;
+            }
+        }
+        class FormatMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value, format) {
+                super(sessionId);
+                this.type = 1 /* format */;
+                this.value = value;
+                this.format = format;
+            }
+        }
+        class CompleteMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value) {
+                super(sessionId);
+                this.type = 2 /* complete */;
+                this.value = value;
+            }
+        }
+        class ResolveCompletionMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value) {
+                super(sessionId);
+                this.type = 3 /* resolveCompletion */;
+                this.value = value;
+            }
+        }
+        class HoverMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value) {
+                super(sessionId);
+                this.type = 5 /* hover */;
+                this.value = value;
+            }
+        }
+        class ValidateMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId) {
+                super(sessionId);
+                this.type = 6 /* validate */;
+            }
+        }
+        class ChangeMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value, version) {
+                super(sessionId);
+                this.type = 4 /* change */;
+                this.value = value;
+                this.version = version;
+            }
+        }
+        class DeltasMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value, version) {
+                super(sessionId);
+                this.type = 7 /* applyDelta */;
+                this.value = value;
+                this.version = version;
+            }
+        }
+        class ChangeModeMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value, mode) {
+                super(sessionId);
+                this.type = 8 /* changeMode */;
+                this.value = value;
+                this.mode = mode;
+            }
+        }
+        class ChangeOptionsMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, options, merge = false) {
+                super(sessionId);
+                this.type = 9 /* changeOptions */;
+                this.options = options;
+                this.merge = merge;
+            }
+        }
+        class DisposeMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId) {
+                super(sessionId);
+                this.type = 10 /* dispose */;
+            }
+        }
+        class GlobalOptionsMessage {
+            constructor(serviceName, options, merge) {
+                this.type = 11 /* globalOptions */;
+                this.serviceName = serviceName;
+                this.options = options;
+                this.merge = merge;
+            }
+        }
+        class SignatureHelpMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value) {
+                super(sessionId);
+                this.type = 12 /* signatureHelp */;
+                this.value = value;
+            }
+        }
+        class DocumentHighlightMessage extends ( /* unused pure expression or super */null && (0)) {
+            constructor(sessionId, value) {
+                super(sessionId);
+                this.type = 13 /* documentHighlight */;
+                this.value = value;
+            }
+        }
+        var MessageType = /* @__PURE__ */ ((MessageType2) => {
+            MessageType2[MessageType2["init"] = 0] = "init";
+            MessageType2[MessageType2["format"] = 1] = "format";
+            MessageType2[MessageType2["complete"] = 2] = "complete";
+            MessageType2[MessageType2["resolveCompletion"] = 3] = "resolveCompletion";
+            MessageType2[MessageType2["change"] = 4] = "change";
+            MessageType2[MessageType2["hover"] = 5] = "hover";
+            MessageType2[MessageType2["validate"] = 6] = "validate";
+            MessageType2[MessageType2["applyDelta"] = 7] = "applyDelta";
+            MessageType2[MessageType2["changeMode"] = 8] = "changeMode";
+            MessageType2[MessageType2["changeOptions"] = 9] = "changeOptions";
+            MessageType2[MessageType2["dispose"] = 10] = "dispose";
+            MessageType2[MessageType2["globalOptions"] = 11] = "globalOptions";
+            MessageType2[MessageType2["signatureHelp"] = 12] = "signatureHelp";
+            MessageType2[MessageType2["documentHighlight"] = 13] = "documentHighlight";
+            return MessageType2;
+        })(MessageType || {});
+        ; // CONCATENATED MODULE: ./services/service-manager.ts
+        class ServiceManager {
+            constructor(ctx) {
+                this.$services = {};
+                this.$sessionIDToMode = {};
+                let doValidation = (document, serviceInstance) => {
+                    serviceInstance != null ? serviceInstance : serviceInstance = this.getServiceInstance(document.uri);
+                    if (!serviceInstance)
+                        return;
+                    let postMessage = {
+                        "type": MessageType.validate
+                    };
+                    let sessionIDList = Object.keys(serviceInstance.documents);
+                    for (let sessionID of sessionIDList) {
+                        serviceInstance.doValidation({ uri: sessionID }).then((result) => {
+                            postMessage["sessionId"] = sessionID;
+                            postMessage["value"] = result;
+                            ctx.postMessage(postMessage);
+                        });
+                    }
+                };
+                ctx.addEventListener("message", async (ev) => {
+                    var _a;
+                    let message = ev.data;
+                    let sessionID = (_a = message.sessionId) != null ? _a : "";
+                    let version = message.version;
+                    let postMessage = {
+                        "type": message.type,
+                        "sessionId": sessionID
+                    };
+                    let serviceInstance = this.getServiceInstance(sessionID);
+                    let documentIdentifier = {
+                        uri: sessionID,
+                        version
+                    };
+                    switch (message["type"]) {
+                        case MessageType.format:
+                            postMessage["value"] = serviceInstance == null ? void 0 : serviceInstance.format(documentIdentifier, message.value, message.format);
+                            break;
+                        case MessageType.complete:
+                            postMessage["value"] = await (serviceInstance == null ? void 0 : serviceInstance.doComplete(documentIdentifier, message.value));
+                            break;
+                        case MessageType.resolveCompletion:
+                            postMessage["value"] = await (serviceInstance == null ? void 0 : serviceInstance.doResolve(message.value));
+                            break;
+                        case MessageType.change:
+                            serviceInstance == null ? void 0 : serviceInstance.setValue(documentIdentifier, message.value);
+                            doValidation(documentIdentifier, serviceInstance);
+                            break;
+                        case MessageType.applyDelta:
+                            serviceInstance == null ? void 0 : serviceInstance.applyDeltas(documentIdentifier, message.value);
+                            doValidation(documentIdentifier, serviceInstance);
+                            break;
+                        case MessageType.hover:
+                            postMessage["value"] = await (serviceInstance == null ? void 0 : serviceInstance.doHover(documentIdentifier, message.value));
+                            break;
+                        case MessageType.validate:
+                            postMessage["value"] = await (serviceInstance == null ? void 0 : serviceInstance.doValidation(documentIdentifier));
+                            break;
+                        case MessageType.init:
+                            await this.addDocument(documentIdentifier, message.value, message.mode, message.options);
+                            doValidation(documentIdentifier);
+                            break;
+                        case MessageType.changeMode:
+                            await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options);
+                            doValidation(documentIdentifier, serviceInstance);
+                            break;
+                        case MessageType.changeOptions:
+                            serviceInstance == null ? void 0 : serviceInstance.setOptions(sessionID, message.options);
+                            doValidation(documentIdentifier, serviceInstance);
+                            break;
+                        case MessageType.dispose:
+                            this.removeDocument(documentIdentifier);
+                            break;
+                        case MessageType.globalOptions:
+                            serviceInstance = this.$services[message.serviceName].serviceInstance;
+                            this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                            if (serviceInstance)
+                                doValidation(void 0, serviceInstance);
+                            break;
+                        case MessageType.signatureHelp:
+                            postMessage["value"] = await (serviceInstance == null ? void 0 : serviceInstance.provideSignatureHelp(documentIdentifier, message.value));
+                            break;
+                        case MessageType.documentHighlight:
+                            postMessage["value"] = await (serviceInstance == null ? void 0 : serviceInstance.findDocumentHighlights(documentIdentifier, message.value));
+                            break;
+                    }
+                    ctx.postMessage(postMessage);
+                });
+            }
+            static async $initServiceInstance(service) {
+                let module = await service.module();
+                service.serviceInstance = new module[service.className](service.modes);
+                if (service.options)
+                    service.serviceInstance.setGlobalOptions(service.options);
+            }
+            async $getServiceInstanceByMode(mode) {
+                let service = this.findServiceByMode(mode);
+                if (!service)
+                    return;
+                if (!service.serviceInstance)
+                    await ServiceManager.$initServiceInstance(service);
+                return service.serviceInstance;
+            }
+            setGlobalOptions(serviceName, options, merge = false) {
+                let service = this.$services[serviceName];
+                if (!service)
+                    return;
+                service.options = merge ? mergeObjects(options, service.options) : options;
+                if (service.serviceInstance) {
+                    service.serviceInstance.setGlobalOptions(service.options);
+                }
+            }
+            async addDocument(documentIdentifier, documentValue, mode, options) {
+                if (!mode || !/^ace\/mode\//.test(mode))
+                    return;
+                mode = mode.replace("ace/mode/", "");
+                let serviceInstance = await this.$getServiceInstanceByMode(mode);
+                if (!serviceInstance)
+                    return;
+                let documentItem = {
+                    uri: documentIdentifier.uri,
+                    version: documentIdentifier.version,
+                    languageId: mode,
+                    text: documentValue
+                };
+                serviceInstance.addDocument(documentItem);
+                this.$sessionIDToMode[documentIdentifier.uri] = mode;
+            }
+            async changeDocumentMode(documentIdentifier, value, mode, options) {
+                this.removeDocument(documentIdentifier);
+                await this.addDocument(documentIdentifier, value, mode, options);
+            }
+            removeDocument(document) {
+                let service = this.getServiceInstance(document.uri);
+                if (service) {
+                    service.removeDocument(document);
+                    delete this.$sessionIDToMode[document.uri];
+                }
+            }
+            getServiceInstance(sessionID) {
+                let mode = this.$sessionIDToMode[sessionID];
+                let service = this.findServiceByMode(mode);
+                if (!mode || !(service == null ? void 0 : service.serviceInstance))
+                    return;
+                return service.serviceInstance;
+            }
+            findServiceByMode(mode) {
+                return Object.values(this.$services).find((el) => {
+                    let extensions = el.modes.split("|");
+                    if (extensions.includes(mode))
+                        return el;
+                });
+            }
+            registerService(name, service) {
+                this.$services[name] = service;
+            }
+        }
+        /******/ return __webpack_exports__;
+        /******/ 
+    })();
+});
 
 
 /***/ })
@@ -385,7 +607,7 @@ manager.registerService("json5", {
     modes: "json5",
 });
 manager.registerService("typescript", {
-    module: () => __webpack_require__.e(/* import() */ 275).then(__webpack_require__.t.bind(__webpack_require__, 8275, 23)),
+    module: () => Promise.all(/* import() */[__webpack_require__.e(100), __webpack_require__.e(26)]).then(__webpack_require__.t.bind(__webpack_require__, 8275, 23)),
     className: "TypescriptService",
     modes: "typescript|tsx|javascript|jsx",
 });

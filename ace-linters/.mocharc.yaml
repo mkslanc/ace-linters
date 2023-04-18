@@ -1,0 +1,7 @@
+extension:
+  - ts
+
+spec: "tests/*.tests.ts"
+
+require:
+  - ts-node/register

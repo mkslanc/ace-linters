@@ -16,7 +16,7 @@
 
 var dom = __webpack_require__(6359);
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var Editor = (__webpack_require__(2880)/* .Editor */ .M);
 var EditSession = (__webpack_require__(6480)/* .EditSession */ .m);
 var UndoManager = (__webpack_require__(718)/* .UndoManager */ .H);
@@ -107,7 +107,7 @@ exports.version = exports.config.version;
 
 
 var oop = __webpack_require__(9359);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 /**
  * Defines a floating pointer in the document. Whenever text is inserted or deleted before the cursor, the position of the anchor is updated.
@@ -409,11 +409,7 @@ var snippetManager = (__webpack_require__(6629)/* .snippetManager */ .w);
 var config = __webpack_require__(3188);
 
 /**
- * Completion represents a text snippet that is proposed to complete text
- * @typedef Completion
- * @property {string} [snippet] - a text snippet that would be inserted when the completion is selected
- * @property {string} [value] - The text that would be inserted when selecting this completion. If a `snippet` is
- * provided, it will be used instead of `value`
+ * @typedef BaseCompletion
  * @property {number} [score] - a numerical value that determines the order in which completions would be displayed.
  * A lower score means that the completion would be displayed further from the start
  * @property {string} [meta] - a short description of the completion
@@ -423,8 +419,26 @@ var config = __webpack_require__(3188);
  * @property {string} [docText] - a plain text that would be displayed as an additional popup. If `docHTML` exists,
  * it would be used instead of `docText`.
  * @property {string} [completerId] - the identifier of the completer
- * @property {Ace.Range} [range] - an object that determines which range should be replaced in the text with new values (experimental)
- * @property {string} [command] - A command that needs to be executed after the insertion of the completion (experimental)
+ * @property {Ace.Range} [range] - An object specifying the range of text to be replaced with the new completion value (experimental)
+ * @property {string} [command] - A command to be executed after the completion is inserted (experimental)
+ */
+
+/**
+ * @typedef SnippetCompletion
+ * @extends BaseCompletion
+ * @property {string} snippet - a text snippet that would be inserted when the completion is selected
+ */
+
+/**
+ * @typedef ValueCompletion
+ * @extends BaseCompletion
+ * @property {string} value - The text that would be inserted when selecting this completion.
+ */
+
+/**
+ * Represents a suggested text snippet intended to complete a user's input
+ * @typedef Completion
+ * @type {SnippetCompletion|ValueCompletion}
  */
 
 var destroyCompleter = function(e, editor) {
@@ -1028,7 +1042,8 @@ class CompletionProvider {
 
             this.completions.setFilter(prefix);
 
-            callback(null, this.completions, results.finished);
+            if (results.finished || this.completions.filtered.length)
+                callback(null, this.completions, results.finished);
         }.bind(this);
 
         var isImmediate = true;
@@ -1102,7 +1117,7 @@ class FilteredList {
 
         this.filtered = matches;
     }
-
+    
     filterCompletions(items, needle) {
         var results = [];
         var upper = needle.toUpperCase();
@@ -1248,7 +1263,7 @@ var __webpack_unused_export__;
 
 var Renderer = (__webpack_require__(3049)/* .VirtualRenderer */ ._);
 var Editor = (__webpack_require__(2880)/* .Editor */ .M);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var event = __webpack_require__(7989);
 var lang = __webpack_require__(124);
 var dom = __webpack_require__(6359);
@@ -1702,7 +1717,7 @@ exports.i1 = getAriaId;
 /***/ 2636:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 var splitRegex = /[^a-zA-Z_0-9\$\-\u00C0-\u1FFF\u2C00-\uD7FF\w]+/;
 
@@ -1827,7 +1842,7 @@ exports.getCompletionPrefix = function (editor) {
 
 
 var oop = __webpack_require__(9359);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 
 /**
@@ -2436,7 +2451,7 @@ module.exports = {
 
 var oop = __webpack_require__(9359);
 var MultiHashHandler = (__webpack_require__(7116).MultiHashHandler);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 class CommandManager extends MultiHashHandler{
     /**
@@ -2554,7 +2569,7 @@ exports.f = CommandManager;
 
 var lang = __webpack_require__(124);
 var config = __webpack_require__(3188);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 function bindKey(win, mac) {
     return {win: win, mac: mac};
@@ -3706,7 +3721,7 @@ var reportErrorIfPathIsNotConfigured = function() {
     }
 };
 
-exports.version = "1.16.0";
+exports.version = "1.17.0";
 
 
 
@@ -3776,6 +3791,11 @@ module.exports = `
     font-variant-ligatures: no-common-ligatures;
 }
 
+.ace_keyboard-focus:focus {
+    box-shadow: inset 0 0 0 2px #5E9ED6;
+    outline: none;
+}
+
 .ace_dragging .ace_scroller:before{
     position: absolute;
     top: 0;
@@ -3823,7 +3843,7 @@ module.exports = `
     pointer-events: none;
 }
 
-.ace_gutter-cell {
+.ace_gutter-cell, .ace_gutter-cell_svg-icons  {
     position: absolute;
     top: 0;
     left: 0;
@@ -3831,6 +3851,11 @@ module.exports = `
     padding-left: 19px;
     padding-right: 6px;
     background-repeat: no-repeat;
+}
+
+.ace_gutter-cell_svg-icons .ace_icon_svg{
+    margin-left: -14px;
+    float: left;
 }
 
 .ace_gutter-cell.ace_error, .ace_icon.ace_error {
@@ -3852,6 +3877,19 @@ module.exports = `
 }
 .ace_dark .ace_gutter-cell.ace_info, .ace_dark .ace_icon.ace_info {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAJFBMVEUAAAChoaGAgIAqKiq+vr6tra1ZWVmUlJSbm5s8PDxubm56enrdgzg3AAAAAXRSTlMAQObYZgAAAClJREFUeNpjYMAPdsMYHegyJZFQBlsUlMFVCWUYKkAZMxZAGdxlDMQBAG+TBP4B6RyJAAAAAElFTkSuQmCC");
+}
+
+.ace_icon_svg.ace_error {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJyZWQiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIj4KPGNpcmNsZSBmaWxsPSJub25lIiBjeD0iOCIgY3k9IjgiIHI9IjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPGxpbmUgeDE9IjExIiB5MT0iNSIgeDI9IjUiIHkyPSIxMSIvPgo8bGluZSB4MT0iMTEiIHkxPSIxMSIgeDI9IjUiIHkyPSI1Ii8+CjwvZz4KPC9zdmc+");
+    background-color: crimson;
+}
+.ace_icon_svg.ace_warning {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJkYXJrb3JhbmdlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+Cjxwb2x5Z29uIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiIHBvaW50cz0iOCAxIDE1IDE1IDEgMTUgOCAxIi8+CjxyZWN0IHg9IjgiIHk9IjEyIiB3aWR0aD0iMC4wMSIgaGVpZ2h0PSIwLjAxIi8+CjxsaW5lIHgxPSI4IiB5MT0iNiIgeDI9IjgiIHkyPSIxMCIvPgo8L2c+Cjwvc3ZnPg==");
+    background-color: darkorange;
+}
+.ace_icon_svg.ace_info {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJibHVlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+CjxjaXJjbGUgZmlsbD0ibm9uZSIgY3g9IjgiIGN5PSI4IiByPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjxwb2x5bGluZSBwb2ludHM9IjggMTEgOCA4Ii8+Cjxwb2x5bGluZSBwb2ludHM9IjkgOCA2IDgiLz4KPGxpbmUgeDE9IjEwIiB5MT0iMTEiIHgyPSI2IiB5Mj0iMTEiLz4KPHJlY3QgeD0iOCIgeT0iNSIgd2lkdGg9IjAuMDEiIGhlaWdodD0iMC4wMSIvPgo8L2c+Cjwvc3ZnPg==");
+    background-color: royalblue;
 }
 
 .ace_scrollbar {
@@ -4155,7 +4193,16 @@ module.exports = `
     width: 18px;
 }
 
-.ace_folding-enabled > .ace_gutter-cell {
+.ace_icon_svg {
+    display: inline-block;
+    width: 12px;
+    vertical-align: top;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 12px;
+    -webkit-mask-position: center;
+}
+
+.ace_folding-enabled > .ace_gutter-cell, .ace_folding-enabled > .ace_gutter-cell_svg-icons {
     padding-right: 13px;
 }
 
@@ -4338,8 +4385,8 @@ module.exports = `
 
 var oop = __webpack_require__(9359);
 var applyDelta = (__webpack_require__(8934)/* .applyDelta */ .B);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
+var Range = (__webpack_require__(9082).Range);
 var Anchor = (__webpack_require__(7869)/* .Anchor */ .e);
 
 /**
@@ -5005,10 +5052,10 @@ var oop = __webpack_require__(9359);
 var lang = __webpack_require__(124);
 var BidiHandler = (__webpack_require__(5087)/* .BidiHandler */ .l);
 var config = __webpack_require__(3188);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 var Selection = (__webpack_require__(8939)/* .Selection */ .Y);
 var TextMode = (__webpack_require__(8030)/* .Mode */ .A);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var Document = (__webpack_require__(1218)/* .Document */ .B);
 var BackgroundTokenizer = (__webpack_require__(2484)/* .BackgroundTokenizer */ .V);
 var SearchHighlight = (__webpack_require__(7988)/* .SearchHighlight */ .t);
@@ -7528,7 +7575,7 @@ exports.m = EditSession;
 
 
 var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 
 function BracketMatch() {
@@ -7989,7 +8036,7 @@ exports.F = BracketMatch;
 "use strict";
 
 
-var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
+var RangeList = (__webpack_require__(6510).RangeList);
 
 /*
  * Simple fold-data struct.
@@ -8105,7 +8152,7 @@ exports.q = Fold;
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 class FoldLine {
     /**
@@ -8349,7 +8396,7 @@ exports.z = FoldLine;
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var FoldLine = (__webpack_require__(4285)/* .FoldLine */ .z);
 var Fold = (__webpack_require__(7899)/* .Fold */ .q);
 var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
@@ -9234,8 +9281,8 @@ var FoldHandler = (__webpack_require__(138)/* .FoldHandler */ .z);
 var KeyBinding = (__webpack_require__(8229)/* .KeyBinding */ .M);
 var EditSession = (__webpack_require__(6480)/* .EditSession */ .m);
 var Search = (__webpack_require__(6745)/* .Search */ .o);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var Range = (__webpack_require__(9082).Range);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 var CommandManager = (__webpack_require__(3190)/* .CommandManager */ .f);
 var defaultCommands = (__webpack_require__(883)/* .commands */ .C);
 var config = __webpack_require__(3188);
@@ -9243,6 +9290,7 @@ var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
 var LineWidgets = (__webpack_require__(2269)/* .LineWidgets */ .H);
 
 var clipboard = __webpack_require__(6311);
+var keys = __webpack_require__(1797);
 
 /**
  * The main entry point into the Ace functionality.
@@ -12082,6 +12130,53 @@ config.defineOptions(Editor.prototype, "editor", {
             this.$updatePlaceholder();
         }
     },
+    enableKeyboardAccessibility: {
+        set: function(value) {
+            var blurCommand = {
+                name: "blurTextInput",
+                description: "Set focus to the editor content div to allow tabbing through the page",
+                bindKey: "Esc",
+                exec: function(editor) {
+                    editor.blur();
+                    editor.renderer.content.focus();
+                },
+                readOnly: true
+            };
+
+            var focusOnEnterKeyup = function (e) {
+                if (e.target == this.renderer.content && e.keyCode === keys['enter']){
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.focus();
+                }
+            };
+
+            var keyboardFocusClassName = "ace_keyboard-focus";
+
+            // Prevent focus to be captured when tabbing through the page. When focus is set to the content div, 
+            // press Enter key to give focus to Ace and press Esc to again allow to tab through the page.
+            if (value){
+                this.textInput.getElement().setAttribute("tabindex", -1);
+                this.renderer.content.setAttribute("tabindex", 0);
+                this.renderer.content.classList.add(keyboardFocusClassName);
+                this.renderer.content.setAttribute("aria-label",
+                    "Editor, press Enter key to start editing, press Escape key to exit"
+                );
+
+                this.renderer.content.addEventListener("keyup", focusOnEnterKeyup.bind(this));
+                this.commands.addCommand(blurCommand);
+            } else {
+                this.textInput.getElement().setAttribute("tabindex", 0);
+                this.renderer.content.setAttribute("tabindex", -1);
+                this.renderer.content.classList.remove(keyboardFocusClassName);
+                this.renderer.content.setAttribute("aria-label", "");
+            
+                this.renderer.content.removeEventListener("keyup", focusOnEnterKeyup.bind(this));
+                this.commands.removeCommand(blurCommand);
+            }
+        },
+        initialValue: false
+    },
     customScrollbar: "renderer",
     hScrollBarAlwaysVisible: "renderer",
     vScrollBarAlwaysVisible: "renderer",
@@ -12107,6 +12202,7 @@ config.defineOptions(Editor.prototype, "editor", {
     maxPixelHeight: "renderer",
     useTextareaForIME: "renderer",
     useResizeObserver: "renderer",
+    useSvgGutterIcons: "renderer",
 
     scrollSpeed: "$mouseHandler",
     dragDelay: "$mouseHandler",
@@ -12167,7 +12263,7 @@ exports.M = Editor;
 
 var LineWidgets = (__webpack_require__(2269)/* .LineWidgets */ .H);
 var dom = __webpack_require__(6359);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 function binarySearch(array, needle, comparator) {
     var first = 0;
@@ -13955,7 +14051,7 @@ exports.C = Cursor;
 
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(9359);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 class Decorator {
     constructor(parent, renderer) {
@@ -14093,7 +14189,7 @@ var dom = __webpack_require__(6359);
 var lang = __webpack_require__(124);
 var event = __webpack_require__(7989);
 var useragent = __webpack_require__(618);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 var CHAR_COUNT = 512;
 var USE_OBSERVER = typeof ResizeObserver == "function";
@@ -14304,7 +14400,7 @@ exports.c = FontMetrics;
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(9359);
 var lang = __webpack_require__(124);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 var Lines = (__webpack_require__(5388)/* .Lines */ .x);
 
 class Gutter{
@@ -14579,6 +14675,7 @@ class Gutter{
         
         var textNode = element.childNodes[0];
         var foldWidget = element.childNodes[1];
+        var annotationNode = element.childNodes[2];
 
         var firstLineNumber = session.$firstLineNumber;
         
@@ -14588,7 +14685,27 @@ class Gutter{
         var foldWidgets = this.$showFoldWidgets && session.foldWidgets;
         var foldStart = fold ? fold.start.row : Number.MAX_VALUE;
         
-        var className = "ace_gutter-cell ";
+        var lineHeight = config.lineHeight + "px";
+
+        var className;
+        if (this.$useSvgGutterIcons){
+            className = "ace_gutter-cell_svg-icons ";
+
+            if (this.$annotations[row]){
+                annotationNode.className = "ace_icon_svg" + this.$annotations[row].className;
+
+                dom.setStyle(annotationNode.style, "height", lineHeight);
+                dom.setStyle(annotationNode.style, "display", "block");
+            }
+            else {
+                dom.setStyle(annotationNode.style, "display", "none");
+            }
+        }
+        else {
+            className = "ace_gutter-cell ";
+            dom.setStyle(annotationNode.style, "display", "none");
+        }
+
         if (this.$highlightGutterLine) {
             if (row == this.$cursorRow || (fold && row < this.$cursorRow && row >= foldStart &&  this.$cursorRow <= fold.end.row)) {
                 className += "ace_gutter-active-line ";
@@ -14625,8 +14742,7 @@ class Gutter{
             if (foldWidget.className != className)
                 foldWidget.className = className;
 
-            var foldHeight = config.lineHeight + "px";
-            dom.setStyle(foldWidget.style, "height", foldHeight);
+            dom.setStyle(foldWidget.style, "height", lineHeight);
             dom.setStyle(foldWidget.style, "display", "inline-block");
         } else {
             if (foldWidget) {
@@ -14716,6 +14832,9 @@ function onCreateCell(element) {
     
     var foldWidget = dom.createElement("span");
     element.appendChild(foldWidget);
+
+    var annotationNode = dom.createElement("span");
+    element.appendChild(annotationNode);
     
     return element;
 }
@@ -14861,7 +14980,7 @@ exports.x = Lines;
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var dom = __webpack_require__(6359);
 
 
@@ -15106,7 +15225,7 @@ var oop = __webpack_require__(9359);
 var dom = __webpack_require__(6359);
 var lang = __webpack_require__(124);
 var Lines = (__webpack_require__(5388)/* .Lines */ .x);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 
 class Text {
@@ -15851,7 +15970,7 @@ exports.x = Text;
 "no use strict";
 
 var oop = __webpack_require__(9359);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 var optionsProvider = {
     setOptions: function(optList) {
@@ -17152,7 +17271,7 @@ EventEmitter.removeAllListeners = function(eventName) {
     if (this._defaultHandlers) this._defaultHandlers[eventName] = undefined;
 };
 
-exports.v = EventEmitter;
+exports.EventEmitter = EventEmitter;
 
 
 /***/ }),
@@ -18538,7 +18657,7 @@ exports.B = CstyleBehaviour;
 
 
 var oop = __webpack_require__(9359);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var BaseFoldMode = (__webpack_require__(5369).FoldMode);
 
 var FoldMode = exports.Z = function(commentRegex) {
@@ -18704,7 +18823,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 var FoldMode = exports.FoldMode = function() {};
 
@@ -18961,7 +19080,7 @@ exports.h = JsonHighlightRules;
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 var MatchingBraceOutdent = function() {};
 
@@ -19013,7 +19132,7 @@ var CstyleBehaviour = (__webpack_require__(9414)/* .CstyleBehaviour */ .B);
 var unicode = __webpack_require__(9740);
 var lang = __webpack_require__(124);
 var TokenIterator = (__webpack_require__(9216)/* .TokenIterator */ .N);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 /**
  *
@@ -19603,7 +19722,7 @@ exports.K = TextHighlightRules;
 
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(7989);
-var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
+var Tooltip = (__webpack_require__(962).Tooltip);
 
 function GutterHandler(mouseHandler) {
     var editor = mouseHandler.editor;
@@ -19659,9 +19778,11 @@ function GutterHandler(mouseHandler) {
             info: {singular: "information message", plural: "information messages"}
         };
 
+        var iconClassName = gutter.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
+
         // Construct the body of the tooltip.
         for (var i = 0; i < annotation.text.length; i++) {
-            var line = `<span class='ace_${annotation.type[i]} ace_icon' aria-label='${annotationLabels[annotation.type[i]].singular}' role=img> </span> ${annotation.text[i]}`;
+            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${annotationLabels[annotation.type[i]].singular}' role=img> </span> ${annotation.text[i]}`;
             annotationMessages[annotation.type[i]].push(line);
         }
         var tooltipBody = "<div class='ace_gutter-tooltip_body'>";
@@ -21343,8 +21464,8 @@ exports.W = function(el, editor) {
 /***/ 2972:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var RangeList = (__webpack_require__(6510).RangeList);
+var Range = (__webpack_require__(9082).Range);
 var Selection = (__webpack_require__(8939)/* .Selection */ .Y);
 var onMouseDown = (__webpack_require__(4407)/* .onMouseDown */ .P);
 var event = __webpack_require__(7989);
@@ -22288,8 +22409,8 @@ exports.MultiSelect = MultiSelect;
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var Range = (__webpack_require__(9082).Range);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 var oop = __webpack_require__(9359);
 
 class PlaceHolder {
@@ -22978,7 +23099,7 @@ Range.comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
 };
 
-exports.e = Range;
+exports.Range = Range;
 
 
 /***/ }),
@@ -22988,7 +23109,7 @@ exports.e = Range;
 
 "use strict";
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var comparePoints = Range.comparePoints;
 
 class RangeList {
@@ -23253,7 +23374,7 @@ class RangeList {
 
 RangeList.prototype.comparePoints = comparePoints;
 
-exports.$ = RangeList;
+exports.RangeList = RangeList;
 
 
 /***/ }),
@@ -23329,7 +23450,7 @@ var __webpack_unused_export__;
 var oop = __webpack_require__(9359);
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(7989);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 // on ie maximal element height is smaller than what we get from 4-5K line document
 // so scrollbar doesn't work, as a workaround we do not set height higher than MAX_SCROLL_H
 // and rescale scrolltop
@@ -23575,7 +23696,7 @@ var __webpack_unused_export__;
 var oop = __webpack_require__(9359);
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(7989);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 
 dom.importCssString(`.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{
   position: absolute;
@@ -23946,7 +24067,7 @@ exports.ii = HScrollBar;
 
 var lang = __webpack_require__(124);
 var oop = __webpack_require__(9359);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 /**
  * A class designed to handle all sorts of text searches within a [[Document `Document`]].
@@ -24321,7 +24442,7 @@ exports.o = Search;
 
 
 var lang = __webpack_require__(124);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 var SearchHighlight = 
 
@@ -24387,8 +24508,8 @@ exports.t = SearchHighlight;
 
 var oop = __webpack_require__(9359);
 var lang = __webpack_require__(124);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
+var Range = (__webpack_require__(9082).Range);
 
 /**
  * Contains the cursor position and the text selection of an edit session.
@@ -25310,10 +25431,10 @@ exports.Y = Selection;
 
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(9359);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 var lang = __webpack_require__(124);
-var Range = (__webpack_require__(9082)/* .Range */ .e);
-var RangeList = (__webpack_require__(6510)/* .RangeList */ .$);
+var Range = (__webpack_require__(9082).Range);
+var RangeList = (__webpack_require__(6510).RangeList);
 var HashHandler = (__webpack_require__(7116).HashHandler);
 var Tokenizer = (__webpack_require__(760)/* .Tokenizer */ .d);
 var clipboard = __webpack_require__(6311);
@@ -26539,7 +26660,7 @@ dom.importCssString(exports.cssText, exports.cssClass, false);
 "use strict";
 
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 
 /**
  * This class provides an essay way to treat the document as a stream of tokens, and provides methods to iterate over these tokens.
@@ -27125,7 +27246,7 @@ class Tooltip {
 
 }
 
-exports.u = Tooltip;
+exports.Tooltip = Tooltip;
 
 
 /***/ }),
@@ -27407,7 +27528,7 @@ function rearrangeUndoStack(stack, pos) {
     }
 }
 
-var Range = (__webpack_require__(9082)/* .Range */ .e);
+var Range = (__webpack_require__(9082).Range);
 var cmp = Range.comparePoints;
 var comparePoints = Range.comparePoints;
 
@@ -27744,7 +27865,7 @@ var HScrollBarCustom = (__webpack_require__(6810)/* .HScrollBar */ .ii);
 var VScrollBarCustom = (__webpack_require__(6810)/* .VScrollBar */ .oX);
 var RenderLoop = (__webpack_require__(3081)/* .RenderLoop */ .d);
 var FontMetrics = (__webpack_require__(9506)/* .FontMetrics */ .c);
-var EventEmitter = (__webpack_require__(3056)/* .EventEmitter */ .v);
+var EventEmitter = (__webpack_require__(3056).EventEmitter);
 var editorCss = __webpack_require__(610);
 var Decorator = (__webpack_require__(2113)/* .Decorator */ .S);
 
@@ -28551,7 +28672,7 @@ class VirtualRenderer {
             // scrollTop so that the cursor and onscreen content stays in the same place.
             // TODO: find a better way to handle this, that works non wrapped case and doesn't compute layerConfig twice
             if (config.firstRow != this.layerConfig.firstRow && config.firstRowScreen == this.layerConfig.firstRowScreen) {
-                var st = this.scrollTop + (config.firstRow - this.layerConfig.firstRow) * this.lineHeight;
+                var st = this.scrollTop + (config.firstRow - Math.max(this.layerConfig.firstRow, 0)) * this.lineHeight;
                 if (st > 0) {
                     // this check is needed as a workaround for the documentToScreenRow returning -1 if document.length == 0
                     this.scrollTop = st;
@@ -29631,6 +29752,12 @@ config.defineOptions(VirtualRenderer.prototype, "renderer", {
             this.onGutterResize();
         },
         initialValue: true
+    },
+    useSvgGutterIcons: {
+        set: function(value){
+            this.$gutterLayer.$useSvgGutterIcons = value;
+        },
+        initialValue: false
     },
     fadeFoldWidgets: {
         set: function(show) {
@@ -43328,7 +43455,8 @@ var Is;
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			671: 0,
-/******/ 			224: 0
+/******/ 			224: 0,
+/******/ 			100: 0
 /******/ 		};
 /******/ 		
 /******/ 		// no chunk on demand loading
@@ -43362,7 +43490,7 @@ var ace = __webpack_require__(9100);
 var tooltip = __webpack_require__(962);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
 
-class BaseTooltip extends tooltip/* Tooltip */.u {
+class BaseTooltip extends tooltip.Tooltip {
     provider;
     $activeEditor;
     descriptionText;
@@ -43378,7 +43506,7 @@ class BaseTooltip extends tooltip/* Tooltip */.u {
         this.provider = provider;
         //this is for ace-code version < 1.16.0
         try {
-            tooltip/* Tooltip.call */.u.call(this, document.body);
+            tooltip.Tooltip.call(this, document.body);
         }
         catch (e) {
         }
@@ -43832,7 +43960,7 @@ class MessageController {
         this.$worker.postMessage(message);
     }
 }
-oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
+oop.implement(MessageController.prototype, event_emitter.EventEmitter);
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
 var src_range = __webpack_require__(9082);
@@ -43859,7 +43987,7 @@ function rangeFromPositions(start, end) {
     };
 }
 function toRange(range) {
-    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
+    return new src_range.Range(range.start.line, range.start.character, range.end.line, range.end.character);
 }
 function fromPoint(point) {
     return { line: point.row, character: point.column };
@@ -43931,17 +44059,17 @@ function toCompletionItem(completion) {
         label: completion.caption ?? "",
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
-        insertTextFormat: (completion.snippet) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
+        insertTextFormat: (completion["snippet"]) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
         documentation: completion["documentation"],
     };
     if (completion["range"]) {
         completionItem.textEdit = {
             range: fromRange(completion["range"]),
-            newText: (completion.snippet ?? completion.value)
+            newText: (completion["snippet"] ?? completion["value"])
         };
     }
     else {
-        completionItem.insertText = (completion.snippet ?? completion.value);
+        completionItem.insertText = (completion["snippet"] ?? completion["value"]);
     }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
@@ -43951,7 +44079,7 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        let rangeList = new range_list/* RangeList */.$();
+        let rangeList = new range_list.RangeList();
         rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
         rangeList.merge();
         return rangeList[0];
@@ -44312,7 +44440,7 @@ class LanguageProvider {
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
      * @param {Worker} worker
-     * @param {AceLinters.ProviderOptions} options
+     * @param {ProviderOptions} options
      */
     static create(worker, options) {
         let messageController;
@@ -45093,7 +45221,7 @@ class AceLanguageClient {
     /**
      *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
      * @param {Worker | WebSocket} mode
-     * @param {AceLinters.ProviderOptions} options
+     * @param {ProviderOptions} options
      */
     static for(mode, options) {
         let messageController = new MessageControllerWS(mode);
