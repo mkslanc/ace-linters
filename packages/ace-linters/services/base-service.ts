@@ -1,9 +1,9 @@
 import * as lsp from "vscode-languageserver-protocol";
-import {AceLinters} from "../types";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
+import {LanguageService, ServiceOptions} from "../types";
 
-export abstract class BaseService<OptionsType extends AceLinters.ServiceOptions = AceLinters.ServiceOptions> implements AceLinters.LanguageService {
+export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service;
     mode: string;
     documents: { [sessionID: string]: TextDocument } = {};

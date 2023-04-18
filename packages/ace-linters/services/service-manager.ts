@@ -1,9 +1,7 @@
-import LanguageService = AceLinters.LanguageService;
-import ServiceOptions = AceLinters.ServiceOptions;
-import {AceLinters} from "../types";
 import {mergeObjects} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
+import {LanguageService, ServiceOptions} from "../types";
 
 interface ServiceData {
     module: () => any,

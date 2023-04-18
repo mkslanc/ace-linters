@@ -7,16 +7,16 @@ module.exports = (env, argv) => {
     loader = {
         test: /\.(t|j)sx?$/,
         use: {
-            loader: 'ts-loader',
+            loader: 'esbuild-loader',
             options: {
-                transpileOnly: true
+                target: "es2019"
             }
         },
         exclude: /node_modules/
     };
     return {
         cache: false,
-        devtool: isProduction ? "source-map" : 'inline-source-map',
+        devtool: isProduction ? false : 'inline-source-map',
         entry: {
             "ace-linters": './index.ts',
             "service-manager": './services/service-manager.ts',
@@ -35,6 +35,7 @@ module.exports = (env, argv) => {
                 import: './services/python/python-service.ts'
             }
         },
+        externals: /ace-code/,
         module: {
             rules: [
                 loader, {
@@ -66,7 +67,7 @@ module.exports = (env, argv) => {
             }
         },
         optimization: {
-            minimize: isProduction
+            minimize: false
         },
         plugins: [
             new NodePolyfillPlugin()

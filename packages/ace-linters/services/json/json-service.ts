@@ -3,14 +3,13 @@ import {
     SchemaConfiguration
 } from "vscode-json-languageservice";
 import {BaseService} from "../base-service";
-import JsonServiceOptions = AceLinters.JsonServiceOptions;
-import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
 
 import * as jsonService from 'vscode-json-languageservice';
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
+import {JsonServiceOptions, LanguageService} from "../../types";
 
-export class JsonService extends BaseService<JsonServiceOptions> implements AceLinters.LanguageService {
+export class JsonService extends BaseService<JsonServiceOptions> implements LanguageService {
     $service: VSLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 

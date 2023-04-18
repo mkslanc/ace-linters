@@ -18,10 +18,8 @@ import {
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
-import {AceLinters} from "../types";
-import Tooltip = AceLinters.Tooltip;
-import TooltipContent = AceLinters.TooltipContent;
 import {CommonConverter} from "./common-converters";
+import {Tooltip, TooltipContent} from "../types";
 
 
 export function fromRange(range: Ace.Range): Range {
@@ -120,16 +118,16 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
         label: completion.caption ?? "",
         kind: CommonConverter.convertKind(completion.meta),
         command: command,
-        insertTextFormat: (completion.snippet) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
+        insertTextFormat: (completion["snippet"]) ? InsertTextFormat.Snippet : InsertTextFormat.PlainText,
         documentation: completion["documentation"],
     };
     if (completion["range"]) {
         completionItem.textEdit = {
             range: fromRange(completion["range"]),
-            newText: (completion.snippet ?? completion.value)!
+            newText: (completion["snippet"] ?? completion["value"])!
         }
     } else {
-        completionItem.insertText = (completion.snippet ?? completion.value)!
+        completionItem.insertText = (completion["snippet"] ?? completion["value"])!
     }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];

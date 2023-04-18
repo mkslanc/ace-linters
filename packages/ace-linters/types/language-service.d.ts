@@ -6,170 +6,168 @@ import {Ace} from "ace-code";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {MarkDownConverter} from "./converters";
 
-export declare namespace AceLinters {
-    export interface LanguageService {
-        documents: { [sessionID: string]: TextDocument };
-        $service;
-        mode: string;
-        globalOptions;
+export interface LanguageService {
+    documents: { [sessionID: string]: TextDocument };
+    $service;
+    mode: string;
+    globalOptions;
 
-        format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
 
-        doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
+    doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 
-        doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
+    doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
 
-        doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
+    doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
 
-        doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
+    doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 
-        setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
+    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
 
-        applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]);
+    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]);
 
-        addDocument(document: TextDocumentItem);
+    addDocument(document: TextDocumentItem);
 
-        setOptions(sessionID: string, options: ServiceOptions, merge?: boolean); //TODO:
+    setOptions(sessionID: string, options: ServiceOptions, merge?: boolean); //TODO:
 
-        setGlobalOptions(options: ServiceOptions); //TODO:
+    setGlobalOptions(options: ServiceOptions); //TODO:
 
-        getDocument(uri: string): TextDocument;
+    getDocument(uri: string): TextDocument;
 
-        removeDocument(document: TextDocumentIdentifier);
+    removeDocument(document: TextDocumentIdentifier);
 
-        getDocumentValue(uri: string): string;
+    getDocumentValue(uri: string): string;
 
-        provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position ): Promise<lsp.SignatureHelp | null>
-        
-        findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
-    }
+    provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
-    interface TooltipContent {
-        type: CommonConverter.TooltipType,
-        text: string
-    }
+    findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
+}
 
-    export interface Tooltip {
-        content: TooltipContent,
-        range?: Ace.Range
-    }
+interface TooltipContent {
+    type: CommonConverter.TooltipType,
+    text: string
+}
 
-    export interface TextChange {
-        range: Ace.Range;
-        newText: string;
-    }
+export interface Tooltip {
+    content: TooltipContent,
+    range?: Ace.Range
+}
 
-    export interface ServiceOptions {
-        [name: string]: any
-    }
+export interface TextChange {
+    range: Ace.Range;
+    newText: string;
+}
 
-    export interface JsonServiceOptions {
-        schemas?: {
-            uri: string,
-            fileMatch?: string[],
-            schema?: string,
-        }[],
-        schemaUri?: string,
-        allowComments?: boolean,
-        trailingCommas?: boolean
-    }
+export interface ServiceOptions {
+    [name: string]: any
+}
 
-    export interface YamlServiceOptions {
-        schemas?: {
-            uri: string,
-            fileMatch?: string[],
-            schema?: string,
-        }[],
-        schemaUri?: string,
-    }
+export interface JsonServiceOptions {
+    schemas?: {
+        uri: string,
+        fileMatch?: string[],
+        schema?: string,
+    }[],
+    schemaUri?: string,
+    allowComments?: boolean,
+    trailingCommas?: boolean
+}
 
-    interface ExtraLib {
-        content: string;
-        version: number;
-    }
+export interface YamlServiceOptions {
+    schemas?: {
+        uri: string,
+        fileMatch?: string[],
+        schema?: string,
+    }[],
+    schemaUri?: string,
+}
 
-    export interface TsServiceOptions {
-        compilerOptions?: ts.CompilerOptions,
-        extraLibs?: {
-            [path: string]: ExtraLib;
-        },
-        formatOptions?: ts.FormatCodeSettings
-    }
+interface ExtraLib {
+    content: string;
+    version: number;
+}
 
-    export interface HtmlServiceOptions {
-        validationOptions?: { [option: string]: boolean },
-        formatOptions?: {}
-    }
+export interface TsServiceOptions {
+    compilerOptions?: ts.CompilerOptions,
+    extraLibs?: {
+        [path: string]: ExtraLib;
+    },
+    formatOptions?: ts.FormatCodeSettings
+}
 
-    export interface XmlServiceOptions {
-        schemas?: {
-            uri: string,
-            fileMatch?: string[],
-            schema?: string,
-        }[],
-        schemaUri?: string,
-    }
+export interface HtmlServiceOptions {
+    validationOptions?: { [option: string]: boolean },
+    formatOptions?: {}
+}
 
-    export interface PhpServiceOptions {
-        inline: boolean
-    }
+export interface XmlServiceOptions {
+    schemas?: {
+        uri: string,
+        fileMatch?: string[],
+        schema?: string,
+    }[],
+    schemaUri?: string,
+}
 
-    export interface JavascriptServiceOptions {
-        env?: { [name: string]: boolean } | undefined;
-        extends?: string | string[] | undefined;
-        globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
-        noInlineConfig?: boolean | undefined;
-        overrides?: Array<any> | undefined;
-        parser?: string | undefined;
-        parserOptions?: { [option: string]: any } | undefined;
-        plugins?: string[] | undefined;
-        processor?: string | undefined;
-        reportUnusedDisableDirectives?: boolean | undefined;
-        settings?: { [name: string]: any } | undefined;
-        rules?: { [rule: string]: any };
-    }
+export interface PhpServiceOptions {
+    inline: boolean
+}
 
-    export interface PythonServiceOptions {
-        configuration: { [name: string]: any }
-    }
+export interface JavascriptServiceOptions {
+    env?: { [name: string]: boolean } | undefined;
+    extends?: string | string[] | undefined;
+    globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
+    noInlineConfig?: boolean | undefined;
+    overrides?: Array<any> | undefined;
+    parser?: string | undefined;
+    parserOptions?: { [option: string]: any } | undefined;
+    plugins?: string[] | undefined;
+    processor?: string | undefined;
+    reportUnusedDisableDirectives?: boolean | undefined;
+    settings?: { [name: string]: any } | undefined;
+    rules?: { [rule: string]: any };
+}
 
-    export interface ServiceOptionsMap {
-        json: JsonServiceOptions,
-        json5: JsonServiceOptions,
-        typescript: TsServiceOptions,
-        html: HtmlServiceOptions,
-        yaml: YamlServiceOptions,
-        php: PhpServiceOptions,
-        xml: XmlServiceOptions,
-        javascript: JavascriptServiceOptions,
-        python: PythonServiceOptions
-    }
+export interface PythonServiceOptions {
+    configuration: { [name: string]: any }
+}
 
-    export type SupportedServices =
-        "json"
-        | "typescript"
-        | "css"
-        | "html"
-        | "yaml"
-        | "php"
-        | "xml"
-        | "javascript"
-        | "lua"
-        | "less"
-        | "scss"
-        | "python";
+export interface ServiceOptionsMap {
+    json: JsonServiceOptions,
+    json5: JsonServiceOptions,
+    typescript: TsServiceOptions,
+    html: HtmlServiceOptions,
+    yaml: YamlServiceOptions,
+    php: PhpServiceOptions,
+    xml: XmlServiceOptions,
+    javascript: JavascriptServiceOptions,
+    python: PythonServiceOptions
+}
 
-    export interface ProviderOptions {
-        functionality: {
-            hover: boolean,
-            completion: {
-                overwriteCompleters: boolean
-            } | false,
-            completionResolve: boolean,
-            format: boolean,
-            documentHighlights: boolean,
-            signatureHelp: boolean
-        },
-        markdownConverter?: MarkDownConverter
-    }
+export type SupportedServices =
+    "json"
+    | "typescript"
+    | "css"
+    | "html"
+    | "yaml"
+    | "php"
+    | "xml"
+    | "javascript"
+    | "lua"
+    | "less"
+    | "scss"
+    | "python";
+
+export interface ProviderOptions {
+    functionality: {
+        hover: boolean,
+        completion: {
+            overwriteCompleters: boolean
+        } | false,
+        completionResolve: boolean,
+        format: boolean,
+        documentHighlights: boolean,
+        signatureHelp: boolean
+    },
+    markdownConverter?: MarkDownConverter
 }

@@ -41,7 +41,7 @@ export interface Diagnostic {
             column: number;
         };
     } | null;
-};
+}
 
 
 
