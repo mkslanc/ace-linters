@@ -14,12 +14,11 @@ import {
     toTextEdits,
     toTsOffset
 } from "../../type-converters/typescript-converters";
-import TsServiceOptions = AceLinters.TsServiceOptions;
-import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../../utils";
+import {LanguageService, TsServiceOptions} from "../../types";
 
-export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, AceLinters.LanguageService {
+export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, LanguageService {
     $service: ts.LanguageService;
     $defaultCompilerOptions: ts.CompilerOptions = {
         allowJs: true,

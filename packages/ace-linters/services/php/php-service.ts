@@ -1,11 +1,9 @@
 import {BaseService} from "../base-service";
-import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
 import {PHP} from "./lib/php";
-import PhpServiceOptions = AceLinters.PhpServiceOptions;
+import {LanguageService, PhpServiceOptions} from "../../types";
 
-
-export class PhpService extends BaseService<PhpServiceOptions> implements AceLinters.LanguageService {
+export class PhpService extends BaseService<PhpServiceOptions> implements LanguageService {
     $service;
 
     constructor(mode: string) {

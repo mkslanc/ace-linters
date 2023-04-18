@@ -1,15 +1,8 @@
 import {Ace, Range as AceRange} from "ace-code";
 import {DescriptionTooltip} from "./components/description-tooltip";
-import {AceLinters} from "./types";
-import Tooltip = AceLinters.Tooltip;
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
 import {IMessageController} from "./types/message-controller-interface";
-import ServiceOptions = AceLinters.ServiceOptions;
-import Editor = Ace.Editor;
-import EditSession = Ace.EditSession;
-import Completion = Ace.Completion;
-import ServiceOptionsMap = AceLinters.ServiceOptionsMap;
 import {MessageController} from "./message-controller";
 import {
     fromAceDelta,
@@ -26,20 +19,21 @@ import * as lsp from "vscode-languageserver-protocol";
 import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
+import {ProviderOptions, ServiceOptions, ServiceOptionsMap, Tooltip} from "./types";
 
 export class LanguageProvider {
-    activeEditor: Editor;
+    activeEditor: Ace.Editor;
     private $descriptionTooltip: DescriptionTooltip;
     private $signatureTooltip: SignatureTooltip;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
-    editors: Editor[] = [];
-    options: AceLinters.ProviderOptions;
+    editors: Ace.Editor[] = [];
+    options: ProviderOptions;
 
-    constructor(messageController: IMessageController, options?: AceLinters.ProviderOptions) {
+    constructor(messageController: IMessageController, options?: ProviderOptions) {
         this.$messageController = messageController;
 
-        this.options = options ?? {} as AceLinters.ProviderOptions;
+        this.options = options ?? {} as ProviderOptions;
         this.options.functionality ??= {
             hover: true,
             completion: {
@@ -59,15 +53,15 @@ export class LanguageProvider {
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
      * @param {Worker} worker
-     * @param {AceLinters.ProviderOptions} options
+     * @param {ProviderOptions} options
      */
-    static create(worker: Worker, options?: AceLinters.ProviderOptions) {
+    static create(worker: Worker, options?: ProviderOptions) {
         let messageController: IMessageController;
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
     }
 
-    static fromCdn(cdnUrl: string, options?: AceLinters.ProviderOptions) {
+    static fromCdn(cdnUrl: string, options?: ProviderOptions) {
         let messageController: IMessageController;
         if (cdnUrl == "" || !(/^http(s)?:/.test(cdnUrl))) {
             throw "Url is not valid";
@@ -81,26 +75,26 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
-    private $registerSession = (session: EditSession, options?: ServiceOptions) => {
+    private $registerSession = (session: Ace.EditSession, options?: ServiceOptions) => {
         this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
     }
 
-    private $getSessionLanguageProvider(session: EditSession): SessionLanguageProvider {
+    private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
         return this.$sessionLanguageProviders[session["id"]];
     }
 
-    private $getFileName(session: EditSession) {
+    private $getFileName(session: Ace.EditSession) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         return sessionLanguageProvider.fileName;
     }
 
-    registerEditor(editor: Editor) {
+    registerEditor(editor: Ace.Editor) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
         this.$registerSession(editor.session);
     }
 
-    $registerEditor(editor: Editor) {
+    $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session));
@@ -131,7 +125,7 @@ export class LanguageProvider {
         this.$signatureTooltip.registerEditor(editor);
     }
 
-    setSessionOptions<OptionsType extends ServiceOptions>(session: EditSession, options: OptionsType) {
+    setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
     }
@@ -140,15 +134,15 @@ export class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
-    configureServiceFeatures(serviceName: AceLinters.SupportedServices, features: AceLinters.ServiceFeatures) {
+    configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures) {
         this.$messageController.configureFeatures(serviceName, features);
     }
 
-    doHover(session: EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
+    doHover(session: Ace.EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
 
-    provideSignatureHelp(session: EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void) {
+    provideSignatureHelp(session: Ace.EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void) {
         this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 
@@ -165,18 +159,18 @@ export class LanguageProvider {
         sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
     }
 
-    doComplete(editor: Editor, session: EditSession, callback: (CompletionList: Completion[] | null) => void) {
+    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completions) => completions && callback(toCompletions(completions)));
     }
 
-    doResolve(item: Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
+    doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
     }
 
 
-    $registerCompleters(editor: Editor) {
+    $registerCompleters(editor: Ace.Editor) {
         let completer = {
             getCompletions: async (editor, session, pos, prefix, callback) => {
                 this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
@@ -192,7 +186,7 @@ export class LanguageProvider {
                     });
                 });
             },
-            getDocTooltip: (item: Completion) => {
+            getDocTooltip: (item: Ace.Completion) => {
                 if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
                     this.doResolve(item, (completionItem?) => {
                         item["isResolved"] = true;
@@ -230,7 +224,7 @@ export class LanguageProvider {
 }
 
 class SessionLanguageProvider {
-    session: EditSession;
+    session: Ace.EditSession;
     fileName: string;
     private $messageController: IMessageController;
     private $deltaQueue: Ace.Delta[] | null;
@@ -243,7 +237,7 @@ class SessionLanguageProvider {
         "javascript": "js"
     }
 
-    constructor(session: EditSession, messageController: IMessageController, options?: ServiceOptions) {
+    constructor(session: Ace.EditSession, messageController: IMessageController, options?: ServiceOptions) {
         this.$messageController = messageController;
         this.session = session;
         this.initFileName();

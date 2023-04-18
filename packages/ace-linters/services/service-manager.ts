@@ -1,9 +1,7 @@
-import LanguageService = AceLinters.LanguageService;
-import ServiceOptions = AceLinters.ServiceOptions;
-import {AceLinters} from "../types";
 import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
+import {LanguageService, ServiceOptions} from "../types";
 
 type Validation = {
     (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): Promise<void>;
@@ -11,7 +9,7 @@ type Validation = {
 }
 
 export class ServiceManager {
-    $services: { [serviceName: string]: AceLinters.ServiceData } = {};
+    $services: { [serviceName: string]: ServiceData } = {};
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {

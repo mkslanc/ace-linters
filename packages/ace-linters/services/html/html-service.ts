@@ -1,15 +1,14 @@
 import {LanguageService as VSLanguageService} from "vscode-html-languageservice";
 import {HTMLFormatConfiguration} from "vscode-html-languageservice/lib/umd/htmlLanguageTypes";
 import {BaseService} from "../base-service";
-import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
 import {HTMLHint} from 'htmlhint';
 
 import * as htmlService from 'vscode-html-languageservice';
-import HtmlServiceOptions = AceLinters.HtmlServiceOptions;
 import {mergeObjects} from "../../utils";
+import {HtmlServiceOptions, LanguageService} from "../../types";
 
-export class HtmlService extends BaseService<HtmlServiceOptions> implements AceLinters.LanguageService {
+export class HtmlService extends BaseService<HtmlServiceOptions> implements LanguageService {
     $service: VSLanguageService;
 
     defaultValidationOptions = {

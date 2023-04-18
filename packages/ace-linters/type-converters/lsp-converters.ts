@@ -16,9 +16,8 @@ import {
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
-import {AceLinters} from "../types";
-import Tooltip = AceLinters.Tooltip;
 import {CommonConverter} from "./common-converters";
+import {Tooltip, TooltipContent} from "../types";
 
 
 export function fromRange(range: Ace.Range): Range {
