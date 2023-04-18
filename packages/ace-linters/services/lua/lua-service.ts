@@ -1,9 +1,9 @@
 import {BaseService} from "../base-service";
 import * as lua from "luaparse";
-import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
+import {LanguageService} from "../../types";
 
-export class LuaService extends BaseService implements AceLinters.LanguageService {
+export class LuaService extends BaseService implements LanguageService {
     $service;
 
     constructor(mode: string) {

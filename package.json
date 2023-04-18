@@ -8,9 +8,9 @@
     "start-dev": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "mkslanc/ace#completions-improvements",
+    "ace-code": "^1.17.0",
     "jsonc-parser": "latest",
-    "typescript": "latest"
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
     "copy-webpack-plugin": "9.1.0",
@@ -22,7 +22,8 @@
     "ts-loader": "latest",
     "webpack": "latest",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "latest"
+    "webpack-dev-server": "latest",
+    "esbuild-loader": "^3.0.1"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

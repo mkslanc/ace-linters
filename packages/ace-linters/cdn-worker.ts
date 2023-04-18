@@ -1,10 +1,10 @@
-import type {AceLinters} from "./types";
+import {SupportedServices} from "./types";
 
 function $workerBlob(script) {
     return new Blob([script.toString()], {"type": "application/javascript"});
 }
 
-export function createWorker(cdnUrl, includeLinters?: { [name in AceLinters.SupportedServices]: boolean }) {
+export function createWorker(cdnUrl, includeLinters?: { [name in SupportedServices]: boolean }) {
     if (typeof Worker == "undefined") return {
         postMessage: function () {
         },
@@ -19,7 +19,7 @@ export function createWorker(cdnUrl, includeLinters?: { [name in AceLinters.Supp
     return new Worker(blobURL);
 }
 
-function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.SupportedServices]?: boolean }) {
+function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServices]?: boolean }) {
     const jsonService = `manager.registerService("json", {
         module: () => {
             importScripts("${cdnUrl}/json-service.js");
@@ -127,7 +127,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in AceLinters.Su
     let services: Array<string> = [];
     Object.entries(includeLinters).forEach(([key, value]) => {
         if (value) {
-            switch (key as AceLinters.SupportedServices) {
+            switch (key as SupportedServices) {
                 /*case "javascript":
                     services.push(javascriptService);
                     break;*/

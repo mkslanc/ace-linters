@@ -81,6 +81,9 @@ module.exports = (env, argv) => {
                     }, {
                         from: "packages/demo/enable-threads.js",
                         to: "."
+                    }, {
+                        from: "packages/ace-linters",
+                        to: "ace-linters"
                     }
                 ]
             })

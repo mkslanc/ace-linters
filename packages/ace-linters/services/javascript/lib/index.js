@@ -18270,7 +18270,7 @@ var require_items = __commonJS({
         $it.schema = $schema;
         $it.schemaPath = $schemaPath;
         $it.errSchemaPath = $errSchemaPath;
-        out += "  for (var " + $idx + " = " + 0 + "; " + $idx + " < " + $data + ".length; " + $idx + "++) { ";
+        out += "  for (var " + $idx + " = 0; " + $idx + " < " + $data + ".length; " + $idx + "++) { ";
         $it.errorPath = it.util.getPathExpr(it.errorPath, $idx, it.opts.jsonPointers, true);
         var $passData = $data + "[" + $idx + "]";
         $it.dataPathArr[$dataNxt] = $idx;

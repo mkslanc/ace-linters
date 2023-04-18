@@ -1,13 +1,13 @@
 import {LanguageService as VSLanguageService} from "vscode-css-languageservice";
 import {CSSFormatConfiguration} from "vscode-css-languageservice/lib/umd/cssLanguageTypes";
 import {BaseService} from "../base-service";
-import {AceLinters} from "../../types";
 import * as lsp from "vscode-languageserver-protocol";
 
 import * as cssService from 'vscode-css-languageservice';
 import {mergeObjects} from "../../utils";
+import {LanguageService} from "../../types";
 
-export class CssService extends BaseService implements AceLinters.LanguageService {
+export class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;
     $languageId: string;
     $defaultFormatOptions: CSSFormatConfiguration = {
