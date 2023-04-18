@@ -3,13 +3,11 @@ import {
     Position,
     Diagnostic,
     InsertTextFormat,
-    CompletionList,
     CompletionItem,
     CompletionItemKind,
     Hover,
     MarkupContent,
     MarkedString,
-    MarkupKind,
     TextEdit,
     InsertReplaceEdit,
     TextDocumentContentChangeEvent,
@@ -19,7 +17,7 @@ import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
 import {CommonConverter} from "./common-converters";
-import {Tooltip, TooltipContent} from "../types";
+import {CompletionService, Tooltip} from "../types";
 
 
 export function fromRange(range: Ace.Range): Range {
@@ -85,24 +83,37 @@ export function toCompletion(item: CompletionItem): Ace.Completion {
     }
     completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
     completion["position"] = item["position"];
+    completion["service"] = item["service"]; //TODO: since we have multiple servers, we need to determine which
+    // server to use for resolving
     return completion;
 }
 
-export function toCompletions(completionList: CompletionList | CompletionItem[]): Ace.Completion[] {
-    if (!Array.isArray(completionList))
-        completionList = completionList.items;
-    return completionList && completionList.map((item) => toCompletion(item));
+
+export function toCompletions(completions: CompletionService[]): Ace.Completion[] {
+    if (completions.length > 0) {
+        let combinedCompletions = completions.map((el) => {
+            if (!el.completions) {
+                return [];
+            }
+            let allCompletions;
+            if (Array.isArray(el.completions)) {
+                allCompletions = el.completions;
+            } else {
+                allCompletions = el.completions.items;
+            }
+            return allCompletions.map((item) => {
+                item["service"] = el.service;
+                return item;
+            });
+        }).flat();
+
+        return combinedCompletions.map((item) => toCompletion(item))
+    }
+    return [];
 }
 
 export function toResolvedCompletion(completion: Ace.Completion, item: CompletionItem): Ace.Completion {
-    let doc = fromMarkupContent(item.documentation);
-    if (doc) {
-        if (doc.type === "markdown") {
-            completion["docMarkdown"] = doc.text;
-        } else {
-            completion["docText"] = doc.text;
-        }
-    }
+    completion["docMarkdown"] = fromMarkupContent(item.documentation);
     return completion;
 }
 
@@ -132,6 +143,7 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
     completionItem["item"] = completion["item"];
+    completionItem["service"] = completion["service"]; //TODO:
 
     return completionItem;
 }
@@ -149,66 +161,78 @@ export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): Ace.Ra
     }
 }
 
-export function toTooltip(hover: Hover | undefined): Tooltip | undefined {
-    let content;
+export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
     if (!hover)
         return;
-    if (MarkupContent.is(hover.contents)) {
-        content = fromMarkupContent(hover.contents);
-    } else if (MarkedString.is(hover.contents)) {
-        content = {type: "markdown", text: "```" + (hover.contents as any).value + "```"};
-    } else {
-        let contents = hover.contents.map((el) => {
-            if (typeof el !== "string") {
-                return `\`\`\`${el.value}\`\`\``;
-            } else {
-                return el;
-            }
-        });
-        content = {type: "markdown", text: contents.join("\n\n")};
-    }
-    return {content: content, range: hover.range && toRange(hover.range)};
+    let content = hover.map((el) => {
+        if (MarkupContent.is(el.contents)) {
+            return fromMarkupContent(el.contents);
+        } else if (MarkedString.is(el.contents)) {
+            return "```" + (el.contents as any).value + "```";
+        } else {
+            let contents = el.contents.map((el) => {
+                if (typeof el !== "string") {
+                    return `\`\`\`${el.value}\`\`\``;
+                } else {
+                    return el;
+                }
+            });
+            return contents.join("\n\n");
+        }
+    });
+
+    //TODO: not to forget about `range` when we will have this feature in editor
+    return {
+        content: {
+            type: "markdown",
+            text: content.join("\n\n")
+        }
+    };
 }
 
-export function fromSignatureHelp(signatureHelp: SignatureHelp | undefined): Tooltip | undefined {
-    let content;
+export function fromSignatureHelp(signatureHelp: SignatureHelp[] | undefined): Tooltip | undefined {
     if (!signatureHelp)
         return;
-    let signatureIndex = signatureHelp?.activeSignature || 0;
-    let activeSignature = signatureHelp.signatures[signatureIndex];
-    let activeParam = signatureHelp?.activeParameter;
-    let contents = activeSignature.label;
-    if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
-        let param = activeSignature.parameters[activeParam].label;
-        if (typeof param == "string") {
-            contents = contents.replace(param, `**${param}**`);
+    let content = signatureHelp.map((el) => {
+        let signatureIndex = el?.activeSignature || 0;
+        let activeSignature = el.signatures[signatureIndex];
+        let activeParam = el?.activeParameter;
+        let contents = activeSignature.label;
+        if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
+            let param = activeSignature.parameters[activeParam].label;
+            if (typeof param == "string") {
+                contents = contents.replace(param, `**${param}**`);
+            }
         }
-    }
-    if (activeSignature.documentation) {
-        if (MarkupContent.is(activeSignature.documentation)) {
-            content = fromMarkupContent(activeSignature.documentation);
-            content.text = contents + "\n\n" + content.text;
+        if (activeSignature.documentation) {
+            if (MarkupContent.is(activeSignature.documentation)) {
+                return contents + "\n\n" + fromMarkupContent(activeSignature.documentation)
+            } else {
+                contents += "\n\n" + activeSignature.documentation;
+                return contents;
+            }
         } else {
-            contents += "\n\n" + activeSignature.documentation;
-            content = {type: "markdown", text: contents};
+            return contents;
         }
-    } else {
-        content = {type: "markdown", text: contents};
-    }
+    });
 
-    return {content: content};
+
+    return {
+        content: {
+            type: "markdown",
+            text: content.join("\n\n")
+        }
+    };
 }
 
-export function fromMarkupContent(content?: string | MarkupContent): TooltipContent | undefined {
+export function fromMarkupContent(content?: string | MarkupContent): string | undefined {
     if (!content)
         return;
 
     if (typeof content === "string") {
-        return {type: "plaintext", text: content};
-    } else if (content.kind === MarkupKind.Markdown) {
-        return {type: "markdown", text: content.value};
+        return content;
     } else {
-        return {type: "plaintext", text: content.value};
+        return content.value;
     }
 }
 

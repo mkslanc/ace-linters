@@ -1,8 +1,9 @@
 import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
-import {AceLanguageClient} from "ace-linters/ace-language-client";
+import {LanguageProvider} from "ace-linters/build/ace-linters";
+import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {createEditorWithLSP} from "../utils";
-import {jsonContent, jsonSchema, jsonSchema2} from "../webworker-lsp/docs-example/json-example";
+import {jsContent} from "../webworker-lsp/docs-example/javascript-example";
 
 import event from "ace-code/src/lib/event";
 
@@ -11,34 +12,25 @@ import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 import keyUtil from "ace-code/src/lib/keys";
 
 let modes = [
-    {name: "json", mode: "ace/mode/json", content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
-
+    {name: "javascript validated by EsLint, with hover, autocompletion and format of Typescript", mode: "ace/mode/javascript", content: jsContent},
 ];
+
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = AceLanguageClient.for(worker);
-
-languageProvider.setGlobalOptions("json", {
-    schemas: [
-        {
-            uri: "common-form.schema.json",
-            schema: jsonSchema2
-        }
-    ]
-});
-
+let languageProvider = LanguageProvider.create(worker);
 let i = 0;
 for (let mode of modes) {
     createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
-languageProvider.setGlobalOptions("json", {
-    schemas: [{
-        uri: "colors.schema.json",
-        schema: jsonSchema
-    },]
-}, true);
-
+languageProvider.setGlobalOptions("typescript", {
+    compilerOptions: {
+        allowJs: true,
+        checkJs: true,
+        target: ScriptTarget.ESNext,
+        jsx: JsxEmit.Preserve
+    }
+});
 let menuKb = new HashHandler([
     {
         bindKey: "Ctrl-Shift-B",

@@ -9,13 +9,14 @@ import {
     HoverMessage,
     InitMessage, MessageType,
     ResolveCompletionMessage, SignatureHelpMessage,
+    ConfigureFeaturesMessage,
     ValidateMessage
 } from "./message-types";
 import * as oop from "ace-code/src/lib/oop";
 import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import {ServiceOptions, ServiceOptionsMap} from "./types";
+import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types";
 
 export class MessageController implements IMessageController {
     private $worker: Worker;
@@ -29,7 +30,7 @@ export class MessageController implements IMessageController {
         });
 
     }
-
+    
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
         this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
 
@@ -40,7 +41,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new ValidateMessage(sessionId), callback);
     }
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void) {
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void) {
         this.postMessage(new CompleteMessage(sessionId, position), callback);
     }
 
@@ -52,7 +53,7 @@ export class MessageController implements IMessageController {
         this.postMessage(new FormatMessage(sessionId, range, format), callback);
     }
 
-    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void) {
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void) {
         this.postMessage(new HoverMessage(sessionId, position), callback)
     }
 
@@ -83,12 +84,16 @@ export class MessageController implements IMessageController {
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
 
-    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void) {
         this.postMessage(new SignatureHelpMessage(sessionId, position), callback)
     }
 
     findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void) {
         this.postMessage(new DocumentHighlightMessage(sessionId, position), callback)
+    }
+
+    configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void {
+        this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

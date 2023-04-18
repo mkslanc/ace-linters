@@ -21,6 +21,7 @@ module.exports = (env, argv) => {
             webworker_demo: './packages/demo/webworker-json-rpc/demo.ts',
             websocket_demo: './packages/demo/websockets-lsp/client.ts',
             rust_demo: './packages/demo/rust-analyzer/demo.ts',
+            multiprovider_demo: './packages/demo/multiprovider/demo.ts',
         },
         mode: "production",
         module: {
@@ -64,20 +65,8 @@ module.exports = (env, argv) => {
             new CopyPlugin({
                 patterns: [
                     {
-                        from: "packages/demo/index.html",
-                        to: "."
-                    }, {
-                        from: "packages/demo/webworker.html",
-                        to: "."
-                    }, {
-                        from: "packages/demo/websocket.html",
-                        to: "."
-                    }, {
-                        from: "packages/demo/default_services.html",
-                        to: "."
-                    }, {
-                        from: "packages/demo/rust_analyzer.html",
-                        to: "."
+                        from: "packages/demo/*.html",
+                        to: "[name][ext]"
                     }, {
                         from: "packages/demo/enable-threads.js",
                         to: "."

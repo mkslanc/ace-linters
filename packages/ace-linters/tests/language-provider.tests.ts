@@ -1,4 +1,5 @@
-import ace, {Ace} from "ace-code";
+import * as ace from "ace-code";
+import {Ace} from "ace-code";
 import "ace-code/src/test/mockdom";
 //@ts-ignore
 window["self"] = {};
@@ -62,6 +63,7 @@ describe('LanguageProvider tests', () => {
 
         manager = new ServiceManager(ctx);
         manager.registerService("html", {
+            features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
             module: () => import("../services/html/html-service"),
             className: "HtmlService",
             modes: "html"
@@ -88,12 +90,22 @@ describe('LanguageProvider tests', () => {
         expect(hoverText).to.equal("Plain text");
     })
 
-    it('do hover', (done) => {
+    it('do hover or not, depending on service feature state', (done) => {
         languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
             let hoverText = languageProvider.getTooltipText(hover);
             expect(hoverText).to.equal(`<p>The html element represents the root of an HTML document.</p>
 <p><a target='_blank' href="https://developer.mozilla.org/docs/Web/HTML/Element/html">MDN Reference</a></p>`);
-            done();
+            languageProvider.configureServiceFeatures("html", {
+                hover: false,
+                diagnostics: false,
+            });
+            
+            languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
+                let hoverText = languageProvider.getTooltipText(hover);
+                expect(hoverText).to.equal("");
+
+                done();
+            })
         })
     })
 
@@ -148,6 +160,7 @@ describe('LanguageProvider tests', () => {
             ctx.setEmitter(client);
 
             manager.registerService("json", {
+                features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
                 module: () => import("../services/json/json-service"),
                 className: "JsonService",
                 modes: "json"

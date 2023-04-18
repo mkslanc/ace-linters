@@ -8,6 +8,7 @@ import {
 } from "vscode-languageserver-protocol/browser";
 import {IMessageController} from "./types/message-controller-interface";
 import {Ace} from "ace-code";
+import {CompletionService, ServiceFeatures, SupportedServices} from "./types";
 
 export class MessageControllerWS extends events.EventEmitter implements IMessageController {
     private isConnected = false;
@@ -68,6 +69,10 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             this.socket = mode;
             this.$connectSocket();
         }
+    }
+
+    configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void {
+        throw new Error('Method not implemented.');
     }
 
     private $connectSocket() {
@@ -188,7 +193,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.connection.sendNotification('textDocument/didChange', textDocumentChange);
     }
 
-    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover) => void) {
+    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void) {
         if (!this.isInitialized) {
             return;
         }
@@ -202,12 +207,12 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             position: position,
         };
         let hoverCallback = (result: lsp.Hover) => {
-            callback && callback(result);
+            callback && callback([result]);
         };
         this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
     }
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completionList: lsp.CompletionList | lsp.CompletionItem[] | null) => void) {
+    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void) {
         if (!this.isInitialized) {
             return;
         }
@@ -221,7 +226,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             },
             position: position,
         };
-        let completionCallback = (result: lsp.CompletionList | lsp.CompletionItem[] | null) => {
+        let completionCallback = (result: CompletionService[]) => {
             callback && callback(result);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
@@ -306,7 +311,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
     }
 
-    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp) => void) {
+    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void) {
         if (!this.isInitialized)
             return;
         if (!this.serverCapabilities?.signatureHelpProvider)
@@ -318,7 +323,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             position: position,
         };
         let signatureHelpCallback = (result: lsp.SignatureHelp) => {
-            callback && callback(result);
+            callback && callback([result]);
         };
         this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
     }
