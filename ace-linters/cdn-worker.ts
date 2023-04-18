@@ -29,6 +29,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "json|json5"
     });`;
     const htmlService = `manager.registerService("html", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/html-service.js");
             return {HtmlService};
@@ -37,6 +38,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "html"
     });`;
     const cssService = `manager.registerService("css", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -45,6 +47,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "css"
     });`;
     const lessService = `manager.registerService("less", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -53,6 +56,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "less"
     });`;
     const scssService = `manager.registerService("scss", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -69,6 +73,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "typescript|tsx|javascript|jsx",
     });`;
     const luaService = `manager.registerService("lua", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/lua-service.js");
             return {LuaService};
@@ -77,6 +82,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "lua",
     });`;
     const yamlService = `manager.registerService("yaml", {
+        features: {signatureHelp: false, documentHighlight: false},
         module: () => {
             importScripts("${cdnUrl}/yaml-service.js");
             return {YamlService};
@@ -85,6 +91,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "yaml",
     });`;
     const xmlService = `manager.registerService("xml", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/xml-service.js");
             return {XmlService};
@@ -93,6 +100,7 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         modes: "xml",
     });`;
     const phpService = `manager.registerService("php", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/php-service.js");
             return {PhpService};
@@ -100,15 +108,17 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         className: "PhpService",
         modes: "php"
     });`;
-    /*const javascriptService = `manager.registerService("javascript", {
+    const javascriptService = `manager.registerService("javascript", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/javascript-service.js");
             return {JavascriptService};
         },
         className: "JavascriptService",
         modes: "javascript",
-    });`;*/
+    });`;
     const pythonService = `manager.registerService("python", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/python-service.js");
             return {PythonService};
@@ -121,16 +131,16 @@ function generateLintersImport(cdnUrl, includeLinters?: { [name in SupportedServ
         return `!function () {
     importScripts("${cdnUrl}/service-manager.js");
     let manager = new ServiceManager(self);
-    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, pythonService].join("\n")}
+    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, pythonService, javascriptService].join("\n")}
 }()`;
     }
     let services: Array<string> = [];
     Object.entries(includeLinters).forEach(([key, value]) => {
         if (value) {
             switch (key as SupportedServices) {
-                /*case "javascript":
+                case "javascript":
                     services.push(javascriptService);
-                    break;*/
+                    break;
                 case "css":
                     services.push(cssService);
                     break;

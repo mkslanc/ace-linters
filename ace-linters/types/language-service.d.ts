@@ -11,6 +11,7 @@ export interface LanguageService {
     $service;
     mode: string;
     globalOptions;
+    serviceData: ServiceData;
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
 
@@ -36,7 +37,7 @@ export interface LanguageService {
 
     removeDocument(document: TextDocumentIdentifier);
 
-    getDocumentValue(uri: string): string;
+        getDocumentValue(uri: string): string | undefined;
 
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
@@ -58,9 +59,14 @@ export interface TextChange {
     newText: string;
 }
 
-export interface ServiceOptions {
-    [name: string]: any
-}
+    export interface CompletionService {
+        completions: lsp.CompletionItem[] | lsp.CompletionList | null,
+        service: string
+    }
+
+    export interface ServiceOptions {
+        [name: string]: any
+    }
 
 export interface JsonServiceOptions {
     schemas?: {
@@ -144,30 +150,46 @@ export interface ServiceOptionsMap {
     python: PythonServiceOptions
 }
 
-export type SupportedServices =
-    "json"
-    | "typescript"
-    | "css"
-    | "html"
-    | "yaml"
-    | "php"
-    | "xml"
-    | "javascript"
-    | "lua"
-    | "less"
-    | "scss"
-    | "python";
+    export type SupportedServices =
+        "json"
+        | "json5"
+        | "typescript"
+        | "css"
+        | "html"
+        | "yaml"
+        | "php"
+        | "xml"
+        | "javascript"
+        | "lua"
+        | "less"
+        | "scss"
+        | "python";
 
-export interface ProviderOptions {
-    functionality: {
-        hover: boolean,
-        completion: {
-            overwriteCompleters: boolean
-        } | false,
-        completionResolve: boolean,
-        format: boolean,
-        documentHighlights: boolean,
-        signatureHelp: boolean
-    },
-    markdownConverter?: MarkDownConverter
-}
+    export interface ProviderOptions {
+        functionality: {
+            hover: boolean,
+            completion: {
+                overwriteCompleters: boolean
+            } | false,
+            completionResolve: boolean,
+            format: boolean,
+            documentHighlights: boolean,
+            signatureHelp: boolean
+        },
+        markdownConverter?: MarkDownConverter
+    }
+
+    export type ServiceFeatures = {
+        [feature in SupportedFeatures]?: boolean;
+    };
+    
+    export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight"
+
+    export interface ServiceData {
+        module: () => any,
+        className: string,
+        modes: string,
+        serviceInstance?: LanguageService,
+        options?: ServiceOptions,
+        features?: ServiceFeatures
+    }

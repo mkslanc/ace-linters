@@ -1,42 +1,47 @@
-import {mergeObjects} from "../utils";
+import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
-import {LanguageService, ServiceOptions} from "../types";
+import {LanguageService, ServiceData, ServiceFeatures, ServiceOptions, SupportedFeatures} from "../types";
 
-interface ServiceData {
-    module: () => any,
-    className: string,
-    modes: string,
-    serviceInstance?: LanguageService,
-    options?: ServiceOptions
+type Validation = {
+    (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): Promise<void>;
+    (document: TextDocumentIdentifier | undefined, servicesInstances: LanguageService[]): Promise<void>;
 }
 
 export class ServiceManager {
-    private $services: { [serviceName: string]: ServiceData } = {};
+    $services: { [serviceName: string]: ServiceData } = {};
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
     constructor(ctx) {
-        type Validation = {
-            (document: TextDocumentIdentifier, serviceInstance?: LanguageService): void;
-            (document: TextDocumentIdentifier | undefined, serviceInstance: LanguageService): void;
-        }
-        let doValidation: Validation = (document?: TextDocumentIdentifier, serviceInstance?: LanguageService) => {
-            serviceInstance ??= this.getServiceInstance(document!.uri);
-            if (!serviceInstance)
+
+        let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
+            servicesInstances ??= this.getServicesInstances(document!.uri);
+            if (servicesInstances.length === 0) {
                 return;
+            }
+            //this is list of documents linked to services
+            let sessionIDList = Object.keys(servicesInstances[0].documents);
+            servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
             let postMessage = {
                 "type": MessageType.validate,
             };
-            let sessionIDList = Object.keys(serviceInstance.documents);
+            
             for (let sessionID of sessionIDList) {
-                serviceInstance.doValidation({uri: sessionID}).then((result) => {
-                    postMessage["sessionId"] = sessionID;
-                    postMessage["value"] = result;
-                    ctx.postMessage(postMessage);
-                });
-
+                let diagnostics = await Promise.all(servicesInstances.map((el) => {
+                    return el.doValidation({uri: sessionID});
+                })) ?? [];
+                postMessage["sessionId"] = sessionID;
+                postMessage["value"] = diagnostics.flat();
+                ctx.postMessage(postMessage);
             }
         }
+        
+        let provideValidationForServiceInstance = async (serviceName) => {
+            var serviceInstance = this.$services[serviceName].serviceInstance;
+            if (serviceInstance)
+                await doValidation(undefined, [serviceInstance]);
+        }
+        
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
             let sessionID = message.sessionId ?? "";
@@ -45,61 +50,91 @@ export class ServiceManager {
                 "type": message.type,
                 "sessionId": sessionID,
             };
-            let serviceInstance = this.getServiceInstance(sessionID);
+
+            let serviceInstances = this.getServicesInstances(sessionID);
             let documentIdentifier = {
                 uri: sessionID,
                 version: version
             };
             switch (message["type"] as MessageType) {
                 case MessageType.format:
-                    postMessage["value"] = serviceInstance?.format(documentIdentifier, message.value, message.format);
+                    serviceInstances = this.filterByFeature(serviceInstances, "format");
+                    if (serviceInstances.length > 0) {
+                        //we will use only first service to format
+                        postMessage["value"] = serviceInstances[0].format(documentIdentifier, message.value, message.format);
+                    }
                     break;
                 case MessageType.complete:
-                    postMessage["value"] = await serviceInstance?.doComplete(documentIdentifier, message.value);
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service) => {
+                        return {
+                            completions: await service.doComplete(documentIdentifier, message.value),
+                            service: service.serviceData.className
+                        };
+                    }))).filter(notEmpty);
                     break;
                 case MessageType.resolveCompletion:
-                    postMessage["value"] = await serviceInstance?.doResolve(message.value);
+                    let serviceName = message.value.service;
+                    postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
+                        if (service.serviceData.className === serviceName) {
+                            return service;
+                        }
+                    })?.doResolve(message.value);
                     break;
                 case MessageType.change:
-                    serviceInstance?.setValue(documentIdentifier, message.value);
-                    doValidation(documentIdentifier, serviceInstance);
+                    serviceInstances.forEach((service) => {
+                        service.setValue(documentIdentifier, message.value);
+                    });
+                    await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.applyDelta:
-                    serviceInstance?.applyDeltas(documentIdentifier, message.value);
-                    doValidation(documentIdentifier, serviceInstance);
+                    serviceInstances.forEach((service) => {
+                        service.applyDeltas(documentIdentifier, message.value);
+                    });
+                    await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.hover:
-                    postMessage["value"] = await serviceInstance?.doHover(documentIdentifier, message.value);
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service) => {
+                        return service.doHover(documentIdentifier, message.value);
+                    }))).filter(notEmpty);
                     break;
                 case MessageType.validate:
-                    postMessage["value"] = await serviceInstance?.doValidation(documentIdentifier);
+                    postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.init: //this should be first message
                     await this.addDocument(documentIdentifier, message.value, message.mode, message.options);
-                    doValidation(documentIdentifier);
+                    await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
                     await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options);
-                    doValidation(documentIdentifier, serviceInstance);
+                    await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.changeOptions:
-                    serviceInstance?.setOptions(sessionID, message.options);
-                    doValidation(documentIdentifier, serviceInstance);
+                    serviceInstances.forEach((service) => {
+                        service.setOptions(sessionID, message.options);
+                    });
+                    await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.dispose:
                     this.removeDocument(documentIdentifier);
                     break;
                 case MessageType.globalOptions:
-                    serviceInstance = this.$services[message.serviceName].serviceInstance;
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
-                    if (serviceInstance)
-                        doValidation(undefined, serviceInstance);
+                    await provideValidationForServiceInstance(message.serviceName);
+                    break;
+                case MessageType.configureFeatures:
+                    this.configureFeatures(message.serviceName, message.options);
+                    await provideValidationForServiceInstance(message.serviceName);
                     break;
                 case MessageType.signatureHelp:
-                    postMessage["value"] = await serviceInstance?.provideSignatureHelp(documentIdentifier, message.value);
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service) => {
+                        return service.provideSignatureHelp(documentIdentifier, message.value);
+                    }))).filter(notEmpty);
                     break;
                 case MessageType.documentHighlight:
-                    postMessage["value"] = await serviceInstance?.findDocumentHighlights(documentIdentifier, message.value);
+                    let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service) => {
+                        return service.findDocumentHighlights(documentIdentifier, message.value);
+                    }))).filter(notEmpty);
+                    postMessage["value"] = highlights.flat();
                     break;
             }
 
@@ -107,20 +142,27 @@ export class ServiceManager {
         })
     }
 
-    private static async $initServiceInstance(service: ServiceData) {
+    private static async $initServiceInstance(service: ServiceData): Promise<LanguageService> {
         let module = await service.module();
         service.serviceInstance = new module[service.className](service.modes);
         if (service.options)
             service.serviceInstance!.setGlobalOptions(service.options);
+        service.serviceInstance!.serviceData = service;
+        return service.serviceInstance!;
     }
 
-    private async $getServiceInstanceByMode(mode: string): Promise<LanguageService | undefined> {
-        let service = this.findServiceByMode(mode);
-        if (!service)
-            return;
-        if (!service.serviceInstance)
-            await ServiceManager.$initServiceInstance(service);
-        return service.serviceInstance!;
+    private async $getServicesInstancesByMode(mode: string): Promise<LanguageService[]> {
+        let services = this.findServicesByMode(mode);
+        if (services.length === 0) {
+            return [];
+        }
+        return Promise.all(services.map(async (service) => {
+            if (!service.serviceInstance) {
+                return await ServiceManager.$initServiceInstance(service);
+            } else {
+                return service.serviceInstance;
+            }
+        }));
     }
 
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge = false) {
@@ -137,8 +179,8 @@ export class ServiceManager {
         if (!mode || !/^ace\/mode\//.test(mode))
             return;
         mode = mode.replace("ace/mode/", "");
-        let serviceInstance = await this.$getServiceInstanceByMode(mode);
-        if (!serviceInstance)
+        let serviceInstances = await this.$getServicesInstancesByMode(mode);
+        if (serviceInstances.length === 0)
             return;
         let documentItem = {
             uri: documentIdentifier.uri,
@@ -146,7 +188,7 @@ export class ServiceManager {
             languageId: mode,
             text: documentValue
         }
-        serviceInstance.addDocument(documentItem);
+        serviceInstances.forEach((el) => el.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
     }
 
@@ -156,24 +198,27 @@ export class ServiceManager {
     }
 
     removeDocument(document: TextDocumentIdentifier) {
-        let service = this.getServiceInstance(document.uri);
-        if (service) {
-            service.removeDocument(document);
+        let services = this.getServicesInstances(document.uri);
+        if (services.length > 0) {
+            services.forEach((el) => el.removeDocument(document));
             delete this.$sessionIDToMode[document.uri];
         }
     }
 
-    getServiceInstance(sessionID: string): LanguageService | undefined {
+    getServicesInstances(sessionID: string): LanguageService[] {
         let mode = this.$sessionIDToMode[sessionID];
-        let service = this.findServiceByMode(mode);
-        if (!mode || !service?.serviceInstance)
-            return; //TODO:
-
-        return service.serviceInstance;
+        if (!mode)
+            return []; //TODO:
+        let services = this.findServicesByMode(mode);
+        return services.map((el) => el.serviceInstance).filter(notEmpty);
     }
 
-    findServiceByMode(mode: string): ServiceData | undefined {
-        return Object.values(this.$services).find((el) => {
+    filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
+        return serviceInstances.filter((el) => el.serviceData.features![feature] === true);
+    }
+
+    findServicesByMode(mode: string): ServiceData[] {
+        return Object.values(this.$services).filter((el) => {
             let extensions = el.modes.split('|');
             if (extensions.includes(mode))
                 return el;
@@ -181,6 +226,24 @@ export class ServiceManager {
     }
 
     registerService(name: string, service: ServiceData) {
+        service.features = this.setDefaultFeaturesState(service.features);
         this.$services[name] = service;
+    }
+
+    configureFeatures(name: string, features: ServiceFeatures) {
+        features = this.setDefaultFeaturesState(features);
+        this.$services[name].features = features;
+    }
+
+    setDefaultFeaturesState(serviceFeatures?: ServiceFeatures) {
+        let features = serviceFeatures ?? {} as ServiceFeatures;
+        features.hover ??= true;
+        features.completion ??= true;
+        features.completionResolve ??= true;
+        features.format ??= true;
+        features.diagnostics ??= true;
+        features.signatureHelp ??= true;
+        features.documentHighlight ??= true;
+        return features;
     }
 }

@@ -1,0 +1,1 @@
+{"version":3,"file":"bundle.165.js","mappings":";;;;;AAAA;AACA,UAAU,QAAQ,IAAI,QAAQ;AAC9B,KAAK;AACL;AACA","sources":["webpack://ace-linters-root/./node_modules/ace-code/src/snippets/makefile.snippets.js"],"sourcesContent":["module.exports = `snippet ifeq\n\tifeq (\\${1:cond0},\\${2:cond1})\n\t\t\\${3:code}\n\tendif\n`;\n"],"names":[],"sourceRoot":""}

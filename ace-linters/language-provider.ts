@@ -19,7 +19,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
-import {ProviderOptions, ServiceOptions, ServiceOptionsMap, Tooltip} from "./types";
+import {ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices, Tooltip} from "./types";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -134,6 +134,10 @@ export class LanguageProvider {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
+    configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures) {
+        this.$messageController.configureFeatures(serviceName, features);
+    }
+
     doHover(session: Ace.EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void) {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
     }
@@ -158,7 +162,7 @@ export class LanguageProvider {
     doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
-            (completionList) => completionList && callback(toCompletions(completionList)));
+            (completions) => completions && callback(toCompletions(completions)));
     }
 
     doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {

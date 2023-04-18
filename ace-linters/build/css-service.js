@@ -290,6 +290,9 @@ function mergeObjects(obj1, obj2) {
   }
   return mergedObjects;
 }
+function notEmpty(value) {
+  return value !== null && value !== void 0;
+}
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
 /* --------------------------------------------------------------------------------------------
@@ -600,7 +603,8 @@ class BaseService {
     }
   }
   getDocumentValue(uri) {
-    return this.getDocument(uri).getText();
+    var _a;
+    return (_a = this.getDocument(uri)) == null ? void 0 : _a.getText();
   }
   setValue(identifier, value) {
     let document = this.getDocument(identifier.uri);

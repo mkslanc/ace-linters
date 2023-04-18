@@ -18889,17 +18889,24 @@ class GlobalOptionsMessage {
     this.merge = merge;
   }
 }
+class ConfigureFeaturesMessage {
+  constructor(serviceName, options) {
+    this.type = 12 /* configureFeatures */;
+    this.serviceName = serviceName;
+    this.options = options;
+  }
+}
 class SignatureHelpMessage extends BaseMessage {
   constructor(sessionId, value) {
     super(sessionId);
-    this.type = 12 /* signatureHelp */;
+    this.type = 13 /* signatureHelp */;
     this.value = value;
   }
 }
 class DocumentHighlightMessage extends BaseMessage {
   constructor(sessionId, value) {
     super(sessionId);
-    this.type = 13 /* documentHighlight */;
+    this.type = 14 /* documentHighlight */;
     this.value = value;
   }
 }
@@ -18916,8 +18923,9 @@ var MessageType = /* @__PURE__ */ ((MessageType2) => {
   MessageType2[MessageType2["changeOptions"] = 9] = "changeOptions";
   MessageType2[MessageType2["dispose"] = 10] = "dispose";
   MessageType2[MessageType2["globalOptions"] = 11] = "globalOptions";
-  MessageType2[MessageType2["signatureHelp"] = 12] = "signatureHelp";
-  MessageType2[MessageType2["documentHighlight"] = 13] = "documentHighlight";
+  MessageType2[MessageType2["configureFeatures"] = 12] = "configureFeatures";
+  MessageType2[MessageType2["signatureHelp"] = 13] = "signatureHelp";
+  MessageType2[MessageType2["documentHighlight"] = 14] = "documentHighlight";
   return MessageType2;
 })(MessageType || {});
 
@@ -18982,6 +18990,9 @@ class MessageController {
   }
   findDocumentHighlights(sessionId, position, callback) {
     this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
+  }
+  configureFeatures(serviceName, features) {
+    this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
   }
   postMessage(message, callback) {
     if (callback) {
@@ -19063,22 +19074,32 @@ function toCompletion(item) {
   }
   completion["documentation"] = item.documentation;
   completion["position"] = item["position"];
+  completion["service"] = item["service"];
   return completion;
 }
-function toCompletions(completionList) {
-  if (!Array.isArray(completionList))
-    completionList = completionList.items;
-  return completionList && completionList.map((item) => toCompletion(item));
+function toCompletions(completions) {
+  if (completions.length > 0) {
+    let combinedCompletions = completions.map((el) => {
+      if (!el.completions) {
+        return [];
+      }
+      let allCompletions;
+      if (Array.isArray(el.completions)) {
+        allCompletions = el.completions;
+      } else {
+        allCompletions = el.completions.items;
+      }
+      return allCompletions.map((item) => {
+        item["service"] = el.service;
+        return item;
+      });
+    }).flat();
+    return combinedCompletions.map((item) => toCompletion(item));
+  }
+  return [];
 }
 function toResolvedCompletion(completion, item) {
-  let doc = fromMarkupContent(item.documentation);
-  if (doc) {
-    if (doc.type === "markdown") {
-      completion["docMarkdown"] = doc.text;
-    } else {
-      completion["docText"] = doc.text;
-    }
-  }
+  completion["docMarkdown"] = fromMarkupContent(item.documentation);
   return completion;
 }
 function toCompletionItem(completion) {
@@ -19108,6 +19129,7 @@ function toCompletionItem(completion) {
   completionItem["fileName"] = completion["fileName"];
   completionItem["position"] = completion["position"];
   completionItem["item"] = completion["item"];
+  completionItem["service"] = completion["service"];
   return completionItem;
 }
 function getTextEditRange(textEdit) {
@@ -19123,61 +19145,70 @@ function getTextEditRange(textEdit) {
   }
 }
 function toTooltip(hover) {
-  let content;
   if (!hover)
     return;
-  if (main.MarkupContent.is(hover.contents)) {
-    content = fromMarkupContent(hover.contents);
-  } else if (main.MarkedString.is(hover.contents)) {
-    content = { type: "markdown", text: "```" + hover.contents.value + "```" };
-  } else {
-    let contents = hover.contents.map((el) => {
-      if (typeof el !== "string") {
-        return `\`\`\`${el.value}\`\`\``;
-      } else {
-        return el;
-      }
-    });
-    content = { type: "markdown", text: contents.join("\n\n") };
-  }
-  return { content, range: hover.range && toRange(hover.range) };
+  let content = hover.map((el) => {
+    if (main.MarkupContent.is(el.contents)) {
+      return fromMarkupContent(el.contents);
+    } else if (main.MarkedString.is(el.contents)) {
+      return "```" + el.contents.value + "```";
+    } else {
+      let contents = el.contents.map((el2) => {
+        if (typeof el2 !== "string") {
+          return `\`\`\`${el2.value}\`\`\``;
+        } else {
+          return el2;
+        }
+      });
+      return contents.join("\n\n");
+    }
+  });
+  return {
+    content: {
+      type: "markdown",
+      text: content.join("\n\n")
+    }
+  };
 }
 function fromSignatureHelp(signatureHelp) {
-  let content;
   if (!signatureHelp)
     return;
-  let signatureIndex = (signatureHelp == null ? void 0 : signatureHelp.activeSignature) || 0;
-  let activeSignature = signatureHelp.signatures[signatureIndex];
-  let activeParam = signatureHelp == null ? void 0 : signatureHelp.activeParameter;
-  let contents = activeSignature.label;
-  if (activeParam != void 0 && activeSignature.parameters && activeSignature.parameters[activeParam]) {
-    let param = activeSignature.parameters[activeParam].label;
-    if (typeof param == "string") {
-      contents = contents.replace(param, `**${param}**`);
+  let content = signatureHelp.map((el) => {
+    let signatureIndex = (el == null ? void 0 : el.activeSignature) || 0;
+    let activeSignature = el.signatures[signatureIndex];
+    let activeParam = el == null ? void 0 : el.activeParameter;
+    let contents = activeSignature.label;
+    if (activeParam != void 0 && activeSignature.parameters && activeSignature.parameters[activeParam]) {
+      let param = activeSignature.parameters[activeParam].label;
+      if (typeof param == "string") {
+        contents = contents.replace(param, `**${param}**`);
+      }
     }
-  }
-  if (activeSignature.documentation) {
-    if (main.MarkupContent.is(activeSignature.documentation)) {
-      content = fromMarkupContent(activeSignature.documentation);
-      content.text = contents + "\n\n" + content.text;
+    if (activeSignature.documentation) {
+      if (main.MarkupContent.is(activeSignature.documentation)) {
+        return contents + "\n\n" + fromMarkupContent(activeSignature.documentation);
+      } else {
+        contents += "\n\n" + activeSignature.documentation;
+        return contents;
+      }
     } else {
-      contents += "\n\n" + activeSignature.documentation;
-      content = { type: "markdown", text: contents };
+      return contents;
     }
-  } else {
-    content = { type: "markdown", text: contents };
-  }
-  return { content };
+  });
+  return {
+    content: {
+      type: "markdown",
+      text: content.join("\n\n")
+    }
+  };
 }
 function fromMarkupContent(content) {
   if (!content)
     return;
   if (typeof content === "string") {
-    return { type: "plaintext", text: content };
-  } else if (content.kind === main.MarkupKind.Markdown) {
-    return { type: "markdown", text: content.value };
+    return content;
   } else {
-    return { type: "plaintext", text: content.value };
+    return content.value;
   }
 }
 function fromAceDelta(delta, eol) {
@@ -19218,6 +19249,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "json|json5"
     });`;
   const htmlService = `manager.registerService("html", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/html-service.js");
             return {HtmlService};
@@ -19226,6 +19258,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "html"
     });`;
   const cssService = `manager.registerService("css", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -19234,6 +19267,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "css"
     });`;
   const lessService = `manager.registerService("less", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -19242,6 +19276,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "less"
     });`;
   const scssService = `manager.registerService("scss", {
+        features: {signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/css-service.js");
             return {CssService};
@@ -19258,6 +19293,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "typescript|tsx|javascript|jsx",
     });`;
   const luaService = `manager.registerService("lua", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/lua-service.js");
             return {LuaService};
@@ -19266,6 +19302,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "lua",
     });`;
   const yamlService = `manager.registerService("yaml", {
+        features: {signatureHelp: false, documentHighlight: false},
         module: () => {
             importScripts("${cdnUrl}/yaml-service.js");
             return {YamlService};
@@ -19274,6 +19311,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "yaml",
     });`;
   const xmlService = `manager.registerService("xml", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/xml-service.js");
             return {XmlService};
@@ -19282,6 +19320,7 @@ function generateLintersImport(cdnUrl, includeLinters) {
         modes: "xml",
     });`;
   const phpService = `manager.registerService("php", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/php-service.js");
             return {PhpService};
@@ -19289,7 +19328,17 @@ function generateLintersImport(cdnUrl, includeLinters) {
         className: "PhpService",
         modes: "php"
     });`;
+  const javascriptService = `manager.registerService("javascript", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/javascript-service.js");
+            return {JavascriptService};
+        },
+        className: "JavascriptService",
+        modes: "javascript",
+    });`;
   const pythonService = `manager.registerService("python", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
         module: () => {
             importScripts("${cdnUrl}/python-service.js");
             return {PythonService};
@@ -19301,13 +19350,16 @@ function generateLintersImport(cdnUrl, includeLinters) {
     return `!function () {
     importScripts("${cdnUrl}/service-manager.js");
     let manager = new ServiceManager(self);
-    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, pythonService].join("\n")}
+    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, pythonService, javascriptService].join("\n")}
 }()`;
   }
   let services = [];
   Object.entries(includeLinters).forEach(([key, value]) => {
     if (value) {
       switch (key) {
+        case "javascript":
+          services.push(javascriptService);
+          break;
         case "css":
           services.push(cssService);
           break;
@@ -19522,6 +19574,9 @@ class LanguageProvider {
   setGlobalOptions(serviceName, options, merge = false) {
     this.$messageController.setGlobalOptions(serviceName, options, merge);
   }
+  configureServiceFeatures(serviceName, features) {
+    this.$messageController.configureFeatures(serviceName, features);
+  }
   doHover(session, position, callback) {
     this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
   }
@@ -19536,7 +19591,7 @@ class LanguageProvider {
     this.$messageController.doComplete(
       this.$getFileName(session),
       fromPoint(cursor),
-      (completionList) => completionList && callback(toCompletions(completionList))
+      (completions) => completions && callback(toCompletions(completions))
     );
   }
   doResolve(item, callback) {
@@ -19992,6 +20047,9 @@ class MessageControllerWS extends events.EventEmitter {
       this.$connectSocket();
     }
   }
+  configureFeatures(serviceName, features) {
+    throw new Error("Method not implemented.");
+  }
   $connectSocket() {
     listen({
       webSocket: this.socket,
@@ -20104,7 +20162,7 @@ class MessageControllerWS extends events.EventEmitter {
       position
     };
     let hoverCallback = (result) => {
-      callback && callback(result);
+      callback && callback([result]);
     };
     this.postMessage("textDocument/hover", sessionId, options, hoverCallback);
   }
@@ -20210,7 +20268,7 @@ class MessageControllerWS extends events.EventEmitter {
       position
     };
     let signatureHelpCallback = (result) => {
-      callback && callback(result);
+      callback && callback([result]);
     };
     this.postMessage("textDocument/signatureHelp", sessionId, options, signatureHelpCallback);
   }
