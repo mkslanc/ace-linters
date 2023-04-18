@@ -7,10 +7,10 @@ import fake_core from './fake_core.rs';
 import fake_alloc from './fake_alloc.rs';
 import {BaseService} from 'ace-linters/services/base-service';
 import * as lsp from "vscode-languageserver-protocol";
-import {AceLinters} from "ace-linters";
 import {toCompletions, toDiagnostics, toHover} from "./type_converters/converters";
+import {LanguageService} from "ace-linters";
 
-export class RustService extends BaseService implements AceLinters.LanguageService {
+export class RustService extends BaseService implements LanguageService {
     $service: WorldState;
 
     constructor(mode: string) {

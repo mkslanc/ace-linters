@@ -1,18 +1,18 @@
+import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
-
-let event = require("ace-code/src/lib/event");
-let {HashHandler} = require("ace-code/src/keyboard/hash_handler");
-let keyUtil = require("ace-code/src/lib/keys");
-
-import {Mode as JavascriptMode} from "ace-code/src/mode/javascript";
-
 import {LanguageProvider} from "ace-linters/build/ace-linters";
 import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
 import {createEditorWithLSP} from "../utils";
 import {jsContent} from "../webworker-lsp/docs-example/javascript-example";
 
+import event from "ace-code/src/lib/event";
+
+import {HashHandler} from "ace-code/src/keyboard/hash_handler";
+
+import keyUtil from "ace-code/src/lib/keys";
+
 let modes = [
-    {name: "javascript validated by EsLint, with hover, autocompletion and format of Typescript", mode: JavascriptMode, content: jsContent},
+    {name: "javascript validated by EsLint, with hover, autocompletion and format of Typescript", mode: "ace/mode/javascript", content: jsContent},
 ];
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));

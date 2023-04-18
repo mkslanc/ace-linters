@@ -44,7 +44,7 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
     editor.setTheme(theme);
     editor.setOptions({"customScrollbar": true})
     editor.session.setValue(mode.content);
-    editor.session.setMode(new mode.mode());
+    editor.session.setMode(mode.mode);
     
     languageProvider.registerEditor(editor);
 
