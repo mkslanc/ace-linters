@@ -243,7 +243,7 @@ function import$(obj, src){
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var MatchingBraceOutdent = function() {};
 

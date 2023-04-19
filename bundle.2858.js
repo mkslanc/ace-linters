@@ -6,7 +6,7 @@
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var MatchingBraceOutdent = function() {};
 
@@ -90,7 +90,7 @@ exports.MatchingBraceOutdent = MatchingBraceOutdent;
    
 
    var unicode = __webpack_require__(99740);
-   var Range = (__webpack_require__(59082).Range);
+   var Range = (__webpack_require__(59082)/* .Range */ .e);
    var oop = __webpack_require__(89359);
    var TextMode = (__webpack_require__(98030).Mode);
    var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);

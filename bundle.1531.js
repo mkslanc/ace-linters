@@ -528,7 +528,7 @@ module.exports = {
 
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var dom = __webpack_require__(6359);
 var shortcuts = __webpack_require__(26991);
 var FilteredList= (__webpack_require__(39528)/* .FilteredList */ .Xy);

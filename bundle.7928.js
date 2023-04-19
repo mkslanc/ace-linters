@@ -11,7 +11,7 @@
 let manager = new ace_linters_build_service_manager__WEBPACK_IMPORTED_MODULE_0__.ServiceManager(self);
 manager.registerService("typescript", {
     features: { diagnostics: false },
-    module: () => Promise.all(/* import() */[__webpack_require__.e(9100), __webpack_require__.e(3026)]).then(__webpack_require__.t.bind(__webpack_require__, 58275, 23)),
+    module: () => __webpack_require__.e(/* import() */ 8275).then(__webpack_require__.t.bind(__webpack_require__, 58275, 23)),
     className: "TypescriptService",
     modes: "javascript",
 });

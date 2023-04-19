@@ -10,7 +10,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var CrystalHighlightRules = (__webpack_require__(55497)/* .CrystalHighlightRules */ .A);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var FoldMode = (__webpack_require__(35090)/* .FoldMode */ .Z);
 
@@ -527,7 +527,7 @@ exports.Mode = Mode;
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var FoldMode = exports.Z = function() {};
 oop.inherits(FoldMode, BaseFoldMode);
@@ -619,7 +619,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var MatchingBraceOutdent = function() {};
 

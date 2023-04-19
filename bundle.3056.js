@@ -447,7 +447,7 @@ __webpack_require__(9613);
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(89359);
 var config = __webpack_require__(13188);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var buildDom = dom.buildDom;
 
 var modelist = __webpack_require__(90352);

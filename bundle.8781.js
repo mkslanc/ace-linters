@@ -79,7 +79,7 @@ exports.Mode = Mode;
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
 
 
@@ -348,7 +348,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var RubyHighlightRules = (__webpack_require__(35772).RubyHighlightRules);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var FoldMode = (__webpack_require__(48636)/* .FoldMode */ .Z);
 

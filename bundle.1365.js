@@ -10,7 +10,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var c_cppHighlightRules = (__webpack_require__(75560).c_cppHighlightRules);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
@@ -341,7 +341,7 @@ exports.c = DocCommentHighlightRules;
 
 
 var oop = __webpack_require__(89359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
 
 var FoldMode = exports.Z = function(commentRegex) {
@@ -510,7 +510,7 @@ var oop = __webpack_require__(89359);
 var CMode = (__webpack_require__(82671).Mode);
 var glslHighlightRules = (__webpack_require__(6799)/* .glslHighlightRules */ .K);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
@@ -593,7 +593,7 @@ exports.K = glslHighlightRules;
 
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var MatchingBraceOutdent = function() {};
 

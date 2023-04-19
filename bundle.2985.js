@@ -229,7 +229,7 @@ exports.c = DocCommentHighlightRules;
 
 
 var oop = __webpack_require__(89359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var FoldMode = exports.Z = function(commentRegex) {
@@ -340,7 +340,7 @@ oop.inherits(FoldMode, CFoldMode);
 
 
 var oop = __webpack_require__(89359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
 
 var FoldMode = exports.Z = function(commentRegex) {
@@ -505,7 +505,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var MatchingBraceOutdent = function() {};
 

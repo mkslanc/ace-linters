@@ -8,7 +8,7 @@
 var HashHandler = (__webpack_require__(7116).HashHandler);
 var Editor = (__webpack_require__(82880)/* .Editor */ .M);
 var snippetManager = (__webpack_require__(56629)/* .snippetManager */ .w);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var config = __webpack_require__(13188);
 var emmet, emmetPath;
 

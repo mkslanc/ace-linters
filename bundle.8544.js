@@ -147,7 +147,7 @@ exports.h = JsonHighlightRules;
 var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var RedshiftHighlightRules = (__webpack_require__(91079)/* .RedshiftHighlightRules */ .F);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var Mode = function() {
     this.HighlightRules = RedshiftHighlightRules;

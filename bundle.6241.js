@@ -276,7 +276,7 @@ exports.H = occurStartCommand;
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var Search = (__webpack_require__(46745)/* .Search */ .o);
 var SearchHighlight = (__webpack_require__(57988)/* .SearchHighlight */ .t);
 var iSearchCommandModule = __webpack_require__(56809);

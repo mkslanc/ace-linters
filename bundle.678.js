@@ -7,7 +7,7 @@
 
 
 var oop = __webpack_require__(89359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
 
 var FoldMode = exports.Z = function(commentRegex) {
@@ -172,7 +172,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var MatchingBraceOutdent = function() {};
 
@@ -221,7 +221,7 @@ var TextMode = (__webpack_require__(98030).Mode);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 var TclHighlightRules = (__webpack_require__(81176)/* .TclHighlightRules */ .a);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var Mode = function() {
     this.HighlightRules = TclHighlightRules;

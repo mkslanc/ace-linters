@@ -6,7 +6,7 @@
 
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 function hardWrap(editor, options) {
     var max = options.column || editor.getOption("printMarginColumn");
@@ -188,8 +188,8 @@ exports.hardWrap = hardWrap;
     }
     console.log(d);
   }
-  var Range = (__webpack_require__(59082).Range);
-  var EventEmitter = (__webpack_require__(23056).EventEmitter);
+  var Range = (__webpack_require__(59082)/* .Range */ .e);
+  var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
   var domLib = __webpack_require__(6359);
   var oop = __webpack_require__(89359);
   var KEYS = __webpack_require__(11797);

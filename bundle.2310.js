@@ -46,7 +46,7 @@ manager.registerService("json5", {
     modes: "json5",
 });
 manager.registerService("typescript", {
-    module: () => Promise.all(/* import() */[__webpack_require__.e(9100), __webpack_require__.e(3026)]).then(__webpack_require__.t.bind(__webpack_require__, 58275, 23)),
+    module: () => __webpack_require__.e(/* import() */ 8275).then(__webpack_require__.t.bind(__webpack_require__, 58275, 23)),
     className: "TypescriptService",
     modes: "typescript|tsx|javascript|jsx",
 });

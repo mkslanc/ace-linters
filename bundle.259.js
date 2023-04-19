@@ -8,7 +8,7 @@
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var FoldMode = exports.Z = function() {};
 oop.inherits(FoldMode, BaseFoldMode);
@@ -359,7 +359,7 @@ exports.B = MarkdownHighlightRules;
 var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var ShHighlightRules = (__webpack_require__(87808).ShHighlightRules);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 

@@ -16,7 +16,7 @@
 
 var dom = __webpack_require__(6359);
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var Editor = (__webpack_require__(82880)/* .Editor */ .M);
 var EditSession = (__webpack_require__(66480)/* .EditSession */ .m);
 var UndoManager = (__webpack_require__(40718)/* .UndoManager */ .H);
@@ -107,7 +107,7 @@ exports.version = exports.config.version;
 
 
 var oop = __webpack_require__(89359);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 /**
  * Defines a floating pointer in the document. Whenever text is inserted or deleted before the cursor, the position of the anchor is updated.
@@ -1261,7 +1261,7 @@ exports.r = AceInline;
 
 var Renderer = (__webpack_require__(63049)/* .VirtualRenderer */ ._);
 var Editor = (__webpack_require__(82880)/* .Editor */ .M);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var event = __webpack_require__(17989);
 var lang = __webpack_require__(20124);
 var dom = __webpack_require__(6359);
@@ -1715,7 +1715,7 @@ exports.i1 = getAriaId;
 /***/ 52636:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var splitRegex = /[^a-zA-Z_0-9\$\-\u00C0-\u1FFF\u2C00-\uD7FF\w]+/;
 
@@ -1840,7 +1840,7 @@ exports.getCompletionPrefix = function (editor) {
 
 
 var oop = __webpack_require__(89359);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 
 /**
@@ -2449,7 +2449,7 @@ module.exports = {
 
 var oop = __webpack_require__(89359);
 var MultiHashHandler = (__webpack_require__(7116).MultiHashHandler);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 class CommandManager extends MultiHashHandler{
     /**
@@ -2567,7 +2567,7 @@ exports.CommandManager = CommandManager;
 
 var lang = __webpack_require__(20124);
 var config = __webpack_require__(13188);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 function bindKey(win, mac) {
     return {win: win, mac: mac};
@@ -4383,8 +4383,8 @@ module.exports = `
 
 var oop = __webpack_require__(89359);
 var applyDelta = (__webpack_require__(38934)/* .applyDelta */ .B);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
-var Range = (__webpack_require__(59082).Range);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var Anchor = (__webpack_require__(27869)/* .Anchor */ .e);
 
 /**
@@ -5050,10 +5050,10 @@ var oop = __webpack_require__(89359);
 var lang = __webpack_require__(20124);
 var BidiHandler = (__webpack_require__(45087)/* .BidiHandler */ .l);
 var config = __webpack_require__(13188);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var Selection = (__webpack_require__(88939)/* .Selection */ .Y);
 var TextMode = (__webpack_require__(98030).Mode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var Document = (__webpack_require__(21218)/* .Document */ .B);
 var BackgroundTokenizer = (__webpack_require__(52484)/* .BackgroundTokenizer */ .V);
 var SearchHighlight = (__webpack_require__(57988)/* .SearchHighlight */ .t);
@@ -7573,7 +7573,7 @@ exports.m = EditSession;
 
 
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 
 function BracketMatch() {
@@ -8034,7 +8034,7 @@ exports.F = BracketMatch;
 "use strict";
 
 
-var RangeList = (__webpack_require__(16510).RangeList);
+var RangeList = (__webpack_require__(16510)/* .RangeList */ .$);
 
 /*
  * Simple fold-data struct.
@@ -8150,7 +8150,7 @@ exports.q = Fold;
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 class FoldLine {
     /**
@@ -8394,7 +8394,7 @@ exports.z = FoldLine;
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var FoldLine = (__webpack_require__(74285)/* .FoldLine */ .z);
 var Fold = (__webpack_require__(47899)/* .Fold */ .q);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
@@ -9279,8 +9279,8 @@ var FoldHandler = (__webpack_require__(30138)/* .FoldHandler */ .z);
 var KeyBinding = (__webpack_require__(78229)/* .KeyBinding */ .M);
 var EditSession = (__webpack_require__(66480)/* .EditSession */ .m);
 var Search = (__webpack_require__(46745)/* .Search */ .o);
-var Range = (__webpack_require__(59082).Range);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var CommandManager = (__webpack_require__(73190).CommandManager);
 var defaultCommands = (__webpack_require__(70883)/* .commands */ .C);
 var config = __webpack_require__(13188);
@@ -12261,7 +12261,7 @@ exports.M = Editor;
 
 var LineWidgets = (__webpack_require__(62269)/* .LineWidgets */ .H);
 var dom = __webpack_require__(6359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 function binarySearch(array, needle, comparator) {
     var first = 0;
@@ -14048,7 +14048,7 @@ exports.C = Cursor;
 
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(89359);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 class Decorator {
     constructor(parent, renderer) {
@@ -14186,7 +14186,7 @@ var dom = __webpack_require__(6359);
 var lang = __webpack_require__(20124);
 var event = __webpack_require__(17989);
 var useragent = __webpack_require__(50618);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 var CHAR_COUNT = 512;
 var USE_OBSERVER = typeof ResizeObserver == "function";
@@ -14397,7 +14397,7 @@ exports.c = FontMetrics;
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(89359);
 var lang = __webpack_require__(20124);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var Lines = (__webpack_require__(55388)/* .Lines */ .x);
 
 class Gutter{
@@ -14977,7 +14977,7 @@ exports.x = Lines;
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var dom = __webpack_require__(6359);
 
 
@@ -15222,7 +15222,7 @@ var oop = __webpack_require__(89359);
 var dom = __webpack_require__(6359);
 var lang = __webpack_require__(20124);
 var Lines = (__webpack_require__(55388)/* .Lines */ .x);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 
 class Text {
@@ -15967,7 +15967,7 @@ exports.x = Text;
 "no use strict";
 
 var oop = __webpack_require__(89359);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 var optionsProvider = {
     setOptions: function(optList) {
@@ -17268,7 +17268,7 @@ EventEmitter.removeAllListeners = function(eventName) {
     if (this._defaultHandlers) this._defaultHandlers[eventName] = undefined;
 };
 
-exports.EventEmitter = EventEmitter;
+exports.v = EventEmitter;
 
 
 /***/ }),
@@ -18653,7 +18653,7 @@ exports.B = CstyleBehaviour;
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var FoldMode = exports.FoldMode = function() {};
 
@@ -18758,7 +18758,7 @@ var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var unicode = __webpack_require__(99740);
 var lang = __webpack_require__(20124);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 /**
  *
@@ -19348,7 +19348,7 @@ exports.K = TextHighlightRules;
 
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(17989);
-var Tooltip = (__webpack_require__(962).Tooltip);
+var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
 
 function GutterHandler(mouseHandler) {
     var editor = mouseHandler.editor;
@@ -21090,8 +21090,8 @@ exports.W = function(el, editor) {
 /***/ 62972:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-var RangeList = (__webpack_require__(16510).RangeList);
-var Range = (__webpack_require__(59082).Range);
+var RangeList = (__webpack_require__(16510)/* .RangeList */ .$);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var Selection = (__webpack_require__(88939)/* .Selection */ .Y);
 var onMouseDown = (__webpack_require__(4407)/* .onMouseDown */ .P);
 var event = __webpack_require__(17989);
@@ -22035,8 +22035,8 @@ exports.MultiSelect = MultiSelect;
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var oop = __webpack_require__(89359);
 
 class PlaceHolder {
@@ -22725,7 +22725,7 @@ Range.comparePoints = function(p1, p2) {
     return p1.row - p2.row || p1.column - p2.column;
 };
 
-exports.Range = Range;
+exports.e = Range;
 
 
 /***/ }),
@@ -22735,7 +22735,7 @@ exports.Range = Range;
 
 "use strict";
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var comparePoints = Range.comparePoints;
 
 class RangeList {
@@ -23000,7 +23000,7 @@ class RangeList {
 
 RangeList.prototype.comparePoints = comparePoints;
 
-exports.RangeList = RangeList;
+exports.$ = RangeList;
 
 
 /***/ }),
@@ -23076,7 +23076,7 @@ var __webpack_unused_export__;
 var oop = __webpack_require__(89359);
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(17989);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 // on ie maximal element height is smaller than what we get from 4-5K line document
 // so scrollbar doesn't work, as a workaround we do not set height higher than MAX_SCROLL_H
 // and rescale scrolltop
@@ -23322,7 +23322,7 @@ var __webpack_unused_export__;
 var oop = __webpack_require__(89359);
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(17989);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 dom.importCssString(`.ace_editor>.ace_sb-v div, .ace_editor>.ace_sb-h div{
   position: absolute;
@@ -23693,7 +23693,7 @@ exports.ii = HScrollBar;
 
 var lang = __webpack_require__(20124);
 var oop = __webpack_require__(89359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 /**
  * A class designed to handle all sorts of text searches within a [[Document `Document`]].
@@ -24068,7 +24068,7 @@ exports.o = Search;
 
 
 var lang = __webpack_require__(20124);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var SearchHighlight = 
 
@@ -24134,8 +24134,8 @@ exports.t = SearchHighlight;
 
 var oop = __webpack_require__(89359);
 var lang = __webpack_require__(20124);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
-var Range = (__webpack_require__(59082).Range);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 /**
  * Contains the cursor position and the text selection of an edit session.
@@ -25057,10 +25057,10 @@ exports.Y = Selection;
 
 var dom = __webpack_require__(6359);
 var oop = __webpack_require__(89359);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var lang = __webpack_require__(20124);
-var Range = (__webpack_require__(59082).Range);
-var RangeList = (__webpack_require__(16510).RangeList);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
+var RangeList = (__webpack_require__(16510)/* .RangeList */ .$);
 var HashHandler = (__webpack_require__(7116).HashHandler);
 var Tokenizer = (__webpack_require__(60760)/* .Tokenizer */ .d);
 var clipboard = __webpack_require__(76311);
@@ -26286,7 +26286,7 @@ dom.importCssString(exports.cssText, exports.cssClass, false);
 "use strict";
 
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 /**
  * This class provides an essay way to treat the document as a stream of tokens, and provides methods to iterate over these tokens.
@@ -26872,7 +26872,7 @@ class Tooltip {
 
 }
 
-exports.Tooltip = Tooltip;
+exports.u = Tooltip;
 
 
 /***/ }),
@@ -27154,7 +27154,7 @@ function rearrangeUndoStack(stack, pos) {
     }
 }
 
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var cmp = Range.comparePoints;
 var comparePoints = Range.comparePoints;
 
@@ -27491,7 +27491,7 @@ var HScrollBarCustom = (__webpack_require__(66810)/* .HScrollBar */ .ii);
 var VScrollBarCustom = (__webpack_require__(66810)/* .VScrollBar */ .oX);
 var RenderLoop = (__webpack_require__(93081)/* .RenderLoop */ .d);
 var FontMetrics = (__webpack_require__(89506)/* .FontMetrics */ .c);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var editorCss = __webpack_require__(20610);
 var Decorator = (__webpack_require__(22113)/* .Decorator */ .S);
 
@@ -43139,8 +43139,7 @@ var Is;
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			8722: 0,
-/******/ 			5224: 0,
-/******/ 			9100: 0
+/******/ 			5224: 0
 /******/ 		};
 /******/ 		
 /******/ 		__webpack_require__.f.j = (chunkId, promises) => {
@@ -43589,7 +43588,7 @@ var keys = __webpack_require__(11797);
 var tooltip = __webpack_require__(962);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
 
-class BaseTooltip extends tooltip.Tooltip {
+class BaseTooltip extends tooltip/* Tooltip */.u {
     provider;
     $activeEditor;
     descriptionText;
@@ -43605,7 +43604,7 @@ class BaseTooltip extends tooltip.Tooltip {
         this.provider = provider;
         //this is for ace-code version < 1.16.0
         try {
-            tooltip.Tooltip.call(this, document.body);
+            tooltip/* Tooltip.call */.u.call(this, document.body);
         }
         catch (e) {
         }
@@ -44072,7 +44071,7 @@ class MessageController {
         this.$worker.postMessage(message);
     }
 }
-oop.implement(MessageController.prototype, event_emitter.EventEmitter);
+oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
 var src_range = __webpack_require__(59082);
@@ -44099,7 +44098,7 @@ function rangeFromPositions(start, end) {
     };
 }
 function toRange(range) {
-    return new src_range.Range(range.start.line, range.start.character, range.end.line, range.end.character);
+    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
 }
 function fromPoint(point) {
     return { line: point.row, character: point.column };
@@ -44203,7 +44202,7 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        let rangeList = new range_list.RangeList();
+        let rangeList = new range_list/* RangeList */.$();
         rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
         rangeList.merge();
         return rangeList[0];

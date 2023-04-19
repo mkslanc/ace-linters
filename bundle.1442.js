@@ -9,7 +9,7 @@
 var Rules = (__webpack_require__(7678)/* .CoffeeHighlightRules */ .s);
 var Outdent = (__webpack_require__(1164).MatchingBraceOutdent);
 var FoldMode = (__webpack_require__(35090)/* .FoldMode */ .Z);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var TextMode = (__webpack_require__(98030).Mode);
 var WorkerClient = (__webpack_require__(91451).WorkerClient);
 var oop = __webpack_require__(89359);
@@ -306,7 +306,7 @@ exports.Mode = Mode;
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var FoldMode = exports.Z = function() {};
 oop.inherits(FoldMode, BaseFoldMode);
@@ -400,7 +400,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
 
 
@@ -879,7 +879,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var RubyHighlightRules = (__webpack_require__(35772).RubyHighlightRules);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var FoldMode = (__webpack_require__(48636)/* .FoldMode */ .Z);
 

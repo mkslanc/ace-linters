@@ -8,7 +8,7 @@
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
 
 
@@ -327,7 +327,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var VBScriptHighlightRules = (__webpack_require__(20682)/* .VBScriptHighlightRules */ .U);
 var FoldMode = (__webpack_require__(87205)/* .FoldMode */ .Z);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var Mode = function() {
     this.HighlightRules = VBScriptHighlightRules;

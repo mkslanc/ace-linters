@@ -8,7 +8,7 @@
 
 var Rules = (__webpack_require__(18705)/* .AbapHighlightRules */ .c);
 var FoldMode = (__webpack_require__(35090)/* .FoldMode */ .Z);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var TextMode = (__webpack_require__(98030).Mode);
 var oop = __webpack_require__(89359);
 
@@ -152,7 +152,7 @@ exports.c = AbapHighlightRules;
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var FoldMode = exports.Z = function() {};
 oop.inherits(FoldMode, BaseFoldMode);

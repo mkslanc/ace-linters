@@ -42,7 +42,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var PythonHighlightRules = (__webpack_require__(71924)/* .PythonHighlightRules */ .H);
 var PythonFoldMode = (__webpack_require__(74958)/* .FoldMode */ .Z);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var Mode = function() {
     this.HighlightRules = PythonHighlightRules;

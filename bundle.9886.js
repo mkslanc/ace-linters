@@ -264,7 +264,7 @@ exports.c = DocCommentHighlightRules;
 
 
 var oop = __webpack_require__(89359);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
 
 var FoldMode = exports.Z = function(commentRegex) {

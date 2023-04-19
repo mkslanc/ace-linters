@@ -21,7 +21,7 @@ module.exports = __webpack_require__(33598);
 
 var oop = __webpack_require__(89359);
 var lang = __webpack_require__(20124);
-var EventEmitter = (__webpack_require__(23056).EventEmitter);
+var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 
 var Editor = (__webpack_require__(82880)/* .Editor */ .M);
 var Renderer = (__webpack_require__(63049)/* .VirtualRenderer */ ._);

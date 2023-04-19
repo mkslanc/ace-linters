@@ -8,7 +8,7 @@
 
 var oop = __webpack_require__(89359);
 var BaseFoldMode = (__webpack_require__(15369).FoldMode);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
 
 
@@ -153,7 +153,7 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var LuaHighlightRules = (__webpack_require__(98092)/* .LuaHighlightRules */ .Q);
 var LuaFoldMode = (__webpack_require__(73298)/* .FoldMode */ .Z);
-var Range = (__webpack_require__(59082).Range);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 var WorkerClient = (__webpack_require__(91451).WorkerClient);
 
 var Mode = function() {
