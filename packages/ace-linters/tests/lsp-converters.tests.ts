@@ -19,8 +19,7 @@ import {
     toCompletions,
     toResolvedCompletion, toTooltip
 } from "../type-converters/lsp-converters";
-import {AceLinters} from "../types";
-import Tooltip = AceLinters.Tooltip;
+import {CompletionService, Tooltip} from "../types";
 
 
 describe('Converters from/to Language Server Protocol', () => {
@@ -269,11 +268,11 @@ describe('Converters from/to Language Server Protocol', () => {
                 items: JSON.parse(JSON.stringify(completionItems))
             }
 
-            let completionsService: AceLinters.CompletionService = {
+            let completionsService: CompletionService = {
                 service: "test",
                 completions: completionItems
             }
-            let completionsService1: AceLinters.CompletionService = {
+            let completionsService1: CompletionService = {
                 service: "test1",
                 completions: completionList
             }
