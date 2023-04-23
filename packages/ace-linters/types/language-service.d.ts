@@ -37,7 +37,7 @@ export interface LanguageService {
 
     removeDocument(document: TextDocumentIdentifier);
 
-        getDocumentValue(uri: string): string | undefined;
+    getDocumentValue(uri: string): string | undefined;
 
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
@@ -59,14 +59,14 @@ export interface TextChange {
     newText: string;
 }
 
-    export interface CompletionService {
-        completions: lsp.CompletionItem[] | lsp.CompletionList | null,
-        service: string
-    }
+export interface CompletionService {
+    completions: lsp.CompletionItem[] | lsp.CompletionList | null,
+    service: string
+}
 
-    export interface ServiceOptions {
-        [name: string]: any
-    }
+export interface ServiceOptions {
+    [name: string]: any
+}
 
 export interface JsonServiceOptions {
     schemas?: {
@@ -98,7 +98,10 @@ export interface TsServiceOptions {
     extraLibs?: {
         [path: string]: ExtraLib;
     },
-    formatOptions?: ts.FormatCodeSettings
+    formatOptions?: ts.FormatCodeSettings,
+    errorCodesToIgnore?: string[],
+    errorCodesToTreatAsWarning?: string[]
+    errorCodesToTreatAsInfo?: string[]
 }
 
 export interface HtmlServiceOptions {
@@ -136,6 +139,9 @@ export interface JavascriptServiceOptions {
 
 export interface PythonServiceOptions {
     configuration: { [name: string]: any }
+    errorCodesToIgnore?: string[],
+    errorCodesToTreatAsWarning?: string[]
+    errorCodesToTreatAsInfo?: string[]
 }
 
 export interface ServiceOptionsMap {
@@ -150,46 +156,62 @@ export interface ServiceOptionsMap {
     python: PythonServiceOptions
 }
 
-    export type SupportedServices =
-        "json"
-        | "json5"
-        | "typescript"
-        | "css"
-        | "html"
-        | "yaml"
-        | "php"
-        | "xml"
-        | "javascript"
-        | "lua"
-        | "less"
-        | "scss"
-        | "python";
+export type SupportedServices =
+    "json"
+    | "json5"
+    | "typescript"
+    | "css"
+    | "html"
+    | "yaml"
+    | "php"
+    | "xml"
+    | "javascript"
+    | "lua"
+    | "less"
+    | "scss"
+    | "python";
 
-    export interface ProviderOptions {
-        functionality: {
-            hover: boolean,
-            completion: {
-                overwriteCompleters: boolean
-            } | false,
-            completionResolve: boolean,
-            format: boolean,
-            documentHighlights: boolean,
-            signatureHelp: boolean
-        },
-        markdownConverter?: MarkDownConverter
-    }
+export interface ProviderOptions {
+    functionality: {
+        hover: boolean,
+        completion: {
+            overwriteCompleters: boolean
+        } | false,
+        completionResolve: boolean,
+        format: boolean,
+        documentHighlights: boolean,
+        signatureHelp: boolean
+    },
+    markdownConverter?: MarkDownConverter
+}
 
-    export type ServiceFeatures = {
-        [feature in SupportedFeatures]?: boolean;
-    };
-    
-    export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight"
+export type ServiceFeatures = {
+    [feature in SupportedFeatures]?: boolean;
+};
 
-    export interface ServiceData {
-        module: () => any,
-        className: string,
-        modes: string,
-        serviceInstance?: LanguageService,
-        options?: ServiceOptions,
-        features?: ServiceFeatures
-    }
+export type SupportedFeatures =
+    "hover"
+    | "completion"
+    | "completionResolve"
+    | "format"
+    | "diagnostics"
+    | "signatureHelp"
+    | "documentHighlight"
+
+export interface ServiceData {
+    module: () => any,
+    className: string,
+    modes: string,
+    serviceInstance?: LanguageService,
+    options?: ServiceOptions,
+    features?: ServiceFeatures
+}
+
+export interface FilterDiagnosticsOptions {
+    errorCodesToIgnore?: string[],
+    errorCodesToTreatAsWarning?: string[]
+    errorCodesToTreatAsInfo?: string[],
+    errorMessagesToIgnore?: RegExp[],
+    errorMessagesToTreatAsWarning?: RegExp[]
+    errorMessagesToTreatAsInfo?: RegExp[]
+}

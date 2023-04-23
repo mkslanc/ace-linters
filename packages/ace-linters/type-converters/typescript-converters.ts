@@ -12,13 +12,23 @@ import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {CommonConverter} from "./common-converters";
 import convertKind = CommonConverter.convertKind;
+import {FilterDiagnosticsOptions} from "../types";
 
-export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument): lsp.Diagnostic[] {
-    return diagnostics.map((el) => {
+export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
+    return diagnostics.filter((el) => {
+        if (!filterErrors.errorCodesToIgnore!.includes(el.code.toString())) {
+            return el;
+        }
+    }).map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
+        if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code.toString())) {
+            el.category = DiagnosticCategory.Warning;
+        } else if (filterErrors.errorCodesToTreatAsInfo!.includes(el.code.toString())) {
+            el.category = DiagnosticCategory.Message;
+        }
         return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
-            parseMessageText(el.messageText), fromTsCategory(el.category));
+            parseMessageText(el.messageText + " (" + el.code.toString() + ")"), fromTsCategory(el.category));
     });
 }
 
@@ -53,11 +63,10 @@ export function fromTsCategory(category: ts.DiagnosticCategory) {
             return 1;
         case DiagnosticCategory.Suggestion:
         case DiagnosticCategory.Message:
-            return 2;
         case DiagnosticCategory.Warning:
-            return 3;
+            return 2;
     }
-    return 4;
+    return 3;
 }
 
 export function toTextEdits(textEdits: TextChange[], doc: TextDocument): lsp.TextEdit[] {
