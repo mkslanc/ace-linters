@@ -57,6 +57,18 @@ languageProvider.setGlobalOptions("json", {
     ]
 });
 
+languageProvider.setGlobalOptions("typescript", {
+    errorCodesToTreatAsWarning: [
+        "2540"
+    ]
+});
+
+languageProvider.setGlobalOptions("html", {
+    errorMessagesToTreatAsInfo: [
+        /Special\scharacters\smust\sbe\sescaped/
+    ]
+});
+
 languageProvider.setGlobalOptions("json5", {
     schemas: [
         {
@@ -81,6 +93,9 @@ languageProvider.setGlobalOptions("xml", {
             uri: "xmlSchema.json",
             schema: xmlSchema
         }
+    ],
+    errorMessagesToTreatAsInfo: [
+        /Expecting\sone/
     ]
 });
 languageProvider.configureServiceFeatures("json", {
@@ -90,13 +105,12 @@ languageProvider.configureServiceFeatures("json", {
 languageProvider.setGlobalOptions("python", {
     configuration: {
         "line-length": 120,
-        ignore: [
-            "E501",
-            "F401"
-        ]
     },
+    errorCodesToTreatAsWarning: [
+        "E501",
+        "F401"
+    ]
 });
-
 
 let i = 0;
 for (let mode of modes) {

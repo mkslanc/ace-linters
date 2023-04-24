@@ -1,5 +1,6 @@
 import {Ace, Range as AceRange} from "ace-code";
 import {CompletionItemKind} from "vscode-languageserver-protocol";
+import {checkValueAgainstRegexpArray} from "../utils";
 
 export namespace CommonConverter {
     export function normalizeRanges(completions: Ace.Completion[]): Ace.Completion[] {
@@ -55,5 +56,15 @@ export namespace CommonConverter {
         }
 
         return CompletionItemKind.Property;
+    }
+
+    export function excludeByErrorMessage(diagnostics: any[], errorMessagesToIgnore?: RegExp[], fieldName = "message") {
+        if (!errorMessagesToIgnore)
+            return diagnostics;
+        return diagnostics.filter((el) => {
+            if (!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore)) {
+                return el;
+            }
+        });
     }
 }

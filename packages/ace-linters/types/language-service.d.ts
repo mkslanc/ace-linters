@@ -106,7 +106,10 @@ export interface TsServiceOptions {
 
 export interface HtmlServiceOptions {
     validationOptions?: { [option: string]: boolean },
-    formatOptions?: {}
+    formatOptions?: {},
+    errorMessagesToIgnore?: RegExp[],
+    errorMessagesToTreatAsWarning?: RegExp[]
+    errorMessagesToTreatAsInfo?: RegExp[]
 }
 
 export interface XmlServiceOptions {
@@ -116,6 +119,9 @@ export interface XmlServiceOptions {
         schema?: string,
     }[],
     schemaUri?: string,
+    errorMessagesToIgnore?: RegExp[],
+    errorMessagesToTreatAsWarning?: RegExp[]
+    errorMessagesToTreatAsInfo?: RegExp[]
 }
 
 export interface PhpServiceOptions {

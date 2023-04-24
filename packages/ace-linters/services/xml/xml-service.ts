@@ -7,9 +7,9 @@ import {getSchemaValidators} from "@xml-tools/simple-schema";
 import {validate, ValidationIssue} from "@xml-tools/validation";
 
 import {
-    issueToDiagnostic,
-    lexingErrorToDiagnostic,
-    parsingErrorToDiagnostic
+    issuesToDiagnostic,
+    lexingErrorsToDiagnostic,
+    parsingErrorsToDiagnostic
 } from "./xml-converters";
 import {TextDocumentItem} from "vscode-languageserver-protocol";
 import {LanguageService, XmlServiceOptions} from "../../types";
@@ -77,10 +77,10 @@ export class XmlService extends BaseService<XmlServiceOptions> implements Langua
         }
 
         return [
-            ...lexErrors.map((_) => lexingErrorToDiagnostic(fullDocument, _)),
-            ...parseErrors.map((_) => parsingErrorToDiagnostic(fullDocument, _)),
-            ...constraintsIssues.map((_) => issueToDiagnostic(fullDocument, _)),
-            ...schemaIssues.map((_) => issueToDiagnostic(fullDocument, _))
+            ...lexingErrorsToDiagnostic(lexErrors, fullDocument, this.optionsToFilterDiagnostics),
+            ...parsingErrorsToDiagnostic(parseErrors, fullDocument, this.optionsToFilterDiagnostics),
+            ...issuesToDiagnostic(constraintsIssues, fullDocument, this.optionsToFilterDiagnostics),
+            ...issuesToDiagnostic(schemaIssues, fullDocument, this.optionsToFilterDiagnostics)
         ];
     }
 }
