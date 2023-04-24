@@ -2,6 +2,7 @@ import {BaseService} from "../base-service";
 import * as lua from "luaparse";
 import * as lsp from "vscode-languageserver-protocol";
 import {LanguageService} from "../../types";
+import {filterDiagnostics} from "../../type-converters/lsp-converters";
 
 export class LuaService extends BaseService implements LanguageService {
     $service;
@@ -37,7 +38,7 @@ export class LuaService extends BaseService implements LanguageService {
                 });
             }
         }
-        return errors;
+        return filterDiagnostics(errors, this.optionsToFilterDiagnostics);
     }
 
 }

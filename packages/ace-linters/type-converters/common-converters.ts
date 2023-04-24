@@ -58,7 +58,7 @@ export namespace CommonConverter {
         return CompletionItemKind.Property;
     }
 
-    export function excludeByErrorMessage(diagnostics: any[], errorMessagesToIgnore?: RegExp[], fieldName = "message") {
+    export function excludeByErrorMessage<T>(diagnostics: T[], errorMessagesToIgnore?: RegExp[], fieldName = "message"): T[] {
         if (!errorMessagesToIgnore)
             return diagnostics;
         return diagnostics.filter((el) => {

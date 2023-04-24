@@ -92,7 +92,7 @@ export class JavascriptService extends BaseService<JavascriptServiceOptions> imp
             console.error(e.stack);
             return [];
         }
-        return toDiagnostics(messages);
+        return toDiagnostics(messages, this.optionsToFilterDiagnostics);
     }
 
 }

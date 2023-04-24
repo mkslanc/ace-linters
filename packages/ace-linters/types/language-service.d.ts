@@ -68,7 +68,19 @@ export interface ServiceOptions {
     [name: string]: any
 }
 
-export interface JsonServiceOptions {
+interface ServiceOptionsWithErrorCodes {
+    errorCodesToIgnore?: string[],
+    errorCodesToTreatAsWarning?: string[]
+    errorCodesToTreatAsInfo?: string[]
+}
+
+interface ServiceOptionsWithErrorMessages {
+    errorMessagesToIgnore?: RegExp[],
+    errorMessagesToTreatAsWarning?: RegExp[]
+    errorMessagesToTreatAsInfo?: RegExp[]
+}
+
+export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages{
     schemas?: {
         uri: string,
         fileMatch?: string[],
@@ -79,13 +91,13 @@ export interface JsonServiceOptions {
     trailingCommas?: boolean
 }
 
-export interface YamlServiceOptions {
+export interface YamlServiceOptions extends ServiceOptionsWithErrorMessages{
     schemas?: {
         uri: string,
         fileMatch?: string[],
         schema?: string,
     }[],
-    schemaUri?: string,
+    schemaUri?: string
 }
 
 interface ExtraLib {
@@ -93,42 +105,36 @@ interface ExtraLib {
     version: number;
 }
 
-export interface TsServiceOptions {
+export interface TsServiceOptions extends ServiceOptionsWithErrorCodes{
     compilerOptions?: ts.CompilerOptions,
     extraLibs?: {
         [path: string]: ExtraLib;
     },
-    formatOptions?: ts.FormatCodeSettings,
-    errorCodesToIgnore?: string[],
-    errorCodesToTreatAsWarning?: string[]
-    errorCodesToTreatAsInfo?: string[]
+    formatOptions?: ts.FormatCodeSettings
 }
 
-export interface HtmlServiceOptions {
+export interface HtmlServiceOptions extends ServiceOptionsWithErrorMessages {
     validationOptions?: { [option: string]: boolean },
-    formatOptions?: {},
-    errorMessagesToIgnore?: RegExp[],
-    errorMessagesToTreatAsWarning?: RegExp[]
-    errorMessagesToTreatAsInfo?: RegExp[]
+    formatOptions?: {}
 }
 
-export interface XmlServiceOptions {
+export interface XmlServiceOptions extends ServiceOptionsWithErrorMessages {
     schemas?: {
         uri: string,
         fileMatch?: string[],
         schema?: string,
     }[],
-    schemaUri?: string,
-    errorMessagesToIgnore?: RegExp[],
-    errorMessagesToTreatAsWarning?: RegExp[]
-    errorMessagesToTreatAsInfo?: RegExp[]
+    schemaUri?: string
 }
 
-export interface PhpServiceOptions {
-    inline: boolean
+export interface PhpServiceOptions extends ServiceOptionsWithErrorMessages {
+    inline?: boolean
 }
 
-export interface JavascriptServiceOptions {
+export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages  {
+}
+
+export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages{
     env?: { [name: string]: boolean } | undefined;
     extends?: string | string[] | undefined;
     globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
@@ -140,14 +146,14 @@ export interface JavascriptServiceOptions {
     processor?: string | undefined;
     reportUnusedDisableDirectives?: boolean | undefined;
     settings?: { [name: string]: any } | undefined;
-    rules?: { [rule: string]: any };
+    rules?: { [rule: string]: any }
 }
 
-export interface PythonServiceOptions {
+export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes{
     configuration: { [name: string]: any }
-    errorCodesToIgnore?: string[],
-    errorCodesToTreatAsWarning?: string[]
-    errorCodesToTreatAsInfo?: string[]
+}
+
+export interface CssServiceOptions extends ServiceOptionsWithErrorMessages{
 }
 
 export interface ServiceOptionsMap {
@@ -159,7 +165,11 @@ export interface ServiceOptionsMap {
     php: PhpServiceOptions,
     xml: XmlServiceOptions,
     javascript: JavascriptServiceOptions,
-    python: PythonServiceOptions
+    python: PythonServiceOptions,
+    css: CssServiceOptions,
+    less: CssServiceOptions,
+    scss: CssServiceOptions,
+    lua: LuaServiceOptions
 }
 
 export type SupportedServices =
