@@ -1,5 +1,5 @@
-import {mergeObjects} from "../utils";
-import {expect} from "chai";
+import {checkValueAgainstRegexpArray, mergeObjects} from "../utils";
+import {assert, expect} from "chai";
 
 describe('mergeObjects', () => {
     it('should merge two objects with priority to first object values', () => {
@@ -27,5 +27,30 @@ describe('mergeObjects', () => {
         const obj = { a: 1, b: 2 };
         expect(mergeObjects(null, obj)).to.deep.equal(obj);
         expect(mergeObjects(obj, null)).to.deep.equal(obj);
+    });
+});
+
+describe('checkValueAgainstRegexpArray', () => {
+    it('should return false when regexpArray is undefined', () => {
+        const result = checkValueAgainstRegexpArray('test');
+        assert.strictEqual(result, false);
+    });
+
+    it('should return false when value does not match any regular expression', () => {
+        const regexpArray = [/\d+/, /[a-z]+/];
+        const result = checkValueAgainstRegexpArray('TEST', regexpArray);
+        assert.strictEqual(result, false);
+    });
+
+    it('should return true when value matches a regular expression', () => {
+        const regexpArray = [/\d+/, /[a-z]+/];
+        const result = checkValueAgainstRegexpArray('test123', regexpArray);
+        assert.strictEqual(result, true);
+    });
+
+    it('should return true when value matches multiple regular expressions', () => {
+        const regexpArray = [/\d+/, /[a-z]+/, /[!@#$%^&*()_+-={}[\]|\\:;"'<>,.?/]+/];
+        const result = checkValueAgainstRegexpArray('test123!@#', regexpArray);
+        assert.strictEqual(result, true);
     });
 });
