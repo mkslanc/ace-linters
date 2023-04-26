@@ -3,6 +3,7 @@ import {
 } from "./pkg";
 import * as lsp from "vscode-languageserver-protocol";
 import {DiagnosticSeverity} from "vscode-languageserver-protocol";
+import {FilterDiagnosticsOptions} from "../../types";
 
 export function toRange(location: { row: number, column: number }, endLocation: { row: number, column: number }): lsp.Range {
     return {
@@ -17,12 +18,18 @@ export function toRange(location: { row: number, column: number }, endLocation: 
     }
 }
 
-export function toDiagnostics(diagnostics: Diagnostic[]): lsp.Diagnostic[] {
-    return diagnostics.map((el) => {
+export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
+    return diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code)).map((el) => {
+        let severity: DiagnosticSeverity = DiagnosticSeverity.Error;
+        if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code)) {
+            severity = DiagnosticSeverity.Warning;
+        } else if (filterErrors.errorCodesToTreatAsInfo!.includes(el.code)) {
+            severity = DiagnosticSeverity.Information;
+        }
         return {
             message: el.code + " " + el.message,
             range: toRange(el.location, el.end_location),
-            severity: DiagnosticSeverity.Error,
+            severity: severity,
         }
     });
 }

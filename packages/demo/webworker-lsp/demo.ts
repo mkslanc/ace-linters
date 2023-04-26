@@ -12,7 +12,7 @@ import {tsxContent} from "./docs-example/tsx-example";
 import {jsxContent} from "./docs-example/jsx-example";
 import {json5Content, json5Schema} from "./docs-example/json5-example";
 
-import {LanguageProvider} from "ace-linters/build/ace-linters";
+import {LanguageProvider} from "ace-linters";
 import {luaContent} from "./docs-example/lua-example";
 import {createEditorWithLSP} from "../utils";
 import {yamlContent, yamlSchema} from "./docs-example/yaml-example";
@@ -57,12 +57,33 @@ languageProvider.setGlobalOptions("json", {
     ]
 });
 
+languageProvider.setGlobalOptions("typescript", {
+    errorCodesToTreatAsWarning: [
+        "2540"
+    ]
+});
+
+languageProvider.setGlobalOptions("javascript", {
+    errorMessagesToTreatAsInfo: [
+        /Identifier\sdirectly/
+    ]
+});
+
+languageProvider.setGlobalOptions("html", {
+    errorMessagesToTreatAsInfo: [
+        /Special\scharacters\smust\sbe\sescaped/
+    ]
+});
+
 languageProvider.setGlobalOptions("json5", {
     schemas: [
         {
             uri: "json5Schema",
             schema: json5Schema
         }
+    ],
+    errorMessagesToTreatAsInfo: [
+        /Incorrect\stype/
     ]
 });
 
@@ -72,6 +93,9 @@ languageProvider.setGlobalOptions("yaml", {
             uri: "yamlSchema.json",
             schema: yamlSchema
         }
+    ],
+    errorMessagesToTreatAsInfo: [
+        /Missing\sproperty/
     ]
 });
 
@@ -81,8 +105,30 @@ languageProvider.setGlobalOptions("xml", {
             uri: "xmlSchema.json",
             schema: xmlSchema
         }
+    ],
+    errorMessagesToTreatAsWarning: [
+        /Expecting\sone/
     ]
 });
+
+languageProvider.setGlobalOptions("css", {
+    errorMessagesToTreatAsInfo: [
+        /Unknown\sat\srule/
+    ]
+});
+
+languageProvider.setGlobalOptions("php", {
+    errorMessagesToTreatAsInfo: [
+        /unexpected\sT_FUNCTION/
+    ]
+});
+
+languageProvider.setGlobalOptions("lua", {
+    errorMessagesToTreatAsWarning: [
+        /expected\snear/
+    ]
+});
+
 languageProvider.configureServiceFeatures("json", {
     completion: true, completionResolve: true, diagnostics: false, format: true, hover: true
 })
@@ -90,13 +136,12 @@ languageProvider.configureServiceFeatures("json", {
 languageProvider.setGlobalOptions("python", {
     configuration: {
         "line-length": 120,
-        ignore: [
-            "E501",
-            "F401"
-        ]
     },
+    errorCodesToTreatAsWarning: [
+        "E501",
+        "F401"
+    ]
 });
-
 
 let i = 0;
 for (let mode of modes) {

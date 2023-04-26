@@ -30,6 +30,6 @@ export class PythonService extends BaseService<PythonServiceOptions> implements 
         
         let options = this.getOption(document.uri, "configuration") ?? defaultSettings();
         let diagnostics = check(value, options);
-        return toDiagnostics(diagnostics);
+        return toDiagnostics(diagnostics, this.optionsToFilterDiagnostics);
     }
 }

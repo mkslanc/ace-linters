@@ -3,6 +3,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import {getLanguageService} from "./lib";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {LanguageService, YamlServiceOptions} from "../../types";
+import {filterDiagnostics} from "../../type-converters/lsp-converters";
 
 export class YamlService extends BaseService<YamlServiceOptions> implements LanguageService {
     $service;
@@ -97,7 +98,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
         if (!fullDocument)
             return [];
 
-        return this.$service.doValidation(fullDocument, false);
+        return filterDiagnostics(await this.$service.doValidation(fullDocument, false), this.optionsToFilterDiagnostics);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {

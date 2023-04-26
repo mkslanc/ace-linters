@@ -11,13 +11,15 @@ import {
     TextEdit,
     InsertReplaceEdit,
     TextDocumentContentChangeEvent,
-    SignatureHelp
+    SignatureHelp,
+    DiagnosticSeverity
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {Range as AceRange} from "ace-code/src/range";
 import {RangeList} from "ace-code/src/range_list";
 import {CommonConverter} from "./common-converters";
-import {CompletionService, Tooltip} from "../types";
+import {CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
+import {checkValueAgainstRegexpArray} from "../utils";
 
 
 export function fromRange(range: Ace.Range): Range {
@@ -245,4 +247,15 @@ export function fromAceDelta(delta: Ace.Delta, eol: string): TextDocumentContent
                 : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
         text: delta.action === "insert" ? text : "",
     };
+}
+
+export function filterDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): Diagnostic[] {
+    return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el) => {
+        if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
+            el.severity = DiagnosticSeverity.Warning;
+        } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
+            el.severity = DiagnosticSeverity.Information;
+        }
+        return el;
+    })
 }
