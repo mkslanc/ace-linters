@@ -19,11 +19,7 @@ export function toRange(location: { row: number, column: number }, endLocation: 
 }
 
 export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
-    return diagnostics.filter((el) => {
-        if (!filterErrors.errorCodesToIgnore!.includes(el.code)) {
-            return el;
-        }
-    }).map((el) => {
+    return diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code)).map((el) => {
         let severity: DiagnosticSeverity = DiagnosticSeverity.Error;
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code)) {
             severity = DiagnosticSeverity.Warning;

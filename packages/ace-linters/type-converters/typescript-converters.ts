@@ -15,11 +15,7 @@ import convertKind = CommonConverter.convertKind;
 import {FilterDiagnosticsOptions} from "../types";
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
-    return diagnostics.filter((el) => {
-        if (!filterErrors.errorCodesToIgnore!.includes(el.code.toString())) {
-            return el;
-        }
-    }).map((el) => {
+    return diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code.toString())) {
@@ -165,7 +161,7 @@ export function toSignatureHelp(signatureItems: SignatureHelpItems | undefined):
         activeSignature: signatureItems.selectedItemIndex,
         activeParameter: signatureItems.argumentIndex,
     }
-    
+
     signatureItems.items.forEach((item) => {
         let signature = {
             label: '',
@@ -213,7 +209,7 @@ export function toDocumentHighlights(highlights: ts.DocumentHighlights[] | undef
                     : lsp.DocumentHighlightKind.Text
         }
     }));
-} 
+}
 
 export enum ScriptKind {
     Unknown = 0,

@@ -61,10 +61,6 @@ export namespace CommonConverter {
     export function excludeByErrorMessage<T>(diagnostics: T[], errorMessagesToIgnore?: RegExp[], fieldName = "message"): T[] {
         if (!errorMessagesToIgnore)
             return diagnostics;
-        return diagnostics.filter((el) => {
-            if (!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore)) {
-                return el;
-            }
-        });
+        return diagnostics.filter((el) => !checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
     }
 }
