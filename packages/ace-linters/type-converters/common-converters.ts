@@ -1,5 +1,6 @@
-import {Ace, Range as AceRange} from "ace-code";
+import {Ace} from "ace-code";
 import {CompletionItemKind} from "vscode-languageserver-protocol";
+import {Range} from "../ace/range";
 
 export namespace CommonConverter {
     export function normalizeRanges(completions: Ace.Completion[]): Ace.Completion[] {
@@ -15,11 +16,11 @@ export namespace CommonConverter {
         return html.replace(/<a\s/, "<a target='_blank' ");
     }
 
-    export function toRange(range: { start, end }): Ace.Range | undefined {
+    export function toRange(range: { start, end }) {
         if (!range || !range.start || !range.end) {
             return;
         }
-        return AceRange.fromPoints(range.start, range.end);
+        return Range.fromPoints(range.start, range.end);
     }
 
     export declare type TooltipType = 'plaintext' | 'markdown';

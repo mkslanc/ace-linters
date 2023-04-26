@@ -1,8 +1,8 @@
 import {expect} from "chai";
+import {Range} from "../ace/range";
 
 import * as Converter from "../type-converters/lsp-converters";
 
-import {Range as AceRange} from "ace-code/src/range";
 import {
     CompletionItem,
     CompletionItemKind,
@@ -19,14 +19,13 @@ import {
     toCompletions,
     toResolvedCompletion, toTooltip
 } from "../type-converters/lsp-converters";
-import {AceLinters} from "../types";
-import Tooltip = AceLinters.Tooltip;
+import {CompletionService, Tooltip} from "../types";
 
 
 describe('Converters from/to Language Server Protocol', () => {
     describe('fromRange', () => {
         it('should convert an Ace.Range to a Range', () => {
-            const aceRange = new AceRange(0, 1, 2, 3);
+            const aceRange = new Range(0, 1, 2, 3);
 
             const expectedRange = {
                 start: {
@@ -80,7 +79,7 @@ describe('Converters from/to Language Server Protocol', () => {
                 }
             };
 
-            const expectedAceRange = new AceRange(0, 1, 2, 3);
+            const expectedAceRange = new Range(0, 1, 2, 3);
 
             const result = Converter.toRange(range);
 
@@ -214,7 +213,7 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new AceRange(0, 1, 0, 5),
+                range: new Range(0, 1, 0, 5),
                 documentation: {
                     kind: "markdown",
                     value: "Test value"
@@ -240,7 +239,7 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new AceRange(0, 1, 0, 5),
+                range: new Range(0, 1, 0, 5),
                 documentation: {
                     kind: "markdown",
                     value: "Test value"
@@ -269,11 +268,11 @@ describe('Converters from/to Language Server Protocol', () => {
                 items: JSON.parse(JSON.stringify(completionItems))
             }
 
-            let completionsService: AceLinters.CompletionService = {
+            let completionsService: CompletionService = {
                 service: "test",
                 completions: completionItems
             }
-            let completionsService1: AceLinters.CompletionService = {
+            let completionsService1: CompletionService = {
                 service: "test1",
                 completions: completionList
             }

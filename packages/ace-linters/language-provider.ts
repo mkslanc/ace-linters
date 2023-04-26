@@ -1,4 +1,4 @@
-import {Ace, Range as AceRange} from "ace-code";
+import {Ace} from "ace-code";
 import {DescriptionTooltip} from "./components/description-tooltip";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
@@ -331,7 +331,15 @@ class SessionLanguageProvider {
         if (!selectionRanges || selectionRanges[0].isEmpty()) {
             let row = this.session.getLength();
             let column = this.session.getLine(row).length - 1;
-            selectionRanges = [new AceRange(0, 0, row, column)];
+            selectionRanges =
+                [{
+                    start: {
+                        row: 0, column: 0
+                    },
+                    end: {
+                        row: row, column: column
+                    }
+                } as Ace.Range];
         }
         for (let range of selectionRanges) {
             this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);

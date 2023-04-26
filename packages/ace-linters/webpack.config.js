@@ -35,6 +35,7 @@ module.exports = (env, argv) => {
                 import: './services/python/python-service.ts'
             }
         },
+        externals: /ace-code/,
         module: {
             rules: [
                 loader, {
