@@ -43233,7 +43233,7 @@ var ace = __webpack_require__(59100);
 
 ace.config.setModuleLoader('ace/mode/abap', () => __webpack_require__.e(/* import() */ 989).then(__webpack_require__.t.bind(__webpack_require__, 10989, 19)));
 ace.config.setModuleLoader('ace/mode/abc', () => __webpack_require__.e(/* import() */ 4064).then(__webpack_require__.t.bind(__webpack_require__, 84064, 19)));
-ace.config.setModuleLoader('ace/mode/actionscript', () => __webpack_require__.e(/* import() */ 3682).then(__webpack_require__.t.bind(__webpack_require__, 73682, 19)));
+ace.config.setModuleLoader('ace/mode/actionscript', () => __webpack_require__.e(/* import() */ 2560).then(__webpack_require__.t.bind(__webpack_require__, 73682, 19)));
 ace.config.setModuleLoader('ace/mode/ada', () => __webpack_require__.e(/* import() */ 4049).then(__webpack_require__.t.bind(__webpack_require__, 14049, 19)));
 ace.config.setModuleLoader('ace/mode/alda', () => __webpack_require__.e(/* import() */ 8331).then(__webpack_require__.t.bind(__webpack_require__, 98331, 19)));
 ace.config.setModuleLoader('ace/mode/apache_conf', () => __webpack_require__.e(/* import() */ 553).then(__webpack_require__.t.bind(__webpack_require__, 10553, 19)));
@@ -43451,7 +43451,7 @@ ace.config.setModuleLoader('ace/snippets/haskell', () => __webpack_require__.e(/
 ace.config.setModuleLoader('ace/snippets/haskell.snippets', () => __webpack_require__.e(/* import() */ 3153).then(__webpack_require__.t.bind(__webpack_require__, 63153, 23)));
 ace.config.setModuleLoader('ace/snippets/html', () => __webpack_require__.e(/* import() */ 6663).then(__webpack_require__.t.bind(__webpack_require__, 86663, 19)));
 ace.config.setModuleLoader('ace/snippets/html.snippets', () => __webpack_require__.e(/* import() */ 7805).then(__webpack_require__.t.bind(__webpack_require__, 37805, 23)));
-ace.config.setModuleLoader('ace/snippets/io', () => __webpack_require__.e(/* import() */ 3325).then(__webpack_require__.t.bind(__webpack_require__, 25250, 19)));
+ace.config.setModuleLoader('ace/snippets/io', () => __webpack_require__.e(/* import() */ 5250).then(__webpack_require__.t.bind(__webpack_require__, 25250, 19)));
 ace.config.setModuleLoader('ace/snippets/java', () => __webpack_require__.e(/* import() */ 9369).then(__webpack_require__.t.bind(__webpack_require__, 99369, 19)));
 ace.config.setModuleLoader('ace/snippets/java.snippets', () => __webpack_require__.e(/* import() */ 2944).then(__webpack_require__.t.bind(__webpack_require__, 44805, 23)));
 ace.config.setModuleLoader('ace/snippets/javascript', () => __webpack_require__.e(/* import() */ 6383).then(__webpack_require__.t.bind(__webpack_require__, 66383, 19)));
@@ -43585,285 +43585,566 @@ var hash_handler = __webpack_require__(7116);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/lib/keys.js
 var keys = __webpack_require__(11797);
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json-example.js
-var jsonContent = `{
-       "name": 12
-       "country": "Ireland"
-    }`;
-var jsonSchema = (/* unused pure expression or super */ null && (`{
-  "definitions": {
-    "color": {
-      "type": "string",
-      "enum": ["red", "orange", "yellow", "green", "blue", "purple", "pink"]
-    }
-  }
-}
-`));
-var jsonSchema2 = (/* unused pure expression or super */ null && (`  {"type": "object",
-"description": "a very special object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 50
-    },
-    "age": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 120
-    },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
-    "favoriteColor": {
-    "description": "Favorite color",
-      "$ref": "colors.schema.json#/definitions/color"
-    }
-  },
-  "required": ["name", "age", "email", "favoriteColor"],
-  "additionalProperties": false
-  }
-`));
+var jsonContent = '{\n       "name": 12\n       "country": "Ireland"\n    }';
+var jsonSchema = '{\n  "definitions": {\n    "color": {\n      "type": "string",\n      "enum": ["red", "orange", "yellow", "green", "blue", "purple", "pink"]\n    }\n  }\n}\n';
+var jsonSchema2 = '  {"type": "object",\n"description": "a very special object",\n  "properties": {\n    "name": {\n      "type": "string",\n      "minLength": 3,\n      "maxLength": 50\n    },\n    "age": {\n      "type": "integer",\n      "minimum": 0,\n      "maximum": 120\n    },\n    "email": {\n      "type": "string",\n      "format": "email"\n    },\n    "favoriteColor": {\n    "description": "Favorite color",\n      "$ref": "colors.schema.json#/definitions/color"\n    }\n  },\n  "required": ["name", "age", "email", "favoriteColor"],\n  "additionalProperties": false\n  }\n';
 
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json5-example.js
-var json5Content = `{
-       "name": 12,
-       "country": "Ireland", //trailing comma + comment
-    }`;
-var json5Schema = (/* unused pure expression or super */ null && (`{
-    "type": "object",
-    "description": "a very special object",
-    "properties": {
-        "name": {
-            "type": "string",
-            "description": "Some name"
-        },
-        "country": {
-            "type": "string",
-            "enum": ["Ireland", "Iceland"],
-            "description": "Country name"
-        },
-        "age": {
-            "type": "number",
-            "description": "Age of object"
-        }
-    }
-}`));
+var json5Content = '{\n       "name": 12,\n       "country": "Ireland", //trailing comma + comment\n    }';
+var json5Schema = '{\n    "type": "object",\n    "description": "a very special object",\n    "properties": {\n        "name": {\n            "type": "string",\n            "description": "Some name"\n        },\n        "country": {\n            "type": "string",\n            "enum": ["Ireland", "Iceland"],\n            "description": "Country name"\n        },\n        "age": {\n            "type": "number",\n            "description": "Age of object"\n        }\n    }\n}';
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/tooltip.js
 var tooltip = __webpack_require__(962);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
+function _assert_this_initialized(self) {
+    if (self === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+    return self;
+}
+function _class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+function _defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function _create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _get(target, property, receiver) {
+    if (typeof Reflect !== "undefined" && Reflect.get) {
+        _get = Reflect.get;
+    } else {
+        _get = function get(target, property, receiver) {
+            var base = _super_prop_base(target, property);
+            if (!base) return;
+            var desc = Object.getOwnPropertyDescriptor(base, property);
+            if (desc.get) {
+                return desc.get.call(receiver || target);
+            }
+            return desc.value;
+        };
+    }
+    return _get(target, property, receiver || target);
+}
+function _get_prototype_of(o) {
+    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return _get_prototype_of(o);
+}
+function _inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) _set_prototype_of(subClass, superClass);
+}
+function _possible_constructor_return(self, call) {
+    if (call && (_type_of(call) === "object" || typeof call === "function")) {
+        return call;
+    }
+    return _assert_this_initialized(self);
+}
+function _set_prototype_of(o, p) {
+    _set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
+        o.__proto__ = p;
+        return o;
+    };
+    return _set_prototype_of(o, p);
+}
+function _super_prop_base(object, property) {
+    while(!Object.prototype.hasOwnProperty.call(object, property)){
+        object = _get_prototype_of(object);
+        if (object === null) break;
+    }
+    return object;
+}
+function _type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
+function _is_native_reflect_construct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+    try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+function _create_super(Derived) {
+    var hasNativeReflectConstruct = _is_native_reflect_construct();
+    return function _createSuperInternal() {
+        var Super = _get_prototype_of(Derived), result;
+        if (hasNativeReflectConstruct) {
+            var NewTarget = _get_prototype_of(this).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(this, arguments);
+        }
+        return _possible_constructor_return(this, result);
+    };
+}
 
-class BaseTooltip extends tooltip/* Tooltip */.u {
-    provider;
-    $activeEditor;
-    descriptionText;
-    isOpen;
-    x;
-    y;
-    $mouseMoveTimer;
-    $showTimer;
-    row;
-    column;
-    constructor(provider) {
-        super(document.body);
-        this.provider = provider;
+var BaseTooltip = /*#__PURE__*/ function(Tooltip1) {
+    "use strict";
+    _inherits(BaseTooltip, Tooltip1);
+    var _super = _create_super(BaseTooltip);
+    function BaseTooltip(provider) {
+        _class_call_check(this, BaseTooltip);
+        var _this;
+        _this = _super.call(this, document.body);
+        _define_property(_assert_this_initialized(_this), "provider", void 0);
+        _define_property(_assert_this_initialized(_this), "$activeEditor", void 0);
+        _define_property(_assert_this_initialized(_this), "descriptionText", void 0);
+        _define_property(_assert_this_initialized(_this), "isOpen", void 0);
+        _define_property(_assert_this_initialized(_this), "x", void 0);
+        _define_property(_assert_this_initialized(_this), "y", void 0);
+        _define_property(_assert_this_initialized(_this), "$mouseMoveTimer", void 0);
+        _define_property(_assert_this_initialized(_this), "$showTimer", void 0);
+        _define_property(_assert_this_initialized(_this), "row", void 0);
+        _define_property(_assert_this_initialized(_this), "column", void 0);
+        _define_property(_assert_this_initialized(_this), "$hide", function() {
+            clearTimeout(_this.$mouseMoveTimer);
+            clearTimeout(_this.$showTimer);
+            if (_this.isOpen) {
+                _this.$removeEditorEvents();
+                _this.hide();
+            }
+            _this.$inactivateEditor();
+        });
+        _define_property(_assert_this_initialized(_this), "onMouseOut", function(e) {
+            clearTimeout(_this.$mouseMoveTimer);
+            clearTimeout(_this.$showTimer);
+            if (!e.relatedTarget || e.relatedTarget == _this.getElement()) return;
+            //@ts-ignore
+            if (e && e.currentTarget.contains(e.relatedTarget)) return;
+            //@ts-ignore
+            if (!e.relatedTarget.classList.contains("ace_content")) _this.$hide();
+        });
+        _this.provider = provider;
         //this is for ace-code version < 1.16.0
         try {
-            tooltip/* Tooltip.call */.u.call(this, document.body);
+            tooltip/* Tooltip.call */.u.call(_assert_this_initialized(_this), document.body);
+        } catch (e) {}
+        _this.getElement().style.pointerEvents = "auto";
+        _this.getElement().style.whiteSpace = "pre-wrap";
+        _this.getElement().addEventListener("mouseout", _this.onMouseOut);
+        return _this;
+    }
+    _create_class(BaseTooltip, [
+        {
+            key: "$show",
+            value: function $show() {
+                if (!this.$activeEditor) return;
+                var renderer = this.$activeEditor.renderer;
+                var position = renderer.textToScreenCoordinates(this.row, this.column);
+                var cursorPos = this.$activeEditor.getCursorPosition();
+                this.show(null, position.pageX, position.pageY);
+                var labelHeight = this.getElement().getBoundingClientRect().height;
+                var rect = renderer.scroller.getBoundingClientRect();
+                var isTopdown = true;
+                if (this.row > cursorPos.row) // don't obscure cursor
+                isTopdown = true;
+                else if (this.row < cursorPos.row) // don't obscure cursor
+                isTopdown = false;
+                if (position.pageY - labelHeight + renderer.lineHeight < rect.top) // not enough space above us
+                isTopdown = true;
+                else if (position.pageY + labelHeight > rect.bottom) isTopdown = false;
+                if (!isTopdown) position.pageY -= labelHeight;
+                else position.pageY += renderer.lineHeight;
+                this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+                this.show(null, position.pageX, position.pageY);
+            }
+        },
+        {
+            key: "getElement",
+            value: function getElement() {
+                return _get(_get_prototype_of(BaseTooltip.prototype), "getElement", this).call(this);
+            }
+        },
+        {
+            key: "hide",
+            value: function hide() {
+                _get(_get_prototype_of(BaseTooltip.prototype), "hide", this).call(this);
+            }
+        },
+        {
+            key: "show",
+            value: function show(param, pageX, pageY) {
+                _get(_get_prototype_of(BaseTooltip.prototype), "show", this).call(this, param, pageX, pageY);
+                this.$registerEditorEvents();
+            }
+        },
+        {
+            key: "setHtml",
+            value: function setHtml(descriptionText) {
+                _get(_get_prototype_of(BaseTooltip.prototype), "setHtml", this).call(this, descriptionText);
+            }
+        },
+        {
+            key: "destroy",
+            value: function destroy() {
+                this.$hide();
+                this.getElement().removeEventListener("mouseout", this.onMouseOut);
+            }
+        },
+        {
+            key: "$registerEditorEvents",
+            value: function $registerEditorEvents() {
+                this.$activeEditor.on("change", this.$hide);
+                this.$activeEditor.on("mousewheel", this.$hide);
+                //@ts-ignore
+                this.$activeEditor.on("mousedown", this.$hide);
+            }
+        },
+        {
+            key: "$removeEditorEvents",
+            value: function $removeEditorEvents() {
+                this.$activeEditor.off("change", this.$hide);
+                this.$activeEditor.off("mousewheel", this.$hide);
+                //@ts-ignore
+                this.$activeEditor.off("mousedown", this.$hide);
+            }
+        },
+        {
+            key: "$inactivateEditor",
+            value: function $inactivateEditor() {
+                var _this_$activeEditor;
+                (_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+                this.$activeEditor = undefined;
+            }
+        },
+        {
+            key: "$activateEditor",
+            value: function $activateEditor(editor) {
+                if (this.$activeEditor == editor) return;
+                this.$inactivateEditor();
+                this.$activeEditor = editor;
+                this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
+            }
         }
-        catch (e) {
-        }
-        this.getElement().style.pointerEvents = "auto";
-        this.getElement().style.whiteSpace = "pre-wrap";
-        this.getElement().addEventListener("mouseout", this.onMouseOut);
-    }
-    $show() {
-        if (!this.$activeEditor)
-            return;
-        let renderer = this.$activeEditor.renderer;
-        let position = renderer.textToScreenCoordinates(this.row, this.column);
-        let cursorPos = this.$activeEditor.getCursorPosition();
-        this.show(null, position.pageX, position.pageY);
-        let labelHeight = this.getElement().getBoundingClientRect().height;
-        let rect = renderer.scroller.getBoundingClientRect();
-        let isTopdown = true;
-        if (this.row > cursorPos.row)
-            // don't obscure cursor
-            isTopdown = true;
-        else if (this.row < cursorPos.row)
-            // don't obscure cursor
-            isTopdown = false;
-        if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
-            // not enough space above us
-            isTopdown = true;
-        else if (position.pageY + labelHeight > rect.bottom)
-            isTopdown = false;
-        if (!isTopdown)
-            position.pageY -= labelHeight;
-        else
-            position.pageY += renderer.lineHeight;
-        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-        this.show(null, position.pageX, position.pageY);
-    }
-    getElement() {
-        return super.getElement();
-    }
-    hide() {
-        super.hide();
-    }
-    show(param, pageX, pageY) {
-        super.show(param, pageX, pageY);
-        this.$registerEditorEvents();
-    }
-    setHtml(descriptionText) {
-        super.setHtml(descriptionText);
-    }
-    $hide = () => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.$removeEditorEvents();
-            this.hide();
-        }
-        this.$inactivateEditor();
-    };
-    destroy() {
-        this.$hide();
-        this.getElement().removeEventListener("mouseout", this.onMouseOut);
-    }
-    ;
-    onMouseOut = (e) => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (!e.relatedTarget || e.relatedTarget == this.getElement())
-            return;
-        //@ts-ignore
-        if (e && e.currentTarget.contains(e.relatedTarget))
-            return;
-        //@ts-ignore
-        if (!e.relatedTarget.classList.contains("ace_content"))
-            this.$hide();
-    };
-    $registerEditorEvents() {
-        this.$activeEditor.on("change", this.$hide);
-        this.$activeEditor.on("mousewheel", this.$hide);
-        //@ts-ignore
-        this.$activeEditor.on("mousedown", this.$hide);
-    }
-    $removeEditorEvents() {
-        this.$activeEditor.off("change", this.$hide);
-        this.$activeEditor.off("mousewheel", this.$hide);
-        //@ts-ignore
-        this.$activeEditor.off("mousedown", this.$hide);
-    }
-    $inactivateEditor() {
-        this.$activeEditor?.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = undefined;
-    }
-    $activateEditor(editor) {
-        if (this.$activeEditor == editor)
-            return;
-        this.$inactivateEditor();
-        this.$activeEditor = editor;
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
-    }
-}
+    ]);
+    return BaseTooltip;
+}(tooltip/* Tooltip */.u);
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
-
-class DescriptionTooltip extends BaseTooltip {
-    registerEditor(editor) {
-        editor.on("mousemove", this.onMouseMove);
+function description_tooltip_assert_this_initialized(self) {
+    if (self === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
-    update(editor) {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.doHover();
-        }
-        else {
-            this.$mouseMoveTimer = setTimeout(() => {
-                this.$activateEditor(editor);
-                this.doHover();
-                this.$mouseMoveTimer = undefined;
-            }, 500);
-        }
+    return self;
+}
+function description_tooltip_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
     }
-    ;
-    doHover = () => {
-        if (!this.provider.options.functionality.hover)
-            return;
-        let renderer = this.$activeEditor.renderer;
-        let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
-        let session = this.$activeEditor.session;
-        let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
-        this.provider.doHover(session, docPos, (hover) => {
-            let descriptionText = hover ? this.provider.getTooltipText(hover) : null;
-            if (!hover || !descriptionText) {
-                this.hide();
-                return;
-            }
-            let token = session.getTokenAt(docPos.row, docPos.column + 1);
-            let row = hover.range?.start.row ?? docPos.row;
-            let column = hover.range?.start.column ?? token?.start ?? 0;
-            if (this.descriptionText != descriptionText) {
-                this.hide();
-                this.setHtml(descriptionText);
-                this.descriptionText = descriptionText;
-            }
-            else if (this.row == row && this.column == column && this.isOpen) {
-                return;
-            }
-            this.row = row;
-            this.column = column;
-            if (this.$mouseMoveTimer) {
-                this.$show();
-            }
-            else {
-                this.$showTimer = setTimeout(() => {
-                    this.$show();
-                    this.$showTimer = undefined;
-                }, 500);
-            }
+}
+function description_tooltip_defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function description_tooltip_create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) description_tooltip_defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) description_tooltip_defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+function description_tooltip_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
         });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function description_tooltip_get_prototype_of(o) {
+    description_tooltip_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
     };
-    onMouseMove = (e) => {
-        this.x = e.clientX;
-        this.y = e.clientY;
-        this.update(e["editor"]);
+    return description_tooltip_get_prototype_of(o);
+}
+function description_tooltip_inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) description_tooltip_set_prototype_of(subClass, superClass);
+}
+function description_tooltip_possible_constructor_return(self, call) {
+    if (call && (description_tooltip_type_of(call) === "object" || typeof call === "function")) {
+        return call;
+    }
+    return description_tooltip_assert_this_initialized(self);
+}
+function description_tooltip_set_prototype_of(o, p) {
+    description_tooltip_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
+        o.__proto__ = p;
+        return o;
+    };
+    return description_tooltip_set_prototype_of(o, p);
+}
+function description_tooltip_type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
+function description_tooltip_is_native_reflect_construct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+    try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+function description_tooltip_create_super(Derived) {
+    var hasNativeReflectConstruct = description_tooltip_is_native_reflect_construct();
+    return function _createSuperInternal() {
+        var Super = description_tooltip_get_prototype_of(Derived), result;
+        if (hasNativeReflectConstruct) {
+            var NewTarget = description_tooltip_get_prototype_of(this).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(this, arguments);
+        }
+        return description_tooltip_possible_constructor_return(this, result);
     };
 }
+
+var DescriptionTooltip = /*#__PURE__*/ function(BaseTooltip) {
+    "use strict";
+    description_tooltip_inherits(DescriptionTooltip, BaseTooltip);
+    var _super = description_tooltip_create_super(DescriptionTooltip);
+    function DescriptionTooltip() {
+        description_tooltip_class_call_check(this, DescriptionTooltip);
+        var _this;
+        _this = _super.apply(this, arguments);
+        description_tooltip_define_property(description_tooltip_assert_this_initialized(_this), "doHover", function() {
+            if (!_this.provider.options.functionality.hover) return;
+            var renderer = _this.$activeEditor.renderer;
+            var screenCoordinates = renderer.pixelToScreenCoordinates(_this.x, _this.y);
+            var session = _this.$activeEditor.session;
+            var docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
+            _this.provider.doHover(session, docPos, function(hover) {
+                var _hover_range, _hover_range1;
+                var descriptionText = hover ? _this.provider.getTooltipText(hover) : null;
+                if (!hover || !descriptionText) {
+                    _this.hide();
+                    return;
+                }
+                var token = session.getTokenAt(docPos.row, docPos.column + 1);
+                var _hover_range_start_row;
+                var row = (_hover_range_start_row = (_hover_range = hover.range) === null || _hover_range === void 0 ? void 0 : _hover_range.start.row) !== null && _hover_range_start_row !== void 0 ? _hover_range_start_row : docPos.row;
+                var _hover_range_start_column, _ref;
+                var column = (_ref = (_hover_range_start_column = (_hover_range1 = hover.range) === null || _hover_range1 === void 0 ? void 0 : _hover_range1.start.column) !== null && _hover_range_start_column !== void 0 ? _hover_range_start_column : token === null || token === void 0 ? void 0 : token.start) !== null && _ref !== void 0 ? _ref : 0;
+                if (_this.descriptionText != descriptionText) {
+                    _this.hide();
+                    _this.setHtml(descriptionText);
+                    _this.descriptionText = descriptionText;
+                } else if (_this.row == row && _this.column == column && _this.isOpen) {
+                    return;
+                }
+                _this.row = row;
+                _this.column = column;
+                if (_this.$mouseMoveTimer) {
+                    _this.$show();
+                } else {
+                    _this.$showTimer = setTimeout(function() {
+                        _this.$show();
+                        _this.$showTimer = undefined;
+                    }, 500);
+                }
+            });
+        });
+        description_tooltip_define_property(description_tooltip_assert_this_initialized(_this), "onMouseMove", function(e) {
+            _this.x = e.clientX;
+            _this.y = e.clientY;
+            _this.update(e["editor"]);
+        });
+        return _this;
+    }
+    description_tooltip_create_class(DescriptionTooltip, [
+        {
+            key: "registerEditor",
+            value: function registerEditor(editor) {
+                editor.on("mousemove", this.onMouseMove);
+            }
+        },
+        {
+            key: "update",
+            value: function update(editor) {
+                var _this = this;
+                clearTimeout(this.$mouseMoveTimer);
+                clearTimeout(this.$showTimer);
+                if (this.isOpen) {
+                    this.doHover();
+                } else {
+                    this.$mouseMoveTimer = setTimeout(function() {
+                        _this.$activateEditor(editor);
+                        _this.doHover();
+                        _this.$mouseMoveTimer = undefined;
+                    }, 500);
+                }
+            }
+        }
+    ]);
+    return DescriptionTooltip;
+}(BaseTooltip);
 
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var main = __webpack_require__(10152);
+;// CONCATENATED MODULE: ./packages/ace-linters/utils.ts
+function utils_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _object_spread(target) {
+    for(var i = 1; i < arguments.length; i++){
+        var source = arguments[i] != null ? arguments[i] : {};
+        var ownKeys = Object.keys(source);
+        if (typeof Object.getOwnPropertySymbols === "function") {
+            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
+                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+            }));
+        }
+        ownKeys.forEach(function(key) {
+            utils_define_property(target, key, source[key]);
+        });
+    }
+    return target;
+}
+function mergeObjects(obj1, obj2) {
+    if (!obj1) return obj2;
+    if (!obj2) return obj1;
+    var mergedObjects = _object_spread({}, obj2, obj1); // Give priority to obj1 values by spreading obj2 first, then obj1
+    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+    try {
+        for(var _iterator = Object.keys(mergedObjects)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+            var key = _step.value;
+            if (obj1[key] && obj2[key]) {
+                if (Array.isArray(obj1[key])) {
+                    mergedObjects[key] = obj1[key].concat(obj2[key]);
+                } else if (Array.isArray(obj2[key])) {
+                    mergedObjects[key] = obj2[key].concat(obj1[key]);
+                } else if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
+                    mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+                }
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally{
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return != null) {
+                _iterator.return();
+            }
+        } finally{
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+    return mergedObjects;
+}
+function notEmpty(value) {
+    return value !== null && value !== undefined;
+}
+function utils_checkValueAgainstRegexpArray(value, regexpArray) {
+    if (!regexpArray) {
+        return false;
+    }
+    for(var i = 0; i < regexpArray.length; i++){
+        if (regexpArray[i].test(value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/common-converters.ts
 
 
-var CommonConverter;
-(function (CommonConverter) {
-    function normalizeRanges(completions) {
-        return completions && completions.map((el) => {
+
+var common_converters_CommonConverter;
+(function(CommonConverter) {
+    var normalizeRanges = function normalizeRanges(completions) {
+        return completions && completions.map(function(el) {
             if (el["range"]) {
                 el["range"] = toRange(el["range"]);
             }
             return el;
         });
-    }
-    CommonConverter.normalizeRanges = normalizeRanges;
-    function cleanHtml(html) {
+    };
+    var cleanHtml = function cleanHtml(html) {
         return html.replace(/<a\s/, "<a target='_blank' ");
-    }
-    CommonConverter.cleanHtml = cleanHtml;
-    function toRange(range) {
+    };
+    var toRange = function toRange(range) {
         if (!range || !range.start || !range.end) {
             return;
         }
         return ace.Range.fromPoints(range.start, range.end);
-    }
-    CommonConverter.toRange = toRange;
-    function convertKind(kind) {
-        switch (kind) {
+    };
+    var convertKind = function convertKind(kind) {
+        switch(kind){
             case "primitiveType":
             case "keyword":
                 return main.CompletionItemKind.Keyword;
@@ -43892,155 +44173,342 @@ var CommonConverter;
                 return main.CompletionItemKind.File;
         }
         return main.CompletionItemKind.Property;
-    }
+    };
+    var excludeByErrorMessage = function excludeByErrorMessage(diagnostics, errorMessagesToIgnore) {
+        var fieldName = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "message";
+        if (!errorMessagesToIgnore) return diagnostics;
+        return diagnostics.filter(function(el) {
+            return !utils_checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore);
+        });
+    };
+    CommonConverter.normalizeRanges = normalizeRanges;
+    CommonConverter.cleanHtml = cleanHtml;
+    CommonConverter.toRange = toRange;
     CommonConverter.convertKind = convertKind;
-})(CommonConverter || (CommonConverter = {}));
+    CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
+})(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-types.ts
-class BaseMessage {
-    sessionId;
-    constructor(sessionId) {
-        this.sessionId = sessionId;
+function message_types_assert_this_initialized(self) {
+    if (self === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+    return self;
+}
+function message_types_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
     }
 }
-class InitMessage extends BaseMessage {
-    type = MessageType.init;
-    mode;
-    options;
-    value;
-    version;
-    constructor(sessionId, value, version, mode, options) {
-        super(sessionId);
-        this.version = version;
-        this.options = options;
-        this.mode = mode;
-        this.value = value;
+function message_types_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function message_types_get_prototype_of(o) {
+    message_types_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return message_types_get_prototype_of(o);
+}
+function message_types_inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) message_types_set_prototype_of(subClass, superClass);
+}
+function message_types_possible_constructor_return(self, call) {
+    if (call && (message_types_type_of(call) === "object" || typeof call === "function")) {
+        return call;
+    }
+    return message_types_assert_this_initialized(self);
+}
+function message_types_set_prototype_of(o, p) {
+    message_types_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
+        o.__proto__ = p;
+        return o;
+    };
+    return message_types_set_prototype_of(o, p);
+}
+function message_types_type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
+function message_types_is_native_reflect_construct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+    try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+        return true;
+    } catch (e) {
+        return false;
     }
 }
-class FormatMessage extends BaseMessage {
-    type = MessageType.format;
-    value;
-    format;
-    constructor(sessionId, value, format) {
-        super(sessionId);
-        this.value = value;
-        this.format = format;
-    }
+function message_types_create_super(Derived) {
+    var hasNativeReflectConstruct = message_types_is_native_reflect_construct();
+    return function _createSuperInternal() {
+        var Super = message_types_get_prototype_of(Derived), result;
+        if (hasNativeReflectConstruct) {
+            var NewTarget = message_types_get_prototype_of(this).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(this, arguments);
+        }
+        return message_types_possible_constructor_return(this, result);
+    };
 }
-class CompleteMessage extends BaseMessage {
-    type = MessageType.complete;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
+var BaseMessage = function BaseMessage(sessionId) {
+    "use strict";
+    message_types_class_call_check(this, BaseMessage);
+    message_types_define_property(this, "sessionId", void 0);
+    this.sessionId = sessionId;
+};
+var InitMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(InitMessage, BaseMessage);
+    var _super = message_types_create_super(InitMessage);
+    function InitMessage(sessionId, value, version, mode, options) {
+        message_types_class_call_check(this, InitMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.init);
+        message_types_define_property(message_types_assert_this_initialized(_this), "mode", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "options", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "version", void 0);
+        _this.version = version;
+        _this.options = options;
+        _this.mode = mode;
+        _this.value = value;
+        return _this;
     }
-}
-class ResolveCompletionMessage extends BaseMessage {
-    type = MessageType.resolveCompletion;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
+    return InitMessage;
+}(BaseMessage);
+var FormatMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(FormatMessage, BaseMessage);
+    var _super = message_types_create_super(FormatMessage);
+    function FormatMessage(sessionId, value, format) {
+        message_types_class_call_check(this, FormatMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.format);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "format", void 0);
+        _this.value = value;
+        _this.format = format;
+        return _this;
     }
-}
-class HoverMessage extends BaseMessage {
-    type = MessageType.hover;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
+    return FormatMessage;
+}(BaseMessage);
+var CompleteMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(CompleteMessage, BaseMessage);
+    var _super = message_types_create_super(CompleteMessage);
+    function CompleteMessage(sessionId, value) {
+        message_types_class_call_check(this, CompleteMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.complete);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        _this.value = value;
+        return _this;
     }
-}
-class ValidateMessage extends BaseMessage {
-    type = MessageType.validate;
-    constructor(sessionId) {
-        super(sessionId);
+    return CompleteMessage;
+}(BaseMessage);
+var ResolveCompletionMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(ResolveCompletionMessage, BaseMessage);
+    var _super = message_types_create_super(ResolveCompletionMessage);
+    function ResolveCompletionMessage(sessionId, value) {
+        message_types_class_call_check(this, ResolveCompletionMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.resolveCompletion);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        _this.value = value;
+        return _this;
     }
-}
-class ChangeMessage extends BaseMessage {
-    type = MessageType.change;
-    value;
-    version;
-    constructor(sessionId, value, version) {
-        super(sessionId);
-        this.value = value;
-        this.version = version;
+    return ResolveCompletionMessage;
+}(BaseMessage);
+var HoverMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(HoverMessage, BaseMessage);
+    var _super = message_types_create_super(HoverMessage);
+    function HoverMessage(sessionId, value) {
+        message_types_class_call_check(this, HoverMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.hover);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        _this.value = value;
+        return _this;
     }
-}
-class DeltasMessage extends BaseMessage {
-    type = MessageType.applyDelta;
-    value;
-    version;
-    constructor(sessionId, value, version) {
-        super(sessionId);
-        this.value = value;
-        this.version = version;
+    return HoverMessage;
+}(BaseMessage);
+var ValidateMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(ValidateMessage, BaseMessage);
+    var _super = message_types_create_super(ValidateMessage);
+    function ValidateMessage(sessionId) {
+        message_types_class_call_check(this, ValidateMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.validate);
+        return _this;
     }
-}
-class ChangeModeMessage extends BaseMessage {
-    type = MessageType.changeMode;
-    mode;
-    value;
-    constructor(sessionId, value, mode) {
-        super(sessionId);
-        this.value = value;
-        this.mode = mode;
+    return ValidateMessage;
+}(BaseMessage);
+var ChangeMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(ChangeMessage, BaseMessage);
+    var _super = message_types_create_super(ChangeMessage);
+    function ChangeMessage(sessionId, value, version) {
+        message_types_class_call_check(this, ChangeMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.change);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "version", void 0);
+        _this.value = value;
+        _this.version = version;
+        return _this;
     }
-}
-class ChangeOptionsMessage extends BaseMessage {
-    type = MessageType.changeOptions;
-    options;
-    merge;
-    constructor(sessionId, options, merge = false) {
-        super(sessionId);
-        this.options = options;
-        this.merge = merge;
+    return ChangeMessage;
+}(BaseMessage);
+var DeltasMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(DeltasMessage, BaseMessage);
+    var _super = message_types_create_super(DeltasMessage);
+    function DeltasMessage(sessionId, value, version) {
+        message_types_class_call_check(this, DeltasMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.applyDelta);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "version", void 0);
+        _this.value = value;
+        _this.version = version;
+        return _this;
     }
-}
-class DisposeMessage extends BaseMessage {
-    type = MessageType.dispose;
-    constructor(sessionId) {
-        super(sessionId);
+    return DeltasMessage;
+}(BaseMessage);
+var ChangeModeMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(ChangeModeMessage, BaseMessage);
+    var _super = message_types_create_super(ChangeModeMessage);
+    function ChangeModeMessage(sessionId, value, mode) {
+        message_types_class_call_check(this, ChangeModeMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.changeMode);
+        message_types_define_property(message_types_assert_this_initialized(_this), "mode", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        _this.value = value;
+        _this.mode = mode;
+        return _this;
     }
-}
-class GlobalOptionsMessage {
-    type = MessageType.globalOptions;
-    serviceName;
-    options;
-    merge;
-    constructor(serviceName, options, merge) {
-        this.serviceName = serviceName;
-        this.options = options;
-        this.merge = merge;
+    return ChangeModeMessage;
+}(BaseMessage);
+var ChangeOptionsMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(ChangeOptionsMessage, BaseMessage);
+    var _super = message_types_create_super(ChangeOptionsMessage);
+    function ChangeOptionsMessage(sessionId, options) {
+        var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
+        message_types_class_call_check(this, ChangeOptionsMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.changeOptions);
+        message_types_define_property(message_types_assert_this_initialized(_this), "options", void 0);
+        message_types_define_property(message_types_assert_this_initialized(_this), "merge", void 0);
+        _this.options = options;
+        _this.merge = merge;
+        return _this;
     }
-}
-class ConfigureFeaturesMessage {
-    type = MessageType.configureFeatures;
-    serviceName;
-    options;
-    constructor(serviceName, options) {
-        this.serviceName = serviceName;
-        this.options = options;
+    return ChangeOptionsMessage;
+}(BaseMessage);
+var DisposeMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(DisposeMessage, BaseMessage);
+    var _super = message_types_create_super(DisposeMessage);
+    function DisposeMessage(sessionId) {
+        message_types_class_call_check(this, DisposeMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.dispose);
+        return _this;
     }
-}
-class SignatureHelpMessage extends BaseMessage {
-    type = MessageType.signatureHelp;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
+    return DisposeMessage;
+}(BaseMessage);
+var GlobalOptionsMessage = function GlobalOptionsMessage(serviceName, options, merge) {
+    "use strict";
+    message_types_class_call_check(this, GlobalOptionsMessage);
+    message_types_define_property(this, "type", MessageType.globalOptions);
+    message_types_define_property(this, "serviceName", void 0);
+    message_types_define_property(this, "options", void 0);
+    message_types_define_property(this, "merge", void 0);
+    this.serviceName = serviceName;
+    this.options = options;
+    this.merge = merge;
+};
+var ConfigureFeaturesMessage = function ConfigureFeaturesMessage(serviceName, options) {
+    "use strict";
+    message_types_class_call_check(this, ConfigureFeaturesMessage);
+    message_types_define_property(this, "type", MessageType.configureFeatures);
+    message_types_define_property(this, "serviceName", void 0);
+    message_types_define_property(this, "options", void 0);
+    this.serviceName = serviceName;
+    this.options = options;
+};
+var SignatureHelpMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(SignatureHelpMessage, BaseMessage);
+    var _super = message_types_create_super(SignatureHelpMessage);
+    function SignatureHelpMessage(sessionId, value) {
+        message_types_class_call_check(this, SignatureHelpMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.signatureHelp);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        _this.value = value;
+        return _this;
     }
-}
-class DocumentHighlightMessage extends BaseMessage {
-    type = MessageType.documentHighlight;
-    value;
-    constructor(sessionId, value) {
-        super(sessionId);
-        this.value = value;
+    return SignatureHelpMessage;
+}(BaseMessage);
+var DocumentHighlightMessage = /*#__PURE__*/ function(BaseMessage) {
+    "use strict";
+    message_types_inherits(DocumentHighlightMessage, BaseMessage);
+    var _super = message_types_create_super(DocumentHighlightMessage);
+    function DocumentHighlightMessage(sessionId, value) {
+        message_types_class_call_check(this, DocumentHighlightMessage);
+        var _this;
+        _this = _super.call(this, sessionId);
+        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.documentHighlight);
+        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
+        _this.value = value;
+        return _this;
     }
-}
+    return DocumentHighlightMessage;
+}(BaseMessage);
 var MessageType;
-(function (MessageType) {
+(function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
     MessageType[MessageType["format"] = 1] = "format";
     MessageType[MessageType["complete"] = 2] = "complete";
@@ -44063,80 +44531,165 @@ var oop = __webpack_require__(89359);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event_emitter.js
 var event_emitter = __webpack_require__(23056);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller.ts
-
-
-
-class MessageController {
-    $worker;
-    constructor(worker) {
-        this.$worker = worker;
-        this.$worker.addEventListener("message", (e) => {
-            let message = e.data;
-            this["_signal"](message.type + "-" + message.sessionId, message.value);
-        });
-    }
-    init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
-    }
-    doValidation(sessionId, callback) {
-        this.postMessage(new ValidateMessage(sessionId), callback);
-    }
-    doComplete(sessionId, position, callback) {
-        this.postMessage(new CompleteMessage(sessionId, position), callback);
-    }
-    doResolve(sessionId, completion, callback) {
-        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
-    }
-    format(sessionId, range, format, callback) {
-        this.postMessage(new FormatMessage(sessionId, range, format), callback);
-    }
-    doHover(sessionId, position, callback) {
-        this.postMessage(new HoverMessage(sessionId, position), callback);
-    }
-    change(sessionId, deltas, document, callback) {
-        let message;
-        if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
-        }
-        else {
-            message = new DeltasMessage(sessionId, deltas, document["version"]);
-        }
-        this.postMessage(message, callback);
-    }
-    changeMode(sessionId, value, mode, callback) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
-    }
-    changeOptions(sessionId, options, callback, merge = false) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
-    }
-    dispose(sessionId, callback) {
-        this.postMessage(new DisposeMessage(sessionId), callback);
-    }
-    setGlobalOptions(serviceName, options, merge = false) {
-        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
-    }
-    provideSignatureHelp(sessionId, position, callback) {
-        this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
-    }
-    findDocumentHighlights(sessionId, position, callback) {
-        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
-    }
-    configureFeatures(serviceName, features) {
-        this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
-    }
-    postMessage(message, callback) {
-        if (callback) {
-            let eventName = message.type.toString() + "-" + message.sessionId;
-            let callbackFunction = (data) => {
-                this["off"](eventName, callbackFunction);
-                callback(data);
-            };
-            this["on"](eventName, callbackFunction);
-        }
-        this.$worker.postMessage(message);
+function message_controller_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
     }
 }
+function message_controller_defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function message_controller_create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) message_controller_defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) message_controller_defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+function message_controller_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+
+var MessageController = /*#__PURE__*/ function() {
+    "use strict";
+    function MessageController(worker) {
+        var _this = this;
+        message_controller_class_call_check(this, MessageController);
+        message_controller_define_property(this, "$worker", void 0);
+        this.$worker = worker;
+        this.$worker.addEventListener("message", function(e) {
+            var message = e.data;
+            _this["_signal"](message.type + "-" + message.sessionId, message.value);
+        });
+    }
+    message_controller_create_class(MessageController, [
+        {
+            key: "init",
+            value: function init(sessionId, document, mode, options, initCallback, validationCallback) {
+                this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+                this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
+            }
+        },
+        {
+            key: "doValidation",
+            value: function doValidation(sessionId, callback) {
+                this.postMessage(new ValidateMessage(sessionId), callback);
+            }
+        },
+        {
+            key: "doComplete",
+            value: function doComplete(sessionId, position, callback) {
+                this.postMessage(new CompleteMessage(sessionId, position), callback);
+            }
+        },
+        {
+            key: "doResolve",
+            value: function doResolve(sessionId, completion, callback) {
+                this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
+            }
+        },
+        {
+            key: "format",
+            value: function format(sessionId, range, format, callback) {
+                this.postMessage(new FormatMessage(sessionId, range, format), callback);
+            }
+        },
+        {
+            key: "doHover",
+            value: function doHover(sessionId, position, callback) {
+                this.postMessage(new HoverMessage(sessionId, position), callback);
+            }
+        },
+        {
+            key: "change",
+            value: function change(sessionId, deltas, document, callback) {
+                var message;
+                if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
+                    message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+                } else {
+                    message = new DeltasMessage(sessionId, deltas, document["version"]);
+                }
+                this.postMessage(message, callback);
+            }
+        },
+        {
+            key: "changeMode",
+            value: function changeMode(sessionId, value, mode, callback) {
+                this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
+            }
+        },
+        {
+            key: "changeOptions",
+            value: function changeOptions(sessionId, options, callback) {
+                var merge = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false;
+                this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
+            }
+        },
+        {
+            key: "dispose",
+            value: function dispose(sessionId, callback) {
+                this.postMessage(new DisposeMessage(sessionId), callback);
+            }
+        },
+        {
+            key: "setGlobalOptions",
+            value: function setGlobalOptions(serviceName, options) {
+                var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
+                this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+            }
+        },
+        {
+            key: "provideSignatureHelp",
+            value: function provideSignatureHelp(sessionId, position, callback) {
+                this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
+            }
+        },
+        {
+            key: "findDocumentHighlights",
+            value: function findDocumentHighlights(sessionId, position, callback) {
+                this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
+            }
+        },
+        {
+            key: "configureFeatures",
+            value: function configureFeatures(serviceName, features) {
+                this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
+            }
+        },
+        {
+            key: "postMessage",
+            value: function postMessage(message, callback) {
+                var _this = this;
+                if (callback) {
+                    var eventName = message.type.toString() + "-" + message.sessionId;
+                    var callbackFunction = function(data) {
+                        _this["off"](eventName, callbackFunction);
+                        callback(data);
+                    };
+                    this["on"](eventName, callbackFunction);
+                }
+                this.$worker.postMessage(message);
+            }
+        }
+    ]);
+    return MessageController;
+}();
 oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
@@ -44148,13 +44701,17 @@ var range_list = __webpack_require__(16510);
 
 
 
+
 function fromRange(range) {
     return {
         start: {
             line: range.start.row,
             character: range.start.column
         },
-        end: { line: range.end.row, character: range.end.column }
+        end: {
+            line: range.end.row,
+            character: range.end.column
+        }
     };
 }
 function rangeFromPositions(start, end) {
@@ -44167,13 +44724,19 @@ function toRange(range) {
     return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
 }
 function fromPoint(point) {
-    return { line: point.row, character: point.column };
+    return {
+        line: point.row,
+        character: point.column
+    };
 }
 function toPoint(position) {
-    return { row: position.line, column: position.character };
+    return {
+        row: position.line,
+        column: position.character
+    };
 }
 function toAnnotations(diagnostics) {
-    return diagnostics.map((el) => {
+    return diagnostics.map(function(el) {
         return {
             row: el.range.start.line,
             column: el.range.start.character,
@@ -44183,12 +44746,14 @@ function toAnnotations(diagnostics) {
     });
 }
 function toCompletion(item) {
-    let itemKind = item.kind;
-    let kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
-    let text = item.textEdit?.newText ?? item.insertText ?? item.label;
-    let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-    let range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
-    let completion = {
+    var _item_textEdit, _item_command;
+    var itemKind = item.kind;
+    var kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
+    var _item_textEdit_newText, _ref;
+    var text = (_ref = (_item_textEdit_newText = (_item_textEdit = item.textEdit) === null || _item_textEdit === void 0 ? void 0 : _item_textEdit.newText) !== null && _item_textEdit_newText !== void 0 ? _item_textEdit_newText : item.insertText) !== null && _ref !== void 0 ? _ref : item.label;
+    var command = ((_item_command = item.command) === null || _item_command === void 0 ? void 0 : _item_command.command) == "editor.action.triggerSuggest" ? "startAutocomplete" : undefined;
+    var range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
+    var completion = {
         meta: kind,
         caption: item.label,
         command: command,
@@ -44199,8 +44764,7 @@ function toCompletion(item) {
     };
     if (item.insertTextFormat == main.InsertTextFormat.Snippet) {
         completion["snippet"] = text;
-    }
-    else {
+    } else {
         completion["value"] = text;
     }
     completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
@@ -44211,23 +44775,24 @@ function toCompletion(item) {
 }
 function toCompletions(completions) {
     if (completions.length > 0) {
-        let combinedCompletions = completions.map((el) => {
+        var combinedCompletions = completions.map(function(el) {
             if (!el.completions) {
                 return [];
             }
-            let allCompletions;
+            var allCompletions;
             if (Array.isArray(el.completions)) {
                 allCompletions = el.completions;
-            }
-            else {
+            } else {
                 allCompletions = el.completions.items;
             }
-            return allCompletions.map((item) => {
+            return allCompletions.map(function(item) {
                 item["service"] = el.service;
                 return item;
             });
         }).flat();
-        return combinedCompletions.map((item) => toCompletion(item));
+        return combinedCompletions.map(function(item) {
+            return toCompletion(item);
+        });
     }
     return [];
 }
@@ -44236,28 +44801,30 @@ function toResolvedCompletion(completion, item) {
     return completion;
 }
 function toCompletionItem(completion) {
-    let command;
+    var command;
     if (completion["command"]) {
         command = {
             title: "triggerSuggest",
             command: completion["command"]
         };
     }
-    let completionItem = {
-        label: completion.caption ?? "",
-        kind: CommonConverter.convertKind(completion.meta),
+    var _completion_caption;
+    var completionItem = {
+        label: (_completion_caption = completion.caption) !== null && _completion_caption !== void 0 ? _completion_caption : "",
+        kind: common_converters_CommonConverter.convertKind(completion.meta),
         command: command,
-        insertTextFormat: (completion["snippet"]) ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
-        documentation: completion["documentation"],
+        insertTextFormat: completion["snippet"] ? main.InsertTextFormat.Snippet : main.InsertTextFormat.PlainText,
+        documentation: completion["documentation"]
     };
     if (completion["range"]) {
+        var _completion_snippet;
         completionItem.textEdit = {
             range: fromRange(completion["range"]),
-            newText: (completion["snippet"] ?? completion["value"])
+            newText: (_completion_snippet = completion["snippet"]) !== null && _completion_snippet !== void 0 ? _completion_snippet : completion["value"]
         };
-    }
-    else {
-        completionItem.insertText = (completion["snippet"] ?? completion["value"]);
+    } else {
+        var _completion_snippet1;
+        completionItem.insertText = (_completion_snippet1 = completion["snippet"]) !== null && _completion_snippet1 !== void 0 ? _completion_snippet1 : completion["value"];
     }
     completionItem["fileName"] = completion["fileName"];
     completionItem["position"] = completion["position"];
@@ -44268,32 +44835,30 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        let rangeList = new range_list/* RangeList */.$();
-        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
+        var rangeList = new range_list/* RangeList */.$();
+        rangeList.ranges = [
+            toRange(textEdit.insert),
+            toRange(textEdit.replace)
+        ];
         rangeList.merge();
         return rangeList[0];
-    }
-    else {
+    } else {
         textEdit = textEdit;
         return toRange(textEdit.range);
     }
 }
 function toTooltip(hover) {
-    if (!hover)
-        return;
-    let content = hover.map((el) => {
+    if (!hover) return;
+    var content = hover.map(function(el) {
         if (main.MarkupContent.is(el.contents)) {
             return fromMarkupContent(el.contents);
-        }
-        else if (main.MarkedString.is(el.contents)) {
+        } else if (main.MarkedString.is(el.contents)) {
             return "```" + el.contents.value + "```";
-        }
-        else {
-            let contents = el.contents.map((el) => {
+        } else {
+            var contents = el.contents.map(function(el) {
                 if (typeof el !== "string") {
-                    return `\`\`\`${el.value}\`\`\``;
-                }
-                else {
+                    return "```".concat(el.value, "```");
+                } else {
                     return el;
                 }
             });
@@ -44309,29 +44874,26 @@ function toTooltip(hover) {
     };
 }
 function fromSignatureHelp(signatureHelp) {
-    if (!signatureHelp)
-        return;
-    let content = signatureHelp.map((el) => {
-        let signatureIndex = el?.activeSignature || 0;
-        let activeSignature = el.signatures[signatureIndex];
-        let activeParam = el?.activeParameter;
-        let contents = activeSignature.label;
+    if (!signatureHelp) return;
+    var content = signatureHelp.map(function(el) {
+        var signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
+        var activeSignature = el.signatures[signatureIndex];
+        var activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
+        var contents = activeSignature.label;
         if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
-            let param = activeSignature.parameters[activeParam].label;
+            var param = activeSignature.parameters[activeParam].label;
             if (typeof param == "string") {
-                contents = contents.replace(param, `**${param}**`);
+                contents = contents.replace(param, "**".concat(param, "**"));
             }
         }
         if (activeSignature.documentation) {
             if (main.MarkupContent.is(activeSignature.documentation)) {
                 return contents + "\n\n" + fromMarkupContent(activeSignature.documentation);
-            }
-            else {
+            } else {
                 contents += "\n\n" + activeSignature.documentation;
                 return contents;
             }
-        }
-        else {
+        } else {
             return contents;
         }
     });
@@ -44343,40 +44905,93 @@ function fromSignatureHelp(signatureHelp) {
     };
 }
 function fromMarkupContent(content) {
-    if (!content)
-        return;
+    if (!content) return;
     if (typeof content === "string") {
         return content;
-    }
-    else {
+    } else {
         return content.value;
     }
 }
 function fromAceDelta(delta, eol) {
-    const text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
+    var text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
     return {
-        range: delta.action === "insert"
-            ? rangeFromPositions(fromPoint(delta.start), fromPoint(delta.start))
-            : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
-        text: delta.action === "insert" ? text : "",
+        range: delta.action === "insert" ? rangeFromPositions(fromPoint(delta.start), fromPoint(delta.start)) : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
+        text: delta.action === "insert" ? text : ""
     };
+}
+function filterDiagnostics(diagnostics, filterErrors) {
+    return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map(function(el) {
+        if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
+            el.severity = DiagnosticSeverity.Warning;
+        } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
+            el.severity = DiagnosticSeverity.Information;
+        }
+        return el;
+    });
 }
 
 // EXTERNAL MODULE: ./node_modules/showdown/dist/showdown.js
 var showdown = __webpack_require__(53787);
 var showdown_default = /*#__PURE__*/__webpack_require__.n(showdown);
 ;// CONCATENATED MODULE: ./packages/ace-linters/cdn-worker.ts
+function _array_like_to_array(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
+    return arr2;
+}
+function _array_with_holes(arr) {
+    if (Array.isArray(arr)) return arr;
+}
+function _iterable_to_array_limit(arr, i) {
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+    if (_i == null) return;
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _s, _e;
+    try {
+        for(_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true){
+            _arr.push(_s.value);
+            if (i && _arr.length === i) break;
+        }
+    } catch (err) {
+        _d = true;
+        _e = err;
+    } finally{
+        try {
+            if (!_n && _i["return"] != null) _i["return"]();
+        } finally{
+            if (_d) throw _e;
+        }
+    }
+    return _arr;
+}
+function _non_iterable_rest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _sliced_to_array(arr, i) {
+    return _array_with_holes(arr) || _iterable_to_array_limit(arr, i) || _unsupported_iterable_to_array(arr, i) || _non_iterable_rest();
+}
+function _unsupported_iterable_to_array(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _array_like_to_array(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
+}
 function $workerBlob(script) {
-    return new Blob([script.toString()], { "type": "application/javascript" });
+    return new Blob([
+        script.toString()
+    ], {
+        "type": "application/javascript"
+    });
 }
 function createWorker(cdnUrl, includeLinters) {
-    if (typeof Worker == "undefined")
-        return {
-            postMessage: function () {
-            },
-            terminate: function () {
-            }
-        };
+    if (typeof Worker == "undefined") return {
+        postMessage: function postMessage() {},
+        terminate: function terminate() {}
+    };
     var blob = $workerBlob(generateLintersImport(cdnUrl, includeLinters));
     var URL = window.URL || window.webkitURL;
     var blobURL = URL.createObjectURL(blob);
@@ -44384,123 +44999,39 @@ function createWorker(cdnUrl, includeLinters) {
     return new Worker(blobURL);
 }
 function generateLintersImport(cdnUrl, includeLinters) {
-    const jsonService = `manager.registerService("json", {
-        module: () => {
-            importScripts("${cdnUrl}/json-service.js");
-            return {JsonService};
-        },
-        className: "JsonService",
-        modes: "json|json5"
-    });`;
-    const htmlService = `manager.registerService("html", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/html-service.js");
-            return {HtmlService};
-        },
-        className: "HtmlService",
-        modes: "html"
-    });`;
-    const cssService = `manager.registerService("css", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/css-service.js");
-            return {CssService};
-        },
-        className: "CssService",
-        modes: "css"
-    });`;
-    const lessService = `manager.registerService("less", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/css-service.js");
-            return {CssService};
-        },
-        className: "CssService",
-        modes: "less"
-    });`;
-    const scssService = `manager.registerService("scss", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/css-service.js");
-            return {CssService};
-        },
-        className: "CssService",
-        modes: "scss"
-    });`;
-    const typeScriptService = `manager.registerService("typescript", {
-        module: () => {
-            importScripts("${cdnUrl}/typescript-service.js");
-            return {TypescriptService};
-        },
-        className: "TypescriptService",
-        modes: "typescript|tsx|javascript|jsx",
-    });`;
-    const luaService = `manager.registerService("lua", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/lua-service.js");
-            return {LuaService};
-        },
-        className: "LuaService",
-        modes: "lua",
-    });`;
-    const yamlService = `manager.registerService("yaml", {
-        features: {signatureHelp: false, documentHighlight: false},
-        module: () => {
-            importScripts("${cdnUrl}/yaml-service.js");
-            return {YamlService};
-        },
-        className: "YamlService",
-        modes: "yaml",
-    });`;
-    const xmlService = `manager.registerService("xml", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/xml-service.js");
-            return {XmlService};
-        },
-        className: "XmlService",
-        modes: "xml",
-    });`;
-    const phpService = `manager.registerService("php", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/php-service.js");
-            return {PhpService};
-        },
-        className: "PhpService",
-        modes: "php"
-    });`;
-    const javascriptService = `manager.registerService("javascript", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/javascript-service.js");
-            return {JavascriptService};
-        },
-        className: "JavascriptService",
-        modes: "javascript",
-    });`;
-    const pythonService = `manager.registerService("python", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/python-service.js");
-            return {PythonService};
-        },
-        className: "PythonService",
-        modes: "python",
-    });`;
+    var jsonService = 'manager.registerService("json", {\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/json-service.js");\n            return {JsonService};\n        },\n        className: "JsonService",\n        modes: "json|json5"\n    });');
+    var htmlService = 'manager.registerService("html", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/html-service.js");\n            return {HtmlService};\n        },\n        className: "HtmlService",\n        modes: "html"\n    });');
+    var cssService = 'manager.registerService("css", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "css"\n    });');
+    var lessService = 'manager.registerService("less", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "less"\n    });');
+    var scssService = 'manager.registerService("scss", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "scss"\n    });');
+    var typeScriptService = 'manager.registerService("typescript", {\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/typescript-service.js");\n            return {TypescriptService};\n        },\n        className: "TypescriptService",\n        modes: "typescript|tsx|javascript|jsx",\n    });');
+    var luaService = 'manager.registerService("lua", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/lua-service.js");\n            return {LuaService};\n        },\n        className: "LuaService",\n        modes: "lua",\n    });');
+    var yamlService = 'manager.registerService("yaml", {\n        features: {signatureHelp: false, documentHighlight: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/yaml-service.js");\n            return {YamlService};\n        },\n        className: "YamlService",\n        modes: "yaml",\n    });');
+    var xmlService = 'manager.registerService("xml", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/xml-service.js");\n            return {XmlService};\n        },\n        className: "XmlService",\n        modes: "xml",\n    });');
+    var phpService = 'manager.registerService("php", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/php-service.js");\n            return {PhpService};\n        },\n        className: "PhpService",\n        modes: "php"\n    });');
+    var javascriptService = 'manager.registerService("javascript", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/javascript-service.js");\n            return {JavascriptService};\n        },\n        className: "JavascriptService",\n        modes: "javascript",\n    });');
+    var pythonService = 'manager.registerService("python", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/python-service.js");\n            return {PythonService};\n        },\n        className: "PythonService",\n        modes: "python",\n    });');
     if (!includeLinters) {
-        return `!function () {
-    importScripts("${cdnUrl}/service-manager.js");
-    let manager = new ServiceManager(self);
-    ${[jsonService, htmlService, cssService, lessService, scssService, typeScriptService, luaService, yamlService, xmlService, phpService, pythonService, javascriptService].join("\n")}
-}()`;
+        return '!function () {\n    importScripts("'.concat(cdnUrl, '/service-manager.js");\n    let manager = new ServiceManager(self);\n    ').concat([
+            jsonService,
+            htmlService,
+            cssService,
+            lessService,
+            scssService,
+            typeScriptService,
+            luaService,
+            yamlService,
+            xmlService,
+            phpService,
+            pythonService,
+            javascriptService
+        ].join("\n"), "\n}()");
     }
-    let services = [];
-    Object.entries(includeLinters).forEach(([key, value]) => {
+    var services = [];
+    Object.entries(includeLinters).forEach(function(param) {
+        var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
         if (value) {
-            switch (key) {
+            switch(key){
                 case "javascript":
                     services.push(javascriptService);
                     break;
@@ -44540,77 +45071,347 @@ function generateLintersImport(cdnUrl, includeLinters) {
             }
         }
     });
-    return `!function () {
-    importScripts("${cdnUrl}/service-manager.js");
-    let manager = new ServiceManager(self);
-    ${services.join("\n")}
-}()`;
+    return '!function () {\n    importScripts("'.concat(cdnUrl, '/service-manager.js");\n    let manager = new ServiceManager(self);\n    ').concat(services.join("\n"), "\n}()");
 }
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/signature-tooltip.ts
-
-class SignatureTooltip extends BaseTooltip {
-    registerEditor(editor) {
-        // @ts-ignore
-        editor.on("changeSelection", () => this.onChangeSelection(editor));
+function signature_tooltip_assert_this_initialized(self) {
+    if (self === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
-    update(editor) {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.provideSignatureHelp();
-        }
-        else {
-            this.$mouseMoveTimer = setTimeout(() => {
-                this.$activateEditor(editor);
-                this.provideSignatureHelp();
-                this.$mouseMoveTimer = undefined;
-            }, 500);
-        }
+    return self;
+}
+function signature_tooltip_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
     }
-    ;
-    provideSignatureHelp = () => {
-        if (!this.provider.options.functionality.signatureHelp)
-            return;
-        let cursor = this.$activeEditor.getCursorPosition();
-        let session = this.$activeEditor.session;
-        let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
-        this.provider.provideSignatureHelp(session, docPos, (tooltip) => {
-            let descriptionText = tooltip ? this.provider.getTooltipText(tooltip) : null;
-            if (!tooltip || !descriptionText) {
-                this.hide();
-                return;
-            }
-            let token = session.getTokenAt(docPos.row, docPos.column);
-            let row = tooltip.range?.start.row ?? docPos.row;
-            let column = tooltip.range?.start.column ?? token?.start ?? 0;
-            if (this.descriptionText != descriptionText) {
-                this.hide();
-                this.setHtml(descriptionText);
-                this.descriptionText = descriptionText;
-            }
-            else if (this.row == row && this.column == column && this.isOpen) {
-                return;
-            }
-            this.row = row;
-            this.column = column;
-            if (this.$mouseMoveTimer) {
-                this.$show();
-            }
-            else {
-                this.$showTimer = setTimeout(() => {
-                    this.$show();
-                    this.$showTimer = undefined;
-                }, 500);
-            }
+}
+function signature_tooltip_defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function signature_tooltip_create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) signature_tooltip_defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) signature_tooltip_defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+function signature_tooltip_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
         });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function signature_tooltip_get_prototype_of(o) {
+    signature_tooltip_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
     };
-    onChangeSelection = (editor) => {
-        this.update(editor);
+    return signature_tooltip_get_prototype_of(o);
+}
+function signature_tooltip_inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) signature_tooltip_set_prototype_of(subClass, superClass);
+}
+function signature_tooltip_possible_constructor_return(self, call) {
+    if (call && (signature_tooltip_type_of(call) === "object" || typeof call === "function")) {
+        return call;
+    }
+    return signature_tooltip_assert_this_initialized(self);
+}
+function signature_tooltip_set_prototype_of(o, p) {
+    signature_tooltip_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
+        o.__proto__ = p;
+        return o;
+    };
+    return signature_tooltip_set_prototype_of(o, p);
+}
+function signature_tooltip_type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
+function signature_tooltip_is_native_reflect_construct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+    try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+function signature_tooltip_create_super(Derived) {
+    var hasNativeReflectConstruct = signature_tooltip_is_native_reflect_construct();
+    return function _createSuperInternal() {
+        var Super = signature_tooltip_get_prototype_of(Derived), result;
+        if (hasNativeReflectConstruct) {
+            var NewTarget = signature_tooltip_get_prototype_of(this).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(this, arguments);
+        }
+        return signature_tooltip_possible_constructor_return(this, result);
     };
 }
 
+var SignatureTooltip = /*#__PURE__*/ function(BaseTooltip) {
+    "use strict";
+    signature_tooltip_inherits(SignatureTooltip, BaseTooltip);
+    var _super = signature_tooltip_create_super(SignatureTooltip);
+    function SignatureTooltip() {
+        signature_tooltip_class_call_check(this, SignatureTooltip);
+        var _this;
+        _this = _super.apply(this, arguments);
+        signature_tooltip_define_property(signature_tooltip_assert_this_initialized(_this), "provideSignatureHelp", function() {
+            if (!_this.provider.options.functionality.signatureHelp) return;
+            var cursor = _this.$activeEditor.getCursorPosition();
+            var session = _this.$activeEditor.session;
+            var docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
+            _this.provider.provideSignatureHelp(session, docPos, function(tooltip) {
+                var _tooltip_range, _tooltip_range1;
+                var descriptionText = tooltip ? _this.provider.getTooltipText(tooltip) : null;
+                if (!tooltip || !descriptionText) {
+                    _this.hide();
+                    return;
+                }
+                var token = session.getTokenAt(docPos.row, docPos.column);
+                var _tooltip_range_start_row;
+                var row = (_tooltip_range_start_row = (_tooltip_range = tooltip.range) === null || _tooltip_range === void 0 ? void 0 : _tooltip_range.start.row) !== null && _tooltip_range_start_row !== void 0 ? _tooltip_range_start_row : docPos.row;
+                var _tooltip_range_start_column, _ref;
+                var column = (_ref = (_tooltip_range_start_column = (_tooltip_range1 = tooltip.range) === null || _tooltip_range1 === void 0 ? void 0 : _tooltip_range1.start.column) !== null && _tooltip_range_start_column !== void 0 ? _tooltip_range_start_column : token === null || token === void 0 ? void 0 : token.start) !== null && _ref !== void 0 ? _ref : 0;
+                if (_this.descriptionText != descriptionText) {
+                    _this.hide();
+                    _this.setHtml(descriptionText);
+                    _this.descriptionText = descriptionText;
+                } else if (_this.row == row && _this.column == column && _this.isOpen) {
+                    return;
+                }
+                _this.row = row;
+                _this.column = column;
+                if (_this.$mouseMoveTimer) {
+                    _this.$show();
+                } else {
+                    _this.$showTimer = setTimeout(function() {
+                        _this.$show();
+                        _this.$showTimer = undefined;
+                    }, 500);
+                }
+            });
+        });
+        signature_tooltip_define_property(signature_tooltip_assert_this_initialized(_this), "onChangeSelection", function(editor) {
+            _this.update(editor);
+        });
+        return _this;
+    }
+    signature_tooltip_create_class(SignatureTooltip, [
+        {
+            key: "registerEditor",
+            value: function registerEditor(editor) {
+                var _this = this;
+                // @ts-ignore
+                editor.on("changeSelection", function() {
+                    return _this.onChangeSelection(editor);
+                });
+            }
+        },
+        {
+            key: "update",
+            value: function update(editor) {
+                var _this = this;
+                clearTimeout(this.$mouseMoveTimer);
+                clearTimeout(this.$showTimer);
+                if (this.isOpen) {
+                    this.provideSignatureHelp();
+                } else {
+                    this.$mouseMoveTimer = setTimeout(function() {
+                        _this.$activateEditor(editor);
+                        _this.provideSignatureHelp();
+                        _this.$mouseMoveTimer = undefined;
+                    }, 500);
+                }
+            }
+        }
+    ]);
+    return SignatureTooltip;
+}(BaseTooltip);
+
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    try {
+        var info = gen[key](arg);
+        var value = info.value;
+    } catch (error) {
+        reject(error);
+        return;
+    }
+    if (info.done) {
+        resolve(value);
+    } else {
+        Promise.resolve(value).then(_next, _throw);
+    }
+}
+function _async_to_generator(fn) {
+    return function() {
+        var self = this, args = arguments;
+        return new Promise(function(resolve, reject) {
+            var gen = fn.apply(self, args);
+            function _next(value) {
+                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+            }
+            function _throw(err) {
+                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+            }
+            _next(undefined);
+        });
+    };
+}
+function language_provider_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+function language_provider_defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function language_provider_create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) language_provider_defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) language_provider_defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+function language_provider_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function _ts_generator(thisArg, body) {
+    var f, y, t, g, _ = {
+        label: 0,
+        sent: function() {
+            if (t[0] & 1) throw t[1];
+            return t[1];
+        },
+        trys: [],
+        ops: []
+    };
+    return(g = {
+        next: verb(0),
+        "throw": verb(1),
+        "return": verb(2)
+    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
+        return this;
+    }), g);
+    function verb(n) {
+        return function(v) {
+            return step([
+                n,
+                v
+            ]);
+        };
+    }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while(_)try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [
+                op[0] & 2,
+                t.value
+            ];
+            switch(op[0]){
+                case 0:
+                case 1:
+                    t = op;
+                    break;
+                case 4:
+                    _.label++;
+                    return {
+                        value: op[1],
+                        done: false
+                    };
+                case 5:
+                    _.label++;
+                    y = op[1];
+                    op = [
+                        0
+                    ];
+                    continue;
+                case 7:
+                    op = _.ops.pop();
+                    _.trys.pop();
+                    continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                        _ = 0;
+                        continue;
+                    }
+                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+                        _.label = op[1];
+                        break;
+                    }
+                    if (op[0] === 6 && _.label < t[1]) {
+                        _.label = t[1];
+                        t = op;
+                        break;
+                    }
+                    if (t && _.label < t[2]) {
+                        _.label = t[2];
+                        _.ops.push(op);
+                        break;
+                    }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop();
+                    continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) {
+            op = [
+                6,
+                e
+            ];
+            y = 0;
+        } finally{
+            f = t = 0;
+        }
+        if (op[0] & 5) throw op[1];
+        return {
+            value: op[0] ? op[1] : void 0,
+            done: true
+        };
+    }
+}
 
 
 
@@ -44619,18 +45420,33 @@ class SignatureTooltip extends BaseTooltip {
 
 
 
-class LanguageProvider {
-    activeEditor;
-    $descriptionTooltip;
-    $signatureTooltip;
-    $messageController;
-    $sessionLanguageProviders = {};
-    editors = [];
-    options;
-    constructor(messageController, options) {
+var LanguageProvider = /*#__PURE__*/ function() {
+    "use strict";
+    function LanguageProvider(messageController, options) {
+        var _this = this;
+        language_provider_class_call_check(this, LanguageProvider);
+        var _this_options, _this_options1;
+        language_provider_define_property(this, "activeEditor", void 0);
+        language_provider_define_property(this, "$descriptionTooltip", void 0);
+        language_provider_define_property(this, "$signatureTooltip", void 0);
+        language_provider_define_property(this, "$messageController", void 0);
+        language_provider_define_property(this, "$sessionLanguageProviders", {});
+        language_provider_define_property(this, "editors", []);
+        language_provider_define_property(this, "options", void 0);
+        language_provider_define_property(this, "$registerSession", function(session, options) {
+            var _this_$sessionLanguageProviders, _session_id;
+            var _;
+            (_ = (_this_$sessionLanguageProviders = _this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(session, _this.$messageController, options);
+        });
+        language_provider_define_property(this, "format", function() {
+            if (!_this.options.functionality.format) return;
+            var sessionLanguageProvider = _this.$getSessionLanguageProvider(_this.activeEditor.session);
+            sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
+        });
         this.$messageController = messageController;
-        this.options = options ?? {};
-        this.options.functionality ??= {
+        this.options = options !== null && options !== void 0 ? options : {};
+        var _functionality;
+        (_functionality = (_this_options = this.options).functionality) !== null && _functionality !== void 0 ? _functionality : _this_options.functionality = {
             hover: true,
             completion: {
                 overwriteCompleters: true
@@ -44640,175 +45456,330 @@ class LanguageProvider {
             documentHighlights: false,
             signatureHelp: true
         };
-        this.options.markdownConverter ??= new (showdown_default()).Converter();
+        var _markdownConverter;
+        (_markdownConverter = (_this_options1 = this.options).markdownConverter) !== null && _markdownConverter !== void 0 ? _markdownConverter : _this_options1.markdownConverter = new (showdown_default()).Converter();
         this.$signatureTooltip = new SignatureTooltip(this);
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
-    /**
+    language_provider_create_class(LanguageProvider, [
+        {
+            key: "$getSessionLanguageProvider",
+            value: function $getSessionLanguageProvider(session) {
+                return this.$sessionLanguageProviders[session["id"]];
+            }
+        },
+        {
+            key: "$getFileName",
+            value: function $getFileName(session) {
+                var sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+                return sessionLanguageProvider.fileName;
+            }
+        },
+        {
+            key: "registerEditor",
+            value: function registerEditor(editor) {
+                if (!this.editors.includes(editor)) this.$registerEditor(editor);
+                this.$registerSession(editor.session);
+            }
+        },
+        {
+            key: "$registerEditor",
+            value: function $registerEditor(editor) {
+                var _this = this;
+                this.editors.push(editor);
+                editor.setOption("useWorker", false);
+                editor.on("changeSession", function(param) {
+                    var session = param.session;
+                    return _this.$registerSession(session);
+                });
+                if (this.options.functionality.completion) {
+                    this.$registerCompleters(editor);
+                }
+                var _this_activeEditor;
+                (_this_activeEditor = this.activeEditor) !== null && _this_activeEditor !== void 0 ? _this_activeEditor : this.activeEditor = editor;
+                editor.on("focus", function() {
+                    _this.activeEditor = editor;
+                });
+                if (this.options.functionality.documentHighlights) {
+                    var $timer;
+                    // @ts-ignore
+                    editor.on("changeSelection", function() {
+                        if (!$timer) $timer = setTimeout(function() {
+                            var cursor = editor.getCursorPosition();
+                            var sessionLanguageProvider = _this.$getSessionLanguageProvider(editor.session);
+                            _this.$messageController.findDocumentHighlights(_this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                            $timer = undefined;
+                        }, 50);
+                    });
+                }
+                this.$descriptionTooltip.registerEditor(editor);
+                this.$signatureTooltip.registerEditor(editor);
+            }
+        },
+        {
+            key: "setSessionOptions",
+            value: function setSessionOptions(session, options) {
+                var sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+                sessionLanguageProvider.setOptions(options);
+            }
+        },
+        {
+            key: "setGlobalOptions",
+            value: function setGlobalOptions(serviceName, options) {
+                var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
+                this.$messageController.setGlobalOptions(serviceName, options, merge);
+            }
+        },
+        {
+            key: "configureServiceFeatures",
+            value: function configureServiceFeatures(serviceName, features) {
+                this.$messageController.configureFeatures(serviceName, features);
+            }
+        },
+        {
+            key: "doHover",
+            value: function doHover(session, position, callback) {
+                this.$messageController.doHover(this.$getFileName(session), fromPoint(position), function(hover) {
+                    return callback && callback(toTooltip(hover));
+                });
+            }
+        },
+        {
+            key: "provideSignatureHelp",
+            value: function provideSignatureHelp(session, position, callback) {
+                this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), function(signatureHelp) {
+                    return callback && callback(fromSignatureHelp(signatureHelp));
+                });
+            }
+        },
+        {
+            key: "getTooltipText",
+            value: function getTooltipText(hover) {
+                return hover.content.type === "markdown" ? common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+            }
+        },
+        {
+            key: "doComplete",
+            value: function doComplete(editor, session, callback) {
+                var cursor = editor.getCursorPosition();
+                this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), function(completions) {
+                    return completions && callback(toCompletions(completions));
+                });
+            }
+        },
+        {
+            key: "doResolve",
+            value: function doResolve(item, callback) {
+                this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
+            }
+        },
+        {
+            key: "$registerCompleters",
+            value: function $registerCompleters(editor) {
+                var _this = this;
+                var _this1 = this;
+                var completer = {
+                    getCompletions: function() {
+                        var _ref = _async_to_generator(function(editor, session, pos, prefix, callback) {
+                            return _ts_generator(this, function(_state) {
+                                _this1.$getSessionLanguageProvider(session).$sendDeltaQueue(function() {
+                                    _this1.doComplete(editor, session, function(completions) {
+                                        var fileName = _this1.$getFileName(session);
+                                        if (!completions) return;
+                                        completions.forEach(function(item) {
+                                            item.completerId = completer.id;
+                                            item["fileName"] = fileName;
+                                        });
+                                        callback(null, common_converters_CommonConverter.normalizeRanges(completions));
+                                    });
+                                });
+                                return [
+                                    2
+                                ];
+                            });
+                        });
+                        return function(editor, session, pos, prefix, callback) {
+                            return _ref.apply(this, arguments);
+                        };
+                    }(),
+                    getDocTooltip: function(item) {
+                        if (_this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                            _this.doResolve(item, function(completionItem) {
+                                item["isResolved"] = true;
+                                if (!completionItem) return;
+                                var completion = toResolvedCompletion(item, completionItem);
+                                item.docText = completion.docText;
+                                if (completion.docHTML) {
+                                    item.docHTML = completion.docHTML;
+                                } else if (completion["docMarkdown"]) {
+                                    item.docHTML = common_converters_CommonConverter.cleanHtml(_this.options.markdownConverter.makeHtml(completion["docMarkdown"]));
+                                }
+                                if (editor["completer"]) {
+                                    editor["completer"].updateDocTooltip();
+                                }
+                            });
+                        }
+                        return item;
+                    },
+                    id: "lspCompleters"
+                };
+                if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
+                    editor.completers = [
+                        completer
+                    ];
+                } else {
+                    editor.completers.push(completer);
+                }
+            }
+        },
+        {
+            key: "dispose",
+            value: function dispose() {
+            // this.$messageController.dispose(this.$fileName);
+            }
+        }
+    ], [
+        {
+            key: "create",
+            value: /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
      * @param {Worker} worker
      * @param {ProviderOptions} options
-     */
-    static create(worker, options) {
-        let messageController;
-        messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, options);
-    }
-    static fromCdn(cdnUrl, options) {
-        let messageController;
-        if (cdnUrl == "" || !(/^http(s)?:/.test(cdnUrl))) {
-            throw "Url is not valid";
-        }
-        if (cdnUrl[cdnUrl.length - 1] == "/") {
-            cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
-        }
-        let worker = createWorker(cdnUrl);
-        // @ts-ignore
-        messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, options);
-    }
-    $registerSession = (session, options) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
-    };
-    $getSessionLanguageProvider(session) {
-        return this.$sessionLanguageProviders[session["id"]];
-    }
-    $getFileName(session) {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-        return sessionLanguageProvider.fileName;
-    }
-    registerEditor(editor) {
-        if (!this.editors.includes(editor))
-            this.$registerEditor(editor);
-        this.$registerSession(editor.session);
-    }
-    $registerEditor(editor) {
-        this.editors.push(editor);
-        editor.setOption("useWorker", false);
-        editor.on("changeSession", ({ session }) => this.$registerSession(session));
-        if (this.options.functionality.completion) {
-            this.$registerCompleters(editor);
-        }
-        this.activeEditor ??= editor;
-        editor.on("focus", () => {
-            this.activeEditor = editor;
-        });
-        if (this.options.functionality.documentHighlights) {
-            var $timer;
-            // @ts-ignore
-            editor.on("changeSelection", () => {
-                if (!$timer)
-                    $timer =
-                        setTimeout(() => {
-                            let cursor = editor.getCursorPosition();
-                            let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
-                            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
-                            $timer = undefined;
-                        }, 50);
-            });
-        }
-        this.$descriptionTooltip.registerEditor(editor);
-        this.$signatureTooltip.registerEditor(editor);
-    }
-    setSessionOptions(session, options) {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-        sessionLanguageProvider.setOptions(options);
-    }
-    setGlobalOptions(serviceName, options, merge = false) {
-        this.$messageController.setGlobalOptions(serviceName, options, merge);
-    }
-    configureServiceFeatures(serviceName, features) {
-        this.$messageController.configureFeatures(serviceName, features);
-    }
-    doHover(session, position, callback) {
-        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover) => callback && callback(toTooltip(hover)));
-    }
-    provideSignatureHelp(session, position, callback) {
-        this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
-    }
-    getTooltipText(hover) {
-        return hover.content.type === "markdown" ?
-            CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
-    }
-    format = () => {
-        if (!this.options.functionality.format)
-            return;
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
-        sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
-    };
-    doComplete(editor, session, callback) {
-        let cursor = editor.getCursorPosition();
-        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completions) => completions && callback(toCompletions(completions)));
-    }
-    doResolve(item, callback) {
-        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
-    }
-    $registerCompleters(editor) {
-        let completer = {
-            getCompletions: async (editor, session, pos, prefix, callback) => {
-                this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
-                    this.doComplete(editor, session, (completions) => {
-                        let fileName = this.$getFileName(session);
-                        if (!completions)
-                            return;
-                        completions.forEach((item) => {
-                            item.completerId = completer.id;
-                            item["fileName"] = fileName;
-                        });
-                        callback(null, CommonConverter.normalizeRanges(completions));
-                    });
-                });
-            },
-            getDocTooltip: (item) => {
-                if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
-                    this.doResolve(item, (completionItem) => {
-                        item["isResolved"] = true;
-                        if (!completionItem)
-                            return;
-                        let completion = toResolvedCompletion(item, completionItem);
-                        item.docText = completion.docText;
-                        if (completion.docHTML) {
-                            item.docHTML = completion.docHTML;
-                        }
-                        else if (completion["docMarkdown"]) {
-                            item.docHTML = CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(completion["docMarkdown"]));
-                        }
-                        if (editor["completer"]) {
-                            editor["completer"].updateDocTooltip();
-                        }
-                    });
+     */ function create(worker, options) {
+                var messageController;
+                messageController = new MessageController(worker);
+                return new LanguageProvider(messageController, options);
+            }
+        },
+        {
+            key: "fromCdn",
+            value: function fromCdn(cdnUrl, options) {
+                var messageController;
+                if (cdnUrl == "" || !/^http(s)?:/.test(cdnUrl)) {
+                    throw "Url is not valid";
                 }
-                return item;
-            },
-            id: "lspCompleters"
-        };
-        if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
-            editor.completers = [
-                completer
-            ];
+                if (cdnUrl[cdnUrl.length - 1] == "/") {
+                    cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
+                }
+                var worker = createWorker(cdnUrl);
+                // @ts-ignore
+                messageController = new MessageController(worker);
+                return new LanguageProvider(messageController, options);
+            }
         }
-        else {
-            editor.completers.push(completer);
-        }
-    }
-    dispose() {
-        // this.$messageController.dispose(this.$fileName);
-    }
-}
-class SessionLanguageProvider {
-    session;
-    fileName;
-    $messageController;
-    $deltaQueue;
-    $isConnected = false;
-    $modeIsChanged = false;
-    $options;
-    extensions = {
-        "typescript": "ts",
-        "javascript": "js"
-    };
-    constructor(session, messageController, options) {
+    ]);
+    return LanguageProvider;
+}();
+var SessionLanguageProvider = /*#__PURE__*/ function() {
+    "use strict";
+    function SessionLanguageProvider(session, messageController, options) {
+        var _this = this;
+        language_provider_class_call_check(this, SessionLanguageProvider);
+        language_provider_define_property(this, "session", void 0);
+        language_provider_define_property(this, "fileName", void 0);
+        language_provider_define_property(this, "$messageController", void 0);
+        language_provider_define_property(this, "$deltaQueue", void 0);
+        language_provider_define_property(this, "$isConnected", false);
+        language_provider_define_property(this, "$modeIsChanged", false);
+        language_provider_define_property(this, "$options", void 0);
+        language_provider_define_property(this, "extensions", {
+            "typescript": "ts",
+            "javascript": "js"
+        });
+        language_provider_define_property(this, "$connected", function() {
+            _this.$isConnected = true;
+            if (_this.$modeIsChanged) _this.$changeMode();
+            if (_this.$deltaQueue) _this.$sendDeltaQueue();
+            if (_this.$options) _this.setOptions(_this.$options);
+        });
+        language_provider_define_property(this, "$changeMode", function() {
+            if (!_this.$isConnected) {
+                _this.$modeIsChanged = true;
+                return;
+            }
+            _this.$deltaQueue = [];
+            _this.$messageController.changeMode(_this.fileName, _this.session.getValue(), _this.$mode);
+        });
+        language_provider_define_property(this, "$changeListener", function(delta) {
+            _this.session.doc["version"]++;
+            if (!_this.$deltaQueue) {
+                _this.$deltaQueue = [];
+                setTimeout(_this.$sendDeltaQueue, 0);
+            }
+            _this.$deltaQueue.push(delta);
+        });
+        language_provider_define_property(this, "$sendDeltaQueue", function(callback) {
+            var deltas = _this.$deltaQueue;
+            if (!deltas) return callback && callback();
+            _this.$deltaQueue = null;
+            if (deltas.length) _this.$messageController.change(_this.fileName, deltas.map(function(delta) {
+                return fromAceDelta(delta, _this.session.doc.getNewLineCharacter());
+            }), _this.session.doc, callback);
+        });
+        language_provider_define_property(this, "$showAnnotations", function(diagnostics) {
+            var annotations = toAnnotations(diagnostics);
+            _this.session.setAnnotations(annotations);
+        });
+        language_provider_define_property(this, "validate", function() {
+            _this.$messageController.doValidation(_this.fileName, _this.$showAnnotations);
+        });
+        language_provider_define_property(this, "format", function() {
+            var selectionRanges = _this.session.getSelection().getAllRanges();
+            var $format = _this.$format;
+            if (!selectionRanges || selectionRanges[0].isEmpty()) {
+                var row = _this.session.getLength();
+                var column = _this.session.getLine(row).length - 1;
+                selectionRanges = [
+                    new ace.Range(0, 0, row, column)
+                ];
+            }
+            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+            try {
+                for(var _iterator = selectionRanges[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                    var range = _step.value;
+                    _this.$messageController.format(_this.fileName, fromRange(range), $format, _this.$applyFormat);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally{
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                        _iterator.return();
+                    }
+                } finally{
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        });
+        language_provider_define_property(this, "$applyFormat", function(edits) {
+            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+            try {
+                for(var _iterator = edits.reverse()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+                    var edit = _step.value;
+                    _this.session.replace(toRange(edit.range), edit.newText);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally{
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return != null) {
+                        _iterator.return();
+                    }
+                } finally{
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        });
+        language_provider_define_property(this, "$applyDocumentHiglight", function(documentHighlights) {
+        //TODO: place for your code
+        });
         this.$messageController = messageController;
         this.session = session;
         this.initFileName();
@@ -44818,90 +45789,49 @@ class SessionLanguageProvider {
         session.on("changeMode", this.$changeMode);
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
-    $connected = () => {
-        this.$isConnected = true;
-        if (this.$modeIsChanged)
-            this.$changeMode();
-        if (this.$deltaQueue)
-            this.$sendDeltaQueue();
-        if (this.$options)
-            this.setOptions(this.$options);
-    };
-    $changeMode = () => {
-        if (!this.$isConnected) {
-            this.$modeIsChanged = true;
-            return;
+    language_provider_create_class(SessionLanguageProvider, [
+        {
+            key: "initFileName",
+            value: function initFileName() {
+                this.fileName = this.session["id"] + "." + this.$extension;
+            }
+        },
+        {
+            key: "$extension",
+            get: function get() {
+                var mode = this.$mode.replace("ace/mode/", "");
+                var _this_extensions_mode;
+                return (_this_extensions_mode = this.extensions[mode]) !== null && _this_extensions_mode !== void 0 ? _this_extensions_mode : mode;
+            }
+        },
+        {
+            key: "$mode",
+            get: function get() {
+                return this.session["$modeId"];
+            }
+        },
+        {
+            key: "$format",
+            get: function get() {
+                return {
+                    tabSize: this.session.getTabSize(),
+                    insertSpaces: this.session.getUseSoftTabs()
+                };
+            }
+        },
+        {
+            key: "setOptions",
+            value: function setOptions(options) {
+                if (!this.$isConnected) {
+                    this.$options = options;
+                    return;
+                }
+                this.$messageController.changeOptions(this.fileName, options);
+            }
         }
-        this.$deltaQueue = [];
-        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
-    };
-    initFileName() {
-        this.fileName = this.session["id"] + "." + this.$extension;
-    }
-    get $extension() {
-        let mode = this.$mode.replace("ace/mode/", "");
-        return this.extensions[mode] ?? mode;
-    }
-    get $mode() {
-        return this.session["$modeId"];
-    }
-    get $format() {
-        return {
-            tabSize: this.session.getTabSize(),
-            insertSpaces: this.session.getUseSoftTabs()
-        };
-    }
-    $changeListener = (delta) => {
-        this.session.doc["version"]++;
-        if (!this.$deltaQueue) {
-            this.$deltaQueue = [];
-            setTimeout(this.$sendDeltaQueue, 0);
-        }
-        this.$deltaQueue.push(delta);
-    };
-    $sendDeltaQueue = (callback) => {
-        let deltas = this.$deltaQueue;
-        if (!deltas)
-            return callback && callback();
-        this.$deltaQueue = null;
-        if (deltas.length)
-            this.$messageController.change(this.fileName, deltas.map((delta) => fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
-    };
-    $showAnnotations = (diagnostics) => {
-        let annotations = toAnnotations(diagnostics);
-        this.session.setAnnotations(annotations);
-    };
-    setOptions(options) {
-        if (!this.$isConnected) {
-            this.$options = options;
-            return;
-        }
-        this.$messageController.changeOptions(this.fileName, options);
-    }
-    validate = () => {
-        this.$messageController.doValidation(this.fileName, this.$showAnnotations);
-    };
-    format = () => {
-        let selectionRanges = this.session.getSelection().getAllRanges();
-        let $format = this.$format;
-        if (!selectionRanges || selectionRanges[0].isEmpty()) {
-            let row = this.session.getLength();
-            let column = this.session.getLine(row).length - 1;
-            selectionRanges = [new ace.Range(0, 0, row, column)];
-        }
-        for (let range of selectionRanges) {
-            this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
-        }
-    };
-    $applyFormat = (edits) => {
-        for (let edit of edits.reverse()) {
-            this.session.replace(toRange(edit.range), edit.newText);
-        }
-    };
-    $applyDocumentHiglight = (documentHighlights) => {
-        //TODO: place for your code
-    };
-}
+    ]);
+    return SessionLanguageProvider;
+}();
 
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/browser/main.js
 var browser_main = __webpack_require__(39054);
@@ -45144,304 +46074,523 @@ var events = __webpack_require__(17187);
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/browser.js
 var browser = __webpack_require__(5224);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller-ws.ts
-
-
-
-class MessageControllerWS extends events.EventEmitter {
-    isConnected = false;
-    isInitialized = false;
-    socket;
-    serverCapabilities;
-    connection;
-    initSessionQueue = [];
-    clientCapabilities = {
-        textDocument: {
-            hover: {
-                dynamicRegistration: true,
-                contentFormat: ['markdown', 'plaintext'],
-            },
-            synchronization: {
-                dynamicRegistration: true,
-                willSave: false,
-                didSave: false,
-                willSaveWaitUntil: false,
-            },
-            formatting: {
-                dynamicRegistration: true
-            },
-            completion: {
-                dynamicRegistration: true,
-                completionItem: {
-                    snippetSupport: true,
-                    commitCharactersSupport: false,
-                    documentationFormat: ['markdown', 'plaintext'],
-                    deprecatedSupport: false,
-                    preselectSupport: false,
-                },
-                contextSupport: false,
-            },
-            signatureHelp: {
-                signatureInformation: {
-                    documentationFormat: ['markdown', 'plaintext'],
-                    activeParameterSupport: true
-                }
-            },
-            documentHighlight: {
-                dynamicRegistration: true
-            }
-        },
-        workspace: {
-            didChangeConfiguration: {
-                dynamicRegistration: true,
-            },
-        },
-    };
-    constructor(mode) {
-        super();
-        if (mode instanceof Worker) {
-            this.$connectWorker(mode);
-        }
-        else {
-            this.socket = mode;
-            this.$connectSocket();
-        }
+function message_controller_ws_assert_this_initialized(self) {
+    if (self === void 0) {
+        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
-    configureFeatures(serviceName, features) {
-        throw new Error('Method not implemented.');
-    }
-    $connectSocket() {
-        listen({
-            webSocket: this.socket,
-            logger: new ConsoleLogger(),
-            onConnection: (connection) => {
-                this.$connect(connection);
-            },
-        });
-    }
-    $connectWorker(worker) {
-        const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
-        this.$connect(connection);
-    }
-    $connect(connection) {
-        connection.listen();
-        this.isConnected = true;
-        this.connection = connection;
-        this.sendInitialize();
-        this.connection.onNotification('textDocument/publishDiagnostics', (result) => {
-            this.emit("validate-" + result.uri, result.diagnostics);
-        });
-        this.connection.onNotification('window/showMessage', (params) => {
-            this.emit('logging', params);
-        });
-        this.connection.onRequest('window/showMessageRequest', (params) => {
-            this.emit('logging', params);
-        });
-        this.connection.onError((e) => {
-            this.emit('error', e);
-        });
-        this.connection.onClose(() => {
-            this.isConnected = false;
-        });
-        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
-    }
-    init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this["on"]("validate-" + sessionId, validationCallback);
-        const textDocumentMessage = {
-            textDocument: {
-                uri: sessionId,
-                languageId: mode,
-                text: document.getValue(),
-                version: document["version"],
-            },
-        };
-        if (!this.isConnected) {
-            this.initSessionQueue.push({ textDocumentMessage: textDocumentMessage, initCallback: initCallback });
-        }
-        else {
-            this.initSession(textDocumentMessage, initCallback);
-        }
-    }
-    initSession(textDocumentMessage, initCallback) {
-        this.connection.sendNotification('textDocument/didOpen', textDocumentMessage);
-        initCallback();
-    }
-    close() {
-        if (this.connection) {
-            this.connection.dispose();
-        }
-        this.socket.close();
-    }
-    sendInitialize() {
-        if (!this.isConnected) {
-            return;
-        }
-        const message = {
-            capabilities: this.clientCapabilities,
-            initializationOptions: null,
-            processId: null,
-            rootUri: "",
-            workspaceFolders: null,
-        };
-        this.connection.sendRequest("initialize", message).then((params) => {
-            this.isInitialized = true;
-            this.serverCapabilities = params.capabilities;
-            this.connection.sendNotification('initialized');
-            this.connection.sendNotification('workspace/didChangeConfiguration', {
-                settings: {},
-            });
-        });
-    }
-    change(sessionId, deltas, document, callback) {
-        if (!this.isConnected) {
-            return;
-        }
-        const textDocumentChange = {
-            textDocument: {
-                uri: sessionId,
-                version: document["version"],
-            },
-            contentChanges: deltas,
-        };
-        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
-    }
-    doHover(sessionId, position, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            position: position,
-        };
-        let hoverCallback = (result) => {
-            callback && callback([result]);
-        };
-        this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
-    }
-    doComplete(sessionId, position, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            position: position,
-        };
-        let completionCallback = (result) => {
-            callback && callback(result);
-        };
-        this.postMessage('textDocument/completion', sessionId, options, completionCallback);
-    }
-    doResolve(sessionId, completion, callback) {
-        if (!this.isInitialized)
-            return;
-        if (!this.serverCapabilities?.completionProvider?.resolveProvider)
-            return;
-        this.postMessage('completionItem/resolve', sessionId, completion["item"], (result) => {
-            callback && callback(result);
-        });
-    }
-    changeMode(sessionId, value, mode, callback) {
-    }
-    changeOptions(sessionId, options, callback) {
-    }
-    dispose(sessionId, callback) {
-        this.connection.sendNotification('textDocument/didClose', {
-            textDocument: {
-                uri: sessionId
-            }
-        });
-    }
-    doValidation(sessionId, callback) {
-        //TODO: textDocument/diagnostic capability
-    }
-    format(sessionId, range, format, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            options: format,
-            range: range
-        };
-        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params) => {
-            callback && callback(params);
-        });
-    }
-    setGlobalOptions(serviceName, options, merge) {
-    }
-    postMessage(name, sessionId, options, callback) {
-        let eventName = name + "-" + sessionId;
-        let callbackFunction = (data) => {
-            this["off"](eventName, callbackFunction);
-            callback(data);
-        };
-        this["on"](eventName, callbackFunction);
-        this.connection.sendRequest(name, options).then((params) => {
-            this.emit(eventName, params);
-        });
-    }
-    findDocumentHighlights(sessionId, position, callback) {
-        if (!this.isInitialized)
-            return;
-        if (!this.serverCapabilities?.documentHighlightProvider)
-            return;
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            position: position,
-        };
-        let documentHighlightCallback = (result) => {
-            callback && callback(result);
-        };
-        this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
-    }
-    provideSignatureHelp(sessionId, position, callback) {
-        if (!this.isInitialized)
-            return;
-        if (!this.serverCapabilities?.signatureHelpProvider)
-            return;
-        let options = {
-            textDocument: {
-                uri: sessionId,
-            },
-            position: position,
-        };
-        let signatureHelpCallback = (result) => {
-            callback && callback([result]);
-        };
-        this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
+    return self;
+}
+function message_controller_ws_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
     }
 }
+function message_controller_ws_defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function message_controller_ws_create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) message_controller_ws_defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) message_controller_ws_defineProperties(Constructor, staticProps);
+    return Constructor;
+}
+function message_controller_ws_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function message_controller_ws_get_prototype_of(o) {
+    message_controller_ws_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
+        return o.__proto__ || Object.getPrototypeOf(o);
+    };
+    return message_controller_ws_get_prototype_of(o);
+}
+function message_controller_ws_inherits(subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+        throw new TypeError("Super expression must either be null or a function");
+    }
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+        constructor: {
+            value: subClass,
+            writable: true,
+            configurable: true
+        }
+    });
+    if (superClass) message_controller_ws_set_prototype_of(subClass, superClass);
+}
+function _instanceof(left, right) {
+    if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
+        return !!right[Symbol.hasInstance](left);
+    } else {
+        return left instanceof right;
+    }
+}
+function message_controller_ws_possible_constructor_return(self, call) {
+    if (call && (message_controller_ws_type_of(call) === "object" || typeof call === "function")) {
+        return call;
+    }
+    return message_controller_ws_assert_this_initialized(self);
+}
+function message_controller_ws_set_prototype_of(o, p) {
+    message_controller_ws_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
+        o.__proto__ = p;
+        return o;
+    };
+    return message_controller_ws_set_prototype_of(o, p);
+}
+function message_controller_ws_type_of(obj) {
+    "@swc/helpers - typeof";
+    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+}
+function message_controller_ws_is_native_reflect_construct() {
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
+    try {
+        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+function message_controller_ws_create_super(Derived) {
+    var hasNativeReflectConstruct = message_controller_ws_is_native_reflect_construct();
+    return function _createSuperInternal() {
+        var Super = message_controller_ws_get_prototype_of(Derived), result;
+        if (hasNativeReflectConstruct) {
+            var NewTarget = message_controller_ws_get_prototype_of(this).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(this, arguments);
+        }
+        return message_controller_ws_possible_constructor_return(this, result);
+    };
+}
+
+
+
+var MessageControllerWS = /*#__PURE__*/ function(_events_EventEmitter) {
+    "use strict";
+    message_controller_ws_inherits(MessageControllerWS, _events_EventEmitter);
+    var _super = message_controller_ws_create_super(MessageControllerWS);
+    function MessageControllerWS(mode) {
+        message_controller_ws_class_call_check(this, MessageControllerWS);
+        var _this;
+        _this = _super.call(this);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "isConnected", false);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "isInitialized", false);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "socket", void 0);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "serverCapabilities", void 0);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "connection", void 0);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "initSessionQueue", []);
+        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "clientCapabilities", {
+            textDocument: {
+                hover: {
+                    dynamicRegistration: true,
+                    contentFormat: [
+                        "markdown",
+                        "plaintext"
+                    ]
+                },
+                synchronization: {
+                    dynamicRegistration: true,
+                    willSave: false,
+                    didSave: false,
+                    willSaveWaitUntil: false
+                },
+                formatting: {
+                    dynamicRegistration: true
+                },
+                completion: {
+                    dynamicRegistration: true,
+                    completionItem: {
+                        snippetSupport: true,
+                        commitCharactersSupport: false,
+                        documentationFormat: [
+                            "markdown",
+                            "plaintext"
+                        ],
+                        deprecatedSupport: false,
+                        preselectSupport: false
+                    },
+                    contextSupport: false
+                },
+                signatureHelp: {
+                    signatureInformation: {
+                        documentationFormat: [
+                            "markdown",
+                            "plaintext"
+                        ],
+                        activeParameterSupport: true
+                    }
+                },
+                documentHighlight: {
+                    dynamicRegistration: true
+                }
+            },
+            workspace: {
+                didChangeConfiguration: {
+                    dynamicRegistration: true
+                }
+            }
+        });
+        if (_instanceof(mode, Worker)) {
+            _this.$connectWorker(mode);
+        } else {
+            _this.socket = mode;
+            _this.$connectSocket();
+        }
+        return _this;
+    }
+    message_controller_ws_create_class(MessageControllerWS, [
+        {
+            key: "configureFeatures",
+            value: function configureFeatures(serviceName, features) {
+                throw new Error("Method not implemented.");
+            }
+        },
+        {
+            key: "$connectSocket",
+            value: function $connectSocket() {
+                var _this = this;
+                listen({
+                    webSocket: this.socket,
+                    logger: new ConsoleLogger(),
+                    onConnection: function(connection) {
+                        _this.$connect(connection);
+                    }
+                });
+            }
+        },
+        {
+            key: "$connectWorker",
+            value: function $connectWorker(worker) {
+                var connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
+                this.$connect(connection);
+            }
+        },
+        {
+            key: "$connect",
+            value: function $connect(connection) {
+                var _this = this;
+                connection.listen();
+                this.isConnected = true;
+                this.connection = connection;
+                this.sendInitialize();
+                this.connection.onNotification("textDocument/publishDiagnostics", function(result) {
+                    _this.emit("validate-" + result.uri, result.diagnostics);
+                });
+                this.connection.onNotification("window/showMessage", function(params) {
+                    _this.emit("logging", params);
+                });
+                this.connection.onRequest("window/showMessageRequest", function(params) {
+                    _this.emit("logging", params);
+                });
+                this.connection.onError(function(e) {
+                    _this.emit("error", e);
+                });
+                this.connection.onClose(function() {
+                    _this.isConnected = false;
+                });
+                this.initSessionQueue.forEach(function(initSession) {
+                    return _this.initSession(initSession.textDocumentMessage, initSession.initCallback);
+                });
+            }
+        },
+        {
+            key: "init",
+            value: function init(sessionId, document, mode, options, initCallback, validationCallback) {
+                this["on"]("validate-" + sessionId, validationCallback);
+                var textDocumentMessage = {
+                    textDocument: {
+                        uri: sessionId,
+                        languageId: mode,
+                        text: document.getValue(),
+                        version: document["version"]
+                    }
+                };
+                if (!this.isConnected) {
+                    this.initSessionQueue.push({
+                        textDocumentMessage: textDocumentMessage,
+                        initCallback: initCallback
+                    });
+                } else {
+                    this.initSession(textDocumentMessage, initCallback);
+                }
+            }
+        },
+        {
+            key: "initSession",
+            value: function initSession(textDocumentMessage, initCallback) {
+                this.connection.sendNotification("textDocument/didOpen", textDocumentMessage);
+                initCallback();
+            }
+        },
+        {
+            key: "close",
+            value: function close() {
+                if (this.connection) {
+                    this.connection.dispose();
+                }
+                this.socket.close();
+            }
+        },
+        {
+            key: "sendInitialize",
+            value: function sendInitialize() {
+                var _this = this;
+                if (!this.isConnected) {
+                    return;
+                }
+                var message = {
+                    capabilities: this.clientCapabilities,
+                    initializationOptions: null,
+                    processId: null,
+                    rootUri: "",
+                    workspaceFolders: null
+                };
+                this.connection.sendRequest("initialize", message).then(function(params) {
+                    _this.isInitialized = true;
+                    _this.serverCapabilities = params.capabilities;
+                    _this.connection.sendNotification("initialized");
+                    _this.connection.sendNotification("workspace/didChangeConfiguration", {
+                        settings: {}
+                    });
+                });
+            }
+        },
+        {
+            key: "change",
+            value: function change(sessionId, deltas, document, callback) {
+                if (!this.isConnected) {
+                    return;
+                }
+                var textDocumentChange = {
+                    textDocument: {
+                        uri: sessionId,
+                        version: document["version"]
+                    },
+                    contentChanges: deltas
+                };
+                this.connection.sendNotification("textDocument/didChange", textDocumentChange);
+            }
+        },
+        {
+            key: "doHover",
+            value: function doHover(sessionId, position, callback) {
+                if (!this.isInitialized) {
+                    return;
+                }
+                if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
+                    return;
+                }
+                var options = {
+                    textDocument: {
+                        uri: sessionId
+                    },
+                    position: position
+                };
+                var hoverCallback = function(result) {
+                    callback && callback([
+                        result
+                    ]);
+                };
+                this.postMessage("textDocument/hover", sessionId, options, hoverCallback);
+            }
+        },
+        {
+            key: "doComplete",
+            value: function doComplete(sessionId, position, callback) {
+                if (!this.isInitialized) {
+                    return;
+                }
+                if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
+                    return;
+                }
+                var options = {
+                    textDocument: {
+                        uri: sessionId
+                    },
+                    position: position
+                };
+                var completionCallback = function(result) {
+                    callback && callback(result);
+                };
+                this.postMessage("textDocument/completion", sessionId, options, completionCallback);
+            }
+        },
+        {
+            key: "doResolve",
+            value: function doResolve(sessionId, completion, callback) {
+                var _this_serverCapabilities, _this_serverCapabilities_completionProvider;
+                if (!this.isInitialized) return;
+                if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : (_this_serverCapabilities_completionProvider = _this_serverCapabilities.completionProvider) === null || _this_serverCapabilities_completionProvider === void 0 ? void 0 : _this_serverCapabilities_completionProvider.resolveProvider)) return;
+                this.postMessage("completionItem/resolve", sessionId, completion["item"], function(result) {
+                    callback && callback(result);
+                });
+            }
+        },
+        {
+            key: "changeMode",
+            value: function changeMode(sessionId, value, mode, callback) {}
+        },
+        {
+            key: "changeOptions",
+            value: function changeOptions(sessionId, options, callback) {}
+        },
+        {
+            key: "dispose",
+            value: function dispose(sessionId, callback) {
+                this.connection.sendNotification("textDocument/didClose", {
+                    textDocument: {
+                        uri: sessionId
+                    }
+                });
+            }
+        },
+        {
+            key: "doValidation",
+            value: function doValidation(sessionId, callback) {
+            //TODO: textDocument/diagnostic capability
+            }
+        },
+        {
+            key: "format",
+            value: function format(sessionId, range, format, callback) {
+                if (!this.isInitialized) {
+                    return;
+                }
+                if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
+                    return;
+                }
+                var options = {
+                    textDocument: {
+                        uri: sessionId
+                    },
+                    options: format,
+                    range: range
+                };
+                this.postMessage("textDocument/rangeFormatting", sessionId, options, function(params) {
+                    callback && callback(params);
+                });
+            }
+        },
+        {
+            key: "setGlobalOptions",
+            value: function setGlobalOptions(serviceName, options, merge) {}
+        },
+        {
+            key: "postMessage",
+            value: function postMessage(name, sessionId, options, callback) {
+                var _this = this;
+                var eventName = name + "-" + sessionId;
+                var callbackFunction = function(data) {
+                    _this["off"](eventName, callbackFunction);
+                    callback(data);
+                };
+                this["on"](eventName, callbackFunction);
+                this.connection.sendRequest(name, options).then(function(params) {
+                    _this.emit(eventName, params);
+                });
+            }
+        },
+        {
+            key: "findDocumentHighlights",
+            value: function findDocumentHighlights(sessionId, position, callback) {
+                var _this_serverCapabilities;
+                if (!this.isInitialized) return;
+                if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.documentHighlightProvider)) return;
+                var options = {
+                    textDocument: {
+                        uri: sessionId
+                    },
+                    position: position
+                };
+                var documentHighlightCallback = function(result) {
+                    callback && callback(result);
+                };
+                this.postMessage("textDocument/documentHighlight", sessionId, options, documentHighlightCallback);
+            }
+        },
+        {
+            key: "provideSignatureHelp",
+            value: function provideSignatureHelp(sessionId, position, callback) {
+                var _this_serverCapabilities;
+                if (!this.isInitialized) return;
+                if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.signatureHelpProvider)) return;
+                var options = {
+                    textDocument: {
+                        uri: sessionId
+                    },
+                    position: position
+                };
+                var signatureHelpCallback = function(result) {
+                    callback && callback([
+                        result
+                    ]);
+                };
+                this.postMessage("textDocument/signatureHelp", sessionId, options, signatureHelpCallback);
+            }
+        }
+    ]);
+    return MessageControllerWS;
+}(events.EventEmitter);
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/ace-language-client.ts
+function ace_language_client_class_call_check(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+function ace_language_client_defineProperties(target, props) {
+    for(var i = 0; i < props.length; i++){
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+    }
+}
+function ace_language_client_create_class(Constructor, protoProps, staticProps) {
+    if (protoProps) ace_language_client_defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) ace_language_client_defineProperties(Constructor, staticProps);
+    return Constructor;
+}
 
 
-class AceLanguageClient {
-    /**
+var AceLanguageClient = /*#__PURE__*/ function() {
+    "use strict";
+    function AceLanguageClient() {
+        ace_language_client_class_call_check(this, AceLanguageClient);
+    }
+    ace_language_client_create_class(AceLanguageClient, null, [
+        {
+            key: "for",
+            value: /**
      *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
      * @param {Worker | WebSocket} mode
      * @param {ProviderOptions} options
-     */
-    static for(mode, options) {
-        let messageController = new MessageControllerWS(mode);
-        return new LanguageProvider(messageController, options);
-    }
-}
+     */ function _for(mode, options) {
+                var messageController = new MessageControllerWS(mode);
+                return new LanguageProvider(messageController, options);
+            }
+        }
+    ]);
+    return AceLanguageClient;
+}();
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ext/language_tools.js
 var language_tools = __webpack_require__(11105);
@@ -45453,14 +46602,14 @@ var textmate_namespaceObject = /*#__PURE__*/__webpack_require__.t(textmate, 2);
 
 
 function createCloseButton(el) {
-    let closeButton = document.createElement("span");
-    closeButton.innerText = "\u00D7";
+    var closeButton = document.createElement("span");
+    closeButton.innerText = "\xd7";
     closeButton.style.cursor = "pointer";
     el.appendChild(closeButton);
     return closeButton;
 }
 function createModeNameText(el, name) {
-    let modeName = document.createElement("p");
+    var modeName = document.createElement("p");
     modeName.innerText = name;
     modeName.style.margin = "0";
     modeName.style.paddingRight = "10px";
@@ -45469,30 +46618,33 @@ function createModeNameText(el, name) {
     return modeName;
 }
 function createEditorWithLSP(mode, i, languageProvider) {
-    let el = document.createElement("div");
-    let modeName = createModeNameText(el, mode.name);
-    let closeButton = createCloseButton(el);
-    let editorContainer = document.createElement("div");
+    var el = document.createElement("div");
+    var modeName = createModeNameText(el, mode.name);
+    var closeButton = createCloseButton(el);
+    var editorContainer = document.createElement("div");
     editorContainer.setAttribute("id", "container" + i);
     editorContainer.style.height = "300px";
     el.appendChild(editorContainer);
     el.style.width = "49%";
     el.style.float = "left";
     document.body.appendChild(el);
-    let editor = ace.edit("container" + i);
+    var editor = ace.edit("container" + i);
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         enableSnippets: true
     });
     editor.setTheme(textmate_namespaceObject);
-    editor.setOptions({ "customScrollbar": true });
+    editor.setOptions({
+        "customScrollbar": true
+    });
     editor.session.setValue(mode.content);
     editor.session.setMode(mode.mode);
     languageProvider.registerEditor(editor);
-    let options = mode.options ?? {};
+    var _mode_options;
+    var options = (_mode_options = mode.options) !== null && _mode_options !== void 0 ? _mode_options : {};
     languageProvider.setSessionOptions(editor.session, options);
-    closeButton.onclick = () => {
+    closeButton.onclick = function() {
         editor.destroy();
         editor.container.remove();
         modeName.remove();
@@ -45509,29 +46661,60 @@ function createEditorWithLSP(mode, i, languageProvider) {
 
 
 
-const webSocket = new WebSocket("ws://localhost:3000/exampleServer");
-let modes = [
-    { name: "json", mode: "ace/mode/json", content: jsonContent, options: { jsonSchemaUri: "common-form.schema.json" } },
-    { name: "json5", mode: "ace/mode/json5", content: json5Content, options: { jsonSchemaUri: "json5Schema" } },
+var webSocket = new WebSocket("ws://localhost:3000/exampleServer");
+var modes = [
+    {
+        name: "json",
+        mode: "ace/mode/json",
+        content: jsonContent,
+        options: {
+            jsonSchemaUri: "common-form.schema.json"
+        }
+    },
+    {
+        name: "json5",
+        mode: "ace/mode/json5",
+        content: json5Content,
+        options: {
+            jsonSchemaUri: "json5Schema"
+        }
+    }
 ];
-let languageProvider = AceLanguageClient["for"](webSocket);
-let i = 0;
-for (let mode of modes) {
-    createEditorWithLSP(mode, i, languageProvider);
-    i++;
+var languageProvider = AceLanguageClient["for"](webSocket);
+var i = 0;
+var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
+try {
+    for(var _iterator = modes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
+        var mode = _step.value;
+        createEditorWithLSP(mode, i, languageProvider);
+        i++;
+    }
+} catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+} finally{
+    try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+            _iterator.return();
+        }
+    } finally{
+        if (_didIteratorError) {
+            throw _iteratorError;
+        }
+    }
 }
-let menuKb = new hash_handler.HashHandler([
+var menuKb = new hash_handler.HashHandler([
     {
         bindKey: "Ctrl-Shift-B",
         name: "format",
-        exec: function () {
+        exec: function exec() {
             languageProvider.format();
         }
     }
 ]);
-lib_event.addCommandKeyListener(window, function (e, hashId, keyCode) {
-    let keyString = keys.keyCodeToString(keyCode);
-    let command = menuKb.findKeyCommand(hashId, keyString);
+lib_event.addCommandKeyListener(window, function(e, hashId, keyCode) {
+    var keyString = keys.keyCodeToString(keyCode);
+    var command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
         command.exec();
         e.preventDefault();
