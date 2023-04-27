@@ -6,7 +6,6 @@ export class BaseTooltip extends Tooltip {
     provider: LanguageProvider;
     $activeEditor?: Ace.Editor;
     descriptionText: string;
-    isOpen: boolean;
     x: number;
     y: number;
 

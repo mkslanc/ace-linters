@@ -1,5 +1,4 @@
 import {expect} from "chai";
-import {Range} from "../ace/range";
 
 import * as Converter from "../type-converters/lsp-converters";
 
@@ -21,11 +20,15 @@ import {
     toResolvedCompletion, toTooltip
 } from "../type-converters/lsp-converters";
 import {CompletionService, Tooltip} from "../types";
+import {Ace} from "ace-code";
 
 describe('Converters from/to Language Server Protocol', () => {
     describe('fromRange', () => {
         it('should convert an Ace.Range to a Range', () => {
-            const aceRange = new Range(0, 1, 2, 3);
+            const aceRange = {
+                start: {row: 0, column: 1},
+                end: {row:2, column: 3}
+            } as Ace.Range;
 
             const expectedRange = {
                 start: {
@@ -79,7 +82,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 }
             };
 
-            const expectedAceRange = new Range(0, 1, 2, 3);
+            const expectedAceRange = {
+                start: {row: 0, column: 1},
+                end: {row:2, column: 3}
+            } as Ace.Range;
 
             const result = Converter.toRange(range);
 
@@ -213,7 +219,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new Range(0, 1, 0, 5),
+                range: {
+                    start: {row: 0, column: 1},
+                    end: {row:0, column: 5}
+                },
                 documentation: {
                     kind: "markdown",
                     value: "Test value"
@@ -239,7 +248,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new Range(0, 1, 0, 5),
+                range: {
+                    start: {row: 0, column: 1},
+                    end: {row:0, column: 5}
+                },
                 documentation: {
                     kind: "markdown",
                     value: "Test value"

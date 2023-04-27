@@ -1,9 +1,0 @@
-.ace_tooltip > p {
-    margin: 0;
-    font-size: 12px;
-}
-
-.ace_tooltip > code, .ace_tooltip > * > code {
-    font-style: italic;
-    font-size: 11px;
-}

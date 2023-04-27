@@ -123,6 +123,12 @@ export class LanguageProvider {
         }
         this.$descriptionTooltip.registerEditor(editor);
         this.$signatureTooltip.registerEditor(editor);
+
+        this.setStyle(editor);
+    }
+
+    setStyle(editor) {
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {margin: 0;font-size: 12px;} .ace_tooltip > code, .ace_tooltip > * > code {font-style: italic;font-size: 11px;}`, "linters.css");
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
@@ -182,7 +188,7 @@ export class LanguageProvider {
                             item.completerId = completer.id;
                             item["fileName"] = fileName
                         });
-                        callback(null, CommonConverter.normalizeRanges(completions));
+                        callback(null, CommonConverter.normalizeRanges(completions, editor));
                     });
                 });
             },

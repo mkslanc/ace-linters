@@ -16,10 +16,10 @@ import {
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {CommonConverter} from "./common-converters";
-import {mergeRanges} from "../ace/dom";
 import {CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
 import {checkValueAgainstRegexpArray} from "../utils";
 
+import {mergeRanges} from "../utils";
 
 export function fromRange(range: Ace.Range): Range {
     return {
