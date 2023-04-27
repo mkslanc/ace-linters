@@ -6,6 +6,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import * as cssService from 'vscode-css-languageservice';
 import {mergeObjects} from "../../utils";
 import {LanguageService} from "../../types";
+import {filterDiagnostics} from "../../type-converters/lsp-converters";
 
 export class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;
@@ -71,7 +72,7 @@ export class CssService extends BaseService implements LanguageService {
             return [];
 
         let cssDocument = this.$service.parseStylesheet(fullDocument);
-        return this.$service.doValidation(fullDocument, cssDocument);
+        return filterDiagnostics(this.$service.doValidation(fullDocument, cssDocument), this.optionsToFilterDiagnostics);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {

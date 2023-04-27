@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
     "build": "npm run build:ace-linters && webpack",
@@ -19,11 +19,10 @@
     "raw-loader": "^4.0.2",
     "style-loader": "^3.3.1",
     "text-loader": "latest",
-    "ts-loader": "latest",
     "webpack": "latest",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "latest",
-    "esbuild-loader": "^3.0.1"
+    "swc-loader": "^0.2.3"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

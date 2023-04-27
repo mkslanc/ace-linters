@@ -22,3 +22,15 @@ export function mergeObjects(obj1, obj2) {
 export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
     return value !== null && value !== undefined;
 }
+
+export function checkValueAgainstRegexpArray(value: string, regexpArray?: RegExp[]) {
+    if (!regexpArray) {
+        return false;
+    }
+    for (let i = 0; i < regexpArray.length; i++) {
+        if (regexpArray[i].test(value)) {
+            return true;
+        }
+    }
+    return false;
+}

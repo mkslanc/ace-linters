@@ -37,7 +37,7 @@ export interface LanguageService {
 
     removeDocument(document: TextDocumentIdentifier);
 
-        getDocumentValue(uri: string): string | undefined;
+    getDocumentValue(uri: string): string | undefined;
 
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
@@ -59,16 +59,28 @@ export interface TextChange {
     newText: string;
 }
 
-    export interface CompletionService {
-        completions: lsp.CompletionItem[] | lsp.CompletionList | null,
-        service: string
-    }
+export interface CompletionService {
+    completions: lsp.CompletionItem[] | lsp.CompletionList | null,
+    service: string
+}
 
-    export interface ServiceOptions {
-        [name: string]: any
-    }
+export interface ServiceOptions {
+    [name: string]: any
+}
 
-export interface JsonServiceOptions {
+interface ServiceOptionsWithErrorCodes {
+    errorCodesToIgnore?: string[],
+    errorCodesToTreatAsWarning?: string[]
+    errorCodesToTreatAsInfo?: string[]
+}
+
+interface ServiceOptionsWithErrorMessages {
+    errorMessagesToIgnore?: RegExp[],
+    errorMessagesToTreatAsWarning?: RegExp[]
+    errorMessagesToTreatAsInfo?: RegExp[]
+}
+
+export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages{
     schemas?: {
         uri: string,
         fileMatch?: string[],
@@ -79,13 +91,13 @@ export interface JsonServiceOptions {
     trailingCommas?: boolean
 }
 
-export interface YamlServiceOptions {
+export interface YamlServiceOptions extends ServiceOptionsWithErrorMessages{
     schemas?: {
         uri: string,
         fileMatch?: string[],
         schema?: string,
     }[],
-    schemaUri?: string,
+    schemaUri?: string
 }
 
 interface ExtraLib {
@@ -93,7 +105,7 @@ interface ExtraLib {
     version: number;
 }
 
-export interface TsServiceOptions {
+export interface TsServiceOptions extends ServiceOptionsWithErrorCodes{
     compilerOptions?: ts.CompilerOptions,
     extraLibs?: {
         [path: string]: ExtraLib;
@@ -101,25 +113,28 @@ export interface TsServiceOptions {
     formatOptions?: ts.FormatCodeSettings
 }
 
-export interface HtmlServiceOptions {
+export interface HtmlServiceOptions extends ServiceOptionsWithErrorMessages {
     validationOptions?: { [option: string]: boolean },
     formatOptions?: {}
 }
 
-export interface XmlServiceOptions {
+export interface XmlServiceOptions extends ServiceOptionsWithErrorMessages {
     schemas?: {
         uri: string,
         fileMatch?: string[],
         schema?: string,
     }[],
-    schemaUri?: string,
+    schemaUri?: string
 }
 
-export interface PhpServiceOptions {
-    inline: boolean
+export interface PhpServiceOptions extends ServiceOptionsWithErrorMessages {
+    inline?: boolean
 }
 
-export interface JavascriptServiceOptions {
+export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages  {
+}
+
+export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages{
     env?: { [name: string]: boolean } | undefined;
     extends?: string | string[] | undefined;
     globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
@@ -131,11 +146,14 @@ export interface JavascriptServiceOptions {
     processor?: string | undefined;
     reportUnusedDisableDirectives?: boolean | undefined;
     settings?: { [name: string]: any } | undefined;
-    rules?: { [rule: string]: any };
+    rules?: { [rule: string]: any }
 }
 
-export interface PythonServiceOptions {
+export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes{
     configuration: { [name: string]: any }
+}
+
+export interface CssServiceOptions extends ServiceOptionsWithErrorMessages{
 }
 
 export interface ServiceOptionsMap {
@@ -147,49 +165,69 @@ export interface ServiceOptionsMap {
     php: PhpServiceOptions,
     xml: XmlServiceOptions,
     javascript: JavascriptServiceOptions,
-    python: PythonServiceOptions
+    python: PythonServiceOptions,
+    css: CssServiceOptions,
+    less: CssServiceOptions,
+    scss: CssServiceOptions,
+    lua: LuaServiceOptions
 }
 
-    export type SupportedServices =
-        "json"
-        | "json5"
-        | "typescript"
-        | "css"
-        | "html"
-        | "yaml"
-        | "php"
-        | "xml"
-        | "javascript"
-        | "lua"
-        | "less"
-        | "scss"
-        | "python";
+export type SupportedServices =
+    "json"
+    | "json5"
+    | "typescript"
+    | "css"
+    | "html"
+    | "yaml"
+    | "php"
+    | "xml"
+    | "javascript"
+    | "lua"
+    | "less"
+    | "scss"
+    | "python";
 
-    export interface ProviderOptions {
-        functionality: {
-            hover: boolean,
-            completion: {
-                overwriteCompleters: boolean
-            } | false,
-            completionResolve: boolean,
-            format: boolean,
-            documentHighlights: boolean,
-            signatureHelp: boolean
-        },
-        markdownConverter?: MarkDownConverter
-    }
+export interface ProviderOptions {
+    functionality: {
+        hover: boolean,
+        completion: {
+            overwriteCompleters: boolean
+        } | false,
+        completionResolve: boolean,
+        format: boolean,
+        documentHighlights: boolean,
+        signatureHelp: boolean
+    },
+    markdownConverter?: MarkDownConverter
+}
 
-    export type ServiceFeatures = {
-        [feature in SupportedFeatures]?: boolean;
-    };
-    
-    export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight"
+export type ServiceFeatures = {
+    [feature in SupportedFeatures]?: boolean;
+};
 
-    export interface ServiceData {
-        module: () => any,
-        className: string,
-        modes: string,
-        serviceInstance?: LanguageService,
-        options?: ServiceOptions,
-        features?: ServiceFeatures
-    }
+export type SupportedFeatures =
+    "hover"
+    | "completion"
+    | "completionResolve"
+    | "format"
+    | "diagnostics"
+    | "signatureHelp"
+    | "documentHighlight"
+
+export interface ServiceData {
+    module: () => any,
+    className: string,
+    modes: string,
+    serviceInstance?: LanguageService,
+    options?: ServiceOptions,
+    features?: ServiceFeatures
+}
+
+export interface FilterDiagnosticsOptions {
+    errorCodesToIgnore?: string[],
+    errorCodesToTreatAsWarning?: string[]
+    errorCodesToTreatAsInfo?: string[],
+    errorMessagesToIgnore?: RegExp[],
+    errorMessagesToTreatAsWarning?: RegExp[]
+    errorMessagesToTreatAsInfo?: RegExp[]
+}

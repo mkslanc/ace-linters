@@ -1,5 +1,6 @@
 import {Ace} from "ace-code";
 import {CompletionItemKind} from "vscode-languageserver-protocol";
+import {checkValueAgainstRegexpArray} from "../utils";
 import {Range} from "../ace/range";
 
 export namespace CommonConverter {
@@ -56,5 +57,11 @@ export namespace CommonConverter {
         }
 
         return CompletionItemKind.Property;
+    }
+
+    export function excludeByErrorMessage<T>(diagnostics: T[], errorMessagesToIgnore?: RegExp[], fieldName = "message"): T[] {
+        if (!errorMessagesToIgnore)
+            return diagnostics;
+        return diagnostics.filter((el) => !checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
     }
 }

@@ -1,7 +1,7 @@
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
-import {LanguageService, ServiceData, ServiceOptions} from "../types";
+import {FilterDiagnosticsOptions, LanguageService, ServiceData, ServiceOptions} from "../types";
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service;
@@ -94,6 +94,17 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
 
     async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]> {
         return [];
+    }
+
+    get optionsToFilterDiagnostics(): FilterDiagnosticsOptions {
+        return {
+            errorCodesToIgnore: this.globalOptions.errorCodesToIgnore ?? [],
+            errorCodesToTreatAsWarning: this.globalOptions.errorCodesToTreatAsWarning ?? [],
+            errorCodesToTreatAsInfo: this.globalOptions.errorCodesToTreatAsInfo ?? [],
+            errorMessagesToIgnore: this.globalOptions.errorMessagesToIgnore ?? [],
+            errorMessagesToTreatAsWarning: this.globalOptions.errorMessagesToTreatAsWarning ?? [],
+            errorMessagesToTreatAsInfo: this.globalOptions.errorMessagesToTreatAsInfo ?? [],
+        }
     }
 
 }
