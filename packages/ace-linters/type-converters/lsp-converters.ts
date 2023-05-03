@@ -183,12 +183,17 @@ export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
         }
     });
 
-    //TODO: not to forget about `range` when we will have this feature in editor
+    //TODO: it could be merged within all ranges in future
+    let lspRange = hover.find((el) => el.range)?.range;
+    let range;
+    if (lspRange) range = toRange(lspRange);
     return {
         content: {
             type: "markdown",
-            text: content.join("\n\n")
-        }
+            text: content.join("\n\n"),
+            
+        },
+        range: range
     };
 }
 

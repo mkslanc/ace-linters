@@ -7,7 +7,12 @@ module.exports = (env, argv) => {
     loader = {
         test: /\.(t|j)sx?$/,
         use: {
-            loader: 'swc-loader'
+            loader: 'swc-loader',
+            options: {
+                jsc: {
+                    "target": "es2019"
+                }
+            }
         },
         exclude: /node_modules/
     };
