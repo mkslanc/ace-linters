@@ -4414,7 +4414,7 @@ var reportErrorIfPathIsNotConfigured = function() {
     }
 };
 
-exports.version = "1.17.0";
+exports.version = "1.19.0";
 
 
 
@@ -4536,7 +4536,7 @@ module.exports = `
     pointer-events: none;
 }
 
-.ace_gutter-cell, .ace_gutter-cell_svg-icons  {
+.ace_gutter-cell, .ace_gutter-cell_svg-icons {
     position: absolute;
     top: 0;
     left: 0;
@@ -4546,18 +4546,23 @@ module.exports = `
     background-repeat: no-repeat;
 }
 
-.ace_gutter-cell_svg-icons .ace_icon_svg{
+.ace_gutter-cell_svg-icons .ace_icon_svg {
     margin-left: -14px;
     float: left;
 }
 
-.ace_gutter-cell.ace_error, .ace_icon.ace_error {
+.ace_gutter-cell .ace_icon {
+    margin-left: -18px;
+    float: left;
+}
+
+.ace_gutter-cell.ace_error, .ace_icon.ace_error, .ace_icon.ace_error_fold {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABOFBMVEX/////////QRswFAb/Ui4wFAYwFAYwFAaWGAfDRymzOSH/PxswFAb/SiUwFAYwFAbUPRvjQiDllog5HhHdRybsTi3/Tyv9Tir+Syj/UC3////XurebMBIwFAb/RSHbPx/gUzfdwL3kzMivKBAwFAbbvbnhPx66NhowFAYwFAaZJg8wFAaxKBDZurf/RB6mMxb/SCMwFAYwFAbxQB3+RB4wFAb/Qhy4Oh+4QifbNRcwFAYwFAYwFAb/QRzdNhgwFAYwFAbav7v/Uy7oaE68MBK5LxLewr/r2NXewLswFAaxJw4wFAbkPRy2PyYwFAaxKhLm1tMwFAazPiQwFAaUGAb/QBrfOx3bvrv/VC/maE4wFAbRPBq6MRO8Qynew8Dp2tjfwb0wFAbx6eju5+by6uns4uH9/f36+vr/GkHjAAAAYnRSTlMAGt+64rnWu/bo8eAA4InH3+DwoN7j4eLi4xP99Nfg4+b+/u9B/eDs1MD1mO7+4PHg2MXa347g7vDizMLN4eG+Pv7i5evs/v79yu7S3/DV7/498Yv24eH+4ufQ3Ozu/v7+y13sRqwAAADLSURBVHjaZc/XDsFgGIBhtDrshlitmk2IrbHFqL2pvXf/+78DPokj7+Fz9qpU/9UXJIlhmPaTaQ6QPaz0mm+5gwkgovcV6GZzd5JtCQwgsxoHOvJO15kleRLAnMgHFIESUEPmawB9ngmelTtipwwfASilxOLyiV5UVUyVAfbG0cCPHig+GBkzAENHS0AstVF6bacZIOzgLmxsHbt2OecNgJC83JERmePUYq8ARGkJx6XtFsdddBQgZE2nPR6CICZhawjA4Fb/chv+399kfR+MMMDGOQAAAABJRU5ErkJggg==");
     background-repeat: no-repeat;
     background-position: 2px center;
 }
 
-.ace_gutter-cell.ace_warning, .ace_icon.ace_warning {
+.ace_gutter-cell.ace_warning, .ace_icon.ace_warning, .ace_icon.ace_warning_fold {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAmVBMVEX///8AAAD///8AAAAAAABPSzb/5sAAAAB/blH/73z/ulkAAAAAAAD85pkAAAAAAAACAgP/vGz/rkDerGbGrV7/pkQICAf////e0IsAAAD/oED/qTvhrnUAAAD/yHD/njcAAADuv2r/nz//oTj/p064oGf/zHAAAAA9Nir/tFIAAAD/tlTiuWf/tkIAAACynXEAAAAAAAAtIRW7zBpBAAAAM3RSTlMAABR1m7RXO8Ln31Z36zT+neXe5OzooRDfn+TZ4p3h2hTf4t3k3ucyrN1K5+Xaks52Sfs9CXgrAAAAjklEQVR42o3PbQ+CIBQFYEwboPhSYgoYunIqqLn6/z8uYdH8Vmdnu9vz4WwXgN/xTPRD2+sgOcZjsge/whXZgUaYYvT8QnuJaUrjrHUQreGczuEafQCO/SJTufTbroWsPgsllVhq3wJEk2jUSzX3CUEDJC84707djRc5MTAQxoLgupWRwW6UB5fS++NV8AbOZgnsC7BpEAAAAABJRU5ErkJggg==");
     background-repeat: no-repeat;
     background-position: 2px center;
@@ -4573,16 +4578,25 @@ module.exports = `
 }
 
 .ace_icon_svg.ace_error {
-    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJyZWQiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIj4KPGNpcmNsZSBmaWxsPSJub25lIiBjeD0iOCIgY3k9IjgiIHI9IjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPGxpbmUgeDE9IjExIiB5MT0iNSIgeDI9IjUiIHkyPSIxMSIvPgo8bGluZSB4MT0iMTEiIHkxPSIxMSIgeDI9IjUiIHkyPSI1Ii8+CjwvZz4KPC9zdmc+");
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJyZWQiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIj4KPGNpcmNsZSBmaWxsPSJub25lIiBjeD0iOCIgY3k9IjgiIHI9IjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPGxpbmUgeDE9IjExIiB5MT0iNSIgeDI9IjUiIHkyPSIxMSIvPgo8bGluZSB4MT0iMTEiIHkxPSIxMSIgeDI9IjUiIHkyPSI1Ii8+CjwvZz4KPC9zdmc+");
     background-color: crimson;
 }
 .ace_icon_svg.ace_warning {
-    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJkYXJrb3JhbmdlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+Cjxwb2x5Z29uIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiIHBvaW50cz0iOCAxIDE1IDE1IDEgMTUgOCAxIi8+CjxyZWN0IHg9IjgiIHk9IjEyIiB3aWR0aD0iMC4wMSIgaGVpZ2h0PSIwLjAxIi8+CjxsaW5lIHgxPSI4IiB5MT0iNiIgeDI9IjgiIHkyPSIxMCIvPgo8L2c+Cjwvc3ZnPg==");
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJkYXJrb3JhbmdlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+Cjxwb2x5Z29uIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiIHBvaW50cz0iOCAxIDE1IDE1IDEgMTUgOCAxIi8+CjxyZWN0IHg9IjgiIHk9IjEyIiB3aWR0aD0iMC4wMSIgaGVpZ2h0PSIwLjAxIi8+CjxsaW5lIHgxPSI4IiB5MT0iNiIgeDI9IjgiIHkyPSIxMCIvPgo8L2c+Cjwvc3ZnPg==");
     background-color: darkorange;
 }
 .ace_icon_svg.ace_info {
-    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJibHVlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+CjxjaXJjbGUgZmlsbD0ibm9uZSIgY3g9IjgiIGN5PSI4IiByPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjxwb2x5bGluZSBwb2ludHM9IjggMTEgOCA4Ii8+Cjxwb2x5bGluZSBwb2ludHM9IjkgOCA2IDgiLz4KPGxpbmUgeDE9IjEwIiB5MT0iMTEiIHgyPSI2IiB5Mj0iMTEiLz4KPHJlY3QgeD0iOCIgeT0iNSIgd2lkdGg9IjAuMDEiIGhlaWdodD0iMC4wMSIvPgo8L2c+Cjwvc3ZnPg==");
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJibHVlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+CjxjaXJjbGUgZmlsbD0ibm9uZSIgY3g9IjgiIGN5PSI4IiByPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjxwb2x5bGluZSBwb2ludHM9IjggMTEgOCA4Ii8+Cjxwb2x5bGluZSBwb2ludHM9IjkgOCA2IDgiLz4KPGxpbmUgeDE9IjEwIiB5MT0iMTEiIHgyPSI2IiB5Mj0iMTEiLz4KPHJlY3QgeD0iOCIgeT0iNSIgd2lkdGg9IjAuMDEiIGhlaWdodD0iMC4wMSIvPgo8L2c+Cjwvc3ZnPg==");
     background-color: royalblue;
+}
+
+.ace_icon_svg.ace_error_fold {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiIgZmlsbD0ibm9uZSI+CiAgPHBhdGggZD0ibSAxOC45Mjk4NTEsNy44Mjk4MDc2IGMgMC4xNDYzNTMsNi4zMzc0NjA0IC02LjMyMzE0Nyw3Ljc3Nzg0NDQgLTcuNDc3OTEyLDcuNzc3ODQ0NCAtMi4xMDcyNzI2LC0wLjEyODc1IDUuMTE3Njc4LDAuMzU2MjQ5IDUuMDUxNjk4LC03Ljg3MDA2MTggLTAuNjA0NjcyLC04LjAwMzk3MzQ5IC03LjA3NzI3MDYsLTcuNTYzMTE4OSAtNC44NTczLC03LjQzMDM5NTU2IDEuNjA2LC0wLjExNTE0MjI1IDYuODk3NDg1LDEuMjYyNTQ1OTYgNy4yODM1MTQsNy41MjI2MTI5NiB6IiBmaWxsPSJjcmltc29uIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibSA4LjExNDc1NjIsMi4wNTI5ODI4IGMgMy4zNDkxNjk4LDAgNi4wNjQxMzI4LDIuNjc2ODYyNyA2LjA2NDEzMjgsNS45Nzg5NTMgMCwzLjMwMjExMjIgLTIuNzE0OTYzLDUuOTc4OTIwMiAtNi4wNjQxMzI4LDUuOTc4OTIwMiAtMy4zNDkxNDczLDAgLTYuMDY0MTc3MiwtMi42NzY4MDggLTYuMDY0MTc3MiwtNS45Nzg5MjAyIDAuMDA1MzksLTMuMjk5ODg2MSAyLjcxNzI2NTYsLTUuOTczNjQwOCA2LjA2NDE3NzIsLTUuOTc4OTUzIHogbSAwLC0xLjczNTgyNzE5IGMgLTQuMzIxNDgzNiwwIC03LjgyNDc0MDM4LDMuNDU0MDE4NDkgLTcuODI0NzQwMzgsNy43MTQ3ODAxOSAwLDQuMjYwNzI4MiAzLjUwMzI1Njc4LDcuNzE0NzQ1MiA3LjgyNDc0MDM4LDcuNzE0NzQ1MiA0LjMyMTQ0OTgsMCA3LjgyNDY5OTgsLTMuNDU0MDE3IDcuODI0Njk5OCwtNy43MTQ3NDUyIDAsLTIuMDQ2MDkxNCAtMC44MjQzOTIsLTQuMDA4MzY3MiAtMi4yOTE3NTYsLTUuNDU1MTc0NiBDIDEyLjE4MDIyNSwxLjEyOTk2NDggMTAuMTkwMDEzLDAuMzE3MTU1NjEgOC4xMTQ3NTYyLDAuMzE3MTU1NjEgWiBNIDYuOTM3NDU2Myw4LjI0MDU5ODUgNC42NzE4Njg1LDEwLjQ4NTg1MiA2LjAwODY4MTQsMTEuODc2NzI4IDguMzE3MDAzNSw5LjYwMDc5MTEgMTAuNjI1MzM3LDExLjg3NjcyOCAxMS45NjIxMzgsMTAuNDg1ODUyIDkuNjk2NTUwOCw4LjI0MDU5ODUgMTEuOTYyMTM4LDYuMDA2ODA2NiAxMC41NzMyNDYsNC42Mzc0MzM1IDguMzE3MDAzNSw2Ljg3MzQyOTcgNi4wNjA3NjA3LDQuNjM3NDMzNSA0LjY3MTg2ODUsNi4wMDY4MDY2IFoiIGZpbGw9ImNyaW1zb24iIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4=");
+    background-color: crimson;
+}
+.ace_icon_svg.ace_warning_fold {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyMCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNC43NzY5IDE0LjczMzdMOC42NTE5MiAyLjQ4MzY5QzguMzI5NDYgMS44Mzg3NyA3LjQwOTEzIDEuODM4NzcgNy4wODY2NyAyLjQ4MzY5TDAuOTYxNjY5IDE0LjczMzdDMC42NzA3NzUgMTUuMzE1NSAxLjA5MzgzIDE2IDEuNzQ0MjkgMTZIMTMuOTk0M0MxNC42NDQ4IDE2IDE1LjA2NzggMTUuMzE1NSAxNC43NzY5IDE0LjczMzdaTTMuMTYwMDcgMTQuMjVMNy44NjkyOSA0LjgzMTU2TDEyLjU3ODUgMTQuMjVIMy4xNjAwN1pNOC43NDQyOSAxMS42MjVWMTMuMzc1SDYuOTk0MjlWMTEuNjI1SDguNzQ0MjlaTTYuOTk0MjkgMTAuNzVWNy4yNUg4Ljc0NDI5VjEwLjc1SDYuOTk0MjlaIiBmaWxsPSIjRUM3MjExIi8+CjxwYXRoIGQ9Ik0xMS4xOTkxIDIuOTUyMzhDMTAuODgwOSAyLjMxNDY3IDEwLjM1MzcgMS44MDUyNiA5LjcwNTUgMS41MDlMMTEuMDQxIDEuMDY5NzhDMTEuNjg4MyAwLjk0OTgxNCAxMi4zMzcgMS4yNzI2MyAxMi42MzE3IDEuODYxNDFMMTcuNjEzNiAxMS44MTYxQzE4LjM1MjcgMTMuMjkyOSAxNy41OTM4IDE1LjA4MDQgMTYuMDE4IDE1LjU3NDVDMTYuNDA0NCAxNC40NTA3IDE2LjMyMzEgMTMuMjE4OCAxNS43OTI0IDEyLjE1NTVMMTEuMTk5MSAyLjk1MjM4WiIgZmlsbD0iI0VDNzIxMSIvPgo8L3N2Zz4=");
+    background-color: darkorange;
 }
 
 .ace_scrollbar {
@@ -4869,21 +4883,19 @@ module.exports = `
     pointer-events: none;
 }
 
+.ace_tooltip.ace_dark {
+    background-color: #636363;
+    color: #fff;
+}
+
 .ace_tooltip:focus {
-    outline: 1px solid black;
+    outline: 1px solid #5E9ED6;
 }
 
-.ace_gutter-tooltip_header {
-    font-weight: bold;
-}
-
-.ace_gutter-tooltip_body {
-    padding-top: 5px;
-}
-
-.ace_gutter-tooltip .ace_icon {
+.ace_icon {
     display: inline-block;
     width: 18px;
+    vertical-align: top;
 }
 
 .ace_icon_svg {
@@ -5710,22 +5722,19 @@ class Document {
         return index + pos.column;
     }
 
+    /**
+     * Splits a string of text on any newline (`\n`) or carriage-return (`\r`) characters.
+     *
+     * @method $split
+     * @param {String} text The text to work with
+     * @returns {String} A String array, with each index containing a piece of the original `text` string.
+     *
+     **/
+    $split(text) {
+        return text.split(/\r\n|\r|\n/);
+    }
 }
 
-/**
- * Splits a string of text on any newline (`\n`) or carriage-return (`\r`) characters.
- *
- * @method $split
- * @param {String} text The text to work with
- * @returns {String} A String array, with each index containing a piece of the original `text` string.
- *
- **/
-// check for IE split bug
-Document.prototype.$split = ("aaa".split(/a/).length === 0) ? function (text) {
-    return text.replace(/\r\n|\r/g, "\n").split("\n");
-} : function (text) {
-    return text.split(/\r\n|\r|\n/);
-};
 Document.prototype.$autoNewLine = "";
 Document.prototype.$newLineMode = "auto";
 
@@ -12898,6 +12907,7 @@ config.defineOptions(Editor.prototype, "editor", {
     useTextareaForIME: "renderer",
     useResizeObserver: "renderer",
     useSvgGutterIcons: "renderer",
+    showFoldedAnnotations: "renderer",
 
     scrollSpeed: "$mouseHandler",
     dragDelay: "$mouseHandler",
@@ -15173,25 +15183,9 @@ class Gutter{
         
         var lineHeight = config.lineHeight + "px";
 
-        var className;
-        if (this.$useSvgGutterIcons){
-            className = "ace_gutter-cell_svg-icons ";
-
-            if (this.$annotations[row]){
-                annotationNode.className = "ace_icon_svg" + this.$annotations[row].className;
-
-                dom.setStyle(annotationNode.style, "height", lineHeight);
-                dom.setStyle(annotationNode.style, "display", "block");
-            }
-            else {
-                dom.setStyle(annotationNode.style, "display", "none");
-            }
-        }
-        else {
-            className = "ace_gutter-cell ";
-            dom.setStyle(annotationNode.style, "display", "none");
-        }
-
+        var className = this.$useSvgGutterIcons ? "ace_gutter-cell_svg-icons " : "ace_gutter-cell ";
+        var iconClassName = this.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
+        
         if (this.$highlightGutterLine) {
             if (row == this.$cursorRow || (fold && row < this.$cursorRow && row >= foldStart &&  this.$cursorRow <= fold.end.row)) {
                 className += "ace_gutter-active-line ";
@@ -15207,7 +15201,7 @@ class Gutter{
             className += breakpoints[row];
         if (decorations[row])
             className += decorations[row];
-        if (this.$annotations[row])
+        if (this.$annotations[row] && row !== foldStart)
             className += this.$annotations[row].className;
         if (element.className != className)
             element.className = className;
@@ -15221,8 +15215,29 @@ class Gutter{
 
         if (c) {
             var className = "ace_fold-widget ace_" + c;
-            if (c == "start" && row == foldStart && row < fold.end.row)
+            if (c == "start" && row == foldStart && row < fold.end.row){
                 className += " ace_closed";
+                var foldAnnotationClass;
+                var annotationInFold = false;
+
+                for (var i = row + 1; i <= fold.end.row; i++){
+                    if (!this.$annotations[i])
+                        continue;
+
+                    if (this.$annotations[i].className === " ace_error"){
+                        annotationInFold = true;
+                        foldAnnotationClass = " ace_error_fold";
+                        break;
+                    } 
+                    if (this.$annotations[i].className === " ace_warning"){
+                        annotationInFold = true;
+                        foldAnnotationClass = " ace_warning_fold";
+                        continue;
+                    }
+                }
+
+                element.className += foldAnnotationClass;
+            }
             else
                 className += " ace_open";
             if (foldWidget.className != className)
@@ -15234,6 +15249,28 @@ class Gutter{
             if (foldWidget) {
                 dom.setStyle(foldWidget.style, "display", "none");
             }
+        }
+
+        if (annotationInFold && this.$showFoldedAnnotations){
+            annotationNode.className = iconClassName;
+            annotationNode.className += foldAnnotationClass;
+
+            dom.setStyle(annotationNode.style, "height", lineHeight);
+            dom.setStyle(annotationNode.style, "display", "block");
+        }
+        else if (this.$annotations[row]){
+            annotationNode.className = iconClassName;
+
+            if (this.$useSvgGutterIcons)
+                annotationNode.className += this.$annotations[row].className;
+            else 
+                element.classList.add(this.$annotations[row].className.replace(" ", ""));
+
+            dom.setStyle(annotationNode.style, "height", lineHeight);
+            dom.setStyle(annotationNode.style, "display", "block");
+        }
+        else {
+            dom.setStyle(annotationNode.style, "display", "none");
         }
         
         var text = (gutterRenderer
@@ -15255,7 +15292,6 @@ class Gutter{
         this.$highlightGutterLine = highlightGutterLine;
     }
     
-
     setShowLineNumbers(show) {
         this.$renderer = !show && {
             getWidth: function() {return 0;},
@@ -19871,12 +19907,60 @@ function GutterHandler(mouseHandler) {
     });
 
 
-    var tooltipTimeout, mouseEvent, tooltipAnnotation;
+    var tooltipTimeout, mouseEvent, tooltipContent;
+
+    var annotationLabels = {
+        error: {singular: "error", plural: "errors"}, 
+        warning: {singular: "warning", plural: "warnings"},
+        info: {singular: "information message", plural: "information messages"}
+    };
 
     function showTooltip() {
         var row = mouseEvent.getDocumentPosition().row;
-        var annotation = gutter.$annotations[row];
-        if (!annotation)
+        var annotationsInRow = gutter.$annotations[row];
+        var annotation;
+
+        if (annotationsInRow)
+            annotation = {text: Array.from(annotationsInRow.text), type: Array.from(annotationsInRow.type)};
+        else
+            annotation = {text: [], type: []};
+
+        // If the tooltip is for a row which has a closed fold, check whether there are
+        // annotations in the folded lines. If so, add a summary to the list of annotations.
+        var fold = gutter.session.getFoldLine(row);
+        if (fold && gutter.$showFoldedAnnotations){
+            var annotationsInFold = {error: [], warning: [], info: []};
+            var mostSevereAnnotationInFoldType;
+
+            for (var i = row + 1; i <= fold.end.row; i++){
+                if (!gutter.$annotations[i])
+                    continue;
+
+                for (var j = 0; j < gutter.$annotations[i].text.length; j++) {
+                    var annotationType = gutter.$annotations[i].type[j];
+                    annotationsInFold[annotationType].push(gutter.$annotations[i].text[j]);
+
+                    if (annotationType === "error"){
+                        mostSevereAnnotationInFoldType = "error_fold";
+                        continue;
+                    }
+
+                    if (annotationType === "warning"){
+                        mostSevereAnnotationInFoldType = "warning_fold";
+                        continue;
+                    }
+                }
+            }
+           
+            if (mostSevereAnnotationInFoldType === "error_fold" || mostSevereAnnotationInFoldType === "warning_fold"){
+                var summaryFoldedAnnotations = `${annotationsToSummaryString(annotationsInFold)} in folded code.`;
+
+                annotation.text.push(summaryFoldedAnnotations);
+                annotation.type.push(mostSevereAnnotationInFoldType);
+            }
+        }
+        
+        if (annotation.text.length === 0)
             return hideTooltip();
 
         var maxRow = editor.session.getLength();
@@ -19888,42 +19972,22 @@ function GutterHandler(mouseHandler) {
         }
 
         var annotationMessages = {error: [], warning: [], info: []};
-        var annotationLabels = {
-            error: {singular: "error", plural: "errors"}, 
-            warning: {singular: "warning", plural: "warnings"},
-            info: {singular: "information message", plural: "information messages"}
-        };
-
         var iconClassName = gutter.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
 
-        // Construct the body of the tooltip.
+        // Construct the contents of the tooltip.
         for (var i = 0; i < annotation.text.length; i++) {
-            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${annotationLabels[annotation.type[i]].singular}' role=img> </span> ${annotation.text[i]}`;
-            annotationMessages[annotation.type[i]].push(line);
+            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${annotationLabels[annotation.type[i].replace("_fold","")].singular}' role=img> </span> ${annotation.text[i]}`;
+            annotationMessages[annotation.type[i].replace("_fold","")].push(line);
         }
-        var tooltipBody = "<div class='ace_gutter-tooltip_body'>";
-        tooltipBody += [].concat(annotationMessages.error, annotationMessages.warning, annotationMessages.info).join("<br>");
-        tooltipBody += '</div>';    
-        
-        // Construct the header of the tooltip.
-        var isMoreThanOneAnnotationType = false;
-        var tooltipHeader = "<div class='ace_gutter-tooltip_header'>";
-        for (var i = 0; i < 3; i++){
-            var annotationType = ['error', 'warning', 'info'][i];
-            if (annotationMessages[annotationType].length > 0){
-                var label = annotationMessages[annotationType].length === 1 ? annotationLabels[annotationType].singular : annotationLabels[annotationType].plural;
-                tooltipHeader += `${isMoreThanOneAnnotationType ? ', ' : ''}${annotationMessages[annotationType].length} ${label}`;
-                isMoreThanOneAnnotationType = true;
-            } 
-        }
-        tooltipHeader += "</div>";
-
-        tooltipAnnotation = tooltipHeader + tooltipBody;
-
-        tooltip.setHtml(tooltipAnnotation);
+        tooltipContent = [].concat(annotationMessages.error, annotationMessages.warning, annotationMessages.info).join("<br>");
+ 
+        tooltip.setHtml(tooltipContent);
         tooltip.setClassName("ace_gutter-tooltip");
         tooltip.$element.setAttribute("aria-live", "polite");
         
+        if (!tooltip.isOpen) {
+            tooltip.setTheme(editor.renderer.theme);
+        }
         tooltip.show();
         editor._signal("showGutterTooltip", tooltip);
         editor.on("mousewheel", hideTooltip);
@@ -19931,7 +19995,7 @@ function GutterHandler(mouseHandler) {
         if (mouseHandler.$tooltipFollowsMouse) {
             moveTooltip(mouseEvent);
         } else {
-            var gutterElement = mouseEvent.domEvent.target;
+            var gutterElement = gutter.$lines.cells[row].element.querySelector("[class*=ace_icon]");
             var rect = gutterElement.getBoundingClientRect();
             var style = tooltip.getElement().style;
             style.left = rect.right + "px";
@@ -19942,12 +20006,23 @@ function GutterHandler(mouseHandler) {
     function hideTooltip() {
         if (tooltipTimeout)
             tooltipTimeout = clearTimeout(tooltipTimeout);
-        if (tooltipAnnotation) {
+        if (tooltipContent) {
             tooltip.hide();
-            tooltipAnnotation = null;
+            tooltipContent = null;
             editor._signal("hideGutterTooltip", tooltip);
             editor.off("mousewheel", hideTooltip);
         }
+    }
+
+    function annotationsToSummaryString(annotations) {
+        const summary = [];
+        const annotationTypes = ['error', 'warning', 'info'];
+        for (const annotationType of annotationTypes) {
+            if (!annotations[annotationType].length) continue;
+            const label = annotations[annotationType].length === 1 ? annotationLabels[annotationType].singular : annotationLabels[annotationType].plural;
+            summary.push(`${annotations[annotationType].length} ${label}`);
+        }
+        return summary.join(", ");
     }
 
     function moveTooltip(e) {
@@ -19959,7 +20034,7 @@ function GutterHandler(mouseHandler) {
         if (dom.hasCssClass(target, "ace_fold-widget"))
             return hideTooltip();
 
-        if (tooltipAnnotation && mouseHandler.$tooltipFollowsMouse)
+        if (tooltipContent && mouseHandler.$tooltipFollowsMouse)
             moveTooltip(e);
 
         mouseEvent = e;
@@ -19976,7 +20051,7 @@ function GutterHandler(mouseHandler) {
 
     event.addListener(editor.renderer.$gutter, "mouseout", function(e) {
         mouseEvent = null;
-        if (!tooltipAnnotation || tooltipTimeout)
+        if (!tooltipContent || tooltipTimeout)
             return;
 
         tooltipTimeout = setTimeout(function() {
@@ -20792,12 +20867,6 @@ class MouseEvent {
 
         this.propagationStopped = false;
         this.defaultPrevented = false;
-
-        this.getAccelKey = useragent.isMac ? function () {
-            return this.domEvent.metaKey;
-        } : function () {
-            return this.domEvent.ctrlKey;
-        };
     }
     
     stopPropagation() {
@@ -20866,7 +20935,10 @@ class MouseEvent {
     getShiftKey() {
         return this.domEvent.shiftKey;
     }
-    
+
+    getAccelKey() {
+        return useragent.isMac ? this.domEvent.metaKey : this.domEvent.ctrlKey;
+    }
 }
 
 exports.T = MouseEvent;
@@ -22829,7 +22901,7 @@ class Range {
      * @returns {Number} This method returns one of the following numbers:
      * * `-2`: (B) is in front of (A), and doesn't intersect with (A)
      * * `-1`: (B) begins before (A) but ends inside of (A)
-     * * `0`: (B) is completely inside of (A) OR (A) is completely inside of (B)
+     * * `0`: (B) is completely inside of (A)
      * * `+1`: (B) begins inside of (A) but ends outside of (A)
      * * `+2`: (B) is after (A) and doesn't intersect with (A)
      * * `42`: FTW state: (B) ends in (A) but starts outside of (A)
@@ -24560,8 +24632,6 @@ exports.o = Search;
 var lang = __webpack_require__(732);
 var Range = (__webpack_require__(3069)/* .Range */ .e);
 
-var SearchHighlight = 
-
 class SearchHighlight {
     constructor(regExp, clazz, type = "text") {
         this.setRegexp(regExp);
@@ -24606,7 +24676,7 @@ class SearchHighlight {
         }
     }
 
-};
+}
 
 // needed to prevent long lines from freezing the browser
 SearchHighlight.prototype.MAX_RANGES = 500;
@@ -26207,9 +26277,11 @@ exports.d = Tokenizer;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
+var __webpack_unused_export__;
 
 
 var dom = __webpack_require__(5336);
+var Range = (__webpack_require__(3069)/* .Range */ .e);
 
 var CLASSNAME = "ace_tooltip";
 
@@ -26232,7 +26304,7 @@ class Tooltip {
     }
 
     /**
-     * @returns {Element}
+     * @returns {HTMLElement}
      **/
     getElement() {
         return this.$element || this.$init();
@@ -26266,6 +26338,11 @@ class Tooltip {
      **/
     setClassName(className) {
         dom.addCssClass(this.getElement(), className);
+    }
+
+    setTheme(theme) {
+        this.$element.className = CLASSNAME + " " +
+            (theme.isDark? "ace_dark " : "") + (theme.cssClass || "");
     }
 
     /**
@@ -26315,7 +26392,261 @@ class Tooltip {
 
 }
 
+class PopupManager {
+    constructor () {
+        this.popups = [];
+    }
+    
+    addPopup(popup) {
+        this.popups.push(popup);
+        this.updatePopups();
+    }
+
+    removePopup(popup) {
+        const index = this.popups.indexOf(popup);
+        if (index !== -1) {
+            this.popups.splice(index, 1);
+            this.updatePopups();
+        }
+    }
+
+    updatePopups() {
+        this.popups.sort((a, b) => b.priority - a.priority);
+        let visiblepopups = [];
+
+        for (let popup of this.popups) {
+            let shouldDisplay = true;
+            for (let visiblePopup of visiblepopups) {
+                if (this.doPopupsOverlap(visiblePopup, popup)) {
+                    shouldDisplay = false;
+                    break;
+                }
+            }
+            
+            if (shouldDisplay) {
+                visiblepopups.push(popup);
+            } else {
+                popup.hide();
+            }
+        }
+    }
+
+    doPopupsOverlap (popupA, popupB) {
+        const rectA = popupA.getElement().getBoundingClientRect();
+        const rectB = popupB.getElement().getBoundingClientRect();
+
+        return (rectA.left < rectB.right && rectA.right > rectB.left && rectA.top < rectB.bottom && rectA.bottom
+            > rectB.top);
+    }
+}
+
+var popupManager = new PopupManager();
+__webpack_unused_export__ = popupManager;
+
 exports.u = Tooltip;
+
+
+class HoverTooltip extends Tooltip {
+    constructor() {
+        super(document.body);
+        
+        this.timeout = undefined;
+        this.lastT = 0;
+        this.idleTime = 350;
+        this.lastEvent = undefined;
+        
+        this.onMouseOut = this.onMouseOut.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.waitForHover = this.waitForHover.bind(this);
+        this.hide = this.hide.bind(this);
+        
+        var el = this.getElement();
+        el.style.whiteSpace = "pre-wrap";
+        el.style.pointerEvents = "auto";
+        el.addEventListener("mouseout", this.onMouseOut);
+        el.tabIndex = -1;
+        
+        el.addEventListener("blur", function() {
+            if (document.activeElement != el) this.hide();
+        }.bind(this));
+    }
+    
+    addToEditor(editor) {
+        editor.on("mousemove", this.onMouseMove);
+        editor.on("mousedown", this.hide);
+        editor.renderer.getMouseEventTarget().addEventListener("mouseout", this.onMouseOut, true);
+    }
+
+    removeFromEditor(editor) {
+        editor.off("mousemove", this.onMouseMove);
+        editor.off("mousedown", this.hide);
+        editor.renderer.getMouseEventTarget().removeEventListener("mouseout", this.onMouseOut, true);
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+    }
+
+    onMouseMove(e, editor) {
+        this.lastEvent = e;
+        this.lastT = Date.now();
+        var isMousePressed = editor.$mouseHandler.isMousePressed;
+        if (this.isOpen) {
+            var pos = this.lastEvent && this.lastEvent.getDocumentPosition();
+            if (
+                !this.range 
+                || !this.range.contains(pos.row, pos.column)
+                || isMousePressed
+                || this.isOutsideOfText(this.lastEvent)
+            ) {
+                this.hide();
+            }
+        }
+        if (this.timeout || isMousePressed) return;
+        this.lastEvent = e;
+        this.timeout = setTimeout(this.waitForHover, this.idleTime);
+    }
+    waitForHover() {
+        if (this.timeout) clearTimeout(this.timeout);
+        var dt = Date.now() - this.lastT;
+        if (this.idleTime - dt > 10) {
+            this.timeout = setTimeout(this.waitForHover, this.idleTime - dt);
+            return;
+        }
+        
+        this.timeout = null;
+        if (this.lastEvent && !this.isOutsideOfText(this.lastEvent)) {
+            this.$gatherData(this.lastEvent, this.lastEvent.editor);
+        }
+    }
+
+    isOutsideOfText(e) {
+        var editor = e.editor;
+        var docPos = e.getDocumentPosition();
+        var line = editor.session.getLine(docPos.row);
+        if (docPos.column == line.length) {
+            var screenPos = editor.renderer.pixelToScreenCoordinates(e.clientX, e.clientY);
+            var clippedPos = editor.session.documentToScreenPosition(docPos.row, docPos.column);
+            if (
+                clippedPos.column != screenPos.column
+                || clippedPos.row != screenPos.row
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    setDataProvider(value) {
+        this.$gatherData = value;
+    }
+    
+    showForRange(editor, range, domNode, startingEvent) {
+        if (startingEvent && startingEvent != this.lastEvent) return;
+        if (this.isOpen && document.activeElement == this.getElement()) return;
+        
+        var renderer = editor.renderer;
+        if (!this.isOpen) {
+            popupManager.addPopup(this);
+            this.$registerCloseEvents();
+            this.setTheme(renderer.theme);
+        }
+        this.isOpen = true;
+        
+        this.addMarker(range, editor.session);
+        this.range = Range.fromPoints(range.start, range.end);
+        
+        var element = this.getElement();
+        element.innerHTML = "";
+        element.appendChild(domNode);
+        element.style.display = "block";
+        
+        var position = renderer.textToScreenCoordinates(range.start.row, range.start.column);
+        var cursorPos = editor.getCursorPosition();
+        
+        var labelHeight = element.clientHeight;
+        var rect = renderer.scroller.getBoundingClientRect();
+
+        var isTopdown = true;
+        if (this.row > cursorPos.row) {
+            // don't obscure cursor
+            isTopdown = true; 
+        } else if (this.row < cursorPos.row) {
+            // don't obscure cursor
+            isTopdown = false;
+        }
+        
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) {
+            // not enough space above us
+            isTopdown = true; 
+        } else if (position.pageY + labelHeight > rect.bottom) {
+            isTopdown = false;
+        }
+
+        if (!isTopdown) {
+            position.pageY -= labelHeight; 
+        } else {
+            position.pageY += renderer.lineHeight;
+        }
+
+        element.style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+
+        this.setPosition(position.pageX, position.pageY);
+    }
+    
+    addMarker(range, session) {
+        if (this.marker) {
+            this.$markerSession.removeMarker(this.marker);
+        }
+        this.$markerSession = session;
+        this.marker = session && session.addMarker(range, "ace_highlight-marker", "text");
+    }
+    
+    hide(e) {
+        if (!e && document.activeElement == this.getElement())
+            return;
+        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && this.$element.contains(e.target))
+            return;
+        this.lastEvent = null;
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = null;
+        this.addMarker(null);
+        if (this.isOpen) {
+            this.$removeCloseEvents();
+            this.getElement().style.display = "none";
+            this.isOpen = false;
+            popupManager.removePopup(this);
+        }
+    }
+
+    $registerCloseEvents() {
+        window.addEventListener("keydown", this.hide, true);
+        window.addEventListener("mousewheel", this.hide, true);
+        window.addEventListener("mousedown", this.hide, true);
+    }
+
+    $removeCloseEvents() {
+        window.removeEventListener("keydown", this.hide, true);
+        window.removeEventListener("mousewheel", this.hide, true);
+        window.removeEventListener("mousedown", this.hide, true);
+    }
+
+    onMouseOut(e) {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+        this.lastEvent = null;
+        if (!this.isOpen) return;
+
+        if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
+
+        if (e && e.currentTarget.contains(e.relatedTarget)) return;
+        if (!e.relatedTarget.classList.contains("ace_content")) this.hide();
+    }
+}
+
+__webpack_unused_export__ = HoverTooltip;
 
 
 /***/ }),
@@ -28825,6 +29156,12 @@ config.defineOptions(VirtualRenderer.prototype, "renderer", {
     useSvgGutterIcons: {
         set: function(value){
             this.$gutterLayer.$useSvgGutterIcons = value;
+        },
+        initialValue: false
+    },
+    showFoldedAnnotations: {
+        set: function(value){
+            this.$gutterLayer.$showFoldedAnnotations = value;
         },
         initialValue: false
     },
@@ -67885,63 +68222,21 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 ;// CONCATENATED MODULE: ./utils.ts
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-function _object_spread(target) {
-    for(var i = 1; i < arguments.length; i++){
-        var source = arguments[i] != null ? arguments[i] : {};
-        var ownKeys = Object.keys(source);
-        if (typeof Object.getOwnPropertySymbols === "function") {
-            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
-                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-            }));
-        }
-        ownKeys.forEach(function(key) {
-            _define_property(target, key, source[key]);
-        });
-    }
-    return target;
-}
 function mergeObjects(obj1, obj2) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
-    var mergedObjects = _object_spread({}, obj2, obj1); // Give priority to obj1 values by spreading obj2 first, then obj1
-    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-    try {
-        for(var _iterator = Object.keys(mergedObjects)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-            var key = _step.value;
-            if (obj1[key] && obj2[key]) {
-                if (Array.isArray(obj1[key])) {
-                    mergedObjects[key] = obj1[key].concat(obj2[key]);
-                } else if (Array.isArray(obj2[key])) {
-                    mergedObjects[key] = obj2[key].concat(obj1[key]);
-                } else if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
-                    mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-                }
-            }
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally{
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                _iterator.return();
-            }
-        } finally{
-            if (_didIteratorError) {
-                throw _iteratorError;
+    const mergedObjects = {
+        ...obj2,
+        ...obj1
+    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+    for (const key of Object.keys(mergedObjects)){
+        if (obj1[key] && obj2[key]) {
+            if (Array.isArray(obj1[key])) {
+                mergedObjects[key] = obj1[key].concat(obj2[key]);
+            } else if (Array.isArray(obj2[key])) {
+                mergedObjects[key] = obj2[key].concat(obj1[key]);
+            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
             }
         }
     }
@@ -67954,7 +68249,7 @@ function checkValueAgainstRegexpArray(value, regexpArray) {
     if (!regexpArray) {
         return false;
     }
-    for(var i = 0; i < regexpArray.length; i++){
+    for(let i = 0; i < regexpArray.length; i++){
         if (regexpArray[i].test(value)) {
             return true;
         }
@@ -68244,55 +68539,7 @@ function getWellformedEdit(textEdit) {
 }
 
 ;// CONCATENATED MODULE: ./services/base-service.ts
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-        var info = gen[key](arg);
-        var value = info.value;
-    } catch (error) {
-        reject(error);
-        return;
-    }
-    if (info.done) {
-        resolve(value);
-    } else {
-        Promise.resolve(value).then(_next, _throw);
-    }
-}
-function _async_to_generator(fn) {
-    return function() {
-        var self = this, args = arguments;
-        return new Promise(function(resolve, reject) {
-            var gen = fn.apply(self, args);
-            function _next(value) {
-                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-            }
-            function _throw(err) {
-                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-            }
-            _next(undefined);
-        });
-    };
-}
-function _class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function _defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function _create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) _defineProperties(Constructor, staticProps);
-    return Constructor;
-}
-function base_service_define_property(obj, key, value) {
+function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -68305,286 +68552,92 @@ function base_service_define_property(obj, key, value) {
     }
     return obj;
 }
-function _ts_generator(thisArg, body) {
-    var f, y, t, g, _ = {
-        label: 0,
-        sent: function() {
-            if (t[0] & 1) throw t[1];
-            return t[1];
-        },
-        trys: [],
-        ops: []
-    };
-    return g = {
-        next: verb(0),
-        "throw": verb(1),
-        "return": verb(2)
-    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-        return this;
-    }), g;
-    function verb(n) {
-        return function(v) {
-            return step([
-                n,
-                v
-            ]);
-        };
+
+
+class BaseService {
+    addDocument(document) {
+        this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, document.text);
+    //TODO:
+    /*if (options)
+            this.setSessionOptions(sessionID, options);*/ }
+    getDocument(uri) {
+        return this.documents[uri];
     }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while(_)try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [
-                op[0] & 2,
-                t.value
-            ];
-            switch(op[0]){
-                case 0:
-                case 1:
-                    t = op;
-                    break;
-                case 4:
-                    _.label++;
-                    return {
-                        value: op[1],
-                        done: false
-                    };
-                case 5:
-                    _.label++;
-                    y = op[1];
-                    op = [
-                        0
-                    ];
-                    continue;
-                case 7:
-                    op = _.ops.pop();
-                    _.trys.pop();
-                    continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-                        _ = 0;
-                        continue;
-                    }
-                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-                        _.label = op[1];
-                        break;
-                    }
-                    if (op[0] === 6 && _.label < t[1]) {
-                        _.label = t[1];
-                        t = op;
-                        break;
-                    }
-                    if (t && _.label < t[2]) {
-                        _.label = t[2];
-                        _.ops.push(op);
-                        break;
-                    }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop();
-                    continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) {
-            op = [
-                6,
-                e
-            ];
-            y = 0;
-        } finally{
-            f = t = 0;
+    removeDocument(document) {
+        delete this.documents[document.uri];
+        if (this.options[document.uri]) {
+            delete this.options[document.uri];
         }
-        if (op[0] & 5) throw op[1];
+    }
+    getDocumentValue(uri) {
+        var _this_getDocument;
+        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
+    }
+    setValue(identifier, value) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            document = TextDocument.create(document.uri, document.languageId, document.version, value);
+            this.documents[document.uri] = document;
+        }
+    }
+    setGlobalOptions(options) {
+        this.globalOptions = options !== null && options !== void 0 ? options : {};
+    }
+    setOptions(sessionID, options, merge = false) {
+        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
+    }
+    getOption(sessionID, optionName) {
+        if (this.options[sessionID] && this.options[sessionID][optionName]) {
+            return this.options[sessionID][optionName];
+        } else {
+            return this.globalOptions[optionName];
+        }
+    }
+    applyDeltas(identifier, deltas) {
+        let document = this.getDocument(identifier.uri);
+        if (document) TextDocument.update(document, deltas, identifier.version);
+    }
+    async doComplete(document, position) {
+        return null;
+    }
+    async doHover(document, position) {
+        return null;
+    }
+    async doResolve(item) {
+        return null;
+    }
+    async doValidation(document) {
+        return [];
+    }
+    format(document, range, options) {
+        return [];
+    }
+    async provideSignatureHelp(document, position) {
+        return null;
+    }
+    async findDocumentHighlights(document, position) {
+        return [];
+    }
+    get optionsToFilterDiagnostics() {
+        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
         return {
-            value: op[0] ? op[1] : void 0,
-            done: true
+            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
+            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
+            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
+            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
+            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
+            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
         };
     }
-}
-
-
-var BaseService = /*#__PURE__*/ function() {
-    "use strict";
-    function BaseService(mode) {
-        _class_call_check(this, BaseService);
-        base_service_define_property(this, "mode", void 0);
-        base_service_define_property(this, "documents", {});
-        base_service_define_property(this, "options", {});
-        base_service_define_property(this, "globalOptions", {});
-        base_service_define_property(this, "serviceData", void 0);
+    constructor(mode){
+        _define_property(this, "mode", void 0);
+        _define_property(this, "documents", {});
+        _define_property(this, "options", {});
+        _define_property(this, "globalOptions", {});
+        _define_property(this, "serviceData", void 0);
         this.mode = mode;
     }
-    _create_class(BaseService, [
-        {
-            key: "addDocument",
-            value: function addDocument(document) {
-                this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, document.text);
-            //TODO:
-            /*if (options)
-            this.setSessionOptions(sessionID, options);*/ }
-        },
-        {
-            key: "getDocument",
-            value: function getDocument(uri) {
-                return this.documents[uri];
-            }
-        },
-        {
-            key: "removeDocument",
-            value: function removeDocument(document) {
-                delete this.documents[document.uri];
-                if (this.options[document.uri]) {
-                    delete this.options[document.uri];
-                }
-            }
-        },
-        {
-            key: "getDocumentValue",
-            value: function getDocumentValue(uri) {
-                var _this_getDocument;
-                return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
-            }
-        },
-        {
-            key: "setValue",
-            value: function setValue(identifier, value) {
-                var document = this.getDocument(identifier.uri);
-                if (document) {
-                    document = TextDocument.create(document.uri, document.languageId, document.version, value);
-                    this.documents[document.uri] = document;
-                }
-            }
-        },
-        {
-            key: "setGlobalOptions",
-            value: function setGlobalOptions(options) {
-                this.globalOptions = options !== null && options !== void 0 ? options : {};
-            }
-        },
-        {
-            key: "setOptions",
-            value: function setOptions(sessionID, options) {
-                var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-                this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
-            }
-        },
-        {
-            key: "getOption",
-            value: function getOption(sessionID, optionName) {
-                if (this.options[sessionID] && this.options[sessionID][optionName]) {
-                    return this.options[sessionID][optionName];
-                } else {
-                    return this.globalOptions[optionName];
-                }
-            }
-        },
-        {
-            key: "applyDeltas",
-            value: function applyDeltas(identifier, deltas) {
-                var document = this.getDocument(identifier.uri);
-                if (document) TextDocument.update(document, deltas, identifier.version);
-            }
-        },
-        {
-            key: "doComplete",
-            value: function doComplete(document, position) {
-                return _async_to_generator(function() {
-                    return _ts_generator(this, function(_state) {
-                        return [
-                            2,
-                            null
-                        ];
-                    });
-                })();
-            }
-        },
-        {
-            key: "doHover",
-            value: function doHover(document, position) {
-                return _async_to_generator(function() {
-                    return _ts_generator(this, function(_state) {
-                        return [
-                            2,
-                            null
-                        ];
-                    });
-                })();
-            }
-        },
-        {
-            key: "doResolve",
-            value: function doResolve(item) {
-                return _async_to_generator(function() {
-                    return _ts_generator(this, function(_state) {
-                        return [
-                            2,
-                            null
-                        ];
-                    });
-                })();
-            }
-        },
-        {
-            key: "doValidation",
-            value: function doValidation(document) {
-                return _async_to_generator(function() {
-                    return _ts_generator(this, function(_state) {
-                        return [
-                            2,
-                            []
-                        ];
-                    });
-                })();
-            }
-        },
-        {
-            key: "format",
-            value: function format(document, range, options) {
-                return [];
-            }
-        },
-        {
-            key: "provideSignatureHelp",
-            value: function provideSignatureHelp(document, position) {
-                return _async_to_generator(function() {
-                    return _ts_generator(this, function(_state) {
-                        return [
-                            2,
-                            null
-                        ];
-                    });
-                })();
-            }
-        },
-        {
-            key: "findDocumentHighlights",
-            value: function findDocumentHighlights(document, position) {
-                return _async_to_generator(function() {
-                    return _ts_generator(this, function(_state) {
-                        return [
-                            2,
-                            []
-                        ];
-                    });
-                })();
-            }
-        },
-        {
-            key: "optionsToFilterDiagnostics",
-            get: function get() {
-                var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
-                return {
-                    errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
-                    errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
-                    errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
-                    errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
-                    errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
-                    errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
-                };
-            }
-        }
-    ]);
-    return BaseService;
-}();
+}
 
 // EXTERNAL MODULE: ../../node_modules/@xml-tools/parser/lib/api.js
 var api = __webpack_require__(3429);
@@ -68606,24 +68659,27 @@ var ace = __webpack_require__(8151);
 
 var CommonConverter;
 (function(CommonConverter) {
-    var normalizeRanges = function normalizeRanges(completions) {
-        return completions && completions.map(function(el) {
+    function normalizeRanges(completions) {
+        return completions && completions.map((el)=>{
             if (el["range"]) {
                 el["range"] = toRange(el["range"]);
             }
             return el;
         });
-    };
-    var cleanHtml = function cleanHtml(html) {
+    }
+    CommonConverter.normalizeRanges = normalizeRanges;
+    function cleanHtml(html) {
         return html.replace(/<a\s/, "<a target='_blank' ");
-    };
-    var toRange = function toRange(range) {
+    }
+    CommonConverter.cleanHtml = cleanHtml;
+    function toRange(range) {
         if (!range || !range.start || !range.end) {
             return;
         }
         return ace.Range.fromPoints(range.start, range.end);
-    };
-    var convertKind = function convertKind(kind) {
+    }
+    CommonConverter.toRange = toRange;
+    function convertKind(kind) {
         switch(kind){
             case "primitiveType":
             case "keyword":
@@ -68653,18 +68709,12 @@ var CommonConverter;
                 return main.CompletionItemKind.File;
         }
         return main.CompletionItemKind.Property;
-    };
-    var excludeByErrorMessage = function excludeByErrorMessage(diagnostics, errorMessagesToIgnore) {
-        var fieldName = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "message";
-        if (!errorMessagesToIgnore) return diagnostics;
-        return diagnostics.filter(function(el) {
-            return !checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore);
-        });
-    };
-    CommonConverter.normalizeRanges = normalizeRanges;
-    CommonConverter.cleanHtml = cleanHtml;
-    CommonConverter.toRange = toRange;
+    }
     CommonConverter.convertKind = convertKind;
+    function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
+        if (!errorMessagesToIgnore) return diagnostics;
+        return diagnostics.filter((el)=>!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+    }
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(CommonConverter || (CommonConverter = {}));
 
@@ -68673,7 +68723,7 @@ var CommonConverter;
 
 
 function lexingErrorsToDiagnostic(errors, document, filterErrors) {
-    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map(function(el) {
+    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map((el)=>{
         return {
             message: el.message,
             range: main.Range.create(document.positionAt(el.offset), document.positionAt(el.offset + el.length)),
@@ -68682,7 +68732,7 @@ function lexingErrorsToDiagnostic(errors, document, filterErrors) {
     });
 }
 function parsingErrorsToDiagnostic(errors, document, filterErrors) {
-    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map(function(el) {
+    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map((el)=>{
         var _el_token_endOffset;
         return {
             message: el.message,
@@ -68692,7 +68742,7 @@ function parsingErrorsToDiagnostic(errors, document, filterErrors) {
     });
 }
 function issuesToDiagnostic(errors, document, filterErrors) {
-    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore, "msg").map(function(el) {
+    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore, "msg").map((el)=>{
         return {
             message: el.msg,
             range: {
@@ -68717,7 +68767,7 @@ function toDiagnosticSeverity(issueSeverity) {
     }
 }
 function determineDiagnosticSeverity(message, filterErrors, issueSeverity) {
-    var severity;
+    let severity;
     if (checkValueAgainstRegexpArray(message, filterErrors.errorMessagesToTreatAsWarning)) {
         severity = main.DiagnosticSeverity.Warning;
     } else if (checkValueAgainstRegexpArray(message, filterErrors.errorMessagesToTreatAsInfo)) {
@@ -68729,68 +68779,6 @@ function determineDiagnosticSeverity(message, filterErrors, issueSeverity) {
 }
 
 ;// CONCATENATED MODULE: ./services/xml/xml-service.ts
-function _array_like_to_array(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
-    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
-    return arr2;
-}
-function _array_without_holes(arr) {
-    if (Array.isArray(arr)) return _array_like_to_array(arr);
-}
-function _assert_this_initialized(self) {
-    if (self === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return self;
-}
-function xml_service_asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-        var info = gen[key](arg);
-        var value = info.value;
-    } catch (error) {
-        reject(error);
-        return;
-    }
-    if (info.done) {
-        resolve(value);
-    } else {
-        Promise.resolve(value).then(_next, _throw);
-    }
-}
-function xml_service_async_to_generator(fn) {
-    return function() {
-        var self = this, args = arguments;
-        return new Promise(function(resolve, reject) {
-            var gen = fn.apply(self, args);
-            function _next(value) {
-                xml_service_asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-            }
-            function _throw(err) {
-                xml_service_asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-            }
-            _next(undefined);
-        });
-    };
-}
-function xml_service_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function xml_service_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function xml_service_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) xml_service_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) xml_service_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function xml_service_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -68804,304 +68792,77 @@ function xml_service_define_property(obj, key, value) {
     }
     return obj;
 }
-function _get(target, property, receiver) {
-    if (typeof Reflect !== "undefined" && Reflect.get) {
-        _get = Reflect.get;
-    } else {
-        _get = function get(target, property, receiver) {
-            var base = _super_prop_base(target, property);
-            if (!base) return;
-            var desc = Object.getOwnPropertyDescriptor(base, property);
-            if (desc.get) {
-                return desc.get.call(receiver || target);
+
+
+
+
+
+
+
+class XmlService extends BaseService {
+    addDocument(document) {
+        super.addDocument(document);
+        this.$configureService(document.uri);
+    }
+    $getXmlSchemaUri(sessionID) {
+        return this.getOption(sessionID, "schemaUri");
+    }
+    $configureService(sessionID) {
+        let schemas = this.getOption(sessionID, "schemas");
+        schemas === null || schemas === void 0 ? void 0 : schemas.forEach((el)=>{
+            if (el.uri === this.$getXmlSchemaUri(sessionID)) {
+                var _el;
+                var _fileMatch;
+                (_fileMatch = (_el = el).fileMatch) !== null && _fileMatch !== void 0 ? _fileMatch : _el.fileMatch = [];
+                el.fileMatch.push(sessionID);
             }
-            return desc.value;
-        };
+            var _el_schema;
+            let schema = (_el_schema = el.schema) !== null && _el_schema !== void 0 ? _el_schema : this.schemas[el.uri];
+            if (schema) this.schemas[el.uri] = schema;
+            el.schema = undefined;
+        });
     }
-    return _get(target, property, receiver || target);
-}
-function _get_prototype_of(o) {
-    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
-        return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return _get_prototype_of(o);
-}
-function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            writable: true,
-            configurable: true
+    $getSchema(sessionId) {
+        let schemaId = this.$getXmlSchemaUri(sessionId);
+        if (schemaId && this.schemas[schemaId]) {
+            return JSON.parse(this.schemas[schemaId]);
         }
-    });
-    if (superClass) _set_prototype_of(subClass, superClass);
-}
-function _iterable_to_array(iter) {
-    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
-}
-function _non_iterable_spread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-function _possible_constructor_return(self, call) {
-    if (call && (_type_of(call) === "object" || typeof call === "function")) {
-        return call;
     }
-    return _assert_this_initialized(self);
-}
-function _set_prototype_of(o, p) {
-    _set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return _set_prototype_of(o, p);
-}
-function _super_prop_base(object, property) {
-    while(!Object.prototype.hasOwnProperty.call(object, property)){
-        object = _get_prototype_of(object);
-        if (object === null) break;
-    }
-    return object;
-}
-function _to_consumable_array(arr) {
-    return _array_without_holes(arr) || _iterable_to_array(arr) || _unsupported_iterable_to_array(arr) || _non_iterable_spread();
-}
-function _type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-}
-function _unsupported_iterable_to_array(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _array_like_to_array(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(n);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
-}
-function _is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-function _create_super(Derived) {
-    var hasNativeReflectConstruct = _is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = _get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = _get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-            result = Super.apply(this, arguments);
-        }
-        return _possible_constructor_return(this, result);
-    };
-}
-function xml_service_ts_generator(thisArg, body) {
-    var f, y, t, g, _ = {
-        label: 0,
-        sent: function() {
-            if (t[0] & 1) throw t[1];
-            return t[1];
-        },
-        trys: [],
-        ops: []
-    };
-    return g = {
-        next: verb(0),
-        "throw": verb(1),
-        "return": verb(2)
-    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-        return this;
-    }), g;
-    function verb(n) {
-        return function(v) {
-            return step([
-                n,
-                v
-            ]);
-        };
-    }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while(_)try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [
-                op[0] & 2,
-                t.value
-            ];
-            switch(op[0]){
-                case 0:
-                case 1:
-                    t = op;
-                    break;
-                case 4:
-                    _.label++;
-                    return {
-                        value: op[1],
-                        done: false
-                    };
-                case 5:
-                    _.label++;
-                    y = op[1];
-                    op = [
-                        0
-                    ];
-                    continue;
-                case 7:
-                    op = _.ops.pop();
-                    _.trys.pop();
-                    continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-                        _ = 0;
-                        continue;
-                    }
-                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-                        _.label = op[1];
-                        break;
-                    }
-                    if (op[0] === 6 && _.label < t[1]) {
-                        _.label = t[1];
-                        t = op;
-                        break;
-                    }
-                    if (t && _.label < t[2]) {
-                        _.label = t[2];
-                        _.ops.push(op);
-                        break;
-                    }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop();
-                    continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) {
-            op = [
-                6,
-                e
-            ];
-            y = 0;
-        } finally{
-            f = t = 0;
-        }
-        if (op[0] & 5) throw op[1];
-        return {
-            value: op[0] ? op[1] : void 0,
-            done: true
-        };
-    }
-}
-
-
-
-
-
-
-
-var XmlService = /*#__PURE__*/ function(BaseService) {
-    "use strict";
-    _inherits(XmlService, BaseService);
-    var _super = _create_super(XmlService);
-    function XmlService(mode) {
-        xml_service_class_call_check(this, XmlService);
-        var _this;
-        _this = _super.call(this, mode);
-        xml_service_define_property(_assert_this_initialized(_this), "$service", void 0);
-        xml_service_define_property(_assert_this_initialized(_this), "schemas", {});
-        return _this;
-    }
-    xml_service_create_class(XmlService, [
-        {
-            key: "addDocument",
-            value: function addDocument(document) {
-                _get(_get_prototype_of(XmlService.prototype), "addDocument", this).call(this, document);
-                this.$configureService(document.uri);
-            }
-        },
-        {
-            key: "$getXmlSchemaUri",
-            value: function $getXmlSchemaUri(sessionID) {
-                return this.getOption(sessionID, "schemaUri");
-            }
-        },
-        {
-            key: "$configureService",
-            value: function $configureService(sessionID) {
-                var _this = this;
-                var schemas = this.getOption(sessionID, "schemas");
-                schemas === null || schemas === void 0 ? void 0 : schemas.forEach(function(el) {
-                    if (el.uri === _this.$getXmlSchemaUri(sessionID)) {
-                        var _el;
-                        var _fileMatch;
-                        (_fileMatch = (_el = el).fileMatch) !== null && _fileMatch !== void 0 ? _fileMatch : _el.fileMatch = [];
-                        el.fileMatch.push(sessionID);
-                    }
-                    var _el_schema;
-                    var schema = (_el_schema = el.schema) !== null && _el_schema !== void 0 ? _el_schema : _this.schemas[el.uri];
-                    if (schema) _this.schemas[el.uri] = schema;
-                    el.schema = undefined;
-                });
-            }
-        },
-        {
-            key: "$getSchema",
-            value: function $getSchema(sessionId) {
-                var schemaId = this.$getXmlSchemaUri(sessionId);
-                if (schemaId && this.schemas[schemaId]) {
-                    return JSON.parse(this.schemas[schemaId]);
+    async doValidation(document) {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument) return [];
+        const { cst , tokenVector , lexErrors , parseErrors  } = (0,api.parse)(fullDocument.getText());
+        const xmlDoc = (0,lib_api.buildAst)(cst, tokenVector);
+        const constraintsIssues = (0,constraints_lib_api.checkConstraints)(xmlDoc);
+        let schema = this.$getSchema(document.uri);
+        let schemaIssues = [];
+        if (schema) {
+            const schemaValidators = (0,simple_schema_lib_api.getSchemaValidators)(schema);
+            schemaIssues = (0,validation_lib_api.validate)({
+                doc: xmlDoc,
+                validators: {
+                    attribute: [
+                        schemaValidators.attribute
+                    ],
+                    element: [
+                        schemaValidators.element
+                    ]
                 }
-            }
-        },
-        {
-            key: "doValidation",
-            value: function doValidation(document) {
-                var _this = this;
-                return xml_service_async_to_generator(function() {
-                    var fullDocument, _parse, cst, tokenVector, lexErrors, parseErrors, xmlDoc, constraintsIssues, schema, schemaIssues, schemaValidators;
-                    return xml_service_ts_generator(this, function(_state) {
-                        fullDocument = _this.getDocument(document.uri);
-                        if (!fullDocument) return [
-                            2,
-                            []
-                        ];
-                        _parse = (0,api.parse)(fullDocument.getText()), cst = _parse.cst, tokenVector = _parse.tokenVector, lexErrors = _parse.lexErrors, parseErrors = _parse.parseErrors;
-                        xmlDoc = (0,lib_api.buildAst)(cst, tokenVector);
-                        constraintsIssues = (0,constraints_lib_api.checkConstraints)(xmlDoc);
-                        schema = _this.$getSchema(document.uri);
-                        schemaIssues = [];
-                        if (schema) {
-                            schemaValidators = (0,simple_schema_lib_api.getSchemaValidators)(schema);
-                            schemaIssues = (0,validation_lib_api.validate)({
-                                doc: xmlDoc,
-                                validators: {
-                                    attribute: [
-                                        schemaValidators.attribute
-                                    ],
-                                    element: [
-                                        schemaValidators.element
-                                    ]
-                                }
-                            });
-                        }
-                        return [
-                            2,
-                            _to_consumable_array(lexingErrorsToDiagnostic(lexErrors, fullDocument, _this.optionsToFilterDiagnostics)).concat(_to_consumable_array(parsingErrorsToDiagnostic(parseErrors, fullDocument, _this.optionsToFilterDiagnostics)), _to_consumable_array(issuesToDiagnostic(constraintsIssues, fullDocument, _this.optionsToFilterDiagnostics)), _to_consumable_array(issuesToDiagnostic(schemaIssues, fullDocument, _this.optionsToFilterDiagnostics)))
-                        ];
-                    });
-                })();
-            }
+            });
         }
-    ]);
-    return XmlService;
-}(BaseService);
+        return [
+            ...lexingErrorsToDiagnostic(lexErrors, fullDocument, this.optionsToFilterDiagnostics),
+            ...parsingErrorsToDiagnostic(parseErrors, fullDocument, this.optionsToFilterDiagnostics),
+            ...issuesToDiagnostic(constraintsIssues, fullDocument, this.optionsToFilterDiagnostics),
+            ...issuesToDiagnostic(schemaIssues, fullDocument, this.optionsToFilterDiagnostics)
+        ];
+    }
+    constructor(mode){
+        super(mode);
+        xml_service_define_property(this, "$service", void 0);
+        xml_service_define_property(this, "schemas", {});
+    }
+}
 
 })();
 

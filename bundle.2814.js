@@ -104,7 +104,7 @@ var LuceneHighlightRules = function() {
                 // flag
                 token: "string.regexp.end",
                 regex: "/[sxngimy]*",
-                next: "no_regex"
+                next: "start"
             }, {
                 // invalid operators
                 token : "invalid",
@@ -127,7 +127,7 @@ var LuceneHighlightRules = function() {
             }, {
                 token: "empty",
                 regex: "$",
-                next: "no_regex"
+                next: "start"
             }, {
                 defaultToken: "string.regexp"
             }
@@ -146,9 +146,9 @@ var LuceneHighlightRules = function() {
             }, {
                 token: "empty",
                 regex: "$",
-                next: "no_regex"
+                next: "start"
             }, {
-                defaultToken: "string.regexp.charachterclass"
+                defaultToken: "string.regexp.characterclass"
             }
         ]
     };

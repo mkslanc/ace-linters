@@ -787,13 +787,15 @@ class Autocomplete {
     showDocTooltip(item) {
         if (!this.tooltipNode) {
             this.tooltipNode = dom.createElement("div");
-            this.tooltipNode.className = "ace_tooltip ace_doc-tooltip";
             this.tooltipNode.style.margin = 0;
             this.tooltipNode.style.pointerEvents = "auto";
             this.tooltipNode.tabIndex = -1;
             this.tooltipNode.onblur = this.blurListener.bind(this);
             this.tooltipNode.onclick = this.onTooltipClick.bind(this);
         }
+        var theme = this.editor.renderer.theme;
+        this.tooltipNode.className = "ace_tooltip ace_doc-tooltip " +
+            (theme.isDark? "ace_dark " : "") + (theme.cssClass || "");
 
         var tooltipNode = this.tooltipNode;
         if (item.docHTML) {
@@ -3719,7 +3721,7 @@ var reportErrorIfPathIsNotConfigured = function() {
     }
 };
 
-exports.version = "1.17.0";
+exports.version = "1.19.0";
 
 
 
@@ -3841,7 +3843,7 @@ module.exports = `
     pointer-events: none;
 }
 
-.ace_gutter-cell, .ace_gutter-cell_svg-icons  {
+.ace_gutter-cell, .ace_gutter-cell_svg-icons {
     position: absolute;
     top: 0;
     left: 0;
@@ -3851,18 +3853,23 @@ module.exports = `
     background-repeat: no-repeat;
 }
 
-.ace_gutter-cell_svg-icons .ace_icon_svg{
+.ace_gutter-cell_svg-icons .ace_icon_svg {
     margin-left: -14px;
     float: left;
 }
 
-.ace_gutter-cell.ace_error, .ace_icon.ace_error {
+.ace_gutter-cell .ace_icon {
+    margin-left: -18px;
+    float: left;
+}
+
+.ace_gutter-cell.ace_error, .ace_icon.ace_error, .ace_icon.ace_error_fold {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABOFBMVEX/////////QRswFAb/Ui4wFAYwFAYwFAaWGAfDRymzOSH/PxswFAb/SiUwFAYwFAbUPRvjQiDllog5HhHdRybsTi3/Tyv9Tir+Syj/UC3////XurebMBIwFAb/RSHbPx/gUzfdwL3kzMivKBAwFAbbvbnhPx66NhowFAYwFAaZJg8wFAaxKBDZurf/RB6mMxb/SCMwFAYwFAbxQB3+RB4wFAb/Qhy4Oh+4QifbNRcwFAYwFAYwFAb/QRzdNhgwFAYwFAbav7v/Uy7oaE68MBK5LxLewr/r2NXewLswFAaxJw4wFAbkPRy2PyYwFAaxKhLm1tMwFAazPiQwFAaUGAb/QBrfOx3bvrv/VC/maE4wFAbRPBq6MRO8Qynew8Dp2tjfwb0wFAbx6eju5+by6uns4uH9/f36+vr/GkHjAAAAYnRSTlMAGt+64rnWu/bo8eAA4InH3+DwoN7j4eLi4xP99Nfg4+b+/u9B/eDs1MD1mO7+4PHg2MXa347g7vDizMLN4eG+Pv7i5evs/v79yu7S3/DV7/498Yv24eH+4ufQ3Ozu/v7+y13sRqwAAADLSURBVHjaZc/XDsFgGIBhtDrshlitmk2IrbHFqL2pvXf/+78DPokj7+Fz9qpU/9UXJIlhmPaTaQ6QPaz0mm+5gwkgovcV6GZzd5JtCQwgsxoHOvJO15kleRLAnMgHFIESUEPmawB9ngmelTtipwwfASilxOLyiV5UVUyVAfbG0cCPHig+GBkzAENHS0AstVF6bacZIOzgLmxsHbt2OecNgJC83JERmePUYq8ARGkJx6XtFsdddBQgZE2nPR6CICZhawjA4Fb/chv+399kfR+MMMDGOQAAAABJRU5ErkJggg==");
     background-repeat: no-repeat;
     background-position: 2px center;
 }
 
-.ace_gutter-cell.ace_warning, .ace_icon.ace_warning {
+.ace_gutter-cell.ace_warning, .ace_icon.ace_warning, .ace_icon.ace_warning_fold {
     background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAmVBMVEX///8AAAD///8AAAAAAABPSzb/5sAAAAB/blH/73z/ulkAAAAAAAD85pkAAAAAAAACAgP/vGz/rkDerGbGrV7/pkQICAf////e0IsAAAD/oED/qTvhrnUAAAD/yHD/njcAAADuv2r/nz//oTj/p064oGf/zHAAAAA9Nir/tFIAAAD/tlTiuWf/tkIAAACynXEAAAAAAAAtIRW7zBpBAAAAM3RSTlMAABR1m7RXO8Ln31Z36zT+neXe5OzooRDfn+TZ4p3h2hTf4t3k3ucyrN1K5+Xaks52Sfs9CXgrAAAAjklEQVR42o3PbQ+CIBQFYEwboPhSYgoYunIqqLn6/z8uYdH8Vmdnu9vz4WwXgN/xTPRD2+sgOcZjsge/whXZgUaYYvT8QnuJaUrjrHUQreGczuEafQCO/SJTufTbroWsPgsllVhq3wJEk2jUSzX3CUEDJC84707djRc5MTAQxoLgupWRwW6UB5fS++NV8AbOZgnsC7BpEAAAAABJRU5ErkJggg==");
     background-repeat: no-repeat;
     background-position: 2px center;
@@ -3878,16 +3885,25 @@ module.exports = `
 }
 
 .ace_icon_svg.ace_error {
-    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJyZWQiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIj4KPGNpcmNsZSBmaWxsPSJub25lIiBjeD0iOCIgY3k9IjgiIHI9IjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPGxpbmUgeDE9IjExIiB5MT0iNSIgeDI9IjUiIHkyPSIxMSIvPgo8bGluZSB4MT0iMTEiIHkxPSIxMSIgeDI9IjUiIHkyPSI1Ii8+CjwvZz4KPC9zdmc+");
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJyZWQiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIj4KPGNpcmNsZSBmaWxsPSJub25lIiBjeD0iOCIgY3k9IjgiIHI9IjciIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPGxpbmUgeDE9IjExIiB5MT0iNSIgeDI9IjUiIHkyPSIxMSIvPgo8bGluZSB4MT0iMTEiIHkxPSIxMSIgeDI9IjUiIHkyPSI1Ii8+CjwvZz4KPC9zdmc+");
     background-color: crimson;
 }
 .ace_icon_svg.ace_warning {
-    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJkYXJrb3JhbmdlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+Cjxwb2x5Z29uIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiIHBvaW50cz0iOCAxIDE1IDE1IDEgMTUgOCAxIi8+CjxyZWN0IHg9IjgiIHk9IjEyIiB3aWR0aD0iMC4wMSIgaGVpZ2h0PSIwLjAxIi8+CjxsaW5lIHgxPSI4IiB5MT0iNiIgeDI9IjgiIHkyPSIxMCIvPgo8L2c+Cjwvc3ZnPg==");
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJkYXJrb3JhbmdlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+Cjxwb2x5Z29uIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiIHBvaW50cz0iOCAxIDE1IDE1IDEgMTUgOCAxIi8+CjxyZWN0IHg9IjgiIHk9IjEyIiB3aWR0aD0iMC4wMSIgaGVpZ2h0PSIwLjAxIi8+CjxsaW5lIHgxPSI4IiB5MT0iNiIgeDI9IjgiIHkyPSIxMCIvPgo8L2c+Cjwvc3ZnPg==");
     background-color: darkorange;
 }
 .ace_icon_svg.ace_info {
-    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJibHVlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+CjxjaXJjbGUgZmlsbD0ibm9uZSIgY3g9IjgiIGN5PSI4IiByPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjxwb2x5bGluZSBwb2ludHM9IjggMTEgOCA4Ii8+Cjxwb2x5bGluZSBwb2ludHM9IjkgOCA2IDgiLz4KPGxpbmUgeDE9IjEwIiB5MT0iMTEiIHgyPSI2IiB5Mj0iMTEiLz4KPHJlY3QgeD0iOCIgeT0iNSIgd2lkdGg9IjAuMDEiIGhlaWdodD0iMC4wMSIvPgo8L2c+Cjwvc3ZnPg==");
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiI+CjxnIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlPSJibHVlIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiI+CjxjaXJjbGUgZmlsbD0ibm9uZSIgY3g9IjgiIGN5PSI4IiByPSI3IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjxwb2x5bGluZSBwb2ludHM9IjggMTEgOCA4Ii8+Cjxwb2x5bGluZSBwb2ludHM9IjkgOCA2IDgiLz4KPGxpbmUgeDE9IjEwIiB5MT0iMTEiIHgyPSI2IiB5Mj0iMTEiLz4KPHJlY3QgeD0iOCIgeT0iNSIgd2lkdGg9IjAuMDEiIGhlaWdodD0iMC4wMSIvPgo8L2c+Cjwvc3ZnPg==");
     background-color: royalblue;
+}
+
+.ace_icon_svg.ace_error_fold {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAxNiIgZmlsbD0ibm9uZSI+CiAgPHBhdGggZD0ibSAxOC45Mjk4NTEsNy44Mjk4MDc2IGMgMC4xNDYzNTMsNi4zMzc0NjA0IC02LjMyMzE0Nyw3Ljc3Nzg0NDQgLTcuNDc3OTEyLDcuNzc3ODQ0NCAtMi4xMDcyNzI2LC0wLjEyODc1IDUuMTE3Njc4LDAuMzU2MjQ5IDUuMDUxNjk4LC03Ljg3MDA2MTggLTAuNjA0NjcyLC04LjAwMzk3MzQ5IC03LjA3NzI3MDYsLTcuNTYzMTE4OSAtNC44NTczLC03LjQzMDM5NTU2IDEuNjA2LC0wLjExNTE0MjI1IDYuODk3NDg1LDEuMjYyNTQ1OTYgNy4yODM1MTQsNy41MjI2MTI5NiB6IiBmaWxsPSJjcmltc29uIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0ibSA4LjExNDc1NjIsMi4wNTI5ODI4IGMgMy4zNDkxNjk4LDAgNi4wNjQxMzI4LDIuNjc2ODYyNyA2LjA2NDEzMjgsNS45Nzg5NTMgMCwzLjMwMjExMjIgLTIuNzE0OTYzLDUuOTc4OTIwMiAtNi4wNjQxMzI4LDUuOTc4OTIwMiAtMy4zNDkxNDczLDAgLTYuMDY0MTc3MiwtMi42NzY4MDggLTYuMDY0MTc3MiwtNS45Nzg5MjAyIDAuMDA1MzksLTMuMjk5ODg2MSAyLjcxNzI2NTYsLTUuOTczNjQwOCA2LjA2NDE3NzIsLTUuOTc4OTUzIHogbSAwLC0xLjczNTgyNzE5IGMgLTQuMzIxNDgzNiwwIC03LjgyNDc0MDM4LDMuNDU0MDE4NDkgLTcuODI0NzQwMzgsNy43MTQ3ODAxOSAwLDQuMjYwNzI4MiAzLjUwMzI1Njc4LDcuNzE0NzQ1MiA3LjgyNDc0MDM4LDcuNzE0NzQ1MiA0LjMyMTQ0OTgsMCA3LjgyNDY5OTgsLTMuNDU0MDE3IDcuODI0Njk5OCwtNy43MTQ3NDUyIDAsLTIuMDQ2MDkxNCAtMC44MjQzOTIsLTQuMDA4MzY3MiAtMi4yOTE3NTYsLTUuNDU1MTc0NiBDIDEyLjE4MDIyNSwxLjEyOTk2NDggMTAuMTkwMDEzLDAuMzE3MTU1NjEgOC4xMTQ3NTYyLDAuMzE3MTU1NjEgWiBNIDYuOTM3NDU2Myw4LjI0MDU5ODUgNC42NzE4Njg1LDEwLjQ4NTg1MiA2LjAwODY4MTQsMTEuODc2NzI4IDguMzE3MDAzNSw5LjYwMDc5MTEgMTAuNjI1MzM3LDExLjg3NjcyOCAxMS45NjIxMzgsMTAuNDg1ODUyIDkuNjk2NTUwOCw4LjI0MDU5ODUgMTEuOTYyMTM4LDYuMDA2ODA2NiAxMC41NzMyNDYsNC42Mzc0MzM1IDguMzE3MDAzNSw2Ljg3MzQyOTcgNi4wNjA3NjA3LDQuNjM3NDMzNSA0LjY3MTg2ODUsNi4wMDY4MDY2IFoiIGZpbGw9ImNyaW1zb24iIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4=");
+    background-color: crimson;
+}
+.ace_icon_svg.ace_warning_fold {
+    -webkit-mask-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAyMCAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNC43NzY5IDE0LjczMzdMOC42NTE5MiAyLjQ4MzY5QzguMzI5NDYgMS44Mzg3NyA3LjQwOTEzIDEuODM4NzcgNy4wODY2NyAyLjQ4MzY5TDAuOTYxNjY5IDE0LjczMzdDMC42NzA3NzUgMTUuMzE1NSAxLjA5MzgzIDE2IDEuNzQ0MjkgMTZIMTMuOTk0M0MxNC42NDQ4IDE2IDE1LjA2NzggMTUuMzE1NSAxNC43NzY5IDE0LjczMzdaTTMuMTYwMDcgMTQuMjVMNy44NjkyOSA0LjgzMTU2TDEyLjU3ODUgMTQuMjVIMy4xNjAwN1pNOC43NDQyOSAxMS42MjVWMTMuMzc1SDYuOTk0MjlWMTEuNjI1SDguNzQ0MjlaTTYuOTk0MjkgMTAuNzVWNy4yNUg4Ljc0NDI5VjEwLjc1SDYuOTk0MjlaIiBmaWxsPSIjRUM3MjExIi8+CjxwYXRoIGQ9Ik0xMS4xOTkxIDIuOTUyMzhDMTAuODgwOSAyLjMxNDY3IDEwLjM1MzcgMS44MDUyNiA5LjcwNTUgMS41MDlMMTEuMDQxIDEuMDY5NzhDMTEuNjg4MyAwLjk0OTgxNCAxMi4zMzcgMS4yNzI2MyAxMi42MzE3IDEuODYxNDFMMTcuNjEzNiAxMS44MTYxQzE4LjM1MjcgMTMuMjkyOSAxNy41OTM4IDE1LjA4MDQgMTYuMDE4IDE1LjU3NDVDMTYuNDA0NCAxNC40NTA3IDE2LjMyMzEgMTMuMjE4OCAxNS43OTI0IDEyLjE1NTVMMTEuMTk5MSAyLjk1MjM4WiIgZmlsbD0iI0VDNzIxMSIvPgo8L3N2Zz4=");
+    background-color: darkorange;
 }
 
 .ace_scrollbar {
@@ -4174,21 +4190,19 @@ module.exports = `
     pointer-events: none;
 }
 
+.ace_tooltip.ace_dark {
+    background-color: #636363;
+    color: #fff;
+}
+
 .ace_tooltip:focus {
-    outline: 1px solid black;
+    outline: 1px solid #5E9ED6;
 }
 
-.ace_gutter-tooltip_header {
-    font-weight: bold;
-}
-
-.ace_gutter-tooltip_body {
-    padding-top: 5px;
-}
-
-.ace_gutter-tooltip .ace_icon {
+.ace_icon {
     display: inline-block;
     width: 18px;
+    vertical-align: top;
 }
 
 .ace_icon_svg {
@@ -5014,22 +5028,19 @@ class Document {
         return index + pos.column;
     }
 
+    /**
+     * Splits a string of text on any newline (`\n`) or carriage-return (`\r`) characters.
+     *
+     * @method $split
+     * @param {String} text The text to work with
+     * @returns {String} A String array, with each index containing a piece of the original `text` string.
+     *
+     **/
+    $split(text) {
+        return text.split(/\r\n|\r|\n/);
+    }
 }
 
-/**
- * Splits a string of text on any newline (`\n`) or carriage-return (`\r`) characters.
- *
- * @method $split
- * @param {String} text The text to work with
- * @returns {String} A String array, with each index containing a piece of the original `text` string.
- *
- **/
-// check for IE split bug
-Document.prototype.$split = ("aaa".split(/a/).length === 0) ? function (text) {
-    return text.replace(/\r\n|\r/g, "\n").split("\n");
-} : function (text) {
-    return text.split(/\r\n|\r|\n/);
-};
 Document.prototype.$autoNewLine = "";
 Document.prototype.$newLineMode = "auto";
 
@@ -12201,6 +12212,7 @@ config.defineOptions(Editor.prototype, "editor", {
     useTextareaForIME: "renderer",
     useResizeObserver: "renderer",
     useSvgGutterIcons: "renderer",
+    showFoldedAnnotations: "renderer",
 
     scrollSpeed: "$mouseHandler",
     dragDelay: "$mouseHandler",
@@ -14684,25 +14696,9 @@ class Gutter{
         
         var lineHeight = config.lineHeight + "px";
 
-        var className;
-        if (this.$useSvgGutterIcons){
-            className = "ace_gutter-cell_svg-icons ";
-
-            if (this.$annotations[row]){
-                annotationNode.className = "ace_icon_svg" + this.$annotations[row].className;
-
-                dom.setStyle(annotationNode.style, "height", lineHeight);
-                dom.setStyle(annotationNode.style, "display", "block");
-            }
-            else {
-                dom.setStyle(annotationNode.style, "display", "none");
-            }
-        }
-        else {
-            className = "ace_gutter-cell ";
-            dom.setStyle(annotationNode.style, "display", "none");
-        }
-
+        var className = this.$useSvgGutterIcons ? "ace_gutter-cell_svg-icons " : "ace_gutter-cell ";
+        var iconClassName = this.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
+        
         if (this.$highlightGutterLine) {
             if (row == this.$cursorRow || (fold && row < this.$cursorRow && row >= foldStart &&  this.$cursorRow <= fold.end.row)) {
                 className += "ace_gutter-active-line ";
@@ -14718,7 +14714,7 @@ class Gutter{
             className += breakpoints[row];
         if (decorations[row])
             className += decorations[row];
-        if (this.$annotations[row])
+        if (this.$annotations[row] && row !== foldStart)
             className += this.$annotations[row].className;
         if (element.className != className)
             element.className = className;
@@ -14732,8 +14728,29 @@ class Gutter{
 
         if (c) {
             var className = "ace_fold-widget ace_" + c;
-            if (c == "start" && row == foldStart && row < fold.end.row)
+            if (c == "start" && row == foldStart && row < fold.end.row){
                 className += " ace_closed";
+                var foldAnnotationClass;
+                var annotationInFold = false;
+
+                for (var i = row + 1; i <= fold.end.row; i++){
+                    if (!this.$annotations[i])
+                        continue;
+
+                    if (this.$annotations[i].className === " ace_error"){
+                        annotationInFold = true;
+                        foldAnnotationClass = " ace_error_fold";
+                        break;
+                    } 
+                    if (this.$annotations[i].className === " ace_warning"){
+                        annotationInFold = true;
+                        foldAnnotationClass = " ace_warning_fold";
+                        continue;
+                    }
+                }
+
+                element.className += foldAnnotationClass;
+            }
             else
                 className += " ace_open";
             if (foldWidget.className != className)
@@ -14745,6 +14762,28 @@ class Gutter{
             if (foldWidget) {
                 dom.setStyle(foldWidget.style, "display", "none");
             }
+        }
+
+        if (annotationInFold && this.$showFoldedAnnotations){
+            annotationNode.className = iconClassName;
+            annotationNode.className += foldAnnotationClass;
+
+            dom.setStyle(annotationNode.style, "height", lineHeight);
+            dom.setStyle(annotationNode.style, "display", "block");
+        }
+        else if (this.$annotations[row]){
+            annotationNode.className = iconClassName;
+
+            if (this.$useSvgGutterIcons)
+                annotationNode.className += this.$annotations[row].className;
+            else 
+                element.classList.add(this.$annotations[row].className.replace(" ", ""));
+
+            dom.setStyle(annotationNode.style, "height", lineHeight);
+            dom.setStyle(annotationNode.style, "display", "block");
+        }
+        else {
+            dom.setStyle(annotationNode.style, "display", "none");
         }
         
         var text = (gutterRenderer
@@ -14766,7 +14805,6 @@ class Gutter{
         this.$highlightGutterLine = highlightGutterLine;
     }
     
-
     setShowLineNumbers(show) {
         this.$renderer = !show && {
             getWidth: function() {return 0;},
@@ -19381,12 +19419,60 @@ function GutterHandler(mouseHandler) {
     });
 
 
-    var tooltipTimeout, mouseEvent, tooltipAnnotation;
+    var tooltipTimeout, mouseEvent, tooltipContent;
+
+    var annotationLabels = {
+        error: {singular: "error", plural: "errors"}, 
+        warning: {singular: "warning", plural: "warnings"},
+        info: {singular: "information message", plural: "information messages"}
+    };
 
     function showTooltip() {
         var row = mouseEvent.getDocumentPosition().row;
-        var annotation = gutter.$annotations[row];
-        if (!annotation)
+        var annotationsInRow = gutter.$annotations[row];
+        var annotation;
+
+        if (annotationsInRow)
+            annotation = {text: Array.from(annotationsInRow.text), type: Array.from(annotationsInRow.type)};
+        else
+            annotation = {text: [], type: []};
+
+        // If the tooltip is for a row which has a closed fold, check whether there are
+        // annotations in the folded lines. If so, add a summary to the list of annotations.
+        var fold = gutter.session.getFoldLine(row);
+        if (fold && gutter.$showFoldedAnnotations){
+            var annotationsInFold = {error: [], warning: [], info: []};
+            var mostSevereAnnotationInFoldType;
+
+            for (var i = row + 1; i <= fold.end.row; i++){
+                if (!gutter.$annotations[i])
+                    continue;
+
+                for (var j = 0; j < gutter.$annotations[i].text.length; j++) {
+                    var annotationType = gutter.$annotations[i].type[j];
+                    annotationsInFold[annotationType].push(gutter.$annotations[i].text[j]);
+
+                    if (annotationType === "error"){
+                        mostSevereAnnotationInFoldType = "error_fold";
+                        continue;
+                    }
+
+                    if (annotationType === "warning"){
+                        mostSevereAnnotationInFoldType = "warning_fold";
+                        continue;
+                    }
+                }
+            }
+           
+            if (mostSevereAnnotationInFoldType === "error_fold" || mostSevereAnnotationInFoldType === "warning_fold"){
+                var summaryFoldedAnnotations = `${annotationsToSummaryString(annotationsInFold)} in folded code.`;
+
+                annotation.text.push(summaryFoldedAnnotations);
+                annotation.type.push(mostSevereAnnotationInFoldType);
+            }
+        }
+        
+        if (annotation.text.length === 0)
             return hideTooltip();
 
         var maxRow = editor.session.getLength();
@@ -19398,42 +19484,22 @@ function GutterHandler(mouseHandler) {
         }
 
         var annotationMessages = {error: [], warning: [], info: []};
-        var annotationLabels = {
-            error: {singular: "error", plural: "errors"}, 
-            warning: {singular: "warning", plural: "warnings"},
-            info: {singular: "information message", plural: "information messages"}
-        };
-
         var iconClassName = gutter.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
 
-        // Construct the body of the tooltip.
+        // Construct the contents of the tooltip.
         for (var i = 0; i < annotation.text.length; i++) {
-            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${annotationLabels[annotation.type[i]].singular}' role=img> </span> ${annotation.text[i]}`;
-            annotationMessages[annotation.type[i]].push(line);
+            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${annotationLabels[annotation.type[i].replace("_fold","")].singular}' role=img> </span> ${annotation.text[i]}`;
+            annotationMessages[annotation.type[i].replace("_fold","")].push(line);
         }
-        var tooltipBody = "<div class='ace_gutter-tooltip_body'>";
-        tooltipBody += [].concat(annotationMessages.error, annotationMessages.warning, annotationMessages.info).join("<br>");
-        tooltipBody += '</div>';    
-        
-        // Construct the header of the tooltip.
-        var isMoreThanOneAnnotationType = false;
-        var tooltipHeader = "<div class='ace_gutter-tooltip_header'>";
-        for (var i = 0; i < 3; i++){
-            var annotationType = ['error', 'warning', 'info'][i];
-            if (annotationMessages[annotationType].length > 0){
-                var label = annotationMessages[annotationType].length === 1 ? annotationLabels[annotationType].singular : annotationLabels[annotationType].plural;
-                tooltipHeader += `${isMoreThanOneAnnotationType ? ', ' : ''}${annotationMessages[annotationType].length} ${label}`;
-                isMoreThanOneAnnotationType = true;
-            } 
-        }
-        tooltipHeader += "</div>";
-
-        tooltipAnnotation = tooltipHeader + tooltipBody;
-
-        tooltip.setHtml(tooltipAnnotation);
+        tooltipContent = [].concat(annotationMessages.error, annotationMessages.warning, annotationMessages.info).join("<br>");
+ 
+        tooltip.setHtml(tooltipContent);
         tooltip.setClassName("ace_gutter-tooltip");
         tooltip.$element.setAttribute("aria-live", "polite");
         
+        if (!tooltip.isOpen) {
+            tooltip.setTheme(editor.renderer.theme);
+        }
         tooltip.show();
         editor._signal("showGutterTooltip", tooltip);
         editor.on("mousewheel", hideTooltip);
@@ -19441,7 +19507,7 @@ function GutterHandler(mouseHandler) {
         if (mouseHandler.$tooltipFollowsMouse) {
             moveTooltip(mouseEvent);
         } else {
-            var gutterElement = mouseEvent.domEvent.target;
+            var gutterElement = gutter.$lines.cells[row].element.querySelector("[class*=ace_icon]");
             var rect = gutterElement.getBoundingClientRect();
             var style = tooltip.getElement().style;
             style.left = rect.right + "px";
@@ -19452,12 +19518,23 @@ function GutterHandler(mouseHandler) {
     function hideTooltip() {
         if (tooltipTimeout)
             tooltipTimeout = clearTimeout(tooltipTimeout);
-        if (tooltipAnnotation) {
+        if (tooltipContent) {
             tooltip.hide();
-            tooltipAnnotation = null;
+            tooltipContent = null;
             editor._signal("hideGutterTooltip", tooltip);
             editor.off("mousewheel", hideTooltip);
         }
+    }
+
+    function annotationsToSummaryString(annotations) {
+        const summary = [];
+        const annotationTypes = ['error', 'warning', 'info'];
+        for (const annotationType of annotationTypes) {
+            if (!annotations[annotationType].length) continue;
+            const label = annotations[annotationType].length === 1 ? annotationLabels[annotationType].singular : annotationLabels[annotationType].plural;
+            summary.push(`${annotations[annotationType].length} ${label}`);
+        }
+        return summary.join(", ");
     }
 
     function moveTooltip(e) {
@@ -19469,7 +19546,7 @@ function GutterHandler(mouseHandler) {
         if (dom.hasCssClass(target, "ace_fold-widget"))
             return hideTooltip();
 
-        if (tooltipAnnotation && mouseHandler.$tooltipFollowsMouse)
+        if (tooltipContent && mouseHandler.$tooltipFollowsMouse)
             moveTooltip(e);
 
         mouseEvent = e;
@@ -19486,7 +19563,7 @@ function GutterHandler(mouseHandler) {
 
     event.addListener(editor.renderer.$gutter, "mouseout", function(e) {
         mouseEvent = null;
-        if (!tooltipAnnotation || tooltipTimeout)
+        if (!tooltipContent || tooltipTimeout)
             return;
 
         tooltipTimeout = setTimeout(function() {
@@ -20302,12 +20379,6 @@ class MouseEvent {
 
         this.propagationStopped = false;
         this.defaultPrevented = false;
-
-        this.getAccelKey = useragent.isMac ? function () {
-            return this.domEvent.metaKey;
-        } : function () {
-            return this.domEvent.ctrlKey;
-        };
     }
     
     stopPropagation() {
@@ -20376,7 +20447,10 @@ class MouseEvent {
     getShiftKey() {
         return this.domEvent.shiftKey;
     }
-    
+
+    getAccelKey() {
+        return useragent.isMac ? this.domEvent.metaKey : this.domEvent.ctrlKey;
+    }
 }
 
 exports.T = MouseEvent;
@@ -22339,7 +22413,7 @@ class Range {
      * @returns {Number} This method returns one of the following numbers:
      * * `-2`: (B) is in front of (A), and doesn't intersect with (A)
      * * `-1`: (B) begins before (A) but ends inside of (A)
-     * * `0`: (B) is completely inside of (A) OR (A) is completely inside of (B)
+     * * `0`: (B) is completely inside of (A)
      * * `+1`: (B) begins inside of (A) but ends outside of (A)
      * * `+2`: (B) is after (A) and doesn't intersect with (A)
      * * `42`: FTW state: (B) ends in (A) but starts outside of (A)
@@ -24070,8 +24144,6 @@ exports.o = Search;
 var lang = __webpack_require__(20124);
 var Range = (__webpack_require__(59082)/* .Range */ .e);
 
-var SearchHighlight = 
-
 class SearchHighlight {
     constructor(regExp, clazz, type = "text") {
         this.setRegexp(regExp);
@@ -24116,7 +24188,7 @@ class SearchHighlight {
         }
     }
 
-};
+}
 
 // needed to prevent long lines from freezing the browser
 SearchHighlight.prototype.MAX_RANGES = 500;
@@ -25551,6 +25623,9 @@ var SnippetManager = function() {
     
     this.insertSnippet = function(editor, snippetText, replaceRange) {
         var self = this;
+        if (replaceRange && !(replaceRange instanceof Range))
+            replaceRange = Range.fromPoints(replaceRange.start, replaceRange.end);
+        
         if (editor.inVirtualSelectionMode)
             return self.insertSnippetForSelection(editor, snippetText, replaceRange);
         
@@ -26764,9 +26839,11 @@ exports.d = Tokenizer;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
+var __webpack_unused_export__;
 
 
 var dom = __webpack_require__(6359);
+var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var CLASSNAME = "ace_tooltip";
 
@@ -26789,7 +26866,7 @@ class Tooltip {
     }
 
     /**
-     * @returns {Element}
+     * @returns {HTMLElement}
      **/
     getElement() {
         return this.$element || this.$init();
@@ -26823,6 +26900,11 @@ class Tooltip {
      **/
     setClassName(className) {
         dom.addCssClass(this.getElement(), className);
+    }
+
+    setTheme(theme) {
+        this.$element.className = CLASSNAME + " " +
+            (theme.isDark? "ace_dark " : "") + (theme.cssClass || "");
     }
 
     /**
@@ -26872,7 +26954,261 @@ class Tooltip {
 
 }
 
+class PopupManager {
+    constructor () {
+        this.popups = [];
+    }
+    
+    addPopup(popup) {
+        this.popups.push(popup);
+        this.updatePopups();
+    }
+
+    removePopup(popup) {
+        const index = this.popups.indexOf(popup);
+        if (index !== -1) {
+            this.popups.splice(index, 1);
+            this.updatePopups();
+        }
+    }
+
+    updatePopups() {
+        this.popups.sort((a, b) => b.priority - a.priority);
+        let visiblepopups = [];
+
+        for (let popup of this.popups) {
+            let shouldDisplay = true;
+            for (let visiblePopup of visiblepopups) {
+                if (this.doPopupsOverlap(visiblePopup, popup)) {
+                    shouldDisplay = false;
+                    break;
+                }
+            }
+            
+            if (shouldDisplay) {
+                visiblepopups.push(popup);
+            } else {
+                popup.hide();
+            }
+        }
+    }
+
+    doPopupsOverlap (popupA, popupB) {
+        const rectA = popupA.getElement().getBoundingClientRect();
+        const rectB = popupB.getElement().getBoundingClientRect();
+
+        return (rectA.left < rectB.right && rectA.right > rectB.left && rectA.top < rectB.bottom && rectA.bottom
+            > rectB.top);
+    }
+}
+
+var popupManager = new PopupManager();
+__webpack_unused_export__ = popupManager;
+
 exports.u = Tooltip;
+
+
+class HoverTooltip extends Tooltip {
+    constructor() {
+        super(document.body);
+        
+        this.timeout = undefined;
+        this.lastT = 0;
+        this.idleTime = 350;
+        this.lastEvent = undefined;
+        
+        this.onMouseOut = this.onMouseOut.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.waitForHover = this.waitForHover.bind(this);
+        this.hide = this.hide.bind(this);
+        
+        var el = this.getElement();
+        el.style.whiteSpace = "pre-wrap";
+        el.style.pointerEvents = "auto";
+        el.addEventListener("mouseout", this.onMouseOut);
+        el.tabIndex = -1;
+        
+        el.addEventListener("blur", function() {
+            if (document.activeElement != el) this.hide();
+        }.bind(this));
+    }
+    
+    addToEditor(editor) {
+        editor.on("mousemove", this.onMouseMove);
+        editor.on("mousedown", this.hide);
+        editor.renderer.getMouseEventTarget().addEventListener("mouseout", this.onMouseOut, true);
+    }
+
+    removeFromEditor(editor) {
+        editor.off("mousemove", this.onMouseMove);
+        editor.off("mousedown", this.hide);
+        editor.renderer.getMouseEventTarget().removeEventListener("mouseout", this.onMouseOut, true);
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+    }
+
+    onMouseMove(e, editor) {
+        this.lastEvent = e;
+        this.lastT = Date.now();
+        var isMousePressed = editor.$mouseHandler.isMousePressed;
+        if (this.isOpen) {
+            var pos = this.lastEvent && this.lastEvent.getDocumentPosition();
+            if (
+                !this.range 
+                || !this.range.contains(pos.row, pos.column)
+                || isMousePressed
+                || this.isOutsideOfText(this.lastEvent)
+            ) {
+                this.hide();
+            }
+        }
+        if (this.timeout || isMousePressed) return;
+        this.lastEvent = e;
+        this.timeout = setTimeout(this.waitForHover, this.idleTime);
+    }
+    waitForHover() {
+        if (this.timeout) clearTimeout(this.timeout);
+        var dt = Date.now() - this.lastT;
+        if (this.idleTime - dt > 10) {
+            this.timeout = setTimeout(this.waitForHover, this.idleTime - dt);
+            return;
+        }
+        
+        this.timeout = null;
+        if (this.lastEvent && !this.isOutsideOfText(this.lastEvent)) {
+            this.$gatherData(this.lastEvent, this.lastEvent.editor);
+        }
+    }
+
+    isOutsideOfText(e) {
+        var editor = e.editor;
+        var docPos = e.getDocumentPosition();
+        var line = editor.session.getLine(docPos.row);
+        if (docPos.column == line.length) {
+            var screenPos = editor.renderer.pixelToScreenCoordinates(e.clientX, e.clientY);
+            var clippedPos = editor.session.documentToScreenPosition(docPos.row, docPos.column);
+            if (
+                clippedPos.column != screenPos.column
+                || clippedPos.row != screenPos.row
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    setDataProvider(value) {
+        this.$gatherData = value;
+    }
+    
+    showForRange(editor, range, domNode, startingEvent) {
+        if (startingEvent && startingEvent != this.lastEvent) return;
+        if (this.isOpen && document.activeElement == this.getElement()) return;
+        
+        var renderer = editor.renderer;
+        if (!this.isOpen) {
+            popupManager.addPopup(this);
+            this.$registerCloseEvents();
+            this.setTheme(renderer.theme);
+        }
+        this.isOpen = true;
+        
+        this.addMarker(range, editor.session);
+        this.range = Range.fromPoints(range.start, range.end);
+        
+        var element = this.getElement();
+        element.innerHTML = "";
+        element.appendChild(domNode);
+        element.style.display = "block";
+        
+        var position = renderer.textToScreenCoordinates(range.start.row, range.start.column);
+        var cursorPos = editor.getCursorPosition();
+        
+        var labelHeight = element.clientHeight;
+        var rect = renderer.scroller.getBoundingClientRect();
+
+        var isTopdown = true;
+        if (this.row > cursorPos.row) {
+            // don't obscure cursor
+            isTopdown = true; 
+        } else if (this.row < cursorPos.row) {
+            // don't obscure cursor
+            isTopdown = false;
+        }
+        
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) {
+            // not enough space above us
+            isTopdown = true; 
+        } else if (position.pageY + labelHeight > rect.bottom) {
+            isTopdown = false;
+        }
+
+        if (!isTopdown) {
+            position.pageY -= labelHeight; 
+        } else {
+            position.pageY += renderer.lineHeight;
+        }
+
+        element.style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+
+        this.setPosition(position.pageX, position.pageY);
+    }
+    
+    addMarker(range, session) {
+        if (this.marker) {
+            this.$markerSession.removeMarker(this.marker);
+        }
+        this.$markerSession = session;
+        this.marker = session && session.addMarker(range, "ace_highlight-marker", "text");
+    }
+    
+    hide(e) {
+        if (!e && document.activeElement == this.getElement())
+            return;
+        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && this.$element.contains(e.target))
+            return;
+        this.lastEvent = null;
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = null;
+        this.addMarker(null);
+        if (this.isOpen) {
+            this.$removeCloseEvents();
+            this.getElement().style.display = "none";
+            this.isOpen = false;
+            popupManager.removePopup(this);
+        }
+    }
+
+    $registerCloseEvents() {
+        window.addEventListener("keydown", this.hide, true);
+        window.addEventListener("mousewheel", this.hide, true);
+        window.addEventListener("mousedown", this.hide, true);
+    }
+
+    $removeCloseEvents() {
+        window.removeEventListener("keydown", this.hide, true);
+        window.removeEventListener("mousewheel", this.hide, true);
+        window.removeEventListener("mousedown", this.hide, true);
+    }
+
+    onMouseOut(e) {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+        this.lastEvent = null;
+        if (!this.isOpen) return;
+
+        if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
+
+        if (e && e.currentTarget.contains(e.relatedTarget)) return;
+        if (!e.relatedTarget.classList.contains("ace_content")) this.hide();
+    }
+}
+
+__webpack_unused_export__ = HoverTooltip;
 
 
 /***/ }),
@@ -29382,6 +29718,12 @@ config.defineOptions(VirtualRenderer.prototype, "renderer", {
     useSvgGutterIcons: {
         set: function(value){
             this.$gutterLayer.$useSvgGutterIcons = value;
+        },
+        initialValue: false
+    },
+    showFoldedAnnotations: {
+        set: function(value){
+            this.$gutterLayer.$showFoldedAnnotations = value;
         },
         initialValue: false
     },
@@ -43233,7 +43575,7 @@ var ace = __webpack_require__(59100);
 
 ace.config.setModuleLoader('ace/mode/abap', () => __webpack_require__.e(/* import() */ 989).then(__webpack_require__.t.bind(__webpack_require__, 10989, 19)));
 ace.config.setModuleLoader('ace/mode/abc', () => __webpack_require__.e(/* import() */ 4064).then(__webpack_require__.t.bind(__webpack_require__, 84064, 19)));
-ace.config.setModuleLoader('ace/mode/actionscript', () => __webpack_require__.e(/* import() */ 2560).then(__webpack_require__.t.bind(__webpack_require__, 73682, 19)));
+ace.config.setModuleLoader('ace/mode/actionscript', () => __webpack_require__.e(/* import() */ 3682).then(__webpack_require__.t.bind(__webpack_require__, 73682, 19)));
 ace.config.setModuleLoader('ace/mode/ada', () => __webpack_require__.e(/* import() */ 4049).then(__webpack_require__.t.bind(__webpack_require__, 14049, 19)));
 ace.config.setModuleLoader('ace/mode/alda', () => __webpack_require__.e(/* import() */ 8331).then(__webpack_require__.t.bind(__webpack_require__, 98331, 19)));
 ace.config.setModuleLoader('ace/mode/apache_conf', () => __webpack_require__.e(/* import() */ 553).then(__webpack_require__.t.bind(__webpack_require__, 10553, 19)));
@@ -43585,42 +43927,74 @@ var hash_handler = __webpack_require__(7116);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/lib/keys.js
 var keys = __webpack_require__(11797);
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json-example.js
-var jsonContent = '{\n       "name": 12\n       "country": "Ireland"\n    }';
-var jsonSchema = '{\n  "definitions": {\n    "color": {\n      "type": "string",\n      "enum": ["red", "orange", "yellow", "green", "blue", "purple", "pink"]\n    }\n  }\n}\n';
-var jsonSchema2 = '  {"type": "object",\n"description": "a very special object",\n  "properties": {\n    "name": {\n      "type": "string",\n      "minLength": 3,\n      "maxLength": 50\n    },\n    "age": {\n      "type": "integer",\n      "minimum": 0,\n      "maximum": 120\n    },\n    "email": {\n      "type": "string",\n      "format": "email"\n    },\n    "favoriteColor": {\n    "description": "Favorite color",\n      "$ref": "colors.schema.json#/definitions/color"\n    }\n  },\n  "required": ["name", "age", "email", "favoriteColor"],\n  "additionalProperties": false\n  }\n';
+var jsonContent = `{
+       "name": 12
+       "country": "Ireland"
+    }`;
+var jsonSchema = (/* unused pure expression or super */ null && (`{
+  "definitions": {
+    "color": {
+      "type": "string",
+      "enum": ["red", "orange", "yellow", "green", "blue", "purple", "pink"]
+    }
+  }
+}
+`));
+var jsonSchema2 = (/* unused pure expression or super */ null && (`  {"type": "object",
+"description": "a very special object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 50
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "favoriteColor": {
+    "description": "Favorite color",
+      "$ref": "colors.schema.json#/definitions/color"
+    }
+  },
+  "required": ["name", "age", "email", "favoriteColor"],
+  "additionalProperties": false
+  }
+`));
 
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json5-example.js
-var json5Content = '{\n       "name": 12,\n       "country": "Ireland", //trailing comma + comment\n    }';
-var json5Schema = '{\n    "type": "object",\n    "description": "a very special object",\n    "properties": {\n        "name": {\n            "type": "string",\n            "description": "Some name"\n        },\n        "country": {\n            "type": "string",\n            "enum": ["Ireland", "Iceland"],\n            "description": "Country name"\n        },\n        "age": {\n            "type": "number",\n            "description": "Age of object"\n        }\n    }\n}';
+var json5Content = `{
+       "name": 12,
+       "country": "Ireland", //trailing comma + comment
+    }`;
+var json5Schema = (/* unused pure expression or super */ null && (`{
+    "type": "object",
+    "description": "a very special object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Some name"
+        },
+        "country": {
+            "type": "string",
+            "enum": ["Ireland", "Iceland"],
+            "description": "Country name"
+        },
+        "age": {
+            "type": "number",
+            "description": "Age of object"
+        }
+    }
+}`));
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/tooltip.js
 var tooltip = __webpack_require__(962);
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
-function _assert_this_initialized(self) {
-    if (self === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return self;
-}
-function _class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function _defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function _create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) _defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -43634,258 +44008,111 @@ function _define_property(obj, key, value) {
     }
     return obj;
 }
-function _get(target, property, receiver) {
-    if (typeof Reflect !== "undefined" && Reflect.get) {
-        _get = Reflect.get;
-    } else {
-        _get = function get(target, property, receiver) {
-            var base = _super_prop_base(target, property);
-            if (!base) return;
-            var desc = Object.getOwnPropertyDescriptor(base, property);
-            if (desc.get) {
-                return desc.get.call(receiver || target);
-            }
-            return desc.value;
-        };
-    }
-    return _get(target, property, receiver || target);
-}
-function _get_prototype_of(o) {
-    _get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
-        return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return _get_prototype_of(o);
-}
-function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            writable: true,
-            configurable: true
-        }
-    });
-    if (superClass) _set_prototype_of(subClass, superClass);
-}
-function _possible_constructor_return(self, call) {
-    if (call && (_type_of(call) === "object" || typeof call === "function")) {
-        return call;
-    }
-    return _assert_this_initialized(self);
-}
-function _set_prototype_of(o, p) {
-    _set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return _set_prototype_of(o, p);
-}
-function _super_prop_base(object, property) {
-    while(!Object.prototype.hasOwnProperty.call(object, property)){
-        object = _get_prototype_of(object);
-        if (object === null) break;
-    }
-    return object;
-}
-function _type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-}
-function _is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-function _create_super(Derived) {
-    var hasNativeReflectConstruct = _is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = _get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = _get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-            result = Super.apply(this, arguments);
-        }
-        return _possible_constructor_return(this, result);
-    };
-}
 
-var BaseTooltip = /*#__PURE__*/ function(Tooltip1) {
-    "use strict";
-    _inherits(BaseTooltip, Tooltip1);
-    var _super = _create_super(BaseTooltip);
-    function BaseTooltip(provider) {
-        _class_call_check(this, BaseTooltip);
-        var _this;
-        _this = _super.call(this, document.body);
-        _define_property(_assert_this_initialized(_this), "provider", void 0);
-        _define_property(_assert_this_initialized(_this), "$activeEditor", void 0);
-        _define_property(_assert_this_initialized(_this), "descriptionText", void 0);
-        _define_property(_assert_this_initialized(_this), "isOpen", void 0);
-        _define_property(_assert_this_initialized(_this), "x", void 0);
-        _define_property(_assert_this_initialized(_this), "y", void 0);
-        _define_property(_assert_this_initialized(_this), "$mouseMoveTimer", void 0);
-        _define_property(_assert_this_initialized(_this), "$showTimer", void 0);
-        _define_property(_assert_this_initialized(_this), "row", void 0);
-        _define_property(_assert_this_initialized(_this), "column", void 0);
-        _define_property(_assert_this_initialized(_this), "$hide", function() {
-            clearTimeout(_this.$mouseMoveTimer);
-            clearTimeout(_this.$showTimer);
-            if (_this.isOpen) {
-                _this.$removeEditorEvents();
-                _this.hide();
+class BaseTooltip extends tooltip/* Tooltip */.u {
+    $show() {
+        if (!this.$activeEditor) return;
+        let renderer = this.$activeEditor.renderer;
+        let position = renderer.textToScreenCoordinates(this.row, this.column);
+        let cursorPos = this.$activeEditor.getCursorPosition();
+        this.show(null, position.pageX, position.pageY);
+        let labelHeight = this.getElement().getBoundingClientRect().height;
+        let rect = renderer.scroller.getBoundingClientRect();
+        let isTopdown = true;
+        if (this.row > cursorPos.row) // don't obscure cursor
+        isTopdown = true;
+        else if (this.row < cursorPos.row) // don't obscure cursor
+        isTopdown = false;
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) // not enough space above us
+        isTopdown = true;
+        else if (position.pageY + labelHeight > rect.bottom) isTopdown = false;
+        if (!isTopdown) position.pageY -= labelHeight;
+        else position.pageY += renderer.lineHeight;
+        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+        this.show(null, position.pageX, position.pageY);
+    }
+    getElement() {
+        return super.getElement();
+    }
+    hide() {
+        super.hide();
+    }
+    show(param, pageX, pageY) {
+        super.show(param, pageX, pageY);
+        this.$registerEditorEvents();
+    }
+    setHtml(descriptionText) {
+        super.setHtml(descriptionText);
+    }
+    destroy() {
+        this.$hide();
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
+    }
+    $registerEditorEvents() {
+        this.$activeEditor.on("change", this.$hide);
+        this.$activeEditor.on("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.on("mousedown", this.$hide);
+    }
+    $removeEditorEvents() {
+        this.$activeEditor.off("change", this.$hide);
+        this.$activeEditor.off("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.off("mousedown", this.$hide);
+    }
+    $inactivateEditor() {
+        var _this_$activeEditor;
+        (_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+        this.$activeEditor = undefined;
+    }
+    $activateEditor(editor) {
+        if (this.$activeEditor == editor) return;
+        this.$inactivateEditor();
+        this.$activeEditor = editor;
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
+    }
+    constructor(provider){
+        super(document.body);
+        _define_property(this, "provider", void 0);
+        _define_property(this, "$activeEditor", void 0);
+        _define_property(this, "descriptionText", void 0);
+        _define_property(this, "isOpen", void 0);
+        _define_property(this, "x", void 0);
+        _define_property(this, "y", void 0);
+        _define_property(this, "$mouseMoveTimer", void 0);
+        _define_property(this, "$showTimer", void 0);
+        _define_property(this, "row", void 0);
+        _define_property(this, "column", void 0);
+        _define_property(this, "$hide", ()=>{
+            clearTimeout(this.$mouseMoveTimer);
+            clearTimeout(this.$showTimer);
+            if (this.isOpen) {
+                this.$removeEditorEvents();
+                this.hide();
             }
-            _this.$inactivateEditor();
+            this.$inactivateEditor();
         });
-        _define_property(_assert_this_initialized(_this), "onMouseOut", function(e) {
-            clearTimeout(_this.$mouseMoveTimer);
-            clearTimeout(_this.$showTimer);
-            if (!e.relatedTarget || e.relatedTarget == _this.getElement()) return;
+        _define_property(this, "onMouseOut", (e)=>{
+            clearTimeout(this.$mouseMoveTimer);
+            clearTimeout(this.$showTimer);
+            if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
             //@ts-ignore
             if (e && e.currentTarget.contains(e.relatedTarget)) return;
             //@ts-ignore
-            if (!e.relatedTarget.classList.contains("ace_content")) _this.$hide();
+            if (!e.relatedTarget.classList.contains("ace_content")) this.$hide();
         });
-        _this.provider = provider;
+        this.provider = provider;
         //this is for ace-code version < 1.16.0
         try {
-            tooltip/* Tooltip.call */.u.call(_assert_this_initialized(_this), document.body);
+            tooltip/* Tooltip.call */.u.call(this, document.body);
         } catch (e) {}
-        _this.getElement().style.pointerEvents = "auto";
-        _this.getElement().style.whiteSpace = "pre-wrap";
-        _this.getElement().addEventListener("mouseout", _this.onMouseOut);
-        return _this;
+        this.getElement().style.pointerEvents = "auto";
+        this.getElement().style.whiteSpace = "pre-wrap";
+        this.getElement().addEventListener("mouseout", this.onMouseOut);
     }
-    _create_class(BaseTooltip, [
-        {
-            key: "$show",
-            value: function $show() {
-                if (!this.$activeEditor) return;
-                var renderer = this.$activeEditor.renderer;
-                var position = renderer.textToScreenCoordinates(this.row, this.column);
-                var cursorPos = this.$activeEditor.getCursorPosition();
-                this.show(null, position.pageX, position.pageY);
-                var labelHeight = this.getElement().getBoundingClientRect().height;
-                var rect = renderer.scroller.getBoundingClientRect();
-                var isTopdown = true;
-                if (this.row > cursorPos.row) // don't obscure cursor
-                isTopdown = true;
-                else if (this.row < cursorPos.row) // don't obscure cursor
-                isTopdown = false;
-                if (position.pageY - labelHeight + renderer.lineHeight < rect.top) // not enough space above us
-                isTopdown = true;
-                else if (position.pageY + labelHeight > rect.bottom) isTopdown = false;
-                if (!isTopdown) position.pageY -= labelHeight;
-                else position.pageY += renderer.lineHeight;
-                this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-                this.show(null, position.pageX, position.pageY);
-            }
-        },
-        {
-            key: "getElement",
-            value: function getElement() {
-                return _get(_get_prototype_of(BaseTooltip.prototype), "getElement", this).call(this);
-            }
-        },
-        {
-            key: "hide",
-            value: function hide() {
-                _get(_get_prototype_of(BaseTooltip.prototype), "hide", this).call(this);
-            }
-        },
-        {
-            key: "show",
-            value: function show(param, pageX, pageY) {
-                _get(_get_prototype_of(BaseTooltip.prototype), "show", this).call(this, param, pageX, pageY);
-                this.$registerEditorEvents();
-            }
-        },
-        {
-            key: "setHtml",
-            value: function setHtml(descriptionText) {
-                _get(_get_prototype_of(BaseTooltip.prototype), "setHtml", this).call(this, descriptionText);
-            }
-        },
-        {
-            key: "destroy",
-            value: function destroy() {
-                this.$hide();
-                this.getElement().removeEventListener("mouseout", this.onMouseOut);
-            }
-        },
-        {
-            key: "$registerEditorEvents",
-            value: function $registerEditorEvents() {
-                this.$activeEditor.on("change", this.$hide);
-                this.$activeEditor.on("mousewheel", this.$hide);
-                //@ts-ignore
-                this.$activeEditor.on("mousedown", this.$hide);
-            }
-        },
-        {
-            key: "$removeEditorEvents",
-            value: function $removeEditorEvents() {
-                this.$activeEditor.off("change", this.$hide);
-                this.$activeEditor.off("mousewheel", this.$hide);
-                //@ts-ignore
-                this.$activeEditor.off("mousedown", this.$hide);
-            }
-        },
-        {
-            key: "$inactivateEditor",
-            value: function $inactivateEditor() {
-                var _this_$activeEditor;
-                (_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-                this.$activeEditor = undefined;
-            }
-        },
-        {
-            key: "$activateEditor",
-            value: function $activateEditor(editor) {
-                if (this.$activeEditor == editor) return;
-                this.$inactivateEditor();
-                this.$activeEditor = editor;
-                this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
-            }
-        }
-    ]);
-    return BaseTooltip;
-}(tooltip/* Tooltip */.u);
+}
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/description-tooltip.ts
-function description_tooltip_assert_this_initialized(self) {
-    if (self === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return self;
-}
-function description_tooltip_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function description_tooltip_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function description_tooltip_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) description_tooltip_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) description_tooltip_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function description_tooltip_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -43899,207 +44126,89 @@ function description_tooltip_define_property(obj, key, value) {
     }
     return obj;
 }
-function description_tooltip_get_prototype_of(o) {
-    description_tooltip_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
-        return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return description_tooltip_get_prototype_of(o);
-}
-function description_tooltip_inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            writable: true,
-            configurable: true
-        }
-    });
-    if (superClass) description_tooltip_set_prototype_of(subClass, superClass);
-}
-function description_tooltip_possible_constructor_return(self, call) {
-    if (call && (description_tooltip_type_of(call) === "object" || typeof call === "function")) {
-        return call;
-    }
-    return description_tooltip_assert_this_initialized(self);
-}
-function description_tooltip_set_prototype_of(o, p) {
-    description_tooltip_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return description_tooltip_set_prototype_of(o, p);
-}
-function description_tooltip_type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-}
-function description_tooltip_is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-function description_tooltip_create_super(Derived) {
-    var hasNativeReflectConstruct = description_tooltip_is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = description_tooltip_get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = description_tooltip_get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-            result = Super.apply(this, arguments);
-        }
-        return description_tooltip_possible_constructor_return(this, result);
-    };
-}
 
-var DescriptionTooltip = /*#__PURE__*/ function(BaseTooltip) {
-    "use strict";
-    description_tooltip_inherits(DescriptionTooltip, BaseTooltip);
-    var _super = description_tooltip_create_super(DescriptionTooltip);
-    function DescriptionTooltip() {
-        description_tooltip_class_call_check(this, DescriptionTooltip);
-        var _this;
-        _this = _super.apply(this, arguments);
-        description_tooltip_define_property(description_tooltip_assert_this_initialized(_this), "doHover", function() {
-            if (!_this.provider.options.functionality.hover) return;
-            var renderer = _this.$activeEditor.renderer;
-            var screenCoordinates = renderer.pixelToScreenCoordinates(_this.x, _this.y);
-            var session = _this.$activeEditor.session;
-            var docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
-            _this.provider.doHover(session, docPos, function(hover) {
+class DescriptionTooltip extends BaseTooltip {
+    registerEditor(editor) {
+        editor.on("mousemove", this.onMouseMove);
+    }
+    update(editor) {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.doHover();
+        } else {
+            this.$mouseMoveTimer = setTimeout(()=>{
+                this.$activateEditor(editor);
+                this.doHover();
+                this.$mouseMoveTimer = undefined;
+            }, 500);
+        }
+    }
+    constructor(...args){
+        super(...args);
+        description_tooltip_define_property(this, "doHover", ()=>{
+            if (!this.provider.options.functionality.hover) return;
+            let renderer = this.$activeEditor.renderer;
+            let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
+            let session = this.$activeEditor.session;
+            let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
+            this.provider.doHover(session, docPos, (hover)=>{
                 var _hover_range, _hover_range1;
-                var descriptionText = hover ? _this.provider.getTooltipText(hover) : null;
+                let descriptionText = hover ? this.provider.getTooltipText(hover) : null;
                 if (!hover || !descriptionText) {
-                    _this.hide();
+                    this.hide();
                     return;
                 }
-                var token = session.getTokenAt(docPos.row, docPos.column + 1);
+                let token = session.getTokenAt(docPos.row, docPos.column + 1);
                 var _hover_range_start_row;
-                var row = (_hover_range_start_row = (_hover_range = hover.range) === null || _hover_range === void 0 ? void 0 : _hover_range.start.row) !== null && _hover_range_start_row !== void 0 ? _hover_range_start_row : docPos.row;
+                let row = (_hover_range_start_row = (_hover_range = hover.range) === null || _hover_range === void 0 ? void 0 : _hover_range.start.row) !== null && _hover_range_start_row !== void 0 ? _hover_range_start_row : docPos.row;
                 var _hover_range_start_column, _ref;
-                var column = (_ref = (_hover_range_start_column = (_hover_range1 = hover.range) === null || _hover_range1 === void 0 ? void 0 : _hover_range1.start.column) !== null && _hover_range_start_column !== void 0 ? _hover_range_start_column : token === null || token === void 0 ? void 0 : token.start) !== null && _ref !== void 0 ? _ref : 0;
-                if (_this.descriptionText != descriptionText) {
-                    _this.hide();
-                    _this.setHtml(descriptionText);
-                    _this.descriptionText = descriptionText;
-                } else if (_this.row == row && _this.column == column && _this.isOpen) {
+                let column = (_ref = (_hover_range_start_column = (_hover_range1 = hover.range) === null || _hover_range1 === void 0 ? void 0 : _hover_range1.start.column) !== null && _hover_range_start_column !== void 0 ? _hover_range_start_column : token === null || token === void 0 ? void 0 : token.start) !== null && _ref !== void 0 ? _ref : 0;
+                if (this.descriptionText != descriptionText) {
+                    this.hide();
+                    this.setHtml(descriptionText);
+                    this.descriptionText = descriptionText;
+                } else if (this.row == row && this.column == column && this.isOpen) {
                     return;
                 }
-                _this.row = row;
-                _this.column = column;
-                if (_this.$mouseMoveTimer) {
-                    _this.$show();
+                this.row = row;
+                this.column = column;
+                if (this.$mouseMoveTimer) {
+                    this.$show();
                 } else {
-                    _this.$showTimer = setTimeout(function() {
-                        _this.$show();
-                        _this.$showTimer = undefined;
+                    this.$showTimer = setTimeout(()=>{
+                        this.$show();
+                        this.$showTimer = undefined;
                     }, 500);
                 }
             });
         });
-        description_tooltip_define_property(description_tooltip_assert_this_initialized(_this), "onMouseMove", function(e) {
-            _this.x = e.clientX;
-            _this.y = e.clientY;
-            _this.update(e["editor"]);
+        description_tooltip_define_property(this, "onMouseMove", (e)=>{
+            this.x = e.clientX;
+            this.y = e.clientY;
+            this.update(e["editor"]);
         });
-        return _this;
     }
-    description_tooltip_create_class(DescriptionTooltip, [
-        {
-            key: "registerEditor",
-            value: function registerEditor(editor) {
-                editor.on("mousemove", this.onMouseMove);
-            }
-        },
-        {
-            key: "update",
-            value: function update(editor) {
-                var _this = this;
-                clearTimeout(this.$mouseMoveTimer);
-                clearTimeout(this.$showTimer);
-                if (this.isOpen) {
-                    this.doHover();
-                } else {
-                    this.$mouseMoveTimer = setTimeout(function() {
-                        _this.$activateEditor(editor);
-                        _this.doHover();
-                        _this.$mouseMoveTimer = undefined;
-                    }, 500);
-                }
-            }
-        }
-    ]);
-    return DescriptionTooltip;
-}(BaseTooltip);
+}
 
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var main = __webpack_require__(10152);
 ;// CONCATENATED MODULE: ./packages/ace-linters/utils.ts
-function utils_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-function _object_spread(target) {
-    for(var i = 1; i < arguments.length; i++){
-        var source = arguments[i] != null ? arguments[i] : {};
-        var ownKeys = Object.keys(source);
-        if (typeof Object.getOwnPropertySymbols === "function") {
-            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function(sym) {
-                return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-            }));
-        }
-        ownKeys.forEach(function(key) {
-            utils_define_property(target, key, source[key]);
-        });
-    }
-    return target;
-}
 function mergeObjects(obj1, obj2) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
-    var mergedObjects = _object_spread({}, obj2, obj1); // Give priority to obj1 values by spreading obj2 first, then obj1
-    var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-    try {
-        for(var _iterator = Object.keys(mergedObjects)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-            var key = _step.value;
-            if (obj1[key] && obj2[key]) {
-                if (Array.isArray(obj1[key])) {
-                    mergedObjects[key] = obj1[key].concat(obj2[key]);
-                } else if (Array.isArray(obj2[key])) {
-                    mergedObjects[key] = obj2[key].concat(obj1[key]);
-                } else if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
-                    mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-                }
-            }
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally{
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return != null) {
-                _iterator.return();
-            }
-        } finally{
-            if (_didIteratorError) {
-                throw _iteratorError;
+    const mergedObjects = {
+        ...obj2,
+        ...obj1
+    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+    for (const key of Object.keys(mergedObjects)){
+        if (obj1[key] && obj2[key]) {
+            if (Array.isArray(obj1[key])) {
+                mergedObjects[key] = obj1[key].concat(obj2[key]);
+            } else if (Array.isArray(obj2[key])) {
+                mergedObjects[key] = obj2[key].concat(obj1[key]);
+            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
             }
         }
     }
@@ -44112,7 +44221,7 @@ function utils_checkValueAgainstRegexpArray(value, regexpArray) {
     if (!regexpArray) {
         return false;
     }
-    for(var i = 0; i < regexpArray.length; i++){
+    for(let i = 0; i < regexpArray.length; i++){
         if (regexpArray[i].test(value)) {
             return true;
         }
@@ -44126,24 +44235,27 @@ function utils_checkValueAgainstRegexpArray(value, regexpArray) {
 
 var common_converters_CommonConverter;
 (function(CommonConverter) {
-    var normalizeRanges = function normalizeRanges(completions) {
-        return completions && completions.map(function(el) {
+    function normalizeRanges(completions) {
+        return completions && completions.map((el)=>{
             if (el["range"]) {
                 el["range"] = toRange(el["range"]);
             }
             return el;
         });
-    };
-    var cleanHtml = function cleanHtml(html) {
+    }
+    CommonConverter.normalizeRanges = normalizeRanges;
+    function cleanHtml(html) {
         return html.replace(/<a\s/, "<a target='_blank' ");
-    };
-    var toRange = function toRange(range) {
+    }
+    CommonConverter.cleanHtml = cleanHtml;
+    function toRange(range) {
         if (!range || !range.start || !range.end) {
             return;
         }
         return ace.Range.fromPoints(range.start, range.end);
-    };
-    var convertKind = function convertKind(kind) {
+    }
+    CommonConverter.toRange = toRange;
+    function convertKind(kind) {
         switch(kind){
             case "primitiveType":
             case "keyword":
@@ -44173,33 +44285,16 @@ var common_converters_CommonConverter;
                 return main.CompletionItemKind.File;
         }
         return main.CompletionItemKind.Property;
-    };
-    var excludeByErrorMessage = function excludeByErrorMessage(diagnostics, errorMessagesToIgnore) {
-        var fieldName = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "message";
-        if (!errorMessagesToIgnore) return diagnostics;
-        return diagnostics.filter(function(el) {
-            return !utils_checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore);
-        });
-    };
-    CommonConverter.normalizeRanges = normalizeRanges;
-    CommonConverter.cleanHtml = cleanHtml;
-    CommonConverter.toRange = toRange;
+    }
     CommonConverter.convertKind = convertKind;
+    function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
+        if (!errorMessagesToIgnore) return diagnostics;
+        return diagnostics.filter((el)=>!utils_checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+    }
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-types.ts
-function message_types_assert_this_initialized(self) {
-    if (self === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return self;
-}
-function message_types_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
 function message_types_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -44213,300 +44308,148 @@ function message_types_define_property(obj, key, value) {
     }
     return obj;
 }
-function message_types_get_prototype_of(o) {
-    message_types_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
-        return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return message_types_get_prototype_of(o);
-}
-function message_types_inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            writable: true,
-            configurable: true
-        }
-    });
-    if (superClass) message_types_set_prototype_of(subClass, superClass);
-}
-function message_types_possible_constructor_return(self, call) {
-    if (call && (message_types_type_of(call) === "object" || typeof call === "function")) {
-        return call;
-    }
-    return message_types_assert_this_initialized(self);
-}
-function message_types_set_prototype_of(o, p) {
-    message_types_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return message_types_set_prototype_of(o, p);
-}
-function message_types_type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-}
-function message_types_is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
+class BaseMessage {
+    constructor(sessionId){
+        message_types_define_property(this, "sessionId", void 0);
+        this.sessionId = sessionId;
     }
 }
-function message_types_create_super(Derived) {
-    var hasNativeReflectConstruct = message_types_is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = message_types_get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = message_types_get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-            result = Super.apply(this, arguments);
-        }
-        return message_types_possible_constructor_return(this, result);
-    };
+class InitMessage extends BaseMessage {
+    constructor(sessionId, value, version, mode, options){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.init);
+        message_types_define_property(this, "mode", void 0);
+        message_types_define_property(this, "options", void 0);
+        message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "version", void 0);
+        this.version = version;
+        this.options = options;
+        this.mode = mode;
+        this.value = value;
+    }
 }
-var BaseMessage = function BaseMessage(sessionId) {
-    "use strict";
-    message_types_class_call_check(this, BaseMessage);
-    message_types_define_property(this, "sessionId", void 0);
-    this.sessionId = sessionId;
-};
-var InitMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(InitMessage, BaseMessage);
-    var _super = message_types_create_super(InitMessage);
-    function InitMessage(sessionId, value, version, mode, options) {
-        message_types_class_call_check(this, InitMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.init);
-        message_types_define_property(message_types_assert_this_initialized(_this), "mode", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "options", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "version", void 0);
-        _this.version = version;
-        _this.options = options;
-        _this.mode = mode;
-        _this.value = value;
-        return _this;
+class FormatMessage extends BaseMessage {
+    constructor(sessionId, value, format){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.format);
+        message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "format", void 0);
+        this.value = value;
+        this.format = format;
     }
-    return InitMessage;
-}(BaseMessage);
-var FormatMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(FormatMessage, BaseMessage);
-    var _super = message_types_create_super(FormatMessage);
-    function FormatMessage(sessionId, value, format) {
-        message_types_class_call_check(this, FormatMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.format);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "format", void 0);
-        _this.value = value;
-        _this.format = format;
-        return _this;
+}
+class CompleteMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.complete);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
     }
-    return FormatMessage;
-}(BaseMessage);
-var CompleteMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(CompleteMessage, BaseMessage);
-    var _super = message_types_create_super(CompleteMessage);
-    function CompleteMessage(sessionId, value) {
-        message_types_class_call_check(this, CompleteMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.complete);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        _this.value = value;
-        return _this;
+}
+class ResolveCompletionMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.resolveCompletion);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
     }
-    return CompleteMessage;
-}(BaseMessage);
-var ResolveCompletionMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(ResolveCompletionMessage, BaseMessage);
-    var _super = message_types_create_super(ResolveCompletionMessage);
-    function ResolveCompletionMessage(sessionId, value) {
-        message_types_class_call_check(this, ResolveCompletionMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.resolveCompletion);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        _this.value = value;
-        return _this;
+}
+class HoverMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.hover);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
     }
-    return ResolveCompletionMessage;
-}(BaseMessage);
-var HoverMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(HoverMessage, BaseMessage);
-    var _super = message_types_create_super(HoverMessage);
-    function HoverMessage(sessionId, value) {
-        message_types_class_call_check(this, HoverMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.hover);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        _this.value = value;
-        return _this;
+}
+class ValidateMessage extends BaseMessage {
+    constructor(sessionId){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.validate);
     }
-    return HoverMessage;
-}(BaseMessage);
-var ValidateMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(ValidateMessage, BaseMessage);
-    var _super = message_types_create_super(ValidateMessage);
-    function ValidateMessage(sessionId) {
-        message_types_class_call_check(this, ValidateMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.validate);
-        return _this;
+}
+class ChangeMessage extends BaseMessage {
+    constructor(sessionId, value, version){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.change);
+        message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
     }
-    return ValidateMessage;
-}(BaseMessage);
-var ChangeMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(ChangeMessage, BaseMessage);
-    var _super = message_types_create_super(ChangeMessage);
-    function ChangeMessage(sessionId, value, version) {
-        message_types_class_call_check(this, ChangeMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.change);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "version", void 0);
-        _this.value = value;
-        _this.version = version;
-        return _this;
+}
+class DeltasMessage extends BaseMessage {
+    constructor(sessionId, value, version){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.applyDelta);
+        message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
     }
-    return ChangeMessage;
-}(BaseMessage);
-var DeltasMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(DeltasMessage, BaseMessage);
-    var _super = message_types_create_super(DeltasMessage);
-    function DeltasMessage(sessionId, value, version) {
-        message_types_class_call_check(this, DeltasMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.applyDelta);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "version", void 0);
-        _this.value = value;
-        _this.version = version;
-        return _this;
+}
+class ChangeModeMessage extends BaseMessage {
+    constructor(sessionId, value, mode){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.changeMode);
+        message_types_define_property(this, "mode", void 0);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
+        this.mode = mode;
     }
-    return DeltasMessage;
-}(BaseMessage);
-var ChangeModeMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(ChangeModeMessage, BaseMessage);
-    var _super = message_types_create_super(ChangeModeMessage);
-    function ChangeModeMessage(sessionId, value, mode) {
-        message_types_class_call_check(this, ChangeModeMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.changeMode);
-        message_types_define_property(message_types_assert_this_initialized(_this), "mode", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        _this.value = value;
-        _this.mode = mode;
-        return _this;
+}
+class ChangeOptionsMessage extends BaseMessage {
+    constructor(sessionId, options, merge = false){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.changeOptions);
+        message_types_define_property(this, "options", void 0);
+        message_types_define_property(this, "merge", void 0);
+        this.options = options;
+        this.merge = merge;
     }
-    return ChangeModeMessage;
-}(BaseMessage);
-var ChangeOptionsMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(ChangeOptionsMessage, BaseMessage);
-    var _super = message_types_create_super(ChangeOptionsMessage);
-    function ChangeOptionsMessage(sessionId, options) {
-        var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-        message_types_class_call_check(this, ChangeOptionsMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.changeOptions);
-        message_types_define_property(message_types_assert_this_initialized(_this), "options", void 0);
-        message_types_define_property(message_types_assert_this_initialized(_this), "merge", void 0);
-        _this.options = options;
-        _this.merge = merge;
-        return _this;
+}
+class DisposeMessage extends BaseMessage {
+    constructor(sessionId){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.dispose);
     }
-    return ChangeOptionsMessage;
-}(BaseMessage);
-var DisposeMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(DisposeMessage, BaseMessage);
-    var _super = message_types_create_super(DisposeMessage);
-    function DisposeMessage(sessionId) {
-        message_types_class_call_check(this, DisposeMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.dispose);
-        return _this;
+}
+class GlobalOptionsMessage {
+    constructor(serviceName, options, merge){
+        message_types_define_property(this, "type", MessageType.globalOptions);
+        message_types_define_property(this, "serviceName", void 0);
+        message_types_define_property(this, "options", void 0);
+        message_types_define_property(this, "merge", void 0);
+        this.serviceName = serviceName;
+        this.options = options;
+        this.merge = merge;
     }
-    return DisposeMessage;
-}(BaseMessage);
-var GlobalOptionsMessage = function GlobalOptionsMessage(serviceName, options, merge) {
-    "use strict";
-    message_types_class_call_check(this, GlobalOptionsMessage);
-    message_types_define_property(this, "type", MessageType.globalOptions);
-    message_types_define_property(this, "serviceName", void 0);
-    message_types_define_property(this, "options", void 0);
-    message_types_define_property(this, "merge", void 0);
-    this.serviceName = serviceName;
-    this.options = options;
-    this.merge = merge;
-};
-var ConfigureFeaturesMessage = function ConfigureFeaturesMessage(serviceName, options) {
-    "use strict";
-    message_types_class_call_check(this, ConfigureFeaturesMessage);
-    message_types_define_property(this, "type", MessageType.configureFeatures);
-    message_types_define_property(this, "serviceName", void 0);
-    message_types_define_property(this, "options", void 0);
-    this.serviceName = serviceName;
-    this.options = options;
-};
-var SignatureHelpMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(SignatureHelpMessage, BaseMessage);
-    var _super = message_types_create_super(SignatureHelpMessage);
-    function SignatureHelpMessage(sessionId, value) {
-        message_types_class_call_check(this, SignatureHelpMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.signatureHelp);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        _this.value = value;
-        return _this;
+}
+class ConfigureFeaturesMessage {
+    constructor(serviceName, options){
+        message_types_define_property(this, "type", MessageType.configureFeatures);
+        message_types_define_property(this, "serviceName", void 0);
+        message_types_define_property(this, "options", void 0);
+        this.serviceName = serviceName;
+        this.options = options;
     }
-    return SignatureHelpMessage;
-}(BaseMessage);
-var DocumentHighlightMessage = /*#__PURE__*/ function(BaseMessage) {
-    "use strict";
-    message_types_inherits(DocumentHighlightMessage, BaseMessage);
-    var _super = message_types_create_super(DocumentHighlightMessage);
-    function DocumentHighlightMessage(sessionId, value) {
-        message_types_class_call_check(this, DocumentHighlightMessage);
-        var _this;
-        _this = _super.call(this, sessionId);
-        message_types_define_property(message_types_assert_this_initialized(_this), "type", MessageType.documentHighlight);
-        message_types_define_property(message_types_assert_this_initialized(_this), "value", void 0);
-        _this.value = value;
-        return _this;
+}
+class SignatureHelpMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.signatureHelp);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
     }
-    return DocumentHighlightMessage;
-}(BaseMessage);
+}
+class DocumentHighlightMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.documentHighlight);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -44531,25 +44474,6 @@ var oop = __webpack_require__(89359);
 // EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event_emitter.js
 var event_emitter = __webpack_require__(23056);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller.ts
-function message_controller_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function message_controller_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function message_controller_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) message_controller_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) message_controller_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function message_controller_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -44566,130 +44490,76 @@ function message_controller_define_property(obj, key, value) {
 
 
 
-var MessageController = /*#__PURE__*/ function() {
-    "use strict";
-    function MessageController(worker) {
-        var _this = this;
-        message_controller_class_call_check(this, MessageController);
+class MessageController {
+    init(sessionId, document, mode, options, initCallback, validationCallback) {
+        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
+    }
+    doValidation(sessionId, callback) {
+        this.postMessage(new ValidateMessage(sessionId), callback);
+    }
+    doComplete(sessionId, position, callback) {
+        this.postMessage(new CompleteMessage(sessionId, position), callback);
+    }
+    doResolve(sessionId, completion, callback) {
+        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
+    }
+    format(sessionId, range, format, callback) {
+        this.postMessage(new FormatMessage(sessionId, range, format), callback);
+    }
+    doHover(sessionId, position, callback) {
+        this.postMessage(new HoverMessage(sessionId, position), callback);
+    }
+    change(sessionId, deltas, document, callback) {
+        let message;
+        if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
+            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+        } else {
+            message = new DeltasMessage(sessionId, deltas, document["version"]);
+        }
+        this.postMessage(message, callback);
+    }
+    changeMode(sessionId, value, mode, callback) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
+    }
+    changeOptions(sessionId, options, callback, merge = false) {
+        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
+    }
+    dispose(sessionId, callback) {
+        this.postMessage(new DisposeMessage(sessionId), callback);
+    }
+    setGlobalOptions(serviceName, options, merge = false) {
+        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+    }
+    provideSignatureHelp(sessionId, position, callback) {
+        this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
+    }
+    findDocumentHighlights(sessionId, position, callback) {
+        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
+    }
+    configureFeatures(serviceName, features) {
+        this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
+    }
+    postMessage(message, callback) {
+        if (callback) {
+            let eventName = message.type.toString() + "-" + message.sessionId;
+            let callbackFunction = (data)=>{
+                this["off"](eventName, callbackFunction);
+                callback(data);
+            };
+            this["on"](eventName, callbackFunction);
+        }
+        this.$worker.postMessage(message);
+    }
+    constructor(worker){
         message_controller_define_property(this, "$worker", void 0);
         this.$worker = worker;
-        this.$worker.addEventListener("message", function(e) {
-            var message = e.data;
-            _this["_signal"](message.type + "-" + message.sessionId, message.value);
+        this.$worker.addEventListener("message", (e)=>{
+            let message = e.data;
+            this["_signal"](message.type + "-" + message.sessionId, message.value);
         });
     }
-    message_controller_create_class(MessageController, [
-        {
-            key: "init",
-            value: function init(sessionId, document, mode, options, initCallback, validationCallback) {
-                this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
-                this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
-            }
-        },
-        {
-            key: "doValidation",
-            value: function doValidation(sessionId, callback) {
-                this.postMessage(new ValidateMessage(sessionId), callback);
-            }
-        },
-        {
-            key: "doComplete",
-            value: function doComplete(sessionId, position, callback) {
-                this.postMessage(new CompleteMessage(sessionId, position), callback);
-            }
-        },
-        {
-            key: "doResolve",
-            value: function doResolve(sessionId, completion, callback) {
-                this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
-            }
-        },
-        {
-            key: "format",
-            value: function format(sessionId, range, format, callback) {
-                this.postMessage(new FormatMessage(sessionId, range, format), callback);
-            }
-        },
-        {
-            key: "doHover",
-            value: function doHover(sessionId, position, callback) {
-                this.postMessage(new HoverMessage(sessionId, position), callback);
-            }
-        },
-        {
-            key: "change",
-            value: function change(sessionId, deltas, document, callback) {
-                var message;
-                if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-                    message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
-                } else {
-                    message = new DeltasMessage(sessionId, deltas, document["version"]);
-                }
-                this.postMessage(message, callback);
-            }
-        },
-        {
-            key: "changeMode",
-            value: function changeMode(sessionId, value, mode, callback) {
-                this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
-            }
-        },
-        {
-            key: "changeOptions",
-            value: function changeOptions(sessionId, options, callback) {
-                var merge = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false;
-                this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
-            }
-        },
-        {
-            key: "dispose",
-            value: function dispose(sessionId, callback) {
-                this.postMessage(new DisposeMessage(sessionId), callback);
-            }
-        },
-        {
-            key: "setGlobalOptions",
-            value: function setGlobalOptions(serviceName, options) {
-                var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-                this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
-            }
-        },
-        {
-            key: "provideSignatureHelp",
-            value: function provideSignatureHelp(sessionId, position, callback) {
-                this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
-            }
-        },
-        {
-            key: "findDocumentHighlights",
-            value: function findDocumentHighlights(sessionId, position, callback) {
-                this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
-            }
-        },
-        {
-            key: "configureFeatures",
-            value: function configureFeatures(serviceName, features) {
-                this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
-            }
-        },
-        {
-            key: "postMessage",
-            value: function postMessage(message, callback) {
-                var _this = this;
-                if (callback) {
-                    var eventName = message.type.toString() + "-" + message.sessionId;
-                    var callbackFunction = function(data) {
-                        _this["off"](eventName, callbackFunction);
-                        callback(data);
-                    };
-                    this["on"](eventName, callbackFunction);
-                }
-                this.$worker.postMessage(message);
-            }
-        }
-    ]);
-    return MessageController;
-}();
+}
 oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
@@ -44736,7 +44606,7 @@ function toPoint(position) {
     };
 }
 function toAnnotations(diagnostics) {
-    return diagnostics.map(function(el) {
+    return diagnostics.map((el)=>{
         return {
             row: el.range.start.line,
             column: el.range.start.character,
@@ -44747,13 +44617,13 @@ function toAnnotations(diagnostics) {
 }
 function toCompletion(item) {
     var _item_textEdit, _item_command;
-    var itemKind = item.kind;
-    var kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
+    let itemKind = item.kind;
+    let kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
     var _item_textEdit_newText, _ref;
-    var text = (_ref = (_item_textEdit_newText = (_item_textEdit = item.textEdit) === null || _item_textEdit === void 0 ? void 0 : _item_textEdit.newText) !== null && _item_textEdit_newText !== void 0 ? _item_textEdit_newText : item.insertText) !== null && _ref !== void 0 ? _ref : item.label;
-    var command = ((_item_command = item.command) === null || _item_command === void 0 ? void 0 : _item_command.command) == "editor.action.triggerSuggest" ? "startAutocomplete" : undefined;
-    var range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
-    var completion = {
+    let text = (_ref = (_item_textEdit_newText = (_item_textEdit = item.textEdit) === null || _item_textEdit === void 0 ? void 0 : _item_textEdit.newText) !== null && _item_textEdit_newText !== void 0 ? _item_textEdit_newText : item.insertText) !== null && _ref !== void 0 ? _ref : item.label;
+    let command = ((_item_command = item.command) === null || _item_command === void 0 ? void 0 : _item_command.command) == "editor.action.triggerSuggest" ? "startAutocomplete" : undefined;
+    let range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
+    let completion = {
         meta: kind,
         caption: item.label,
         command: command,
@@ -44775,24 +44645,22 @@ function toCompletion(item) {
 }
 function toCompletions(completions) {
     if (completions.length > 0) {
-        var combinedCompletions = completions.map(function(el) {
+        let combinedCompletions = completions.map((el)=>{
             if (!el.completions) {
                 return [];
             }
-            var allCompletions;
+            let allCompletions;
             if (Array.isArray(el.completions)) {
                 allCompletions = el.completions;
             } else {
                 allCompletions = el.completions.items;
             }
-            return allCompletions.map(function(item) {
+            return allCompletions.map((item)=>{
                 item["service"] = el.service;
                 return item;
             });
         }).flat();
-        return combinedCompletions.map(function(item) {
-            return toCompletion(item);
-        });
+        return combinedCompletions.map((item)=>toCompletion(item));
     }
     return [];
 }
@@ -44801,7 +44669,7 @@ function toResolvedCompletion(completion, item) {
     return completion;
 }
 function toCompletionItem(completion) {
-    var command;
+    let command;
     if (completion["command"]) {
         command = {
             title: "triggerSuggest",
@@ -44809,7 +44677,7 @@ function toCompletionItem(completion) {
         };
     }
     var _completion_caption;
-    var completionItem = {
+    let completionItem = {
         label: (_completion_caption = completion.caption) !== null && _completion_caption !== void 0 ? _completion_caption : "",
         kind: common_converters_CommonConverter.convertKind(completion.meta),
         command: command,
@@ -44835,7 +44703,7 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        var rangeList = new range_list/* RangeList */.$();
+        let rangeList = new range_list/* RangeList */.$();
         rangeList.ranges = [
             toRange(textEdit.insert),
             toRange(textEdit.replace)
@@ -44848,16 +44716,17 @@ function getTextEditRange(textEdit) {
     }
 }
 function toTooltip(hover) {
+    var _hover_find;
     if (!hover) return;
-    var content = hover.map(function(el) {
+    let content = hover.map((el)=>{
         if (main.MarkupContent.is(el.contents)) {
             return fromMarkupContent(el.contents);
         } else if (main.MarkedString.is(el.contents)) {
             return "```" + el.contents.value + "```";
         } else {
-            var contents = el.contents.map(function(el) {
+            let contents = el.contents.map((el)=>{
                 if (typeof el !== "string") {
-                    return "```".concat(el.value, "```");
+                    return `\`\`\`${el.value}\`\`\``;
                 } else {
                     return el;
                 }
@@ -44865,25 +44734,29 @@ function toTooltip(hover) {
             return contents.join("\n\n");
         }
     });
-    //TODO: not to forget about `range` when we will have this feature in editor
+    //TODO: it could be merged within all ranges in future
+    let lspRange = (_hover_find = hover.find((el)=>el.range)) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
+    let range;
+    if (lspRange) range = toRange(lspRange);
     return {
         content: {
             type: "markdown",
             text: content.join("\n\n")
-        }
+        },
+        range: range
     };
 }
 function fromSignatureHelp(signatureHelp) {
     if (!signatureHelp) return;
-    var content = signatureHelp.map(function(el) {
-        var signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
-        var activeSignature = el.signatures[signatureIndex];
-        var activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
-        var contents = activeSignature.label;
+    let content = signatureHelp.map((el)=>{
+        let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
+        let activeSignature = el.signatures[signatureIndex];
+        let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
+        let contents = activeSignature.label;
         if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
-            var param = activeSignature.parameters[activeParam].label;
+            let param = activeSignature.parameters[activeParam].label;
             if (typeof param == "string") {
-                contents = contents.replace(param, "**".concat(param, "**"));
+                contents = contents.replace(param, `**${param}**`);
             }
         }
         if (activeSignature.documentation) {
@@ -44913,14 +44786,14 @@ function fromMarkupContent(content) {
     }
 }
 function fromAceDelta(delta, eol) {
-    var text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
+    const text = delta.lines.length > 1 ? delta.lines.join(eol) : delta.lines[0];
     return {
         range: delta.action === "insert" ? rangeFromPositions(fromPoint(delta.start), fromPoint(delta.start)) : rangeFromPositions(fromPoint(delta.start), fromPoint(delta.end)),
         text: delta.action === "insert" ? text : ""
     };
 }
 function filterDiagnostics(diagnostics, filterErrors) {
-    return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map(function(el) {
+    return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el)=>{
         if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
             el.severity = DiagnosticSeverity.Warning;
         } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
@@ -44934,52 +44807,6 @@ function filterDiagnostics(diagnostics, filterErrors) {
 var showdown = __webpack_require__(53787);
 var showdown_default = /*#__PURE__*/__webpack_require__.n(showdown);
 ;// CONCATENATED MODULE: ./packages/ace-linters/cdn-worker.ts
-function _array_like_to_array(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
-    for(var i = 0, arr2 = new Array(len); i < len; i++)arr2[i] = arr[i];
-    return arr2;
-}
-function _array_with_holes(arr) {
-    if (Array.isArray(arr)) return arr;
-}
-function _iterable_to_array_limit(arr, i) {
-    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
-    if (_i == null) return;
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _s, _e;
-    try {
-        for(_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true){
-            _arr.push(_s.value);
-            if (i && _arr.length === i) break;
-        }
-    } catch (err) {
-        _d = true;
-        _e = err;
-    } finally{
-        try {
-            if (!_n && _i["return"] != null) _i["return"]();
-        } finally{
-            if (_d) throw _e;
-        }
-    }
-    return _arr;
-}
-function _non_iterable_rest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-function _sliced_to_array(arr, i) {
-    return _array_with_holes(arr) || _iterable_to_array_limit(arr, i) || _unsupported_iterable_to_array(arr, i) || _non_iterable_rest();
-}
-function _unsupported_iterable_to_array(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _array_like_to_array(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(n);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _array_like_to_array(o, minLen);
-}
 function $workerBlob(script) {
     return new Blob([
         script.toString()
@@ -44989,8 +44816,8 @@ function $workerBlob(script) {
 }
 function createWorker(cdnUrl, includeLinters) {
     if (typeof Worker == "undefined") return {
-        postMessage: function postMessage() {},
-        terminate: function terminate() {}
+        postMessage: function() {},
+        terminate: function() {}
     };
     var blob = $workerBlob(generateLintersImport(cdnUrl, includeLinters));
     var URL = window.URL || window.webkitURL;
@@ -44999,20 +44826,117 @@ function createWorker(cdnUrl, includeLinters) {
     return new Worker(blobURL);
 }
 function generateLintersImport(cdnUrl, includeLinters) {
-    var jsonService = 'manager.registerService("json", {\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/json-service.js");\n            return {JsonService};\n        },\n        className: "JsonService",\n        modes: "json|json5"\n    });');
-    var htmlService = 'manager.registerService("html", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/html-service.js");\n            return {HtmlService};\n        },\n        className: "HtmlService",\n        modes: "html"\n    });');
-    var cssService = 'manager.registerService("css", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "css"\n    });');
-    var lessService = 'manager.registerService("less", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "less"\n    });');
-    var scssService = 'manager.registerService("scss", {\n        features: {signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/css-service.js");\n            return {CssService};\n        },\n        className: "CssService",\n        modes: "scss"\n    });');
-    var typeScriptService = 'manager.registerService("typescript", {\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/typescript-service.js");\n            return {TypescriptService};\n        },\n        className: "TypescriptService",\n        modes: "typescript|tsx|javascript|jsx",\n    });');
-    var luaService = 'manager.registerService("lua", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/lua-service.js");\n            return {LuaService};\n        },\n        className: "LuaService",\n        modes: "lua",\n    });');
-    var yamlService = 'manager.registerService("yaml", {\n        features: {signatureHelp: false, documentHighlight: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/yaml-service.js");\n            return {YamlService};\n        },\n        className: "YamlService",\n        modes: "yaml",\n    });');
-    var xmlService = 'manager.registerService("xml", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/xml-service.js");\n            return {XmlService};\n        },\n        className: "XmlService",\n        modes: "xml",\n    });');
-    var phpService = 'manager.registerService("php", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/php-service.js");\n            return {PhpService};\n        },\n        className: "PhpService",\n        modes: "php"\n    });');
-    var javascriptService = 'manager.registerService("javascript", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/javascript-service.js");\n            return {JavascriptService};\n        },\n        className: "JavascriptService",\n        modes: "javascript",\n    });');
-    var pythonService = 'manager.registerService("python", {\n        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},\n        module: () => {\n            importScripts("'.concat(cdnUrl, '/python-service.js");\n            return {PythonService};\n        },\n        className: "PythonService",\n        modes: "python",\n    });');
+    const jsonService = `manager.registerService("json", {
+        module: () => {
+            importScripts("${cdnUrl}/json-service.js");
+            return {JsonService};
+        },
+        className: "JsonService",
+        modes: "json|json5"
+    });`;
+    const htmlService = `manager.registerService("html", {
+        features: {signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/html-service.js");
+            return {HtmlService};
+        },
+        className: "HtmlService",
+        modes: "html"
+    });`;
+    const cssService = `manager.registerService("css", {
+        features: {signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/css-service.js");
+            return {CssService};
+        },
+        className: "CssService",
+        modes: "css"
+    });`;
+    const lessService = `manager.registerService("less", {
+        features: {signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/css-service.js");
+            return {CssService};
+        },
+        className: "CssService",
+        modes: "less"
+    });`;
+    const scssService = `manager.registerService("scss", {
+        features: {signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/css-service.js");
+            return {CssService};
+        },
+        className: "CssService",
+        modes: "scss"
+    });`;
+    const typeScriptService = `manager.registerService("typescript", {
+        module: () => {
+            importScripts("${cdnUrl}/typescript-service.js");
+            return {TypescriptService};
+        },
+        className: "TypescriptService",
+        modes: "typescript|tsx|javascript|jsx",
+    });`;
+    const luaService = `manager.registerService("lua", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/lua-service.js");
+            return {LuaService};
+        },
+        className: "LuaService",
+        modes: "lua",
+    });`;
+    const yamlService = `manager.registerService("yaml", {
+        features: {signatureHelp: false, documentHighlight: false},
+        module: () => {
+            importScripts("${cdnUrl}/yaml-service.js");
+            return {YamlService};
+        },
+        className: "YamlService",
+        modes: "yaml",
+    });`;
+    const xmlService = `manager.registerService("xml", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/xml-service.js");
+            return {XmlService};
+        },
+        className: "XmlService",
+        modes: "xml",
+    });`;
+    const phpService = `manager.registerService("php", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/php-service.js");
+            return {PhpService};
+        },
+        className: "PhpService",
+        modes: "php"
+    });`;
+    const javascriptService = `manager.registerService("javascript", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/javascript-service.js");
+            return {JavascriptService};
+        },
+        className: "JavascriptService",
+        modes: "javascript",
+    });`;
+    const pythonService = `manager.registerService("python", {
+        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
+        module: () => {
+            importScripts("${cdnUrl}/python-service.js");
+            return {PythonService};
+        },
+        className: "PythonService",
+        modes: "python",
+    });`;
     if (!includeLinters) {
-        return '!function () {\n    importScripts("'.concat(cdnUrl, '/service-manager.js");\n    let manager = new ServiceManager(self);\n    ').concat([
+        return `!function () {
+    importScripts("${cdnUrl}/service-manager.js");
+    let manager = new ServiceManager(self);
+    ${[
             jsonService,
             htmlService,
             cssService,
@@ -45025,11 +44949,11 @@ function generateLintersImport(cdnUrl, includeLinters) {
             phpService,
             pythonService,
             javascriptService
-        ].join("\n"), "\n}()");
+        ].join("\n")}
+}()`;
     }
-    var services = [];
-    Object.entries(includeLinters).forEach(function(param) {
-        var _param = _sliced_to_array(param, 2), key = _param[0], value = _param[1];
+    let services = [];
+    Object.entries(includeLinters).forEach(([key, value])=>{
         if (value) {
             switch(key){
                 case "javascript":
@@ -45071,35 +44995,14 @@ function generateLintersImport(cdnUrl, includeLinters) {
             }
         }
     });
-    return '!function () {\n    importScripts("'.concat(cdnUrl, '/service-manager.js");\n    let manager = new ServiceManager(self);\n    ').concat(services.join("\n"), "\n}()");
+    return `!function () {
+    importScripts("${cdnUrl}/service-manager.js");
+    let manager = new ServiceManager(self);
+    ${services.join("\n")}
+}()`;
 }
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/components/signature-tooltip.ts
-function signature_tooltip_assert_this_initialized(self) {
-    if (self === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return self;
-}
-function signature_tooltip_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function signature_tooltip_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function signature_tooltip_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) signature_tooltip_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) signature_tooltip_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function signature_tooltip_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -45113,197 +45016,70 @@ function signature_tooltip_define_property(obj, key, value) {
     }
     return obj;
 }
-function signature_tooltip_get_prototype_of(o) {
-    signature_tooltip_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
-        return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return signature_tooltip_get_prototype_of(o);
-}
-function signature_tooltip_inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            writable: true,
-            configurable: true
-        }
-    });
-    if (superClass) signature_tooltip_set_prototype_of(subClass, superClass);
-}
-function signature_tooltip_possible_constructor_return(self, call) {
-    if (call && (signature_tooltip_type_of(call) === "object" || typeof call === "function")) {
-        return call;
-    }
-    return signature_tooltip_assert_this_initialized(self);
-}
-function signature_tooltip_set_prototype_of(o, p) {
-    signature_tooltip_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return signature_tooltip_set_prototype_of(o, p);
-}
-function signature_tooltip_type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-}
-function signature_tooltip_is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-function signature_tooltip_create_super(Derived) {
-    var hasNativeReflectConstruct = signature_tooltip_is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = signature_tooltip_get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = signature_tooltip_get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
-        } else {
-            result = Super.apply(this, arguments);
-        }
-        return signature_tooltip_possible_constructor_return(this, result);
-    };
-}
 
-var SignatureTooltip = /*#__PURE__*/ function(BaseTooltip) {
-    "use strict";
-    signature_tooltip_inherits(SignatureTooltip, BaseTooltip);
-    var _super = signature_tooltip_create_super(SignatureTooltip);
-    function SignatureTooltip() {
-        signature_tooltip_class_call_check(this, SignatureTooltip);
-        var _this;
-        _this = _super.apply(this, arguments);
-        signature_tooltip_define_property(signature_tooltip_assert_this_initialized(_this), "provideSignatureHelp", function() {
-            if (!_this.provider.options.functionality.signatureHelp) return;
-            var cursor = _this.$activeEditor.getCursorPosition();
-            var session = _this.$activeEditor.session;
-            var docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
-            _this.provider.provideSignatureHelp(session, docPos, function(tooltip) {
+class SignatureTooltip extends BaseTooltip {
+    registerEditor(editor) {
+        // @ts-ignore
+        editor.on("changeSelection", ()=>this.onChangeSelection(editor));
+    }
+    update(editor) {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.provideSignatureHelp();
+        } else {
+            this.$mouseMoveTimer = setTimeout(()=>{
+                this.$activateEditor(editor);
+                this.provideSignatureHelp();
+                this.$mouseMoveTimer = undefined;
+            }, 500);
+        }
+    }
+    constructor(...args){
+        super(...args);
+        signature_tooltip_define_property(this, "provideSignatureHelp", ()=>{
+            if (!this.provider.options.functionality.signatureHelp) return;
+            let cursor = this.$activeEditor.getCursorPosition();
+            let session = this.$activeEditor.session;
+            let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
+            this.provider.provideSignatureHelp(session, docPos, (tooltip)=>{
                 var _tooltip_range, _tooltip_range1;
-                var descriptionText = tooltip ? _this.provider.getTooltipText(tooltip) : null;
+                let descriptionText = tooltip ? this.provider.getTooltipText(tooltip) : null;
                 if (!tooltip || !descriptionText) {
-                    _this.hide();
+                    this.hide();
                     return;
                 }
-                var token = session.getTokenAt(docPos.row, docPos.column);
+                let token = session.getTokenAt(docPos.row, docPos.column);
                 var _tooltip_range_start_row;
-                var row = (_tooltip_range_start_row = (_tooltip_range = tooltip.range) === null || _tooltip_range === void 0 ? void 0 : _tooltip_range.start.row) !== null && _tooltip_range_start_row !== void 0 ? _tooltip_range_start_row : docPos.row;
+                let row = (_tooltip_range_start_row = (_tooltip_range = tooltip.range) === null || _tooltip_range === void 0 ? void 0 : _tooltip_range.start.row) !== null && _tooltip_range_start_row !== void 0 ? _tooltip_range_start_row : docPos.row;
                 var _tooltip_range_start_column, _ref;
-                var column = (_ref = (_tooltip_range_start_column = (_tooltip_range1 = tooltip.range) === null || _tooltip_range1 === void 0 ? void 0 : _tooltip_range1.start.column) !== null && _tooltip_range_start_column !== void 0 ? _tooltip_range_start_column : token === null || token === void 0 ? void 0 : token.start) !== null && _ref !== void 0 ? _ref : 0;
-                if (_this.descriptionText != descriptionText) {
-                    _this.hide();
-                    _this.setHtml(descriptionText);
-                    _this.descriptionText = descriptionText;
-                } else if (_this.row == row && _this.column == column && _this.isOpen) {
+                let column = (_ref = (_tooltip_range_start_column = (_tooltip_range1 = tooltip.range) === null || _tooltip_range1 === void 0 ? void 0 : _tooltip_range1.start.column) !== null && _tooltip_range_start_column !== void 0 ? _tooltip_range_start_column : token === null || token === void 0 ? void 0 : token.start) !== null && _ref !== void 0 ? _ref : 0;
+                if (this.descriptionText != descriptionText) {
+                    this.hide();
+                    this.setHtml(descriptionText);
+                    this.descriptionText = descriptionText;
+                } else if (this.row == row && this.column == column && this.isOpen) {
                     return;
                 }
-                _this.row = row;
-                _this.column = column;
-                if (_this.$mouseMoveTimer) {
-                    _this.$show();
+                this.row = row;
+                this.column = column;
+                if (this.$mouseMoveTimer) {
+                    this.$show();
                 } else {
-                    _this.$showTimer = setTimeout(function() {
-                        _this.$show();
-                        _this.$showTimer = undefined;
+                    this.$showTimer = setTimeout(()=>{
+                        this.$show();
+                        this.$showTimer = undefined;
                     }, 500);
                 }
             });
         });
-        signature_tooltip_define_property(signature_tooltip_assert_this_initialized(_this), "onChangeSelection", function(editor) {
-            _this.update(editor);
+        signature_tooltip_define_property(this, "onChangeSelection", (editor)=>{
+            this.update(editor);
         });
-        return _this;
     }
-    signature_tooltip_create_class(SignatureTooltip, [
-        {
-            key: "registerEditor",
-            value: function registerEditor(editor) {
-                var _this = this;
-                // @ts-ignore
-                editor.on("changeSelection", function() {
-                    return _this.onChangeSelection(editor);
-                });
-            }
-        },
-        {
-            key: "update",
-            value: function update(editor) {
-                var _this = this;
-                clearTimeout(this.$mouseMoveTimer);
-                clearTimeout(this.$showTimer);
-                if (this.isOpen) {
-                    this.provideSignatureHelp();
-                } else {
-                    this.$mouseMoveTimer = setTimeout(function() {
-                        _this.$activateEditor(editor);
-                        _this.provideSignatureHelp();
-                        _this.$mouseMoveTimer = undefined;
-                    }, 500);
-                }
-            }
-        }
-    ]);
-    return SignatureTooltip;
-}(BaseTooltip);
+}
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/language-provider.ts
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-        var info = gen[key](arg);
-        var value = info.value;
-    } catch (error) {
-        reject(error);
-        return;
-    }
-    if (info.done) {
-        resolve(value);
-    } else {
-        Promise.resolve(value).then(_next, _throw);
-    }
-}
-function _async_to_generator(fn) {
-    return function() {
-        var self = this, args = arguments;
-        return new Promise(function(resolve, reject) {
-            var gen = fn.apply(self, args);
-            function _next(value) {
-                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-            }
-            function _throw(err) {
-                asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-            }
-            _next(undefined);
-        });
-    };
-}
-function language_provider_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function language_provider_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function language_provider_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) language_provider_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) language_provider_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function language_provider_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -45317,114 +45093,150 @@ function language_provider_define_property(obj, key, value) {
     }
     return obj;
 }
-function _ts_generator(thisArg, body) {
-    var f, y, t, g, _ = {
-        label: 0,
-        sent: function() {
-            if (t[0] & 1) throw t[1];
-            return t[1];
-        },
-        trys: [],
-        ops: []
-    };
-    return(g = {
-        next: verb(0),
-        "throw": verb(1),
-        "return": verb(2)
-    }, typeof Symbol === "function" && (g[Symbol.iterator] = function() {
-        return this;
-    }), g);
-    function verb(n) {
-        return function(v) {
-            return step([
-                n,
-                v
-            ]);
-        };
+
+
+
+
+
+
+
+
+class LanguageProvider {
+    /**
+     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  webworker
+     * @param {Worker} worker
+     * @param {ProviderOptions} options
+     */ static create(worker, options) {
+        let messageController;
+        messageController = new MessageController(worker);
+        return new LanguageProvider(messageController, options);
     }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while(_)try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [
-                op[0] & 2,
-                t.value
-            ];
-            switch(op[0]){
-                case 0:
-                case 1:
-                    t = op;
-                    break;
-                case 4:
-                    _.label++;
-                    return {
-                        value: op[1],
-                        done: false
-                    };
-                case 5:
-                    _.label++;
-                    y = op[1];
-                    op = [
-                        0
-                    ];
-                    continue;
-                case 7:
-                    op = _.ops.pop();
-                    _.trys.pop();
-                    continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-                        _ = 0;
-                        continue;
-                    }
-                    if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-                        _.label = op[1];
-                        break;
-                    }
-                    if (op[0] === 6 && _.label < t[1]) {
-                        _.label = t[1];
-                        t = op;
-                        break;
-                    }
-                    if (t && _.label < t[2]) {
-                        _.label = t[2];
-                        _.ops.push(op);
-                        break;
-                    }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop();
-                    continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) {
-            op = [
-                6,
-                e
-            ];
-            y = 0;
-        } finally{
-            f = t = 0;
+    static fromCdn(cdnUrl, options) {
+        let messageController;
+        if (cdnUrl == "" || !/^http(s)?:/.test(cdnUrl)) {
+            throw "Url is not valid";
         }
-        if (op[0] & 5) throw op[1];
-        return {
-            value: op[0] ? op[1] : void 0,
-            done: true
-        };
+        if (cdnUrl[cdnUrl.length - 1] == "/") {
+            cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
+        }
+        let worker = createWorker(cdnUrl);
+        // @ts-ignore
+        messageController = new MessageController(worker);
+        return new LanguageProvider(messageController, options);
     }
-}
-
-
-
-
-
-
-
-
-var LanguageProvider = /*#__PURE__*/ function() {
-    "use strict";
-    function LanguageProvider(messageController, options) {
-        var _this = this;
-        language_provider_class_call_check(this, LanguageProvider);
+    $getSessionLanguageProvider(session) {
+        return this.$sessionLanguageProviders[session["id"]];
+    }
+    $getFileName(session) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        return sessionLanguageProvider.fileName;
+    }
+    registerEditor(editor) {
+        if (!this.editors.includes(editor)) this.$registerEditor(editor);
+        this.$registerSession(editor.session);
+    }
+    $registerEditor(editor) {
+        this.editors.push(editor);
+        editor.setOption("useWorker", false);
+        editor.on("changeSession", ({ session  })=>this.$registerSession(session));
+        if (this.options.functionality.completion) {
+            this.$registerCompleters(editor);
+        }
+        var _this_activeEditor;
+        (_this_activeEditor = this.activeEditor) !== null && _this_activeEditor !== void 0 ? _this_activeEditor : this.activeEditor = editor;
+        editor.on("focus", ()=>{
+            this.activeEditor = editor;
+        });
+        if (this.options.functionality.documentHighlights) {
+            var $timer;
+            // @ts-ignore
+            editor.on("changeSelection", ()=>{
+                if (!$timer) $timer = setTimeout(()=>{
+                    let cursor = editor.getCursorPosition();
+                    let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+                    this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                    $timer = undefined;
+                }, 50);
+            });
+        }
+        this.$descriptionTooltip.registerEditor(editor);
+        this.$signatureTooltip.registerEditor(editor);
+    }
+    setSessionOptions(session, options) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        sessionLanguageProvider.setOptions(options);
+    }
+    setGlobalOptions(serviceName, options, merge = false) {
+        this.$messageController.setGlobalOptions(serviceName, options, merge);
+    }
+    configureServiceFeatures(serviceName, features) {
+        this.$messageController.configureFeatures(serviceName, features);
+    }
+    doHover(session, position, callback) {
+        this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover)=>callback && callback(toTooltip(hover)));
+    }
+    provideSignatureHelp(session, position, callback) {
+        this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp)=>callback && callback(fromSignatureHelp(signatureHelp)));
+    }
+    getTooltipText(hover) {
+        return hover.content.type === "markdown" ? common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
+    }
+    doComplete(editor, session, callback) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completions)=>completions && callback(toCompletions(completions)));
+    }
+    doResolve(item, callback) {
+        this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
+    }
+    $registerCompleters(editor) {
+        let completer = {
+            getCompletions: async (editor, session, pos, prefix, callback)=>{
+                this.$getSessionLanguageProvider(session).$sendDeltaQueue(()=>{
+                    this.doComplete(editor, session, (completions)=>{
+                        let fileName = this.$getFileName(session);
+                        if (!completions) return;
+                        completions.forEach((item)=>{
+                            item.completerId = completer.id;
+                            item["fileName"] = fileName;
+                        });
+                        callback(null, common_converters_CommonConverter.normalizeRanges(completions));
+                    });
+                });
+            },
+            getDocTooltip: (item)=>{
+                if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                    this.doResolve(item, (completionItem)=>{
+                        item["isResolved"] = true;
+                        if (!completionItem) return;
+                        let completion = toResolvedCompletion(item, completionItem);
+                        item.docText = completion.docText;
+                        if (completion.docHTML) {
+                            item.docHTML = completion.docHTML;
+                        } else if (completion["docMarkdown"]) {
+                            item.docHTML = common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(completion["docMarkdown"]));
+                        }
+                        if (editor["completer"]) {
+                            editor["completer"].updateDocTooltip();
+                        }
+                    });
+                }
+                return item;
+            },
+            id: "lspCompleters"
+        };
+        if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
+            editor.completers = [
+                completer
+            ];
+        } else {
+            editor.completers.push(completer);
+        }
+    }
+    dispose() {
+    // this.$messageController.dispose(this.$fileName);
+    }
+    constructor(messageController, options){
         var _this_options, _this_options1;
         language_provider_define_property(this, "activeEditor", void 0);
         language_provider_define_property(this, "$descriptionTooltip", void 0);
@@ -45433,14 +45245,14 @@ var LanguageProvider = /*#__PURE__*/ function() {
         language_provider_define_property(this, "$sessionLanguageProviders", {});
         language_provider_define_property(this, "editors", []);
         language_provider_define_property(this, "options", void 0);
-        language_provider_define_property(this, "$registerSession", function(session, options) {
+        language_provider_define_property(this, "$registerSession", (session, options)=>{
             var _this_$sessionLanguageProviders, _session_id;
             var _;
-            (_ = (_this_$sessionLanguageProviders = _this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(session, _this.$messageController, options);
+            (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(session, this.$messageController, options);
         });
-        language_provider_define_property(this, "format", function() {
-            if (!_this.options.functionality.format) return;
-            var sessionLanguageProvider = _this.$getSessionLanguageProvider(_this.activeEditor.session);
+        language_provider_define_property(this, "format", ()=>{
+            if (!this.options.functionality.format) return;
+            let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
             sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
         });
         this.$messageController = messageController;
@@ -45461,221 +45273,33 @@ var LanguageProvider = /*#__PURE__*/ function() {
         this.$signatureTooltip = new SignatureTooltip(this);
         this.$descriptionTooltip = new DescriptionTooltip(this);
     }
-    language_provider_create_class(LanguageProvider, [
-        {
-            key: "$getSessionLanguageProvider",
-            value: function $getSessionLanguageProvider(session) {
-                return this.$sessionLanguageProviders[session["id"]];
-            }
-        },
-        {
-            key: "$getFileName",
-            value: function $getFileName(session) {
-                var sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-                return sessionLanguageProvider.fileName;
-            }
-        },
-        {
-            key: "registerEditor",
-            value: function registerEditor(editor) {
-                if (!this.editors.includes(editor)) this.$registerEditor(editor);
-                this.$registerSession(editor.session);
-            }
-        },
-        {
-            key: "$registerEditor",
-            value: function $registerEditor(editor) {
-                var _this = this;
-                this.editors.push(editor);
-                editor.setOption("useWorker", false);
-                editor.on("changeSession", function(param) {
-                    var session = param.session;
-                    return _this.$registerSession(session);
-                });
-                if (this.options.functionality.completion) {
-                    this.$registerCompleters(editor);
-                }
-                var _this_activeEditor;
-                (_this_activeEditor = this.activeEditor) !== null && _this_activeEditor !== void 0 ? _this_activeEditor : this.activeEditor = editor;
-                editor.on("focus", function() {
-                    _this.activeEditor = editor;
-                });
-                if (this.options.functionality.documentHighlights) {
-                    var $timer;
-                    // @ts-ignore
-                    editor.on("changeSelection", function() {
-                        if (!$timer) $timer = setTimeout(function() {
-                            var cursor = editor.getCursorPosition();
-                            var sessionLanguageProvider = _this.$getSessionLanguageProvider(editor.session);
-                            _this.$messageController.findDocumentHighlights(_this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
-                            $timer = undefined;
-                        }, 50);
-                    });
-                }
-                this.$descriptionTooltip.registerEditor(editor);
-                this.$signatureTooltip.registerEditor(editor);
-            }
-        },
-        {
-            key: "setSessionOptions",
-            value: function setSessionOptions(session, options) {
-                var sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-                sessionLanguageProvider.setOptions(options);
-            }
-        },
-        {
-            key: "setGlobalOptions",
-            value: function setGlobalOptions(serviceName, options) {
-                var merge = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : false;
-                this.$messageController.setGlobalOptions(serviceName, options, merge);
-            }
-        },
-        {
-            key: "configureServiceFeatures",
-            value: function configureServiceFeatures(serviceName, features) {
-                this.$messageController.configureFeatures(serviceName, features);
-            }
-        },
-        {
-            key: "doHover",
-            value: function doHover(session, position, callback) {
-                this.$messageController.doHover(this.$getFileName(session), fromPoint(position), function(hover) {
-                    return callback && callback(toTooltip(hover));
-                });
-            }
-        },
-        {
-            key: "provideSignatureHelp",
-            value: function provideSignatureHelp(session, position, callback) {
-                this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), function(signatureHelp) {
-                    return callback && callback(fromSignatureHelp(signatureHelp));
-                });
-            }
-        },
-        {
-            key: "getTooltipText",
-            value: function getTooltipText(hover) {
-                return hover.content.type === "markdown" ? common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
-            }
-        },
-        {
-            key: "doComplete",
-            value: function doComplete(editor, session, callback) {
-                var cursor = editor.getCursorPosition();
-                this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), function(completions) {
-                    return completions && callback(toCompletions(completions));
-                });
-            }
-        },
-        {
-            key: "doResolve",
-            value: function doResolve(item, callback) {
-                this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
-            }
-        },
-        {
-            key: "$registerCompleters",
-            value: function $registerCompleters(editor) {
-                var _this = this;
-                var _this1 = this;
-                var completer = {
-                    getCompletions: function() {
-                        var _ref = _async_to_generator(function(editor, session, pos, prefix, callback) {
-                            return _ts_generator(this, function(_state) {
-                                _this1.$getSessionLanguageProvider(session).$sendDeltaQueue(function() {
-                                    _this1.doComplete(editor, session, function(completions) {
-                                        var fileName = _this1.$getFileName(session);
-                                        if (!completions) return;
-                                        completions.forEach(function(item) {
-                                            item.completerId = completer.id;
-                                            item["fileName"] = fileName;
-                                        });
-                                        callback(null, common_converters_CommonConverter.normalizeRanges(completions));
-                                    });
-                                });
-                                return [
-                                    2
-                                ];
-                            });
-                        });
-                        return function(editor, session, pos, prefix, callback) {
-                            return _ref.apply(this, arguments);
-                        };
-                    }(),
-                    getDocTooltip: function(item) {
-                        if (_this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
-                            _this.doResolve(item, function(completionItem) {
-                                item["isResolved"] = true;
-                                if (!completionItem) return;
-                                var completion = toResolvedCompletion(item, completionItem);
-                                item.docText = completion.docText;
-                                if (completion.docHTML) {
-                                    item.docHTML = completion.docHTML;
-                                } else if (completion["docMarkdown"]) {
-                                    item.docHTML = common_converters_CommonConverter.cleanHtml(_this.options.markdownConverter.makeHtml(completion["docMarkdown"]));
-                                }
-                                if (editor["completer"]) {
-                                    editor["completer"].updateDocTooltip();
-                                }
-                            });
-                        }
-                        return item;
-                    },
-                    id: "lspCompleters"
-                };
-                if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
-                    editor.completers = [
-                        completer
-                    ];
-                } else {
-                    editor.completers.push(completer);
-                }
-            }
-        },
-        {
-            key: "dispose",
-            value: function dispose() {
-            // this.$messageController.dispose(this.$fileName);
-            }
+}
+class SessionLanguageProvider {
+    initFileName() {
+        this.fileName = this.session["id"] + "." + this.$extension;
+    }
+    get $extension() {
+        let mode = this.$mode.replace("ace/mode/", "");
+        var _this_extensions_mode;
+        return (_this_extensions_mode = this.extensions[mode]) !== null && _this_extensions_mode !== void 0 ? _this_extensions_mode : mode;
+    }
+    get $mode() {
+        return this.session["$modeId"];
+    }
+    get $format() {
+        return {
+            tabSize: this.session.getTabSize(),
+            insertSpaces: this.session.getUseSoftTabs()
+        };
+    }
+    setOptions(options) {
+        if (!this.$isConnected) {
+            this.$options = options;
+            return;
         }
-    ], [
-        {
-            key: "create",
-            value: /**
-     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
-     *  webworker
-     * @param {Worker} worker
-     * @param {ProviderOptions} options
-     */ function create(worker, options) {
-                var messageController;
-                messageController = new MessageController(worker);
-                return new LanguageProvider(messageController, options);
-            }
-        },
-        {
-            key: "fromCdn",
-            value: function fromCdn(cdnUrl, options) {
-                var messageController;
-                if (cdnUrl == "" || !/^http(s)?:/.test(cdnUrl)) {
-                    throw "Url is not valid";
-                }
-                if (cdnUrl[cdnUrl.length - 1] == "/") {
-                    cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
-                }
-                var worker = createWorker(cdnUrl);
-                // @ts-ignore
-                messageController = new MessageController(worker);
-                return new LanguageProvider(messageController, options);
-            }
-        }
-    ]);
-    return LanguageProvider;
-}();
-var SessionLanguageProvider = /*#__PURE__*/ function() {
-    "use strict";
-    function SessionLanguageProvider(session, messageController, options) {
-        var _this = this;
-        language_provider_class_call_check(this, SessionLanguageProvider);
+        this.$messageController.changeOptions(this.fileName, options);
+    }
+    constructor(session, messageController, options){
         language_provider_define_property(this, "session", void 0);
         language_provider_define_property(this, "fileName", void 0);
         language_provider_define_property(this, "$messageController", void 0);
@@ -45687,97 +45311,61 @@ var SessionLanguageProvider = /*#__PURE__*/ function() {
             "typescript": "ts",
             "javascript": "js"
         });
-        language_provider_define_property(this, "$connected", function() {
-            _this.$isConnected = true;
-            if (_this.$modeIsChanged) _this.$changeMode();
-            if (_this.$deltaQueue) _this.$sendDeltaQueue();
-            if (_this.$options) _this.setOptions(_this.$options);
+        language_provider_define_property(this, "$connected", ()=>{
+            this.$isConnected = true;
+            if (this.$modeIsChanged) this.$changeMode();
+            if (this.$deltaQueue) this.$sendDeltaQueue();
+            if (this.$options) this.setOptions(this.$options);
         });
-        language_provider_define_property(this, "$changeMode", function() {
-            if (!_this.$isConnected) {
-                _this.$modeIsChanged = true;
+        language_provider_define_property(this, "$changeMode", ()=>{
+            if (!this.$isConnected) {
+                this.$modeIsChanged = true;
                 return;
             }
-            _this.$deltaQueue = [];
-            _this.$messageController.changeMode(_this.fileName, _this.session.getValue(), _this.$mode);
+            this.$deltaQueue = [];
+            this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
         });
-        language_provider_define_property(this, "$changeListener", function(delta) {
-            _this.session.doc["version"]++;
-            if (!_this.$deltaQueue) {
-                _this.$deltaQueue = [];
-                setTimeout(_this.$sendDeltaQueue, 0);
+        language_provider_define_property(this, "$changeListener", (delta)=>{
+            this.session.doc["version"]++;
+            if (!this.$deltaQueue) {
+                this.$deltaQueue = [];
+                setTimeout(this.$sendDeltaQueue, 0);
             }
-            _this.$deltaQueue.push(delta);
+            this.$deltaQueue.push(delta);
         });
-        language_provider_define_property(this, "$sendDeltaQueue", function(callback) {
-            var deltas = _this.$deltaQueue;
+        language_provider_define_property(this, "$sendDeltaQueue", (callback)=>{
+            let deltas = this.$deltaQueue;
             if (!deltas) return callback && callback();
-            _this.$deltaQueue = null;
-            if (deltas.length) _this.$messageController.change(_this.fileName, deltas.map(function(delta) {
-                return fromAceDelta(delta, _this.session.doc.getNewLineCharacter());
-            }), _this.session.doc, callback);
+            this.$deltaQueue = null;
+            if (deltas.length) this.$messageController.change(this.fileName, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
         });
-        language_provider_define_property(this, "$showAnnotations", function(diagnostics) {
-            var annotations = toAnnotations(diagnostics);
-            _this.session.setAnnotations(annotations);
+        language_provider_define_property(this, "$showAnnotations", (diagnostics)=>{
+            let annotations = toAnnotations(diagnostics);
+            this.session.setAnnotations(annotations);
         });
-        language_provider_define_property(this, "validate", function() {
-            _this.$messageController.doValidation(_this.fileName, _this.$showAnnotations);
+        language_provider_define_property(this, "validate", ()=>{
+            this.$messageController.doValidation(this.fileName, this.$showAnnotations);
         });
-        language_provider_define_property(this, "format", function() {
-            var selectionRanges = _this.session.getSelection().getAllRanges();
-            var $format = _this.$format;
+        language_provider_define_property(this, "format", ()=>{
+            let selectionRanges = this.session.getSelection().getAllRanges();
+            let $format = this.$format;
             if (!selectionRanges || selectionRanges[0].isEmpty()) {
-                var row = _this.session.getLength();
-                var column = _this.session.getLine(row).length - 1;
+                let row = this.session.getLength();
+                let column = this.session.getLine(row).length - 1;
                 selectionRanges = [
                     new ace.Range(0, 0, row, column)
                 ];
             }
-            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-            try {
-                for(var _iterator = selectionRanges[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                    var range = _step.value;
-                    _this.$messageController.format(_this.fileName, fromRange(range), $format, _this.$applyFormat);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally{
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                        _iterator.return();
-                    }
-                } finally{
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
+            for (let range of selectionRanges){
+                this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
             }
         });
-        language_provider_define_property(this, "$applyFormat", function(edits) {
-            var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-            try {
-                for(var _iterator = edits.reverse()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-                    var edit = _step.value;
-                    _this.session.replace(toRange(edit.range), edit.newText);
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally{
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return != null) {
-                        _iterator.return();
-                    }
-                } finally{
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
+        language_provider_define_property(this, "$applyFormat", (edits)=>{
+            for (let edit of edits.reverse()){
+                this.session.replace(toRange(edit.range), edit.newText);
             }
         });
-        language_provider_define_property(this, "$applyDocumentHiglight", function(documentHighlights) {
+        language_provider_define_property(this, "$applyDocumentHiglight", (documentHighlights)=>{
         //TODO: place for your code
         });
         this.$messageController = messageController;
@@ -45789,49 +45377,7 @@ var SessionLanguageProvider = /*#__PURE__*/ function() {
         session.on("changeMode", this.$changeMode);
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
-    language_provider_create_class(SessionLanguageProvider, [
-        {
-            key: "initFileName",
-            value: function initFileName() {
-                this.fileName = this.session["id"] + "." + this.$extension;
-            }
-        },
-        {
-            key: "$extension",
-            get: function get() {
-                var mode = this.$mode.replace("ace/mode/", "");
-                var _this_extensions_mode;
-                return (_this_extensions_mode = this.extensions[mode]) !== null && _this_extensions_mode !== void 0 ? _this_extensions_mode : mode;
-            }
-        },
-        {
-            key: "$mode",
-            get: function get() {
-                return this.session["$modeId"];
-            }
-        },
-        {
-            key: "$format",
-            get: function get() {
-                return {
-                    tabSize: this.session.getTabSize(),
-                    insertSpaces: this.session.getUseSoftTabs()
-                };
-            }
-        },
-        {
-            key: "setOptions",
-            value: function setOptions(options) {
-                if (!this.$isConnected) {
-                    this.$options = options;
-                    return;
-                }
-                this.$messageController.changeOptions(this.fileName, options);
-            }
-        }
-    ]);
-    return SessionLanguageProvider;
-}();
+}
 
 // EXTERNAL MODULE: ./node_modules/vscode-jsonrpc/lib/browser/main.js
 var browser_main = __webpack_require__(39054);
@@ -46074,31 +45620,6 @@ var events = __webpack_require__(17187);
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/browser.js
 var browser = __webpack_require__(5224);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller-ws.ts
-function message_controller_ws_assert_this_initialized(self) {
-    if (self === void 0) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-    return self;
-}
-function message_controller_ws_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function message_controller_ws_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function message_controller_ws_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) message_controller_ws_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) message_controller_ws_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 function message_controller_ws_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -46112,97 +45633,245 @@ function message_controller_ws_define_property(obj, key, value) {
     }
     return obj;
 }
-function message_controller_ws_get_prototype_of(o) {
-    message_controller_ws_get_prototype_of = Object.setPrototypeOf ? Object.getPrototypeOf : function getPrototypeOf(o) {
-        return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return message_controller_ws_get_prototype_of(o);
-}
-function message_controller_ws_inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function");
+
+
+
+class MessageControllerWS extends events.EventEmitter {
+    configureFeatures(serviceName, features) {
+        throw new Error('Method not implemented.');
     }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-        constructor: {
-            value: subClass,
-            writable: true,
-            configurable: true
-        }
-    });
-    if (superClass) message_controller_ws_set_prototype_of(subClass, superClass);
-}
-function _instanceof(left, right) {
-    if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
-        return !!right[Symbol.hasInstance](left);
-    } else {
-        return left instanceof right;
+    $connectSocket() {
+        listen({
+            webSocket: this.socket,
+            logger: new ConsoleLogger(),
+            onConnection: (connection)=>{
+                this.$connect(connection);
+            }
+        });
     }
-}
-function message_controller_ws_possible_constructor_return(self, call) {
-    if (call && (message_controller_ws_type_of(call) === "object" || typeof call === "function")) {
-        return call;
+    $connectWorker(worker) {
+        const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
+        this.$connect(connection);
     }
-    return message_controller_ws_assert_this_initialized(self);
-}
-function message_controller_ws_set_prototype_of(o, p) {
-    message_controller_ws_set_prototype_of = Object.setPrototypeOf || function setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return message_controller_ws_set_prototype_of(o, p);
-}
-function message_controller_ws_type_of(obj) {
-    "@swc/helpers - typeof";
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
-}
-function message_controller_ws_is_native_reflect_construct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-        Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function() {}));
-        return true;
-    } catch (e) {
-        return false;
+    $connect(connection) {
+        connection.listen();
+        this.isConnected = true;
+        this.connection = connection;
+        this.sendInitialize();
+        this.connection.onNotification('textDocument/publishDiagnostics', (result)=>{
+            this.emit("validate-" + result.uri, result.diagnostics);
+        });
+        this.connection.onNotification('window/showMessage', (params)=>{
+            this.emit('logging', params);
+        });
+        this.connection.onRequest('window/showMessageRequest', (params)=>{
+            this.emit('logging', params);
+        });
+        this.connection.onError((e)=>{
+            this.emit('error', e);
+        });
+        this.connection.onClose(()=>{
+            this.isConnected = false;
+        });
+        this.initSessionQueue.forEach((initSession)=>this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
-}
-function message_controller_ws_create_super(Derived) {
-    var hasNativeReflectConstruct = message_controller_ws_is_native_reflect_construct();
-    return function _createSuperInternal() {
-        var Super = message_controller_ws_get_prototype_of(Derived), result;
-        if (hasNativeReflectConstruct) {
-            var NewTarget = message_controller_ws_get_prototype_of(this).constructor;
-            result = Reflect.construct(Super, arguments, NewTarget);
+    init(sessionId, document, mode, options, initCallback, validationCallback) {
+        this["on"]("validate-" + sessionId, validationCallback);
+        const textDocumentMessage = {
+            textDocument: {
+                uri: sessionId,
+                languageId: mode,
+                text: document.getValue(),
+                version: document["version"]
+            }
+        };
+        if (!this.isConnected) {
+            this.initSessionQueue.push({
+                textDocumentMessage: textDocumentMessage,
+                initCallback: initCallback
+            });
         } else {
-            result = Super.apply(this, arguments);
+            this.initSession(textDocumentMessage, initCallback);
         }
-        return message_controller_ws_possible_constructor_return(this, result);
-    };
-}
-
-
-
-var MessageControllerWS = /*#__PURE__*/ function(_events_EventEmitter) {
-    "use strict";
-    message_controller_ws_inherits(MessageControllerWS, _events_EventEmitter);
-    var _super = message_controller_ws_create_super(MessageControllerWS);
-    function MessageControllerWS(mode) {
-        message_controller_ws_class_call_check(this, MessageControllerWS);
-        var _this;
-        _this = _super.call(this);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "isConnected", false);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "isInitialized", false);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "socket", void 0);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "serverCapabilities", void 0);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "connection", void 0);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "initSessionQueue", []);
-        message_controller_ws_define_property(message_controller_ws_assert_this_initialized(_this), "clientCapabilities", {
+    }
+    initSession(textDocumentMessage, initCallback) {
+        this.connection.sendNotification('textDocument/didOpen', textDocumentMessage);
+        initCallback();
+    }
+    close() {
+        if (this.connection) {
+            this.connection.dispose();
+        }
+        this.socket.close();
+    }
+    sendInitialize() {
+        if (!this.isConnected) {
+            return;
+        }
+        const message = {
+            capabilities: this.clientCapabilities,
+            initializationOptions: null,
+            processId: null,
+            rootUri: "",
+            workspaceFolders: null
+        };
+        this.connection.sendRequest("initialize", message).then((params)=>{
+            this.isInitialized = true;
+            this.serverCapabilities = params.capabilities;
+            this.connection.sendNotification('initialized');
+            this.connection.sendNotification('workspace/didChangeConfiguration', {
+                settings: {}
+            });
+        });
+    }
+    change(sessionId, deltas, document, callback) {
+        if (!this.isConnected) {
+            return;
+        }
+        const textDocumentChange = {
+            textDocument: {
+                uri: sessionId,
+                version: document["version"]
+            },
+            contentChanges: deltas
+        };
+        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
+    }
+    doHover(sessionId, position, callback) {
+        if (!this.isInitialized) {
+            return;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
+            return;
+        }
+        let options = {
+            textDocument: {
+                uri: sessionId
+            },
+            position: position
+        };
+        let hoverCallback = (result)=>{
+            callback && callback([
+                result
+            ]);
+        };
+        this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
+    }
+    doComplete(sessionId, position, callback) {
+        if (!this.isInitialized) {
+            return;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
+            return;
+        }
+        let options = {
+            textDocument: {
+                uri: sessionId
+            },
+            position: position
+        };
+        let completionCallback = (result)=>{
+            callback && callback(result);
+        };
+        this.postMessage('textDocument/completion', sessionId, options, completionCallback);
+    }
+    doResolve(sessionId, completion, callback) {
+        var _this_serverCapabilities, _this_serverCapabilities_completionProvider;
+        if (!this.isInitialized) return;
+        if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : (_this_serverCapabilities_completionProvider = _this_serverCapabilities.completionProvider) === null || _this_serverCapabilities_completionProvider === void 0 ? void 0 : _this_serverCapabilities_completionProvider.resolveProvider)) return;
+        this.postMessage('completionItem/resolve', sessionId, completion["item"], (result)=>{
+            callback && callback(result);
+        });
+    }
+    changeMode(sessionId, value, mode, callback) {}
+    changeOptions(sessionId, options, callback) {}
+    dispose(sessionId, callback) {
+        this.connection.sendNotification('textDocument/didClose', {
+            textDocument: {
+                uri: sessionId
+            }
+        });
+    }
+    doValidation(sessionId, callback) {
+    //TODO: textDocument/diagnostic capability
+    }
+    format(sessionId, range, format, callback) {
+        if (!this.isInitialized) {
+            return;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
+            return;
+        }
+        let options = {
+            textDocument: {
+                uri: sessionId
+            },
+            options: format,
+            range: range
+        };
+        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params)=>{
+            callback && callback(params);
+        });
+    }
+    setGlobalOptions(serviceName, options, merge) {}
+    postMessage(name, sessionId, options, callback) {
+        let eventName = name + "-" + sessionId;
+        let callbackFunction = (data)=>{
+            this["off"](eventName, callbackFunction);
+            callback(data);
+        };
+        this["on"](eventName, callbackFunction);
+        this.connection.sendRequest(name, options).then((params)=>{
+            this.emit(eventName, params);
+        });
+    }
+    findDocumentHighlights(sessionId, position, callback) {
+        var _this_serverCapabilities;
+        if (!this.isInitialized) return;
+        if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.documentHighlightProvider)) return;
+        let options = {
+            textDocument: {
+                uri: sessionId
+            },
+            position: position
+        };
+        let documentHighlightCallback = (result)=>{
+            callback && callback(result);
+        };
+        this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
+    }
+    provideSignatureHelp(sessionId, position, callback) {
+        var _this_serverCapabilities;
+        if (!this.isInitialized) return;
+        if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.signatureHelpProvider)) return;
+        let options = {
+            textDocument: {
+                uri: sessionId
+            },
+            position: position
+        };
+        let signatureHelpCallback = (result)=>{
+            callback && callback([
+                result
+            ]);
+        };
+        this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
+    }
+    constructor(mode){
+        super();
+        message_controller_ws_define_property(this, "isConnected", false);
+        message_controller_ws_define_property(this, "isInitialized", false);
+        message_controller_ws_define_property(this, "socket", void 0);
+        message_controller_ws_define_property(this, "serverCapabilities", void 0);
+        message_controller_ws_define_property(this, "connection", void 0);
+        message_controller_ws_define_property(this, "initSessionQueue", []);
+        message_controller_ws_define_property(this, "clientCapabilities", {
             textDocument: {
                 hover: {
                     dynamicRegistration: true,
                     contentFormat: [
-                        "markdown",
-                        "plaintext"
+                        'markdown',
+                        'plaintext'
                     ]
                 },
                 synchronization: {
@@ -46220,8 +45889,8 @@ var MessageControllerWS = /*#__PURE__*/ function(_events_EventEmitter) {
                         snippetSupport: true,
                         commitCharactersSupport: false,
                         documentationFormat: [
-                            "markdown",
-                            "plaintext"
+                            'markdown',
+                            'plaintext'
                         ],
                         deprecatedSupport: false,
                         preselectSupport: false
@@ -46231,8 +45900,8 @@ var MessageControllerWS = /*#__PURE__*/ function(_events_EventEmitter) {
                 signatureHelp: {
                     signatureInformation: {
                         documentationFormat: [
-                            "markdown",
-                            "plaintext"
+                            'markdown',
+                            'plaintext'
                         ],
                         activeParameterSupport: true
                     }
@@ -46247,350 +45916,28 @@ var MessageControllerWS = /*#__PURE__*/ function(_events_EventEmitter) {
                 }
             }
         });
-        if (_instanceof(mode, Worker)) {
-            _this.$connectWorker(mode);
+        if (mode instanceof Worker) {
+            this.$connectWorker(mode);
         } else {
-            _this.socket = mode;
-            _this.$connectSocket();
+            this.socket = mode;
+            this.$connectSocket();
         }
-        return _this;
     }
-    message_controller_ws_create_class(MessageControllerWS, [
-        {
-            key: "configureFeatures",
-            value: function configureFeatures(serviceName, features) {
-                throw new Error("Method not implemented.");
-            }
-        },
-        {
-            key: "$connectSocket",
-            value: function $connectSocket() {
-                var _this = this;
-                listen({
-                    webSocket: this.socket,
-                    logger: new ConsoleLogger(),
-                    onConnection: function(connection) {
-                        _this.$connect(connection);
-                    }
-                });
-            }
-        },
-        {
-            key: "$connectWorker",
-            value: function $connectWorker(worker) {
-                var connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
-                this.$connect(connection);
-            }
-        },
-        {
-            key: "$connect",
-            value: function $connect(connection) {
-                var _this = this;
-                connection.listen();
-                this.isConnected = true;
-                this.connection = connection;
-                this.sendInitialize();
-                this.connection.onNotification("textDocument/publishDiagnostics", function(result) {
-                    _this.emit("validate-" + result.uri, result.diagnostics);
-                });
-                this.connection.onNotification("window/showMessage", function(params) {
-                    _this.emit("logging", params);
-                });
-                this.connection.onRequest("window/showMessageRequest", function(params) {
-                    _this.emit("logging", params);
-                });
-                this.connection.onError(function(e) {
-                    _this.emit("error", e);
-                });
-                this.connection.onClose(function() {
-                    _this.isConnected = false;
-                });
-                this.initSessionQueue.forEach(function(initSession) {
-                    return _this.initSession(initSession.textDocumentMessage, initSession.initCallback);
-                });
-            }
-        },
-        {
-            key: "init",
-            value: function init(sessionId, document, mode, options, initCallback, validationCallback) {
-                this["on"]("validate-" + sessionId, validationCallback);
-                var textDocumentMessage = {
-                    textDocument: {
-                        uri: sessionId,
-                        languageId: mode,
-                        text: document.getValue(),
-                        version: document["version"]
-                    }
-                };
-                if (!this.isConnected) {
-                    this.initSessionQueue.push({
-                        textDocumentMessage: textDocumentMessage,
-                        initCallback: initCallback
-                    });
-                } else {
-                    this.initSession(textDocumentMessage, initCallback);
-                }
-            }
-        },
-        {
-            key: "initSession",
-            value: function initSession(textDocumentMessage, initCallback) {
-                this.connection.sendNotification("textDocument/didOpen", textDocumentMessage);
-                initCallback();
-            }
-        },
-        {
-            key: "close",
-            value: function close() {
-                if (this.connection) {
-                    this.connection.dispose();
-                }
-                this.socket.close();
-            }
-        },
-        {
-            key: "sendInitialize",
-            value: function sendInitialize() {
-                var _this = this;
-                if (!this.isConnected) {
-                    return;
-                }
-                var message = {
-                    capabilities: this.clientCapabilities,
-                    initializationOptions: null,
-                    processId: null,
-                    rootUri: "",
-                    workspaceFolders: null
-                };
-                this.connection.sendRequest("initialize", message).then(function(params) {
-                    _this.isInitialized = true;
-                    _this.serverCapabilities = params.capabilities;
-                    _this.connection.sendNotification("initialized");
-                    _this.connection.sendNotification("workspace/didChangeConfiguration", {
-                        settings: {}
-                    });
-                });
-            }
-        },
-        {
-            key: "change",
-            value: function change(sessionId, deltas, document, callback) {
-                if (!this.isConnected) {
-                    return;
-                }
-                var textDocumentChange = {
-                    textDocument: {
-                        uri: sessionId,
-                        version: document["version"]
-                    },
-                    contentChanges: deltas
-                };
-                this.connection.sendNotification("textDocument/didChange", textDocumentChange);
-            }
-        },
-        {
-            key: "doHover",
-            value: function doHover(sessionId, position, callback) {
-                if (!this.isInitialized) {
-                    return;
-                }
-                if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
-                    return;
-                }
-                var options = {
-                    textDocument: {
-                        uri: sessionId
-                    },
-                    position: position
-                };
-                var hoverCallback = function(result) {
-                    callback && callback([
-                        result
-                    ]);
-                };
-                this.postMessage("textDocument/hover", sessionId, options, hoverCallback);
-            }
-        },
-        {
-            key: "doComplete",
-            value: function doComplete(sessionId, position, callback) {
-                if (!this.isInitialized) {
-                    return;
-                }
-                if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
-                    return;
-                }
-                var options = {
-                    textDocument: {
-                        uri: sessionId
-                    },
-                    position: position
-                };
-                var completionCallback = function(result) {
-                    callback && callback(result);
-                };
-                this.postMessage("textDocument/completion", sessionId, options, completionCallback);
-            }
-        },
-        {
-            key: "doResolve",
-            value: function doResolve(sessionId, completion, callback) {
-                var _this_serverCapabilities, _this_serverCapabilities_completionProvider;
-                if (!this.isInitialized) return;
-                if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : (_this_serverCapabilities_completionProvider = _this_serverCapabilities.completionProvider) === null || _this_serverCapabilities_completionProvider === void 0 ? void 0 : _this_serverCapabilities_completionProvider.resolveProvider)) return;
-                this.postMessage("completionItem/resolve", sessionId, completion["item"], function(result) {
-                    callback && callback(result);
-                });
-            }
-        },
-        {
-            key: "changeMode",
-            value: function changeMode(sessionId, value, mode, callback) {}
-        },
-        {
-            key: "changeOptions",
-            value: function changeOptions(sessionId, options, callback) {}
-        },
-        {
-            key: "dispose",
-            value: function dispose(sessionId, callback) {
-                this.connection.sendNotification("textDocument/didClose", {
-                    textDocument: {
-                        uri: sessionId
-                    }
-                });
-            }
-        },
-        {
-            key: "doValidation",
-            value: function doValidation(sessionId, callback) {
-            //TODO: textDocument/diagnostic capability
-            }
-        },
-        {
-            key: "format",
-            value: function format(sessionId, range, format, callback) {
-                if (!this.isInitialized) {
-                    return;
-                }
-                if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
-                    return;
-                }
-                var options = {
-                    textDocument: {
-                        uri: sessionId
-                    },
-                    options: format,
-                    range: range
-                };
-                this.postMessage("textDocument/rangeFormatting", sessionId, options, function(params) {
-                    callback && callback(params);
-                });
-            }
-        },
-        {
-            key: "setGlobalOptions",
-            value: function setGlobalOptions(serviceName, options, merge) {}
-        },
-        {
-            key: "postMessage",
-            value: function postMessage(name, sessionId, options, callback) {
-                var _this = this;
-                var eventName = name + "-" + sessionId;
-                var callbackFunction = function(data) {
-                    _this["off"](eventName, callbackFunction);
-                    callback(data);
-                };
-                this["on"](eventName, callbackFunction);
-                this.connection.sendRequest(name, options).then(function(params) {
-                    _this.emit(eventName, params);
-                });
-            }
-        },
-        {
-            key: "findDocumentHighlights",
-            value: function findDocumentHighlights(sessionId, position, callback) {
-                var _this_serverCapabilities;
-                if (!this.isInitialized) return;
-                if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.documentHighlightProvider)) return;
-                var options = {
-                    textDocument: {
-                        uri: sessionId
-                    },
-                    position: position
-                };
-                var documentHighlightCallback = function(result) {
-                    callback && callback(result);
-                };
-                this.postMessage("textDocument/documentHighlight", sessionId, options, documentHighlightCallback);
-            }
-        },
-        {
-            key: "provideSignatureHelp",
-            value: function provideSignatureHelp(sessionId, position, callback) {
-                var _this_serverCapabilities;
-                if (!this.isInitialized) return;
-                if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.signatureHelpProvider)) return;
-                var options = {
-                    textDocument: {
-                        uri: sessionId
-                    },
-                    position: position
-                };
-                var signatureHelpCallback = function(result) {
-                    callback && callback([
-                        result
-                    ]);
-                };
-                this.postMessage("textDocument/signatureHelp", sessionId, options, signatureHelpCallback);
-            }
-        }
-    ]);
-    return MessageControllerWS;
-}(events.EventEmitter);
+}
 
 ;// CONCATENATED MODULE: ./packages/ace-linters/ace-language-client.ts
-function ace_language_client_class_call_check(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-function ace_language_client_defineProperties(target, props) {
-    for(var i = 0; i < props.length; i++){
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ("value" in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-    }
-}
-function ace_language_client_create_class(Constructor, protoProps, staticProps) {
-    if (protoProps) ace_language_client_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) ace_language_client_defineProperties(Constructor, staticProps);
-    return Constructor;
-}
 
 
-var AceLanguageClient = /*#__PURE__*/ function() {
-    "use strict";
-    function AceLanguageClient() {
-        ace_language_client_class_call_check(this, AceLanguageClient);
-    }
-    ace_language_client_create_class(AceLanguageClient, null, [
-        {
-            key: "for",
-            value: /**
+class AceLanguageClient {
+    /**
      *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
      * @param {Worker | WebSocket} mode
      * @param {ProviderOptions} options
-     */ function _for(mode, options) {
-                var messageController = new MessageControllerWS(mode);
-                return new LanguageProvider(messageController, options);
-            }
-        }
-    ]);
-    return AceLanguageClient;
-}();
+     */ static for(mode, options) {
+        let messageController = new MessageControllerWS(mode);
+        return new LanguageProvider(messageController, options);
+    }
+}
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ext/language_tools.js
 var language_tools = __webpack_require__(11105);
@@ -46602,14 +45949,14 @@ var textmate_namespaceObject = /*#__PURE__*/__webpack_require__.t(textmate, 2);
 
 
 function createCloseButton(el) {
-    var closeButton = document.createElement("span");
-    closeButton.innerText = "\xd7";
+    let closeButton = document.createElement("span");
+    closeButton.innerText = "\u00D7";
     closeButton.style.cursor = "pointer";
     el.appendChild(closeButton);
     return closeButton;
 }
 function createModeNameText(el, name) {
-    var modeName = document.createElement("p");
+    let modeName = document.createElement("p");
     modeName.innerText = name;
     modeName.style.margin = "0";
     modeName.style.paddingRight = "10px";
@@ -46618,17 +45965,17 @@ function createModeNameText(el, name) {
     return modeName;
 }
 function createEditorWithLSP(mode, i, languageProvider) {
-    var el = document.createElement("div");
-    var modeName = createModeNameText(el, mode.name);
-    var closeButton = createCloseButton(el);
-    var editorContainer = document.createElement("div");
+    let el = document.createElement("div");
+    let modeName = createModeNameText(el, mode.name);
+    let closeButton = createCloseButton(el);
+    let editorContainer = document.createElement("div");
     editorContainer.setAttribute("id", "container" + i);
     editorContainer.style.height = "300px";
     el.appendChild(editorContainer);
     el.style.width = "49%";
     el.style.float = "left";
     document.body.appendChild(el);
-    var editor = ace.edit("container" + i);
+    let editor = ace.edit("container" + i);
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
@@ -46642,9 +45989,9 @@ function createEditorWithLSP(mode, i, languageProvider) {
     editor.session.setMode(mode.mode);
     languageProvider.registerEditor(editor);
     var _mode_options;
-    var options = (_mode_options = mode.options) !== null && _mode_options !== void 0 ? _mode_options : {};
+    let options = (_mode_options = mode.options) !== null && _mode_options !== void 0 ? _mode_options : {};
     languageProvider.setSessionOptions(editor.session, options);
-    closeButton.onclick = function() {
+    closeButton.onclick = ()=>{
         editor.destroy();
         editor.container.remove();
         modeName.remove();
@@ -46661,8 +46008,8 @@ function createEditorWithLSP(mode, i, languageProvider) {
 
 
 
-var webSocket = new WebSocket("ws://localhost:3000/exampleServer");
-var modes = [
+const webSocket = new WebSocket("ws://localhost:3000/exampleServer");
+let modes = [
     {
         name: "json",
         mode: "ace/mode/json",
@@ -46680,41 +46027,24 @@ var modes = [
         }
     }
 ];
-var languageProvider = AceLanguageClient["for"](webSocket);
-var i = 0;
-var _iteratorNormalCompletion = true, _didIteratorError = false, _iteratorError = undefined;
-try {
-    for(var _iterator = modes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true){
-        var mode = _step.value;
-        createEditorWithLSP(mode, i, languageProvider);
-        i++;
-    }
-} catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-} finally{
-    try {
-        if (!_iteratorNormalCompletion && _iterator.return != null) {
-            _iterator.return();
-        }
-    } finally{
-        if (_didIteratorError) {
-            throw _iteratorError;
-        }
-    }
+let languageProvider = AceLanguageClient["for"](webSocket);
+let i = 0;
+for (let mode of modes){
+    createEditorWithLSP(mode, i, languageProvider);
+    i++;
 }
-var menuKb = new hash_handler.HashHandler([
+let menuKb = new hash_handler.HashHandler([
     {
         bindKey: "Ctrl-Shift-B",
         name: "format",
-        exec: function exec() {
+        exec: function() {
             languageProvider.format();
         }
     }
 ]);
 lib_event.addCommandKeyListener(window, function(e, hashId, keyCode) {
-    var keyString = keys.keyCodeToString(keyCode);
-    var command = menuKb.findKeyCommand(hashId, keyString);
+    let keyString = keys.keyCodeToString(keyCode);
+    let command = menuKb.findKeyCommand(hashId, keyString);
     if (command) {
         command.exec();
         e.preventDefault();
