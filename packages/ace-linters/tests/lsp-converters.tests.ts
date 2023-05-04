@@ -20,15 +20,14 @@ import {
     toResolvedCompletion, toTooltip
 } from "../type-converters/lsp-converters";
 import {CompletionService, Tooltip} from "../types";
-import {Ace} from "ace-code";
 
 describe('Converters from/to Language Server Protocol', () => {
     describe('fromRange', () => {
-        it('should convert an Ace.Range to a Range', () => {
+        it('should convert an AceRangeData to a Range', () => {
             const aceRange = {
                 start: {row: 0, column: 1},
                 end: {row:2, column: 3}
-            } as Ace.Range;
+            };
 
             const expectedRange = {
                 start: {
@@ -70,7 +69,7 @@ describe('Converters from/to Language Server Protocol', () => {
     });
 
     describe('toRange', () => {
-        it('should convert a Range to an Ace.Range', () => {
+        it('should convert a Range to an AceRangeData', () => {
             const range = {
                 start: {
                     line: 0,
@@ -85,7 +84,7 @@ describe('Converters from/to Language Server Protocol', () => {
             const expectedAceRange = {
                 start: {row: 0, column: 1},
                 end: {row:2, column: 3}
-            } as Ace.Range;
+            };
 
             const result = Converter.toRange(range);
 

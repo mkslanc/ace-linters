@@ -16,12 +16,12 @@ import {
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {CommonConverter} from "./common-converters";
-import {CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
+import {AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
 import {checkValueAgainstRegexpArray} from "../utils";
 
 import {mergeRanges} from "../utils";
 
-export function fromRange(range: Ace.Range): Range {
+export function fromRange(range: AceRangeData): Range {
     return {
         start: {
             line: range.start.row,
@@ -38,7 +38,7 @@ export function rangeFromPositions(start: Position, end: Position): Range {
     }
 }
 
-export function toRange(range: Range): Ace.Range {
+export function toRange(range: Range): AceRangeData {
     return {
         start: {
             row: range.start.line,
@@ -48,7 +48,7 @@ export function toRange(range: Range): Ace.Range {
             row: range.end.line,
             column: range.end.character
         }
-    } as Ace.Range
+    }
 }
 
 export function fromPoint(point: Ace.Point): Position {
@@ -158,7 +158,7 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
     return completionItem;
 }
 
-export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): Ace.Range {
+export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): AceRangeData {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit as InsertReplaceEdit;
         let mergedRanges = mergeRanges([toRange(textEdit.insert), toRange(textEdit.replace)]);
