@@ -2,7 +2,6 @@ import {expect} from "chai";
 
 import * as Converter from "../type-converters/lsp-converters";
 
-import {Range as AceRange} from "ace-code/src/range";
 import {
     CompletionItem,
     CompletionItemKind,
@@ -24,8 +23,11 @@ import {CompletionService, Tooltip} from "../types";
 
 describe('Converters from/to Language Server Protocol', () => {
     describe('fromRange', () => {
-        it('should convert an Ace.Range to a Range', () => {
-            const aceRange = new AceRange(0, 1, 2, 3);
+        it('should convert an AceRangeData to a Range', () => {
+            const aceRange = {
+                start: {row: 0, column: 1},
+                end: {row:2, column: 3}
+            };
 
             const expectedRange = {
                 start: {
@@ -67,7 +69,7 @@ describe('Converters from/to Language Server Protocol', () => {
     });
 
     describe('toRange', () => {
-        it('should convert a Range to an Ace.Range', () => {
+        it('should convert a Range to an AceRangeData', () => {
             const range = {
                 start: {
                     line: 0,
@@ -79,7 +81,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 }
             };
 
-            const expectedAceRange = new AceRange(0, 1, 2, 3);
+            const expectedAceRange = {
+                start: {row: 0, column: 1},
+                end: {row:2, column: 3}
+            };
 
             const result = Converter.toRange(range);
 
@@ -213,7 +218,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new AceRange(0, 1, 0, 5),
+                range: {
+                    start: {row: 0, column: 1},
+                    end: {row:0, column: 5}
+                },
                 documentation: {
                     kind: "markdown",
                     value: "Test value"
@@ -239,7 +247,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new AceRange(0, 1, 0, 5),
+                range: {
+                    start: {row: 0, column: 1},
+                    end: {row:0, column: 5}
+                },
                 documentation: {
                     kind: "markdown",
                     value: "Test value"

@@ -15,14 +15,13 @@ import {
     DiagnosticSeverity
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
-import {Range as AceRange} from "ace-code/src/range";
-import {RangeList} from "ace-code/src/range_list";
 import {CommonConverter} from "./common-converters";
-import {CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
+import {AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
 import {checkValueAgainstRegexpArray} from "../utils";
 
+import {mergeRanges} from "../utils";
 
-export function fromRange(range: Ace.Range): Range {
+export function fromRange(range: AceRangeData): Range {
     return {
         start: {
             line: range.start.row,
@@ -39,8 +38,17 @@ export function rangeFromPositions(start: Position, end: Position): Range {
     }
 }
 
-export function toRange(range: Range): Ace.Range {
-    return new AceRange(range.start.line, range.start.character, range.end.line, range.end.character);
+export function toRange(range: Range): AceRangeData {
+    return {
+        start: {
+            row: range.start.line,
+            column: range.start.character
+        },
+        end: {
+            row: range.end.line,
+            column: range.end.character
+        }
+    }
 }
 
 export function fromPoint(point: Ace.Point): Position {
@@ -150,13 +158,11 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
     return completionItem;
 }
 
-export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): Ace.Range {
+export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): AceRangeData {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit as InsertReplaceEdit;
-        let rangeList = new RangeList();
-        rangeList.ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
-        rangeList.merge();
-        return rangeList[0];
+        let mergedRanges = mergeRanges([toRange(textEdit.insert), toRange(textEdit.replace)]);
+        return mergedRanges[0];
     } else {
         textEdit = textEdit as TextEdit;
         return toRange(textEdit.range);

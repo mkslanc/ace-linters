@@ -29,9 +29,6 @@ module.exports = (env, argv) => {
         module: {
             rules: [
                 loader, {
-                    test: /\.css$/,
-                    use: ["style-loader", "css-loader"]
-                }, {
                     test: /\.rs$/,
                     use: ['raw-loader']
                 }

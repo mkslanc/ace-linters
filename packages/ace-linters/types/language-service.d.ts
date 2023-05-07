@@ -51,11 +51,11 @@ interface TooltipContent {
 
 export interface Tooltip {
     content: TooltipContent,
-    range?: Ace.Range
+    range?: AceRangeData
 }
 
 export interface TextChange {
-    range: Ace.Range;
+    range: AceRangeData;
     newText: string;
 }
 
@@ -230,4 +230,15 @@ export interface FilterDiagnosticsOptions {
     errorMessagesToIgnore?: RegExp[],
     errorMessagesToTreatAsWarning?: RegExp[]
     errorMessagesToTreatAsInfo?: RegExp[]
+}
+
+export interface AceRangeData {
+    start: {
+        row: number,
+        column: number
+    },
+    end: {
+        row: number,
+        column: number
+    }
 }
