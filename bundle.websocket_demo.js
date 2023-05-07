@@ -43992,9 +43992,8 @@ var json5Schema = (/* unused pure expression or super */ null && (`{
     }
 }`));
 
-// EXTERNAL MODULE: ./node_modules/ace-code/src/tooltip.js
-var tooltip = __webpack_require__(962);
-;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
+;// CONCATENATED MODULE: ./packages/ace-linters/ace/tooltip.ts
+
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -44008,8 +44007,106 @@ function _define_property(obj, key, value) {
     }
     return obj;
 }
+var CLASSNAME = "ace_tooltip";
+//taken from ace-code with small changes
+class Tooltip {
+    $init() {
+        this.$element = document.createElement("div");
+        this.$element.className = "ace_tooltip";
+        this.$element.style.display = "none";
+        this.$parentNode.appendChild(this.$element);
+        return this.$element;
+    }
+    /**
+     * @returns {Element}
+     **/ getElement() {
+        return this.$element || this.$init();
+    }
+    /**
+     * @param {String} text
+     **/ setText(text) {
+        this.getElement().textContent = text;
+    }
+    /**
+     * @param {String} html
+     **/ setHtml(html) {
+        this.getElement().innerHTML = html;
+    }
+    /**
+     * @param {Number} x
+     * @param {Number} y
+     **/ setPosition(x, y) {
+        this.getElement().style.left = x + "px";
+        this.getElement().style.top = y + "px";
+    }
+    /**
+     * @param {String} className
+     **/ setClassName(className) {
+        this.getElement().className += " " + className;
+    }
+    /**
+     * @param {String} text
+     * @param {Number} x
+     * @param {Number} y
+     **/ show(text, x, y) {
+        if (text != null) this.setText(text);
+        if (x != null && y != null) this.setPosition(x, y);
+        if (!this.isOpen) {
+            this.getElement().style.display = "block";
+            this.isOpen = true;
+        }
+    }
+    hide() {
+        if (this.isOpen) {
+            this.getElement().style.display = "none";
+            this.getElement().className = CLASSNAME;
+            this.isOpen = false;
+        }
+    }
+    /**
+     * @returns {Number}
+     **/ getHeight() {
+        return this.getElement().offsetHeight;
+    }
+    /**
+     * @returns {Number}
+     **/ getWidth() {
+        return this.getElement().offsetWidth;
+    }
+    destroy() {
+        this.isOpen = false;
+        if (this.$element && this.$element.parentNode) {
+            this.$element.parentNode.removeChild(this.$element);
+        }
+    }
+    /**
+     * @param {Element} parentNode
+     **/ constructor(parentNode){
+        _define_property(this, "$element", void 0);
+        _define_property(this, "isOpen", void 0);
+        _define_property(this, "$parentNode", void 0);
+        this.isOpen = false;
+        this.$element = null;
+        this.$parentNode = parentNode;
+    }
+}
 
-class BaseTooltip extends tooltip/* Tooltip */.u {
+;// CONCATENATED MODULE: ./packages/ace-linters/components/base-tooltip.ts
+function base_tooltip_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+class BaseTooltip extends Tooltip {
     $show() {
         if (!this.$activeEditor) return;
         let renderer = this.$activeEditor.renderer;
@@ -44073,17 +44170,16 @@ class BaseTooltip extends tooltip/* Tooltip */.u {
     }
     constructor(provider){
         super(document.body);
-        _define_property(this, "provider", void 0);
-        _define_property(this, "$activeEditor", void 0);
-        _define_property(this, "descriptionText", void 0);
-        _define_property(this, "isOpen", void 0);
-        _define_property(this, "x", void 0);
-        _define_property(this, "y", void 0);
-        _define_property(this, "$mouseMoveTimer", void 0);
-        _define_property(this, "$showTimer", void 0);
-        _define_property(this, "row", void 0);
-        _define_property(this, "column", void 0);
-        _define_property(this, "$hide", ()=>{
+        base_tooltip_define_property(this, "provider", void 0);
+        base_tooltip_define_property(this, "$activeEditor", void 0);
+        base_tooltip_define_property(this, "descriptionText", void 0);
+        base_tooltip_define_property(this, "x", void 0);
+        base_tooltip_define_property(this, "y", void 0);
+        base_tooltip_define_property(this, "$mouseMoveTimer", void 0);
+        base_tooltip_define_property(this, "$showTimer", void 0);
+        base_tooltip_define_property(this, "row", void 0);
+        base_tooltip_define_property(this, "column", void 0);
+        base_tooltip_define_property(this, "$hide", ()=>{
             clearTimeout(this.$mouseMoveTimer);
             clearTimeout(this.$showTimer);
             if (this.isOpen) {
@@ -44092,7 +44188,7 @@ class BaseTooltip extends tooltip/* Tooltip */.u {
             }
             this.$inactivateEditor();
         });
-        _define_property(this, "onMouseOut", (e)=>{
+        base_tooltip_define_property(this, "onMouseOut", (e)=>{
             clearTimeout(this.$mouseMoveTimer);
             clearTimeout(this.$showTimer);
             if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
@@ -44104,7 +44200,7 @@ class BaseTooltip extends tooltip/* Tooltip */.u {
         this.provider = provider;
         //this is for ace-code version < 1.16.0
         try {
-            tooltip/* Tooltip.call */.u.call(this, document.body);
+            Tooltip.call(this, document.body);
         } catch (e) {}
         this.getElement().style.pointerEvents = "auto";
         this.getElement().style.whiteSpace = "pre-wrap";
@@ -44217,6 +44313,32 @@ function mergeObjects(obj1, obj2) {
 function notEmpty(value) {
     return value !== null && value !== undefined;
 }
+//taken with small changes from ace-code
+function mergeRanges(ranges) {
+    var list = ranges;
+    list = list.sort(function(a, b) {
+        return comparePoints(a.start, b.start);
+    });
+    var next = list[0], range;
+    for(var i = 1; i < list.length; i++){
+        range = next;
+        next = list[i];
+        var cmp = comparePoints(range.end, next.start);
+        if (cmp < 0) continue;
+        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (comparePoints(range.end, next.end) < 0) {
+            range.end.row = next.end.row;
+            range.end.column = next.end.column;
+        }
+        list.splice(i, 1);
+        next = range;
+        i--;
+    }
+    return list;
+}
+function comparePoints(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+}
 function utils_checkValueAgainstRegexpArray(value, regexpArray) {
     if (!regexpArray) {
         return false;
@@ -44232,13 +44354,13 @@ function utils_checkValueAgainstRegexpArray(value, regexpArray) {
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/common-converters.ts
 
 
-
 var common_converters_CommonConverter;
 (function(CommonConverter) {
-    function normalizeRanges(completions) {
+    function normalizeRanges(completions, editor) {
+        const Range = editor.getSelectionRange().constructor;
         return completions && completions.map((el)=>{
             if (el["range"]) {
-                el["range"] = toRange(el["range"]);
+                el["range"] = toRange(el["range"], Range);
             }
             return el;
         });
@@ -44248,11 +44370,11 @@ var common_converters_CommonConverter;
         return html.replace(/<a\s/, "<a target='_blank' ");
     }
     CommonConverter.cleanHtml = cleanHtml;
-    function toRange(range) {
+    function toRange(range, Range) {
         if (!range || !range.start || !range.end) {
             return;
         }
-        return ace.Range.fromPoints(range.start, range.end);
+        return Range.fromPoints(range.start, range.end);
     }
     CommonConverter.toRange = toRange;
     function convertKind(kind) {
@@ -44469,10 +44591,9 @@ var MessageType;
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
 })(MessageType || (MessageType = {}));
 
-// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/oop.js
-var oop = __webpack_require__(89359);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/lib/event_emitter.js
-var event_emitter = __webpack_require__(23056);
+// EXTERNAL MODULE: ./node_modules/events/events.js
+var events = __webpack_require__(17187);
+var events_default = /*#__PURE__*/__webpack_require__.n(events);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller.ts
 function message_controller_define_property(obj, key, value) {
     if (key in obj) {
@@ -44489,10 +44610,9 @@ function message_controller_define_property(obj, key, value) {
 }
 
 
-
-class MessageController {
+class MessageController extends (events_default()) {
     init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+        this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
         this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
     }
     doValidation(sessionId, callback) {
@@ -44544,30 +44664,25 @@ class MessageController {
         if (callback) {
             let eventName = message.type.toString() + "-" + message.sessionId;
             let callbackFunction = (data)=>{
-                this["off"](eventName, callbackFunction);
+                this.off(eventName, callbackFunction);
                 callback(data);
             };
-            this["on"](eventName, callbackFunction);
+            this.on(eventName, callbackFunction);
         }
         this.$worker.postMessage(message);
     }
     constructor(worker){
+        super();
         message_controller_define_property(this, "$worker", void 0);
         this.$worker = worker;
         this.$worker.addEventListener("message", (e)=>{
             let message = e.data;
-            this["_signal"](message.type + "-" + message.sessionId, message.value);
+            this.emit(message.type + "-" + message.sessionId, message.value);
         });
     }
 }
-oop.implement(MessageController.prototype, event_emitter/* EventEmitter */.v);
 
-// EXTERNAL MODULE: ./node_modules/ace-code/src/range.js
-var src_range = __webpack_require__(59082);
-// EXTERNAL MODULE: ./node_modules/ace-code/src/range_list.js
-var range_list = __webpack_require__(16510);
 ;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/lsp-converters.ts
-
 
 
 
@@ -44591,7 +44706,16 @@ function rangeFromPositions(start, end) {
     };
 }
 function toRange(range) {
-    return new src_range/* Range */.e(range.start.line, range.start.character, range.end.line, range.end.character);
+    return {
+        start: {
+            row: range.start.line,
+            column: range.start.character
+        },
+        end: {
+            row: range.end.line,
+            column: range.end.character
+        }
+    };
 }
 function fromPoint(point) {
     return {
@@ -44703,13 +44827,11 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        let rangeList = new range_list/* RangeList */.$();
-        rangeList.ranges = [
+        let mergedRanges = mergeRanges([
             toRange(textEdit.insert),
             toRange(textEdit.replace)
-        ];
-        rangeList.merge();
-        return rangeList[0];
+        ]);
+        return mergedRanges[0];
     } else {
         textEdit = textEdit;
         return toRange(textEdit.range);
@@ -45100,7 +45222,6 @@ function language_provider_define_property(obj, key, value) {
 
 
 
-
 class LanguageProvider {
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
@@ -45162,6 +45283,10 @@ class LanguageProvider {
         }
         this.$descriptionTooltip.registerEditor(editor);
         this.$signatureTooltip.registerEditor(editor);
+        this.setStyle(editor);
+    }
+    setStyle(editor) {
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {margin: 0;font-size: 12px;} .ace_tooltip > code, .ace_tooltip > * > code {font-style: italic;font-size: 11px;}`, "linters.css");
     }
     setSessionOptions(session, options) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
@@ -45200,7 +45325,7 @@ class LanguageProvider {
                             item.completerId = completer.id;
                             item["fileName"] = fileName;
                         });
-                        callback(null, common_converters_CommonConverter.normalizeRanges(completions));
+                        callback(null, common_converters_CommonConverter.normalizeRanges(completions, editor));
                     });
                 });
             },
@@ -45349,14 +45474,24 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "format", ()=>{
             let selectionRanges = this.session.getSelection().getAllRanges();
             let $format = this.$format;
+            let aceRangeDatas = selectionRanges;
             if (!selectionRanges || selectionRanges[0].isEmpty()) {
                 let row = this.session.getLength();
                 let column = this.session.getLine(row).length - 1;
-                selectionRanges = [
-                    new ace.Range(0, 0, row, column)
+                aceRangeDatas = [
+                    {
+                        start: {
+                            row: 0,
+                            column: 0
+                        },
+                        end: {
+                            row: row,
+                            column: column
+                        }
+                    }
                 ];
             }
-            for (let range of selectionRanges){
+            for (let range of aceRangeDatas){
                 this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
             }
         });
@@ -45615,8 +45750,6 @@ function toSocket(webSocket) {
 
 
 //# sourceMappingURL=index.js.map
-// EXTERNAL MODULE: ./node_modules/events/events.js
-var events = __webpack_require__(17187);
 // EXTERNAL MODULE: ./node_modules/vscode-languageserver-protocol/browser.js
 var browser = __webpack_require__(5224);
 ;// CONCATENATED MODULE: ./packages/ace-linters/message-controller-ws.ts
