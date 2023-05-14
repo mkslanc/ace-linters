@@ -6,13 +6,13 @@ import {
     QuickInfo, SignatureHelpItems,
     TextChange,
     TextSpan
-} from "../services/typescript/lib/typescriptServices";
-import * as ts from "../services/typescript/lib/typescriptServices";
+} from "./lib/typescriptServices";
+import * as ts from "./lib/typescriptServices";
 import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
-import {CommonConverter} from "./common-converters";
+import {CommonConverter} from "../../type-converters/common-converters";
 import convertKind = CommonConverter.convertKind;
-import {FilterDiagnosticsOptions} from "../types";
+import {FilterDiagnosticsOptions} from "../../types";
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
     return diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
@@ -236,6 +236,7 @@ export enum ScriptTarget {
     ES2019 = 6,
     ES2020 = 7,
     ES2021 = 8,
+    ES2022 = 9,
     ESNext = 99,
     JSON = 100,
     Latest = 99

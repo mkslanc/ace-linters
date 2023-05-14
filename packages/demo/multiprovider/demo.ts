@@ -1,7 +1,7 @@
 import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
 import {LanguageProvider} from "ace-linters/build/ace-linters";
-import {ScriptTarget, JsxEmit} from "ace-linters/type-converters/typescript-converters";
+import {ScriptTarget, JsxEmit} from "ace-linters/services/typescript/typescript-converters";
 import {createEditorWithLSP} from "../utils";
 import {jsContent} from "../webworker-lsp/docs-example/javascript-example";
 
