@@ -57041,7 +57041,7 @@ var CommonConverter;
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(CommonConverter || (CommonConverter = {}));
 
-;// CONCATENATED MODULE: ./packages/ace-linters/type-converters/typescript-converters.ts
+;// CONCATENATED MODULE: ./packages/ace-linters/services/typescript/typescript-converters.ts
 
 
 var convertKind = CommonConverter.convertKind;
@@ -57249,6 +57249,7 @@ var ScriptTarget;
     ScriptTarget[ScriptTarget["ES2019"] = 6] = "ES2019";
     ScriptTarget[ScriptTarget["ES2020"] = 7] = "ES2020";
     ScriptTarget[ScriptTarget["ES2021"] = 8] = "ES2021";
+    ScriptTarget[ScriptTarget["ES2022"] = 9] = "ES2022";
     ScriptTarget[ScriptTarget["ESNext"] = 99] = "ESNext";
     ScriptTarget[ScriptTarget["JSON"] = 100] = "JSON";
     ScriptTarget[ScriptTarget["Latest"] = 99] = "Latest";
