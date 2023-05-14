@@ -13,7 +13,7 @@ import {
     toSignatureHelp,
     toTextEdits,
     toTsOffset
-} from "../../type-converters/typescript-converters";
+} from "./typescript-converters";
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../../utils";
 import {LanguageService, TsServiceOptions} from "../../types";
