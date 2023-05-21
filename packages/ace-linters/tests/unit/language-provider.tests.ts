@@ -4,12 +4,12 @@ import "ace-code/src/test/mockdom";
 //@ts-ignore
 window["self"] = {};
 
-import {LanguageProvider} from "../language-provider";
+import {LanguageProvider} from "../../language-provider";
 import {Mode as JSONMode} from "ace-code/src/mode/json";
 import {Mode as HtmlMode} from "ace-code/src/mode/html";
 import {assert, expect} from "chai";
 import {MockWorker} from "./mock-worker";
-import {ServiceManager} from "../services/service-manager";
+import {ServiceManager} from "../../services/service-manager";
 import {Done} from "mocha";
 import Completion = Ace.Completion;
 
@@ -64,7 +64,7 @@ describe('LanguageProvider tests', () => {
         manager = new ServiceManager(ctx);
         manager.registerService("html", {
             features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-            module: () => import("../services/html/html-service"),
+            module: () => import("../../services/html/html-service"),
             className: "HtmlService",
             modes: "html"
         });
@@ -161,7 +161,7 @@ describe('LanguageProvider tests', () => {
 
             manager.registerService("json", {
                 features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-                module: () => import("../services/json/json-service"),
+                module: () => import("../../services/json/json-service"),
                 className: "JsonService",
                 modes: "json"
             });

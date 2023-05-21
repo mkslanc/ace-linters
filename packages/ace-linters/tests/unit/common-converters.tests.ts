@@ -1,15 +1,12 @@
 import {expect} from "chai";
+import {Range as AceRange} from "ace-code/src/range";
 import {
     CompletionItemKind,
 } from "vscode-languageserver-protocol";
-import {CommonConverter} from "../type-converters/common-converters";
-import {Editor} from "ace-code/src/editor";
-import {MockRenderer} from "ace-code/src/test/mockrenderer";
+import {CommonConverter} from "../../type-converters/common-converters";
+
 
 describe('General Converters', () => {
-    let editor = new Editor(new MockRenderer());
-    const Range = editor.getSelectionRange().constructor;
-    
     describe('normalizeRanges', () => {
         it('should correctly normalize the ranges of an array of completions', () => {
             const completions = [
@@ -17,10 +14,10 @@ describe('General Converters', () => {
                 {value: 'value2', range: {start: {row: 2, column: 0}, end: {row: 3, column: 0}}}
             ];
             const expected = [
-                {value: 'value1', range: Range.fromPoints({row: 0, column: 0}, {row: 1, column: 0})},
-                {value: 'value2', range: Range.fromPoints({row: 2, column: 0}, {row: 3, column: 0})}
+                {value: 'value1', range: AceRange.fromPoints({row: 0, column: 0}, {row: 1, column: 0})},
+                {value: 'value2', range: AceRange.fromPoints({row: 2, column: 0}, {row: 3, column: 0})}
             ];
-            expect(CommonConverter.normalizeRanges(completions, editor)).to.deep.equal(expected);
+            expect(CommonConverter.normalizeRanges(completions)).to.deep.equal(expected);
         });
     });
 
@@ -35,13 +32,13 @@ describe('General Converters', () => {
     describe('toRange', () => {
         it('should correctly convert a range object to an Ace range', () => {
             const range = {start: {row: 0, column: 0}, end: {row: 1, column: 0}};
-            const expected = Range.fromPoints({row: 0, column: 0}, {row: 1, column: 0});
-            expect(CommonConverter.toRange(range, Range)).to.deep.equal(expected);
+            const expected = AceRange.fromPoints({row: 0, column: 0}, {row: 1, column: 0});
+            expect(CommonConverter.toRange(range)).to.deep.equal(expected);
         });
 
         it('should return undefined if the range object is missing start or end properties', () => {
             const range = {start: {row: 0, column: 0}};
-            expect(CommonConverter.toRange(range as any, Range)).to.undefined;
+            expect(CommonConverter.toRange(range as any)).to.undefined;
         });
     });
 
