@@ -12,27 +12,27 @@ import {
     ConfigureFeaturesMessage,
     ValidateMessage
 } from "./message-types";
-import * as oop from "ace-code/src/lib/oop";
-import {EventEmitter} from "ace-code/src/lib/event_emitter";
 import {IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
 import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types";
+import EventEmitter from "events";
 
-export class MessageController implements IMessageController {
+export class MessageController extends EventEmitter implements IMessageController {
     private $worker: Worker;
 
     constructor(worker: Worker) {
+        super();
         this.$worker = worker;
 
         this.$worker.addEventListener("message", (e) => {
             let message = e.data;
-            this["_signal"](message.type + "-" + message.sessionId, message.value);
+            this.emit(message.type + "-" + message.sessionId, message.value);
         });
 
     }
     
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
-        this["on"](MessageType.validate.toString() + "-" + sessionId, validationCallback);
+        this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
 
         this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
     }
@@ -100,13 +100,11 @@ export class MessageController implements IMessageController {
         if (callback) {
             let eventName = message.type.toString() + "-" + message.sessionId;
             let callbackFunction = (data) => {
-                this["off"](eventName, callbackFunction);
+                this.off(eventName, callbackFunction);
                 callback(data);
             }
-            this["on"](eventName, callbackFunction);
+            this.on(eventName, callbackFunction);
         }
         this.$worker.postMessage(message);
     }
 }
-
-oop.implement(MessageController.prototype, EventEmitter);

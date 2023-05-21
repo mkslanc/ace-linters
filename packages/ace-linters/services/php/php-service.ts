@@ -2,6 +2,7 @@ import {BaseService} from "../base-service";
 import * as lsp from "vscode-languageserver-protocol";
 import {PHP} from "./lib/php";
 import {LanguageService, PhpServiceOptions} from "../../types";
+import {filterDiagnostics} from "../../type-converters/lsp-converters";
 
 export class PhpService extends BaseService<PhpServiceOptions> implements LanguageService {
     $service;
@@ -37,7 +38,7 @@ export class PhpService extends BaseService<PhpServiceOptions> implements Langua
                 severity: 1
             });
         }
-        return errors;
+        return filterDiagnostics(errors, this.optionsToFilterDiagnostics);
     }
 
 }

@@ -6,9 +6,11 @@ module.exports = (env, argv) => {
     loader = {
         test: /\.(t|j)sx?$/,
         use: {
-            loader: 'ts-loader',
+            loader: 'swc-loader',
             options: {
-                transpileOnly: true
+                jsc: {
+                    "target": "es2019"
+                }
             }
         },
         exclude: /node_modules/
@@ -27,9 +29,6 @@ module.exports = (env, argv) => {
         module: {
             rules: [
                 loader, {
-                    test: /\.css$/,
-                    use: ["style-loader", "css-loader"]
-                }, {
                     test: /\.rs$/,
                     use: ['raw-loader']
                 }

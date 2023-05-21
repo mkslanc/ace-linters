@@ -7,6 +7,7 @@ import {HTMLHint} from 'htmlhint';
 import * as htmlService from 'vscode-html-languageservice';
 import {mergeObjects} from "../../utils";
 import {HtmlServiceOptions, LanguageService} from "../../types";
+import {toDiagnostics} from "./html-converters";
 
 export class HtmlService extends BaseService<HtmlServiceOptions> implements LanguageService {
     $service: VSLanguageService;
@@ -68,22 +69,7 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements Lang
             return [];
         }
         let options = this.getOption(document.uri, "validationOptions") ?? this.defaultValidationOptions;
-        return HTMLHint.verify(fullDocument.getText(), options).map(el => {
-            return {
-                range: {
-                    start: {
-                        line: el.line - 1,
-                        character: el.col - 1
-                    },
-                    end: {
-                        line: el.line - 1,
-                        character: el.col - 1
-                    }
-                },
-                severity: el.type === "error" ? 1 : el.type === "warning" ? 2 : 3,
-                message: el.message
-            }
-        });
+        return toDiagnostics(HTMLHint.verify(fullDocument.getText(), options), this.optionsToFilterDiagnostics);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {

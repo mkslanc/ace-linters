@@ -1,4 +1,4 @@
-import {Ace, Range as AceRange} from "ace-code";
+import {Ace} from "ace-code";
 import {DescriptionTooltip} from "./components/description-tooltip";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
@@ -19,7 +19,15 @@ import * as lsp from "vscode-languageserver-protocol";
 import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
-import {ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices, Tooltip} from "./types";
+import {
+    AceRangeData,
+    ProviderOptions,
+    ServiceFeatures,
+    ServiceOptions,
+    ServiceOptionsMap,
+    SupportedServices,
+    Tooltip
+} from "./types";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -123,6 +131,12 @@ export class LanguageProvider {
         }
         this.$descriptionTooltip.registerEditor(editor);
         this.$signatureTooltip.registerEditor(editor);
+
+        this.setStyle(editor);
+    }
+
+    setStyle(editor) {
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {margin: 0;font-size: 12px;} .ace_tooltip > code, .ace_tooltip > * > code {font-style: italic;font-size: 11px;}`, "linters.css");
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
@@ -182,7 +196,7 @@ export class LanguageProvider {
                             item.completerId = completer.id;
                             item["fileName"] = fileName
                         });
-                        callback(null, CommonConverter.normalizeRanges(completions));
+                        callback(null, CommonConverter.normalizeRanges(completions, editor));
                     });
                 });
             },
@@ -328,19 +342,28 @@ class SessionLanguageProvider {
     format = () => {
         let selectionRanges = this.session.getSelection().getAllRanges();
         let $format = this.$format;
+        let aceRangeDatas = selectionRanges as AceRangeData[];
         if (!selectionRanges || selectionRanges[0].isEmpty()) {
             let row = this.session.getLength();
             let column = this.session.getLine(row).length - 1;
-            selectionRanges = [new AceRange(0, 0, row, column)];
+            aceRangeDatas =
+                [{
+                    start: {
+                        row: 0, column: 0
+                    },
+                    end: {
+                        row: row, column: column
+                    }
+                }];
         }
-        for (let range of selectionRanges) {
+        for (let range of aceRangeDatas) {
             this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
         }
     }
 
     private $applyFormat = (edits: lsp.TextEdit[]) => {
         for (let edit of edits.reverse()) {
-            this.session.replace(toRange(edit.range), edit.newText);
+            this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
         }
     }
     

@@ -1,43 +1,52 @@
 import {Diagnostic, DiagnosticSeverity, Range} from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
+import {FilterDiagnosticsOptions} from "../../types";
+import {checkValueAgainstRegexpArray} from "../../utils";
+import {CommonConverter} from "../../type-converters/common-converters";
 
-export function lexingErrorToDiagnostic(document: TextDocument, error): Diagnostic {
-    return {
-        message: error.message,
-        range: Range.create(
-            document.positionAt(error.offset),
-            document.positionAt(error.offset + error.length)
-        ),
-        severity: DiagnosticSeverity.Error,
-    };
-}
-
-export function parsingErrorToDiagnostic(document: TextDocument, error): Diagnostic {
-    return {
-        message: error.message,
-        range: {
-            start: document.positionAt(error.token.startOffset),
-            end: document.positionAt(
-                error.token.endOffset ? error.token.endOffset : 0
+export function lexingErrorsToDiagnostic(errors: any[], document: TextDocument, filterErrors: FilterDiagnosticsOptions): Diagnostic[] {
+    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map((el) => {
+        return {
+            message: el.message,
+            range: Range.create(
+                document.positionAt(el.offset),
+                document.positionAt(el.offset + el.length)
             ),
-        },
-        severity: DiagnosticSeverity.Error,
-    };
+            severity: determineDiagnosticSeverity(el.message, filterErrors, el.severity),
+        };
+    });
 }
 
-export function issueToDiagnostic(document: TextDocument, issue): Diagnostic {
-    return {
-        message: issue.msg,
-        range: {
-            start: document.positionAt(issue.position.startOffset),
-            // Chevrotain Token positions are non-inclusive for endOffsets
-            end: document.positionAt(issue.position.endOffset + 1),
-        },
-        severity: toDiagnosticSeverity(issue.severity),
-    };
+export function parsingErrorsToDiagnostic(errors: any[], document: TextDocument, filterErrors: FilterDiagnosticsOptions): Diagnostic[] {
+    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map((el) => {
+        return {
+            message: el.message,
+            range: Range.create(
+                document.positionAt(el.token.startOffset),
+                document.positionAt(el.token.endOffset ?? 0)
+            ),
+            severity: determineDiagnosticSeverity(el.message, filterErrors, el.severity),
+        };
+    });
 }
 
-function toDiagnosticSeverity(issueSeverity: string): DiagnosticSeverity {
+export function issuesToDiagnostic(errors: any[], document: TextDocument, filterErrors: FilterDiagnosticsOptions): Diagnostic[] {
+    return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore, "msg").map((el) => {
+        return {
+            message: el.msg,
+            range: {
+                start: document.positionAt(el.position.startOffset),
+                // Chevrotain Token positions are non-inclusive for endOffsets
+                end: document.positionAt(el.position.endOffset + 1),
+            },
+            severity: determineDiagnosticSeverity(el.msg, filterErrors, el.severity),
+        };
+    });
+}
+
+function toDiagnosticSeverity(issueSeverity?: string): DiagnosticSeverity {
+    if (!issueSeverity)
+        return DiagnosticSeverity.Error;
     switch (issueSeverity) {
         case "error":
             return DiagnosticSeverity.Error;
@@ -47,4 +56,16 @@ function toDiagnosticSeverity(issueSeverity: string): DiagnosticSeverity {
         default:
             return DiagnosticSeverity.Information;
     }
+}
+
+function determineDiagnosticSeverity(message: string, filterErrors: FilterDiagnosticsOptions, issueSeverity?: string) {
+    let severity;
+    if (checkValueAgainstRegexpArray(message, filterErrors.errorMessagesToTreatAsWarning)) {
+        severity = DiagnosticSeverity.Warning;
+    } else if (checkValueAgainstRegexpArray(message, filterErrors.errorMessagesToTreatAsInfo)) {
+        severity = DiagnosticSeverity.Information;
+    } else {
+        severity = toDiagnosticSeverity(issueSeverity);
+    }
+    return severity;
 }

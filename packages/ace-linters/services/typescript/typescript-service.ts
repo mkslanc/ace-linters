@@ -13,7 +13,7 @@ import {
     toSignatureHelp,
     toTextEdits,
     toTsOffset
-} from "../../type-converters/typescript-converters";
+} from "./typescript-converters";
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../../utils";
 import {LanguageService, TsServiceOptions} from "../../types";
@@ -209,8 +209,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
         let semanticDiagnostics = this.getSemanticDiagnostics(document.uri);
         let syntacticDiagnostics = this.getSyntacticDiagnostics(document.uri);
-
-        return fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument);
+        return fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument, this.optionsToFilterDiagnostics);
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {

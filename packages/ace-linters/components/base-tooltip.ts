@@ -1,12 +1,11 @@
 import {LanguageProvider} from "../language-provider";
 import type {Ace} from "ace-code";
-import {Tooltip} from "ace-code/src/tooltip";
+import {Tooltip} from "../ace/tooltip";
 
 export class BaseTooltip extends Tooltip {
     provider: LanguageProvider;
     $activeEditor?: Ace.Editor;
     descriptionText: string;
-    isOpen: boolean;
     x: number;
     y: number;
 

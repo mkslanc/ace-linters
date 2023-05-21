@@ -1,6 +1,17 @@
-import {Diagnostic} from "vscode-languageserver-protocol";
+import {Diagnostic, DiagnosticSeverity} from "vscode-languageserver-protocol";
+import {CommonConverter} from "../../type-converters/common-converters";
+import {FilterDiagnosticsOptions} from "../../types";
+import {checkValueAgainstRegexpArray} from "../../utils";
 
-export function toDiagnostic(error): Diagnostic {
+export function toDiagnostic(error, filterErrors: FilterDiagnosticsOptions): Diagnostic {
+    let severity;
+    if (checkValueAgainstRegexpArray(error.message, filterErrors.errorMessagesToTreatAsWarning)) {
+        severity = DiagnosticSeverity.Warning;
+    } else if (checkValueAgainstRegexpArray(error.message, filterErrors.errorMessagesToTreatAsInfo)) {
+        severity = DiagnosticSeverity.Information;
+    } else {
+        severity = (error.fatal) ? DiagnosticSeverity.Error : error.severity;
+    }
     return {
         message: error.message,
         range: {
@@ -13,13 +24,13 @@ export function toDiagnostic(error): Diagnostic {
                 character: error.endColumn - 1
             }
         },
-        severity: (error.fatal) ? 1 : error.severity,
+        severity: severity,
     }
 }
 
-export function toDiagnostics(errors: any[]): Diagnostic[] {
-    if (!errors) {
+export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): Diagnostic[] {
+    if (!diagnostics) {
         return [];
     }
-    return errors.map((error) => toDiagnostic(error));
+    return CommonConverter.excludeByErrorMessage(diagnostics).map((error) => toDiagnostic(error, filterErrors));
 }

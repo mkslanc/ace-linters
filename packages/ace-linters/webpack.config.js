@@ -7,9 +7,11 @@ module.exports = (env, argv) => {
     loader = {
         test: /\.(t|j)sx?$/,
         use: {
-            loader: 'esbuild-loader',
+            loader: 'swc-loader',
             options: {
-                target: "es2019"
+                jsc: {
+                    "target": "es2019"
+                }
             }
         },
         exclude: /node_modules/
@@ -35,12 +37,10 @@ module.exports = (env, argv) => {
                 import: './services/python/python-service.ts'
             }
         },
+        externals: /ace-code/,
         module: {
             rules: [
                 loader, {
-                    test: /\.css$/,
-                    use: ["style-loader", "css-loader"]
-                },{
                     test: /\.wasm$/,
                     type: "asset/inline",
                 },

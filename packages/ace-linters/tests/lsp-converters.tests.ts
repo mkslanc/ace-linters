@@ -2,7 +2,6 @@ import {expect} from "chai";
 
 import * as Converter from "../type-converters/lsp-converters";
 
-import {Range as AceRange} from "ace-code/src/range";
 import {
     CompletionItem,
     CompletionItemKind,
@@ -13,6 +12,7 @@ import {
     MarkupKind
 } from "vscode-languageserver-protocol";
 import {
+    filterDiagnostics,
     fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
@@ -21,11 +21,13 @@ import {
 } from "../type-converters/lsp-converters";
 import {CompletionService, Tooltip} from "../types";
 
-
 describe('Converters from/to Language Server Protocol', () => {
     describe('fromRange', () => {
-        it('should convert an Ace.Range to a Range', () => {
-            const aceRange = new AceRange(0, 1, 2, 3);
+        it('should convert an AceRangeData to a Range', () => {
+            const aceRange = {
+                start: {row: 0, column: 1},
+                end: {row:2, column: 3}
+            };
 
             const expectedRange = {
                 start: {
@@ -67,7 +69,7 @@ describe('Converters from/to Language Server Protocol', () => {
     });
 
     describe('toRange', () => {
-        it('should convert a Range to an Ace.Range', () => {
+        it('should convert a Range to an AceRangeData', () => {
             const range = {
                 start: {
                     line: 0,
@@ -79,7 +81,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 }
             };
 
-            const expectedAceRange = new AceRange(0, 1, 2, 3);
+            const expectedAceRange = {
+                start: {row: 0, column: 1},
+                end: {row:2, column: 3}
+            };
 
             const result = Converter.toRange(range);
 
@@ -213,7 +218,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new AceRange(0, 1, 0, 5),
+                range: {
+                    start: {row: 0, column: 1},
+                    end: {row:0, column: 5}
+                },
                 documentation: {
                     kind: "markdown",
                     value: "Test value"
@@ -239,7 +247,10 @@ describe('Converters from/to Language Server Protocol', () => {
                 meta: 'Function',
                 caption: 'html',
                 snippet: "Test text",
-                range: new AceRange(0, 1, 0, 5),
+                range: {
+                    start: {row: 0, column: 1},
+                    end: {row:0, column: 5}
+                },
                 documentation: {
                     kind: "markdown",
                     value: "Test value"
@@ -457,6 +468,147 @@ describe('Converters from/to Language Server Protocol', () => {
             });
         });
 
+    });
+
+    describe("filterDiagnostics", () => {
+        const diagnostic1: Diagnostic = {
+            message: "Syntax error: unexpected token '}'",
+            severity: DiagnosticSeverity.Error,
+            range: {
+                start: {line: 1, character: 1}, end: {line: 1, character: 1}
+            }
+        };
+        const diagnostic2 = {
+            message: "Unused variable 'x'",
+            severity: DiagnosticSeverity.Error,
+            range: {
+                start: {line: 1, character: 1}, end: {line: 1, character: 1}
+            }
+        };
+        const diagnostic3 = {
+            message: "Function 'foo' is not defined",
+            severity: DiagnosticSeverity.Error,
+            range: {
+                start: {line: 1, character: 1}, end: {line: 1, character: 1}
+            }
+        };
+        const diagnostic4 = {
+            message: "Warning: unreachable code",
+            severity: DiagnosticSeverity.Warning,
+            range: {
+                start: {line: 1, character: 1}, end: {line: 1, character: 1}
+            }
+        };
+        const diagnostic5 = {
+            message: "Info: variable 'x' is assigned but never used",
+            severity: DiagnosticSeverity.Information,
+            range: {
+                start: {line: 1, character: 1}, end: {line: 1, character: 1}
+            }
+        };
+        const diagnostics = [diagnostic1, diagnostic2, diagnostic3, diagnostic4, diagnostic5];
+
+        it("should exclude diagnostics with error messages to ignore", () => {
+            const filterErrors = {
+                errorMessagesToIgnore: [/unused variable/i],
+                errorMessagesToTreatAsWarning: [],
+                errorMessagesToTreatAsInfo: [],
+            };
+            const result = filterDiagnostics(diagnostics, filterErrors);
+            expect(result).deep.equal([diagnostic1, diagnostic3, diagnostic4, diagnostic5]);
+        });
+
+        it("should treat diagnostics with error messages to treat as warning as warnings", () => {
+            const filterErrors = {
+                errorMessagesToIgnore: [],
+                errorMessagesToTreatAsWarning: [/unreachable code/i],
+                errorMessagesToTreatAsInfo: [],
+            };
+            const result = filterDiagnostics(diagnostics, filterErrors);
+            expect(result).deep.equal([
+                {
+                    message: "Syntax error: unexpected token '}'",
+                    severity: DiagnosticSeverity.Error,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Unused variable 'x'",
+                    severity: DiagnosticSeverity.Error,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Function 'foo' is not defined",
+                    severity: DiagnosticSeverity.Error,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Warning: unreachable code",
+                    severity: DiagnosticSeverity.Warning,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Info: variable 'x' is assigned but never used",
+                    severity: DiagnosticSeverity.Information,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+            ]);
+        });
+
+        it("should treat diagnostics with error messages to treat as info as info messages", () => {
+            const filterErrors = {
+                errorMessagesToIgnore: [],
+                errorMessagesToTreatAsWarning: [],
+                errorMessagesToTreatAsInfo: [/assigned but never used/i],
+            };
+            const result = filterDiagnostics(diagnostics, filterErrors);
+            expect(result).deep.equal([
+                {
+                    message: "Syntax error: unexpected token '}'",
+                    severity: DiagnosticSeverity.Error,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Unused variable 'x'",
+                    severity: DiagnosticSeverity.Error,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Function 'foo' is not defined",
+                    severity: DiagnosticSeverity.Error,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Warning: unreachable code",
+                    severity: DiagnosticSeverity.Warning,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+                {
+                    message: "Info: variable 'x' is assigned but never used",
+                    severity: DiagnosticSeverity.Information,
+                    range: {
+                        start: {line: 1, character: 1}, end: {line: 1, character: 1}
+                    }
+                },
+            ]);
+        });
     });
 
 });
