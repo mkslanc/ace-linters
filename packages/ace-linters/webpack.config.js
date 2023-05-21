@@ -3,6 +3,7 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === 'production';
+    const isTest = argv.name === 'test';
     let loader;
     loader = {
         test: /\.(t|j)sx?$/,
@@ -59,7 +60,7 @@ module.exports = (env, argv) => {
         },
         output: {
             filename: '[name].js',
-            path: __dirname + '/build',
+            path: __dirname + (isTest ? "/tests/ui/dist/" : "") + '/build',
             publicPath: 'auto',
             library: {
                 type: "umd2"
