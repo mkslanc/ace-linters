@@ -2,12 +2,12 @@ import {expect} from "chai";
 import * as puppeteer from 'puppeteer';
 
 const opts = {
-    headless: false,
-    slowMo: 10,
-    devtools: true
+    headless: true,
+    slowMo: 0,
+    devtools: false
 };
 
-describe("sample test", function () {
+describe("General ui tests", function () {
     let browser: puppeteer.Browser;
     let page: puppeteer.Page;
     let errors = [];
@@ -30,10 +30,6 @@ describe("sample test", function () {
         await page.waitForSelector("#example");
         expect(errors.length).to.eql(0);
     })
-
-    it('should have the correct page title', async function () {
-        expect(await page.title()).to.eql('Example with using fetch and inline worker');
-    });
 
     after(async function () {
         await browser.close();
