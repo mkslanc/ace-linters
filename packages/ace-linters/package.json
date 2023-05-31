@@ -9,7 +9,12 @@
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
     "build": "npm run clean && npm run build:dependencies && webpack --mode=production",
     "build-dev": "npm run clean && npm run build:dependencies && webpack --mode=development",
-    "test": "mocha --timeout 5000 --exit",
+
+    "build-test": "npm run build:dependencies && webpack --name=test",
+    "start-test-server": "npm run build-test && http-server --cors='*' tests/ui/dist",
+    "test:unit": "mocha --config mocha.unit.config.js",
+    "test:ui": "mocha --config mocha.ui.config.js",
+    "test": "npm run test:unit && npm run test:ui",
     "test:coverage": "nyc npm run test",
     "start-server": "http-server build --cors=\"*\""
   },
@@ -37,7 +42,9 @@
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "puppeteer": "^19.9.1",
+    "http-server": "^14.1.1"
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
