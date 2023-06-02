@@ -6,23 +6,23 @@
 
 
 
-    var oop = __webpack_require__(89359);
-    var TextMode = (__webpack_require__(98030).Mode);
-    var ASLHighlightRules = (__webpack_require__(28999)/* .ASLHighlightRules */ .M);
-    var FoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
+var oop = __webpack_require__(89359);
+var TextMode = (__webpack_require__(98030).Mode);
+var ASLHighlightRules = (__webpack_require__(28999)/* .ASLHighlightRules */ .M);
+var FoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
-    var Mode = function () {
-        this.HighlightRules = ASLHighlightRules;
-        this.foldingRules = new FoldMode();
+var Mode = function () {
+    this.HighlightRules = ASLHighlightRules;
+    this.foldingRules = new FoldMode();
         this.$behaviour = this.$defaultBehaviour;
-    };
-    oop.inherits(Mode, TextMode);
+};
+oop.inherits(Mode, TextMode);
 
-    (function () {
-        this.$id = "ace/mode/asl";
-    }).call(Mode.prototype);
+(function () {
+    this.$id = "ace/mode/asl";
+}).call(Mode.prototype);
 
-    exports.Mode = Mode;
+exports.Mode = Mode;
 
 
 /***/ }),
@@ -244,17 +244,17 @@
 var oop = __webpack_require__(89359);
 var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
 
-var DocCommentHighlightRules = function() {
+var DocCommentHighlightRules = function () {
     this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
     };
 };
 

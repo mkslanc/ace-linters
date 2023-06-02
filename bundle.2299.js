@@ -11,13 +11,12 @@ var TextMode = (__webpack_require__(98030).Mode);
 var CrystalHighlightRules = (__webpack_require__(55497)/* .CrystalHighlightRules */ .A);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
 var Range = (__webpack_require__(59082)/* .Range */ .e);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var FoldMode = (__webpack_require__(35090)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = CrystalHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new FoldMode();
 };
 oop.inherits(Mode, TextMode);

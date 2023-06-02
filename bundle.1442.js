@@ -880,13 +880,12 @@ var TextMode = (__webpack_require__(98030).Mode);
 var RubyHighlightRules = (__webpack_require__(35772).RubyHighlightRules);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
 var Range = (__webpack_require__(59082)/* .Range */ .e);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var FoldMode = (__webpack_require__(48636)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = RubyHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new FoldMode();
     this.indentKeywords = this.foldingRules.indentKeywords;
 };

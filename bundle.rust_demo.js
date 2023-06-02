@@ -452,10 +452,12 @@ class Autocomplete {
     constructor() {
         this.autoInsert = false;
         this.autoSelect = true;
+        this.autoShown = false;
         this.exactMatch = false;
         this.inlineEnabled = false;
         this.keyboardHandler = new HashHandler();
         this.keyboardHandler.bindKeys(this.commands);
+        this.parentNode = null;
 
         this.blurListener = this.blurListener.bind(this);
         this.changeListener = this.changeListener.bind(this);
@@ -470,7 +472,7 @@ class Autocomplete {
     }
 
     $init() {
-        this.popup = new AcePopup(document.body || document.documentElement);
+        this.popup = new AcePopup(this.parentNode || document.body || document.documentElement); 
         this.popup.on("click", function(e) {
             this.insertMatch();
             e.stop();
@@ -652,6 +654,8 @@ class Autocomplete {
             data = this.popup.getData(this.popup.getRow());
         if (!data)
             return false;
+        if (data.value === "") // Explicitly given nothing to insert, e.g. "No suggestion state"
+            return this.detach();
         var completions = this.completions;
         var result = this.getCompletionProvider().insertMatch(this.editor, data, completions.filterText, options);
         // detach only if new popup was not opened while inserting match
@@ -738,15 +742,28 @@ class Autocomplete {
 
             if (finished) {
                 // No results
-                if (!filtered.length)
+                if (!filtered.length) {
+                    var emptyMessage = !this.autoShown && this.emptyMessage;
+                    if ( typeof emptyMessage == "function")
+                          emptyMessage = this.emptyMessage(prefix);
+                    if (emptyMessage) {
+                        var completionsForEmpty = [{
+                            caption: this.emptyMessage(prefix),
+                            value: ""
+                        }];
+                        this.completions = new FilteredList(completionsForEmpty);
+                        this.openPopup(this.editor, prefix, keepPopupPosition);
+                        return;
+                    }
                     return this.detach();
+                }
 
                 // One result equals to the prefix
                 if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
                     return this.detach();
 
                 // Autoinsert if one result
-                if (this.autoInsert && filtered.length == 1)
+                if (this.autoInsert && !this.autoShown && filtered.length == 1)
                     return this.insertMatch(filtered[0]);
             }
             this.completions = completions;
@@ -805,7 +822,8 @@ class Autocomplete {
         }
 
         if (!tooltipNode.parentNode)
-            document.body.appendChild(tooltipNode);
+            this.popup.container.appendChild(this.tooltipNode);
+
         var popup = this.popup;
         var rect = popup.container.getBoundingClientRect();
         tooltipNode.style.top = popup.container.style.top;
@@ -922,6 +940,7 @@ Autocomplete.startCommand = {
         var completer = Autocomplete.for(editor);
         completer.autoInsert = false;
         completer.autoSelect = true;
+        completer.autoShown = false;
         completer.showPopup(editor, options);
         // prevent ctrl-space opening context menu on firefox on mac
         completer.cancelContextMenu();
@@ -957,14 +976,19 @@ class CompletionProvider {
             if (!this.completions)
                 return false;
             if (this.completions.filterText) {
-                var ranges = editor.selection.getAllRanges();
+                var ranges;
+                if (editor.selection.getAllRanges) {
+                    ranges = editor.selection.getAllRanges();
+                } else {
+                    ranges = [editor.getSelectionRange()];
+                }
                 for (var i = 0, range; range = ranges[i]; i++) {
                     range.start.column -= this.completions.filterText.length;
                     editor.session.remove(range);
                 }
             }
             if (data.snippet)
-                snippetManager.insertSnippet(editor, data.snippet, data.range);
+                snippetManager.insertSnippet(editor, data.snippet, {range: data.range});
             else {
                 this.$insertString(editor, data);
             }
@@ -1267,6 +1291,7 @@ var Range = (__webpack_require__(59082)/* .Range */ .e);
 var event = __webpack_require__(17989);
 var lang = __webpack_require__(20124);
 var dom = __webpack_require__(6359);
+var nls = (__webpack_require__(13188).nls);
 
 var getAriaId = function(index) {
     return `suggest-aria-id:${index}`;
@@ -1302,15 +1327,16 @@ class AcePopup {
         var el = dom.createElement("div");
         var popup = new $singleLineEditor(el);
 
-        if (parentNode)
+        if (parentNode) {
             parentNode.appendChild(el);
+        }
         el.style.display = "none";
         popup.renderer.content.style.cursor = "default";
         popup.renderer.setStyle("ace_autocomplete");
 
         // Set aria attributes for the popup
         popup.renderer.container.setAttribute("role", "listbox");
-        popup.renderer.container.setAttribute("aria-label", "Autocomplete suggestions");
+        popup.renderer.container.setAttribute("aria-label", nls("Autocomplete suggestions"));
 
         popup.setOption("displayIndentGuides", false);
         popup.setOption("dragDelay", 150);
@@ -1461,6 +1487,7 @@ class AcePopup {
             }
             addToken(caption.slice(lastIndex, caption.length), "");
 
+            tokens.push({type: "completion-spacer", value: " "});
             if (data.meta)
                 tokens.push({type: "completion-meta", value: data.meta});
             if (data.message)
@@ -1496,7 +1523,7 @@ class AcePopup {
             return selectionMarker.start.row;
         };
         popup.setRow = function(line) {
-            line = Math.max(this.autoSelect ? 0 : -1, Math.min(this.data.length, line));
+            line = Math.max(this.autoSelect ? 0 : -1, Math.min(this.data.length - 1, line));
             if (selectionMarker.start.row != line) {
                 popup.selection.clearSelection();
                 selectionMarker.start.row = selectionMarker.end.row = line || 0;
@@ -1701,9 +1728,8 @@ dom.importCssString(`
 .ace_autocomplete_right .ace_line {
     display: flex;
 }
-.ace_autocomplete_right .ace_completion-meta {
+.ace_autocomplete_right .ace_completion-spacer {
     flex: 1;
-    text-align: right;
 }
 `, "autocompletion.css", false);
 
@@ -1830,6 +1856,18 @@ exports.getCompletionPrefix = function (editor) {
         }
     }.bind(this));
     return prefix || this.retrievePrecedingIdentifier(line, pos.column);
+};
+
+exports.triggerAutocomplete = function (editor) {
+    var pos = editor.getCursorPosition();
+    var line = editor.session.getLine(pos.row);
+    var column = (pos.column === 0) ? 0 : pos.column - 1;
+    var previousChar = line[column];
+    return editor.completers.some((el) => {
+        if (el.triggerCharacters && Array.isArray(el.triggerCharacters)) {
+            return el.triggerCharacters.includes(previousChar);
+        }
+    });
 };
 
 
@@ -3721,7 +3759,7 @@ var reportErrorIfPathIsNotConfigured = function() {
     }
 };
 
-exports.version = "1.19.0";
+exports.version = "1.22.0";
 
 
 
@@ -3853,13 +3891,13 @@ module.exports = `
     background-repeat: no-repeat;
 }
 
-.ace_gutter-cell_svg-icons .ace_icon_svg {
+.ace_gutter-cell_svg-icons .ace_gutter_annotation {
     margin-left: -14px;
     float: left;
 }
 
-.ace_gutter-cell .ace_icon {
-    margin-left: -18px;
+.ace_gutter-cell .ace_gutter_annotation {
+    margin-left: -19px;
     float: left;
 }
 
@@ -8409,6 +8447,7 @@ var Range = (__webpack_require__(59082)/* .Range */ .e);
 var FoldLine = (__webpack_require__(74285)/* .FoldLine */ .z);
 var Fold = (__webpack_require__(47899)/* .Fold */ .q);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
+var MouseEvent = (__webpack_require__(53489)/* .MouseEvent */ .T);
 
 function Folding() {
     /*
@@ -9160,7 +9199,9 @@ function Folding() {
     };
 
     this.onFoldWidgetClick = function(row, e) {
-        e = e.domEvent;
+        if (e instanceof MouseEvent)
+            e = e.domEvent;
+
         var options = {
             children: e.shiftKey,
             all: e.ctrlKey || e.metaKey,
@@ -9297,6 +9338,8 @@ var defaultCommands = (__webpack_require__(70883)/* .commands */ .C);
 var config = __webpack_require__(13188);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
 var LineWidgets = (__webpack_require__(62269)/* .LineWidgets */ .H);
+var GutterKeyboardHandler = (__webpack_require__(4173)/* .GutterKeyboardHandler */ .K);
+var nls = (__webpack_require__(13188).nls);
 
 var clipboard = __webpack_require__(76311);
 var keys = __webpack_require__(11797);
@@ -12116,13 +12159,14 @@ config.defineOptions(Editor.prototype, "editor", {
         set: function(message) {
             if (!this.$updatePlaceholder) {
                 this.$updatePlaceholder = function() {
-                    var value = this.session && (this.renderer.$composition || this.getValue());
-                    if (value && this.renderer.placeholderNode) {
+                    var hasValue = this.session && (this.renderer.$composition ||
+                         this.session.getLength() > 1 || this.session.getLine(0).length > 0);
+                    if (hasValue && this.renderer.placeholderNode) {
                         this.renderer.off("afterRender", this.$updatePlaceholder);
                         dom.removeCssClass(this.container, "ace_hasPlaceholder");
                         this.renderer.placeholderNode.remove();
                         this.renderer.placeholderNode = null;
-                    } else if (!value && !this.renderer.placeholderNode) {
+                    } else if (!hasValue && !this.renderer.placeholderNode) {
                         this.renderer.on("afterRender", this.$updatePlaceholder);
                         dom.addCssClass(this.container, "ace_hasPlaceholder");
                         var el = dom.createElement("div");
@@ -12130,7 +12174,7 @@ config.defineOptions(Editor.prototype, "editor", {
                         el.textContent = this.$placeholder || "";
                         this.renderer.placeholderNode = el;
                         this.renderer.content.appendChild(this.renderer.placeholderNode);
-                    } else if (!value && this.renderer.placeholderNode) {
+                    } else if (!hasValue && this.renderer.placeholderNode) {
                         this.renderer.placeholderNode.textContent = this.$placeholder || "";
                     }
                 }.bind(this);
@@ -12147,41 +12191,82 @@ config.defineOptions(Editor.prototype, "editor", {
                 bindKey: "Esc",
                 exec: function(editor) {
                     editor.blur();
-                    editor.renderer.content.focus();
+                    editor.renderer.scroller.focus();
                 },
                 readOnly: true
             };
 
             var focusOnEnterKeyup = function (e) {
-                if (e.target == this.renderer.content && e.keyCode === keys['enter']){
-                    e.stopPropagation();
+                if (e.target == this.renderer.scroller && e.keyCode === keys['enter']){
                     e.preventDefault();
+                    var row = this.getCursorPosition().row;
+                    
+                    if (!this.isRowVisible(row))
+                        this.scrollToLine(row, true, true);
+    
                     this.focus();
                 }
             };
 
-            var keyboardFocusClassName = "ace_keyboard-focus";
+            var gutterKeyboardHandler;
 
             // Prevent focus to be captured when tabbing through the page. When focus is set to the content div, 
             // press Enter key to give focus to Ace and press Esc to again allow to tab through the page.
             if (value){
+                this.renderer.enableKeyboardAccessibility = true;
+                this.renderer.keyboardFocusClassName = "ace_keyboard-focus";
+
                 this.textInput.getElement().setAttribute("tabindex", -1);
-                this.renderer.content.setAttribute("tabindex", 0);
-                this.renderer.content.classList.add(keyboardFocusClassName);
-                this.renderer.content.setAttribute("aria-label",
-                    "Editor, press Enter key to start editing, press Escape key to exit"
+                this.renderer.scroller.setAttribute("tabindex", 0);
+                this.renderer.scroller.setAttribute("role", "group");
+                this.renderer.scroller.setAttribute("aria-roledescription", nls("editor"));
+                this.renderer.scroller.classList.add(this.renderer.keyboardFocusClassName);
+                this.renderer.scroller.setAttribute("aria-label",
+                    nls("Editor content, press Enter to start editing, press Escape to exit")
                 );
 
-                this.renderer.content.addEventListener("keyup", focusOnEnterKeyup.bind(this));
+                this.renderer.scroller.addEventListener("keyup", focusOnEnterKeyup.bind(this));
                 this.commands.addCommand(blurCommand);
+
+                this.renderer.$gutter.setAttribute("tabindex", 0);
+                this.renderer.$gutter.setAttribute("aria-hidden", false);
+                this.renderer.$gutter.setAttribute("role", "group");
+                this.renderer.$gutter.setAttribute("aria-roledescription", nls("editor"));
+                this.renderer.$gutter.setAttribute("aria-label",
+                    nls("Editor gutter, press Enter to interact with controls using arrow keys, press Escape to exit")
+                );
+                this.renderer.$gutter.classList.add(this.renderer.keyboardFocusClassName);
+
+                this.renderer.content.setAttribute("aria-hidden", true);
+
+                if (!gutterKeyboardHandler)
+                    gutterKeyboardHandler = new GutterKeyboardHandler(this);
+
+                gutterKeyboardHandler.addListener();
             } else {
+                this.renderer.enableKeyboardAccessibility = false;
+
                 this.textInput.getElement().setAttribute("tabindex", 0);
-                this.renderer.content.setAttribute("tabindex", -1);
-                this.renderer.content.classList.remove(keyboardFocusClassName);
-                this.renderer.content.setAttribute("aria-label", "");
+                this.renderer.scroller.setAttribute("tabindex", -1);
+                this.renderer.scroller.removeAttribute("role");
+                this.renderer.scroller.removeAttribute("aria-roledescription");
+                this.renderer.scroller.classList.remove(this.renderer.keyboardFocusClassName);
+                this.renderer.scroller.removeAttribute("aria-label");
             
-                this.renderer.content.removeEventListener("keyup", focusOnEnterKeyup.bind(this));
+                this.renderer.scroller.removeEventListener("keyup", focusOnEnterKeyup.bind(this));
                 this.commands.removeCommand(blurCommand);
+
+                this.renderer.content.removeAttribute("aria-hidden");
+
+                this.renderer.$gutter.setAttribute("tabindex", -1);
+                this.renderer.$gutter.setAttribute("aria-hidden", true);
+                this.renderer.$gutter.removeAttribute("role");
+                this.renderer.$gutter.removeAttribute("aria-roledescription");
+                this.renderer.$gutter.removeAttribute("aria-label");
+                this.renderer.$gutter.classList.remove(this.renderer.keyboardFocusClassName);
+
+                if (gutterKeyboardHandler)
+                    gutterKeyboardHandler.removeListener();
             }
         },
         initialValue: false
@@ -12274,6 +12359,7 @@ exports.M = Editor;
 var LineWidgets = (__webpack_require__(62269)/* .LineWidgets */ .H);
 var dom = __webpack_require__(6359);
 var Range = (__webpack_require__(59082)/* .Range */ .e);
+var nls = (__webpack_require__(13188).nls);
 
 function binarySearch(array, needle, comparator) {
     var first = 0;
@@ -12360,7 +12446,7 @@ exports.showErrorMarker = function(editor, dir) {
         return;
     } else {
         gutterAnno = {
-            text: ["Looks good!"],
+            text: [nls("Looks good!")],
             className: "ace_ok"
         };
     }
@@ -12607,11 +12693,12 @@ var doLiveAutocomplete = function(e) {
     }
     else if (e.command.name === "insertstring") {
         var prefix = util.getCompletionPrefix(editor);
-        // Only autocomplete if there's a prefix that can be matched
-        if (prefix && !hasCompleter) {
+        // Only autocomplete if there's a prefix that can be matched or previous char is trigger character 
+        var triggerAutocomplete = util.triggerAutocomplete(editor);
+        if ((prefix || triggerAutocomplete) && !hasCompleter) {
             var completer = Autocomplete.for(editor);
-            // Disable autoInsert
-            completer.autoInsert = false;
+            // Set a flag for auto shown
+            completer.autoShown = true;
             completer.showPopup(editor);
         }
     }
@@ -12665,6 +12752,439 @@ var Editor = (__webpack_require__(82880)/* .Editor */ .M);
     }
 });
 
+
+/***/ }),
+
+/***/ 4173:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var keys = __webpack_require__(11797);
+var GutterTooltip = (__webpack_require__(956)/* .GutterTooltip */ .w);
+
+class GutterKeyboardHandler {
+    constructor(editor) {
+        this.editor = editor;
+        this.gutterLayer = editor.renderer.$gutterLayer;
+        this.element = editor.renderer.$gutter;
+        this.lines = editor.renderer.$gutterLayer.$lines;
+
+        this.activeRowIndex = null;
+        this.activeLane = null;
+
+        this.annotationTooltip = new GutterTooltip(this.editor);
+    }
+
+    addListener() {
+        this.element.addEventListener("keydown", this.$onGutterKeyDown.bind(this));
+        this.element.addEventListener("focusout", this.$blurGutter.bind(this));
+        this.editor.on("mousewheel", this.$blurGutter.bind(this));
+    }
+
+    removeListener() {
+        this.element.removeEventListener("keydown", this.$onGutterKeyDown.bind(this));
+        this.element.removeEventListener("focusout", this.$blurGutter.bind(this));
+        this.editor.off("mousewheel", this.$blurGutter.bind(this));
+    }
+
+    $onGutterKeyDown(e) {
+        // if the tooltip is open, we only want to respond to commands to close it (like a modal)
+        if (this.annotationTooltip.isOpen) {
+            e.preventDefault();
+
+            if (e.keyCode === keys["escape"])
+                this.annotationTooltip.hide();
+
+            return;
+        }
+
+        // If focus is on the gutter element, set focus to nearest gutter icon on enter press.
+        if (e.target === this.element) {
+            if (e.keyCode != keys["enter"]) {return;}
+            e.preventDefault();
+
+            // Scroll if the cursor is not currently within the viewport.
+            var row = this.editor.getCursorPosition().row;       
+            if (!this.editor.isRowVisible(row))
+                this.editor.scrollToLine(row, true, true);
+
+            // After scrolling is completed, find the nearest gutter icon and set focus to it.
+            setTimeout(function() {
+                var index = this.$rowToRowIndex(this.gutterLayer.$cursorCell.row);
+                var nearestFoldIndex = this.$findNearestFoldWidget(index);
+                var nearestAnnotationIndex = this.$findNearestAnnotation(index);
+
+                if (nearestFoldIndex === null && nearestAnnotationIndex === null)
+                    return;
+
+                if (nearestFoldIndex === null && nearestAnnotationIndex !== null){
+                    this.activeRowIndex = nearestAnnotationIndex;
+                    this.activeLane = "annotation";
+                    this.$focusAnnotation(this.activeRowIndex);
+                    return;
+                }
+
+                if (nearestFoldIndex !== null && nearestAnnotationIndex === null){
+                    this.activeRowIndex = nearestFoldIndex;
+                    this.activeLane = "fold";
+                    this.$focusFoldWidget(this.activeRowIndex);
+                    return;
+                }
+
+                if (Math.abs(nearestAnnotationIndex - index) < Math.abs(nearestFoldIndex - index)){
+                    this.activeRowIndex = nearestAnnotationIndex;
+                    this.activeLane = "annotation";
+                    this.$focusAnnotation(this.activeRowIndex);
+                    return;
+                } else {
+                    this.activeRowIndex = nearestFoldIndex;
+                    this.activeLane = "fold";
+                    this.$focusFoldWidget(this.activeRowIndex);
+                    return;
+                }
+            }.bind(this), 10);
+            return;
+        } 
+
+        // After here, foucs is on a gutter icon and we want to interact with them.
+        // Prevent tabbing when interacting with the gutter icons.
+        if (e.keyCode === keys["tab"]){
+            e.preventDefault();
+            return;
+        } 
+
+        // If focus is on a gutter icon, set focus to gutter on escape press.
+        if (e.keyCode === keys["escape"]) {
+            e.preventDefault();
+            this.$blurGutter();
+            this.element.focus();
+            this.lane = null;
+            return;
+        }
+
+        if (e.keyCode === keys["up"]) {
+            e.preventDefault();
+  
+            switch (this.activeLane){
+                case "fold":
+                    this.$moveFoldWidgetUp();
+                    break;
+                
+                case "annotation":
+                    this.$moveAnnotationUp();
+                    break;
+            }
+            return;
+        }
+
+        if (e.keyCode === keys["down"]) {
+            e.preventDefault();
+
+            switch (this.activeLane){
+                case "fold":
+                    this.$moveFoldWidgetDown();
+                    break;
+                
+                case "annotation":
+                    this.$moveAnnotationDown();
+                    break;
+            }
+            return;
+        }
+
+        // Try to switch from fold widgets to annotations.
+        if (e.keyCode === keys["left"]){
+            e.preventDefault();
+            this.$switchLane("annotation");
+        }
+
+        // Try to switch from annotations to fold widgets.
+        if (e.keyCode === keys["right"]){
+            e.preventDefault();
+            this.$switchLane("fold");
+        }
+
+        if (e.keyCode === keys["enter"] || e.keyCode === keys["space"]){
+            e.preventDefault();
+
+            switch (this.activeLane) {
+                case "fold":
+                    if (this.gutterLayer.session.foldWidgets[this.$rowIndexToRow(this.activeRowIndex)] === 'start') {
+                        var rowFoldingWidget = this.$rowIndexToRow(this.activeRowIndex);
+                        this.editor.session.onFoldWidgetClick(this.$rowIndexToRow(this.activeRowIndex), e);
+
+                        // After folding, check that the right fold widget is still in focus.
+                        // If not (e.g. folding close to bottom of doc), put right widget in focus.
+                        setTimeout(function() {
+                            if (this.$rowIndexToRow(this.activeRowIndex) !== rowFoldingWidget){ 
+                                this.$blurFoldWidget(this.activeRowIndex);
+                                this.activeRowIndex = this.$rowToRowIndex(rowFoldingWidget);
+                                this.$focusFoldWidget(this.activeRowIndex);
+                            }
+                        }.bind(this), 10);
+
+                        break;
+                    } else if (this.gutterLayer.session.foldWidgets[this.$rowIndexToRow(this.activeRowIndex)] === 'end') {
+                        /* TO DO: deal with 'end' fold widgets */
+                        break;
+                    }
+                    return; 
+                
+                case "annotation":
+                    var gutterElement = this.lines.cells[this.activeRowIndex].element.childNodes[2];
+                    var rect = gutterElement.getBoundingClientRect();
+                    var style = this.annotationTooltip.getElement().style;
+                    style.left = rect.right + "px";
+                    style.top = rect.bottom + "px";
+                    this.annotationTooltip.showTooltip(this.$rowIndexToRow(this.activeRowIndex));                
+                    break;
+            }
+            return;
+        }   
+    }
+
+    $blurGutter() {
+        if (this.activeRowIndex !== null){
+            switch (this.activeLane){
+                case "fold":
+                    this.$blurFoldWidget(this.activeRowIndex);
+                    break;
+
+                case "annotation":
+                    this.$blurAnnotation(this.activeRowIndex);
+                    break;
+            }
+        }
+
+        if (this.annotationTooltip.isOpen)
+            this.annotationTooltip.hide();
+
+        return;
+    }
+
+    $isFoldWidgetVisible(index) {
+        var isRowFullyVisible = this.editor.isRowFullyVisible(this.$rowIndexToRow(index));
+        var isIconVisible = this.$getFoldWidget(index).style.display !== "none";
+        return isRowFullyVisible && isIconVisible;
+    }
+
+    $isAnnotationVisible(index) {
+        var isRowFullyVisible = this.editor.isRowFullyVisible(this.$rowIndexToRow(index));
+        var isIconVisible = this.$getAnnotation(index).style.display !== "none";
+        return isRowFullyVisible && isIconVisible;
+    }
+
+    $getFoldWidget(index) {
+        var cell = this.lines.get(index);
+        var element = cell.element;
+        return element.childNodes[1];
+    }
+
+    $getAnnotation(index) {
+        var cell = this.lines.get(index);
+        var element = cell.element;
+        return element.childNodes[2];
+    }
+
+    // Given an index, find the nearest index with a foldwidget
+    $findNearestFoldWidget(index) {
+        // If fold widget exists at index, return index.
+        if (this.$isFoldWidgetVisible(index))
+            return index;
+
+        // else, find the nearest index with fold widget within viewport.
+        var i = 0;
+        while (index - i > 0 || index + i < this.lines.getLength() - 1){
+            i++;
+
+            if (index - i >= 0 && this.$isFoldWidgetVisible(index - i))
+                return index - i;
+
+            if (index + i <= this.lines.getLength() - 1 && this.$isFoldWidgetVisible(index + i))
+                return index + i;
+        }
+
+        // If there are no fold widgets within the viewport, return null.
+        return null;
+    }
+
+    // Given an index, find the nearest index with an annotation.
+    $findNearestAnnotation(index) {
+        // If annotation exists at index, return index.
+        if (this.$isAnnotationVisible(index))
+            return index;
+
+        // else, find the nearest index with annotation within viewport.
+        var i = 0;
+        while (index - i > 0 || index + i < this.lines.getLength() - 1){
+            i++;
+
+            if (index - i >= 0 && this.$isAnnotationVisible(index - i))
+                return index - i;
+
+            if (index + i <= this.lines.getLength() - 1 && this.$isAnnotationVisible(index + i))
+                return index + i;
+        }
+
+        // If there are no annotations within the viewport, return null.
+        return null;
+    }
+
+    $focusFoldWidget(index) {
+        if (index == null)
+            return;
+
+        var foldWidget = this.$getFoldWidget(index);
+
+        foldWidget.classList.add(this.editor.renderer.keyboardFocusClassName);
+        foldWidget.focus();
+    }
+
+    $focusAnnotation(index) {
+        if (index == null)
+            return;
+
+        var annotation = this.$getAnnotation(index);
+
+        annotation.classList.add(this.editor.renderer.keyboardFocusClassName);
+        annotation.setAttribute("role", "button");
+        annotation.focus();
+    }
+
+    $blurFoldWidget(index) {
+        var foldWidget = this.$getFoldWidget(index);
+
+        foldWidget.classList.remove(this.editor.renderer.keyboardFocusClassName);
+        foldWidget.blur();
+    }
+
+    $blurAnnotation(index) {
+        var annotation = this.$getAnnotation(index);
+
+        annotation.classList.remove(this.editor.renderer.keyboardFocusClassName);
+        annotation.removeAttribute("role");
+        annotation.blur();
+    }
+
+    $moveFoldWidgetUp() {
+        var index = this.activeRowIndex;
+
+        while (index > 0){
+            index--;
+
+            if (this.$isFoldWidgetVisible(index)){
+                this.$blurFoldWidget(this.activeRowIndex);
+                this.activeRowIndex = index;
+                this.$focusFoldWidget(this.activeRowIndex);
+                return;
+            }
+        }
+        return;
+    }
+
+    $moveFoldWidgetDown() {
+        var index = this.activeRowIndex;
+
+        while (index < this.lines.getLength() - 1){
+            index++;
+
+            if (this.$isFoldWidgetVisible(index)){
+                this.$blurFoldWidget(this.activeRowIndex);
+                this.activeRowIndex = index;
+                this.$focusFoldWidget(this.activeRowIndex);
+                return;
+            }
+        }
+        return;
+    }
+
+    $moveAnnotationUp() {
+        var index = this.activeRowIndex;
+
+        while (index > 0){
+            index--;
+
+            if (this.$isAnnotationVisible(index)){
+                this.$blurAnnotation(this.activeRowIndex);
+                this.activeRowIndex = index;
+                this.$focusAnnotation(this.activeRowIndex);
+                return;
+            }
+        }
+        return;
+    }
+
+    $moveAnnotationDown() {
+        var index = this.activeRowIndex;
+
+        while (index < this.lines.getLength() - 1){
+            index++;
+
+            if (this.$isAnnotationVisible(index)){
+                this.$blurAnnotation(this.activeRowIndex);
+                this.activeRowIndex = index;
+                this.$focusAnnotation(this.activeRowIndex);
+                return;
+            }
+        }
+        return;
+    }
+
+    $switchLane(desinationLane){
+        switch (desinationLane) {
+            case "annotation":
+                if (this.activeLane === "annotation") {break;}
+                var annotationIndex = this.$findNearestAnnotation(this.activeRowIndex);
+                if (annotationIndex == null) {break;}
+
+                this.activeLane = "annotation";
+
+                this.$blurFoldWidget(this.activeRowIndex);
+                this.activeRowIndex = annotationIndex;
+                this.$focusAnnotation(this.activeRowIndex);
+
+                break;
+
+            case "fold": 
+                if (this.activeLane === "fold") {break;}
+                var foldWidgetIndex = this.$findNearestFoldWidget(this.activeRowIndex);
+                if (foldWidgetIndex == null) {break;}
+
+                this.activeLane = "fold";
+
+                this.$blurAnnotation(this.activeRowIndex);
+                this.activeRowIndex = foldWidgetIndex;
+                this.$focusFoldWidget(this.activeRowIndex);
+                
+                break;
+        }
+        return;
+    }
+
+    // Convert row index (viewport space) to row (document space).
+    $rowIndexToRow(index) {
+        var cell = this.lines.get(index);
+        if (cell)
+            return cell.row;
+
+        return null;
+    }
+
+    // Convert row (document space) to row index (viewport space).
+    $rowToRowIndex(row) {
+        for (var i = 0; i < this.lines.getLength(); i++){
+            var cell = this.lines.get(i);
+            if (cell.row == row)
+                return i;
+        }
+
+        return null;
+    }
+}
+
+exports.K = GutterKeyboardHandler;
 
 /***/ }),
 
@@ -13037,6 +13557,7 @@ var __webpack_unused_export__;
 
 
 var event = __webpack_require__(17989);
+var nls = (__webpack_require__(13188).nls);
 var useragent = __webpack_require__(50618);
 var dom = __webpack_require__(6359);
 var lang = __webpack_require__(20124);
@@ -13097,9 +13618,22 @@ var TextInput = function(parentNode, host) {
         }
         if (options.role) {
             text.setAttribute("role", options.role);
+        }     
+    };
+    this.setAriaLabel = function() {
+        if(host.session && host.renderer.enableKeyboardAccessibility) {
+            var row =  host.session.selection.cursor.row;
+
+            text.setAttribute("aria-roledescription", nls("editor"));
+            text.setAttribute("aria-label", nls("Cursor at row $0", [row + 1]));
+        } else {
+            text.removeAttribute("aria-roledescription");
+            text.removeAttribute("aria-label");
         }
     };
+
     this.setAriaOptions({role: "textbox"});
+    this.setAriaLabel();
 
     event.addListener(text, "blur", function(e) {
         if (ignoreFocusEvents) return;
@@ -13128,6 +13662,9 @@ var TextInput = function(parentNode, host) {
     }, host);
     this.$focusScroll = false;
     this.focus = function() {
+        // On focusing on the textarea, read active row number to assistive tech.
+        this.setAriaLabel();
+
         if (tempStyle || HAS_FOCUS_ARGS || this.$focusScroll == "browser")
             return text.focus({ preventScroll: true });
 
@@ -14411,6 +14948,7 @@ var oop = __webpack_require__(89359);
 var lang = __webpack_require__(20124);
 var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
 var Lines = (__webpack_require__(55388)/* .Lines */ .x);
+var nls = (__webpack_require__(13188).nls);
 
 class Gutter{
     constructor(parentEl) {
@@ -14685,6 +15223,7 @@ class Gutter{
         var textNode = element.childNodes[0];
         var foldWidget = element.childNodes[1];
         var annotationNode = element.childNodes[2];
+        var annotationIconNode = annotationNode.firstChild;
 
         var firstLineNumber = session.$firstLineNumber;
         
@@ -14699,6 +15238,10 @@ class Gutter{
         var className = this.$useSvgGutterIcons ? "ace_gutter-cell_svg-icons " : "ace_gutter-cell ";
         var iconClassName = this.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
         
+        var rowText = (gutterRenderer
+            ? gutterRenderer.getText(session, row)
+            : row + firstLineNumber).toString();
+
         if (this.$highlightGutterLine) {
             if (row == this.$cursorRow || (fold && row < this.$cursorRow && row >= foldStart &&  this.$cursorRow <= fold.end.row)) {
                 className += "ace_gutter-active-line ";
@@ -14758,46 +15301,77 @@ class Gutter{
 
             dom.setStyle(foldWidget.style, "height", lineHeight);
             dom.setStyle(foldWidget.style, "display", "inline-block");
+            
+            // Set a11y properties.
+            foldWidget.setAttribute("role", "button");
+            foldWidget.setAttribute("tabindex", "-1");
+            var fold = session.getFoldLine(rowText - 1);
+            if (fold) {
+                foldWidget.setAttribute("aria-label", nls("Unfold rows $0 to $1", [rowText, fold.end.row + 1]));
+                foldWidget.setAttribute("title", nls("Unfold code"));
+            }
+            else {
+                foldWidget.setAttribute("aria-label", nls("Fold at row $0", [rowText]));
+                foldWidget.setAttribute("title", nls("Fold code"));
+            }
         } else {
             if (foldWidget) {
                 dom.setStyle(foldWidget.style, "display", "none");
+                foldWidget.setAttribute("tabindex", "0");
+                foldWidget.removeAttribute("role");
+                foldWidget.removeAttribute("aria-label");
             }
         }
 
         if (annotationInFold && this.$showFoldedAnnotations){
-            annotationNode.className = iconClassName;
-            annotationNode.className += foldAnnotationClass;
+            annotationNode.className = "ace_gutter_annotation";
+            annotationIconNode.className = iconClassName;
+            annotationIconNode.className += foldAnnotationClass;
 
-            dom.setStyle(annotationNode.style, "height", lineHeight);
+            dom.setStyle(annotationIconNode.style, "height", lineHeight);
             dom.setStyle(annotationNode.style, "display", "block");
+            dom.setStyle(annotationNode.style, "height", lineHeight);
+            annotationNode.setAttribute("aria-label", nls("Read annotations row $0", [rowText]));
+            annotationNode.setAttribute("tabindex", "-1");
+            annotationNode.setAttribute("role", "button");
         }
         else if (this.$annotations[row]){
-            annotationNode.className = iconClassName;
+            annotationNode.className = "ace_gutter_annotation";
+            annotationIconNode.className = iconClassName;
 
             if (this.$useSvgGutterIcons)
-                annotationNode.className += this.$annotations[row].className;
+                annotationIconNode.className += this.$annotations[row].className;
             else 
                 element.classList.add(this.$annotations[row].className.replace(" ", ""));
 
-            dom.setStyle(annotationNode.style, "height", lineHeight);
+            dom.setStyle(annotationIconNode.style, "height", lineHeight);
             dom.setStyle(annotationNode.style, "display", "block");
+            dom.setStyle(annotationNode.style, "height", lineHeight);
+            annotationNode.setAttribute("aria-label", nls("Read annotations row $0", [rowText]));
+            annotationNode.setAttribute("tabindex", "-1");
+            annotationNode.setAttribute("role", "button");
         }
         else {
             dom.setStyle(annotationNode.style, "display", "none");
+            annotationNode.removeAttribute("aria-label");
+            annotationNode.removeAttribute("role");
+            annotationNode.setAttribute("tabindex", "0");
         }
-        
-        var text = (gutterRenderer
-            ? gutterRenderer.getText(session, row)
-            : row + firstLineNumber).toString();
-            
-        if (text !== textNode.data) {
-            textNode.data = text;
-        }
-        
+        if (rowText !== textNode.data) {
+            textNode.data = rowText;
+        } 
+
         dom.setStyle(cell.element.style, "height", this.$lines.computeLineHeight(row, config, session) + "px");
         dom.setStyle(cell.element.style, "top", this.$lines.computeLineTop(row, config, session) + "px");
         
-        cell.text = text;
+        cell.text = rowText;
+
+        // If there are no annotations or fold widgets in the gutter cell, hide it from assistive tech.
+        if (annotationNode.style.display === "none" && foldWidget.style.display === "none")
+            cell.element.setAttribute("aria-hidden", true);
+        else
+            cell.element.setAttribute("aria-hidden", false);
+        
         return cell;
     }
     
@@ -14870,6 +15444,9 @@ function onCreateCell(element) {
 
     var annotationNode = dom.createElement("span");
     element.appendChild(annotationNode);
+
+    var annotationIconNode = dom.createElement("span");
+    annotationNode.appendChild(annotationIconNode);
     
     return element;
 }
@@ -15261,7 +15838,7 @@ var dom = __webpack_require__(6359);
 var lang = __webpack_require__(20124);
 var Lines = (__webpack_require__(55388)/* .Lines */ .x);
 var EventEmitter = (__webpack_require__(23056)/* .EventEmitter */ .v);
-
+var nls = (__webpack_require__(13188).nls);
 
 class Text {
     constructor(parentEl) {
@@ -15619,8 +16196,10 @@ class Text {
         if (!this.$textToken[token.type]) {
             var classes = "ace_" + token.type.replace(/\./g, " ace_");
             var span = this.dom.createElement("span");
-            if (token.type == "fold")
+            if (token.type == "fold"){
                 span.style.width = (token.value.length * this.config.characterWidth) + "px";
+                span.setAttribute("title", nls("Unfold code"));
+            }
 
             span.className = classes;
             span.appendChild(valueFragment);
@@ -16068,6 +16647,8 @@ function reportError(msg, data) {
     setTimeout(function() { throw e; });
 }
 
+var messages;
+
 class AppConfig {
     constructor() {
         this.$defaultOptions = {};
@@ -16128,6 +16709,20 @@ class AppConfig {
         }, this);
     }
     
+    setMessages(value) {
+        messages = value;
+    }
+    
+    nls(string, params) {
+        var translated = messages && messages[string] || string;
+        if (params) {
+            translated = translated.replace(/\$(\$|[\d]+)/g, function(_, name) {
+                if (name == "$") return "$";
+                return params[name];
+            });
+        }
+        return translated;
+    }
 }
 AppConfig.prototype.warn = warn;
 AppConfig.prototype.reportError = reportError;
@@ -18350,8 +18945,10 @@ var getWrapped = function(selection, selected, opening, closing) {
  * @constructor
  * @param {Object} [options] - The options for the Cstyle behaviour object.
  * @param {boolean} [options.braces] - Whether to force braces auto-pairing.
+ * @param {boolean} [options.closeDocComment] - enables automatic insertion of closing tags for documentation comments.
  */
 var CstyleBehaviour = function(options) {
+    options = options || {};
     this.add("braces", "insertion", function(state, action, editor, session, text) {
         var cursor = editor.getCursorPosition();
         var line = session.doc.getLine(cursor.row);
@@ -18362,7 +18959,7 @@ var CstyleBehaviour = function(options) {
             if (selected !== "" && selected !== "{" && editor.getWrapBehavioursEnabled()) {
                 return getWrapped(selection, selected, '{', '}');
             } else if (CstyleBehaviour.isSaneInsertion(editor, session)) {
-                if (/[\]\}\)]/.test(line[cursor.column]) || editor.inMultiSelectMode || options && options.braces) {
+                if (/[\]\}\)]/.test(line[cursor.column]) || editor.inMultiSelectMode || options.braces) {
                     CstyleBehaviour.recordAutoInsert(editor, session, "}");
                     return {
                         text: '{}',
@@ -18600,7 +19197,38 @@ var CstyleBehaviour = function(options) {
             }
         }
     });
+    
+    if (options.closeDocComment !== false) {
+        this.add("doc comment end", "insertion", function (state, action, editor, session, text) {
+            if (state === "doc-start" && (text === "\n" || text === "\r\n") && editor.selection.isEmpty()) {
+                var cursor = editor.getCursorPosition();
+                var line = session.doc.getLine(cursor.row);
+                var nextLine = session.doc.getLine(cursor.row + 1);
+                var indent = this.$getIndent(line);
+                if (/\s*\*/.test(nextLine)) {
+                    if (/^\s*\*/.test(line)) {
+                        return {
+                            text: text + indent + "* ",
+                            selection: [1, 3 + indent.length, 1, 3 + indent.length]
+                        };
+                    }
+                    else {
+                        return {
+                            text: text + indent + " * ",
+                            selection: [1, 3 + indent.length, 1, 3 + indent.length]
+                        };
+                    }
 
+                }
+                if (/\/\*\*/.test(line.substring(0, cursor.column))) {
+                    return {
+                        text: text + indent + " * " + text + " " + indent + "*/",
+                        selection: [1, 4 + indent.length, 1, 4 + indent.length]
+                    };
+                }
+            }
+        });
+    }
 };
 
     
@@ -19387,11 +20015,12 @@ exports.K = TextHighlightRules;
 var dom = __webpack_require__(6359);
 var event = __webpack_require__(17989);
 var Tooltip = (__webpack_require__(962)/* .Tooltip */ .u);
+var nls = (__webpack_require__(13188).nls);
 
 function GutterHandler(mouseHandler) {
     var editor = mouseHandler.editor;
     var gutter = editor.renderer.$gutterLayer;
-    var tooltip = new GutterTooltip(editor.container);
+    var tooltip = new GutterTooltip(editor);
 
     mouseHandler.editor.setDefaultHandler("guttermousedown", function(e) {
         if (!editor.isFocused() || e.getButton() != 0)
@@ -19418,17 +20047,119 @@ function GutterHandler(mouseHandler) {
         return e.preventDefault();
     });
 
-
-    var tooltipTimeout, mouseEvent, tooltipContent;
-
-    var annotationLabels = {
-        error: {singular: "error", plural: "errors"}, 
-        warning: {singular: "warning", plural: "warnings"},
-        info: {singular: "information message", plural: "information messages"}
-    };
+    var tooltipTimeout, mouseEvent;
 
     function showTooltip() {
         var row = mouseEvent.getDocumentPosition().row;
+
+        var maxRow = editor.session.getLength();
+        if (row == maxRow) {
+            var screenRow = editor.renderer.pixelToScreenCoordinates(0, mouseEvent.y).row;
+            var pos = mouseEvent.$pos;
+            if (screenRow > editor.session.documentToScreenRow(pos.row, pos.column))
+                return hideTooltip();
+        }
+
+        tooltip.showTooltip(row);
+
+        if (!tooltip.isOpen)
+            return;
+
+        editor.on("mousewheel", hideTooltip);
+
+        if (mouseHandler.$tooltipFollowsMouse) {
+            moveTooltip(mouseEvent);
+        } else {
+            var gutterElement = gutter.$lines.cells[row].element.querySelector("[class*=ace_icon]");
+            var rect = gutterElement.getBoundingClientRect();
+            var style = tooltip.getElement().style;
+            style.left = rect.right + "px";
+            style.top = rect.bottom + "px";
+        }
+    }
+
+    function hideTooltip() {
+        if (tooltipTimeout)
+            tooltipTimeout = clearTimeout(tooltipTimeout);
+        if (tooltip.isOpen) {
+            tooltip.hide();
+            editor._signal("hideGutterTooltip", tooltip);
+            editor.off("mousewheel", hideTooltip);
+        }
+    }
+
+    function moveTooltip(e) {
+        tooltip.setPosition(e.x, e.y);
+    }
+
+    mouseHandler.editor.setDefaultHandler("guttermousemove", function(e) {
+        var target = e.domEvent.target || e.domEvent.srcElement;
+        if (dom.hasCssClass(target, "ace_fold-widget"))
+            return hideTooltip();
+
+        if (tooltip.isOpen && mouseHandler.$tooltipFollowsMouse)
+            moveTooltip(e);
+
+        mouseEvent = e;
+        if (tooltipTimeout)
+            return;
+        tooltipTimeout = setTimeout(function() {
+            tooltipTimeout = null;
+            if (mouseEvent && !mouseHandler.isMousePressed)
+                showTooltip();
+            else
+                hideTooltip();
+        }, 50);
+    });
+
+    event.addListener(editor.renderer.$gutter, "mouseout", function(e) {
+        mouseEvent = null;
+        if (!tooltip.isOpen || tooltipTimeout)
+            return;
+
+        tooltipTimeout = setTimeout(function() {
+            tooltipTimeout = null;
+            hideTooltip();
+        }, 50);
+    }, editor);
+    
+    editor.on("changeSession", hideTooltip);
+    editor.on("input", hideTooltip);
+}
+
+exports.d = GutterHandler;
+
+class GutterTooltip extends Tooltip {
+    constructor(editor) {
+        super(editor.container);
+        this.editor = editor;
+    }
+
+    setPosition(x, y) {
+        var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+        var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        var width = this.getWidth();
+        var height = this.getHeight();
+        x += 15;
+        y += 15;
+        if (x + width > windowWidth) {
+            x -= (x + width) - windowWidth;
+        }
+        if (y + height > windowHeight) {
+            y -= 20 + height;
+        }
+        Tooltip.prototype.setPosition.call(this, x, y);
+    }
+    
+    static get annotationLabels() { return {
+            error: {singular: nls("error"), plural: nls("errors")},
+            warning: {singular: nls("warning"), plural: nls("warnings")},
+            info: {singular: nls("information message"), plural: nls("information messages")}
+        };
+    }
+
+    showTooltip(row) {
+        var gutter = this.editor.renderer.$gutterLayer;
         var annotationsInRow = gutter.$annotations[row];
         var annotation;
 
@@ -19465,7 +20196,7 @@ function GutterHandler(mouseHandler) {
             }
            
             if (mostSevereAnnotationInFoldType === "error_fold" || mostSevereAnnotationInFoldType === "warning_fold"){
-                var summaryFoldedAnnotations = `${annotationsToSummaryString(annotationsInFold)} in folded code.`;
+                var summaryFoldedAnnotations = `${GutterTooltip.annotationsToSummaryString(annotationsInFold)} in folded code.`;
 
                 annotation.text.push(summaryFoldedAnnotations);
                 annotation.type.push(mostSevereAnnotationInFoldType);
@@ -19473,128 +20204,43 @@ function GutterHandler(mouseHandler) {
         }
         
         if (annotation.text.length === 0)
-            return hideTooltip();
-
-        var maxRow = editor.session.getLength();
-        if (row == maxRow) {
-            var screenRow = editor.renderer.pixelToScreenCoordinates(0, mouseEvent.y).row;
-            var pos = mouseEvent.$pos;
-            if (screenRow > editor.session.documentToScreenRow(pos.row, pos.column))
-                return hideTooltip();
-        }
+            return this.hide();
 
         var annotationMessages = {error: [], warning: [], info: []};
         var iconClassName = gutter.$useSvgGutterIcons ? "ace_icon_svg" : "ace_icon";
 
         // Construct the contents of the tooltip.
         for (var i = 0; i < annotation.text.length; i++) {
-            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${annotationLabels[annotation.type[i].replace("_fold","")].singular}' role=img> </span> ${annotation.text[i]}`;
+            var line = `<span class='ace_${annotation.type[i]} ${iconClassName}' aria-label='${GutterTooltip.annotationLabels[annotation.type[i].replace("_fold","")].singular}' role=img> </span> ${annotation.text[i]}`;
             annotationMessages[annotation.type[i].replace("_fold","")].push(line);
         }
-        tooltipContent = [].concat(annotationMessages.error, annotationMessages.warning, annotationMessages.info).join("<br>");
+        var tooltipContent = [].concat(annotationMessages.error, annotationMessages.warning, annotationMessages.info).join("<br>");
  
-        tooltip.setHtml(tooltipContent);
-        tooltip.setClassName("ace_gutter-tooltip");
-        tooltip.$element.setAttribute("aria-live", "polite");
+        this.setHtml(tooltipContent);
+        this.setClassName("ace_gutter-tooltip");
+        this.$element.setAttribute("aria-live", "polite");
         
-        if (!tooltip.isOpen) {
-            tooltip.setTheme(editor.renderer.theme);
+        if (!this.isOpen) {
+            this.setTheme(this.editor.renderer.theme);
         }
-        tooltip.show();
-        editor._signal("showGutterTooltip", tooltip);
-        editor.on("mousewheel", hideTooltip);
 
-        if (mouseHandler.$tooltipFollowsMouse) {
-            moveTooltip(mouseEvent);
-        } else {
-            var gutterElement = gutter.$lines.cells[row].element.querySelector("[class*=ace_icon]");
-            var rect = gutterElement.getBoundingClientRect();
-            var style = tooltip.getElement().style;
-            style.left = rect.right + "px";
-            style.top = rect.bottom + "px";
-        }
+        this.editor._signal("showGutterTooltip", this);
+        this.show();
     }
 
-    function hideTooltip() {
-        if (tooltipTimeout)
-            tooltipTimeout = clearTimeout(tooltipTimeout);
-        if (tooltipContent) {
-            tooltip.hide();
-            tooltipContent = null;
-            editor._signal("hideGutterTooltip", tooltip);
-            editor.off("mousewheel", hideTooltip);
-        }
-    }
-
-    function annotationsToSummaryString(annotations) {
+    static annotationsToSummaryString(annotations) {
         const summary = [];
         const annotationTypes = ['error', 'warning', 'info'];
         for (const annotationType of annotationTypes) {
             if (!annotations[annotationType].length) continue;
-            const label = annotations[annotationType].length === 1 ? annotationLabels[annotationType].singular : annotationLabels[annotationType].plural;
+            const label = annotations[annotationType].length === 1 ? GutterTooltip.annotationLabels[annotationType].singular : GutterTooltip.annotationLabels[annotationType].plural;
             summary.push(`${annotations[annotationType].length} ${label}`);
         }
         return summary.join(", ");
     }
-
-    function moveTooltip(e) {
-        tooltip.setPosition(e.x, e.y);
-    }
-
-    mouseHandler.editor.setDefaultHandler("guttermousemove", function(e) {
-        var target = e.domEvent.target || e.domEvent.srcElement;
-        if (dom.hasCssClass(target, "ace_fold-widget"))
-            return hideTooltip();
-
-        if (tooltipContent && mouseHandler.$tooltipFollowsMouse)
-            moveTooltip(e);
-
-        mouseEvent = e;
-        if (tooltipTimeout)
-            return;
-        tooltipTimeout = setTimeout(function() {
-            tooltipTimeout = null;
-            if (mouseEvent && !mouseHandler.isMousePressed)
-                showTooltip();
-            else
-                hideTooltip();
-        }, 50);
-    });
-
-    event.addListener(editor.renderer.$gutter, "mouseout", function(e) {
-        mouseEvent = null;
-        if (!tooltipContent || tooltipTimeout)
-            return;
-
-        tooltipTimeout = setTimeout(function() {
-            tooltipTimeout = null;
-            hideTooltip();
-        }, 50);
-    }, editor);
-    
-    editor.on("changeSession", hideTooltip);
 }
 
-class GutterTooltip extends Tooltip {
-    setPosition(x, y) {
-        var windowWidth = window.innerWidth || document.documentElement.clientWidth;
-        var windowHeight = window.innerHeight || document.documentElement.clientHeight;
-        var width = this.getWidth();
-        var height = this.getHeight();
-        x += 15;
-        y += 15;
-        if (x + width > windowWidth) {
-            x -= (x + width) - windowWidth;
-        }
-        if (y + height > windowHeight) {
-            y -= 20 + height;
-        }
-        Tooltip.prototype.setPosition.call(this, x, y);
-    }
-
-}
-
-exports.d = GutterHandler;
+exports.w = GutterTooltip;
 
 
 /***/ }),
@@ -22083,10 +22729,8 @@ exports.MultiSelect = MultiSelect;
         set: function(val) {
             MultiSelect(this);
             if (val) {
-                this.on("changeSession", this.$multiselectOnSessionChange);
                 this.on("mousedown", onMouseDown);
             } else {
-                this.off("changeSession", this.$multiselectOnSessionChange);
                 this.off("mousedown", onMouseDown);
             }
         },
@@ -25477,7 +26121,7 @@ var SnippetManager = function() {
         return result;
     };
 
-    var processSnippetText = function(editor, snippetText, replaceRange) {
+    var processSnippetText = function(editor, snippetText, options={}) {
         var cursor = editor.getCursorPosition();
         var line = editor.session.getLine(cursor.row);
         var tabString = editor.session.getTabString();
@@ -25491,7 +26135,7 @@ var SnippetManager = function() {
         tokens = this.resolveVariables(tokens, editor);
         // indent
         tokens = tokens.map(function(x) {
-            if (x == "\n")
+            if (x == "\n" && !options.excludeExtraIndent)
                 return x + indentString;
             if (typeof x == "string")
                 return x.replace(/\t/g, tabString);
@@ -25607,12 +26251,12 @@ var SnippetManager = function() {
         return processedSnippet.text;
     };
 
-    this.insertSnippetForSelection = function(editor, snippetText, replaceRange) {
-        var processedSnippet = processSnippetText.call(this, editor, snippetText);
+    this.insertSnippetForSelection = function(editor, snippetText, options={}) {
+        var processedSnippet = processSnippetText.call(this, editor, snippetText, options);
         
         var range = editor.getSelectionRange();
-        if (replaceRange && replaceRange.compareRange(range) === 0) {
-            range = replaceRange;
+        if (options.range && options.range.compareRange(range) === 0) {
+            range = options.range;
         }
         var end = editor.session.replace(range, processedSnippet.text);
 
@@ -25621,16 +26265,16 @@ var SnippetManager = function() {
         tabstopManager.addTabstops(processedSnippet.tabstops, range.start, end, selectionId);
     };
     
-    this.insertSnippet = function(editor, snippetText, replaceRange) {
+    this.insertSnippet = function(editor, snippetText, options={}) {
         var self = this;
-        if (replaceRange && !(replaceRange instanceof Range))
-            replaceRange = Range.fromPoints(replaceRange.start, replaceRange.end);
+        if (options.range && !(options.range instanceof Range))
+            options.range = Range.fromPoints(options.range.start, options.range.end);
         
         if (editor.inVirtualSelectionMode)
-            return self.insertSnippetForSelection(editor, snippetText, replaceRange);
+            return self.insertSnippetForSelection(editor, snippetText, options);
         
         editor.forEachSelection(function() {
-            self.insertSnippetForSelection(editor, snippetText, replaceRange);
+            self.insertSnippetForSelection(editor, snippetText, options);
         }, null, {keepOrder: true});
         
         if (editor.tabstopManager)
@@ -27009,8 +27653,8 @@ exports.u = Tooltip;
 
 
 class HoverTooltip extends Tooltip {
-    constructor() {
-        super(document.body);
+    constructor(parentNode=document.body) {
+        super(parentNode);
         
         this.timeout = undefined;
         this.lastT = 0;
@@ -27029,7 +27673,7 @@ class HoverTooltip extends Tooltip {
         el.tabIndex = -1;
         
         el.addEventListener("blur", function() {
-            if (document.activeElement != el) this.hide();
+            if (!el.contains(document.activeElement)) this.hide();
         }.bind(this));
     }
     
@@ -27209,7 +27853,6 @@ class HoverTooltip extends Tooltip {
 }
 
 __webpack_unused_export__ = HoverTooltip;
-
 
 /***/ }),
 
@@ -28660,7 +29303,9 @@ class VirtualRenderer {
         // horizontal scrolling
         if (changes & this.CHANGE_H_SCROLL) {
             dom.translate(this.content, -this.scrollLeft, -config.offset);
-            this.scroller.className = this.scrollLeft <= 0 ? "ace_scroller" : "ace_scroller ace_scroll-left";
+            this.scroller.className = this.scrollLeft <= 0 ? "ace_scroller " : "ace_scroller ace_scroll-left ";
+            if (this.enableKeyboardAccessibility)
+                this.scroller.className += this.keyboardFocusClassName;
         }
 
         // full
@@ -43683,6 +44328,7 @@ ace.config.setModuleLoader('ace/mode/nsis', () => __webpack_require__.e(/* impor
 ace.config.setModuleLoader('ace/mode/nunjucks', () => Promise.all(/* import() */[__webpack_require__.e(3801), __webpack_require__.e(2843), __webpack_require__.e(2207), __webpack_require__.e(5528), __webpack_require__.e(9382)]).then(__webpack_require__.t.bind(__webpack_require__, 99382, 19)));
 ace.config.setModuleLoader('ace/mode/objectivec', () => __webpack_require__.e(/* import() */ 9886).then(__webpack_require__.t.bind(__webpack_require__, 69886, 19)));
 ace.config.setModuleLoader('ace/mode/ocaml', () => __webpack_require__.e(/* import() */ 6708).then(__webpack_require__.t.bind(__webpack_require__, 96708, 19)));
+ace.config.setModuleLoader('ace/mode/odin', () => __webpack_require__.e(/* import() */ 34).then(__webpack_require__.t.bind(__webpack_require__, 70034, 19)));
 ace.config.setModuleLoader('ace/mode/partiql', () => __webpack_require__.e(/* import() */ 1910).then(__webpack_require__.t.bind(__webpack_require__, 81910, 19)));
 ace.config.setModuleLoader('ace/mode/pascal', () => __webpack_require__.e(/* import() */ 8361).then(__webpack_require__.t.bind(__webpack_require__, 58361, 19)));
 ace.config.setModuleLoader('ace/mode/perl', () => __webpack_require__.e(/* import() */ 6918).then(__webpack_require__.t.bind(__webpack_require__, 26918, 19)));
@@ -43862,6 +44508,7 @@ ace.config.setModuleLoader('ace/theme/dracula', () => __webpack_require__.e(/* i
 ace.config.setModuleLoader('ace/theme/dreamweaver', () => __webpack_require__.e(/* import() */ 8390).then(__webpack_require__.t.bind(__webpack_require__, 28390, 19)));
 ace.config.setModuleLoader('ace/theme/eclipse', () => __webpack_require__.e(/* import() */ 8385).then(__webpack_require__.t.bind(__webpack_require__, 38385, 19)));
 ace.config.setModuleLoader('ace/theme/github', () => __webpack_require__.e(/* import() */ 4103).then(__webpack_require__.t.bind(__webpack_require__, 94103, 19)));
+ace.config.setModuleLoader('ace/theme/github_dark', () => __webpack_require__.e(/* import() */ 3510).then(__webpack_require__.t.bind(__webpack_require__, 33510, 19)));
 ace.config.setModuleLoader('ace/theme/gob', () => __webpack_require__.e(/* import() */ 1375).then(__webpack_require__.t.bind(__webpack_require__, 81375, 19)));
 ace.config.setModuleLoader('ace/theme/gruvbox', () => __webpack_require__.e(/* import() */ 8642).then(__webpack_require__.t.bind(__webpack_require__, 8642, 19)));
 ace.config.setModuleLoader('ace/theme/gruvbox_dark_hard', () => __webpack_require__.e(/* import() */ 9475).then(__webpack_require__.t.bind(__webpack_require__, 99475, 19)));
@@ -43897,6 +44544,7 @@ ace.config.setModuleLoader('ace/keyboard/sublime', () => __webpack_require__.e(/
 ace.config.setModuleLoader('ace/keyboard/vscode', () => __webpack_require__.e(/* import() */ 8143).then(__webpack_require__.t.bind(__webpack_require__, 58143, 19)));
 ace.config.setModuleLoader('ace/ext/beautify', () => __webpack_require__.e(/* import() */ 682).then(__webpack_require__.t.bind(__webpack_require__, 50682, 19)));
 ace.config.setModuleLoader('ace/ext/code_lens', () => __webpack_require__.e(/* import() */ 2447).then(__webpack_require__.t.bind(__webpack_require__, 62447, 19)));
+ace.config.setModuleLoader('ace/ext/command_bar', () => __webpack_require__.e(/* import() */ 9700).then(__webpack_require__.t.bind(__webpack_require__, 19700, 19)));
 ace.config.setModuleLoader('ace/ext/elastic_tabstops_lite', () => __webpack_require__.e(/* import() */ 7720).then(__webpack_require__.t.bind(__webpack_require__, 37720, 19)));
 ace.config.setModuleLoader('ace/ext/emmet', () => __webpack_require__.e(/* import() */ 4836).then(__webpack_require__.t.bind(__webpack_require__, 24836, 19)));
 ace.config.setModuleLoader('ace/ext/error_marker', () => Promise.resolve(/* import() */).then(__webpack_require__.t.bind(__webpack_require__, 18552, 19)));
@@ -44775,6 +45423,7 @@ function toTooltip(hover) {
     var _hover_find;
     if (!hover) return;
     let content = hover.map((el)=>{
+        if (!el || !el.contents) return;
         if (main.MarkupContent.is(el.contents)) {
             return fromMarkupContent(el.contents);
         } else if (main.MarkedString.is(el.contents)) {
@@ -44789,9 +45438,12 @@ function toTooltip(hover) {
             });
             return contents.join("\n\n");
         }
-    });
+    }).filter(notEmpty);
+    if (content.length === 0) return;
     //TODO: it could be merged within all ranges in future
-    let lspRange = (_hover_find = hover.find((el)=>el.range)) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
+    let lspRange = (_hover_find = hover.find((el)=>{
+        return el === null || el === void 0 ? void 0 : el.range;
+    })) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
     let range;
     if (lspRange) range = toRange(lspRange);
     return {
@@ -44807,6 +45459,7 @@ function fromSignatureHelp(signatureHelp) {
     let content = signatureHelp.map((el)=>{
         let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
         let activeSignature = el.signatures[signatureIndex];
+        if (!activeSignature) return;
         let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
         let contents = activeSignature.label;
         if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
@@ -44825,7 +45478,8 @@ function fromSignatureHelp(signatureHelp) {
         } else {
             return contents;
         }
-    });
+    }).filter(notEmpty);
+    if (content.length === 0) return;
     return {
         content: {
             type: "markdown",
@@ -45802,7 +46456,7 @@ class MessageControllerWS extends events.EventEmitter {
             },
             contentChanges: deltas
         };
-        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
+        this.connection.sendNotification('textDocument/didChange', textDocumentChange).then(()=>callback && callback());
     }
     doHover(sessionId, position, callback) {
         if (!this.isInitialized) {
@@ -45838,7 +46492,13 @@ class MessageControllerWS extends events.EventEmitter {
             position: position
         };
         let completionCallback = (result)=>{
-            callback && callback(result);
+            let completionService = {
+                completions: result,
+                service: "lsp"
+            };
+            callback && callback([
+                completionService
+            ]);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }

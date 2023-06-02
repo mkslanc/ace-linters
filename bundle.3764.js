@@ -12,14 +12,13 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var ApexHighlightRules = (__webpack_require__(96362)/* .ApexHighlightRules */ .t);
 var FoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 
 function ApexMode() {
     TextMode.call(this);
 
     this.HighlightRules = ApexHighlightRules;
     this.foldingRules = new FoldMode();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
 }
 
 oop.inherits(ApexMode, TextMode);
@@ -279,17 +278,17 @@ exports.t = ApexHighlightRules;
 var oop = __webpack_require__(89359);
 var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
 
-var DocCommentHighlightRules = function() {
+var DocCommentHighlightRules = function () {
     this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
     };
 };
 

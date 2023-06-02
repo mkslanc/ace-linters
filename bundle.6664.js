@@ -106,14 +106,13 @@ var LogiQLHighlightRules = (__webpack_require__(57975)/* .LogiQLHighlightRules *
 var FoldMode = (__webpack_require__(35090)/* .FoldMode */ .Z);
 var TokenIterator = (__webpack_require__(39216)/* .TokenIterator */ .N);
 var Range = (__webpack_require__(59082)/* .Range */ .e);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
 
 var Mode = function() {
     this.HighlightRules = LogiQLHighlightRules;
     this.foldingRules = new FoldMode();
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 

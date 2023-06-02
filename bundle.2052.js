@@ -219,7 +219,6 @@ exports.MatchingBraceOutdent = MatchingBraceOutdent;
 var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var TerraformHighlightRules = (__webpack_require__(28641)/* .TerraformHighlightRules */ .p);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
 
@@ -227,7 +226,7 @@ var Mode = function () {
     TextMode.call(this);
     this.HighlightRules = TerraformHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new CStyleFoldMode();
 };
 

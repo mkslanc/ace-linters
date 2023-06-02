@@ -222,10 +222,7 @@ exports.MatchingBraceOutdent = MatchingBraceOutdent;
 
 var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
-var Tokenizer = (__webpack_require__(60760)/* .Tokenizer */ .d);
 var ValaHighlightRules = (__webpack_require__(78040)/* .ValaHighlightRules */ .I);
-var FoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
 
@@ -233,7 +230,7 @@ var Mode = function() {
     this.HighlightRules = ValaHighlightRules;
     
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new CStyleFoldMode();
 };
 oop.inherits(Mode, TextMode);

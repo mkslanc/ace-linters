@@ -9,17 +9,17 @@
 var oop = __webpack_require__(89359);
 var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
 
-var DocCommentHighlightRules = function() {
+var DocCommentHighlightRules = function () {
     this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
     };
 };
 
@@ -228,14 +228,13 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var GolangHighlightRules = (__webpack_require__(52686)/* .GolangHighlightRules */ .L);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = GolangHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
     this.foldingRules = new CStyleFoldMode();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 

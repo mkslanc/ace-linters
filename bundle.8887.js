@@ -177,12 +177,11 @@ var TextMode = (__webpack_require__(98030).Mode);
 var ShHighlightRules = (__webpack_require__(87808).ShHighlightRules);
 var Range = (__webpack_require__(59082)/* .Range */ .e);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 
 var Mode = function() {
     this.HighlightRules = ShHighlightRules;
     this.foldingRules = new CStyleFoldMode();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 

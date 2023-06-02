@@ -1,6 +1,59 @@
 "use strict";
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[4981],{
 
+/***/ 62718:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+var oop = __webpack_require__(89359);
+var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
+
+var DocCommentHighlightRules = function () {
+    this.$rules = {
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
+    };
+};
+
+oop.inherits(DocCommentHighlightRules, TextHighlightRules);
+
+DocCommentHighlightRules.getTagRule = function(start) {
+    return {
+        token : "comment.doc.tag.storage.type",
+        regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
+    };
+};
+
+DocCommentHighlightRules.getStartRule = function(start) {
+    return {
+        token : "comment.doc", // doc comment
+        regex : "\\/\\*(?=\\*)",
+        next  : start
+    };
+};
+
+DocCommentHighlightRules.getEndRule = function (start) {
+    return {
+        token : "comment.doc", // closing comment
+        regex : "\\*\\/",
+        next  : start
+    };
+};
+
+
+exports.c = DocCommentHighlightRules;
+
+
+/***/ }),
+
 /***/ 12764:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -342,13 +395,12 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var JspHighlightRules = (__webpack_require__(6817)/* .JspHighlightRules */ .w);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = JspHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new CStyleFoldMode();
 };
 oop.inherits(Mode, TextMode);

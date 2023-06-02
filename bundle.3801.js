@@ -1,66 +1,13 @@
 "use strict";
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[3801],{
 
-/***/ 62718:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-
-var oop = __webpack_require__(89359);
-var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
-
-var DocCommentHighlightRules = function() {
-    this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
-    };
-};
-
-oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-
-DocCommentHighlightRules.getTagRule = function(start) {
-    return {
-        token : "comment.doc.tag.storage.type",
-        regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
-    };
-};
-
-DocCommentHighlightRules.getStartRule = function(start) {
-    return {
-        token : "comment.doc", // doc comment
-        regex : "\\/\\*(?=\\*)",
-        next  : start
-    };
-};
-
-DocCommentHighlightRules.getEndRule = function (start) {
-    return {
-        token : "comment.doc", // closing comment
-        regex : "\\*\\/",
-        next  : start
-    };
-};
-
-
-exports.c = DocCommentHighlightRules;
-
-
-/***/ }),
-
 /***/ 33801:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 
 var oop = __webpack_require__(89359);
-var DocCommentHighlightRules = (__webpack_require__(62718)/* .DocCommentHighlightRules */ .c);
+var DocCommentHighlightRules = (__webpack_require__(78004)/* .JsDocCommentHighlightRules */ .p);
 var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
 
 // TODO: Unicode escape sequences
@@ -635,6 +582,140 @@ function comments(next) {
     ];
 }
 exports._ = JavaScriptHighlightRules;
+
+
+/***/ }),
+
+/***/ 78004:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+var oop = __webpack_require__(89359);
+var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
+
+var JsDocCommentHighlightRules = function() {
+    this.$rules = {
+        "start": [
+            {
+                token: ["comment.doc.tag", "text", "lparen.doc"],
+                regex: "(@(?:param|member|typedef|property|namespace|var|const|callback))(\\s*)({)",
+                push: [
+                    {
+                        token: "lparen.doc",
+                        regex: "{",
+                        push: [
+                            {
+                                include: "doc-syntax"
+                            }, {
+                                token: "rparen.doc",
+                                regex: "}|(?=$)",
+                                next: "pop"
+                            }
+                        ]
+                    }, {
+                        token: ["rparen.doc", "text", "variable.parameter.doc", "lparen.doc", "variable.parameter.doc", "rparen.doc"],
+                        regex: /(})(\s*)(?:([\w=:\/\.]+)|(?:(\[)([\w=:\/\.]+)(\])))/,
+                        next: "pop"
+                    }, {
+                        token: "rparen.doc",
+                        regex: "}|(?=$)",
+                        next: "pop"
+                    }, {
+                        include: "doc-syntax"
+                    }, {
+                        defaultToken: "text"
+                    }
+                ]
+            }, {
+                token: ["comment.doc.tag", "text", "lparen.doc"],
+                regex: "(@(?:returns?|yields|type|this|suppress|public|protected|private|package|modifies|" 
+                    + "implements|external|exception|throws|enum|define|extends))(\\s*)({)",
+                push: [
+                    {
+                        token: "lparen.doc",
+                        regex: "{",
+                        push: [
+                            {
+                                include: "doc-syntax"
+                            }, {
+                                token: "rparen.doc",
+                                regex: "}|(?=$)",
+                                next: "pop"
+                            }
+                        ]
+                    }, {
+                        token: "rparen.doc",
+                        regex: "}|(?=$)",
+                        next: "pop"
+                    }, {
+                        include: "doc-syntax"
+                    }, {
+                        defaultToken: "text"
+                    }
+                    ]
+            }, {
+                token: ["comment.doc.tag", "text", "variable.parameter.doc"],
+                regex: "(@(?:alias|memberof|instance|module|name|lends|namespace|external|this|template|" 
+                    + "requires|param|implements|function|extends|typedef|mixes|constructor|var|" 
+                    + "memberof\\!|event|listens|exports|class|constructs|interface|emits|fires|" 
+                    + "throws|const|callback|borrows|augments))(\\s+)(\\w[\\w#\.:\/~\"\\-]*)?"
+            }, {
+                token: ["comment.doc.tag", "text", "variable.parameter.doc"],
+                regex: "(@method)(\\s+)(\\w[\\w\.\\(\\)]*)"
+            }, {
+                token: "comment.doc.tag",
+                regex: "@access\\s+(?:private|public|protected)"
+            }, {
+                token: "comment.doc.tag",
+                regex: "@kind\\s+(?:class|constant|event|external|file|function|member|mixin|module|namespace|typedef)"
+            }, {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            },
+            JsDocCommentHighlightRules.getTagRule(),
+        {
+            defaultToken : "comment.doc",
+            caseInsensitive: true
+        }],
+        "doc-syntax": [{
+            token: "operator.doc",
+            regex: /[|:]/
+        }, {
+            token: "paren.doc",
+            regex: /[\[\]]/
+        }]
+    };
+    this.normalizeRules();
+};
+
+oop.inherits(JsDocCommentHighlightRules, TextHighlightRules);
+
+JsDocCommentHighlightRules.getTagRule = function(start) {
+    return {
+        token : "comment.doc.tag.storage.type",
+        regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
+    };
+};
+
+JsDocCommentHighlightRules.getStartRule = function(start) {
+    return {
+        token : "comment.doc", // doc comment
+        regex : "\\/\\*(?=\\*)",
+        next  : start
+    };
+};
+
+JsDocCommentHighlightRules.getEndRule = function (start) {
+    return {
+        token : "comment.doc", // closing comment
+        regex : "\\*\\/",
+        next  : start
+    };
+};
+
+
+exports.p = JsDocCommentHighlightRules;
 
 
 /***/ })

@@ -314,13 +314,12 @@ var oop = __webpack_require__(89359);
 var JSMode = (__webpack_require__(88057).Mode);
 var SJSHighlightRules = (__webpack_require__(78377)/* .SJSHighlightRules */ .n);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = SJSHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new CStyleFoldMode();
 };
 oop.inherits(Mode, JSMode);

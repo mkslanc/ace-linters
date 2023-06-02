@@ -10,15 +10,13 @@ var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var c_cppHighlightRules = (__webpack_require__(75560).c_cppHighlightRules);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082)/* .Range */ .e);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = c_cppHighlightRules;
 
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
 
     this.foldingRules = new CStyleFoldMode();
 };
@@ -290,17 +288,17 @@ exports.c_cppHighlightRules = c_cppHighlightRules;
 var oop = __webpack_require__(89359);
 var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
 
-var DocCommentHighlightRules = function() {
+var DocCommentHighlightRules = function () {
     this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
     };
 };
 
@@ -510,15 +508,13 @@ var oop = __webpack_require__(89359);
 var CMode = (__webpack_require__(82671).Mode);
 var glslHighlightRules = (__webpack_require__(6799)/* .glslHighlightRules */ .K);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082)/* .Range */ .e);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = glslHighlightRules;
     
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new CStyleFoldMode();
 };
 oop.inherits(Mode, CMode);

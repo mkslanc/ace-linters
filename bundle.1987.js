@@ -179,13 +179,12 @@ oop.inherits(FoldMode, BaseFoldMode);
 var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var KotlinHighlightRules = (__webpack_require__(58377)/* .KotlinHighlightRules */ .v);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var FoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 
 var Mode = function() {
     this.HighlightRules = KotlinHighlightRules;
     this.foldingRules = new FoldMode();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 

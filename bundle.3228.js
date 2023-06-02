@@ -29,7 +29,7 @@
         // make sure the menu isn't open already.
         if(!document.getElementById('kbshortcutmenu')) {
             var overlayPage = (__webpack_require__(9613).overlayPage);
-            var getEditorKeybordShortcuts = (__webpack_require__(26991).getEditorKeybordShortcuts);
+            var getEditorKeybordShortcuts = (__webpack_require__(26991)/* .getEditorKeybordShortcuts */ .F);
             var kb = getEditorKeybordShortcuts(editor);
             var el = document.createElement('div');
             var commands = kb.reduce(function(previous, current) {
@@ -94,7 +94,7 @@ var keys = __webpack_require__(11797);
  * //     {'command' : aCommand, 'key' : 'Control-d'}
  * // ]
  */
-module.exports.getEditorKeybordShortcuts = function(editor) {
+module.exports.F = function(editor) {
     var KEY_MODS = keys.KEY_MODS;
     var keybindings = [];
     var commandMap = {};

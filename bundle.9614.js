@@ -14740,7 +14740,7 @@
                 }
                 return mergedObjects;
             }
-            function notEmpty(value) {
+            function utils_notEmpty(value) {
                 return value !== null && value !== undefined;
             }
             //taken with small changes from ace-code
@@ -15382,6 +15382,7 @@
                 var _hover_find;
                 if (!hover) return;
                 let content = hover.map((el)=>{
+                    if (!el || !el.contents) return;
                     if (MarkupContent.is(el.contents)) {
                         return fromMarkupContent(el.contents);
                     } else if (MarkedString.is(el.contents)) {
@@ -15396,9 +15397,12 @@
                         });
                         return contents.join("\n\n");
                     }
-                });
+                }).filter(notEmpty);
+                if (content.length === 0) return;
                 //TODO: it could be merged within all ranges in future
-                let lspRange = (_hover_find = hover.find((el)=>el.range)) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
+                let lspRange = (_hover_find = hover.find((el)=>{
+                    return el === null || el === void 0 ? void 0 : el.range;
+                })) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
                 let range;
                 if (lspRange) range = toRange(lspRange);
                 return {
@@ -15414,6 +15418,7 @@
                 let content = signatureHelp.map((el)=>{
                     let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
                     let activeSignature = el.signatures[signatureIndex];
+                    if (!activeSignature) return;
                     let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
                     let contents = activeSignature.label;
                     if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
@@ -15432,7 +15437,8 @@
                     } else {
                         return contents;
                     }
-                });
+                }).filter(notEmpty);
+                if (content.length === 0) return;
                 return {
                     content: {
                         type: "markdown",

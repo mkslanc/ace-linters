@@ -1,6 +1,59 @@
 "use strict";
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[8681],{
 
+/***/ 62718:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+var oop = __webpack_require__(89359);
+var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
+
+var DocCommentHighlightRules = function () {
+    this.$rules = {
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
+    };
+};
+
+oop.inherits(DocCommentHighlightRules, TextHighlightRules);
+
+DocCommentHighlightRules.getTagRule = function(start) {
+    return {
+        token : "comment.doc.tag.storage.type",
+        regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
+    };
+};
+
+DocCommentHighlightRules.getStartRule = function(start) {
+    return {
+        token : "comment.doc", // doc comment
+        regex : "\\/\\*(?=\\*)",
+        next  : start
+    };
+};
+
+DocCommentHighlightRules.getEndRule = function (start) {
+    return {
+        token : "comment.doc", // closing comment
+        regex : "\\*\\/",
+        next  : start
+    };
+};
+
+
+exports.c = DocCommentHighlightRules;
+
+
+/***/ }),
+
 /***/ 48681:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
@@ -11,10 +64,8 @@ var TextMode = (__webpack_require__(98030).Mode);
 var PhpHighlightRules = (__webpack_require__(63857)/* .PhpHighlightRules */ .l);
 var PhpLangHighlightRules = (__webpack_require__(63857)/* .PhpLangHighlightRules */ .g);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
-var Range = (__webpack_require__(59082)/* .Range */ .e);
 var WorkerClient = (__webpack_require__(91451).WorkerClient);
 var PhpCompletions = (__webpack_require__(76707)/* .PhpCompletions */ .K);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 var unicode = __webpack_require__(99740);
 var HtmlMode = (__webpack_require__(75528).Mode);
@@ -24,7 +75,7 @@ var CssMode = (__webpack_require__(98771).Mode);
 var PhpMode = function(opts) {
     this.HighlightRules = PhpLangHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.$completer = new PhpCompletions();
     this.foldingRules = new CStyleFoldMode();
 };

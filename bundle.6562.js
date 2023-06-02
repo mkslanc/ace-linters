@@ -104,6 +104,59 @@ exports.f = CSharpHighlightRules;
 
 /***/ }),
 
+/***/ 62718:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+var oop = __webpack_require__(89359);
+var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
+
+var DocCommentHighlightRules = function () {
+    this.$rules = {
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
+    };
+};
+
+oop.inherits(DocCommentHighlightRules, TextHighlightRules);
+
+DocCommentHighlightRules.getTagRule = function(start) {
+    return {
+        token : "comment.doc.tag.storage.type",
+        regex : "\\b(?:TODO|FIXME|XXX|HACK)\\b"
+    };
+};
+
+DocCommentHighlightRules.getStartRule = function(start) {
+    return {
+        token : "comment.doc", // doc comment
+        regex : "\\/\\*(?=\\*)",
+        next  : start
+    };
+};
+
+DocCommentHighlightRules.getEndRule = function (start) {
+    return {
+        token : "comment.doc", // closing comment
+        regex : "\\*\\/",
+        next  : start
+    };
+};
+
+
+exports.c = DocCommentHighlightRules;
+
+
+/***/ }),
+
 /***/ 86562:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 

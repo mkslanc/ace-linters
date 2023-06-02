@@ -9,17 +9,17 @@
 var oop = __webpack_require__(89359);
 var TextHighlightRules = (__webpack_require__(28053)/* .TextHighlightRules */ .K);
 
-var DocCommentHighlightRules = function() {
+var DocCommentHighlightRules = function () {
     this.$rules = {
-        "start" : [ {
-            token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-        DocCommentHighlightRules.getTagRule(),
-        {
-            defaultToken : "comment.doc",
-            caseInsensitive: true
-        }]
+        "start": [
+            {
+                token: "comment.doc.tag",
+                regex: "@\\w+(?=\\s|$)"
+            }, DocCommentHighlightRules.getTagRule(), {
+                defaultToken: "comment.doc",
+                caseInsensitive: true
+            }
+        ]
     };
 };
 
@@ -147,10 +147,10 @@ exports.h = JsonHighlightRules;
 var oop = __webpack_require__(89359);
 var TextMode = (__webpack_require__(98030).Mode);
 var RedshiftHighlightRules = (__webpack_require__(91079)/* .RedshiftHighlightRules */ .F);
-var Range = (__webpack_require__(59082)/* .Range */ .e);
 
 var Mode = function() {
     this.HighlightRules = RedshiftHighlightRules;
+    this.$behaviour = this.$defaultBehaviour;
 };
 oop.inherits(Mode, TextMode);
 

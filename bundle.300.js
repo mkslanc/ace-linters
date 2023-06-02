@@ -345,7 +345,6 @@ exports.Mode = Mode;
 var oop = __webpack_require__(89359);
 var jsMode = (__webpack_require__(88057).Mode);
 var TypeScriptHighlightRules = (__webpack_require__(57419)/* .TypeScriptHighlightRules */ .x);
-var CstyleBehaviour = (__webpack_require__(19414)/* .CstyleBehaviour */ .B);
 var CStyleFoldMode = (__webpack_require__(12764)/* .FoldMode */ .Z);
 var MatchingBraceOutdent = (__webpack_require__(1164).MatchingBraceOutdent);
 
@@ -353,7 +352,7 @@ var Mode = function() {
     this.HighlightRules = TypeScriptHighlightRules;
     
     this.$outdent = new MatchingBraceOutdent();
-    this.$behaviour = new CstyleBehaviour();
+    this.$behaviour = this.$defaultBehaviour;
     this.foldingRules = new CStyleFoldMode();
 };
 oop.inherits(Mode, jsMode);
