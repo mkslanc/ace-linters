@@ -101,9 +101,7 @@ describe('LanguageProvider tests', () => {
             });
             
             languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
-                let hoverText = languageProvider.getTooltipText(hover);
-                expect(hoverText).to.equal("");
-
+                expect(hover).to.be.undefined;
                 done();
             })
         })

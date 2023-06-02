@@ -190,7 +190,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             } as lsp.VersionedTextDocumentIdentifier,
             contentChanges: deltas,
         };
-        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
+        this.connection.sendNotification('textDocument/didChange', textDocumentChange).then(() => callback && callback());
     }
 
     doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void) {
@@ -226,8 +226,12 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             },
             position: position,
         };
-        let completionCallback = (result: CompletionService[]) => {
-            callback && callback(result);
+        let completionCallback = (result: lsp.CompletionItem[] | lsp.CompletionList | null) => {
+            let completionService = {
+                completions: result,
+                service: "lsp"
+            }
+            callback && callback([completionService]);
         };
         this.postMessage('textDocument/completion', sessionId, options, completionCallback);
     }

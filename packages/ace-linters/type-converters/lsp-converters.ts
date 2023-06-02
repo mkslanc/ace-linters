@@ -17,7 +17,7 @@ import {
 import type {Ace} from "ace-code";
 import {CommonConverter} from "./common-converters";
 import {AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types";
-import {checkValueAgainstRegexpArray} from "../utils";
+import {checkValueAgainstRegexpArray, notEmpty} from "../utils";
 
 import {mergeRanges} from "../utils";
 
@@ -173,6 +173,8 @@ export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
     if (!hover)
         return;
     let content = hover.map((el) => {
+        if (!el || !el.contents) 
+            return;
         if (MarkupContent.is(el.contents)) {
             return fromMarkupContent(el.contents);
         } else if (MarkedString.is(el.contents)) {
@@ -187,17 +189,18 @@ export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
             });
             return contents.join("\n\n");
         }
-    });
+    }).filter(notEmpty);
+    if (content.length === 0)
+        return;
 
     //TODO: it could be merged within all ranges in future
-    let lspRange = hover.find((el) => el.range)?.range;
+    let lspRange = hover.find((el) => el?.range)?.range;
     let range;
     if (lspRange) range = toRange(lspRange);
     return {
         content: {
             type: "markdown",
-            text: content.join("\n\n"),
-            
+            text: content.join("\n\n")
         },
         range: range
     };
@@ -209,6 +212,8 @@ export function fromSignatureHelp(signatureHelp: SignatureHelp[] | undefined): T
     let content = signatureHelp.map((el) => {
         let signatureIndex = el?.activeSignature || 0;
         let activeSignature = el.signatures[signatureIndex];
+        if (!activeSignature)
+            return;
         let activeParam = el?.activeParameter;
         let contents = activeSignature.label;
         if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
@@ -227,8 +232,10 @@ export function fromSignatureHelp(signatureHelp: SignatureHelp[] | undefined): T
         } else {
             return contents;
         }
-    });
-
+    }).filter(notEmpty);
+    
+    if (content.length === 0)
+        return;
 
     return {
         content: {
