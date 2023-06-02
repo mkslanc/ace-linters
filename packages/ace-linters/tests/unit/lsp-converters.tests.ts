@@ -380,16 +380,38 @@ describe('Converters from/to Language Server Protocol', () => {
                 content: {
                     type: "markdown",
                     "text": "```This is a *markdown* hover.```\n\nPlain text hover.\n\n```This is another plain text hover.```"
+                },
+                range: {
+                    end: {
+                        column: 1,
+                        row: 1
+                    },
+                    start: {
+                        column: 0,
+                        row: 0
+                    }
                 }
             };
             expect(toTooltip([hover, anotherHover])).to.deep.equal(expected);
         });
+
+        it("should handle empty tooltips", () => {
+            expect(toTooltip([undefined])).to.be.undefined;
+            expect(toTooltip(undefined)).to.be.undefined;
+        });
     });
 
     describe('fromSignatureHelp', () => {
-        it('should return undefined when no signature help is provided', () => {
-            const signatureHelp = undefined;
-            const result = fromSignatureHelp(signatureHelp);
+        it('should return undefined when no signature help is provided or where is no signatures', () => {
+            let result = fromSignatureHelp(undefined);
+            expect(result).to.be.undefined;
+
+            const signatureHelp = {
+                activeSignature: 0,
+                activeParameter: 0,
+                signatures: []
+            };
+            result = fromSignatureHelp([signatureHelp]);
             expect(result).to.be.undefined;
         });
 
