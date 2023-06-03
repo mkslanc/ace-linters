@@ -13,10 +13,10 @@ import {CompletionService, ServiceFeatures, SupportedServices} from "./types";
 export class MessageControllerWS extends events.EventEmitter implements IMessageController {
     private isConnected = false;
     private isInitialized = false;
-    private socket: WebSocket;
+    private readonly socket: WebSocket;
     private serverCapabilities: lsp.ServerCapabilities;
     private connection: lsp.ProtocolConnection;
-    private initSessionQueue: { textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: () => void }[] = [];
+    private requestsQueue: Function[] = [];
 
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
@@ -61,22 +61,13 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         } as lsp.WorkspaceClientCapabilities,
     };
 
-    constructor() {
+    constructor(mode: WebSocket | Worker) {
         super();
-        window.addEventListener("beforeunload", () => {
-            this.close();
-        });
-        window.addEventListener("unload", () => {
-            this.close();
-        })
-    }
-
-    async initialize(mode: WebSocket | Worker) {
         if (mode instanceof Worker) {
-            await this.$connectWorker(mode);
+            this.$connectWorker(mode);
         } else {
             this.socket = mode;
-            await this.$connectSocket();
+            this.$connectSocket();
         }
     }
 
@@ -85,32 +76,29 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
     }
 
     private $connectSocket() {
-        return new Promise<void>((resolve, err) => {
-            rpc.listen({
-                webSocket: this.socket,
-                logger: new rpc.ConsoleLogger(),
-                onConnection: async (connection: rpc.MessageConnection) => {
-                    await this.$connect(connection);
-                    resolve();
-                },
-            });
-        })
+        rpc.listen({
+            webSocket: this.socket,
+            logger: new rpc.ConsoleLogger(),
+            onConnection: (connection: rpc.MessageConnection) => {
+                this.$connect(connection);
+            },
+        });
     }
 
-    private async $connectWorker(worker: Worker) {
+    private $connectWorker(worker: Worker) {
         const connection = createProtocolConnection(
             new BrowserMessageReader(worker),
             new BrowserMessageWriter(worker)
         );
-        await this.$connect(connection);
+        this.$connect(connection);
     }
 
-    private async $connect(connection) {
+    private $connect(connection) {
         connection.listen();
         this.isConnected = true;
 
         this.connection = connection;
-        await this.sendInitialize();
+        this.sendInitialize();
 
         this.connection.onNotification('textDocument/publishDiagnostics', (
             result: lsp.PublishDiagnosticsParams,
@@ -133,8 +121,6 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.connection.onClose(() => {
             this.isConnected = false;
         });
-
-        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
 
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
@@ -150,7 +136,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         };
 
         if (!this.isConnected) {
-            this.initSessionQueue.push({textDocumentMessage: textDocumentMessage, initCallback: initCallback});
+            this.requestsQueue.push(() => this.initSession(textDocumentMessage, initCallback));
         } else {
             this.initSession(textDocumentMessage, initCallback);
         }
@@ -181,17 +167,16 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             workspaceFolders: null,
         };
 
-        return new Promise<void>((resolve, err) => {
-            this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
-                this.isInitialized = true;
-                this.serverCapabilities = params.capabilities as lsp.ServerCapabilities;
+        this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
+            this.isInitialized = true;
+            this.serverCapabilities = params.capabilities as lsp.ServerCapabilities;
 
-                this.connection.sendNotification('initialized');
-                this.connection.sendNotification('workspace/didChangeConfiguration', {
-                    settings: {},
-                });
-                resolve();
+            this.connection.sendNotification('initialized');
+            this.connection.sendNotification('workspace/didChangeConfiguration', {
+                settings: {},
             });
+            this.requestsQueue.forEach((requestCallback) => requestCallback());
+            this.requestsQueue = [];
         });
     }
 
@@ -301,6 +286,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
 
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void {
         if (!this.isConnected) {
+            this.requestsQueue.push(() => this.setGlobalOptions(serviceName, options, merge));
             return;
         }
         const configChanges: lsp.DidChangeConfigurationParams = {

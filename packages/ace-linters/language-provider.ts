@@ -144,7 +144,7 @@ export class LanguageProvider {
         sessionLanguageProvider.setOptions(options);
     }
 
-    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 

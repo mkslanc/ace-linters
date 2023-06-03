@@ -8,9 +8,8 @@ export class AceLanguageClient {
      * @param {Worker | WebSocket} mode
      * @param {ProviderOptions} options
      */
-    static async for(mode: Worker | WebSocket, options?: ProviderOptions) {
-        let messageController = new MessageControllerWS();
-        await messageController.initialize(mode);
+    static for(mode: Worker | WebSocket, options?: ProviderOptions) {
+        let messageController = new MessageControllerWS(mode);
         return new LanguageProvider(messageController, options);
     }
 }
