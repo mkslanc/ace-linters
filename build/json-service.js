@@ -19992,6 +19992,7 @@ function toTooltip(hover) {
 function fromSignatureHelp(signatureHelp) {
     if (!signatureHelp) return;
     let content = signatureHelp.map((el)=>{
+        if (!el) return;
         let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
         let activeSignature = el.signatures[signatureIndex];
         if (!activeSignature) return;

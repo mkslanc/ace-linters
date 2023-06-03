@@ -48336,6 +48336,7 @@ module.exports = webpackEmptyContext;
                     this.postMessage(new DisposeMessage(sessionId), callback);
                 }
                 setGlobalOptions(serviceName, options, merge = false) {
+                    // @ts-ignore
                     this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
                 }
                 provideSignatureHelp(sessionId, position, callback) {
@@ -48557,6 +48558,7 @@ module.exports = webpackEmptyContext;
             function fromSignatureHelp(signatureHelp) {
                 if (!signatureHelp) return;
                 let content = signatureHelp.map((el)=>{
+                    if (!el) return;
                     let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
                     let activeSignature = el.signatures[signatureIndex];
                     if (!activeSignature) return;
@@ -50207,6 +50209,7 @@ function createEditorWithLSP(mode, i, languageProvider) {
         modeName.remove();
         closeButton.remove();
     };
+    return editor;
 }
 
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/yaml-example.js

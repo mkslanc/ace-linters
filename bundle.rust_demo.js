@@ -45231,6 +45231,7 @@ class MessageController extends (events_default()) {
         this.postMessage(new DisposeMessage(sessionId), callback);
     }
     setGlobalOptions(serviceName, options, merge = false) {
+        // @ts-ignore
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
     provideSignatureHelp(sessionId, position, callback) {
@@ -45457,6 +45458,7 @@ function toTooltip(hover) {
 function fromSignatureHelp(signatureHelp) {
     if (!signatureHelp) return;
     let content = signatureHelp.map((el)=>{
+        if (!el) return;
         let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
         let activeSignature = el.signatures[signatureIndex];
         if (!activeSignature) return;
@@ -46394,7 +46396,6 @@ class MessageControllerWS extends events.EventEmitter {
         this.connection.onClose(()=>{
             this.isConnected = false;
         });
-        this.initSessionQueue.forEach((initSession)=>this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
     init(sessionId, document, mode, options, initCallback, validationCallback) {
         this["on"]("validate-" + sessionId, validationCallback);
@@ -46407,10 +46408,7 @@ class MessageControllerWS extends events.EventEmitter {
             }
         };
         if (!this.isConnected) {
-            this.initSessionQueue.push({
-                textDocumentMessage: textDocumentMessage,
-                initCallback: initCallback
-            });
+            this.requestsQueue.push(()=>this.initSession(textDocumentMessage, initCallback));
         } else {
             this.initSession(textDocumentMessage, initCallback);
         }
@@ -46423,7 +46421,7 @@ class MessageControllerWS extends events.EventEmitter {
         if (this.connection) {
             this.connection.dispose();
         }
-        this.socket.close();
+        if (this.socket) this.socket.close();
     }
     sendInitialize() {
         if (!this.isConnected) {
@@ -46443,6 +46441,8 @@ class MessageControllerWS extends events.EventEmitter {
             this.connection.sendNotification('workspace/didChangeConfiguration', {
                 settings: {}
             });
+            this.requestsQueue.forEach((requestCallback)=>requestCallback());
+            this.requestsQueue = [];
         });
     }
     change(sessionId, deltas, document, callback) {
@@ -46540,7 +46540,16 @@ class MessageControllerWS extends events.EventEmitter {
             callback && callback(params);
         });
     }
-    setGlobalOptions(serviceName, options, merge) {}
+    setGlobalOptions(serviceName, options, merge) {
+        if (!this.isConnected) {
+            this.requestsQueue.push(()=>this.setGlobalOptions(serviceName, options, merge));
+            return;
+        }
+        const configChanges = {
+            settings: options
+        };
+        this.connection.sendNotification('workspace/didChangeConfiguration', configChanges);
+    }
     postMessage(name, sessionId, options, callback) {
         let eventName = name + "-" + sessionId;
         let callbackFunction = (data)=>{
@@ -46591,7 +46600,7 @@ class MessageControllerWS extends events.EventEmitter {
         message_controller_ws_define_property(this, "socket", void 0);
         message_controller_ws_define_property(this, "serverCapabilities", void 0);
         message_controller_ws_define_property(this, "connection", void 0);
-        message_controller_ws_define_property(this, "initSessionQueue", []);
+        message_controller_ws_define_property(this, "requestsQueue", []);
         message_controller_ws_define_property(this, "clientCapabilities", {
             textDocument: {
                 hover: {
@@ -46724,6 +46733,7 @@ function createEditorWithLSP(mode, i, languageProvider) {
         modeName.remove();
         closeButton.remove();
     };
+    return editor;
 }
 
 ;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/rust-example.js
