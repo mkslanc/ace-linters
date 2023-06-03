@@ -12,8 +12,8 @@
 
     "build-test": "npm run build:dependencies && webpack --name=test",
     "start-test-server": "npm run build-test && http-server --cors='*' tests/ui/dist",
-    "test:unit": "mocha --config mocha.unit.config.js",
-    "test:ui": "mocha --config mocha.ui.config.js",
+    "test:unit": "mocha --config mocha.unit.config.js --exit",
+    "test:ui": "mocha --config mocha.ui.config.js --exit",
     "test": "npm run test:unit && npm run test:ui",
     "test:coverage": "nyc npm run test",
     "start-server": "http-server build --cors=\"*\""
