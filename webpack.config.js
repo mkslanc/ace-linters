@@ -24,6 +24,7 @@ module.exports = (env, argv) => {
             websocket_demo: './packages/demo/websockets-lsp/client.ts',
             rust_demo: './packages/demo/rust-analyzer/demo.ts',
             multiprovider_demo: './packages/demo/multiprovider/demo.ts',
+            pylsp_websocket_demo: './packages/demo/websockets-pylsp/client.ts'
         },
         mode: "production",
         module: {

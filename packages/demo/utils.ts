@@ -57,4 +57,5 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
         modeName.remove();
         closeButton.remove();
     }
+    return editor;
 }

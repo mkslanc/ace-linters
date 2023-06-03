@@ -81,6 +81,7 @@ export class MessageController extends EventEmitter implements IMessageControlle
     }
 
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
+        // @ts-ignore
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
 

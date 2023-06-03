@@ -16,7 +16,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
     private readonly socket: WebSocket;
     private serverCapabilities: lsp.ServerCapabilities;
     private connection: lsp.ProtocolConnection;
-    private initSessionQueue: { textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: () => void }[] = [];
+    private requestsQueue: Function[] = [];
 
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
@@ -121,8 +121,6 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.connection.onClose(() => {
             this.isConnected = false;
         });
-
-        this.initSessionQueue.forEach((initSession) => this.initSession(initSession.textDocumentMessage, initSession.initCallback));
     }
 
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
@@ -138,7 +136,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         };
 
         if (!this.isConnected) {
-            this.initSessionQueue.push({textDocumentMessage: textDocumentMessage, initCallback: initCallback});
+            this.requestsQueue.push(() => this.initSession(textDocumentMessage, initCallback));
         } else {
             this.initSession(textDocumentMessage, initCallback);
         }
@@ -149,11 +147,12 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         initCallback();
     }
 
-    close() { //TODO:
+    close() {
         if (this.connection) {
             this.connection.dispose();
         }
-        this.socket.close();
+        if (this.socket)
+            this.socket.close();
     }
 
     sendInitialize() {
@@ -176,6 +175,8 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             this.connection.sendNotification('workspace/didChangeConfiguration', {
                 settings: {},
             });
+            this.requestsQueue.forEach((requestCallback) => requestCallback());
+            this.requestsQueue = [];
         });
     }
 
@@ -283,7 +284,15 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         });
     }
 
-    setGlobalOptions(serviceName: string, options: any, merge?: boolean): void { //TODO: ?
+    setGlobalOptions(serviceName: string, options: any, merge?: boolean): void {
+        if (!this.isConnected) {
+            this.requestsQueue.push(() => this.setGlobalOptions(serviceName, options, merge));
+            return;
+        }
+        const configChanges: lsp.DidChangeConfigurationParams = {
+            settings: options
+        };
+        this.connection.sendNotification('workspace/didChangeConfiguration', configChanges);
     }
 
     postMessage(name, sessionId, options, callback: (any) => void) {

@@ -169,7 +169,8 @@ export interface ServiceOptionsMap {
     css: CssServiceOptions,
     less: CssServiceOptions,
     scss: CssServiceOptions,
-    lua: LuaServiceOptions
+    lua: LuaServiceOptions,
+    [serviceName: string]: any
 }
 
 export type SupportedServices =

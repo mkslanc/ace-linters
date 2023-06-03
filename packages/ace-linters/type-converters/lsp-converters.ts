@@ -210,6 +210,9 @@ export function fromSignatureHelp(signatureHelp: SignatureHelp[] | undefined): T
     if (!signatureHelp)
         return;
     let content = signatureHelp.map((el) => {
+        if (!el)
+            return;
+        
         let signatureIndex = el?.activeSignature || 0;
         let activeSignature = el.signatures[signatureIndex];
         if (!activeSignature)
