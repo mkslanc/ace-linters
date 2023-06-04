@@ -235,6 +235,18 @@ export class LanguageProvider {
     dispose() {
         // this.$messageController.dispose(this.$fileName);
     }
+
+    /**
+     * Removes document from all linked services by session id 
+     * @param session
+     */
+    closeDocument(session: Ace.EditSession, callback?) {
+        let sessionProvider = this.$getSessionLanguageProvider(session);
+        if (sessionProvider) {
+            sessionProvider.dispose(callback);
+            delete this.$sessionLanguageProviders[session["id"]];
+        }
+    }
 }
 
 class SessionLanguageProvider {
@@ -370,4 +382,8 @@ class SessionLanguageProvider {
     $applyDocumentHiglight = (documentHighlights) => {
         //TODO: place for your code
     };
+
+    dispose(callback?) {
+        this.$messageController.dispose(this.fileName, callback);
+    }
 }

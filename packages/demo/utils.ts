@@ -52,6 +52,7 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
     languageProvider.setSessionOptions(editor.session, options);
 
     closeButton.onclick = () => {
+        languageProvider.closeDocument(editor.session);
         editor.destroy();
         editor.container.remove();
         modeName.remove();

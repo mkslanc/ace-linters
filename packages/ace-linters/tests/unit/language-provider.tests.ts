@@ -237,6 +237,22 @@ describe('LanguageProvider tests', () => {
         });
     })
 
+    it('should remove document from linked services', (done) => {
+        let $sessionIDToMode = manager["$sessionIDToMode"];
+        let name = editor.session["id"] +".html";
+        let htmlService = manager.getServicesInstances(name)[0];
+        
+        expect(htmlService.documents[name]).exist;
+        expect($sessionIDToMode[name]).exist;
+        
+        languageProvider.closeDocument(editor.session, () => {
+            
+            expect(htmlService.documents[name]).not.exist;
+            expect($sessionIDToMode[name]).not.exist;
+            done()
+        });
+        
+    })
 
     after(() => {
         client.removeAllListeners();
