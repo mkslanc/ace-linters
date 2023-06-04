@@ -220,7 +220,6 @@ describe('Converters from/to Language Server Protocol', () => {
                 },
                 command: "startAutocomplete",
                 item: expectedFirstCompletionItem,
-                value: "",
                 score: undefined,
                 position: undefined,
                 service: "test"
@@ -246,7 +245,6 @@ describe('Converters from/to Language Server Protocol', () => {
                 },
                 command: "startAutocomplete",
                 item: expectedThirdCompletionItem,
-                value: "",
                 score: undefined,
                 position: undefined,
                 service: "test1"

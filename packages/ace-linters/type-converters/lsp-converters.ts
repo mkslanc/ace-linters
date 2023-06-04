@@ -70,7 +70,7 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
-export function toCompletion(item: CompletionItem): Ace.Completion {
+export function toCompletion(item: CompletionItem) {
     let itemKind = item.kind;
     let kind = itemKind ? Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(itemKind)] : undefined;
     let text = item.textEdit?.newText ?? item.insertText ?? item.label;
@@ -79,17 +79,17 @@ export function toCompletion(item: CompletionItem): Ace.Completion {
     let completion = {
         meta: kind,
         caption: item.label,
-        command: command,
-        range: range,
-        value: "",
-        score: undefined,
-        item: item
+        score: undefined
     };
+
+    completion["command"] = command;
+    completion["range"] = range;
+    completion["item"] = item;
 
     if (item.insertTextFormat == InsertTextFormat.Snippet) {
         completion["snippet"] = text;
     } else {
-        completion["value"] = text;
+        completion["value"] = text ?? "";
     }
     completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
     completion["position"] = item["position"];
@@ -117,7 +117,7 @@ export function toCompletions(completions: CompletionService[]): Ace.Completion[
             });
         }).flat();
 
-        return combinedCompletions.map((item) => toCompletion(item))
+        return combinedCompletions.map((item) => toCompletion(item) as Ace.Completion)
     }
     return [];
 }
