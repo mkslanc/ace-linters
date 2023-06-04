@@ -499,6 +499,7 @@
                             break;
                         case MessageType.dispose:
                             this.removeDocument(documentIdentifier);
+                            await doValidation(documentIdentifier, serviceInstances);
                             break;
                         case MessageType.globalOptions:
                             this.setGlobalOptions(message.serviceName, message.options, message.merge);

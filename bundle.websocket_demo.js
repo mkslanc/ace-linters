@@ -46016,6 +46016,16 @@ class LanguageProvider {
     dispose() {
     // this.$messageController.dispose(this.$fileName);
     }
+    /**
+     * Removes document from all linked services by session id 
+     * @param session
+     */ closeDocument(session, callback) {
+        let sessionProvider = this.$getSessionLanguageProvider(session);
+        if (sessionProvider) {
+            sessionProvider.dispose(callback);
+            delete this.$sessionLanguageProviders[session["id"]];
+        }
+    }
     constructor(messageController, options){
         var _this_options, _this_options1;
         language_provider_define_property(this, "activeEditor", void 0);
@@ -46078,6 +46088,9 @@ class SessionLanguageProvider {
             return;
         }
         this.$messageController.changeOptions(this.fileName, options);
+    }
+    dispose(callback) {
+        this.$messageController.dispose(this.fileName, callback);
     }
     constructor(session, messageController, options){
         language_provider_define_property(this, "session", void 0);
@@ -46793,6 +46806,7 @@ function createEditorWithLSP(mode, i, languageProvider) {
     let options = (_mode_options = mode.options) !== null && _mode_options !== void 0 ? _mode_options : {};
     languageProvider.setSessionOptions(editor.session, options);
     closeButton.onclick = ()=>{
+        languageProvider.closeDocument(editor.session);
         editor.destroy();
         editor.container.remove();
         modeName.remove();
