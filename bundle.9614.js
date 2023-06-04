@@ -15291,16 +15291,15 @@
                 let completion = {
                     meta: kind,
                     caption: item.label,
-                    command: command,
-                    range: range,
-                    value: "",
-                    score: undefined,
-                    item: item
+                    score: undefined
                 };
+                completion["command"] = command;
+                completion["range"] = range;
+                completion["item"] = item;
                 if (item.insertTextFormat == InsertTextFormat.Snippet) {
                     completion["snippet"] = text;
                 } else {
-                    completion["value"] = text;
+                    completion["value"] = text !== null && text !== void 0 ? text : "";
                 }
                 completion["documentation"] = item.documentation; //TODO: this is workaround for services with instant completion
                 completion["position"] = item["position"];
