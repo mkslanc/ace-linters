@@ -48,6 +48,7 @@
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
+  "files": ["build", "types"],
   "repository": {
     "url": "https://github.com/mkslanc/ace-linters"
   },
