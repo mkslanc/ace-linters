@@ -1,7 +1,6 @@
 import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
-import {LanguageProvider} from "ace-linters/build/ace-linters";
-import {ScriptTarget, JsxEmit} from "ace-linters/services/typescript/typescript-converters";
+import {LanguageProvider} from "ace-linters";
 import {createEditorWithLSP} from "../utils";
 import {jsContent} from "../webworker-lsp/docs-example/javascript-example";
 
@@ -27,8 +26,8 @@ languageProvider.setGlobalOptions("typescript", {
     compilerOptions: {
         allowJs: true,
         checkJs: true,
-        target: ScriptTarget.ESNext,
-        jsx: JsxEmit.Preserve
+        target: 99,
+        jsx: 1
     }
 });
 let menuKb = new HashHandler([

@@ -21,22 +21,23 @@ module.exports = (env, argv) => {
         cache: false,
         devtool: isProduction ? false : 'inline-source-map',
         entry: {
-            "ace-linters": './index.ts',
-            "service-manager": './services/service-manager.ts',
-            "html-service": './services/html/html-service.ts',
-            "css-service": './services/css/css-service.ts',
-            "json-service": './services/json/json-service.ts',
-            "lua-service": './services/lua/lua-service.ts',
-            "typescript-service": './services/typescript/typescript-service.ts',
-            "yaml-service": './services/yaml/yaml-service.ts',
-            "xml-service": './services/xml/xml-service.ts',
-            "php-service": './services/php/php-service.ts',
-            "ace-language-client": './ace-language-client.ts',
-            "javascript-service": './services/javascript/javascript-service.ts',
+            "ace-linters": './src/index.ts',
+            "service-manager": './src/services/service-manager.ts',
+            "html-service": './src/services/html/html-service.ts',
+            "css-service": './src/services/css/css-service.ts',
+            "json-service": './src/services/json/json-service.ts',
+            "lua-service": './src/services/lua/lua-service.ts',
+            "typescript-service": './src/services/typescript/typescript-service.ts',
+            "yaml-service": './src/services/yaml/yaml-service.ts',
+            "xml-service": './src/services/xml/xml-service.ts',
+            "php-service": './src/services/php/php-service.ts',
+            "ace-language-client": './src/ace-language-client.ts',
+            "javascript-service": './src/services/javascript/javascript-service.ts',
             "python-service": {
                 chunkLoading: "import-scripts",
-                import: './services/python/python-service.ts'
-            }
+                import: './src/services/python/python-service.ts'
+            },
+            "base-service": './src/services/base-service.ts',
         },
         externals: /ace-code/,
         module: {

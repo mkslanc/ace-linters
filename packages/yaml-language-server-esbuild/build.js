@@ -48,6 +48,6 @@ await build({
     ]
 });
 
-await copyFile(fileURLToPath(new URL("dist/index.js", import.meta.url)), fileURLToPath(new URL("../ace-linters/services/yaml/lib/index.js", import.meta.url)), (err) => {
+await copyFile(fileURLToPath(new URL("dist/index.js", import.meta.url)), fileURLToPath(new URL("../ace-linters/src/services/yaml/lib/index.js", import.meta.url)), (err) => {
     if (err) throw err;
 });

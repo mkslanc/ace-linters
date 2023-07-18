@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {MockWorker} from "./mock-worker";
-import {ServiceManager} from "../../services/service-manager";
-import {BaseService} from "../../services/base-service";
+import {ServiceManager} from "../../src/services/service-manager";
+import {BaseService} from "../../src/services/base-service";
 
 describe('ServiceManager tests', () => {
     let manager: ServiceManager;
@@ -22,13 +22,13 @@ describe('ServiceManager tests', () => {
 
         const cssService = {
             features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-            module: () => import("../../services/css/css-service"),
+            module: () => import("../../src/services/css/css-service"),
             className: "CssService",
             modes: "css"
         };
         const htmlService = {
             features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-            module: () => import("../../services/html/html-service"),
+            module: () => import("../../src/services/html/html-service"),
             className: "HtmlService",
             modes: "css"
         };
@@ -78,7 +78,7 @@ describe('ServiceManager tests', () => {
 
             const jsonService = {
                 features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-                module: () => import("../../services/json/json-service"),
+                module: () => import("../../src/services/json/json-service"),
                 className: "JsonService",
                 modes: "json"
             };

@@ -3,7 +3,7 @@ import {Range as AceRange} from "ace-code/src/range";
 import {
     CompletionItemKind,
 } from "vscode-languageserver-protocol";
-import {CommonConverter} from "../../type-converters/common-converters";
+import {CommonConverter} from "../../src/type-converters/common-converters";
 
 
 describe('General Converters', () => {

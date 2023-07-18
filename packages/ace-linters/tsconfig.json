@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "outDir": "./out",
     "allowJs": true,
     "strictNullChecks": true,
@@ -8,19 +9,17 @@
     "sourceMap": true,
     "module": "CommonJS",
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declaration": true,
+    "declarationDir": "./types" 
   },
   "ts-node": {
     "transpileOnly": true
   },
   "exclude": [
     "node_modules",
-    "build",
-    "out",
-    "coverage",
-    "tests"
   ],
   "include": [
-    "./**/*.ts"
+    "./src/**/*.ts",
   ]
 }

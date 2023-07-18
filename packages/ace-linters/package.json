@@ -4,6 +4,7 @@
   "version": "0.11.3",
   "scripts": {
     "clean": "rimraf build",
+    "prebuild": "node prebuild.js",
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
     "build:eslint-linter-bundle": "cd ../eslint-linter-bundle && npm run build",
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
@@ -19,12 +20,12 @@
     "start-server": "http-server build --cors=\"*\""
   },
   "dependencies": {
-    "vscode-html-languageservice": "latest",
-    "vscode-css-languageservice": "latest",
-    "vscode-json-languageservice": "4.2.1",
-    "vscode-languageserver-protocol": "^3.17.2",
+    "vscode-html-languageservice": "^5.0.6",
+    "vscode-css-languageservice": "^6.2.6",
+    "vscode-json-languageservice": "^5.3.5",
+    "vscode-languageserver-protocol": "^3.17.3",
     "vscode-languageserver-textdocument": "^1.0.8",
-    "vscode-languageserver-types": "^3.17.2",
+    "vscode-languageserver-types": "^3.17.3",
     "showdown": "latest",
     "luaparse": "latest",
     "vscode-ws-jsonrpc": "^2.0.1",
@@ -48,6 +49,66 @@
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
+  "exports": {
+    ".": "./build/ace-linters.js",
+    "./build/*": "./build/*.js",
+    "./ace-language-client": "./build/ace-language-client.js",
+    "./service-manager": "./build/service-manager.js",
+    "./html-service": "./build/html-service.js",
+    "./css-service": "./build/css-service.js",
+    "./json-service": "./build/json-service.js",
+    "./lua-service": "./build/lua-service.js",
+    "./typescript-service": "./build/typescript-service.js",
+    "./yaml-service": "./build/yaml-service.js",
+    "./xml-service": "./build/xml-service.js",
+    "./php-service": "./build/php-service.js",
+    "./javascript-service": "./build/javascript-service.js",
+    "./python-service": "./build/python-service.js",
+    "./base-service": "./build/base-service.js"
+  },
+  "typesVersions": {
+    "*": {
+      "ace-language-client": [
+        "./types/ace-language-client.d.ts"
+      ],
+      "service-manager": [
+        "./types/services/service-manager.d.ts"
+      ],
+      "html-service": [
+        "./types/services/html/html-service.d.ts"
+      ],
+      "css-service": [
+        "./types/services/css/css-service.d.ts"
+      ],
+      "json-service": [
+        "./types/services/json/json-service.d.ts"
+      ],
+      "lua-service": [
+        "./types/services/lua/lua-service.d.ts"
+      ],
+      "typescript-service": [
+        "./types/services/typescript/typescript-service.d.ts"
+      ],
+      "xml-service": [
+        "./types/services/xml/xml-service.d.ts"
+      ],
+      "php-service": [
+        "./types/services/php/php-service.d.ts"
+      ],
+      "javascript-service": [
+        "./types/services/javascript/javascript-service.d.ts"
+      ],
+      "python-service": [
+        "./types/services/python/python-service.d.ts"
+      ],
+      "yaml-service": [
+        "./types/services/yaml/yaml-service.d.ts"
+      ],
+      "base-service": [
+        "./types/services/base-service.d.ts"
+      ]
+    }
+  },
   "repository": {
     "url": "https://github.com/mkslanc/ace-linters"
   },
