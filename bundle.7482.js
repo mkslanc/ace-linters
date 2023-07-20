@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[7482],{
 
-/***/ 47865:
+/***/ 23666:
 /***/ ((module) => {
 
 module.exports = `/*
@@ -178,7 +178,7 @@ module.exports = `/*
 
 exports.isDark = true;
 exports.cssClass = "ace-dracula";
-exports.cssText = __webpack_require__(47865);
+exports.cssText = __webpack_require__(23666);
 exports.$selectionColorConflict = true;
 
 var dom = __webpack_require__(6359);

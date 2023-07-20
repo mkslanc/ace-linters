@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[4270],{
 
-/***/ 74790:
+/***/ 13136:
 /***/ ((module) => {
 
 module.exports = `.ace-crimson-editor .ace_gutter {
@@ -159,7 +159,7 @@ module.exports = `.ace-crimson-editor .ace_gutter {
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 exports.isDark = false;
-exports.cssText = __webpack_require__(74790);
+exports.cssText = __webpack_require__(13136);
 
 exports.cssClass = "ace-crimson-editor";
 

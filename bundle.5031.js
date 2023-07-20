@@ -40,14 +40,14 @@
                 });
             /******/ };
         /******/ })();
-        /******/ /************************************************************************/ var __webpack_exports__ = {};
+        /******/ /************************************************************************/ var __nested_webpack_exports__ = {};
         // ESM COMPAT FLAG
-        __nested_webpack_require_490__.r(__webpack_exports__);
+        __nested_webpack_require_490__.r(__nested_webpack_exports__);
         // EXPORTS
-        __nested_webpack_require_490__.d(__webpack_exports__, {
-            "ServiceManager": ()=>/* binding */ ServiceManager
+        __nested_webpack_require_490__.d(__nested_webpack_exports__, {
+            ServiceManager: ()=>/* binding */ ServiceManager
         });
-        ; // CONCATENATED MODULE: ./utils.ts
+        ; // CONCATENATED MODULE: ./src/utils.ts
         function mergeObjects(obj1, obj2) {
             if (!obj1) return obj2;
             if (!obj2) return obj1;
@@ -108,7 +108,7 @@
             }
             return false;
         }
-        ; // CONCATENATED MODULE: ./message-types.ts
+        ; // CONCATENATED MODULE: ./src/message-types.ts
         function _define_property(obj, key, value) {
             if (key in obj) {
                 Object.defineProperty(obj, key, {
@@ -282,7 +282,7 @@
             MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
             MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
         })(MessageType || (MessageType = {}));
-        ; // CONCATENATED MODULE: ./services/service-manager.ts
+        ; // CONCATENATED MODULE: ./src/services/service-manager.ts
         function service_manager_define_property(obj, key, value) {
             if (key in obj) {
                 Object.defineProperty(obj, key, {
@@ -525,7 +525,7 @@
                 });
             }
         }
-        /******/ return __webpack_exports__;
+        /******/ return __nested_webpack_exports__;
     /******/ })();
 });
 

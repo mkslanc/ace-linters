@@ -2245,16 +2245,18 @@
                     }
                 }() : throwTypeError;
                 var hasSymbols = __nested_webpack_require_123872__(2636)();
-                var getProto = Object.getPrototypeOf || function(x) {
+                var hasProto = __nested_webpack_require_123872__(8486)();
+                var getProto = Object.getPrototypeOf || (hasProto ? function(x) {
                     return x.__proto__;
-                }; // eslint-disable-line no-proto
+                } // eslint-disable-line no-proto
+                 : null);
                 var needsEval = {};
-                var TypedArray = typeof Uint8Array === 'undefined' ? undefined1 : getProto(Uint8Array);
+                var TypedArray = typeof Uint8Array === 'undefined' || !getProto ? undefined1 : getProto(Uint8Array);
                 var INTRINSICS = {
                     '%AggregateError%': typeof AggregateError === 'undefined' ? undefined1 : AggregateError,
                     '%Array%': Array,
                     '%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined1 : ArrayBuffer,
-                    '%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined1,
+                    '%ArrayIteratorPrototype%': hasSymbols && getProto ? getProto([][Symbol.iterator]()) : undefined1,
                     '%AsyncFromSyncIteratorPrototype%': undefined1,
                     '%AsyncFunction%': needsEval,
                     '%AsyncGenerator%': needsEval,
@@ -2262,6 +2264,8 @@
                     '%AsyncIteratorPrototype%': needsEval,
                     '%Atomics%': typeof Atomics === 'undefined' ? undefined1 : Atomics,
                     '%BigInt%': typeof BigInt === 'undefined' ? undefined1 : BigInt,
+                    '%BigInt64Array%': typeof BigInt64Array === 'undefined' ? undefined1 : BigInt64Array,
+                    '%BigUint64Array%': typeof BigUint64Array === 'undefined' ? undefined1 : BigUint64Array,
                     '%Boolean%': Boolean,
                     '%DataView%': typeof DataView === 'undefined' ? undefined1 : DataView,
                     '%Date%': Date,
@@ -2282,10 +2286,10 @@
                     '%Int32Array%': typeof Int32Array === 'undefined' ? undefined1 : Int32Array,
                     '%isFinite%': isFinite,
                     '%isNaN%': isNaN,
-                    '%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined1,
+                    '%IteratorPrototype%': hasSymbols && getProto ? getProto(getProto([][Symbol.iterator]())) : undefined1,
                     '%JSON%': typeof JSON === 'object' ? JSON : undefined1,
                     '%Map%': typeof Map === 'undefined' ? undefined1 : Map,
-                    '%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined1 : getProto(new Map()[Symbol.iterator]()),
+                    '%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols || !getProto ? undefined1 : getProto(new Map()[Symbol.iterator]()),
                     '%Math%': Math,
                     '%Number%': Number,
                     '%Object%': Object,
@@ -2298,10 +2302,10 @@
                     '%Reflect%': typeof Reflect === 'undefined' ? undefined1 : Reflect,
                     '%RegExp%': RegExp,
                     '%Set%': typeof Set === 'undefined' ? undefined1 : Set,
-                    '%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined1 : getProto(new Set()[Symbol.iterator]()),
+                    '%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols || !getProto ? undefined1 : getProto(new Set()[Symbol.iterator]()),
                     '%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined1 : SharedArrayBuffer,
                     '%String%': String,
-                    '%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined1,
+                    '%StringIteratorPrototype%': hasSymbols && getProto ? getProto(''[Symbol.iterator]()) : undefined1,
                     '%Symbol%': hasSymbols ? Symbol : undefined1,
                     '%SyntaxError%': $SyntaxError,
                     '%ThrowTypeError%': ThrowTypeError,
@@ -2316,6 +2320,15 @@
                     '%WeakRef%': typeof WeakRef === 'undefined' ? undefined1 : WeakRef,
                     '%WeakSet%': typeof WeakSet === 'undefined' ? undefined1 : WeakSet
                 };
+                if (getProto) {
+                    try {
+                        null.error; // eslint-disable-line no-unused-expressions
+                    } catch (e) {
+                        // https://github.com/tc39/proposal-shadowrealm/pull/384#issuecomment-1364264229
+                        var errorProto = getProto(getProto(e));
+                        INTRINSICS['%Error.prototype%'] = errorProto;
+                    }
+                }
                 var doEval = function doEval(name) {
                     var value;
                     if (name === '%AsyncFunction%') {
@@ -2331,7 +2344,7 @@
                         }
                     } else if (name === '%AsyncIteratorPrototype%') {
                         var gen = doEval('%AsyncGenerator%');
-                        if (gen) {
+                        if (gen && getProto) {
                             value = getProto(gen.prototype);
                         }
                     }
@@ -2671,9 +2684,9 @@
                     return value;
                 };
             /***/ },
-            /***/ 326: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_146488__)=>{
+            /***/ 326: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_147339__)=>{
                 "use strict";
-                var GetIntrinsic = __nested_webpack_require_146488__(7286);
+                var GetIntrinsic = __nested_webpack_require_147339__(7286);
                 var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
                 if ($gOPD) {
                     try {
@@ -2685,9 +2698,9 @@
                 }
                 module1.exports = $gOPD;
             /***/ },
-            /***/ 1181: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_147079__)=>{
+            /***/ 1181: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_147930__)=>{
                 "use strict";
-                var GetIntrinsic = __nested_webpack_require_147079__(7286);
+                var GetIntrinsic = __nested_webpack_require_147930__(7286);
                 var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
                 var hasPropertyDescriptors = function hasPropertyDescriptors() {
                     if ($defineProperty) {
@@ -2719,10 +2732,24 @@
                 };
                 module1.exports = hasPropertyDescriptors;
             /***/ },
-            /***/ 2636: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_148669__)=>{
+            /***/ 8486: /***/ (module1)=>{
+                "use strict";
+                var test = {
+                    foo: {}
+                };
+                var $Object = Object;
+                module1.exports = function hasProto() {
+                    return ({
+                        __proto__: test
+                    }).foo === test.foo && !(({
+                        __proto__: null
+                    }) instanceof $Object);
+                };
+            /***/ },
+            /***/ 2636: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_150005__)=>{
                 "use strict";
                 var origSymbol = typeof Symbol !== 'undefined' && Symbol;
-                var hasSymbolSham = __nested_webpack_require_148669__(6679);
+                var hasSymbolSham = __nested_webpack_require_150005__(6679);
                 module1.exports = function hasNativeSymbols() {
                     if (typeof origSymbol !== 'function') {
                         return false;
@@ -2793,16 +2820,16 @@
                     return true;
                 };
             /***/ },
-            /***/ 7226: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_152428__)=>{
+            /***/ 7226: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_153764__)=>{
                 "use strict";
-                var hasSymbols = __nested_webpack_require_152428__(6679);
+                var hasSymbols = __nested_webpack_require_153764__(6679);
                 module1.exports = function hasToStringTagShams() {
                     return hasSymbols() && !!Symbol.toStringTag;
                 };
             /***/ },
-            /***/ 3198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_152780__)=>{
+            /***/ 3198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_154116__)=>{
                 "use strict";
-                var bind = __nested_webpack_require_152780__(4090);
+                var bind = __nested_webpack_require_154116__(4090);
                 module1.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
             /***/ },
             /***/ 1285: /***/ (module1)=>{
@@ -2834,10 +2861,10 @@
                     };
                 }
             /***/ },
-            /***/ 2635: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_154458__)=>{
+            /***/ 2635: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_155794__)=>{
                 "use strict";
-                var hasToStringTag = __nested_webpack_require_154458__(7226)();
-                var callBound = __nested_webpack_require_154458__(2680);
+                var hasToStringTag = __nested_webpack_require_155794__(7226)();
+                var callBound = __nested_webpack_require_155794__(2680);
                 var $toString = callBound('Object.prototype.toString');
                 var isStandardArguments = function isArguments(value) {
                     if (hasToStringTag && value && typeof value === 'object' && Symbol.toStringTag in value) {
@@ -2976,12 +3003,12 @@
                     return tryFunctionObject(value);
                 };
             /***/ },
-            /***/ 3138: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_161518__)=>{
+            /***/ 3138: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_162854__)=>{
                 "use strict";
                 var toStr = Object.prototype.toString;
                 var fnToStr = Function.prototype.toString;
                 var isFnRegex = /^\s*(?:function)?\*/;
-                var hasToStringTag = __nested_webpack_require_161518__(7226)();
+                var hasToStringTag = __nested_webpack_require_162854__(7226)();
                 var getProto = Object.getPrototypeOf;
                 var getGeneratorFunc = function() {
                     if (!hasToStringTag) {
@@ -3019,13 +3046,13 @@
                     return value !== value;
                 };
             /***/ },
-            /***/ 4782: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_163487__)=>{
+            /***/ 4782: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_164823__)=>{
                 "use strict";
-                var callBind = __nested_webpack_require_163487__(9429);
-                var define1 = __nested_webpack_require_163487__(4926);
-                var implementation = __nested_webpack_require_163487__(7053);
-                var getPolyfill = __nested_webpack_require_163487__(755);
-                var shim = __nested_webpack_require_163487__(5346);
+                var callBind = __nested_webpack_require_164823__(9429);
+                var define1 = __nested_webpack_require_164823__(4926);
+                var implementation = __nested_webpack_require_164823__(7053);
+                var getPolyfill = __nested_webpack_require_164823__(755);
+                var shim = __nested_webpack_require_164823__(5346);
                 var polyfill = callBind(getPolyfill(), Number);
                 /* http://www.ecma-international.org/ecma-262/6.0/#sec-number.isnan */ define1(polyfill, {
                     getPolyfill: getPolyfill,
@@ -3034,9 +3061,9 @@
                 });
                 module1.exports = polyfill;
             /***/ },
-            /***/ 755: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_164284__)=>{
+            /***/ 755: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_165620__)=>{
                 "use strict";
-                var implementation = __nested_webpack_require_164284__(7053);
+                var implementation = __nested_webpack_require_165620__(7053);
                 module1.exports = function getPolyfill() {
                     if (Number.isNaN && Number.isNaN(NaN) && !Number.isNaN('a')) {
                         return Number.isNaN;
@@ -3044,10 +3071,10 @@
                     return implementation;
                 };
             /***/ },
-            /***/ 5346: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_164760__)=>{
+            /***/ 5346: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_166096__)=>{
                 "use strict";
-                var define1 = __nested_webpack_require_164760__(4926);
-                var getPolyfill = __nested_webpack_require_164760__(755);
+                var define1 = __nested_webpack_require_166096__(4926);
+                var getPolyfill = __nested_webpack_require_166096__(755);
                 /* http://www.ecma-international.org/ecma-262/6.0/#sec-number.isnan */ module1.exports = function shimNumberIsNaN() {
                     var polyfill = getPolyfill();
                     define1(Number, {
@@ -3060,64 +3087,11 @@
                     return polyfill;
                 };
             /***/ },
-            /***/ 198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_165526__)=>{
+            /***/ 198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_166862__)=>{
                 "use strict";
-                var forEach = __nested_webpack_require_165526__(3243);
-                var availableTypedArrays = __nested_webpack_require_165526__(2191);
-                var callBound = __nested_webpack_require_165526__(2680);
-                var $toString = callBound('Object.prototype.toString');
-                var hasToStringTag = __nested_webpack_require_165526__(7226)();
-                var gOPD = __nested_webpack_require_165526__(326);
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_165526__.g : globalThis;
-                var typedArrays = availableTypedArrays();
-                var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
-                    for(var i = 0; i < array.length; i += 1){
-                        if (array[i] === value) {
-                            return i;
-                        }
-                    }
-                    return -1;
-                };
-                var $slice = callBound('String.prototype.slice');
-                var toStrTags = {};
-                var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
-                if (hasToStringTag && gOPD && getPrototypeOf) {
-                    forEach(typedArrays, function(typedArray) {
-                        var arr = new g[typedArray]();
-                        if (Symbol.toStringTag in arr) {
-                            var proto = getPrototypeOf(arr);
-                            var descriptor = gOPD(proto, Symbol.toStringTag);
-                            if (!descriptor) {
-                                var superProto = getPrototypeOf(proto);
-                                descriptor = gOPD(superProto, Symbol.toStringTag);
-                            }
-                            toStrTags[typedArray] = descriptor.get;
-                        }
-                    });
-                }
-                var tryTypedArrays = function tryAllTypedArrays(value) {
-                    var anyTrue = false;
-                    forEach(toStrTags, function(getter, typedArray) {
-                        if (!anyTrue) {
-                            try {
-                                anyTrue = getter.call(value) === typedArray;
-                            } catch (e) {}
-                        }
-                    });
-                    return anyTrue;
-                };
+                var whichTypedArray = __nested_webpack_require_166862__(2094);
                 module1.exports = function isTypedArray(value) {
-                    if (!value || typeof value !== 'object') {
-                        return false;
-                    }
-                    if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-                        var tag = $slice($toString(value), 8, -1);
-                        return $indexOf(typedArrays, tag) > -1;
-                    }
-                    if (!gOPD) {
-                        return false;
-                    }
-                    return tryTypedArrays(value);
+                    return !!whichTypedArray(value);
                 };
             /***/ },
             /***/ 8169: /***/ (module1)=>{
@@ -3138,13 +3112,13 @@
                     return false;
                 };
             /***/ },
-            /***/ 4679: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_169203__)=>{
+            /***/ 4679: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_167850__)=>{
                 "use strict";
-                var define1 = __nested_webpack_require_169203__(4926);
-                var callBind = __nested_webpack_require_169203__(9429);
-                var implementation = __nested_webpack_require_169203__(8169);
-                var getPolyfill = __nested_webpack_require_169203__(8070);
-                var shim = __nested_webpack_require_169203__(191);
+                var define1 = __nested_webpack_require_167850__(4926);
+                var callBind = __nested_webpack_require_167850__(9429);
+                var implementation = __nested_webpack_require_167850__(8169);
+                var getPolyfill = __nested_webpack_require_167850__(8070);
+                var shim = __nested_webpack_require_167850__(191);
                 var polyfill = callBind(getPolyfill(), Object);
                 define1(polyfill, {
                     getPolyfill: getPolyfill,
@@ -3153,17 +3127,17 @@
                 });
                 module1.exports = polyfill;
             /***/ },
-            /***/ 8070: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_169930__)=>{
+            /***/ 8070: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_168577__)=>{
                 "use strict";
-                var implementation = __nested_webpack_require_169930__(8169);
+                var implementation = __nested_webpack_require_168577__(8169);
                 module1.exports = function getPolyfill() {
                     return typeof Object.is === 'function' ? Object.is : implementation;
                 };
             /***/ },
-            /***/ 191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_170301__)=>{
+            /***/ 191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_168948__)=>{
                 "use strict";
-                var getPolyfill = __nested_webpack_require_170301__(8070);
-                var define1 = __nested_webpack_require_170301__(4926);
+                var getPolyfill = __nested_webpack_require_168948__(8070);
+                var define1 = __nested_webpack_require_168948__(4926);
                 module1.exports = function shimObjectIs() {
                     var polyfill = getPolyfill();
                     define1(Object, {
@@ -3176,14 +3150,14 @@
                     return polyfill;
                 };
             /***/ },
-            /***/ 5691: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_170989__)=>{
+            /***/ 5691: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_169636__)=>{
                 "use strict";
                 var keysShim;
                 if (!Object.keys) {
                     // modified from https://github.com/es-shims/es5-shim
                     var has = Object.prototype.hasOwnProperty;
                     var toStr = Object.prototype.toString;
-                    var isArgs = __nested_webpack_require_170989__(801); // eslint-disable-line global-require
+                    var isArgs = __nested_webpack_require_169636__(801); // eslint-disable-line global-require
                     var isEnumerable = Object.prototype.propertyIsEnumerable;
                     var hasDontEnumBug = !isEnumerable.call({
                         toString: null
@@ -3295,14 +3269,14 @@
                 }
                 module1.exports = keysShim;
             /***/ },
-            /***/ 3464: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_176958__)=>{
+            /***/ 3464: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_175605__)=>{
                 "use strict";
                 var slice = Array.prototype.slice;
-                var isArgs = __nested_webpack_require_176958__(801);
+                var isArgs = __nested_webpack_require_175605__(801);
                 var origKeys = Object.keys;
                 var keysShim = origKeys ? function keys(o) {
                     return origKeys(o);
-                } : __nested_webpack_require_176958__(5691);
+                } : __nested_webpack_require_175605__(5691);
                 var originalKeys = Object.keys;
                 keysShim.shim = function shimObjectKeys() {
                     if (Object.keys) {
@@ -3512,19 +3486,191 @@
                     return 0;
                 };
             /***/ },
+            /***/ 4487: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_185980__)=>{
+                "use strict";
+                /* harmony export */ __nested_webpack_require_185980__.d(__nested_webpack_exports__, {
+                    /* harmony export */ BaseService: ()=>/* binding */ BaseService
+                });
+                /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __nested_webpack_require_185980__(6297);
+                /* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ = __nested_webpack_require_185980__(4881);
+                function _define_property(obj, key, value) {
+                    if (key in obj) {
+                        Object.defineProperty(obj, key, {
+                            value: value,
+                            enumerable: true,
+                            configurable: true,
+                            writable: true
+                        });
+                    } else {
+                        obj[key] = value;
+                    }
+                    return obj;
+                }
+                class BaseService {
+                    addDocument(document1) {
+                        this.documents[document1.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ /* .TextDocument */ .n.create(document1.uri, document1.languageId, document1.version, document1.text);
+                    //TODO:
+                    /*if (options)
+            this.setSessionOptions(sessionID, options);*/ }
+                    getDocument(uri) {
+                        return this.documents[uri];
+                    }
+                    removeDocument(document1) {
+                        delete this.documents[document1.uri];
+                        if (this.options[document1.uri]) {
+                            delete this.options[document1.uri];
+                        }
+                    }
+                    getDocumentValue(uri) {
+                        var _this_getDocument;
+                        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
+                    }
+                    setValue(identifier, value) {
+                        let document1 = this.getDocument(identifier.uri);
+                        if (document1) {
+                            document1 = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ /* .TextDocument */ .n.create(document1.uri, document1.languageId, document1.version, value);
+                            this.documents[document1.uri] = document1;
+                        }
+                    }
+                    setGlobalOptions(options) {
+                        this.globalOptions = options !== null && options !== void 0 ? options : {};
+                    }
+                    setOptions(sessionID, options, merge = false) {
+                        this.options[sessionID] = merge ? (0, _utils__WEBPACK_IMPORTED_MODULE_1__ /* .mergeObjects */ .PM)(options, this.options[sessionID]) : options;
+                    }
+                    getOption(sessionID, optionName) {
+                        if (this.options[sessionID] && this.options[sessionID][optionName]) {
+                            return this.options[sessionID][optionName];
+                        } else {
+                            return this.globalOptions[optionName];
+                        }
+                    }
+                    applyDeltas(identifier, deltas) {
+                        let document1 = this.getDocument(identifier.uri);
+                        if (document1) vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ /* .TextDocument */ .n.update(document1, deltas, identifier.version);
+                    }
+                    async doComplete(document1, position) {
+                        return null;
+                    }
+                    async doHover(document1, position) {
+                        return null;
+                    }
+                    async doResolve(item) {
+                        return null;
+                    }
+                    async doValidation(document1) {
+                        return [];
+                    }
+                    format(document1, range, options) {
+                        return [];
+                    }
+                    async provideSignatureHelp(document1, position) {
+                        return null;
+                    }
+                    async findDocumentHighlights(document1, position) {
+                        return [];
+                    }
+                    get optionsToFilterDiagnostics() {
+                        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
+                        return {
+                            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
+                            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
+                            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
+                            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
+                            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
+                            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
+                        };
+                    }
+                    constructor(mode){
+                        _define_property(this, "mode", void 0);
+                        _define_property(this, "documents", {});
+                        _define_property(this, "options", {});
+                        _define_property(this, "globalOptions", {});
+                        _define_property(this, "serviceData", void 0);
+                        this.mode = mode;
+                    }
+                }
+            /***/ },
+            /***/ 6297: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_193070__)=>{
+                "use strict";
+                /* harmony export */ __nested_webpack_require_193070__.d(__nested_webpack_exports__, {
+                    /* harmony export */ $p: ()=>/* binding */ checkValueAgainstRegexpArray,
+                    /* harmony export */ PM: ()=>/* binding */ mergeObjects
+                });
+                /* unused harmony exports notEmpty, mergeRanges */ function mergeObjects(obj1, obj2) {
+                    if (!obj1) return obj2;
+                    if (!obj2) return obj1;
+                    const mergedObjects = {
+                        ...obj2,
+                        ...obj1
+                    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+                    for (const key of Object.keys(mergedObjects)){
+                        if (obj1[key] && obj2[key]) {
+                            if (Array.isArray(obj1[key])) {
+                                mergedObjects[key] = obj1[key].concat(obj2[key]);
+                            } else if (Array.isArray(obj2[key])) {
+                                mergedObjects[key] = obj2[key].concat(obj1[key]);
+                            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+                            }
+                        }
+                    }
+                    return mergedObjects;
+                }
+                function notEmpty1(value) {
+                    return value !== null && value !== undefined;
+                }
+                //taken with small changes from ace-code
+                function mergeRanges1(ranges) {
+                    var list = ranges;
+                    list = list.sort(function(a, b) {
+                        return comparePoints(a.start, b.start);
+                    });
+                    var next = list[0], range;
+                    for(var i = 1; i < list.length; i++){
+                        range = next;
+                        next = list[i];
+                        var cmp = comparePoints(range.end, next.start);
+                        if (cmp < 0) continue;
+                        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+                        if (comparePoints(range.end, next.end) < 0) {
+                            range.end.row = next.end.row;
+                            range.end.column = next.end.column;
+                        }
+                        list.splice(i, 1);
+                        next = range;
+                        i--;
+                    }
+                    return list;
+                }
+                function comparePoints(p1, p2) {
+                    return p1.row - p2.row || p1.column - p2.column;
+                }
+                function checkValueAgainstRegexpArray(value, regexpArray) {
+                    if (!regexpArray) {
+                        return false;
+                    }
+                    for(let i = 0; i < regexpArray.length; i++){
+                        if (regexpArray[i].test(value)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            /***/ },
             /***/ 82: /***/ (module1)=>{
                 module1.exports = function isBuffer(arg) {
                     return arg && typeof arg === 'object' && typeof arg.copy === 'function' && typeof arg.fill === 'function' && typeof arg.readUInt8 === 'function';
                 };
             /***/ },
-            /***/ 4895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_187628__)=>{
+            /***/ 4895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_196702__)=>{
                 "use strict";
                 // Currently in sync with Node.js lib/internal/util/types.js
                 // https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
-                var isArgumentsObject = __nested_webpack_require_187628__(2635);
-                var isGeneratorFunction = __nested_webpack_require_187628__(3138);
-                var whichTypedArray = __nested_webpack_require_187628__(2094);
-                var isTypedArray = __nested_webpack_require_187628__(198);
+                var isArgumentsObject = __nested_webpack_require_196702__(2635);
+                var isGeneratorFunction = __nested_webpack_require_196702__(3138);
+                var whichTypedArray = __nested_webpack_require_196702__(2094);
+                var isTypedArray = __nested_webpack_require_196702__(198);
                 function uncurryThis(f) {
                     return f.call.bind(f);
                 }
@@ -3750,9 +3896,9 @@
                     });
                 });
             /***/ },
-            /***/ 3335: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_200104__)=>{
-                /* provided dependency */ var process = __nested_webpack_require_200104__(4406);
-                /* provided dependency */ var console = __nested_webpack_require_200104__(3716);
+            /***/ 3335: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_209178__)=>{
+                /* provided dependency */ var process = __nested_webpack_require_209178__(4406);
+                /* provided dependency */ var console = __nested_webpack_require_209178__(3716);
                 // Copyright Joyent, Inc. and other Node contributors.
                 //
                 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4182,7 +4328,7 @@
                 }
                 // NOTE: These type checking functions intentionally don't use `instanceof`
                 // because it is fragile and can be easily faked with `Object.create()`.
-                exports1.types = __nested_webpack_require_200104__(4895);
+                exports1.types = __nested_webpack_require_209178__(4895);
                 function isArray(ar) {
                     return Array.isArray(ar);
                 }
@@ -4243,7 +4389,7 @@
                     typeof arg === 'undefined';
                 }
                 exports1.isPrimitive = isPrimitive;
-                exports1.isBuffer = __nested_webpack_require_200104__(82);
+                exports1.isBuffer = __nested_webpack_require_209178__(82);
                 function objectToString(o) {
                     return Object.prototype.toString.call(o);
                 }
@@ -4294,7 +4440,7 @@
  * @param {function} ctor Constructor function which needs to inherit the
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
- */ exports1.inherits = __nested_webpack_require_200104__(1285);
+ */ exports1.inherits = __nested_webpack_require_209178__(1285);
                 exports1._extend = function(origin, add) {
                     // Don't do anything if add isn't an object
                     if (!add || !isObject(add)) return origin;
@@ -4404,14 +4550,14 @@
                 }
                 exports1.callbackify = callbackify;
             /***/ },
-            /***/ 1200: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_231702__)=>{
+            /***/ 1200: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_240776__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
- * ----------------------------------------------------------------------------------------- */ module1.exports = __nested_webpack_require_231702__(5953);
+ * ----------------------------------------------------------------------------------------- */ module1.exports = __nested_webpack_require_240776__(5953);
             /***/ },
-            /***/ 5953: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_232261__) {
+            /***/ 5953: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_241335__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -4439,30 +4585,30 @@
                     value: true
                 });
                 exports1.createMessageConnection = exports1.BrowserMessageWriter = exports1.BrowserMessageReader = void 0;
-                const ril_1 = __nested_webpack_require_232261__(3632);
+                const ril_1 = __nested_webpack_require_241335__(3632);
                 // Install the browser runtime abstract.
                 ril_1.default.install();
-                const api_1 = __nested_webpack_require_232261__(5247);
-                __exportStar(__nested_webpack_require_232261__(5247), exports1);
+                const api_1 = __nested_webpack_require_241335__(5247);
+                __exportStar(__nested_webpack_require_241335__(5247), exports1);
                 class BrowserMessageReader extends api_1.AbstractMessageReader {
                     listen(callback) {
                         return this._onData.event(callback);
                     }
-                    constructor(context){
+                    constructor(port){
                         super();
                         this._onData = new api_1.Emitter();
                         this._messageListener = (event)=>{
                             this._onData.fire(event.data);
                         };
-                        context.addEventListener('error', (event)=>this.fireError(event));
-                        context.onmessage = this._messageListener;
+                        port.addEventListener('error', (event)=>this.fireError(event));
+                        port.onmessage = this._messageListener;
                     }
                 }
                 exports1.BrowserMessageReader = BrowserMessageReader;
                 class BrowserMessageWriter extends api_1.AbstractMessageWriter {
                     write(msg) {
                         try {
-                            this.context.postMessage(msg);
+                            this.port.postMessage(msg);
                             return Promise.resolve();
                         } catch (error) {
                             this.handleError(error, msg);
@@ -4474,11 +4620,11 @@
                         this.fireError(error, msg, this.errorCount);
                     }
                     end() {}
-                    constructor(context){
+                    constructor(port){
                         super();
-                        this.context = context;
+                        this.port = port;
                         this.errorCount = 0;
-                        context.addEventListener('error', (event)=>this.fireError(event));
+                        port.addEventListener('error', (event)=>this.fireError(event));
                     }
                 }
                 exports1.BrowserMessageWriter = BrowserMessageWriter;
@@ -4494,22 +4640,18 @@
                     return (0, api_1.createMessageConnection)(reader, writer, logger, options);
                 }
                 exports1.createMessageConnection = createMessageConnection;
-            //# sourceMappingURL=main.js.map
             /***/ },
-            /***/ 3632: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_236745__)=>{
+            /***/ 3632: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_245750__)=>{
                 "use strict";
-                /* provided dependency */ var console = __nested_webpack_require_236745__(3716);
+                /* provided dependency */ var console = __nested_webpack_require_245750__(3716);
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                const ral_1 = __nested_webpack_require_236745__(5706);
-                const disposable_1 = __nested_webpack_require_236745__(8437);
-                const events_1 = __nested_webpack_require_236745__(5165);
-                const messageBuffer_1 = __nested_webpack_require_236745__(8652);
-                class MessageBuffer extends messageBuffer_1.AbstractMessageBuffer {
+                const api_1 = __nested_webpack_require_245750__(5247);
+                class MessageBuffer extends api_1.AbstractMessageBuffer {
                     emptyBuffer() {
                         return MessageBuffer.emptyBuffer;
                     }
@@ -4542,28 +4684,28 @@
                 class ReadableStreamWrapper {
                     onClose(listener) {
                         this.socket.addEventListener('close', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
                     }
                     onError(listener) {
                         this.socket.addEventListener('error', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
                     }
                     onEnd(listener) {
                         this.socket.addEventListener('end', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
                     }
                     onData(listener) {
                         return this._onData.event(listener);
                     }
                     constructor(socket){
                         this.socket = socket;
-                        this._onData = new events_1.Emitter();
+                        this._onData = new api_1.Emitter();
                         this._messageListener = (event)=>{
                             const blob = event.data;
                             blob.arrayBuffer().then((buffer)=>{
                                 this._onData.fire(new Uint8Array(buffer));
                             }, ()=>{
-                                (0, ral_1.default)().console.error(`Converting blob to array buffer failed.`);
+                                (0, api_1.RAL)().console.error(`Converting blob to array buffer failed.`);
                             });
                         };
                         this.socket.addEventListener('message', this._messageListener);
@@ -4572,15 +4714,15 @@
                 class WritableStreamWrapper {
                     onClose(listener) {
                         this.socket.addEventListener('close', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
                     }
                     onError(listener) {
                         this.socket.addEventListener('error', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
                     }
                     onEnd(listener) {
                         this.socket.addEventListener('end', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
                     }
                     write(data, encoding) {
                         if (typeof data === 'string') {
@@ -4656,14 +4798,13 @@
                 }
                 (function(RIL) {
                     function install() {
-                        ral_1.default.install(_ril);
+                        api_1.RAL.install(_ril);
                     }
                     RIL.install = install;
                 })(RIL || (RIL = {}));
                 exports1["default"] = RIL;
-            //# sourceMappingURL=ril.js.map
             /***/ },
-            /***/ 5247: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_245422__)=>{
+            /***/ 5247: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_254129__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -4672,9 +4813,9 @@
                 Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.ProgressType = exports1.ProgressToken = exports1.createMessageConnection = exports1.NullLogger = exports1.ConnectionOptions = exports1.ConnectionStrategy = exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = exports1.CancellationToken = exports1.CancellationTokenSource = exports1.Emitter = exports1.Event = exports1.Disposable = exports1.LRUCache = exports1.Touch = exports1.LinkedMap = exports1.ParameterStructures = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.ErrorCodes = exports1.ResponseError = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType0 = exports1.RequestType = exports1.Message = exports1.RAL = void 0;
-                exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = void 0;
-                const messages_1 = __nested_webpack_require_245422__(9141);
+                exports1.ProgressType = exports1.ProgressToken = exports1.createMessageConnection = exports1.NullLogger = exports1.ConnectionOptions = exports1.ConnectionStrategy = exports1.AbstractMessageBuffer = exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = exports1.SharedArrayReceiverStrategy = exports1.SharedArraySenderStrategy = exports1.CancellationToken = exports1.CancellationTokenSource = exports1.Emitter = exports1.Event = exports1.Disposable = exports1.LRUCache = exports1.Touch = exports1.LinkedMap = exports1.ParameterStructures = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.ErrorCodes = exports1.ResponseError = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType0 = exports1.RequestType = exports1.Message = exports1.RAL = void 0;
+                exports1.MessageStrategy = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = void 0;
+                const messages_1 = __nested_webpack_require_254129__(9141);
                 Object.defineProperty(exports1, "Message", {
                     enumerable: true,
                     get: function() {
@@ -4831,7 +4972,7 @@
                         return messages_1.ParameterStructures;
                     }
                 });
-                const linkedMap_1 = __nested_webpack_require_245422__(7040);
+                const linkedMap_1 = __nested_webpack_require_254129__(7040);
                 Object.defineProperty(exports1, "LinkedMap", {
                     enumerable: true,
                     get: function() {
@@ -4850,14 +4991,14 @@
                         return linkedMap_1.Touch;
                     }
                 });
-                const disposable_1 = __nested_webpack_require_245422__(8437);
+                const disposable_1 = __nested_webpack_require_254129__(8437);
                 Object.defineProperty(exports1, "Disposable", {
                     enumerable: true,
                     get: function() {
                         return disposable_1.Disposable;
                     }
                 });
-                const events_1 = __nested_webpack_require_245422__(5165);
+                const events_1 = __nested_webpack_require_254129__(5165);
                 Object.defineProperty(exports1, "Event", {
                     enumerable: true,
                     get: function() {
@@ -4870,7 +5011,7 @@
                         return events_1.Emitter;
                     }
                 });
-                const cancellation_1 = __nested_webpack_require_245422__(415);
+                const cancellation_1 = __nested_webpack_require_254129__(415);
                 Object.defineProperty(exports1, "CancellationTokenSource", {
                     enumerable: true,
                     get: function() {
@@ -4883,7 +5024,20 @@
                         return cancellation_1.CancellationToken;
                     }
                 });
-                const messageReader_1 = __nested_webpack_require_245422__(451);
+                const sharedArrayCancellation_1 = __nested_webpack_require_254129__(178);
+                Object.defineProperty(exports1, "SharedArraySenderStrategy", {
+                    enumerable: true,
+                    get: function() {
+                        return sharedArrayCancellation_1.SharedArraySenderStrategy;
+                    }
+                });
+                Object.defineProperty(exports1, "SharedArrayReceiverStrategy", {
+                    enumerable: true,
+                    get: function() {
+                        return sharedArrayCancellation_1.SharedArrayReceiverStrategy;
+                    }
+                });
+                const messageReader_1 = __nested_webpack_require_254129__(451);
                 Object.defineProperty(exports1, "MessageReader", {
                     enumerable: true,
                     get: function() {
@@ -4902,7 +5056,7 @@
                         return messageReader_1.ReadableStreamMessageReader;
                     }
                 });
-                const messageWriter_1 = __nested_webpack_require_245422__(1251);
+                const messageWriter_1 = __nested_webpack_require_254129__(1251);
                 Object.defineProperty(exports1, "MessageWriter", {
                     enumerable: true,
                     get: function() {
@@ -4921,7 +5075,14 @@
                         return messageWriter_1.WriteableStreamMessageWriter;
                     }
                 });
-                const connection_1 = __nested_webpack_require_245422__(1908);
+                const messageBuffer_1 = __nested_webpack_require_254129__(8652);
+                Object.defineProperty(exports1, "AbstractMessageBuffer", {
+                    enumerable: true,
+                    get: function() {
+                        return messageBuffer_1.AbstractMessageBuffer;
+                    }
+                });
+                const connection_1 = __nested_webpack_require_254129__(1908);
                 Object.defineProperty(exports1, "ConnectionStrategy", {
                     enumerable: true,
                     get: function() {
@@ -5018,11 +5179,16 @@
                         return connection_1.CancellationStrategy;
                     }
                 });
-                const ral_1 = __nested_webpack_require_245422__(5706);
+                Object.defineProperty(exports1, "MessageStrategy", {
+                    enumerable: true,
+                    get: function() {
+                        return connection_1.MessageStrategy;
+                    }
+                });
+                const ral_1 = __nested_webpack_require_254129__(5706);
                 exports1.RAL = ral_1.default;
-            //# sourceMappingURL=api.js.map
             /***/ },
-            /***/ 415: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_262171__)=>{
+            /***/ 415: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_272190__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -5031,9 +5197,9 @@
                     value: true
                 });
                 exports1.CancellationTokenSource = exports1.CancellationToken = void 0;
-                const ral_1 = __nested_webpack_require_262171__(5706);
-                const Is = __nested_webpack_require_262171__(8811);
-                const events_1 = __nested_webpack_require_262171__(5165);
+                const ral_1 = __nested_webpack_require_272190__(5706);
+                const Is = __nested_webpack_require_272190__(8811);
+                const events_1 = __nested_webpack_require_272190__(5165);
                 var CancellationToken;
                 (function(CancellationToken) {
                     CancellationToken.None = Object.freeze({
@@ -5120,9 +5286,8 @@
                     }
                 }
                 exports1.CancellationTokenSource = CancellationTokenSource;
-            //# sourceMappingURL=cancellation.js.map
             /***/ },
-            /***/ 1908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_267158__)=>{
+            /***/ 1908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_277124__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -5130,13 +5295,13 @@
  * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                exports1.createMessageConnection = exports1.ConnectionOptions = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.NullLogger = exports1.ProgressType = exports1.ProgressToken = void 0;
-                const ral_1 = __nested_webpack_require_267158__(5706);
-                const Is = __nested_webpack_require_267158__(8811);
-                const messages_1 = __nested_webpack_require_267158__(9141);
-                const linkedMap_1 = __nested_webpack_require_267158__(7040);
-                const events_1 = __nested_webpack_require_267158__(5165);
-                const cancellation_1 = __nested_webpack_require_267158__(415);
+                exports1.createMessageConnection = exports1.ConnectionOptions = exports1.MessageStrategy = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.RequestCancellationReceiverStrategy = exports1.IdCancellationReceiverStrategy = exports1.ConnectionStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.NullLogger = exports1.ProgressType = exports1.ProgressToken = void 0;
+                const ral_1 = __nested_webpack_require_277124__(5706);
+                const Is = __nested_webpack_require_277124__(8811);
+                const messages_1 = __nested_webpack_require_277124__(9141);
+                const linkedMap_1 = __nested_webpack_require_277124__(7040);
+                const events_1 = __nested_webpack_require_277124__(5165);
+                const cancellation_1 = __nested_webpack_require_277124__(415);
                 var CancelNotification;
                 (function(CancelNotification) {
                     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -5282,6 +5447,22 @@
                     }
                     ConnectionStrategy.is = is;
                 })(ConnectionStrategy = exports1.ConnectionStrategy || (exports1.ConnectionStrategy = {}));
+                var IdCancellationReceiverStrategy;
+                (function(IdCancellationReceiverStrategy) {
+                    function is(value) {
+                        const candidate = value;
+                        return candidate && (candidate.kind === undefined || candidate.kind === 'id') && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+                    }
+                    IdCancellationReceiverStrategy.is = is;
+                })(IdCancellationReceiverStrategy = exports1.IdCancellationReceiverStrategy || (exports1.IdCancellationReceiverStrategy = {}));
+                var RequestCancellationReceiverStrategy;
+                (function(RequestCancellationReceiverStrategy) {
+                    function is(value) {
+                        const candidate = value;
+                        return candidate && candidate.kind === 'request' && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+                    }
+                    RequestCancellationReceiverStrategy.is = is;
+                })(RequestCancellationReceiverStrategy = exports1.RequestCancellationReceiverStrategy || (exports1.RequestCancellationReceiverStrategy = {}));
                 var CancellationReceiverStrategy;
                 (function(CancellationReceiverStrategy) {
                     CancellationReceiverStrategy.Message = Object.freeze({
@@ -5290,8 +5471,7 @@
                         }
                     });
                     function is(value) {
-                        const candidate = value;
-                        return candidate && Is.func(candidate.createCancellationTokenSource);
+                        return IdCancellationReceiverStrategy.is(value) || RequestCancellationReceiverStrategy.is(value);
                     }
                     CancellationReceiverStrategy.is = is;
                 })(CancellationReceiverStrategy = exports1.CancellationReceiverStrategy || (exports1.CancellationReceiverStrategy = {}));
@@ -5323,11 +5503,19 @@
                     }
                     CancellationStrategy.is = is;
                 })(CancellationStrategy = exports1.CancellationStrategy || (exports1.CancellationStrategy = {}));
+                var MessageStrategy;
+                (function(MessageStrategy) {
+                    function is(value) {
+                        const candidate = value;
+                        return candidate && Is.func(candidate.handleMessage);
+                    }
+                    MessageStrategy.is = is;
+                })(MessageStrategy = exports1.MessageStrategy || (exports1.MessageStrategy = {}));
                 var ConnectionOptions;
                 (function(ConnectionOptions) {
                     function is(value) {
                         const candidate = value;
-                        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy));
+                        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy) || MessageStrategy.is(candidate.messageStrategy));
                     }
                     ConnectionOptions.is = is;
                 })(ConnectionOptions = exports1.ConnectionOptions || (exports1.ConnectionOptions = {}));
@@ -5431,20 +5619,29 @@
                             processMessageQueue();
                         });
                     }
+                    function handleMessage(message) {
+                        if (messages_1.Message.isRequest(message)) {
+                            handleRequest(message);
+                        } else if (messages_1.Message.isNotification(message)) {
+                            handleNotification(message);
+                        } else if (messages_1.Message.isResponse(message)) {
+                            handleResponse(message);
+                        } else {
+                            handleInvalidMessage(message);
+                        }
+                    }
                     function processMessageQueue() {
                         if (messageQueue.size === 0) {
                             return;
                         }
                         const message = messageQueue.shift();
                         try {
-                            if (messages_1.Message.isRequest(message)) {
-                                handleRequest(message);
-                            } else if (messages_1.Message.isNotification(message)) {
-                                handleNotification(message);
-                            } else if (messages_1.Message.isResponse(message)) {
-                                handleResponse(message);
+                            var _options;
+                            const messageStrategy = (_options = options) === null || _options === void 0 ? void 0 : _options.messageStrategy;
+                            if (MessageStrategy.is(messageStrategy)) {
+                                messageStrategy.handleMessage(message, handleMessage);
                             } else {
-                                handleInvalidMessage(message);
+                                handleMessage(message);
                             }
                         } finally{
                             triggerMessageQueue();
@@ -5459,7 +5656,8 @@
                                 const key = createRequestQueueKey(cancelId);
                                 const toCancel = messageQueue.get(key);
                                 if (messages_1.Message.isRequest(toCancel)) {
-                                    const strategy = options === null || options === void 0 ? void 0 : options.connectionStrategy;
+                                    var _options;
+                                    const strategy = (_options = options) === null || _options === void 0 ? void 0 : _options.connectionStrategy;
                                     const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
                                     if (response && (response.error !== undefined || response.result !== undefined)) {
                                         messageQueue.delete(key);
@@ -5541,7 +5739,7 @@
                         if (requestHandler || starRequestHandler) {
                             var _requestMessage_id;
                             const tokenKey = (_requestMessage_id = requestMessage.id) !== null && _requestMessage_id !== void 0 ? _requestMessage_id : String(Date.now()); //
-                            const cancellationSource = cancellationStrategy.receiver.createCancellationTokenSource(tokenKey);
+                            const cancellationSource = IdCancellationReceiverStrategy.is(cancellationStrategy.receiver) ? cancellationStrategy.receiver.createCancellationTokenSource(tokenKey) : cancellationStrategy.receiver.createCancellationTokenSource(requestMessage);
                             if (requestMessage.id !== null && knownCanceledRequests.has(requestMessage.id)) {
                                 cancellationSource.cancel();
                             }
@@ -5992,7 +6190,10 @@
                                 params: messageParams
                             };
                             traceSendingNotification(notificationMessage);
-                            return messageWriter.write(notificationMessage).catch(()=>logger.error(`Sending notification failed.`));
+                            return messageWriter.write(notificationMessage).catch((error)=>{
+                                logger.error(`Sending notification failed.`);
+                                throw error;
+                            });
                         },
                         onNotification: (type, handler)=>{
                             throwIfClosedOrDisposed();
@@ -6036,6 +6237,8 @@
                             };
                         },
                         sendProgress: (_type, token, value)=>{
+                            // This should not await but simple return to ensure that we don't have another
+                            // async scheduling. Otherwise one send could overtake another send.
                             return connection.sendNotification(ProgressNotification.type, {
                                 token,
                                 value
@@ -6100,42 +6303,45 @@
                                     }
                                 });
                             }
-                            const result = new Promise((resolve, reject)=>{
-                                const requestMessage = {
-                                    jsonrpc: version,
-                                    id: id,
-                                    method: method,
-                                    params: messageParams
-                                };
+                            const requestMessage = {
+                                jsonrpc: version,
+                                id: id,
+                                method: method,
+                                params: messageParams
+                            };
+                            traceSendingRequest(requestMessage);
+                            if (typeof cancellationStrategy.sender.enableCancellation === 'function') {
+                                cancellationStrategy.sender.enableCancellation(requestMessage);
+                            }
+                            return new Promise(async (resolve, reject)=>{
                                 const resolveWithCleanup = (r)=>{
+                                    var _disposable;
                                     resolve(r);
                                     cancellationStrategy.sender.cleanup(id);
-                                    disposable === null || disposable === void 0 ? void 0 : disposable.dispose();
+                                    (_disposable = disposable) === null || _disposable === void 0 ? void 0 : _disposable.dispose();
                                 };
                                 const rejectWithCleanup = (r)=>{
+                                    var _disposable;
                                     reject(r);
                                     cancellationStrategy.sender.cleanup(id);
-                                    disposable === null || disposable === void 0 ? void 0 : disposable.dispose();
+                                    (_disposable = disposable) === null || _disposable === void 0 ? void 0 : _disposable.dispose();
                                 };
-                                let responsePromise = {
+                                const responsePromise = {
                                     method: method,
                                     timerStart: Date.now(),
                                     resolve: resolveWithCleanup,
                                     reject: rejectWithCleanup
                                 };
-                                traceSendingRequest(requestMessage);
                                 try {
-                                    messageWriter.write(requestMessage).catch(()=>logger.error(`Sending request failed.`));
-                                } catch (e) {
-                                    // Writing the message failed. So we need to reject the promise.
-                                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, e.message ? e.message : 'Unknown reason'));
-                                    responsePromise = null;
-                                }
-                                if (responsePromise) {
+                                    await messageWriter.write(requestMessage);
                                     responsePromises.set(id, responsePromise);
+                                } catch (error) {
+                                    logger.error(`Sending request failed.`);
+                                    // Writing the message failed. So we need to reject the promise.
+                                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, error.message ? error.message : 'Unknown reason'));
+                                    throw error;
                                 }
                             });
-                            return result;
                         },
                         onRequest: (type, handler)=>{
                             throwIfClosedOrDisposed();
@@ -6259,7 +6465,6 @@
                     return connection;
                 }
                 exports1.createMessageConnection = createMessageConnection;
-            //# sourceMappingURL=connection.js.map
             /***/ },
             /***/ 8437: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -6279,9 +6484,8 @@
                     }
                     Disposable.create = create;
                 })(Disposable = exports1.Disposable || (exports1.Disposable = {}));
-            //# sourceMappingURL=disposable.js.map
             /***/ },
-            /***/ 5165: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_335210__)=>{
+            /***/ 5165: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_348215__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6290,7 +6494,7 @@
                     value: true
                 });
                 exports1.Emitter = exports1.Event = void 0;
-                const ral_1 = __nested_webpack_require_335210__(5706);
+                const ral_1 = __nested_webpack_require_348215__(5706);
                 var Event;
                 (function(Event) {
                     const _disposable = {
@@ -6413,7 +6617,6 @@
                 }
                 exports1.Emitter = Emitter;
                 Emitter._noop = function() {};
-            //# sourceMappingURL=events.js.map
             /***/ },
             /***/ 8811: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -6452,7 +6655,6 @@
                     return array(value) && value.every((elem)=>string(elem));
                 }
                 exports1.stringArray = stringArray;
-            //# sourceMappingURL=is.js.map
             /***/ },
             /***/ 7040: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -6870,7 +7072,6 @@
                     }
                 }
                 exports1.LRUCache = LRUCache;
-            //# sourceMappingURL=linkedMap.js.map
             /***/ },
             /***/ 8652: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -6893,7 +7094,7 @@
                         this._chunks.push(toAppend);
                         this._totalLength += toAppend.byteLength;
                     }
-                    tryReadHeaders() {
+                    tryReadHeaders(lowerCaseKeys = false) {
                         if (this._chunks.length === 0) {
                             return undefined;
                         }
@@ -6959,7 +7160,7 @@
                             }
                             const key = header.substr(0, index);
                             const value = header.substr(index + 1).trim();
-                            result.set(key, value);
+                            result.set(lowerCaseKeys ? key.toLowerCase() : key, value);
                         }
                         return result;
                     }
@@ -7025,9 +7226,8 @@
                     }
                 }
                 exports1.AbstractMessageBuffer = AbstractMessageBuffer;
-            //# sourceMappingURL=messageBuffer.js.map
             /***/ },
-            /***/ 451: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_371039__)=>{
+            /***/ 451: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_383907__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7036,9 +7236,10 @@
                     value: true
                 });
                 exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = void 0;
-                const ral_1 = __nested_webpack_require_371039__(5706);
-                const Is = __nested_webpack_require_371039__(8811);
-                const events_1 = __nested_webpack_require_371039__(5165);
+                const ral_1 = __nested_webpack_require_383907__(5706);
+                const Is = __nested_webpack_require_383907__(8811);
+                const events_1 = __nested_webpack_require_383907__(5165);
+                const semaphore_1 = __nested_webpack_require_383907__(2339);
                 var MessageReader;
                 (function(MessageReader) {
                     function is(value) {
@@ -7154,17 +7355,19 @@
                         this.buffer.append(data);
                         while(true){
                             if (this.nextMessageLength === -1) {
-                                const headers = this.buffer.tryReadHeaders();
+                                const headers = this.buffer.tryReadHeaders(true);
                                 if (!headers) {
                                     return;
                                 }
-                                const contentLength = headers.get('Content-Length');
+                                const contentLength = headers.get('content-length');
                                 if (!contentLength) {
-                                    throw new Error('Header must provide a Content-Length property.');
+                                    this.fireError(new Error('Header must provide a Content-Length property.'));
+                                    return;
                                 }
                                 const length = parseInt(contentLength);
                                 if (isNaN(length)) {
-                                    throw new Error('Content-Length value must be a number.');
+                                    this.fireError(new Error('Content-Length value must be a number.'));
+                                    return;
                                 }
                                 this.nextMessageLength = length;
                             }
@@ -7175,19 +7378,15 @@
                             }
                             this.clearPartialMessageTimer();
                             this.nextMessageLength = -1;
-                            let p;
-                            if (this.options.contentDecoder !== undefined) {
-                                p = this.options.contentDecoder.decode(body);
-                            } else {
-                                p = Promise.resolve(body);
-                            }
-                            p.then((value)=>{
-                                this.options.contentTypeDecoder.decode(value, this.options).then((msg)=>{
-                                    this.callback(msg);
-                                }, (error)=>{
-                                    this.fireError(error);
-                                });
-                            }, (error)=>{
+                            // Make sure that we convert one received message after the
+                            // other. Otherwise it could happen that a decoding of a second
+                            // smaller message finished before the decoding of a first larger
+                            // message and then we would deliver the second message first.
+                            this.readSemaphore.lock(async ()=>{
+                                const bytes = this.options.contentDecoder !== undefined ? await this.options.contentDecoder.decode(body) : body;
+                                const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
+                                this.callback(message);
+                            }).catch((error)=>{
                                 this.fireError(error);
                             });
                         }
@@ -7222,12 +7421,12 @@
                         this._partialMessageTimeout = 10000;
                         this.nextMessageLength = -1;
                         this.messageToken = 0;
+                        this.readSemaphore = new semaphore_1.Semaphore(1);
                     }
                 }
                 exports1.ReadableStreamMessageReader = ReadableStreamMessageReader;
-            //# sourceMappingURL=messageReader.js.map
             /***/ },
-            /***/ 1251: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_382019__)=>{
+            /***/ 1251: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_395169__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7236,10 +7435,10 @@
                     value: true
                 });
                 exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = void 0;
-                const ral_1 = __nested_webpack_require_382019__(5706);
-                const Is = __nested_webpack_require_382019__(8811);
-                const semaphore_1 = __nested_webpack_require_382019__(2339);
-                const events_1 = __nested_webpack_require_382019__(5165);
+                const ral_1 = __nested_webpack_require_395169__(5706);
+                const Is = __nested_webpack_require_395169__(8811);
+                const semaphore_1 = __nested_webpack_require_395169__(2339);
+                const events_1 = __nested_webpack_require_395169__(5165);
                 const ContentLength = 'Content-Length: ';
                 const CRLF = '\r\n';
                 var MessageWriter;
@@ -7351,9 +7550,8 @@
                     }
                 }
                 exports1.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
-            //# sourceMappingURL=messageWriter.js.map
             /***/ },
-            /***/ 9141: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_388959__)=>{
+            /***/ 9141: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_402055__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7362,7 +7560,7 @@
                     value: true
                 });
                 exports1.Message = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType = exports1.RequestType0 = exports1.AbstractMessageSignature = exports1.ParameterStructures = exports1.ResponseError = exports1.ErrorCodes = void 0;
-                const is = __nested_webpack_require_388959__(8811);
+                const is = __nested_webpack_require_402055__(8811);
                 /**
  * Predefined error codes.
  */ var ErrorCodes;
@@ -7642,7 +7840,6 @@
                     }
                     Message.isResponse = isResponse;
                 })(Message = exports1.Message || (exports1.Message = {}));
-            //# sourceMappingURL=messages.js.map
             /***/ },
             /***/ 5706: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -7669,9 +7866,8 @@
                     RAL.install = install;
                 })(RAL || (RAL = {}));
                 exports1["default"] = RAL;
-            //# sourceMappingURL=ral.js.map
             /***/ },
-            /***/ 2339: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_404560__)=>{
+            /***/ 2339: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_417563__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7680,7 +7876,7 @@
                     value: true
                 });
                 exports1.Semaphore = void 0;
-                const ral_1 = __nested_webpack_require_404560__(5706);
+                const ral_1 = __nested_webpack_require_417563__(5706);
                 class Semaphore {
                     lock(thunk) {
                         return new Promise((resolve, reject)=>{
@@ -7743,9 +7939,85 @@
                     }
                 }
                 exports1.Semaphore = Semaphore;
-            //# sourceMappingURL=semaphore.js.map
             /***/ },
-            /***/ 294: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_408060__) {
+            /***/ 178: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_421005__)=>{
+                "use strict";
+                /* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
+                    value: true
+                });
+                exports1.SharedArrayReceiverStrategy = exports1.SharedArraySenderStrategy = void 0;
+                const cancellation_1 = __nested_webpack_require_421005__(415);
+                var CancellationState;
+                (function(CancellationState) {
+                    CancellationState.Continue = 0;
+                    CancellationState.Cancelled = 1;
+                })(CancellationState || (CancellationState = {}));
+                class SharedArraySenderStrategy {
+                    enableCancellation(request) {
+                        if (request.id === null) {
+                            return;
+                        }
+                        const buffer = new SharedArrayBuffer(4);
+                        const data = new Int32Array(buffer, 0, 1);
+                        data[0] = CancellationState.Continue;
+                        this.buffers.set(request.id, buffer);
+                        request.$cancellationData = buffer;
+                    }
+                    async sendCancellation(_conn, id) {
+                        const buffer = this.buffers.get(id);
+                        if (buffer === undefined) {
+                            return;
+                        }
+                        const data = new Int32Array(buffer, 0, 1);
+                        Atomics.store(data, 0, CancellationState.Cancelled);
+                    }
+                    cleanup(id) {
+                        this.buffers.delete(id);
+                    }
+                    dispose() {
+                        this.buffers.clear();
+                    }
+                    constructor(){
+                        this.buffers = new Map();
+                    }
+                }
+                exports1.SharedArraySenderStrategy = SharedArraySenderStrategy;
+                class SharedArrayBufferCancellationToken {
+                    get isCancellationRequested() {
+                        return Atomics.load(this.data, 0) === CancellationState.Cancelled;
+                    }
+                    get onCancellationRequested() {
+                        throw new Error(`Cancellation over SharedArrayBuffer doesn't support cancellation events`);
+                    }
+                    constructor(buffer){
+                        this.data = new Int32Array(buffer, 0, 1);
+                    }
+                }
+                class SharedArrayBufferCancellationTokenSource {
+                    cancel() {}
+                    dispose() {}
+                    constructor(buffer){
+                        this.token = new SharedArrayBufferCancellationToken(buffer);
+                    }
+                }
+                class SharedArrayReceiverStrategy {
+                    createCancellationTokenSource(request) {
+                        const buffer = request.$cancellationData;
+                        if (buffer === undefined) {
+                            return new cancellation_1.CancellationTokenSource();
+                        }
+                        return new SharedArrayBufferCancellationTokenSource(buffer);
+                    }
+                    constructor(){
+                        this.kind = 'request';
+                    }
+                }
+                exports1.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
+            /***/ },
+            /***/ 294: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_424908__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7773,16 +8045,15 @@
                     value: true
                 });
                 exports1.createProtocolConnection = void 0;
-                const browser_1 = __nested_webpack_require_408060__(1200);
-                __exportStar(__nested_webpack_require_408060__(1200), exports1);
-                __exportStar(__nested_webpack_require_408060__(9372), exports1);
+                const browser_1 = __nested_webpack_require_424908__(1200);
+                __exportStar(__nested_webpack_require_424908__(1200), exports1);
+                __exportStar(__nested_webpack_require_424908__(9372), exports1);
                 function createProtocolConnection(reader, writer, logger, options) {
                     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
                 }
                 exports1.createProtocolConnection = createProtocolConnection;
-            //# sourceMappingURL=main.js.map
             /***/ },
-            /***/ 9372: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_410294__) {
+            /***/ 9372: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_427097__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7810,11 +8081,11 @@
                     value: true
                 });
                 exports1.LSPErrorCodes = exports1.createProtocolConnection = void 0;
-                __exportStar(__nested_webpack_require_410294__(5953), exports1);
-                __exportStar(__nested_webpack_require_410294__(4767), exports1);
-                __exportStar(__nested_webpack_require_410294__(8599), exports1);
-                __exportStar(__nested_webpack_require_410294__(6525), exports1);
-                var connection_1 = __nested_webpack_require_410294__(2798);
+                __exportStar(__nested_webpack_require_427097__(5953), exports1);
+                __exportStar(__nested_webpack_require_427097__(4767), exports1);
+                __exportStar(__nested_webpack_require_427097__(8599), exports1);
+                __exportStar(__nested_webpack_require_427097__(6525), exports1);
+                var connection_1 = __nested_webpack_require_427097__(2798);
                 Object.defineProperty(exports1, "createProtocolConnection", {
                     enumerable: true,
                     get: function() {
@@ -7865,9 +8136,8 @@
     * @since 3.16.0
     */ LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
                 })(LSPErrorCodes = exports1.LSPErrorCodes || (exports1.LSPErrorCodes = {}));
-            //# sourceMappingURL=api.js.map
             /***/ },
-            /***/ 2798: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_414489__)=>{
+            /***/ 2798: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_431248__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7876,7 +8146,7 @@
                     value: true
                 });
                 exports1.createProtocolConnection = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_414489__(5953);
+                const vscode_jsonrpc_1 = __nested_webpack_require_431248__(5953);
                 function createProtocolConnection(input, output, logger, options) {
                     if (vscode_jsonrpc_1.ConnectionStrategy.is(options)) {
                         options = {
@@ -7886,9 +8156,8 @@
                     return (0, vscode_jsonrpc_1.createMessageConnection)(input, output, logger, options);
                 }
                 exports1.createProtocolConnection = createProtocolConnection;
-            //# sourceMappingURL=connection.js.map
             /***/ },
-            /***/ 8599: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_415777__)=>{
+            /***/ 8599: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_432485__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7897,7 +8166,7 @@
                     value: true
                 });
                 exports1.ProtocolNotificationType = exports1.ProtocolNotificationType0 = exports1.ProtocolRequestType = exports1.ProtocolRequestType0 = exports1.RegistrationType = exports1.MessageDirection = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_415777__(5953);
+                const vscode_jsonrpc_1 = __nested_webpack_require_432485__(5953);
                 var MessageDirection;
                 (function(MessageDirection) {
                     MessageDirection["clientToServer"] = "clientToServer";
@@ -7934,9 +8203,8 @@
                     }
                 }
                 exports1.ProtocolNotificationType = ProtocolNotificationType;
-            //# sourceMappingURL=messages.js.map
             /***/ },
-            /***/ 4434: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_418552__)=>{
+            /***/ 4434: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_435211__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) TypeFox, Microsoft and others. All rights reserved.
@@ -7945,7 +8213,7 @@
                     value: true
                 });
                 exports1.CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyIncomingCallsRequest = exports1.CallHierarchyPrepareRequest = void 0;
-                const messages_1 = __nested_webpack_require_418552__(8599);
+                const messages_1 = __nested_webpack_require_435211__(8599);
                 /**
  * A request to result a `CallHierarchyItem` in a document at a given position.
  * Can be used as an input to an incoming or outgoing call hierarchy.
@@ -7977,9 +8245,8 @@
                     CallHierarchyOutgoingCallsRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
                 })(CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyOutgoingCallsRequest || (exports1.CallHierarchyOutgoingCallsRequest = {}));
-            //# sourceMappingURL=protocol.callHierarchy.js.map
             /***/ },
-            /***/ 7908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_421646__)=>{
+            /***/ 7908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_438242__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7988,11 +8255,11 @@
                     value: true
                 });
                 exports1.ColorPresentationRequest = exports1.DocumentColorRequest = void 0;
-                const messages_1 = __nested_webpack_require_421646__(8599);
+                const messages_1 = __nested_webpack_require_438242__(8599);
                 /**
  * A request to list all color symbols found in a given text document. The request's
- * parameter is of type [DocumentColorParams](#DocumentColorParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link DocumentColorParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */ var DocumentColorRequest;
                 (function(DocumentColorRequest) {
@@ -8002,8 +8269,8 @@
                 })(DocumentColorRequest = exports1.DocumentColorRequest || (exports1.DocumentColorRequest = {}));
                 /**
  * A request to list all presentation for a color. The request's
- * parameter is of type [ColorPresentationParams](#ColorPresentationParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link ColorPresentationParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */ var ColorPresentationRequest;
                 (function(ColorPresentationRequest) {
@@ -8011,9 +8278,8 @@
                     ColorPresentationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
                 })(ColorPresentationRequest = exports1.ColorPresentationRequest || (exports1.ColorPresentationRequest = {}));
-            //# sourceMappingURL=protocol.colorProvider.js.map
             /***/ },
-            /***/ 5442: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_424040__)=>{
+            /***/ 5442: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_440545__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8022,7 +8288,7 @@
                     value: true
                 });
                 exports1.ConfigurationRequest = void 0;
-                const messages_1 = __nested_webpack_require_424040__(8599);
+                const messages_1 = __nested_webpack_require_440545__(8599);
                 //---- Get Configuration request ----
                 /**
  * The 'workspace/configuration' request is sent from the server to the client to fetch a certain
@@ -8038,9 +8304,8 @@
                     ConfigurationRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
                 })(ConfigurationRequest = exports1.ConfigurationRequest || (exports1.ConfigurationRequest = {}));
-            //# sourceMappingURL=protocol.configuration.js.map
             /***/ },
-            /***/ 7210: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_425885__)=>{
+            /***/ 7210: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_442327__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8049,14 +8314,14 @@
                     value: true
                 });
                 exports1.DeclarationRequest = void 0;
-                const messages_1 = __nested_webpack_require_425885__(8599);
+                const messages_1 = __nested_webpack_require_442327__(8599);
                 // @ts-ignore: to avoid inlining LocationLink as dynamic import
                 let __noDynamicImport;
                 /**
  * A request to resolve the type definition locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Declaration](#Declaration)
- * or a typed array of [DeclarationLink](#DeclarationLink) or a Thenable that resolves
+ * (#TextDocumentPositionParams) the response is of type {@link Declaration}
+ * or a typed array of {@link DeclarationLink} or a Thenable that resolves
  * to such.
  */ var DeclarationRequest;
                 (function(DeclarationRequest) {
@@ -8064,9 +8329,8 @@
                     DeclarationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
                 })(DeclarationRequest = exports1.DeclarationRequest || (exports1.DeclarationRequest = {}));
-            //# sourceMappingURL=protocol.declaration.js.map
             /***/ },
-            /***/ 5692: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_427631__)=>{
+            /***/ 5692: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_443992__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8075,9 +8339,9 @@
                     value: true
                 });
                 exports1.DiagnosticRefreshRequest = exports1.WorkspaceDiagnosticRequest = exports1.DocumentDiagnosticRequest = exports1.DocumentDiagnosticReportKind = exports1.DiagnosticServerCancellationData = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_427631__(5953);
-                const Is = __nested_webpack_require_427631__(2523);
-                const messages_1 = __nested_webpack_require_427631__(8599);
+                const vscode_jsonrpc_1 = __nested_webpack_require_443992__(5953);
+                const Is = __nested_webpack_require_443992__(2523);
+                const messages_1 = __nested_webpack_require_443992__(8599);
                 /**
  * @since 3.17.0
  */ var DiagnosticServerCancellationData;
@@ -8132,12 +8396,11 @@
  */ var DiagnosticRefreshRequest;
                 (function(DiagnosticRefreshRequest) {
                     DiagnosticRefreshRequest.method = `workspace/diagnostic/refresh`;
-                    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
                 })(DiagnosticRefreshRequest = exports1.DiagnosticRefreshRequest || (exports1.DiagnosticRefreshRequest = {}));
-            //# sourceMappingURL=protocol.diagnostic.js.map
             /***/ },
-            /***/ 6190: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_431935__)=>{
+            /***/ 6190: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_448236__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8146,7 +8409,7 @@
                     value: true
                 });
                 exports1.WillDeleteFilesRequest = exports1.DidDeleteFilesNotification = exports1.DidRenameFilesNotification = exports1.WillRenameFilesRequest = exports1.DidCreateFilesNotification = exports1.WillCreateFilesRequest = exports1.FileOperationPatternKind = void 0;
-                const messages_1 = __nested_webpack_require_431935__(8599);
+                const messages_1 = __nested_webpack_require_448236__(8599);
                 /**
  * A pattern kind describing if a glob pattern matches a file a folder or
  * both.
@@ -8164,6 +8427,10 @@
                 /**
  * The will create files request is sent from the client to the server before files are actually
  * created as long as the creation is triggered from within the client.
+ *
+ * The request can return a `WorkspaceEdit` which will be applied to workspace before the
+ * files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
+ * to be created.
  *
  * @since 3.16.0
  */ var WillCreateFilesRequest;
@@ -8227,9 +8494,8 @@
                     WillDeleteFilesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
                 })(WillDeleteFilesRequest = exports1.WillDeleteFilesRequest || (exports1.WillDeleteFilesRequest = {}));
-            //# sourceMappingURL=protocol.fileOperations.js.map
             /***/ },
-            /***/ 7029: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_437802__)=>{
+            /***/ 7029: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_454241__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8238,11 +8504,11 @@
                     value: true
                 });
                 exports1.FoldingRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_437802__(8599);
+                const messages_1 = __nested_webpack_require_454241__(8599);
                 /**
  * A request to provide folding ranges in a document. The request's
- * parameter is of type [FoldingRangeParams](#FoldingRangeParams), the
- * response is of type [FoldingRangeList](#FoldingRangeList) or a Thenable
+ * parameter is of type {@link FoldingRangeParams}, the
+ * response is of type {@link FoldingRangeList} or a Thenable
  * that resolves to such.
  */ var FoldingRangeRequest;
                 (function(FoldingRangeRequest) {
@@ -8250,9 +8516,8 @@
                     FoldingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     FoldingRangeRequest.type = new messages_1.ProtocolRequestType(FoldingRangeRequest.method);
                 })(FoldingRangeRequest = exports1.FoldingRangeRequest || (exports1.FoldingRangeRequest = {}));
-            //# sourceMappingURL=protocol.foldingRange.js.map
             /***/ },
-            /***/ 9380: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_439331__)=>{
+            /***/ 9380: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_455680__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8261,13 +8526,13 @@
                     value: true
                 });
                 exports1.ImplementationRequest = void 0;
-                const messages_1 = __nested_webpack_require_439331__(8599);
+                const messages_1 = __nested_webpack_require_455680__(8599);
                 // @ts-ignore: to avoid inlining LocationLink as dynamic import
                 let __noDynamicImport;
                 /**
  * A request to resolve the implementation locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */ var ImplementationRequest;
                 (function(ImplementationRequest) {
@@ -8275,9 +8540,8 @@
                     ImplementationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
                 })(ImplementationRequest = exports1.ImplementationRequest || (exports1.ImplementationRequest = {}));
-            //# sourceMappingURL=protocol.implementation.js.map
             /***/ },
-            /***/ 6315: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_441051__)=>{
+            /***/ 6315: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_457329__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8286,11 +8550,11 @@
                     value: true
                 });
                 exports1.InlayHintRefreshRequest = exports1.InlayHintResolveRequest = exports1.InlayHintRequest = void 0;
-                const messages_1 = __nested_webpack_require_441051__(8599);
+                const messages_1 = __nested_webpack_require_457329__(8599);
                 /**
  * A request to provide inlay hints in a document. The request's parameter is of
- * type [InlayHintsParams](#InlayHintsParams), the response is of type
- * [InlayHint[]](#InlayHint[]) or a Thenable that resolves to such.
+ * type {@link InlayHintsParams}, the response is of type
+ * {@link InlayHint InlayHint[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */ var InlayHintRequest;
@@ -8301,8 +8565,8 @@
                 })(InlayHintRequest = exports1.InlayHintRequest || (exports1.InlayHintRequest = {}));
                 /**
  * A request to resolve additional properties for an inlay hint.
- * The request's parameter is of type [InlayHint](#InlayHint), the response is
- * of type [InlayHint](#InlayHint) or a Thenable that resolves to such.
+ * The request's parameter is of type {@link InlayHint}, the response is
+ * of type {@link InlayHint} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */ var InlayHintResolveRequest;
@@ -8316,12 +8580,11 @@
  */ var InlayHintRefreshRequest;
                 (function(InlayHintRefreshRequest) {
                     InlayHintRefreshRequest.method = `workspace/inlayHint/refresh`;
-                    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
                 })(InlayHintRefreshRequest = exports1.InlayHintRefreshRequest || (exports1.InlayHintRefreshRequest = {}));
-            //# sourceMappingURL=protocol.inlayHint.js.map
             /***/ },
-            /***/ 7425: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_443936__)=>{
+            /***/ 7425: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_460132__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8330,11 +8593,11 @@
                     value: true
                 });
                 exports1.InlineValueRefreshRequest = exports1.InlineValueRequest = void 0;
-                const messages_1 = __nested_webpack_require_443936__(8599);
+                const messages_1 = __nested_webpack_require_460132__(8599);
                 /**
  * A request to provide inline values in a document. The request's parameter is of
- * type [InlineValueParams](#InlineValueParams), the response is of type
- * [InlineValue[]](#InlineValue[]) or a Thenable that resolves to such.
+ * type {@link InlineValueParams}, the response is of type
+ * {@link InlineValue InlineValue[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */ var InlineValueRequest;
@@ -8348,12 +8611,11 @@
  */ var InlineValueRefreshRequest;
                 (function(InlineValueRefreshRequest) {
                     InlineValueRefreshRequest.method = `workspace/inlineValue/refresh`;
-                    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
                 })(InlineValueRefreshRequest = exports1.InlineValueRefreshRequest || (exports1.InlineValueRefreshRequest = {}));
-            //# sourceMappingURL=protocol.inlineValue.js.map
             /***/ },
-            /***/ 6525: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_446075__)=>{
+            /***/ 6525: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_462198__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8364,24 +8626,24 @@
                 exports1.WorkspaceSymbolRequest = exports1.CodeActionResolveRequest = exports1.CodeActionRequest = exports1.DocumentSymbolRequest = exports1.DocumentHighlightRequest = exports1.ReferencesRequest = exports1.DefinitionRequest = exports1.SignatureHelpRequest = exports1.SignatureHelpTriggerKind = exports1.HoverRequest = exports1.CompletionResolveRequest = exports1.CompletionRequest = exports1.CompletionTriggerKind = exports1.PublishDiagnosticsNotification = exports1.WatchKind = exports1.RelativePattern = exports1.FileChangeType = exports1.DidChangeWatchedFilesNotification = exports1.WillSaveTextDocumentWaitUntilRequest = exports1.WillSaveTextDocumentNotification = exports1.TextDocumentSaveReason = exports1.DidSaveTextDocumentNotification = exports1.DidCloseTextDocumentNotification = exports1.DidChangeTextDocumentNotification = exports1.TextDocumentContentChangeEvent = exports1.DidOpenTextDocumentNotification = exports1.TextDocumentSyncKind = exports1.TelemetryEventNotification = exports1.LogMessageNotification = exports1.ShowMessageRequest = exports1.ShowMessageNotification = exports1.MessageType = exports1.DidChangeConfigurationNotification = exports1.ExitNotification = exports1.ShutdownRequest = exports1.InitializedNotification = exports1.InitializeErrorCodes = exports1.InitializeRequest = exports1.WorkDoneProgressOptions = exports1.TextDocumentRegistrationOptions = exports1.StaticRegistrationOptions = exports1.PositionEncodingKind = exports1.FailureHandlingKind = exports1.ResourceOperationKind = exports1.UnregistrationRequest = exports1.RegistrationRequest = exports1.DocumentSelector = exports1.NotebookCellTextDocumentFilter = exports1.NotebookDocumentFilter = exports1.TextDocumentFilter = void 0;
                 exports1.TypeHierarchySubtypesRequest = exports1.TypeHierarchyPrepareRequest = exports1.MonikerRequest = exports1.MonikerKind = exports1.UniquenessLevel = exports1.WillDeleteFilesRequest = exports1.DidDeleteFilesNotification = exports1.WillRenameFilesRequest = exports1.DidRenameFilesNotification = exports1.WillCreateFilesRequest = exports1.DidCreateFilesNotification = exports1.FileOperationPatternKind = exports1.LinkedEditingRangeRequest = exports1.ShowDocumentRequest = exports1.SemanticTokensRegistrationType = exports1.SemanticTokensRefreshRequest = exports1.SemanticTokensRangeRequest = exports1.SemanticTokensDeltaRequest = exports1.SemanticTokensRequest = exports1.TokenFormat = exports1.CallHierarchyPrepareRequest = exports1.CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyIncomingCallsRequest = exports1.WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCreateRequest = exports1.WorkDoneProgress = exports1.SelectionRangeRequest = exports1.DeclarationRequest = exports1.FoldingRangeRequest = exports1.ColorPresentationRequest = exports1.DocumentColorRequest = exports1.ConfigurationRequest = exports1.DidChangeWorkspaceFoldersNotification = exports1.WorkspaceFoldersRequest = exports1.TypeDefinitionRequest = exports1.ImplementationRequest = exports1.ApplyWorkspaceEditRequest = exports1.ExecuteCommandRequest = exports1.PrepareRenameRequest = exports1.RenameRequest = exports1.PrepareSupportDefaultBehavior = exports1.DocumentOnTypeFormattingRequest = exports1.DocumentRangeFormattingRequest = exports1.DocumentFormattingRequest = exports1.DocumentLinkResolveRequest = exports1.DocumentLinkRequest = exports1.CodeLensRefreshRequest = exports1.CodeLensResolveRequest = exports1.CodeLensRequest = exports1.WorkspaceSymbolResolveRequest = void 0;
                 exports1.DidCloseNotebookDocumentNotification = exports1.DidSaveNotebookDocumentNotification = exports1.DidChangeNotebookDocumentNotification = exports1.NotebookCellArrayChange = exports1.DidOpenNotebookDocumentNotification = exports1.NotebookDocumentSyncRegistrationType = exports1.NotebookDocument = exports1.NotebookCell = exports1.ExecutionSummary = exports1.NotebookCellKind = exports1.DiagnosticRefreshRequest = exports1.WorkspaceDiagnosticRequest = exports1.DocumentDiagnosticRequest = exports1.DocumentDiagnosticReportKind = exports1.DiagnosticServerCancellationData = exports1.InlayHintRefreshRequest = exports1.InlayHintResolveRequest = exports1.InlayHintRequest = exports1.InlineValueRefreshRequest = exports1.InlineValueRequest = exports1.TypeHierarchySupertypesRequest = void 0;
-                const messages_1 = __nested_webpack_require_446075__(8599);
-                const vscode_languageserver_types_1 = __nested_webpack_require_446075__(4767);
-                const Is = __nested_webpack_require_446075__(2523);
-                const protocol_implementation_1 = __nested_webpack_require_446075__(9380);
+                const messages_1 = __nested_webpack_require_462198__(8599);
+                const vscode_languageserver_types_1 = __nested_webpack_require_462198__(4767);
+                const Is = __nested_webpack_require_462198__(2523);
+                const protocol_implementation_1 = __nested_webpack_require_462198__(9380);
                 Object.defineProperty(exports1, "ImplementationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_implementation_1.ImplementationRequest;
                     }
                 });
-                const protocol_typeDefinition_1 = __nested_webpack_require_446075__(8642);
+                const protocol_typeDefinition_1 = __nested_webpack_require_462198__(8642);
                 Object.defineProperty(exports1, "TypeDefinitionRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_typeDefinition_1.TypeDefinitionRequest;
                     }
                 });
-                const protocol_workspaceFolder_1 = __nested_webpack_require_446075__(3402);
+                const protocol_workspaceFolder_1 = __nested_webpack_require_462198__(3402);
                 Object.defineProperty(exports1, "WorkspaceFoldersRequest", {
                     enumerable: true,
                     get: function() {
@@ -8394,14 +8656,14 @@
                         return protocol_workspaceFolder_1.DidChangeWorkspaceFoldersNotification;
                     }
                 });
-                const protocol_configuration_1 = __nested_webpack_require_446075__(5442);
+                const protocol_configuration_1 = __nested_webpack_require_462198__(5442);
                 Object.defineProperty(exports1, "ConfigurationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_configuration_1.ConfigurationRequest;
                     }
                 });
-                const protocol_colorProvider_1 = __nested_webpack_require_446075__(7908);
+                const protocol_colorProvider_1 = __nested_webpack_require_462198__(7908);
                 Object.defineProperty(exports1, "DocumentColorRequest", {
                     enumerable: true,
                     get: function() {
@@ -8414,28 +8676,28 @@
                         return protocol_colorProvider_1.ColorPresentationRequest;
                     }
                 });
-                const protocol_foldingRange_1 = __nested_webpack_require_446075__(7029);
+                const protocol_foldingRange_1 = __nested_webpack_require_462198__(7029);
                 Object.defineProperty(exports1, "FoldingRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_foldingRange_1.FoldingRangeRequest;
                     }
                 });
-                const protocol_declaration_1 = __nested_webpack_require_446075__(7210);
+                const protocol_declaration_1 = __nested_webpack_require_462198__(7210);
                 Object.defineProperty(exports1, "DeclarationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_declaration_1.DeclarationRequest;
                     }
                 });
-                const protocol_selectionRange_1 = __nested_webpack_require_446075__(2392);
+                const protocol_selectionRange_1 = __nested_webpack_require_462198__(2392);
                 Object.defineProperty(exports1, "SelectionRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_selectionRange_1.SelectionRangeRequest;
                     }
                 });
-                const protocol_progress_1 = __nested_webpack_require_446075__(7895);
+                const protocol_progress_1 = __nested_webpack_require_462198__(7895);
                 Object.defineProperty(exports1, "WorkDoneProgress", {
                     enumerable: true,
                     get: function() {
@@ -8454,7 +8716,7 @@
                         return protocol_progress_1.WorkDoneProgressCancelNotification;
                     }
                 });
-                const protocol_callHierarchy_1 = __nested_webpack_require_446075__(4434);
+                const protocol_callHierarchy_1 = __nested_webpack_require_462198__(4434);
                 Object.defineProperty(exports1, "CallHierarchyIncomingCallsRequest", {
                     enumerable: true,
                     get: function() {
@@ -8473,7 +8735,7 @@
                         return protocol_callHierarchy_1.CallHierarchyPrepareRequest;
                     }
                 });
-                const protocol_semanticTokens_1 = __nested_webpack_require_446075__(8489);
+                const protocol_semanticTokens_1 = __nested_webpack_require_462198__(8489);
                 Object.defineProperty(exports1, "TokenFormat", {
                     enumerable: true,
                     get: function() {
@@ -8510,21 +8772,21 @@
                         return protocol_semanticTokens_1.SemanticTokensRegistrationType;
                     }
                 });
-                const protocol_showDocument_1 = __nested_webpack_require_446075__(1541);
+                const protocol_showDocument_1 = __nested_webpack_require_462198__(1541);
                 Object.defineProperty(exports1, "ShowDocumentRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_showDocument_1.ShowDocumentRequest;
                     }
                 });
-                const protocol_linkedEditingRange_1 = __nested_webpack_require_446075__(527);
+                const protocol_linkedEditingRange_1 = __nested_webpack_require_462198__(527);
                 Object.defineProperty(exports1, "LinkedEditingRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_linkedEditingRange_1.LinkedEditingRangeRequest;
                     }
                 });
-                const protocol_fileOperations_1 = __nested_webpack_require_446075__(6190);
+                const protocol_fileOperations_1 = __nested_webpack_require_462198__(6190);
                 Object.defineProperty(exports1, "FileOperationPatternKind", {
                     enumerable: true,
                     get: function() {
@@ -8567,7 +8829,7 @@
                         return protocol_fileOperations_1.WillDeleteFilesRequest;
                     }
                 });
-                const protocol_moniker_1 = __nested_webpack_require_446075__(1964);
+                const protocol_moniker_1 = __nested_webpack_require_462198__(1964);
                 Object.defineProperty(exports1, "UniquenessLevel", {
                     enumerable: true,
                     get: function() {
@@ -8586,7 +8848,7 @@
                         return protocol_moniker_1.MonikerRequest;
                     }
                 });
-                const protocol_typeHierarchy_1 = __nested_webpack_require_446075__(5318);
+                const protocol_typeHierarchy_1 = __nested_webpack_require_462198__(5318);
                 Object.defineProperty(exports1, "TypeHierarchyPrepareRequest", {
                     enumerable: true,
                     get: function() {
@@ -8605,7 +8867,7 @@
                         return protocol_typeHierarchy_1.TypeHierarchySupertypesRequest;
                     }
                 });
-                const protocol_inlineValue_1 = __nested_webpack_require_446075__(7425);
+                const protocol_inlineValue_1 = __nested_webpack_require_462198__(7425);
                 Object.defineProperty(exports1, "InlineValueRequest", {
                     enumerable: true,
                     get: function() {
@@ -8618,7 +8880,7 @@
                         return protocol_inlineValue_1.InlineValueRefreshRequest;
                     }
                 });
-                const protocol_inlayHint_1 = __nested_webpack_require_446075__(6315);
+                const protocol_inlayHint_1 = __nested_webpack_require_462198__(6315);
                 Object.defineProperty(exports1, "InlayHintRequest", {
                     enumerable: true,
                     get: function() {
@@ -8637,7 +8899,7 @@
                         return protocol_inlayHint_1.InlayHintRefreshRequest;
                     }
                 });
-                const protocol_diagnostic_1 = __nested_webpack_require_446075__(5692);
+                const protocol_diagnostic_1 = __nested_webpack_require_462198__(5692);
                 Object.defineProperty(exports1, "DiagnosticServerCancellationData", {
                     enumerable: true,
                     get: function() {
@@ -8668,7 +8930,7 @@
                         return protocol_diagnostic_1.DiagnosticRefreshRequest;
                     }
                 });
-                const protocol_notebook_1 = __nested_webpack_require_446075__(4460);
+                const protocol_notebook_1 = __nested_webpack_require_462198__(4460);
                 Object.defineProperty(exports1, "NotebookCellKind", {
                     enumerable: true,
                     get: function() {
@@ -8733,7 +8995,7 @@
                 let __noDynamicImport;
                 /**
  * The TextDocumentFilter namespace provides helper functions to work with
- * [TextDocumentFilter](#TextDocumentFilter) literals.
+ * {@link TextDocumentFilter} literals.
  *
  * @since 3.17.0
  */ var TextDocumentFilter;
@@ -8746,7 +9008,7 @@
                 })(TextDocumentFilter = exports1.TextDocumentFilter || (exports1.TextDocumentFilter = {}));
                 /**
  * The NotebookDocumentFilter namespace provides helper functions to work with
- * [NotebookDocumentFilter](#NotebookDocumentFilter) literals.
+ * {@link NotebookDocumentFilter} literals.
  *
  * @since 3.17.0
  */ var NotebookDocumentFilter;
@@ -8759,7 +9021,7 @@
                 })(NotebookDocumentFilter = exports1.NotebookDocumentFilter || (exports1.NotebookDocumentFilter = {}));
                 /**
  * The NotebookCellTextDocumentFilter namespace provides helper functions to work with
- * [NotebookCellTextDocumentFilter](#NotebookCellTextDocumentFilter) literals.
+ * {@link NotebookCellTextDocumentFilter} literals.
  *
  * @since 3.17.0
  */ var NotebookCellTextDocumentFilter;
@@ -8772,7 +9034,7 @@
                 })(NotebookCellTextDocumentFilter = exports1.NotebookCellTextDocumentFilter || (exports1.NotebookCellTextDocumentFilter = {}));
                 /**
  * The DocumentSelector namespace provides helper functions to work with
- * [DocumentSelector](#DocumentSelector)s.
+ * {@link DocumentSelector}s.
  */ var DocumentSelector;
                 (function(DocumentSelector) {
                     function is(value) {
@@ -8845,7 +9107,7 @@
  */ var PositionEncodingKind;
                 (function(PositionEncodingKind) {
                     /**
-     * Character offsets count UTF-8 code units.
+     * Character offsets count UTF-8 code units (e.g. bytes).
      */ PositionEncodingKind.UTF8 = 'utf-8';
                     /**
      * Character offsets count UTF-16 code units.
@@ -8856,14 +9118,14 @@
                     /**
      * Character offsets count UTF-32 code units.
      *
-     * Implementation note: these are the same as Unicode code points,
+     * Implementation note: these are the same as Unicode codepoints,
      * so this `PositionEncodingKind` may also be used for an
      * encoding-agnostic representation of character offsets.
      */ PositionEncodingKind.UTF32 = 'utf-32';
                 })(PositionEncodingKind = exports1.PositionEncodingKind || (exports1.PositionEncodingKind = {}));
                 /**
  * The StaticRegistrationOptions namespace provides helper functions to work with
- * [StaticRegistrationOptions](#StaticRegistrationOptions) literals.
+ * {@link StaticRegistrationOptions} literals.
  */ var StaticRegistrationOptions;
                 (function(StaticRegistrationOptions) {
                     function hasId(value) {
@@ -8874,7 +9136,7 @@
                 })(StaticRegistrationOptions = exports1.StaticRegistrationOptions || (exports1.StaticRegistrationOptions = {}));
                 /**
  * The TextDocumentRegistrationOptions namespace provides helper functions to work with
- * [TextDocumentRegistrationOptions](#TextDocumentRegistrationOptions) literals.
+ * {@link TextDocumentRegistrationOptions} literals.
  */ var TextDocumentRegistrationOptions;
                 (function(TextDocumentRegistrationOptions) {
                     function is(value) {
@@ -8885,7 +9147,7 @@
                 })(TextDocumentRegistrationOptions = exports1.TextDocumentRegistrationOptions || (exports1.TextDocumentRegistrationOptions = {}));
                 /**
  * The WorkDoneProgressOptions namespace provides helper functions to work with
- * [WorkDoneProgressOptions](#WorkDoneProgressOptions) literals.
+ * {@link WorkDoneProgressOptions} literals.
  */ var WorkDoneProgressOptions;
                 (function(WorkDoneProgressOptions) {
                     function is(value) {
@@ -8902,8 +9164,8 @@
                 /**
  * The initialize request is sent from the client to the server.
  * It is sent once as the request after starting up the server.
- * The requests parameter is of type [InitializeParams](#InitializeParams)
- * the response if of type [InitializeResult](#InitializeResult) of a Thenable that
+ * The requests parameter is of type {@link InitializeParams}
+ * the response if of type {@link InitializeResult} of a Thenable that
  * resolves to such.
  */ var InitializeRequest;
                 (function(InitializeRequest) {
@@ -9208,12 +9470,12 @@
                 })(CompletionTriggerKind = exports1.CompletionTriggerKind || (exports1.CompletionTriggerKind = {}));
                 /**
  * Request to request completion at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response
- * is of type [CompletionItem[]](#CompletionItem) or [CompletionList](#CompletionList)
+ * parameter is of type {@link TextDocumentPosition} the response
+ * is of type {@link CompletionItem CompletionItem[]} or {@link CompletionList}
  * or a Thenable that resolves to such.
  *
- * The request can delay the computation of the [`detail`](#CompletionItem.detail)
- * and [`documentation`](#CompletionItem.documentation) properties to the `completionItem/resolve`
+ * The request can delay the computation of the {@link CompletionItem.detail `detail`}
+ * and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
  * request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
  * `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
  */ var CompletionRequest;
@@ -9224,8 +9486,8 @@
                 })(CompletionRequest = exports1.CompletionRequest || (exports1.CompletionRequest = {}));
                 /**
  * Request to resolve additional information for a given completion item.The request's
- * parameter is of type [CompletionItem](#CompletionItem) the response
- * is of type [CompletionItem](#CompletionItem) or a Thenable that resolves to such.
+ * parameter is of type {@link CompletionItem} the response
+ * is of type {@link CompletionItem} or a Thenable that resolves to such.
  */ var CompletionResolveRequest;
                 (function(CompletionResolveRequest) {
                     CompletionResolveRequest.method = 'completionItem/resolve';
@@ -9234,8 +9496,8 @@
                 })(CompletionResolveRequest = exports1.CompletionResolveRequest || (exports1.CompletionResolveRequest = {}));
                 /**
  * Request to request hover information at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response is of
- * type [Hover](#Hover) or a Thenable that resolves to such.
+ * parameter is of type {@link TextDocumentPosition} the response is of
+ * type {@link Hover} or a Thenable that resolves to such.
  */ var HoverRequest;
                 (function(HoverRequest) {
                     HoverRequest.method = 'textDocument/hover';
@@ -9267,8 +9529,8 @@
                 /**
  * A request to resolve the definition location of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPosition]
- * (#TextDocumentPosition) the response is of either type [Definition](#Definition)
- * or a typed array of [DefinitionLink](#DefinitionLink) or a Thenable that resolves
+ * (#TextDocumentPosition) the response is of either type {@link Definition}
+ * or a typed array of {@link DefinitionLink} or a Thenable that resolves
  * to such.
  */ var DefinitionRequest;
                 (function(DefinitionRequest) {
@@ -9279,8 +9541,8 @@
                 /**
  * A request to resolve project-wide references for the symbol denoted
  * by the given text document position. The request's parameter is of
- * type [ReferenceParams](#ReferenceParams) the response is of type
- * [Location[]](#Location) or a Thenable that resolves to such.
+ * type {@link ReferenceParams} the response is of type
+ * {@link Location Location[]} or a Thenable that resolves to such.
  */ var ReferencesRequest;
                 (function(ReferencesRequest) {
                     ReferencesRequest.method = 'textDocument/references';
@@ -9288,7 +9550,7 @@
                     ReferencesRequest.type = new messages_1.ProtocolRequestType(ReferencesRequest.method);
                 })(ReferencesRequest = exports1.ReferencesRequest || (exports1.ReferencesRequest = {}));
                 /**
- * Request to resolve a [DocumentHighlight](#DocumentHighlight) for a given
+ * Request to resolve a {@link DocumentHighlight} for a given
  * text document position. The request's parameter is of type [TextDocumentPosition]
  * (#TextDocumentPosition) the request response is of type [DocumentHighlight[]]
  * (#DocumentHighlight) or a Thenable that resolves to such.
@@ -9300,8 +9562,8 @@
                 })(DocumentHighlightRequest = exports1.DocumentHighlightRequest || (exports1.DocumentHighlightRequest = {}));
                 /**
  * A request to list all symbols found in a given text document. The request's
- * parameter is of type [TextDocumentIdentifier](#TextDocumentIdentifier) the
- * response is of type [SymbolInformation[]](#SymbolInformation) or a Thenable
+ * parameter is of type {@link TextDocumentIdentifier} the
+ * response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
  * that resolves to such.
  */ var DocumentSymbolRequest;
                 (function(DocumentSymbolRequest) {
@@ -9319,8 +9581,8 @@
                 })(CodeActionRequest = exports1.CodeActionRequest || (exports1.CodeActionRequest = {}));
                 /**
  * Request to resolve additional information for a given code action.The request's
- * parameter is of type [CodeAction](#CodeAction) the response
- * is of type [CodeAction](#CodeAction) or a Thenable that resolves to such.
+ * parameter is of type {@link CodeAction} the response
+ * is of type {@link CodeAction} or a Thenable that resolves to such.
  */ var CodeActionResolveRequest;
                 (function(CodeActionResolveRequest) {
                     CodeActionResolveRequest.method = 'codeAction/resolve';
@@ -9329,8 +9591,8 @@
                 })(CodeActionResolveRequest = exports1.CodeActionResolveRequest || (exports1.CodeActionResolveRequest = {}));
                 /**
  * A request to list project-wide symbols matching the query string given
- * by the [WorkspaceSymbolParams](#WorkspaceSymbolParams). The response is
- * of type [SymbolInformation[]](#SymbolInformation) or a Thenable that
+ * by the {@link WorkspaceSymbolParams}. The response is
+ * of type {@link SymbolInformation SymbolInformation[]} or a Thenable that
  * resolves to such.
  *
  * @since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
@@ -9390,8 +9652,8 @@
                 })(DocumentLinkRequest = exports1.DocumentLinkRequest || (exports1.DocumentLinkRequest = {}));
                 /**
  * Request to resolve additional information for a given document link. The request's
- * parameter is of type [DocumentLink](#DocumentLink) the response
- * is of type [DocumentLink](#DocumentLink) or a Thenable that resolves to such.
+ * parameter is of type {@link DocumentLink} the response
+ * is of type {@link DocumentLink} or a Thenable that resolves to such.
  */ var DocumentLinkResolveRequest;
                 (function(DocumentLinkResolveRequest) {
                     DocumentLinkResolveRequest.method = 'documentLink/resolve';
@@ -9465,9 +9727,8 @@
                     ApplyWorkspaceEditRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType('workspace/applyEdit');
                 })(ApplyWorkspaceEditRequest = exports1.ApplyWorkspaceEditRequest || (exports1.ApplyWorkspaceEditRequest = {}));
-            //# sourceMappingURL=protocol.js.map
             /***/ },
-            /***/ 527: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_515554__)=>{
+            /***/ 527: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_531312__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9476,7 +9737,7 @@
                     value: true
                 });
                 exports1.LinkedEditingRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_515554__(8599);
+                const messages_1 = __nested_webpack_require_531312__(8599);
                 /**
  * A request to provide ranges that can be edited together.
  *
@@ -9487,9 +9748,8 @@
                     LinkedEditingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
                 })(LinkedEditingRangeRequest = exports1.LinkedEditingRangeRequest || (exports1.LinkedEditingRangeRequest = {}));
-            //# sourceMappingURL=protocol.linkedEditingRange.js.map
             /***/ },
-            /***/ 1964: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_516995__)=>{
+            /***/ 1964: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_532685__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9498,7 +9758,7 @@
                     value: true
                 });
                 exports1.MonikerRequest = exports1.MonikerKind = exports1.UniquenessLevel = void 0;
-                const messages_1 = __nested_webpack_require_516995__(8599);
+                const messages_1 = __nested_webpack_require_532685__(8599);
                 /**
  * Moniker uniqueness level to define scope of the moniker.
  *
@@ -9540,17 +9800,16 @@
                 })(MonikerKind = exports1.MonikerKind || (exports1.MonikerKind = {}));
                 /**
  * A request to get the moniker of a symbol at a given text document position.
- * The request parameter is of type [TextDocumentPositionParams](#TextDocumentPositionParams).
- * The response is of type [Moniker[]](#Moniker[]) or `null`.
+ * The request parameter is of type {@link TextDocumentPositionParams}.
+ * The response is of type {@link Moniker Moniker[]} or `null`.
  */ var MonikerRequest;
                 (function(MonikerRequest) {
                     MonikerRequest.method = 'textDocument/moniker';
                     MonikerRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
                 })(MonikerRequest = exports1.MonikerRequest || (exports1.MonikerRequest = {}));
-            //# sourceMappingURL=protocol.moniker.js.map
             /***/ },
-            /***/ 4460: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_520107__)=>{
+            /***/ 4460: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_535719__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9559,9 +9818,9 @@
                     value: true
                 });
                 exports1.DidCloseNotebookDocumentNotification = exports1.DidSaveNotebookDocumentNotification = exports1.DidChangeNotebookDocumentNotification = exports1.NotebookCellArrayChange = exports1.DidOpenNotebookDocumentNotification = exports1.NotebookDocumentSyncRegistrationType = exports1.NotebookDocument = exports1.NotebookCell = exports1.ExecutionSummary = exports1.NotebookCellKind = void 0;
-                const vscode_languageserver_types_1 = __nested_webpack_require_520107__(4767);
-                const Is = __nested_webpack_require_520107__(2523);
-                const messages_1 = __nested_webpack_require_520107__(8599);
+                const vscode_languageserver_types_1 = __nested_webpack_require_535719__(4767);
+                const Is = __nested_webpack_require_535719__(2523);
+                const messages_1 = __nested_webpack_require_535719__(8599);
                 /**
  * A notebook cell kind.
  *
@@ -9772,9 +10031,8 @@
                     DidCloseNotebookDocumentNotification.type = new messages_1.ProtocolNotificationType(DidCloseNotebookDocumentNotification.method);
                     DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
                 })(DidCloseNotebookDocumentNotification = exports1.DidCloseNotebookDocumentNotification || (exports1.DidCloseNotebookDocumentNotification = {}));
-            //# sourceMappingURL=protocol.notebook.js.map
             /***/ },
-            /***/ 7895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_533742__)=>{
+            /***/ 7895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_549296__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9783,8 +10041,8 @@
                     value: true
                 });
                 exports1.WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCreateRequest = exports1.WorkDoneProgress = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_533742__(5953);
-                const messages_1 = __nested_webpack_require_533742__(8599);
+                const vscode_jsonrpc_1 = __nested_webpack_require_549296__(5953);
+                const messages_1 = __nested_webpack_require_549296__(8599);
                 var WorkDoneProgress;
                 (function(WorkDoneProgress) {
                     WorkDoneProgress.type = new vscode_jsonrpc_1.ProgressType();
@@ -9811,9 +10069,8 @@
                     WorkDoneProgressCancelNotification.messageDirection = messages_1.MessageDirection.clientToServer;
                     WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
                 })(WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCancelNotification || (exports1.WorkDoneProgressCancelNotification = {}));
-            //# sourceMappingURL=protocol.progress.js.map
             /***/ },
-            /***/ 2392: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_536641__)=>{
+            /***/ 2392: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_552137__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9822,11 +10079,11 @@
                     value: true
                 });
                 exports1.SelectionRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_536641__(8599);
+                const messages_1 = __nested_webpack_require_552137__(8599);
                 /**
  * A request to provide selection ranges in a document. The request's
- * parameter is of type [SelectionRangeParams](#SelectionRangeParams), the
- * response is of type [SelectionRange[]](#SelectionRange[]) or a Thenable
+ * parameter is of type {@link SelectionRangeParams}, the
+ * response is of type {@link SelectionRange SelectionRange[]} or a Thenable
  * that resolves to such.
  */ var SelectionRangeRequest;
                 (function(SelectionRangeRequest) {
@@ -9834,9 +10091,8 @@
                     SelectionRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
                 })(SelectionRangeRequest = exports1.SelectionRangeRequest || (exports1.SelectionRangeRequest = {}));
-            //# sourceMappingURL=protocol.selectionRange.js.map
             /***/ },
-            /***/ 8489: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_538200__)=>{
+            /***/ 8489: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_553617__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9845,7 +10101,7 @@
                     value: true
                 });
                 exports1.SemanticTokensRefreshRequest = exports1.SemanticTokensRangeRequest = exports1.SemanticTokensDeltaRequest = exports1.SemanticTokensRequest = exports1.SemanticTokensRegistrationType = exports1.TokenFormat = void 0;
-                const messages_1 = __nested_webpack_require_538200__(8599);
+                const messages_1 = __nested_webpack_require_553617__(8599);
                 //------- 'textDocument/semanticTokens' -----
                 var TokenFormat;
                 (function(TokenFormat) {
@@ -9888,12 +10144,11 @@
  */ var SemanticTokensRefreshRequest;
                 (function(SemanticTokensRefreshRequest) {
                     SemanticTokensRefreshRequest.method = `workspace/semanticTokens/refresh`;
-                    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
                 })(SemanticTokensRefreshRequest = exports1.SemanticTokensRefreshRequest || (exports1.SemanticTokensRefreshRequest = {}));
-            //# sourceMappingURL=protocol.semanticTokens.js.map
             /***/ },
-            /***/ 1541: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_542575__)=>{
+            /***/ 1541: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_557928__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9902,7 +10157,7 @@
                     value: true
                 });
                 exports1.ShowDocumentRequest = void 0;
-                const messages_1 = __nested_webpack_require_542575__(8599);
+                const messages_1 = __nested_webpack_require_557928__(8599);
                 /**
  * A request to show a document. This request might open an
  * external program depending on the value of the URI to open.
@@ -9916,9 +10171,8 @@
                     ShowDocumentRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
                 })(ShowDocumentRequest = exports1.ShowDocumentRequest || (exports1.ShowDocumentRequest = {}));
-            //# sourceMappingURL=protocol.showDocument.js.map
             /***/ },
-            /***/ 8642: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_544115__)=>{
+            /***/ 8642: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_559406__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9927,13 +10181,13 @@
                     value: true
                 });
                 exports1.TypeDefinitionRequest = void 0;
-                const messages_1 = __nested_webpack_require_544115__(8599);
+                const messages_1 = __nested_webpack_require_559406__(8599);
                 // @ts-ignore: to avoid inlining LocatioLink as dynamic import
                 let __noDynamicImport;
                 /**
  * A request to resolve the type definition locations of a symbol at a given text
- * document position. The request's parameter is of type [TextDocumentPositioParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * document position. The request's parameter is of type [TextDocumentPositionParams]
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */ var TypeDefinitionRequest;
                 (function(TypeDefinitionRequest) {
@@ -9941,9 +10195,8 @@
                     TypeDefinitionRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
                 })(TypeDefinitionRequest = exports1.TypeDefinitionRequest || (exports1.TypeDefinitionRequest = {}));
-            //# sourceMappingURL=protocol.typeDefinition.js.map
             /***/ },
-            /***/ 5318: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_545834__)=>{
+            /***/ 5318: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_561055__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) TypeFox, Microsoft and others. All rights reserved.
@@ -9952,7 +10205,7 @@
                     value: true
                 });
                 exports1.TypeHierarchySubtypesRequest = exports1.TypeHierarchySupertypesRequest = exports1.TypeHierarchyPrepareRequest = void 0;
-                const messages_1 = __nested_webpack_require_545834__(8599);
+                const messages_1 = __nested_webpack_require_561055__(8599);
                 /**
  * A request to result a `TypeHierarchyItem` in a document at a given position.
  * Can be used as an input to a subtypes or supertypes type hierarchy.
@@ -9984,9 +10237,8 @@
                     TypeHierarchySubtypesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
                 })(TypeHierarchySubtypesRequest = exports1.TypeHierarchySubtypesRequest || (exports1.TypeHierarchySubtypesRequest = {}));
-            //# sourceMappingURL=protocol.typeHierarchy.js.map
             /***/ },
-            /***/ 3402: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_548831__)=>{
+            /***/ 3402: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_563989__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9995,7 +10247,7 @@
                     value: true
                 });
                 exports1.DidChangeWorkspaceFoldersNotification = exports1.WorkspaceFoldersRequest = void 0;
-                const messages_1 = __nested_webpack_require_548831__(8599);
+                const messages_1 = __nested_webpack_require_563989__(8599);
                 /**
  * The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
  */ var WorkspaceFoldersRequest;
@@ -10013,7 +10265,6 @@
                     DidChangeWorkspaceFoldersNotification.messageDirection = messages_1.MessageDirection.clientToServer;
                     DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
                 })(DidChangeWorkspaceFoldersNotification = exports1.DidChangeWorkspaceFoldersNotification || (exports1.DidChangeWorkspaceFoldersNotification = {}));
-            //# sourceMappingURL=protocol.workspaceFolder.js.map
             /***/ },
             /***/ 2523: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -10063,87 +10314,374 @@
                     return value !== null && typeof value === 'object';
                 }
                 exports1.objectLiteral = objectLiteral;
-            //# sourceMappingURL=is.js.map
             /***/ },
-            /***/ 4767: /***/ (__unused_webpack_module, __webpack_exports__, __nested_webpack_require_553834__)=>{
+            /***/ 4881: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_568884__)=>{
                 "use strict";
-                __nested_webpack_require_553834__.r(__webpack_exports__);
-                /* harmony export */ __nested_webpack_require_553834__.d(__webpack_exports__, {
-                    /* harmony export */ "AnnotatedTextEdit": ()=>/* binding */ AnnotatedTextEdit,
-                    /* harmony export */ "ChangeAnnotation": ()=>/* binding */ ChangeAnnotation,
-                    /* harmony export */ "ChangeAnnotationIdentifier": ()=>/* binding */ ChangeAnnotationIdentifier,
-                    /* harmony export */ "CodeAction": ()=>/* binding */ CodeAction,
-                    /* harmony export */ "CodeActionContext": ()=>/* binding */ CodeActionContext,
-                    /* harmony export */ "CodeActionKind": ()=>/* binding */ CodeActionKind,
-                    /* harmony export */ "CodeActionTriggerKind": ()=>/* binding */ CodeActionTriggerKind,
-                    /* harmony export */ "CodeDescription": ()=>/* binding */ CodeDescription,
-                    /* harmony export */ "CodeLens": ()=>/* binding */ CodeLens,
-                    /* harmony export */ "Color": ()=>/* binding */ Color,
-                    /* harmony export */ "ColorInformation": ()=>/* binding */ ColorInformation,
-                    /* harmony export */ "ColorPresentation": ()=>/* binding */ ColorPresentation,
-                    /* harmony export */ "Command": ()=>/* binding */ Command,
-                    /* harmony export */ "CompletionItem": ()=>/* binding */ CompletionItem,
-                    /* harmony export */ "CompletionItemKind": ()=>/* binding */ CompletionItemKind1,
-                    /* harmony export */ "CompletionItemLabelDetails": ()=>/* binding */ CompletionItemLabelDetails,
-                    /* harmony export */ "CompletionItemTag": ()=>/* binding */ CompletionItemTag,
-                    /* harmony export */ "CompletionList": ()=>/* binding */ CompletionList,
-                    /* harmony export */ "CreateFile": ()=>/* binding */ CreateFile,
-                    /* harmony export */ "DeleteFile": ()=>/* binding */ DeleteFile,
-                    /* harmony export */ "Diagnostic": ()=>/* binding */ Diagnostic,
-                    /* harmony export */ "DiagnosticRelatedInformation": ()=>/* binding */ DiagnosticRelatedInformation,
-                    /* harmony export */ "DiagnosticSeverity": ()=>/* binding */ DiagnosticSeverity,
-                    /* harmony export */ "DiagnosticTag": ()=>/* binding */ DiagnosticTag,
-                    /* harmony export */ "DocumentHighlight": ()=>/* binding */ DocumentHighlight,
-                    /* harmony export */ "DocumentHighlightKind": ()=>/* binding */ DocumentHighlightKind,
-                    /* harmony export */ "DocumentLink": ()=>/* binding */ DocumentLink,
-                    /* harmony export */ "DocumentSymbol": ()=>/* binding */ DocumentSymbol,
-                    /* harmony export */ "DocumentUri": ()=>/* binding */ DocumentUri,
-                    /* harmony export */ "EOL": ()=>/* binding */ EOL,
-                    /* harmony export */ "FoldingRange": ()=>/* binding */ FoldingRange,
-                    /* harmony export */ "FoldingRangeKind": ()=>/* binding */ FoldingRangeKind,
-                    /* harmony export */ "FormattingOptions": ()=>/* binding */ FormattingOptions,
-                    /* harmony export */ "Hover": ()=>/* binding */ Hover,
-                    /* harmony export */ "InlayHint": ()=>/* binding */ InlayHint,
-                    /* harmony export */ "InlayHintKind": ()=>/* binding */ InlayHintKind,
-                    /* harmony export */ "InlayHintLabelPart": ()=>/* binding */ InlayHintLabelPart,
-                    /* harmony export */ "InlineValueContext": ()=>/* binding */ InlineValueContext,
-                    /* harmony export */ "InlineValueEvaluatableExpression": ()=>/* binding */ InlineValueEvaluatableExpression,
-                    /* harmony export */ "InlineValueText": ()=>/* binding */ InlineValueText,
-                    /* harmony export */ "InlineValueVariableLookup": ()=>/* binding */ InlineValueVariableLookup,
-                    /* harmony export */ "InsertReplaceEdit": ()=>/* binding */ InsertReplaceEdit,
-                    /* harmony export */ "InsertTextFormat": ()=>/* binding */ InsertTextFormat1,
-                    /* harmony export */ "InsertTextMode": ()=>/* binding */ InsertTextMode,
-                    /* harmony export */ "Location": ()=>/* binding */ Location,
-                    /* harmony export */ "LocationLink": ()=>/* binding */ LocationLink,
-                    /* harmony export */ "MarkedString": ()=>/* binding */ MarkedString1,
-                    /* harmony export */ "MarkupContent": ()=>/* binding */ MarkupContent1,
-                    /* harmony export */ "MarkupKind": ()=>/* binding */ MarkupKind,
-                    /* harmony export */ "OptionalVersionedTextDocumentIdentifier": ()=>/* binding */ OptionalVersionedTextDocumentIdentifier,
-                    /* harmony export */ "ParameterInformation": ()=>/* binding */ ParameterInformation,
-                    /* harmony export */ "Position": ()=>/* binding */ Position,
-                    /* harmony export */ "Range": ()=>/* binding */ Range,
-                    /* harmony export */ "RenameFile": ()=>/* binding */ RenameFile,
-                    /* harmony export */ "SelectionRange": ()=>/* binding */ SelectionRange,
-                    /* harmony export */ "SemanticTokenModifiers": ()=>/* binding */ SemanticTokenModifiers,
-                    /* harmony export */ "SemanticTokenTypes": ()=>/* binding */ SemanticTokenTypes,
-                    /* harmony export */ "SemanticTokens": ()=>/* binding */ SemanticTokens,
-                    /* harmony export */ "SignatureInformation": ()=>/* binding */ SignatureInformation,
-                    /* harmony export */ "SymbolInformation": ()=>/* binding */ SymbolInformation,
-                    /* harmony export */ "SymbolKind": ()=>/* binding */ SymbolKind,
-                    /* harmony export */ "SymbolTag": ()=>/* binding */ SymbolTag,
-                    /* harmony export */ "TextDocument": ()=>/* binding */ TextDocument,
-                    /* harmony export */ "TextDocumentEdit": ()=>/* binding */ TextDocumentEdit,
-                    /* harmony export */ "TextDocumentIdentifier": ()=>/* binding */ TextDocumentIdentifier,
-                    /* harmony export */ "TextDocumentItem": ()=>/* binding */ TextDocumentItem,
-                    /* harmony export */ "TextEdit": ()=>/* binding */ TextEdit,
-                    /* harmony export */ "URI": ()=>/* binding */ URI,
-                    /* harmony export */ "VersionedTextDocumentIdentifier": ()=>/* binding */ VersionedTextDocumentIdentifier,
-                    /* harmony export */ "WorkspaceChange": ()=>/* binding */ WorkspaceChange,
-                    /* harmony export */ "WorkspaceEdit": ()=>/* binding */ WorkspaceEdit,
-                    /* harmony export */ "WorkspaceFolder": ()=>/* binding */ WorkspaceFolder,
-                    /* harmony export */ "WorkspaceSymbol": ()=>/* binding */ WorkspaceSymbol,
-                    /* harmony export */ "integer": ()=>/* binding */ integer,
-                    /* harmony export */ "uinteger": ()=>/* binding */ uinteger
+                /* harmony export */ __nested_webpack_require_568884__.d(__nested_webpack_exports__, {
+                    /* harmony export */ n: ()=>/* binding */ TextDocument
+                });
+                /* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */ var __spreadArray =  false || function(to, from, pack) {
+                    if (pack || arguments.length === 2) for(var i = 0, l = from.length, ar; i < l; i++){
+                        if (ar || !(i in from)) {
+                            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+                            ar[i] = from[i];
+                        }
+                    }
+                    return to.concat(ar || Array.prototype.slice.call(from));
+                };
+                var FullTextDocument = /** @class */ function() {
+                    function FullTextDocument(uri, languageId, version, content) {
+                        this._uri = uri;
+                        this._languageId = languageId;
+                        this._version = version;
+                        this._content = content;
+                        this._lineOffsets = undefined;
+                    }
+                    Object.defineProperty(FullTextDocument.prototype, "uri", {
+                        get: function() {
+                            return this._uri;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    Object.defineProperty(FullTextDocument.prototype, "languageId", {
+                        get: function() {
+                            return this._languageId;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    Object.defineProperty(FullTextDocument.prototype, "version", {
+                        get: function() {
+                            return this._version;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    FullTextDocument.prototype.getText = function(range) {
+                        if (range) {
+                            var start = this.offsetAt(range.start);
+                            var end = this.offsetAt(range.end);
+                            return this._content.substring(start, end);
+                        }
+                        return this._content;
+                    };
+                    FullTextDocument.prototype.update = function(changes, version) {
+                        for(var _i = 0, changes_1 = changes; _i < changes_1.length; _i++){
+                            var change = changes_1[_i];
+                            if (FullTextDocument.isIncremental(change)) {
+                                // makes sure start is before end
+                                var range = getWellformedRange(change.range);
+                                // update content
+                                var startOffset = this.offsetAt(range.start);
+                                var endOffset = this.offsetAt(range.end);
+                                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+                                // update the offsets
+                                var startLine = Math.max(range.start.line, 0);
+                                var endLine = Math.max(range.end.line, 0);
+                                var lineOffsets = this._lineOffsets;
+                                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
+                                if (endLine - startLine === addedLineOffsets.length) {
+                                    for(var i = 0, len = addedLineOffsets.length; i < len; i++){
+                                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
+                                    }
+                                } else {
+                                    if (addedLineOffsets.length < 10000) {
+                                        lineOffsets.splice.apply(lineOffsets, __spreadArray([
+                                            startLine + 1,
+                                            endLine - startLine
+                                        ], addedLineOffsets, false));
+                                    } else {
+                                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
+                                    }
+                                }
+                                var diff = change.text.length - (endOffset - startOffset);
+                                if (diff !== 0) {
+                                    for(var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++){
+                                        lineOffsets[i] = lineOffsets[i] + diff;
+                                    }
+                                }
+                            } else if (FullTextDocument.isFull(change)) {
+                                this._content = change.text;
+                                this._lineOffsets = undefined;
+                            } else {
+                                throw new Error('Unknown change event received');
+                            }
+                        }
+                        this._version = version;
+                    };
+                    FullTextDocument.prototype.getLineOffsets = function() {
+                        if (this._lineOffsets === undefined) {
+                            this._lineOffsets = computeLineOffsets(this._content, true);
+                        }
+                        return this._lineOffsets;
+                    };
+                    FullTextDocument.prototype.positionAt = function(offset) {
+                        offset = Math.max(Math.min(offset, this._content.length), 0);
+                        var lineOffsets = this.getLineOffsets();
+                        var low = 0, high = lineOffsets.length;
+                        if (high === 0) {
+                            return {
+                                line: 0,
+                                character: offset
+                            };
+                        }
+                        while(low < high){
+                            var mid = Math.floor((low + high) / 2);
+                            if (lineOffsets[mid] > offset) {
+                                high = mid;
+                            } else {
+                                low = mid + 1;
+                            }
+                        }
+                        // low is the least x for which the line offset is larger than the current offset
+                        // or array.length if no line offset is larger than the current offset
+                        var line = low - 1;
+                        return {
+                            line: line,
+                            character: offset - lineOffsets[line]
+                        };
+                    };
+                    FullTextDocument.prototype.offsetAt = function(position) {
+                        var lineOffsets = this.getLineOffsets();
+                        if (position.line >= lineOffsets.length) {
+                            return this._content.length;
+                        } else if (position.line < 0) {
+                            return 0;
+                        }
+                        var lineOffset = lineOffsets[position.line];
+                        var nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
+                        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
+                    };
+                    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
+                        get: function() {
+                            return this.getLineOffsets().length;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    FullTextDocument.isIncremental = function(event) {
+                        var candidate = event;
+                        return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range !== undefined && (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
+                    };
+                    FullTextDocument.isFull = function(event) {
+                        var candidate = event;
+                        return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
+                    };
+                    return FullTextDocument;
+                }();
+                var TextDocument;
+                (function(TextDocument) {
+                    /**
+     * Creates a new text document.
+     *
+     * @param uri The document's uri.
+     * @param languageId  The document's language Id.
+     * @param version The document's initial version number.
+     * @param content The document's content.
+     */ function create(uri, languageId, version, content) {
+                        return new FullTextDocument(uri, languageId, version, content);
+                    }
+                    TextDocument.create = create;
+                    /**
+     * Updates a TextDocument by modifying its content.
+     *
+     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
+     * @param changes the changes to apply to the document.
+     * @param version the changes version for the document.
+     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
+     *
+     */ function update(document1, changes, version) {
+                        if (document1 instanceof FullTextDocument) {
+                            document1.update(changes, version);
+                            return document1;
+                        } else {
+                            throw new Error('TextDocument.update: document must be created by TextDocument.create');
+                        }
+                    }
+                    TextDocument.update = update;
+                    function applyEdits(document1, edits) {
+                        var text = document1.getText();
+                        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function(a, b) {
+                            var diff = a.range.start.line - b.range.start.line;
+                            if (diff === 0) {
+                                return a.range.start.character - b.range.start.character;
+                            }
+                            return diff;
+                        });
+                        var lastModifiedOffset = 0;
+                        var spans = [];
+                        for(var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++){
+                            var e = sortedEdits_1[_i];
+                            var startOffset = document1.offsetAt(e.range.start);
+                            if (startOffset < lastModifiedOffset) {
+                                throw new Error('Overlapping edit');
+                            } else if (startOffset > lastModifiedOffset) {
+                                spans.push(text.substring(lastModifiedOffset, startOffset));
+                            }
+                            if (e.newText.length) {
+                                spans.push(e.newText);
+                            }
+                            lastModifiedOffset = document1.offsetAt(e.range.end);
+                        }
+                        spans.push(text.substr(lastModifiedOffset));
+                        return spans.join('');
+                    }
+                    TextDocument.applyEdits = applyEdits;
+                })(TextDocument || (TextDocument = {}));
+                function mergeSort(data, compare) {
+                    if (data.length <= 1) {
+                        // sorted
+                        return data;
+                    }
+                    var p = data.length / 2 | 0;
+                    var left = data.slice(0, p);
+                    var right = data.slice(p);
+                    mergeSort(left, compare);
+                    mergeSort(right, compare);
+                    var leftIdx = 0;
+                    var rightIdx = 0;
+                    var i = 0;
+                    while(leftIdx < left.length && rightIdx < right.length){
+                        var ret = compare(left[leftIdx], right[rightIdx]);
+                        if (ret <= 0) {
+                            // smaller_equal -> take left to preserve order
+                            data[i++] = left[leftIdx++];
+                        } else {
+                            // greater -> take right
+                            data[i++] = right[rightIdx++];
+                        }
+                    }
+                    while(leftIdx < left.length){
+                        data[i++] = left[leftIdx++];
+                    }
+                    while(rightIdx < right.length){
+                        data[i++] = right[rightIdx++];
+                    }
+                    return data;
+                }
+                function computeLineOffsets(text, isAtLineStart, textOffset) {
+                    if (textOffset === void 0) {
+                        textOffset = 0;
+                    }
+                    var result = isAtLineStart ? [
+                        textOffset
+                    ] : [];
+                    for(var i = 0; i < text.length; i++){
+                        var ch = text.charCodeAt(i);
+                        if (ch === 13 /* CharCode.CarriageReturn */  || ch === 10 /* CharCode.LineFeed */ ) {
+                            if (ch === 13 /* CharCode.CarriageReturn */  && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */ ) {
+                                i++;
+                            }
+                            result.push(textOffset + i + 1);
+                        }
+                    }
+                    return result;
+                }
+                function getWellformedRange(range) {
+                    var start = range.start;
+                    var end = range.end;
+                    if (start.line > end.line || start.line === end.line && start.character > end.character) {
+                        return {
+                            start: end,
+                            end: start
+                        };
+                    }
+                    return range;
+                }
+                function getWellformedEdit(textEdit) {
+                    var range = getWellformedRange(textEdit.range);
+                    if (range !== textEdit.range) {
+                        return {
+                            newText: textEdit.newText,
+                            range: range
+                        };
+                    }
+                    return textEdit;
+                }
+            /***/ },
+            /***/ 4767: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_584708__)=>{
+                "use strict";
+                __nested_webpack_require_584708__.r(__nested_webpack_exports__);
+                /* harmony export */ __nested_webpack_require_584708__.d(__nested_webpack_exports__, {
+                    /* harmony export */ AnnotatedTextEdit: ()=>/* binding */ AnnotatedTextEdit,
+                    /* harmony export */ ChangeAnnotation: ()=>/* binding */ ChangeAnnotation,
+                    /* harmony export */ ChangeAnnotationIdentifier: ()=>/* binding */ ChangeAnnotationIdentifier,
+                    /* harmony export */ CodeAction: ()=>/* binding */ CodeAction,
+                    /* harmony export */ CodeActionContext: ()=>/* binding */ CodeActionContext,
+                    /* harmony export */ CodeActionKind: ()=>/* binding */ CodeActionKind,
+                    /* harmony export */ CodeActionTriggerKind: ()=>/* binding */ CodeActionTriggerKind,
+                    /* harmony export */ CodeDescription: ()=>/* binding */ CodeDescription,
+                    /* harmony export */ CodeLens: ()=>/* binding */ CodeLens,
+                    /* harmony export */ Color: ()=>/* binding */ Color,
+                    /* harmony export */ ColorInformation: ()=>/* binding */ ColorInformation,
+                    /* harmony export */ ColorPresentation: ()=>/* binding */ ColorPresentation,
+                    /* harmony export */ Command: ()=>/* binding */ Command,
+                    /* harmony export */ CompletionItem: ()=>/* binding */ CompletionItem,
+                    /* harmony export */ CompletionItemKind: ()=>/* binding */ CompletionItemKind1,
+                    /* harmony export */ CompletionItemLabelDetails: ()=>/* binding */ CompletionItemLabelDetails,
+                    /* harmony export */ CompletionItemTag: ()=>/* binding */ CompletionItemTag,
+                    /* harmony export */ CompletionList: ()=>/* binding */ CompletionList,
+                    /* harmony export */ CreateFile: ()=>/* binding */ CreateFile,
+                    /* harmony export */ DeleteFile: ()=>/* binding */ DeleteFile,
+                    /* harmony export */ Diagnostic: ()=>/* binding */ Diagnostic,
+                    /* harmony export */ DiagnosticRelatedInformation: ()=>/* binding */ DiagnosticRelatedInformation,
+                    /* harmony export */ DiagnosticSeverity: ()=>/* binding */ DiagnosticSeverity,
+                    /* harmony export */ DiagnosticTag: ()=>/* binding */ DiagnosticTag,
+                    /* harmony export */ DocumentHighlight: ()=>/* binding */ DocumentHighlight,
+                    /* harmony export */ DocumentHighlightKind: ()=>/* binding */ DocumentHighlightKind,
+                    /* harmony export */ DocumentLink: ()=>/* binding */ DocumentLink,
+                    /* harmony export */ DocumentSymbol: ()=>/* binding */ DocumentSymbol,
+                    /* harmony export */ DocumentUri: ()=>/* binding */ DocumentUri,
+                    /* harmony export */ EOL: ()=>/* binding */ EOL,
+                    /* harmony export */ FoldingRange: ()=>/* binding */ FoldingRange,
+                    /* harmony export */ FoldingRangeKind: ()=>/* binding */ FoldingRangeKind,
+                    /* harmony export */ FormattingOptions: ()=>/* binding */ FormattingOptions,
+                    /* harmony export */ Hover: ()=>/* binding */ Hover,
+                    /* harmony export */ InlayHint: ()=>/* binding */ InlayHint,
+                    /* harmony export */ InlayHintKind: ()=>/* binding */ InlayHintKind,
+                    /* harmony export */ InlayHintLabelPart: ()=>/* binding */ InlayHintLabelPart,
+                    /* harmony export */ InlineValueContext: ()=>/* binding */ InlineValueContext,
+                    /* harmony export */ InlineValueEvaluatableExpression: ()=>/* binding */ InlineValueEvaluatableExpression,
+                    /* harmony export */ InlineValueText: ()=>/* binding */ InlineValueText,
+                    /* harmony export */ InlineValueVariableLookup: ()=>/* binding */ InlineValueVariableLookup,
+                    /* harmony export */ InsertReplaceEdit: ()=>/* binding */ InsertReplaceEdit,
+                    /* harmony export */ InsertTextFormat: ()=>/* binding */ InsertTextFormat1,
+                    /* harmony export */ InsertTextMode: ()=>/* binding */ InsertTextMode,
+                    /* harmony export */ Location: ()=>/* binding */ Location,
+                    /* harmony export */ LocationLink: ()=>/* binding */ LocationLink,
+                    /* harmony export */ MarkedString: ()=>/* binding */ MarkedString1,
+                    /* harmony export */ MarkupContent: ()=>/* binding */ MarkupContent1,
+                    /* harmony export */ MarkupKind: ()=>/* binding */ MarkupKind,
+                    /* harmony export */ OptionalVersionedTextDocumentIdentifier: ()=>/* binding */ OptionalVersionedTextDocumentIdentifier,
+                    /* harmony export */ ParameterInformation: ()=>/* binding */ ParameterInformation,
+                    /* harmony export */ Position: ()=>/* binding */ Position,
+                    /* harmony export */ Range: ()=>/* binding */ Range,
+                    /* harmony export */ RenameFile: ()=>/* binding */ RenameFile,
+                    /* harmony export */ SelectionRange: ()=>/* binding */ SelectionRange,
+                    /* harmony export */ SemanticTokenModifiers: ()=>/* binding */ SemanticTokenModifiers,
+                    /* harmony export */ SemanticTokenTypes: ()=>/* binding */ SemanticTokenTypes,
+                    /* harmony export */ SemanticTokens: ()=>/* binding */ SemanticTokens,
+                    /* harmony export */ SignatureInformation: ()=>/* binding */ SignatureInformation,
+                    /* harmony export */ SymbolInformation: ()=>/* binding */ SymbolInformation,
+                    /* harmony export */ SymbolKind: ()=>/* binding */ SymbolKind,
+                    /* harmony export */ SymbolTag: ()=>/* binding */ SymbolTag,
+                    /* harmony export */ TextDocument: ()=>/* binding */ TextDocument,
+                    /* harmony export */ TextDocumentEdit: ()=>/* binding */ TextDocumentEdit,
+                    /* harmony export */ TextDocumentIdentifier: ()=>/* binding */ TextDocumentIdentifier,
+                    /* harmony export */ TextDocumentItem: ()=>/* binding */ TextDocumentItem,
+                    /* harmony export */ TextEdit: ()=>/* binding */ TextEdit,
+                    /* harmony export */ URI: ()=>/* binding */ URI,
+                    /* harmony export */ VersionedTextDocumentIdentifier: ()=>/* binding */ VersionedTextDocumentIdentifier,
+                    /* harmony export */ WorkspaceChange: ()=>/* binding */ WorkspaceChange,
+                    /* harmony export */ WorkspaceEdit: ()=>/* binding */ WorkspaceEdit,
+                    /* harmony export */ WorkspaceFolder: ()=>/* binding */ WorkspaceFolder,
+                    /* harmony export */ WorkspaceSymbol: ()=>/* binding */ WorkspaceSymbol,
+                    /* harmony export */ integer: ()=>/* binding */ integer,
+                    /* harmony export */ uinteger: ()=>/* binding */ uinteger
                 });
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10182,7 +10720,7 @@
                 })(uinteger || (uinteger = {}));
                 /**
  * The Position namespace provides helper functions to work with
- * [Position](#Position) literals.
+ * {@link Position} literals.
  */ var Position;
                 (function(Position) {
                     /**
@@ -10203,7 +10741,7 @@
                     }
                     Position.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Position](#Position) interface.
+     * Checks whether the given literal conforms to the {@link Position} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.uinteger(candidate.line) && Is.uinteger(candidate.character);
@@ -10212,7 +10750,7 @@
                 })(Position || (Position = {}));
                 /**
  * The Range namespace provides helper functions to work with
- * [Range](#Range) literals.
+ * {@link Range} literals.
  */ var Range;
                 (function(Range) {
                     function create(one, two, three, four) {
@@ -10232,7 +10770,7 @@
                     }
                     Range.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Range](#Range) interface.
+     * Checks whether the given literal conforms to the {@link Range} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Position.is(candidate.start) && Position.is(candidate.end);
@@ -10241,7 +10779,7 @@
                 })(Range || (Range = {}));
                 /**
  * The Location namespace provides helper functions to work with
- * [Location](#Location) literals.
+ * {@link Location} literals.
  */ var Location;
                 (function(Location) {
                     /**
@@ -10256,7 +10794,7 @@
                     }
                     Location.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Location](#Location) interface.
+     * Checks whether the given literal conforms to the {@link Location} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Range.is(candidate.range) && (Is.string(candidate.uri) || Is.undefined(candidate.uri));
@@ -10265,7 +10803,7 @@
                 })(Location || (Location = {}));
                 /**
  * The LocationLink namespace provides helper functions to work with
- * [LocationLink](#LocationLink) literals.
+ * {@link LocationLink} literals.
  */ var LocationLink;
                 (function(LocationLink) {
                     /**
@@ -10284,7 +10822,7 @@
                     }
                     LocationLink.create = create;
                     /**
-     * Checks whether the given literal conforms to the [LocationLink](#LocationLink) interface.
+     * Checks whether the given literal conforms to the {@link LocationLink} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Range.is(candidate.targetRange) && Is.string(candidate.targetUri) && Range.is(candidate.targetSelectionRange) && (Range.is(candidate.originSelectionRange) || Is.undefined(candidate.originSelectionRange));
@@ -10293,7 +10831,7 @@
                 })(LocationLink || (LocationLink = {}));
                 /**
  * The Color namespace provides helper functions to work with
- * [Color](#Color) literals.
+ * {@link Color} literals.
  */ var Color;
                 (function(Color) {
                     /**
@@ -10308,7 +10846,7 @@
                     }
                     Color.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Color](#Color) interface.
+     * Checks whether the given literal conforms to the {@link Color} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.numberRange(candidate.red, 0, 1) && Is.numberRange(candidate.green, 0, 1) && Is.numberRange(candidate.blue, 0, 1) && Is.numberRange(candidate.alpha, 0, 1);
@@ -10317,7 +10855,7 @@
                 })(Color || (Color = {}));
                 /**
  * The ColorInformation namespace provides helper functions to work with
- * [ColorInformation](#ColorInformation) literals.
+ * {@link ColorInformation} literals.
  */ var ColorInformation;
                 (function(ColorInformation) {
                     /**
@@ -10330,7 +10868,7 @@
                     }
                     ColorInformation.create = create;
                     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Range.is(candidate.range) && Color.is(candidate.color);
@@ -10339,7 +10877,7 @@
                 })(ColorInformation || (ColorInformation = {}));
                 /**
  * The Color namespace provides helper functions to work with
- * [ColorPresentation](#ColorPresentation) literals.
+ * {@link ColorPresentation} literals.
  */ var ColorPresentation;
                 (function(ColorPresentation) {
                     /**
@@ -10353,7 +10891,7 @@
                     }
                     ColorPresentation.create = create;
                     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.string(candidate.label) && (Is.undefined(candidate.textEdit) || TextEdit.is(candidate)) && (Is.undefined(candidate.additionalTextEdits) || Is.typedArray(candidate.additionalTextEdits, TextEdit.is));
@@ -10376,7 +10914,7 @@
                 })(FoldingRangeKind || (FoldingRangeKind = {}));
                 /**
  * The folding range namespace provides helper functions to work with
- * [FoldingRange](#FoldingRange) literals.
+ * {@link FoldingRange} literals.
  */ var FoldingRange;
                 (function(FoldingRange) {
                     /**
@@ -10402,7 +10940,7 @@
                     }
                     FoldingRange.create = create;
                     /**
-     * Checks whether the given literal conforms to the [FoldingRange](#FoldingRange) interface.
+     * Checks whether the given literal conforms to the {@link FoldingRange} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.uinteger(candidate.startLine) && Is.uinteger(candidate.startLine) && (Is.undefined(candidate.startCharacter) || Is.uinteger(candidate.startCharacter)) && (Is.undefined(candidate.endCharacter) || Is.uinteger(candidate.endCharacter)) && (Is.undefined(candidate.kind) || Is.string(candidate.kind));
@@ -10411,7 +10949,7 @@
                 })(FoldingRange || (FoldingRange = {}));
                 /**
  * The DiagnosticRelatedInformation namespace provides helper functions to work with
- * [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) literals.
+ * {@link DiagnosticRelatedInformation} literals.
  */ var DiagnosticRelatedInformation;
                 (function(DiagnosticRelatedInformation) {
                     /**
@@ -10424,7 +10962,7 @@
                     }
                     DiagnosticRelatedInformation.create = create;
                     /**
-     * Checks whether the given literal conforms to the [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) interface.
+     * Checks whether the given literal conforms to the {@link DiagnosticRelatedInformation} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Location.is(candidate.location) && Is.string(candidate.message);
@@ -10480,7 +11018,7 @@
                 })(CodeDescription || (CodeDescription = {}));
                 /**
  * The Diagnostic namespace provides helper functions to work with
- * [Diagnostic](#Diagnostic) literals.
+ * {@link Diagnostic} literals.
  */ var Diagnostic;
                 (function(Diagnostic) {
                     /**
@@ -10506,7 +11044,7 @@
                     }
                     Diagnostic.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Diagnostic](#Diagnostic) interface.
+     * Checks whether the given literal conforms to the {@link Diagnostic} interface.
      */ function is(value) {
                         var _a;
                         var candidate = value;
@@ -10516,7 +11054,7 @@
                 })(Diagnostic || (Diagnostic = {}));
                 /**
  * The Command namespace provides helper functions to work with
- * [Command](#Command) literals.
+ * {@link Command} literals.
  */ var Command;
                 (function(Command) {
                     /**
@@ -10537,7 +11075,7 @@
                     }
                     Command.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Command](#Command) interface.
+     * Checks whether the given literal conforms to the {@link Command} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.title) && Is.string(candidate.command);
@@ -10918,7 +11456,7 @@
                     }
                     Object.defineProperty(WorkspaceChange.prototype, "edit", {
                         /**
-         * Returns the underlying [WorkspaceEdit](#WorkspaceEdit) literal
+         * Returns the underlying {@link WorkspaceEdit} literal
          * use to be returned from a workspace edit operation like rename.
          */ get: function() {
                             this.initDocumentChanges();
@@ -11059,7 +11597,7 @@
                 }();
                 /**
  * The TextDocumentIdentifier namespace provides helper functions to work with
- * [TextDocumentIdentifier](#TextDocumentIdentifier) literals.
+ * {@link TextDocumentIdentifier} literals.
  */ var TextDocumentIdentifier;
                 (function(TextDocumentIdentifier) {
                     /**
@@ -11072,7 +11610,7 @@
                     }
                     TextDocumentIdentifier.create = create;
                     /**
-     * Checks whether the given literal conforms to the [TextDocumentIdentifier](#TextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentIdentifier} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri);
@@ -11081,7 +11619,7 @@
                 })(TextDocumentIdentifier || (TextDocumentIdentifier = {}));
                 /**
  * The VersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) literals.
+ * {@link VersionedTextDocumentIdentifier} literals.
  */ var VersionedTextDocumentIdentifier;
                 (function(VersionedTextDocumentIdentifier) {
                     /**
@@ -11096,7 +11634,7 @@
                     }
                     VersionedTextDocumentIdentifier.create = create;
                     /**
-     * Checks whether the given literal conforms to the [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link VersionedTextDocumentIdentifier} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && Is.integer(candidate.version);
@@ -11105,7 +11643,7 @@
                 })(VersionedTextDocumentIdentifier || (VersionedTextDocumentIdentifier = {}));
                 /**
  * The OptionalVersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) literals.
+ * {@link OptionalVersionedTextDocumentIdentifier} literals.
  */ var OptionalVersionedTextDocumentIdentifier;
                 (function(OptionalVersionedTextDocumentIdentifier) {
                     /**
@@ -11120,7 +11658,7 @@
                     }
                     OptionalVersionedTextDocumentIdentifier.create = create;
                     /**
-     * Checks whether the given literal conforms to the [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link OptionalVersionedTextDocumentIdentifier} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && (candidate.version === null || Is.integer(candidate.version));
@@ -11129,7 +11667,7 @@
                 })(OptionalVersionedTextDocumentIdentifier || (OptionalVersionedTextDocumentIdentifier = {}));
                 /**
  * The TextDocumentItem namespace provides helper functions to work with
- * [TextDocumentItem](#TextDocumentItem) literals.
+ * {@link TextDocumentItem} literals.
  */ var TextDocumentItem;
                 (function(TextDocumentItem) {
                     /**
@@ -11148,7 +11686,7 @@
                     }
                     TextDocumentItem.create = create;
                     /**
-     * Checks whether the given literal conforms to the [TextDocumentItem](#TextDocumentItem) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentItem} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && Is.string(candidate.languageId) && Is.integer(candidate.version) && Is.string(candidate.text);
@@ -11170,7 +11708,7 @@
      * Markdown is supported as a content format
      */ MarkupKind.Markdown = 'markdown';
                     /**
-     * Checks whether the given value is a value of the [MarkupKind](#MarkupKind) type.
+     * Checks whether the given value is a value of the {@link MarkupKind} type.
      */ function is(value) {
                         var candidate = value;
                         return candidate === MarkupKind.PlainText || candidate === MarkupKind.Markdown;
@@ -11180,7 +11718,7 @@
                 var MarkupContent1;
                 (function(MarkupContent1) {
                     /**
-     * Checks whether the given value conforms to the [MarkupContent](#MarkupContent) interface.
+     * Checks whether the given value conforms to the {@link MarkupContent} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(value) && MarkupKind.is(candidate.kind) && Is.string(candidate.value);
@@ -11264,7 +11802,7 @@
                     }
                     InsertReplaceEdit.create = create;
                     /**
-     * Checks whether the given literal conforms to the [InsertReplaceEdit](#InsertReplaceEdit) interface.
+     * Checks whether the given literal conforms to the {@link InsertReplaceEdit} interface.
      */ function is(value) {
                         var candidate = value;
                         return candidate && Is.string(candidate.newText) && Range.is(candidate.insert) && Range.is(candidate.replace);
@@ -11347,7 +11885,7 @@
                     }
                     MarkedString1.fromPlainText = fromPlainText;
                     /**
-     * Checks whether the given value conforms to the [MarkedString](#MarkedString) type.
+     * Checks whether the given value conforms to the {@link MarkedString} type.
      */ function is(value) {
                         var candidate = value;
                         return Is.string(candidate) || Is.objectLiteral(candidate) && Is.string(candidate.language) && Is.string(candidate.value);
@@ -11357,7 +11895,7 @@
                 var Hover;
                 (function(Hover) {
                     /**
-     * Checks whether the given value conforms to the [Hover](#Hover) interface.
+     * Checks whether the given value conforms to the {@link Hover} interface.
      */ function is(value) {
                         var candidate = value;
                         return !!candidate && Is.objectLiteral(candidate) && (MarkupContent1.is(candidate.contents) || MarkedString1.is(candidate.contents) || Is.typedArray(candidate.contents, MarkedString1.is)) && (value.range === undefined || Range.is(value.range));
@@ -11366,7 +11904,7 @@
                 })(Hover || (Hover = {}));
                 /**
  * The ParameterInformation namespace provides helper functions to work with
- * [ParameterInformation](#ParameterInformation) literals.
+ * {@link ParameterInformation} literals.
  */ var ParameterInformation;
                 (function(ParameterInformation) {
                     /**
@@ -11386,7 +11924,7 @@
                 })(ParameterInformation || (ParameterInformation = {}));
                 /**
  * The SignatureInformation namespace provides helper functions to work with
- * [SignatureInformation](#SignatureInformation) literals.
+ * {@link SignatureInformation} literals.
  */ var SignatureInformation;
                 (function(SignatureInformation) {
                     function create(label, documentation) {
@@ -11425,7 +11963,7 @@
                 })(DocumentHighlightKind || (DocumentHighlightKind = {}));
                 /**
  * DocumentHighlight namespace to provide helper functions to work with
- * [DocumentHighlight](#DocumentHighlight) literals.
+ * {@link DocumentHighlight} literals.
  */ var DocumentHighlight;
                 (function(DocumentHighlight) {
                     /**
@@ -11564,7 +12102,7 @@
                     }
                     DocumentSymbol.create = create;
                     /**
-     * Checks whether the given literal conforms to the [DocumentSymbol](#DocumentSymbol) interface.
+     * Checks whether the given literal conforms to the {@link DocumentSymbol} interface.
      */ function is(value) {
                         var candidate = value;
                         return candidate && Is.string(candidate.name) && Is.number(candidate.kind) && Range.is(candidate.range) && Range.is(candidate.selectionRange) && (candidate.detail === undefined || Is.string(candidate.detail)) && (candidate.deprecated === undefined || Is.boolean(candidate.deprecated)) && (candidate.children === undefined || Array.isArray(candidate.children)) && (candidate.tags === undefined || Array.isArray(candidate.tags));
@@ -11652,7 +12190,7 @@
                 })(CodeActionTriggerKind || (CodeActionTriggerKind = {}));
                 /**
  * The CodeActionContext namespace provides helper functions to work with
- * [CodeActionContext](#CodeActionContext) literals.
+ * {@link CodeActionContext} literals.
  */ var CodeActionContext;
                 (function(CodeActionContext) {
                     /**
@@ -11671,7 +12209,7 @@
                     }
                     CodeActionContext.create = create;
                     /**
-     * Checks whether the given literal conforms to the [CodeActionContext](#CodeActionContext) interface.
+     * Checks whether the given literal conforms to the {@link CodeActionContext} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.typedArray(candidate.diagnostics, Diagnostic.is) && (candidate.only === undefined || Is.typedArray(candidate.only, Is.string)) && (candidate.triggerKind === undefined || candidate.triggerKind === CodeActionTriggerKind.Invoked || candidate.triggerKind === CodeActionTriggerKind.Automatic);
@@ -11707,7 +12245,7 @@
                 })(CodeAction || (CodeAction = {}));
                 /**
  * The CodeLens namespace provides helper functions to work with
- * [CodeLens](#CodeLens) literals.
+ * {@link CodeLens} literals.
  */ var CodeLens;
                 (function(CodeLens) {
                     /**
@@ -11723,7 +12261,7 @@
                     }
                     CodeLens.create = create;
                     /**
-     * Checks whether the given literal conforms to the [CodeLens](#CodeLens) interface.
+     * Checks whether the given literal conforms to the {@link CodeLens} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.command) || Command.is(candidate.command));
@@ -11732,7 +12270,7 @@
                 })(CodeLens || (CodeLens = {}));
                 /**
  * The FormattingOptions namespace provides helper functions to work with
- * [FormattingOptions](#FormattingOptions) literals.
+ * {@link FormattingOptions} literals.
  */ var FormattingOptions;
                 (function(FormattingOptions) {
                     /**
@@ -11745,7 +12283,7 @@
                     }
                     FormattingOptions.create = create;
                     /**
-     * Checks whether the given literal conforms to the [FormattingOptions](#FormattingOptions) interface.
+     * Checks whether the given literal conforms to the {@link FormattingOptions} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.uinteger(candidate.tabSize) && Is.boolean(candidate.insertSpaces);
@@ -11754,7 +12292,7 @@
                 })(FormattingOptions || (FormattingOptions = {}));
                 /**
  * The DocumentLink namespace provides helper functions to work with
- * [DocumentLink](#DocumentLink) literals.
+ * {@link DocumentLink} literals.
  */ var DocumentLink;
                 (function(DocumentLink) {
                     /**
@@ -11768,7 +12306,7 @@
                     }
                     DocumentLink.create = create;
                     /**
-     * Checks whether the given literal conforms to the [DocumentLink](#DocumentLink) interface.
+     * Checks whether the given literal conforms to the {@link DocumentLink} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.target) || Is.string(candidate.target));
@@ -11929,7 +12467,7 @@
                 })(InlineValueEvaluatableExpression || (InlineValueEvaluatableExpression = {}));
                 /**
  * The InlineValueContext namespace provides helper functions to work with
- * [InlineValueContext](#InlineValueContext) literals.
+ * {@link InlineValueContext} literals.
  *
  * @since 3.17.0
  */ var InlineValueContext;
@@ -11944,7 +12482,7 @@
                     }
                     InlineValueContext.create = create;
                     /**
-     * Checks whether the given literal conforms to the [InlineValueContext](#InlineValueContext) interface.
+     * Checks whether the given literal conforms to the {@link InlineValueContext} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Range.is(value.stoppedLocation);
@@ -12029,7 +12567,7 @@
                     }
                     TextDocument.create = create;
                     /**
-     * Checks whether the given literal conforms to the [ITextDocument](#ITextDocument) interface.
+     * Checks whether the given literal conforms to the {@link ITextDocument} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && (Is.undefined(candidate.languageId) || Is.string(candidate.languageId)) && Is.uinteger(candidate.lineCount) && Is.func(candidate.getText) && Is.func(candidate.positionAt) && Is.func(candidate.offsetAt) ? true : false;
@@ -12250,228 +12788,96 @@
                     Is.typedArray = typedArray;
                 })(Is || (Is = {}));
             /***/ },
-            /***/ 7045: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_665722__) {
+            /***/ 2094: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_695822__)=>{
                 "use strict";
-                /* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */ var __spreadArray = this && this.__spreadArray || function(to, from, pack) {
-                    if (pack || arguments.length === 2) for(var i = 0, l = from.length, ar; i < l; i++){
-                        if (ar || !(i in from)) {
-                            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-                            ar[i] = from[i];
-                        }
-                    }
-                    return to.concat(ar || Array.prototype.slice.call(from));
-                };
-                Object.defineProperty(exports1, "__esModule", {
-                    value: true
-                });
-                exports1.config = exports1.loadMessageBundle = exports1.BundleFormat = exports1.MessageFormat = void 0;
-                var ral_1 = __nested_webpack_require_665722__(9889);
-                var common_1 = __nested_webpack_require_665722__(2310);
-                var common_2 = __nested_webpack_require_665722__(2310);
-                Object.defineProperty(exports1, "MessageFormat", {
-                    enumerable: true,
-                    get: function() {
-                        return common_2.MessageFormat;
-                    }
-                });
-                Object.defineProperty(exports1, "BundleFormat", {
-                    enumerable: true,
-                    get: function() {
-                        return common_2.BundleFormat;
-                    }
-                });
-                function loadMessageBundle(_file) {
-                    return function(key, message) {
-                        var args = [];
-                        for(var _i = 2; _i < arguments.length; _i++){
-                            args[_i - 2] = arguments[_i];
-                        }
-                        if (typeof key === 'number') {
-                            throw new Error("Browser implementation does currently not support externalized strings.");
-                        } else {
-                            return common_1.localize.apply(void 0, __spreadArray([
-                                key,
-                                message
-                            ], args, false));
-                        }
-                    };
-                }
-                exports1.loadMessageBundle = loadMessageBundle;
-                function config(options) {
-                    var _a;
-                    (0, common_1.setPseudo)(((_a = options === null || options === void 0 ? void 0 : options.locale) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'pseudo');
-                    return loadMessageBundle;
-                }
-                exports1.config = config;
-                ral_1.default.install(Object.freeze({
-                    loadMessageBundle: loadMessageBundle,
-                    config: config
-                }));
-            //# sourceMappingURL=main.js.map
-            /***/ },
-            /***/ 2310: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_669036__)=>{
-                "use strict";
-                /* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
-                    value: true
-                });
-                exports1.config = exports1.loadMessageBundle = exports1.localize = exports1.format = exports1.setPseudo = exports1.isPseudo = exports1.isDefined = exports1.BundleFormat = exports1.MessageFormat = void 0;
-                var ral_1 = __nested_webpack_require_669036__(9889);
-                var MessageFormat;
-                (function(MessageFormat) {
-                    MessageFormat["file"] = "file";
-                    MessageFormat["bundle"] = "bundle";
-                    MessageFormat["both"] = "both";
-                })(MessageFormat = exports1.MessageFormat || (exports1.MessageFormat = {}));
-                var BundleFormat;
-                (function(BundleFormat) {
-                    // the nls.bundle format
-                    BundleFormat["standalone"] = "standalone";
-                    BundleFormat["languagePack"] = "languagePack";
-                })(BundleFormat = exports1.BundleFormat || (exports1.BundleFormat = {}));
-                var LocalizeInfo;
-                (function(LocalizeInfo) {
-                    function is(value) {
-                        var candidate = value;
-                        return candidate && isDefined(candidate.key) && isDefined(candidate.comment);
-                    }
-                    LocalizeInfo.is = is;
-                })(LocalizeInfo || (LocalizeInfo = {}));
-                function isDefined(value) {
-                    return typeof value !== 'undefined';
-                }
-                exports1.isDefined = isDefined;
-                exports1.isPseudo = false;
-                function setPseudo(pseudo) {
-                    exports1.isPseudo = pseudo;
-                }
-                exports1.setPseudo = setPseudo;
-                function format1(message, args) {
-                    var result;
-                    if (exports1.isPseudo) {
-                        // FF3B and FF3D is the Unicode zenkaku representation for [ and ]
-                        message = '\uFF3B' + message.replace(/[aouei]/g, '$&$&') + '\uFF3D';
-                    }
-                    if (args.length === 0) {
-                        result = message;
-                    } else {
-                        result = message.replace(/\{(\d+)\}/g, function(match, rest) {
-                            var index = rest[0];
-                            var arg = args[index];
-                            var replacement = match;
-                            if (typeof arg === 'string') {
-                                replacement = arg;
-                            } else if (typeof arg === 'number' || typeof arg === 'boolean' || arg === void 0 || arg === null) {
-                                replacement = String(arg);
-                            }
-                            return replacement;
-                        });
-                    }
-                    return result;
-                }
-                exports1.format = format1;
-                function localize(_key, message) {
-                    var args = [];
-                    for(var _i = 2; _i < arguments.length; _i++){
-                        args[_i - 2] = arguments[_i];
-                    }
-                    return format1(message, args);
-                }
-                exports1.localize = localize;
-                function loadMessageBundle(file) {
-                    return (0, ral_1.default)().loadMessageBundle(file);
-                }
-                exports1.loadMessageBundle = loadMessageBundle;
-                function config(opts) {
-                    return (0, ral_1.default)().config(opts);
-                }
-                exports1.config = config;
-            //# sourceMappingURL=common.js.map
-            /***/ },
-            /***/ 9889: /***/ (__unused_webpack_module, exports1)=>{
-                "use strict";
-                Object.defineProperty(exports1, "__esModule", {
-                    value: true
-                });
-                var _ral;
-                function RAL() {
-                    if (_ral === undefined) {
-                        throw new Error("No runtime abstraction layer installed");
-                    }
-                    return _ral;
-                }
-                (function(RAL) {
-                    function install(ral) {
-                        if (ral === undefined) {
-                            throw new Error("No runtime abstraction layer provided");
-                        }
-                        _ral = ral;
-                    }
-                    RAL.install = install;
-                })(RAL || (RAL = {}));
-                exports1["default"] = RAL;
-            //# sourceMappingURL=ral.js.map
-            /***/ },
-            /***/ 2094: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_674276__)=>{
-                "use strict";
-                var forEach = __nested_webpack_require_674276__(3243);
-                var availableTypedArrays = __nested_webpack_require_674276__(2191);
-                var callBound = __nested_webpack_require_674276__(2680);
-                var gOPD = __nested_webpack_require_674276__(326);
+                var forEach = __nested_webpack_require_695822__(3243);
+                var availableTypedArrays = __nested_webpack_require_695822__(2191);
+                var callBind = __nested_webpack_require_695822__(9429);
+                var callBound = __nested_webpack_require_695822__(2680);
+                var gOPD = __nested_webpack_require_695822__(326);
                 var $toString = callBound('Object.prototype.toString');
-                var hasToStringTag = __nested_webpack_require_674276__(7226)();
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_674276__.g : globalThis;
+                var hasToStringTag = __nested_webpack_require_695822__(7226)();
+                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_695822__.g : globalThis;
                 var typedArrays = availableTypedArrays();
                 var $slice = callBound('String.prototype.slice');
-                var toStrTags = {};
                 var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+                var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
+                    for(var i = 0; i < array.length; i += 1){
+                        if (array[i] === value) {
+                            return i;
+                        }
+                    }
+                    return -1;
+                };
+                var cache = {
+                    __proto__: null
+                };
                 if (hasToStringTag && gOPD && getPrototypeOf) {
                     forEach(typedArrays, function(typedArray) {
-                        if (typeof g[typedArray] === 'function') {
-                            var arr = new g[typedArray]();
-                            if (Symbol.toStringTag in arr) {
-                                var proto = getPrototypeOf(arr);
-                                var descriptor = gOPD(proto, Symbol.toStringTag);
-                                if (!descriptor) {
-                                    var superProto = getPrototypeOf(proto);
-                                    descriptor = gOPD(superProto, Symbol.toStringTag);
-                                }
-                                toStrTags[typedArray] = descriptor.get;
+                        var arr = new g[typedArray]();
+                        if (Symbol.toStringTag in arr) {
+                            var proto = getPrototypeOf(arr);
+                            var descriptor = gOPD(proto, Symbol.toStringTag);
+                            if (!descriptor) {
+                                var superProto = getPrototypeOf(proto);
+                                descriptor = gOPD(superProto, Symbol.toStringTag);
                             }
+                            cache['$' + typedArray] = callBind(descriptor.get);
                         }
+                    });
+                } else {
+                    forEach(typedArrays, function(typedArray) {
+                        var arr = new g[typedArray]();
+                        cache['$' + typedArray] = callBind(arr.slice);
                     });
                 }
                 var tryTypedArrays = function tryAllTypedArrays(value) {
-                    var foundName = false;
-                    forEach(toStrTags, function(getter, typedArray) {
-                        if (!foundName) {
+                    var found = false;
+                    forEach(cache, function(getter, typedArray) {
+                        if (!found) {
                             try {
-                                var name = getter.call(value);
-                                if (name === typedArray) {
-                                    foundName = name;
+                                if ('$' + getter(value) === typedArray) {
+                                    found = $slice(typedArray, 1);
                                 }
                             } catch (e) {}
                         }
                     });
-                    return foundName;
+                    return found;
                 };
-                var isTypedArray = __nested_webpack_require_674276__(198);
+                var trySlices = function tryAllSlices(value) {
+                    var found = false;
+                    forEach(cache, function(getter, name) {
+                        if (!found) {
+                            try {
+                                getter(value);
+                                found = $slice(name, 1);
+                            } catch (e) {}
+                        }
+                    });
+                    return found;
+                };
                 module1.exports = function whichTypedArray(value) {
-                    if (!isTypedArray(value)) {
+                    if (!value || typeof value !== 'object') {
                         return false;
                     }
-                    if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-                        return $slice($toString(value), 8, -1);
+                    if (!hasToStringTag) {
+                        var tag = $slice($toString(value), 8, -1);
+                        if ($indexOf(typedArrays, tag) > -1) {
+                            return tag;
+                        }
+                        if (tag !== 'Object') {
+                            return false;
+                        }
+                        // node < 0.6 hits here on real Typed Arrays
+                        return trySlices(value);
                     }
+                    if (!gOPD) {
+                        return null;
+                    } // unknown engine
                     return tryTypedArrays(value);
                 };
             /***/ },
-            /***/ 2191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_677111__)=>{
+            /***/ 2191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_700069__)=>{
                 "use strict";
                 var possibleNames = [
                     'BigInt64Array',
@@ -12486,7 +12892,7 @@
                     'Uint8Array',
                     'Uint8ClampedArray'
                 ];
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_677111__.g : globalThis;
+                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_700069__.g : globalThis;
                 module1.exports = function availableTypedArrays() {
                     var out = [];
                     for(var i = 0; i < possibleNames.length; i++){
@@ -12501,7 +12907,7 @@
         /************************************************************************/ /******/ // The module cache
         /******/ var __webpack_module_cache__ = {};
         /******/ /******/ // The require function
-        /******/ function __nested_webpack_require_678377__(moduleId) {
+        /******/ function __nested_webpack_require_701335__(moduleId) {
             /******/ // Check if module is in cache
             /******/ var cachedModule = __webpack_module_cache__[moduleId];
             /******/ if (cachedModule !== undefined) {
@@ -12514,15 +12920,15 @@
                 /******/ exports: {}
             };
             /******/ /******/ // Execute the module function
-            /******/ __webpack_modules__[moduleId].call(module1.exports, module1, module1.exports, __nested_webpack_require_678377__);
+            /******/ __webpack_modules__[moduleId].call(module1.exports, module1, module1.exports, __nested_webpack_require_701335__);
             /******/ /******/ // Return the exports of the module
             /******/ return module1.exports;
         /******/ }
         /******/ /************************************************************************/ /******/ /* webpack/runtime/define property getters */ /******/ (()=>{
             /******/ // define getter functions for harmony exports
-            /******/ __nested_webpack_require_678377__.d = (exports1, definition)=>{
+            /******/ __nested_webpack_require_701335__.d = (exports1, definition)=>{
                 /******/ for(var key in definition){
-                    /******/ if (__nested_webpack_require_678377__.o(definition, key) && !__nested_webpack_require_678377__.o(exports1, key)) {
+                    /******/ if (__nested_webpack_require_701335__.o(definition, key) && !__nested_webpack_require_701335__.o(exports1, key)) {
                         /******/ Object.defineProperty(exports1, key, {
                             enumerable: true,
                             get: definition[key]
@@ -12532,7 +12938,7 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/global */ /******/ (()=>{
-            /******/ __nested_webpack_require_678377__.g = function() {
+            /******/ __nested_webpack_require_701335__.g = function() {
                 /******/ if (typeof globalThis === 'object') return globalThis;
                 /******/ try {
                     /******/ return this || new Function('return this')();
@@ -12542,11 +12948,11 @@
             /******/ }();
         /******/ })();
         /******/ /******/ /* webpack/runtime/hasOwnProperty shorthand */ /******/ (()=>{
-            /******/ __nested_webpack_require_678377__.o = (obj, prop)=>Object.prototype.hasOwnProperty.call(obj, prop);
+            /******/ __nested_webpack_require_701335__.o = (obj, prop)=>Object.prototype.hasOwnProperty.call(obj, prop);
         /******/ })();
         /******/ /******/ /* webpack/runtime/make namespace object */ /******/ (()=>{
             /******/ // define __esModule on exports
-            /******/ __nested_webpack_require_678377__.r = (exports1)=>{
+            /******/ __nested_webpack_require_701335__.r = (exports1)=>{
                 /******/ if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                     /******/ Object.defineProperty(exports1, Symbol.toStringTag, {
                         value: 'Module'
@@ -12557,458 +12963,18 @@
                 });
             /******/ };
         /******/ })();
-        /******/ /************************************************************************/ var __webpack_exports__ = {};
+        /******/ /************************************************************************/ var __nested_webpack_exports__ = {};
         // This entry need to be wrapped in an IIFE because it need to be in strict mode.
         (()=>{
             "use strict";
             // ESM COMPAT FLAG
-            __nested_webpack_require_678377__.r(__webpack_exports__);
+            __nested_webpack_require_701335__.r(__nested_webpack_exports__);
             // EXPORTS
-            __nested_webpack_require_678377__.d(__webpack_exports__, {
-                "JsonService": ()=>/* binding */ JsonService
+            __nested_webpack_require_701335__.d(__nested_webpack_exports__, {
+                JsonService: ()=>/* binding */ JsonService
             });
-            ; // CONCATENATED MODULE: ./utils.ts
-            function mergeObjects(obj1, obj2) {
-                if (!obj1) return obj2;
-                if (!obj2) return obj1;
-                const mergedObjects = {
-                    ...obj2,
-                    ...obj1
-                }; // Give priority to obj1 values by spreading obj2 first, then obj1
-                for (const key of Object.keys(mergedObjects)){
-                    if (obj1[key] && obj2[key]) {
-                        if (Array.isArray(obj1[key])) {
-                            mergedObjects[key] = obj1[key].concat(obj2[key]);
-                        } else if (Array.isArray(obj2[key])) {
-                            mergedObjects[key] = obj2[key].concat(obj1[key]);
-                        } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                            mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-                        }
-                    }
-                }
-                return mergedObjects;
-            }
-            function utils_notEmpty(value) {
-                return value !== null && value !== undefined;
-            }
-            //taken with small changes from ace-code
-            function utils_mergeRanges(ranges) {
-                var list = ranges;
-                list = list.sort(function(a, b) {
-                    return comparePoints(a.start, b.start);
-                });
-                var next = list[0], range;
-                for(var i = 1; i < list.length; i++){
-                    range = next;
-                    next = list[i];
-                    var cmp = comparePoints(range.end, next.start);
-                    if (cmp < 0) continue;
-                    if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
-                    if (comparePoints(range.end, next.end) < 0) {
-                        range.end.row = next.end.row;
-                        range.end.column = next.end.column;
-                    }
-                    list.splice(i, 1);
-                    next = range;
-                    i--;
-                }
-                return list;
-            }
-            function comparePoints(p1, p2) {
-                return p1.row - p2.row || p1.column - p2.column;
-            }
-            function checkValueAgainstRegexpArray(value, regexpArray) {
-                if (!regexpArray) {
-                    return false;
-                }
-                for(let i = 0; i < regexpArray.length; i++){
-                    if (regexpArray[i].test(value)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            ; // CONCATENATED MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
-            /* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */ var __spreadArray =  false || function(to, from, pack) {
-                if (pack || arguments.length === 2) for(var i = 0, l = from.length, ar; i < l; i++){
-                    if (ar || !(i in from)) {
-                        if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-                        ar[i] = from[i];
-                    }
-                }
-                return to.concat(ar || Array.prototype.slice.call(from));
-            };
-            var FullTextDocument = /** @class */ function() {
-                function FullTextDocument(uri, languageId, version, content) {
-                    this._uri = uri;
-                    this._languageId = languageId;
-                    this._version = version;
-                    this._content = content;
-                    this._lineOffsets = undefined;
-                }
-                Object.defineProperty(FullTextDocument.prototype, "uri", {
-                    get: function() {
-                        return this._uri;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(FullTextDocument.prototype, "languageId", {
-                    get: function() {
-                        return this._languageId;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(FullTextDocument.prototype, "version", {
-                    get: function() {
-                        return this._version;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                FullTextDocument.prototype.getText = function(range) {
-                    if (range) {
-                        var start = this.offsetAt(range.start);
-                        var end = this.offsetAt(range.end);
-                        return this._content.substring(start, end);
-                    }
-                    return this._content;
-                };
-                FullTextDocument.prototype.update = function(changes, version) {
-                    for(var _i = 0, changes_1 = changes; _i < changes_1.length; _i++){
-                        var change = changes_1[_i];
-                        if (FullTextDocument.isIncremental(change)) {
-                            // makes sure start is before end
-                            var range = getWellformedRange(change.range);
-                            // update content
-                            var startOffset = this.offsetAt(range.start);
-                            var endOffset = this.offsetAt(range.end);
-                            this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
-                            // update the offsets
-                            var startLine = Math.max(range.start.line, 0);
-                            var endLine = Math.max(range.end.line, 0);
-                            var lineOffsets = this._lineOffsets;
-                            var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
-                            if (endLine - startLine === addedLineOffsets.length) {
-                                for(var i = 0, len = addedLineOffsets.length; i < len; i++){
-                                    lineOffsets[i + startLine + 1] = addedLineOffsets[i];
-                                }
-                            } else {
-                                if (addedLineOffsets.length < 10000) {
-                                    lineOffsets.splice.apply(lineOffsets, __spreadArray([
-                                        startLine + 1,
-                                        endLine - startLine
-                                    ], addedLineOffsets, false));
-                                } else {
-                                    this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
-                                }
-                            }
-                            var diff = change.text.length - (endOffset - startOffset);
-                            if (diff !== 0) {
-                                for(var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++){
-                                    lineOffsets[i] = lineOffsets[i] + diff;
-                                }
-                            }
-                        } else if (FullTextDocument.isFull(change)) {
-                            this._content = change.text;
-                            this._lineOffsets = undefined;
-                        } else {
-                            throw new Error('Unknown change event received');
-                        }
-                    }
-                    this._version = version;
-                };
-                FullTextDocument.prototype.getLineOffsets = function() {
-                    if (this._lineOffsets === undefined) {
-                        this._lineOffsets = computeLineOffsets(this._content, true);
-                    }
-                    return this._lineOffsets;
-                };
-                FullTextDocument.prototype.positionAt = function(offset) {
-                    offset = Math.max(Math.min(offset, this._content.length), 0);
-                    var lineOffsets = this.getLineOffsets();
-                    var low = 0, high = lineOffsets.length;
-                    if (high === 0) {
-                        return {
-                            line: 0,
-                            character: offset
-                        };
-                    }
-                    while(low < high){
-                        var mid = Math.floor((low + high) / 2);
-                        if (lineOffsets[mid] > offset) {
-                            high = mid;
-                        } else {
-                            low = mid + 1;
-                        }
-                    }
-                    // low is the least x for which the line offset is larger than the current offset
-                    // or array.length if no line offset is larger than the current offset
-                    var line = low - 1;
-                    return {
-                        line: line,
-                        character: offset - lineOffsets[line]
-                    };
-                };
-                FullTextDocument.prototype.offsetAt = function(position) {
-                    var lineOffsets = this.getLineOffsets();
-                    if (position.line >= lineOffsets.length) {
-                        return this._content.length;
-                    } else if (position.line < 0) {
-                        return 0;
-                    }
-                    var lineOffset = lineOffsets[position.line];
-                    var nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
-                    return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-                };
-                Object.defineProperty(FullTextDocument.prototype, "lineCount", {
-                    get: function() {
-                        return this.getLineOffsets().length;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                FullTextDocument.isIncremental = function(event) {
-                    var candidate = event;
-                    return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range !== undefined && (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
-                };
-                FullTextDocument.isFull = function(event) {
-                    var candidate = event;
-                    return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
-                };
-                return FullTextDocument;
-            }();
-            var TextDocument;
-            (function(TextDocument) {
-                /**
-     * Creates a new text document.
-     *
-     * @param uri The document's uri.
-     * @param languageId  The document's language Id.
-     * @param version The document's initial version number.
-     * @param content The document's content.
-     */ function create(uri, languageId, version, content) {
-                    return new FullTextDocument(uri, languageId, version, content);
-                }
-                TextDocument.create = create;
-                /**
-     * Updates a TextDocument by modifying its content.
-     *
-     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
-     * @param changes the changes to apply to the document.
-     * @param version the changes version for the document.
-     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
-     *
-     */ function update(document1, changes, version) {
-                    if (document1 instanceof FullTextDocument) {
-                        document1.update(changes, version);
-                        return document1;
-                    } else {
-                        throw new Error('TextDocument.update: document must be created by TextDocument.create');
-                    }
-                }
-                TextDocument.update = update;
-                function applyEdits(document1, edits) {
-                    var text = document1.getText();
-                    var sortedEdits = mergeSort(edits.map(getWellformedEdit), function(a, b) {
-                        var diff = a.range.start.line - b.range.start.line;
-                        if (diff === 0) {
-                            return a.range.start.character - b.range.start.character;
-                        }
-                        return diff;
-                    });
-                    var lastModifiedOffset = 0;
-                    var spans = [];
-                    for(var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++){
-                        var e = sortedEdits_1[_i];
-                        var startOffset = document1.offsetAt(e.range.start);
-                        if (startOffset < lastModifiedOffset) {
-                            throw new Error('Overlapping edit');
-                        } else if (startOffset > lastModifiedOffset) {
-                            spans.push(text.substring(lastModifiedOffset, startOffset));
-                        }
-                        if (e.newText.length) {
-                            spans.push(e.newText);
-                        }
-                        lastModifiedOffset = document1.offsetAt(e.range.end);
-                    }
-                    spans.push(text.substr(lastModifiedOffset));
-                    return spans.join('');
-                }
-                TextDocument.applyEdits = applyEdits;
-            })(TextDocument || (TextDocument = {}));
-            function mergeSort(data, compare) {
-                if (data.length <= 1) {
-                    // sorted
-                    return data;
-                }
-                var p = data.length / 2 | 0;
-                var left = data.slice(0, p);
-                var right = data.slice(p);
-                mergeSort(left, compare);
-                mergeSort(right, compare);
-                var leftIdx = 0;
-                var rightIdx = 0;
-                var i = 0;
-                while(leftIdx < left.length && rightIdx < right.length){
-                    var ret = compare(left[leftIdx], right[rightIdx]);
-                    if (ret <= 0) {
-                        // smaller_equal -> take left to preserve order
-                        data[i++] = left[leftIdx++];
-                    } else {
-                        // greater -> take right
-                        data[i++] = right[rightIdx++];
-                    }
-                }
-                while(leftIdx < left.length){
-                    data[i++] = left[leftIdx++];
-                }
-                while(rightIdx < right.length){
-                    data[i++] = right[rightIdx++];
-                }
-                return data;
-            }
-            function computeLineOffsets(text, isAtLineStart, textOffset) {
-                if (textOffset === void 0) {
-                    textOffset = 0;
-                }
-                var result = isAtLineStart ? [
-                    textOffset
-                ] : [];
-                for(var i = 0; i < text.length; i++){
-                    var ch = text.charCodeAt(i);
-                    if (ch === 13 /* CharCode.CarriageReturn */  || ch === 10 /* CharCode.LineFeed */ ) {
-                        if (ch === 13 /* CharCode.CarriageReturn */  && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */ ) {
-                            i++;
-                        }
-                        result.push(textOffset + i + 1);
-                    }
-                }
-                return result;
-            }
-            function getWellformedRange(range) {
-                var start = range.start;
-                var end = range.end;
-                if (start.line > end.line || start.line === end.line && start.character > end.character) {
-                    return {
-                        start: end,
-                        end: start
-                    };
-                }
-                return range;
-            }
-            function getWellformedEdit(textEdit) {
-                var range = getWellformedRange(textEdit.range);
-                if (range !== textEdit.range) {
-                    return {
-                        newText: textEdit.newText,
-                        range: range
-                    };
-                }
-                return textEdit;
-            }
-            ; // CONCATENATED MODULE: ./services/base-service.ts
-            function _define_property(obj, key, value) {
-                if (key in obj) {
-                    Object.defineProperty(obj, key, {
-                        value: value,
-                        enumerable: true,
-                        configurable: true,
-                        writable: true
-                    });
-                } else {
-                    obj[key] = value;
-                }
-                return obj;
-            }
-            class BaseService {
-                addDocument(document1) {
-                    this.documents[document1.uri] = TextDocument.create(document1.uri, document1.languageId, document1.version, document1.text);
-                //TODO:
-                /*if (options)
-            this.setSessionOptions(sessionID, options);*/ }
-                getDocument(uri) {
-                    return this.documents[uri];
-                }
-                removeDocument(document1) {
-                    delete this.documents[document1.uri];
-                    if (this.options[document1.uri]) {
-                        delete this.options[document1.uri];
-                    }
-                }
-                getDocumentValue(uri) {
-                    var _this_getDocument;
-                    return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
-                }
-                setValue(identifier, value) {
-                    let document1 = this.getDocument(identifier.uri);
-                    if (document1) {
-                        document1 = TextDocument.create(document1.uri, document1.languageId, document1.version, value);
-                        this.documents[document1.uri] = document1;
-                    }
-                }
-                setGlobalOptions(options) {
-                    this.globalOptions = options !== null && options !== void 0 ? options : {};
-                }
-                setOptions(sessionID, options, merge = false) {
-                    this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
-                }
-                getOption(sessionID, optionName) {
-                    if (this.options[sessionID] && this.options[sessionID][optionName]) {
-                        return this.options[sessionID][optionName];
-                    } else {
-                        return this.globalOptions[optionName];
-                    }
-                }
-                applyDeltas(identifier, deltas) {
-                    let document1 = this.getDocument(identifier.uri);
-                    if (document1) TextDocument.update(document1, deltas, identifier.version);
-                }
-                async doComplete(document1, position) {
-                    return null;
-                }
-                async doHover(document1, position) {
-                    return null;
-                }
-                async doResolve(item) {
-                    return null;
-                }
-                async doValidation(document1) {
-                    return [];
-                }
-                format(document1, range, options) {
-                    return [];
-                }
-                async provideSignatureHelp(document1, position) {
-                    return null;
-                }
-                async findDocumentHighlights(document1, position) {
-                    return [];
-                }
-                get optionsToFilterDiagnostics() {
-                    var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
-                    return {
-                        errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
-                        errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
-                        errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
-                        errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
-                        errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
-                        errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
-                    };
-                }
-                constructor(mode){
-                    _define_property(this, "mode", void 0);
-                    _define_property(this, "documents", {});
-                    _define_property(this, "options", {});
-                    _define_property(this, "globalOptions", {});
-                    _define_property(this, "serviceData", void 0);
-                    this.mode = mode;
-                }
-            }
+            // EXTERNAL MODULE: ./src/services/base-service.ts
+            var base_service = __nested_webpack_require_701335__(4487);
             ; // CONCATENATED MODULE: ../../node_modules/jsonc-parser/lib/esm/impl/scanner.js
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14785,7 +14751,7 @@
                 if (Array.isArray(one) !== Array.isArray(other)) {
                     return false;
                 }
-                var i, key;
+                let i, key;
                 if (Array.isArray(one)) {
                     if (one.length !== other.length) {
                         return false;
@@ -14796,12 +14762,12 @@
                         }
                     }
                 } else {
-                    var oneKeys = [];
+                    const oneKeys = [];
                     for(key in one){
                         oneKeys.push(key);
                     }
                     oneKeys.sort();
-                    var otherKeys = [];
+                    const otherKeys = [];
                     for(key in other){
                         otherKeys.push(key);
                     }
@@ -14829,6 +14795,9 @@
             function isString(val) {
                 return typeof val === 'string';
             }
+            function isObject(val) {
+                return typeof val === 'object' && val !== null && !Array.isArray(val);
+            }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/utils/strings.js
             /*---------------------------------------------------------------------------------------------
 *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14837,7 +14806,7 @@
                 if (haystack.length < needle.length) {
                     return false;
                 }
-                for(var i = 0; i < needle.length; i++){
+                for(let i = 0; i < needle.length; i++){
                     if (haystack[i] !== needle[i]) {
                         return false;
                     }
@@ -14847,7 +14816,7 @@
             /**
  * Determines if haystack ends with needle.
  */ function endsWith(haystack, needle) {
-                var diff = haystack.length - needle.length;
+                const diff = haystack.length - needle.length;
                 if (diff > 0) {
                     return haystack.lastIndexOf(needle) === diff;
                 } else if (diff === 0) {
@@ -14860,7 +14829,7 @@
                 return pattern.replace(/[\-\\\{\}\+\?\|\^\$\.\,\[\]\(\)\#\s]/g, '\\$&').replace(/[\*]/g, '.*');
             }
             function strings_repeat(value, count) {
-                var s = '';
+                let s = '';
                 while(count > 0){
                     if ((count & 1) === 1) {
                         s += value;
@@ -14871,7 +14840,7 @@
                 return s;
             }
             function extendedRegExp(pattern) {
-                var flags = '';
+                let flags = '';
                 if (startsWith(pattern, '(?i)')) {
                     pattern = pattern.substring(4);
                     flags = 'i';
@@ -14888,8 +14857,25 @@
                     }
                 }
             }
+            // from https://tanishiking.github.io/posts/count-unicode-codepoint/#work-hard-with-for-statements
+            function stringLength(str) {
+                let count = 0;
+                for(let i = 0; i < str.length; i++){
+                    count++;
+                    // obtain the i-th 16-bit
+                    const code = str.charCodeAt(i);
+                    if (0xD800 <= code && code <= 0xDBFF) {
+                        // if the i-th 16bit is an upper surrogate
+                        // skip the next 16 bits (lower surrogate)
+                        i++;
+                    }
+                }
+                return count;
+            }
             // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-types/lib/esm/main.js
-            var main = __nested_webpack_require_678377__(4767);
+            var main = __nested_webpack_require_701335__(4767);
+            // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+            var esm_main = __nested_webpack_require_701335__(4881);
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/jsonLanguageTypes.js
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14917,7 +14903,17 @@
                 ErrorCode[ErrorCode["DuplicateKey"] = 520] = "DuplicateKey";
                 ErrorCode[ErrorCode["CommentNotPermitted"] = 521] = "CommentNotPermitted";
                 ErrorCode[ErrorCode["SchemaResolveError"] = 768] = "SchemaResolveError";
+                ErrorCode[ErrorCode["SchemaUnsupportedFeature"] = 769] = "SchemaUnsupportedFeature";
             })(ErrorCode || (ErrorCode = {}));
+            var SchemaDraft;
+            (function(SchemaDraft) {
+                SchemaDraft[SchemaDraft["v3"] = 3] = "v3";
+                SchemaDraft[SchemaDraft["v4"] = 4] = "v4";
+                SchemaDraft[SchemaDraft["v6"] = 6] = "v6";
+                SchemaDraft[SchemaDraft["v7"] = 7] = "v7";
+                SchemaDraft[SchemaDraft["v2019_09"] = 19] = "v2019_09";
+                SchemaDraft[SchemaDraft["v2020_12"] = 20] = "v2020_12";
+            })(SchemaDraft || (SchemaDraft = {}));
             var ClientCapabilities;
             (function(ClientCapabilities) {
                 ClientCapabilities.LATEST = {
@@ -14928,192 +14924,221 @@
                                     main.MarkupKind.Markdown,
                                     main.MarkupKind.PlainText
                                 ],
-                                commitCharactersSupport: true
+                                commitCharactersSupport: true,
+                                labelDetailsSupport: true
                             }
                         }
                     }
                 };
             })(ClientCapabilities || (ClientCapabilities = {}));
-            // EXTERNAL MODULE: ../../node_modules/vscode-nls/lib/browser/main.js
-            var browser_main = __nested_webpack_require_678377__(7045);
+            ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/node_modules/@vscode/l10n/dist/browser.js
+            // src/browser/reader.ts
+            async function readFileFromUri(uri) {
+                if (uri.protocol === "http:" || uri.protocol === "https:") {
+                    const res = await fetch(uri);
+                    return await res.text();
+                }
+                throw new Error("Unsupported protocol");
+            }
+            function readFileFromFsPath(_) {
+                throw new Error("Unsupported in browser");
+            }
+            // src/main.ts
+            var bundle;
+            function config(config2) {
+                if ("contents" in config2) {
+                    if (typeof config2.contents === "string") {
+                        bundle = JSON.parse(config2.contents);
+                    } else {
+                        bundle = config2.contents;
+                    }
+                    return;
+                }
+                if ("fsPath" in config2) {
+                    const fileContent = readFileFromFsPath(config2.fsPath);
+                    const content = JSON.parse(fileContent);
+                    bundle = isBuiltinExtension(content) ? content.contents.bundle : content;
+                    return;
+                }
+                if (config2.uri) {
+                    let uri = config2.uri;
+                    if (typeof config2.uri === "string") {
+                        uri = new URL(config2.uri);
+                    }
+                    return new Promise((resolve, reject)=>{
+                        const p = readFileFromUri(uri).then((uriContent)=>{
+                            try {
+                                const content = JSON.parse(uriContent);
+                                bundle = isBuiltinExtension(content) ? content.contents.bundle : content;
+                            } catch (err) {
+                                reject(err);
+                            }
+                        }).catch((err)=>{
+                            reject(err);
+                        });
+                        resolve(p);
+                    });
+                }
+            }
+            function t(...args) {
+                const firstArg = args[0];
+                let key;
+                let message;
+                let formatArgs;
+                if (typeof firstArg === "string") {
+                    key = firstArg;
+                    message = firstArg;
+                    args.splice(0, 1);
+                    formatArgs = !args || typeof args[0] !== "object" ? args : args[0];
+                } else {
+                    message = firstArg.message;
+                    key = message;
+                    if (firstArg.comment && firstArg.comment.length > 0) {
+                        key += `/${Array.isArray(firstArg.comment) ? firstArg.comment.join("") : firstArg.comment}`;
+                    }
+                    var _firstArg_args;
+                    formatArgs = (_firstArg_args = firstArg.args) !== null && _firstArg_args !== void 0 ? _firstArg_args : {};
+                }
+                if (!bundle) {
+                    return browser_format(message, formatArgs);
+                }
+                const messageFromBundle = bundle[key];
+                if (!messageFromBundle) {
+                    return browser_format(message, formatArgs);
+                }
+                if (typeof messageFromBundle === "string") {
+                    return browser_format(messageFromBundle, formatArgs);
+                }
+                if (messageFromBundle.comment) {
+                    return browser_format(messageFromBundle.message, formatArgs);
+                }
+                return browser_format(message, formatArgs);
+            }
+            var _format2Regexp = /{([^}]+)}/g;
+            function browser_format(template, values) {
+                var _values_group;
+                return template.replace(_format2Regexp, (match, group)=>(_values_group = values[group]) !== null && _values_group !== void 0 ? _values_group : match);
+            }
+            function isBuiltinExtension(json) {
+                var _json_contents, _json, _json1;
+                return !!(typeof ((_json = json) === null || _json === void 0 ? void 0 : (_json_contents = _json.contents) === null || _json_contents === void 0 ? void 0 : _json_contents.bundle) === "object" && typeof ((_json1 = json) === null || _json1 === void 0 ? void 0 : _json1.version) === "string");
+            }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/parser/jsonParser.js
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var __extends =  false || function() {
-                var extendStatics = function(d, b) {
-                    extendStatics = Object.setPrototypeOf || ({
-                        __proto__: []
-                    }) instanceof Array && function(d, b) {
-                        d.__proto__ = b;
-                    } || function(d, b) {
-                        for(var p in b)if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-                    };
-                    return extendStatics(d, b);
-                };
-                return function(d, b) {
-                    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-                    extendStatics(d, b);
-                    function __() {
-                        this.constructor = d;
-                    }
-                    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-                };
-            }();
-            var localize = browser_main.loadMessageBundle();
-            var formats = {
+ *--------------------------------------------------------------------------------------------*/ const formats = {
                 'color-hex': {
-                    errorMessage: localize('colorHexFormatWarning', 'Invalid color format. Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA.'),
+                    errorMessage: t('Invalid color format. Use #RGB, #RGBA, #RRGGBB or #RRGGBBAA.'),
                     pattern: /^#([0-9A-Fa-f]{3,4}|([0-9A-Fa-f]{2}){3,4})$/
                 },
                 'date-time': {
-                    errorMessage: localize('dateTimeFormatWarning', 'String is not a RFC3339 date-time.'),
+                    errorMessage: t('String is not a RFC3339 date-time.'),
                     pattern: /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))$/i
                 },
                 'date': {
-                    errorMessage: localize('dateFormatWarning', 'String is not a RFC3339 date.'),
+                    errorMessage: t('String is not a RFC3339 date.'),
                     pattern: /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/i
                 },
                 'time': {
-                    errorMessage: localize('timeFormatWarning', 'String is not a RFC3339 time.'),
+                    errorMessage: t('String is not a RFC3339 time.'),
                     pattern: /^([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)([01][0-9]|2[0-3]):([0-5][0-9]))$/i
                 },
                 'email': {
-                    errorMessage: localize('emailFormatWarning', 'String is not an e-mail address.'),
+                    errorMessage: t('String is not an e-mail address.'),
                     pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}))$/
                 },
                 'hostname': {
-                    errorMessage: localize('hostnameFormatWarning', 'String is not a hostname.'),
+                    errorMessage: t('String is not a hostname.'),
                     pattern: /^(?=.{1,253}\.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*\.?$/i
                 },
                 'ipv4': {
-                    errorMessage: localize('ipv4FormatWarning', 'String is not an IPv4 address.'),
+                    errorMessage: t('String is not an IPv4 address.'),
                     pattern: /^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/
                 },
                 'ipv6': {
-                    errorMessage: localize('ipv6FormatWarning', 'String is not an IPv6 address.'),
+                    errorMessage: t('String is not an IPv6 address.'),
                     pattern: /^((([0-9a-f]{1,4}:){7}([0-9a-f]{1,4}|:))|(([0-9a-f]{1,4}:){6}(:[0-9a-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9a-f]{1,4}:){5}(((:[0-9a-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9a-f]{1,4}:){4}(((:[0-9a-f]{1,4}){1,3})|((:[0-9a-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){3}(((:[0-9a-f]{1,4}){1,4})|((:[0-9a-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){2}(((:[0-9a-f]{1,4}){1,5})|((:[0-9a-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9a-f]{1,4}:){1}(((:[0-9a-f]{1,4}){1,6})|((:[0-9a-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9a-f]{1,4}){1,7})|((:[0-9a-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))$/i
                 }
             };
-            var ASTNodeImpl = /** @class */ function() {
-                function ASTNodeImpl(parent, offset, length) {
-                    if (length === void 0) {
-                        length = 0;
-                    }
+            class ASTNodeImpl {
+                get children() {
+                    return [];
+                }
+                toString() {
+                    return 'type: ' + this.type + ' (' + this.offset + '/' + this.length + ')' + (this.parent ? ' parent: {' + this.parent.toString() + '}' : '');
+                }
+                constructor(parent, offset, length = 0){
                     this.offset = offset;
                     this.length = length;
                     this.parent = parent;
                 }
-                Object.defineProperty(ASTNodeImpl.prototype, "children", {
-                    get: function() {
-                        return [];
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                ASTNodeImpl.prototype.toString = function() {
-                    return 'type: ' + this.type + ' (' + this.offset + '/' + this.length + ')' + (this.parent ? ' parent: {' + this.parent.toString() + '}' : '');
-                };
-                return ASTNodeImpl;
-            }();
-            var NullASTNodeImpl = /** @class */ function(_super) {
-                __extends(NullASTNodeImpl, _super);
-                function NullASTNodeImpl(parent, offset) {
-                    var _this = _super.call(this, parent, offset) || this;
-                    _this.type = 'null';
-                    _this.value = null;
-                    return _this;
+            }
+            class NullASTNodeImpl extends ASTNodeImpl {
+                constructor(parent, offset){
+                    super(parent, offset);
+                    this.type = 'null';
+                    this.value = null;
                 }
-                return NullASTNodeImpl;
-            }(ASTNodeImpl);
-            var BooleanASTNodeImpl = /** @class */ function(_super) {
-                __extends(BooleanASTNodeImpl, _super);
-                function BooleanASTNodeImpl(parent, boolValue, offset) {
-                    var _this = _super.call(this, parent, offset) || this;
-                    _this.type = 'boolean';
-                    _this.value = boolValue;
-                    return _this;
+            }
+            class BooleanASTNodeImpl extends ASTNodeImpl {
+                constructor(parent, boolValue, offset){
+                    super(parent, offset);
+                    this.type = 'boolean';
+                    this.value = boolValue;
                 }
-                return BooleanASTNodeImpl;
-            }(ASTNodeImpl);
-            var ArrayASTNodeImpl = /** @class */ function(_super) {
-                __extends(ArrayASTNodeImpl, _super);
-                function ArrayASTNodeImpl(parent, offset) {
-                    var _this = _super.call(this, parent, offset) || this;
-                    _this.type = 'array';
-                    _this.items = [];
-                    return _this;
+            }
+            class ArrayASTNodeImpl extends ASTNodeImpl {
+                get children() {
+                    return this.items;
                 }
-                Object.defineProperty(ArrayASTNodeImpl.prototype, "children", {
-                    get: function() {
-                        return this.items;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return ArrayASTNodeImpl;
-            }(ASTNodeImpl);
-            var NumberASTNodeImpl = /** @class */ function(_super) {
-                __extends(NumberASTNodeImpl, _super);
-                function NumberASTNodeImpl(parent, offset) {
-                    var _this = _super.call(this, parent, offset) || this;
-                    _this.type = 'number';
-                    _this.isInteger = true;
-                    _this.value = Number.NaN;
-                    return _this;
+                constructor(parent, offset){
+                    super(parent, offset);
+                    this.type = 'array';
+                    this.items = [];
                 }
-                return NumberASTNodeImpl;
-            }(ASTNodeImpl);
-            var StringASTNodeImpl = /** @class */ function(_super) {
-                __extends(StringASTNodeImpl, _super);
-                function StringASTNodeImpl(parent, offset, length) {
-                    var _this = _super.call(this, parent, offset, length) || this;
-                    _this.type = 'string';
-                    _this.value = '';
-                    return _this;
+            }
+            class NumberASTNodeImpl extends ASTNodeImpl {
+                constructor(parent, offset){
+                    super(parent, offset);
+                    this.type = 'number';
+                    this.isInteger = true;
+                    this.value = Number.NaN;
                 }
-                return StringASTNodeImpl;
-            }(ASTNodeImpl);
-            var PropertyASTNodeImpl = /** @class */ function(_super) {
-                __extends(PropertyASTNodeImpl, _super);
-                function PropertyASTNodeImpl(parent, offset, keyNode) {
-                    var _this = _super.call(this, parent, offset) || this;
-                    _this.type = 'property';
-                    _this.colonOffset = -1;
-                    _this.keyNode = keyNode;
-                    return _this;
+            }
+            class StringASTNodeImpl extends ASTNodeImpl {
+                constructor(parent, offset, length){
+                    super(parent, offset, length);
+                    this.type = 'string';
+                    this.value = '';
                 }
-                Object.defineProperty(PropertyASTNodeImpl.prototype, "children", {
-                    get: function() {
-                        return this.valueNode ? [
-                            this.keyNode,
-                            this.valueNode
-                        ] : [
-                            this.keyNode
-                        ];
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return PropertyASTNodeImpl;
-            }(ASTNodeImpl);
-            var ObjectASTNodeImpl = /** @class */ function(_super) {
-                __extends(ObjectASTNodeImpl, _super);
-                function ObjectASTNodeImpl(parent, offset) {
-                    var _this = _super.call(this, parent, offset) || this;
-                    _this.type = 'object';
-                    _this.properties = [];
-                    return _this;
+            }
+            class PropertyASTNodeImpl extends ASTNodeImpl {
+                get children() {
+                    return this.valueNode ? [
+                        this.keyNode,
+                        this.valueNode
+                    ] : [
+                        this.keyNode
+                    ];
                 }
-                Object.defineProperty(ObjectASTNodeImpl.prototype, "children", {
-                    get: function() {
-                        return this.properties;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                return ObjectASTNodeImpl;
-            }(ASTNodeImpl);
+                constructor(parent, offset, keyNode){
+                    super(parent, offset);
+                    this.type = 'property';
+                    this.colonOffset = -1;
+                    this.keyNode = keyNode;
+                }
+            }
+            class ObjectASTNodeImpl extends ASTNodeImpl {
+                get children() {
+                    return this.properties;
+                }
+                constructor(parent, offset){
+                    super(parent, offset);
+                    this.type = 'object';
+                    this.properties = [];
+                }
+            }
             function asSchema(schema) {
                 if (isBoolean(schema)) {
                     return schema ? {} : {
@@ -15127,85 +15152,75 @@
                 EnumMatch[EnumMatch["Key"] = 0] = "Key";
                 EnumMatch[EnumMatch["Enum"] = 1] = "Enum";
             })(EnumMatch || (EnumMatch = {}));
-            var SchemaCollector = /** @class */ function() {
-                function SchemaCollector(focusOffset, exclude) {
-                    if (focusOffset === void 0) {
-                        focusOffset = -1;
-                    }
+            const schemaDraftFromId = {
+                'http://json-schema.org/draft-03/schema#': SchemaDraft.v3,
+                'http://json-schema.org/draft-04/schema#': SchemaDraft.v4,
+                'http://json-schema.org/draft-06/schema#': SchemaDraft.v6,
+                'http://json-schema.org/draft-07/schema#': SchemaDraft.v7,
+                'https://json-schema.org/draft/2019-09/schema': SchemaDraft.v2019_09,
+                'https://json-schema.org/draft/2020-12/schema': SchemaDraft.v2020_12
+            };
+            class EvaluationContext {
+                constructor(schemaDraft){
+                    this.schemaDraft = schemaDraft;
+                }
+            }
+            class SchemaCollector {
+                add(schema) {
+                    this.schemas.push(schema);
+                }
+                merge(other) {
+                    Array.prototype.push.apply(this.schemas, other.schemas);
+                }
+                include(node) {
+                    return (this.focusOffset === -1 || jsonParser_contains(node, this.focusOffset)) && node !== this.exclude;
+                }
+                newSub() {
+                    return new SchemaCollector(-1, this.exclude);
+                }
+                constructor(focusOffset = -1, exclude){
                     this.focusOffset = focusOffset;
                     this.exclude = exclude;
                     this.schemas = [];
                 }
-                SchemaCollector.prototype.add = function(schema) {
-                    this.schemas.push(schema);
-                };
-                SchemaCollector.prototype.merge = function(other) {
-                    Array.prototype.push.apply(this.schemas, other.schemas);
-                };
-                SchemaCollector.prototype.include = function(node) {
-                    return (this.focusOffset === -1 || jsonParser_contains(node, this.focusOffset)) && node !== this.exclude;
-                };
-                SchemaCollector.prototype.newSub = function() {
-                    return new SchemaCollector(-1, this.exclude);
-                };
-                return SchemaCollector;
-            }();
-            var NoOpSchemaCollector = /** @class */ function() {
-                function NoOpSchemaCollector() {}
-                Object.defineProperty(NoOpSchemaCollector.prototype, "schemas", {
-                    get: function() {
-                        return [];
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                NoOpSchemaCollector.prototype.add = function(schema) {};
-                NoOpSchemaCollector.prototype.merge = function(other) {};
-                NoOpSchemaCollector.prototype.include = function(node) {
-                    return true;
-                };
-                NoOpSchemaCollector.prototype.newSub = function() {
-                    return this;
-                };
-                NoOpSchemaCollector.instance = new NoOpSchemaCollector();
-                return NoOpSchemaCollector;
-            }();
-            var ValidationResult = /** @class */ function() {
-                function ValidationResult() {
-                    this.problems = [];
-                    this.propertiesMatches = 0;
-                    this.propertiesValueMatches = 0;
-                    this.primaryValueMatches = 0;
-                    this.enumValueMatch = false;
-                    this.enumValues = undefined;
+            }
+            class NoOpSchemaCollector {
+                get schemas() {
+                    return [];
                 }
-                ValidationResult.prototype.hasProblems = function() {
+                add(_schema) {}
+                merge(_other) {}
+                include(_node) {
+                    return true;
+                }
+                newSub() {
+                    return this;
+                }
+                constructor(){}
+            }
+            NoOpSchemaCollector.instance = new NoOpSchemaCollector();
+            class ValidationResult {
+                hasProblems() {
                     return !!this.problems.length;
-                };
-                ValidationResult.prototype.mergeAll = function(validationResults) {
-                    for(var _i = 0, validationResults_1 = validationResults; _i < validationResults_1.length; _i++){
-                        var validationResult = validationResults_1[_i];
-                        this.merge(validationResult);
-                    }
-                };
-                ValidationResult.prototype.merge = function(validationResult) {
+                }
+                merge(validationResult) {
                     this.problems = this.problems.concat(validationResult.problems);
-                };
-                ValidationResult.prototype.mergeEnumValues = function(validationResult) {
+                    this.propertiesMatches += validationResult.propertiesMatches;
+                    this.propertiesValueMatches += validationResult.propertiesValueMatches;
+                    this.mergeProcessedProperties(validationResult);
+                }
+                mergeEnumValues(validationResult) {
                     if (!this.enumValueMatch && !validationResult.enumValueMatch && this.enumValues && validationResult.enumValues) {
                         this.enumValues = this.enumValues.concat(validationResult.enumValues);
-                        for(var _i = 0, _a = this.problems; _i < _a.length; _i++){
-                            var error = _a[_i];
+                        for (const error of this.problems){
                             if (error.code === ErrorCode.EnumValueMismatch) {
-                                error.message = localize('enumWarning', 'Value is not accepted. Valid values: {0}.', this.enumValues.map(function(v) {
-                                    return JSON.stringify(v);
-                                }).join(', '));
+                                error.message = t('Value is not accepted. Valid values: {0}.', this.enumValues.map((v)=>JSON.stringify(v)).join(', '));
                             }
                         }
                     }
-                };
-                ValidationResult.prototype.mergePropertyMatch = function(propertyValidationResult) {
-                    this.merge(propertyValidationResult);
+                }
+                mergePropertyMatch(propertyValidationResult) {
+                    this.problems = this.problems.concat(propertyValidationResult.problems);
                     this.propertiesMatches++;
                     if (propertyValidationResult.enumValueMatch || !propertyValidationResult.hasProblems() && propertyValidationResult.propertiesMatches) {
                         this.propertiesValueMatches++;
@@ -15213,9 +15228,12 @@
                     if (propertyValidationResult.enumValueMatch && propertyValidationResult.enumValues && propertyValidationResult.enumValues.length === 1) {
                         this.primaryValueMatches++;
                     }
-                };
-                ValidationResult.prototype.compare = function(other) {
-                    var hasProblems = this.hasProblems();
+                }
+                mergeProcessedProperties(validationResult) {
+                    validationResult.processedProperties.forEach((p)=>this.processedProperties.add(p));
+                }
+                compare(other) {
+                    const hasProblems = this.hasProblems();
                     if (hasProblems !== other.hasProblems()) {
                         return hasProblems ? -1 : 1;
                     }
@@ -15229,13 +15247,18 @@
                         return this.propertiesValueMatches - other.propertiesValueMatches;
                     }
                     return this.propertiesMatches - other.propertiesMatches;
-                };
-                return ValidationResult;
-            }();
-            function newJSONDocument(root, diagnostics) {
-                if (diagnostics === void 0) {
-                    diagnostics = [];
                 }
+                constructor(){
+                    this.problems = [];
+                    this.propertiesMatches = 0;
+                    this.processedProperties = new Set();
+                    this.propertiesValueMatches = 0;
+                    this.primaryValueMatches = 0;
+                    this.enumValueMatch = false;
+                    this.enumValues = undefined;
+                }
+            }
+            function newJSONDocument(root, diagnostics = []) {
                 return new JSONDocument(root, diagnostics, []);
             }
             function jsonParser_getNodeValue(node) {
@@ -15244,97 +15267,90 @@
             function jsonParser_getNodePath(node) {
                 return main_getNodePath(node);
             }
-            function jsonParser_contains(node, offset, includeRightBound) {
-                if (includeRightBound === void 0) {
-                    includeRightBound = false;
-                }
+            function jsonParser_contains(node, offset, includeRightBound = false) {
                 return offset >= node.offset && offset < node.offset + node.length || includeRightBound && offset === node.offset + node.length;
             }
-            var JSONDocument = /** @class */ function() {
-                function JSONDocument(root, syntaxErrors, comments) {
-                    if (syntaxErrors === void 0) {
-                        syntaxErrors = [];
-                    }
-                    if (comments === void 0) {
-                        comments = [];
-                    }
-                    this.root = root;
-                    this.syntaxErrors = syntaxErrors;
-                    this.comments = comments;
-                }
-                JSONDocument.prototype.getNodeFromOffset = function(offset, includeRightBound) {
-                    if (includeRightBound === void 0) {
-                        includeRightBound = false;
-                    }
+            class JSONDocument {
+                getNodeFromOffset(offset, includeRightBound = false) {
                     if (this.root) {
                         return main_findNodeAtOffset(this.root, offset, includeRightBound);
                     }
                     return undefined;
-                };
-                JSONDocument.prototype.visit = function(visitor) {
+                }
+                visit(visitor) {
                     if (this.root) {
-                        var doVisit_1 = function(node) {
-                            var ctn = visitor(node);
-                            var children = node.children;
+                        const doVisit = (node)=>{
+                            let ctn = visitor(node);
+                            const children = node.children;
                             if (Array.isArray(children)) {
-                                for(var i = 0; i < children.length && ctn; i++){
-                                    ctn = doVisit_1(children[i]);
+                                for(let i = 0; i < children.length && ctn; i++){
+                                    ctn = doVisit(children[i]);
                                 }
                             }
                             return ctn;
                         };
-                        doVisit_1(this.root);
+                        doVisit(this.root);
                     }
-                };
-                JSONDocument.prototype.validate = function(textDocument, schema, severity) {
-                    if (severity === void 0) {
-                        severity = main.DiagnosticSeverity.Warning;
-                    }
+                }
+                validate(textDocument, schema, severity = main.DiagnosticSeverity.Warning, schemaDraft) {
                     if (this.root && schema) {
-                        var validationResult = new ValidationResult();
-                        validate(this.root, schema, validationResult, NoOpSchemaCollector.instance);
-                        return validationResult.problems.map(function(p) {
-                            var _a;
-                            var range = main.Range.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
-                            return main.Diagnostic.create(range, p.message, (_a = p.severity) !== null && _a !== void 0 ? _a : severity, p.code);
+                        const validationResult = new ValidationResult();
+                        validate(this.root, schema, validationResult, NoOpSchemaCollector.instance, new EvaluationContext(schemaDraft !== null && schemaDraft !== void 0 ? schemaDraft : getSchemaDraft(schema)));
+                        return validationResult.problems.map((p)=>{
+                            const range = main.Range.create(textDocument.positionAt(p.location.offset), textDocument.positionAt(p.location.offset + p.location.length));
+                            var _p_severity;
+                            return main.Diagnostic.create(range, p.message, (_p_severity = p.severity) !== null && _p_severity !== void 0 ? _p_severity : severity, p.code);
                         });
                     }
                     return undefined;
-                };
-                JSONDocument.prototype.getMatchingSchemas = function(schema, focusOffset, exclude) {
-                    if (focusOffset === void 0) {
-                        focusOffset = -1;
-                    }
-                    var matchingSchemas = new SchemaCollector(focusOffset, exclude);
+                }
+                getMatchingSchemas(schema, focusOffset = -1, exclude) {
                     if (this.root && schema) {
-                        validate(this.root, schema, new ValidationResult(), matchingSchemas);
+                        const matchingSchemas = new SchemaCollector(focusOffset, exclude);
+                        const schemaDraft = getSchemaDraft(schema);
+                        const context = new EvaluationContext(schemaDraft);
+                        validate(this.root, schema, new ValidationResult(), matchingSchemas, context);
+                        return matchingSchemas.schemas;
                     }
-                    return matchingSchemas.schemas;
-                };
-                return JSONDocument;
-            }();
-            function validate(n, schema, validationResult, matchingSchemas) {
+                    return [];
+                }
+                constructor(root, syntaxErrors = [], comments = []){
+                    this.root = root;
+                    this.syntaxErrors = syntaxErrors;
+                    this.comments = comments;
+                }
+            }
+            function getSchemaDraft(schema, fallBack = SchemaDraft.v2020_12) {
+                let schemaId = schema.$schema;
+                if (schemaId) {
+                    var _schemaDraftFromId_schemaId;
+                    return (_schemaDraftFromId_schemaId = schemaDraftFromId[schemaId]) !== null && _schemaDraftFromId_schemaId !== void 0 ? _schemaDraftFromId_schemaId : fallBack;
+                }
+                return fallBack;
+            }
+            function validate(n, schema, validationResult, matchingSchemas, context) {
                 if (!n || !matchingSchemas.include(n)) {
                     return;
                 }
-                var node = n;
+                if (n.type === 'property') {
+                    return validate(n.valueNode, schema, validationResult, matchingSchemas, context);
+                }
+                const node = n;
+                _validateNode();
                 switch(node.type){
                     case 'object':
-                        _validateObjectNode(node, schema, validationResult, matchingSchemas);
+                        _validateObjectNode(node);
                         break;
                     case 'array':
-                        _validateArrayNode(node, schema, validationResult, matchingSchemas);
+                        _validateArrayNode(node);
                         break;
                     case 'string':
-                        _validateStringNode(node, schema, validationResult, matchingSchemas);
+                        _validateStringNode(node);
                         break;
                     case 'number':
-                        _validateNumberNode(node, schema, validationResult, matchingSchemas);
+                        _validateNumberNode(node);
                         break;
-                    case 'property':
-                        return validate(node.valueNode, schema, validationResult, matchingSchemas);
                 }
-                _validateNode();
                 matchingSchemas.add({
                     node: node,
                     schema: schema
@@ -15350,7 +15366,7 @@
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: schema.errorMessage || localize('typeArrayMismatchWarning', 'Incorrect type. Expected one of {0}.', schema.type.join(', '))
+                                message: schema.errorMessage || t('Incorrect type. Expected one of {0}.', schema.type.join(', '))
                             });
                         }
                     } else if (schema.type) {
@@ -15360,46 +15376,47 @@
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: schema.errorMessage || localize('typeMismatchWarning', 'Incorrect type. Expected "{0}".', schema.type)
+                                message: schema.errorMessage || t('Incorrect type. Expected "{0}".', schema.type)
                             });
                         }
                     }
                     if (Array.isArray(schema.allOf)) {
-                        for(var _i = 0, _a = schema.allOf; _i < _a.length; _i++){
-                            var subSchemaRef = _a[_i];
-                            validate(node, asSchema(subSchemaRef), validationResult, matchingSchemas);
+                        for (const subSchemaRef of schema.allOf){
+                            const subValidationResult = new ValidationResult();
+                            const subMatchingSchemas = matchingSchemas.newSub();
+                            validate(node, asSchema(subSchemaRef), subValidationResult, subMatchingSchemas, context);
+                            validationResult.merge(subValidationResult);
+                            matchingSchemas.merge(subMatchingSchemas);
                         }
                     }
-                    var notSchema = asSchema(schema.not);
+                    const notSchema = asSchema(schema.not);
                     if (notSchema) {
-                        var subValidationResult = new ValidationResult();
-                        var subMatchingSchemas = matchingSchemas.newSub();
-                        validate(node, notSchema, subValidationResult, subMatchingSchemas);
+                        const subValidationResult = new ValidationResult();
+                        const subMatchingSchemas = matchingSchemas.newSub();
+                        validate(node, notSchema, subValidationResult, subMatchingSchemas, context);
                         if (!subValidationResult.hasProblems()) {
                             validationResult.problems.push({
                                 location: {
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: localize('notSchemaWarning', "Matches a schema that is not allowed.")
+                                message: schema.errorMessage || t("Matches a schema that is not allowed.")
                             });
                         }
-                        for(var _b = 0, _c = subMatchingSchemas.schemas; _b < _c.length; _b++){
-                            var ms = _c[_b];
+                        for (const ms of subMatchingSchemas.schemas){
                             ms.inverted = !ms.inverted;
                             matchingSchemas.add(ms);
                         }
                     }
-                    var testAlternatives = function(alternatives, maxOneMatch) {
-                        var matches = [];
+                    const testAlternatives = (alternatives, maxOneMatch)=>{
+                        const matches = [];
                         // remember the best match that is used for error messages
-                        var bestMatch = undefined;
-                        for(var _i = 0, alternatives_1 = alternatives; _i < alternatives_1.length; _i++){
-                            var subSchemaRef = alternatives_1[_i];
-                            var subSchema = asSchema(subSchemaRef);
-                            var subValidationResult = new ValidationResult();
-                            var subMatchingSchemas = matchingSchemas.newSub();
-                            validate(node, subSchema, subValidationResult, subMatchingSchemas);
+                        let bestMatch = undefined;
+                        for (const subSchemaRef of alternatives){
+                            const subSchema = asSchema(subSchemaRef);
+                            const subValidationResult = new ValidationResult();
+                            const subMatchingSchemas = matchingSchemas.newSub();
+                            validate(node, subSchema, subValidationResult, subMatchingSchemas, context);
                             if (!subValidationResult.hasProblems()) {
                                 matches.push(subSchema);
                             }
@@ -15415,8 +15432,9 @@
                                     bestMatch.matchingSchemas.merge(subMatchingSchemas);
                                     bestMatch.validationResult.propertiesMatches += subValidationResult.propertiesMatches;
                                     bestMatch.validationResult.propertiesValueMatches += subValidationResult.propertiesValueMatches;
+                                    bestMatch.validationResult.mergeProcessedProperties(subValidationResult);
                                 } else {
-                                    var compareResult = subValidationResult.compare(bestMatch.validationResult);
+                                    const compareResult = subValidationResult.compare(bestMatch.validationResult);
                                     if (compareResult > 0) {
                                         // our node is the best matching so far
                                         bestMatch = {
@@ -15438,13 +15456,11 @@
                                     offset: node.offset,
                                     length: 1
                                 },
-                                message: localize('oneOfWarning', "Matches multiple schemas when only one must validate.")
+                                message: t("Matches multiple schemas when only one must validate.")
                             });
                         }
                         if (bestMatch) {
                             validationResult.merge(bestMatch.validationResult);
-                            validationResult.propertiesMatches += bestMatch.validationResult.propertiesMatches;
-                            validationResult.propertiesValueMatches += bestMatch.validationResult.propertiesValueMatches;
                             matchingSchemas.merge(bestMatch.matchingSchemas);
                         }
                         return matches.length;
@@ -15455,21 +15471,20 @@
                     if (Array.isArray(schema.oneOf)) {
                         testAlternatives(schema.oneOf, true);
                     }
-                    var testBranch = function(schema) {
-                        var subValidationResult = new ValidationResult();
-                        var subMatchingSchemas = matchingSchemas.newSub();
-                        validate(node, asSchema(schema), subValidationResult, subMatchingSchemas);
+                    const testBranch = (schema)=>{
+                        const subValidationResult = new ValidationResult();
+                        const subMatchingSchemas = matchingSchemas.newSub();
+                        validate(node, asSchema(schema), subValidationResult, subMatchingSchemas, context);
                         validationResult.merge(subValidationResult);
-                        validationResult.propertiesMatches += subValidationResult.propertiesMatches;
-                        validationResult.propertiesValueMatches += subValidationResult.propertiesValueMatches;
                         matchingSchemas.merge(subMatchingSchemas);
                     };
-                    var testCondition = function(ifSchema, thenSchema, elseSchema) {
-                        var subSchema = asSchema(ifSchema);
-                        var subValidationResult = new ValidationResult();
-                        var subMatchingSchemas = matchingSchemas.newSub();
-                        validate(node, subSchema, subValidationResult, subMatchingSchemas);
+                    const testCondition = (ifSchema, thenSchema, elseSchema)=>{
+                        const subSchema = asSchema(ifSchema);
+                        const subValidationResult = new ValidationResult();
+                        const subMatchingSchemas = matchingSchemas.newSub();
+                        validate(node, subSchema, subValidationResult, subMatchingSchemas, context);
                         matchingSchemas.merge(subMatchingSchemas);
+                        validationResult.mergeProcessedProperties(subValidationResult);
                         if (!subValidationResult.hasProblems()) {
                             if (thenSchema) {
                                 testBranch(thenSchema);
@@ -15478,15 +15493,14 @@
                             testBranch(elseSchema);
                         }
                     };
-                    var ifSchema = asSchema(schema.if);
+                    const ifSchema = asSchema(schema.if);
                     if (ifSchema) {
                         testCondition(ifSchema, asSchema(schema.then), asSchema(schema.else));
                     }
                     if (Array.isArray(schema.enum)) {
-                        var val = jsonParser_getNodeValue(node);
-                        var enumValueMatch = false;
-                        for(var _d = 0, _e = schema.enum; _d < _e.length; _d++){
-                            var e = _e[_d];
+                        const val = jsonParser_getNodeValue(node);
+                        let enumValueMatch = false;
+                        for (const e of schema.enum){
                             if (equals(val, e)) {
                                 enumValueMatch = true;
                                 break;
@@ -15501,14 +15515,12 @@
                                     length: node.length
                                 },
                                 code: ErrorCode.EnumValueMismatch,
-                                message: schema.errorMessage || localize('enumWarning', 'Value is not accepted. Valid values: {0}.', schema.enum.map(function(v) {
-                                    return JSON.stringify(v);
-                                }).join(', '))
+                                message: schema.errorMessage || t('Value is not accepted. Valid values: {0}.', schema.enum.map((v)=>JSON.stringify(v)).join(', '))
                             });
                         }
                     }
                     if (isDefined(schema.const)) {
-                        var val = jsonParser_getNodeValue(node);
+                        const val = jsonParser_getNodeValue(node);
                         if (!equals(val, schema.const)) {
                             validationResult.problems.push({
                                 location: {
@@ -15516,7 +15528,7 @@
                                     length: node.length
                                 },
                                 code: ErrorCode.EnumValueMismatch,
-                                message: schema.errorMessage || localize('constWarning', 'Value must be {0}.', JSON.stringify(schema.const))
+                                message: schema.errorMessage || t('Value must be {0}.', JSON.stringify(schema.const))
                             });
                             validationResult.enumValueMatch = false;
                         } else {
@@ -15526,38 +15538,40 @@
                             schema.const
                         ];
                     }
-                    if (schema.deprecationMessage && node.parent) {
+                    let deprecationMessage = schema.deprecationMessage;
+                    if ((deprecationMessage || schema.deprecated) && node.parent) {
+                        deprecationMessage = deprecationMessage || t('Value is deprecated');
                         validationResult.problems.push({
                             location: {
                                 offset: node.parent.offset,
                                 length: node.parent.length
                             },
                             severity: main.DiagnosticSeverity.Warning,
-                            message: schema.deprecationMessage,
+                            message: deprecationMessage,
                             code: ErrorCode.Deprecated
                         });
                     }
                 }
-                function _validateNumberNode(node, schema, validationResult, matchingSchemas) {
-                    var val = node.value;
+                function _validateNumberNode(node) {
+                    const val = node.value;
                     function normalizeFloats(float) {
-                        var _a;
-                        var parts = /^(-?\d+)(?:\.(\d+))?(?:e([-+]\d+))?$/.exec(float.toString());
+                        var _parts_;
+                        const parts = /^(-?\d+)(?:\.(\d+))?(?:e([-+]\d+))?$/.exec(float.toString());
                         return parts && {
                             value: Number(parts[1] + (parts[2] || '')),
-                            multiplier: (((_a = parts[2]) === null || _a === void 0 ? void 0 : _a.length) || 0) - (parseInt(parts[3]) || 0)
+                            multiplier: (((_parts_ = parts[2]) === null || _parts_ === void 0 ? void 0 : _parts_.length) || 0) - (parseInt(parts[3]) || 0)
                         };
                     }
                     ;
                     if (isNumber(schema.multipleOf)) {
-                        var remainder = -1;
+                        let remainder = -1;
                         if (Number.isInteger(schema.multipleOf)) {
                             remainder = val % schema.multipleOf;
                         } else {
-                            var normMultipleOf = normalizeFloats(schema.multipleOf);
-                            var normValue = normalizeFloats(val);
+                            let normMultipleOf = normalizeFloats(schema.multipleOf);
+                            let normValue = normalizeFloats(val);
                             if (normMultipleOf && normValue) {
-                                var multiplier = Math.pow(10, Math.abs(normValue.multiplier - normMultipleOf.multiplier));
+                                const multiplier = 10 ** Math.abs(normValue.multiplier - normMultipleOf.multiplier);
                                 if (normValue.multiplier < normMultipleOf.multiplier) {
                                     normValue.value *= multiplier;
                                 } else {
@@ -15572,7 +15586,7 @@
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: localize('multipleOfWarning', 'Value is not divisible by {0}.', schema.multipleOf)
+                                message: t('Value is not divisible by {0}.', schema.multipleOf)
                             });
                         }
                     }
@@ -15591,75 +15605,76 @@
                         }
                         return undefined;
                     }
-                    var exclusiveMinimum = getExclusiveLimit(schema.minimum, schema.exclusiveMinimum);
+                    const exclusiveMinimum = getExclusiveLimit(schema.minimum, schema.exclusiveMinimum);
                     if (isNumber(exclusiveMinimum) && val <= exclusiveMinimum) {
                         validationResult.problems.push({
                             location: {
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('exclusiveMinimumWarning', 'Value is below the exclusive minimum of {0}.', exclusiveMinimum)
+                            message: t('Value is below the exclusive minimum of {0}.', exclusiveMinimum)
                         });
                     }
-                    var exclusiveMaximum = getExclusiveLimit(schema.maximum, schema.exclusiveMaximum);
+                    const exclusiveMaximum = getExclusiveLimit(schema.maximum, schema.exclusiveMaximum);
                     if (isNumber(exclusiveMaximum) && val >= exclusiveMaximum) {
                         validationResult.problems.push({
                             location: {
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('exclusiveMaximumWarning', 'Value is above the exclusive maximum of {0}.', exclusiveMaximum)
+                            message: t('Value is above the exclusive maximum of {0}.', exclusiveMaximum)
                         });
                     }
-                    var minimum = getLimit(schema.minimum, schema.exclusiveMinimum);
+                    const minimum = getLimit(schema.minimum, schema.exclusiveMinimum);
                     if (isNumber(minimum) && val < minimum) {
                         validationResult.problems.push({
                             location: {
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('minimumWarning', 'Value is below the minimum of {0}.', minimum)
+                            message: t('Value is below the minimum of {0}.', minimum)
                         });
                     }
-                    var maximum = getLimit(schema.maximum, schema.exclusiveMaximum);
+                    const maximum = getLimit(schema.maximum, schema.exclusiveMaximum);
                     if (isNumber(maximum) && val > maximum) {
                         validationResult.problems.push({
                             location: {
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('maximumWarning', 'Value is above the maximum of {0}.', maximum)
+                            message: t('Value is above the maximum of {0}.', maximum)
                         });
                     }
                 }
-                function _validateStringNode(node, schema, validationResult, matchingSchemas) {
-                    if (isNumber(schema.minLength) && node.value.length < schema.minLength) {
+                function _validateStringNode(node) {
+                    if (isNumber(schema.minLength) && stringLength(node.value) < schema.minLength) {
                         validationResult.problems.push({
                             location: {
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('minLengthWarning', 'String is shorter than the minimum length of {0}.', schema.minLength)
+                            message: t('String is shorter than the minimum length of {0}.', schema.minLength)
                         });
                     }
-                    if (isNumber(schema.maxLength) && node.value.length > schema.maxLength) {
+                    if (isNumber(schema.maxLength) && stringLength(node.value) > schema.maxLength) {
                         validationResult.problems.push({
                             location: {
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('maxLengthWarning', 'String is longer than the maximum length of {0}.', schema.maxLength)
+                            message: t('String is longer than the maximum length of {0}.', schema.maxLength)
                         });
                     }
                     if (isString(schema.pattern)) {
-                        var regex = extendedRegExp(schema.pattern);
-                        if (!(regex === null || regex === void 0 ? void 0 : regex.test(node.value))) {
+                        var _regex;
+                        const regex = extendedRegExp(schema.pattern);
+                        if (!((_regex = regex) === null || _regex === void 0 ? void 0 : _regex.test(node.value))) {
                             validationResult.problems.push({
                                 location: {
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: schema.patternErrorMessage || schema.errorMessage || localize('patternWarning', 'String does not match the pattern of "{0}".', schema.pattern)
+                                message: schema.patternErrorMessage || schema.errorMessage || t('String does not match the pattern of "{0}".', schema.pattern)
                             });
                         }
                     }
@@ -15668,15 +15683,15 @@
                             case 'uri':
                             case 'uri-reference':
                                 {
-                                    var errorMessage = void 0;
+                                    let errorMessage;
                                     if (!node.value) {
-                                        errorMessage = localize('uriEmpty', 'URI expected.');
+                                        errorMessage = t('URI expected.');
                                     } else {
-                                        var match = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/.exec(node.value);
+                                        const match = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/.exec(node.value);
                                         if (!match) {
-                                            errorMessage = localize('uriMissing', 'URI is expected.');
+                                            errorMessage = t('URI is expected.');
                                         } else if (!match[2] && schema.format === 'uri') {
-                                            errorMessage = localize('uriSchemeMissing', 'URI with a scheme is expected.');
+                                            errorMessage = t('URI with a scheme is expected.');
                                         }
                                     }
                                     if (errorMessage) {
@@ -15685,7 +15700,7 @@
                                                 offset: node.offset,
                                                 length: node.length
                                             },
-                                            message: schema.patternErrorMessage || schema.errorMessage || localize('uriFormatWarning', 'String is not a URI: {0}', errorMessage)
+                                            message: schema.patternErrorMessage || schema.errorMessage || t('String is not a URI: {0}', errorMessage)
                                         });
                                     }
                                 }
@@ -15698,7 +15713,7 @@
                             case 'hostname':
                             case 'ipv4':
                             case 'ipv6':
-                                var format1 = formats[schema.format];
+                                const format1 = formats[schema.format];
                                 if (!node.value || !format1.pattern.exec(node.value)) {
                                     validationResult.problems.push({
                                         location: {
@@ -15712,64 +15727,117 @@
                         }
                     }
                 }
-                function _validateArrayNode(node, schema, validationResult, matchingSchemas) {
-                    if (Array.isArray(schema.items)) {
-                        var subSchemas = schema.items;
-                        for(var index = 0; index < subSchemas.length; index++){
-                            var subSchemaRef = subSchemas[index];
-                            var subSchema = asSchema(subSchemaRef);
-                            var itemValidationResult = new ValidationResult();
-                            var item = node.items[index];
+                function _validateArrayNode(node) {
+                    let prefixItemsSchemas;
+                    let additionalItemSchema;
+                    if (context.schemaDraft >= SchemaDraft.v2020_12) {
+                        prefixItemsSchemas = schema.prefixItems;
+                        additionalItemSchema = !Array.isArray(schema.items) ? schema.items : undefined;
+                    } else {
+                        prefixItemsSchemas = Array.isArray(schema.items) ? schema.items : undefined;
+                        additionalItemSchema = !Array.isArray(schema.items) ? schema.items : schema.additionalItems;
+                    }
+                    let index = 0;
+                    if (prefixItemsSchemas !== undefined) {
+                        const max = Math.min(prefixItemsSchemas.length, node.items.length);
+                        for(; index < max; index++){
+                            const subSchemaRef = prefixItemsSchemas[index];
+                            const subSchema = asSchema(subSchemaRef);
+                            const itemValidationResult = new ValidationResult();
+                            const item = node.items[index];
                             if (item) {
-                                validate(item, subSchema, itemValidationResult, matchingSchemas);
+                                validate(item, subSchema, itemValidationResult, matchingSchemas, context);
                                 validationResult.mergePropertyMatch(itemValidationResult);
-                            } else if (node.items.length >= subSchemas.length) {
-                                validationResult.propertiesValueMatches++;
                             }
+                            validationResult.processedProperties.add(String(index));
                         }
-                        if (node.items.length > subSchemas.length) {
-                            if (typeof schema.additionalItems === 'object') {
-                                for(var i = subSchemas.length; i < node.items.length; i++){
-                                    var itemValidationResult = new ValidationResult();
-                                    validate(node.items[i], schema.additionalItems, itemValidationResult, matchingSchemas);
-                                    validationResult.mergePropertyMatch(itemValidationResult);
-                                }
-                            } else if (schema.additionalItems === false) {
+                    }
+                    if (additionalItemSchema !== undefined && index < node.items.length) {
+                        if (typeof additionalItemSchema === 'boolean') {
+                            if (additionalItemSchema === false) {
                                 validationResult.problems.push({
                                     location: {
                                         offset: node.offset,
                                         length: node.length
                                     },
-                                    message: localize('additionalItemsWarning', 'Array has too many items according to schema. Expected {0} or fewer.', subSchemas.length)
+                                    message: t('Array has too many items according to schema. Expected {0} or fewer.', index)
                                 });
                             }
-                        }
-                    } else {
-                        var itemSchema = asSchema(schema.items);
-                        if (itemSchema) {
-                            for(var _i = 0, _a = node.items; _i < _a.length; _i++){
-                                var item = _a[_i];
-                                var itemValidationResult = new ValidationResult();
-                                validate(item, itemSchema, itemValidationResult, matchingSchemas);
+                            for(; index < node.items.length; index++){
+                                validationResult.processedProperties.add(String(index));
+                                validationResult.propertiesValueMatches++;
+                            }
+                        } else {
+                            for(; index < node.items.length; index++){
+                                const itemValidationResult = new ValidationResult();
+                                validate(node.items[index], additionalItemSchema, itemValidationResult, matchingSchemas, context);
                                 validationResult.mergePropertyMatch(itemValidationResult);
+                                validationResult.processedProperties.add(String(index));
                             }
                         }
                     }
-                    var containsSchema = asSchema(schema.contains);
+                    const containsSchema = asSchema(schema.contains);
                     if (containsSchema) {
-                        var doesContain = node.items.some(function(item) {
-                            var itemValidationResult = new ValidationResult();
-                            validate(item, containsSchema, itemValidationResult, NoOpSchemaCollector.instance);
-                            return !itemValidationResult.hasProblems();
-                        });
-                        if (!doesContain) {
+                        let containsCount = 0;
+                        for(let index = 0; index < node.items.length; index++){
+                            const item = node.items[index];
+                            const itemValidationResult = new ValidationResult();
+                            validate(item, containsSchema, itemValidationResult, NoOpSchemaCollector.instance, context);
+                            if (!itemValidationResult.hasProblems()) {
+                                containsCount++;
+                                if (context.schemaDraft >= SchemaDraft.v2020_12) {
+                                    validationResult.processedProperties.add(String(index));
+                                }
+                            }
+                        }
+                        if (containsCount === 0 && !isNumber(schema.minContains)) {
                             validationResult.problems.push({
                                 location: {
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: schema.errorMessage || localize('requiredItemMissingWarning', 'Array does not contain required item.')
+                                message: schema.errorMessage || t('Array does not contain required item.')
                             });
+                        }
+                        if (isNumber(schema.minContains) && containsCount < schema.minContains) {
+                            validationResult.problems.push({
+                                location: {
+                                    offset: node.offset,
+                                    length: node.length
+                                },
+                                message: t('Array has too few items that match the contains contraint. Expected {0} or more.', schema.minContains)
+                            });
+                        }
+                        if (isNumber(schema.maxContains) && containsCount > schema.maxContains) {
+                            validationResult.problems.push({
+                                location: {
+                                    offset: node.offset,
+                                    length: node.length
+                                },
+                                message: t('Array has too many items that match the contains contraint. Expected {0} or less.', schema.maxContains)
+                            });
+                        }
+                    }
+                    const unevaluatedItems = schema.unevaluatedItems;
+                    if (unevaluatedItems !== undefined) {
+                        for(let i = 0; i < node.items.length; i++){
+                            if (!validationResult.processedProperties.has(String(i))) {
+                                if (unevaluatedItems === false) {
+                                    validationResult.problems.push({
+                                        location: {
+                                            offset: node.offset,
+                                            length: node.length
+                                        },
+                                        message: t('Item does not match any validation rule from the array.')
+                                    });
+                                } else {
+                                    const itemValidationResult = new ValidationResult();
+                                    validate(node.items[i], schema.unevaluatedItems, itemValidationResult, matchingSchemas, context);
+                                    validationResult.mergePropertyMatch(itemValidationResult);
+                                }
+                            }
+                            validationResult.processedProperties.add(String(i));
+                            validationResult.propertiesValueMatches++;
                         }
                     }
                     if (isNumber(schema.minItems) && node.items.length < schema.minItems) {
@@ -15778,7 +15846,7 @@
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('minItemsWarning', 'Array has too few items. Expected {0} or more.', schema.minItems)
+                            message: t('Array has too few items. Expected {0} or more.', schema.minItems)
                         });
                     }
                     if (isNumber(schema.maxItems) && node.items.length > schema.maxItems) {
@@ -15787,13 +15855,13 @@
                                 offset: node.offset,
                                 length: node.length
                             },
-                            message: localize('maxItemsWarning', 'Array has too many items. Expected {0} or fewer.', schema.maxItems)
+                            message: t('Array has too many items. Expected {0} or fewer.', schema.maxItems)
                         });
                     }
                     if (schema.uniqueItems === true) {
-                        var values_1 = jsonParser_getNodeValue(node);
-                        var duplicates = values_1.some(function(value, index) {
-                            return index !== values_1.lastIndexOf(value);
+                        const values = jsonParser_getNodeValue(node);
+                        const duplicates = values.some((value, index)=>{
+                            return index !== values.lastIndexOf(value);
                         });
                         if (duplicates) {
                             validationResult.problems.push({
@@ -15801,26 +15869,24 @@
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: localize('uniqueItemsWarning', 'Array has duplicate items.')
+                                message: t('Array has duplicate items.')
                             });
                         }
                     }
                 }
-                function _validateObjectNode(node, schema, validationResult, matchingSchemas) {
-                    var seenKeys = Object.create(null);
-                    var unprocessedProperties = [];
-                    for(var _i = 0, _a = node.properties; _i < _a.length; _i++){
-                        var propertyNode = _a[_i];
-                        var key = propertyNode.keyNode.value;
+                function _validateObjectNode(node) {
+                    const seenKeys = Object.create(null);
+                    const unprocessedProperties = new Set();
+                    for (const propertyNode of node.properties){
+                        const key = propertyNode.keyNode.value;
                         seenKeys[key] = propertyNode.valueNode;
-                        unprocessedProperties.push(key);
+                        unprocessedProperties.add(key);
                     }
                     if (Array.isArray(schema.required)) {
-                        for(var _b = 0, _c = schema.required; _b < _c.length; _b++){
-                            var propertyName = _c[_b];
+                        for (const propertyName of schema.required){
                             if (!seenKeys[propertyName]) {
-                                var keyNode = node.parent && node.parent.type === 'property' && node.parent.keyNode;
-                                var location = keyNode ? {
+                                const keyNode = node.parent && node.parent.type === 'property' && node.parent.keyNode;
+                                const location = keyNode ? {
                                     offset: keyNode.offset,
                                     length: keyNode.length
                                 } : {
@@ -15829,109 +15895,129 @@
                                 };
                                 validationResult.problems.push({
                                     location: location,
-                                    message: localize('MissingRequiredPropWarning', 'Missing property "{0}".', propertyName)
+                                    message: t('Missing property "{0}".', propertyName)
                                 });
                             }
                         }
                     }
-                    var propertyProcessed = function(prop) {
-                        var index = unprocessedProperties.indexOf(prop);
-                        while(index >= 0){
-                            unprocessedProperties.splice(index, 1);
-                            index = unprocessedProperties.indexOf(prop);
-                        }
+                    const propertyProcessed = (prop)=>{
+                        unprocessedProperties.delete(prop);
+                        validationResult.processedProperties.add(prop);
                     };
                     if (schema.properties) {
-                        for(var _d = 0, _e = Object.keys(schema.properties); _d < _e.length; _d++){
-                            var propertyName = _e[_d];
+                        for (const propertyName of Object.keys(schema.properties)){
                             propertyProcessed(propertyName);
-                            var propertySchema = schema.properties[propertyName];
-                            var child = seenKeys[propertyName];
+                            const propertySchema = schema.properties[propertyName];
+                            const child = seenKeys[propertyName];
                             if (child) {
                                 if (isBoolean(propertySchema)) {
                                     if (!propertySchema) {
-                                        var propertyNode = child.parent;
+                                        const propertyNode = child.parent;
                                         validationResult.problems.push({
                                             location: {
                                                 offset: propertyNode.keyNode.offset,
                                                 length: propertyNode.keyNode.length
                                             },
-                                            message: schema.errorMessage || localize('DisallowedExtraPropWarning', 'Property {0} is not allowed.', propertyName)
+                                            message: schema.errorMessage || t('Property {0} is not allowed.', propertyName)
                                         });
                                     } else {
                                         validationResult.propertiesMatches++;
                                         validationResult.propertiesValueMatches++;
                                     }
                                 } else {
-                                    var propertyValidationResult = new ValidationResult();
-                                    validate(child, propertySchema, propertyValidationResult, matchingSchemas);
+                                    const propertyValidationResult = new ValidationResult();
+                                    validate(child, propertySchema, propertyValidationResult, matchingSchemas, context);
                                     validationResult.mergePropertyMatch(propertyValidationResult);
                                 }
                             }
                         }
                     }
                     if (schema.patternProperties) {
-                        for(var _f = 0, _g = Object.keys(schema.patternProperties); _f < _g.length; _f++){
-                            var propertyPattern = _g[_f];
-                            var regex = extendedRegExp(propertyPattern);
-                            for(var _h = 0, _j = unprocessedProperties.slice(0); _h < _j.length; _h++){
-                                var propertyName = _j[_h];
-                                if (regex === null || regex === void 0 ? void 0 : regex.test(propertyName)) {
-                                    propertyProcessed(propertyName);
-                                    var child = seenKeys[propertyName];
-                                    if (child) {
-                                        var propertySchema = schema.patternProperties[propertyPattern];
-                                        if (isBoolean(propertySchema)) {
-                                            if (!propertySchema) {
-                                                var propertyNode = child.parent;
-                                                validationResult.problems.push({
-                                                    location: {
-                                                        offset: propertyNode.keyNode.offset,
-                                                        length: propertyNode.keyNode.length
-                                                    },
-                                                    message: schema.errorMessage || localize('DisallowedExtraPropWarning', 'Property {0} is not allowed.', propertyName)
-                                                });
+                        for (const propertyPattern of Object.keys(schema.patternProperties)){
+                            const regex = extendedRegExp(propertyPattern);
+                            if (regex) {
+                                const processed = [];
+                                for (const propertyName of unprocessedProperties){
+                                    if (regex.test(propertyName)) {
+                                        processed.push(propertyName);
+                                        const child = seenKeys[propertyName];
+                                        if (child) {
+                                            const propertySchema = schema.patternProperties[propertyPattern];
+                                            if (isBoolean(propertySchema)) {
+                                                if (!propertySchema) {
+                                                    const propertyNode = child.parent;
+                                                    validationResult.problems.push({
+                                                        location: {
+                                                            offset: propertyNode.keyNode.offset,
+                                                            length: propertyNode.keyNode.length
+                                                        },
+                                                        message: schema.errorMessage || t('Property {0} is not allowed.', propertyName)
+                                                    });
+                                                } else {
+                                                    validationResult.propertiesMatches++;
+                                                    validationResult.propertiesValueMatches++;
+                                                }
                                             } else {
-                                                validationResult.propertiesMatches++;
-                                                validationResult.propertiesValueMatches++;
+                                                const propertyValidationResult = new ValidationResult();
+                                                validate(child, propertySchema, propertyValidationResult, matchingSchemas, context);
+                                                validationResult.mergePropertyMatch(propertyValidationResult);
                                             }
-                                        } else {
-                                            var propertyValidationResult = new ValidationResult();
-                                            validate(child, propertySchema, propertyValidationResult, matchingSchemas);
-                                            validationResult.mergePropertyMatch(propertyValidationResult);
                                         }
                                     }
                                 }
+                                processed.forEach(propertyProcessed);
                             }
                         }
                     }
-                    if (typeof schema.additionalProperties === 'object') {
-                        for(var _k = 0, unprocessedProperties_1 = unprocessedProperties; _k < unprocessedProperties_1.length; _k++){
-                            var propertyName = unprocessedProperties_1[_k];
-                            var child = seenKeys[propertyName];
+                    const additionalProperties = schema.additionalProperties;
+                    if (additionalProperties !== undefined) {
+                        for (const propertyName of unprocessedProperties){
+                            propertyProcessed(propertyName);
+                            const child = seenKeys[propertyName];
                             if (child) {
-                                var propertyValidationResult = new ValidationResult();
-                                validate(child, schema.additionalProperties, propertyValidationResult, matchingSchemas);
-                                validationResult.mergePropertyMatch(propertyValidationResult);
-                            }
-                        }
-                    } else if (schema.additionalProperties === false) {
-                        if (unprocessedProperties.length > 0) {
-                            for(var _l = 0, unprocessedProperties_2 = unprocessedProperties; _l < unprocessedProperties_2.length; _l++){
-                                var propertyName = unprocessedProperties_2[_l];
-                                var child = seenKeys[propertyName];
-                                if (child) {
-                                    var propertyNode = child.parent;
+                                if (additionalProperties === false) {
+                                    const propertyNode = child.parent;
                                     validationResult.problems.push({
                                         location: {
                                             offset: propertyNode.keyNode.offset,
                                             length: propertyNode.keyNode.length
                                         },
-                                        message: schema.errorMessage || localize('DisallowedExtraPropWarning', 'Property {0} is not allowed.', propertyName)
+                                        message: schema.errorMessage || t('Property {0} is not allowed.', propertyName)
                                     });
+                                } else if (additionalProperties !== true) {
+                                    const propertyValidationResult = new ValidationResult();
+                                    validate(child, additionalProperties, propertyValidationResult, matchingSchemas, context);
+                                    validationResult.mergePropertyMatch(propertyValidationResult);
                                 }
                             }
                         }
+                    }
+                    const unevaluatedProperties = schema.unevaluatedProperties;
+                    if (unevaluatedProperties !== undefined) {
+                        const processed = [];
+                        for (const propertyName of unprocessedProperties){
+                            if (!validationResult.processedProperties.has(propertyName)) {
+                                processed.push(propertyName);
+                                const child = seenKeys[propertyName];
+                                if (child) {
+                                    if (unevaluatedProperties === false) {
+                                        const propertyNode = child.parent;
+                                        validationResult.problems.push({
+                                            location: {
+                                                offset: propertyNode.keyNode.offset,
+                                                length: propertyNode.keyNode.length
+                                            },
+                                            message: schema.errorMessage || t('Property {0} is not allowed.', propertyName)
+                                        });
+                                    } else if (unevaluatedProperties !== true) {
+                                        const propertyValidationResult = new ValidationResult();
+                                        validate(child, unevaluatedProperties, propertyValidationResult, matchingSchemas, context);
+                                        validationResult.mergePropertyMatch(propertyValidationResult);
+                                    }
+                                }
+                            }
+                        }
+                        processed.forEach(propertyProcessed);
                     }
                     if (isNumber(schema.maxProperties)) {
                         if (node.properties.length > schema.maxProperties) {
@@ -15940,7 +16026,7 @@
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: localize('MaxPropWarning', 'Object has more properties than limit of {0}.', schema.maxProperties)
+                                message: t('Object has more properties than limit of {0}.', schema.maxProperties)
                             });
                         }
                     }
@@ -15951,76 +16037,93 @@
                                     offset: node.offset,
                                     length: node.length
                                 },
-                                message: localize('MinPropWarning', 'Object has fewer properties than the required number of {0}', schema.minProperties)
+                                message: t('Object has fewer properties than the required number of {0}', schema.minProperties)
                             });
                         }
                     }
-                    if (schema.dependencies) {
-                        for(var _m = 0, _o = Object.keys(schema.dependencies); _m < _o.length; _m++){
-                            var key = _o[_m];
-                            var prop = seenKeys[key];
-                            if (prop) {
-                                var propertyDep = schema.dependencies[key];
-                                if (Array.isArray(propertyDep)) {
-                                    for(var _p = 0, propertyDep_1 = propertyDep; _p < propertyDep_1.length; _p++){
-                                        var requiredProp = propertyDep_1[_p];
-                                        if (!seenKeys[requiredProp]) {
-                                            validationResult.problems.push({
-                                                location: {
-                                                    offset: node.offset,
-                                                    length: node.length
-                                                },
-                                                message: localize('RequiredDependentPropWarning', 'Object is missing property {0} required by property {1}.', requiredProp, key)
-                                            });
-                                        } else {
-                                            validationResult.propertiesValueMatches++;
-                                        }
-                                    }
-                                } else {
-                                    var propertySchema = asSchema(propertyDep);
-                                    if (propertySchema) {
-                                        var propertyValidationResult = new ValidationResult();
-                                        validate(node, propertySchema, propertyValidationResult, matchingSchemas);
-                                        validationResult.mergePropertyMatch(propertyValidationResult);
-                                    }
-                                }
+                    if (schema.dependentRequired) {
+                        for(const key in schema.dependentRequired){
+                            const prop = seenKeys[key];
+                            const propertyDeps = schema.dependentRequired[key];
+                            if (prop && Array.isArray(propertyDeps)) {
+                                _validatePropertyDependencies(key, propertyDeps);
                             }
                         }
                     }
-                    var propertyNames = asSchema(schema.propertyNames);
+                    if (schema.dependentSchemas) {
+                        for(const key in schema.dependentSchemas){
+                            const prop = seenKeys[key];
+                            const propertyDeps = schema.dependentSchemas[key];
+                            if (prop && isObject(propertyDeps)) {
+                                _validatePropertyDependencies(key, propertyDeps);
+                            }
+                        }
+                    }
+                    if (schema.dependencies) {
+                        for(const key in schema.dependencies){
+                            const prop = seenKeys[key];
+                            if (prop) {
+                                _validatePropertyDependencies(key, schema.dependencies[key]);
+                            }
+                        }
+                    }
+                    const propertyNames = asSchema(schema.propertyNames);
                     if (propertyNames) {
-                        for(var _q = 0, _r = node.properties; _q < _r.length; _q++){
-                            var f = _r[_q];
-                            var key = f.keyNode;
+                        for (const f of node.properties){
+                            const key = f.keyNode;
                             if (key) {
-                                validate(key, propertyNames, validationResult, NoOpSchemaCollector.instance);
+                                validate(key, propertyNames, validationResult, NoOpSchemaCollector.instance, context);
+                            }
+                        }
+                    }
+                    function _validatePropertyDependencies(key, propertyDep) {
+                        if (Array.isArray(propertyDep)) {
+                            for (const requiredProp of propertyDep){
+                                if (!seenKeys[requiredProp]) {
+                                    validationResult.problems.push({
+                                        location: {
+                                            offset: node.offset,
+                                            length: node.length
+                                        },
+                                        message: t('Object is missing property {0} required by property {1}.', requiredProp, key)
+                                    });
+                                } else {
+                                    validationResult.propertiesValueMatches++;
+                                }
+                            }
+                        } else {
+                            const propertySchema = asSchema(propertyDep);
+                            if (propertySchema) {
+                                const propertyValidationResult = new ValidationResult();
+                                validate(node, propertySchema, propertyValidationResult, matchingSchemas, context);
+                                validationResult.mergePropertyMatch(propertyValidationResult);
                             }
                         }
                     }
                 }
             }
             function jsonParser_parse(textDocument, config) {
-                var problems = [];
-                var lastProblemOffset = -1;
-                var text = textDocument.getText();
-                var scanner = main_createScanner(text, false);
-                var commentRanges = config && config.collectComments ? [] : undefined;
+                const problems = [];
+                let lastProblemOffset = -1;
+                const text = textDocument.getText();
+                const scanner = main_createScanner(text, false);
+                const commentRanges = config && config.collectComments ? [] : undefined;
                 function _scanNext() {
                     while(true){
-                        var token_1 = scanner.scan();
+                        const token = scanner.scan();
                         _checkScanError();
-                        switch(token_1){
-                            case 12 /* LineCommentTrivia */ :
-                            case 13 /* BlockCommentTrivia */ :
+                        switch(token){
+                            case 12 /* Json.SyntaxKind.LineCommentTrivia */ :
+                            case 13 /* Json.SyntaxKind.BlockCommentTrivia */ :
                                 if (Array.isArray(commentRanges)) {
                                     commentRanges.push(main.Range.create(textDocument.positionAt(scanner.getTokenOffset()), textDocument.positionAt(scanner.getTokenOffset() + scanner.getTokenLength())));
                                 }
                                 break;
-                            case 15 /* Trivia */ :
-                            case 14 /* LineBreakTrivia */ :
+                            case 15 /* Json.SyntaxKind.Trivia */ :
+                            case 14 /* Json.SyntaxKind.LineBreakTrivia */ :
                                 break;
                             default:
-                                return token_1;
+                                return token;
                         }
                     }
                 }
@@ -16031,28 +16134,16 @@
                     }
                     return false;
                 }
-                function _errorAtRange(message, code, startOffset, endOffset, severity) {
-                    if (severity === void 0) {
-                        severity = main.DiagnosticSeverity.Error;
-                    }
+                function _errorAtRange(message, code, startOffset, endOffset, severity = main.DiagnosticSeverity.Error) {
                     if (problems.length === 0 || startOffset !== lastProblemOffset) {
-                        var range = main.Range.create(textDocument.positionAt(startOffset), textDocument.positionAt(endOffset));
+                        const range = main.Range.create(textDocument.positionAt(startOffset), textDocument.positionAt(endOffset));
                         problems.push(main.Diagnostic.create(range, message, severity, code, textDocument.languageId));
                         lastProblemOffset = startOffset;
                     }
                 }
-                function _error(message, code, node, skipUntilAfter, skipUntil) {
-                    if (node === void 0) {
-                        node = undefined;
-                    }
-                    if (skipUntilAfter === void 0) {
-                        skipUntilAfter = [];
-                    }
-                    if (skipUntil === void 0) {
-                        skipUntil = [];
-                    }
-                    var start = scanner.getTokenOffset();
-                    var end = scanner.getTokenOffset() + scanner.getTokenLength();
+                function _error(message, code, node = undefined, skipUntilAfter = [], skipUntil = []) {
+                    let start = scanner.getTokenOffset();
+                    let end = scanner.getTokenOffset() + scanner.getTokenLength();
                     if (start === end && start > 0) {
                         start--;
                         while(start > 0 && /\s/.test(text.charAt(start))){
@@ -16065,38 +16156,38 @@
                         _finalize(node, false);
                     }
                     if (skipUntilAfter.length + skipUntil.length > 0) {
-                        var token_2 = scanner.getToken();
-                        while(token_2 !== 17 /* EOF */ ){
-                            if (skipUntilAfter.indexOf(token_2) !== -1) {
+                        let token = scanner.getToken();
+                        while(token !== 17 /* Json.SyntaxKind.EOF */ ){
+                            if (skipUntilAfter.indexOf(token) !== -1) {
                                 _scanNext();
                                 break;
-                            } else if (skipUntil.indexOf(token_2) !== -1) {
+                            } else if (skipUntil.indexOf(token) !== -1) {
                                 break;
                             }
-                            token_2 = _scanNext();
+                            token = _scanNext();
                         }
                     }
                     return node;
                 }
                 function _checkScanError() {
                     switch(scanner.getTokenError()){
-                        case 4 /* InvalidUnicode */ :
-                            _error(localize('InvalidUnicode', 'Invalid unicode sequence in string.'), ErrorCode.InvalidUnicode);
+                        case 4 /* Json.ScanError.InvalidUnicode */ :
+                            _error(t('Invalid unicode sequence in string.'), ErrorCode.InvalidUnicode);
                             return true;
-                        case 5 /* InvalidEscapeCharacter */ :
-                            _error(localize('InvalidEscapeCharacter', 'Invalid escape character in string.'), ErrorCode.InvalidEscapeCharacter);
+                        case 5 /* Json.ScanError.InvalidEscapeCharacter */ :
+                            _error(t('Invalid escape character in string.'), ErrorCode.InvalidEscapeCharacter);
                             return true;
-                        case 3 /* UnexpectedEndOfNumber */ :
-                            _error(localize('UnexpectedEndOfNumber', 'Unexpected end of number.'), ErrorCode.UnexpectedEndOfNumber);
+                        case 3 /* Json.ScanError.UnexpectedEndOfNumber */ :
+                            _error(t('Unexpected end of number.'), ErrorCode.UnexpectedEndOfNumber);
                             return true;
-                        case 1 /* UnexpectedEndOfComment */ :
-                            _error(localize('UnexpectedEndOfComment', 'Unexpected end of comment.'), ErrorCode.UnexpectedEndOfComment);
+                        case 1 /* Json.ScanError.UnexpectedEndOfComment */ :
+                            _error(t('Unexpected end of comment.'), ErrorCode.UnexpectedEndOfComment);
                             return true;
-                        case 2 /* UnexpectedEndOfString */ :
-                            _error(localize('UnexpectedEndOfString', 'Unexpected end of string.'), ErrorCode.UnexpectedEndOfString);
+                        case 2 /* Json.ScanError.UnexpectedEndOfString */ :
+                            _error(t('Unexpected end of string.'), ErrorCode.UnexpectedEndOfString);
                             return true;
-                        case 6 /* InvalidCharacter */ :
-                            _error(localize('InvalidCharacter', 'Invalid characters in string. Control characters must be escaped.'), ErrorCode.InvalidCharacter);
+                        case 6 /* Json.ScanError.InvalidCharacter */ :
+                            _error(t('Invalid characters in string. Control characters must be escaped.'), ErrorCode.InvalidCharacter);
                             return true;
                     }
                     return false;
@@ -16109,54 +16200,54 @@
                     return node;
                 }
                 function _parseArray(parent) {
-                    if (scanner.getToken() !== 3 /* OpenBracketToken */ ) {
+                    if (scanner.getToken() !== 3 /* Json.SyntaxKind.OpenBracketToken */ ) {
                         return undefined;
                     }
-                    var node = new ArrayASTNodeImpl(parent, scanner.getTokenOffset());
+                    const node = new ArrayASTNodeImpl(parent, scanner.getTokenOffset());
                     _scanNext(); // consume OpenBracketToken
-                    var count = 0;
-                    var needsComma = false;
-                    while(scanner.getToken() !== 4 /* CloseBracketToken */  && scanner.getToken() !== 17 /* EOF */ ){
-                        if (scanner.getToken() === 5 /* CommaToken */ ) {
+                    const count = 0;
+                    let needsComma = false;
+                    while(scanner.getToken() !== 4 /* Json.SyntaxKind.CloseBracketToken */  && scanner.getToken() !== 17 /* Json.SyntaxKind.EOF */ ){
+                        if (scanner.getToken() === 5 /* Json.SyntaxKind.CommaToken */ ) {
                             if (!needsComma) {
-                                _error(localize('ValueExpected', 'Value expected'), ErrorCode.ValueExpected);
+                                _error(t('Value expected'), ErrorCode.ValueExpected);
                             }
-                            var commaOffset = scanner.getTokenOffset();
+                            const commaOffset = scanner.getTokenOffset();
                             _scanNext(); // consume comma
-                            if (scanner.getToken() === 4 /* CloseBracketToken */ ) {
+                            if (scanner.getToken() === 4 /* Json.SyntaxKind.CloseBracketToken */ ) {
                                 if (needsComma) {
-                                    _errorAtRange(localize('TrailingComma', 'Trailing comma'), ErrorCode.TrailingComma, commaOffset, commaOffset + 1);
+                                    _errorAtRange(t('Trailing comma'), ErrorCode.TrailingComma, commaOffset, commaOffset + 1);
                                 }
                                 continue;
                             }
                         } else if (needsComma) {
-                            _error(localize('ExpectedComma', 'Expected comma'), ErrorCode.CommaExpected);
+                            _error(t('Expected comma'), ErrorCode.CommaExpected);
                         }
-                        var item = _parseValue(node);
+                        const item = _parseValue(node);
                         if (!item) {
-                            _error(localize('PropertyExpected', 'Value expected'), ErrorCode.ValueExpected, undefined, [], [
-                                4 /* CloseBracketToken */ ,
-                                5 /* CommaToken */ 
+                            _error(t('Value expected'), ErrorCode.ValueExpected, undefined, [], [
+                                4 /* Json.SyntaxKind.CloseBracketToken */ ,
+                                5 /* Json.SyntaxKind.CommaToken */ 
                             ]);
                         } else {
                             node.items.push(item);
                         }
                         needsComma = true;
                     }
-                    if (scanner.getToken() !== 4 /* CloseBracketToken */ ) {
-                        return _error(localize('ExpectedCloseBracket', 'Expected comma or closing bracket'), ErrorCode.CommaOrCloseBacketExpected, node);
+                    if (scanner.getToken() !== 4 /* Json.SyntaxKind.CloseBracketToken */ ) {
+                        return _error(t('Expected comma or closing bracket'), ErrorCode.CommaOrCloseBacketExpected, node);
                     }
                     return _finalize(node, true);
                 }
-                var keyPlaceholder = new StringASTNodeImpl(undefined, 0, 0);
+                const keyPlaceholder = new StringASTNodeImpl(undefined, 0, 0);
                 function _parseProperty(parent, keysSeen) {
-                    var node = new PropertyASTNodeImpl(parent, scanner.getTokenOffset(), keyPlaceholder);
-                    var key = _parseString(node);
+                    const node = new PropertyASTNodeImpl(parent, scanner.getTokenOffset(), keyPlaceholder);
+                    let key = _parseString(node);
                     if (!key) {
-                        if (scanner.getToken() === 16 /* Unknown */ ) {
+                        if (scanner.getToken() === 16 /* Json.SyntaxKind.Unknown */ ) {
                             // give a more helpful error message
-                            _error(localize('DoubleQuotesExpected', 'Property keys must be doublequoted'), ErrorCode.Undefined);
-                            var keyNode = new StringASTNodeImpl(node, scanner.getTokenOffset(), scanner.getTokenLength());
+                            _error(t('Property keys must be doublequoted'), ErrorCode.Undefined);
+                            const keyNode = new StringASTNodeImpl(node, scanner.getTokenOffset(), scanner.getTokenLength());
                             keyNode.value = scanner.getTokenValue();
                             key = keyNode;
                             _scanNext(); // consume Unknown
@@ -16165,31 +16256,35 @@
                         }
                     }
                     node.keyNode = key;
-                    var seen = keysSeen[key.value];
-                    if (seen) {
-                        _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, node.keyNode.offset, node.keyNode.offset + node.keyNode.length, main.DiagnosticSeverity.Warning);
-                        if (typeof seen === 'object') {
-                            _errorAtRange(localize('DuplicateKeyWarning', "Duplicate object key"), ErrorCode.DuplicateKey, seen.keyNode.offset, seen.keyNode.offset + seen.keyNode.length, main.DiagnosticSeverity.Warning);
+                    // For JSON files that forbid code comments, there is a convention to use the key name "//" to add comments.
+                    // Multiple instances of "//" are okay.
+                    if (key.value !== "//") {
+                        const seen = keysSeen[key.value];
+                        if (seen) {
+                            _errorAtRange(t("Duplicate object key"), ErrorCode.DuplicateKey, node.keyNode.offset, node.keyNode.offset + node.keyNode.length, main.DiagnosticSeverity.Warning);
+                            if (isObject(seen)) {
+                                _errorAtRange(t("Duplicate object key"), ErrorCode.DuplicateKey, seen.keyNode.offset, seen.keyNode.offset + seen.keyNode.length, main.DiagnosticSeverity.Warning);
+                            }
+                            keysSeen[key.value] = true; // if the same key is duplicate again, avoid duplicate error reporting
+                        } else {
+                            keysSeen[key.value] = node;
                         }
-                        keysSeen[key.value] = true; // if the same key is duplicate again, avoid duplicate error reporting
-                    } else {
-                        keysSeen[key.value] = node;
                     }
-                    if (scanner.getToken() === 6 /* ColonToken */ ) {
+                    if (scanner.getToken() === 6 /* Json.SyntaxKind.ColonToken */ ) {
                         node.colonOffset = scanner.getTokenOffset();
                         _scanNext(); // consume ColonToken
                     } else {
-                        _error(localize('ColonExpected', 'Colon expected'), ErrorCode.ColonExpected);
-                        if (scanner.getToken() === 10 /* StringLiteral */  && textDocument.positionAt(key.offset + key.length).line < textDocument.positionAt(scanner.getTokenOffset()).line) {
+                        _error(t('Colon expected'), ErrorCode.ColonExpected);
+                        if (scanner.getToken() === 10 /* Json.SyntaxKind.StringLiteral */  && textDocument.positionAt(key.offset + key.length).line < textDocument.positionAt(scanner.getTokenOffset()).line) {
                             node.length = key.length;
                             return node;
                         }
                     }
-                    var value = _parseValue(node);
+                    const value = _parseValue(node);
                     if (!value) {
-                        return _error(localize('ValueExpected', 'Value expected'), ErrorCode.ValueExpected, node, [], [
-                            2 /* CloseBraceToken */ ,
-                            5 /* CommaToken */ 
+                        return _error(t('Value expected'), ErrorCode.ValueExpected, node, [], [
+                            2 /* Json.SyntaxKind.CloseBraceToken */ ,
+                            5 /* Json.SyntaxKind.CommaToken */ 
                         ]);
                     }
                     node.valueNode = value;
@@ -16197,81 +16292,81 @@
                     return node;
                 }
                 function _parseObject(parent) {
-                    if (scanner.getToken() !== 1 /* OpenBraceToken */ ) {
+                    if (scanner.getToken() !== 1 /* Json.SyntaxKind.OpenBraceToken */ ) {
                         return undefined;
                     }
-                    var node = new ObjectASTNodeImpl(parent, scanner.getTokenOffset());
-                    var keysSeen = Object.create(null);
+                    const node = new ObjectASTNodeImpl(parent, scanner.getTokenOffset());
+                    const keysSeen = Object.create(null);
                     _scanNext(); // consume OpenBraceToken
-                    var needsComma = false;
-                    while(scanner.getToken() !== 2 /* CloseBraceToken */  && scanner.getToken() !== 17 /* EOF */ ){
-                        if (scanner.getToken() === 5 /* CommaToken */ ) {
+                    let needsComma = false;
+                    while(scanner.getToken() !== 2 /* Json.SyntaxKind.CloseBraceToken */  && scanner.getToken() !== 17 /* Json.SyntaxKind.EOF */ ){
+                        if (scanner.getToken() === 5 /* Json.SyntaxKind.CommaToken */ ) {
                             if (!needsComma) {
-                                _error(localize('PropertyExpected', 'Property expected'), ErrorCode.PropertyExpected);
+                                _error(t('Property expected'), ErrorCode.PropertyExpected);
                             }
-                            var commaOffset = scanner.getTokenOffset();
+                            const commaOffset = scanner.getTokenOffset();
                             _scanNext(); // consume comma
-                            if (scanner.getToken() === 2 /* CloseBraceToken */ ) {
+                            if (scanner.getToken() === 2 /* Json.SyntaxKind.CloseBraceToken */ ) {
                                 if (needsComma) {
-                                    _errorAtRange(localize('TrailingComma', 'Trailing comma'), ErrorCode.TrailingComma, commaOffset, commaOffset + 1);
+                                    _errorAtRange(t('Trailing comma'), ErrorCode.TrailingComma, commaOffset, commaOffset + 1);
                                 }
                                 continue;
                             }
                         } else if (needsComma) {
-                            _error(localize('ExpectedComma', 'Expected comma'), ErrorCode.CommaExpected);
+                            _error(t('Expected comma'), ErrorCode.CommaExpected);
                         }
-                        var property = _parseProperty(node, keysSeen);
+                        const property = _parseProperty(node, keysSeen);
                         if (!property) {
-                            _error(localize('PropertyExpected', 'Property expected'), ErrorCode.PropertyExpected, undefined, [], [
-                                2 /* CloseBraceToken */ ,
-                                5 /* CommaToken */ 
+                            _error(t('Property expected'), ErrorCode.PropertyExpected, undefined, [], [
+                                2 /* Json.SyntaxKind.CloseBraceToken */ ,
+                                5 /* Json.SyntaxKind.CommaToken */ 
                             ]);
                         } else {
                             node.properties.push(property);
                         }
                         needsComma = true;
                     }
-                    if (scanner.getToken() !== 2 /* CloseBraceToken */ ) {
-                        return _error(localize('ExpectedCloseBrace', 'Expected comma or closing brace'), ErrorCode.CommaOrCloseBraceExpected, node);
+                    if (scanner.getToken() !== 2 /* Json.SyntaxKind.CloseBraceToken */ ) {
+                        return _error(t('Expected comma or closing brace'), ErrorCode.CommaOrCloseBraceExpected, node);
                     }
                     return _finalize(node, true);
                 }
                 function _parseString(parent) {
-                    if (scanner.getToken() !== 10 /* StringLiteral */ ) {
+                    if (scanner.getToken() !== 10 /* Json.SyntaxKind.StringLiteral */ ) {
                         return undefined;
                     }
-                    var node = new StringASTNodeImpl(parent, scanner.getTokenOffset());
+                    const node = new StringASTNodeImpl(parent, scanner.getTokenOffset());
                     node.value = scanner.getTokenValue();
                     return _finalize(node, true);
                 }
                 function _parseNumber(parent) {
-                    if (scanner.getToken() !== 11 /* NumericLiteral */ ) {
+                    if (scanner.getToken() !== 11 /* Json.SyntaxKind.NumericLiteral */ ) {
                         return undefined;
                     }
-                    var node = new NumberASTNodeImpl(parent, scanner.getTokenOffset());
-                    if (scanner.getTokenError() === 0 /* None */ ) {
-                        var tokenValue = scanner.getTokenValue();
+                    const node = new NumberASTNodeImpl(parent, scanner.getTokenOffset());
+                    if (scanner.getTokenError() === 0 /* Json.ScanError.None */ ) {
+                        const tokenValue = scanner.getTokenValue();
                         try {
-                            var numberValue = JSON.parse(tokenValue);
+                            const numberValue = JSON.parse(tokenValue);
                             if (!isNumber(numberValue)) {
-                                return _error(localize('InvalidNumberFormat', 'Invalid number format.'), ErrorCode.Undefined, node);
+                                return _error(t('Invalid number format.'), ErrorCode.Undefined, node);
                             }
                             node.value = numberValue;
                         } catch (e) {
-                            return _error(localize('InvalidNumberFormat', 'Invalid number format.'), ErrorCode.Undefined, node);
+                            return _error(t('Invalid number format.'), ErrorCode.Undefined, node);
                         }
                         node.isInteger = tokenValue.indexOf('.') === -1;
                     }
                     return _finalize(node, true);
                 }
                 function _parseLiteral(parent) {
-                    var node;
+                    let node;
                     switch(scanner.getToken()){
-                        case 7 /* NullKeyword */ :
+                        case 7 /* Json.SyntaxKind.NullKeyword */ :
                             return _finalize(new NullASTNodeImpl(parent, scanner.getTokenOffset()), true);
-                        case 8 /* TrueKeyword */ :
+                        case 8 /* Json.SyntaxKind.TrueKeyword */ :
                             return _finalize(new BooleanASTNodeImpl(parent, true, scanner.getTokenOffset()), true);
-                        case 9 /* FalseKeyword */ :
+                        case 9 /* Json.SyntaxKind.FalseKeyword */ :
                             return _finalize(new BooleanASTNodeImpl(parent, false, scanner.getTokenOffset()), true);
                         default:
                             return undefined;
@@ -16280,14 +16375,14 @@
                 function _parseValue(parent) {
                     return _parseArray(parent) || _parseObject(parent) || _parseString(parent) || _parseNumber(parent) || _parseLiteral(parent);
                 }
-                var _root = undefined;
-                var token = _scanNext();
-                if (token !== 17 /* EOF */ ) {
+                let _root = undefined;
+                const token = _scanNext();
+                if (token !== 17 /* Json.SyntaxKind.EOF */ ) {
                     _root = _parseValue(_root);
                     if (!_root) {
-                        _error(localize('Invalid symbol', 'Expected a JSON object, array or literal.'), ErrorCode.Undefined);
-                    } else if (scanner.getToken() !== 17 /* EOF */ ) {
-                        _error(localize('End of file expected', 'End of file expected.'), ErrorCode.Undefined);
+                        _error(t('Expected a JSON object, array or literal.'), ErrorCode.Undefined);
+                    } else if (scanner.getToken() !== 17 /* Json.SyntaxKind.EOF */ ) {
+                        _error(t('End of file expected.'), ErrorCode.Undefined);
                     }
                 }
                 return new JSONDocument(_root, problems, commentRanges);
@@ -16298,13 +16393,13 @@
 *  Licensed under the MIT License. See License.txt in the project root for license information.
 *--------------------------------------------------------------------------------------------*/ function stringifyObject(obj, indent, stringifyLiteral) {
                 if (obj !== null && typeof obj === 'object') {
-                    var newIndent = indent + '\t';
+                    const newIndent = indent + '\t';
                     if (Array.isArray(obj)) {
                         if (obj.length === 0) {
                             return '[]';
                         }
-                        var result = '[\n';
-                        for(var i = 0; i < obj.length; i++){
+                        let result = '[\n';
+                        for(let i = 0; i < obj.length; i++){
                             result += newIndent + stringifyObject(obj[i], newIndent, stringifyLiteral);
                             if (i < obj.length - 1) {
                                 result += ',';
@@ -16314,13 +16409,13 @@
                         result += indent + ']';
                         return result;
                     } else {
-                        var keys = Object.keys(obj);
+                        const keys = Object.keys(obj);
                         if (keys.length === 0) {
                             return '{}';
                         }
-                        var result = '{\n';
-                        for(var i = 0; i < keys.length; i++){
-                            var key = keys[i];
+                        let result = '{\n';
+                        for(let i = 0; i < keys.length; i++){
+                            const key = keys[i];
                             result += newIndent + JSON.stringify(key) + ': ' + stringifyObject(obj[key], newIndent, stringifyLiteral);
                             if (i < keys.length - 1) {
                                 result += ',';
@@ -16334,99 +16429,80 @@
                 return stringifyLiteral(obj);
             }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/services/jsonCompletion.js
-            /* provided dependency */ var console = __nested_webpack_require_678377__(3716);
+            /* provided dependency */ var console = __nested_webpack_require_701335__(3716);
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var jsonCompletion_localize = browser_main.loadMessageBundle();
-            var valueCommitCharacters = [
+ *--------------------------------------------------------------------------------------------*/ const valueCommitCharacters = [
                 ',',
                 '}',
                 ']'
             ];
-            var propertyCommitCharacters = [
+            const propertyCommitCharacters = [
                 ':'
             ];
-            var JSONCompletion = /** @class */ function() {
-                function JSONCompletion(schemaService, contributions, promiseConstructor, clientCapabilities) {
-                    if (contributions === void 0) {
-                        contributions = [];
-                    }
-                    if (promiseConstructor === void 0) {
-                        promiseConstructor = Promise;
-                    }
-                    if (clientCapabilities === void 0) {
-                        clientCapabilities = {};
-                    }
-                    this.schemaService = schemaService;
-                    this.contributions = contributions;
-                    this.promiseConstructor = promiseConstructor;
-                    this.clientCapabilities = clientCapabilities;
-                }
-                JSONCompletion.prototype.doResolve = function(item) {
-                    for(var i = this.contributions.length - 1; i >= 0; i--){
-                        var resolveCompletion = this.contributions[i].resolveCompletion;
+            class JSONCompletion {
+                doResolve(item) {
+                    for(let i = this.contributions.length - 1; i >= 0; i--){
+                        const resolveCompletion = this.contributions[i].resolveCompletion;
                         if (resolveCompletion) {
-                            var resolver = resolveCompletion(item);
+                            const resolver = resolveCompletion(item);
                             if (resolver) {
                                 return resolver;
                             }
                         }
                     }
                     return this.promiseConstructor.resolve(item);
-                };
-                JSONCompletion.prototype.doComplete = function(document1, position, doc) {
-                    var _this = this;
-                    var result = {
+                }
+                doComplete(document1, position, doc) {
+                    const result = {
                         items: [],
                         isIncomplete: false
                     };
-                    var text = document1.getText();
-                    var offset = document1.offsetAt(position);
-                    var node = doc.getNodeFromOffset(offset, true);
+                    const text = document1.getText();
+                    const offset = document1.offsetAt(position);
+                    let node = doc.getNodeFromOffset(offset, true);
                     if (this.isInComment(document1, node ? node.offset : 0, offset)) {
                         return Promise.resolve(result);
                     }
                     if (node && offset === node.offset + node.length && offset > 0) {
-                        var ch = text[offset - 1];
+                        const ch = text[offset - 1];
                         if (node.type === 'object' && ch === '}' || node.type === 'array' && ch === ']') {
                             // after ] or }
                             node = node.parent;
                         }
                     }
-                    var currentWord = this.getCurrentWord(document1, offset);
-                    var overwriteRange;
+                    const currentWord = this.getCurrentWord(document1, offset);
+                    let overwriteRange;
                     if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
                         overwriteRange = main.Range.create(document1.positionAt(node.offset), document1.positionAt(node.offset + node.length));
                     } else {
-                        var overwriteStart = offset - currentWord.length;
+                        let overwriteStart = offset - currentWord.length;
                         if (overwriteStart > 0 && text[overwriteStart - 1] === '"') {
                             overwriteStart--;
                         }
                         overwriteRange = main.Range.create(document1.positionAt(overwriteStart), position);
                     }
-                    var supportsCommitCharacters = false; //this.doesSupportsCommitCharacters(); disabled for now, waiting for new API: https://github.com/microsoft/vscode/issues/42544
-                    var proposed = {};
-                    var collector = {
-                        add: function(suggestion) {
-                            var label = suggestion.label;
-                            var existing = proposed[label];
+                    const supportsCommitCharacters = false; //this.doesSupportsCommitCharacters(); disabled for now, waiting for new API: https://github.com/microsoft/vscode/issues/42544
+                    const proposed = new Map();
+                    const collector = {
+                        add: (suggestion)=>{
+                            let label = suggestion.label;
+                            const existing = proposed.get(label);
                             if (!existing) {
                                 label = label.replace(/[\n]/g, '↵');
                                 if (label.length > 60) {
-                                    var shortendedLabel = label.substr(0, 57).trim() + '...';
-                                    if (!proposed[shortendedLabel]) {
+                                    const shortendedLabel = label.substr(0, 57).trim() + '...';
+                                    if (!proposed.has(shortendedLabel)) {
                                         label = shortendedLabel;
                                     }
                                 }
-                                if (overwriteRange && suggestion.insertText !== undefined) {
-                                    suggestion.textEdit = main.TextEdit.replace(overwriteRange, suggestion.insertText);
-                                }
+                                suggestion.textEdit = main.TextEdit.replace(overwriteRange, suggestion.insertText);
                                 if (supportsCommitCharacters) {
                                     suggestion.commitCharacters = suggestion.kind === main.CompletionItemKind.Property ? propertyCommitCharacters : valueCommitCharacters;
                                 }
                                 suggestion.label = label;
-                                proposed[label] = suggestion;
+                                proposed.set(label, suggestion);
                                 result.items.push(suggestion);
                             } else {
                                 if (!existing.documentation) {
@@ -16435,29 +16511,29 @@
                                 if (!existing.detail) {
                                     existing.detail = suggestion.detail;
                                 }
+                                if (!existing.labelDetails) {
+                                    existing.labelDetails = suggestion.labelDetails;
+                                }
                             }
                         },
-                        setAsIncomplete: function() {
+                        setAsIncomplete: ()=>{
                             result.isIncomplete = true;
                         },
-                        error: function(message) {
+                        error: (message)=>{
                             console.error(message);
                         },
-                        log: function(message) {
-                            console.log(message);
-                        },
-                        getNumberOfProposals: function() {
+                        getNumberOfProposals: ()=>{
                             return result.items.length;
                         }
                     };
-                    return this.schemaService.getSchemaForResource(document1.uri, doc).then(function(schema) {
-                        var collectionPromises = [];
-                        var addValue = true;
-                        var currentKey = '';
-                        var currentProperty = undefined;
+                    return this.schemaService.getSchemaForResource(document1.uri, doc).then((schema)=>{
+                        const collectionPromises = [];
+                        let addValue = true;
+                        let currentKey = '';
+                        let currentProperty = undefined;
                         if (node) {
                             if (node.type === 'string') {
-                                var parent = node.parent;
+                                const parent = node.parent;
                                 if (parent && parent.type === 'property' && parent.keyNode === node) {
                                     addValue = !parent.valueNode;
                                     currentProperty = parent;
@@ -16475,26 +16551,26 @@
                                 return result;
                             }
                             // don't suggest properties that are already present
-                            var properties = node.properties;
-                            properties.forEach(function(p) {
+                            const properties = node.properties;
+                            properties.forEach((p)=>{
                                 if (!currentProperty || currentProperty !== p) {
-                                    proposed[p.keyNode.value] = main.CompletionItem.create('__');
+                                    proposed.set(p.keyNode.value, main.CompletionItem.create('__'));
                                 }
                             });
-                            var separatorAfter_1 = '';
+                            let separatorAfter = '';
                             if (addValue) {
-                                separatorAfter_1 = _this.evaluateSeparatorAfter(document1, document1.offsetAt(overwriteRange.end));
+                                separatorAfter = this.evaluateSeparatorAfter(document1, document1.offsetAt(overwriteRange.end));
                             }
                             if (schema) {
                                 // property proposals with schema
-                                _this.getPropertyCompletions(schema, doc, node, addValue, separatorAfter_1, collector);
+                                this.getPropertyCompletions(schema, doc, node, addValue, separatorAfter, collector);
                             } else {
                                 // property proposals without schema
-                                _this.getSchemaLessPropertyCompletions(doc, node, currentKey, collector);
+                                this.getSchemaLessPropertyCompletions(doc, node, currentKey, collector);
                             }
-                            var location_1 = jsonParser_getNodePath(node);
-                            _this.contributions.forEach(function(contribution) {
-                                var collectPromise = contribution.collectPropertyCompletions(document1.uri, location_1, currentWord, addValue, separatorAfter_1 === '', collector);
+                            const location = jsonParser_getNodePath(node);
+                            this.contributions.forEach((contribution)=>{
+                                const collectPromise = contribution.collectPropertyCompletions(document1.uri, location, currentWord, addValue, separatorAfter === '', collector);
                                 if (collectPromise) {
                                     collectionPromises.push(collectPromise);
                                 }
@@ -16502,8 +16578,8 @@
                             if (!schema && currentWord.length > 0 && text.charAt(offset - currentWord.length - 1) !== '"') {
                                 collector.add({
                                     kind: main.CompletionItemKind.Property,
-                                    label: _this.getLabelForValue(currentWord),
-                                    insertText: _this.getInsertTextForProperty(currentWord, undefined, false, separatorAfter_1),
+                                    label: this.getLabelForValue(currentWord),
+                                    insertText: this.getInsertTextForProperty(currentWord, undefined, false, separatorAfter),
                                     insertTextFormat: main.InsertTextFormat.Snippet,
                                     documentation: ''
                                 });
@@ -16511,52 +16587,51 @@
                             }
                         }
                         // proposals for values
-                        var types = {};
+                        const types = {};
                         if (schema) {
                             // value proposals with schema
-                            _this.getValueCompletions(schema, doc, node, offset, document1, collector, types);
+                            this.getValueCompletions(schema, doc, node, offset, document1, collector, types);
                         } else {
                             // value proposals without schema
-                            _this.getSchemaLessValueCompletions(doc, node, offset, document1, collector);
+                            this.getSchemaLessValueCompletions(doc, node, offset, document1, collector);
                         }
-                        if (_this.contributions.length > 0) {
-                            _this.getContributedValueCompletions(doc, node, offset, document1, collector, collectionPromises);
+                        if (this.contributions.length > 0) {
+                            this.getContributedValueCompletions(doc, node, offset, document1, collector, collectionPromises);
                         }
-                        return _this.promiseConstructor.all(collectionPromises).then(function() {
+                        return this.promiseConstructor.all(collectionPromises).then(()=>{
                             if (collector.getNumberOfProposals() === 0) {
-                                var offsetForSeparator = offset;
+                                let offsetForSeparator = offset;
                                 if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
                                     offsetForSeparator = node.offset + node.length;
                                 }
-                                var separatorAfter = _this.evaluateSeparatorAfter(document1, offsetForSeparator);
-                                _this.addFillerValueCompletions(types, separatorAfter, collector);
+                                const separatorAfter = this.evaluateSeparatorAfter(document1, offsetForSeparator);
+                                this.addFillerValueCompletions(types, separatorAfter, collector);
                             }
                             return result;
                         });
                     });
-                };
-                JSONCompletion.prototype.getPropertyCompletions = function(schema, doc, node, addValue, separatorAfter, collector) {
-                    var _this = this;
-                    var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset);
-                    matchingSchemas.forEach(function(s) {
+                }
+                getPropertyCompletions(schema, doc, node, addValue, separatorAfter, collector) {
+                    const matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset);
+                    matchingSchemas.forEach((s)=>{
                         if (s.node === node && !s.inverted) {
-                            var schemaProperties_1 = s.schema.properties;
-                            if (schemaProperties_1) {
-                                Object.keys(schemaProperties_1).forEach(function(key) {
-                                    var propertySchema = schemaProperties_1[key];
+                            const schemaProperties = s.schema.properties;
+                            if (schemaProperties) {
+                                Object.keys(schemaProperties).forEach((key)=>{
+                                    const propertySchema = schemaProperties[key];
                                     if (typeof propertySchema === 'object' && !propertySchema.deprecationMessage && !propertySchema.doNotSuggest) {
-                                        var proposal = {
+                                        const proposal = {
                                             kind: main.CompletionItemKind.Property,
                                             label: key,
-                                            insertText: _this.getInsertTextForProperty(key, propertySchema, addValue, separatorAfter),
+                                            insertText: this.getInsertTextForProperty(key, propertySchema, addValue, separatorAfter),
                                             insertTextFormat: main.InsertTextFormat.Snippet,
-                                            filterText: _this.getFilterTextForValue(key),
-                                            documentation: _this.fromMarkup(propertySchema.markdownDescription) || propertySchema.description || ''
+                                            filterText: this.getFilterTextForValue(key),
+                                            documentation: this.fromMarkup(propertySchema.markdownDescription) || propertySchema.description || ''
                                         };
                                         if (propertySchema.suggestSortText !== undefined) {
                                             proposal.sortText = propertySchema.suggestSortText;
                                         }
-                                        if (proposal.insertText && endsWith(proposal.insertText, "$1".concat(separatorAfter))) {
+                                        if (proposal.insertText && endsWith(proposal.insertText, `$1${separatorAfter}`)) {
                                             proposal.command = {
                                                 title: 'Suggest',
                                                 command: 'editor.action.triggerSuggest'
@@ -16566,24 +16641,21 @@
                                     }
                                 });
                             }
-                            var schemaPropertyNames_1 = s.schema.propertyNames;
-                            if (typeof schemaPropertyNames_1 === 'object' && !schemaPropertyNames_1.deprecationMessage && !schemaPropertyNames_1.doNotSuggest) {
-                                var propertyNameCompletionItem = function(name, enumDescription) {
-                                    if (enumDescription === void 0) {
-                                        enumDescription = undefined;
-                                    }
-                                    var proposal = {
+                            const schemaPropertyNames = s.schema.propertyNames;
+                            if (typeof schemaPropertyNames === 'object' && !schemaPropertyNames.deprecationMessage && !schemaPropertyNames.doNotSuggest) {
+                                const propertyNameCompletionItem = (name, enumDescription = undefined)=>{
+                                    const proposal = {
                                         kind: main.CompletionItemKind.Property,
                                         label: name,
-                                        insertText: _this.getInsertTextForProperty(name, undefined, addValue, separatorAfter),
+                                        insertText: this.getInsertTextForProperty(name, undefined, addValue, separatorAfter),
                                         insertTextFormat: main.InsertTextFormat.Snippet,
-                                        filterText: _this.getFilterTextForValue(name),
-                                        documentation: enumDescription || _this.fromMarkup(schemaPropertyNames_1.markdownDescription) || schemaPropertyNames_1.description || ''
+                                        filterText: this.getFilterTextForValue(name),
+                                        documentation: enumDescription || this.fromMarkup(schemaPropertyNames.markdownDescription) || schemaPropertyNames.description || ''
                                     };
-                                    if (schemaPropertyNames_1.suggestSortText !== undefined) {
-                                        proposal.sortText = schemaPropertyNames_1.suggestSortText;
+                                    if (schemaPropertyNames.suggestSortText !== undefined) {
+                                        proposal.sortText = schemaPropertyNames.suggestSortText;
                                     }
-                                    if (proposal.insertText && endsWith(proposal.insertText, "$1".concat(separatorAfter))) {
+                                    if (proposal.insertText && endsWith(proposal.insertText, `$1${separatorAfter}`)) {
                                         proposal.command = {
                                             title: 'Suggest',
                                             command: 'editor.action.triggerSuggest'
@@ -16591,35 +16663,34 @@
                                     }
                                     collector.add(proposal);
                                 };
-                                if (schemaPropertyNames_1.enum) {
-                                    for(var i = 0; i < schemaPropertyNames_1.enum.length; i++){
-                                        var enumDescription = undefined;
-                                        if (schemaPropertyNames_1.markdownEnumDescriptions && i < schemaPropertyNames_1.markdownEnumDescriptions.length) {
-                                            enumDescription = _this.fromMarkup(schemaPropertyNames_1.markdownEnumDescriptions[i]);
-                                        } else if (schemaPropertyNames_1.enumDescriptions && i < schemaPropertyNames_1.enumDescriptions.length) {
-                                            enumDescription = schemaPropertyNames_1.enumDescriptions[i];
+                                if (schemaPropertyNames.enum) {
+                                    for(let i = 0; i < schemaPropertyNames.enum.length; i++){
+                                        let enumDescription = undefined;
+                                        if (schemaPropertyNames.markdownEnumDescriptions && i < schemaPropertyNames.markdownEnumDescriptions.length) {
+                                            enumDescription = this.fromMarkup(schemaPropertyNames.markdownEnumDescriptions[i]);
+                                        } else if (schemaPropertyNames.enumDescriptions && i < schemaPropertyNames.enumDescriptions.length) {
+                                            enumDescription = schemaPropertyNames.enumDescriptions[i];
                                         }
-                                        propertyNameCompletionItem(schemaPropertyNames_1.enum[i], enumDescription);
+                                        propertyNameCompletionItem(schemaPropertyNames.enum[i], enumDescription);
                                     }
                                 }
-                                if (schemaPropertyNames_1.const) {
-                                    propertyNameCompletionItem(schemaPropertyNames_1.const);
+                                if (schemaPropertyNames.const) {
+                                    propertyNameCompletionItem(schemaPropertyNames.const);
                                 }
                             }
                         }
                     });
-                };
-                JSONCompletion.prototype.getSchemaLessPropertyCompletions = function(doc, node, currentKey, collector) {
-                    var _this = this;
-                    var collectCompletionsForSimilarObject = function(obj) {
-                        obj.properties.forEach(function(p) {
-                            var key = p.keyNode.value;
+                }
+                getSchemaLessPropertyCompletions(doc, node, currentKey, collector) {
+                    const collectCompletionsForSimilarObject = (obj)=>{
+                        obj.properties.forEach((p)=>{
+                            const key = p.keyNode.value;
                             collector.add({
                                 kind: main.CompletionItemKind.Property,
                                 label: key,
-                                insertText: _this.getInsertTextForValue(key, ''),
+                                insertText: this.getInsertTextForValue(key, ''),
                                 insertTextFormat: main.InsertTextFormat.Snippet,
-                                filterText: _this.getFilterTextForValue(key),
+                                filterText: this.getFilterTextForValue(key),
                                 documentation: ''
                             });
                         });
@@ -16627,16 +16698,16 @@
                     if (node.parent) {
                         if (node.parent.type === 'property') {
                             // if the object is a property value, check the tree for other objects that hang under a property of the same name
-                            var parentKey_1 = node.parent.keyNode.value;
-                            doc.visit(function(n) {
-                                if (n.type === 'property' && n !== node.parent && n.keyNode.value === parentKey_1 && n.valueNode && n.valueNode.type === 'object') {
+                            const parentKey = node.parent.keyNode.value;
+                            doc.visit((n)=>{
+                                if (n.type === 'property' && n !== node.parent && n.keyNode.value === parentKey && n.valueNode && n.valueNode.type === 'object') {
                                     collectCompletionsForSimilarObject(n.valueNode);
                                 }
                                 return true;
                             });
                         } else if (node.parent.type === 'array') {
                             // if the object is in an array, use all other array elements as similar objects
-                            node.parent.items.forEach(function(n) {
+                            node.parent.items.forEach((n)=>{
                                 if (n.type === 'object' && n !== node) {
                                     collectCompletionsForSimilarObject(n);
                                 }
@@ -16652,10 +16723,9 @@
                             filterText: this.getFilterTextForValue("$schema")
                         });
                     }
-                };
-                JSONCompletion.prototype.getSchemaLessValueCompletions = function(doc, node, offset, document1, collector) {
-                    var _this = this;
-                    var offsetForSeparator = offset;
+                }
+                getSchemaLessValueCompletions(doc, node, offset, document1, collector) {
+                    let offsetForSeparator = offset;
                     if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
                         offsetForSeparator = node.offset + node.length;
                         node = node.parent;
@@ -16677,36 +16747,36 @@
                         });
                         return;
                     }
-                    var separatorAfter = this.evaluateSeparatorAfter(document1, offsetForSeparator);
-                    var collectSuggestionsForValues = function(value) {
+                    const separatorAfter = this.evaluateSeparatorAfter(document1, offsetForSeparator);
+                    const collectSuggestionsForValues = (value)=>{
                         if (value.parent && !jsonParser_contains(value.parent, offset, true)) {
                             collector.add({
-                                kind: _this.getSuggestionKind(value.type),
-                                label: _this.getLabelTextForMatchingNode(value, document1),
-                                insertText: _this.getInsertTextForMatchingNode(value, document1, separatorAfter),
+                                kind: this.getSuggestionKind(value.type),
+                                label: this.getLabelTextForMatchingNode(value, document1),
+                                insertText: this.getInsertTextForMatchingNode(value, document1, separatorAfter),
                                 insertTextFormat: main.InsertTextFormat.Snippet,
                                 documentation: ''
                             });
                         }
                         if (value.type === 'boolean') {
-                            _this.addBooleanValueCompletion(!value.value, separatorAfter, collector);
+                            this.addBooleanValueCompletion(!value.value, separatorAfter, collector);
                         }
                     };
                     if (node.type === 'property') {
                         if (offset > (node.colonOffset || 0)) {
-                            var valueNode = node.valueNode;
+                            const valueNode = node.valueNode;
                             if (valueNode && (offset > valueNode.offset + valueNode.length || valueNode.type === 'object' || valueNode.type === 'array')) {
                                 return;
                             }
                             // suggest values at the same key
-                            var parentKey_2 = node.keyNode.value;
-                            doc.visit(function(n) {
-                                if (n.type === 'property' && n.keyNode.value === parentKey_2 && n.valueNode) {
+                            const parentKey = node.keyNode.value;
+                            doc.visit((n)=>{
+                                if (n.type === 'property' && n.keyNode.value === parentKey && n.valueNode) {
                                     collectSuggestionsForValues(n.valueNode);
                                 }
                                 return true;
                             });
-                            if (parentKey_2 === '$schema' && node.parent && !node.parent.parent) {
+                            if (parentKey === '$schema' && node.parent && !node.parent.parent) {
                                 this.addDollarSchemaCompletions(separatorAfter, collector);
                             }
                         }
@@ -16714,9 +16784,9 @@
                     if (node.type === 'array') {
                         if (node.parent && node.parent.type === 'property') {
                             // suggest items of an array at the same key
-                            var parentKey_3 = node.parent.keyNode.value;
-                            doc.visit(function(n) {
-                                if (n.type === 'property' && n.keyNode.value === parentKey_3 && n.valueNode && n.valueNode.type === 'array') {
+                            const parentKey = node.parent.keyNode.value;
+                            doc.visit((n)=>{
+                                if (n.type === 'property' && n.keyNode.value === parentKey && n.valueNode && n.valueNode.type === 'array') {
                                     n.valueNode.items.forEach(collectSuggestionsForValues);
                                 }
                                 return true;
@@ -16726,11 +16796,11 @@
                             node.items.forEach(collectSuggestionsForValues);
                         }
                     }
-                };
-                JSONCompletion.prototype.getValueCompletions = function(schema, doc, node, offset, document1, collector, types) {
-                    var offsetForSeparator = offset;
-                    var parentKey = undefined;
-                    var valueNode = undefined;
+                }
+                getValueCompletions(schema, doc, node, offset, document1, collector, types) {
+                    let offsetForSeparator = offset;
+                    let parentKey = undefined;
+                    let valueNode = undefined;
                     if (node && (node.type === 'string' || node.type === 'number' || node.type === 'boolean' || node.type === 'null')) {
                         offsetForSeparator = node.offset + node.length;
                         valueNode = node;
@@ -16741,51 +16811,67 @@
                         return;
                     }
                     if (node.type === 'property' && offset > (node.colonOffset || 0)) {
-                        var valueNode_1 = node.valueNode;
-                        if (valueNode_1 && offset > valueNode_1.offset + valueNode_1.length) {
+                        const valueNode = node.valueNode;
+                        if (valueNode && offset > valueNode.offset + valueNode.length) {
                             return; // we are past the value node
                         }
                         parentKey = node.keyNode.value;
                         node = node.parent;
                     }
                     if (node && (parentKey !== undefined || node.type === 'array')) {
-                        var separatorAfter = this.evaluateSeparatorAfter(document1, offsetForSeparator);
-                        var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset, valueNode);
-                        for(var _i = 0, matchingSchemas_1 = matchingSchemas; _i < matchingSchemas_1.length; _i++){
-                            var s = matchingSchemas_1[_i];
+                        const separatorAfter = this.evaluateSeparatorAfter(document1, offsetForSeparator);
+                        const matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset, valueNode);
+                        for (const s of matchingSchemas){
                             if (s.node === node && !s.inverted && s.schema) {
                                 if (node.type === 'array' && s.schema.items) {
+                                    let c = collector;
+                                    if (s.schema.uniqueItems) {
+                                        const existingValues = new Set();
+                                        node.children.forEach((n)=>{
+                                            if (n.type !== 'array' && n.type !== 'object') {
+                                                existingValues.add(this.getLabelForValue(jsonParser_getNodeValue(n)));
+                                            }
+                                        });
+                                        c = {
+                                            ...collector,
+                                            add (suggestion) {
+                                                if (!existingValues.has(suggestion.label)) {
+                                                    collector.add(suggestion);
+                                                }
+                                            }
+                                        };
+                                    }
                                     if (Array.isArray(s.schema.items)) {
-                                        var index = this.findItemAtOffset(node, document1, offset);
+                                        const index = this.findItemAtOffset(node, document1, offset);
                                         if (index < s.schema.items.length) {
-                                            this.addSchemaValueCompletions(s.schema.items[index], separatorAfter, collector, types);
+                                            this.addSchemaValueCompletions(s.schema.items[index], separatorAfter, c, types);
                                         }
                                     } else {
-                                        this.addSchemaValueCompletions(s.schema.items, separatorAfter, collector, types);
+                                        this.addSchemaValueCompletions(s.schema.items, separatorAfter, c, types);
                                     }
                                 }
                                 if (parentKey !== undefined) {
-                                    var propertyMatched = false;
+                                    let propertyMatched = false;
                                     if (s.schema.properties) {
-                                        var propertySchema = s.schema.properties[parentKey];
+                                        const propertySchema = s.schema.properties[parentKey];
                                         if (propertySchema) {
                                             propertyMatched = true;
                                             this.addSchemaValueCompletions(propertySchema, separatorAfter, collector, types);
                                         }
                                     }
                                     if (s.schema.patternProperties && !propertyMatched) {
-                                        for(var _a = 0, _b = Object.keys(s.schema.patternProperties); _a < _b.length; _a++){
-                                            var pattern = _b[_a];
-                                            var regex = extendedRegExp(pattern);
-                                            if (regex === null || regex === void 0 ? void 0 : regex.test(parentKey)) {
+                                        for (const pattern of Object.keys(s.schema.patternProperties)){
+                                            var _regex;
+                                            const regex = extendedRegExp(pattern);
+                                            if ((_regex = regex) === null || _regex === void 0 ? void 0 : _regex.test(parentKey)) {
                                                 propertyMatched = true;
-                                                var propertySchema = s.schema.patternProperties[pattern];
+                                                const propertySchema = s.schema.patternProperties[pattern];
                                                 this.addSchemaValueCompletions(propertySchema, separatorAfter, collector, types);
                                             }
                                         }
                                     }
                                     if (s.schema.additionalProperties && !propertyMatched) {
-                                        var propertySchema = s.schema.additionalProperties;
+                                        const propertySchema = s.schema.additionalProperties;
                                         this.addSchemaValueCompletions(propertySchema, separatorAfter, collector, types);
                                     }
                                 }
@@ -16802,11 +16888,11 @@
                             this.addNullValueCompletion(separatorAfter, collector);
                         }
                     }
-                };
-                JSONCompletion.prototype.getContributedValueCompletions = function(doc, node, offset, document1, collector, collectionPromises) {
+                }
+                getContributedValueCompletions(doc, node, offset, document1, collector, collectionPromises) {
                     if (!node) {
-                        this.contributions.forEach(function(contribution) {
-                            var collectPromise = contribution.collectDefaultCompletions(document1.uri, collector);
+                        this.contributions.forEach((contribution)=>{
+                            const collectPromise = contribution.collectDefaultCompletions(document1.uri, collector);
                             if (collectPromise) {
                                 collectionPromises.push(collectPromise);
                             }
@@ -16816,12 +16902,12 @@
                             node = node.parent;
                         }
                         if (node && node.type === 'property' && offset > (node.colonOffset || 0)) {
-                            var parentKey_4 = node.keyNode.value;
-                            var valueNode = node.valueNode;
+                            const parentKey = node.keyNode.value;
+                            const valueNode = node.valueNode;
                             if ((!valueNode || offset <= valueNode.offset + valueNode.length) && node.parent) {
-                                var location_2 = jsonParser_getNodePath(node.parent);
-                                this.contributions.forEach(function(contribution) {
-                                    var collectPromise = contribution.collectValueCompletions(document1.uri, location_2, parentKey_4, collector);
+                                const location = jsonParser_getNodePath(node.parent);
+                                this.contributions.forEach((contribution)=>{
+                                    const collectPromise = contribution.collectValueCompletions(document1.uri, location, parentKey, collector);
                                     if (collectPromise) {
                                         collectionPromises.push(collectPromise);
                                     }
@@ -16829,94 +16915,90 @@
                             }
                         }
                     }
-                };
-                JSONCompletion.prototype.addSchemaValueCompletions = function(schema, separatorAfter, collector, types) {
-                    var _this = this;
+                }
+                addSchemaValueCompletions(schema, separatorAfter, collector, types) {
                     if (typeof schema === 'object') {
                         this.addEnumValueCompletions(schema, separatorAfter, collector);
                         this.addDefaultValueCompletions(schema, separatorAfter, collector);
                         this.collectTypes(schema, types);
                         if (Array.isArray(schema.allOf)) {
-                            schema.allOf.forEach(function(s) {
-                                return _this.addSchemaValueCompletions(s, separatorAfter, collector, types);
-                            });
+                            schema.allOf.forEach((s)=>this.addSchemaValueCompletions(s, separatorAfter, collector, types));
                         }
                         if (Array.isArray(schema.anyOf)) {
-                            schema.anyOf.forEach(function(s) {
-                                return _this.addSchemaValueCompletions(s, separatorAfter, collector, types);
-                            });
+                            schema.anyOf.forEach((s)=>this.addSchemaValueCompletions(s, separatorAfter, collector, types));
                         }
                         if (Array.isArray(schema.oneOf)) {
-                            schema.oneOf.forEach(function(s) {
-                                return _this.addSchemaValueCompletions(s, separatorAfter, collector, types);
-                            });
+                            schema.oneOf.forEach((s)=>this.addSchemaValueCompletions(s, separatorAfter, collector, types));
                         }
                     }
-                };
-                JSONCompletion.prototype.addDefaultValueCompletions = function(schema, separatorAfter, collector, arrayDepth) {
-                    var _this = this;
-                    if (arrayDepth === void 0) {
-                        arrayDepth = 0;
-                    }
-                    var hasProposals = false;
+                }
+                addDefaultValueCompletions(schema, separatorAfter, collector, arrayDepth = 0) {
+                    let hasProposals = false;
                     if (isDefined(schema.default)) {
-                        var type = schema.type;
-                        var value = schema.default;
-                        for(var i = arrayDepth; i > 0; i--){
+                        let type = schema.type;
+                        let value = schema.default;
+                        for(let i = arrayDepth; i > 0; i--){
                             value = [
                                 value
                             ];
                             type = 'array';
                         }
-                        collector.add({
+                        const completionItem = {
                             kind: this.getSuggestionKind(type),
                             label: this.getLabelForValue(value),
                             insertText: this.getInsertTextForValue(value, separatorAfter),
-                            insertTextFormat: main.InsertTextFormat.Snippet,
-                            detail: jsonCompletion_localize('json.suggest.default', 'Default value')
-                        });
+                            insertTextFormat: main.InsertTextFormat.Snippet
+                        };
+                        if (this.doesSupportsLabelDetails()) {
+                            completionItem.labelDetails = {
+                                description: t('Default value')
+                            };
+                        } else {
+                            completionItem.detail = t('Default value');
+                        }
+                        collector.add(completionItem);
                         hasProposals = true;
                     }
                     if (Array.isArray(schema.examples)) {
-                        schema.examples.forEach(function(example) {
-                            var type = schema.type;
-                            var value = example;
-                            for(var i = arrayDepth; i > 0; i--){
+                        schema.examples.forEach((example)=>{
+                            let type = schema.type;
+                            let value = example;
+                            for(let i = arrayDepth; i > 0; i--){
                                 value = [
                                     value
                                 ];
                                 type = 'array';
                             }
                             collector.add({
-                                kind: _this.getSuggestionKind(type),
-                                label: _this.getLabelForValue(value),
-                                insertText: _this.getInsertTextForValue(value, separatorAfter),
+                                kind: this.getSuggestionKind(type),
+                                label: this.getLabelForValue(value),
+                                insertText: this.getInsertTextForValue(value, separatorAfter),
                                 insertTextFormat: main.InsertTextFormat.Snippet
                             });
                             hasProposals = true;
                         });
                     }
                     if (Array.isArray(schema.defaultSnippets)) {
-                        schema.defaultSnippets.forEach(function(s) {
-                            var type = schema.type;
-                            var value = s.body;
-                            var label = s.label;
-                            var insertText;
-                            var filterText;
+                        schema.defaultSnippets.forEach((s)=>{
+                            let type = schema.type;
+                            let value = s.body;
+                            let label = s.label;
+                            let insertText;
+                            let filterText;
                             if (isDefined(value)) {
-                                var type_1 = schema.type;
-                                for(var i = arrayDepth; i > 0; i--){
+                                let type = schema.type;
+                                for(let i = arrayDepth; i > 0; i--){
                                     value = [
                                         value
                                     ];
-                                    type_1 = 'array';
+                                    type = 'array';
                                 }
-                                insertText = _this.getInsertTextForSnippetValue(value, separatorAfter);
-                                filterText = _this.getFilterTextForSnippetValue(value);
-                                label = label || _this.getLabelForSnippetValue(value);
+                                insertText = this.getInsertTextForSnippetValue(value, separatorAfter);
+                                filterText = this.getFilterTextForSnippetValue(value);
+                                label = label || this.getLabelForSnippetValue(value);
                             } else if (typeof s.bodyText === 'string') {
-                                var prefix = '', suffix = '', indent = '';
-                                for(var i = arrayDepth; i > 0; i--){
+                                let prefix = '', suffix = '', indent = '';
+                                for(let i = arrayDepth; i > 0; i--){
                                     prefix = prefix + indent + '[\n';
                                     suffix = suffix + '\n' + indent + ']';
                                     indent += '\t';
@@ -16928,12 +17010,12 @@
                                 return;
                             }
                             collector.add({
-                                kind: _this.getSuggestionKind(type),
-                                label: label,
-                                documentation: _this.fromMarkup(s.markdownDescription) || s.description,
-                                insertText: insertText,
+                                kind: this.getSuggestionKind(type),
+                                label,
+                                documentation: this.fromMarkup(s.markdownDescription) || s.description,
+                                insertText,
                                 insertTextFormat: main.InsertTextFormat.Snippet,
-                                filterText: filterText
+                                filterText
                             });
                             hasProposals = true;
                         });
@@ -16941,8 +17023,8 @@
                     if (!hasProposals && typeof schema.items === 'object' && !Array.isArray(schema.items) && arrayDepth < 5 /* beware of recursion */ ) {
                         this.addDefaultValueCompletions(schema.items, separatorAfter, collector, arrayDepth + 1);
                     }
-                };
-                JSONCompletion.prototype.addEnumValueCompletions = function(schema, separatorAfter, collector) {
+                }
+                addEnumValueCompletions(schema, separatorAfter, collector) {
                     if (isDefined(schema.const)) {
                         collector.add({
                             kind: this.getSuggestionKind(schema.type),
@@ -16953,9 +17035,9 @@
                         });
                     }
                     if (Array.isArray(schema.enum)) {
-                        for(var i = 0, length = schema.enum.length; i < length; i++){
-                            var enm = schema.enum[i];
-                            var documentation = this.fromMarkup(schema.markdownDescription) || schema.description;
+                        for(let i = 0, length = schema.enum.length; i < length; i++){
+                            const enm = schema.enum[i];
+                            let documentation = this.fromMarkup(schema.markdownDescription) || schema.description;
                             if (schema.markdownEnumDescriptions && i < schema.markdownEnumDescriptions.length && this.doesSupportMarkdown()) {
                                 documentation = this.fromMarkup(schema.markdownEnumDescriptions[i]);
                             } else if (schema.enumDescriptions && i < schema.enumDescriptions.length) {
@@ -16966,32 +17048,30 @@
                                 label: this.getLabelForValue(enm),
                                 insertText: this.getInsertTextForValue(enm, separatorAfter),
                                 insertTextFormat: main.InsertTextFormat.Snippet,
-                                documentation: documentation
+                                documentation
                             });
                         }
                     }
-                };
-                JSONCompletion.prototype.collectTypes = function(schema, types) {
+                }
+                collectTypes(schema, types) {
                     if (Array.isArray(schema.enum) || isDefined(schema.const)) {
                         return;
                     }
-                    var type = schema.type;
+                    const type = schema.type;
                     if (Array.isArray(type)) {
-                        type.forEach(function(t) {
-                            return types[t] = true;
-                        });
+                        type.forEach((t)=>types[t] = true);
                     } else if (type) {
                         types[type] = true;
                     }
-                };
-                JSONCompletion.prototype.addFillerValueCompletions = function(types, separatorAfter, collector) {
+                }
+                addFillerValueCompletions(types, separatorAfter, collector) {
                     if (types['object']) {
                         collector.add({
                             kind: this.getSuggestionKind('object'),
                             label: '{}',
                             insertText: this.getInsertTextForGuessedValue({}, separatorAfter),
                             insertTextFormat: main.InsertTextFormat.Snippet,
-                            detail: jsonCompletion_localize('defaults.object', 'New object'),
+                            detail: t('New object'),
                             documentation: ''
                         });
                     }
@@ -17001,12 +17081,12 @@
                             label: '[]',
                             insertText: this.getInsertTextForGuessedValue([], separatorAfter),
                             insertTextFormat: main.InsertTextFormat.Snippet,
-                            detail: jsonCompletion_localize('defaults.array', 'New array'),
+                            detail: t('New array'),
                             documentation: ''
                         });
                     }
-                };
-                JSONCompletion.prototype.addBooleanValueCompletion = function(value, separatorAfter, collector) {
+                }
+                addBooleanValueCompletion(value, separatorAfter, collector) {
                     collector.add({
                         kind: this.getSuggestionKind('boolean'),
                         label: value ? 'true' : 'false',
@@ -17014,8 +17094,8 @@
                         insertTextFormat: main.InsertTextFormat.Snippet,
                         documentation: ''
                     });
-                };
-                JSONCompletion.prototype.addNullValueCompletion = function(separatorAfter, collector) {
+                }
+                addNullValueCompletion(separatorAfter, collector) {
                     collector.add({
                         kind: this.getSuggestionKind('null'),
                         label: 'null',
@@ -17023,50 +17103,48 @@
                         insertTextFormat: main.InsertTextFormat.Snippet,
                         documentation: ''
                     });
-                };
-                JSONCompletion.prototype.addDollarSchemaCompletions = function(separatorAfter, collector) {
-                    var _this = this;
-                    var schemaIds = this.schemaService.getRegisteredSchemaIds(function(schema) {
-                        return schema === 'http' || schema === 'https';
-                    });
-                    schemaIds.forEach(function(schemaId) {
-                        return collector.add({
+                }
+                addDollarSchemaCompletions(separatorAfter, collector) {
+                    const schemaIds = this.schemaService.getRegisteredSchemaIds((schema)=>schema === 'http' || schema === 'https');
+                    schemaIds.forEach((schemaId)=>collector.add({
                             kind: main.CompletionItemKind.Module,
-                            label: _this.getLabelForValue(schemaId),
-                            filterText: _this.getFilterTextForValue(schemaId),
-                            insertText: _this.getInsertTextForValue(schemaId, separatorAfter),
+                            label: this.getLabelForValue(schemaId),
+                            filterText: this.getFilterTextForValue(schemaId),
+                            insertText: this.getInsertTextForValue(schemaId, separatorAfter),
                             insertTextFormat: main.InsertTextFormat.Snippet,
                             documentation: ''
-                        });
-                    });
-                };
-                JSONCompletion.prototype.getLabelForValue = function(value) {
+                        }));
+                }
+                getLabelForValue(value) {
                     return JSON.stringify(value);
-                };
-                JSONCompletion.prototype.getFilterTextForValue = function(value) {
+                }
+                getValueFromLabel(value) {
+                    return JSON.parse(value);
+                }
+                getFilterTextForValue(value) {
                     return JSON.stringify(value);
-                };
-                JSONCompletion.prototype.getFilterTextForSnippetValue = function(value) {
+                }
+                getFilterTextForSnippetValue(value) {
                     return JSON.stringify(value).replace(/\$\{\d+:([^}]+)\}|\$\d+/g, '$1');
-                };
-                JSONCompletion.prototype.getLabelForSnippetValue = function(value) {
-                    var label = JSON.stringify(value);
+                }
+                getLabelForSnippetValue(value) {
+                    const label = JSON.stringify(value);
                     return label.replace(/\$\{\d+:([^}]+)\}|\$\d+/g, '$1');
-                };
-                JSONCompletion.prototype.getInsertTextForPlainText = function(text) {
-                    return text.replace(/[\\\$\}]/g, '\\$&'); // escape $, \ and } 
-                };
-                JSONCompletion.prototype.getInsertTextForValue = function(value, separatorAfter) {
-                    var text = JSON.stringify(value, null, '\t');
+                }
+                getInsertTextForPlainText(text) {
+                    return text.replace(/[\\\$\}]/g, '\\$&'); // escape $, \ and }
+                }
+                getInsertTextForValue(value, separatorAfter) {
+                    const text = JSON.stringify(value, null, '\t');
                     if (text === '{}') {
                         return '{$1}' + separatorAfter;
                     } else if (text === '[]') {
                         return '[$1]' + separatorAfter;
                     }
                     return this.getInsertTextForPlainText(text + separatorAfter);
-                };
-                JSONCompletion.prototype.getInsertTextForSnippetValue = function(value, separatorAfter) {
-                    var replacer = function(value) {
+                }
+                getInsertTextForSnippetValue(value, separatorAfter) {
+                    const replacer = (value)=>{
                         if (typeof value === 'string') {
                             if (value[0] === '^') {
                                 return value.substr(1);
@@ -17075,8 +17153,8 @@
                         return JSON.stringify(value);
                     };
                     return stringifyObject(value, '', replacer) + separatorAfter;
-                };
-                JSONCompletion.prototype.getInsertTextForGuessedValue = function(value, separatorAfter) {
+                }
+                getInsertTextForGuessedValue(value, separatorAfter) {
                     switch(typeof value){
                         case 'object':
                             if (value === null) {
@@ -17084,7 +17162,7 @@
                             }
                             return this.getInsertTextForValue(value, separatorAfter);
                         case 'string':
-                            var snippetValue = JSON.stringify(value);
+                            let snippetValue = JSON.stringify(value);
                             snippetValue = snippetValue.substr(1, snippetValue.length - 2); // remove quotes
                             snippetValue = this.getInsertTextForPlainText(snippetValue); // escape \ and }
                             return '"${1:' + snippetValue + '}"' + separatorAfter;
@@ -17093,10 +17171,10 @@
                             return '${1:' + JSON.stringify(value) + '}' + separatorAfter;
                     }
                     return this.getInsertTextForValue(value, separatorAfter);
-                };
-                JSONCompletion.prototype.getSuggestionKind = function(type) {
+                }
+                getSuggestionKind(type) {
                     if (Array.isArray(type)) {
-                        var array = type;
+                        const array = type;
                         type = array.length > 0 ? array[0] : undefined;
                     }
                     if (!type) {
@@ -17112,41 +17190,41 @@
                         default:
                             return main.CompletionItemKind.Value;
                     }
-                };
-                JSONCompletion.prototype.getLabelTextForMatchingNode = function(node, document1) {
+                }
+                getLabelTextForMatchingNode(node, document1) {
                     switch(node.type){
                         case 'array':
                             return '[]';
                         case 'object':
                             return '{}';
                         default:
-                            var content = document1.getText().substr(node.offset, node.length);
+                            const content = document1.getText().substr(node.offset, node.length);
                             return content;
                     }
-                };
-                JSONCompletion.prototype.getInsertTextForMatchingNode = function(node, document1, separatorAfter) {
+                }
+                getInsertTextForMatchingNode(node, document1, separatorAfter) {
                     switch(node.type){
                         case 'array':
                             return this.getInsertTextForValue([], separatorAfter);
                         case 'object':
                             return this.getInsertTextForValue({}, separatorAfter);
                         default:
-                            var content = document1.getText().substr(node.offset, node.length) + separatorAfter;
+                            const content = document1.getText().substr(node.offset, node.length) + separatorAfter;
                             return this.getInsertTextForPlainText(content);
                     }
-                };
-                JSONCompletion.prototype.getInsertTextForProperty = function(key, propertySchema, addValue, separatorAfter) {
-                    var propertyText = this.getInsertTextForValue(key, '');
+                }
+                getInsertTextForProperty(key, propertySchema, addValue, separatorAfter) {
+                    const propertyText = this.getInsertTextForValue(key, '');
                     if (!addValue) {
                         return propertyText;
                     }
-                    var resultText = propertyText + ': ';
-                    var value;
-                    var nValueProposals = 0;
+                    const resultText = propertyText + ': ';
+                    let value;
+                    let nValueProposals = 0;
                     if (propertySchema) {
                         if (Array.isArray(propertySchema.defaultSnippets)) {
                             if (propertySchema.defaultSnippets.length === 1) {
-                                var body = propertySchema.defaultSnippets[0].body;
+                                const body = propertySchema.defaultSnippets[0].body;
                                 if (isDefined(body)) {
                                     value = this.getInsertTextForSnippetValue(body, '');
                                 }
@@ -17158,6 +17236,12 @@
                                 value = this.getInsertTextForGuessedValue(propertySchema.enum[0], '');
                             }
                             nValueProposals += propertySchema.enum.length;
+                        }
+                        if (isDefined(propertySchema.const)) {
+                            if (!value) {
+                                value = this.getInsertTextForGuessedValue(propertySchema.const, '');
+                            }
+                            nValueProposals++;
                         }
                         if (isDefined(propertySchema.default)) {
                             if (!value) {
@@ -17172,7 +17256,7 @@
                             nValueProposals += propertySchema.examples.length;
                         }
                         if (nValueProposals === 0) {
-                            var type = Array.isArray(propertySchema.type) ? propertySchema.type[0] : propertySchema.type;
+                            let type = Array.isArray(propertySchema.type) ? propertySchema.type[0] : propertySchema.type;
                             if (!type) {
                                 if (propertySchema.properties) {
                                     type = 'object';
@@ -17209,38 +17293,38 @@
                         value = '$1';
                     }
                     return resultText + value + separatorAfter;
-                };
-                JSONCompletion.prototype.getCurrentWord = function(document1, offset) {
-                    var i = offset - 1;
-                    var text = document1.getText();
+                }
+                getCurrentWord(document1, offset) {
+                    let i = offset - 1;
+                    const text = document1.getText();
                     while(i >= 0 && ' \t\n\r\v":{[,]}'.indexOf(text.charAt(i)) === -1){
                         i--;
                     }
                     return text.substring(i + 1, offset);
-                };
-                JSONCompletion.prototype.evaluateSeparatorAfter = function(document1, offset) {
-                    var scanner = main_createScanner(document1.getText(), true);
+                }
+                evaluateSeparatorAfter(document1, offset) {
+                    const scanner = main_createScanner(document1.getText(), true);
                     scanner.setPosition(offset);
-                    var token = scanner.scan();
+                    const token = scanner.scan();
                     switch(token){
-                        case 5 /* CommaToken */ :
-                        case 2 /* CloseBraceToken */ :
-                        case 4 /* CloseBracketToken */ :
-                        case 17 /* EOF */ :
+                        case 5 /* Json.SyntaxKind.CommaToken */ :
+                        case 2 /* Json.SyntaxKind.CloseBraceToken */ :
+                        case 4 /* Json.SyntaxKind.CloseBracketToken */ :
+                        case 17 /* Json.SyntaxKind.EOF */ :
                             return '';
                         default:
                             return ',';
                     }
-                };
-                JSONCompletion.prototype.findItemAtOffset = function(node, document1, offset) {
-                    var scanner = main_createScanner(document1.getText(), true);
-                    var children = node.items;
-                    for(var i = children.length - 1; i >= 0; i--){
-                        var child = children[i];
+                }
+                findItemAtOffset(node, document1, offset) {
+                    const scanner = main_createScanner(document1.getText(), true);
+                    const children = node.items;
+                    for(let i = children.length - 1; i >= 0; i--){
+                        const child = children[i];
                         if (offset > child.offset + child.length) {
                             scanner.setPosition(child.offset + child.length);
-                            var token = scanner.scan();
-                            if (token === 5 /* CommaToken */  && offset >= scanner.getTokenOffset() + scanner.getTokenLength()) {
+                            const token = scanner.scan();
+                            if (token === 5 /* Json.SyntaxKind.CommaToken */  && offset >= scanner.getTokenOffset() + scanner.getTokenLength()) {
                                 return i + 1;
                             }
                             return i;
@@ -17249,17 +17333,17 @@
                         }
                     }
                     return 0;
-                };
-                JSONCompletion.prototype.isInComment = function(document1, start, offset) {
-                    var scanner = main_createScanner(document1.getText(), false);
+                }
+                isInComment(document1, start, offset) {
+                    const scanner = main_createScanner(document1.getText(), false);
                     scanner.setPosition(start);
-                    var token = scanner.scan();
-                    while(token !== 17 /* EOF */  && scanner.getTokenOffset() + scanner.getTokenLength() < offset){
+                    let token = scanner.scan();
+                    while(token !== 17 /* Json.SyntaxKind.EOF */  && scanner.getTokenOffset() + scanner.getTokenLength() < offset){
                         token = scanner.scan();
                     }
-                    return (token === 12 /* LineCommentTrivia */  || token === 13 /* BlockCommentTrivia */ ) && scanner.getTokenOffset() <= offset;
-                };
-                JSONCompletion.prototype.fromMarkup = function(markupString) {
+                    return (token === 12 /* Json.SyntaxKind.LineCommentTrivia */  || token === 13 /* Json.SyntaxKind.BlockCommentTrivia */ ) && scanner.getTokenOffset() <= offset;
+                }
+                fromMarkup(markupString) {
                     if (markupString && this.doesSupportMarkdown()) {
                         return {
                             kind: main.MarkupKind.Markdown,
@@ -17267,46 +17351,51 @@
                         };
                     }
                     return undefined;
-                };
-                JSONCompletion.prototype.doesSupportMarkdown = function() {
+                }
+                doesSupportMarkdown() {
                     if (!isDefined(this.supportsMarkdown)) {
-                        var completion = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.completion;
-                        this.supportsMarkdown = completion && completion.completionItem && Array.isArray(completion.completionItem.documentationFormat) && completion.completionItem.documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
+                        var _this_clientCapabilities_textDocument_completion_completionItem, _this_clientCapabilities_textDocument_completion, _this_clientCapabilities_textDocument;
+                        const documentationFormat = (_this_clientCapabilities_textDocument = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion = _this_clientCapabilities_textDocument.completion) === null || _this_clientCapabilities_textDocument_completion === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion_completionItem = _this_clientCapabilities_textDocument_completion.completionItem) === null || _this_clientCapabilities_textDocument_completion_completionItem === void 0 ? void 0 : _this_clientCapabilities_textDocument_completion_completionItem.documentationFormat;
+                        this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
                     }
                     return this.supportsMarkdown;
-                };
-                JSONCompletion.prototype.doesSupportsCommitCharacters = function() {
+                }
+                doesSupportsCommitCharacters() {
                     if (!isDefined(this.supportsCommitCharacters)) {
-                        var completion = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.completion;
-                        this.supportsCommitCharacters = completion && completion.completionItem && !!completion.completionItem.commitCharactersSupport;
+                        var _this_clientCapabilities_textDocument_completion_completionItem, _this_clientCapabilities_textDocument_completion, _this_clientCapabilities_textDocument;
+                        this.labelDetailsSupport = (_this_clientCapabilities_textDocument = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion = _this_clientCapabilities_textDocument.completion) === null || _this_clientCapabilities_textDocument_completion === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion_completionItem = _this_clientCapabilities_textDocument_completion.completionItem) === null || _this_clientCapabilities_textDocument_completion_completionItem === void 0 ? void 0 : _this_clientCapabilities_textDocument_completion_completionItem.commitCharactersSupport;
                     }
                     return this.supportsCommitCharacters;
-                };
-                return JSONCompletion;
-            }();
+                }
+                doesSupportsLabelDetails() {
+                    if (!isDefined(this.labelDetailsSupport)) {
+                        var _this_clientCapabilities_textDocument_completion_completionItem, _this_clientCapabilities_textDocument_completion, _this_clientCapabilities_textDocument;
+                        this.labelDetailsSupport = (_this_clientCapabilities_textDocument = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion = _this_clientCapabilities_textDocument.completion) === null || _this_clientCapabilities_textDocument_completion === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion_completionItem = _this_clientCapabilities_textDocument_completion.completionItem) === null || _this_clientCapabilities_textDocument_completion_completionItem === void 0 ? void 0 : _this_clientCapabilities_textDocument_completion_completionItem.labelDetailsSupport;
+                    }
+                    return this.labelDetailsSupport;
+                }
+                constructor(schemaService, contributions = [], promiseConstructor = Promise, clientCapabilities = {}){
+                    this.schemaService = schemaService;
+                    this.contributions = contributions;
+                    this.promiseConstructor = promiseConstructor;
+                    this.clientCapabilities = clientCapabilities;
+                }
+            }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/services/jsonHover.js
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var JSONHover = /** @class */ function() {
-                function JSONHover(schemaService, contributions, promiseConstructor) {
-                    if (contributions === void 0) {
-                        contributions = [];
-                    }
-                    this.schemaService = schemaService;
-                    this.contributions = contributions;
-                    this.promise = promiseConstructor || Promise;
-                }
-                JSONHover.prototype.doHover = function(document1, position, doc) {
-                    var offset = document1.offsetAt(position);
-                    var node = doc.getNodeFromOffset(offset);
+ *--------------------------------------------------------------------------------------------*/ class JSONHover {
+                doHover(document1, position, doc) {
+                    const offset = document1.offsetAt(position);
+                    let node = doc.getNodeFromOffset(offset);
                     if (!node || (node.type === 'object' || node.type === 'array') && offset > node.offset + 1 && offset < node.offset + node.length - 1) {
                         return this.promise.resolve(null);
                     }
-                    var hoverRangeNode = node;
+                    const hoverRangeNode = node;
                     // use the property description when hovering over an object key
                     if (node.type === 'string') {
-                        var parent = node.parent;
+                        const parent = node.parent;
                         if (parent && parent.type === 'property' && parent.keyNode === node) {
                             node = parent.valueNode;
                             if (!node) {
@@ -17314,66 +17403,64 @@
                             }
                         }
                     }
-                    var hoverRange = main.Range.create(document1.positionAt(hoverRangeNode.offset), document1.positionAt(hoverRangeNode.offset + hoverRangeNode.length));
-                    var createHover = function(contents) {
-                        var result = {
+                    const hoverRange = main.Range.create(document1.positionAt(hoverRangeNode.offset), document1.positionAt(hoverRangeNode.offset + hoverRangeNode.length));
+                    const createHover = (contents)=>{
+                        const result = {
                             contents: contents,
                             range: hoverRange
                         };
                         return result;
                     };
-                    var location = jsonParser_getNodePath(node);
-                    for(var i = this.contributions.length - 1; i >= 0; i--){
-                        var contribution = this.contributions[i];
-                        var promise = contribution.getInfoContribution(document1.uri, location);
+                    const location = jsonParser_getNodePath(node);
+                    for(let i = this.contributions.length - 1; i >= 0; i--){
+                        const contribution = this.contributions[i];
+                        const promise = contribution.getInfoContribution(document1.uri, location);
                         if (promise) {
-                            return promise.then(function(htmlContent) {
-                                return createHover(htmlContent);
-                            });
+                            return promise.then((htmlContent)=>createHover(htmlContent));
                         }
                     }
-                    return this.schemaService.getSchemaForResource(document1.uri, doc).then(function(schema) {
+                    return this.schemaService.getSchemaForResource(document1.uri, doc).then((schema)=>{
                         if (schema && node) {
-                            var matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset);
-                            var title_1 = undefined;
-                            var markdownDescription_1 = undefined;
-                            var markdownEnumValueDescription_1 = undefined, enumValue_1 = undefined;
-                            matchingSchemas.every(function(s) {
+                            const matchingSchemas = doc.getMatchingSchemas(schema.schema, node.offset);
+                            let title = undefined;
+                            let markdownDescription = undefined;
+                            let markdownEnumValueDescription = undefined, enumValue = undefined;
+                            matchingSchemas.every((s)=>{
                                 if (s.node === node && !s.inverted && s.schema) {
-                                    title_1 = title_1 || s.schema.title;
-                                    markdownDescription_1 = markdownDescription_1 || s.schema.markdownDescription || toMarkdown(s.schema.description);
+                                    title = title || s.schema.title;
+                                    markdownDescription = markdownDescription || s.schema.markdownDescription || toMarkdown(s.schema.description);
                                     if (s.schema.enum) {
-                                        var idx = s.schema.enum.indexOf(jsonParser_getNodeValue(node));
+                                        const idx = s.schema.enum.indexOf(jsonParser_getNodeValue(node));
                                         if (s.schema.markdownEnumDescriptions) {
-                                            markdownEnumValueDescription_1 = s.schema.markdownEnumDescriptions[idx];
+                                            markdownEnumValueDescription = s.schema.markdownEnumDescriptions[idx];
                                         } else if (s.schema.enumDescriptions) {
-                                            markdownEnumValueDescription_1 = toMarkdown(s.schema.enumDescriptions[idx]);
+                                            markdownEnumValueDescription = toMarkdown(s.schema.enumDescriptions[idx]);
                                         }
-                                        if (markdownEnumValueDescription_1) {
-                                            enumValue_1 = s.schema.enum[idx];
-                                            if (typeof enumValue_1 !== 'string') {
-                                                enumValue_1 = JSON.stringify(enumValue_1);
+                                        if (markdownEnumValueDescription) {
+                                            enumValue = s.schema.enum[idx];
+                                            if (typeof enumValue !== 'string') {
+                                                enumValue = JSON.stringify(enumValue);
                                             }
                                         }
                                     }
                                 }
                                 return true;
                             });
-                            var result = '';
-                            if (title_1) {
-                                result = toMarkdown(title_1);
+                            let result = '';
+                            if (title) {
+                                result = toMarkdown(title);
                             }
-                            if (markdownDescription_1) {
+                            if (markdownDescription) {
                                 if (result.length > 0) {
                                     result += "\n\n";
                                 }
-                                result += markdownDescription_1;
+                                result += markdownDescription;
                             }
-                            if (markdownEnumValueDescription_1) {
+                            if (markdownEnumValueDescription) {
                                 if (result.length > 0) {
                                     result += "\n\n";
                                 }
-                                result += "`".concat(toMarkdownCodeBlock(enumValue_1), "`: ").concat(markdownEnumValueDescription_1);
+                                result += `\`${toMarkdownCodeBlock(enumValue)}\`: ${markdownEnumValueDescription}`;
                             }
                             return createHover([
                                 result
@@ -17381,12 +17468,16 @@
                         }
                         return null;
                     });
-                };
-                return JSONHover;
-            }();
+                }
+                constructor(schemaService, contributions = [], promiseConstructor){
+                    this.schemaService = schemaService;
+                    this.contributions = contributions;
+                    this.promise = promiseConstructor || Promise;
+                }
+            }
             function toMarkdown(plain) {
                 if (plain) {
-                    var res = plain.replace(/([^\n\r])(\r?\n)([^\n\r])/gm, '$1\n\n$3'); // single new lines to \n\n (Markdown paragraph)
+                    const res = plain.replace(/([^\n\r])(\r?\n)([^\n\r])/gm, '$1\n\n$3'); // single new lines to \n\n (Markdown paragraph)
                     return res.replace(/[\\`*_{}[\]()#+\-.!]/g, "\\$&"); // escape markdown syntax tokens: http://daringfireball.net/projects/markdown/syntax#backslash
                 }
                 return undefined;
@@ -17402,53 +17493,56 @@
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var jsonValidation_localize = browser_main.loadMessageBundle();
-            var JSONValidation = /** @class */ function() {
-                function JSONValidation(jsonSchemaService, promiseConstructor) {
-                    this.jsonSchemaService = jsonSchemaService;
-                    this.promise = promiseConstructor;
-                    this.validationEnabled = true;
-                }
-                JSONValidation.prototype.configure = function(raw) {
+ *--------------------------------------------------------------------------------------------*/ class JSONValidation {
+                configure(raw) {
                     if (raw) {
                         this.validationEnabled = raw.validate !== false;
                         this.commentSeverity = raw.allowComments ? undefined : main.DiagnosticSeverity.Error;
                     }
-                };
-                JSONValidation.prototype.doValidation = function(textDocument, jsonDocument, documentSettings, schema) {
-                    var _this = this;
+                }
+                doValidation(textDocument, jsonDocument, documentSettings, schema) {
                     if (!this.validationEnabled) {
                         return this.promise.resolve([]);
                     }
-                    var diagnostics = [];
-                    var added = {};
-                    var addProblem = function(problem) {
+                    const diagnostics = [];
+                    const added = {};
+                    const addProblem = (problem)=>{
                         // remove duplicated messages
-                        var signature = problem.range.start.line + ' ' + problem.range.start.character + ' ' + problem.message;
+                        const signature = problem.range.start.line + ' ' + problem.range.start.character + ' ' + problem.message;
                         if (!added[signature]) {
                             added[signature] = true;
                             diagnostics.push(problem);
                         }
                     };
-                    var getDiagnostics = function(schema) {
-                        var trailingCommaSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.trailingCommas) ? toDiagnosticSeverity(documentSettings.trailingCommas) : main.DiagnosticSeverity.Error;
-                        var commentSeverity = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.comments) ? toDiagnosticSeverity(documentSettings.comments) : _this.commentSeverity;
-                        var schemaValidation = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : main.DiagnosticSeverity.Warning;
-                        var schemaRequest = (documentSettings === null || documentSettings === void 0 ? void 0 : documentSettings.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : main.DiagnosticSeverity.Warning;
+                    const getDiagnostics = (schema)=>{
+                        var _documentSettings, _documentSettings1, _documentSettings2, _documentSettings3;
+                        let trailingCommaSeverity = ((_documentSettings = documentSettings) === null || _documentSettings === void 0 ? void 0 : _documentSettings.trailingCommas) ? toDiagnosticSeverity(documentSettings.trailingCommas) : main.DiagnosticSeverity.Error;
+                        let commentSeverity = ((_documentSettings1 = documentSettings) === null || _documentSettings1 === void 0 ? void 0 : _documentSettings1.comments) ? toDiagnosticSeverity(documentSettings.comments) : this.commentSeverity;
+                        let schemaValidation = ((_documentSettings2 = documentSettings) === null || _documentSettings2 === void 0 ? void 0 : _documentSettings2.schemaValidation) ? toDiagnosticSeverity(documentSettings.schemaValidation) : main.DiagnosticSeverity.Warning;
+                        let schemaRequest = ((_documentSettings3 = documentSettings) === null || _documentSettings3 === void 0 ? void 0 : _documentSettings3.schemaRequest) ? toDiagnosticSeverity(documentSettings.schemaRequest) : main.DiagnosticSeverity.Warning;
                         if (schema) {
-                            if (schema.errors.length && jsonDocument.root && schemaRequest) {
-                                var astRoot = jsonDocument.root;
-                                var property = astRoot.type === 'object' ? astRoot.properties[0] : undefined;
-                                if (property && property.keyNode.value === '$schema') {
-                                    var node = property.valueNode || property;
-                                    var range = main.Range.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
-                                    addProblem(main.Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
-                                } else {
-                                    var range = main.Range.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
-                                    addProblem(main.Diagnostic.create(range, schema.errors[0], schemaRequest, ErrorCode.SchemaResolveError));
+                            const addSchemaProblem = (errorMessage, errorCode)=>{
+                                if (jsonDocument.root && schemaRequest) {
+                                    const astRoot = jsonDocument.root;
+                                    const property = astRoot.type === 'object' ? astRoot.properties[0] : undefined;
+                                    if (property && property.keyNode.value === '$schema') {
+                                        const node = property.valueNode || property;
+                                        const range = main.Range.create(textDocument.positionAt(node.offset), textDocument.positionAt(node.offset + node.length));
+                                        addProblem(main.Diagnostic.create(range, errorMessage, schemaRequest, errorCode));
+                                    } else {
+                                        const range = main.Range.create(textDocument.positionAt(astRoot.offset), textDocument.positionAt(astRoot.offset + 1));
+                                        addProblem(main.Diagnostic.create(range, errorMessage, schemaRequest, errorCode));
+                                    }
                                 }
+                            };
+                            if (schema.errors.length) {
+                                addSchemaProblem(schema.errors[0], ErrorCode.SchemaResolveError);
                             } else if (schemaValidation) {
-                                var semanticErrors = jsonDocument.validate(textDocument, schema.schema, schemaValidation);
+                                var _documentSettings4;
+                                for (const warning of schema.warnings){
+                                    addSchemaProblem(warning, ErrorCode.SchemaUnsupportedFeature);
+                                }
+                                const semanticErrors = jsonDocument.validate(textDocument, schema.schema, schemaValidation, (_documentSettings4 = documentSettings) === null || _documentSettings4 === void 0 ? void 0 : _documentSettings4.schemaDraft);
                                 if (semanticErrors) {
                                     semanticErrors.forEach(addProblem);
                                 }
@@ -17460,8 +17554,7 @@
                                 trailingCommaSeverity = undefined;
                             }
                         }
-                        for(var _i = 0, _a = jsonDocument.syntaxErrors; _i < _a.length; _i++){
-                            var p = _a[_i];
+                        for (const p of jsonDocument.syntaxErrors){
                             if (p.code === ErrorCode.TrailingComma) {
                                 if (typeof trailingCommaSeverity !== 'number') {
                                     continue;
@@ -17471,41 +17564,47 @@
                             addProblem(p);
                         }
                         if (typeof commentSeverity === 'number') {
-                            var message_1 = jsonValidation_localize('InvalidCommentToken', 'Comments are not permitted in JSON.');
-                            jsonDocument.comments.forEach(function(c) {
-                                addProblem(main.Diagnostic.create(c, message_1, commentSeverity, ErrorCode.CommentNotPermitted));
+                            const message = t('Comments are not permitted in JSON.');
+                            jsonDocument.comments.forEach((c)=>{
+                                addProblem(main.Diagnostic.create(c, message, commentSeverity, ErrorCode.CommentNotPermitted));
                             });
                         }
                         return diagnostics;
                     };
                     if (schema) {
-                        var id = schema.id || 'schemaservice://untitled/' + idCounter++;
-                        var handle = this.jsonSchemaService.registerExternalSchema(id, [], schema);
-                        return handle.getResolvedSchema().then(function(resolvedSchema) {
+                        const uri = schema.id || 'schemaservice://untitled/' + idCounter++;
+                        const handle = this.jsonSchemaService.registerExternalSchema({
+                            uri,
+                            schema
+                        });
+                        return handle.getResolvedSchema().then((resolvedSchema)=>{
                             return getDiagnostics(resolvedSchema);
                         });
                     }
-                    return this.jsonSchemaService.getSchemaForResource(textDocument.uri, jsonDocument).then(function(schema) {
+                    return this.jsonSchemaService.getSchemaForResource(textDocument.uri, jsonDocument).then((schema)=>{
                         return getDiagnostics(schema);
                     });
-                };
-                JSONValidation.prototype.getLanguageStatus = function(textDocument, jsonDocument) {
+                }
+                getLanguageStatus(textDocument, jsonDocument) {
                     return {
                         schemas: this.jsonSchemaService.getSchemaURIsForResource(textDocument.uri, jsonDocument)
                     };
-                };
-                return JSONValidation;
-            }();
-            var idCounter = 0;
+                }
+                constructor(jsonSchemaService, promiseConstructor){
+                    this.jsonSchemaService = jsonSchemaService;
+                    this.promise = promiseConstructor;
+                    this.validationEnabled = true;
+                }
+            }
+            let idCounter = 0;
             function schemaAllowsComments(schemaRef) {
                 if (schemaRef && typeof schemaRef === 'object') {
                     if (isBoolean(schemaRef.allowComments)) {
                         return schemaRef.allowComments;
                     }
                     if (schemaRef.allOf) {
-                        for(var _i = 0, _a = schemaRef.allOf; _i < _a.length; _i++){
-                            var schema = _a[_i];
-                            var allow = schemaAllowsComments(schema);
+                        for (const schema of schemaRef.allOf){
+                            const allow = schemaAllowsComments(schema);
                             if (isBoolean(allow)) {
                                 return allow;
                             }
@@ -17519,14 +17618,13 @@
                     if (isBoolean(schemaRef.allowTrailingCommas)) {
                         return schemaRef.allowTrailingCommas;
                     }
-                    var deprSchemaRef = schemaRef;
+                    const deprSchemaRef = schemaRef;
                     if (isBoolean(deprSchemaRef['allowsTrailingCommas'])) {
                         return deprSchemaRef['allowsTrailingCommas'];
                     }
                     if (schemaRef.allOf) {
-                        for(var _i = 0, _a = schemaRef.allOf; _i < _a.length; _i++){
-                            var schema = _a[_i];
-                            var allow = schemaAllowsTrailingCommas(schema);
+                        for (const schema of schemaRef.allOf){
+                            const allow = schemaAllowsTrailingCommas(schema);
                             if (isBoolean(allow)) {
                                 return allow;
                             }
@@ -17550,11 +17648,11 @@
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var Digit0 = 48;
-            var Digit9 = 57;
-            var A = 65;
-            var a = 97;
-            var f = 102;
+ *--------------------------------------------------------------------------------------------*/ const Digit0 = 48;
+            const Digit9 = 57;
+            const A = 65;
+            const a = 97;
+            const f = 102;
             function hexDigit(charCode) {
                 if (charCode < Digit0) {
                     return 0;
@@ -17606,51 +17704,39 @@
                 }
                 return undefined;
             }
-            function colorFrom256RGB(red, green, blue, alpha) {
-                if (alpha === void 0) {
-                    alpha = 1.0;
-                }
+            function colorFrom256RGB(red, green, blue, alpha = 1.0) {
                 return {
                     red: red / 255.0,
                     green: green / 255.0,
                     blue: blue / 255.0,
-                    alpha: alpha
+                    alpha
                 };
             }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/services/jsonDocumentSymbols.js
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var JSONDocumentSymbols = /** @class */ function() {
-                function JSONDocumentSymbols(schemaService) {
-                    this.schemaService = schemaService;
-                }
-                JSONDocumentSymbols.prototype.findDocumentSymbols = function(document1, doc, context) {
-                    var _this = this;
-                    if (context === void 0) {
-                        context = {
-                            resultLimit: Number.MAX_VALUE
-                        };
-                    }
-                    var root = doc.root;
+ *--------------------------------------------------------------------------------------------*/ class JSONDocumentSymbols {
+                findDocumentSymbols(document1, doc, context = {
+                    resultLimit: Number.MAX_VALUE
+                }) {
+                    const root = doc.root;
                     if (!root) {
                         return [];
                     }
-                    var limit = context.resultLimit || Number.MAX_VALUE;
+                    let limit = context.resultLimit || Number.MAX_VALUE;
                     // special handling for key bindings
-                    var resourceString = document1.uri;
+                    const resourceString = document1.uri;
                     if (resourceString === 'vscode://defaultsettings/keybindings.json' || endsWith(resourceString.toLowerCase(), '/user/keybindings.json')) {
                         if (root.type === 'array') {
-                            var result_1 = [];
-                            for(var _i = 0, _a = root.items; _i < _a.length; _i++){
-                                var item = _a[_i];
+                            const result = [];
+                            for (const item of root.items){
                                 if (item.type === 'object') {
-                                    for(var _b = 0, _c = item.properties; _b < _c.length; _b++){
-                                        var property = _c[_b];
+                                    for (const property of item.properties){
                                         if (property.keyNode.value === 'key' && property.valueNode) {
-                                            var location = main.Location.create(document1.uri, getRange(document1, item));
-                                            result_1.push({
-                                                name: jsonParser_getNodeValue(property.valueNode),
+                                            const location = main.Location.create(document1.uri, getRange(document1, item));
+                                            result.push({
+                                                name: getName(property.valueNode),
                                                 kind: main.SymbolKind.Function,
                                                 location: location
                                             });
@@ -17659,45 +17745,45 @@
                                                 if (context && context.onResultLimitExceeded) {
                                                     context.onResultLimitExceeded(resourceString);
                                                 }
-                                                return result_1;
+                                                return result;
                                             }
                                         }
                                     }
                                 }
                             }
-                            return result_1;
+                            return result;
                         }
                     }
-                    var toVisit = [
+                    const toVisit = [
                         {
                             node: root,
                             containerName: ''
                         }
                     ];
-                    var nextToVisit = 0;
-                    var limitExceeded = false;
-                    var result = [];
-                    var collectOutlineEntries = function(node, containerName) {
+                    let nextToVisit = 0;
+                    let limitExceeded = false;
+                    const result = [];
+                    const collectOutlineEntries = (node, containerName)=>{
                         if (node.type === 'array') {
-                            node.items.forEach(function(node) {
+                            node.items.forEach((node)=>{
                                 if (node) {
                                     toVisit.push({
-                                        node: node,
-                                        containerName: containerName
+                                        node,
+                                        containerName
                                     });
                                 }
                             });
                         } else if (node.type === 'object') {
-                            node.properties.forEach(function(property) {
-                                var valueNode = property.valueNode;
+                            node.properties.forEach((property)=>{
+                                const valueNode = property.valueNode;
                                 if (valueNode) {
                                     if (limit > 0) {
                                         limit--;
-                                        var location = main.Location.create(document1.uri, getRange(document1, property));
-                                        var childContainerName = containerName ? containerName + '.' + property.keyNode.value : property.keyNode.value;
+                                        const location = main.Location.create(document1.uri, getRange(document1, property));
+                                        const childContainerName = containerName ? containerName + '.' + property.keyNode.value : property.keyNode.value;
                                         result.push({
-                                            name: _this.getKeyLabel(property),
-                                            kind: _this.getSymbolKind(valueNode.type),
+                                            name: this.getKeyLabel(property),
+                                            kind: this.getSymbolKind(valueNode.type),
                                             location: location,
                                             containerName: containerName
                                         });
@@ -17714,88 +17800,82 @@
                     };
                     // breath first traversal
                     while(nextToVisit < toVisit.length){
-                        var next = toVisit[nextToVisit++];
+                        const next = toVisit[nextToVisit++];
                         collectOutlineEntries(next.node, next.containerName);
                     }
                     if (limitExceeded && context && context.onResultLimitExceeded) {
                         context.onResultLimitExceeded(resourceString);
                     }
                     return result;
-                };
-                JSONDocumentSymbols.prototype.findDocumentSymbols2 = function(document1, doc, context) {
-                    var _this = this;
-                    if (context === void 0) {
-                        context = {
-                            resultLimit: Number.MAX_VALUE
-                        };
-                    }
-                    var root = doc.root;
+                }
+                findDocumentSymbols2(document1, doc, context = {
+                    resultLimit: Number.MAX_VALUE
+                }) {
+                    const root = doc.root;
                     if (!root) {
                         return [];
                     }
-                    var limit = context.resultLimit || Number.MAX_VALUE;
+                    let limit = context.resultLimit || Number.MAX_VALUE;
                     // special handling for key bindings
-                    var resourceString = document1.uri;
+                    const resourceString = document1.uri;
                     if (resourceString === 'vscode://defaultsettings/keybindings.json' || endsWith(resourceString.toLowerCase(), '/user/keybindings.json')) {
                         if (root.type === 'array') {
-                            var result_2 = [];
-                            for(var _i = 0, _a = root.items; _i < _a.length; _i++){
-                                var item = _a[_i];
+                            const result = [];
+                            for (const item of root.items){
                                 if (item.type === 'object') {
-                                    for(var _b = 0, _c = item.properties; _b < _c.length; _b++){
-                                        var property = _c[_b];
+                                    for (const property of item.properties){
                                         if (property.keyNode.value === 'key' && property.valueNode) {
-                                            var range = getRange(document1, item);
-                                            var selectionRange = getRange(document1, property.keyNode);
-                                            result_2.push({
-                                                name: jsonParser_getNodeValue(property.valueNode),
+                                            const range = getRange(document1, item);
+                                            const selectionRange = getRange(document1, property.keyNode);
+                                            result.push({
+                                                name: getName(property.valueNode),
                                                 kind: main.SymbolKind.Function,
-                                                range: range,
-                                                selectionRange: selectionRange
+                                                range,
+                                                selectionRange
                                             });
                                             limit--;
                                             if (limit <= 0) {
                                                 if (context && context.onResultLimitExceeded) {
                                                     context.onResultLimitExceeded(resourceString);
                                                 }
-                                                return result_2;
+                                                return result;
                                             }
                                         }
                                     }
                                 }
                             }
-                            return result_2;
+                            return result;
                         }
                     }
-                    var result = [];
-                    var toVisit = [
+                    const result = [];
+                    const toVisit = [
                         {
                             node: root,
-                            result: result
+                            result
                         }
                     ];
-                    var nextToVisit = 0;
-                    var limitExceeded = false;
-                    var collectOutlineEntries = function(node, result) {
+                    let nextToVisit = 0;
+                    let limitExceeded = false;
+                    const collectOutlineEntries = (node, result)=>{
                         if (node.type === 'array') {
-                            node.items.forEach(function(node, index) {
+                            node.items.forEach((node, index)=>{
                                 if (node) {
                                     if (limit > 0) {
                                         limit--;
-                                        var range = getRange(document1, node);
-                                        var selectionRange = range;
-                                        var name = String(index);
-                                        var symbol = {
-                                            name: name,
-                                            kind: _this.getSymbolKind(node.type),
-                                            range: range,
-                                            selectionRange: selectionRange,
+                                        const range = getRange(document1, node);
+                                        const selectionRange = range;
+                                        const name = String(index);
+                                        const symbol = {
+                                            name,
+                                            kind: this.getSymbolKind(node.type),
+                                            range,
+                                            selectionRange,
                                             children: []
                                         };
                                         result.push(symbol);
                                         toVisit.push({
                                             result: symbol.children,
-                                            node: node
+                                            node
                                         });
                                     } else {
                                         limitExceeded = true;
@@ -17803,21 +17883,21 @@
                                 }
                             });
                         } else if (node.type === 'object') {
-                            node.properties.forEach(function(property) {
-                                var valueNode = property.valueNode;
+                            node.properties.forEach((property)=>{
+                                const valueNode = property.valueNode;
                                 if (valueNode) {
                                     if (limit > 0) {
                                         limit--;
-                                        var range = getRange(document1, property);
-                                        var selectionRange = getRange(document1, property.keyNode);
-                                        var children = [];
-                                        var symbol = {
-                                            name: _this.getKeyLabel(property),
-                                            kind: _this.getSymbolKind(valueNode.type),
-                                            range: range,
-                                            selectionRange: selectionRange,
-                                            children: children,
-                                            detail: _this.getDetail(valueNode)
+                                        const range = getRange(document1, property);
+                                        const selectionRange = getRange(document1, property.keyNode);
+                                        const children = [];
+                                        const symbol = {
+                                            name: this.getKeyLabel(property),
+                                            kind: this.getSymbolKind(valueNode.type),
+                                            range,
+                                            selectionRange,
+                                            children,
+                                            detail: this.getDetail(valueNode)
                                         };
                                         result.push(symbol);
                                         toVisit.push({
@@ -17833,15 +17913,15 @@
                     };
                     // breath first traversal
                     while(nextToVisit < toVisit.length){
-                        var next = toVisit[nextToVisit++];
+                        const next = toVisit[nextToVisit++];
                         collectOutlineEntries(next.node, next.result);
                     }
                     if (limitExceeded && context && context.onResultLimitExceeded) {
                         context.onResultLimitExceeded(resourceString);
                     }
                     return result;
-                };
-                JSONDocumentSymbols.prototype.getSymbolKind = function(nodeType) {
+                }
+                getSymbolKind(nodeType) {
                     switch(nodeType){
                         case 'object':
                             return main.SymbolKind.Module;
@@ -17856,18 +17936,18 @@
                         default:
                             return main.SymbolKind.Variable;
                     }
-                };
-                JSONDocumentSymbols.prototype.getKeyLabel = function(property) {
-                    var name = property.keyNode.value;
+                }
+                getKeyLabel(property) {
+                    let name = property.keyNode.value;
                     if (name) {
                         name = name.replace(/[\n]/g, '↵');
                     }
                     if (name && name.trim()) {
                         return name;
                     }
-                    return "\"".concat(name, "\"");
-                };
-                JSONDocumentSymbols.prototype.getDetail = function(node) {
+                    return `"${name}"`;
+                }
+                getDetail(node) {
                     if (!node) {
                         return undefined;
                     }
@@ -17881,25 +17961,24 @@
                         }
                     }
                     return undefined;
-                };
-                JSONDocumentSymbols.prototype.findDocumentColors = function(document1, doc, context) {
-                    return this.schemaService.getSchemaForResource(document1.uri, doc).then(function(schema) {
-                        var result = [];
+                }
+                findDocumentColors(document1, doc, context) {
+                    return this.schemaService.getSchemaForResource(document1.uri, doc).then((schema)=>{
+                        const result = [];
                         if (schema) {
-                            var limit = context && typeof context.resultLimit === 'number' ? context.resultLimit : Number.MAX_VALUE;
-                            var matchingSchemas = doc.getMatchingSchemas(schema.schema);
-                            var visitedNode = {};
-                            for(var _i = 0, matchingSchemas_1 = matchingSchemas; _i < matchingSchemas_1.length; _i++){
-                                var s = matchingSchemas_1[_i];
+                            let limit = context && typeof context.resultLimit === 'number' ? context.resultLimit : Number.MAX_VALUE;
+                            const matchingSchemas = doc.getMatchingSchemas(schema.schema);
+                            const visitedNode = {};
+                            for (const s of matchingSchemas){
                                 if (!s.inverted && s.schema && (s.schema.format === 'color' || s.schema.format === 'color-hex') && s.node && s.node.type === 'string') {
-                                    var nodeId = String(s.node.offset);
+                                    const nodeId = String(s.node.offset);
                                     if (!visitedNode[nodeId]) {
-                                        var color = colorFromHex(jsonParser_getNodeValue(s.node));
+                                        const color = colorFromHex(jsonParser_getNodeValue(s.node));
                                         if (color) {
-                                            var range = getRange(document1, s.node);
+                                            const range = getRange(document1, s.node);
                                             result.push({
-                                                color: color,
-                                                range: range
+                                                color,
+                                                range
                                             });
                                         }
                                         visitedNode[nodeId] = true;
@@ -17916,38 +17995,41 @@
                         }
                         return result;
                     });
-                };
-                JSONDocumentSymbols.prototype.getColorPresentations = function(document1, doc, color, range) {
-                    var result = [];
-                    var red256 = Math.round(color.red * 255), green256 = Math.round(color.green * 255), blue256 = Math.round(color.blue * 255);
+                }
+                getColorPresentations(document1, doc, color, range) {
+                    const result = [];
+                    const red256 = Math.round(color.red * 255), green256 = Math.round(color.green * 255), blue256 = Math.round(color.blue * 255);
                     function toTwoDigitHex(n) {
-                        var r = n.toString(16);
+                        const r = n.toString(16);
                         return r.length !== 2 ? '0' + r : r;
                     }
-                    var label;
+                    let label;
                     if (color.alpha === 1) {
-                        label = "#".concat(toTwoDigitHex(red256)).concat(toTwoDigitHex(green256)).concat(toTwoDigitHex(blue256));
+                        label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}`;
                     } else {
-                        label = "#".concat(toTwoDigitHex(red256)).concat(toTwoDigitHex(green256)).concat(toTwoDigitHex(blue256)).concat(toTwoDigitHex(Math.round(color.alpha * 255)));
+                        label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}${toTwoDigitHex(Math.round(color.alpha * 255))}`;
                     }
                     result.push({
                         label: label,
                         textEdit: main.TextEdit.replace(range, JSON.stringify(label))
                     });
                     return result;
-                };
-                return JSONDocumentSymbols;
-            }();
+                }
+                constructor(schemaService){
+                    this.schemaService = schemaService;
+                }
+            }
             function getRange(document1, node) {
                 return main.Range.create(document1.positionAt(node.offset), document1.positionAt(node.offset + node.length));
             }
+            function getName(node) {
+                return jsonParser_getNodeValue(node) || t('<empty>');
+            }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/services/configuration.js
-            /* provided dependency */ var configuration_console = __nested_webpack_require_678377__(3716);
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var configuration_localize = browser_main.loadMessageBundle();
-            var schemaContributions = {
+ *--------------------------------------------------------------------------------------------*/ const schemaContributions = {
                 schemaAssociations: [],
                 schemas: {
                     // refer to the latest schema
@@ -18478,71 +18560,69 @@
                     }
                 }
             };
-            var descriptions = {
-                id: configuration_localize('schema.json.id', "A unique identifier for the schema."),
-                $schema: configuration_localize('schema.json.$schema', "The schema to verify this document against."),
-                title: configuration_localize('schema.json.title', "A descriptive title of the element."),
-                description: configuration_localize('schema.json.description', "A long description of the element. Used in hover menus and suggestions."),
-                default: configuration_localize('schema.json.default', "A default value. Used by suggestions."),
-                multipleOf: configuration_localize('schema.json.multipleOf', "A number that should cleanly divide the current value (i.e. have no remainder)."),
-                maximum: configuration_localize('schema.json.maximum', "The maximum numerical value, inclusive by default."),
-                exclusiveMaximum: configuration_localize('schema.json.exclusiveMaximum', "Makes the maximum property exclusive."),
-                minimum: configuration_localize('schema.json.minimum', "The minimum numerical value, inclusive by default."),
-                exclusiveMinimum: configuration_localize('schema.json.exclusiveMininum', "Makes the minimum property exclusive."),
-                maxLength: configuration_localize('schema.json.maxLength', "The maximum length of a string."),
-                minLength: configuration_localize('schema.json.minLength', "The minimum length of a string."),
-                pattern: configuration_localize('schema.json.pattern', "A regular expression to match the string against. It is not implicitly anchored."),
-                additionalItems: configuration_localize('schema.json.additionalItems', "For arrays, only when items is set as an array. If it is a schema, then this schema validates items after the ones specified by the items array. If it is false, then additional items will cause validation to fail."),
-                items: configuration_localize('schema.json.items', "For arrays. Can either be a schema to validate every element against or an array of schemas to validate each item against in order (the first schema will validate the first element, the second schema will validate the second element, and so on."),
-                maxItems: configuration_localize('schema.json.maxItems', "The maximum number of items that can be inside an array. Inclusive."),
-                minItems: configuration_localize('schema.json.minItems', "The minimum number of items that can be inside an array. Inclusive."),
-                uniqueItems: configuration_localize('schema.json.uniqueItems', "If all of the items in the array must be unique. Defaults to false."),
-                maxProperties: configuration_localize('schema.json.maxProperties', "The maximum number of properties an object can have. Inclusive."),
-                minProperties: configuration_localize('schema.json.minProperties', "The minimum number of properties an object can have. Inclusive."),
-                required: configuration_localize('schema.json.required', "An array of strings that lists the names of all properties required on this object."),
-                additionalProperties: configuration_localize('schema.json.additionalProperties', "Either a schema or a boolean. If a schema, then used to validate all properties not matched by 'properties' or 'patternProperties'. If false, then any properties not matched by either will cause this schema to fail."),
-                definitions: configuration_localize('schema.json.definitions', "Not used for validation. Place subschemas here that you wish to reference inline with $ref."),
-                properties: configuration_localize('schema.json.properties', "A map of property names to schemas for each property."),
-                patternProperties: configuration_localize('schema.json.patternProperties', "A map of regular expressions on property names to schemas for matching properties."),
-                dependencies: configuration_localize('schema.json.dependencies', "A map of property names to either an array of property names or a schema. An array of property names means the property named in the key depends on the properties in the array being present in the object in order to be valid. If the value is a schema, then the schema is only applied to the object if the property in the key exists on the object."),
-                enum: configuration_localize('schema.json.enum', "The set of literal values that are valid."),
-                type: configuration_localize('schema.json.type', "Either a string of one of the basic schema types (number, integer, null, array, object, boolean, string) or an array of strings specifying a subset of those types."),
-                format: configuration_localize('schema.json.format', "Describes the format expected for the value."),
-                allOf: configuration_localize('schema.json.allOf', "An array of schemas, all of which must match."),
-                anyOf: configuration_localize('schema.json.anyOf', "An array of schemas, where at least one must match."),
-                oneOf: configuration_localize('schema.json.oneOf', "An array of schemas, exactly one of which must match."),
-                not: configuration_localize('schema.json.not', "A schema which must not match."),
-                $id: configuration_localize('schema.json.$id', "A unique identifier for the schema."),
-                $ref: configuration_localize('schema.json.$ref', "Reference a definition hosted on any location."),
-                $comment: configuration_localize('schema.json.$comment', "Comments from schema authors to readers or maintainers of the schema."),
-                readOnly: configuration_localize('schema.json.readOnly', "Indicates that the value of the instance is managed exclusively by the owning authority."),
-                examples: configuration_localize('schema.json.examples', "Sample JSON values associated with a particular schema, for the purpose of illustrating usage."),
-                contains: configuration_localize('schema.json.contains', "An array instance is valid against \"contains\" if at least one of its elements is valid against the given schema."),
-                propertyNames: configuration_localize('schema.json.propertyNames', "If the instance is an object, this keyword validates if every property name in the instance validates against the provided schema."),
-                const: configuration_localize('schema.json.const', "An instance validates successfully against this keyword if its value is equal to the value of the keyword."),
-                contentMediaType: configuration_localize('schema.json.contentMediaType', "Describes the media type of a string property."),
-                contentEncoding: configuration_localize('schema.json.contentEncoding', "Describes the content encoding of a string property."),
-                if: configuration_localize('schema.json.if', "The validation outcome of the \"if\" subschema controls which of the \"then\" or \"else\" keywords are evaluated."),
-                then: configuration_localize('schema.json.then', "The \"if\" subschema is used for validation when the \"if\" subschema succeeds."),
-                else: configuration_localize('schema.json.else', "The \"else\" subschema is used for validation when the \"if\" subschema fails.")
+            const descriptions = {
+                id: t("A unique identifier for the schema."),
+                $schema: t("The schema to verify this document against."),
+                title: t("A descriptive title of the element."),
+                description: t("A long description of the element. Used in hover menus and suggestions."),
+                default: t("A default value. Used by suggestions."),
+                multipleOf: t("A number that should cleanly divide the current value (i.e. have no remainder)."),
+                maximum: t("The maximum numerical value, inclusive by default."),
+                exclusiveMaximum: t("Makes the maximum property exclusive."),
+                minimum: t("The minimum numerical value, inclusive by default."),
+                exclusiveMinimum: t("Makes the minimum property exclusive."),
+                maxLength: t("The maximum length of a string."),
+                minLength: t("The minimum length of a string."),
+                pattern: t("A regular expression to match the string against. It is not implicitly anchored."),
+                additionalItems: t("For arrays, only when items is set as an array. If it is a schema, then this schema validates items after the ones specified by the items array. If it is false, then additional items will cause validation to fail."),
+                items: t("For arrays. Can either be a schema to validate every element against or an array of schemas to validate each item against in order (the first schema will validate the first element, the second schema will validate the second element, and so on."),
+                maxItems: t("The maximum number of items that can be inside an array. Inclusive."),
+                minItems: t("The minimum number of items that can be inside an array. Inclusive."),
+                uniqueItems: t("If all of the items in the array must be unique. Defaults to false."),
+                maxProperties: t("The maximum number of properties an object can have. Inclusive."),
+                minProperties: t("The minimum number of properties an object can have. Inclusive."),
+                required: t("An array of strings that lists the names of all properties required on this object."),
+                additionalProperties: t("Either a schema or a boolean. If a schema, then used to validate all properties not matched by 'properties' or 'patternProperties'. If false, then any properties not matched by either will cause this schema to fail."),
+                definitions: t("Not used for validation. Place subschemas here that you wish to reference inline with $ref."),
+                properties: t("A map of property names to schemas for each property."),
+                patternProperties: t("A map of regular expressions on property names to schemas for matching properties."),
+                dependencies: t("A map of property names to either an array of property names or a schema. An array of property names means the property named in the key depends on the properties in the array being present in the object in order to be valid. If the value is a schema, then the schema is only applied to the object if the property in the key exists on the object."),
+                enum: t("The set of literal values that are valid."),
+                type: t("Either a string of one of the basic schema types (number, integer, null, array, object, boolean, string) or an array of strings specifying a subset of those types."),
+                format: t("Describes the format expected for the value."),
+                allOf: t("An array of schemas, all of which must match."),
+                anyOf: t("An array of schemas, where at least one must match."),
+                oneOf: t("An array of schemas, exactly one of which must match."),
+                not: t("A schema which must not match."),
+                $id: t("A unique identifier for the schema."),
+                $ref: t("Reference a definition hosted on any location."),
+                $comment: t("Comments from schema authors to readers or maintainers of the schema."),
+                readOnly: t("Indicates that the value of the instance is managed exclusively by the owning authority."),
+                examples: t("Sample JSON values associated with a particular schema, for the purpose of illustrating usage."),
+                contains: t("An array instance is valid against \"contains\" if at least one of its elements is valid against the given schema."),
+                propertyNames: t("If the instance is an object, this keyword validates if every property name in the instance validates against the provided schema."),
+                const: t("An instance validates successfully against this keyword if its value is equal to the value of the keyword."),
+                contentMediaType: t("Describes the media type of a string property."),
+                contentEncoding: t("Describes the content encoding of a string property."),
+                if: t("The validation outcome of the \"if\" subschema controls which of the \"then\" or \"else\" keywords are evaluated."),
+                then: t("The \"if\" subschema is used for validation when the \"if\" subschema succeeds."),
+                else: t("The \"else\" subschema is used for validation when the \"if\" subschema fails.")
             };
-            for(var schemaName in schemaContributions.schemas){
-                var schema = schemaContributions.schemas[schemaName];
-                for(var property in schema.properties){
-                    var propertyObject = schema.properties[property];
+            for(const schemaName in schemaContributions.schemas){
+                const schema = schemaContributions.schemas[schemaName];
+                for(const property in schema.properties){
+                    let propertyObject = schema.properties[property];
                     if (typeof propertyObject === 'boolean') {
                         propertyObject = schema.properties[property] = {};
                     }
-                    var description = descriptions[property];
+                    const description = descriptions[property];
                     if (description) {
                         propertyObject['description'] = description;
-                    } else {
-                        configuration_console.log("".concat(property, ": localize('schema.json.").concat(property, "', \"\")"));
                     }
                 }
             }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-uri/lib/esm/index.js
-            /* provided dependency */ var process = __nested_webpack_require_678377__(4406);
+            /* provided dependency */ var process = __nested_webpack_require_701335__(4406);
             var LIB;
             (()=>{
                 "use strict";
@@ -18929,7 +19009,7 @@
                     }(O || (O = {}));
                 })(), LIB = n;
             })();
-            const { URI , Utils  } = LIB;
+            const { URI, Utils } = LIB;
             //# sourceMappingURL=index.js.map
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/utils/glob.js
             /*---------------------------------------------------------------------------------------------
@@ -18940,13 +19020,13 @@
                 if (typeof glob !== 'string') {
                     throw new TypeError('Expected a string');
                 }
-                var str = String(glob);
+                const str = String(glob);
                 // The regexp we are building, as a string.
-                var reStr = "";
+                let reStr = "";
                 // Whether we are matching so called "extended" globs (like bash) and should
                 // support single character matching, matching ranges of characters, group
                 // matching, etc.
-                var extended = opts ? !!opts.extended : false;
+                const extended = opts ? !!opts.extended : false;
                 // When globstar is _false_ (default), '/foo/*' is translated a regexp like
                 // '^\/foo\/.*$' which will match any string beginning with '/foo/'
                 // When globstar is _true_, '/foo/*' is translated to regexp like
@@ -18956,14 +19036,14 @@
                 // these will not '/foo/bar/baz', '/foo/bar/baz.txt'
                 // Lastely, when globstar is _true_, '/foo/**' is equivelant to '/foo/*' when
                 // globstar is _false_
-                var globstar = opts ? !!opts.globstar : false;
+                const globstar = opts ? !!opts.globstar : false;
                 // If we are doing extended matching, this boolean is true when we are inside
                 // a group (eg {*.html,*.js}), and false otherwise.
-                var inGroup = false;
+                let inGroup = false;
                 // RegExp flags (eg "i" ) to pass in to RegExp constructor.
-                var flags = opts && typeof opts.flags === "string" ? opts.flags : "";
-                var c;
-                for(var i = 0, len = str.length; i < len; i++){
+                const flags = opts && typeof opts.flags === "string" ? opts.flags : "";
+                let c;
+                for(let i = 0, len = str.length; i < len; i++){
                     c = str[i];
                     switch(c){
                         case "/":
@@ -19011,19 +19091,19 @@
                         case "*":
                             // Move over all consecutive "*"'s.
                             // Also store the previous and next characters
-                            var prevChar = str[i - 1];
-                            var starCount = 1;
+                            const prevChar = str[i - 1];
+                            let starCount = 1;
                             while(str[i + 1] === "*"){
                                 starCount++;
                                 i++;
                             }
-                            var nextChar = str[i + 1];
+                            const nextChar = str[i + 1];
                             if (!globstar) {
                                 // globstar is disabled, so treat any number of "*" as one
                                 reStr += ".*";
                             } else {
                                 // globstar is enabled, so determine if this is a globstar segment
-                                var isGlobstar = starCount > 1 // multiple "*"'s
+                                const isGlobstar = starCount > 1 // multiple "*"'s
                                  && (prevChar === "/" || prevChar === undefined || prevChar === '{' || prevChar === ',' // from the start of the segment
                                 ) && (nextChar === "/" || nextChar === undefined || nextChar === ',' || nextChar === '}'); // to the end of the segment
                                 if (isGlobstar) {
@@ -19056,16 +19136,31 @@
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/ var jsonSchemaService_localize = browser_main.loadMessageBundle();
-            var BANG = '!';
-            var PATH_SEP = '/';
-            var FilePatternAssociation = /** @class */ function() {
-                function FilePatternAssociation(pattern, uris) {
+ *--------------------------------------------------------------------------------------------*/ const BANG = '!';
+            const PATH_SEP = '/';
+            class FilePatternAssociation {
+                matchesPattern(fileName) {
+                    if (this.folderUri && !fileName.startsWith(this.folderUri)) {
+                        return false;
+                    }
+                    let match = false;
+                    for (const { regexp, include } of this.globWrappers){
+                        if (regexp.test(fileName)) {
+                            match = include;
+                        }
+                    }
+                    return match;
+                }
+                getURIs() {
+                    return this.uris;
+                }
+                constructor(pattern, folderUri, uris){
+                    this.folderUri = folderUri;
+                    this.uris = uris;
                     this.globWrappers = [];
                     try {
-                        for(var _i = 0, pattern_1 = pattern; _i < pattern_1.length; _i++){
-                            var patternString = pattern_1[_i];
-                            var include = patternString[0] !== BANG;
+                        for (let patternString of pattern){
+                            const include = patternString[0] !== BANG;
                             if (!include) {
                                 patternString = patternString.substring(1);
                             }
@@ -19083,29 +19178,43 @@
                             }
                         }
                         ;
-                        this.uris = uris;
+                        if (folderUri) {
+                            folderUri = normalizeResourceForMatching(folderUri);
+                            if (!folderUri.endsWith('/')) {
+                                folderUri = folderUri + '/';
+                            }
+                            this.folderUri = folderUri;
+                        }
                     } catch (e) {
                         this.globWrappers.length = 0;
                         this.uris = [];
                     }
                 }
-                FilePatternAssociation.prototype.matchesPattern = function(fileName) {
-                    var match = false;
-                    for(var _i = 0, _a = this.globWrappers; _i < _a.length; _i++){
-                        var _b = _a[_i], regexp = _b.regexp, include = _b.include;
-                        if (regexp.test(fileName)) {
-                            match = include;
-                        }
+            }
+            class SchemaHandle {
+                getUnresolvedSchema() {
+                    if (!this.unresolvedSchema) {
+                        this.unresolvedSchema = this.service.loadSchema(this.uri);
                     }
-                    return match;
-                };
-                FilePatternAssociation.prototype.getURIs = function() {
-                    return this.uris;
-                };
-                return FilePatternAssociation;
-            }();
-            var SchemaHandle = /** @class */ function() {
-                function SchemaHandle(service, uri, unresolvedSchemaContent) {
+                    return this.unresolvedSchema;
+                }
+                getResolvedSchema() {
+                    if (!this.resolvedSchema) {
+                        this.resolvedSchema = this.getUnresolvedSchema().then((unresolved)=>{
+                            return this.service.resolveSchemaContent(unresolved, this);
+                        });
+                    }
+                    return this.resolvedSchema;
+                }
+                clearSchema() {
+                    const hasChanges = !!this.unresolvedSchema;
+                    this.resolvedSchema = undefined;
+                    this.unresolvedSchema = undefined;
+                    this.dependencies.clear();
+                    this.anchors = undefined;
+                    return hasChanges;
+                }
+                constructor(service, uri, unresolvedSchemaContent){
                     this.service = service;
                     this.uri = uri;
                     this.dependencies = new Set();
@@ -19114,68 +19223,33 @@
                         this.unresolvedSchema = this.service.promise.resolve(new UnresolvedSchema(unresolvedSchemaContent));
                     }
                 }
-                SchemaHandle.prototype.getUnresolvedSchema = function() {
-                    if (!this.unresolvedSchema) {
-                        this.unresolvedSchema = this.service.loadSchema(this.uri);
-                    }
-                    return this.unresolvedSchema;
-                };
-                SchemaHandle.prototype.getResolvedSchema = function() {
-                    var _this = this;
-                    if (!this.resolvedSchema) {
-                        this.resolvedSchema = this.getUnresolvedSchema().then(function(unresolved) {
-                            return _this.service.resolveSchemaContent(unresolved, _this);
-                        });
-                    }
-                    return this.resolvedSchema;
-                };
-                SchemaHandle.prototype.clearSchema = function() {
-                    var hasChanges = !!this.unresolvedSchema;
-                    this.resolvedSchema = undefined;
-                    this.unresolvedSchema = undefined;
-                    this.dependencies.clear();
-                    this.anchors = undefined;
-                    return hasChanges;
-                };
-                return SchemaHandle;
-            }();
-            var UnresolvedSchema = /** @class */ function() {
-                function UnresolvedSchema(schema, errors) {
-                    if (errors === void 0) {
-                        errors = [];
-                    }
+            }
+            class UnresolvedSchema {
+                constructor(schema, errors = []){
                     this.schema = schema;
                     this.errors = errors;
                 }
-                return UnresolvedSchema;
-            }();
-            var ResolvedSchema = /** @class */ function() {
-                function ResolvedSchema(schema, errors) {
-                    if (errors === void 0) {
-                        errors = [];
-                    }
-                    this.schema = schema;
-                    this.errors = errors;
-                }
-                ResolvedSchema.prototype.getSection = function(path) {
-                    var schemaRef = this.getSectionRecursive(path, this.schema);
+            }
+            class ResolvedSchema {
+                getSection(path) {
+                    const schemaRef = this.getSectionRecursive(path, this.schema);
                     if (schemaRef) {
                         return asSchema(schemaRef);
                     }
                     return undefined;
-                };
-                ResolvedSchema.prototype.getSectionRecursive = function(path, schema) {
+                }
+                getSectionRecursive(path, schema) {
                     if (!schema || typeof schema === 'boolean' || path.length === 0) {
                         return schema;
                     }
-                    var next = path.shift();
+                    const next = path.shift();
                     if (schema.properties && typeof schema.properties[next]) {
                         return this.getSectionRecursive(path, schema.properties[next]);
                     } else if (schema.patternProperties) {
-                        for(var _i = 0, _a = Object.keys(schema.patternProperties); _i < _a.length; _i++){
-                            var pattern = _a[_i];
-                            var regex = extendedRegExp(pattern);
-                            if (regex === null || regex === void 0 ? void 0 : regex.test(next)) {
+                        for (const pattern of Object.keys(schema.patternProperties)){
+                            var _regex;
+                            const regex = extendedRegExp(pattern);
+                            if ((_regex = regex) === null || _regex === void 0 ? void 0 : _regex.test(next)) {
                                 return this.getSectionRecursive(path, schema.patternProperties[pattern]);
                             }
                         }
@@ -19183,7 +19257,7 @@
                         return this.getSectionRecursive(path, schema.additionalProperties);
                     } else if (next.match('[0-9]+')) {
                         if (Array.isArray(schema.items)) {
-                            var index = parseInt(next, 10);
+                            const index = parseInt(next, 10);
                             if (!isNaN(index) && schema.items[index]) {
                                 return this.getSectionRecursive(path, schema.items[index]);
                             }
@@ -19192,55 +19266,42 @@
                         }
                     }
                     return undefined;
-                };
-                return ResolvedSchema;
-            }();
-            var JSONSchemaService = /** @class */ function() {
-                function JSONSchemaService(requestService, contextService, promiseConstructor) {
-                    this.contextService = contextService;
-                    this.requestService = requestService;
-                    this.promiseConstructor = promiseConstructor || Promise;
-                    this.callOnDispose = [];
-                    this.contributionSchemas = {};
-                    this.contributionAssociations = [];
-                    this.schemasById = {};
-                    this.filePatternAssociations = [];
-                    this.registeredSchemasIds = {};
                 }
-                JSONSchemaService.prototype.getRegisteredSchemaIds = function(filter) {
-                    return Object.keys(this.registeredSchemasIds).filter(function(id) {
-                        var scheme = URI.parse(id).scheme;
+                constructor(schema, errors = [], warnings = [], schemaDraft){
+                    this.schema = schema;
+                    this.errors = errors;
+                    this.warnings = warnings;
+                    this.schemaDraft = schemaDraft;
+                }
+            }
+            class JSONSchemaService {
+                getRegisteredSchemaIds(filter) {
+                    return Object.keys(this.registeredSchemasIds).filter((id)=>{
+                        const scheme = URI.parse(id).scheme;
                         return scheme !== 'schemaservice' && (!filter || filter(scheme));
                     });
-                };
-                Object.defineProperty(JSONSchemaService.prototype, "promise", {
-                    get: function() {
-                        return this.promiseConstructor;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                JSONSchemaService.prototype.dispose = function() {
+                }
+                get promise() {
+                    return this.promiseConstructor;
+                }
+                dispose() {
                     while(this.callOnDispose.length > 0){
                         this.callOnDispose.pop()();
                     }
-                };
-                JSONSchemaService.prototype.onResourceChange = function(uri) {
-                    var _this = this;
+                }
+                onResourceChange(uri) {
                     // always clear this local cache when a resource changes
                     this.cachedSchemaForResource = undefined;
-                    var hasChanges = false;
+                    let hasChanges = false;
                     uri = normalizeId(uri);
-                    var toWalk = [
+                    const toWalk = [
                         uri
                     ];
-                    var all = Object.keys(this.schemasById).map(function(key) {
-                        return _this.schemasById[key];
-                    });
+                    const all = Object.keys(this.schemasById).map((key)=>this.schemasById[key]);
                     while(toWalk.length){
-                        var curr = toWalk.pop();
-                        for(var i = 0; i < all.length; i++){
-                            var handle = all[i];
+                        const curr = toWalk.pop();
+                        for(let i = 0; i < all.length; i++){
+                            const handle = all[i];
                             if (handle && (handle.uri === curr || handle.dependencies.has(curr))) {
                                 if (handle.uri !== curr) {
                                     toWalk.push(handle.uri);
@@ -19253,95 +19314,98 @@
                         }
                     }
                     return hasChanges;
-                };
-                JSONSchemaService.prototype.setSchemaContributions = function(schemaContributions) {
+                }
+                setSchemaContributions(schemaContributions) {
                     if (schemaContributions.schemas) {
-                        var schemas = schemaContributions.schemas;
-                        for(var id in schemas){
-                            var normalizedId = normalizeId(id);
+                        const schemas = schemaContributions.schemas;
+                        for(const id in schemas){
+                            const normalizedId = normalizeId(id);
                             this.contributionSchemas[normalizedId] = this.addSchemaHandle(normalizedId, schemas[id]);
                         }
                     }
                     if (Array.isArray(schemaContributions.schemaAssociations)) {
-                        var schemaAssociations = schemaContributions.schemaAssociations;
-                        for(var _i = 0, schemaAssociations_1 = schemaAssociations; _i < schemaAssociations_1.length; _i++){
-                            var schemaAssociation = schemaAssociations_1[_i];
-                            var uris = schemaAssociation.uris.map(normalizeId);
-                            var association = this.addFilePatternAssociation(schemaAssociation.pattern, uris);
+                        const schemaAssociations = schemaContributions.schemaAssociations;
+                        for (let schemaAssociation of schemaAssociations){
+                            const uris = schemaAssociation.uris.map(normalizeId);
+                            const association = this.addFilePatternAssociation(schemaAssociation.pattern, schemaAssociation.folderUri, uris);
                             this.contributionAssociations.push(association);
                         }
                     }
-                };
-                JSONSchemaService.prototype.addSchemaHandle = function(id, unresolvedSchemaContent) {
-                    var schemaHandle = new SchemaHandle(this, id, unresolvedSchemaContent);
+                }
+                addSchemaHandle(id, unresolvedSchemaContent) {
+                    const schemaHandle = new SchemaHandle(this, id, unresolvedSchemaContent);
                     this.schemasById[id] = schemaHandle;
                     return schemaHandle;
-                };
-                JSONSchemaService.prototype.getOrAddSchemaHandle = function(id, unresolvedSchemaContent) {
+                }
+                getOrAddSchemaHandle(id, unresolvedSchemaContent) {
                     return this.schemasById[id] || this.addSchemaHandle(id, unresolvedSchemaContent);
-                };
-                JSONSchemaService.prototype.addFilePatternAssociation = function(pattern, uris) {
-                    var fpa = new FilePatternAssociation(pattern, uris);
+                }
+                addFilePatternAssociation(pattern, folderUri, uris) {
+                    const fpa = new FilePatternAssociation(pattern, folderUri, uris);
                     this.filePatternAssociations.push(fpa);
                     return fpa;
-                };
-                JSONSchemaService.prototype.registerExternalSchema = function(uri, filePatterns, unresolvedSchemaContent) {
-                    var id = normalizeId(uri);
+                }
+                registerExternalSchema(config) {
+                    const id = normalizeId(config.uri);
                     this.registeredSchemasIds[id] = true;
                     this.cachedSchemaForResource = undefined;
-                    if (filePatterns) {
-                        this.addFilePatternAssociation(filePatterns, [
+                    if (config.fileMatch && config.fileMatch.length) {
+                        this.addFilePatternAssociation(config.fileMatch, config.folderUri, [
                             id
                         ]);
                     }
-                    return unresolvedSchemaContent ? this.addSchemaHandle(id, unresolvedSchemaContent) : this.getOrAddSchemaHandle(id);
-                };
-                JSONSchemaService.prototype.clearExternalSchemas = function() {
+                    return config.schema ? this.addSchemaHandle(id, config.schema) : this.getOrAddSchemaHandle(id);
+                }
+                clearExternalSchemas() {
                     this.schemasById = {};
                     this.filePatternAssociations = [];
                     this.registeredSchemasIds = {};
                     this.cachedSchemaForResource = undefined;
-                    for(var id in this.contributionSchemas){
+                    for(const id in this.contributionSchemas){
                         this.schemasById[id] = this.contributionSchemas[id];
                         this.registeredSchemasIds[id] = true;
                     }
-                    for(var _i = 0, _a = this.contributionAssociations; _i < _a.length; _i++){
-                        var contributionAssociation = _a[_i];
+                    for (const contributionAssociation of this.contributionAssociations){
                         this.filePatternAssociations.push(contributionAssociation);
                     }
-                };
-                JSONSchemaService.prototype.getResolvedSchema = function(schemaId) {
-                    var id = normalizeId(schemaId);
-                    var schemaHandle = this.schemasById[id];
+                }
+                getResolvedSchema(schemaId) {
+                    const id = normalizeId(schemaId);
+                    const schemaHandle = this.schemasById[id];
                     if (schemaHandle) {
                         return schemaHandle.getResolvedSchema();
                     }
                     return this.promise.resolve(undefined);
-                };
-                JSONSchemaService.prototype.loadSchema = function(url) {
+                }
+                loadSchema(url) {
                     if (!this.requestService) {
-                        var errorMessage = jsonSchemaService_localize('json.schema.norequestservice', 'Unable to load schema from \'{0}\'. No schema request service available', toDisplayString(url));
+                        const errorMessage = t('Unable to load schema from \'{0}\'. No schema request service available', toDisplayString(url));
                         return this.promise.resolve(new UnresolvedSchema({}, [
                             errorMessage
                         ]));
                     }
-                    return this.requestService(url).then(function(content) {
+                    return this.requestService(url).then((content)=>{
                         if (!content) {
-                            var errorMessage = jsonSchemaService_localize('json.schema.nocontent', 'Unable to load schema from \'{0}\': No content.', toDisplayString(url));
+                            const errorMessage = t('Unable to load schema from \'{0}\': No content.', toDisplayString(url));
                             return new UnresolvedSchema({}, [
                                 errorMessage
                             ]);
                         }
-                        var schemaContent = {};
-                        var jsonErrors = [];
+                        const errors = [];
+                        if (content.charCodeAt(0) === 65279) {
+                            errors.push(t('Problem reading content from \'{0}\': UTF-8 with BOM detected, only UTF 8 is allowed.', toDisplayString(url)));
+                            content = content.trimStart();
+                        }
+                        let schemaContent = {};
+                        const jsonErrors = [];
                         schemaContent = main_parse(content, jsonErrors);
-                        var errors = jsonErrors.length ? [
-                            jsonSchemaService_localize('json.schema.invalidFormat', 'Unable to parse content from \'{0}\': Parse error at offset {1}.', toDisplayString(url), jsonErrors[0].offset)
-                        ] : [];
+                        if (jsonErrors.length) {
+                            errors.push(t('Unable to parse content from \'{0}\': Parse error at offset {1}.', toDisplayString(url), jsonErrors[0].offset));
+                        }
                         return new UnresolvedSchema(schemaContent, errors);
-                    }, function(error) {
-                        var errorMessage = error.toString();
-                        var errorSplit = error.toString().split('Error: ');
+                    }, (error)=>{
+                        let errorMessage = error.toString();
+                        const errorSplit = error.toString().split('Error: ');
                         if (errorSplit.length > 1) {
                             // more concise error message, URL and context are attached by caller anyways
                             errorMessage = errorSplit[1];
@@ -19350,55 +19414,49 @@
                             errorMessage = errorMessage.substr(0, errorMessage.length - 1);
                         }
                         return new UnresolvedSchema({}, [
-                            jsonSchemaService_localize('json.schema.nocontent', 'Unable to load schema from \'{0}\': {1}.', toDisplayString(url), errorMessage)
+                            t('Unable to load schema from \'{0}\': {1}.', toDisplayString(url), errorMessage)
                         ]);
                     });
-                };
-                JSONSchemaService.prototype.resolveSchemaContent = function(schemaToResolve, handle) {
-                    var _this = this;
-                    var resolveErrors = schemaToResolve.errors.slice(0);
-                    var schema = schemaToResolve.schema;
-                    if (schema.$schema) {
-                        var id = normalizeId(schema.$schema);
-                        if (id === 'http://json-schema.org/draft-03/schema') {
-                            return this.promise.resolve(new ResolvedSchema({}, [
-                                jsonSchemaService_localize('json.schema.draft03.notsupported', "Draft-03 schemas are not supported.")
-                            ]));
-                        } else if (id === 'https://json-schema.org/draft/2019-09/schema') {
-                            resolveErrors.push(jsonSchemaService_localize('json.schema.draft201909.notsupported', "Draft 2019-09 schemas are not yet fully supported."));
-                        } else if (id === 'https://json-schema.org/draft/2020-12/schema') {
-                            resolveErrors.push(jsonSchemaService_localize('json.schema.draft202012.notsupported', "Draft 2020-12 schemas are not yet fully supported."));
-                        }
+                }
+                resolveSchemaContent(schemaToResolve, handle) {
+                    const resolveErrors = schemaToResolve.errors.slice(0);
+                    const schema = schemaToResolve.schema;
+                    let schemaDraft = schema.$schema ? normalizeId(schema.$schema) : undefined;
+                    if (schemaDraft === 'http://json-schema.org/draft-03/schema') {
+                        return this.promise.resolve(new ResolvedSchema({}, [
+                            t("Draft-03 schemas are not supported.")
+                        ], [], schemaDraft));
                     }
-                    var contextService = this.contextService;
-                    var findSectionByJSONPointer = function(schema, path) {
+                    let usesUnsupportedFeatures = new Set();
+                    const contextService = this.contextService;
+                    const findSectionByJSONPointer = (schema, path)=>{
                         path = decodeURIComponent(path);
-                        var current = schema;
+                        let current = schema;
                         if (path[0] === '/') {
                             path = path.substring(1);
                         }
-                        path.split('/').some(function(part) {
+                        path.split('/').some((part)=>{
                             part = part.replace(/~1/g, '/').replace(/~0/g, '~');
                             current = current[part];
                             return !current;
                         });
                         return current;
                     };
-                    var findSchemaById = function(schema, handle, id) {
+                    const findSchemaById = (schema, handle, id)=>{
                         if (!handle.anchors) {
                             handle.anchors = collectAnchors(schema);
                         }
                         return handle.anchors.get(id);
                     };
-                    var merge = function(target, section) {
-                        for(var key in section){
-                            if (section.hasOwnProperty(key) && !target.hasOwnProperty(key) && key !== 'id' && key !== '$id') {
+                    const merge = (target, section)=>{
+                        for(const key in section){
+                            if (section.hasOwnProperty(key) && key !== 'id' && key !== '$id') {
                                 target[key] = section[key];
                             }
                         }
                     };
-                    var mergeRef = function(target, sourceRoot, sourceHandle, refSegment) {
-                        var section;
+                    const mergeRef = (target, sourceRoot, sourceHandle, refSegment)=>{
+                        let section;
                         if (refSegment === undefined || refSegment.length === 0) {
                             section = sourceRoot;
                         } else if (refSegment.charAt(0) === '/') {
@@ -19411,32 +19469,32 @@
                         if (section) {
                             merge(target, section);
                         } else {
-                            resolveErrors.push(jsonSchemaService_localize('json.schema.invalidid', '$ref \'{0}\' in \'{1}\' can not be resolved.', refSegment, sourceHandle.uri));
+                            resolveErrors.push(t('$ref \'{0}\' in \'{1}\' can not be resolved.', refSegment || '', sourceHandle.uri));
                         }
                     };
-                    var resolveExternalLink = function(node, uri, refSegment, parentHandle) {
+                    const resolveExternalLink = (node, uri, refSegment, parentHandle)=>{
                         if (contextService && !/^[A-Za-z][A-Za-z0-9+\-.+]*:\/\/.*/.test(uri)) {
                             uri = contextService.resolveRelativePath(uri, parentHandle.uri);
                         }
                         uri = normalizeId(uri);
-                        var referencedHandle = _this.getOrAddSchemaHandle(uri);
-                        return referencedHandle.getUnresolvedSchema().then(function(unresolvedSchema) {
+                        const referencedHandle = this.getOrAddSchemaHandle(uri);
+                        return referencedHandle.getUnresolvedSchema().then((unresolvedSchema)=>{
                             parentHandle.dependencies.add(uri);
                             if (unresolvedSchema.errors.length) {
-                                var loc = refSegment ? uri + '#' + refSegment : uri;
-                                resolveErrors.push(jsonSchemaService_localize('json.schema.problemloadingref', 'Problems loading reference \'{0}\': {1}', loc, unresolvedSchema.errors[0]));
+                                const loc = refSegment ? uri + '#' + refSegment : uri;
+                                resolveErrors.push(t('Problems loading reference \'{0}\': {1}', loc, unresolvedSchema.errors[0]));
                             }
                             mergeRef(node, unresolvedSchema.schema, referencedHandle, refSegment);
                             return resolveRefs(node, unresolvedSchema.schema, referencedHandle);
                         });
                     };
-                    var resolveRefs = function(node, parentSchema, parentHandle) {
-                        var openPromises = [];
-                        _this.traverseNodes(node, function(next) {
-                            var seenRefs = new Set();
+                    const resolveRefs = (node, parentSchema, parentHandle)=>{
+                        const openPromises = [];
+                        this.traverseNodes(node, (next)=>{
+                            const seenRefs = new Set();
                             while(next.$ref){
-                                var ref = next.$ref;
-                                var segments = ref.split('#', 2);
+                                const ref = next.$ref;
+                                const segments = ref.split('#', 2);
                                 delete next.$ref;
                                 if (segments[0].length > 0) {
                                     // This is a reference to an external schema
@@ -19445,111 +19503,120 @@
                                 } else {
                                     // This is a reference inside the current schema
                                     if (!seenRefs.has(ref)) {
-                                        var id = segments[1];
+                                        const id = segments[1];
                                         mergeRef(next, parentSchema, parentHandle, id);
                                         seenRefs.add(ref);
                                     }
                                 }
                             }
+                            if (next.$recursiveRef) {
+                                usesUnsupportedFeatures.add('$recursiveRef');
+                            }
+                            if (next.$dynamicRef) {
+                                usesUnsupportedFeatures.add('$dynamicRef');
+                            }
                         });
-                        return _this.promise.all(openPromises);
+                        return this.promise.all(openPromises);
                     };
-                    var collectAnchors = function(root) {
-                        var result = new Map();
-                        _this.traverseNodes(root, function(next) {
-                            var id = next.$id || next.id;
-                            if (typeof id === 'string' && id.charAt(0) === '#') {
-                                // delete next.$id;
-                                // delete next.id;
-                                var anchor = id.substring(1);
+                    const collectAnchors = (root)=>{
+                        const result = new Map();
+                        this.traverseNodes(root, (next)=>{
+                            const id = next.$id || next.id;
+                            const anchor = isString(id) && id.charAt(0) === '#' ? id.substring(1) : next.$anchor;
+                            if (anchor) {
                                 if (result.has(anchor)) {
-                                    resolveErrors.push(jsonSchemaService_localize('json.schema.duplicateid', 'Duplicate id declaration: \'{0}\'', id));
+                                    resolveErrors.push(t('Duplicate anchor declaration: \'{0}\'', anchor));
                                 } else {
                                     result.set(anchor, next);
                                 }
                             }
+                            if (next.$recursiveAnchor) {
+                                usesUnsupportedFeatures.add('$recursiveAnchor');
+                            }
+                            if (next.$dynamicAnchor) {
+                                usesUnsupportedFeatures.add('$dynamicAnchor');
+                            }
                         });
                         return result;
                     };
-                    return resolveRefs(schema, schema, handle).then(function(_) {
-                        return new ResolvedSchema(schema, resolveErrors);
+                    return resolveRefs(schema, schema, handle).then((_)=>{
+                        let resolveWarnings = [];
+                        if (usesUnsupportedFeatures.size) {
+                            resolveWarnings.push(t('The schema uses meta-schema features ({0}) that are not yet supported by the validator.', Array.from(usesUnsupportedFeatures.keys()).join(', ')));
+                        }
+                        return new ResolvedSchema(schema, resolveErrors, resolveWarnings, schemaDraft);
                     });
-                };
-                JSONSchemaService.prototype.traverseNodes = function(root, handle) {
+                }
+                traverseNodes(root, handle) {
                     if (!root || typeof root !== 'object') {
                         return Promise.resolve(null);
                     }
-                    var seen = new Set();
-                    var collectEntries = function() {
-                        var entries = [];
-                        for(var _i = 0; _i < arguments.length; _i++){
-                            entries[_i] = arguments[_i];
-                        }
-                        for(var _a = 0, entries_1 = entries; _a < entries_1.length; _a++){
-                            var entry = entries_1[_a];
-                            if (typeof entry === 'object') {
+                    const seen = new Set();
+                    const collectEntries = (...entries)=>{
+                        for (const entry of entries){
+                            if (isObject(entry)) {
                                 toWalk.push(entry);
                             }
                         }
                     };
-                    var collectMapEntries = function() {
-                        var maps = [];
-                        for(var _i = 0; _i < arguments.length; _i++){
-                            maps[_i] = arguments[_i];
-                        }
-                        for(var _a = 0, maps_1 = maps; _a < maps_1.length; _a++){
-                            var map = maps_1[_a];
-                            if (typeof map === 'object') {
-                                for(var k in map){
-                                    var key = k;
-                                    var entry = map[key];
-                                    if (typeof entry === 'object') {
+                    const collectMapEntries = (...maps)=>{
+                        for (const map of maps){
+                            if (isObject(map)) {
+                                for(const k in map){
+                                    const key = k;
+                                    const entry = map[key];
+                                    if (isObject(entry)) {
                                         toWalk.push(entry);
                                     }
                                 }
                             }
                         }
                     };
-                    var collectArrayEntries = function() {
-                        var arrays = [];
-                        for(var _i = 0; _i < arguments.length; _i++){
-                            arrays[_i] = arguments[_i];
-                        }
-                        for(var _a = 0, arrays_1 = arrays; _a < arrays_1.length; _a++){
-                            var array = arrays_1[_a];
+                    const collectArrayEntries = (...arrays)=>{
+                        for (const array of arrays){
                             if (Array.isArray(array)) {
-                                for(var _b = 0, array_1 = array; _b < array_1.length; _b++){
-                                    var entry = array_1[_b];
-                                    if (typeof entry === 'object') {
+                                for (const entry of array){
+                                    if (isObject(entry)) {
                                         toWalk.push(entry);
                                     }
                                 }
                             }
                         }
                     };
-                    var toWalk = [
+                    const collectEntryOrArrayEntries = (items)=>{
+                        if (Array.isArray(items)) {
+                            for (const entry of items){
+                                if (isObject(entry)) {
+                                    toWalk.push(entry);
+                                }
+                            }
+                        } else if (isObject(items)) {
+                            toWalk.push(items);
+                        }
+                    };
+                    const toWalk = [
                         root
                     ];
-                    var next = toWalk.pop();
+                    let next = toWalk.pop();
                     while(next){
                         if (!seen.has(next)) {
                             seen.add(next);
                             handle(next);
-                            collectEntries(next.items, next.additionalItems, next.additionalProperties, next.not, next.contains, next.propertyNames, next.if, next.then, next.else);
-                            collectMapEntries(next.definitions, next.properties, next.patternProperties, next.dependencies);
-                            collectArrayEntries(next.anyOf, next.allOf, next.oneOf, next.items);
+                            collectEntries(next.additionalItems, next.additionalProperties, next.not, next.contains, next.propertyNames, next.if, next.then, next.else, next.unevaluatedItems, next.unevaluatedProperties);
+                            collectMapEntries(next.definitions, next.$defs, next.properties, next.patternProperties, next.dependencies, next.dependentSchemas);
+                            collectArrayEntries(next.anyOf, next.allOf, next.oneOf, next.prefixItems);
+                            collectEntryOrArrayEntries(next.items);
                         }
                         next = toWalk.pop();
                     }
-                };
-                ;
-                JSONSchemaService.prototype.getSchemaFromProperty = function(resource, document1) {
-                    var _a, _b;
-                    if (((_a = document1.root) === null || _a === void 0 ? void 0 : _a.type) === 'object') {
-                        for(var _i = 0, _c = document1.root.properties; _i < _c.length; _i++){
-                            var p = _c[_i];
-                            if (p.keyNode.value === '$schema' && ((_b = p.valueNode) === null || _b === void 0 ? void 0 : _b.type) === 'string') {
-                                var schemaId = p.valueNode.value;
+                }
+                getSchemaFromProperty(resource, document1) {
+                    var _document_root;
+                    if (((_document_root = document1.root) === null || _document_root === void 0 ? void 0 : _document_root.type) === 'object') {
+                        for (const p of document1.root.properties){
+                            var _p_valueNode;
+                            if (p.keyNode.value === '$schema' && ((_p_valueNode = p.valueNode) === null || _p_valueNode === void 0 ? void 0 : _p_valueNode.type) === 'string') {
+                                let schemaId = p.valueNode.value;
                                 if (this.contextService && !/^\w[\w\d+.-]*:/.test(schemaId)) {
                                     schemaId = this.contextService.resolveRelativePath(schemaId, resource);
                                 }
@@ -19558,16 +19625,14 @@
                         }
                     }
                     return undefined;
-                };
-                JSONSchemaService.prototype.getAssociatedSchemas = function(resource) {
-                    var seen = Object.create(null);
-                    var schemas = [];
-                    var normalizedResource = normalizeResourceForMatching(resource);
-                    for(var _i = 0, _a = this.filePatternAssociations; _i < _a.length; _i++){
-                        var entry = _a[_i];
+                }
+                getAssociatedSchemas(resource) {
+                    const seen = Object.create(null);
+                    const schemas = [];
+                    const normalizedResource = normalizeResourceForMatching(resource);
+                    for (const entry of this.filePatternAssociations){
                         if (entry.matchesPattern(normalizedResource)) {
-                            for(var _b = 0, _c = entry.getURIs(); _b < _c.length; _b++){
-                                var schemaId = _c[_b];
+                            for (const schemaId of entry.getURIs()){
                                 if (!seen[schemaId]) {
                                     schemas.push(schemaId);
                                     seen[schemaId] = true;
@@ -19576,73 +19641,77 @@
                         }
                     }
                     return schemas;
-                };
-                JSONSchemaService.prototype.getSchemaURIsForResource = function(resource, document1) {
-                    var schemeId = document1 && this.getSchemaFromProperty(resource, document1);
+                }
+                getSchemaURIsForResource(resource, document1) {
+                    let schemeId = document1 && this.getSchemaFromProperty(resource, document1);
                     if (schemeId) {
                         return [
                             schemeId
                         ];
                     }
                     return this.getAssociatedSchemas(resource);
-                };
-                JSONSchemaService.prototype.getSchemaForResource = function(resource, document1) {
+                }
+                getSchemaForResource(resource, document1) {
                     if (document1) {
                         // first use $schema if present
-                        var schemeId = this.getSchemaFromProperty(resource, document1);
+                        let schemeId = this.getSchemaFromProperty(resource, document1);
                         if (schemeId) {
-                            var id = normalizeId(schemeId);
+                            const id = normalizeId(schemeId);
                             return this.getOrAddSchemaHandle(id).getResolvedSchema();
                         }
                     }
                     if (this.cachedSchemaForResource && this.cachedSchemaForResource.resource === resource) {
                         return this.cachedSchemaForResource.resolvedSchema;
                     }
-                    var schemas = this.getAssociatedSchemas(resource);
-                    var resolvedSchema = schemas.length > 0 ? this.createCombinedSchema(resource, schemas).getResolvedSchema() : this.promise.resolve(undefined);
+                    const schemas = this.getAssociatedSchemas(resource);
+                    const resolvedSchema = schemas.length > 0 ? this.createCombinedSchema(resource, schemas).getResolvedSchema() : this.promise.resolve(undefined);
                     this.cachedSchemaForResource = {
-                        resource: resource,
-                        resolvedSchema: resolvedSchema
+                        resource,
+                        resolvedSchema
                     };
                     return resolvedSchema;
-                };
-                JSONSchemaService.prototype.createCombinedSchema = function(resource, schemaIds) {
+                }
+                createCombinedSchema(resource, schemaIds) {
                     if (schemaIds.length === 1) {
                         return this.getOrAddSchemaHandle(schemaIds[0]);
                     } else {
-                        var combinedSchemaId = 'schemaservice://combinedSchema/' + encodeURIComponent(resource);
-                        var combinedSchema = {
-                            allOf: schemaIds.map(function(schemaId) {
-                                return {
+                        const combinedSchemaId = 'schemaservice://combinedSchema/' + encodeURIComponent(resource);
+                        const combinedSchema = {
+                            allOf: schemaIds.map((schemaId)=>({
                                     $ref: schemaId
-                                };
-                            })
+                                }))
                         };
                         return this.addSchemaHandle(combinedSchemaId, combinedSchema);
                     }
-                };
-                JSONSchemaService.prototype.getMatchingSchemas = function(document1, jsonDocument, schema) {
+                }
+                getMatchingSchemas(document1, jsonDocument, schema) {
                     if (schema) {
-                        var id = schema.id || 'schemaservice://untitled/matchingSchemas/' + jsonSchemaService_idCounter++;
-                        var handle = this.addSchemaHandle(id, schema);
-                        return handle.getResolvedSchema().then(function(resolvedSchema) {
-                            return jsonDocument.getMatchingSchemas(resolvedSchema.schema).filter(function(s) {
-                                return !s.inverted;
-                            });
+                        const id = schema.id || 'schemaservice://untitled/matchingSchemas/' + jsonSchemaService_idCounter++;
+                        const handle = this.addSchemaHandle(id, schema);
+                        return handle.getResolvedSchema().then((resolvedSchema)=>{
+                            return jsonDocument.getMatchingSchemas(resolvedSchema.schema).filter((s)=>!s.inverted);
                         });
                     }
-                    return this.getSchemaForResource(document1.uri, jsonDocument).then(function(schema) {
+                    return this.getSchemaForResource(document1.uri, jsonDocument).then((schema)=>{
                         if (schema) {
-                            return jsonDocument.getMatchingSchemas(schema.schema).filter(function(s) {
-                                return !s.inverted;
-                            });
+                            return jsonDocument.getMatchingSchemas(schema.schema).filter((s)=>!s.inverted);
                         }
                         return [];
                     });
-                };
-                return JSONSchemaService;
-            }();
-            var jsonSchemaService_idCounter = 0;
+                }
+                constructor(requestService, contextService, promiseConstructor){
+                    this.contextService = contextService;
+                    this.requestService = requestService;
+                    this.promiseConstructor = promiseConstructor || Promise;
+                    this.callOnDispose = [];
+                    this.contributionSchemas = {};
+                    this.contributionAssociations = [];
+                    this.schemasById = {};
+                    this.filePatternAssociations = [];
+                    this.registeredSchemasIds = {};
+                }
+            }
+            let jsonSchemaService_idCounter = 0;
             function normalizeId(id) {
                 // remove trailing '#', normalize drive capitalization
                 try {
@@ -19664,7 +19733,7 @@
             }
             function toDisplayString(url) {
                 try {
-                    var uri = URI.parse(url);
+                    const uri = URI.parse(url);
                     if (uri.scheme === 'file') {
                         return uri.fsPath;
                     }
@@ -19678,37 +19747,37 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/ function getFoldingRanges(document1, context) {
-                var ranges = [];
-                var nestingLevels = [];
-                var stack = [];
-                var prevStart = -1;
-                var scanner = main_createScanner(document1.getText(), false);
-                var token = scanner.scan();
+                const ranges = [];
+                const nestingLevels = [];
+                const stack = [];
+                let prevStart = -1;
+                const scanner = main_createScanner(document1.getText(), false);
+                let token = scanner.scan();
                 function addRange(range) {
                     ranges.push(range);
                     nestingLevels.push(stack.length);
                 }
-                while(token !== 17 /* EOF */ ){
+                while(token !== 17 /* SyntaxKind.EOF */ ){
                     switch(token){
-                        case 1 /* OpenBraceToken */ :
-                        case 3 /* OpenBracketToken */ :
+                        case 1 /* SyntaxKind.OpenBraceToken */ :
+                        case 3 /* SyntaxKind.OpenBracketToken */ :
                             {
-                                var startLine = document1.positionAt(scanner.getTokenOffset()).line;
-                                var range = {
-                                    startLine: startLine,
+                                const startLine = document1.positionAt(scanner.getTokenOffset()).line;
+                                const range = {
+                                    startLine,
                                     endLine: startLine,
-                                    kind: token === 1 /* OpenBraceToken */  ? 'object' : 'array'
+                                    kind: token === 1 /* SyntaxKind.OpenBraceToken */  ? 'object' : 'array'
                                 };
                                 stack.push(range);
                                 break;
                             }
-                        case 2 /* CloseBraceToken */ :
-                        case 4 /* CloseBracketToken */ :
+                        case 2 /* SyntaxKind.CloseBraceToken */ :
+                        case 4 /* SyntaxKind.CloseBracketToken */ :
                             {
-                                var kind = token === 2 /* CloseBraceToken */  ? 'object' : 'array';
+                                const kind = token === 2 /* SyntaxKind.CloseBraceToken */  ? 'object' : 'array';
                                 if (stack.length > 0 && stack[stack.length - 1].kind === kind) {
-                                    var range = stack.pop();
-                                    var line = document1.positionAt(scanner.getTokenOffset()).line;
+                                    const range = stack.pop();
+                                    const line = document1.positionAt(scanner.getTokenOffset()).line;
                                     if (range && line > range.startLine + 1 && prevStart !== range.startLine) {
                                         range.endLine = line - 1;
                                         addRange(range);
@@ -19717,17 +19786,17 @@
                                 }
                                 break;
                             }
-                        case 13 /* BlockCommentTrivia */ :
+                        case 13 /* SyntaxKind.BlockCommentTrivia */ :
                             {
-                                var startLine = document1.positionAt(scanner.getTokenOffset()).line;
-                                var endLine = document1.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
-                                if (scanner.getTokenError() === 1 /* UnexpectedEndOfComment */  && startLine + 1 < document1.lineCount) {
+                                const startLine = document1.positionAt(scanner.getTokenOffset()).line;
+                                const endLine = document1.positionAt(scanner.getTokenOffset() + scanner.getTokenLength()).line;
+                                if (scanner.getTokenError() === 1 /* ScanError.UnexpectedEndOfComment */  && startLine + 1 < document1.lineCount) {
                                     scanner.setPosition(document1.offsetAt(main.Position.create(startLine + 1, 0)));
                                 } else {
                                     if (startLine < endLine) {
                                         addRange({
-                                            startLine: startLine,
-                                            endLine: endLine,
+                                            startLine,
+                                            endLine,
                                             kind: main.FoldingRangeKind.Comment
                                         });
                                         prevStart = startLine;
@@ -19735,26 +19804,26 @@
                                 }
                                 break;
                             }
-                        case 12 /* LineCommentTrivia */ :
+                        case 12 /* SyntaxKind.LineCommentTrivia */ :
                             {
-                                var text = document1.getText().substr(scanner.getTokenOffset(), scanner.getTokenLength());
-                                var m = text.match(/^\/\/\s*#(region\b)|(endregion\b)/);
+                                const text = document1.getText().substr(scanner.getTokenOffset(), scanner.getTokenLength());
+                                const m = text.match(/^\/\/\s*#(region\b)|(endregion\b)/);
                                 if (m) {
-                                    var line = document1.positionAt(scanner.getTokenOffset()).line;
+                                    const line = document1.positionAt(scanner.getTokenOffset()).line;
                                     if (m[1]) {
-                                        var range = {
+                                        const range = {
                                             startLine: line,
                                             endLine: line,
                                             kind: main.FoldingRangeKind.Region
                                         };
                                         stack.push(range);
                                     } else {
-                                        var i = stack.length - 1;
+                                        let i = stack.length - 1;
                                         while(i >= 0 && stack[i].kind !== main.FoldingRangeKind.Region){
                                             i--;
                                         }
                                         if (i >= 0) {
-                                            var range = stack[i];
+                                            const range = stack[i];
                                             stack.length = i;
                                             if (line > range.startLine && prevStart !== range.startLine) {
                                                 range.endLine = line;
@@ -19769,24 +19838,23 @@
                     }
                     token = scanner.scan();
                 }
-                var rangeLimit = context && context.rangeLimit;
+                const rangeLimit = context && context.rangeLimit;
                 if (typeof rangeLimit !== 'number' || ranges.length <= rangeLimit) {
                     return ranges;
                 }
                 if (context && context.onRangeLimitExceeded) {
                     context.onRangeLimitExceeded(document1.uri);
                 }
-                var counts = [];
-                for(var _i = 0, nestingLevels_1 = nestingLevels; _i < nestingLevels_1.length; _i++){
-                    var level = nestingLevels_1[_i];
+                const counts = [];
+                for (let level of nestingLevels){
                     if (level < 30) {
                         counts[level] = (counts[level] || 0) + 1;
                     }
                 }
-                var entries = 0;
-                var maxLevel = 0;
-                for(var i = 0; i < counts.length; i++){
-                    var n = counts[i];
+                let entries = 0;
+                let maxLevel = 0;
+                for(let i = 0; i < counts.length; i++){
+                    const n = counts[i];
                     if (n) {
                         if (n + entries > rangeLimit) {
                             maxLevel = i;
@@ -19795,9 +19863,9 @@
                         entries += n;
                     }
                 }
-                var result = [];
-                for(var i = 0; i < ranges.length; i++){
-                    var level = nestingLevels[i];
+                const result = [];
+                for(let i = 0; i < ranges.length; i++){
+                    const level = nestingLevels[i];
                     if (typeof level === 'number') {
                         if (level < maxLevel || level === maxLevel && entries++ < rangeLimit) {
                             result.push(ranges[i]);
@@ -19812,16 +19880,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/ function getSelectionRanges(document1, positions, doc) {
                 function getSelectionRange(position) {
-                    var offset = document1.offsetAt(position);
-                    var node = doc.getNodeFromOffset(offset, true);
-                    var result = [];
+                    let offset = document1.offsetAt(position);
+                    let node = doc.getNodeFromOffset(offset, true);
+                    const result = [];
                     while(node){
                         switch(node.type){
                             case 'string':
                             case 'object':
                             case 'array':
                                 // range without ", [ or {
-                                var cStart = node.offset + 1, cEnd = node.offset + node.length - 1;
+                                const cStart = node.offset + 1, cEnd = node.offset + node.length - 1;
                                 if (cStart < cEnd && offset >= cStart && offset <= cEnd) {
                                     result.push(newRange(cStart, cEnd));
                                 }
@@ -19835,15 +19903,15 @@
                                 break;
                         }
                         if (node.type === 'property' || node.parent && node.parent.type === 'array') {
-                            var afterCommaOffset = getOffsetAfterNextToken(node.offset + node.length, 5 /* CommaToken */ );
+                            const afterCommaOffset = getOffsetAfterNextToken(node.offset + node.length, 5 /* SyntaxKind.CommaToken */ );
                             if (afterCommaOffset !== -1) {
                                 result.push(newRange(node.offset, afterCommaOffset));
                             }
                         }
                         node = node.parent;
                     }
-                    var current = undefined;
-                    for(var index = result.length - 1; index >= 0; index--){
+                    let current = undefined;
+                    for(let index = result.length - 1; index >= 0; index--){
                         current = main.SelectionRange.create(result[index], current);
                     }
                     if (!current) {
@@ -19854,10 +19922,10 @@
                 function newRange(start, end) {
                     return main.Range.create(document1.positionAt(start), document1.positionAt(end));
                 }
-                var scanner = main_createScanner(document1.getText(), true);
+                const scanner = main_createScanner(document1.getText(), true);
                 function getOffsetAfterNextToken(offset, expectedToken) {
                     scanner.setPosition(offset);
-                    var token = scanner.scan();
+                    let token = scanner.scan();
                     if (token === expectedToken) {
                         return scanner.getTokenOffset() + scanner.getTokenLength();
                     }
@@ -19865,21 +19933,448 @@
                 }
                 return positions.map(getSelectionRange);
             }
+            ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/utils/format.js
+            function utils_format_format(documentToFormat, formattingOptions, formattingRange) {
+                var _formattingOptions, _formattingOptions1, _formattingOptions2;
+                let range = undefined;
+                if (formattingRange) {
+                    const offset = documentToFormat.offsetAt(formattingRange.start);
+                    const length = documentToFormat.offsetAt(formattingRange.end) - offset;
+                    range = {
+                        offset,
+                        length
+                    };
+                }
+                const options = {
+                    tabSize: formattingOptions ? formattingOptions.tabSize : 4,
+                    insertSpaces: ((_formattingOptions = formattingOptions) === null || _formattingOptions === void 0 ? void 0 : _formattingOptions.insertSpaces) === true,
+                    insertFinalNewline: ((_formattingOptions1 = formattingOptions) === null || _formattingOptions1 === void 0 ? void 0 : _formattingOptions1.insertFinalNewline) === true,
+                    eol: '\n',
+                    keepLines: ((_formattingOptions2 = formattingOptions) === null || _formattingOptions2 === void 0 ? void 0 : _formattingOptions2.keepLines) === true
+                };
+                return main_format(documentToFormat.getText(), range, options).map((edit1)=>{
+                    return main.TextEdit.replace(main.Range.create(documentToFormat.positionAt(edit1.offset), documentToFormat.positionAt(edit1.offset + edit1.length)), edit1.content);
+                });
+            }
+            ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/utils/propertyTree.js
+            /*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/ var Container;
+            (function(Container) {
+                Container[Container["Object"] = 0] = "Object";
+                Container[Container["Array"] = 1] = "Array";
+            })(Container || (Container = {}));
+            class PropertyTree {
+                addChildProperty(childProperty) {
+                    childProperty.parent = this;
+                    if (this.childrenProperties.length > 0) {
+                        let insertionIndex = 0;
+                        if (childProperty.noKeyName) {
+                            insertionIndex = this.childrenProperties.length;
+                        } else {
+                            insertionIndex = binarySearchOnPropertyArray(this.childrenProperties, childProperty, compareProperties);
+                        }
+                        if (insertionIndex < 0) {
+                            insertionIndex = insertionIndex * -1 - 1;
+                        }
+                        this.childrenProperties.splice(insertionIndex, 0, childProperty);
+                    } else {
+                        this.childrenProperties.push(childProperty);
+                    }
+                    return childProperty;
+                }
+                constructor(propertyName, beginningLineNumber){
+                    this.propertyName = propertyName !== null && propertyName !== void 0 ? propertyName : '';
+                    this.beginningLineNumber = beginningLineNumber;
+                    this.childrenProperties = [];
+                    this.lastProperty = false;
+                    this.noKeyName = false;
+                }
+            }
+            function compareProperties(propertyTree1, propertyTree2) {
+                const propertyName1 = propertyTree1.propertyName.toLowerCase();
+                const propertyName2 = propertyTree2.propertyName.toLowerCase();
+                if (propertyName1 < propertyName2) {
+                    return -1;
+                } else if (propertyName1 > propertyName2) {
+                    return 1;
+                }
+                return 0;
+            }
+            function binarySearchOnPropertyArray(propertyTreeArray, propertyTree, compare_fn) {
+                const propertyName = propertyTree.propertyName.toLowerCase();
+                const firstPropertyInArrayName = propertyTreeArray[0].propertyName.toLowerCase();
+                const lastPropertyInArrayName = propertyTreeArray[propertyTreeArray.length - 1].propertyName.toLowerCase();
+                if (propertyName < firstPropertyInArrayName) {
+                    return 0;
+                }
+                if (propertyName > lastPropertyInArrayName) {
+                    return propertyTreeArray.length;
+                }
+                let m = 0;
+                let n = propertyTreeArray.length - 1;
+                while(m <= n){
+                    let k = n + m >> 1;
+                    let cmp = compare_fn(propertyTree, propertyTreeArray[k]);
+                    if (cmp > 0) {
+                        m = k + 1;
+                    } else if (cmp < 0) {
+                        n = k - 1;
+                    } else {
+                        return k;
+                    }
+                }
+                return -m - 1;
+            }
+            ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/utils/sort.js
+            /*---------------------------------------------------------------------------------------------
+*  Copyright (c) Microsoft Corporation. All rights reserved.
+*  Licensed under the MIT License. See License.txt in the project root for license information.
+*--------------------------------------------------------------------------------------------*/ // import { TextEdit} from 'vscode-languageserver-textdocument';
+            function sort(documentToSort, formattingOptions) {
+                const options = {
+                    ...formattingOptions,
+                    keepLines: false
+                };
+                const formattedJsonString = esm_main /* TextDocument */ .n.applyEdits(documentToSort, utils_format_format(documentToSort, options, undefined));
+                const formattedJsonDocument = esm_main /* TextDocument */ .n.create('test://test.json', 'json', 0, formattedJsonString);
+                const jsonPropertyTree = findJsoncPropertyTree(formattedJsonDocument);
+                const sortedJsonDocument = sortJsoncDocument(formattedJsonDocument, jsonPropertyTree);
+                const edits = utils_format_format(sortedJsonDocument, options, undefined);
+                const sortedAndFormattedJsonDocument = esm_main /* TextDocument */ .n.applyEdits(sortedJsonDocument, edits);
+                return [
+                    main.TextEdit.replace(main.Range.create(main.Position.create(0, 0), documentToSort.positionAt(documentToSort.getText().length)), sortedAndFormattedJsonDocument)
+                ];
+            }
+            function findJsoncPropertyTree(formattedDocument) {
+                const formattedString = formattedDocument.getText();
+                const scanner = main_createScanner(formattedString, false);
+                // The tree that will be returned
+                let rootTree = new PropertyTree();
+                // The tree where the current properties can be added as children
+                let currentTree = rootTree;
+                // The tree representing the current property analyzed
+                let currentProperty = rootTree;
+                // The tree representing the previous property analyzed
+                let lastProperty = rootTree;
+                // The current scanned token
+                let token = undefined;
+                // Line number of the last token found
+                let lastTokenLine = 0;
+                // Total number of characters on the lines prior to current line 
+                let numberOfCharactersOnPreviousLines = 0;
+                // The last token scanned that is not trivial, nor a comment
+                let lastNonTriviaNonCommentToken = undefined;
+                // The second to last token scanned that is not trivial, nor a comment
+                let secondToLastNonTriviaNonCommentToken = undefined;
+                // Line number of last token that is not trivial, nor a comment
+                let lineOfLastNonTriviaNonCommentToken = -1;
+                // End index on its line of last token that is not trivial, nor a comment
+                let endIndexOfLastNonTriviaNonCommentToken = -1;
+                // Line number of the start of the range of current/next property
+                let beginningLineNumber = 0;
+                // Line number of the end of the range of current/next property
+                let endLineNumber = 0;
+                // Stack indicating whether we are inside of an object or an array
+                let currentContainerStack = [];
+                // Boolean indicating that the current property end line number needs to be updated. Used only when block comments are encountered.
+                let updateLastPropertyEndLineNumber = false;
+                // Boolean indicating that the beginning line number should be updated. Used only when block comments are encountered. 
+                let updateBeginningLineNumber = false;
+                while((token = scanner.scan()) !== 17 /* SyntaxKind.EOF */ ){
+                    // In the case when a block comment has been encountered that starts on the same line as the comma ending a property, update the end line of that
+                    // property so that it covers the block comment. For example, if we have: 
+                    // 1. "key" : {}, /* some block
+                    // 2. comment */
+                    // Then, the end line of the property "key" should be line 2 not line 1
+                    if (updateLastPropertyEndLineNumber === true && token !== 14 /* SyntaxKind.LineBreakTrivia */  && token !== 15 /* SyntaxKind.Trivia */  && token !== 12 /* SyntaxKind.LineCommentTrivia */  && token !== 13 /* SyntaxKind.BlockCommentTrivia */  && currentProperty.endLineNumber === undefined) {
+                        let endLineNumber = scanner.getTokenStartLine();
+                        // Update the end line number in the case when the last property visited is a container (object or array)
+                        if (secondToLastNonTriviaNonCommentToken === 2 /* SyntaxKind.CloseBraceToken */  || secondToLastNonTriviaNonCommentToken === 4 /* SyntaxKind.CloseBracketToken */ ) {
+                            lastProperty.endLineNumber = endLineNumber - 1;
+                        } else {
+                            currentProperty.endLineNumber = endLineNumber - 1;
+                        }
+                        beginningLineNumber = endLineNumber;
+                        updateLastPropertyEndLineNumber = false;
+                    }
+                    // When a block comment follows an open brace or an open bracket, that block comment should be associated to that brace or bracket, not the property below it. For example, for:
+                    // 1. { /*
+                    // 2. ... */
+                    // 3. "key" : {}
+                    // 4. }
+                    // Instead of associating the block comment to the property on line 3, it is associate to the property on line 1
+                    if (updateBeginningLineNumber === true && token !== 14 /* SyntaxKind.LineBreakTrivia */  && token !== 15 /* SyntaxKind.Trivia */  && token !== 12 /* SyntaxKind.LineCommentTrivia */  && token !== 13 /* SyntaxKind.BlockCommentTrivia */ ) {
+                        beginningLineNumber = scanner.getTokenStartLine();
+                        updateBeginningLineNumber = false;
+                    }
+                    // Update the number of characters on all the previous lines each time the new token is on a different line to the previous token
+                    if (scanner.getTokenStartLine() !== lastTokenLine) {
+                        for(let i = lastTokenLine; i < scanner.getTokenStartLine(); i++){
+                            const lengthOfLine = formattedDocument.getText(main.Range.create(main.Position.create(i, 0), main.Position.create(i + 1, 0))).length;
+                            numberOfCharactersOnPreviousLines = numberOfCharactersOnPreviousLines + lengthOfLine;
+                        }
+                        lastTokenLine = scanner.getTokenStartLine();
+                    }
+                    switch(token){
+                        // When a string is found, if it follows an open brace or a comma token and it is within an object, then it corresponds to a key name, not a simple string
+                        case 10 /* SyntaxKind.StringLiteral */ :
+                            {
+                                if (lastNonTriviaNonCommentToken === undefined || lastNonTriviaNonCommentToken === 1 /* SyntaxKind.OpenBraceToken */  || lastNonTriviaNonCommentToken === 5 /* SyntaxKind.CommaToken */  && currentContainerStack[currentContainerStack.length - 1] === Container.Object) {
+                                    // In that case create the child property which starts at beginningLineNumber, add it to the current tree
+                                    const childProperty = new PropertyTree(scanner.getTokenValue(), beginningLineNumber);
+                                    lastProperty = currentProperty;
+                                    currentProperty = currentTree.addChildProperty(childProperty);
+                                }
+                                break;
+                            }
+                        // When the token is an open bracket, then we enter into an array
+                        case 3 /* SyntaxKind.OpenBracketToken */ :
+                            {
+                                // If the root tree beginning line number is not defined, then this open bracket is the first open bracket in the document
+                                if (rootTree.beginningLineNumber === undefined) {
+                                    rootTree.beginningLineNumber = scanner.getTokenStartLine();
+                                }
+                                // Suppose we are inside of an object, then the current array is associated to a key, and has already been created
+                                // We have the following configuration: {"a": "val", "array": [...], "b": "val"}
+                                // In that case navigate down to the child property
+                                if (currentContainerStack[currentContainerStack.length - 1] === Container.Object) {
+                                    currentTree = currentProperty;
+                                } else if (currentContainerStack[currentContainerStack.length - 1] === Container.Array) {
+                                    const childProperty = new PropertyTree(scanner.getTokenValue(), beginningLineNumber);
+                                    childProperty.noKeyName = true;
+                                    lastProperty = currentProperty;
+                                    currentProperty = currentTree.addChildProperty(childProperty);
+                                    currentTree = currentProperty;
+                                }
+                                currentContainerStack.push(Container.Array);
+                                currentProperty.type = Container.Array;
+                                beginningLineNumber = scanner.getTokenStartLine();
+                                beginningLineNumber++;
+                                break;
+                            }
+                        // When the token is an open brace, then we enter into an object
+                        case 1 /* SyntaxKind.OpenBraceToken */ :
+                            {
+                                // If the root tree beginning line number is not defined, then this open brace is the first open brace in the document
+                                if (rootTree.beginningLineNumber === undefined) {
+                                    rootTree.beginningLineNumber = scanner.getTokenStartLine();
+                                } else if (currentContainerStack[currentContainerStack.length - 1] === Container.Array) {
+                                    const childProperty = new PropertyTree(scanner.getTokenValue(), beginningLineNumber);
+                                    childProperty.noKeyName = true;
+                                    lastProperty = currentProperty;
+                                    currentProperty = currentTree.addChildProperty(childProperty);
+                                }
+                                currentProperty.type = Container.Object;
+                                currentContainerStack.push(Container.Object);
+                                currentTree = currentProperty;
+                                beginningLineNumber = scanner.getTokenStartLine();
+                                beginningLineNumber++;
+                                break;
+                            }
+                        case 4 /* SyntaxKind.CloseBracketToken */ :
+                            {
+                                endLineNumber = scanner.getTokenStartLine();
+                                currentContainerStack.pop();
+                                // If the last non-trivial non-comment token is a closing brace or bracket, then the currentProperty end line number has not been set yet so set it
+                                // The configuration considered is: [..., {}] or [..., []]
+                                if (currentProperty.endLineNumber === undefined && (lastNonTriviaNonCommentToken === 2 /* SyntaxKind.CloseBraceToken */  || lastNonTriviaNonCommentToken === 4 /* SyntaxKind.CloseBracketToken */ )) {
+                                    currentProperty.endLineNumber = endLineNumber - 1;
+                                    currentProperty.lastProperty = true;
+                                    currentProperty.lineWhereToAddComma = lineOfLastNonTriviaNonCommentToken;
+                                    currentProperty.indexWhereToAddComa = endIndexOfLastNonTriviaNonCommentToken;
+                                    lastProperty = currentProperty;
+                                    currentProperty = currentProperty ? currentProperty.parent : undefined;
+                                    currentTree = currentProperty;
+                                }
+                                rootTree.endLineNumber = endLineNumber;
+                                beginningLineNumber = endLineNumber + 1;
+                                break;
+                            }
+                        case 2 /* SyntaxKind.CloseBraceToken */ :
+                            {
+                                endLineNumber = scanner.getTokenStartLine();
+                                currentContainerStack.pop();
+                                // If we are not inside of an empty object and current property end line number has not yet been defined, define it
+                                if (lastNonTriviaNonCommentToken !== 1 /* SyntaxKind.OpenBraceToken */  && currentProperty.endLineNumber === undefined) {
+                                    currentProperty.endLineNumber = endLineNumber - 1;
+                                    // The current property is also the last property
+                                    currentProperty.lastProperty = true;
+                                    // The last property of an object is associated with the line and index of where to add the comma, in case after sorting, it is no longer the last property
+                                    currentProperty.lineWhereToAddComma = lineOfLastNonTriviaNonCommentToken;
+                                    currentProperty.indexWhereToAddComa = endIndexOfLastNonTriviaNonCommentToken;
+                                    lastProperty = currentProperty;
+                                    currentProperty = currentProperty ? currentProperty.parent : undefined;
+                                    currentTree = currentProperty;
+                                }
+                                rootTree.endLineNumber = scanner.getTokenStartLine();
+                                beginningLineNumber = endLineNumber + 1;
+                                break;
+                            }
+                        case 5 /* SyntaxKind.CommaToken */ :
+                            {
+                                endLineNumber = scanner.getTokenStartLine();
+                                // If the current container is an object or the current container is an array and the last non-trivia non-comment token is a closing brace or a closing bracket
+                                // Then update the end line number of the current property
+                                if (currentProperty.endLineNumber === undefined && (currentContainerStack[currentContainerStack.length - 1] === Container.Object || currentContainerStack[currentContainerStack.length - 1] === Container.Array && (lastNonTriviaNonCommentToken === 2 /* SyntaxKind.CloseBraceToken */  || lastNonTriviaNonCommentToken === 4 /* SyntaxKind.CloseBracketToken */ ))) {
+                                    currentProperty.endLineNumber = endLineNumber;
+                                    // Store the line and the index of the comma in case it needs to be removed during the sorting
+                                    currentProperty.commaIndex = scanner.getTokenOffset() - numberOfCharactersOnPreviousLines;
+                                    currentProperty.commaLine = endLineNumber;
+                                }
+                                if (lastNonTriviaNonCommentToken === 2 /* SyntaxKind.CloseBraceToken */  || lastNonTriviaNonCommentToken === 4 /* SyntaxKind.CloseBracketToken */ ) {
+                                    lastProperty = currentProperty;
+                                    currentProperty = currentProperty ? currentProperty.parent : undefined;
+                                    currentTree = currentProperty;
+                                }
+                                beginningLineNumber = endLineNumber + 1;
+                                break;
+                            }
+                        case 13 /* SyntaxKind.BlockCommentTrivia */ :
+                            {
+                                // If the last non trivia non-comment token is a comma and the block comment starts on the same line as the comma, then update the end line number of the current property. For example if:
+                                // 1. {}, /* ...
+                                // 2. ..*/
+                                // The the property on line 1 shoud end on line 2, not line 1
+                                // In the case we are in an array we update the end line number only if the second to last non-trivia non-comment token is a closing brace or bracket
+                                if (lastNonTriviaNonCommentToken === 5 /* SyntaxKind.CommaToken */  && lineOfLastNonTriviaNonCommentToken === scanner.getTokenStartLine() && (currentContainerStack[currentContainerStack.length - 1] === Container.Array && (secondToLastNonTriviaNonCommentToken === 2 /* SyntaxKind.CloseBraceToken */  || secondToLastNonTriviaNonCommentToken === 4 /* SyntaxKind.CloseBracketToken */ ) || currentContainerStack[currentContainerStack.length - 1] === Container.Object)) {
+                                    if (currentContainerStack[currentContainerStack.length - 1] === Container.Array && (secondToLastNonTriviaNonCommentToken === 2 /* SyntaxKind.CloseBraceToken */  || secondToLastNonTriviaNonCommentToken === 4 /* SyntaxKind.CloseBracketToken */ ) || currentContainerStack[currentContainerStack.length - 1] === Container.Object) {
+                                        currentProperty.endLineNumber = undefined;
+                                        updateLastPropertyEndLineNumber = true;
+                                    }
+                                }
+                                // When the block comment follows an open brace or an open token, we have the following scenario:
+                                // { /**
+                                // ../
+                                // }
+                                // The block comment should be assigned to the open brace not the first property below it
+                                if ((lastNonTriviaNonCommentToken === 1 /* SyntaxKind.OpenBraceToken */  || lastNonTriviaNonCommentToken === 3 /* SyntaxKind.OpenBracketToken */ ) && lineOfLastNonTriviaNonCommentToken === scanner.getTokenStartLine()) {
+                                    updateBeginningLineNumber = true;
+                                }
+                                break;
+                            }
+                    }
+                    // Update the last and second to last non-trivia non-comment tokens
+                    if (token !== 14 /* SyntaxKind.LineBreakTrivia */  && token !== 13 /* SyntaxKind.BlockCommentTrivia */  && token !== 12 /* SyntaxKind.LineCommentTrivia */  && token !== 15 /* SyntaxKind.Trivia */ ) {
+                        secondToLastNonTriviaNonCommentToken = lastNonTriviaNonCommentToken;
+                        lastNonTriviaNonCommentToken = token;
+                        lineOfLastNonTriviaNonCommentToken = scanner.getTokenStartLine();
+                        endIndexOfLastNonTriviaNonCommentToken = scanner.getTokenOffset() + scanner.getTokenLength() - numberOfCharactersOnPreviousLines;
+                    }
+                }
+                return rootTree;
+            }
+            function sortJsoncDocument(jsonDocument, propertyTree) {
+                if (propertyTree.childrenProperties.length === 0) {
+                    return jsonDocument;
+                }
+                const sortedJsonDocument = esm_main /* TextDocument */ .n.create('test://test.json', 'json', 0, jsonDocument.getText());
+                const queueToSort = [];
+                updateSortingQueue(queueToSort, propertyTree, propertyTree.beginningLineNumber);
+                while(queueToSort.length > 0){
+                    const dataToSort = queueToSort.shift();
+                    const propertyTreeArray = dataToSort.propertyTreeArray;
+                    let beginningLineNumber = dataToSort.beginningLineNumber;
+                    for(let i = 0; i < propertyTreeArray.length; i++){
+                        const propertyTree = propertyTreeArray[i];
+                        const range = main.Range.create(main.Position.create(propertyTree.beginningLineNumber, 0), main.Position.create(propertyTree.endLineNumber + 1, 0));
+                        const jsonContentToReplace = jsonDocument.getText(range);
+                        const jsonDocumentToReplace = esm_main /* TextDocument */ .n.create('test://test.json', 'json', 0, jsonContentToReplace);
+                        if (propertyTree.lastProperty === true && i !== propertyTreeArray.length - 1) {
+                            const lineWhereToAddComma = propertyTree.lineWhereToAddComma - propertyTree.beginningLineNumber;
+                            const indexWhereToAddComma = propertyTree.indexWhereToAddComa;
+                            const edit1 = {
+                                range: main.Range.create(main.Position.create(lineWhereToAddComma, indexWhereToAddComma), main.Position.create(lineWhereToAddComma, indexWhereToAddComma)),
+                                text: ','
+                            };
+                            esm_main /* TextDocument */ .n.update(jsonDocumentToReplace, [
+                                edit1
+                            ], 1);
+                        } else if (propertyTree.lastProperty === false && i === propertyTreeArray.length - 1) {
+                            const commaIndex = propertyTree.commaIndex;
+                            const commaLine = propertyTree.commaLine;
+                            const lineWhereToRemoveComma = commaLine - propertyTree.beginningLineNumber;
+                            const edit1 = {
+                                range: main.Range.create(main.Position.create(lineWhereToRemoveComma, commaIndex), main.Position.create(lineWhereToRemoveComma, commaIndex + 1)),
+                                text: ''
+                            };
+                            esm_main /* TextDocument */ .n.update(jsonDocumentToReplace, [
+                                edit1
+                            ], 1);
+                        }
+                        const length = propertyTree.endLineNumber - propertyTree.beginningLineNumber + 1;
+                        const edit1 = {
+                            range: main.Range.create(main.Position.create(beginningLineNumber, 0), main.Position.create(beginningLineNumber + length, 0)),
+                            text: jsonDocumentToReplace.getText()
+                        };
+                        esm_main /* TextDocument */ .n.update(sortedJsonDocument, [
+                            edit1
+                        ], 1);
+                        updateSortingQueue(queueToSort, propertyTree, beginningLineNumber);
+                        beginningLineNumber = beginningLineNumber + length;
+                    }
+                }
+                return sortedJsonDocument;
+            }
+            function updateSortingQueue(queue, propertyTree, beginningLineNumber) {
+                if (propertyTree.childrenProperties.length === 0) {
+                    return;
+                }
+                if (propertyTree.type === Container.Object) {
+                    let minimumBeginningLineNumber = Infinity;
+                    for (const childProperty of propertyTree.childrenProperties){
+                        if (childProperty.beginningLineNumber < minimumBeginningLineNumber) {
+                            minimumBeginningLineNumber = childProperty.beginningLineNumber;
+                        }
+                    }
+                    const diff = minimumBeginningLineNumber - propertyTree.beginningLineNumber;
+                    beginningLineNumber = beginningLineNumber + diff;
+                    queue.push(new SortingRange(beginningLineNumber, propertyTree.childrenProperties));
+                } else if (propertyTree.type === Container.Array) {
+                    updateSortingQueueForArrayProperties(queue, propertyTree, beginningLineNumber);
+                }
+            }
+            function updateSortingQueueForArrayProperties(queue, propertyTree, beginningLineNumber) {
+                for (const subObject of propertyTree.childrenProperties){
+                    // If the child property of the array is an object, then you can sort the properties within this object
+                    if (subObject.type === Container.Object) {
+                        let minimumBeginningLineNumber = Infinity;
+                        for (const childProperty of subObject.childrenProperties){
+                            if (childProperty.beginningLineNumber < minimumBeginningLineNumber) {
+                                minimumBeginningLineNumber = childProperty.beginningLineNumber;
+                            }
+                        }
+                        const diff = minimumBeginningLineNumber - subObject.beginningLineNumber;
+                        queue.push(new SortingRange(beginningLineNumber + subObject.beginningLineNumber - propertyTree.beginningLineNumber + diff, subObject.childrenProperties));
+                    }
+                    // If the child property of the array is an array, then you need to recurse on the children properties, until you find an object to sort
+                    if (subObject.type === Container.Array) {
+                        updateSortingQueueForArrayProperties(queue, subObject, beginningLineNumber + subObject.beginningLineNumber - propertyTree.beginningLineNumber);
+                    }
+                }
+            }
+            class SortingRange {
+                constructor(beginningLineNumber, propertyTreeArray){
+                    this.beginningLineNumber = beginningLineNumber;
+                    this.propertyTreeArray = propertyTreeArray;
+                }
+            }
             ; // CONCATENATED MODULE: ../../node_modules/vscode-json-languageservice/lib/esm/services/jsonLinks.js
             /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/ function findLinks(document1, doc) {
-                var links = [];
-                doc.visit(function(node) {
-                    var _a;
-                    if (node.type === "property" && node.keyNode.value === "$ref" && ((_a = node.valueNode) === null || _a === void 0 ? void 0 : _a.type) === 'string') {
-                        var path = node.valueNode.value;
-                        var targetNode = findTargetNode(doc, path);
+                const links = [];
+                doc.visit((node)=>{
+                    var _node_valueNode;
+                    if (node.type === "property" && node.keyNode.value === "$ref" && ((_node_valueNode = node.valueNode) === null || _node_valueNode === void 0 ? void 0 : _node_valueNode.type) === 'string') {
+                        const path = node.valueNode.value;
+                        const targetNode = findTargetNode(doc, path);
                         if (targetNode) {
-                            var targetPos = document1.positionAt(targetNode.offset);
+                            const targetPos = document1.positionAt(targetNode.offset);
                             links.push({
-                                target: "".concat(document1.uri, "#").concat(targetPos.line + 1, ",").concat(targetPos.character + 1),
+                                target: `${document1.uri}#${targetPos.line + 1},${targetPos.character + 1}`,
                                 range: createRange(document1, node.valueNode)
                             });
                         }
@@ -19892,7 +20387,7 @@
                 return main.Range.create(document1.positionAt(node.offset + 1), document1.positionAt(node.offset + node.length - 1));
             }
             function findTargetNode(doc, path) {
-                var tokens = parseJSONPointer(path);
+                const tokens = parseJSONPointer(path);
                 if (!tokens) {
                     return null;
                 }
@@ -19905,19 +20400,17 @@
                 if (pointer.length === 0) {
                     return node;
                 }
-                var token = pointer.shift();
+                const token = pointer.shift();
                 if (node && node.type === 'object') {
-                    var propertyNode = node.properties.find(function(propertyNode) {
-                        return propertyNode.keyNode.value === token;
-                    });
+                    const propertyNode = node.properties.find((propertyNode)=>propertyNode.keyNode.value === token);
                     if (!propertyNode) {
                         return null;
                     }
                     return findNode(pointer, propertyNode.valueNode);
                 } else if (node && node.type === 'array') {
                     if (token.match(/^(0|[1-9][0-9]*)$/)) {
-                        var index = Number.parseInt(token);
-                        var arrayItem = node.items[index];
+                        const index = Number.parseInt(token);
+                        const arrayItem = node.items[index];
                         if (!arrayItem) {
                             return null;
                         }
@@ -19943,36 +20436,27 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/ function getLanguageService(params) {
-                var promise = params.promiseConstructor || Promise;
-                var jsonSchemaService = new JSONSchemaService(params.schemaRequestService, params.workspaceContext, promise);
+                const promise = params.promiseConstructor || Promise;
+                const jsonSchemaService = new JSONSchemaService(params.schemaRequestService, params.workspaceContext, promise);
                 jsonSchemaService.setSchemaContributions(schemaContributions);
-                var jsonCompletion = new JSONCompletion(jsonSchemaService, params.contributions, promise, params.clientCapabilities);
-                var jsonHover = new JSONHover(jsonSchemaService, params.contributions, promise);
-                var jsonDocumentSymbols = new JSONDocumentSymbols(jsonSchemaService);
-                var jsonValidation = new JSONValidation(jsonSchemaService, promise);
+                const jsonCompletion = new JSONCompletion(jsonSchemaService, params.contributions, promise, params.clientCapabilities);
+                const jsonHover = new JSONHover(jsonSchemaService, params.contributions, promise);
+                const jsonDocumentSymbols = new JSONDocumentSymbols(jsonSchemaService);
+                const jsonValidation = new JSONValidation(jsonSchemaService, promise);
                 return {
-                    configure: function(settings) {
+                    configure: (settings)=>{
+                        var _settings_schemas;
                         jsonSchemaService.clearExternalSchemas();
-                        if (settings.schemas) {
-                            settings.schemas.forEach(function(settings) {
-                                jsonSchemaService.registerExternalSchema(settings.uri, settings.fileMatch, settings.schema);
-                            });
-                        }
+                        (_settings_schemas = settings.schemas) === null || _settings_schemas === void 0 ? void 0 : _settings_schemas.forEach(jsonSchemaService.registerExternalSchema.bind(jsonSchemaService));
                         jsonValidation.configure(settings);
                     },
-                    resetSchema: function(uri) {
-                        return jsonSchemaService.onResourceChange(uri);
-                    },
+                    resetSchema: (uri)=>jsonSchemaService.onResourceChange(uri),
                     doValidation: jsonValidation.doValidation.bind(jsonValidation),
                     getLanguageStatus: jsonValidation.getLanguageStatus.bind(jsonValidation),
-                    parseJSONDocument: function(document1) {
-                        return jsonParser_parse(document1, {
+                    parseJSONDocument: (document1)=>jsonParser_parse(document1, {
                             collectComments: true
-                        });
-                    },
-                    newJSONDocument: function(root, diagnostics) {
-                        return newJSONDocument(root, diagnostics);
-                    },
+                        }),
+                    newJSONDocument: (root, diagnostics)=>newJSONDocument(root, diagnostics),
                     getMatchingSchemas: jsonSchemaService.getMatchingSchemas.bind(jsonSchemaService),
                     doResolve: jsonCompletion.doResolve.bind(jsonCompletion),
                     doComplete: jsonCompletion.doComplete.bind(jsonCompletion),
@@ -19983,35 +20467,17 @@
                     doHover: jsonHover.doHover.bind(jsonHover),
                     getFoldingRanges: getFoldingRanges,
                     getSelectionRanges: getSelectionRanges,
-                    findDefinition: function() {
-                        return Promise.resolve([]);
-                    },
+                    findDefinition: ()=>Promise.resolve([]),
                     findLinks: findLinks,
-                    format: function(d, r, o) {
-                        var range = undefined;
-                        if (r) {
-                            var offset = d.offsetAt(r.start);
-                            var length = d.offsetAt(r.end) - offset;
-                            range = {
-                                offset: offset,
-                                length: length
-                            };
-                        }
-                        var options = {
-                            tabSize: o ? o.tabSize : 4,
-                            insertSpaces: (o === null || o === void 0 ? void 0 : o.insertSpaces) === true,
-                            insertFinalNewline: (o === null || o === void 0 ? void 0 : o.insertFinalNewline) === true,
-                            eol: '\n'
-                        };
-                        return main_format(d.getText(), range, options).map(function(e) {
-                            return main.TextEdit.replace(main.Range.create(d.positionAt(e.offset), d.positionAt(e.offset + e.length)), e.content);
-                        });
-                    }
+                    format: (document1, range, options)=>utils_format_format(document1, options, range),
+                    sort: (document1, options)=>sort(document1, options)
                 };
             }
             // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-            var lib_browser_main = __nested_webpack_require_678377__(294);
-            ; // CONCATENATED MODULE: ./type-converters/common-converters.ts
+            var browser_main = __nested_webpack_require_701335__(294);
+            // EXTERNAL MODULE: ./src/utils.ts
+            var utils = __nested_webpack_require_701335__(6297);
+            ; // CONCATENATED MODULE: ./src/type-converters/common-converters.ts
             var common_converters_CommonConverter;
             (function(CommonConverter1) {
                 function normalizeRanges(completions, editor) {
@@ -20039,41 +20505,41 @@
                     switch(kind){
                         case "primitiveType":
                         case "keyword":
-                            return lib_browser_main.CompletionItemKind.Keyword;
+                            return browser_main.CompletionItemKind.Keyword;
                         case "variable":
                         case "localVariable":
-                            return lib_browser_main.CompletionItemKind.Variable;
+                            return browser_main.CompletionItemKind.Variable;
                         case "memberVariable":
                         case "memberGetAccessor":
                         case "memberSetAccessor":
-                            return lib_browser_main.CompletionItemKind.Field;
+                            return browser_main.CompletionItemKind.Field;
                         case "function":
                         case "memberFunction":
                         case "constructSignature":
                         case "callSignature":
                         case "indexSignature":
-                            return lib_browser_main.CompletionItemKind.Function;
+                            return browser_main.CompletionItemKind.Function;
                         case "enum":
-                            return lib_browser_main.CompletionItemKind.Enum;
+                            return browser_main.CompletionItemKind.Enum;
                         case "module":
-                            return lib_browser_main.CompletionItemKind.Module;
+                            return browser_main.CompletionItemKind.Module;
                         case "class":
-                            return lib_browser_main.CompletionItemKind.Class;
+                            return browser_main.CompletionItemKind.Class;
                         case "interface":
-                            return lib_browser_main.CompletionItemKind.Interface;
+                            return browser_main.CompletionItemKind.Interface;
                         case "warning":
-                            return lib_browser_main.CompletionItemKind.File;
+                            return browser_main.CompletionItemKind.File;
                     }
-                    return lib_browser_main.CompletionItemKind.Property;
+                    return browser_main.CompletionItemKind.Property;
                 }
                 CommonConverter1.convertKind = convertKind;
                 function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
                     if (!errorMessagesToIgnore) return diagnostics;
-                    return diagnostics.filter((el)=>!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+                    return diagnostics.filter((el)=>!(0, utils /* checkValueAgainstRegexpArray */ .$p)(el[fieldName], errorMessagesToIgnore));
                 }
                 CommonConverter1.excludeByErrorMessage = excludeByErrorMessage;
             })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
-            ; // CONCATENATED MODULE: ./type-converters/lsp-converters.ts
+            ; // CONCATENATED MODULE: ./src/type-converters/lsp-converters.ts
             function fromRange(range) {
                 return {
                     start: {
@@ -20246,7 +20712,8 @@
                 if (content.length === 0) return;
                 //TODO: it could be merged within all ranges in future
                 let lspRange = (_hover_find = hover.find((el)=>{
-                    return el === null || el === void 0 ? void 0 : el.range;
+                    var _el;
+                    return (_el = el) === null || _el === void 0 ? void 0 : _el.range;
                 })) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
                 let range;
                 if (lspRange) range = toRange(lspRange);
@@ -20261,11 +20728,12 @@
             function fromSignatureHelp(signatureHelp) {
                 if (!signatureHelp) return;
                 let content = signatureHelp.map((el)=>{
+                    var _el, _el1;
                     if (!el) return;
-                    let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
+                    let signatureIndex = ((_el = el) === null || _el === void 0 ? void 0 : _el.activeSignature) || 0;
                     let activeSignature = el.signatures[signatureIndex];
                     if (!activeSignature) return;
-                    let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
+                    let activeParam = (_el1 = el) === null || _el1 === void 0 ? void 0 : _el1.activeParameter;
                     let contents = activeSignature.label;
                     if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
                         let param = activeSignature.parameters[activeParam].label;
@@ -20309,16 +20777,16 @@
             }
             function filterDiagnostics(diagnostics, filterErrors) {
                 return common_converters_CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el)=>{
-                    if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
-                        el.severity = lib_browser_main.DiagnosticSeverity.Warning;
-                    } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
-                        el.severity = lib_browser_main.DiagnosticSeverity.Information;
+                    if ((0, utils /* checkValueAgainstRegexpArray */ .$p)(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
+                        el.severity = browser_main.DiagnosticSeverity.Warning;
+                    } else if ((0, utils /* checkValueAgainstRegexpArray */ .$p)(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
+                        el.severity = browser_main.DiagnosticSeverity.Information;
                     }
                     return el;
                 });
             }
-            ; // CONCATENATED MODULE: ./services/json/json-service.ts
-            function json_service_define_property(obj, key, value) {
+            ; // CONCATENATED MODULE: ./src/services/json/json-service.ts
+            function _define_property(obj, key, value) {
                 if (key in obj) {
                     Object.defineProperty(obj, key, {
                         value: value,
@@ -20331,7 +20799,7 @@
                 }
                 return obj;
             }
-            class JsonService extends BaseService {
+            class JsonService extends base_service.BaseService {
                 $getJsonSchemaUri(sessionID) {
                     return this.getOption(sessionID, "schemaUri");
                 }
@@ -20340,9 +20808,10 @@
                     this.$configureService(document1.uri);
                 }
                 $configureService(sessionID) {
+                    var _schemas;
                     let schemas = this.getOption(sessionID !== null && sessionID !== void 0 ? sessionID : "", "schemas");
                     let sessionIDs = sessionID ? [] : Object.keys(this.documents);
-                    schemas === null || schemas === void 0 ? void 0 : schemas.forEach((el)=>{
+                    (_schemas = schemas) === null || _schemas === void 0 ? void 0 : _schemas.forEach((el)=>{
                         if (sessionID) {
                             if (this.$getJsonSchemaUri(sessionID) == el.uri) {
                                 var _el;
@@ -20365,9 +20834,10 @@
                     });
                 }
                 removeDocument(document1) {
+                    var _schemas;
                     super.removeDocument(document1);
                     let schemas = this.getOption(document1.uri, "schemas");
-                    schemas === null || schemas === void 0 ? void 0 : schemas.forEach((el)=>{
+                    (_schemas = schemas) === null || _schemas === void 0 ? void 0 : _schemas.forEach((el)=>{
                         if (el.uri === this.$getJsonSchemaUri(document1.uri)) {
                             var _el_fileMatch;
                             el.fileMatch = (_el_fileMatch = el.fileMatch) === null || _el_fileMatch === void 0 ? void 0 : _el_fileMatch.filter((pattern)=>pattern != document1.uri);
@@ -20417,8 +20887,8 @@
                 }
                 constructor(mode){
                     super(mode);
-                    json_service_define_property(this, "$service", void 0);
-                    json_service_define_property(this, "schemas", {});
+                    _define_property(this, "$service", void 0);
+                    _define_property(this, "schemas", {});
                     this.$service = getLanguageService({
                         schemaRequestService: (uri)=>{
                             uri = uri.replace("file:///", "");
@@ -20430,7 +20900,7 @@
                 }
             }
         })();
-        /******/ return __webpack_exports__;
+        /******/ return __nested_webpack_exports__;
     /******/ })();
 });
 

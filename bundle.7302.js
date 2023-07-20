@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[7302],{
 
-/***/ 853:
+/***/ 56968:
 /***/ ((module) => {
 
 module.exports = `.ace-sqlserver .ace_gutter {
@@ -184,7 +184,7 @@ module.exports = `.ace-sqlserver .ace_gutter {
 
 exports.isDark = false;
 exports.cssClass = "ace-sqlserver";
-exports.cssText = __webpack_require__(853);
+exports.cssText = __webpack_require__(56968);
 
 var dom = __webpack_require__(6359);
 dom.importCssString(exports.cssText, exports.cssClass, false);

@@ -8,7 +8,6 @@
 
 var event = __webpack_require__(17989);
 var UA = __webpack_require__(50618);
-var net = __webpack_require__(42634);
 var ace = __webpack_require__(59100);
 
 module.exports = exports = ace;
@@ -237,16 +236,7 @@ exports.transformTextarea = function(element, options) {
     return editor;
 };
 
-function load(url, module, callback) {
-    net.loadScript(url, function() {
-        __webpack_require__.e(/* AMD require */ 7880).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(77880)(module)]; (callback).apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__);}.bind(this))['catch'](__webpack_require__.oe);
-    });
-}
-
 function setupApi(editor, editorDiv, settingDiv, ace, options) {
-    var session = editor.getSession();
-    var renderer = editor.renderer;
-
     function toBool(value) {
         return value === "true" || value == true;
     }

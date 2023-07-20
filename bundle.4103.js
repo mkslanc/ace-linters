@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[4103],{
 
-/***/ 72045:
+/***/ 40221:
 /***/ ((module) => {
 
 module.exports = `/* CSS style content from github's default pygments highlighter template.
@@ -141,7 +141,7 @@ module.exports = `/* CSS style content from github's default pygments highlighte
 
 exports.isDark = false;
 exports.cssClass = "ace-github";
-exports.cssText = __webpack_require__(72045);
+exports.cssText = __webpack_require__(40221);
 
     var dom = __webpack_require__(6359);
     dom.importCssString(exports.cssText, exports.cssClass, false);

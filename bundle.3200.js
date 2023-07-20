@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[3200],{
 
-/***/ 59189:
+/***/ 15502:
 /***/ ((module) => {
 
 module.exports = `.ace-vibrant-ink .ace_gutter {
@@ -126,7 +126,7 @@ module.exports = `.ace-vibrant-ink .ace_gutter {
 
 exports.isDark = true;
 exports.cssClass = "ace-vibrant-ink";
-exports.cssText = __webpack_require__(59189);
+exports.cssText = __webpack_require__(15502);
 
 var dom = __webpack_require__(6359);
 dom.importCssString(exports.cssText, exports.cssClass, false);

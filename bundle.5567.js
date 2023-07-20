@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[5567],{
 
-/***/ 78098:
+/***/ 36290:
 /***/ ((module) => {
 
 module.exports = `.ace-monokai .ace_gutter {
@@ -138,7 +138,7 @@ module.exports = `.ace-monokai .ace_gutter {
 
 exports.isDark = true;
 exports.cssClass = "ace-monokai";
-exports.cssText = __webpack_require__(78098);
+exports.cssText = __webpack_require__(36290);
 
 var dom = __webpack_require__(6359);
 dom.importCssString(exports.cssText, exports.cssClass, false);

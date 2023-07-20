@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[2841],{
 
-/***/ 68523:
+/***/ 11828:
 /***/ ((module) => {
 
 module.exports = `.ace_static_highlight {
@@ -55,7 +55,7 @@ module.exports = `.ace_static_highlight {
 
 var EditSession = (__webpack_require__(66480)/* .EditSession */ .m);
 var TextLayer = (__webpack_require__(73572)/* .Text */ .x);
-var baseStyles = __webpack_require__(68523);
+var baseStyles = __webpack_require__(11828);
 var config = __webpack_require__(13188);
 var dom = __webpack_require__(6359);
 var escapeHTML = (__webpack_require__(20124).escapeHTML);

@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[7738],{
 
-/***/ 8636:
+/***/ 26248:
 /***/ ((module) => {
 
 module.exports = `.ace-ambiance .ace_gutter {
@@ -233,7 +233,7 @@ module.exports = `.ace-ambiance .ace_gutter {
 
 exports.isDark = true;
 exports.cssClass = "ace-ambiance";
-exports.cssText = __webpack_require__(8636);
+exports.cssText = __webpack_require__(26248);
 
 var dom = __webpack_require__(6359);
 dom.importCssString(exports.cssText, exports.cssClass, false);

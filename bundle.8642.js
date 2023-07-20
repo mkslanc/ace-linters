@@ -1,6 +1,6 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[8642],{
 
-/***/ 64913:
+/***/ 34609:
 /***/ ((module) => {
 
 module.exports = `.ace-gruvbox .ace_gutter-active-line {
@@ -112,7 +112,7 @@ module.exports = `.ace-gruvbox .ace_gutter-active-line {
 
 exports.isDark = true;
 exports.cssClass = "ace-gruvbox";
-exports.cssText = __webpack_require__(64913);
+exports.cssText = __webpack_require__(34609);
 
 var dom = __webpack_require__(6359);
 dom.importCssString(exports.cssText, exports.cssClass, false);

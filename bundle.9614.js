@@ -2245,16 +2245,18 @@
                     }
                 }() : throwTypeError;
                 var hasSymbols = __nested_webpack_require_123872__(2636)();
-                var getProto = Object.getPrototypeOf || function(x) {
+                var hasProto = __nested_webpack_require_123872__(8486)();
+                var getProto = Object.getPrototypeOf || (hasProto ? function(x) {
                     return x.__proto__;
-                }; // eslint-disable-line no-proto
+                } // eslint-disable-line no-proto
+                 : null);
                 var needsEval = {};
-                var TypedArray = typeof Uint8Array === 'undefined' ? undefined1 : getProto(Uint8Array);
+                var TypedArray = typeof Uint8Array === 'undefined' || !getProto ? undefined1 : getProto(Uint8Array);
                 var INTRINSICS = {
                     '%AggregateError%': typeof AggregateError === 'undefined' ? undefined1 : AggregateError,
                     '%Array%': Array,
                     '%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined1 : ArrayBuffer,
-                    '%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined1,
+                    '%ArrayIteratorPrototype%': hasSymbols && getProto ? getProto([][Symbol.iterator]()) : undefined1,
                     '%AsyncFromSyncIteratorPrototype%': undefined1,
                     '%AsyncFunction%': needsEval,
                     '%AsyncGenerator%': needsEval,
@@ -2262,6 +2264,8 @@
                     '%AsyncIteratorPrototype%': needsEval,
                     '%Atomics%': typeof Atomics === 'undefined' ? undefined1 : Atomics,
                     '%BigInt%': typeof BigInt === 'undefined' ? undefined1 : BigInt,
+                    '%BigInt64Array%': typeof BigInt64Array === 'undefined' ? undefined1 : BigInt64Array,
+                    '%BigUint64Array%': typeof BigUint64Array === 'undefined' ? undefined1 : BigUint64Array,
                     '%Boolean%': Boolean,
                     '%DataView%': typeof DataView === 'undefined' ? undefined1 : DataView,
                     '%Date%': Date,
@@ -2282,10 +2286,10 @@
                     '%Int32Array%': typeof Int32Array === 'undefined' ? undefined1 : Int32Array,
                     '%isFinite%': isFinite,
                     '%isNaN%': isNaN,
-                    '%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined1,
+                    '%IteratorPrototype%': hasSymbols && getProto ? getProto(getProto([][Symbol.iterator]())) : undefined1,
                     '%JSON%': typeof JSON === 'object' ? JSON : undefined1,
                     '%Map%': typeof Map === 'undefined' ? undefined1 : Map,
-                    '%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined1 : getProto(new Map()[Symbol.iterator]()),
+                    '%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols || !getProto ? undefined1 : getProto(new Map()[Symbol.iterator]()),
                     '%Math%': Math,
                     '%Number%': Number,
                     '%Object%': Object,
@@ -2298,10 +2302,10 @@
                     '%Reflect%': typeof Reflect === 'undefined' ? undefined1 : Reflect,
                     '%RegExp%': RegExp,
                     '%Set%': typeof Set === 'undefined' ? undefined1 : Set,
-                    '%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined1 : getProto(new Set()[Symbol.iterator]()),
+                    '%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols || !getProto ? undefined1 : getProto(new Set()[Symbol.iterator]()),
                     '%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined1 : SharedArrayBuffer,
                     '%String%': String,
-                    '%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined1,
+                    '%StringIteratorPrototype%': hasSymbols && getProto ? getProto(''[Symbol.iterator]()) : undefined1,
                     '%Symbol%': hasSymbols ? Symbol : undefined1,
                     '%SyntaxError%': $SyntaxError,
                     '%ThrowTypeError%': ThrowTypeError,
@@ -2316,6 +2320,15 @@
                     '%WeakRef%': typeof WeakRef === 'undefined' ? undefined1 : WeakRef,
                     '%WeakSet%': typeof WeakSet === 'undefined' ? undefined1 : WeakSet
                 };
+                if (getProto) {
+                    try {
+                        null.error; // eslint-disable-line no-unused-expressions
+                    } catch (e) {
+                        // https://github.com/tc39/proposal-shadowrealm/pull/384#issuecomment-1364264229
+                        var errorProto = getProto(getProto(e));
+                        INTRINSICS['%Error.prototype%'] = errorProto;
+                    }
+                }
                 var doEval = function doEval(name) {
                     var value;
                     if (name === '%AsyncFunction%') {
@@ -2331,7 +2344,7 @@
                         }
                     } else if (name === '%AsyncIteratorPrototype%') {
                         var gen = doEval('%AsyncGenerator%');
-                        if (gen) {
+                        if (gen && getProto) {
                             value = getProto(gen.prototype);
                         }
                     }
@@ -2671,9 +2684,9 @@
                     return value;
                 };
             /***/ },
-            /***/ 326: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_146488__)=>{
+            /***/ 326: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_147339__)=>{
                 "use strict";
-                var GetIntrinsic = __nested_webpack_require_146488__(7286);
+                var GetIntrinsic = __nested_webpack_require_147339__(7286);
                 var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
                 if ($gOPD) {
                     try {
@@ -2685,9 +2698,9 @@
                 }
                 module1.exports = $gOPD;
             /***/ },
-            /***/ 1181: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_147079__)=>{
+            /***/ 1181: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_147930__)=>{
                 "use strict";
-                var GetIntrinsic = __nested_webpack_require_147079__(7286);
+                var GetIntrinsic = __nested_webpack_require_147930__(7286);
                 var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
                 var hasPropertyDescriptors = function hasPropertyDescriptors() {
                     if ($defineProperty) {
@@ -2719,10 +2732,24 @@
                 };
                 module1.exports = hasPropertyDescriptors;
             /***/ },
-            /***/ 2636: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_148669__)=>{
+            /***/ 8486: /***/ (module1)=>{
+                "use strict";
+                var test = {
+                    foo: {}
+                };
+                var $Object = Object;
+                module1.exports = function hasProto() {
+                    return ({
+                        __proto__: test
+                    }).foo === test.foo && !(({
+                        __proto__: null
+                    }) instanceof $Object);
+                };
+            /***/ },
+            /***/ 2636: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_150005__)=>{
                 "use strict";
                 var origSymbol = typeof Symbol !== 'undefined' && Symbol;
-                var hasSymbolSham = __nested_webpack_require_148669__(6679);
+                var hasSymbolSham = __nested_webpack_require_150005__(6679);
                 module1.exports = function hasNativeSymbols() {
                     if (typeof origSymbol !== 'function') {
                         return false;
@@ -2793,16 +2820,16 @@
                     return true;
                 };
             /***/ },
-            /***/ 7226: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_152428__)=>{
+            /***/ 7226: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_153764__)=>{
                 "use strict";
-                var hasSymbols = __nested_webpack_require_152428__(6679);
+                var hasSymbols = __nested_webpack_require_153764__(6679);
                 module1.exports = function hasToStringTagShams() {
                     return hasSymbols() && !!Symbol.toStringTag;
                 };
             /***/ },
-            /***/ 3198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_152780__)=>{
+            /***/ 3198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_154116__)=>{
                 "use strict";
-                var bind = __nested_webpack_require_152780__(4090);
+                var bind = __nested_webpack_require_154116__(4090);
                 module1.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
             /***/ },
             /***/ 1285: /***/ (module1)=>{
@@ -2834,10 +2861,10 @@
                     };
                 }
             /***/ },
-            /***/ 2635: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_154458__)=>{
+            /***/ 2635: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_155794__)=>{
                 "use strict";
-                var hasToStringTag = __nested_webpack_require_154458__(7226)();
-                var callBound = __nested_webpack_require_154458__(2680);
+                var hasToStringTag = __nested_webpack_require_155794__(7226)();
+                var callBound = __nested_webpack_require_155794__(2680);
                 var $toString = callBound('Object.prototype.toString');
                 var isStandardArguments = function isArguments(value) {
                     if (hasToStringTag && value && typeof value === 'object' && Symbol.toStringTag in value) {
@@ -2976,12 +3003,12 @@
                     return tryFunctionObject(value);
                 };
             /***/ },
-            /***/ 3138: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_161518__)=>{
+            /***/ 3138: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_162854__)=>{
                 "use strict";
                 var toStr = Object.prototype.toString;
                 var fnToStr = Function.prototype.toString;
                 var isFnRegex = /^\s*(?:function)?\*/;
-                var hasToStringTag = __nested_webpack_require_161518__(7226)();
+                var hasToStringTag = __nested_webpack_require_162854__(7226)();
                 var getProto = Object.getPrototypeOf;
                 var getGeneratorFunc = function() {
                     if (!hasToStringTag) {
@@ -3019,13 +3046,13 @@
                     return value !== value;
                 };
             /***/ },
-            /***/ 4782: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_163487__)=>{
+            /***/ 4782: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_164823__)=>{
                 "use strict";
-                var callBind = __nested_webpack_require_163487__(9429);
-                var define1 = __nested_webpack_require_163487__(4926);
-                var implementation = __nested_webpack_require_163487__(7053);
-                var getPolyfill = __nested_webpack_require_163487__(755);
-                var shim = __nested_webpack_require_163487__(5346);
+                var callBind = __nested_webpack_require_164823__(9429);
+                var define1 = __nested_webpack_require_164823__(4926);
+                var implementation = __nested_webpack_require_164823__(7053);
+                var getPolyfill = __nested_webpack_require_164823__(755);
+                var shim = __nested_webpack_require_164823__(5346);
                 var polyfill = callBind(getPolyfill(), Number);
                 /* http://www.ecma-international.org/ecma-262/6.0/#sec-number.isnan */ define1(polyfill, {
                     getPolyfill: getPolyfill,
@@ -3034,9 +3061,9 @@
                 });
                 module1.exports = polyfill;
             /***/ },
-            /***/ 755: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_164284__)=>{
+            /***/ 755: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_165620__)=>{
                 "use strict";
-                var implementation = __nested_webpack_require_164284__(7053);
+                var implementation = __nested_webpack_require_165620__(7053);
                 module1.exports = function getPolyfill() {
                     if (Number.isNaN && Number.isNaN(NaN) && !Number.isNaN('a')) {
                         return Number.isNaN;
@@ -3044,10 +3071,10 @@
                     return implementation;
                 };
             /***/ },
-            /***/ 5346: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_164760__)=>{
+            /***/ 5346: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_166096__)=>{
                 "use strict";
-                var define1 = __nested_webpack_require_164760__(4926);
-                var getPolyfill = __nested_webpack_require_164760__(755);
+                var define1 = __nested_webpack_require_166096__(4926);
+                var getPolyfill = __nested_webpack_require_166096__(755);
                 /* http://www.ecma-international.org/ecma-262/6.0/#sec-number.isnan */ module1.exports = function shimNumberIsNaN() {
                     var polyfill = getPolyfill();
                     define1(Number, {
@@ -3060,68 +3087,15 @@
                     return polyfill;
                 };
             /***/ },
-            /***/ 198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_165526__)=>{
+            /***/ 198: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_166862__)=>{
                 "use strict";
-                var forEach = __nested_webpack_require_165526__(3243);
-                var availableTypedArrays = __nested_webpack_require_165526__(2191);
-                var callBound = __nested_webpack_require_165526__(2680);
-                var $toString = callBound('Object.prototype.toString');
-                var hasToStringTag = __nested_webpack_require_165526__(7226)();
-                var gOPD = __nested_webpack_require_165526__(326);
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_165526__.g : globalThis;
-                var typedArrays = availableTypedArrays();
-                var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
-                    for(var i = 0; i < array.length; i += 1){
-                        if (array[i] === value) {
-                            return i;
-                        }
-                    }
-                    return -1;
-                };
-                var $slice = callBound('String.prototype.slice');
-                var toStrTags = {};
-                var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
-                if (hasToStringTag && gOPD && getPrototypeOf) {
-                    forEach(typedArrays, function(typedArray) {
-                        var arr = new g[typedArray]();
-                        if (Symbol.toStringTag in arr) {
-                            var proto = getPrototypeOf(arr);
-                            var descriptor = gOPD(proto, Symbol.toStringTag);
-                            if (!descriptor) {
-                                var superProto = getPrototypeOf(proto);
-                                descriptor = gOPD(superProto, Symbol.toStringTag);
-                            }
-                            toStrTags[typedArray] = descriptor.get;
-                        }
-                    });
-                }
-                var tryTypedArrays = function tryAllTypedArrays(value) {
-                    var anyTrue = false;
-                    forEach(toStrTags, function(getter, typedArray) {
-                        if (!anyTrue) {
-                            try {
-                                anyTrue = getter.call(value) === typedArray;
-                            } catch (e) {}
-                        }
-                    });
-                    return anyTrue;
-                };
+                var whichTypedArray = __nested_webpack_require_166862__(2094);
                 module1.exports = function isTypedArray(value) {
-                    if (!value || typeof value !== 'object') {
-                        return false;
-                    }
-                    if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-                        var tag = $slice($toString(value), 8, -1);
-                        return $indexOf(typedArrays, tag) > -1;
-                    }
-                    if (!gOPD) {
-                        return false;
-                    }
-                    return tryTypedArrays(value);
+                    return !!whichTypedArray(value);
                 };
             /***/ },
-            /***/ 7438: /***/ function(module1, exports1, __nested_webpack_require_168550__) {
-                /* module decorator */ module1 = __nested_webpack_require_168550__.nmd(module1);
+            /***/ 7438: /***/ function(module1, exports1, __nested_webpack_require_167197__) {
+                /* module decorator */ module1 = __nested_webpack_require_167197__.nmd(module1);
                 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__; /* global exports:true, module:true, require:true, define:true, global:true */ 
                 (function(root, name, factory) {
                     'use strict';
@@ -3129,7 +3103,7 @@
                     var objectTypes = {
                         'function': true,
                         'object': true
-                    }, freeExports = objectTypes[typeof exports1] && exports1 && !exports1.nodeType && exports1, freeModule = objectTypes["object"] && module1 && !module1.nodeType && module1, freeGlobal = freeExports && freeModule && typeof __nested_webpack_require_168550__.g === 'object' && __nested_webpack_require_168550__.g, moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+                    }, freeExports = objectTypes[typeof exports1] && exports1 && !exports1.nodeType && exports1, freeModule = objectTypes["object"] && module1 && !module1.nodeType && module1, freeGlobal = freeExports && freeModule && typeof __nested_webpack_require_167197__.g === 'object' && __nested_webpack_require_167197__.g, moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
                     /* istanbul ignore else */ if (freeGlobal && (freeGlobal.global === freeGlobal || /* istanbul ignore next */ freeGlobal.window === freeGlobal || /* istanbul ignore next */ freeGlobal.self === freeGlobal)) {
                         root = freeGlobal;
                     }
@@ -5448,13 +5422,13 @@
                     return false;
                 };
             /***/ },
-            /***/ 4679: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_297923__)=>{
+            /***/ 4679: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_296570__)=>{
                 "use strict";
-                var define1 = __nested_webpack_require_297923__(4926);
-                var callBind = __nested_webpack_require_297923__(9429);
-                var implementation = __nested_webpack_require_297923__(8169);
-                var getPolyfill = __nested_webpack_require_297923__(8070);
-                var shim = __nested_webpack_require_297923__(191);
+                var define1 = __nested_webpack_require_296570__(4926);
+                var callBind = __nested_webpack_require_296570__(9429);
+                var implementation = __nested_webpack_require_296570__(8169);
+                var getPolyfill = __nested_webpack_require_296570__(8070);
+                var shim = __nested_webpack_require_296570__(191);
                 var polyfill = callBind(getPolyfill(), Object);
                 define1(polyfill, {
                     getPolyfill: getPolyfill,
@@ -5463,17 +5437,17 @@
                 });
                 module1.exports = polyfill;
             /***/ },
-            /***/ 8070: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_298650__)=>{
+            /***/ 8070: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_297297__)=>{
                 "use strict";
-                var implementation = __nested_webpack_require_298650__(8169);
+                var implementation = __nested_webpack_require_297297__(8169);
                 module1.exports = function getPolyfill() {
                     return typeof Object.is === 'function' ? Object.is : implementation;
                 };
             /***/ },
-            /***/ 191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_299021__)=>{
+            /***/ 191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_297668__)=>{
                 "use strict";
-                var getPolyfill = __nested_webpack_require_299021__(8070);
-                var define1 = __nested_webpack_require_299021__(4926);
+                var getPolyfill = __nested_webpack_require_297668__(8070);
+                var define1 = __nested_webpack_require_297668__(4926);
                 module1.exports = function shimObjectIs() {
                     var polyfill = getPolyfill();
                     define1(Object, {
@@ -5486,14 +5460,14 @@
                     return polyfill;
                 };
             /***/ },
-            /***/ 5691: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_299709__)=>{
+            /***/ 5691: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_298356__)=>{
                 "use strict";
                 var keysShim;
                 if (!Object.keys) {
                     // modified from https://github.com/es-shims/es5-shim
                     var has = Object.prototype.hasOwnProperty;
                     var toStr = Object.prototype.toString;
-                    var isArgs = __nested_webpack_require_299709__(801); // eslint-disable-line global-require
+                    var isArgs = __nested_webpack_require_298356__(801); // eslint-disable-line global-require
                     var isEnumerable = Object.prototype.propertyIsEnumerable;
                     var hasDontEnumBug = !isEnumerable.call({
                         toString: null
@@ -5605,14 +5579,14 @@
                 }
                 module1.exports = keysShim;
             /***/ },
-            /***/ 3464: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_305678__)=>{
+            /***/ 3464: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_304325__)=>{
                 "use strict";
                 var slice = Array.prototype.slice;
-                var isArgs = __nested_webpack_require_305678__(801);
+                var isArgs = __nested_webpack_require_304325__(801);
                 var origKeys = Object.keys;
                 var keysShim = origKeys ? function keys(o) {
                     return origKeys(o);
-                } : __nested_webpack_require_305678__(5691);
+                } : __nested_webpack_require_304325__(5691);
                 var originalKeys = Object.keys;
                 keysShim.shim = function shimObjectKeys() {
                     if (Object.keys) {
@@ -5822,19 +5796,191 @@
                     return 0;
                 };
             /***/ },
+            /***/ 4487: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_314700__)=>{
+                "use strict";
+                /* harmony export */ __nested_webpack_require_314700__.d(__nested_webpack_exports__, {
+                    /* harmony export */ BaseService: ()=>/* binding */ BaseService
+                });
+                /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __nested_webpack_require_314700__(6297);
+                /* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ = __nested_webpack_require_314700__(4881);
+                function _define_property(obj, key, value) {
+                    if (key in obj) {
+                        Object.defineProperty(obj, key, {
+                            value: value,
+                            enumerable: true,
+                            configurable: true,
+                            writable: true
+                        });
+                    } else {
+                        obj[key] = value;
+                    }
+                    return obj;
+                }
+                class BaseService {
+                    addDocument(document1) {
+                        this.documents[document1.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ /* .TextDocument */ .n.create(document1.uri, document1.languageId, document1.version, document1.text);
+                    //TODO:
+                    /*if (options)
+            this.setSessionOptions(sessionID, options);*/ }
+                    getDocument(uri) {
+                        return this.documents[uri];
+                    }
+                    removeDocument(document1) {
+                        delete this.documents[document1.uri];
+                        if (this.options[document1.uri]) {
+                            delete this.options[document1.uri];
+                        }
+                    }
+                    getDocumentValue(uri) {
+                        var _this_getDocument;
+                        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
+                    }
+                    setValue(identifier, value) {
+                        let document1 = this.getDocument(identifier.uri);
+                        if (document1) {
+                            document1 = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ /* .TextDocument */ .n.create(document1.uri, document1.languageId, document1.version, value);
+                            this.documents[document1.uri] = document1;
+                        }
+                    }
+                    setGlobalOptions(options) {
+                        this.globalOptions = options !== null && options !== void 0 ? options : {};
+                    }
+                    setOptions(sessionID, options, merge = false) {
+                        this.options[sessionID] = merge ? (0, _utils__WEBPACK_IMPORTED_MODULE_1__ /* .mergeObjects */ .PM)(options, this.options[sessionID]) : options;
+                    }
+                    getOption(sessionID, optionName) {
+                        if (this.options[sessionID] && this.options[sessionID][optionName]) {
+                            return this.options[sessionID][optionName];
+                        } else {
+                            return this.globalOptions[optionName];
+                        }
+                    }
+                    applyDeltas(identifier, deltas) {
+                        let document1 = this.getDocument(identifier.uri);
+                        if (document1) vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ /* .TextDocument */ .n.update(document1, deltas, identifier.version);
+                    }
+                    async doComplete(document1, position) {
+                        return null;
+                    }
+                    async doHover(document1, position) {
+                        return null;
+                    }
+                    async doResolve(item) {
+                        return null;
+                    }
+                    async doValidation(document1) {
+                        return [];
+                    }
+                    format(document1, range, options) {
+                        return [];
+                    }
+                    async provideSignatureHelp(document1, position) {
+                        return null;
+                    }
+                    async findDocumentHighlights(document1, position) {
+                        return [];
+                    }
+                    get optionsToFilterDiagnostics() {
+                        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
+                        return {
+                            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
+                            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
+                            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
+                            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
+                            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
+                            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
+                        };
+                    }
+                    constructor(mode){
+                        _define_property(this, "mode", void 0);
+                        _define_property(this, "documents", {});
+                        _define_property(this, "options", {});
+                        _define_property(this, "globalOptions", {});
+                        _define_property(this, "serviceData", void 0);
+                        this.mode = mode;
+                    }
+                }
+            /***/ },
+            /***/ 6297: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_321790__)=>{
+                "use strict";
+                /* harmony export */ __nested_webpack_require_321790__.d(__nested_webpack_exports__, {
+                    /* harmony export */ $p: ()=>/* binding */ checkValueAgainstRegexpArray,
+                    /* harmony export */ PM: ()=>/* binding */ mergeObjects
+                });
+                /* unused harmony exports notEmpty, mergeRanges */ function mergeObjects(obj1, obj2) {
+                    if (!obj1) return obj2;
+                    if (!obj2) return obj1;
+                    const mergedObjects = {
+                        ...obj2,
+                        ...obj1
+                    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+                    for (const key of Object.keys(mergedObjects)){
+                        if (obj1[key] && obj2[key]) {
+                            if (Array.isArray(obj1[key])) {
+                                mergedObjects[key] = obj1[key].concat(obj2[key]);
+                            } else if (Array.isArray(obj2[key])) {
+                                mergedObjects[key] = obj2[key].concat(obj1[key]);
+                            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+                            }
+                        }
+                    }
+                    return mergedObjects;
+                }
+                function notEmpty1(value) {
+                    return value !== null && value !== undefined;
+                }
+                //taken with small changes from ace-code
+                function mergeRanges1(ranges) {
+                    var list = ranges;
+                    list = list.sort(function(a, b) {
+                        return comparePoints(a.start, b.start);
+                    });
+                    var next = list[0], range;
+                    for(var i = 1; i < list.length; i++){
+                        range = next;
+                        next = list[i];
+                        var cmp = comparePoints(range.end, next.start);
+                        if (cmp < 0) continue;
+                        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+                        if (comparePoints(range.end, next.end) < 0) {
+                            range.end.row = next.end.row;
+                            range.end.column = next.end.column;
+                        }
+                        list.splice(i, 1);
+                        next = range;
+                        i--;
+                    }
+                    return list;
+                }
+                function comparePoints(p1, p2) {
+                    return p1.row - p2.row || p1.column - p2.column;
+                }
+                function checkValueAgainstRegexpArray(value, regexpArray) {
+                    if (!regexpArray) {
+                        return false;
+                    }
+                    for(let i = 0; i < regexpArray.length; i++){
+                        if (regexpArray[i].test(value)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            /***/ },
             /***/ 82: /***/ (module1)=>{
                 module1.exports = function isBuffer(arg) {
                     return arg && typeof arg === 'object' && typeof arg.copy === 'function' && typeof arg.fill === 'function' && typeof arg.readUInt8 === 'function';
                 };
             /***/ },
-            /***/ 4895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_316348__)=>{
+            /***/ 4895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_325422__)=>{
                 "use strict";
                 // Currently in sync with Node.js lib/internal/util/types.js
                 // https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
-                var isArgumentsObject = __nested_webpack_require_316348__(2635);
-                var isGeneratorFunction = __nested_webpack_require_316348__(3138);
-                var whichTypedArray = __nested_webpack_require_316348__(2094);
-                var isTypedArray = __nested_webpack_require_316348__(198);
+                var isArgumentsObject = __nested_webpack_require_325422__(2635);
+                var isGeneratorFunction = __nested_webpack_require_325422__(3138);
+                var whichTypedArray = __nested_webpack_require_325422__(2094);
+                var isTypedArray = __nested_webpack_require_325422__(198);
                 function uncurryThis(f) {
                     return f.call.bind(f);
                 }
@@ -6060,9 +6206,9 @@
                     });
                 });
             /***/ },
-            /***/ 3335: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_328824__)=>{
-                /* provided dependency */ var process = __nested_webpack_require_328824__(4406);
-                /* provided dependency */ var console = __nested_webpack_require_328824__(3716);
+            /***/ 3335: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_337898__)=>{
+                /* provided dependency */ var process = __nested_webpack_require_337898__(4406);
+                /* provided dependency */ var console = __nested_webpack_require_337898__(3716);
                 // Copyright Joyent, Inc. and other Node contributors.
                 //
                 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6492,7 +6638,7 @@
                 }
                 // NOTE: These type checking functions intentionally don't use `instanceof`
                 // because it is fragile and can be easily faked with `Object.create()`.
-                exports1.types = __nested_webpack_require_328824__(4895);
+                exports1.types = __nested_webpack_require_337898__(4895);
                 function isArray(ar) {
                     return Array.isArray(ar);
                 }
@@ -6553,7 +6699,7 @@
                     typeof arg === 'undefined';
                 }
                 exports1.isPrimitive = isPrimitive;
-                exports1.isBuffer = __nested_webpack_require_328824__(82);
+                exports1.isBuffer = __nested_webpack_require_337898__(82);
                 function objectToString(o) {
                     return Object.prototype.toString.call(o);
                 }
@@ -6604,7 +6750,7 @@
  * @param {function} ctor Constructor function which needs to inherit the
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
- */ exports1.inherits = __nested_webpack_require_328824__(1285);
+ */ exports1.inherits = __nested_webpack_require_337898__(1285);
                 exports1._extend = function(origin, add) {
                     // Don't do anything if add isn't an object
                     if (!add || !isObject(add)) return origin;
@@ -6714,14 +6860,14 @@
                 }
                 exports1.callbackify = callbackify;
             /***/ },
-            /***/ 1200: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_360422__)=>{
+            /***/ 1200: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_369496__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
- * ----------------------------------------------------------------------------------------- */ module1.exports = __nested_webpack_require_360422__(5953);
+ * ----------------------------------------------------------------------------------------- */ module1.exports = __nested_webpack_require_369496__(5953);
             /***/ },
-            /***/ 5953: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_360981__) {
+            /***/ 5953: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_370055__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6749,30 +6895,30 @@
                     value: true
                 });
                 exports1.createMessageConnection = exports1.BrowserMessageWriter = exports1.BrowserMessageReader = void 0;
-                const ril_1 = __nested_webpack_require_360981__(3632);
+                const ril_1 = __nested_webpack_require_370055__(3632);
                 // Install the browser runtime abstract.
                 ril_1.default.install();
-                const api_1 = __nested_webpack_require_360981__(5247);
-                __exportStar(__nested_webpack_require_360981__(5247), exports1);
+                const api_1 = __nested_webpack_require_370055__(5247);
+                __exportStar(__nested_webpack_require_370055__(5247), exports1);
                 class BrowserMessageReader extends api_1.AbstractMessageReader {
                     listen(callback) {
                         return this._onData.event(callback);
                     }
-                    constructor(context){
+                    constructor(port){
                         super();
                         this._onData = new api_1.Emitter();
                         this._messageListener = (event)=>{
                             this._onData.fire(event.data);
                         };
-                        context.addEventListener('error', (event)=>this.fireError(event));
-                        context.onmessage = this._messageListener;
+                        port.addEventListener('error', (event)=>this.fireError(event));
+                        port.onmessage = this._messageListener;
                     }
                 }
                 exports1.BrowserMessageReader = BrowserMessageReader;
                 class BrowserMessageWriter extends api_1.AbstractMessageWriter {
                     write(msg) {
                         try {
-                            this.context.postMessage(msg);
+                            this.port.postMessage(msg);
                             return Promise.resolve();
                         } catch (error) {
                             this.handleError(error, msg);
@@ -6784,11 +6930,11 @@
                         this.fireError(error, msg, this.errorCount);
                     }
                     end() {}
-                    constructor(context){
+                    constructor(port){
                         super();
-                        this.context = context;
+                        this.port = port;
                         this.errorCount = 0;
-                        context.addEventListener('error', (event)=>this.fireError(event));
+                        port.addEventListener('error', (event)=>this.fireError(event));
                     }
                 }
                 exports1.BrowserMessageWriter = BrowserMessageWriter;
@@ -6804,22 +6950,18 @@
                     return (0, api_1.createMessageConnection)(reader, writer, logger, options);
                 }
                 exports1.createMessageConnection = createMessageConnection;
-            //# sourceMappingURL=main.js.map
             /***/ },
-            /***/ 3632: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_365465__)=>{
+            /***/ 3632: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_374470__)=>{
                 "use strict";
-                /* provided dependency */ var console = __nested_webpack_require_365465__(3716);
+                /* provided dependency */ var console = __nested_webpack_require_374470__(3716);
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                const ral_1 = __nested_webpack_require_365465__(5706);
-                const disposable_1 = __nested_webpack_require_365465__(8437);
-                const events_1 = __nested_webpack_require_365465__(5165);
-                const messageBuffer_1 = __nested_webpack_require_365465__(8652);
-                class MessageBuffer extends messageBuffer_1.AbstractMessageBuffer {
+                const api_1 = __nested_webpack_require_374470__(5247);
+                class MessageBuffer extends api_1.AbstractMessageBuffer {
                     emptyBuffer() {
                         return MessageBuffer.emptyBuffer;
                     }
@@ -6852,28 +6994,28 @@
                 class ReadableStreamWrapper {
                     onClose(listener) {
                         this.socket.addEventListener('close', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
                     }
                     onError(listener) {
                         this.socket.addEventListener('error', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
                     }
                     onEnd(listener) {
                         this.socket.addEventListener('end', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
                     }
                     onData(listener) {
                         return this._onData.event(listener);
                     }
                     constructor(socket){
                         this.socket = socket;
-                        this._onData = new events_1.Emitter();
+                        this._onData = new api_1.Emitter();
                         this._messageListener = (event)=>{
                             const blob = event.data;
                             blob.arrayBuffer().then((buffer)=>{
                                 this._onData.fire(new Uint8Array(buffer));
                             }, ()=>{
-                                (0, ral_1.default)().console.error(`Converting blob to array buffer failed.`);
+                                (0, api_1.RAL)().console.error(`Converting blob to array buffer failed.`);
                             });
                         };
                         this.socket.addEventListener('message', this._messageListener);
@@ -6882,15 +7024,15 @@
                 class WritableStreamWrapper {
                     onClose(listener) {
                         this.socket.addEventListener('close', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('close', listener));
                     }
                     onError(listener) {
                         this.socket.addEventListener('error', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('error', listener));
                     }
                     onEnd(listener) {
                         this.socket.addEventListener('end', listener);
-                        return disposable_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
+                        return api_1.Disposable.create(()=>this.socket.removeEventListener('end', listener));
                     }
                     write(data, encoding) {
                         if (typeof data === 'string') {
@@ -6966,14 +7108,13 @@
                 }
                 (function(RIL) {
                     function install() {
-                        ral_1.default.install(_ril);
+                        api_1.RAL.install(_ril);
                     }
                     RIL.install = install;
                 })(RIL || (RIL = {}));
                 exports1["default"] = RIL;
-            //# sourceMappingURL=ril.js.map
             /***/ },
-            /***/ 5247: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_374142__)=>{
+            /***/ 5247: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_382849__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6982,9 +7123,9 @@
                 Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.ProgressType = exports1.ProgressToken = exports1.createMessageConnection = exports1.NullLogger = exports1.ConnectionOptions = exports1.ConnectionStrategy = exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = exports1.CancellationToken = exports1.CancellationTokenSource = exports1.Emitter = exports1.Event = exports1.Disposable = exports1.LRUCache = exports1.Touch = exports1.LinkedMap = exports1.ParameterStructures = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.ErrorCodes = exports1.ResponseError = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType0 = exports1.RequestType = exports1.Message = exports1.RAL = void 0;
-                exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = void 0;
-                const messages_1 = __nested_webpack_require_374142__(9141);
+                exports1.ProgressType = exports1.ProgressToken = exports1.createMessageConnection = exports1.NullLogger = exports1.ConnectionOptions = exports1.ConnectionStrategy = exports1.AbstractMessageBuffer = exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = exports1.SharedArrayReceiverStrategy = exports1.SharedArraySenderStrategy = exports1.CancellationToken = exports1.CancellationTokenSource = exports1.Emitter = exports1.Event = exports1.Disposable = exports1.LRUCache = exports1.Touch = exports1.LinkedMap = exports1.ParameterStructures = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.ErrorCodes = exports1.ResponseError = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType0 = exports1.RequestType = exports1.Message = exports1.RAL = void 0;
+                exports1.MessageStrategy = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = void 0;
+                const messages_1 = __nested_webpack_require_382849__(9141);
                 Object.defineProperty(exports1, "Message", {
                     enumerable: true,
                     get: function() {
@@ -7141,7 +7282,7 @@
                         return messages_1.ParameterStructures;
                     }
                 });
-                const linkedMap_1 = __nested_webpack_require_374142__(7040);
+                const linkedMap_1 = __nested_webpack_require_382849__(7040);
                 Object.defineProperty(exports1, "LinkedMap", {
                     enumerable: true,
                     get: function() {
@@ -7160,14 +7301,14 @@
                         return linkedMap_1.Touch;
                     }
                 });
-                const disposable_1 = __nested_webpack_require_374142__(8437);
+                const disposable_1 = __nested_webpack_require_382849__(8437);
                 Object.defineProperty(exports1, "Disposable", {
                     enumerable: true,
                     get: function() {
                         return disposable_1.Disposable;
                     }
                 });
-                const events_1 = __nested_webpack_require_374142__(5165);
+                const events_1 = __nested_webpack_require_382849__(5165);
                 Object.defineProperty(exports1, "Event", {
                     enumerable: true,
                     get: function() {
@@ -7180,7 +7321,7 @@
                         return events_1.Emitter;
                     }
                 });
-                const cancellation_1 = __nested_webpack_require_374142__(415);
+                const cancellation_1 = __nested_webpack_require_382849__(415);
                 Object.defineProperty(exports1, "CancellationTokenSource", {
                     enumerable: true,
                     get: function() {
@@ -7193,7 +7334,20 @@
                         return cancellation_1.CancellationToken;
                     }
                 });
-                const messageReader_1 = __nested_webpack_require_374142__(451);
+                const sharedArrayCancellation_1 = __nested_webpack_require_382849__(178);
+                Object.defineProperty(exports1, "SharedArraySenderStrategy", {
+                    enumerable: true,
+                    get: function() {
+                        return sharedArrayCancellation_1.SharedArraySenderStrategy;
+                    }
+                });
+                Object.defineProperty(exports1, "SharedArrayReceiverStrategy", {
+                    enumerable: true,
+                    get: function() {
+                        return sharedArrayCancellation_1.SharedArrayReceiverStrategy;
+                    }
+                });
+                const messageReader_1 = __nested_webpack_require_382849__(451);
                 Object.defineProperty(exports1, "MessageReader", {
                     enumerable: true,
                     get: function() {
@@ -7212,7 +7366,7 @@
                         return messageReader_1.ReadableStreamMessageReader;
                     }
                 });
-                const messageWriter_1 = __nested_webpack_require_374142__(1251);
+                const messageWriter_1 = __nested_webpack_require_382849__(1251);
                 Object.defineProperty(exports1, "MessageWriter", {
                     enumerable: true,
                     get: function() {
@@ -7231,7 +7385,14 @@
                         return messageWriter_1.WriteableStreamMessageWriter;
                     }
                 });
-                const connection_1 = __nested_webpack_require_374142__(1908);
+                const messageBuffer_1 = __nested_webpack_require_382849__(8652);
+                Object.defineProperty(exports1, "AbstractMessageBuffer", {
+                    enumerable: true,
+                    get: function() {
+                        return messageBuffer_1.AbstractMessageBuffer;
+                    }
+                });
+                const connection_1 = __nested_webpack_require_382849__(1908);
                 Object.defineProperty(exports1, "ConnectionStrategy", {
                     enumerable: true,
                     get: function() {
@@ -7328,11 +7489,16 @@
                         return connection_1.CancellationStrategy;
                     }
                 });
-                const ral_1 = __nested_webpack_require_374142__(5706);
+                Object.defineProperty(exports1, "MessageStrategy", {
+                    enumerable: true,
+                    get: function() {
+                        return connection_1.MessageStrategy;
+                    }
+                });
+                const ral_1 = __nested_webpack_require_382849__(5706);
                 exports1.RAL = ral_1.default;
-            //# sourceMappingURL=api.js.map
             /***/ },
-            /***/ 415: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_390891__)=>{
+            /***/ 415: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_400910__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7341,9 +7507,9 @@
                     value: true
                 });
                 exports1.CancellationTokenSource = exports1.CancellationToken = void 0;
-                const ral_1 = __nested_webpack_require_390891__(5706);
-                const Is = __nested_webpack_require_390891__(8811);
-                const events_1 = __nested_webpack_require_390891__(5165);
+                const ral_1 = __nested_webpack_require_400910__(5706);
+                const Is = __nested_webpack_require_400910__(8811);
+                const events_1 = __nested_webpack_require_400910__(5165);
                 var CancellationToken;
                 (function(CancellationToken) {
                     CancellationToken.None = Object.freeze({
@@ -7430,9 +7596,8 @@
                     }
                 }
                 exports1.CancellationTokenSource = CancellationTokenSource;
-            //# sourceMappingURL=cancellation.js.map
             /***/ },
-            /***/ 1908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_395878__)=>{
+            /***/ 1908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_405844__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7440,13 +7605,13 @@
  * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                exports1.createMessageConnection = exports1.ConnectionOptions = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.NullLogger = exports1.ProgressType = exports1.ProgressToken = void 0;
-                const ral_1 = __nested_webpack_require_395878__(5706);
-                const Is = __nested_webpack_require_395878__(8811);
-                const messages_1 = __nested_webpack_require_395878__(9141);
-                const linkedMap_1 = __nested_webpack_require_395878__(7040);
-                const events_1 = __nested_webpack_require_395878__(5165);
-                const cancellation_1 = __nested_webpack_require_395878__(415);
+                exports1.createMessageConnection = exports1.ConnectionOptions = exports1.MessageStrategy = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.RequestCancellationReceiverStrategy = exports1.IdCancellationReceiverStrategy = exports1.ConnectionStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.NullLogger = exports1.ProgressType = exports1.ProgressToken = void 0;
+                const ral_1 = __nested_webpack_require_405844__(5706);
+                const Is = __nested_webpack_require_405844__(8811);
+                const messages_1 = __nested_webpack_require_405844__(9141);
+                const linkedMap_1 = __nested_webpack_require_405844__(7040);
+                const events_1 = __nested_webpack_require_405844__(5165);
+                const cancellation_1 = __nested_webpack_require_405844__(415);
                 var CancelNotification;
                 (function(CancelNotification) {
                     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -7592,6 +7757,22 @@
                     }
                     ConnectionStrategy.is = is;
                 })(ConnectionStrategy = exports1.ConnectionStrategy || (exports1.ConnectionStrategy = {}));
+                var IdCancellationReceiverStrategy;
+                (function(IdCancellationReceiverStrategy) {
+                    function is(value) {
+                        const candidate = value;
+                        return candidate && (candidate.kind === undefined || candidate.kind === 'id') && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+                    }
+                    IdCancellationReceiverStrategy.is = is;
+                })(IdCancellationReceiverStrategy = exports1.IdCancellationReceiverStrategy || (exports1.IdCancellationReceiverStrategy = {}));
+                var RequestCancellationReceiverStrategy;
+                (function(RequestCancellationReceiverStrategy) {
+                    function is(value) {
+                        const candidate = value;
+                        return candidate && candidate.kind === 'request' && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+                    }
+                    RequestCancellationReceiverStrategy.is = is;
+                })(RequestCancellationReceiverStrategy = exports1.RequestCancellationReceiverStrategy || (exports1.RequestCancellationReceiverStrategy = {}));
                 var CancellationReceiverStrategy;
                 (function(CancellationReceiverStrategy) {
                     CancellationReceiverStrategy.Message = Object.freeze({
@@ -7600,8 +7781,7 @@
                         }
                     });
                     function is(value) {
-                        const candidate = value;
-                        return candidate && Is.func(candidate.createCancellationTokenSource);
+                        return IdCancellationReceiverStrategy.is(value) || RequestCancellationReceiverStrategy.is(value);
                     }
                     CancellationReceiverStrategy.is = is;
                 })(CancellationReceiverStrategy = exports1.CancellationReceiverStrategy || (exports1.CancellationReceiverStrategy = {}));
@@ -7633,11 +7813,19 @@
                     }
                     CancellationStrategy.is = is;
                 })(CancellationStrategy = exports1.CancellationStrategy || (exports1.CancellationStrategy = {}));
+                var MessageStrategy;
+                (function(MessageStrategy) {
+                    function is(value) {
+                        const candidate = value;
+                        return candidate && Is.func(candidate.handleMessage);
+                    }
+                    MessageStrategy.is = is;
+                })(MessageStrategy = exports1.MessageStrategy || (exports1.MessageStrategy = {}));
                 var ConnectionOptions;
                 (function(ConnectionOptions) {
                     function is(value) {
                         const candidate = value;
-                        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy));
+                        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy) || MessageStrategy.is(candidate.messageStrategy));
                     }
                     ConnectionOptions.is = is;
                 })(ConnectionOptions = exports1.ConnectionOptions || (exports1.ConnectionOptions = {}));
@@ -7741,20 +7929,29 @@
                             processMessageQueue();
                         });
                     }
+                    function handleMessage(message) {
+                        if (messages_1.Message.isRequest(message)) {
+                            handleRequest(message);
+                        } else if (messages_1.Message.isNotification(message)) {
+                            handleNotification(message);
+                        } else if (messages_1.Message.isResponse(message)) {
+                            handleResponse(message);
+                        } else {
+                            handleInvalidMessage(message);
+                        }
+                    }
                     function processMessageQueue() {
                         if (messageQueue.size === 0) {
                             return;
                         }
                         const message = messageQueue.shift();
                         try {
-                            if (messages_1.Message.isRequest(message)) {
-                                handleRequest(message);
-                            } else if (messages_1.Message.isNotification(message)) {
-                                handleNotification(message);
-                            } else if (messages_1.Message.isResponse(message)) {
-                                handleResponse(message);
+                            var _options;
+                            const messageStrategy = (_options = options) === null || _options === void 0 ? void 0 : _options.messageStrategy;
+                            if (MessageStrategy.is(messageStrategy)) {
+                                messageStrategy.handleMessage(message, handleMessage);
                             } else {
-                                handleInvalidMessage(message);
+                                handleMessage(message);
                             }
                         } finally{
                             triggerMessageQueue();
@@ -7769,7 +7966,8 @@
                                 const key = createRequestQueueKey(cancelId);
                                 const toCancel = messageQueue.get(key);
                                 if (messages_1.Message.isRequest(toCancel)) {
-                                    const strategy = options === null || options === void 0 ? void 0 : options.connectionStrategy;
+                                    var _options;
+                                    const strategy = (_options = options) === null || _options === void 0 ? void 0 : _options.connectionStrategy;
                                     const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
                                     if (response && (response.error !== undefined || response.result !== undefined)) {
                                         messageQueue.delete(key);
@@ -7851,7 +8049,7 @@
                         if (requestHandler || starRequestHandler) {
                             var _requestMessage_id;
                             const tokenKey = (_requestMessage_id = requestMessage.id) !== null && _requestMessage_id !== void 0 ? _requestMessage_id : String(Date.now()); //
-                            const cancellationSource = cancellationStrategy.receiver.createCancellationTokenSource(tokenKey);
+                            const cancellationSource = IdCancellationReceiverStrategy.is(cancellationStrategy.receiver) ? cancellationStrategy.receiver.createCancellationTokenSource(tokenKey) : cancellationStrategy.receiver.createCancellationTokenSource(requestMessage);
                             if (requestMessage.id !== null && knownCanceledRequests.has(requestMessage.id)) {
                                 cancellationSource.cancel();
                             }
@@ -8302,7 +8500,10 @@
                                 params: messageParams
                             };
                             traceSendingNotification(notificationMessage);
-                            return messageWriter.write(notificationMessage).catch(()=>logger.error(`Sending notification failed.`));
+                            return messageWriter.write(notificationMessage).catch((error)=>{
+                                logger.error(`Sending notification failed.`);
+                                throw error;
+                            });
                         },
                         onNotification: (type, handler)=>{
                             throwIfClosedOrDisposed();
@@ -8346,6 +8547,8 @@
                             };
                         },
                         sendProgress: (_type, token, value)=>{
+                            // This should not await but simple return to ensure that we don't have another
+                            // async scheduling. Otherwise one send could overtake another send.
                             return connection.sendNotification(ProgressNotification.type, {
                                 token,
                                 value
@@ -8410,42 +8613,45 @@
                                     }
                                 });
                             }
-                            const result = new Promise((resolve, reject)=>{
-                                const requestMessage = {
-                                    jsonrpc: version,
-                                    id: id,
-                                    method: method,
-                                    params: messageParams
-                                };
+                            const requestMessage = {
+                                jsonrpc: version,
+                                id: id,
+                                method: method,
+                                params: messageParams
+                            };
+                            traceSendingRequest(requestMessage);
+                            if (typeof cancellationStrategy.sender.enableCancellation === 'function') {
+                                cancellationStrategy.sender.enableCancellation(requestMessage);
+                            }
+                            return new Promise(async (resolve, reject)=>{
                                 const resolveWithCleanup = (r)=>{
+                                    var _disposable;
                                     resolve(r);
                                     cancellationStrategy.sender.cleanup(id);
-                                    disposable === null || disposable === void 0 ? void 0 : disposable.dispose();
+                                    (_disposable = disposable) === null || _disposable === void 0 ? void 0 : _disposable.dispose();
                                 };
                                 const rejectWithCleanup = (r)=>{
+                                    var _disposable;
                                     reject(r);
                                     cancellationStrategy.sender.cleanup(id);
-                                    disposable === null || disposable === void 0 ? void 0 : disposable.dispose();
+                                    (_disposable = disposable) === null || _disposable === void 0 ? void 0 : _disposable.dispose();
                                 };
-                                let responsePromise = {
+                                const responsePromise = {
                                     method: method,
                                     timerStart: Date.now(),
                                     resolve: resolveWithCleanup,
                                     reject: rejectWithCleanup
                                 };
-                                traceSendingRequest(requestMessage);
                                 try {
-                                    messageWriter.write(requestMessage).catch(()=>logger.error(`Sending request failed.`));
-                                } catch (e) {
-                                    // Writing the message failed. So we need to reject the promise.
-                                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, e.message ? e.message : 'Unknown reason'));
-                                    responsePromise = null;
-                                }
-                                if (responsePromise) {
+                                    await messageWriter.write(requestMessage);
                                     responsePromises.set(id, responsePromise);
+                                } catch (error) {
+                                    logger.error(`Sending request failed.`);
+                                    // Writing the message failed. So we need to reject the promise.
+                                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, error.message ? error.message : 'Unknown reason'));
+                                    throw error;
                                 }
                             });
-                            return result;
                         },
                         onRequest: (type, handler)=>{
                             throwIfClosedOrDisposed();
@@ -8569,7 +8775,6 @@
                     return connection;
                 }
                 exports1.createMessageConnection = createMessageConnection;
-            //# sourceMappingURL=connection.js.map
             /***/ },
             /***/ 8437: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -8589,9 +8794,8 @@
                     }
                     Disposable.create = create;
                 })(Disposable = exports1.Disposable || (exports1.Disposable = {}));
-            //# sourceMappingURL=disposable.js.map
             /***/ },
-            /***/ 5165: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_463930__)=>{
+            /***/ 5165: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_476935__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8600,7 +8804,7 @@
                     value: true
                 });
                 exports1.Emitter = exports1.Event = void 0;
-                const ral_1 = __nested_webpack_require_463930__(5706);
+                const ral_1 = __nested_webpack_require_476935__(5706);
                 var Event;
                 (function(Event) {
                     const _disposable = {
@@ -8723,7 +8927,6 @@
                 }
                 exports1.Emitter = Emitter;
                 Emitter._noop = function() {};
-            //# sourceMappingURL=events.js.map
             /***/ },
             /***/ 8811: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -8762,7 +8965,6 @@
                     return array(value) && value.every((elem)=>string(elem));
                 }
                 exports1.stringArray = stringArray;
-            //# sourceMappingURL=is.js.map
             /***/ },
             /***/ 7040: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -9180,7 +9382,6 @@
                     }
                 }
                 exports1.LRUCache = LRUCache;
-            //# sourceMappingURL=linkedMap.js.map
             /***/ },
             /***/ 8652: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -9203,7 +9404,7 @@
                         this._chunks.push(toAppend);
                         this._totalLength += toAppend.byteLength;
                     }
-                    tryReadHeaders() {
+                    tryReadHeaders(lowerCaseKeys = false) {
                         if (this._chunks.length === 0) {
                             return undefined;
                         }
@@ -9269,7 +9470,7 @@
                             }
                             const key = header.substr(0, index);
                             const value = header.substr(index + 1).trim();
-                            result.set(key, value);
+                            result.set(lowerCaseKeys ? key.toLowerCase() : key, value);
                         }
                         return result;
                     }
@@ -9335,9 +9536,8 @@
                     }
                 }
                 exports1.AbstractMessageBuffer = AbstractMessageBuffer;
-            //# sourceMappingURL=messageBuffer.js.map
             /***/ },
-            /***/ 451: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_499759__)=>{
+            /***/ 451: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_512627__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9346,9 +9546,10 @@
                     value: true
                 });
                 exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = void 0;
-                const ral_1 = __nested_webpack_require_499759__(5706);
-                const Is = __nested_webpack_require_499759__(8811);
-                const events_1 = __nested_webpack_require_499759__(5165);
+                const ral_1 = __nested_webpack_require_512627__(5706);
+                const Is = __nested_webpack_require_512627__(8811);
+                const events_1 = __nested_webpack_require_512627__(5165);
+                const semaphore_1 = __nested_webpack_require_512627__(2339);
                 var MessageReader;
                 (function(MessageReader) {
                     function is(value) {
@@ -9464,17 +9665,19 @@
                         this.buffer.append(data);
                         while(true){
                             if (this.nextMessageLength === -1) {
-                                const headers = this.buffer.tryReadHeaders();
+                                const headers = this.buffer.tryReadHeaders(true);
                                 if (!headers) {
                                     return;
                                 }
-                                const contentLength = headers.get('Content-Length');
+                                const contentLength = headers.get('content-length');
                                 if (!contentLength) {
-                                    throw new Error('Header must provide a Content-Length property.');
+                                    this.fireError(new Error('Header must provide a Content-Length property.'));
+                                    return;
                                 }
                                 const length = parseInt(contentLength);
                                 if (isNaN(length)) {
-                                    throw new Error('Content-Length value must be a number.');
+                                    this.fireError(new Error('Content-Length value must be a number.'));
+                                    return;
                                 }
                                 this.nextMessageLength = length;
                             }
@@ -9485,19 +9688,15 @@
                             }
                             this.clearPartialMessageTimer();
                             this.nextMessageLength = -1;
-                            let p;
-                            if (this.options.contentDecoder !== undefined) {
-                                p = this.options.contentDecoder.decode(body);
-                            } else {
-                                p = Promise.resolve(body);
-                            }
-                            p.then((value)=>{
-                                this.options.contentTypeDecoder.decode(value, this.options).then((msg)=>{
-                                    this.callback(msg);
-                                }, (error)=>{
-                                    this.fireError(error);
-                                });
-                            }, (error)=>{
+                            // Make sure that we convert one received message after the
+                            // other. Otherwise it could happen that a decoding of a second
+                            // smaller message finished before the decoding of a first larger
+                            // message and then we would deliver the second message first.
+                            this.readSemaphore.lock(async ()=>{
+                                const bytes = this.options.contentDecoder !== undefined ? await this.options.contentDecoder.decode(body) : body;
+                                const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
+                                this.callback(message);
+                            }).catch((error)=>{
                                 this.fireError(error);
                             });
                         }
@@ -9532,12 +9731,12 @@
                         this._partialMessageTimeout = 10000;
                         this.nextMessageLength = -1;
                         this.messageToken = 0;
+                        this.readSemaphore = new semaphore_1.Semaphore(1);
                     }
                 }
                 exports1.ReadableStreamMessageReader = ReadableStreamMessageReader;
-            //# sourceMappingURL=messageReader.js.map
             /***/ },
-            /***/ 1251: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_510739__)=>{
+            /***/ 1251: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_523889__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9546,10 +9745,10 @@
                     value: true
                 });
                 exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = void 0;
-                const ral_1 = __nested_webpack_require_510739__(5706);
-                const Is = __nested_webpack_require_510739__(8811);
-                const semaphore_1 = __nested_webpack_require_510739__(2339);
-                const events_1 = __nested_webpack_require_510739__(5165);
+                const ral_1 = __nested_webpack_require_523889__(5706);
+                const Is = __nested_webpack_require_523889__(8811);
+                const semaphore_1 = __nested_webpack_require_523889__(2339);
+                const events_1 = __nested_webpack_require_523889__(5165);
                 const ContentLength = 'Content-Length: ';
                 const CRLF = '\r\n';
                 var MessageWriter;
@@ -9661,9 +9860,8 @@
                     }
                 }
                 exports1.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
-            //# sourceMappingURL=messageWriter.js.map
             /***/ },
-            /***/ 9141: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_517679__)=>{
+            /***/ 9141: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_530775__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9672,7 +9870,7 @@
                     value: true
                 });
                 exports1.Message = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType = exports1.RequestType0 = exports1.AbstractMessageSignature = exports1.ParameterStructures = exports1.ResponseError = exports1.ErrorCodes = void 0;
-                const is = __nested_webpack_require_517679__(8811);
+                const is = __nested_webpack_require_530775__(8811);
                 /**
  * Predefined error codes.
  */ var ErrorCodes;
@@ -9952,7 +10150,6 @@
                     }
                     Message.isResponse = isResponse;
                 })(Message = exports1.Message || (exports1.Message = {}));
-            //# sourceMappingURL=messages.js.map
             /***/ },
             /***/ 5706: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -9979,9 +10176,8 @@
                     RAL.install = install;
                 })(RAL || (RAL = {}));
                 exports1["default"] = RAL;
-            //# sourceMappingURL=ral.js.map
             /***/ },
-            /***/ 2339: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_533280__)=>{
+            /***/ 2339: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_546283__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9990,7 +10186,7 @@
                     value: true
                 });
                 exports1.Semaphore = void 0;
-                const ral_1 = __nested_webpack_require_533280__(5706);
+                const ral_1 = __nested_webpack_require_546283__(5706);
                 class Semaphore {
                     lock(thunk) {
                         return new Promise((resolve, reject)=>{
@@ -10053,9 +10249,85 @@
                     }
                 }
                 exports1.Semaphore = Semaphore;
-            //# sourceMappingURL=semaphore.js.map
             /***/ },
-            /***/ 294: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_536780__) {
+            /***/ 178: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_549725__)=>{
+                "use strict";
+                /* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
+                    value: true
+                });
+                exports1.SharedArrayReceiverStrategy = exports1.SharedArraySenderStrategy = void 0;
+                const cancellation_1 = __nested_webpack_require_549725__(415);
+                var CancellationState;
+                (function(CancellationState) {
+                    CancellationState.Continue = 0;
+                    CancellationState.Cancelled = 1;
+                })(CancellationState || (CancellationState = {}));
+                class SharedArraySenderStrategy {
+                    enableCancellation(request) {
+                        if (request.id === null) {
+                            return;
+                        }
+                        const buffer = new SharedArrayBuffer(4);
+                        const data = new Int32Array(buffer, 0, 1);
+                        data[0] = CancellationState.Continue;
+                        this.buffers.set(request.id, buffer);
+                        request.$cancellationData = buffer;
+                    }
+                    async sendCancellation(_conn, id) {
+                        const buffer = this.buffers.get(id);
+                        if (buffer === undefined) {
+                            return;
+                        }
+                        const data = new Int32Array(buffer, 0, 1);
+                        Atomics.store(data, 0, CancellationState.Cancelled);
+                    }
+                    cleanup(id) {
+                        this.buffers.delete(id);
+                    }
+                    dispose() {
+                        this.buffers.clear();
+                    }
+                    constructor(){
+                        this.buffers = new Map();
+                    }
+                }
+                exports1.SharedArraySenderStrategy = SharedArraySenderStrategy;
+                class SharedArrayBufferCancellationToken {
+                    get isCancellationRequested() {
+                        return Atomics.load(this.data, 0) === CancellationState.Cancelled;
+                    }
+                    get onCancellationRequested() {
+                        throw new Error(`Cancellation over SharedArrayBuffer doesn't support cancellation events`);
+                    }
+                    constructor(buffer){
+                        this.data = new Int32Array(buffer, 0, 1);
+                    }
+                }
+                class SharedArrayBufferCancellationTokenSource {
+                    cancel() {}
+                    dispose() {}
+                    constructor(buffer){
+                        this.token = new SharedArrayBufferCancellationToken(buffer);
+                    }
+                }
+                class SharedArrayReceiverStrategy {
+                    createCancellationTokenSource(request) {
+                        const buffer = request.$cancellationData;
+                        if (buffer === undefined) {
+                            return new cancellation_1.CancellationTokenSource();
+                        }
+                        return new SharedArrayBufferCancellationTokenSource(buffer);
+                    }
+                    constructor(){
+                        this.kind = 'request';
+                    }
+                }
+                exports1.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
+            /***/ },
+            /***/ 294: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_553628__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10083,16 +10355,15 @@
                     value: true
                 });
                 exports1.createProtocolConnection = void 0;
-                const browser_1 = __nested_webpack_require_536780__(1200);
-                __exportStar(__nested_webpack_require_536780__(1200), exports1);
-                __exportStar(__nested_webpack_require_536780__(9372), exports1);
+                const browser_1 = __nested_webpack_require_553628__(1200);
+                __exportStar(__nested_webpack_require_553628__(1200), exports1);
+                __exportStar(__nested_webpack_require_553628__(9372), exports1);
                 function createProtocolConnection(reader, writer, logger, options) {
                     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
                 }
                 exports1.createProtocolConnection = createProtocolConnection;
-            //# sourceMappingURL=main.js.map
             /***/ },
-            /***/ 9372: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_539014__) {
+            /***/ 9372: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_555817__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10120,11 +10391,11 @@
                     value: true
                 });
                 exports1.LSPErrorCodes = exports1.createProtocolConnection = void 0;
-                __exportStar(__nested_webpack_require_539014__(5953), exports1);
-                __exportStar(__nested_webpack_require_539014__(4767), exports1);
-                __exportStar(__nested_webpack_require_539014__(8599), exports1);
-                __exportStar(__nested_webpack_require_539014__(6525), exports1);
-                var connection_1 = __nested_webpack_require_539014__(2798);
+                __exportStar(__nested_webpack_require_555817__(5953), exports1);
+                __exportStar(__nested_webpack_require_555817__(4767), exports1);
+                __exportStar(__nested_webpack_require_555817__(8599), exports1);
+                __exportStar(__nested_webpack_require_555817__(6525), exports1);
+                var connection_1 = __nested_webpack_require_555817__(2798);
                 Object.defineProperty(exports1, "createProtocolConnection", {
                     enumerable: true,
                     get: function() {
@@ -10175,9 +10446,8 @@
     * @since 3.16.0
     */ LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
                 })(LSPErrorCodes = exports1.LSPErrorCodes || (exports1.LSPErrorCodes = {}));
-            //# sourceMappingURL=api.js.map
             /***/ },
-            /***/ 2798: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_543209__)=>{
+            /***/ 2798: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_559968__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10186,7 +10456,7 @@
                     value: true
                 });
                 exports1.createProtocolConnection = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_543209__(5953);
+                const vscode_jsonrpc_1 = __nested_webpack_require_559968__(5953);
                 function createProtocolConnection(input, output, logger, options) {
                     if (vscode_jsonrpc_1.ConnectionStrategy.is(options)) {
                         options = {
@@ -10196,9 +10466,8 @@
                     return (0, vscode_jsonrpc_1.createMessageConnection)(input, output, logger, options);
                 }
                 exports1.createProtocolConnection = createProtocolConnection;
-            //# sourceMappingURL=connection.js.map
             /***/ },
-            /***/ 8599: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_544497__)=>{
+            /***/ 8599: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_561205__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10207,7 +10476,7 @@
                     value: true
                 });
                 exports1.ProtocolNotificationType = exports1.ProtocolNotificationType0 = exports1.ProtocolRequestType = exports1.ProtocolRequestType0 = exports1.RegistrationType = exports1.MessageDirection = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_544497__(5953);
+                const vscode_jsonrpc_1 = __nested_webpack_require_561205__(5953);
                 var MessageDirection;
                 (function(MessageDirection) {
                     MessageDirection["clientToServer"] = "clientToServer";
@@ -10244,9 +10513,8 @@
                     }
                 }
                 exports1.ProtocolNotificationType = ProtocolNotificationType;
-            //# sourceMappingURL=messages.js.map
             /***/ },
-            /***/ 4434: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_547272__)=>{
+            /***/ 4434: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_563931__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) TypeFox, Microsoft and others. All rights reserved.
@@ -10255,7 +10523,7 @@
                     value: true
                 });
                 exports1.CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyIncomingCallsRequest = exports1.CallHierarchyPrepareRequest = void 0;
-                const messages_1 = __nested_webpack_require_547272__(8599);
+                const messages_1 = __nested_webpack_require_563931__(8599);
                 /**
  * A request to result a `CallHierarchyItem` in a document at a given position.
  * Can be used as an input to an incoming or outgoing call hierarchy.
@@ -10287,9 +10555,8 @@
                     CallHierarchyOutgoingCallsRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
                 })(CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyOutgoingCallsRequest || (exports1.CallHierarchyOutgoingCallsRequest = {}));
-            //# sourceMappingURL=protocol.callHierarchy.js.map
             /***/ },
-            /***/ 7908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_550366__)=>{
+            /***/ 7908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_566962__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10298,11 +10565,11 @@
                     value: true
                 });
                 exports1.ColorPresentationRequest = exports1.DocumentColorRequest = void 0;
-                const messages_1 = __nested_webpack_require_550366__(8599);
+                const messages_1 = __nested_webpack_require_566962__(8599);
                 /**
  * A request to list all color symbols found in a given text document. The request's
- * parameter is of type [DocumentColorParams](#DocumentColorParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link DocumentColorParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */ var DocumentColorRequest;
                 (function(DocumentColorRequest) {
@@ -10312,8 +10579,8 @@
                 })(DocumentColorRequest = exports1.DocumentColorRequest || (exports1.DocumentColorRequest = {}));
                 /**
  * A request to list all presentation for a color. The request's
- * parameter is of type [ColorPresentationParams](#ColorPresentationParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link ColorPresentationParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */ var ColorPresentationRequest;
                 (function(ColorPresentationRequest) {
@@ -10321,9 +10588,8 @@
                     ColorPresentationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
                 })(ColorPresentationRequest = exports1.ColorPresentationRequest || (exports1.ColorPresentationRequest = {}));
-            //# sourceMappingURL=protocol.colorProvider.js.map
             /***/ },
-            /***/ 5442: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_552760__)=>{
+            /***/ 5442: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_569265__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10332,7 +10598,7 @@
                     value: true
                 });
                 exports1.ConfigurationRequest = void 0;
-                const messages_1 = __nested_webpack_require_552760__(8599);
+                const messages_1 = __nested_webpack_require_569265__(8599);
                 //---- Get Configuration request ----
                 /**
  * The 'workspace/configuration' request is sent from the server to the client to fetch a certain
@@ -10348,9 +10614,8 @@
                     ConfigurationRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
                 })(ConfigurationRequest = exports1.ConfigurationRequest || (exports1.ConfigurationRequest = {}));
-            //# sourceMappingURL=protocol.configuration.js.map
             /***/ },
-            /***/ 7210: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_554605__)=>{
+            /***/ 7210: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_571047__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10359,14 +10624,14 @@
                     value: true
                 });
                 exports1.DeclarationRequest = void 0;
-                const messages_1 = __nested_webpack_require_554605__(8599);
+                const messages_1 = __nested_webpack_require_571047__(8599);
                 // @ts-ignore: to avoid inlining LocationLink as dynamic import
                 let __noDynamicImport;
                 /**
  * A request to resolve the type definition locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Declaration](#Declaration)
- * or a typed array of [DeclarationLink](#DeclarationLink) or a Thenable that resolves
+ * (#TextDocumentPositionParams) the response is of type {@link Declaration}
+ * or a typed array of {@link DeclarationLink} or a Thenable that resolves
  * to such.
  */ var DeclarationRequest;
                 (function(DeclarationRequest) {
@@ -10374,9 +10639,8 @@
                     DeclarationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
                 })(DeclarationRequest = exports1.DeclarationRequest || (exports1.DeclarationRequest = {}));
-            //# sourceMappingURL=protocol.declaration.js.map
             /***/ },
-            /***/ 5692: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_556351__)=>{
+            /***/ 5692: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_572712__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10385,9 +10649,9 @@
                     value: true
                 });
                 exports1.DiagnosticRefreshRequest = exports1.WorkspaceDiagnosticRequest = exports1.DocumentDiagnosticRequest = exports1.DocumentDiagnosticReportKind = exports1.DiagnosticServerCancellationData = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_556351__(5953);
-                const Is = __nested_webpack_require_556351__(2523);
-                const messages_1 = __nested_webpack_require_556351__(8599);
+                const vscode_jsonrpc_1 = __nested_webpack_require_572712__(5953);
+                const Is = __nested_webpack_require_572712__(2523);
+                const messages_1 = __nested_webpack_require_572712__(8599);
                 /**
  * @since 3.17.0
  */ var DiagnosticServerCancellationData;
@@ -10442,12 +10706,11 @@
  */ var DiagnosticRefreshRequest;
                 (function(DiagnosticRefreshRequest) {
                     DiagnosticRefreshRequest.method = `workspace/diagnostic/refresh`;
-                    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
                 })(DiagnosticRefreshRequest = exports1.DiagnosticRefreshRequest || (exports1.DiagnosticRefreshRequest = {}));
-            //# sourceMappingURL=protocol.diagnostic.js.map
             /***/ },
-            /***/ 6190: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_560655__)=>{
+            /***/ 6190: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_576956__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10456,7 +10719,7 @@
                     value: true
                 });
                 exports1.WillDeleteFilesRequest = exports1.DidDeleteFilesNotification = exports1.DidRenameFilesNotification = exports1.WillRenameFilesRequest = exports1.DidCreateFilesNotification = exports1.WillCreateFilesRequest = exports1.FileOperationPatternKind = void 0;
-                const messages_1 = __nested_webpack_require_560655__(8599);
+                const messages_1 = __nested_webpack_require_576956__(8599);
                 /**
  * A pattern kind describing if a glob pattern matches a file a folder or
  * both.
@@ -10474,6 +10737,10 @@
                 /**
  * The will create files request is sent from the client to the server before files are actually
  * created as long as the creation is triggered from within the client.
+ *
+ * The request can return a `WorkspaceEdit` which will be applied to workspace before the
+ * files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
+ * to be created.
  *
  * @since 3.16.0
  */ var WillCreateFilesRequest;
@@ -10537,9 +10804,8 @@
                     WillDeleteFilesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
                 })(WillDeleteFilesRequest = exports1.WillDeleteFilesRequest || (exports1.WillDeleteFilesRequest = {}));
-            //# sourceMappingURL=protocol.fileOperations.js.map
             /***/ },
-            /***/ 7029: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_566522__)=>{
+            /***/ 7029: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_582961__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10548,11 +10814,11 @@
                     value: true
                 });
                 exports1.FoldingRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_566522__(8599);
+                const messages_1 = __nested_webpack_require_582961__(8599);
                 /**
  * A request to provide folding ranges in a document. The request's
- * parameter is of type [FoldingRangeParams](#FoldingRangeParams), the
- * response is of type [FoldingRangeList](#FoldingRangeList) or a Thenable
+ * parameter is of type {@link FoldingRangeParams}, the
+ * response is of type {@link FoldingRangeList} or a Thenable
  * that resolves to such.
  */ var FoldingRangeRequest;
                 (function(FoldingRangeRequest) {
@@ -10560,9 +10826,8 @@
                     FoldingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     FoldingRangeRequest.type = new messages_1.ProtocolRequestType(FoldingRangeRequest.method);
                 })(FoldingRangeRequest = exports1.FoldingRangeRequest || (exports1.FoldingRangeRequest = {}));
-            //# sourceMappingURL=protocol.foldingRange.js.map
             /***/ },
-            /***/ 9380: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_568051__)=>{
+            /***/ 9380: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_584400__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10571,13 +10836,13 @@
                     value: true
                 });
                 exports1.ImplementationRequest = void 0;
-                const messages_1 = __nested_webpack_require_568051__(8599);
+                const messages_1 = __nested_webpack_require_584400__(8599);
                 // @ts-ignore: to avoid inlining LocationLink as dynamic import
                 let __noDynamicImport;
                 /**
  * A request to resolve the implementation locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */ var ImplementationRequest;
                 (function(ImplementationRequest) {
@@ -10585,9 +10850,8 @@
                     ImplementationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
                 })(ImplementationRequest = exports1.ImplementationRequest || (exports1.ImplementationRequest = {}));
-            //# sourceMappingURL=protocol.implementation.js.map
             /***/ },
-            /***/ 6315: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_569771__)=>{
+            /***/ 6315: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_586049__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10596,11 +10860,11 @@
                     value: true
                 });
                 exports1.InlayHintRefreshRequest = exports1.InlayHintResolveRequest = exports1.InlayHintRequest = void 0;
-                const messages_1 = __nested_webpack_require_569771__(8599);
+                const messages_1 = __nested_webpack_require_586049__(8599);
                 /**
  * A request to provide inlay hints in a document. The request's parameter is of
- * type [InlayHintsParams](#InlayHintsParams), the response is of type
- * [InlayHint[]](#InlayHint[]) or a Thenable that resolves to such.
+ * type {@link InlayHintsParams}, the response is of type
+ * {@link InlayHint InlayHint[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */ var InlayHintRequest;
@@ -10611,8 +10875,8 @@
                 })(InlayHintRequest = exports1.InlayHintRequest || (exports1.InlayHintRequest = {}));
                 /**
  * A request to resolve additional properties for an inlay hint.
- * The request's parameter is of type [InlayHint](#InlayHint), the response is
- * of type [InlayHint](#InlayHint) or a Thenable that resolves to such.
+ * The request's parameter is of type {@link InlayHint}, the response is
+ * of type {@link InlayHint} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */ var InlayHintResolveRequest;
@@ -10626,12 +10890,11 @@
  */ var InlayHintRefreshRequest;
                 (function(InlayHintRefreshRequest) {
                     InlayHintRefreshRequest.method = `workspace/inlayHint/refresh`;
-                    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
                 })(InlayHintRefreshRequest = exports1.InlayHintRefreshRequest || (exports1.InlayHintRefreshRequest = {}));
-            //# sourceMappingURL=protocol.inlayHint.js.map
             /***/ },
-            /***/ 7425: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_572656__)=>{
+            /***/ 7425: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_588852__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10640,11 +10903,11 @@
                     value: true
                 });
                 exports1.InlineValueRefreshRequest = exports1.InlineValueRequest = void 0;
-                const messages_1 = __nested_webpack_require_572656__(8599);
+                const messages_1 = __nested_webpack_require_588852__(8599);
                 /**
  * A request to provide inline values in a document. The request's parameter is of
- * type [InlineValueParams](#InlineValueParams), the response is of type
- * [InlineValue[]](#InlineValue[]) or a Thenable that resolves to such.
+ * type {@link InlineValueParams}, the response is of type
+ * {@link InlineValue InlineValue[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */ var InlineValueRequest;
@@ -10658,12 +10921,11 @@
  */ var InlineValueRefreshRequest;
                 (function(InlineValueRefreshRequest) {
                     InlineValueRefreshRequest.method = `workspace/inlineValue/refresh`;
-                    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
                 })(InlineValueRefreshRequest = exports1.InlineValueRefreshRequest || (exports1.InlineValueRefreshRequest = {}));
-            //# sourceMappingURL=protocol.inlineValue.js.map
             /***/ },
-            /***/ 6525: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_574795__)=>{
+            /***/ 6525: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_590918__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10674,24 +10936,24 @@
                 exports1.WorkspaceSymbolRequest = exports1.CodeActionResolveRequest = exports1.CodeActionRequest = exports1.DocumentSymbolRequest = exports1.DocumentHighlightRequest = exports1.ReferencesRequest = exports1.DefinitionRequest = exports1.SignatureHelpRequest = exports1.SignatureHelpTriggerKind = exports1.HoverRequest = exports1.CompletionResolveRequest = exports1.CompletionRequest = exports1.CompletionTriggerKind = exports1.PublishDiagnosticsNotification = exports1.WatchKind = exports1.RelativePattern = exports1.FileChangeType = exports1.DidChangeWatchedFilesNotification = exports1.WillSaveTextDocumentWaitUntilRequest = exports1.WillSaveTextDocumentNotification = exports1.TextDocumentSaveReason = exports1.DidSaveTextDocumentNotification = exports1.DidCloseTextDocumentNotification = exports1.DidChangeTextDocumentNotification = exports1.TextDocumentContentChangeEvent = exports1.DidOpenTextDocumentNotification = exports1.TextDocumentSyncKind = exports1.TelemetryEventNotification = exports1.LogMessageNotification = exports1.ShowMessageRequest = exports1.ShowMessageNotification = exports1.MessageType = exports1.DidChangeConfigurationNotification = exports1.ExitNotification = exports1.ShutdownRequest = exports1.InitializedNotification = exports1.InitializeErrorCodes = exports1.InitializeRequest = exports1.WorkDoneProgressOptions = exports1.TextDocumentRegistrationOptions = exports1.StaticRegistrationOptions = exports1.PositionEncodingKind = exports1.FailureHandlingKind = exports1.ResourceOperationKind = exports1.UnregistrationRequest = exports1.RegistrationRequest = exports1.DocumentSelector = exports1.NotebookCellTextDocumentFilter = exports1.NotebookDocumentFilter = exports1.TextDocumentFilter = void 0;
                 exports1.TypeHierarchySubtypesRequest = exports1.TypeHierarchyPrepareRequest = exports1.MonikerRequest = exports1.MonikerKind = exports1.UniquenessLevel = exports1.WillDeleteFilesRequest = exports1.DidDeleteFilesNotification = exports1.WillRenameFilesRequest = exports1.DidRenameFilesNotification = exports1.WillCreateFilesRequest = exports1.DidCreateFilesNotification = exports1.FileOperationPatternKind = exports1.LinkedEditingRangeRequest = exports1.ShowDocumentRequest = exports1.SemanticTokensRegistrationType = exports1.SemanticTokensRefreshRequest = exports1.SemanticTokensRangeRequest = exports1.SemanticTokensDeltaRequest = exports1.SemanticTokensRequest = exports1.TokenFormat = exports1.CallHierarchyPrepareRequest = exports1.CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyIncomingCallsRequest = exports1.WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCreateRequest = exports1.WorkDoneProgress = exports1.SelectionRangeRequest = exports1.DeclarationRequest = exports1.FoldingRangeRequest = exports1.ColorPresentationRequest = exports1.DocumentColorRequest = exports1.ConfigurationRequest = exports1.DidChangeWorkspaceFoldersNotification = exports1.WorkspaceFoldersRequest = exports1.TypeDefinitionRequest = exports1.ImplementationRequest = exports1.ApplyWorkspaceEditRequest = exports1.ExecuteCommandRequest = exports1.PrepareRenameRequest = exports1.RenameRequest = exports1.PrepareSupportDefaultBehavior = exports1.DocumentOnTypeFormattingRequest = exports1.DocumentRangeFormattingRequest = exports1.DocumentFormattingRequest = exports1.DocumentLinkResolveRequest = exports1.DocumentLinkRequest = exports1.CodeLensRefreshRequest = exports1.CodeLensResolveRequest = exports1.CodeLensRequest = exports1.WorkspaceSymbolResolveRequest = void 0;
                 exports1.DidCloseNotebookDocumentNotification = exports1.DidSaveNotebookDocumentNotification = exports1.DidChangeNotebookDocumentNotification = exports1.NotebookCellArrayChange = exports1.DidOpenNotebookDocumentNotification = exports1.NotebookDocumentSyncRegistrationType = exports1.NotebookDocument = exports1.NotebookCell = exports1.ExecutionSummary = exports1.NotebookCellKind = exports1.DiagnosticRefreshRequest = exports1.WorkspaceDiagnosticRequest = exports1.DocumentDiagnosticRequest = exports1.DocumentDiagnosticReportKind = exports1.DiagnosticServerCancellationData = exports1.InlayHintRefreshRequest = exports1.InlayHintResolveRequest = exports1.InlayHintRequest = exports1.InlineValueRefreshRequest = exports1.InlineValueRequest = exports1.TypeHierarchySupertypesRequest = void 0;
-                const messages_1 = __nested_webpack_require_574795__(8599);
-                const vscode_languageserver_types_1 = __nested_webpack_require_574795__(4767);
-                const Is = __nested_webpack_require_574795__(2523);
-                const protocol_implementation_1 = __nested_webpack_require_574795__(9380);
+                const messages_1 = __nested_webpack_require_590918__(8599);
+                const vscode_languageserver_types_1 = __nested_webpack_require_590918__(4767);
+                const Is = __nested_webpack_require_590918__(2523);
+                const protocol_implementation_1 = __nested_webpack_require_590918__(9380);
                 Object.defineProperty(exports1, "ImplementationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_implementation_1.ImplementationRequest;
                     }
                 });
-                const protocol_typeDefinition_1 = __nested_webpack_require_574795__(8642);
+                const protocol_typeDefinition_1 = __nested_webpack_require_590918__(8642);
                 Object.defineProperty(exports1, "TypeDefinitionRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_typeDefinition_1.TypeDefinitionRequest;
                     }
                 });
-                const protocol_workspaceFolder_1 = __nested_webpack_require_574795__(3402);
+                const protocol_workspaceFolder_1 = __nested_webpack_require_590918__(3402);
                 Object.defineProperty(exports1, "WorkspaceFoldersRequest", {
                     enumerable: true,
                     get: function() {
@@ -10704,14 +10966,14 @@
                         return protocol_workspaceFolder_1.DidChangeWorkspaceFoldersNotification;
                     }
                 });
-                const protocol_configuration_1 = __nested_webpack_require_574795__(5442);
+                const protocol_configuration_1 = __nested_webpack_require_590918__(5442);
                 Object.defineProperty(exports1, "ConfigurationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_configuration_1.ConfigurationRequest;
                     }
                 });
-                const protocol_colorProvider_1 = __nested_webpack_require_574795__(7908);
+                const protocol_colorProvider_1 = __nested_webpack_require_590918__(7908);
                 Object.defineProperty(exports1, "DocumentColorRequest", {
                     enumerable: true,
                     get: function() {
@@ -10724,28 +10986,28 @@
                         return protocol_colorProvider_1.ColorPresentationRequest;
                     }
                 });
-                const protocol_foldingRange_1 = __nested_webpack_require_574795__(7029);
+                const protocol_foldingRange_1 = __nested_webpack_require_590918__(7029);
                 Object.defineProperty(exports1, "FoldingRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_foldingRange_1.FoldingRangeRequest;
                     }
                 });
-                const protocol_declaration_1 = __nested_webpack_require_574795__(7210);
+                const protocol_declaration_1 = __nested_webpack_require_590918__(7210);
                 Object.defineProperty(exports1, "DeclarationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_declaration_1.DeclarationRequest;
                     }
                 });
-                const protocol_selectionRange_1 = __nested_webpack_require_574795__(2392);
+                const protocol_selectionRange_1 = __nested_webpack_require_590918__(2392);
                 Object.defineProperty(exports1, "SelectionRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_selectionRange_1.SelectionRangeRequest;
                     }
                 });
-                const protocol_progress_1 = __nested_webpack_require_574795__(7895);
+                const protocol_progress_1 = __nested_webpack_require_590918__(7895);
                 Object.defineProperty(exports1, "WorkDoneProgress", {
                     enumerable: true,
                     get: function() {
@@ -10764,7 +11026,7 @@
                         return protocol_progress_1.WorkDoneProgressCancelNotification;
                     }
                 });
-                const protocol_callHierarchy_1 = __nested_webpack_require_574795__(4434);
+                const protocol_callHierarchy_1 = __nested_webpack_require_590918__(4434);
                 Object.defineProperty(exports1, "CallHierarchyIncomingCallsRequest", {
                     enumerable: true,
                     get: function() {
@@ -10783,7 +11045,7 @@
                         return protocol_callHierarchy_1.CallHierarchyPrepareRequest;
                     }
                 });
-                const protocol_semanticTokens_1 = __nested_webpack_require_574795__(8489);
+                const protocol_semanticTokens_1 = __nested_webpack_require_590918__(8489);
                 Object.defineProperty(exports1, "TokenFormat", {
                     enumerable: true,
                     get: function() {
@@ -10820,21 +11082,21 @@
                         return protocol_semanticTokens_1.SemanticTokensRegistrationType;
                     }
                 });
-                const protocol_showDocument_1 = __nested_webpack_require_574795__(1541);
+                const protocol_showDocument_1 = __nested_webpack_require_590918__(1541);
                 Object.defineProperty(exports1, "ShowDocumentRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_showDocument_1.ShowDocumentRequest;
                     }
                 });
-                const protocol_linkedEditingRange_1 = __nested_webpack_require_574795__(527);
+                const protocol_linkedEditingRange_1 = __nested_webpack_require_590918__(527);
                 Object.defineProperty(exports1, "LinkedEditingRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_linkedEditingRange_1.LinkedEditingRangeRequest;
                     }
                 });
-                const protocol_fileOperations_1 = __nested_webpack_require_574795__(6190);
+                const protocol_fileOperations_1 = __nested_webpack_require_590918__(6190);
                 Object.defineProperty(exports1, "FileOperationPatternKind", {
                     enumerable: true,
                     get: function() {
@@ -10877,7 +11139,7 @@
                         return protocol_fileOperations_1.WillDeleteFilesRequest;
                     }
                 });
-                const protocol_moniker_1 = __nested_webpack_require_574795__(1964);
+                const protocol_moniker_1 = __nested_webpack_require_590918__(1964);
                 Object.defineProperty(exports1, "UniquenessLevel", {
                     enumerable: true,
                     get: function() {
@@ -10896,7 +11158,7 @@
                         return protocol_moniker_1.MonikerRequest;
                     }
                 });
-                const protocol_typeHierarchy_1 = __nested_webpack_require_574795__(5318);
+                const protocol_typeHierarchy_1 = __nested_webpack_require_590918__(5318);
                 Object.defineProperty(exports1, "TypeHierarchyPrepareRequest", {
                     enumerable: true,
                     get: function() {
@@ -10915,7 +11177,7 @@
                         return protocol_typeHierarchy_1.TypeHierarchySupertypesRequest;
                     }
                 });
-                const protocol_inlineValue_1 = __nested_webpack_require_574795__(7425);
+                const protocol_inlineValue_1 = __nested_webpack_require_590918__(7425);
                 Object.defineProperty(exports1, "InlineValueRequest", {
                     enumerable: true,
                     get: function() {
@@ -10928,7 +11190,7 @@
                         return protocol_inlineValue_1.InlineValueRefreshRequest;
                     }
                 });
-                const protocol_inlayHint_1 = __nested_webpack_require_574795__(6315);
+                const protocol_inlayHint_1 = __nested_webpack_require_590918__(6315);
                 Object.defineProperty(exports1, "InlayHintRequest", {
                     enumerable: true,
                     get: function() {
@@ -10947,7 +11209,7 @@
                         return protocol_inlayHint_1.InlayHintRefreshRequest;
                     }
                 });
-                const protocol_diagnostic_1 = __nested_webpack_require_574795__(5692);
+                const protocol_diagnostic_1 = __nested_webpack_require_590918__(5692);
                 Object.defineProperty(exports1, "DiagnosticServerCancellationData", {
                     enumerable: true,
                     get: function() {
@@ -10978,7 +11240,7 @@
                         return protocol_diagnostic_1.DiagnosticRefreshRequest;
                     }
                 });
-                const protocol_notebook_1 = __nested_webpack_require_574795__(4460);
+                const protocol_notebook_1 = __nested_webpack_require_590918__(4460);
                 Object.defineProperty(exports1, "NotebookCellKind", {
                     enumerable: true,
                     get: function() {
@@ -11043,7 +11305,7 @@
                 let __noDynamicImport;
                 /**
  * The TextDocumentFilter namespace provides helper functions to work with
- * [TextDocumentFilter](#TextDocumentFilter) literals.
+ * {@link TextDocumentFilter} literals.
  *
  * @since 3.17.0
  */ var TextDocumentFilter;
@@ -11056,7 +11318,7 @@
                 })(TextDocumentFilter = exports1.TextDocumentFilter || (exports1.TextDocumentFilter = {}));
                 /**
  * The NotebookDocumentFilter namespace provides helper functions to work with
- * [NotebookDocumentFilter](#NotebookDocumentFilter) literals.
+ * {@link NotebookDocumentFilter} literals.
  *
  * @since 3.17.0
  */ var NotebookDocumentFilter;
@@ -11069,7 +11331,7 @@
                 })(NotebookDocumentFilter = exports1.NotebookDocumentFilter || (exports1.NotebookDocumentFilter = {}));
                 /**
  * The NotebookCellTextDocumentFilter namespace provides helper functions to work with
- * [NotebookCellTextDocumentFilter](#NotebookCellTextDocumentFilter) literals.
+ * {@link NotebookCellTextDocumentFilter} literals.
  *
  * @since 3.17.0
  */ var NotebookCellTextDocumentFilter;
@@ -11082,7 +11344,7 @@
                 })(NotebookCellTextDocumentFilter = exports1.NotebookCellTextDocumentFilter || (exports1.NotebookCellTextDocumentFilter = {}));
                 /**
  * The DocumentSelector namespace provides helper functions to work with
- * [DocumentSelector](#DocumentSelector)s.
+ * {@link DocumentSelector}s.
  */ var DocumentSelector;
                 (function(DocumentSelector) {
                     function is(value) {
@@ -11155,7 +11417,7 @@
  */ var PositionEncodingKind;
                 (function(PositionEncodingKind) {
                     /**
-     * Character offsets count UTF-8 code units.
+     * Character offsets count UTF-8 code units (e.g. bytes).
      */ PositionEncodingKind.UTF8 = 'utf-8';
                     /**
      * Character offsets count UTF-16 code units.
@@ -11166,14 +11428,14 @@
                     /**
      * Character offsets count UTF-32 code units.
      *
-     * Implementation note: these are the same as Unicode code points,
+     * Implementation note: these are the same as Unicode codepoints,
      * so this `PositionEncodingKind` may also be used for an
      * encoding-agnostic representation of character offsets.
      */ PositionEncodingKind.UTF32 = 'utf-32';
                 })(PositionEncodingKind = exports1.PositionEncodingKind || (exports1.PositionEncodingKind = {}));
                 /**
  * The StaticRegistrationOptions namespace provides helper functions to work with
- * [StaticRegistrationOptions](#StaticRegistrationOptions) literals.
+ * {@link StaticRegistrationOptions} literals.
  */ var StaticRegistrationOptions;
                 (function(StaticRegistrationOptions) {
                     function hasId(value) {
@@ -11184,7 +11446,7 @@
                 })(StaticRegistrationOptions = exports1.StaticRegistrationOptions || (exports1.StaticRegistrationOptions = {}));
                 /**
  * The TextDocumentRegistrationOptions namespace provides helper functions to work with
- * [TextDocumentRegistrationOptions](#TextDocumentRegistrationOptions) literals.
+ * {@link TextDocumentRegistrationOptions} literals.
  */ var TextDocumentRegistrationOptions;
                 (function(TextDocumentRegistrationOptions) {
                     function is(value) {
@@ -11195,7 +11457,7 @@
                 })(TextDocumentRegistrationOptions = exports1.TextDocumentRegistrationOptions || (exports1.TextDocumentRegistrationOptions = {}));
                 /**
  * The WorkDoneProgressOptions namespace provides helper functions to work with
- * [WorkDoneProgressOptions](#WorkDoneProgressOptions) literals.
+ * {@link WorkDoneProgressOptions} literals.
  */ var WorkDoneProgressOptions;
                 (function(WorkDoneProgressOptions) {
                     function is(value) {
@@ -11212,8 +11474,8 @@
                 /**
  * The initialize request is sent from the client to the server.
  * It is sent once as the request after starting up the server.
- * The requests parameter is of type [InitializeParams](#InitializeParams)
- * the response if of type [InitializeResult](#InitializeResult) of a Thenable that
+ * The requests parameter is of type {@link InitializeParams}
+ * the response if of type {@link InitializeResult} of a Thenable that
  * resolves to such.
  */ var InitializeRequest;
                 (function(InitializeRequest) {
@@ -11518,12 +11780,12 @@
                 })(CompletionTriggerKind = exports1.CompletionTriggerKind || (exports1.CompletionTriggerKind = {}));
                 /**
  * Request to request completion at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response
- * is of type [CompletionItem[]](#CompletionItem) or [CompletionList](#CompletionList)
+ * parameter is of type {@link TextDocumentPosition} the response
+ * is of type {@link CompletionItem CompletionItem[]} or {@link CompletionList}
  * or a Thenable that resolves to such.
  *
- * The request can delay the computation of the [`detail`](#CompletionItem.detail)
- * and [`documentation`](#CompletionItem.documentation) properties to the `completionItem/resolve`
+ * The request can delay the computation of the {@link CompletionItem.detail `detail`}
+ * and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
  * request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
  * `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
  */ var CompletionRequest;
@@ -11534,8 +11796,8 @@
                 })(CompletionRequest = exports1.CompletionRequest || (exports1.CompletionRequest = {}));
                 /**
  * Request to resolve additional information for a given completion item.The request's
- * parameter is of type [CompletionItem](#CompletionItem) the response
- * is of type [CompletionItem](#CompletionItem) or a Thenable that resolves to such.
+ * parameter is of type {@link CompletionItem} the response
+ * is of type {@link CompletionItem} or a Thenable that resolves to such.
  */ var CompletionResolveRequest;
                 (function(CompletionResolveRequest) {
                     CompletionResolveRequest.method = 'completionItem/resolve';
@@ -11544,8 +11806,8 @@
                 })(CompletionResolveRequest = exports1.CompletionResolveRequest || (exports1.CompletionResolveRequest = {}));
                 /**
  * Request to request hover information at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response is of
- * type [Hover](#Hover) or a Thenable that resolves to such.
+ * parameter is of type {@link TextDocumentPosition} the response is of
+ * type {@link Hover} or a Thenable that resolves to such.
  */ var HoverRequest;
                 (function(HoverRequest) {
                     HoverRequest.method = 'textDocument/hover';
@@ -11577,8 +11839,8 @@
                 /**
  * A request to resolve the definition location of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPosition]
- * (#TextDocumentPosition) the response is of either type [Definition](#Definition)
- * or a typed array of [DefinitionLink](#DefinitionLink) or a Thenable that resolves
+ * (#TextDocumentPosition) the response is of either type {@link Definition}
+ * or a typed array of {@link DefinitionLink} or a Thenable that resolves
  * to such.
  */ var DefinitionRequest;
                 (function(DefinitionRequest) {
@@ -11589,8 +11851,8 @@
                 /**
  * A request to resolve project-wide references for the symbol denoted
  * by the given text document position. The request's parameter is of
- * type [ReferenceParams](#ReferenceParams) the response is of type
- * [Location[]](#Location) or a Thenable that resolves to such.
+ * type {@link ReferenceParams} the response is of type
+ * {@link Location Location[]} or a Thenable that resolves to such.
  */ var ReferencesRequest;
                 (function(ReferencesRequest) {
                     ReferencesRequest.method = 'textDocument/references';
@@ -11598,7 +11860,7 @@
                     ReferencesRequest.type = new messages_1.ProtocolRequestType(ReferencesRequest.method);
                 })(ReferencesRequest = exports1.ReferencesRequest || (exports1.ReferencesRequest = {}));
                 /**
- * Request to resolve a [DocumentHighlight](#DocumentHighlight) for a given
+ * Request to resolve a {@link DocumentHighlight} for a given
  * text document position. The request's parameter is of type [TextDocumentPosition]
  * (#TextDocumentPosition) the request response is of type [DocumentHighlight[]]
  * (#DocumentHighlight) or a Thenable that resolves to such.
@@ -11610,8 +11872,8 @@
                 })(DocumentHighlightRequest = exports1.DocumentHighlightRequest || (exports1.DocumentHighlightRequest = {}));
                 /**
  * A request to list all symbols found in a given text document. The request's
- * parameter is of type [TextDocumentIdentifier](#TextDocumentIdentifier) the
- * response is of type [SymbolInformation[]](#SymbolInformation) or a Thenable
+ * parameter is of type {@link TextDocumentIdentifier} the
+ * response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
  * that resolves to such.
  */ var DocumentSymbolRequest;
                 (function(DocumentSymbolRequest) {
@@ -11629,8 +11891,8 @@
                 })(CodeActionRequest = exports1.CodeActionRequest || (exports1.CodeActionRequest = {}));
                 /**
  * Request to resolve additional information for a given code action.The request's
- * parameter is of type [CodeAction](#CodeAction) the response
- * is of type [CodeAction](#CodeAction) or a Thenable that resolves to such.
+ * parameter is of type {@link CodeAction} the response
+ * is of type {@link CodeAction} or a Thenable that resolves to such.
  */ var CodeActionResolveRequest;
                 (function(CodeActionResolveRequest) {
                     CodeActionResolveRequest.method = 'codeAction/resolve';
@@ -11639,8 +11901,8 @@
                 })(CodeActionResolveRequest = exports1.CodeActionResolveRequest || (exports1.CodeActionResolveRequest = {}));
                 /**
  * A request to list project-wide symbols matching the query string given
- * by the [WorkspaceSymbolParams](#WorkspaceSymbolParams). The response is
- * of type [SymbolInformation[]](#SymbolInformation) or a Thenable that
+ * by the {@link WorkspaceSymbolParams}. The response is
+ * of type {@link SymbolInformation SymbolInformation[]} or a Thenable that
  * resolves to such.
  *
  * @since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
@@ -11700,8 +11962,8 @@
                 })(DocumentLinkRequest = exports1.DocumentLinkRequest || (exports1.DocumentLinkRequest = {}));
                 /**
  * Request to resolve additional information for a given document link. The request's
- * parameter is of type [DocumentLink](#DocumentLink) the response
- * is of type [DocumentLink](#DocumentLink) or a Thenable that resolves to such.
+ * parameter is of type {@link DocumentLink} the response
+ * is of type {@link DocumentLink} or a Thenable that resolves to such.
  */ var DocumentLinkResolveRequest;
                 (function(DocumentLinkResolveRequest) {
                     DocumentLinkResolveRequest.method = 'documentLink/resolve';
@@ -11775,9 +12037,8 @@
                     ApplyWorkspaceEditRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType('workspace/applyEdit');
                 })(ApplyWorkspaceEditRequest = exports1.ApplyWorkspaceEditRequest || (exports1.ApplyWorkspaceEditRequest = {}));
-            //# sourceMappingURL=protocol.js.map
             /***/ },
-            /***/ 527: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_644274__)=>{
+            /***/ 527: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_660032__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11786,7 +12047,7 @@
                     value: true
                 });
                 exports1.LinkedEditingRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_644274__(8599);
+                const messages_1 = __nested_webpack_require_660032__(8599);
                 /**
  * A request to provide ranges that can be edited together.
  *
@@ -11797,9 +12058,8 @@
                     LinkedEditingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
                 })(LinkedEditingRangeRequest = exports1.LinkedEditingRangeRequest || (exports1.LinkedEditingRangeRequest = {}));
-            //# sourceMappingURL=protocol.linkedEditingRange.js.map
             /***/ },
-            /***/ 1964: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_645715__)=>{
+            /***/ 1964: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_661405__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11808,7 +12068,7 @@
                     value: true
                 });
                 exports1.MonikerRequest = exports1.MonikerKind = exports1.UniquenessLevel = void 0;
-                const messages_1 = __nested_webpack_require_645715__(8599);
+                const messages_1 = __nested_webpack_require_661405__(8599);
                 /**
  * Moniker uniqueness level to define scope of the moniker.
  *
@@ -11850,17 +12110,16 @@
                 })(MonikerKind = exports1.MonikerKind || (exports1.MonikerKind = {}));
                 /**
  * A request to get the moniker of a symbol at a given text document position.
- * The request parameter is of type [TextDocumentPositionParams](#TextDocumentPositionParams).
- * The response is of type [Moniker[]](#Moniker[]) or `null`.
+ * The request parameter is of type {@link TextDocumentPositionParams}.
+ * The response is of type {@link Moniker Moniker[]} or `null`.
  */ var MonikerRequest;
                 (function(MonikerRequest) {
                     MonikerRequest.method = 'textDocument/moniker';
                     MonikerRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
                 })(MonikerRequest = exports1.MonikerRequest || (exports1.MonikerRequest = {}));
-            //# sourceMappingURL=protocol.moniker.js.map
             /***/ },
-            /***/ 4460: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_648827__)=>{
+            /***/ 4460: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_664439__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11869,9 +12128,9 @@
                     value: true
                 });
                 exports1.DidCloseNotebookDocumentNotification = exports1.DidSaveNotebookDocumentNotification = exports1.DidChangeNotebookDocumentNotification = exports1.NotebookCellArrayChange = exports1.DidOpenNotebookDocumentNotification = exports1.NotebookDocumentSyncRegistrationType = exports1.NotebookDocument = exports1.NotebookCell = exports1.ExecutionSummary = exports1.NotebookCellKind = void 0;
-                const vscode_languageserver_types_1 = __nested_webpack_require_648827__(4767);
-                const Is = __nested_webpack_require_648827__(2523);
-                const messages_1 = __nested_webpack_require_648827__(8599);
+                const vscode_languageserver_types_1 = __nested_webpack_require_664439__(4767);
+                const Is = __nested_webpack_require_664439__(2523);
+                const messages_1 = __nested_webpack_require_664439__(8599);
                 /**
  * A notebook cell kind.
  *
@@ -12082,9 +12341,8 @@
                     DidCloseNotebookDocumentNotification.type = new messages_1.ProtocolNotificationType(DidCloseNotebookDocumentNotification.method);
                     DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
                 })(DidCloseNotebookDocumentNotification = exports1.DidCloseNotebookDocumentNotification || (exports1.DidCloseNotebookDocumentNotification = {}));
-            //# sourceMappingURL=protocol.notebook.js.map
             /***/ },
-            /***/ 7895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_662462__)=>{
+            /***/ 7895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_678016__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12093,8 +12351,8 @@
                     value: true
                 });
                 exports1.WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCreateRequest = exports1.WorkDoneProgress = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_662462__(5953);
-                const messages_1 = __nested_webpack_require_662462__(8599);
+                const vscode_jsonrpc_1 = __nested_webpack_require_678016__(5953);
+                const messages_1 = __nested_webpack_require_678016__(8599);
                 var WorkDoneProgress;
                 (function(WorkDoneProgress) {
                     WorkDoneProgress.type = new vscode_jsonrpc_1.ProgressType();
@@ -12121,9 +12379,8 @@
                     WorkDoneProgressCancelNotification.messageDirection = messages_1.MessageDirection.clientToServer;
                     WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
                 })(WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCancelNotification || (exports1.WorkDoneProgressCancelNotification = {}));
-            //# sourceMappingURL=protocol.progress.js.map
             /***/ },
-            /***/ 2392: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_665361__)=>{
+            /***/ 2392: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_680857__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12132,11 +12389,11 @@
                     value: true
                 });
                 exports1.SelectionRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_665361__(8599);
+                const messages_1 = __nested_webpack_require_680857__(8599);
                 /**
  * A request to provide selection ranges in a document. The request's
- * parameter is of type [SelectionRangeParams](#SelectionRangeParams), the
- * response is of type [SelectionRange[]](#SelectionRange[]) or a Thenable
+ * parameter is of type {@link SelectionRangeParams}, the
+ * response is of type {@link SelectionRange SelectionRange[]} or a Thenable
  * that resolves to such.
  */ var SelectionRangeRequest;
                 (function(SelectionRangeRequest) {
@@ -12144,9 +12401,8 @@
                     SelectionRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
                 })(SelectionRangeRequest = exports1.SelectionRangeRequest || (exports1.SelectionRangeRequest = {}));
-            //# sourceMappingURL=protocol.selectionRange.js.map
             /***/ },
-            /***/ 8489: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_666920__)=>{
+            /***/ 8489: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_682337__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12155,7 +12411,7 @@
                     value: true
                 });
                 exports1.SemanticTokensRefreshRequest = exports1.SemanticTokensRangeRequest = exports1.SemanticTokensDeltaRequest = exports1.SemanticTokensRequest = exports1.SemanticTokensRegistrationType = exports1.TokenFormat = void 0;
-                const messages_1 = __nested_webpack_require_666920__(8599);
+                const messages_1 = __nested_webpack_require_682337__(8599);
                 //------- 'textDocument/semanticTokens' -----
                 var TokenFormat;
                 (function(TokenFormat) {
@@ -12198,12 +12454,11 @@
  */ var SemanticTokensRefreshRequest;
                 (function(SemanticTokensRefreshRequest) {
                     SemanticTokensRefreshRequest.method = `workspace/semanticTokens/refresh`;
-                    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+                    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
                 })(SemanticTokensRefreshRequest = exports1.SemanticTokensRefreshRequest || (exports1.SemanticTokensRefreshRequest = {}));
-            //# sourceMappingURL=protocol.semanticTokens.js.map
             /***/ },
-            /***/ 1541: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_671295__)=>{
+            /***/ 1541: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_686648__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12212,7 +12467,7 @@
                     value: true
                 });
                 exports1.ShowDocumentRequest = void 0;
-                const messages_1 = __nested_webpack_require_671295__(8599);
+                const messages_1 = __nested_webpack_require_686648__(8599);
                 /**
  * A request to show a document. This request might open an
  * external program depending on the value of the URI to open.
@@ -12226,9 +12481,8 @@
                     ShowDocumentRequest.messageDirection = messages_1.MessageDirection.serverToClient;
                     ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
                 })(ShowDocumentRequest = exports1.ShowDocumentRequest || (exports1.ShowDocumentRequest = {}));
-            //# sourceMappingURL=protocol.showDocument.js.map
             /***/ },
-            /***/ 8642: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_672835__)=>{
+            /***/ 8642: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_688126__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12237,13 +12491,13 @@
                     value: true
                 });
                 exports1.TypeDefinitionRequest = void 0;
-                const messages_1 = __nested_webpack_require_672835__(8599);
+                const messages_1 = __nested_webpack_require_688126__(8599);
                 // @ts-ignore: to avoid inlining LocatioLink as dynamic import
                 let __noDynamicImport;
                 /**
  * A request to resolve the type definition locations of a symbol at a given text
- * document position. The request's parameter is of type [TextDocumentPositioParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * document position. The request's parameter is of type [TextDocumentPositionParams]
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */ var TypeDefinitionRequest;
                 (function(TypeDefinitionRequest) {
@@ -12251,9 +12505,8 @@
                     TypeDefinitionRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
                 })(TypeDefinitionRequest = exports1.TypeDefinitionRequest || (exports1.TypeDefinitionRequest = {}));
-            //# sourceMappingURL=protocol.typeDefinition.js.map
             /***/ },
-            /***/ 5318: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_674554__)=>{
+            /***/ 5318: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_689775__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) TypeFox, Microsoft and others. All rights reserved.
@@ -12262,7 +12515,7 @@
                     value: true
                 });
                 exports1.TypeHierarchySubtypesRequest = exports1.TypeHierarchySupertypesRequest = exports1.TypeHierarchyPrepareRequest = void 0;
-                const messages_1 = __nested_webpack_require_674554__(8599);
+                const messages_1 = __nested_webpack_require_689775__(8599);
                 /**
  * A request to result a `TypeHierarchyItem` in a document at a given position.
  * Can be used as an input to a subtypes or supertypes type hierarchy.
@@ -12294,9 +12547,8 @@
                     TypeHierarchySubtypesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
                     TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
                 })(TypeHierarchySubtypesRequest = exports1.TypeHierarchySubtypesRequest || (exports1.TypeHierarchySubtypesRequest = {}));
-            //# sourceMappingURL=protocol.typeHierarchy.js.map
             /***/ },
-            /***/ 3402: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_677551__)=>{
+            /***/ 3402: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_692709__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12305,7 +12557,7 @@
                     value: true
                 });
                 exports1.DidChangeWorkspaceFoldersNotification = exports1.WorkspaceFoldersRequest = void 0;
-                const messages_1 = __nested_webpack_require_677551__(8599);
+                const messages_1 = __nested_webpack_require_692709__(8599);
                 /**
  * The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
  */ var WorkspaceFoldersRequest;
@@ -12323,7 +12575,6 @@
                     DidChangeWorkspaceFoldersNotification.messageDirection = messages_1.MessageDirection.clientToServer;
                     DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
                 })(DidChangeWorkspaceFoldersNotification = exports1.DidChangeWorkspaceFoldersNotification || (exports1.DidChangeWorkspaceFoldersNotification = {}));
-            //# sourceMappingURL=protocol.workspaceFolder.js.map
             /***/ },
             /***/ 2523: /***/ (__unused_webpack_module, exports1)=>{
                 "use strict";
@@ -12373,87 +12624,374 @@
                     return value !== null && typeof value === 'object';
                 }
                 exports1.objectLiteral = objectLiteral;
-            //# sourceMappingURL=is.js.map
             /***/ },
-            /***/ 4767: /***/ (__unused_webpack_module, __webpack_exports__, __nested_webpack_require_682554__)=>{
+            /***/ 4881: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_697604__)=>{
                 "use strict";
-                __nested_webpack_require_682554__.r(__webpack_exports__);
-                /* harmony export */ __nested_webpack_require_682554__.d(__webpack_exports__, {
-                    /* harmony export */ "AnnotatedTextEdit": ()=>/* binding */ AnnotatedTextEdit,
-                    /* harmony export */ "ChangeAnnotation": ()=>/* binding */ ChangeAnnotation,
-                    /* harmony export */ "ChangeAnnotationIdentifier": ()=>/* binding */ ChangeAnnotationIdentifier,
-                    /* harmony export */ "CodeAction": ()=>/* binding */ CodeAction,
-                    /* harmony export */ "CodeActionContext": ()=>/* binding */ CodeActionContext,
-                    /* harmony export */ "CodeActionKind": ()=>/* binding */ CodeActionKind,
-                    /* harmony export */ "CodeActionTriggerKind": ()=>/* binding */ CodeActionTriggerKind,
-                    /* harmony export */ "CodeDescription": ()=>/* binding */ CodeDescription,
-                    /* harmony export */ "CodeLens": ()=>/* binding */ CodeLens,
-                    /* harmony export */ "Color": ()=>/* binding */ Color,
-                    /* harmony export */ "ColorInformation": ()=>/* binding */ ColorInformation,
-                    /* harmony export */ "ColorPresentation": ()=>/* binding */ ColorPresentation,
-                    /* harmony export */ "Command": ()=>/* binding */ Command,
-                    /* harmony export */ "CompletionItem": ()=>/* binding */ CompletionItem,
-                    /* harmony export */ "CompletionItemKind": ()=>/* binding */ CompletionItemKind1,
-                    /* harmony export */ "CompletionItemLabelDetails": ()=>/* binding */ CompletionItemLabelDetails,
-                    /* harmony export */ "CompletionItemTag": ()=>/* binding */ CompletionItemTag,
-                    /* harmony export */ "CompletionList": ()=>/* binding */ CompletionList,
-                    /* harmony export */ "CreateFile": ()=>/* binding */ CreateFile,
-                    /* harmony export */ "DeleteFile": ()=>/* binding */ DeleteFile,
-                    /* harmony export */ "Diagnostic": ()=>/* binding */ Diagnostic,
-                    /* harmony export */ "DiagnosticRelatedInformation": ()=>/* binding */ DiagnosticRelatedInformation,
-                    /* harmony export */ "DiagnosticSeverity": ()=>/* binding */ DiagnosticSeverity,
-                    /* harmony export */ "DiagnosticTag": ()=>/* binding */ DiagnosticTag,
-                    /* harmony export */ "DocumentHighlight": ()=>/* binding */ DocumentHighlight,
-                    /* harmony export */ "DocumentHighlightKind": ()=>/* binding */ DocumentHighlightKind,
-                    /* harmony export */ "DocumentLink": ()=>/* binding */ DocumentLink,
-                    /* harmony export */ "DocumentSymbol": ()=>/* binding */ DocumentSymbol,
-                    /* harmony export */ "DocumentUri": ()=>/* binding */ DocumentUri,
-                    /* harmony export */ "EOL": ()=>/* binding */ EOL,
-                    /* harmony export */ "FoldingRange": ()=>/* binding */ FoldingRange,
-                    /* harmony export */ "FoldingRangeKind": ()=>/* binding */ FoldingRangeKind,
-                    /* harmony export */ "FormattingOptions": ()=>/* binding */ FormattingOptions,
-                    /* harmony export */ "Hover": ()=>/* binding */ Hover,
-                    /* harmony export */ "InlayHint": ()=>/* binding */ InlayHint,
-                    /* harmony export */ "InlayHintKind": ()=>/* binding */ InlayHintKind,
-                    /* harmony export */ "InlayHintLabelPart": ()=>/* binding */ InlayHintLabelPart,
-                    /* harmony export */ "InlineValueContext": ()=>/* binding */ InlineValueContext,
-                    /* harmony export */ "InlineValueEvaluatableExpression": ()=>/* binding */ InlineValueEvaluatableExpression,
-                    /* harmony export */ "InlineValueText": ()=>/* binding */ InlineValueText,
-                    /* harmony export */ "InlineValueVariableLookup": ()=>/* binding */ InlineValueVariableLookup,
-                    /* harmony export */ "InsertReplaceEdit": ()=>/* binding */ InsertReplaceEdit,
-                    /* harmony export */ "InsertTextFormat": ()=>/* binding */ InsertTextFormat1,
-                    /* harmony export */ "InsertTextMode": ()=>/* binding */ InsertTextMode,
-                    /* harmony export */ "Location": ()=>/* binding */ Location,
-                    /* harmony export */ "LocationLink": ()=>/* binding */ LocationLink,
-                    /* harmony export */ "MarkedString": ()=>/* binding */ MarkedString1,
-                    /* harmony export */ "MarkupContent": ()=>/* binding */ MarkupContent1,
-                    /* harmony export */ "MarkupKind": ()=>/* binding */ MarkupKind,
-                    /* harmony export */ "OptionalVersionedTextDocumentIdentifier": ()=>/* binding */ OptionalVersionedTextDocumentIdentifier,
-                    /* harmony export */ "ParameterInformation": ()=>/* binding */ ParameterInformation,
-                    /* harmony export */ "Position": ()=>/* binding */ Position,
-                    /* harmony export */ "Range": ()=>/* binding */ Range,
-                    /* harmony export */ "RenameFile": ()=>/* binding */ RenameFile,
-                    /* harmony export */ "SelectionRange": ()=>/* binding */ SelectionRange,
-                    /* harmony export */ "SemanticTokenModifiers": ()=>/* binding */ SemanticTokenModifiers,
-                    /* harmony export */ "SemanticTokenTypes": ()=>/* binding */ SemanticTokenTypes,
-                    /* harmony export */ "SemanticTokens": ()=>/* binding */ SemanticTokens,
-                    /* harmony export */ "SignatureInformation": ()=>/* binding */ SignatureInformation,
-                    /* harmony export */ "SymbolInformation": ()=>/* binding */ SymbolInformation,
-                    /* harmony export */ "SymbolKind": ()=>/* binding */ SymbolKind,
-                    /* harmony export */ "SymbolTag": ()=>/* binding */ SymbolTag,
-                    /* harmony export */ "TextDocument": ()=>/* binding */ TextDocument,
-                    /* harmony export */ "TextDocumentEdit": ()=>/* binding */ TextDocumentEdit,
-                    /* harmony export */ "TextDocumentIdentifier": ()=>/* binding */ TextDocumentIdentifier,
-                    /* harmony export */ "TextDocumentItem": ()=>/* binding */ TextDocumentItem,
-                    /* harmony export */ "TextEdit": ()=>/* binding */ TextEdit,
-                    /* harmony export */ "URI": ()=>/* binding */ URI,
-                    /* harmony export */ "VersionedTextDocumentIdentifier": ()=>/* binding */ VersionedTextDocumentIdentifier,
-                    /* harmony export */ "WorkspaceChange": ()=>/* binding */ WorkspaceChange,
-                    /* harmony export */ "WorkspaceEdit": ()=>/* binding */ WorkspaceEdit,
-                    /* harmony export */ "WorkspaceFolder": ()=>/* binding */ WorkspaceFolder,
-                    /* harmony export */ "WorkspaceSymbol": ()=>/* binding */ WorkspaceSymbol,
-                    /* harmony export */ "integer": ()=>/* binding */ integer,
-                    /* harmony export */ "uinteger": ()=>/* binding */ uinteger
+                /* harmony export */ __nested_webpack_require_697604__.d(__nested_webpack_exports__, {
+                    /* harmony export */ n: ()=>/* binding */ TextDocument
+                });
+                /* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */ var __spreadArray =  false || function(to, from, pack) {
+                    if (pack || arguments.length === 2) for(var i = 0, l = from.length, ar; i < l; i++){
+                        if (ar || !(i in from)) {
+                            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+                            ar[i] = from[i];
+                        }
+                    }
+                    return to.concat(ar || Array.prototype.slice.call(from));
+                };
+                var FullTextDocument = /** @class */ function() {
+                    function FullTextDocument(uri, languageId, version, content) {
+                        this._uri = uri;
+                        this._languageId = languageId;
+                        this._version = version;
+                        this._content = content;
+                        this._lineOffsets = undefined;
+                    }
+                    Object.defineProperty(FullTextDocument.prototype, "uri", {
+                        get: function() {
+                            return this._uri;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    Object.defineProperty(FullTextDocument.prototype, "languageId", {
+                        get: function() {
+                            return this._languageId;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    Object.defineProperty(FullTextDocument.prototype, "version", {
+                        get: function() {
+                            return this._version;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    FullTextDocument.prototype.getText = function(range) {
+                        if (range) {
+                            var start = this.offsetAt(range.start);
+                            var end = this.offsetAt(range.end);
+                            return this._content.substring(start, end);
+                        }
+                        return this._content;
+                    };
+                    FullTextDocument.prototype.update = function(changes, version) {
+                        for(var _i = 0, changes_1 = changes; _i < changes_1.length; _i++){
+                            var change = changes_1[_i];
+                            if (FullTextDocument.isIncremental(change)) {
+                                // makes sure start is before end
+                                var range = getWellformedRange(change.range);
+                                // update content
+                                var startOffset = this.offsetAt(range.start);
+                                var endOffset = this.offsetAt(range.end);
+                                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+                                // update the offsets
+                                var startLine = Math.max(range.start.line, 0);
+                                var endLine = Math.max(range.end.line, 0);
+                                var lineOffsets = this._lineOffsets;
+                                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
+                                if (endLine - startLine === addedLineOffsets.length) {
+                                    for(var i = 0, len = addedLineOffsets.length; i < len; i++){
+                                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
+                                    }
+                                } else {
+                                    if (addedLineOffsets.length < 10000) {
+                                        lineOffsets.splice.apply(lineOffsets, __spreadArray([
+                                            startLine + 1,
+                                            endLine - startLine
+                                        ], addedLineOffsets, false));
+                                    } else {
+                                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
+                                    }
+                                }
+                                var diff = change.text.length - (endOffset - startOffset);
+                                if (diff !== 0) {
+                                    for(var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++){
+                                        lineOffsets[i] = lineOffsets[i] + diff;
+                                    }
+                                }
+                            } else if (FullTextDocument.isFull(change)) {
+                                this._content = change.text;
+                                this._lineOffsets = undefined;
+                            } else {
+                                throw new Error('Unknown change event received');
+                            }
+                        }
+                        this._version = version;
+                    };
+                    FullTextDocument.prototype.getLineOffsets = function() {
+                        if (this._lineOffsets === undefined) {
+                            this._lineOffsets = computeLineOffsets(this._content, true);
+                        }
+                        return this._lineOffsets;
+                    };
+                    FullTextDocument.prototype.positionAt = function(offset) {
+                        offset = Math.max(Math.min(offset, this._content.length), 0);
+                        var lineOffsets = this.getLineOffsets();
+                        var low = 0, high = lineOffsets.length;
+                        if (high === 0) {
+                            return {
+                                line: 0,
+                                character: offset
+                            };
+                        }
+                        while(low < high){
+                            var mid = Math.floor((low + high) / 2);
+                            if (lineOffsets[mid] > offset) {
+                                high = mid;
+                            } else {
+                                low = mid + 1;
+                            }
+                        }
+                        // low is the least x for which the line offset is larger than the current offset
+                        // or array.length if no line offset is larger than the current offset
+                        var line = low - 1;
+                        return {
+                            line: line,
+                            character: offset - lineOffsets[line]
+                        };
+                    };
+                    FullTextDocument.prototype.offsetAt = function(position) {
+                        var lineOffsets = this.getLineOffsets();
+                        if (position.line >= lineOffsets.length) {
+                            return this._content.length;
+                        } else if (position.line < 0) {
+                            return 0;
+                        }
+                        var lineOffset = lineOffsets[position.line];
+                        var nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
+                        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
+                    };
+                    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
+                        get: function() {
+                            return this.getLineOffsets().length;
+                        },
+                        enumerable: false,
+                        configurable: true
+                    });
+                    FullTextDocument.isIncremental = function(event) {
+                        var candidate = event;
+                        return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range !== undefined && (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
+                    };
+                    FullTextDocument.isFull = function(event) {
+                        var candidate = event;
+                        return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
+                    };
+                    return FullTextDocument;
+                }();
+                var TextDocument;
+                (function(TextDocument) {
+                    /**
+     * Creates a new text document.
+     *
+     * @param uri The document's uri.
+     * @param languageId  The document's language Id.
+     * @param version The document's initial version number.
+     * @param content The document's content.
+     */ function create(uri, languageId, version, content) {
+                        return new FullTextDocument(uri, languageId, version, content);
+                    }
+                    TextDocument.create = create;
+                    /**
+     * Updates a TextDocument by modifying its content.
+     *
+     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
+     * @param changes the changes to apply to the document.
+     * @param version the changes version for the document.
+     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
+     *
+     */ function update(document1, changes, version) {
+                        if (document1 instanceof FullTextDocument) {
+                            document1.update(changes, version);
+                            return document1;
+                        } else {
+                            throw new Error('TextDocument.update: document must be created by TextDocument.create');
+                        }
+                    }
+                    TextDocument.update = update;
+                    function applyEdits(document1, edits) {
+                        var text = document1.getText();
+                        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function(a, b) {
+                            var diff = a.range.start.line - b.range.start.line;
+                            if (diff === 0) {
+                                return a.range.start.character - b.range.start.character;
+                            }
+                            return diff;
+                        });
+                        var lastModifiedOffset = 0;
+                        var spans = [];
+                        for(var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++){
+                            var e = sortedEdits_1[_i];
+                            var startOffset = document1.offsetAt(e.range.start);
+                            if (startOffset < lastModifiedOffset) {
+                                throw new Error('Overlapping edit');
+                            } else if (startOffset > lastModifiedOffset) {
+                                spans.push(text.substring(lastModifiedOffset, startOffset));
+                            }
+                            if (e.newText.length) {
+                                spans.push(e.newText);
+                            }
+                            lastModifiedOffset = document1.offsetAt(e.range.end);
+                        }
+                        spans.push(text.substr(lastModifiedOffset));
+                        return spans.join('');
+                    }
+                    TextDocument.applyEdits = applyEdits;
+                })(TextDocument || (TextDocument = {}));
+                function mergeSort(data, compare) {
+                    if (data.length <= 1) {
+                        // sorted
+                        return data;
+                    }
+                    var p = data.length / 2 | 0;
+                    var left = data.slice(0, p);
+                    var right = data.slice(p);
+                    mergeSort(left, compare);
+                    mergeSort(right, compare);
+                    var leftIdx = 0;
+                    var rightIdx = 0;
+                    var i = 0;
+                    while(leftIdx < left.length && rightIdx < right.length){
+                        var ret = compare(left[leftIdx], right[rightIdx]);
+                        if (ret <= 0) {
+                            // smaller_equal -> take left to preserve order
+                            data[i++] = left[leftIdx++];
+                        } else {
+                            // greater -> take right
+                            data[i++] = right[rightIdx++];
+                        }
+                    }
+                    while(leftIdx < left.length){
+                        data[i++] = left[leftIdx++];
+                    }
+                    while(rightIdx < right.length){
+                        data[i++] = right[rightIdx++];
+                    }
+                    return data;
+                }
+                function computeLineOffsets(text, isAtLineStart, textOffset) {
+                    if (textOffset === void 0) {
+                        textOffset = 0;
+                    }
+                    var result = isAtLineStart ? [
+                        textOffset
+                    ] : [];
+                    for(var i = 0; i < text.length; i++){
+                        var ch = text.charCodeAt(i);
+                        if (ch === 13 /* CharCode.CarriageReturn */  || ch === 10 /* CharCode.LineFeed */ ) {
+                            if (ch === 13 /* CharCode.CarriageReturn */  && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */ ) {
+                                i++;
+                            }
+                            result.push(textOffset + i + 1);
+                        }
+                    }
+                    return result;
+                }
+                function getWellformedRange(range) {
+                    var start = range.start;
+                    var end = range.end;
+                    if (start.line > end.line || start.line === end.line && start.character > end.character) {
+                        return {
+                            start: end,
+                            end: start
+                        };
+                    }
+                    return range;
+                }
+                function getWellformedEdit(textEdit) {
+                    var range = getWellformedRange(textEdit.range);
+                    if (range !== textEdit.range) {
+                        return {
+                            newText: textEdit.newText,
+                            range: range
+                        };
+                    }
+                    return textEdit;
+                }
+            /***/ },
+            /***/ 4767: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_713428__)=>{
+                "use strict";
+                __nested_webpack_require_713428__.r(__nested_webpack_exports__);
+                /* harmony export */ __nested_webpack_require_713428__.d(__nested_webpack_exports__, {
+                    /* harmony export */ AnnotatedTextEdit: ()=>/* binding */ AnnotatedTextEdit,
+                    /* harmony export */ ChangeAnnotation: ()=>/* binding */ ChangeAnnotation,
+                    /* harmony export */ ChangeAnnotationIdentifier: ()=>/* binding */ ChangeAnnotationIdentifier,
+                    /* harmony export */ CodeAction: ()=>/* binding */ CodeAction,
+                    /* harmony export */ CodeActionContext: ()=>/* binding */ CodeActionContext,
+                    /* harmony export */ CodeActionKind: ()=>/* binding */ CodeActionKind,
+                    /* harmony export */ CodeActionTriggerKind: ()=>/* binding */ CodeActionTriggerKind,
+                    /* harmony export */ CodeDescription: ()=>/* binding */ CodeDescription,
+                    /* harmony export */ CodeLens: ()=>/* binding */ CodeLens,
+                    /* harmony export */ Color: ()=>/* binding */ Color,
+                    /* harmony export */ ColorInformation: ()=>/* binding */ ColorInformation,
+                    /* harmony export */ ColorPresentation: ()=>/* binding */ ColorPresentation,
+                    /* harmony export */ Command: ()=>/* binding */ Command,
+                    /* harmony export */ CompletionItem: ()=>/* binding */ CompletionItem,
+                    /* harmony export */ CompletionItemKind: ()=>/* binding */ CompletionItemKind1,
+                    /* harmony export */ CompletionItemLabelDetails: ()=>/* binding */ CompletionItemLabelDetails,
+                    /* harmony export */ CompletionItemTag: ()=>/* binding */ CompletionItemTag,
+                    /* harmony export */ CompletionList: ()=>/* binding */ CompletionList,
+                    /* harmony export */ CreateFile: ()=>/* binding */ CreateFile,
+                    /* harmony export */ DeleteFile: ()=>/* binding */ DeleteFile,
+                    /* harmony export */ Diagnostic: ()=>/* binding */ Diagnostic,
+                    /* harmony export */ DiagnosticRelatedInformation: ()=>/* binding */ DiagnosticRelatedInformation,
+                    /* harmony export */ DiagnosticSeverity: ()=>/* binding */ DiagnosticSeverity,
+                    /* harmony export */ DiagnosticTag: ()=>/* binding */ DiagnosticTag,
+                    /* harmony export */ DocumentHighlight: ()=>/* binding */ DocumentHighlight,
+                    /* harmony export */ DocumentHighlightKind: ()=>/* binding */ DocumentHighlightKind,
+                    /* harmony export */ DocumentLink: ()=>/* binding */ DocumentLink,
+                    /* harmony export */ DocumentSymbol: ()=>/* binding */ DocumentSymbol,
+                    /* harmony export */ DocumentUri: ()=>/* binding */ DocumentUri,
+                    /* harmony export */ EOL: ()=>/* binding */ EOL,
+                    /* harmony export */ FoldingRange: ()=>/* binding */ FoldingRange,
+                    /* harmony export */ FoldingRangeKind: ()=>/* binding */ FoldingRangeKind,
+                    /* harmony export */ FormattingOptions: ()=>/* binding */ FormattingOptions,
+                    /* harmony export */ Hover: ()=>/* binding */ Hover,
+                    /* harmony export */ InlayHint: ()=>/* binding */ InlayHint,
+                    /* harmony export */ InlayHintKind: ()=>/* binding */ InlayHintKind,
+                    /* harmony export */ InlayHintLabelPart: ()=>/* binding */ InlayHintLabelPart,
+                    /* harmony export */ InlineValueContext: ()=>/* binding */ InlineValueContext,
+                    /* harmony export */ InlineValueEvaluatableExpression: ()=>/* binding */ InlineValueEvaluatableExpression,
+                    /* harmony export */ InlineValueText: ()=>/* binding */ InlineValueText,
+                    /* harmony export */ InlineValueVariableLookup: ()=>/* binding */ InlineValueVariableLookup,
+                    /* harmony export */ InsertReplaceEdit: ()=>/* binding */ InsertReplaceEdit,
+                    /* harmony export */ InsertTextFormat: ()=>/* binding */ InsertTextFormat1,
+                    /* harmony export */ InsertTextMode: ()=>/* binding */ InsertTextMode,
+                    /* harmony export */ Location: ()=>/* binding */ Location,
+                    /* harmony export */ LocationLink: ()=>/* binding */ LocationLink,
+                    /* harmony export */ MarkedString: ()=>/* binding */ MarkedString1,
+                    /* harmony export */ MarkupContent: ()=>/* binding */ MarkupContent1,
+                    /* harmony export */ MarkupKind: ()=>/* binding */ MarkupKind,
+                    /* harmony export */ OptionalVersionedTextDocumentIdentifier: ()=>/* binding */ OptionalVersionedTextDocumentIdentifier,
+                    /* harmony export */ ParameterInformation: ()=>/* binding */ ParameterInformation,
+                    /* harmony export */ Position: ()=>/* binding */ Position,
+                    /* harmony export */ Range: ()=>/* binding */ Range,
+                    /* harmony export */ RenameFile: ()=>/* binding */ RenameFile,
+                    /* harmony export */ SelectionRange: ()=>/* binding */ SelectionRange,
+                    /* harmony export */ SemanticTokenModifiers: ()=>/* binding */ SemanticTokenModifiers,
+                    /* harmony export */ SemanticTokenTypes: ()=>/* binding */ SemanticTokenTypes,
+                    /* harmony export */ SemanticTokens: ()=>/* binding */ SemanticTokens,
+                    /* harmony export */ SignatureInformation: ()=>/* binding */ SignatureInformation,
+                    /* harmony export */ SymbolInformation: ()=>/* binding */ SymbolInformation,
+                    /* harmony export */ SymbolKind: ()=>/* binding */ SymbolKind,
+                    /* harmony export */ SymbolTag: ()=>/* binding */ SymbolTag,
+                    /* harmony export */ TextDocument: ()=>/* binding */ TextDocument,
+                    /* harmony export */ TextDocumentEdit: ()=>/* binding */ TextDocumentEdit,
+                    /* harmony export */ TextDocumentIdentifier: ()=>/* binding */ TextDocumentIdentifier,
+                    /* harmony export */ TextDocumentItem: ()=>/* binding */ TextDocumentItem,
+                    /* harmony export */ TextEdit: ()=>/* binding */ TextEdit,
+                    /* harmony export */ URI: ()=>/* binding */ URI,
+                    /* harmony export */ VersionedTextDocumentIdentifier: ()=>/* binding */ VersionedTextDocumentIdentifier,
+                    /* harmony export */ WorkspaceChange: ()=>/* binding */ WorkspaceChange,
+                    /* harmony export */ WorkspaceEdit: ()=>/* binding */ WorkspaceEdit,
+                    /* harmony export */ WorkspaceFolder: ()=>/* binding */ WorkspaceFolder,
+                    /* harmony export */ WorkspaceSymbol: ()=>/* binding */ WorkspaceSymbol,
+                    /* harmony export */ integer: ()=>/* binding */ integer,
+                    /* harmony export */ uinteger: ()=>/* binding */ uinteger
                 });
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12492,7 +13030,7 @@
                 })(uinteger || (uinteger = {}));
                 /**
  * The Position namespace provides helper functions to work with
- * [Position](#Position) literals.
+ * {@link Position} literals.
  */ var Position;
                 (function(Position) {
                     /**
@@ -12513,7 +13051,7 @@
                     }
                     Position.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Position](#Position) interface.
+     * Checks whether the given literal conforms to the {@link Position} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.uinteger(candidate.line) && Is.uinteger(candidate.character);
@@ -12522,7 +13060,7 @@
                 })(Position || (Position = {}));
                 /**
  * The Range namespace provides helper functions to work with
- * [Range](#Range) literals.
+ * {@link Range} literals.
  */ var Range;
                 (function(Range) {
                     function create(one, two, three, four) {
@@ -12542,7 +13080,7 @@
                     }
                     Range.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Range](#Range) interface.
+     * Checks whether the given literal conforms to the {@link Range} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Position.is(candidate.start) && Position.is(candidate.end);
@@ -12551,7 +13089,7 @@
                 })(Range || (Range = {}));
                 /**
  * The Location namespace provides helper functions to work with
- * [Location](#Location) literals.
+ * {@link Location} literals.
  */ var Location;
                 (function(Location) {
                     /**
@@ -12566,7 +13104,7 @@
                     }
                     Location.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Location](#Location) interface.
+     * Checks whether the given literal conforms to the {@link Location} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Range.is(candidate.range) && (Is.string(candidate.uri) || Is.undefined(candidate.uri));
@@ -12575,7 +13113,7 @@
                 })(Location || (Location = {}));
                 /**
  * The LocationLink namespace provides helper functions to work with
- * [LocationLink](#LocationLink) literals.
+ * {@link LocationLink} literals.
  */ var LocationLink;
                 (function(LocationLink) {
                     /**
@@ -12594,7 +13132,7 @@
                     }
                     LocationLink.create = create;
                     /**
-     * Checks whether the given literal conforms to the [LocationLink](#LocationLink) interface.
+     * Checks whether the given literal conforms to the {@link LocationLink} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Range.is(candidate.targetRange) && Is.string(candidate.targetUri) && Range.is(candidate.targetSelectionRange) && (Range.is(candidate.originSelectionRange) || Is.undefined(candidate.originSelectionRange));
@@ -12603,7 +13141,7 @@
                 })(LocationLink || (LocationLink = {}));
                 /**
  * The Color namespace provides helper functions to work with
- * [Color](#Color) literals.
+ * {@link Color} literals.
  */ var Color;
                 (function(Color) {
                     /**
@@ -12618,7 +13156,7 @@
                     }
                     Color.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Color](#Color) interface.
+     * Checks whether the given literal conforms to the {@link Color} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.numberRange(candidate.red, 0, 1) && Is.numberRange(candidate.green, 0, 1) && Is.numberRange(candidate.blue, 0, 1) && Is.numberRange(candidate.alpha, 0, 1);
@@ -12627,7 +13165,7 @@
                 })(Color || (Color = {}));
                 /**
  * The ColorInformation namespace provides helper functions to work with
- * [ColorInformation](#ColorInformation) literals.
+ * {@link ColorInformation} literals.
  */ var ColorInformation;
                 (function(ColorInformation) {
                     /**
@@ -12640,7 +13178,7 @@
                     }
                     ColorInformation.create = create;
                     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Range.is(candidate.range) && Color.is(candidate.color);
@@ -12649,7 +13187,7 @@
                 })(ColorInformation || (ColorInformation = {}));
                 /**
  * The Color namespace provides helper functions to work with
- * [ColorPresentation](#ColorPresentation) literals.
+ * {@link ColorPresentation} literals.
  */ var ColorPresentation;
                 (function(ColorPresentation) {
                     /**
@@ -12663,7 +13201,7 @@
                     }
                     ColorPresentation.create = create;
                     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.string(candidate.label) && (Is.undefined(candidate.textEdit) || TextEdit.is(candidate)) && (Is.undefined(candidate.additionalTextEdits) || Is.typedArray(candidate.additionalTextEdits, TextEdit.is));
@@ -12686,7 +13224,7 @@
                 })(FoldingRangeKind || (FoldingRangeKind = {}));
                 /**
  * The folding range namespace provides helper functions to work with
- * [FoldingRange](#FoldingRange) literals.
+ * {@link FoldingRange} literals.
  */ var FoldingRange;
                 (function(FoldingRange) {
                     /**
@@ -12712,7 +13250,7 @@
                     }
                     FoldingRange.create = create;
                     /**
-     * Checks whether the given literal conforms to the [FoldingRange](#FoldingRange) interface.
+     * Checks whether the given literal conforms to the {@link FoldingRange} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(candidate) && Is.uinteger(candidate.startLine) && Is.uinteger(candidate.startLine) && (Is.undefined(candidate.startCharacter) || Is.uinteger(candidate.startCharacter)) && (Is.undefined(candidate.endCharacter) || Is.uinteger(candidate.endCharacter)) && (Is.undefined(candidate.kind) || Is.string(candidate.kind));
@@ -12721,7 +13259,7 @@
                 })(FoldingRange || (FoldingRange = {}));
                 /**
  * The DiagnosticRelatedInformation namespace provides helper functions to work with
- * [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) literals.
+ * {@link DiagnosticRelatedInformation} literals.
  */ var DiagnosticRelatedInformation;
                 (function(DiagnosticRelatedInformation) {
                     /**
@@ -12734,7 +13272,7 @@
                     }
                     DiagnosticRelatedInformation.create = create;
                     /**
-     * Checks whether the given literal conforms to the [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) interface.
+     * Checks whether the given literal conforms to the {@link DiagnosticRelatedInformation} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Location.is(candidate.location) && Is.string(candidate.message);
@@ -12790,7 +13328,7 @@
                 })(CodeDescription || (CodeDescription = {}));
                 /**
  * The Diagnostic namespace provides helper functions to work with
- * [Diagnostic](#Diagnostic) literals.
+ * {@link Diagnostic} literals.
  */ var Diagnostic;
                 (function(Diagnostic) {
                     /**
@@ -12816,7 +13354,7 @@
                     }
                     Diagnostic.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Diagnostic](#Diagnostic) interface.
+     * Checks whether the given literal conforms to the {@link Diagnostic} interface.
      */ function is(value) {
                         var _a;
                         var candidate = value;
@@ -12826,7 +13364,7 @@
                 })(Diagnostic || (Diagnostic = {}));
                 /**
  * The Command namespace provides helper functions to work with
- * [Command](#Command) literals.
+ * {@link Command} literals.
  */ var Command;
                 (function(Command) {
                     /**
@@ -12847,7 +13385,7 @@
                     }
                     Command.create = create;
                     /**
-     * Checks whether the given literal conforms to the [Command](#Command) interface.
+     * Checks whether the given literal conforms to the {@link Command} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.title) && Is.string(candidate.command);
@@ -13228,7 +13766,7 @@
                     }
                     Object.defineProperty(WorkspaceChange.prototype, "edit", {
                         /**
-         * Returns the underlying [WorkspaceEdit](#WorkspaceEdit) literal
+         * Returns the underlying {@link WorkspaceEdit} literal
          * use to be returned from a workspace edit operation like rename.
          */ get: function() {
                             this.initDocumentChanges();
@@ -13369,7 +13907,7 @@
                 }();
                 /**
  * The TextDocumentIdentifier namespace provides helper functions to work with
- * [TextDocumentIdentifier](#TextDocumentIdentifier) literals.
+ * {@link TextDocumentIdentifier} literals.
  */ var TextDocumentIdentifier;
                 (function(TextDocumentIdentifier) {
                     /**
@@ -13382,7 +13920,7 @@
                     }
                     TextDocumentIdentifier.create = create;
                     /**
-     * Checks whether the given literal conforms to the [TextDocumentIdentifier](#TextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentIdentifier} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri);
@@ -13391,7 +13929,7 @@
                 })(TextDocumentIdentifier || (TextDocumentIdentifier = {}));
                 /**
  * The VersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) literals.
+ * {@link VersionedTextDocumentIdentifier} literals.
  */ var VersionedTextDocumentIdentifier;
                 (function(VersionedTextDocumentIdentifier) {
                     /**
@@ -13406,7 +13944,7 @@
                     }
                     VersionedTextDocumentIdentifier.create = create;
                     /**
-     * Checks whether the given literal conforms to the [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link VersionedTextDocumentIdentifier} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && Is.integer(candidate.version);
@@ -13415,7 +13953,7 @@
                 })(VersionedTextDocumentIdentifier || (VersionedTextDocumentIdentifier = {}));
                 /**
  * The OptionalVersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) literals.
+ * {@link OptionalVersionedTextDocumentIdentifier} literals.
  */ var OptionalVersionedTextDocumentIdentifier;
                 (function(OptionalVersionedTextDocumentIdentifier) {
                     /**
@@ -13430,7 +13968,7 @@
                     }
                     OptionalVersionedTextDocumentIdentifier.create = create;
                     /**
-     * Checks whether the given literal conforms to the [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link OptionalVersionedTextDocumentIdentifier} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && (candidate.version === null || Is.integer(candidate.version));
@@ -13439,7 +13977,7 @@
                 })(OptionalVersionedTextDocumentIdentifier || (OptionalVersionedTextDocumentIdentifier = {}));
                 /**
  * The TextDocumentItem namespace provides helper functions to work with
- * [TextDocumentItem](#TextDocumentItem) literals.
+ * {@link TextDocumentItem} literals.
  */ var TextDocumentItem;
                 (function(TextDocumentItem) {
                     /**
@@ -13458,7 +13996,7 @@
                     }
                     TextDocumentItem.create = create;
                     /**
-     * Checks whether the given literal conforms to the [TextDocumentItem](#TextDocumentItem) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentItem} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && Is.string(candidate.languageId) && Is.integer(candidate.version) && Is.string(candidate.text);
@@ -13480,7 +14018,7 @@
      * Markdown is supported as a content format
      */ MarkupKind.Markdown = 'markdown';
                     /**
-     * Checks whether the given value is a value of the [MarkupKind](#MarkupKind) type.
+     * Checks whether the given value is a value of the {@link MarkupKind} type.
      */ function is(value) {
                         var candidate = value;
                         return candidate === MarkupKind.PlainText || candidate === MarkupKind.Markdown;
@@ -13490,7 +14028,7 @@
                 var MarkupContent1;
                 (function(MarkupContent1) {
                     /**
-     * Checks whether the given value conforms to the [MarkupContent](#MarkupContent) interface.
+     * Checks whether the given value conforms to the {@link MarkupContent} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.objectLiteral(value) && MarkupKind.is(candidate.kind) && Is.string(candidate.value);
@@ -13574,7 +14112,7 @@
                     }
                     InsertReplaceEdit.create = create;
                     /**
-     * Checks whether the given literal conforms to the [InsertReplaceEdit](#InsertReplaceEdit) interface.
+     * Checks whether the given literal conforms to the {@link InsertReplaceEdit} interface.
      */ function is(value) {
                         var candidate = value;
                         return candidate && Is.string(candidate.newText) && Range.is(candidate.insert) && Range.is(candidate.replace);
@@ -13657,7 +14195,7 @@
                     }
                     MarkedString1.fromPlainText = fromPlainText;
                     /**
-     * Checks whether the given value conforms to the [MarkedString](#MarkedString) type.
+     * Checks whether the given value conforms to the {@link MarkedString} type.
      */ function is(value) {
                         var candidate = value;
                         return Is.string(candidate) || Is.objectLiteral(candidate) && Is.string(candidate.language) && Is.string(candidate.value);
@@ -13667,7 +14205,7 @@
                 var Hover;
                 (function(Hover) {
                     /**
-     * Checks whether the given value conforms to the [Hover](#Hover) interface.
+     * Checks whether the given value conforms to the {@link Hover} interface.
      */ function is(value) {
                         var candidate = value;
                         return !!candidate && Is.objectLiteral(candidate) && (MarkupContent1.is(candidate.contents) || MarkedString1.is(candidate.contents) || Is.typedArray(candidate.contents, MarkedString1.is)) && (value.range === undefined || Range.is(value.range));
@@ -13676,7 +14214,7 @@
                 })(Hover || (Hover = {}));
                 /**
  * The ParameterInformation namespace provides helper functions to work with
- * [ParameterInformation](#ParameterInformation) literals.
+ * {@link ParameterInformation} literals.
  */ var ParameterInformation;
                 (function(ParameterInformation) {
                     /**
@@ -13696,7 +14234,7 @@
                 })(ParameterInformation || (ParameterInformation = {}));
                 /**
  * The SignatureInformation namespace provides helper functions to work with
- * [SignatureInformation](#SignatureInformation) literals.
+ * {@link SignatureInformation} literals.
  */ var SignatureInformation;
                 (function(SignatureInformation) {
                     function create(label, documentation) {
@@ -13735,7 +14273,7 @@
                 })(DocumentHighlightKind || (DocumentHighlightKind = {}));
                 /**
  * DocumentHighlight namespace to provide helper functions to work with
- * [DocumentHighlight](#DocumentHighlight) literals.
+ * {@link DocumentHighlight} literals.
  */ var DocumentHighlight;
                 (function(DocumentHighlight) {
                     /**
@@ -13874,7 +14412,7 @@
                     }
                     DocumentSymbol.create = create;
                     /**
-     * Checks whether the given literal conforms to the [DocumentSymbol](#DocumentSymbol) interface.
+     * Checks whether the given literal conforms to the {@link DocumentSymbol} interface.
      */ function is(value) {
                         var candidate = value;
                         return candidate && Is.string(candidate.name) && Is.number(candidate.kind) && Range.is(candidate.range) && Range.is(candidate.selectionRange) && (candidate.detail === undefined || Is.string(candidate.detail)) && (candidate.deprecated === undefined || Is.boolean(candidate.deprecated)) && (candidate.children === undefined || Array.isArray(candidate.children)) && (candidate.tags === undefined || Array.isArray(candidate.tags));
@@ -13962,7 +14500,7 @@
                 })(CodeActionTriggerKind || (CodeActionTriggerKind = {}));
                 /**
  * The CodeActionContext namespace provides helper functions to work with
- * [CodeActionContext](#CodeActionContext) literals.
+ * {@link CodeActionContext} literals.
  */ var CodeActionContext;
                 (function(CodeActionContext) {
                     /**
@@ -13981,7 +14519,7 @@
                     }
                     CodeActionContext.create = create;
                     /**
-     * Checks whether the given literal conforms to the [CodeActionContext](#CodeActionContext) interface.
+     * Checks whether the given literal conforms to the {@link CodeActionContext} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.typedArray(candidate.diagnostics, Diagnostic.is) && (candidate.only === undefined || Is.typedArray(candidate.only, Is.string)) && (candidate.triggerKind === undefined || candidate.triggerKind === CodeActionTriggerKind.Invoked || candidate.triggerKind === CodeActionTriggerKind.Automatic);
@@ -14017,7 +14555,7 @@
                 })(CodeAction || (CodeAction = {}));
                 /**
  * The CodeLens namespace provides helper functions to work with
- * [CodeLens](#CodeLens) literals.
+ * {@link CodeLens} literals.
  */ var CodeLens;
                 (function(CodeLens) {
                     /**
@@ -14033,7 +14571,7 @@
                     }
                     CodeLens.create = create;
                     /**
-     * Checks whether the given literal conforms to the [CodeLens](#CodeLens) interface.
+     * Checks whether the given literal conforms to the {@link CodeLens} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.command) || Command.is(candidate.command));
@@ -14042,7 +14580,7 @@
                 })(CodeLens || (CodeLens = {}));
                 /**
  * The FormattingOptions namespace provides helper functions to work with
- * [FormattingOptions](#FormattingOptions) literals.
+ * {@link FormattingOptions} literals.
  */ var FormattingOptions;
                 (function(FormattingOptions) {
                     /**
@@ -14055,7 +14593,7 @@
                     }
                     FormattingOptions.create = create;
                     /**
-     * Checks whether the given literal conforms to the [FormattingOptions](#FormattingOptions) interface.
+     * Checks whether the given literal conforms to the {@link FormattingOptions} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.uinteger(candidate.tabSize) && Is.boolean(candidate.insertSpaces);
@@ -14064,7 +14602,7 @@
                 })(FormattingOptions || (FormattingOptions = {}));
                 /**
  * The DocumentLink namespace provides helper functions to work with
- * [DocumentLink](#DocumentLink) literals.
+ * {@link DocumentLink} literals.
  */ var DocumentLink;
                 (function(DocumentLink) {
                     /**
@@ -14078,7 +14616,7 @@
                     }
                     DocumentLink.create = create;
                     /**
-     * Checks whether the given literal conforms to the [DocumentLink](#DocumentLink) interface.
+     * Checks whether the given literal conforms to the {@link DocumentLink} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.target) || Is.string(candidate.target));
@@ -14239,7 +14777,7 @@
                 })(InlineValueEvaluatableExpression || (InlineValueEvaluatableExpression = {}));
                 /**
  * The InlineValueContext namespace provides helper functions to work with
- * [InlineValueContext](#InlineValueContext) literals.
+ * {@link InlineValueContext} literals.
  *
  * @since 3.17.0
  */ var InlineValueContext;
@@ -14254,7 +14792,7 @@
                     }
                     InlineValueContext.create = create;
                     /**
-     * Checks whether the given literal conforms to the [InlineValueContext](#InlineValueContext) interface.
+     * Checks whether the given literal conforms to the {@link InlineValueContext} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Range.is(value.stoppedLocation);
@@ -14339,7 +14877,7 @@
                     }
                     TextDocument.create = create;
                     /**
-     * Checks whether the given literal conforms to the [ITextDocument](#ITextDocument) interface.
+     * Checks whether the given literal conforms to the {@link ITextDocument} interface.
      */ function is(value) {
                         var candidate = value;
                         return Is.defined(candidate) && Is.string(candidate.uri) && (Is.undefined(candidate.languageId) || Is.string(candidate.languageId)) && Is.uinteger(candidate.lineCount) && Is.func(candidate.getText) && Is.func(candidate.positionAt) && Is.func(candidate.offsetAt) ? true : false;
@@ -14560,61 +15098,96 @@
                     Is.typedArray = typedArray;
                 })(Is || (Is = {}));
             /***/ },
-            /***/ 2094: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_794417__)=>{
+            /***/ 2094: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_824525__)=>{
                 "use strict";
-                var forEach = __nested_webpack_require_794417__(3243);
-                var availableTypedArrays = __nested_webpack_require_794417__(2191);
-                var callBound = __nested_webpack_require_794417__(2680);
-                var gOPD = __nested_webpack_require_794417__(326);
+                var forEach = __nested_webpack_require_824525__(3243);
+                var availableTypedArrays = __nested_webpack_require_824525__(2191);
+                var callBind = __nested_webpack_require_824525__(9429);
+                var callBound = __nested_webpack_require_824525__(2680);
+                var gOPD = __nested_webpack_require_824525__(326);
                 var $toString = callBound('Object.prototype.toString');
-                var hasToStringTag = __nested_webpack_require_794417__(7226)();
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_794417__.g : globalThis;
+                var hasToStringTag = __nested_webpack_require_824525__(7226)();
+                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_824525__.g : globalThis;
                 var typedArrays = availableTypedArrays();
                 var $slice = callBound('String.prototype.slice');
-                var toStrTags = {};
                 var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+                var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
+                    for(var i = 0; i < array.length; i += 1){
+                        if (array[i] === value) {
+                            return i;
+                        }
+                    }
+                    return -1;
+                };
+                var cache = {
+                    __proto__: null
+                };
                 if (hasToStringTag && gOPD && getPrototypeOf) {
                     forEach(typedArrays, function(typedArray) {
-                        if (typeof g[typedArray] === 'function') {
-                            var arr = new g[typedArray]();
-                            if (Symbol.toStringTag in arr) {
-                                var proto = getPrototypeOf(arr);
-                                var descriptor = gOPD(proto, Symbol.toStringTag);
-                                if (!descriptor) {
-                                    var superProto = getPrototypeOf(proto);
-                                    descriptor = gOPD(superProto, Symbol.toStringTag);
-                                }
-                                toStrTags[typedArray] = descriptor.get;
+                        var arr = new g[typedArray]();
+                        if (Symbol.toStringTag in arr) {
+                            var proto = getPrototypeOf(arr);
+                            var descriptor = gOPD(proto, Symbol.toStringTag);
+                            if (!descriptor) {
+                                var superProto = getPrototypeOf(proto);
+                                descriptor = gOPD(superProto, Symbol.toStringTag);
                             }
+                            cache['$' + typedArray] = callBind(descriptor.get);
                         }
+                    });
+                } else {
+                    forEach(typedArrays, function(typedArray) {
+                        var arr = new g[typedArray]();
+                        cache['$' + typedArray] = callBind(arr.slice);
                     });
                 }
                 var tryTypedArrays = function tryAllTypedArrays(value) {
-                    var foundName = false;
-                    forEach(toStrTags, function(getter, typedArray) {
-                        if (!foundName) {
+                    var found = false;
+                    forEach(cache, function(getter, typedArray) {
+                        if (!found) {
                             try {
-                                var name = getter.call(value);
-                                if (name === typedArray) {
-                                    foundName = name;
+                                if ('$' + getter(value) === typedArray) {
+                                    found = $slice(typedArray, 1);
                                 }
                             } catch (e) {}
                         }
                     });
-                    return foundName;
+                    return found;
                 };
-                var isTypedArray = __nested_webpack_require_794417__(198);
+                var trySlices = function tryAllSlices(value) {
+                    var found = false;
+                    forEach(cache, function(getter, name) {
+                        if (!found) {
+                            try {
+                                getter(value);
+                                found = $slice(name, 1);
+                            } catch (e) {}
+                        }
+                    });
+                    return found;
+                };
                 module1.exports = function whichTypedArray(value) {
-                    if (!isTypedArray(value)) {
+                    if (!value || typeof value !== 'object') {
                         return false;
                     }
-                    if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-                        return $slice($toString(value), 8, -1);
+                    if (!hasToStringTag) {
+                        var tag = $slice($toString(value), 8, -1);
+                        if ($indexOf(typedArrays, tag) > -1) {
+                            return tag;
+                        }
+                        if (tag !== 'Object') {
+                            return false;
+                        }
+                        // node < 0.6 hits here on real Typed Arrays
+                        return trySlices(value);
                     }
+                    if (!gOPD) {
+                        return null;
+                    } // unknown engine
                     return tryTypedArrays(value);
                 };
             /***/ },
-            /***/ 2191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_797252__)=>{
+            /***/ 2191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_828772__)=>{
                 "use strict";
                 var possibleNames = [
                     'BigInt64Array',
@@ -14629,7 +15202,7 @@
                     'Uint8Array',
                     'Uint8ClampedArray'
                 ];
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_797252__.g : globalThis;
+                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_828772__.g : globalThis;
                 module1.exports = function availableTypedArrays() {
                     var out = [];
                     for(var i = 0; i < possibleNames.length; i++){
@@ -14644,7 +15217,7 @@
         /************************************************************************/ /******/ // The module cache
         /******/ var __webpack_module_cache__ = {};
         /******/ /******/ // The require function
-        /******/ function __nested_webpack_require_798518__(moduleId) {
+        /******/ function __nested_webpack_require_830038__(moduleId) {
             /******/ // Check if module is in cache
             /******/ var cachedModule = __webpack_module_cache__[moduleId];
             /******/ if (cachedModule !== undefined) {
@@ -14657,7 +15230,7 @@
                 /******/ exports: {}
             };
             /******/ /******/ // Execute the module function
-            /******/ __webpack_modules__[moduleId].call(module1.exports, module1, module1.exports, __nested_webpack_require_798518__);
+            /******/ __webpack_modules__[moduleId].call(module1.exports, module1, module1.exports, __nested_webpack_require_830038__);
             /******/ /******/ // Flag the module as loaded
             /******/ module1.loaded = true;
             /******/ /******/ // Return the exports of the module
@@ -14665,9 +15238,9 @@
         /******/ }
         /******/ /************************************************************************/ /******/ /* webpack/runtime/define property getters */ /******/ (()=>{
             /******/ // define getter functions for harmony exports
-            /******/ __nested_webpack_require_798518__.d = (exports1, definition)=>{
+            /******/ __nested_webpack_require_830038__.d = (exports1, definition)=>{
                 /******/ for(var key in definition){
-                    /******/ if (__nested_webpack_require_798518__.o(definition, key) && !__nested_webpack_require_798518__.o(exports1, key)) {
+                    /******/ if (__nested_webpack_require_830038__.o(definition, key) && !__nested_webpack_require_830038__.o(exports1, key)) {
                         /******/ Object.defineProperty(exports1, key, {
                             enumerable: true,
                             get: definition[key]
@@ -14677,7 +15250,7 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/global */ /******/ (()=>{
-            /******/ __nested_webpack_require_798518__.g = function() {
+            /******/ __nested_webpack_require_830038__.g = function() {
                 /******/ if (typeof globalThis === 'object') return globalThis;
                 /******/ try {
                     /******/ return this || new Function('return this')();
@@ -14687,11 +15260,11 @@
             /******/ }();
         /******/ })();
         /******/ /******/ /* webpack/runtime/hasOwnProperty shorthand */ /******/ (()=>{
-            /******/ __nested_webpack_require_798518__.o = (obj, prop)=>Object.prototype.hasOwnProperty.call(obj, prop);
+            /******/ __nested_webpack_require_830038__.o = (obj, prop)=>Object.prototype.hasOwnProperty.call(obj, prop);
         /******/ })();
         /******/ /******/ /* webpack/runtime/make namespace object */ /******/ (()=>{
             /******/ // define __esModule on exports
-            /******/ __nested_webpack_require_798518__.r = (exports1)=>{
+            /******/ __nested_webpack_require_830038__.r = (exports1)=>{
                 /******/ if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                     /******/ Object.defineProperty(exports1, Symbol.toStringTag, {
                         value: 'Module'
@@ -14703,469 +15276,31 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/node module decorator */ /******/ (()=>{
-            /******/ __nested_webpack_require_798518__.nmd = (module1)=>{
+            /******/ __nested_webpack_require_830038__.nmd = (module1)=>{
                 /******/ module1.paths = [];
                 /******/ if (!module1.children) module1.children = [];
                 /******/ return module1;
             /******/ };
         /******/ })();
-        /******/ /************************************************************************/ var __webpack_exports__ = {};
+        /******/ /************************************************************************/ var __nested_webpack_exports__ = {};
         // This entry need to be wrapped in an IIFE because it need to be in strict mode.
         (()=>{
             "use strict";
             // ESM COMPAT FLAG
-            __nested_webpack_require_798518__.r(__webpack_exports__);
+            __nested_webpack_require_830038__.r(__nested_webpack_exports__);
             // EXPORTS
-            __nested_webpack_require_798518__.d(__webpack_exports__, {
-                "LuaService": ()=>/* binding */ LuaService
+            __nested_webpack_require_830038__.d(__nested_webpack_exports__, {
+                LuaService: ()=>/* binding */ LuaService
             });
-            ; // CONCATENATED MODULE: ./utils.ts
-            function mergeObjects(obj1, obj2) {
-                if (!obj1) return obj2;
-                if (!obj2) return obj1;
-                const mergedObjects = {
-                    ...obj2,
-                    ...obj1
-                }; // Give priority to obj1 values by spreading obj2 first, then obj1
-                for (const key of Object.keys(mergedObjects)){
-                    if (obj1[key] && obj2[key]) {
-                        if (Array.isArray(obj1[key])) {
-                            mergedObjects[key] = obj1[key].concat(obj2[key]);
-                        } else if (Array.isArray(obj2[key])) {
-                            mergedObjects[key] = obj2[key].concat(obj1[key]);
-                        } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                            mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-                        }
-                    }
-                }
-                return mergedObjects;
-            }
-            function utils_notEmpty(value) {
-                return value !== null && value !== undefined;
-            }
-            //taken with small changes from ace-code
-            function utils_mergeRanges(ranges) {
-                var list = ranges;
-                list = list.sort(function(a, b) {
-                    return comparePoints(a.start, b.start);
-                });
-                var next = list[0], range;
-                for(var i = 1; i < list.length; i++){
-                    range = next;
-                    next = list[i];
-                    var cmp = comparePoints(range.end, next.start);
-                    if (cmp < 0) continue;
-                    if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
-                    if (comparePoints(range.end, next.end) < 0) {
-                        range.end.row = next.end.row;
-                        range.end.column = next.end.column;
-                    }
-                    list.splice(i, 1);
-                    next = range;
-                    i--;
-                }
-                return list;
-            }
-            function comparePoints(p1, p2) {
-                return p1.row - p2.row || p1.column - p2.column;
-            }
-            function checkValueAgainstRegexpArray(value, regexpArray) {
-                if (!regexpArray) {
-                    return false;
-                }
-                for(let i = 0; i < regexpArray.length; i++){
-                    if (regexpArray[i].test(value)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            ; // CONCATENATED MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
-            /* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */ var __spreadArray =  false || function(to, from, pack) {
-                if (pack || arguments.length === 2) for(var i = 0, l = from.length, ar; i < l; i++){
-                    if (ar || !(i in from)) {
-                        if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-                        ar[i] = from[i];
-                    }
-                }
-                return to.concat(ar || Array.prototype.slice.call(from));
-            };
-            var FullTextDocument = /** @class */ function() {
-                function FullTextDocument(uri, languageId, version, content) {
-                    this._uri = uri;
-                    this._languageId = languageId;
-                    this._version = version;
-                    this._content = content;
-                    this._lineOffsets = undefined;
-                }
-                Object.defineProperty(FullTextDocument.prototype, "uri", {
-                    get: function() {
-                        return this._uri;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(FullTextDocument.prototype, "languageId", {
-                    get: function() {
-                        return this._languageId;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                Object.defineProperty(FullTextDocument.prototype, "version", {
-                    get: function() {
-                        return this._version;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                FullTextDocument.prototype.getText = function(range) {
-                    if (range) {
-                        var start = this.offsetAt(range.start);
-                        var end = this.offsetAt(range.end);
-                        return this._content.substring(start, end);
-                    }
-                    return this._content;
-                };
-                FullTextDocument.prototype.update = function(changes, version) {
-                    for(var _i = 0, changes_1 = changes; _i < changes_1.length; _i++){
-                        var change = changes_1[_i];
-                        if (FullTextDocument.isIncremental(change)) {
-                            // makes sure start is before end
-                            var range = getWellformedRange(change.range);
-                            // update content
-                            var startOffset = this.offsetAt(range.start);
-                            var endOffset = this.offsetAt(range.end);
-                            this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
-                            // update the offsets
-                            var startLine = Math.max(range.start.line, 0);
-                            var endLine = Math.max(range.end.line, 0);
-                            var lineOffsets = this._lineOffsets;
-                            var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
-                            if (endLine - startLine === addedLineOffsets.length) {
-                                for(var i = 0, len = addedLineOffsets.length; i < len; i++){
-                                    lineOffsets[i + startLine + 1] = addedLineOffsets[i];
-                                }
-                            } else {
-                                if (addedLineOffsets.length < 10000) {
-                                    lineOffsets.splice.apply(lineOffsets, __spreadArray([
-                                        startLine + 1,
-                                        endLine - startLine
-                                    ], addedLineOffsets, false));
-                                } else {
-                                    this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
-                                }
-                            }
-                            var diff = change.text.length - (endOffset - startOffset);
-                            if (diff !== 0) {
-                                for(var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++){
-                                    lineOffsets[i] = lineOffsets[i] + diff;
-                                }
-                            }
-                        } else if (FullTextDocument.isFull(change)) {
-                            this._content = change.text;
-                            this._lineOffsets = undefined;
-                        } else {
-                            throw new Error('Unknown change event received');
-                        }
-                    }
-                    this._version = version;
-                };
-                FullTextDocument.prototype.getLineOffsets = function() {
-                    if (this._lineOffsets === undefined) {
-                        this._lineOffsets = computeLineOffsets(this._content, true);
-                    }
-                    return this._lineOffsets;
-                };
-                FullTextDocument.prototype.positionAt = function(offset) {
-                    offset = Math.max(Math.min(offset, this._content.length), 0);
-                    var lineOffsets = this.getLineOffsets();
-                    var low = 0, high = lineOffsets.length;
-                    if (high === 0) {
-                        return {
-                            line: 0,
-                            character: offset
-                        };
-                    }
-                    while(low < high){
-                        var mid = Math.floor((low + high) / 2);
-                        if (lineOffsets[mid] > offset) {
-                            high = mid;
-                        } else {
-                            low = mid + 1;
-                        }
-                    }
-                    // low is the least x for which the line offset is larger than the current offset
-                    // or array.length if no line offset is larger than the current offset
-                    var line = low - 1;
-                    return {
-                        line: line,
-                        character: offset - lineOffsets[line]
-                    };
-                };
-                FullTextDocument.prototype.offsetAt = function(position) {
-                    var lineOffsets = this.getLineOffsets();
-                    if (position.line >= lineOffsets.length) {
-                        return this._content.length;
-                    } else if (position.line < 0) {
-                        return 0;
-                    }
-                    var lineOffset = lineOffsets[position.line];
-                    var nextLineOffset = position.line + 1 < lineOffsets.length ? lineOffsets[position.line + 1] : this._content.length;
-                    return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-                };
-                Object.defineProperty(FullTextDocument.prototype, "lineCount", {
-                    get: function() {
-                        return this.getLineOffsets().length;
-                    },
-                    enumerable: false,
-                    configurable: true
-                });
-                FullTextDocument.isIncremental = function(event) {
-                    var candidate = event;
-                    return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range !== undefined && (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
-                };
-                FullTextDocument.isFull = function(event) {
-                    var candidate = event;
-                    return candidate !== undefined && candidate !== null && typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
-                };
-                return FullTextDocument;
-            }();
-            var TextDocument;
-            (function(TextDocument) {
-                /**
-     * Creates a new text document.
-     *
-     * @param uri The document's uri.
-     * @param languageId  The document's language Id.
-     * @param version The document's initial version number.
-     * @param content The document's content.
-     */ function create(uri, languageId, version, content) {
-                    return new FullTextDocument(uri, languageId, version, content);
-                }
-                TextDocument.create = create;
-                /**
-     * Updates a TextDocument by modifying its content.
-     *
-     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
-     * @param changes the changes to apply to the document.
-     * @param version the changes version for the document.
-     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
-     *
-     */ function update(document1, changes, version) {
-                    if (document1 instanceof FullTextDocument) {
-                        document1.update(changes, version);
-                        return document1;
-                    } else {
-                        throw new Error('TextDocument.update: document must be created by TextDocument.create');
-                    }
-                }
-                TextDocument.update = update;
-                function applyEdits(document1, edits) {
-                    var text = document1.getText();
-                    var sortedEdits = mergeSort(edits.map(getWellformedEdit), function(a, b) {
-                        var diff = a.range.start.line - b.range.start.line;
-                        if (diff === 0) {
-                            return a.range.start.character - b.range.start.character;
-                        }
-                        return diff;
-                    });
-                    var lastModifiedOffset = 0;
-                    var spans = [];
-                    for(var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++){
-                        var e = sortedEdits_1[_i];
-                        var startOffset = document1.offsetAt(e.range.start);
-                        if (startOffset < lastModifiedOffset) {
-                            throw new Error('Overlapping edit');
-                        } else if (startOffset > lastModifiedOffset) {
-                            spans.push(text.substring(lastModifiedOffset, startOffset));
-                        }
-                        if (e.newText.length) {
-                            spans.push(e.newText);
-                        }
-                        lastModifiedOffset = document1.offsetAt(e.range.end);
-                    }
-                    spans.push(text.substr(lastModifiedOffset));
-                    return spans.join('');
-                }
-                TextDocument.applyEdits = applyEdits;
-            })(TextDocument || (TextDocument = {}));
-            function mergeSort(data, compare) {
-                if (data.length <= 1) {
-                    // sorted
-                    return data;
-                }
-                var p = data.length / 2 | 0;
-                var left = data.slice(0, p);
-                var right = data.slice(p);
-                mergeSort(left, compare);
-                mergeSort(right, compare);
-                var leftIdx = 0;
-                var rightIdx = 0;
-                var i = 0;
-                while(leftIdx < left.length && rightIdx < right.length){
-                    var ret = compare(left[leftIdx], right[rightIdx]);
-                    if (ret <= 0) {
-                        // smaller_equal -> take left to preserve order
-                        data[i++] = left[leftIdx++];
-                    } else {
-                        // greater -> take right
-                        data[i++] = right[rightIdx++];
-                    }
-                }
-                while(leftIdx < left.length){
-                    data[i++] = left[leftIdx++];
-                }
-                while(rightIdx < right.length){
-                    data[i++] = right[rightIdx++];
-                }
-                return data;
-            }
-            function computeLineOffsets(text, isAtLineStart, textOffset) {
-                if (textOffset === void 0) {
-                    textOffset = 0;
-                }
-                var result = isAtLineStart ? [
-                    textOffset
-                ] : [];
-                for(var i = 0; i < text.length; i++){
-                    var ch = text.charCodeAt(i);
-                    if (ch === 13 /* CharCode.CarriageReturn */  || ch === 10 /* CharCode.LineFeed */ ) {
-                        if (ch === 13 /* CharCode.CarriageReturn */  && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */ ) {
-                            i++;
-                        }
-                        result.push(textOffset + i + 1);
-                    }
-                }
-                return result;
-            }
-            function getWellformedRange(range) {
-                var start = range.start;
-                var end = range.end;
-                if (start.line > end.line || start.line === end.line && start.character > end.character) {
-                    return {
-                        start: end,
-                        end: start
-                    };
-                }
-                return range;
-            }
-            function getWellformedEdit(textEdit) {
-                var range = getWellformedRange(textEdit.range);
-                if (range !== textEdit.range) {
-                    return {
-                        newText: textEdit.newText,
-                        range: range
-                    };
-                }
-                return textEdit;
-            }
-            ; // CONCATENATED MODULE: ./services/base-service.ts
-            function _define_property(obj, key, value) {
-                if (key in obj) {
-                    Object.defineProperty(obj, key, {
-                        value: value,
-                        enumerable: true,
-                        configurable: true,
-                        writable: true
-                    });
-                } else {
-                    obj[key] = value;
-                }
-                return obj;
-            }
-            class BaseService {
-                addDocument(document1) {
-                    this.documents[document1.uri] = TextDocument.create(document1.uri, document1.languageId, document1.version, document1.text);
-                //TODO:
-                /*if (options)
-            this.setSessionOptions(sessionID, options);*/ }
-                getDocument(uri) {
-                    return this.documents[uri];
-                }
-                removeDocument(document1) {
-                    delete this.documents[document1.uri];
-                    if (this.options[document1.uri]) {
-                        delete this.options[document1.uri];
-                    }
-                }
-                getDocumentValue(uri) {
-                    var _this_getDocument;
-                    return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
-                }
-                setValue(identifier, value) {
-                    let document1 = this.getDocument(identifier.uri);
-                    if (document1) {
-                        document1 = TextDocument.create(document1.uri, document1.languageId, document1.version, value);
-                        this.documents[document1.uri] = document1;
-                    }
-                }
-                setGlobalOptions(options) {
-                    this.globalOptions = options !== null && options !== void 0 ? options : {};
-                }
-                setOptions(sessionID, options, merge = false) {
-                    this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
-                }
-                getOption(sessionID, optionName) {
-                    if (this.options[sessionID] && this.options[sessionID][optionName]) {
-                        return this.options[sessionID][optionName];
-                    } else {
-                        return this.globalOptions[optionName];
-                    }
-                }
-                applyDeltas(identifier, deltas) {
-                    let document1 = this.getDocument(identifier.uri);
-                    if (document1) TextDocument.update(document1, deltas, identifier.version);
-                }
-                async doComplete(document1, position) {
-                    return null;
-                }
-                async doHover(document1, position) {
-                    return null;
-                }
-                async doResolve(item) {
-                    return null;
-                }
-                async doValidation(document1) {
-                    return [];
-                }
-                format(document1, range, options) {
-                    return [];
-                }
-                async provideSignatureHelp(document1, position) {
-                    return null;
-                }
-                async findDocumentHighlights(document1, position) {
-                    return [];
-                }
-                get optionsToFilterDiagnostics() {
-                    var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
-                    return {
-                        errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
-                        errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
-                        errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
-                        errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
-                        errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
-                        errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
-                    };
-                }
-                constructor(mode){
-                    _define_property(this, "mode", void 0);
-                    _define_property(this, "documents", {});
-                    _define_property(this, "options", {});
-                    _define_property(this, "globalOptions", {});
-                    _define_property(this, "serviceData", void 0);
-                    this.mode = mode;
-                }
-            }
+            // EXTERNAL MODULE: ./src/services/base-service.ts
+            var base_service = __nested_webpack_require_830038__(4487);
             // EXTERNAL MODULE: ../../node_modules/luaparse/luaparse.js
-            var luaparse = __nested_webpack_require_798518__(7438);
+            var luaparse = __nested_webpack_require_830038__(7438);
             // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-            var main = __nested_webpack_require_798518__(294);
-            ; // CONCATENATED MODULE: ./type-converters/common-converters.ts
+            var main = __nested_webpack_require_830038__(294);
+            // EXTERNAL MODULE: ./src/utils.ts
+            var utils = __nested_webpack_require_830038__(6297);
+            ; // CONCATENATED MODULE: ./src/type-converters/common-converters.ts
             var common_converters_CommonConverter;
             (function(CommonConverter1) {
                 function normalizeRanges(completions, editor) {
@@ -15223,11 +15358,11 @@
                 CommonConverter1.convertKind = convertKind;
                 function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
                     if (!errorMessagesToIgnore) return diagnostics;
-                    return diagnostics.filter((el)=>!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+                    return diagnostics.filter((el)=>!(0, utils /* checkValueAgainstRegexpArray */ .$p)(el[fieldName], errorMessagesToIgnore));
                 }
                 CommonConverter1.excludeByErrorMessage = excludeByErrorMessage;
             })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
-            ; // CONCATENATED MODULE: ./type-converters/lsp-converters.ts
+            ; // CONCATENATED MODULE: ./src/type-converters/lsp-converters.ts
             function fromRange(range) {
                 return {
                     start: {
@@ -15400,7 +15535,8 @@
                 if (content.length === 0) return;
                 //TODO: it could be merged within all ranges in future
                 let lspRange = (_hover_find = hover.find((el)=>{
-                    return el === null || el === void 0 ? void 0 : el.range;
+                    var _el;
+                    return (_el = el) === null || _el === void 0 ? void 0 : _el.range;
                 })) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
                 let range;
                 if (lspRange) range = toRange(lspRange);
@@ -15415,11 +15551,12 @@
             function fromSignatureHelp(signatureHelp) {
                 if (!signatureHelp) return;
                 let content = signatureHelp.map((el)=>{
+                    var _el, _el1;
                     if (!el) return;
-                    let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
+                    let signatureIndex = ((_el = el) === null || _el === void 0 ? void 0 : _el.activeSignature) || 0;
                     let activeSignature = el.signatures[signatureIndex];
                     if (!activeSignature) return;
-                    let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
+                    let activeParam = (_el1 = el) === null || _el1 === void 0 ? void 0 : _el1.activeParameter;
                     let contents = activeSignature.label;
                     if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
                         let param = activeSignature.parameters[activeParam].label;
@@ -15463,16 +15600,16 @@
             }
             function filterDiagnostics(diagnostics, filterErrors) {
                 return common_converters_CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el)=>{
-                    if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
+                    if ((0, utils /* checkValueAgainstRegexpArray */ .$p)(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
                         el.severity = main.DiagnosticSeverity.Warning;
-                    } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
+                    } else if ((0, utils /* checkValueAgainstRegexpArray */ .$p)(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
                         el.severity = main.DiagnosticSeverity.Information;
                     }
                     return el;
                 });
             }
-            ; // CONCATENATED MODULE: ./services/lua/lua-service.ts
-            function lua_service_define_property(obj, key, value) {
+            ; // CONCATENATED MODULE: ./src/services/lua/lua-service.ts
+            function _define_property(obj, key, value) {
                 if (key in obj) {
                     Object.defineProperty(obj, key, {
                         value: value,
@@ -15485,7 +15622,7 @@
                 }
                 return obj;
             }
-            class LuaService extends BaseService {
+            class LuaService extends base_service.BaseService {
                 async doValidation(document1) {
                     let value = this.getDocumentValue(document1.uri);
                     if (!value) return [];
@@ -15514,12 +15651,12 @@
                 }
                 constructor(mode){
                     super(mode);
-                    lua_service_define_property(this, "$service", void 0);
+                    _define_property(this, "$service", void 0);
                     this.$service = luaparse;
                 }
             }
         })();
-        /******/ return __webpack_exports__;
+        /******/ return __nested_webpack_exports__;
     /******/ })();
 });
 

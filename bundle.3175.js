@@ -6,7 +6,7 @@
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Q": () => (/* binding */ startWorkers)
+/* harmony export */   Q: () => (/* binding */ startWorkers)
 /* harmony export */ });
 /**
  * Copyright 2021 Google Inc. All Rights Reserved.
@@ -27,7 +27,7 @@
 // like just `0` or whatever, but the code would be less resilient.
 function waitForMsgType(target, type) {
     return new Promise((resolve)=>{
-        target.addEventListener('message', function onMsg({ data  }) {
+        target.addEventListener('message', function onMsg({ data }) {
             if (data == null || data.type !== type) return;
             target.removeEventListener('message', onMsg);
             resolve(data);
@@ -213,7 +213,10 @@ async function startWorkers(module, memory, builder) {
 /******/ 				scriptUrl = document.currentScript.src;
 /******/ 			if (!scriptUrl) {
 /******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ 				if(scripts.length) {
+/******/ 					var i = scripts.length - 1;
+/******/ 					while (i > -1 && !scriptUrl) scriptUrl = scripts[i--].src;
+/******/ 				}
 /******/ 			}
 /******/ 		}
 /******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration

@@ -2536,18 +2536,23 @@ var ThrowTypeError = $gOPD
 	: throwTypeError;
 
 var hasSymbols = __webpack_require__(2636)();
+var hasProto = __webpack_require__(8486)();
 
-var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+var getProto = Object.getPrototypeOf || (
+	hasProto
+		? function (x) { return x.__proto__; } // eslint-disable-line no-proto
+		: null
+);
 
 var needsEval = {};
 
-var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
+var TypedArray = typeof Uint8Array === 'undefined' || !getProto ? undefined : getProto(Uint8Array);
 
 var INTRINSICS = {
 	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
 	'%Array%': Array,
 	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
-	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
+	'%ArrayIteratorPrototype%': hasSymbols && getProto ? getProto([][Symbol.iterator]()) : undefined,
 	'%AsyncFromSyncIteratorPrototype%': undefined,
 	'%AsyncFunction%': needsEval,
 	'%AsyncGenerator%': needsEval,
@@ -2555,6 +2560,8 @@ var INTRINSICS = {
 	'%AsyncIteratorPrototype%': needsEval,
 	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
 	'%BigInt%': typeof BigInt === 'undefined' ? undefined : BigInt,
+	'%BigInt64Array%': typeof BigInt64Array === 'undefined' ? undefined : BigInt64Array,
+	'%BigUint64Array%': typeof BigUint64Array === 'undefined' ? undefined : BigUint64Array,
 	'%Boolean%': Boolean,
 	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
 	'%Date%': Date,
@@ -2575,10 +2582,10 @@ var INTRINSICS = {
 	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
 	'%isFinite%': isFinite,
 	'%isNaN%': isNaN,
-	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
+	'%IteratorPrototype%': hasSymbols && getProto ? getProto(getProto([][Symbol.iterator]())) : undefined,
 	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
 	'%Map%': typeof Map === 'undefined' ? undefined : Map,
-	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols || !getProto ? undefined : getProto(new Map()[Symbol.iterator]()),
 	'%Math%': Math,
 	'%Number%': Number,
 	'%Object%': Object,
@@ -2591,10 +2598,10 @@ var INTRINSICS = {
 	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
 	'%RegExp%': RegExp,
 	'%Set%': typeof Set === 'undefined' ? undefined : Set,
-	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols || !getProto ? undefined : getProto(new Set()[Symbol.iterator]()),
 	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
 	'%String%': String,
-	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
+	'%StringIteratorPrototype%': hasSymbols && getProto ? getProto(''[Symbol.iterator]()) : undefined,
 	'%Symbol%': hasSymbols ? Symbol : undefined,
 	'%SyntaxError%': $SyntaxError,
 	'%ThrowTypeError%': ThrowTypeError,
@@ -2609,6 +2616,16 @@ var INTRINSICS = {
 	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
 	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
 };
+
+if (getProto) {
+	try {
+		null.error; // eslint-disable-line no-unused-expressions
+	} catch (e) {
+		// https://github.com/tc39/proposal-shadowrealm/pull/384#issuecomment-1364264229
+		var errorProto = getProto(getProto(e));
+		INTRINSICS['%Error.prototype%'] = errorProto;
+	}
+}
 
 var doEval = function doEval(name) {
 	var value;
@@ -2625,7 +2642,7 @@ var doEval = function doEval(name) {
 		}
 	} else if (name === '%AsyncIteratorPrototype%') {
 		var gen = doEval('%AsyncGenerator%');
-		if (gen) {
+		if (gen && getProto) {
 			value = getProto(gen.prototype);
 		}
 	}
@@ -2890,6 +2907,25 @@ hasPropertyDescriptors.hasArrayLengthDefineBug = function hasArrayLengthDefineBu
 };
 
 module.exports = hasPropertyDescriptors;
+
+
+/***/ }),
+
+/***/ 8486:
+/***/ ((module) => {
+
+"use strict";
+
+
+var test = {
+	foo: {}
+};
+
+var $Object = Object;
+
+module.exports = function hasProto() {
+	return { __proto__: test }.foo === test.foo && !({ __proto__: null } instanceof $Object);
+};
 
 
 /***/ }),
@@ -3314,63 +3350,10 @@ module.exports = function shimNumberIsNaN() {
 "use strict";
 
 
-var forEach = __webpack_require__(3243);
-var availableTypedArrays = __webpack_require__(2191);
-var callBound = __webpack_require__(2680);
-
-var $toString = callBound('Object.prototype.toString');
-var hasToStringTag = __webpack_require__(7226)();
-var gOPD = __webpack_require__(326);
-
-var g = typeof globalThis === 'undefined' ? __webpack_require__.g : globalThis;
-var typedArrays = availableTypedArrays();
-
-var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
-	for (var i = 0; i < array.length; i += 1) {
-		if (array[i] === value) {
-			return i;
-		}
-	}
-	return -1;
-};
-var $slice = callBound('String.prototype.slice');
-var toStrTags = {};
-var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
-if (hasToStringTag && gOPD && getPrototypeOf) {
-	forEach(typedArrays, function (typedArray) {
-		var arr = new g[typedArray]();
-		if (Symbol.toStringTag in arr) {
-			var proto = getPrototypeOf(arr);
-			var descriptor = gOPD(proto, Symbol.toStringTag);
-			if (!descriptor) {
-				var superProto = getPrototypeOf(proto);
-				descriptor = gOPD(superProto, Symbol.toStringTag);
-			}
-			toStrTags[typedArray] = descriptor.get;
-		}
-	});
-}
-
-var tryTypedArrays = function tryAllTypedArrays(value) {
-	var anyTrue = false;
-	forEach(toStrTags, function (getter, typedArray) {
-		if (!anyTrue) {
-			try {
-				anyTrue = getter.call(value) === typedArray;
-			} catch (e) { /**/ }
-		}
-	});
-	return anyTrue;
-};
+var whichTypedArray = __webpack_require__(2094);
 
 module.exports = function isTypedArray(value) {
-	if (!value || typeof value !== 'object') { return false; }
-	if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-		var tag = $slice($toString(value), 8, -1);
-		return $indexOf(typedArrays, tag) > -1;
-	}
-	if (!gOPD) { return false; }
-	return tryTypedArrays(value);
+	return !!whichTypedArray(value);
 };
 
 
@@ -3848,6 +3831,191 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 process.umask = function() { return 0; };
+
+
+/***/ }),
+
+/***/ 4487:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */ });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6297);
+/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4881);
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+class BaseService {
+    addDocument(document) {
+        this.documents[document.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.create(document.uri, document.languageId, document.version, document.text);
+    //TODO:
+    /*if (options)
+            this.setSessionOptions(sessionID, options);*/ }
+    getDocument(uri) {
+        return this.documents[uri];
+    }
+    removeDocument(document) {
+        delete this.documents[document.uri];
+        if (this.options[document.uri]) {
+            delete this.options[document.uri];
+        }
+    }
+    getDocumentValue(uri) {
+        var _this_getDocument;
+        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
+    }
+    setValue(identifier, value) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            document = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.create(document.uri, document.languageId, document.version, value);
+            this.documents[document.uri] = document;
+        }
+    }
+    setGlobalOptions(options) {
+        this.globalOptions = options !== null && options !== void 0 ? options : {};
+    }
+    setOptions(sessionID, options, merge = false) {
+        this.options[sessionID] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_1__/* .mergeObjects */ .PM)(options, this.options[sessionID]) : options;
+    }
+    getOption(sessionID, optionName) {
+        if (this.options[sessionID] && this.options[sessionID][optionName]) {
+            return this.options[sessionID][optionName];
+        } else {
+            return this.globalOptions[optionName];
+        }
+    }
+    applyDeltas(identifier, deltas) {
+        let document = this.getDocument(identifier.uri);
+        if (document) vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.update(document, deltas, identifier.version);
+    }
+    async doComplete(document, position) {
+        return null;
+    }
+    async doHover(document, position) {
+        return null;
+    }
+    async doResolve(item) {
+        return null;
+    }
+    async doValidation(document) {
+        return [];
+    }
+    format(document, range, options) {
+        return [];
+    }
+    async provideSignatureHelp(document, position) {
+        return null;
+    }
+    async findDocumentHighlights(document, position) {
+        return [];
+    }
+    get optionsToFilterDiagnostics() {
+        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
+        return {
+            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
+            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
+            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
+            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
+            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
+            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
+        };
+    }
+    constructor(mode){
+        _define_property(this, "mode", void 0);
+        _define_property(this, "documents", {});
+        _define_property(this, "options", {});
+        _define_property(this, "globalOptions", {});
+        _define_property(this, "serviceData", void 0);
+        this.mode = mode;
+    }
+}
+
+
+/***/ }),
+
+/***/ 6297:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   $p: () => (/* binding */ checkValueAgainstRegexpArray),
+/* harmony export */   PM: () => (/* binding */ mergeObjects)
+/* harmony export */ });
+/* unused harmony exports notEmpty, mergeRanges */
+function mergeObjects(obj1, obj2) {
+    if (!obj1) return obj2;
+    if (!obj2) return obj1;
+    const mergedObjects = {
+        ...obj2,
+        ...obj1
+    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+    for (const key of Object.keys(mergedObjects)){
+        if (obj1[key] && obj2[key]) {
+            if (Array.isArray(obj1[key])) {
+                mergedObjects[key] = obj1[key].concat(obj2[key]);
+            } else if (Array.isArray(obj2[key])) {
+                mergedObjects[key] = obj2[key].concat(obj1[key]);
+            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+            }
+        }
+    }
+    return mergedObjects;
+}
+function notEmpty(value) {
+    return value !== null && value !== undefined;
+}
+//taken with small changes from ace-code
+function mergeRanges(ranges) {
+    var list = ranges;
+    list = list.sort(function(a, b) {
+        return comparePoints(a.start, b.start);
+    });
+    var next = list[0], range;
+    for(var i = 1; i < list.length; i++){
+        range = next;
+        next = list[i];
+        var cmp = comparePoints(range.end, next.start);
+        if (cmp < 0) continue;
+        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (comparePoints(range.end, next.end) < 0) {
+            range.end.row = next.end.row;
+            range.end.column = next.end.column;
+        }
+        list.splice(i, 1);
+        next = range;
+        i--;
+    }
+    return list;
+}
+function comparePoints(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+}
+function checkValueAgainstRegexpArray(value, regexpArray) {
+    if (!regexpArray) {
+        return false;
+    }
+    for(let i = 0; i < regexpArray.length; i++){
+        if (regexpArray[i].test(value)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 /***/ }),
@@ -4975,14 +5143,14 @@ ril_1.default.install();
 const api_1 = __webpack_require__(5247);
 __exportStar(__webpack_require__(5247), exports);
 class BrowserMessageReader extends api_1.AbstractMessageReader {
-    constructor(context) {
+    constructor(port) {
         super();
         this._onData = new api_1.Emitter();
         this._messageListener = (event) => {
             this._onData.fire(event.data);
         };
-        context.addEventListener('error', (event) => this.fireError(event));
-        context.onmessage = this._messageListener;
+        port.addEventListener('error', (event) => this.fireError(event));
+        port.onmessage = this._messageListener;
     }
     listen(callback) {
         return this._onData.event(callback);
@@ -4990,15 +5158,15 @@ class BrowserMessageReader extends api_1.AbstractMessageReader {
 }
 exports.BrowserMessageReader = BrowserMessageReader;
 class BrowserMessageWriter extends api_1.AbstractMessageWriter {
-    constructor(context) {
+    constructor(port) {
         super();
-        this.context = context;
+        this.port = port;
         this.errorCount = 0;
-        context.addEventListener('error', (event) => this.fireError(event));
+        port.addEventListener('error', (event) => this.fireError(event));
     }
     write(msg) {
         try {
-            this.context.postMessage(msg);
+            this.port.postMessage(msg);
             return Promise.resolve();
         }
         catch (error) {
@@ -5024,7 +5192,7 @@ function createMessageConnection(reader, writer, logger, options) {
     return (0, api_1.createMessageConnection)(reader, writer, logger, options);
 }
 exports.createMessageConnection = createMessageConnection;
-//# sourceMappingURL=main.js.map
+
 
 /***/ }),
 
@@ -5039,11 +5207,8 @@ exports.createMessageConnection = createMessageConnection;
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const ral_1 = __webpack_require__(5706);
-const disposable_1 = __webpack_require__(8437);
-const events_1 = __webpack_require__(5165);
-const messageBuffer_1 = __webpack_require__(8652);
-class MessageBuffer extends messageBuffer_1.AbstractMessageBuffer {
+const api_1 = __webpack_require__(5247);
+class MessageBuffer extends api_1.AbstractMessageBuffer {
     constructor(encoding = 'utf-8') {
         super(encoding);
         this.asciiDecoder = new TextDecoder('ascii');
@@ -5078,28 +5243,28 @@ MessageBuffer.emptyBuffer = new Uint8Array(0);
 class ReadableStreamWrapper {
     constructor(socket) {
         this.socket = socket;
-        this._onData = new events_1.Emitter();
+        this._onData = new api_1.Emitter();
         this._messageListener = (event) => {
             const blob = event.data;
             blob.arrayBuffer().then((buffer) => {
                 this._onData.fire(new Uint8Array(buffer));
             }, () => {
-                (0, ral_1.default)().console.error(`Converting blob to array buffer failed.`);
+                (0, api_1.RAL)().console.error(`Converting blob to array buffer failed.`);
             });
         };
         this.socket.addEventListener('message', this._messageListener);
     }
     onClose(listener) {
         this.socket.addEventListener('close', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
     }
     onError(listener) {
         this.socket.addEventListener('error', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
     }
     onEnd(listener) {
         this.socket.addEventListener('end', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
     }
     onData(listener) {
         return this._onData.event(listener);
@@ -5111,15 +5276,15 @@ class WritableStreamWrapper {
     }
     onClose(listener) {
         this.socket.addEventListener('close', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
     }
     onError(listener) {
         this.socket.addEventListener('error', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
     }
     onEnd(listener) {
         this.socket.addEventListener('end', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
     }
     write(data, encoding) {
         if (typeof data === 'string') {
@@ -5187,12 +5352,12 @@ function RIL() {
 }
 (function (RIL) {
     function install() {
-        ral_1.default.install(_ril);
+        api_1.RAL.install(_ril);
     }
     RIL.install = install;
 })(RIL || (RIL = {}));
 exports["default"] = RIL;
-//# sourceMappingURL=ril.js.map
+
 
 /***/ }),
 
@@ -5207,8 +5372,8 @@ exports["default"] = RIL;
  * ------------------------------------------------------------------------------------------ */
 /// <reference path="../../typings/thenable.d.ts" />
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TraceFormat = exports.TraceValues = exports.Trace = exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
-exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = void 0;
+exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
+exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = void 0;
 const messages_1 = __webpack_require__(9141);
 Object.defineProperty(exports, "Message", ({ enumerable: true, get: function () { return messages_1.Message; } }));
 Object.defineProperty(exports, "RequestType", ({ enumerable: true, get: function () { return messages_1.RequestType; } }));
@@ -5248,6 +5413,9 @@ Object.defineProperty(exports, "Emitter", ({ enumerable: true, get: function () 
 const cancellation_1 = __webpack_require__(415);
 Object.defineProperty(exports, "CancellationTokenSource", ({ enumerable: true, get: function () { return cancellation_1.CancellationTokenSource; } }));
 Object.defineProperty(exports, "CancellationToken", ({ enumerable: true, get: function () { return cancellation_1.CancellationToken; } }));
+const sharedArrayCancellation_1 = __webpack_require__(178);
+Object.defineProperty(exports, "SharedArraySenderStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArraySenderStrategy; } }));
+Object.defineProperty(exports, "SharedArrayReceiverStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArrayReceiverStrategy; } }));
 const messageReader_1 = __webpack_require__(451);
 Object.defineProperty(exports, "MessageReader", ({ enumerable: true, get: function () { return messageReader_1.MessageReader; } }));
 Object.defineProperty(exports, "AbstractMessageReader", ({ enumerable: true, get: function () { return messageReader_1.AbstractMessageReader; } }));
@@ -5256,6 +5424,8 @@ const messageWriter_1 = __webpack_require__(1251);
 Object.defineProperty(exports, "MessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.MessageWriter; } }));
 Object.defineProperty(exports, "AbstractMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.AbstractMessageWriter; } }));
 Object.defineProperty(exports, "WriteableStreamMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.WriteableStreamMessageWriter; } }));
+const messageBuffer_1 = __webpack_require__(8652);
+Object.defineProperty(exports, "AbstractMessageBuffer", ({ enumerable: true, get: function () { return messageBuffer_1.AbstractMessageBuffer; } }));
 const connection_1 = __webpack_require__(1908);
 Object.defineProperty(exports, "ConnectionStrategy", ({ enumerable: true, get: function () { return connection_1.ConnectionStrategy; } }));
 Object.defineProperty(exports, "ConnectionOptions", ({ enumerable: true, get: function () { return connection_1.ConnectionOptions; } }));
@@ -5273,9 +5443,10 @@ Object.defineProperty(exports, "ConnectionError", ({ enumerable: true, get: func
 Object.defineProperty(exports, "CancellationReceiverStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationReceiverStrategy; } }));
 Object.defineProperty(exports, "CancellationSenderStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationSenderStrategy; } }));
 Object.defineProperty(exports, "CancellationStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationStrategy; } }));
+Object.defineProperty(exports, "MessageStrategy", ({ enumerable: true, get: function () { return connection_1.MessageStrategy; } }));
 const ral_1 = __webpack_require__(5706);
 exports.RAL = ral_1.default;
-//# sourceMappingURL=api.js.map
+
 
 /***/ }),
 
@@ -5379,7 +5550,7 @@ class CancellationTokenSource {
     }
 }
 exports.CancellationTokenSource = CancellationTokenSource;
-//# sourceMappingURL=cancellation.js.map
+
 
 /***/ }),
 
@@ -5393,7 +5564,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createMessageConnection = exports.ConnectionOptions = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
+exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
 const ral_1 = __webpack_require__(5706);
 const Is = __webpack_require__(8811);
 const messages_1 = __webpack_require__(9141);
@@ -5554,6 +5725,22 @@ var ConnectionStrategy;
     }
     ConnectionStrategy.is = is;
 })(ConnectionStrategy = exports.ConnectionStrategy || (exports.ConnectionStrategy = {}));
+var IdCancellationReceiverStrategy;
+(function (IdCancellationReceiverStrategy) {
+    function is(value) {
+        const candidate = value;
+        return candidate && (candidate.kind === undefined || candidate.kind === 'id') && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+    }
+    IdCancellationReceiverStrategy.is = is;
+})(IdCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy || (exports.IdCancellationReceiverStrategy = {}));
+var RequestCancellationReceiverStrategy;
+(function (RequestCancellationReceiverStrategy) {
+    function is(value) {
+        const candidate = value;
+        return candidate && candidate.kind === 'request' && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+    }
+    RequestCancellationReceiverStrategy.is = is;
+})(RequestCancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy || (exports.RequestCancellationReceiverStrategy = {}));
 var CancellationReceiverStrategy;
 (function (CancellationReceiverStrategy) {
     CancellationReceiverStrategy.Message = Object.freeze({
@@ -5562,8 +5749,7 @@ var CancellationReceiverStrategy;
         }
     });
     function is(value) {
-        const candidate = value;
-        return candidate && Is.func(candidate.createCancellationTokenSource);
+        return IdCancellationReceiverStrategy.is(value) || RequestCancellationReceiverStrategy.is(value);
     }
     CancellationReceiverStrategy.is = is;
 })(CancellationReceiverStrategy = exports.CancellationReceiverStrategy || (exports.CancellationReceiverStrategy = {}));
@@ -5593,11 +5779,19 @@ var CancellationStrategy;
     }
     CancellationStrategy.is = is;
 })(CancellationStrategy = exports.CancellationStrategy || (exports.CancellationStrategy = {}));
+var MessageStrategy;
+(function (MessageStrategy) {
+    function is(value) {
+        const candidate = value;
+        return candidate && Is.func(candidate.handleMessage);
+    }
+    MessageStrategy.is = is;
+})(MessageStrategy = exports.MessageStrategy || (exports.MessageStrategy = {}));
 var ConnectionOptions;
 (function (ConnectionOptions) {
     function is(value) {
         const candidate = value;
-        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy));
+        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy) || MessageStrategy.is(candidate.messageStrategy));
     }
     ConnectionOptions.is = is;
 })(ConnectionOptions = exports.ConnectionOptions || (exports.ConnectionOptions = {}));
@@ -5700,23 +5894,32 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             processMessageQueue();
         });
     }
+    function handleMessage(message) {
+        if (messages_1.Message.isRequest(message)) {
+            handleRequest(message);
+        }
+        else if (messages_1.Message.isNotification(message)) {
+            handleNotification(message);
+        }
+        else if (messages_1.Message.isResponse(message)) {
+            handleResponse(message);
+        }
+        else {
+            handleInvalidMessage(message);
+        }
+    }
     function processMessageQueue() {
         if (messageQueue.size === 0) {
             return;
         }
         const message = messageQueue.shift();
         try {
-            if (messages_1.Message.isRequest(message)) {
-                handleRequest(message);
-            }
-            else if (messages_1.Message.isNotification(message)) {
-                handleNotification(message);
-            }
-            else if (messages_1.Message.isResponse(message)) {
-                handleResponse(message);
+            const messageStrategy = options?.messageStrategy;
+            if (MessageStrategy.is(messageStrategy)) {
+                messageStrategy.handleMessage(message, handleMessage);
             }
             else {
-                handleInvalidMessage(message);
+                handleMessage(message);
             }
         }
         finally {
@@ -5816,7 +6019,9 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
         const startTime = Date.now();
         if (requestHandler || starRequestHandler) {
             const tokenKey = requestMessage.id ?? String(Date.now()); //
-            const cancellationSource = cancellationStrategy.receiver.createCancellationTokenSource(tokenKey);
+            const cancellationSource = IdCancellationReceiverStrategy.is(cancellationStrategy.receiver)
+                ? cancellationStrategy.receiver.createCancellationTokenSource(tokenKey)
+                : cancellationStrategy.receiver.createCancellationTokenSource(requestMessage);
             if (requestMessage.id !== null && knownCanceledRequests.has(requestMessage.id)) {
                 cancellationSource.cancel();
             }
@@ -6302,7 +6507,10 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                 params: messageParams
             };
             traceSendingNotification(notificationMessage);
-            return messageWriter.write(notificationMessage).catch(() => logger.error(`Sending notification failed.`));
+            return messageWriter.write(notificationMessage).catch((error) => {
+                logger.error(`Sending notification failed.`);
+                throw error;
+            });
         },
         onNotification: (type, handler) => {
             throwIfClosedOrDisposed();
@@ -6343,6 +6551,8 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             };
         },
         sendProgress: (_type, token, value) => {
+            // This should not await but simple return to ensure that we don't have another
+            // async scheduling. Otherwise one send could overtake another send.
             return connection.sendNotification(ProgressNotification.type, { token, value });
         },
         onUnhandledProgress: unhandledProgressEmitter.event,
@@ -6406,13 +6616,17 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     }
                 });
             }
-            const result = new Promise((resolve, reject) => {
-                const requestMessage = {
-                    jsonrpc: version,
-                    id: id,
-                    method: method,
-                    params: messageParams
-                };
+            const requestMessage = {
+                jsonrpc: version,
+                id: id,
+                method: method,
+                params: messageParams
+            };
+            traceSendingRequest(requestMessage);
+            if (typeof cancellationStrategy.sender.enableCancellation === 'function') {
+                cancellationStrategy.sender.enableCancellation(requestMessage);
+            }
+            return new Promise(async (resolve, reject) => {
                 const resolveWithCleanup = (r) => {
                     resolve(r);
                     cancellationStrategy.sender.cleanup(id);
@@ -6423,21 +6637,18 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     cancellationStrategy.sender.cleanup(id);
                     disposable?.dispose();
                 };
-                let responsePromise = { method: method, timerStart: Date.now(), resolve: resolveWithCleanup, reject: rejectWithCleanup };
-                traceSendingRequest(requestMessage);
+                const responsePromise = { method: method, timerStart: Date.now(), resolve: resolveWithCleanup, reject: rejectWithCleanup };
                 try {
-                    messageWriter.write(requestMessage).catch(() => logger.error(`Sending request failed.`));
-                }
-                catch (e) {
-                    // Writing the message failed. So we need to reject the promise.
-                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, e.message ? e.message : 'Unknown reason'));
-                    responsePromise = null;
-                }
-                if (responsePromise) {
+                    await messageWriter.write(requestMessage);
                     responsePromises.set(id, responsePromise);
                 }
+                catch (error) {
+                    logger.error(`Sending request failed.`);
+                    // Writing the message failed. So we need to reject the promise.
+                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, error.message ? error.message : 'Unknown reason'));
+                    throw error;
+                }
             });
-            return result;
         },
         onRequest: (type, handler) => {
             throwIfClosedOrDisposed();
@@ -6559,7 +6770,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
     return connection;
 }
 exports.createMessageConnection = createMessageConnection;
-//# sourceMappingURL=connection.js.map
+
 
 /***/ }),
 
@@ -6583,7 +6794,7 @@ var Disposable;
     }
     Disposable.create = create;
 })(Disposable = exports.Disposable || (exports.Disposable = {}));
-//# sourceMappingURL=disposable.js.map
+
 
 /***/ }),
 
@@ -6719,7 +6930,7 @@ class Emitter {
 }
 exports.Emitter = Emitter;
 Emitter._noop = function () { };
-//# sourceMappingURL=events.js.map
+
 
 /***/ }),
 
@@ -6762,7 +6973,7 @@ function stringArray(value) {
     return array(value) && value.every(elem => string(elem));
 }
 exports.stringArray = stringArray;
-//# sourceMappingURL=is.js.map
+
 
 /***/ }),
 
@@ -7168,7 +7379,7 @@ class LRUCache extends LinkedMap {
     }
 }
 exports.LRUCache = LRUCache;
-//# sourceMappingURL=linkedMap.js.map
+
 
 /***/ }),
 
@@ -7200,7 +7411,7 @@ class AbstractMessageBuffer {
         this._chunks.push(toAppend);
         this._totalLength += toAppend.byteLength;
     }
-    tryReadHeaders() {
+    tryReadHeaders(lowerCaseKeys = false) {
         if (this._chunks.length === 0) {
             return undefined;
         }
@@ -7266,7 +7477,7 @@ class AbstractMessageBuffer {
             }
             const key = header.substr(0, index);
             const value = header.substr(index + 1).trim();
-            result.set(key, value);
+            result.set(lowerCaseKeys ? key.toLowerCase() : key, value);
         }
         return result;
     }
@@ -7328,7 +7539,7 @@ class AbstractMessageBuffer {
     }
 }
 exports.AbstractMessageBuffer = AbstractMessageBuffer;
-//# sourceMappingURL=messageBuffer.js.map
+
 
 /***/ }),
 
@@ -7346,6 +7557,7 @@ exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.Me
 const ral_1 = __webpack_require__(5706);
 const Is = __webpack_require__(8811);
 const events_1 = __webpack_require__(5165);
+const semaphore_1 = __webpack_require__(2339);
 var MessageReader;
 (function (MessageReader) {
     function is(value) {
@@ -7443,6 +7655,7 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
         this._partialMessageTimeout = 10000;
         this.nextMessageLength = -1;
         this.messageToken = 0;
+        this.readSemaphore = new semaphore_1.Semaphore(1);
     }
     set partialMessageTimeout(timeout) {
         this._partialMessageTimeout = timeout;
@@ -7466,17 +7679,19 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
         this.buffer.append(data);
         while (true) {
             if (this.nextMessageLength === -1) {
-                const headers = this.buffer.tryReadHeaders();
+                const headers = this.buffer.tryReadHeaders(true);
                 if (!headers) {
                     return;
                 }
-                const contentLength = headers.get('Content-Length');
+                const contentLength = headers.get('content-length');
                 if (!contentLength) {
-                    throw new Error('Header must provide a Content-Length property.');
+                    this.fireError(new Error('Header must provide a Content-Length property.'));
+                    return;
                 }
                 const length = parseInt(contentLength);
                 if (isNaN(length)) {
-                    throw new Error('Content-Length value must be a number.');
+                    this.fireError(new Error('Content-Length value must be a number.'));
+                    return;
                 }
                 this.nextMessageLength = length;
             }
@@ -7488,20 +7703,17 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
             }
             this.clearPartialMessageTimer();
             this.nextMessageLength = -1;
-            let p;
-            if (this.options.contentDecoder !== undefined) {
-                p = this.options.contentDecoder.decode(body);
-            }
-            else {
-                p = Promise.resolve(body);
-            }
-            p.then((value) => {
-                this.options.contentTypeDecoder.decode(value, this.options).then((msg) => {
-                    this.callback(msg);
-                }, (error) => {
-                    this.fireError(error);
-                });
-            }, (error) => {
+            // Make sure that we convert one received message after the
+            // other. Otherwise it could happen that a decoding of a second
+            // smaller message finished before the decoding of a first larger
+            // message and then we would deliver the second message first.
+            this.readSemaphore.lock(async () => {
+                const bytes = this.options.contentDecoder !== undefined
+                    ? await this.options.contentDecoder.decode(body)
+                    : body;
+                const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
+                this.callback(message);
+            }).catch((error) => {
                 this.fireError(error);
             });
         }
@@ -7527,7 +7739,7 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
     }
 }
 exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
-//# sourceMappingURL=messageReader.js.map
+
 
 /***/ }),
 
@@ -7650,7 +7862,7 @@ class WriteableStreamMessageWriter extends AbstractMessageWriter {
     }
 }
 exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
-//# sourceMappingURL=messageWriter.js.map
+
 
 /***/ }),
 
@@ -7964,7 +8176,7 @@ var Message;
     }
     Message.isResponse = isResponse;
 })(Message = exports.Message || (exports.Message = {}));
-//# sourceMappingURL=messages.js.map
+
 
 /***/ }),
 
@@ -7995,7 +8207,7 @@ function RAL() {
     RAL.install = install;
 })(RAL || (RAL = {}));
 exports["default"] = RAL;
-//# sourceMappingURL=ral.js.map
+
 
 /***/ }),
 
@@ -8071,7 +8283,91 @@ class Semaphore {
     }
 }
 exports.Semaphore = Semaphore;
-//# sourceMappingURL=semaphore.js.map
+
+
+/***/ }),
+
+/***/ 178:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
+const cancellation_1 = __webpack_require__(415);
+var CancellationState;
+(function (CancellationState) {
+    CancellationState.Continue = 0;
+    CancellationState.Cancelled = 1;
+})(CancellationState || (CancellationState = {}));
+class SharedArraySenderStrategy {
+    constructor() {
+        this.buffers = new Map();
+    }
+    enableCancellation(request) {
+        if (request.id === null) {
+            return;
+        }
+        const buffer = new SharedArrayBuffer(4);
+        const data = new Int32Array(buffer, 0, 1);
+        data[0] = CancellationState.Continue;
+        this.buffers.set(request.id, buffer);
+        request.$cancellationData = buffer;
+    }
+    async sendCancellation(_conn, id) {
+        const buffer = this.buffers.get(id);
+        if (buffer === undefined) {
+            return;
+        }
+        const data = new Int32Array(buffer, 0, 1);
+        Atomics.store(data, 0, CancellationState.Cancelled);
+    }
+    cleanup(id) {
+        this.buffers.delete(id);
+    }
+    dispose() {
+        this.buffers.clear();
+    }
+}
+exports.SharedArraySenderStrategy = SharedArraySenderStrategy;
+class SharedArrayBufferCancellationToken {
+    constructor(buffer) {
+        this.data = new Int32Array(buffer, 0, 1);
+    }
+    get isCancellationRequested() {
+        return Atomics.load(this.data, 0) === CancellationState.Cancelled;
+    }
+    get onCancellationRequested() {
+        throw new Error(`Cancellation over SharedArrayBuffer doesn't support cancellation events`);
+    }
+}
+class SharedArrayBufferCancellationTokenSource {
+    constructor(buffer) {
+        this.token = new SharedArrayBufferCancellationToken(buffer);
+    }
+    cancel() {
+    }
+    dispose() {
+    }
+}
+class SharedArrayReceiverStrategy {
+    constructor() {
+        this.kind = 'request';
+    }
+    createCancellationTokenSource(request) {
+        const buffer = request.$cancellationData;
+        if (buffer === undefined) {
+            return new cancellation_1.CancellationTokenSource();
+        }
+        return new SharedArrayBufferCancellationTokenSource(buffer);
+    }
+}
+exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
+
 
 /***/ }),
 
@@ -8107,7 +8403,7 @@ function createProtocolConnection(reader, writer, logger, options) {
     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
 }
 exports.createProtocolConnection = createProtocolConnection;
-//# sourceMappingURL=main.js.map
+
 
 /***/ }),
 
@@ -8192,7 +8488,7 @@ var LSPErrorCodes;
     */
     LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 })(LSPErrorCodes = exports.LSPErrorCodes || (exports.LSPErrorCodes = {}));
-//# sourceMappingURL=api.js.map
+
 
 /***/ }),
 
@@ -8215,7 +8511,7 @@ function createProtocolConnection(input, output, logger, options) {
     return (0, vscode_jsonrpc_1.createMessageConnection)(input, output, logger, options);
 }
 exports.createProtocolConnection = createProtocolConnection;
-//# sourceMappingURL=connection.js.map
+
 
 /***/ }),
 
@@ -8267,7 +8563,7 @@ class ProtocolNotificationType extends vscode_jsonrpc_1.NotificationType {
     }
 }
 exports.ProtocolNotificationType = ProtocolNotificationType;
-//# sourceMappingURL=messages.js.map
+
 
 /***/ }),
 
@@ -8317,7 +8613,7 @@ var CallHierarchyOutgoingCallsRequest;
     CallHierarchyOutgoingCallsRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
 })(CallHierarchyOutgoingCallsRequest = exports.CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = {}));
-//# sourceMappingURL=protocol.callHierarchy.js.map
+
 
 /***/ }),
 
@@ -8335,8 +8631,8 @@ exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to list all color symbols found in a given text document. The request's
- * parameter is of type [DocumentColorParams](#DocumentColorParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link DocumentColorParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */
 var DocumentColorRequest;
@@ -8347,8 +8643,8 @@ var DocumentColorRequest;
 })(DocumentColorRequest = exports.DocumentColorRequest || (exports.DocumentColorRequest = {}));
 /**
  * A request to list all presentation for a color. The request's
- * parameter is of type [ColorPresentationParams](#ColorPresentationParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link ColorPresentationParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */
 var ColorPresentationRequest;
@@ -8357,7 +8653,7 @@ var ColorPresentationRequest;
     ColorPresentationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
 })(ColorPresentationRequest = exports.ColorPresentationRequest || (exports.ColorPresentationRequest = {}));
-//# sourceMappingURL=protocol.colorProvider.js.map
+
 
 /***/ }),
 
@@ -8389,7 +8685,7 @@ var ConfigurationRequest;
     ConfigurationRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
 })(ConfigurationRequest = exports.ConfigurationRequest || (exports.ConfigurationRequest = {}));
-//# sourceMappingURL=protocol.configuration.js.map
+
 
 /***/ }),
 
@@ -8410,8 +8706,8 @@ let __noDynamicImport;
 /**
  * A request to resolve the type definition locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Declaration](#Declaration)
- * or a typed array of [DeclarationLink](#DeclarationLink) or a Thenable that resolves
+ * (#TextDocumentPositionParams) the response is of type {@link Declaration}
+ * or a typed array of {@link DeclarationLink} or a Thenable that resolves
  * to such.
  */
 var DeclarationRequest;
@@ -8420,7 +8716,7 @@ var DeclarationRequest;
     DeclarationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
 })(DeclarationRequest = exports.DeclarationRequest || (exports.DeclarationRequest = {}));
-//# sourceMappingURL=protocol.declaration.js.map
+
 
 /***/ }),
 
@@ -8499,10 +8795,10 @@ var WorkspaceDiagnosticRequest;
 var DiagnosticRefreshRequest;
 (function (DiagnosticRefreshRequest) {
     DiagnosticRefreshRequest.method = `workspace/diagnostic/refresh`;
-    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
 })(DiagnosticRefreshRequest = exports.DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = {}));
-//# sourceMappingURL=protocol.diagnostic.js.map
+
 
 /***/ }),
 
@@ -8538,6 +8834,10 @@ var FileOperationPatternKind;
 /**
  * The will create files request is sent from the client to the server before files are actually
  * created as long as the creation is triggered from within the client.
+ *
+ * The request can return a `WorkspaceEdit` which will be applied to workspace before the
+ * files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
+ * to be created.
  *
  * @since 3.16.0
  */
@@ -8607,7 +8907,7 @@ var WillDeleteFilesRequest;
     WillDeleteFilesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
 })(WillDeleteFilesRequest = exports.WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = {}));
-//# sourceMappingURL=protocol.fileOperations.js.map
+
 
 /***/ }),
 
@@ -8625,8 +8925,8 @@ exports.FoldingRangeRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide folding ranges in a document. The request's
- * parameter is of type [FoldingRangeParams](#FoldingRangeParams), the
- * response is of type [FoldingRangeList](#FoldingRangeList) or a Thenable
+ * parameter is of type {@link FoldingRangeParams}, the
+ * response is of type {@link FoldingRangeList} or a Thenable
  * that resolves to such.
  */
 var FoldingRangeRequest;
@@ -8635,7 +8935,7 @@ var FoldingRangeRequest;
     FoldingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     FoldingRangeRequest.type = new messages_1.ProtocolRequestType(FoldingRangeRequest.method);
 })(FoldingRangeRequest = exports.FoldingRangeRequest || (exports.FoldingRangeRequest = {}));
-//# sourceMappingURL=protocol.foldingRange.js.map
+
 
 /***/ }),
 
@@ -8656,7 +8956,7 @@ let __noDynamicImport;
 /**
  * A request to resolve the implementation locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */
 var ImplementationRequest;
@@ -8665,7 +8965,7 @@ var ImplementationRequest;
     ImplementationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
 })(ImplementationRequest = exports.ImplementationRequest || (exports.ImplementationRequest = {}));
-//# sourceMappingURL=protocol.implementation.js.map
+
 
 /***/ }),
 
@@ -8683,8 +8983,8 @@ exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.Inla
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide inlay hints in a document. The request's parameter is of
- * type [InlayHintsParams](#InlayHintsParams), the response is of type
- * [InlayHint[]](#InlayHint[]) or a Thenable that resolves to such.
+ * type {@link InlayHintsParams}, the response is of type
+ * {@link InlayHint InlayHint[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */
@@ -8696,8 +8996,8 @@ var InlayHintRequest;
 })(InlayHintRequest = exports.InlayHintRequest || (exports.InlayHintRequest = {}));
 /**
  * A request to resolve additional properties for an inlay hint.
- * The request's parameter is of type [InlayHint](#InlayHint), the response is
- * of type [InlayHint](#InlayHint) or a Thenable that resolves to such.
+ * The request's parameter is of type {@link InlayHint}, the response is
+ * of type {@link InlayHint} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */
@@ -8713,10 +9013,10 @@ var InlayHintResolveRequest;
 var InlayHintRefreshRequest;
 (function (InlayHintRefreshRequest) {
     InlayHintRefreshRequest.method = `workspace/inlayHint/refresh`;
-    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
 })(InlayHintRefreshRequest = exports.InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = {}));
-//# sourceMappingURL=protocol.inlayHint.js.map
+
 
 /***/ }),
 
@@ -8734,8 +9034,8 @@ exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide inline values in a document. The request's parameter is of
- * type [InlineValueParams](#InlineValueParams), the response is of type
- * [InlineValue[]](#InlineValue[]) or a Thenable that resolves to such.
+ * type {@link InlineValueParams}, the response is of type
+ * {@link InlineValue InlineValue[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */
@@ -8751,10 +9051,10 @@ var InlineValueRequest;
 var InlineValueRefreshRequest;
 (function (InlineValueRefreshRequest) {
     InlineValueRefreshRequest.method = `workspace/inlineValue/refresh`;
-    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
 })(InlineValueRefreshRequest = exports.InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = {}));
-//# sourceMappingURL=protocol.inlineValue.js.map
+
 
 /***/ }),
 
@@ -8855,7 +9155,7 @@ Object.defineProperty(exports, "DidCloseNotebookDocumentNotification", ({ enumer
 let __noDynamicImport;
 /**
  * The TextDocumentFilter namespace provides helper functions to work with
- * [TextDocumentFilter](#TextDocumentFilter) literals.
+ * {@link TextDocumentFilter} literals.
  *
  * @since 3.17.0
  */
@@ -8869,7 +9169,7 @@ var TextDocumentFilter;
 })(TextDocumentFilter = exports.TextDocumentFilter || (exports.TextDocumentFilter = {}));
 /**
  * The NotebookDocumentFilter namespace provides helper functions to work with
- * [NotebookDocumentFilter](#NotebookDocumentFilter) literals.
+ * {@link NotebookDocumentFilter} literals.
  *
  * @since 3.17.0
  */
@@ -8883,7 +9183,7 @@ var NotebookDocumentFilter;
 })(NotebookDocumentFilter = exports.NotebookDocumentFilter || (exports.NotebookDocumentFilter = {}));
 /**
  * The NotebookCellTextDocumentFilter namespace provides helper functions to work with
- * [NotebookCellTextDocumentFilter](#NotebookCellTextDocumentFilter) literals.
+ * {@link NotebookCellTextDocumentFilter} literals.
  *
  * @since 3.17.0
  */
@@ -8899,7 +9199,7 @@ var NotebookCellTextDocumentFilter;
 })(NotebookCellTextDocumentFilter = exports.NotebookCellTextDocumentFilter || (exports.NotebookCellTextDocumentFilter = {}));
 /**
  * The DocumentSelector namespace provides helper functions to work with
- * [DocumentSelector](#DocumentSelector)s.
+ * {@link DocumentSelector}s.
  */
 var DocumentSelector;
 (function (DocumentSelector) {
@@ -8983,7 +9283,7 @@ var FailureHandlingKind;
 var PositionEncodingKind;
 (function (PositionEncodingKind) {
     /**
-     * Character offsets count UTF-8 code units.
+     * Character offsets count UTF-8 code units (e.g. bytes).
      */
     PositionEncodingKind.UTF8 = 'utf-8';
     /**
@@ -8996,7 +9296,7 @@ var PositionEncodingKind;
     /**
      * Character offsets count UTF-32 code units.
      *
-     * Implementation note: these are the same as Unicode code points,
+     * Implementation note: these are the same as Unicode codepoints,
      * so this `PositionEncodingKind` may also be used for an
      * encoding-agnostic representation of character offsets.
      */
@@ -9004,7 +9304,7 @@ var PositionEncodingKind;
 })(PositionEncodingKind = exports.PositionEncodingKind || (exports.PositionEncodingKind = {}));
 /**
  * The StaticRegistrationOptions namespace provides helper functions to work with
- * [StaticRegistrationOptions](#StaticRegistrationOptions) literals.
+ * {@link StaticRegistrationOptions} literals.
  */
 var StaticRegistrationOptions;
 (function (StaticRegistrationOptions) {
@@ -9016,7 +9316,7 @@ var StaticRegistrationOptions;
 })(StaticRegistrationOptions = exports.StaticRegistrationOptions || (exports.StaticRegistrationOptions = {}));
 /**
  * The TextDocumentRegistrationOptions namespace provides helper functions to work with
- * [TextDocumentRegistrationOptions](#TextDocumentRegistrationOptions) literals.
+ * {@link TextDocumentRegistrationOptions} literals.
  */
 var TextDocumentRegistrationOptions;
 (function (TextDocumentRegistrationOptions) {
@@ -9028,7 +9328,7 @@ var TextDocumentRegistrationOptions;
 })(TextDocumentRegistrationOptions = exports.TextDocumentRegistrationOptions || (exports.TextDocumentRegistrationOptions = {}));
 /**
  * The WorkDoneProgressOptions namespace provides helper functions to work with
- * [WorkDoneProgressOptions](#WorkDoneProgressOptions) literals.
+ * {@link WorkDoneProgressOptions} literals.
  */
 var WorkDoneProgressOptions;
 (function (WorkDoneProgressOptions) {
@@ -9046,8 +9346,8 @@ var WorkDoneProgressOptions;
 /**
  * The initialize request is sent from the client to the server.
  * It is sent once as the request after starting up the server.
- * The requests parameter is of type [InitializeParams](#InitializeParams)
- * the response if of type [InitializeResult](#InitializeResult) of a Thenable that
+ * The requests parameter is of type {@link InitializeParams}
+ * the response if of type {@link InitializeResult} of a Thenable that
  * resolves to such.
  */
 var InitializeRequest;
@@ -9400,12 +9700,12 @@ var CompletionTriggerKind;
 })(CompletionTriggerKind = exports.CompletionTriggerKind || (exports.CompletionTriggerKind = {}));
 /**
  * Request to request completion at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response
- * is of type [CompletionItem[]](#CompletionItem) or [CompletionList](#CompletionList)
+ * parameter is of type {@link TextDocumentPosition} the response
+ * is of type {@link CompletionItem CompletionItem[]} or {@link CompletionList}
  * or a Thenable that resolves to such.
  *
- * The request can delay the computation of the [`detail`](#CompletionItem.detail)
- * and [`documentation`](#CompletionItem.documentation) properties to the `completionItem/resolve`
+ * The request can delay the computation of the {@link CompletionItem.detail `detail`}
+ * and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
  * request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
  * `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
  */
@@ -9417,8 +9717,8 @@ var CompletionRequest;
 })(CompletionRequest = exports.CompletionRequest || (exports.CompletionRequest = {}));
 /**
  * Request to resolve additional information for a given completion item.The request's
- * parameter is of type [CompletionItem](#CompletionItem) the response
- * is of type [CompletionItem](#CompletionItem) or a Thenable that resolves to such.
+ * parameter is of type {@link CompletionItem} the response
+ * is of type {@link CompletionItem} or a Thenable that resolves to such.
  */
 var CompletionResolveRequest;
 (function (CompletionResolveRequest) {
@@ -9428,8 +9728,8 @@ var CompletionResolveRequest;
 })(CompletionResolveRequest = exports.CompletionResolveRequest || (exports.CompletionResolveRequest = {}));
 /**
  * Request to request hover information at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response is of
- * type [Hover](#Hover) or a Thenable that resolves to such.
+ * parameter is of type {@link TextDocumentPosition} the response is of
+ * type {@link Hover} or a Thenable that resolves to such.
  */
 var HoverRequest;
 (function (HoverRequest) {
@@ -9466,8 +9766,8 @@ var SignatureHelpRequest;
 /**
  * A request to resolve the definition location of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPosition]
- * (#TextDocumentPosition) the response is of either type [Definition](#Definition)
- * or a typed array of [DefinitionLink](#DefinitionLink) or a Thenable that resolves
+ * (#TextDocumentPosition) the response is of either type {@link Definition}
+ * or a typed array of {@link DefinitionLink} or a Thenable that resolves
  * to such.
  */
 var DefinitionRequest;
@@ -9479,8 +9779,8 @@ var DefinitionRequest;
 /**
  * A request to resolve project-wide references for the symbol denoted
  * by the given text document position. The request's parameter is of
- * type [ReferenceParams](#ReferenceParams) the response is of type
- * [Location[]](#Location) or a Thenable that resolves to such.
+ * type {@link ReferenceParams} the response is of type
+ * {@link Location Location[]} or a Thenable that resolves to such.
  */
 var ReferencesRequest;
 (function (ReferencesRequest) {
@@ -9489,7 +9789,7 @@ var ReferencesRequest;
     ReferencesRequest.type = new messages_1.ProtocolRequestType(ReferencesRequest.method);
 })(ReferencesRequest = exports.ReferencesRequest || (exports.ReferencesRequest = {}));
 /**
- * Request to resolve a [DocumentHighlight](#DocumentHighlight) for a given
+ * Request to resolve a {@link DocumentHighlight} for a given
  * text document position. The request's parameter is of type [TextDocumentPosition]
  * (#TextDocumentPosition) the request response is of type [DocumentHighlight[]]
  * (#DocumentHighlight) or a Thenable that resolves to such.
@@ -9502,8 +9802,8 @@ var DocumentHighlightRequest;
 })(DocumentHighlightRequest = exports.DocumentHighlightRequest || (exports.DocumentHighlightRequest = {}));
 /**
  * A request to list all symbols found in a given text document. The request's
- * parameter is of type [TextDocumentIdentifier](#TextDocumentIdentifier) the
- * response is of type [SymbolInformation[]](#SymbolInformation) or a Thenable
+ * parameter is of type {@link TextDocumentIdentifier} the
+ * response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
  * that resolves to such.
  */
 var DocumentSymbolRequest;
@@ -9523,8 +9823,8 @@ var CodeActionRequest;
 })(CodeActionRequest = exports.CodeActionRequest || (exports.CodeActionRequest = {}));
 /**
  * Request to resolve additional information for a given code action.The request's
- * parameter is of type [CodeAction](#CodeAction) the response
- * is of type [CodeAction](#CodeAction) or a Thenable that resolves to such.
+ * parameter is of type {@link CodeAction} the response
+ * is of type {@link CodeAction} or a Thenable that resolves to such.
  */
 var CodeActionResolveRequest;
 (function (CodeActionResolveRequest) {
@@ -9534,8 +9834,8 @@ var CodeActionResolveRequest;
 })(CodeActionResolveRequest = exports.CodeActionResolveRequest || (exports.CodeActionResolveRequest = {}));
 /**
  * A request to list project-wide symbols matching the query string given
- * by the [WorkspaceSymbolParams](#WorkspaceSymbolParams). The response is
- * of type [SymbolInformation[]](#SymbolInformation) or a Thenable that
+ * by the {@link WorkspaceSymbolParams}. The response is
+ * of type {@link SymbolInformation SymbolInformation[]} or a Thenable that
  * resolves to such.
  *
  * @since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
@@ -9601,8 +9901,8 @@ var DocumentLinkRequest;
 })(DocumentLinkRequest = exports.DocumentLinkRequest || (exports.DocumentLinkRequest = {}));
 /**
  * Request to resolve additional information for a given document link. The request's
- * parameter is of type [DocumentLink](#DocumentLink) the response
- * is of type [DocumentLink](#DocumentLink) or a Thenable that resolves to such.
+ * parameter is of type {@link DocumentLink} the response
+ * is of type {@link DocumentLink} or a Thenable that resolves to such.
  */
 var DocumentLinkResolveRequest;
 (function (DocumentLinkResolveRequest) {
@@ -9685,7 +9985,7 @@ var ApplyWorkspaceEditRequest;
     ApplyWorkspaceEditRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType('workspace/applyEdit');
 })(ApplyWorkspaceEditRequest = exports.ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = {}));
-//# sourceMappingURL=protocol.js.map
+
 
 /***/ }),
 
@@ -9712,7 +10012,7 @@ var LinkedEditingRangeRequest;
     LinkedEditingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
 })(LinkedEditingRangeRequest = exports.LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = {}));
-//# sourceMappingURL=protocol.linkedEditingRange.js.map
+
 
 /***/ }),
 
@@ -9779,8 +10079,8 @@ var MonikerKind;
 })(MonikerKind = exports.MonikerKind || (exports.MonikerKind = {}));
 /**
  * A request to get the moniker of a symbol at a given text document position.
- * The request parameter is of type [TextDocumentPositionParams](#TextDocumentPositionParams).
- * The response is of type [Moniker[]](#Moniker[]) or `null`.
+ * The request parameter is of type {@link TextDocumentPositionParams}.
+ * The response is of type {@link Moniker Moniker[]} or `null`.
  */
 var MonikerRequest;
 (function (MonikerRequest) {
@@ -9788,7 +10088,7 @@ var MonikerRequest;
     MonikerRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
 })(MonikerRequest = exports.MonikerRequest || (exports.MonikerRequest = {}));
-//# sourceMappingURL=protocol.moniker.js.map
+
 
 /***/ }),
 
@@ -10010,7 +10310,7 @@ var DidCloseNotebookDocumentNotification;
     DidCloseNotebookDocumentNotification.type = new messages_1.ProtocolNotificationType(DidCloseNotebookDocumentNotification.method);
     DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 })(DidCloseNotebookDocumentNotification = exports.DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = {}));
-//# sourceMappingURL=protocol.notebook.js.map
+
 
 /***/ }),
 
@@ -10055,7 +10355,7 @@ var WorkDoneProgressCancelNotification;
     WorkDoneProgressCancelNotification.messageDirection = messages_1.MessageDirection.clientToServer;
     WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 })(WorkDoneProgressCancelNotification = exports.WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = {}));
-//# sourceMappingURL=protocol.progress.js.map
+
 
 /***/ }),
 
@@ -10073,8 +10373,8 @@ exports.SelectionRangeRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide selection ranges in a document. The request's
- * parameter is of type [SelectionRangeParams](#SelectionRangeParams), the
- * response is of type [SelectionRange[]](#SelectionRange[]) or a Thenable
+ * parameter is of type {@link SelectionRangeParams}, the
+ * response is of type {@link SelectionRange SelectionRange[]} or a Thenable
  * that resolves to such.
  */
 var SelectionRangeRequest;
@@ -10083,7 +10383,7 @@ var SelectionRangeRequest;
     SelectionRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
 })(SelectionRangeRequest = exports.SelectionRangeRequest || (exports.SelectionRangeRequest = {}));
-//# sourceMappingURL=protocol.selectionRange.js.map
+
 
 /***/ }),
 
@@ -10145,10 +10445,10 @@ var SemanticTokensRangeRequest;
 var SemanticTokensRefreshRequest;
 (function (SemanticTokensRefreshRequest) {
     SemanticTokensRefreshRequest.method = `workspace/semanticTokens/refresh`;
-    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
 })(SemanticTokensRefreshRequest = exports.SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = {}));
-//# sourceMappingURL=protocol.semanticTokens.js.map
+
 
 /***/ }),
 
@@ -10178,7 +10478,7 @@ var ShowDocumentRequest;
     ShowDocumentRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
 })(ShowDocumentRequest = exports.ShowDocumentRequest || (exports.ShowDocumentRequest = {}));
-//# sourceMappingURL=protocol.showDocument.js.map
+
 
 /***/ }),
 
@@ -10198,8 +10498,8 @@ const messages_1 = __webpack_require__(8599);
 let __noDynamicImport;
 /**
  * A request to resolve the type definition locations of a symbol at a given text
- * document position. The request's parameter is of type [TextDocumentPositioParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * document position. The request's parameter is of type [TextDocumentPositionParams]
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */
 var TypeDefinitionRequest;
@@ -10208,7 +10508,7 @@ var TypeDefinitionRequest;
     TypeDefinitionRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
 })(TypeDefinitionRequest = exports.TypeDefinitionRequest || (exports.TypeDefinitionRequest = {}));
-//# sourceMappingURL=protocol.typeDefinition.js.map
+
 
 /***/ }),
 
@@ -10258,7 +10558,7 @@ var TypeHierarchySubtypesRequest;
     TypeHierarchySubtypesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 })(TypeHierarchySubtypesRequest = exports.TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = {}));
-//# sourceMappingURL=protocol.typeHierarchy.js.map
+
 
 /***/ }),
 
@@ -10293,7 +10593,7 @@ var DidChangeWorkspaceFoldersNotification;
     DidChangeWorkspaceFoldersNotification.messageDirection = messages_1.MessageDirection.clientToServer;
     DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
 })(DidChangeWorkspaceFoldersNotification = exports.DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = {}));
-//# sourceMappingURL=protocol.workspaceFolder.js.map
+
 
 /***/ }),
 
@@ -10347,7 +10647,297 @@ function objectLiteral(value) {
     return value !== null && typeof value === 'object';
 }
 exports.objectLiteral = objectLiteral;
-//# sourceMappingURL=is.js.map
+
+
+/***/ }),
+
+/***/ 4881:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   n: () => (/* binding */ TextDocument)
+/* harmony export */ });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var FullTextDocument = /** @class */ (function () {
+    function FullTextDocument(uri, languageId, version, content) {
+        this._uri = uri;
+        this._languageId = languageId;
+        this._version = version;
+        this._content = content;
+        this._lineOffsets = undefined;
+    }
+    Object.defineProperty(FullTextDocument.prototype, "uri", {
+        get: function () {
+            return this._uri;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "languageId", {
+        get: function () {
+            return this._languageId;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "version", {
+        get: function () {
+            return this._version;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    FullTextDocument.prototype.getText = function (range) {
+        if (range) {
+            var start = this.offsetAt(range.start);
+            var end = this.offsetAt(range.end);
+            return this._content.substring(start, end);
+        }
+        return this._content;
+    };
+    FullTextDocument.prototype.update = function (changes, version) {
+        for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
+            var change = changes_1[_i];
+            if (FullTextDocument.isIncremental(change)) {
+                // makes sure start is before end
+                var range = getWellformedRange(change.range);
+                // update content
+                var startOffset = this.offsetAt(range.start);
+                var endOffset = this.offsetAt(range.end);
+                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+                // update the offsets
+                var startLine = Math.max(range.start.line, 0);
+                var endLine = Math.max(range.end.line, 0);
+                var lineOffsets = this._lineOffsets;
+                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
+                if (endLine - startLine === addedLineOffsets.length) {
+                    for (var i = 0, len = addedLineOffsets.length; i < len; i++) {
+                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
+                    }
+                }
+                else {
+                    if (addedLineOffsets.length < 10000) {
+                        lineOffsets.splice.apply(lineOffsets, __spreadArray([startLine + 1, endLine - startLine], addedLineOffsets, false));
+                    }
+                    else { // avoid too many arguments for splice
+                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
+                    }
+                }
+                var diff = change.text.length - (endOffset - startOffset);
+                if (diff !== 0) {
+                    for (var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
+                        lineOffsets[i] = lineOffsets[i] + diff;
+                    }
+                }
+            }
+            else if (FullTextDocument.isFull(change)) {
+                this._content = change.text;
+                this._lineOffsets = undefined;
+            }
+            else {
+                throw new Error('Unknown change event received');
+            }
+        }
+        this._version = version;
+    };
+    FullTextDocument.prototype.getLineOffsets = function () {
+        if (this._lineOffsets === undefined) {
+            this._lineOffsets = computeLineOffsets(this._content, true);
+        }
+        return this._lineOffsets;
+    };
+    FullTextDocument.prototype.positionAt = function (offset) {
+        offset = Math.max(Math.min(offset, this._content.length), 0);
+        var lineOffsets = this.getLineOffsets();
+        var low = 0, high = lineOffsets.length;
+        if (high === 0) {
+            return { line: 0, character: offset };
+        }
+        while (low < high) {
+            var mid = Math.floor((low + high) / 2);
+            if (lineOffsets[mid] > offset) {
+                high = mid;
+            }
+            else {
+                low = mid + 1;
+            }
+        }
+        // low is the least x for which the line offset is larger than the current offset
+        // or array.length if no line offset is larger than the current offset
+        var line = low - 1;
+        return { line: line, character: offset - lineOffsets[line] };
+    };
+    FullTextDocument.prototype.offsetAt = function (position) {
+        var lineOffsets = this.getLineOffsets();
+        if (position.line >= lineOffsets.length) {
+            return this._content.length;
+        }
+        else if (position.line < 0) {
+            return 0;
+        }
+        var lineOffset = lineOffsets[position.line];
+        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
+        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
+    };
+    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
+        get: function () {
+            return this.getLineOffsets().length;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    FullTextDocument.isIncremental = function (event) {
+        var candidate = event;
+        return candidate !== undefined && candidate !== null &&
+            typeof candidate.text === 'string' && candidate.range !== undefined &&
+            (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
+    };
+    FullTextDocument.isFull = function (event) {
+        var candidate = event;
+        return candidate !== undefined && candidate !== null &&
+            typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
+    };
+    return FullTextDocument;
+}());
+var TextDocument;
+(function (TextDocument) {
+    /**
+     * Creates a new text document.
+     *
+     * @param uri The document's uri.
+     * @param languageId  The document's language Id.
+     * @param version The document's initial version number.
+     * @param content The document's content.
+     */
+    function create(uri, languageId, version, content) {
+        return new FullTextDocument(uri, languageId, version, content);
+    }
+    TextDocument.create = create;
+    /**
+     * Updates a TextDocument by modifying its content.
+     *
+     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
+     * @param changes the changes to apply to the document.
+     * @param version the changes version for the document.
+     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
+     *
+     */
+    function update(document, changes, version) {
+        if (document instanceof FullTextDocument) {
+            document.update(changes, version);
+            return document;
+        }
+        else {
+            throw new Error('TextDocument.update: document must be created by TextDocument.create');
+        }
+    }
+    TextDocument.update = update;
+    function applyEdits(document, edits) {
+        var text = document.getText();
+        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function (a, b) {
+            var diff = a.range.start.line - b.range.start.line;
+            if (diff === 0) {
+                return a.range.start.character - b.range.start.character;
+            }
+            return diff;
+        });
+        var lastModifiedOffset = 0;
+        var spans = [];
+        for (var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++) {
+            var e = sortedEdits_1[_i];
+            var startOffset = document.offsetAt(e.range.start);
+            if (startOffset < lastModifiedOffset) {
+                throw new Error('Overlapping edit');
+            }
+            else if (startOffset > lastModifiedOffset) {
+                spans.push(text.substring(lastModifiedOffset, startOffset));
+            }
+            if (e.newText.length) {
+                spans.push(e.newText);
+            }
+            lastModifiedOffset = document.offsetAt(e.range.end);
+        }
+        spans.push(text.substr(lastModifiedOffset));
+        return spans.join('');
+    }
+    TextDocument.applyEdits = applyEdits;
+})(TextDocument || (TextDocument = {}));
+function mergeSort(data, compare) {
+    if (data.length <= 1) {
+        // sorted
+        return data;
+    }
+    var p = (data.length / 2) | 0;
+    var left = data.slice(0, p);
+    var right = data.slice(p);
+    mergeSort(left, compare);
+    mergeSort(right, compare);
+    var leftIdx = 0;
+    var rightIdx = 0;
+    var i = 0;
+    while (leftIdx < left.length && rightIdx < right.length) {
+        var ret = compare(left[leftIdx], right[rightIdx]);
+        if (ret <= 0) {
+            // smaller_equal -> take left to preserve order
+            data[i++] = left[leftIdx++];
+        }
+        else {
+            // greater -> take right
+            data[i++] = right[rightIdx++];
+        }
+    }
+    while (leftIdx < left.length) {
+        data[i++] = left[leftIdx++];
+    }
+    while (rightIdx < right.length) {
+        data[i++] = right[rightIdx++];
+    }
+    return data;
+}
+function computeLineOffsets(text, isAtLineStart, textOffset) {
+    if (textOffset === void 0) { textOffset = 0; }
+    var result = isAtLineStart ? [textOffset] : [];
+    for (var i = 0; i < text.length; i++) {
+        var ch = text.charCodeAt(i);
+        if (ch === 13 /* CharCode.CarriageReturn */ || ch === 10 /* CharCode.LineFeed */) {
+            if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
+                i++;
+            }
+            result.push(textOffset + i + 1);
+        }
+    }
+    return result;
+}
+function getWellformedRange(range) {
+    var start = range.start;
+    var end = range.end;
+    if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
+        return { start: end, end: start };
+    }
+    return range;
+}
+function getWellformedEdit(textEdit) {
+    var range = getWellformedRange(textEdit.range);
+    if (range !== textEdit.range) {
+        return { newText: textEdit.newText, range: range };
+    }
+    return textEdit;
+}
+
 
 /***/ }),
 
@@ -10357,81 +10947,81 @@ exports.objectLiteral = objectLiteral;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AnnotatedTextEdit": () => (/* binding */ AnnotatedTextEdit),
-/* harmony export */   "ChangeAnnotation": () => (/* binding */ ChangeAnnotation),
-/* harmony export */   "ChangeAnnotationIdentifier": () => (/* binding */ ChangeAnnotationIdentifier),
-/* harmony export */   "CodeAction": () => (/* binding */ CodeAction),
-/* harmony export */   "CodeActionContext": () => (/* binding */ CodeActionContext),
-/* harmony export */   "CodeActionKind": () => (/* binding */ CodeActionKind),
-/* harmony export */   "CodeActionTriggerKind": () => (/* binding */ CodeActionTriggerKind),
-/* harmony export */   "CodeDescription": () => (/* binding */ CodeDescription),
-/* harmony export */   "CodeLens": () => (/* binding */ CodeLens),
-/* harmony export */   "Color": () => (/* binding */ Color),
-/* harmony export */   "ColorInformation": () => (/* binding */ ColorInformation),
-/* harmony export */   "ColorPresentation": () => (/* binding */ ColorPresentation),
-/* harmony export */   "Command": () => (/* binding */ Command),
-/* harmony export */   "CompletionItem": () => (/* binding */ CompletionItem),
-/* harmony export */   "CompletionItemKind": () => (/* binding */ CompletionItemKind),
-/* harmony export */   "CompletionItemLabelDetails": () => (/* binding */ CompletionItemLabelDetails),
-/* harmony export */   "CompletionItemTag": () => (/* binding */ CompletionItemTag),
-/* harmony export */   "CompletionList": () => (/* binding */ CompletionList),
-/* harmony export */   "CreateFile": () => (/* binding */ CreateFile),
-/* harmony export */   "DeleteFile": () => (/* binding */ DeleteFile),
-/* harmony export */   "Diagnostic": () => (/* binding */ Diagnostic),
-/* harmony export */   "DiagnosticRelatedInformation": () => (/* binding */ DiagnosticRelatedInformation),
-/* harmony export */   "DiagnosticSeverity": () => (/* binding */ DiagnosticSeverity),
-/* harmony export */   "DiagnosticTag": () => (/* binding */ DiagnosticTag),
-/* harmony export */   "DocumentHighlight": () => (/* binding */ DocumentHighlight),
-/* harmony export */   "DocumentHighlightKind": () => (/* binding */ DocumentHighlightKind),
-/* harmony export */   "DocumentLink": () => (/* binding */ DocumentLink),
-/* harmony export */   "DocumentSymbol": () => (/* binding */ DocumentSymbol),
-/* harmony export */   "DocumentUri": () => (/* binding */ DocumentUri),
-/* harmony export */   "EOL": () => (/* binding */ EOL),
-/* harmony export */   "FoldingRange": () => (/* binding */ FoldingRange),
-/* harmony export */   "FoldingRangeKind": () => (/* binding */ FoldingRangeKind),
-/* harmony export */   "FormattingOptions": () => (/* binding */ FormattingOptions),
-/* harmony export */   "Hover": () => (/* binding */ Hover),
-/* harmony export */   "InlayHint": () => (/* binding */ InlayHint),
-/* harmony export */   "InlayHintKind": () => (/* binding */ InlayHintKind),
-/* harmony export */   "InlayHintLabelPart": () => (/* binding */ InlayHintLabelPart),
-/* harmony export */   "InlineValueContext": () => (/* binding */ InlineValueContext),
-/* harmony export */   "InlineValueEvaluatableExpression": () => (/* binding */ InlineValueEvaluatableExpression),
-/* harmony export */   "InlineValueText": () => (/* binding */ InlineValueText),
-/* harmony export */   "InlineValueVariableLookup": () => (/* binding */ InlineValueVariableLookup),
-/* harmony export */   "InsertReplaceEdit": () => (/* binding */ InsertReplaceEdit),
-/* harmony export */   "InsertTextFormat": () => (/* binding */ InsertTextFormat),
-/* harmony export */   "InsertTextMode": () => (/* binding */ InsertTextMode),
-/* harmony export */   "Location": () => (/* binding */ Location),
-/* harmony export */   "LocationLink": () => (/* binding */ LocationLink),
-/* harmony export */   "MarkedString": () => (/* binding */ MarkedString),
-/* harmony export */   "MarkupContent": () => (/* binding */ MarkupContent),
-/* harmony export */   "MarkupKind": () => (/* binding */ MarkupKind),
-/* harmony export */   "OptionalVersionedTextDocumentIdentifier": () => (/* binding */ OptionalVersionedTextDocumentIdentifier),
-/* harmony export */   "ParameterInformation": () => (/* binding */ ParameterInformation),
-/* harmony export */   "Position": () => (/* binding */ Position),
-/* harmony export */   "Range": () => (/* binding */ Range),
-/* harmony export */   "RenameFile": () => (/* binding */ RenameFile),
-/* harmony export */   "SelectionRange": () => (/* binding */ SelectionRange),
-/* harmony export */   "SemanticTokenModifiers": () => (/* binding */ SemanticTokenModifiers),
-/* harmony export */   "SemanticTokenTypes": () => (/* binding */ SemanticTokenTypes),
-/* harmony export */   "SemanticTokens": () => (/* binding */ SemanticTokens),
-/* harmony export */   "SignatureInformation": () => (/* binding */ SignatureInformation),
-/* harmony export */   "SymbolInformation": () => (/* binding */ SymbolInformation),
-/* harmony export */   "SymbolKind": () => (/* binding */ SymbolKind),
-/* harmony export */   "SymbolTag": () => (/* binding */ SymbolTag),
-/* harmony export */   "TextDocument": () => (/* binding */ TextDocument),
-/* harmony export */   "TextDocumentEdit": () => (/* binding */ TextDocumentEdit),
-/* harmony export */   "TextDocumentIdentifier": () => (/* binding */ TextDocumentIdentifier),
-/* harmony export */   "TextDocumentItem": () => (/* binding */ TextDocumentItem),
-/* harmony export */   "TextEdit": () => (/* binding */ TextEdit),
-/* harmony export */   "URI": () => (/* binding */ URI),
-/* harmony export */   "VersionedTextDocumentIdentifier": () => (/* binding */ VersionedTextDocumentIdentifier),
-/* harmony export */   "WorkspaceChange": () => (/* binding */ WorkspaceChange),
-/* harmony export */   "WorkspaceEdit": () => (/* binding */ WorkspaceEdit),
-/* harmony export */   "WorkspaceFolder": () => (/* binding */ WorkspaceFolder),
-/* harmony export */   "WorkspaceSymbol": () => (/* binding */ WorkspaceSymbol),
-/* harmony export */   "integer": () => (/* binding */ integer),
-/* harmony export */   "uinteger": () => (/* binding */ uinteger)
+/* harmony export */   AnnotatedTextEdit: () => (/* binding */ AnnotatedTextEdit),
+/* harmony export */   ChangeAnnotation: () => (/* binding */ ChangeAnnotation),
+/* harmony export */   ChangeAnnotationIdentifier: () => (/* binding */ ChangeAnnotationIdentifier),
+/* harmony export */   CodeAction: () => (/* binding */ CodeAction),
+/* harmony export */   CodeActionContext: () => (/* binding */ CodeActionContext),
+/* harmony export */   CodeActionKind: () => (/* binding */ CodeActionKind),
+/* harmony export */   CodeActionTriggerKind: () => (/* binding */ CodeActionTriggerKind),
+/* harmony export */   CodeDescription: () => (/* binding */ CodeDescription),
+/* harmony export */   CodeLens: () => (/* binding */ CodeLens),
+/* harmony export */   Color: () => (/* binding */ Color),
+/* harmony export */   ColorInformation: () => (/* binding */ ColorInformation),
+/* harmony export */   ColorPresentation: () => (/* binding */ ColorPresentation),
+/* harmony export */   Command: () => (/* binding */ Command),
+/* harmony export */   CompletionItem: () => (/* binding */ CompletionItem),
+/* harmony export */   CompletionItemKind: () => (/* binding */ CompletionItemKind),
+/* harmony export */   CompletionItemLabelDetails: () => (/* binding */ CompletionItemLabelDetails),
+/* harmony export */   CompletionItemTag: () => (/* binding */ CompletionItemTag),
+/* harmony export */   CompletionList: () => (/* binding */ CompletionList),
+/* harmony export */   CreateFile: () => (/* binding */ CreateFile),
+/* harmony export */   DeleteFile: () => (/* binding */ DeleteFile),
+/* harmony export */   Diagnostic: () => (/* binding */ Diagnostic),
+/* harmony export */   DiagnosticRelatedInformation: () => (/* binding */ DiagnosticRelatedInformation),
+/* harmony export */   DiagnosticSeverity: () => (/* binding */ DiagnosticSeverity),
+/* harmony export */   DiagnosticTag: () => (/* binding */ DiagnosticTag),
+/* harmony export */   DocumentHighlight: () => (/* binding */ DocumentHighlight),
+/* harmony export */   DocumentHighlightKind: () => (/* binding */ DocumentHighlightKind),
+/* harmony export */   DocumentLink: () => (/* binding */ DocumentLink),
+/* harmony export */   DocumentSymbol: () => (/* binding */ DocumentSymbol),
+/* harmony export */   DocumentUri: () => (/* binding */ DocumentUri),
+/* harmony export */   EOL: () => (/* binding */ EOL),
+/* harmony export */   FoldingRange: () => (/* binding */ FoldingRange),
+/* harmony export */   FoldingRangeKind: () => (/* binding */ FoldingRangeKind),
+/* harmony export */   FormattingOptions: () => (/* binding */ FormattingOptions),
+/* harmony export */   Hover: () => (/* binding */ Hover),
+/* harmony export */   InlayHint: () => (/* binding */ InlayHint),
+/* harmony export */   InlayHintKind: () => (/* binding */ InlayHintKind),
+/* harmony export */   InlayHintLabelPart: () => (/* binding */ InlayHintLabelPart),
+/* harmony export */   InlineValueContext: () => (/* binding */ InlineValueContext),
+/* harmony export */   InlineValueEvaluatableExpression: () => (/* binding */ InlineValueEvaluatableExpression),
+/* harmony export */   InlineValueText: () => (/* binding */ InlineValueText),
+/* harmony export */   InlineValueVariableLookup: () => (/* binding */ InlineValueVariableLookup),
+/* harmony export */   InsertReplaceEdit: () => (/* binding */ InsertReplaceEdit),
+/* harmony export */   InsertTextFormat: () => (/* binding */ InsertTextFormat),
+/* harmony export */   InsertTextMode: () => (/* binding */ InsertTextMode),
+/* harmony export */   Location: () => (/* binding */ Location),
+/* harmony export */   LocationLink: () => (/* binding */ LocationLink),
+/* harmony export */   MarkedString: () => (/* binding */ MarkedString),
+/* harmony export */   MarkupContent: () => (/* binding */ MarkupContent),
+/* harmony export */   MarkupKind: () => (/* binding */ MarkupKind),
+/* harmony export */   OptionalVersionedTextDocumentIdentifier: () => (/* binding */ OptionalVersionedTextDocumentIdentifier),
+/* harmony export */   ParameterInformation: () => (/* binding */ ParameterInformation),
+/* harmony export */   Position: () => (/* binding */ Position),
+/* harmony export */   Range: () => (/* binding */ Range),
+/* harmony export */   RenameFile: () => (/* binding */ RenameFile),
+/* harmony export */   SelectionRange: () => (/* binding */ SelectionRange),
+/* harmony export */   SemanticTokenModifiers: () => (/* binding */ SemanticTokenModifiers),
+/* harmony export */   SemanticTokenTypes: () => (/* binding */ SemanticTokenTypes),
+/* harmony export */   SemanticTokens: () => (/* binding */ SemanticTokens),
+/* harmony export */   SignatureInformation: () => (/* binding */ SignatureInformation),
+/* harmony export */   SymbolInformation: () => (/* binding */ SymbolInformation),
+/* harmony export */   SymbolKind: () => (/* binding */ SymbolKind),
+/* harmony export */   SymbolTag: () => (/* binding */ SymbolTag),
+/* harmony export */   TextDocument: () => (/* binding */ TextDocument),
+/* harmony export */   TextDocumentEdit: () => (/* binding */ TextDocumentEdit),
+/* harmony export */   TextDocumentIdentifier: () => (/* binding */ TextDocumentIdentifier),
+/* harmony export */   TextDocumentItem: () => (/* binding */ TextDocumentItem),
+/* harmony export */   TextEdit: () => (/* binding */ TextEdit),
+/* harmony export */   URI: () => (/* binding */ URI),
+/* harmony export */   VersionedTextDocumentIdentifier: () => (/* binding */ VersionedTextDocumentIdentifier),
+/* harmony export */   WorkspaceChange: () => (/* binding */ WorkspaceChange),
+/* harmony export */   WorkspaceEdit: () => (/* binding */ WorkspaceEdit),
+/* harmony export */   WorkspaceFolder: () => (/* binding */ WorkspaceFolder),
+/* harmony export */   WorkspaceSymbol: () => (/* binding */ WorkspaceSymbol),
+/* harmony export */   integer: () => (/* binding */ integer),
+/* harmony export */   uinteger: () => (/* binding */ uinteger)
 /* harmony export */ });
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10472,7 +11062,7 @@ var uinteger;
 })(uinteger || (uinteger = {}));
 /**
  * The Position namespace provides helper functions to work with
- * [Position](#Position) literals.
+ * {@link Position} literals.
  */
 var Position;
 (function (Position) {
@@ -10492,7 +11082,7 @@ var Position;
     }
     Position.create = create;
     /**
-     * Checks whether the given literal conforms to the [Position](#Position) interface.
+     * Checks whether the given literal conforms to the {@link Position} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10502,7 +11092,7 @@ var Position;
 })(Position || (Position = {}));
 /**
  * The Range namespace provides helper functions to work with
- * [Range](#Range) literals.
+ * {@link Range} literals.
  */
 var Range;
 (function (Range) {
@@ -10519,7 +11109,7 @@ var Range;
     }
     Range.create = create;
     /**
-     * Checks whether the given literal conforms to the [Range](#Range) interface.
+     * Checks whether the given literal conforms to the {@link Range} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10529,7 +11119,7 @@ var Range;
 })(Range || (Range = {}));
 /**
  * The Location namespace provides helper functions to work with
- * [Location](#Location) literals.
+ * {@link Location} literals.
  */
 var Location;
 (function (Location) {
@@ -10543,7 +11133,7 @@ var Location;
     }
     Location.create = create;
     /**
-     * Checks whether the given literal conforms to the [Location](#Location) interface.
+     * Checks whether the given literal conforms to the {@link Location} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10553,7 +11143,7 @@ var Location;
 })(Location || (Location = {}));
 /**
  * The LocationLink namespace provides helper functions to work with
- * [LocationLink](#LocationLink) literals.
+ * {@link LocationLink} literals.
  */
 var LocationLink;
 (function (LocationLink) {
@@ -10569,7 +11159,7 @@ var LocationLink;
     }
     LocationLink.create = create;
     /**
-     * Checks whether the given literal conforms to the [LocationLink](#LocationLink) interface.
+     * Checks whether the given literal conforms to the {@link LocationLink} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10581,7 +11171,7 @@ var LocationLink;
 })(LocationLink || (LocationLink = {}));
 /**
  * The Color namespace provides helper functions to work with
- * [Color](#Color) literals.
+ * {@link Color} literals.
  */
 var Color;
 (function (Color) {
@@ -10598,7 +11188,7 @@ var Color;
     }
     Color.create = create;
     /**
-     * Checks whether the given literal conforms to the [Color](#Color) interface.
+     * Checks whether the given literal conforms to the {@link Color} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10611,7 +11201,7 @@ var Color;
 })(Color || (Color = {}));
 /**
  * The ColorInformation namespace provides helper functions to work with
- * [ColorInformation](#ColorInformation) literals.
+ * {@link ColorInformation} literals.
  */
 var ColorInformation;
 (function (ColorInformation) {
@@ -10626,7 +11216,7 @@ var ColorInformation;
     }
     ColorInformation.create = create;
     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10636,7 +11226,7 @@ var ColorInformation;
 })(ColorInformation || (ColorInformation = {}));
 /**
  * The Color namespace provides helper functions to work with
- * [ColorPresentation](#ColorPresentation) literals.
+ * {@link ColorPresentation} literals.
  */
 var ColorPresentation;
 (function (ColorPresentation) {
@@ -10652,7 +11242,7 @@ var ColorPresentation;
     }
     ColorPresentation.create = create;
     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10682,7 +11272,7 @@ var FoldingRangeKind;
 })(FoldingRangeKind || (FoldingRangeKind = {}));
 /**
  * The folding range namespace provides helper functions to work with
- * [FoldingRange](#FoldingRange) literals.
+ * {@link FoldingRange} literals.
  */
 var FoldingRange;
 (function (FoldingRange) {
@@ -10710,7 +11300,7 @@ var FoldingRange;
     }
     FoldingRange.create = create;
     /**
-     * Checks whether the given literal conforms to the [FoldingRange](#FoldingRange) interface.
+     * Checks whether the given literal conforms to the {@link FoldingRange} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10723,7 +11313,7 @@ var FoldingRange;
 })(FoldingRange || (FoldingRange = {}));
 /**
  * The DiagnosticRelatedInformation namespace provides helper functions to work with
- * [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) literals.
+ * {@link DiagnosticRelatedInformation} literals.
  */
 var DiagnosticRelatedInformation;
 (function (DiagnosticRelatedInformation) {
@@ -10738,7 +11328,7 @@ var DiagnosticRelatedInformation;
     }
     DiagnosticRelatedInformation.create = create;
     /**
-     * Checks whether the given literal conforms to the [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) interface.
+     * Checks whether the given literal conforms to the {@link DiagnosticRelatedInformation} interface.
      */
     function is(value) {
         var candidate = value;
@@ -10804,7 +11394,7 @@ var CodeDescription;
 })(CodeDescription || (CodeDescription = {}));
 /**
  * The Diagnostic namespace provides helper functions to work with
- * [Diagnostic](#Diagnostic) literals.
+ * {@link Diagnostic} literals.
  */
 var Diagnostic;
 (function (Diagnostic) {
@@ -10829,7 +11419,7 @@ var Diagnostic;
     }
     Diagnostic.create = create;
     /**
-     * Checks whether the given literal conforms to the [Diagnostic](#Diagnostic) interface.
+     * Checks whether the given literal conforms to the {@link Diagnostic} interface.
      */
     function is(value) {
         var _a;
@@ -10847,7 +11437,7 @@ var Diagnostic;
 })(Diagnostic || (Diagnostic = {}));
 /**
  * The Command namespace provides helper functions to work with
- * [Command](#Command) literals.
+ * {@link Command} literals.
  */
 var Command;
 (function (Command) {
@@ -10867,7 +11457,7 @@ var Command;
     }
     Command.create = create;
     /**
-     * Checks whether the given literal conforms to the [Command](#Command) interface.
+     * Checks whether the given literal conforms to the {@link Command} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11249,7 +11839,7 @@ var WorkspaceChange = /** @class */ (function () {
     }
     Object.defineProperty(WorkspaceChange.prototype, "edit", {
         /**
-         * Returns the underlying [WorkspaceEdit](#WorkspaceEdit) literal
+         * Returns the underlying {@link WorkspaceEdit} literal
          * use to be returned from a workspace edit operation like rename.
          */
         get: function () {
@@ -11397,7 +11987,7 @@ var WorkspaceChange = /** @class */ (function () {
 
 /**
  * The TextDocumentIdentifier namespace provides helper functions to work with
- * [TextDocumentIdentifier](#TextDocumentIdentifier) literals.
+ * {@link TextDocumentIdentifier} literals.
  */
 var TextDocumentIdentifier;
 (function (TextDocumentIdentifier) {
@@ -11410,7 +12000,7 @@ var TextDocumentIdentifier;
     }
     TextDocumentIdentifier.create = create;
     /**
-     * Checks whether the given literal conforms to the [TextDocumentIdentifier](#TextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentIdentifier} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11420,7 +12010,7 @@ var TextDocumentIdentifier;
 })(TextDocumentIdentifier || (TextDocumentIdentifier = {}));
 /**
  * The VersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) literals.
+ * {@link VersionedTextDocumentIdentifier} literals.
  */
 var VersionedTextDocumentIdentifier;
 (function (VersionedTextDocumentIdentifier) {
@@ -11434,7 +12024,7 @@ var VersionedTextDocumentIdentifier;
     }
     VersionedTextDocumentIdentifier.create = create;
     /**
-     * Checks whether the given literal conforms to the [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link VersionedTextDocumentIdentifier} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11444,7 +12034,7 @@ var VersionedTextDocumentIdentifier;
 })(VersionedTextDocumentIdentifier || (VersionedTextDocumentIdentifier = {}));
 /**
  * The OptionalVersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) literals.
+ * {@link OptionalVersionedTextDocumentIdentifier} literals.
  */
 var OptionalVersionedTextDocumentIdentifier;
 (function (OptionalVersionedTextDocumentIdentifier) {
@@ -11458,7 +12048,7 @@ var OptionalVersionedTextDocumentIdentifier;
     }
     OptionalVersionedTextDocumentIdentifier.create = create;
     /**
-     * Checks whether the given literal conforms to the [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link OptionalVersionedTextDocumentIdentifier} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11468,7 +12058,7 @@ var OptionalVersionedTextDocumentIdentifier;
 })(OptionalVersionedTextDocumentIdentifier || (OptionalVersionedTextDocumentIdentifier = {}));
 /**
  * The TextDocumentItem namespace provides helper functions to work with
- * [TextDocumentItem](#TextDocumentItem) literals.
+ * {@link TextDocumentItem} literals.
  */
 var TextDocumentItem;
 (function (TextDocumentItem) {
@@ -11484,7 +12074,7 @@ var TextDocumentItem;
     }
     TextDocumentItem.create = create;
     /**
-     * Checks whether the given literal conforms to the [TextDocumentItem](#TextDocumentItem) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentItem} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11510,7 +12100,7 @@ var MarkupKind;
      */
     MarkupKind.Markdown = 'markdown';
     /**
-     * Checks whether the given value is a value of the [MarkupKind](#MarkupKind) type.
+     * Checks whether the given value is a value of the {@link MarkupKind} type.
      */
     function is(value) {
         var candidate = value;
@@ -11521,7 +12111,7 @@ var MarkupKind;
 var MarkupContent;
 (function (MarkupContent) {
     /**
-     * Checks whether the given value conforms to the [MarkupContent](#MarkupContent) interface.
+     * Checks whether the given value conforms to the {@link MarkupContent} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11610,7 +12200,7 @@ var InsertReplaceEdit;
     }
     InsertReplaceEdit.create = create;
     /**
-     * Checks whether the given literal conforms to the [InsertReplaceEdit](#InsertReplaceEdit) interface.
+     * Checks whether the given literal conforms to the {@link InsertReplaceEdit} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11698,7 +12288,7 @@ var MarkedString;
     }
     MarkedString.fromPlainText = fromPlainText;
     /**
-     * Checks whether the given value conforms to the [MarkedString](#MarkedString) type.
+     * Checks whether the given value conforms to the {@link MarkedString} type.
      */
     function is(value) {
         var candidate = value;
@@ -11709,7 +12299,7 @@ var MarkedString;
 var Hover;
 (function (Hover) {
     /**
-     * Checks whether the given value conforms to the [Hover](#Hover) interface.
+     * Checks whether the given value conforms to the {@link Hover} interface.
      */
     function is(value) {
         var candidate = value;
@@ -11721,7 +12311,7 @@ var Hover;
 })(Hover || (Hover = {}));
 /**
  * The ParameterInformation namespace provides helper functions to work with
- * [ParameterInformation](#ParameterInformation) literals.
+ * {@link ParameterInformation} literals.
  */
 var ParameterInformation;
 (function (ParameterInformation) {
@@ -11738,7 +12328,7 @@ var ParameterInformation;
 })(ParameterInformation || (ParameterInformation = {}));
 /**
  * The SignatureInformation namespace provides helper functions to work with
- * [SignatureInformation](#SignatureInformation) literals.
+ * {@link SignatureInformation} literals.
  */
 var SignatureInformation;
 (function (SignatureInformation) {
@@ -11781,7 +12371,7 @@ var DocumentHighlightKind;
 })(DocumentHighlightKind || (DocumentHighlightKind = {}));
 /**
  * DocumentHighlight namespace to provide helper functions to work with
- * [DocumentHighlight](#DocumentHighlight) literals.
+ * {@link DocumentHighlight} literals.
  */
 var DocumentHighlight;
 (function (DocumentHighlight) {
@@ -11912,7 +12502,7 @@ var DocumentSymbol;
     }
     DocumentSymbol.create = create;
     /**
-     * Checks whether the given literal conforms to the [DocumentSymbol](#DocumentSymbol) interface.
+     * Checks whether the given literal conforms to the {@link DocumentSymbol} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12020,7 +12610,7 @@ var CodeActionTriggerKind;
 })(CodeActionTriggerKind || (CodeActionTriggerKind = {}));
 /**
  * The CodeActionContext namespace provides helper functions to work with
- * [CodeActionContext](#CodeActionContext) literals.
+ * {@link CodeActionContext} literals.
  */
 var CodeActionContext;
 (function (CodeActionContext) {
@@ -12039,7 +12629,7 @@ var CodeActionContext;
     }
     CodeActionContext.create = create;
     /**
-     * Checks whether the given literal conforms to the [CodeActionContext](#CodeActionContext) interface.
+     * Checks whether the given literal conforms to the {@link CodeActionContext} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12084,7 +12674,7 @@ var CodeAction;
 })(CodeAction || (CodeAction = {}));
 /**
  * The CodeLens namespace provides helper functions to work with
- * [CodeLens](#CodeLens) literals.
+ * {@link CodeLens} literals.
  */
 var CodeLens;
 (function (CodeLens) {
@@ -12100,7 +12690,7 @@ var CodeLens;
     }
     CodeLens.create = create;
     /**
-     * Checks whether the given literal conforms to the [CodeLens](#CodeLens) interface.
+     * Checks whether the given literal conforms to the {@link CodeLens} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12110,7 +12700,7 @@ var CodeLens;
 })(CodeLens || (CodeLens = {}));
 /**
  * The FormattingOptions namespace provides helper functions to work with
- * [FormattingOptions](#FormattingOptions) literals.
+ * {@link FormattingOptions} literals.
  */
 var FormattingOptions;
 (function (FormattingOptions) {
@@ -12122,7 +12712,7 @@ var FormattingOptions;
     }
     FormattingOptions.create = create;
     /**
-     * Checks whether the given literal conforms to the [FormattingOptions](#FormattingOptions) interface.
+     * Checks whether the given literal conforms to the {@link FormattingOptions} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12132,7 +12722,7 @@ var FormattingOptions;
 })(FormattingOptions || (FormattingOptions = {}));
 /**
  * The DocumentLink namespace provides helper functions to work with
- * [DocumentLink](#DocumentLink) literals.
+ * {@link DocumentLink} literals.
  */
 var DocumentLink;
 (function (DocumentLink) {
@@ -12144,7 +12734,7 @@ var DocumentLink;
     }
     DocumentLink.create = create;
     /**
-     * Checks whether the given literal conforms to the [DocumentLink](#DocumentLink) interface.
+     * Checks whether the given literal conforms to the {@link DocumentLink} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12309,7 +12899,7 @@ var InlineValueEvaluatableExpression;
 })(InlineValueEvaluatableExpression || (InlineValueEvaluatableExpression = {}));
 /**
  * The InlineValueContext namespace provides helper functions to work with
- * [InlineValueContext](#InlineValueContext) literals.
+ * {@link InlineValueContext} literals.
  *
  * @since 3.17.0
  */
@@ -12323,7 +12913,7 @@ var InlineValueContext;
     }
     InlineValueContext.create = create;
     /**
-     * Checks whether the given literal conforms to the [InlineValueContext](#InlineValueContext) interface.
+     * Checks whether the given literal conforms to the {@link InlineValueContext} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12414,7 +13004,7 @@ var TextDocument;
     }
     TextDocument.create = create;
     /**
-     * Checks whether the given literal conforms to the [ITextDocument](#ITextDocument) interface.
+     * Checks whether the given literal conforms to the {@link ITextDocument} interface.
      */
     function is(value) {
         var candidate = value;
@@ -12653,6 +13243,7 @@ var Is;
 
 var forEach = __webpack_require__(3243);
 var availableTypedArrays = __webpack_require__(2191);
+var callBind = __webpack_require__(9429);
 var callBound = __webpack_require__(2680);
 var gOPD = __webpack_require__(326);
 
@@ -12663,45 +13254,78 @@ var g = typeof globalThis === 'undefined' ? __webpack_require__.g : globalThis;
 var typedArrays = availableTypedArrays();
 
 var $slice = callBound('String.prototype.slice');
-var toStrTags = {};
 var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+
+var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
+	for (var i = 0; i < array.length; i += 1) {
+		if (array[i] === value) {
+			return i;
+		}
+	}
+	return -1;
+};
+var cache = { __proto__: null };
 if (hasToStringTag && gOPD && getPrototypeOf) {
 	forEach(typedArrays, function (typedArray) {
-		if (typeof g[typedArray] === 'function') {
-			var arr = new g[typedArray]();
-			if (Symbol.toStringTag in arr) {
-				var proto = getPrototypeOf(arr);
-				var descriptor = gOPD(proto, Symbol.toStringTag);
-				if (!descriptor) {
-					var superProto = getPrototypeOf(proto);
-					descriptor = gOPD(superProto, Symbol.toStringTag);
-				}
-				toStrTags[typedArray] = descriptor.get;
+		var arr = new g[typedArray]();
+		if (Symbol.toStringTag in arr) {
+			var proto = getPrototypeOf(arr);
+			var descriptor = gOPD(proto, Symbol.toStringTag);
+			if (!descriptor) {
+				var superProto = getPrototypeOf(proto);
+				descriptor = gOPD(superProto, Symbol.toStringTag);
 			}
+			cache['$' + typedArray] = callBind(descriptor.get);
 		}
+	});
+} else {
+	forEach(typedArrays, function (typedArray) {
+		var arr = new g[typedArray]();
+		cache['$' + typedArray] = callBind(arr.slice);
 	});
 }
 
 var tryTypedArrays = function tryAllTypedArrays(value) {
-	var foundName = false;
-	forEach(toStrTags, function (getter, typedArray) {
-		if (!foundName) {
+	var found = false;
+	forEach(cache, function (getter, typedArray) {
+		if (!found) {
 			try {
-				var name = getter.call(value);
-				if (name === typedArray) {
-					foundName = name;
+				if ('$' + getter(value) === typedArray) {
+					found = $slice(typedArray, 1);
 				}
-			} catch (e) {}
+			} catch (e) { /**/ }
 		}
 	});
-	return foundName;
+	return found;
 };
 
-var isTypedArray = __webpack_require__(198);
+var trySlices = function tryAllSlices(value) {
+	var found = false;
+	forEach(cache, function (getter, name) {
+		if (!found) {
+			try {
+				getter(value);
+				found = $slice(name, 1);
+			} catch (e) { /**/ }
+		}
+	});
+	return found;
+};
 
 module.exports = function whichTypedArray(value) {
-	if (!isTypedArray(value)) { return false; }
-	if (!hasToStringTag || !(Symbol.toStringTag in value)) { return $slice($toString(value), 8, -1); }
+	if (!value || typeof value !== 'object') { return false; }
+	if (!hasToStringTag) {
+		var tag = $slice($toString(value), 8, -1);
+		if ($indexOf(typedArrays, tag) > -1) {
+			return tag;
+		}
+		if (tag !== 'Object') {
+			return false;
+		}
+		// node < 0.6 hits here on real Typed Arrays
+		return trySlices(value);
+	}
+	if (!gOPD) { return null; } // unknown engine
 	return tryTypedArrays(value);
 };
 
@@ -12820,453 +13444,11 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "CssService": () => (/* binding */ CssService)
+  CssService: () => (/* binding */ CssService)
 });
 
-;// CONCATENATED MODULE: ./utils.ts
-function mergeObjects(obj1, obj2) {
-    if (!obj1) return obj2;
-    if (!obj2) return obj1;
-    const mergedObjects = {
-        ...obj2,
-        ...obj1
-    }; // Give priority to obj1 values by spreading obj2 first, then obj1
-    for (const key of Object.keys(mergedObjects)){
-        if (obj1[key] && obj2[key]) {
-            if (Array.isArray(obj1[key])) {
-                mergedObjects[key] = obj1[key].concat(obj2[key]);
-            } else if (Array.isArray(obj2[key])) {
-                mergedObjects[key] = obj2[key].concat(obj1[key]);
-            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-            }
-        }
-    }
-    return mergedObjects;
-}
-function utils_notEmpty(value) {
-    return value !== null && value !== undefined;
-}
-//taken with small changes from ace-code
-function utils_mergeRanges(ranges) {
-    var list = ranges;
-    list = list.sort(function(a, b) {
-        return comparePoints(a.start, b.start);
-    });
-    var next = list[0], range;
-    for(var i = 1; i < list.length; i++){
-        range = next;
-        next = list[i];
-        var cmp = comparePoints(range.end, next.start);
-        if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
-        if (comparePoints(range.end, next.end) < 0) {
-            range.end.row = next.end.row;
-            range.end.column = next.end.column;
-        }
-        list.splice(i, 1);
-        next = range;
-        i--;
-    }
-    return list;
-}
-function comparePoints(p1, p2) {
-    return p1.row - p2.row || p1.column - p2.column;
-}
-function checkValueAgainstRegexpArray(value, regexpArray) {
-    if (!regexpArray) {
-        return false;
-    }
-    for(let i = 0; i < regexpArray.length; i++){
-        if (regexpArray[i].test(value)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-;// CONCATENATED MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-var FullTextDocument = /** @class */ (function () {
-    function FullTextDocument(uri, languageId, version, content) {
-        this._uri = uri;
-        this._languageId = languageId;
-        this._version = version;
-        this._content = content;
-        this._lineOffsets = undefined;
-    }
-    Object.defineProperty(FullTextDocument.prototype, "uri", {
-        get: function () {
-            return this._uri;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "languageId", {
-        get: function () {
-            return this._languageId;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "version", {
-        get: function () {
-            return this._version;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.prototype.getText = function (range) {
-        if (range) {
-            var start = this.offsetAt(range.start);
-            var end = this.offsetAt(range.end);
-            return this._content.substring(start, end);
-        }
-        return this._content;
-    };
-    FullTextDocument.prototype.update = function (changes, version) {
-        for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
-            var change = changes_1[_i];
-            if (FullTextDocument.isIncremental(change)) {
-                // makes sure start is before end
-                var range = getWellformedRange(change.range);
-                // update content
-                var startOffset = this.offsetAt(range.start);
-                var endOffset = this.offsetAt(range.end);
-                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
-                // update the offsets
-                var startLine = Math.max(range.start.line, 0);
-                var endLine = Math.max(range.end.line, 0);
-                var lineOffsets = this._lineOffsets;
-                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
-                if (endLine - startLine === addedLineOffsets.length) {
-                    for (var i = 0, len = addedLineOffsets.length; i < len; i++) {
-                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
-                    }
-                }
-                else {
-                    if (addedLineOffsets.length < 10000) {
-                        lineOffsets.splice.apply(lineOffsets, __spreadArray([startLine + 1, endLine - startLine], addedLineOffsets, false));
-                    }
-                    else { // avoid too many arguments for splice
-                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
-                    }
-                }
-                var diff = change.text.length - (endOffset - startOffset);
-                if (diff !== 0) {
-                    for (var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
-                        lineOffsets[i] = lineOffsets[i] + diff;
-                    }
-                }
-            }
-            else if (FullTextDocument.isFull(change)) {
-                this._content = change.text;
-                this._lineOffsets = undefined;
-            }
-            else {
-                throw new Error('Unknown change event received');
-            }
-        }
-        this._version = version;
-    };
-    FullTextDocument.prototype.getLineOffsets = function () {
-        if (this._lineOffsets === undefined) {
-            this._lineOffsets = computeLineOffsets(this._content, true);
-        }
-        return this._lineOffsets;
-    };
-    FullTextDocument.prototype.positionAt = function (offset) {
-        offset = Math.max(Math.min(offset, this._content.length), 0);
-        var lineOffsets = this.getLineOffsets();
-        var low = 0, high = lineOffsets.length;
-        if (high === 0) {
-            return { line: 0, character: offset };
-        }
-        while (low < high) {
-            var mid = Math.floor((low + high) / 2);
-            if (lineOffsets[mid] > offset) {
-                high = mid;
-            }
-            else {
-                low = mid + 1;
-            }
-        }
-        // low is the least x for which the line offset is larger than the current offset
-        // or array.length if no line offset is larger than the current offset
-        var line = low - 1;
-        return { line: line, character: offset - lineOffsets[line] };
-    };
-    FullTextDocument.prototype.offsetAt = function (position) {
-        var lineOffsets = this.getLineOffsets();
-        if (position.line >= lineOffsets.length) {
-            return this._content.length;
-        }
-        else if (position.line < 0) {
-            return 0;
-        }
-        var lineOffset = lineOffsets[position.line];
-        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
-        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-    };
-    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
-        get: function () {
-            return this.getLineOffsets().length;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.isIncremental = function (event) {
-        var candidate = event;
-        return candidate !== undefined && candidate !== null &&
-            typeof candidate.text === 'string' && candidate.range !== undefined &&
-            (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
-    };
-    FullTextDocument.isFull = function (event) {
-        var candidate = event;
-        return candidate !== undefined && candidate !== null &&
-            typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
-    };
-    return FullTextDocument;
-}());
-var TextDocument;
-(function (TextDocument) {
-    /**
-     * Creates a new text document.
-     *
-     * @param uri The document's uri.
-     * @param languageId  The document's language Id.
-     * @param version The document's initial version number.
-     * @param content The document's content.
-     */
-    function create(uri, languageId, version, content) {
-        return new FullTextDocument(uri, languageId, version, content);
-    }
-    TextDocument.create = create;
-    /**
-     * Updates a TextDocument by modifying its content.
-     *
-     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
-     * @param changes the changes to apply to the document.
-     * @param version the changes version for the document.
-     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
-     *
-     */
-    function update(document, changes, version) {
-        if (document instanceof FullTextDocument) {
-            document.update(changes, version);
-            return document;
-        }
-        else {
-            throw new Error('TextDocument.update: document must be created by TextDocument.create');
-        }
-    }
-    TextDocument.update = update;
-    function applyEdits(document, edits) {
-        var text = document.getText();
-        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function (a, b) {
-            var diff = a.range.start.line - b.range.start.line;
-            if (diff === 0) {
-                return a.range.start.character - b.range.start.character;
-            }
-            return diff;
-        });
-        var lastModifiedOffset = 0;
-        var spans = [];
-        for (var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++) {
-            var e = sortedEdits_1[_i];
-            var startOffset = document.offsetAt(e.range.start);
-            if (startOffset < lastModifiedOffset) {
-                throw new Error('Overlapping edit');
-            }
-            else if (startOffset > lastModifiedOffset) {
-                spans.push(text.substring(lastModifiedOffset, startOffset));
-            }
-            if (e.newText.length) {
-                spans.push(e.newText);
-            }
-            lastModifiedOffset = document.offsetAt(e.range.end);
-        }
-        spans.push(text.substr(lastModifiedOffset));
-        return spans.join('');
-    }
-    TextDocument.applyEdits = applyEdits;
-})(TextDocument || (TextDocument = {}));
-function mergeSort(data, compare) {
-    if (data.length <= 1) {
-        // sorted
-        return data;
-    }
-    var p = (data.length / 2) | 0;
-    var left = data.slice(0, p);
-    var right = data.slice(p);
-    mergeSort(left, compare);
-    mergeSort(right, compare);
-    var leftIdx = 0;
-    var rightIdx = 0;
-    var i = 0;
-    while (leftIdx < left.length && rightIdx < right.length) {
-        var ret = compare(left[leftIdx], right[rightIdx]);
-        if (ret <= 0) {
-            // smaller_equal -> take left to preserve order
-            data[i++] = left[leftIdx++];
-        }
-        else {
-            // greater -> take right
-            data[i++] = right[rightIdx++];
-        }
-    }
-    while (leftIdx < left.length) {
-        data[i++] = left[leftIdx++];
-    }
-    while (rightIdx < right.length) {
-        data[i++] = right[rightIdx++];
-    }
-    return data;
-}
-function computeLineOffsets(text, isAtLineStart, textOffset) {
-    if (textOffset === void 0) { textOffset = 0; }
-    var result = isAtLineStart ? [textOffset] : [];
-    for (var i = 0; i < text.length; i++) {
-        var ch = text.charCodeAt(i);
-        if (ch === 13 /* CharCode.CarriageReturn */ || ch === 10 /* CharCode.LineFeed */) {
-            if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
-                i++;
-            }
-            result.push(textOffset + i + 1);
-        }
-    }
-    return result;
-}
-function getWellformedRange(range) {
-    var start = range.start;
-    var end = range.end;
-    if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
-        return { start: end, end: start };
-    }
-    return range;
-}
-function getWellformedEdit(textEdit) {
-    var range = getWellformedRange(textEdit.range);
-    if (range !== textEdit.range) {
-        return { newText: textEdit.newText, range: range };
-    }
-    return textEdit;
-}
-
-;// CONCATENATED MODULE: ./services/base-service.ts
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-
-
-class BaseService {
-    addDocument(document) {
-        this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, document.text);
-    //TODO:
-    /*if (options)
-            this.setSessionOptions(sessionID, options);*/ }
-    getDocument(uri) {
-        return this.documents[uri];
-    }
-    removeDocument(document) {
-        delete this.documents[document.uri];
-        if (this.options[document.uri]) {
-            delete this.options[document.uri];
-        }
-    }
-    getDocumentValue(uri) {
-        var _this_getDocument;
-        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
-    }
-    setValue(identifier, value) {
-        let document = this.getDocument(identifier.uri);
-        if (document) {
-            document = TextDocument.create(document.uri, document.languageId, document.version, value);
-            this.documents[document.uri] = document;
-        }
-    }
-    setGlobalOptions(options) {
-        this.globalOptions = options !== null && options !== void 0 ? options : {};
-    }
-    setOptions(sessionID, options, merge = false) {
-        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
-    }
-    getOption(sessionID, optionName) {
-        if (this.options[sessionID] && this.options[sessionID][optionName]) {
-            return this.options[sessionID][optionName];
-        } else {
-            return this.globalOptions[optionName];
-        }
-    }
-    applyDeltas(identifier, deltas) {
-        let document = this.getDocument(identifier.uri);
-        if (document) TextDocument.update(document, deltas, identifier.version);
-    }
-    async doComplete(document, position) {
-        return null;
-    }
-    async doHover(document, position) {
-        return null;
-    }
-    async doResolve(item) {
-        return null;
-    }
-    async doValidation(document) {
-        return [];
-    }
-    format(document, range, options) {
-        return [];
-    }
-    async provideSignatureHelp(document, position) {
-        return null;
-    }
-    async findDocumentHighlights(document, position) {
-        return [];
-    }
-    get optionsToFilterDiagnostics() {
-        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
-        return {
-            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
-            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
-            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
-            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
-            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
-            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
-        };
-    }
-    constructor(mode){
-        _define_property(this, "mode", void 0);
-        _define_property(this, "documents", {});
-        _define_property(this, "options", {});
-        _define_property(this, "globalOptions", {});
-        _define_property(this, "serviceData", void 0);
-        this.mode = mode;
-    }
-}
-
+// EXTERNAL MODULE: ./src/services/base-service.ts
+var base_service = __webpack_require__(4487);
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/parser/cssScanner.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15165,7 +15347,7 @@ class MixinContentDeclaration extends BodyDeclaration {
         super(offset, length);
     }
     get type() {
-        return NodeType.MixinContentReference;
+        return NodeType.MixinContentDeclaration;
     }
     getParameters() {
         if (!this.parameters) {
@@ -15559,18 +15741,25 @@ function t(...args) {
     message = firstArg;
     args.splice(0, 1);
     formatArgs = !args || typeof args[0] !== "object" ? args : args[0];
+  } else if (firstArg instanceof Array) {
+    const replacements = args.slice(1);
+    if (firstArg.length !== replacements.length + 1) {
+      throw new Error("expected a string as the first argument to l10n.t");
+    }
+    let str = firstArg[0];
+    for (let i = 1; i < firstArg.length; i++) {
+      str += `{${i - 1}}` + firstArg[i];
+    }
+    return t(str, ...replacements);
   } else {
     message = firstArg.message;
     key = message;
     if (firstArg.comment && firstArg.comment.length > 0) {
-      key += `/${Array.isArray(firstArg.comment) ? firstArg.comment.join() : firstArg.comment}`;
+      key += `/${Array.isArray(firstArg.comment) ? firstArg.comment.join("") : firstArg.comment}`;
     }
     formatArgs = firstArg.args ?? {};
   }
-  if (!bundle) {
-    return format(message, formatArgs);
-  }
-  const messageFromBundle = bundle[key];
+  const messageFromBundle = bundle?.[key];
   if (!messageFromBundle) {
     return format(message, formatArgs);
   }
@@ -15640,2216 +15829,10 @@ const ParseError = {
     IdentifierOrVariableExpected: new CSSIssueType('css-idorvarexpected', t("identifier or variable expected")),
 };
 
-;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/node_modules/vscode-languageserver-types/lib/esm/main.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-var DocumentUri;
-(function (DocumentUri) {
-    function is(value) {
-        return typeof value === 'string';
-    }
-    DocumentUri.is = is;
-})(DocumentUri || (DocumentUri = {}));
-var URI;
-(function (URI) {
-    function is(value) {
-        return typeof value === 'string';
-    }
-    URI.is = is;
-})(URI || (URI = {}));
-var integer;
-(function (integer) {
-    integer.MIN_VALUE = -2147483648;
-    integer.MAX_VALUE = 2147483647;
-    function is(value) {
-        return typeof value === 'number' && integer.MIN_VALUE <= value && value <= integer.MAX_VALUE;
-    }
-    integer.is = is;
-})(integer || (integer = {}));
-var uinteger;
-(function (uinteger) {
-    uinteger.MIN_VALUE = 0;
-    uinteger.MAX_VALUE = 2147483647;
-    function is(value) {
-        return typeof value === 'number' && uinteger.MIN_VALUE <= value && value <= uinteger.MAX_VALUE;
-    }
-    uinteger.is = is;
-})(uinteger || (uinteger = {}));
-/**
- * The Position namespace provides helper functions to work with
- * {@link Position} literals.
- */
-var Position;
-(function (Position) {
-    /**
-     * Creates a new Position literal from the given line and character.
-     * @param line The position's line.
-     * @param character The position's character.
-     */
-    function create(line, character) {
-        if (line === Number.MAX_VALUE) {
-            line = uinteger.MAX_VALUE;
-        }
-        if (character === Number.MAX_VALUE) {
-            character = uinteger.MAX_VALUE;
-        }
-        return { line: line, character: character };
-    }
-    Position.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link Position} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Is.uinteger(candidate.line) && Is.uinteger(candidate.character);
-    }
-    Position.is = is;
-})(Position || (Position = {}));
-/**
- * The Range namespace provides helper functions to work with
- * {@link Range} literals.
- */
-var Range;
-(function (Range) {
-    function create(one, two, three, four) {
-        if (Is.uinteger(one) && Is.uinteger(two) && Is.uinteger(three) && Is.uinteger(four)) {
-            return { start: Position.create(one, two), end: Position.create(three, four) };
-        }
-        else if (Position.is(one) && Position.is(two)) {
-            return { start: one, end: two };
-        }
-        else {
-            throw new Error("Range#create called with invalid arguments[".concat(one, ", ").concat(two, ", ").concat(three, ", ").concat(four, "]"));
-        }
-    }
-    Range.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link Range} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Position.is(candidate.start) && Position.is(candidate.end);
-    }
-    Range.is = is;
-})(Range || (Range = {}));
-/**
- * The Location namespace provides helper functions to work with
- * {@link Location} literals.
- */
-var Location;
-(function (Location) {
-    /**
-     * Creates a Location literal.
-     * @param uri The location's uri.
-     * @param range The location's range.
-     */
-    function create(uri, range) {
-        return { uri: uri, range: range };
-    }
-    Location.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link Location} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Range.is(candidate.range) && (Is.string(candidate.uri) || Is.undefined(candidate.uri));
-    }
-    Location.is = is;
-})(Location || (Location = {}));
-/**
- * The LocationLink namespace provides helper functions to work with
- * {@link LocationLink} literals.
- */
-var LocationLink;
-(function (LocationLink) {
-    /**
-     * Creates a LocationLink literal.
-     * @param targetUri The definition's uri.
-     * @param targetRange The full range of the definition.
-     * @param targetSelectionRange The span of the symbol definition at the target.
-     * @param originSelectionRange The span of the symbol being defined in the originating source file.
-     */
-    function create(targetUri, targetRange, targetSelectionRange, originSelectionRange) {
-        return { targetUri: targetUri, targetRange: targetRange, targetSelectionRange: targetSelectionRange, originSelectionRange: originSelectionRange };
-    }
-    LocationLink.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link LocationLink} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Range.is(candidate.targetRange) && Is.string(candidate.targetUri)
-            && Range.is(candidate.targetSelectionRange)
-            && (Range.is(candidate.originSelectionRange) || Is.undefined(candidate.originSelectionRange));
-    }
-    LocationLink.is = is;
-})(LocationLink || (LocationLink = {}));
-/**
- * The Color namespace provides helper functions to work with
- * {@link Color} literals.
- */
-var Color;
-(function (Color) {
-    /**
-     * Creates a new Color literal.
-     */
-    function create(red, green, blue, alpha) {
-        return {
-            red: red,
-            green: green,
-            blue: blue,
-            alpha: alpha,
-        };
-    }
-    Color.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link Color} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Is.numberRange(candidate.red, 0, 1)
-            && Is.numberRange(candidate.green, 0, 1)
-            && Is.numberRange(candidate.blue, 0, 1)
-            && Is.numberRange(candidate.alpha, 0, 1);
-    }
-    Color.is = is;
-})(Color || (Color = {}));
-/**
- * The ColorInformation namespace provides helper functions to work with
- * {@link ColorInformation} literals.
- */
-var ColorInformation;
-(function (ColorInformation) {
-    /**
-     * Creates a new ColorInformation literal.
-     */
-    function create(range, color) {
-        return {
-            range: range,
-            color: color,
-        };
-    }
-    ColorInformation.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Range.is(candidate.range) && Color.is(candidate.color);
-    }
-    ColorInformation.is = is;
-})(ColorInformation || (ColorInformation = {}));
-/**
- * The Color namespace provides helper functions to work with
- * {@link ColorPresentation} literals.
- */
-var ColorPresentation;
-(function (ColorPresentation) {
-    /**
-     * Creates a new ColorInformation literal.
-     */
-    function create(label, textEdit, additionalTextEdits) {
-        return {
-            label: label,
-            textEdit: textEdit,
-            additionalTextEdits: additionalTextEdits,
-        };
-    }
-    ColorPresentation.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Is.string(candidate.label)
-            && (Is.undefined(candidate.textEdit) || TextEdit.is(candidate))
-            && (Is.undefined(candidate.additionalTextEdits) || Is.typedArray(candidate.additionalTextEdits, TextEdit.is));
-    }
-    ColorPresentation.is = is;
-})(ColorPresentation || (ColorPresentation = {}));
-/**
- * A set of predefined range kinds.
- */
-var FoldingRangeKind;
-(function (FoldingRangeKind) {
-    /**
-     * Folding range for a comment
-     */
-    FoldingRangeKind.Comment = 'comment';
-    /**
-     * Folding range for an import or include
-     */
-    FoldingRangeKind.Imports = 'imports';
-    /**
-     * Folding range for a region (e.g. `#region`)
-     */
-    FoldingRangeKind.Region = 'region';
-})(FoldingRangeKind || (FoldingRangeKind = {}));
-/**
- * The folding range namespace provides helper functions to work with
- * {@link FoldingRange} literals.
- */
-var FoldingRange;
-(function (FoldingRange) {
-    /**
-     * Creates a new FoldingRange literal.
-     */
-    function create(startLine, endLine, startCharacter, endCharacter, kind, collapsedText) {
-        var result = {
-            startLine: startLine,
-            endLine: endLine
-        };
-        if (Is.defined(startCharacter)) {
-            result.startCharacter = startCharacter;
-        }
-        if (Is.defined(endCharacter)) {
-            result.endCharacter = endCharacter;
-        }
-        if (Is.defined(kind)) {
-            result.kind = kind;
-        }
-        if (Is.defined(collapsedText)) {
-            result.collapsedText = collapsedText;
-        }
-        return result;
-    }
-    FoldingRange.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link FoldingRange} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Is.uinteger(candidate.startLine) && Is.uinteger(candidate.startLine)
-            && (Is.undefined(candidate.startCharacter) || Is.uinteger(candidate.startCharacter))
-            && (Is.undefined(candidate.endCharacter) || Is.uinteger(candidate.endCharacter))
-            && (Is.undefined(candidate.kind) || Is.string(candidate.kind));
-    }
-    FoldingRange.is = is;
-})(FoldingRange || (FoldingRange = {}));
-/**
- * The DiagnosticRelatedInformation namespace provides helper functions to work with
- * {@link DiagnosticRelatedInformation} literals.
- */
-var DiagnosticRelatedInformation;
-(function (DiagnosticRelatedInformation) {
-    /**
-     * Creates a new DiagnosticRelatedInformation literal.
-     */
-    function create(location, message) {
-        return {
-            location: location,
-            message: message
-        };
-    }
-    DiagnosticRelatedInformation.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link DiagnosticRelatedInformation} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Location.is(candidate.location) && Is.string(candidate.message);
-    }
-    DiagnosticRelatedInformation.is = is;
-})(DiagnosticRelatedInformation || (DiagnosticRelatedInformation = {}));
-/**
- * The diagnostic's severity.
- */
-var DiagnosticSeverity;
-(function (DiagnosticSeverity) {
-    /**
-     * Reports an error.
-     */
-    DiagnosticSeverity.Error = 1;
-    /**
-     * Reports a warning.
-     */
-    DiagnosticSeverity.Warning = 2;
-    /**
-     * Reports an information.
-     */
-    DiagnosticSeverity.Information = 3;
-    /**
-     * Reports a hint.
-     */
-    DiagnosticSeverity.Hint = 4;
-})(DiagnosticSeverity || (DiagnosticSeverity = {}));
-/**
- * The diagnostic tags.
- *
- * @since 3.15.0
- */
-var DiagnosticTag;
-(function (DiagnosticTag) {
-    /**
-     * Unused or unnecessary code.
-     *
-     * Clients are allowed to render diagnostics with this tag faded out instead of having
-     * an error squiggle.
-     */
-    DiagnosticTag.Unnecessary = 1;
-    /**
-     * Deprecated or obsolete code.
-     *
-     * Clients are allowed to rendered diagnostics with this tag strike through.
-     */
-    DiagnosticTag.Deprecated = 2;
-})(DiagnosticTag || (DiagnosticTag = {}));
-/**
- * The CodeDescription namespace provides functions to deal with descriptions for diagnostic codes.
- *
- * @since 3.16.0
- */
-var CodeDescription;
-(function (CodeDescription) {
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Is.string(candidate.href);
-    }
-    CodeDescription.is = is;
-})(CodeDescription || (CodeDescription = {}));
-/**
- * The Diagnostic namespace provides helper functions to work with
- * {@link Diagnostic} literals.
- */
-var Diagnostic;
-(function (Diagnostic) {
-    /**
-     * Creates a new Diagnostic literal.
-     */
-    function create(range, message, severity, code, source, relatedInformation) {
-        var result = { range: range, message: message };
-        if (Is.defined(severity)) {
-            result.severity = severity;
-        }
-        if (Is.defined(code)) {
-            result.code = code;
-        }
-        if (Is.defined(source)) {
-            result.source = source;
-        }
-        if (Is.defined(relatedInformation)) {
-            result.relatedInformation = relatedInformation;
-        }
-        return result;
-    }
-    Diagnostic.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link Diagnostic} interface.
-     */
-    function is(value) {
-        var _a;
-        var candidate = value;
-        return Is.defined(candidate)
-            && Range.is(candidate.range)
-            && Is.string(candidate.message)
-            && (Is.number(candidate.severity) || Is.undefined(candidate.severity))
-            && (Is.integer(candidate.code) || Is.string(candidate.code) || Is.undefined(candidate.code))
-            && (Is.undefined(candidate.codeDescription) || (Is.string((_a = candidate.codeDescription) === null || _a === void 0 ? void 0 : _a.href)))
-            && (Is.string(candidate.source) || Is.undefined(candidate.source))
-            && (Is.undefined(candidate.relatedInformation) || Is.typedArray(candidate.relatedInformation, DiagnosticRelatedInformation.is));
-    }
-    Diagnostic.is = is;
-})(Diagnostic || (Diagnostic = {}));
-/**
- * The Command namespace provides helper functions to work with
- * {@link Command} literals.
- */
-var Command;
-(function (Command) {
-    /**
-     * Creates a new Command literal.
-     */
-    function create(title, command) {
-        var args = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            args[_i - 2] = arguments[_i];
-        }
-        var result = { title: title, command: command };
-        if (Is.defined(args) && args.length > 0) {
-            result.arguments = args;
-        }
-        return result;
-    }
-    Command.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link Command} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.title) && Is.string(candidate.command);
-    }
-    Command.is = is;
-})(Command || (Command = {}));
-/**
- * The TextEdit namespace provides helper function to create replace,
- * insert and delete edits more easily.
- */
-var TextEdit;
-(function (TextEdit) {
-    /**
-     * Creates a replace text edit.
-     * @param range The range of text to be replaced.
-     * @param newText The new text.
-     */
-    function replace(range, newText) {
-        return { range: range, newText: newText };
-    }
-    TextEdit.replace = replace;
-    /**
-     * Creates an insert text edit.
-     * @param position The position to insert the text at.
-     * @param newText The text to be inserted.
-     */
-    function insert(position, newText) {
-        return { range: { start: position, end: position }, newText: newText };
-    }
-    TextEdit.insert = insert;
-    /**
-     * Creates a delete text edit.
-     * @param range The range of text to be deleted.
-     */
-    function del(range) {
-        return { range: range, newText: '' };
-    }
-    TextEdit.del = del;
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate)
-            && Is.string(candidate.newText)
-            && Range.is(candidate.range);
-    }
-    TextEdit.is = is;
-})(TextEdit || (TextEdit = {}));
-var ChangeAnnotation;
-(function (ChangeAnnotation) {
-    function create(label, needsConfirmation, description) {
-        var result = { label: label };
-        if (needsConfirmation !== undefined) {
-            result.needsConfirmation = needsConfirmation;
-        }
-        if (description !== undefined) {
-            result.description = description;
-        }
-        return result;
-    }
-    ChangeAnnotation.create = create;
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Is.string(candidate.label) &&
-            (Is.boolean(candidate.needsConfirmation) || candidate.needsConfirmation === undefined) &&
-            (Is.string(candidate.description) || candidate.description === undefined);
-    }
-    ChangeAnnotation.is = is;
-})(ChangeAnnotation || (ChangeAnnotation = {}));
-var ChangeAnnotationIdentifier;
-(function (ChangeAnnotationIdentifier) {
-    function is(value) {
-        var candidate = value;
-        return Is.string(candidate);
-    }
-    ChangeAnnotationIdentifier.is = is;
-})(ChangeAnnotationIdentifier || (ChangeAnnotationIdentifier = {}));
-var AnnotatedTextEdit;
-(function (AnnotatedTextEdit) {
-    /**
-     * Creates an annotated replace text edit.
-     *
-     * @param range The range of text to be replaced.
-     * @param newText The new text.
-     * @param annotation The annotation.
-     */
-    function replace(range, newText, annotation) {
-        return { range: range, newText: newText, annotationId: annotation };
-    }
-    AnnotatedTextEdit.replace = replace;
-    /**
-     * Creates an annotated insert text edit.
-     *
-     * @param position The position to insert the text at.
-     * @param newText The text to be inserted.
-     * @param annotation The annotation.
-     */
-    function insert(position, newText, annotation) {
-        return { range: { start: position, end: position }, newText: newText, annotationId: annotation };
-    }
-    AnnotatedTextEdit.insert = insert;
-    /**
-     * Creates an annotated delete text edit.
-     *
-     * @param range The range of text to be deleted.
-     * @param annotation The annotation.
-     */
-    function del(range, annotation) {
-        return { range: range, newText: '', annotationId: annotation };
-    }
-    AnnotatedTextEdit.del = del;
-    function is(value) {
-        var candidate = value;
-        return TextEdit.is(candidate) && (ChangeAnnotation.is(candidate.annotationId) || ChangeAnnotationIdentifier.is(candidate.annotationId));
-    }
-    AnnotatedTextEdit.is = is;
-})(AnnotatedTextEdit || (AnnotatedTextEdit = {}));
-/**
- * The TextDocumentEdit namespace provides helper function to create
- * an edit that manipulates a text document.
- */
-var TextDocumentEdit;
-(function (TextDocumentEdit) {
-    /**
-     * Creates a new `TextDocumentEdit`
-     */
-    function create(textDocument, edits) {
-        return { textDocument: textDocument, edits: edits };
-    }
-    TextDocumentEdit.create = create;
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate)
-            && OptionalVersionedTextDocumentIdentifier.is(candidate.textDocument)
-            && Array.isArray(candidate.edits);
-    }
-    TextDocumentEdit.is = is;
-})(TextDocumentEdit || (TextDocumentEdit = {}));
-var CreateFile;
-(function (CreateFile) {
-    function create(uri, options, annotation) {
-        var result = {
-            kind: 'create',
-            uri: uri
-        };
-        if (options !== undefined && (options.overwrite !== undefined || options.ignoreIfExists !== undefined)) {
-            result.options = options;
-        }
-        if (annotation !== undefined) {
-            result.annotationId = annotation;
-        }
-        return result;
-    }
-    CreateFile.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate && candidate.kind === 'create' && Is.string(candidate.uri) && (candidate.options === undefined ||
-            ((candidate.options.overwrite === undefined || Is.boolean(candidate.options.overwrite)) && (candidate.options.ignoreIfExists === undefined || Is.boolean(candidate.options.ignoreIfExists)))) && (candidate.annotationId === undefined || ChangeAnnotationIdentifier.is(candidate.annotationId));
-    }
-    CreateFile.is = is;
-})(CreateFile || (CreateFile = {}));
-var RenameFile;
-(function (RenameFile) {
-    function create(oldUri, newUri, options, annotation) {
-        var result = {
-            kind: 'rename',
-            oldUri: oldUri,
-            newUri: newUri
-        };
-        if (options !== undefined && (options.overwrite !== undefined || options.ignoreIfExists !== undefined)) {
-            result.options = options;
-        }
-        if (annotation !== undefined) {
-            result.annotationId = annotation;
-        }
-        return result;
-    }
-    RenameFile.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate && candidate.kind === 'rename' && Is.string(candidate.oldUri) && Is.string(candidate.newUri) && (candidate.options === undefined ||
-            ((candidate.options.overwrite === undefined || Is.boolean(candidate.options.overwrite)) && (candidate.options.ignoreIfExists === undefined || Is.boolean(candidate.options.ignoreIfExists)))) && (candidate.annotationId === undefined || ChangeAnnotationIdentifier.is(candidate.annotationId));
-    }
-    RenameFile.is = is;
-})(RenameFile || (RenameFile = {}));
-var DeleteFile;
-(function (DeleteFile) {
-    function create(uri, options, annotation) {
-        var result = {
-            kind: 'delete',
-            uri: uri
-        };
-        if (options !== undefined && (options.recursive !== undefined || options.ignoreIfNotExists !== undefined)) {
-            result.options = options;
-        }
-        if (annotation !== undefined) {
-            result.annotationId = annotation;
-        }
-        return result;
-    }
-    DeleteFile.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate && candidate.kind === 'delete' && Is.string(candidate.uri) && (candidate.options === undefined ||
-            ((candidate.options.recursive === undefined || Is.boolean(candidate.options.recursive)) && (candidate.options.ignoreIfNotExists === undefined || Is.boolean(candidate.options.ignoreIfNotExists)))) && (candidate.annotationId === undefined || ChangeAnnotationIdentifier.is(candidate.annotationId));
-    }
-    DeleteFile.is = is;
-})(DeleteFile || (DeleteFile = {}));
-var WorkspaceEdit;
-(function (WorkspaceEdit) {
-    function is(value) {
-        var candidate = value;
-        return candidate &&
-            (candidate.changes !== undefined || candidate.documentChanges !== undefined) &&
-            (candidate.documentChanges === undefined || candidate.documentChanges.every(function (change) {
-                if (Is.string(change.kind)) {
-                    return CreateFile.is(change) || RenameFile.is(change) || DeleteFile.is(change);
-                }
-                else {
-                    return TextDocumentEdit.is(change);
-                }
-            }));
-    }
-    WorkspaceEdit.is = is;
-})(WorkspaceEdit || (WorkspaceEdit = {}));
-var TextEditChangeImpl = /** @class */ (function () {
-    function TextEditChangeImpl(edits, changeAnnotations) {
-        this.edits = edits;
-        this.changeAnnotations = changeAnnotations;
-    }
-    TextEditChangeImpl.prototype.insert = function (position, newText, annotation) {
-        var edit;
-        var id;
-        if (annotation === undefined) {
-            edit = TextEdit.insert(position, newText);
-        }
-        else if (ChangeAnnotationIdentifier.is(annotation)) {
-            id = annotation;
-            edit = AnnotatedTextEdit.insert(position, newText, annotation);
-        }
-        else {
-            this.assertChangeAnnotations(this.changeAnnotations);
-            id = this.changeAnnotations.manage(annotation);
-            edit = AnnotatedTextEdit.insert(position, newText, id);
-        }
-        this.edits.push(edit);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    TextEditChangeImpl.prototype.replace = function (range, newText, annotation) {
-        var edit;
-        var id;
-        if (annotation === undefined) {
-            edit = TextEdit.replace(range, newText);
-        }
-        else if (ChangeAnnotationIdentifier.is(annotation)) {
-            id = annotation;
-            edit = AnnotatedTextEdit.replace(range, newText, annotation);
-        }
-        else {
-            this.assertChangeAnnotations(this.changeAnnotations);
-            id = this.changeAnnotations.manage(annotation);
-            edit = AnnotatedTextEdit.replace(range, newText, id);
-        }
-        this.edits.push(edit);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    TextEditChangeImpl.prototype.delete = function (range, annotation) {
-        var edit;
-        var id;
-        if (annotation === undefined) {
-            edit = TextEdit.del(range);
-        }
-        else if (ChangeAnnotationIdentifier.is(annotation)) {
-            id = annotation;
-            edit = AnnotatedTextEdit.del(range, annotation);
-        }
-        else {
-            this.assertChangeAnnotations(this.changeAnnotations);
-            id = this.changeAnnotations.manage(annotation);
-            edit = AnnotatedTextEdit.del(range, id);
-        }
-        this.edits.push(edit);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    TextEditChangeImpl.prototype.add = function (edit) {
-        this.edits.push(edit);
-    };
-    TextEditChangeImpl.prototype.all = function () {
-        return this.edits;
-    };
-    TextEditChangeImpl.prototype.clear = function () {
-        this.edits.splice(0, this.edits.length);
-    };
-    TextEditChangeImpl.prototype.assertChangeAnnotations = function (value) {
-        if (value === undefined) {
-            throw new Error("Text edit change is not configured to manage change annotations.");
-        }
-    };
-    return TextEditChangeImpl;
-}());
-/**
- * A helper class
- */
-var ChangeAnnotations = /** @class */ (function () {
-    function ChangeAnnotations(annotations) {
-        this._annotations = annotations === undefined ? Object.create(null) : annotations;
-        this._counter = 0;
-        this._size = 0;
-    }
-    ChangeAnnotations.prototype.all = function () {
-        return this._annotations;
-    };
-    Object.defineProperty(ChangeAnnotations.prototype, "size", {
-        get: function () {
-            return this._size;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    ChangeAnnotations.prototype.manage = function (idOrAnnotation, annotation) {
-        var id;
-        if (ChangeAnnotationIdentifier.is(idOrAnnotation)) {
-            id = idOrAnnotation;
-        }
-        else {
-            id = this.nextId();
-            annotation = idOrAnnotation;
-        }
-        if (this._annotations[id] !== undefined) {
-            throw new Error("Id ".concat(id, " is already in use."));
-        }
-        if (annotation === undefined) {
-            throw new Error("No annotation provided for id ".concat(id));
-        }
-        this._annotations[id] = annotation;
-        this._size++;
-        return id;
-    };
-    ChangeAnnotations.prototype.nextId = function () {
-        this._counter++;
-        return this._counter.toString();
-    };
-    return ChangeAnnotations;
-}());
-/**
- * A workspace change helps constructing changes to a workspace.
- */
-var WorkspaceChange = /** @class */ (function () {
-    function WorkspaceChange(workspaceEdit) {
-        var _this = this;
-        this._textEditChanges = Object.create(null);
-        if (workspaceEdit !== undefined) {
-            this._workspaceEdit = workspaceEdit;
-            if (workspaceEdit.documentChanges) {
-                this._changeAnnotations = new ChangeAnnotations(workspaceEdit.changeAnnotations);
-                workspaceEdit.changeAnnotations = this._changeAnnotations.all();
-                workspaceEdit.documentChanges.forEach(function (change) {
-                    if (TextDocumentEdit.is(change)) {
-                        var textEditChange = new TextEditChangeImpl(change.edits, _this._changeAnnotations);
-                        _this._textEditChanges[change.textDocument.uri] = textEditChange;
-                    }
-                });
-            }
-            else if (workspaceEdit.changes) {
-                Object.keys(workspaceEdit.changes).forEach(function (key) {
-                    var textEditChange = new TextEditChangeImpl(workspaceEdit.changes[key]);
-                    _this._textEditChanges[key] = textEditChange;
-                });
-            }
-        }
-        else {
-            this._workspaceEdit = {};
-        }
-    }
-    Object.defineProperty(WorkspaceChange.prototype, "edit", {
-        /**
-         * Returns the underlying {@link WorkspaceEdit} literal
-         * use to be returned from a workspace edit operation like rename.
-         */
-        get: function () {
-            this.initDocumentChanges();
-            if (this._changeAnnotations !== undefined) {
-                if (this._changeAnnotations.size === 0) {
-                    this._workspaceEdit.changeAnnotations = undefined;
-                }
-                else {
-                    this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
-                }
-            }
-            return this._workspaceEdit;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    WorkspaceChange.prototype.getTextEditChange = function (key) {
-        if (OptionalVersionedTextDocumentIdentifier.is(key)) {
-            this.initDocumentChanges();
-            if (this._workspaceEdit.documentChanges === undefined) {
-                throw new Error('Workspace edit is not configured for document changes.');
-            }
-            var textDocument = { uri: key.uri, version: key.version };
-            var result = this._textEditChanges[textDocument.uri];
-            if (!result) {
-                var edits = [];
-                var textDocumentEdit = {
-                    textDocument: textDocument,
-                    edits: edits
-                };
-                this._workspaceEdit.documentChanges.push(textDocumentEdit);
-                result = new TextEditChangeImpl(edits, this._changeAnnotations);
-                this._textEditChanges[textDocument.uri] = result;
-            }
-            return result;
-        }
-        else {
-            this.initChanges();
-            if (this._workspaceEdit.changes === undefined) {
-                throw new Error('Workspace edit is not configured for normal text edit changes.');
-            }
-            var result = this._textEditChanges[key];
-            if (!result) {
-                var edits = [];
-                this._workspaceEdit.changes[key] = edits;
-                result = new TextEditChangeImpl(edits);
-                this._textEditChanges[key] = result;
-            }
-            return result;
-        }
-    };
-    WorkspaceChange.prototype.initDocumentChanges = function () {
-        if (this._workspaceEdit.documentChanges === undefined && this._workspaceEdit.changes === undefined) {
-            this._changeAnnotations = new ChangeAnnotations();
-            this._workspaceEdit.documentChanges = [];
-            this._workspaceEdit.changeAnnotations = this._changeAnnotations.all();
-        }
-    };
-    WorkspaceChange.prototype.initChanges = function () {
-        if (this._workspaceEdit.documentChanges === undefined && this._workspaceEdit.changes === undefined) {
-            this._workspaceEdit.changes = Object.create(null);
-        }
-    };
-    WorkspaceChange.prototype.createFile = function (uri, optionsOrAnnotation, options) {
-        this.initDocumentChanges();
-        if (this._workspaceEdit.documentChanges === undefined) {
-            throw new Error('Workspace edit is not configured for document changes.');
-        }
-        var annotation;
-        if (ChangeAnnotation.is(optionsOrAnnotation) || ChangeAnnotationIdentifier.is(optionsOrAnnotation)) {
-            annotation = optionsOrAnnotation;
-        }
-        else {
-            options = optionsOrAnnotation;
-        }
-        var operation;
-        var id;
-        if (annotation === undefined) {
-            operation = CreateFile.create(uri, options);
-        }
-        else {
-            id = ChangeAnnotationIdentifier.is(annotation) ? annotation : this._changeAnnotations.manage(annotation);
-            operation = CreateFile.create(uri, options, id);
-        }
-        this._workspaceEdit.documentChanges.push(operation);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    WorkspaceChange.prototype.renameFile = function (oldUri, newUri, optionsOrAnnotation, options) {
-        this.initDocumentChanges();
-        if (this._workspaceEdit.documentChanges === undefined) {
-            throw new Error('Workspace edit is not configured for document changes.');
-        }
-        var annotation;
-        if (ChangeAnnotation.is(optionsOrAnnotation) || ChangeAnnotationIdentifier.is(optionsOrAnnotation)) {
-            annotation = optionsOrAnnotation;
-        }
-        else {
-            options = optionsOrAnnotation;
-        }
-        var operation;
-        var id;
-        if (annotation === undefined) {
-            operation = RenameFile.create(oldUri, newUri, options);
-        }
-        else {
-            id = ChangeAnnotationIdentifier.is(annotation) ? annotation : this._changeAnnotations.manage(annotation);
-            operation = RenameFile.create(oldUri, newUri, options, id);
-        }
-        this._workspaceEdit.documentChanges.push(operation);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    WorkspaceChange.prototype.deleteFile = function (uri, optionsOrAnnotation, options) {
-        this.initDocumentChanges();
-        if (this._workspaceEdit.documentChanges === undefined) {
-            throw new Error('Workspace edit is not configured for document changes.');
-        }
-        var annotation;
-        if (ChangeAnnotation.is(optionsOrAnnotation) || ChangeAnnotationIdentifier.is(optionsOrAnnotation)) {
-            annotation = optionsOrAnnotation;
-        }
-        else {
-            options = optionsOrAnnotation;
-        }
-        var operation;
-        var id;
-        if (annotation === undefined) {
-            operation = DeleteFile.create(uri, options);
-        }
-        else {
-            id = ChangeAnnotationIdentifier.is(annotation) ? annotation : this._changeAnnotations.manage(annotation);
-            operation = DeleteFile.create(uri, options, id);
-        }
-        this._workspaceEdit.documentChanges.push(operation);
-        if (id !== undefined) {
-            return id;
-        }
-    };
-    return WorkspaceChange;
-}());
-
-/**
- * The TextDocumentIdentifier namespace provides helper functions to work with
- * {@link TextDocumentIdentifier} literals.
- */
-var TextDocumentIdentifier;
-(function (TextDocumentIdentifier) {
-    /**
-     * Creates a new TextDocumentIdentifier literal.
-     * @param uri The document's uri.
-     */
-    function create(uri) {
-        return { uri: uri };
-    }
-    TextDocumentIdentifier.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link TextDocumentIdentifier} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri);
-    }
-    TextDocumentIdentifier.is = is;
-})(TextDocumentIdentifier || (TextDocumentIdentifier = {}));
-/**
- * The VersionedTextDocumentIdentifier namespace provides helper functions to work with
- * {@link VersionedTextDocumentIdentifier} literals.
- */
-var VersionedTextDocumentIdentifier;
-(function (VersionedTextDocumentIdentifier) {
-    /**
-     * Creates a new VersionedTextDocumentIdentifier literal.
-     * @param uri The document's uri.
-     * @param version The document's version.
-     */
-    function create(uri, version) {
-        return { uri: uri, version: version };
-    }
-    VersionedTextDocumentIdentifier.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link VersionedTextDocumentIdentifier} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && Is.integer(candidate.version);
-    }
-    VersionedTextDocumentIdentifier.is = is;
-})(VersionedTextDocumentIdentifier || (VersionedTextDocumentIdentifier = {}));
-/**
- * The OptionalVersionedTextDocumentIdentifier namespace provides helper functions to work with
- * {@link OptionalVersionedTextDocumentIdentifier} literals.
- */
-var OptionalVersionedTextDocumentIdentifier;
-(function (OptionalVersionedTextDocumentIdentifier) {
-    /**
-     * Creates a new OptionalVersionedTextDocumentIdentifier literal.
-     * @param uri The document's uri.
-     * @param version The document's version.
-     */
-    function create(uri, version) {
-        return { uri: uri, version: version };
-    }
-    OptionalVersionedTextDocumentIdentifier.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link OptionalVersionedTextDocumentIdentifier} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && (candidate.version === null || Is.integer(candidate.version));
-    }
-    OptionalVersionedTextDocumentIdentifier.is = is;
-})(OptionalVersionedTextDocumentIdentifier || (OptionalVersionedTextDocumentIdentifier = {}));
-/**
- * The TextDocumentItem namespace provides helper functions to work with
- * {@link TextDocumentItem} literals.
- */
-var TextDocumentItem;
-(function (TextDocumentItem) {
-    /**
-     * Creates a new TextDocumentItem literal.
-     * @param uri The document's uri.
-     * @param languageId The document's language identifier.
-     * @param version The document's version number.
-     * @param text The document's text.
-     */
-    function create(uri, languageId, version, text) {
-        return { uri: uri, languageId: languageId, version: version, text: text };
-    }
-    TextDocumentItem.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link TextDocumentItem} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && Is.string(candidate.languageId) && Is.integer(candidate.version) && Is.string(candidate.text);
-    }
-    TextDocumentItem.is = is;
-})(TextDocumentItem || (TextDocumentItem = {}));
-/**
- * Describes the content type that a client supports in various
- * result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
- *
- * Please note that `MarkupKinds` must not start with a `$`. This kinds
- * are reserved for internal usage.
- */
-var MarkupKind;
-(function (MarkupKind) {
-    /**
-     * Plain text is supported as a content format
-     */
-    MarkupKind.PlainText = 'plaintext';
-    /**
-     * Markdown is supported as a content format
-     */
-    MarkupKind.Markdown = 'markdown';
-    /**
-     * Checks whether the given value is a value of the {@link MarkupKind} type.
-     */
-    function is(value) {
-        var candidate = value;
-        return candidate === MarkupKind.PlainText || candidate === MarkupKind.Markdown;
-    }
-    MarkupKind.is = is;
-})(MarkupKind || (MarkupKind = {}));
-var main_MarkupContent;
-(function (MarkupContent) {
-    /**
-     * Checks whether the given value conforms to the {@link MarkupContent} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(value) && MarkupKind.is(candidate.kind) && Is.string(candidate.value);
-    }
-    MarkupContent.is = is;
-})(main_MarkupContent || (main_MarkupContent = {}));
-/**
- * The kind of a completion entry.
- */
-var main_CompletionItemKind;
-(function (CompletionItemKind) {
-    CompletionItemKind.Text = 1;
-    CompletionItemKind.Method = 2;
-    CompletionItemKind.Function = 3;
-    CompletionItemKind.Constructor = 4;
-    CompletionItemKind.Field = 5;
-    CompletionItemKind.Variable = 6;
-    CompletionItemKind.Class = 7;
-    CompletionItemKind.Interface = 8;
-    CompletionItemKind.Module = 9;
-    CompletionItemKind.Property = 10;
-    CompletionItemKind.Unit = 11;
-    CompletionItemKind.Value = 12;
-    CompletionItemKind.Enum = 13;
-    CompletionItemKind.Keyword = 14;
-    CompletionItemKind.Snippet = 15;
-    CompletionItemKind.Color = 16;
-    CompletionItemKind.File = 17;
-    CompletionItemKind.Reference = 18;
-    CompletionItemKind.Folder = 19;
-    CompletionItemKind.EnumMember = 20;
-    CompletionItemKind.Constant = 21;
-    CompletionItemKind.Struct = 22;
-    CompletionItemKind.Event = 23;
-    CompletionItemKind.Operator = 24;
-    CompletionItemKind.TypeParameter = 25;
-})(main_CompletionItemKind || (main_CompletionItemKind = {}));
-/**
- * Defines whether the insert text in a completion item should be interpreted as
- * plain text or a snippet.
- */
-var main_InsertTextFormat;
-(function (InsertTextFormat) {
-    /**
-     * The primary text to be inserted is treated as a plain string.
-     */
-    InsertTextFormat.PlainText = 1;
-    /**
-     * The primary text to be inserted is treated as a snippet.
-     *
-     * A snippet can define tab stops and placeholders with `$1`, `$2`
-     * and `${3:foo}`. `$0` defines the final tab stop, it defaults to
-     * the end of the snippet. Placeholders with equal identifiers are linked,
-     * that is typing in one will update others too.
-     *
-     * See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
-     */
-    InsertTextFormat.Snippet = 2;
-})(main_InsertTextFormat || (main_InsertTextFormat = {}));
-/**
- * Completion item tags are extra annotations that tweak the rendering of a completion
- * item.
- *
- * @since 3.15.0
- */
-var CompletionItemTag;
-(function (CompletionItemTag) {
-    /**
-     * Render a completion as obsolete, usually using a strike-out.
-     */
-    CompletionItemTag.Deprecated = 1;
-})(CompletionItemTag || (CompletionItemTag = {}));
-/**
- * The InsertReplaceEdit namespace provides functions to deal with insert / replace edits.
- *
- * @since 3.16.0
- */
-var InsertReplaceEdit;
-(function (InsertReplaceEdit) {
-    /**
-     * Creates a new insert / replace edit
-     */
-    function create(newText, insert, replace) {
-        return { newText: newText, insert: insert, replace: replace };
-    }
-    InsertReplaceEdit.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link InsertReplaceEdit} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return candidate && Is.string(candidate.newText) && Range.is(candidate.insert) && Range.is(candidate.replace);
-    }
-    InsertReplaceEdit.is = is;
-})(InsertReplaceEdit || (InsertReplaceEdit = {}));
-/**
- * How whitespace and indentation is handled during completion
- * item insertion.
- *
- * @since 3.16.0
- */
-var InsertTextMode;
-(function (InsertTextMode) {
-    /**
-     * The insertion or replace strings is taken as it is. If the
-     * value is multi line the lines below the cursor will be
-     * inserted using the indentation defined in the string value.
-     * The client will not apply any kind of adjustments to the
-     * string.
-     */
-    InsertTextMode.asIs = 1;
-    /**
-     * The editor adjusts leading whitespace of new lines so that
-     * they match the indentation up to the cursor of the line for
-     * which the item is accepted.
-     *
-     * Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
-     * multi line completion item is indented using 2 tabs and all
-     * following lines inserted will be indented using 2 tabs as well.
-     */
-    InsertTextMode.adjustIndentation = 2;
-})(InsertTextMode || (InsertTextMode = {}));
-var CompletionItemLabelDetails;
-(function (CompletionItemLabelDetails) {
-    function is(value) {
-        var candidate = value;
-        return candidate && (Is.string(candidate.detail) || candidate.detail === undefined) &&
-            (Is.string(candidate.description) || candidate.description === undefined);
-    }
-    CompletionItemLabelDetails.is = is;
-})(CompletionItemLabelDetails || (CompletionItemLabelDetails = {}));
-/**
- * The CompletionItem namespace provides functions to deal with
- * completion items.
- */
-var CompletionItem;
-(function (CompletionItem) {
-    /**
-     * Create a completion item and seed it with a label.
-     * @param label The completion item's label
-     */
-    function create(label) {
-        return { label: label };
-    }
-    CompletionItem.create = create;
-})(CompletionItem || (CompletionItem = {}));
-/**
- * The CompletionList namespace provides functions to deal with
- * completion lists.
- */
-var CompletionList;
-(function (CompletionList) {
-    /**
-     * Creates a new completion list.
-     *
-     * @param items The completion items.
-     * @param isIncomplete The list is not complete.
-     */
-    function create(items, isIncomplete) {
-        return { items: items ? items : [], isIncomplete: !!isIncomplete };
-    }
-    CompletionList.create = create;
-})(CompletionList || (CompletionList = {}));
-var main_MarkedString;
-(function (MarkedString) {
-    /**
-     * Creates a marked string from plain text.
-     *
-     * @param plainText The plain text.
-     */
-    function fromPlainText(plainText) {
-        return plainText.replace(/[\\`*_{}[\]()#+\-.!]/g, '\\$&'); // escape markdown syntax tokens: http://daringfireball.net/projects/markdown/syntax#backslash
-    }
-    MarkedString.fromPlainText = fromPlainText;
-    /**
-     * Checks whether the given value conforms to the {@link MarkedString} type.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.string(candidate) || (Is.objectLiteral(candidate) && Is.string(candidate.language) && Is.string(candidate.value));
-    }
-    MarkedString.is = is;
-})(main_MarkedString || (main_MarkedString = {}));
-var Hover;
-(function (Hover) {
-    /**
-     * Checks whether the given value conforms to the {@link Hover} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return !!candidate && Is.objectLiteral(candidate) && (main_MarkupContent.is(candidate.contents) ||
-            main_MarkedString.is(candidate.contents) ||
-            Is.typedArray(candidate.contents, main_MarkedString.is)) && (value.range === undefined || Range.is(value.range));
-    }
-    Hover.is = is;
-})(Hover || (Hover = {}));
-/**
- * The ParameterInformation namespace provides helper functions to work with
- * {@link ParameterInformation} literals.
- */
-var ParameterInformation;
-(function (ParameterInformation) {
-    /**
-     * Creates a new parameter information literal.
-     *
-     * @param label A label string.
-     * @param documentation A doc string.
-     */
-    function create(label, documentation) {
-        return documentation ? { label: label, documentation: documentation } : { label: label };
-    }
-    ParameterInformation.create = create;
-})(ParameterInformation || (ParameterInformation = {}));
-/**
- * The SignatureInformation namespace provides helper functions to work with
- * {@link SignatureInformation} literals.
- */
-var SignatureInformation;
-(function (SignatureInformation) {
-    function create(label, documentation) {
-        var parameters = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            parameters[_i - 2] = arguments[_i];
-        }
-        var result = { label: label };
-        if (Is.defined(documentation)) {
-            result.documentation = documentation;
-        }
-        if (Is.defined(parameters)) {
-            result.parameters = parameters;
-        }
-        else {
-            result.parameters = [];
-        }
-        return result;
-    }
-    SignatureInformation.create = create;
-})(SignatureInformation || (SignatureInformation = {}));
-/**
- * A document highlight kind.
- */
-var DocumentHighlightKind;
-(function (DocumentHighlightKind) {
-    /**
-     * A textual occurrence.
-     */
-    DocumentHighlightKind.Text = 1;
-    /**
-     * Read-access of a symbol, like reading a variable.
-     */
-    DocumentHighlightKind.Read = 2;
-    /**
-     * Write-access of a symbol, like writing to a variable.
-     */
-    DocumentHighlightKind.Write = 3;
-})(DocumentHighlightKind || (DocumentHighlightKind = {}));
-/**
- * DocumentHighlight namespace to provide helper functions to work with
- * {@link DocumentHighlight} literals.
- */
-var DocumentHighlight;
-(function (DocumentHighlight) {
-    /**
-     * Create a DocumentHighlight object.
-     * @param range The range the highlight applies to.
-     * @param kind The highlight kind
-     */
-    function create(range, kind) {
-        var result = { range: range };
-        if (Is.number(kind)) {
-            result.kind = kind;
-        }
-        return result;
-    }
-    DocumentHighlight.create = create;
-})(DocumentHighlight || (DocumentHighlight = {}));
-/**
- * A symbol kind.
- */
-var SymbolKind;
-(function (SymbolKind) {
-    SymbolKind.File = 1;
-    SymbolKind.Module = 2;
-    SymbolKind.Namespace = 3;
-    SymbolKind.Package = 4;
-    SymbolKind.Class = 5;
-    SymbolKind.Method = 6;
-    SymbolKind.Property = 7;
-    SymbolKind.Field = 8;
-    SymbolKind.Constructor = 9;
-    SymbolKind.Enum = 10;
-    SymbolKind.Interface = 11;
-    SymbolKind.Function = 12;
-    SymbolKind.Variable = 13;
-    SymbolKind.Constant = 14;
-    SymbolKind.String = 15;
-    SymbolKind.Number = 16;
-    SymbolKind.Boolean = 17;
-    SymbolKind.Array = 18;
-    SymbolKind.Object = 19;
-    SymbolKind.Key = 20;
-    SymbolKind.Null = 21;
-    SymbolKind.EnumMember = 22;
-    SymbolKind.Struct = 23;
-    SymbolKind.Event = 24;
-    SymbolKind.Operator = 25;
-    SymbolKind.TypeParameter = 26;
-})(SymbolKind || (SymbolKind = {}));
-/**
- * Symbol tags are extra annotations that tweak the rendering of a symbol.
- *
- * @since 3.16
- */
-var SymbolTag;
-(function (SymbolTag) {
-    /**
-     * Render a symbol as obsolete, usually using a strike-out.
-     */
-    SymbolTag.Deprecated = 1;
-})(SymbolTag || (SymbolTag = {}));
-var SymbolInformation;
-(function (SymbolInformation) {
-    /**
-     * Creates a new symbol information literal.
-     *
-     * @param name The name of the symbol.
-     * @param kind The kind of the symbol.
-     * @param range The range of the location of the symbol.
-     * @param uri The resource of the location of symbol.
-     * @param containerName The name of the symbol containing the symbol.
-     */
-    function create(name, kind, range, uri, containerName) {
-        var result = {
-            name: name,
-            kind: kind,
-            location: { uri: uri, range: range }
-        };
-        if (containerName) {
-            result.containerName = containerName;
-        }
-        return result;
-    }
-    SymbolInformation.create = create;
-})(SymbolInformation || (SymbolInformation = {}));
-var WorkspaceSymbol;
-(function (WorkspaceSymbol) {
-    /**
-     * Create a new workspace symbol.
-     *
-     * @param name The name of the symbol.
-     * @param kind The kind of the symbol.
-     * @param uri The resource of the location of the symbol.
-     * @param range An options range of the location.
-     * @returns A WorkspaceSymbol.
-     */
-    function create(name, kind, uri, range) {
-        return range !== undefined
-            ? { name: name, kind: kind, location: { uri: uri, range: range } }
-            : { name: name, kind: kind, location: { uri: uri } };
-    }
-    WorkspaceSymbol.create = create;
-})(WorkspaceSymbol || (WorkspaceSymbol = {}));
-var DocumentSymbol;
-(function (DocumentSymbol) {
-    /**
-     * Creates a new symbol information literal.
-     *
-     * @param name The name of the symbol.
-     * @param detail The detail of the symbol.
-     * @param kind The kind of the symbol.
-     * @param range The range of the symbol.
-     * @param selectionRange The selectionRange of the symbol.
-     * @param children Children of the symbol.
-     */
-    function create(name, detail, kind, range, selectionRange, children) {
-        var result = {
-            name: name,
-            detail: detail,
-            kind: kind,
-            range: range,
-            selectionRange: selectionRange
-        };
-        if (children !== undefined) {
-            result.children = children;
-        }
-        return result;
-    }
-    DocumentSymbol.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link DocumentSymbol} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return candidate &&
-            Is.string(candidate.name) && Is.number(candidate.kind) &&
-            Range.is(candidate.range) && Range.is(candidate.selectionRange) &&
-            (candidate.detail === undefined || Is.string(candidate.detail)) &&
-            (candidate.deprecated === undefined || Is.boolean(candidate.deprecated)) &&
-            (candidate.children === undefined || Array.isArray(candidate.children)) &&
-            (candidate.tags === undefined || Array.isArray(candidate.tags));
-    }
-    DocumentSymbol.is = is;
-})(DocumentSymbol || (DocumentSymbol = {}));
-/**
- * A set of predefined code action kinds
- */
-var CodeActionKind;
-(function (CodeActionKind) {
-    /**
-     * Empty kind.
-     */
-    CodeActionKind.Empty = '';
-    /**
-     * Base kind for quickfix actions: 'quickfix'
-     */
-    CodeActionKind.QuickFix = 'quickfix';
-    /**
-     * Base kind for refactoring actions: 'refactor'
-     */
-    CodeActionKind.Refactor = 'refactor';
-    /**
-     * Base kind for refactoring extraction actions: 'refactor.extract'
-     *
-     * Example extract actions:
-     *
-     * - Extract method
-     * - Extract function
-     * - Extract variable
-     * - Extract interface from class
-     * - ...
-     */
-    CodeActionKind.RefactorExtract = 'refactor.extract';
-    /**
-     * Base kind for refactoring inline actions: 'refactor.inline'
-     *
-     * Example inline actions:
-     *
-     * - Inline function
-     * - Inline variable
-     * - Inline constant
-     * - ...
-     */
-    CodeActionKind.RefactorInline = 'refactor.inline';
-    /**
-     * Base kind for refactoring rewrite actions: 'refactor.rewrite'
-     *
-     * Example rewrite actions:
-     *
-     * - Convert JavaScript function to class
-     * - Add or remove parameter
-     * - Encapsulate field
-     * - Make method static
-     * - Move method to base class
-     * - ...
-     */
-    CodeActionKind.RefactorRewrite = 'refactor.rewrite';
-    /**
-     * Base kind for source actions: `source`
-     *
-     * Source code actions apply to the entire file.
-     */
-    CodeActionKind.Source = 'source';
-    /**
-     * Base kind for an organize imports source action: `source.organizeImports`
-     */
-    CodeActionKind.SourceOrganizeImports = 'source.organizeImports';
-    /**
-     * Base kind for auto-fix source actions: `source.fixAll`.
-     *
-     * Fix all actions automatically fix errors that have a clear fix that do not require user input.
-     * They should not suppress errors or perform unsafe fixes such as generating new types or classes.
-     *
-     * @since 3.15.0
-     */
-    CodeActionKind.SourceFixAll = 'source.fixAll';
-})(CodeActionKind || (CodeActionKind = {}));
-/**
- * The reason why code actions were requested.
- *
- * @since 3.17.0
- */
-var CodeActionTriggerKind;
-(function (CodeActionTriggerKind) {
-    /**
-     * Code actions were explicitly requested by the user or by an extension.
-     */
-    CodeActionTriggerKind.Invoked = 1;
-    /**
-     * Code actions were requested automatically.
-     *
-     * This typically happens when current selection in a file changes, but can
-     * also be triggered when file content changes.
-     */
-    CodeActionTriggerKind.Automatic = 2;
-})(CodeActionTriggerKind || (CodeActionTriggerKind = {}));
-/**
- * The CodeActionContext namespace provides helper functions to work with
- * {@link CodeActionContext} literals.
- */
-var CodeActionContext;
-(function (CodeActionContext) {
-    /**
-     * Creates a new CodeActionContext literal.
-     */
-    function create(diagnostics, only, triggerKind) {
-        var result = { diagnostics: diagnostics };
-        if (only !== undefined && only !== null) {
-            result.only = only;
-        }
-        if (triggerKind !== undefined && triggerKind !== null) {
-            result.triggerKind = triggerKind;
-        }
-        return result;
-    }
-    CodeActionContext.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link CodeActionContext} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.typedArray(candidate.diagnostics, Diagnostic.is)
-            && (candidate.only === undefined || Is.typedArray(candidate.only, Is.string))
-            && (candidate.triggerKind === undefined || candidate.triggerKind === CodeActionTriggerKind.Invoked || candidate.triggerKind === CodeActionTriggerKind.Automatic);
-    }
-    CodeActionContext.is = is;
-})(CodeActionContext || (CodeActionContext = {}));
-var CodeAction;
-(function (CodeAction) {
-    function create(title, kindOrCommandOrEdit, kind) {
-        var result = { title: title };
-        var checkKind = true;
-        if (typeof kindOrCommandOrEdit === 'string') {
-            checkKind = false;
-            result.kind = kindOrCommandOrEdit;
-        }
-        else if (Command.is(kindOrCommandOrEdit)) {
-            result.command = kindOrCommandOrEdit;
-        }
-        else {
-            result.edit = kindOrCommandOrEdit;
-        }
-        if (checkKind && kind !== undefined) {
-            result.kind = kind;
-        }
-        return result;
-    }
-    CodeAction.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate && Is.string(candidate.title) &&
-            (candidate.diagnostics === undefined || Is.typedArray(candidate.diagnostics, Diagnostic.is)) &&
-            (candidate.kind === undefined || Is.string(candidate.kind)) &&
-            (candidate.edit !== undefined || candidate.command !== undefined) &&
-            (candidate.command === undefined || Command.is(candidate.command)) &&
-            (candidate.isPreferred === undefined || Is.boolean(candidate.isPreferred)) &&
-            (candidate.edit === undefined || WorkspaceEdit.is(candidate.edit));
-    }
-    CodeAction.is = is;
-})(CodeAction || (CodeAction = {}));
-/**
- * The CodeLens namespace provides helper functions to work with
- * {@link CodeLens} literals.
- */
-var CodeLens;
-(function (CodeLens) {
-    /**
-     * Creates a new CodeLens literal.
-     */
-    function create(range, data) {
-        var result = { range: range };
-        if (Is.defined(data)) {
-            result.data = data;
-        }
-        return result;
-    }
-    CodeLens.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link CodeLens} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.command) || Command.is(candidate.command));
-    }
-    CodeLens.is = is;
-})(CodeLens || (CodeLens = {}));
-/**
- * The FormattingOptions namespace provides helper functions to work with
- * {@link FormattingOptions} literals.
- */
-var FormattingOptions;
-(function (FormattingOptions) {
-    /**
-     * Creates a new FormattingOptions literal.
-     */
-    function create(tabSize, insertSpaces) {
-        return { tabSize: tabSize, insertSpaces: insertSpaces };
-    }
-    FormattingOptions.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link FormattingOptions} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.uinteger(candidate.tabSize) && Is.boolean(candidate.insertSpaces);
-    }
-    FormattingOptions.is = is;
-})(FormattingOptions || (FormattingOptions = {}));
-/**
- * The DocumentLink namespace provides helper functions to work with
- * {@link DocumentLink} literals.
- */
-var DocumentLink;
-(function (DocumentLink) {
-    /**
-     * Creates a new DocumentLink literal.
-     */
-    function create(range, target, data) {
-        return { range: range, target: target, data: data };
-    }
-    DocumentLink.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link DocumentLink} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.target) || Is.string(candidate.target));
-    }
-    DocumentLink.is = is;
-})(DocumentLink || (DocumentLink = {}));
-/**
- * The SelectionRange namespace provides helper function to work with
- * SelectionRange literals.
- */
-var SelectionRange;
-(function (SelectionRange) {
-    /**
-     * Creates a new SelectionRange
-     * @param range the range.
-     * @param parent an optional parent.
-     */
-    function create(range, parent) {
-        return { range: range, parent: parent };
-    }
-    SelectionRange.create = create;
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Range.is(candidate.range) && (candidate.parent === undefined || SelectionRange.is(candidate.parent));
-    }
-    SelectionRange.is = is;
-})(SelectionRange || (SelectionRange = {}));
-/**
- * A set of predefined token types. This set is not fixed
- * an clients can specify additional token types via the
- * corresponding client capabilities.
- *
- * @since 3.16.0
- */
-var SemanticTokenTypes;
-(function (SemanticTokenTypes) {
-    SemanticTokenTypes["namespace"] = "namespace";
-    /**
-     * Represents a generic type. Acts as a fallback for types which can't be mapped to
-     * a specific type like class or enum.
-     */
-    SemanticTokenTypes["type"] = "type";
-    SemanticTokenTypes["class"] = "class";
-    SemanticTokenTypes["enum"] = "enum";
-    SemanticTokenTypes["interface"] = "interface";
-    SemanticTokenTypes["struct"] = "struct";
-    SemanticTokenTypes["typeParameter"] = "typeParameter";
-    SemanticTokenTypes["parameter"] = "parameter";
-    SemanticTokenTypes["variable"] = "variable";
-    SemanticTokenTypes["property"] = "property";
-    SemanticTokenTypes["enumMember"] = "enumMember";
-    SemanticTokenTypes["event"] = "event";
-    SemanticTokenTypes["function"] = "function";
-    SemanticTokenTypes["method"] = "method";
-    SemanticTokenTypes["macro"] = "macro";
-    SemanticTokenTypes["keyword"] = "keyword";
-    SemanticTokenTypes["modifier"] = "modifier";
-    SemanticTokenTypes["comment"] = "comment";
-    SemanticTokenTypes["string"] = "string";
-    SemanticTokenTypes["number"] = "number";
-    SemanticTokenTypes["regexp"] = "regexp";
-    SemanticTokenTypes["operator"] = "operator";
-    /**
-     * @since 3.17.0
-     */
-    SemanticTokenTypes["decorator"] = "decorator";
-})(SemanticTokenTypes || (SemanticTokenTypes = {}));
-/**
- * A set of predefined token modifiers. This set is not fixed
- * an clients can specify additional token types via the
- * corresponding client capabilities.
- *
- * @since 3.16.0
- */
-var SemanticTokenModifiers;
-(function (SemanticTokenModifiers) {
-    SemanticTokenModifiers["declaration"] = "declaration";
-    SemanticTokenModifiers["definition"] = "definition";
-    SemanticTokenModifiers["readonly"] = "readonly";
-    SemanticTokenModifiers["static"] = "static";
-    SemanticTokenModifiers["deprecated"] = "deprecated";
-    SemanticTokenModifiers["abstract"] = "abstract";
-    SemanticTokenModifiers["async"] = "async";
-    SemanticTokenModifiers["modification"] = "modification";
-    SemanticTokenModifiers["documentation"] = "documentation";
-    SemanticTokenModifiers["defaultLibrary"] = "defaultLibrary";
-})(SemanticTokenModifiers || (SemanticTokenModifiers = {}));
-/**
- * @since 3.16.0
- */
-var SemanticTokens;
-(function (SemanticTokens) {
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && (candidate.resultId === undefined || typeof candidate.resultId === 'string') &&
-            Array.isArray(candidate.data) && (candidate.data.length === 0 || typeof candidate.data[0] === 'number');
-    }
-    SemanticTokens.is = is;
-})(SemanticTokens || (SemanticTokens = {}));
-/**
- * The InlineValueText namespace provides functions to deal with InlineValueTexts.
- *
- * @since 3.17.0
- */
-var InlineValueText;
-(function (InlineValueText) {
-    /**
-     * Creates a new InlineValueText literal.
-     */
-    function create(range, text) {
-        return { range: range, text: text };
-    }
-    InlineValueText.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate !== undefined && candidate !== null && Range.is(candidate.range) && Is.string(candidate.text);
-    }
-    InlineValueText.is = is;
-})(InlineValueText || (InlineValueText = {}));
-/**
- * The InlineValueVariableLookup namespace provides functions to deal with InlineValueVariableLookups.
- *
- * @since 3.17.0
- */
-var InlineValueVariableLookup;
-(function (InlineValueVariableLookup) {
-    /**
-     * Creates a new InlineValueText literal.
-     */
-    function create(range, variableName, caseSensitiveLookup) {
-        return { range: range, variableName: variableName, caseSensitiveLookup: caseSensitiveLookup };
-    }
-    InlineValueVariableLookup.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate !== undefined && candidate !== null && Range.is(candidate.range) && Is.boolean(candidate.caseSensitiveLookup)
-            && (Is.string(candidate.variableName) || candidate.variableName === undefined);
-    }
-    InlineValueVariableLookup.is = is;
-})(InlineValueVariableLookup || (InlineValueVariableLookup = {}));
-/**
- * The InlineValueEvaluatableExpression namespace provides functions to deal with InlineValueEvaluatableExpression.
- *
- * @since 3.17.0
- */
-var InlineValueEvaluatableExpression;
-(function (InlineValueEvaluatableExpression) {
-    /**
-     * Creates a new InlineValueEvaluatableExpression literal.
-     */
-    function create(range, expression) {
-        return { range: range, expression: expression };
-    }
-    InlineValueEvaluatableExpression.create = create;
-    function is(value) {
-        var candidate = value;
-        return candidate !== undefined && candidate !== null && Range.is(candidate.range)
-            && (Is.string(candidate.expression) || candidate.expression === undefined);
-    }
-    InlineValueEvaluatableExpression.is = is;
-})(InlineValueEvaluatableExpression || (InlineValueEvaluatableExpression = {}));
-/**
- * The InlineValueContext namespace provides helper functions to work with
- * {@link InlineValueContext} literals.
- *
- * @since 3.17.0
- */
-var InlineValueContext;
-(function (InlineValueContext) {
-    /**
-     * Creates a new InlineValueContext literal.
-     */
-    function create(frameId, stoppedLocation) {
-        return { frameId: frameId, stoppedLocation: stoppedLocation };
-    }
-    InlineValueContext.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link InlineValueContext} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Range.is(value.stoppedLocation);
-    }
-    InlineValueContext.is = is;
-})(InlineValueContext || (InlineValueContext = {}));
-/**
- * Inlay hint kinds.
- *
- * @since 3.17.0
- */
-var InlayHintKind;
-(function (InlayHintKind) {
-    /**
-     * An inlay hint that for a type annotation.
-     */
-    InlayHintKind.Type = 1;
-    /**
-     * An inlay hint that is for a parameter.
-     */
-    InlayHintKind.Parameter = 2;
-    function is(value) {
-        return value === 1 || value === 2;
-    }
-    InlayHintKind.is = is;
-})(InlayHintKind || (InlayHintKind = {}));
-var InlayHintLabelPart;
-(function (InlayHintLabelPart) {
-    function create(value) {
-        return { value: value };
-    }
-    InlayHintLabelPart.create = create;
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate)
-            && (candidate.tooltip === undefined || Is.string(candidate.tooltip) || main_MarkupContent.is(candidate.tooltip))
-            && (candidate.location === undefined || Location.is(candidate.location))
-            && (candidate.command === undefined || Command.is(candidate.command));
-    }
-    InlayHintLabelPart.is = is;
-})(InlayHintLabelPart || (InlayHintLabelPart = {}));
-var InlayHint;
-(function (InlayHint) {
-    function create(position, label, kind) {
-        var result = { position: position, label: label };
-        if (kind !== undefined) {
-            result.kind = kind;
-        }
-        return result;
-    }
-    InlayHint.create = create;
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && Position.is(candidate.position)
-            && (Is.string(candidate.label) || Is.typedArray(candidate.label, InlayHintLabelPart.is))
-            && (candidate.kind === undefined || InlayHintKind.is(candidate.kind))
-            && (candidate.textEdits === undefined) || Is.typedArray(candidate.textEdits, TextEdit.is)
-            && (candidate.tooltip === undefined || Is.string(candidate.tooltip) || main_MarkupContent.is(candidate.tooltip))
-            && (candidate.paddingLeft === undefined || Is.boolean(candidate.paddingLeft))
-            && (candidate.paddingRight === undefined || Is.boolean(candidate.paddingRight));
-    }
-    InlayHint.is = is;
-})(InlayHint || (InlayHint = {}));
-var WorkspaceFolder;
-(function (WorkspaceFolder) {
-    function is(value) {
-        var candidate = value;
-        return Is.objectLiteral(candidate) && URI.is(candidate.uri) && Is.string(candidate.name);
-    }
-    WorkspaceFolder.is = is;
-})(WorkspaceFolder || (WorkspaceFolder = {}));
-var EOL = (/* unused pure expression or super */ null && (['\n', '\r\n', '\r']));
-/**
- * @deprecated Use the text document from the new vscode-languageserver-textdocument package.
- */
-var main_TextDocument;
-(function (TextDocument) {
-    /**
-     * Creates a new ITextDocument literal from the given uri and content.
-     * @param uri The document's uri.
-     * @param languageId The document's language Id.
-     * @param version The document's version.
-     * @param content The document's content.
-     */
-    function create(uri, languageId, version, content) {
-        return new main_FullTextDocument(uri, languageId, version, content);
-    }
-    TextDocument.create = create;
-    /**
-     * Checks whether the given literal conforms to the {@link ITextDocument} interface.
-     */
-    function is(value) {
-        var candidate = value;
-        return Is.defined(candidate) && Is.string(candidate.uri) && (Is.undefined(candidate.languageId) || Is.string(candidate.languageId)) && Is.uinteger(candidate.lineCount)
-            && Is.func(candidate.getText) && Is.func(candidate.positionAt) && Is.func(candidate.offsetAt) ? true : false;
-    }
-    TextDocument.is = is;
-    function applyEdits(document, edits) {
-        var text = document.getText();
-        var sortedEdits = mergeSort(edits, function (a, b) {
-            var diff = a.range.start.line - b.range.start.line;
-            if (diff === 0) {
-                return a.range.start.character - b.range.start.character;
-            }
-            return diff;
-        });
-        var lastModifiedOffset = text.length;
-        for (var i = sortedEdits.length - 1; i >= 0; i--) {
-            var e = sortedEdits[i];
-            var startOffset = document.offsetAt(e.range.start);
-            var endOffset = document.offsetAt(e.range.end);
-            if (endOffset <= lastModifiedOffset) {
-                text = text.substring(0, startOffset) + e.newText + text.substring(endOffset, text.length);
-            }
-            else {
-                throw new Error('Overlapping edit');
-            }
-            lastModifiedOffset = startOffset;
-        }
-        return text;
-    }
-    TextDocument.applyEdits = applyEdits;
-    function mergeSort(data, compare) {
-        if (data.length <= 1) {
-            // sorted
-            return data;
-        }
-        var p = (data.length / 2) | 0;
-        var left = data.slice(0, p);
-        var right = data.slice(p);
-        mergeSort(left, compare);
-        mergeSort(right, compare);
-        var leftIdx = 0;
-        var rightIdx = 0;
-        var i = 0;
-        while (leftIdx < left.length && rightIdx < right.length) {
-            var ret = compare(left[leftIdx], right[rightIdx]);
-            if (ret <= 0) {
-                // smaller_equal -> take left to preserve order
-                data[i++] = left[leftIdx++];
-            }
-            else {
-                // greater -> take right
-                data[i++] = right[rightIdx++];
-            }
-        }
-        while (leftIdx < left.length) {
-            data[i++] = left[leftIdx++];
-        }
-        while (rightIdx < right.length) {
-            data[i++] = right[rightIdx++];
-        }
-        return data;
-    }
-})(main_TextDocument || (main_TextDocument = {}));
-/**
- * @deprecated Use the text document from the new vscode-languageserver-textdocument package.
- */
-var main_FullTextDocument = /** @class */ (function () {
-    function FullTextDocument(uri, languageId, version, content) {
-        this._uri = uri;
-        this._languageId = languageId;
-        this._version = version;
-        this._content = content;
-        this._lineOffsets = undefined;
-    }
-    Object.defineProperty(FullTextDocument.prototype, "uri", {
-        get: function () {
-            return this._uri;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "languageId", {
-        get: function () {
-            return this._languageId;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "version", {
-        get: function () {
-            return this._version;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.prototype.getText = function (range) {
-        if (range) {
-            var start = this.offsetAt(range.start);
-            var end = this.offsetAt(range.end);
-            return this._content.substring(start, end);
-        }
-        return this._content;
-    };
-    FullTextDocument.prototype.update = function (event, version) {
-        this._content = event.text;
-        this._version = version;
-        this._lineOffsets = undefined;
-    };
-    FullTextDocument.prototype.getLineOffsets = function () {
-        if (this._lineOffsets === undefined) {
-            var lineOffsets = [];
-            var text = this._content;
-            var isLineStart = true;
-            for (var i = 0; i < text.length; i++) {
-                if (isLineStart) {
-                    lineOffsets.push(i);
-                    isLineStart = false;
-                }
-                var ch = text.charAt(i);
-                isLineStart = (ch === '\r' || ch === '\n');
-                if (ch === '\r' && i + 1 < text.length && text.charAt(i + 1) === '\n') {
-                    i++;
-                }
-            }
-            if (isLineStart && text.length > 0) {
-                lineOffsets.push(text.length);
-            }
-            this._lineOffsets = lineOffsets;
-        }
-        return this._lineOffsets;
-    };
-    FullTextDocument.prototype.positionAt = function (offset) {
-        offset = Math.max(Math.min(offset, this._content.length), 0);
-        var lineOffsets = this.getLineOffsets();
-        var low = 0, high = lineOffsets.length;
-        if (high === 0) {
-            return Position.create(0, offset);
-        }
-        while (low < high) {
-            var mid = Math.floor((low + high) / 2);
-            if (lineOffsets[mid] > offset) {
-                high = mid;
-            }
-            else {
-                low = mid + 1;
-            }
-        }
-        // low is the least x for which the line offset is larger than the current offset
-        // or array.length if no line offset is larger than the current offset
-        var line = low - 1;
-        return Position.create(line, offset - lineOffsets[line]);
-    };
-    FullTextDocument.prototype.offsetAt = function (position) {
-        var lineOffsets = this.getLineOffsets();
-        if (position.line >= lineOffsets.length) {
-            return this._content.length;
-        }
-        else if (position.line < 0) {
-            return 0;
-        }
-        var lineOffset = lineOffsets[position.line];
-        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
-        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-    };
-    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
-        get: function () {
-            return this.getLineOffsets().length;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return FullTextDocument;
-}());
-var Is;
-(function (Is) {
-    var toString = Object.prototype.toString;
-    function defined(value) {
-        return typeof value !== 'undefined';
-    }
-    Is.defined = defined;
-    function undefined(value) {
-        return typeof value === 'undefined';
-    }
-    Is.undefined = undefined;
-    function boolean(value) {
-        return value === true || value === false;
-    }
-    Is.boolean = boolean;
-    function string(value) {
-        return toString.call(value) === '[object String]';
-    }
-    Is.string = string;
-    function number(value) {
-        return toString.call(value) === '[object Number]';
-    }
-    Is.number = number;
-    function numberRange(value, min, max) {
-        return toString.call(value) === '[object Number]' && min <= value && value <= max;
-    }
-    Is.numberRange = numberRange;
-    function integer(value) {
-        return toString.call(value) === '[object Number]' && -2147483648 <= value && value <= 2147483647;
-    }
-    Is.integer = integer;
-    function uinteger(value) {
-        return toString.call(value) === '[object Number]' && 0 <= value && value <= 2147483647;
-    }
-    Is.uinteger = uinteger;
-    function func(value) {
-        return toString.call(value) === '[object Function]';
-    }
-    Is.func = func;
-    function objectLiteral(value) {
-        // Strictly speaking class instances pass this check as well. Since the LSP
-        // doesn't use classes we ignore this for now. If we do we need to add something
-        // like this: `Object.getPrototypeOf(Object.getPrototypeOf(x)) === null`
-        return value !== null && typeof value === 'object';
-    }
-    Is.objectLiteral = objectLiteral;
-    function typedArray(value, check) {
-        return Array.isArray(value) && value.every(check);
-    }
-    Is.typedArray = typedArray;
-})(Is || (Is = {}));
-
+// EXTERNAL MODULE: ../../node_modules/vscode-languageserver-types/lib/esm/main.js
+var main = __webpack_require__(4767);
+// EXTERNAL MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
+var esm_main = __webpack_require__(4881);
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/cssLanguageTypes.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17865,11 +15848,11 @@ var ClientCapabilities;
         textDocument: {
             completion: {
                 completionItem: {
-                    documentationFormat: [MarkupKind.Markdown, MarkupKind.PlainText]
+                    documentationFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
                 }
             },
             hover: {
-                contentFormat: [MarkupKind.Markdown, MarkupKind.PlainText]
+                contentFormat: [main.MarkupKind.Markdown, main.MarkupKind.PlainText]
             }
         }
     };
@@ -17988,7 +15971,7 @@ function getEntryMarkdownDescription(entry, settings) {
             result += textToMarkedString(entry.description);
         }
         else {
-            result += entry.description.kind === MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
+            result += entry.description.kind === main.MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
         }
         const browserLabel = getBrowserLabel(entry.browsers);
         if (browserLabel) {
@@ -18040,13 +16023,130 @@ function getBrowserLabel(browsers = []) {
  *--------------------------------------------------------------------------------------------*/
 
 
+const hexColorRegExp = /(^#([0-9A-F]{3}){1,2}$)|(^#([0-9A-F]{4}){1,2}$)/i;
 const colorFunctions = [
-    { func: 'rgb($red, $green, $blue)', desc: t('Creates a Color from red, green, and blue values.') },
-    { func: 'rgba($red, $green, $blue, $alpha)', desc: t('Creates a Color from red, green, blue, and alpha values.') },
-    { func: 'hsl($hue, $saturation, $lightness)', desc: t('Creates a Color from hue, saturation, and lightness values.') },
-    { func: 'hsla($hue, $saturation, $lightness, $alpha)', desc: t('Creates a Color from hue, saturation, lightness, and alpha values.') },
-    { func: 'hwb($hue $white $black)', desc: t('Creates a Color from hue, white and black.') }
+    {
+        label: 'rgb',
+        func: 'rgb($red, $green, $blue)',
+        insertText: 'rgb(${1:red}, ${2:green}, ${3:blue})',
+        desc: t('Creates a Color from red, green, and blue values.')
+    },
+    {
+        label: 'rgba',
+        func: 'rgba($red, $green, $blue, $alpha)',
+        insertText: 'rgba(${1:red}, ${2:green}, ${3:blue}, ${4:alpha})',
+        desc: t('Creates a Color from red, green, blue, and alpha values.')
+    },
+    {
+        label: 'rgb relative',
+        func: 'rgb(from $color $red $green $blue)',
+        insertText: 'rgb(from ${1:color} ${2:r} ${3:g} ${4:b})',
+        desc: t('Creates a Color from the red, green, and blue values of another Color.')
+    },
+    {
+        label: 'hsl',
+        func: 'hsl($hue, $saturation, $lightness)',
+        insertText: 'hsl(${1:hue}, ${2:saturation}, ${3:lightness})',
+        desc: t('Creates a Color from hue, saturation, and lightness values.')
+    },
+    {
+        label: 'hsla',
+        func: 'hsla($hue, $saturation, $lightness, $alpha)',
+        insertText: 'hsla(${1:hue}, ${2:saturation}, ${3:lightness}, ${4:alpha})',
+        desc: t('Creates a Color from hue, saturation, lightness, and alpha values.')
+    },
+    {
+        label: 'hsl relative',
+        func: 'hsl(from $color $hue $saturation $lightness)',
+        insertText: 'hsl(from ${1:color} ${2:h} ${3:s} ${4:l})',
+        desc: t('Creates a Color from the hue, saturation, and lightness values of another Color.')
+    },
+    {
+        label: 'hwb',
+        func: 'hwb($hue $white $black)',
+        insertText: 'hwb(${1:hue} ${2:white} ${3:black})',
+        desc: t('Creates a Color from hue, white, and black values.')
+    },
+    {
+        label: 'hwb relative',
+        func: 'hwb(from $color $hue $white $black)',
+        insertText: 'hwb(from ${1:color} ${2:h} ${3:w} ${4:b})',
+        desc: t('Creates a Color from the hue, white, and black values of another Color.')
+    },
+    {
+        label: 'lab',
+        func: 'lab($lightness $a $b)',
+        insertText: 'lab(${1:lightness} ${2:a} ${3:b})',
+        desc: t('Creates a Color from lightness, a, and b values.')
+    },
+    {
+        label: 'lab relative',
+        func: 'lab(from $color $lightness $a $b)',
+        insertText: 'lab(from ${1:color} ${2:l} ${3:a} ${4:b})',
+        desc: t('Creates a Color from the lightness, a, and b values of another Color.')
+    },
+    {
+        label: 'oklab',
+        func: 'oklab($lightness $a $b)',
+        insertText: 'oklab(${1:lightness} ${2:a} ${3:b})',
+        desc: t('Creates a Color from lightness, a, and b values.')
+    },
+    {
+        label: 'oklab relative',
+        func: 'oklab(from $color $lightness $a $b)',
+        insertText: 'oklab(from ${1:color} ${2:l} ${3:a} ${4:b})',
+        desc: t('Creates a Color from the lightness, a, and b values of another Color.')
+    },
+    {
+        label: 'lch',
+        func: 'lch($lightness $chroma $hue)',
+        insertText: 'lch(${1:lightness} ${2:chroma} ${3:hue})',
+        desc: t('Creates a Color from lightness, chroma, and hue values.')
+    },
+    {
+        label: 'lch relative',
+        func: 'lch(from $color $lightness $chroma $hue)',
+        insertText: 'lch(from ${1:color} ${2:l} ${3:c} ${4:h})',
+        desc: t('Creates a Color from the lightness, chroma, and hue values of another Color.')
+    },
+    {
+        label: 'oklch',
+        func: 'oklch($lightness $chroma $hue)',
+        insertText: 'oklch(${1:lightness} ${2:chroma} ${3:hue})',
+        desc: t('Creates a Color from lightness, chroma, and hue values.')
+    },
+    {
+        label: 'oklch relative',
+        func: 'oklch(from $color $lightness $chroma $hue)',
+        insertText: 'oklch(from ${1:color} ${2:l} ${3:c} ${4:h})',
+        desc: t('Creates a Color from the lightness, chroma, and hue values of another Color.')
+    },
+    {
+        label: 'color',
+        func: 'color($color-space $red $green $blue)',
+        insertText: 'color(${1|srgb,srgb-linear,display-p3,a98-rgb,prophoto-rgb,rec2020,xyx,xyz-d50,xyz-d65|} ${2:red} ${3:green} ${4:blue})',
+        desc: t('Creates a Color in a specific color space from red, green, and blue values.')
+    },
+    {
+        label: 'color relative',
+        func: 'color(from $color $color-space $red $green $blue)',
+        insertText: 'color(from ${1:color} ${2|srgb,srgb-linear,display-p3,a98-rgb,prophoto-rgb,rec2020,xyx,xyz-d50,xyz-d65|} ${3:r} ${4:g} ${5:b})',
+        desc: t('Creates a Color in a specific color space from the red, green, and blue values of another Color.')
+    },
+    {
+        label: 'color-mix',
+        func: 'color-mix(in $color-space, $color $percentage, $color $percentage)',
+        insertText: 'color-mix(in ${1|srgb,srgb-linear,lab,oklab,xyz,xyz-d50,xyz-d65|}, ${3:color} ${4:percentage}, ${5:color} ${6:percentage})',
+        desc: t('Mix two colors together in a rectangular color space.')
+    },
+    {
+        label: 'color-mix hue',
+        func: 'color-mix(in $color-space $interpolation-method hue, $color $percentage, $color $percentage)',
+        insertText: 'color-mix(in ${1|hsl,hwb,lch,oklch|} ${2|shorter hue,longer hue,increasing hue,decreasing hue|}, ${3:color} ${4:percentage}, ${5:color} ${6:percentage})',
+        desc: t('Mix two colors together in a polar color space.')
+    },
 ];
+const colorFunctionNameRegExp = /^(rgb|rgba|hsl|hsla|hwb)$/i;
 const colors = {
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
@@ -18197,10 +16297,12 @@ const colors = {
     yellow: '#ffff00',
     yellowgreen: '#9acd32'
 };
+const colorsRegExp = new RegExp(`^(${Object.keys(colors).join('|')})$`, "i");
 const colorKeywords = {
     'currentColor': 'The value of the \'color\' property. The computed value of the \'currentColor\' keyword is the computed value of the \'color\' property. If the \'currentColor\' keyword is set on the \'color\' property itself, it is treated as \'color:inherit\' at parse time.',
     'transparent': 'Fully transparent. This keyword can be considered a shorthand for rgba(0,0,0,0) which is its computed value.',
 };
+const colorKeywordsRegExp = new RegExp(`^(${Object.keys(colorKeywords).join('|')})$`, "i");
 function getNumericValue(node, factor) {
     const val = node.getText();
     const m = val.match(/^([-+]?[0-9]*\.?[0-9]+)(%?)$/);
@@ -18241,7 +16343,10 @@ function isColorConstructor(node) {
     if (!name) {
         return false;
     }
-    return /^(rgb|rgba|hsl|hsla|hwb)$/gi.test(name);
+    return colorFunctionNameRegExp.test(name);
+}
+function isColorString(s) {
+    return hexColorRegExp.test(s) || colorsRegExp.test(s) || colorKeywordsRegExp.test(s);
 }
 /**
  * Returns true if the node is a color value - either
@@ -18623,7 +16728,7 @@ const basicShapeFunctions = {
     'polygon()': 'Defines a polygon.'
 };
 const builtinData_units = {
-    'length': ['cap', 'ch', 'cm', 'cqb', 'cqh', 'cqi', 'cqmax', 'cqmin', 'cqw', 'dvb', 'dvh', 'dvi', 'dvw', 'em', 'ex', 'ic', 'in', 'lh', 'lvb', 'lvh', 'lvi', 'lvw', 'mm', 'pc', 'pt', 'px', 'q', 'rem', 'svb', 'svh', 'svi', 'svw', 'vb', 'vh', 'vi', 'vmax', 'vmin', 'vw'],
+    'length': ['cap', 'ch', 'cm', 'cqb', 'cqh', 'cqi', 'cqmax', 'cqmin', 'cqw', 'dvb', 'dvh', 'dvi', 'dvw', 'em', 'ex', 'ic', 'in', 'lh', 'lvb', 'lvh', 'lvi', 'lvw', 'mm', 'pc', 'pt', 'px', 'q', 'rcap', 'rch', 'rem', 'rex', 'ric', 'rlh', 'svb', 'svh', 'svi', 'svw', 'vb', 'vh', 'vi', 'vmax', 'vmin', 'vw'],
     'angle': ['deg', 'rad', 'grad', 'turn'],
     'time': ['ms', 's'],
     'frequency': ['Hz', 'kHz'],
@@ -18944,7 +17049,7 @@ class Parser {
             || this._parseFontFace()
             || this._parseKeyframe()
             || this._parseSupports(isNested)
-            || this._parseLayer()
+            || this._parseLayer(isNested)
             || this._parsePropertyAtRule()
             || this._parseViewPort()
             || this._parseNamespace()
@@ -18979,14 +17084,20 @@ class Parser {
         return this._parseBody(node, this._parseRuleSetDeclaration.bind(this));
     }
     _parseRuleSetDeclarationAtStatement() {
-        return this._parseUnknownAtRule();
+        return this._parseMedia(true)
+            || this._parseSupports(true)
+            || this._parseLayer(true)
+            || this._parseUnknownAtRule();
     }
     _parseRuleSetDeclaration() {
         // https://www.w3.org/TR/css-syntax-3/#consume-a-list-of-declarations
         if (this.peek(TokenType.AtKeyword)) {
             return this._parseRuleSetDeclarationAtStatement();
         }
-        return this._parseDeclaration();
+        if (!this.peek(TokenType.Ident)) {
+            return this._parseRuleset(true);
+        }
+        return this._tryParseRuleset(true) || this._parseDeclaration();
     }
     _needsSemicolonAfter(node) {
         switch (node.type) {
@@ -19068,9 +17179,9 @@ class Parser {
         return hasContent ? this.finish(node) : null;
     }
     _parseDeclaration(stopTokens) {
-        const custonProperty = this._tryParseCustomPropertyDeclaration(stopTokens);
-        if (custonProperty) {
-            return custonProperty;
+        const customProperty = this._tryParseCustomPropertyDeclaration(stopTokens);
+        if (customProperty) {
+            return customProperty;
         }
         const node = this.create(Declaration);
         if (!node.setProperty(this._parseProperty())) {
@@ -19405,7 +17516,7 @@ class Parser {
         }
         return this._parseBody(node, this._parseDeclaration.bind(this));
     }
-    _parseLayer() {
+    _parseLayer(isNested = false) {
         // @layer layer-name {rules}
         // @layer layer-name;
         // @layer layer-name, layer-name, layer-name;
@@ -19420,12 +17531,21 @@ class Parser {
             node.setNames(names);
         }
         if ((!names || names.getChildren().length === 1) && this.peek(TokenType.CurlyL)) {
-            return this._parseBody(node, this._parseStylesheetStatement.bind(this));
+            return this._parseBody(node, this._parseLayerDeclaration.bind(this, isNested));
         }
         if (!this.accept(TokenType.SemiColon)) {
             return this.finish(node, ParseError.SemiColonExpected);
         }
         return this.finish(node);
+    }
+    _parseLayerDeclaration(isNested = false) {
+        if (isNested) {
+            // if nested, the body can contain rulesets, but also declarations
+            return this._tryParseRuleset(true)
+                || this._tryToParseDeclaration()
+                || this._parseStylesheetStatement(true);
+        }
+        return this._parseStylesheetStatement(false);
     }
     _parseLayerNameList() {
         const node = this.createNode(NodeType.LayerNameList);
@@ -19924,13 +18044,21 @@ class Parser {
         //  : element_name [ HASH | class | attrib | pseudo ]* | [ HASH | class | attrib | pseudo ]+ ;
         const node = this.create(SimpleSelector);
         let c = 0;
-        if (node.addChild(this._parseElementName())) {
+        if (node.addChild(this._parseElementName() || this._parseNestingSelector())) {
             c++;
         }
         while ((c === 0 || !this.hasWhitespace()) && node.addChild(this._parseSimpleSelectorBody())) {
             c++;
         }
         return c > 0 ? this.finish(node) : null;
+    }
+    _parseNestingSelector() {
+        if (this.peekDelim('&')) {
+            const node = this.createNode(NodeType.SelectorCombinator);
+            this.consumeToken();
+            return this.finish(node);
+        }
+        return null;
     }
     _parseSimpleSelectorBody() {
         return this._parsePseudo() || this._parseHash() || this._parseClass() || this._parseAttrib();
@@ -20650,7 +18778,7 @@ class Symbols {
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-uri/lib/esm/index.js
 /* provided dependency */ var process = __webpack_require__(4406);
-var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",o=0,i=-1,a=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(i===h-1||1===a);else if(i!==h-1&&2===a){if(n.length<2||2!==o||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var s=n.lastIndexOf("/");if(s!==n.length-1){-1===s?(n="",o=0):o=(n=n.slice(0,s)).length-1-n.lastIndexOf("/"),i=h,a=0;continue}}else if(2===n.length||1===n.length){n="",o=0,i=h,a=0;continue}e&&(n.length>0?n+="/..":n="..",o=2)}else n.length>0?n+="/"+t.slice(i+1,h):n=t.slice(i+1,h),o=h-i-1;i=h,a=0}else 46===r&&-1!==a?++a:a=-1}return n}var n={resolve:function(){for(var t,n="",o=!1,i=arguments.length-1;i>=-1&&!o;i--){var a;i>=0?a=arguments[i]:(void 0===t&&(t=process.cwd()),a=t),e(a),0!==a.length&&(n=a+"/"+n,o=47===a.charCodeAt(0))}return n=r(n,!o),o?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),o=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&o&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var o=arguments[r];e(o),o.length>0&&(void 0===t?t=o:t+="/"+o)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var o=1;o<t.length&&47===t.charCodeAt(o);++o);for(var i=t.length,a=i-o,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var s=r.length-h,c=a<s?a:s,f=-1,u=0;u<=c;++u){if(u===c){if(s>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else a>c&&(47===t.charCodeAt(o+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(o+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var p="";for(u=o+f+1;u<=i;++u)u!==i&&47!==t.charCodeAt(u)||(0===p.length?p+="..":p+="/..");return p.length>0?p+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,o=-1,i=!0,a=t.length-1;a>=1;--a)if(47===(r=t.charCodeAt(a))){if(!i){o=a;break}}else i=!1;return-1===o?n?"/":".":n&&1===o?"//":t.slice(0,o)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,o=0,i=-1,a=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,s=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!a){o=n+1;break}}else-1===s&&(a=!1,s=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(i=n):(h=-1,i=s))}return o===i?i=s:-1===i&&(i=t.length),t.slice(o,i)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!a){o=n+1;break}}else-1===i&&(a=!1,i=n+1);return-1===i?"":t.slice(o,i)},extname:function(t){e(t);for(var r=-1,n=0,o=-1,i=!0,a=0,h=t.length-1;h>=0;--h){var s=t.charCodeAt(h);if(47!==s)-1===o&&(i=!1,o=h+1),46===s?-1===r?r=h:1!==a&&(a=1):-1!==r&&(a=-1);else if(!i){n=h+1;break}}return-1===r||-1===o||0===a||1===a&&r===o-1&&r===n+1?"":t.slice(r,o)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,o=t.charCodeAt(0),i=47===o;i?(r.root="/",n=1):n=0;for(var a=-1,h=0,s=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(o=t.charCodeAt(f)))-1===s&&(c=!1,s=f+1),46===o?-1===a?a=f:1!==u&&(u=1):-1!==a&&(u=-1);else if(!c){h=f+1;break}return-1===a||-1===s||0===u||1===u&&a===s-1&&a===h+1?-1!==s&&(r.base=r.name=0===h&&i?t.slice(1,s):t.slice(h,s)):(0===h&&i?(r.name=t.slice(1,a),r.base=t.slice(1,s)):(r.name=t.slice(h,a),r.base=t.slice(h,s)),r.ext=t.slice(a,s)),h>0?r.dir=t.slice(0,h-1):i&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var o=e[n];if(void 0!==o)return o.exports;var i=e[n]={exports:{}};return t[n](i,i.exports,r),i.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};(()=>{var t;if(r.r(n),r.d(n,{URI:()=>g,Utils:()=>O}),"object"==typeof process)t="win32"===process.platform;else if("object"==typeof navigator){var e=navigator.userAgent;t=e.indexOf("Windows")>=0}var o,i,a=(o=function(t,e){return o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])},o(t,e)},function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}),h=/^\w[\w\d+.-]*$/,s=/^\//,c=/^\/\//;function f(t,e){if(!t.scheme&&e)throw new Error('[UriError]: Scheme is missing: {scheme: "", authority: "'.concat(t.authority,'", path: "').concat(t.path,'", query: "').concat(t.query,'", fragment: "').concat(t.fragment,'"}'));if(t.scheme&&!h.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!s.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(c.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}var u="",l="/",p=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,g=function(){function e(t,e,r,n,o,i){void 0===i&&(i=!1),"object"==typeof t?(this.scheme=t.scheme||u,this.authority=t.authority||u,this.path=t.path||u,this.query=t.query||u,this.fragment=t.fragment||u):(this.scheme=function(t,e){return t||e?t:"file"}(t,i),this.authority=e||u,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==l&&(e=l+e):e=l}return e}(this.scheme,r||u),this.query=n||u,this.fragment=o||u,f(this,i))}return e.isUri=function(t){return t instanceof e||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString},Object.defineProperty(e.prototype,"fsPath",{get:function(){return C(this,!1)},enumerable:!1,configurable:!0}),e.prototype.with=function(t){if(!t)return this;var e=t.scheme,r=t.authority,n=t.path,o=t.query,i=t.fragment;return void 0===e?e=this.scheme:null===e&&(e=u),void 0===r?r=this.authority:null===r&&(r=u),void 0===n?n=this.path:null===n&&(n=u),void 0===o?o=this.query:null===o&&(o=u),void 0===i?i=this.fragment:null===i&&(i=u),e===this.scheme&&r===this.authority&&n===this.path&&o===this.query&&i===this.fragment?this:new v(e,r,n,o,i)},e.parse=function(t,e){void 0===e&&(e=!1);var r=p.exec(t);return r?new v(r[2]||u,_(r[4]||u),_(r[5]||u),_(r[7]||u),_(r[9]||u),e):new v(u,u,u,u,u)},e.file=function(e){var r=u;if(t&&(e=e.replace(/\\/g,l)),e[0]===l&&e[1]===l){var n=e.indexOf(l,2);-1===n?(r=e.substring(2),e=l):(r=e.substring(2,n),e=e.substring(n)||l)}return new v("file",r,e,u,u)},e.from=function(t){var e=new v(t.scheme,t.authority,t.path,t.query,t.fragment);return f(e,!0),e},e.prototype.toString=function(t){return void 0===t&&(t=!1),A(this,t)},e.prototype.toJSON=function(){return this},e.revive=function(t){if(t){if(t instanceof e)return t;var r=new v(t);return r._formatted=t.external,r._fsPath=t._sep===d?t.fsPath:null,r}return t},e}(),d=t?1:void 0,v=function(t){function e(){var e=null!==t&&t.apply(this,arguments)||this;return e._formatted=null,e._fsPath=null,e}return a(e,t),Object.defineProperty(e.prototype,"fsPath",{get:function(){return this._fsPath||(this._fsPath=C(this,!1)),this._fsPath},enumerable:!1,configurable:!0}),e.prototype.toString=function(t){return void 0===t&&(t=!1),t?A(this,!0):(this._formatted||(this._formatted=A(this,!1)),this._formatted)},e.prototype.toJSON=function(){var t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=d),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t},e}(g),y=((i={})[58]="%3A",i[47]="%2F",i[63]="%3F",i[35]="%23",i[91]="%5B",i[93]="%5D",i[64]="%40",i[33]="%21",i[36]="%24",i[38]="%26",i[39]="%27",i[40]="%28",i[41]="%29",i[42]="%2A",i[43]="%2B",i[44]="%2C",i[59]="%3B",i[61]="%3D",i[32]="%20",i);function m(t,e,r){for(var n=void 0,o=-1,i=0;i<t.length;i++){var a=t.charCodeAt(i);if(a>=97&&a<=122||a>=65&&a<=90||a>=48&&a<=57||45===a||46===a||95===a||126===a||e&&47===a||r&&91===a||r&&93===a||r&&58===a)-1!==o&&(n+=encodeURIComponent(t.substring(o,i)),o=-1),void 0!==n&&(n+=t.charAt(i));else{void 0===n&&(n=t.substr(0,i));var h=y[a];void 0!==h?(-1!==o&&(n+=encodeURIComponent(t.substring(o,i)),o=-1),n+=h):-1===o&&(o=i)}}return-1!==o&&(n+=encodeURIComponent(t.substring(o))),void 0!==n?n:t}function b(t){for(var e=void 0,r=0;r<t.length;r++){var n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=y[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function C(e,r){var n;return n=e.authority&&e.path.length>1&&"file"===e.scheme?"//".concat(e.authority).concat(e.path):47===e.path.charCodeAt(0)&&(e.path.charCodeAt(1)>=65&&e.path.charCodeAt(1)<=90||e.path.charCodeAt(1)>=97&&e.path.charCodeAt(1)<=122)&&58===e.path.charCodeAt(2)?r?e.path.substr(1):e.path[1].toLowerCase()+e.path.substr(2):e.path,t&&(n=n.replace(/\//g,"\\")),n}function A(t,e){var r=e?b:m,n="",o=t.scheme,i=t.authority,a=t.path,h=t.query,s=t.fragment;if(o&&(n+=o,n+=":"),(i||"file"===o)&&(n+=l,n+=l),i){var c=i.indexOf("@");if(-1!==c){var f=i.substr(0,c);i=i.substr(c+1),-1===(c=f.lastIndexOf(":"))?n+=r(f,!1,!1):(n+=r(f.substr(0,c),!1,!1),n+=":",n+=r(f.substr(c+1),!1,!0)),n+="@"}-1===(c=(i=i.toLowerCase()).lastIndexOf(":"))?n+=r(i,!1,!0):(n+=r(i.substr(0,c),!1,!0),n+=i.substr(c))}if(a){if(a.length>=3&&47===a.charCodeAt(0)&&58===a.charCodeAt(2))(u=a.charCodeAt(1))>=65&&u<=90&&(a="/".concat(String.fromCharCode(u+32),":").concat(a.substr(3)));else if(a.length>=2&&58===a.charCodeAt(1)){var u;(u=a.charCodeAt(0))>=65&&u<=90&&(a="".concat(String.fromCharCode(u+32),":").concat(a.substr(2)))}n+=r(a,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),s&&(n+="#",n+=e?s:m(s,!1,!1)),n}function w(t){try{return decodeURIComponent(t)}catch(e){return t.length>3?t.substr(0,3)+w(t.substr(3)):t}}var x=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function _(t){return t.match(x)?t.replace(x,(function(t){return w(t)})):t}var O,P=r(470),j=function(t,e,r){if(r||2===arguments.length)for(var n,o=0,i=e.length;o<i;o++)!n&&o in e||(n||(n=Array.prototype.slice.call(e,0,o)),n[o]=e[o]);return t.concat(n||Array.prototype.slice.call(e))},I=P.posix||P,U="/";!function(t){t.joinPath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];return t.with({path:I.join.apply(I,j([t.path],e,!1))})},t.resolvePath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];var n=t.path,o=!1;n[0]!==U&&(n=U+n,o=!0);var i=I.resolve.apply(I,j([n],e,!1));return o&&i[0]===U&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===U)return t;var e=I.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return I.basename(t.path)},t.extname=function(t){return I.extname(t.path)}}(O||(O={}))})(),LIB=n})();const{URI: esm_URI,Utils}=LIB;
+var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",o=0,i=-1,a=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(i===h-1||1===a);else if(i!==h-1&&2===a){if(n.length<2||2!==o||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var s=n.lastIndexOf("/");if(s!==n.length-1){-1===s?(n="",o=0):o=(n=n.slice(0,s)).length-1-n.lastIndexOf("/"),i=h,a=0;continue}}else if(2===n.length||1===n.length){n="",o=0,i=h,a=0;continue}e&&(n.length>0?n+="/..":n="..",o=2)}else n.length>0?n+="/"+t.slice(i+1,h):n=t.slice(i+1,h),o=h-i-1;i=h,a=0}else 46===r&&-1!==a?++a:a=-1}return n}var n={resolve:function(){for(var t,n="",o=!1,i=arguments.length-1;i>=-1&&!o;i--){var a;i>=0?a=arguments[i]:(void 0===t&&(t=process.cwd()),a=t),e(a),0!==a.length&&(n=a+"/"+n,o=47===a.charCodeAt(0))}return n=r(n,!o),o?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),o=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&o&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var o=arguments[r];e(o),o.length>0&&(void 0===t?t=o:t+="/"+o)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var o=1;o<t.length&&47===t.charCodeAt(o);++o);for(var i=t.length,a=i-o,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var s=r.length-h,c=a<s?a:s,f=-1,u=0;u<=c;++u){if(u===c){if(s>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else a>c&&(47===t.charCodeAt(o+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(o+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var p="";for(u=o+f+1;u<=i;++u)u!==i&&47!==t.charCodeAt(u)||(0===p.length?p+="..":p+="/..");return p.length>0?p+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,o=-1,i=!0,a=t.length-1;a>=1;--a)if(47===(r=t.charCodeAt(a))){if(!i){o=a;break}}else i=!1;return-1===o?n?"/":".":n&&1===o?"//":t.slice(0,o)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,o=0,i=-1,a=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,s=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!a){o=n+1;break}}else-1===s&&(a=!1,s=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(i=n):(h=-1,i=s))}return o===i?i=s:-1===i&&(i=t.length),t.slice(o,i)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!a){o=n+1;break}}else-1===i&&(a=!1,i=n+1);return-1===i?"":t.slice(o,i)},extname:function(t){e(t);for(var r=-1,n=0,o=-1,i=!0,a=0,h=t.length-1;h>=0;--h){var s=t.charCodeAt(h);if(47!==s)-1===o&&(i=!1,o=h+1),46===s?-1===r?r=h:1!==a&&(a=1):-1!==r&&(a=-1);else if(!i){n=h+1;break}}return-1===r||-1===o||0===a||1===a&&r===o-1&&r===n+1?"":t.slice(r,o)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,o=t.charCodeAt(0),i=47===o;i?(r.root="/",n=1):n=0;for(var a=-1,h=0,s=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(o=t.charCodeAt(f)))-1===s&&(c=!1,s=f+1),46===o?-1===a?a=f:1!==u&&(u=1):-1!==a&&(u=-1);else if(!c){h=f+1;break}return-1===a||-1===s||0===u||1===u&&a===s-1&&a===h+1?-1!==s&&(r.base=r.name=0===h&&i?t.slice(1,s):t.slice(h,s)):(0===h&&i?(r.name=t.slice(1,a),r.base=t.slice(1,s)):(r.name=t.slice(h,a),r.base=t.slice(h,s)),r.ext=t.slice(a,s)),h>0?r.dir=t.slice(0,h-1):i&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var o=e[n];if(void 0!==o)return o.exports;var i=e[n]={exports:{}};return t[n](i,i.exports,r),i.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};(()=>{var t;if(r.r(n),r.d(n,{URI:()=>g,Utils:()=>O}),"object"==typeof process)t="win32"===process.platform;else if("object"==typeof navigator){var e=navigator.userAgent;t=e.indexOf("Windows")>=0}var o,i,a=(o=function(t,e){return o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])},o(t,e)},function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}),h=/^\w[\w\d+.-]*$/,s=/^\//,c=/^\/\//;function f(t,e){if(!t.scheme&&e)throw new Error('[UriError]: Scheme is missing: {scheme: "", authority: "'.concat(t.authority,'", path: "').concat(t.path,'", query: "').concat(t.query,'", fragment: "').concat(t.fragment,'"}'));if(t.scheme&&!h.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!s.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(c.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}var u="",l="/",p=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,g=function(){function e(t,e,r,n,o,i){void 0===i&&(i=!1),"object"==typeof t?(this.scheme=t.scheme||u,this.authority=t.authority||u,this.path=t.path||u,this.query=t.query||u,this.fragment=t.fragment||u):(this.scheme=function(t,e){return t||e?t:"file"}(t,i),this.authority=e||u,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==l&&(e=l+e):e=l}return e}(this.scheme,r||u),this.query=n||u,this.fragment=o||u,f(this,i))}return e.isUri=function(t){return t instanceof e||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString},Object.defineProperty(e.prototype,"fsPath",{get:function(){return C(this,!1)},enumerable:!1,configurable:!0}),e.prototype.with=function(t){if(!t)return this;var e=t.scheme,r=t.authority,n=t.path,o=t.query,i=t.fragment;return void 0===e?e=this.scheme:null===e&&(e=u),void 0===r?r=this.authority:null===r&&(r=u),void 0===n?n=this.path:null===n&&(n=u),void 0===o?o=this.query:null===o&&(o=u),void 0===i?i=this.fragment:null===i&&(i=u),e===this.scheme&&r===this.authority&&n===this.path&&o===this.query&&i===this.fragment?this:new v(e,r,n,o,i)},e.parse=function(t,e){void 0===e&&(e=!1);var r=p.exec(t);return r?new v(r[2]||u,_(r[4]||u),_(r[5]||u),_(r[7]||u),_(r[9]||u),e):new v(u,u,u,u,u)},e.file=function(e){var r=u;if(t&&(e=e.replace(/\\/g,l)),e[0]===l&&e[1]===l){var n=e.indexOf(l,2);-1===n?(r=e.substring(2),e=l):(r=e.substring(2,n),e=e.substring(n)||l)}return new v("file",r,e,u,u)},e.from=function(t){var e=new v(t.scheme,t.authority,t.path,t.query,t.fragment);return f(e,!0),e},e.prototype.toString=function(t){return void 0===t&&(t=!1),A(this,t)},e.prototype.toJSON=function(){return this},e.revive=function(t){if(t){if(t instanceof e)return t;var r=new v(t);return r._formatted=t.external,r._fsPath=t._sep===d?t.fsPath:null,r}return t},e}(),d=t?1:void 0,v=function(t){function e(){var e=null!==t&&t.apply(this,arguments)||this;return e._formatted=null,e._fsPath=null,e}return a(e,t),Object.defineProperty(e.prototype,"fsPath",{get:function(){return this._fsPath||(this._fsPath=C(this,!1)),this._fsPath},enumerable:!1,configurable:!0}),e.prototype.toString=function(t){return void 0===t&&(t=!1),t?A(this,!0):(this._formatted||(this._formatted=A(this,!1)),this._formatted)},e.prototype.toJSON=function(){var t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=d),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t},e}(g),y=((i={})[58]="%3A",i[47]="%2F",i[63]="%3F",i[35]="%23",i[91]="%5B",i[93]="%5D",i[64]="%40",i[33]="%21",i[36]="%24",i[38]="%26",i[39]="%27",i[40]="%28",i[41]="%29",i[42]="%2A",i[43]="%2B",i[44]="%2C",i[59]="%3B",i[61]="%3D",i[32]="%20",i);function m(t,e,r){for(var n=void 0,o=-1,i=0;i<t.length;i++){var a=t.charCodeAt(i);if(a>=97&&a<=122||a>=65&&a<=90||a>=48&&a<=57||45===a||46===a||95===a||126===a||e&&47===a||r&&91===a||r&&93===a||r&&58===a)-1!==o&&(n+=encodeURIComponent(t.substring(o,i)),o=-1),void 0!==n&&(n+=t.charAt(i));else{void 0===n&&(n=t.substr(0,i));var h=y[a];void 0!==h?(-1!==o&&(n+=encodeURIComponent(t.substring(o,i)),o=-1),n+=h):-1===o&&(o=i)}}return-1!==o&&(n+=encodeURIComponent(t.substring(o))),void 0!==n?n:t}function b(t){for(var e=void 0,r=0;r<t.length;r++){var n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=y[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function C(e,r){var n;return n=e.authority&&e.path.length>1&&"file"===e.scheme?"//".concat(e.authority).concat(e.path):47===e.path.charCodeAt(0)&&(e.path.charCodeAt(1)>=65&&e.path.charCodeAt(1)<=90||e.path.charCodeAt(1)>=97&&e.path.charCodeAt(1)<=122)&&58===e.path.charCodeAt(2)?r?e.path.substr(1):e.path[1].toLowerCase()+e.path.substr(2):e.path,t&&(n=n.replace(/\//g,"\\")),n}function A(t,e){var r=e?b:m,n="",o=t.scheme,i=t.authority,a=t.path,h=t.query,s=t.fragment;if(o&&(n+=o,n+=":"),(i||"file"===o)&&(n+=l,n+=l),i){var c=i.indexOf("@");if(-1!==c){var f=i.substr(0,c);i=i.substr(c+1),-1===(c=f.lastIndexOf(":"))?n+=r(f,!1,!1):(n+=r(f.substr(0,c),!1,!1),n+=":",n+=r(f.substr(c+1),!1,!0)),n+="@"}-1===(c=(i=i.toLowerCase()).lastIndexOf(":"))?n+=r(i,!1,!0):(n+=r(i.substr(0,c),!1,!0),n+=i.substr(c))}if(a){if(a.length>=3&&47===a.charCodeAt(0)&&58===a.charCodeAt(2))(u=a.charCodeAt(1))>=65&&u<=90&&(a="/".concat(String.fromCharCode(u+32),":").concat(a.substr(3)));else if(a.length>=2&&58===a.charCodeAt(1)){var u;(u=a.charCodeAt(0))>=65&&u<=90&&(a="".concat(String.fromCharCode(u+32),":").concat(a.substr(2)))}n+=r(a,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),s&&(n+="#",n+=e?s:m(s,!1,!1)),n}function w(t){try{return decodeURIComponent(t)}catch(e){return t.length>3?t.substr(0,3)+w(t.substr(3)):t}}var x=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function _(t){return t.match(x)?t.replace(x,(function(t){return w(t)})):t}var O,P=r(470),j=function(t,e,r){if(r||2===arguments.length)for(var n,o=0,i=e.length;o<i;o++)!n&&o in e||(n||(n=Array.prototype.slice.call(e,0,o)),n[o]=e[o]);return t.concat(n||Array.prototype.slice.call(e))},I=P.posix||P,U="/";!function(t){t.joinPath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];return t.with({path:I.join.apply(I,j([t.path],e,!1))})},t.resolvePath=function(t){for(var e=[],r=1;r<arguments.length;r++)e[r-1]=arguments[r];var n=t.path,o=!1;n[0]!==U&&(n=U+n,o=!0);var i=I.resolve.apply(I,j([n],e,!1));return o&&i[0]===U&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===U)return t;var e=I.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return I.basename(t.path)},t.extname=function(t){return I.extname(t.path)}}(O||(O={}))})(),LIB=n})();const{URI,Utils}=LIB;
 //# sourceMappingURL=index.js.map
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/utils/resources.js
 /*---------------------------------------------------------------------------------------------
@@ -20659,10 +18787,10 @@ var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)th
  *--------------------------------------------------------------------------------------------*/
 
 function dirname(uriString) {
-    return Utils.dirname(esm_URI.parse(uriString)).toString(true);
+    return Utils.dirname(URI.parse(uriString)).toString(true);
 }
 function joinPath(uriString, ...paths) {
-    return Utils.joinPath(esm_URI.parse(uriString), ...paths).toString(true);
+    return Utils.joinPath(URI.parse(uriString), ...paths).toString(true);
 }
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/services/pathCompletion.js
@@ -20786,7 +18914,7 @@ function pathToReplaceRange(valueBeforeCursor, fullValue, fullValueRange) {
         else {
             endPos = fullValueRange.end;
         }
-        replaceRange = Range.create(startPos, endPos);
+        replaceRange = main.Range.create(startPos, endPos);
     }
     return replaceRange;
 }
@@ -20795,8 +18923,8 @@ function createCompletionItem(name, isDir, replaceRange) {
         name = name + '/';
         return {
             label: escapePath(name),
-            kind: main_CompletionItemKind.Folder,
-            textEdit: TextEdit.replace(replaceRange, escapePath(name)),
+            kind: main.CompletionItemKind.Folder,
+            textEdit: main.TextEdit.replace(replaceRange, escapePath(name)),
             command: {
                 title: 'Suggest',
                 command: 'editor.action.triggerSuggest'
@@ -20806,8 +18934,8 @@ function createCompletionItem(name, isDir, replaceRange) {
     else {
         return {
             label: escapePath(name),
-            kind: main_CompletionItemKind.File,
-            textEdit: TextEdit.replace(replaceRange, escapePath(name))
+            kind: main.CompletionItemKind.File,
+            textEdit: main.TextEdit.replace(replaceRange, escapePath(name))
         };
     }
 }
@@ -20816,12 +18944,12 @@ function escapePath(p) {
     return p.replace(/(\s|\(|\)|,|"|')/g, '\\$1');
 }
 function shiftPosition(pos, offset) {
-    return Position.create(pos.line, pos.character + offset);
+    return main.Position.create(pos.line, pos.character + offset);
 }
 function shiftRange(range, startOffset, endOffset) {
     const start = shiftPosition(range.start, startOffset);
     const end = shiftPosition(range.end, endOffset);
-    return Range.create(start, end);
+    return main.Range.create(start, end);
 }
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/services/cssCompletion.js
@@ -20838,7 +18966,7 @@ function shiftRange(range, startOffset, endOffset) {
 
 
 
-const SnippetFormat = main_InsertTextFormat.Snippet;
+const SnippetFormat = main.InsertTextFormat.Snippet;
 const retriggerCommand = {
     title: 'Suggest',
     command: 'editor.action.triggerSuggest'
@@ -20895,7 +19023,7 @@ class CSSCompletion {
         this.offset = document.offsetAt(position);
         this.position = position;
         this.currentWord = getCurrentWord(document, this.offset);
-        this.defaultReplaceRange = Range.create(Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+        this.defaultReplaceRange = main.Range.create(main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         this.textDocument = document;
         this.styleSheet = styleSheet;
         this.documentSettings = documentSettings;
@@ -21058,10 +19186,10 @@ class CSSCompletion {
             const item = {
                 label: entry.name,
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [CompletionItemTag.Deprecated] : [],
-                textEdit: TextEdit.replace(range, insertText),
-                insertTextFormat: main_InsertTextFormat.Snippet,
-                kind: main_CompletionItemKind.Property
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                textEdit: main.TextEdit.replace(range, insertText),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Property
             };
             if (!entry.restrictions) {
                 retrigger = false;
@@ -21153,8 +19281,8 @@ class CSSCompletion {
             for (const existingValue of existingValues.getEntries()) {
                 result.items.push({
                     label: existingValue,
-                    textEdit: TextEdit.replace(this.getCompletionRange(existingNode), existingValue),
-                    kind: main_CompletionItemKind.Value
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), existingValue),
+                    kind: main.CompletionItemKind.Value
                 });
             }
         }
@@ -21181,10 +19309,10 @@ class CSSCompletion {
                 const item = {
                     label: value.name,
                     documentation: getEntryDescription(value, this.doesSupportMarkdown()),
-                    tags: isDeprecated(entry) ? [CompletionItemTag.Deprecated] : [],
-                    textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertString),
+                    tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertString),
                     sortText,
-                    kind: main_CompletionItemKind.Value,
+                    kind: main.CompletionItemKind.Value,
                     insertTextFormat
                 };
                 result.items.push(item);
@@ -21197,8 +19325,8 @@ class CSSCompletion {
             result.items.push({
                 label: keywords,
                 documentation: cssWideKeywords[keywords],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), keywords),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), keywords),
+                kind: main.CompletionItemKind.Value
             });
         }
         for (const func in cssWideFunctions) {
@@ -21206,8 +19334,8 @@ class CSSCompletion {
             result.items.push({
                 label: func,
                 documentation: cssWideFunctions[func],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main_CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: SnippetFormat,
                 command: startsWith(func, 'var') ? retriggerCommand : undefined
             });
@@ -21227,12 +19355,12 @@ class CSSCompletion {
             const completionItem = {
                 label: symbol.name,
                 documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main_CompletionItemKind.Variable,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Variable,
                 sortText: SortTexts.Variable
             };
             if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                completionItem.kind = main_CompletionItemKind.Color;
+                completionItem.kind = main.CompletionItemKind.Color;
             }
             if (symbol.node.type === NodeType.FunctionParameter) {
                 const mixinNode = (symbol.node.getParent());
@@ -21253,11 +19381,11 @@ class CSSCompletion {
                 const completionItem = {
                     label: symbol.name,
                     documentation: symbol.value ? getLimitedString(symbol.value) : symbol.value,
-                    textEdit: TextEdit.replace(this.getCompletionRange(null), symbol.name),
-                    kind: main_CompletionItemKind.Variable
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(null), symbol.name),
+                    kind: main.CompletionItemKind.Variable
                 };
                 if (typeof completionItem.documentation === 'string' && isColorString(completionItem.documentation)) {
-                    completionItem.kind = main_CompletionItemKind.Color;
+                    completionItem.kind = main.CompletionItemKind.Color;
                 }
                 result.items.push(completionItem);
             }
@@ -21267,8 +19395,8 @@ class CSSCompletion {
             if (startsWith(name, '--')) {
                 const completionItem = {
                     label: name,
-                    textEdit: TextEdit.replace(this.getCompletionRange(null), name),
-                    kind: main_CompletionItemKind.Variable
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(null), name),
+                    kind: main.CompletionItemKind.Variable
                 };
                 result.items.push(completionItem);
             }
@@ -21298,8 +19426,8 @@ class CSSCompletion {
                         const insertText = currentWord + unit;
                         result.items.push({
                             label: insertText,
-                            textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                            kind: main_CompletionItemKind.Unit
+                            textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                            kind: main.CompletionItemKind.Unit
                         });
                     }
                 }
@@ -21312,7 +19440,7 @@ class CSSCompletion {
             const end = existingNode.end !== -1 ? this.textDocument.positionAt(existingNode.end) : this.position;
             const start = this.textDocument.positionAt(existingNode.offset);
             if (start.line === end.line) {
-                return Range.create(start, end); // multi line edits are not allowed
+                return main.Range.create(start, end); // multi line edits are not allowed
             }
         }
         return this.defaultReplaceRange;
@@ -21322,16 +19450,16 @@ class CSSCompletion {
             result.items.push({
                 label: color,
                 documentation: colors[color],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), color),
-                kind: main_CompletionItemKind.Color
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Color
             });
         }
         for (const color in colorKeywords) {
             result.items.push({
                 label: color,
                 documentation: colorKeywords[color],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), color),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Value
             });
         }
         const colorValues = new cssCompletion_Set();
@@ -21339,21 +19467,18 @@ class CSSCompletion {
         for (const color of colorValues.getEntries()) {
             result.items.push({
                 label: color,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), color),
-                kind: main_CompletionItemKind.Color
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), color),
+                kind: main.CompletionItemKind.Color
             });
         }
         for (const p of colorFunctions) {
-            let tabStop = 1;
-            const replaceFunction = (_match, p1) => '${' + tabStop++ + ':' + p1 + '}';
-            const insertText = p.func.replace(/\[?\$(\w+)\]?/g, replaceFunction);
             result.items.push({
-                label: p.func.substr(0, p.func.indexOf('(')),
+                label: p.label,
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), p.insertText),
                 insertTextFormat: SnippetFormat,
-                kind: main_CompletionItemKind.Function
+                kind: main.CompletionItemKind.Function
             });
         }
         return result;
@@ -21363,8 +19488,8 @@ class CSSCompletion {
             result.items.push({
                 label: position,
                 documentation: positionKeywords[position],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), position),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), position),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -21374,8 +19499,8 @@ class CSSCompletion {
             result.items.push({
                 label: repeat,
                 documentation: repeatStyleKeywords[repeat],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), repeat),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), repeat),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -21385,8 +19510,8 @@ class CSSCompletion {
             result.items.push({
                 label: lineStyle,
                 documentation: lineStyleKeywords[lineStyle],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), lineStyle),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), lineStyle),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -21395,8 +19520,8 @@ class CSSCompletion {
         for (const lineWidth of lineWidthKeywords) {
             result.items.push({
                 label: lineWidth,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), lineWidth),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), lineWidth),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -21406,8 +19531,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: geometryBoxKeywords[box],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), box),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -21417,8 +19542,8 @@ class CSSCompletion {
             result.items.push({
                 label: box,
                 documentation: boxKeywords[box],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), box),
-                kind: main_CompletionItemKind.Value
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), box),
+                kind: main.CompletionItemKind.Value
             });
         }
         return result;
@@ -21429,8 +19554,8 @@ class CSSCompletion {
             result.items.push({
                 label: image,
                 documentation: imageFunctions[image],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main_CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: image !== insertText ? SnippetFormat : void 0
             });
         }
@@ -21442,8 +19567,8 @@ class CSSCompletion {
             result.items.push({
                 label: timing,
                 documentation: transitionTimingFunctions[timing],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main_CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: timing !== insertText ? SnippetFormat : void 0
             });
         }
@@ -21455,8 +19580,8 @@ class CSSCompletion {
             result.items.push({
                 label: shape,
                 documentation: basicShapeFunctions[shape],
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                kind: main_CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: shape !== insertText ? SnippetFormat : void 0
             });
         }
@@ -21479,10 +19604,10 @@ class CSSCompletion {
         this.cssDataManager.getAtDirectives().forEach(entry => {
             result.items.push({
                 label: entry.name,
-                textEdit: TextEdit.replace(this.getCompletionRange(null), entry.name),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(null), entry.name),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [CompletionItemTag.Deprecated] : [],
-                kind: main_CompletionItemKind.Keyword
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Keyword
             });
         });
         this.getCompletionsForSelector(null, false, result);
@@ -21508,17 +19633,17 @@ class CSSCompletion {
             if (this.hasCharacterAtPosition(this.offset - this.currentWord.length - 1, ':')) {
                 this.currentWord = ':' + this.currentWord; // for '::'
             }
-            this.defaultReplaceRange = Range.create(Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
+            this.defaultReplaceRange = main.Range.create(main.Position.create(this.position.line, this.position.character - this.currentWord.length), this.position);
         }
         const pseudoClasses = this.cssDataManager.getPseudoClasses();
         pseudoClasses.forEach(entry => {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [CompletionItemTag.Deprecated] : [],
-                kind: main_CompletionItemKind.Function,
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, ':-')) {
@@ -21531,10 +19656,10 @@ class CSSCompletion {
             const insertText = moveCursorInsideParenthesis(entry.name);
             const item = {
                 label: entry.name,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
                 documentation: getEntryDescription(entry, this.doesSupportMarkdown()),
-                tags: isDeprecated(entry) ? [CompletionItemTag.Deprecated] : [],
-                kind: main_CompletionItemKind.Function,
+                tags: isDeprecated(entry) ? [main.CompletionItemTag.Deprecated] : [],
+                kind: main.CompletionItemKind.Function,
                 insertTextFormat: entry.name !== insertText ? SnippetFormat : void 0
             };
             if (startsWith(entry.name, '::-')) {
@@ -21546,15 +19671,15 @@ class CSSCompletion {
             for (const entry of html5Tags) {
                 result.items.push({
                     label: entry,
-                    textEdit: TextEdit.replace(this.getCompletionRange(existingNode), entry),
-                    kind: main_CompletionItemKind.Keyword
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: main.CompletionItemKind.Keyword
                 });
             }
             for (const entry of svgElements) {
                 result.items.push({
                     label: entry,
-                    textEdit: TextEdit.replace(this.getCompletionRange(existingNode), entry),
-                    kind: main_CompletionItemKind.Keyword
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), entry),
+                    kind: main.CompletionItemKind.Keyword
                 });
             }
         }
@@ -21568,8 +19693,8 @@ class CSSCompletion {
                     visited[selector] = true;
                     result.items.push({
                         label: selector,
-                        textEdit: TextEdit.replace(this.getCompletionRange(existingNode), selector),
-                        kind: main_CompletionItemKind.Keyword
+                        textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), selector),
+                        kind: main.CompletionItemKind.Keyword
                     });
                 }
                 return false;
@@ -21699,9 +19824,9 @@ class CSSCompletion {
         return {
             label: symbol.name,
             detail: symbol.name + '(' + params.join(', ') + ')',
-            textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+            textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
             insertTextFormat: SnippetFormat,
-            kind: main_CompletionItemKind.Function,
+            kind: main.CompletionItemKind.Function,
             sortText: SortTexts.Term
         };
     }
@@ -21749,7 +19874,7 @@ class CSSCompletion {
             uriValue = '';
             position = this.position;
             const emptyURIValuePosition = this.textDocument.positionAt(uriLiteralNode.offset + 'url('.length);
-            range = Range.create(emptyURIValuePosition, emptyURIValuePosition);
+            range = main.Range.create(emptyURIValuePosition, emptyURIValuePosition);
         }
         else {
             const uriValueNode = uriLiteralNode.getChild(0);
@@ -21791,7 +19916,7 @@ class CSSCompletion {
                 return this.supportsMarkdown;
             }
             const documentationFormat = this.lsOptions.clientCapabilities.textDocument?.completion?.completionItem?.documentationFormat;
-            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(MarkupKind.Markdown) !== -1;
+            this.supportsMarkdown = Array.isArray(documentationFormat) && documentationFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -21883,10 +20008,6 @@ function getCurrentWord(document, offset) {
         i--;
     }
     return text.substring(i + 1, offset);
-}
-function isColorString(s) {
-    // From https://stackoverflow.com/questions/8027423/how-to-check-if-a-string-is-a-valid-hex-color-representation/8027444
-    return (s.toLowerCase() in colors) || /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(s);
 }
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/services/selectorPrinting.js
@@ -22294,8 +20415,7 @@ class SelectorPrinting {
             return specificity;
         };
         const specificity = calculateScore(node);
-        ;
-        return t("[Selector Specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity): ({0}, {1}, {2})", specificity.id, specificity.attr, specificity.tag);
+        return `[${t("Selector Specificity")}](https://developer.mozilla.org/docs/Web/CSS/Specificity): (${specificity.id}, ${specificity.attr}, ${specificity.tag})`;
     }
 }
 class SelectorElementBuilder {
@@ -22405,7 +20525,7 @@ class CSSHover {
     }
     doHover(document, position, stylesheet, settings = this.defaultSettings) {
         function getRange(node) {
-            return Range.create(document.positionAt(node.offset), document.positionAt(node.end));
+            return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
         }
         const offset = document.offsetAt(position);
         const nodepath = getNodePath(stylesheet, offset);
@@ -22526,7 +20646,7 @@ class CSSHover {
                 return this.supportsMarkdown;
             }
             const hover = this.clientCapabilities.textDocument && this.clientCapabilities.textDocument.hover;
-            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(MarkupKind.Markdown) !== -1;
+            this.supportsMarkdown = hover && hover.contentFormat && Array.isArray(hover.contentFormat) && hover.contentFormat.indexOf(main.MarkupKind.Markdown) !== -1;
         }
         return this.supportsMarkdown;
     }
@@ -22708,9 +20828,9 @@ class CSSNavigation {
         const addSymbolInformation = (name, kind, symbolNodeOrRange) => {
             const range = symbolNodeOrRange instanceof Node ? getRange(symbolNodeOrRange, document) : symbolNodeOrRange;
             const entry = {
-                name,
+                name: name || t('<undefined>'),
                 kind,
-                location: Location.create(document.uri, range)
+                location: main.Location.create(document.uri, range)
             };
             result.push(entry);
         };
@@ -22722,9 +20842,12 @@ class CSSNavigation {
         const parents = [];
         const addDocumentSymbol = (name, kind, symbolNodeOrRange, nameNodeOrRange, bodyNode) => {
             const range = symbolNodeOrRange instanceof Node ? getRange(symbolNodeOrRange, document) : symbolNodeOrRange;
-            const selectionRange = (nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange) ?? Range.create(range.start, range.start);
+            let selectionRange = nameNodeOrRange instanceof Node ? getRange(nameNodeOrRange, document) : nameNodeOrRange;
+            if (!selectionRange || !containsRange(range, selectionRange)) {
+                selectionRange = main.Range.create(range.start, range.start);
+            }
             const entry = {
-                name,
+                name: name || t('<undefined>'),
                 kind,
                 range,
                 selectionRange
@@ -22756,33 +20879,33 @@ class CSSNavigation {
             if (node instanceof RuleSet) {
                 for (const selector of node.getSelectors().getChildren()) {
                     if (selector instanceof Selector) {
-                        const range = Range.create(document.positionAt(selector.offset), document.positionAt(node.end));
-                        collect(selector.getText(), SymbolKind.Class, range, selector, node.getDeclarations());
+                        const range = main.Range.create(document.positionAt(selector.offset), document.positionAt(node.end));
+                        collect(selector.getText(), main.SymbolKind.Class, range, selector, node.getDeclarations());
                     }
                 }
             }
             else if (node instanceof VariableDeclaration) {
-                collect(node.getName(), SymbolKind.Variable, node, node.getVariable(), undefined);
+                collect(node.getName(), main.SymbolKind.Variable, node, node.getVariable(), undefined);
             }
             else if (node instanceof MixinDeclaration) {
-                collect(node.getName(), SymbolKind.Method, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), main.SymbolKind.Method, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FunctionDeclaration) {
-                collect(node.getName(), SymbolKind.Function, node, node.getIdentifier(), node.getDeclarations());
+                collect(node.getName(), main.SymbolKind.Function, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof Keyframe) {
                 const name = t("@keyframes {0}", node.getName());
-                collect(name, SymbolKind.Class, node, node.getIdentifier(), node.getDeclarations());
+                collect(name, main.SymbolKind.Class, node, node.getIdentifier(), node.getDeclarations());
             }
             else if (node instanceof FontFace) {
                 const name = t("@font-face");
-                collect(name, SymbolKind.Class, node, undefined, node.getDeclarations());
+                collect(name, main.SymbolKind.Class, node, undefined, node.getDeclarations());
             }
             else if (node instanceof Media) {
                 const mediaList = node.getChild(0);
                 if (mediaList instanceof Medialist) {
                     const name = '@media ' + mediaList.getText();
-                    collect(name, SymbolKind.Module, node, mediaList, node.getDeclarations());
+                    collect(name, main.SymbolKind.Module, node, mediaList, node.getDeclarations());
                 }
             }
             return true;
@@ -22809,14 +20932,14 @@ class CSSNavigation {
         else {
             label = `rgba(${red256}, ${green256}, ${blue256}, ${color.alpha})`;
         }
-        result.push({ label: label, textEdit: TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         if (color.alpha === 1) {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}`;
         }
         else {
             label = `#${toTwoDigitHex(red256)}${toTwoDigitHex(green256)}${toTwoDigitHex(blue256)}${toTwoDigitHex(Math.round(color.alpha * 255))}`;
         }
-        result.push({ label: label, textEdit: TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         const hsl = hslFromColor(color);
         if (hsl.a === 1) {
             label = `hsl(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%)`;
@@ -22824,7 +20947,7 @@ class CSSNavigation {
         else {
             label = `hsla(${hsl.h}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%, ${hsl.a})`;
         }
-        result.push({ label: label, textEdit: TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         const hwb = hwbFromColor(color);
         if (hwb.a === 1) {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}%)`;
@@ -22832,18 +20955,18 @@ class CSSNavigation {
         else {
             label = `hwb(${hwb.h} ${Math.round(hwb.w * 100)}% ${Math.round(hwb.b * 100)}% / ${hwb.a})`;
         }
-        result.push({ label: label, textEdit: TextEdit.replace(range, label) });
+        result.push({ label: label, textEdit: main.TextEdit.replace(range, label) });
         return result;
     }
     prepareRename(document, position, stylesheet) {
         const node = this.getHighlightNode(document, position, stylesheet);
         if (node) {
-            return Range.create(document.positionAt(node.offset), document.positionAt(node.end));
+            return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
         }
     }
     doRename(document, position, newName, stylesheet) {
         const highlights = this.findDocumentHighlights(document, position, stylesheet);
-        const edits = highlights.map(h => TextEdit.replace(h.range, newName));
+        const edits = highlights.map(h => main.TextEdit.replace(h.range, newName));
         return {
             changes: { [document.uri]: edits }
         };
@@ -22928,7 +21051,7 @@ function getColorInformation(node, document) {
     return null;
 }
 function getRange(node, document) {
-    return Range.create(document.positionAt(node.offset), document.positionAt(node.end));
+    return main.Range.create(document.positionAt(node.offset), document.positionAt(node.end));
 }
 /**
  * Test if `otherRange` is in `range`. If the ranges are equal, will return true.
@@ -22952,12 +21075,12 @@ function containsRange(range, otherRange) {
 }
 function getHighlightKind(node) {
     if (node.type === NodeType.Selector) {
-        return DocumentHighlightKind.Write;
+        return main.DocumentHighlightKind.Write;
     }
     if (node instanceof Identifier) {
         if (node.parent && node.parent instanceof Property) {
             if (node.isCustomProperty) {
-                return DocumentHighlightKind.Write;
+                return main.DocumentHighlightKind.Write;
             }
         }
     }
@@ -22968,10 +21091,10 @@ function getHighlightKind(node) {
             case NodeType.Keyframe:
             case NodeType.VariableDeclaration:
             case NodeType.FunctionParameter:
-                return DocumentHighlightKind.Write;
+                return main.DocumentHighlightKind.Write;
         }
     }
-    return DocumentHighlightKind.Read;
+    return main.DocumentHighlightKind.Read;
 }
 function toTwoDigitHex(n) {
     const r = n.toString(16);
@@ -23089,7 +21212,7 @@ class CSSCodeActions {
     doCodeActions(document, range, context, stylesheet) {
         return this.doCodeActions2(document, range, context, stylesheet).map(ca => {
             const textDocumentEdit = ca.edit && ca.edit.documentChanges && ca.edit.documentChanges[0];
-            return Command.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
+            return main.Command.create(ca.title, '_css.applyCodeAction', document.uri, document.version, textDocumentEdit && textDocumentEdit.edits);
         });
     }
     doCodeActions2(document, range, context, stylesheet) {
@@ -23118,10 +21241,10 @@ class CSSCodeActions {
         for (const candidate of candidates) {
             const propertyName = candidate.property;
             const title = t("Rename to '{0}'", propertyName);
-            const edit = TextEdit.replace(marker.range, propertyName);
-            const documentIdentifier = VersionedTextDocumentIdentifier.create(document.uri, document.version);
-            const workspaceEdit = { documentChanges: [TextDocumentEdit.create(documentIdentifier, [edit])] };
-            const codeAction = CodeAction.create(title, workspaceEdit, CodeActionKind.QuickFix);
+            const edit = main.TextEdit.replace(marker.range, propertyName);
+            const documentIdentifier = main.VersionedTextDocumentIdentifier.create(document.uri, document.version);
+            const workspaceEdit = { documentChanges: [main.TextDocumentEdit.create(documentIdentifier, [edit])] };
+            const codeAction = main.CodeAction.create(title, workspaceEdit, main.CodeActionKind.QuickFix);
             codeAction.diagnostics = [marker];
             result.push(codeAction);
             if (--maxActions <= 0) {
@@ -23913,6 +22036,7 @@ LintVisitor.prefixes = [
     //		'-xv-', '-atsc-', '-wap-', '-khtml-', 'mso-', 'prince-', '-ah-', '-hp-', '-ro-', '-rim-', '-tc-' // Quite un-common
 ];
 
+
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/services/cssValidation.js
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23942,13 +22066,13 @@ class CSSValidation {
             ruleIds.push(Rules[r].id);
         }
         function toDiagnostic(marker) {
-            const range = Range.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
+            const range = main.Range.create(document.positionAt(marker.getOffset()), document.positionAt(marker.getOffset() + marker.getLength()));
             const source = document.languageId;
             return {
                 code: marker.getRule().id,
                 source: source,
                 message: marker.getMessage(),
-                severity: marker.getLevel() === Level.Warning ? DiagnosticSeverity.Warning : DiagnosticSeverity.Error,
+                severity: marker.getLevel() === Level.Warning ? main.DiagnosticSeverity.Warning : main.DiagnosticSeverity.Error,
                 range: range
             };
         }
@@ -24236,7 +22360,7 @@ class SCSSParser extends Parser {
     _parseTermExpression() {
         return this._parseModuleMember() ||
             this._parseVariable() ||
-            this._parseSelectorCombinator() ||
+            this._parseNestingSelector() ||
             //this._tryParsePrio() ||
             super._parseTermExpression();
     }
@@ -24244,7 +22368,7 @@ class SCSSParser extends Parser {
         if (this.peek(InterpolationFunction)) {
             const node = this.create(Interpolation);
             this.consumeToken();
-            if (!node.addChild(this._parseExpr()) && !this._parseSelectorCombinator()) {
+            if (!node.addChild(this._parseExpr()) && !this._parseNestingSelector()) {
                 if (this.accept(TokenType.CurlyR)) {
                     return this.finish(node);
                 }
@@ -24294,11 +22418,11 @@ class SCSSParser extends Parser {
                 || this._parseSupports(true) // @supports
                 || this._parseLayer() // @layer
                 || this._parsePropertyAtRule() // @property
-                || super._parseRuleSetDeclarationAtStatement();
+                || this._parseRuleSetDeclarationAtStatement();
         }
         return this._parseVariableDeclaration() // variable declaration
             || this._tryParseRuleset(true) // nested ruleset
-            || super._parseRuleSetDeclaration(); // try css ruleset declaration as last so in the error case, the ast will contain a declaration
+            || this._parseDeclaration(); // try css ruleset declaration as last so in the error case, the ast will contain a declaration
     }
     _parseDeclaration(stopTokens) {
         const custonProperty = this._tryParseCustomPropertyDeclaration(stopTokens);
@@ -24357,9 +22481,9 @@ class SCSSParser extends Parser {
         return null;
     }
     _parseSimpleSelectorBody() {
-        return this._parseSelectorCombinator() || this._parseSelectorPlaceholder() || super._parseSimpleSelectorBody();
+        return this._parseSelectorPlaceholder() || super._parseSimpleSelectorBody();
     }
-    _parseSelectorCombinator() {
+    _parseNestingSelector() {
         if (this.peekDelim('&')) {
             const node = this.createNode(NodeType.SelectorCombinator);
             this.consumeToken();
@@ -24913,8 +23037,8 @@ class SCSSCompletion extends CSSCompletion {
                 const item = {
                     label: p.label,
                     documentation: p.documentation,
-                    textEdit: TextEdit.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
-                    kind: main_CompletionItemKind.Module
+                    textEdit: main.TextEdit.replace(this.getCompletionRange(importPathNode), `'${p.label}'`),
+                    kind: main.CompletionItemKind.Module
                 };
                 result.items.push(item);
             }
@@ -24935,9 +23059,9 @@ class SCSSCompletion extends CSSCompletion {
                 label: label,
                 detail: p.func,
                 documentation: p.desc,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), insertText),
-                insertTextFormat: main_InsertTextFormat.Snippet,
-                kind: main_CompletionItemKind.Function
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), insertText),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -24972,8 +23096,8 @@ class SCSSCompletion extends CSSCompletion {
         for (const symbol of symbols) {
             const suggest = {
                 label: symbol.name,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), symbol.name),
-                kind: main_CompletionItemKind.Function,
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), symbol.name),
+                kind: main.CompletionItemKind.Function,
             };
             result.items.push(suggest);
         }
@@ -25097,72 +23221,72 @@ SCSSCompletion.scssAtDirectives = [
     {
         label: "@extend",
         documentation: t("Inherits the styles of another selector."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@at-root",
         documentation: t("Causes one or more rules to be emitted at the root of the document."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@debug",
         documentation: t("Prints the value of an expression to the standard error output stream. Useful for debugging complicated Sass files."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@warn",
         documentation: t("Prints the value of an expression to the standard error output stream. Useful for libraries that need to warn users of deprecations or recovering from minor mixin usage mistakes. Warnings can be turned off with the `--quiet` command-line option or the `:quiet` Sass option."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@error",
         documentation: t("Throws the value of an expression as a fatal error with stack trace. Useful for validating arguments to mixins and functions."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@if",
         documentation: t("Includes the body if the expression does not evaluate to `false` or `null`."),
         insertText: "@if ${1:expr} {\n\t$0\n}",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@for",
         documentation: t("For loop that repeatedly outputs a set of styles for each `$var` in the `from/through` or `from/to` clause."),
         insertText: "@for \\$${1:var} from ${2:start} ${3|to,through|} ${4:end} {\n\t$0\n}",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@each",
         documentation: t("Each loop that sets `$var` to each item in the list or map, then outputs the styles it contains using that value of `$var`."),
         insertText: "@each \\$${1:var} in ${2:list} {\n\t$0\n}",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@while",
         documentation: t("While loop that takes an expression and repeatedly outputs the nested styles until the statement evaluates to `false`."),
         insertText: "@while ${1:condition} {\n\t$0\n}",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@mixin",
         documentation: t("Defines styles that can be re-used throughout the stylesheet with `@include`."),
         insertText: "@mixin ${1:name} {\n\t$0\n}",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@include",
         documentation: t("Includes the styles defined by another mixin into the current rule."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@function",
         documentation: t("Defines complex operations that can be re-used throughout stylesheets."),
-        kind: main_CompletionItemKind.Keyword
+        kind: main.CompletionItemKind.Keyword
     }
 ];
 SCSSCompletion.scssModuleLoaders = [
@@ -25171,16 +23295,16 @@ SCSSCompletion.scssModuleLoaders = [
         documentation: t("Loads mixins, functions, and variables from other Sass stylesheets as 'modules', and combines CSS from multiple stylesheets together."),
         references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/at-rules/use' }],
         insertText: "@use $0;",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
     {
         label: "@forward",
         documentation: t("Loads a Sass stylesheet and makes its mixins, functions, and variables available when this stylesheet is loaded with the @use rule."),
         references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/at-rules/forward' }],
         insertText: "@forward $0;",
-        insertTextFormat: main_InsertTextFormat.Snippet,
-        kind: main_CompletionItemKind.Keyword
+        insertTextFormat: main.InsertTextFormat.Snippet,
+        kind: main.CompletionItemKind.Keyword
     },
 ];
 SCSSCompletion.scssModuleBuiltIns = [
@@ -25220,6 +23344,7 @@ SCSSCompletion.scssModuleBuiltIns = [
         references: [{ name: sassDocumentationName, url: 'https://sass-lang.com/documentation/modules/meta' }]
     },
 ];
+
 /**
  * Todo @Pine: Remove this and do it through custom data
  */
@@ -25578,14 +23703,14 @@ class LESSParser extends Parser {
                 || this._parsePropertyAtRule() // @property
                 || this._parseDetachedRuleSetMixin() // less detached ruleset mixin
                 || this._parseVariableDeclaration() // Variable declarations
-                || super._parseRuleSetDeclarationAtStatement();
+                || this._parseRuleSetDeclarationAtStatement();
         }
         return this._tryParseMixinDeclaration()
             || this._tryParseRuleset(true) // nested ruleset
             || this._tryParseMixinReference() // less mixin reference
             || this._parseFunction()
             || this._parseExtend() // less extend declaration
-            || super._parseRuleSetDeclaration(); // try css ruleset declaration as the last option
+            || this._parseDeclaration(); // try css ruleset declaration as the last option
     }
     _parseKeyframeIdent() {
         return this._parseIdent([ReferenceType.Keyframe]) || this._parseVariable();
@@ -25594,9 +23719,9 @@ class LESSParser extends Parser {
         return this._parseDetachedRuleSetMixin() // less detached ruleset mixin
             || super._parseKeyframeSelector();
     }
-    _parseSimpleSelectorBody() {
-        return this._parseSelectorCombinator() || super._parseSimpleSelectorBody();
-    }
+    // public _parseSimpleSelectorBody(): nodes.Node | null {
+    // 	return this._parseNestingSelector() || super._parseSimpleSelectorBody();
+    // }
     _parseSelector(isNested) {
         // CSS Guards
         const node = this.create(Selector);
@@ -25616,7 +23741,7 @@ class LESSParser extends Parser {
         }
         return hasContent ? this.finish(node) : null;
     }
-    _parseSelectorCombinator() {
+    _parseNestingSelector() {
         if (this.peekDelim('&')) {
             const node = this.createNode(NodeType.SelectorCombinator);
             this.consumeToken();
@@ -26036,9 +24161,9 @@ class LESSCompletion extends CSSCompletion {
                 label: p.name,
                 detail: p.example,
                 documentation: p.description,
-                textEdit: TextEdit.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
-                insertTextFormat: main_InsertTextFormat.Snippet,
-                kind: main_CompletionItemKind.Function
+                textEdit: main.TextEdit.replace(this.getCompletionRange(existingNode), p.name + '($0)'),
+                insertTextFormat: main.InsertTextFormat.Snippet,
+                kind: main.CompletionItemKind.Function
             };
             if (sortToEnd) {
                 item.sortText = 'z';
@@ -26395,6 +24520,7 @@ LESSCompletion.colorProposals = [
         'example': 'negation(@color1, @color2);'
     }
 ];
+
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/services/cssFolding.js
 /*---------------------------------------------------------------------------------------------
@@ -28236,8 +26362,8 @@ module.exports.Options = Options;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nested_webpack_require_51819__(15);
-/******/ 	legacy_beautify_css = __webpack_exports__;
+/******/ 	var __nested_webpack_exports__ = __nested_webpack_require_51819__(15);
+/******/ 	legacy_beautify_css = __nested_webpack_exports__;
 /******/ 	
 /******/ })()
 ;
@@ -28282,13 +26408,13 @@ function cssFormatter_format(document, range, options) {
         if (extendedEnd === value.length || isEOL(value, extendedEnd)) {
             endOffset = extendedEnd;
         }
-        range = Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
+        range = main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset));
         // Test if inside a rule
         inRule = isInRule(value, startOffset);
         includesEnd = endOffset === value.length;
         value = value.substring(startOffset, endOffset);
         if (startOffset !== 0) {
-            const startOfLineOffset = document.offsetAt(Position.create(range.start.line, 0));
+            const startOfLineOffset = document.offsetAt(main.Position.create(range.start.line, 0));
             initialIndentLevel = computeIndentLevel(document.getText(), startOfLineOffset, options);
         }
         if (inRule) {
@@ -28296,7 +26422,7 @@ function cssFormatter_format(document, range, options) {
         }
     }
     else {
-        range = Range.create(Position.create(0, 0), document.positionAt(value.length));
+        range = main.Range.create(main.Position.create(0, 0), document.positionAt(value.length));
     }
     const cssOptions = {
         indent_size: tabSize,
@@ -28638,7 +26764,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28816,7 +26942,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "initial | inherit | unset | revert | revert-layer",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28923,7 +27049,7 @@ const webCustomData_cssData = {
                 "O30"
             ],
             "syntax": "<time>#",
-            "relevance": 65,
+            "relevance": 66,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28964,7 +27090,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<single-animation-direction>#",
-            "relevance": 57,
+            "relevance": 58,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29121,7 +27247,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<single-animation-play-state>#",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29144,7 +27270,7 @@ const webCustomData_cssData = {
                 "O30"
             ],
             "syntax": "<easing-function>#",
-            "relevance": 71,
+            "relevance": 72,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29177,7 +27303,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "visible | hidden",
-            "relevance": 60,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29409,7 +27535,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<box>#",
-            "relevance": 67,
+            "relevance": 68,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29508,7 +27634,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<bg-position>#",
-            "relevance": 88,
+            "relevance": 87,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29610,7 +27736,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "<repeat-style>#",
-            "relevance": 86,
+            "relevance": 85,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29647,7 +27773,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<bg-size>#",
-            "relevance": 86,
+            "relevance": 85,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29947,7 +28073,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<'border-top-color'>",
-            "relevance": 71,
+            "relevance": 72,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30075,7 +28201,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "collapse | separate",
-            "relevance": 73,
+            "relevance": 74,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30155,7 +28281,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'border-image-source'> || <'border-image-slice'> [ / <'border-image-width'> | / <'border-image-width'>? / <'border-image-outset'> ]? || <'border-image-repeat'>",
-            "relevance": 53,
+            "relevance": 52,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30570,7 +28696,7 @@ const webCustomData_cssData = {
                 "O9.2"
             ],
             "syntax": "<line-style>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30593,7 +28719,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 59,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30641,7 +28767,7 @@ const webCustomData_cssData = {
                 "O9.2"
             ],
             "syntax": "<line-width> || <line-style> || <color>",
-            "relevance": 81,
+            "relevance": 82,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30713,7 +28839,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 59,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30761,7 +28887,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "<line-style>{1,4}",
-            "relevance": 80,
+            "relevance": 81,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30810,7 +28936,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<color>",
-            "relevance": 71,
+            "relevance": 72,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30833,7 +28959,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<length-percentage>{1,2}",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30904,7 +29030,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 62,
+            "relevance": 61,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30929,7 +29055,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "<line-width>{1,4}",
-            "relevance": 82,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -31326,7 +29452,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | left | right | both | inline-start | inline-end",
-            "relevance": 84,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -31359,7 +29485,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<shape> | auto",
-            "relevance": 74,
+            "relevance": 75,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -31809,7 +29935,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | strict | content | [ [ size || inline-size ] || layout || style || paint ]",
-            "relevance": 59,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -32250,7 +30376,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "ltr | rtl",
-            "relevance": 72,
+            "relevance": 71,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -32871,7 +30997,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | <filter-function-list>",
-            "relevance": 67,
+            "relevance": 66,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -33139,7 +31265,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "nowrap | wrap | wrap-reverse",
-            "relevance": 81,
+            "relevance": 80,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -33200,7 +31326,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "left | right | none | inline-start | inline-end",
-            "relevance": 91,
+            "relevance": 90,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -33957,7 +32083,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | <feature-tag-value>#",
-            "relevance": 58,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -34087,7 +32213,7 @@ const webCustomData_cssData = {
             "name": "font-size-adjust",
             "browsers": [
                 "FF3",
-                "Spreview"
+                "S16.4"
             ],
             "values": [
                 {
@@ -34278,7 +32404,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> || stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) || [ small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ] || <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero || <east-asian-variant-values> || <east-asian-width-values> || ruby ]",
-            "relevance": 65,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -34540,7 +32666,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ]",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35054,7 +33180,7 @@ const webCustomData_cssData = {
             ],
             "status": "obsolete",
             "syntax": "<'grid-row-gap'> <'grid-column-gap'>?",
-            "relevance": 4,
+            "relevance": 5,
             "description": "Shorthand that specifies the gutters between grid columns and grid rows in one declaration. Replaced by 'gap' property.",
             "restrictions": [
                 "length"
@@ -35080,7 +33206,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<grid-line> [ / <grid-line> ]?",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35164,7 +33290,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<grid-line>",
-            "relevance": 51,
+            "relevance": 52,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35449,7 +33575,7 @@ const webCustomData_cssData = {
                 "S5.1",
                 "C55",
                 "IE10",
-                "O44"
+                "O42"
             ],
             "values": [
                 {
@@ -35909,7 +34035,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | <number> | <length> | <percentage>",
-            "relevance": 93,
+            "relevance": 92,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36007,7 +34133,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'list-style-type'> || <'list-style-position'> || <'list-style-image'>",
-            "relevance": 85,
+            "relevance": 84,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36367,7 +34493,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<length> | <percentage> | auto",
-            "relevance": 92,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36800,7 +34926,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<viewport-length>",
-            "relevance": 86,
+            "relevance": 85,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36895,7 +35021,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<viewport-length>",
-            "relevance": 91,
+            "relevance": 90,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41249,7 +39375,7 @@ const webCustomData_cssData = {
                 "O19"
             ],
             "syntax": "<position>",
-            "relevance": 57,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41794,7 +39920,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<color> | invert",
-            "relevance": 55,
+            "relevance": 58,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41817,7 +39943,7 @@ const webCustomData_cssData = {
                 "O9.5"
             ],
             "syntax": "<length>",
-            "relevance": 69,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -41957,7 +40083,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | break-word | anywhere",
-            "relevance": 65,
+            "relevance": 66,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42039,7 +40165,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "visible | hidden | clip | scroll | auto",
-            "relevance": 82,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42078,7 +40204,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "[ <length> | <percentage> ]{1,4}",
-            "relevance": 95,
+            "relevance": 96,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42390,7 +40516,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | avoid",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42456,7 +40582,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | <length>",
-            "relevance": 55,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42620,7 +40746,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "static | relative | absolute | sticky | fixed",
-            "relevance": 95,
+            "relevance": 96,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42726,7 +40852,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | both | horizontal | vertical | block | inline",
-            "relevance": 61,
+            "relevance": 62,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43093,7 +41219,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | smooth",
-            "relevance": 54,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43424,7 +41550,7 @@ const webCustomData_cssData = {
                     "description": "No paint is applied in this layer."
                 }
             ],
-            "relevance": 66,
+            "relevance": 67,
             "description": "Paints along the outline of the given graphical element.",
             "restrictions": [
                 "color",
@@ -43451,7 +41577,7 @@ const webCustomData_cssData = {
         },
         {
             "name": "stroke-dashoffset",
-            "relevance": 61,
+            "relevance": 62,
             "description": "Specifies the distance into the dash pattern to start the dash.",
             "restrictions": [
                 "percentage",
@@ -43504,7 +41630,7 @@ const webCustomData_cssData = {
         },
         {
             "name": "stroke-miterlimit",
-            "relevance": 50,
+            "relevance": 51,
             "description": "When two line segments meet at a sharp angle and miter joins have been specified for 'stroke-linejoin', it is possible for the miter to extend far beyond the thickness of the line stroking the path.",
             "restrictions": [
                 "number"
@@ -43512,7 +41638,7 @@ const webCustomData_cssData = {
         },
         {
             "name": "stroke-opacity",
-            "relevance": 52,
+            "relevance": 51,
             "description": "Specifies the opacity of the painting operation used to stroke the current object.",
             "restrictions": [
                 "number(0-1)"
@@ -43619,7 +41745,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | fixed",
-            "relevance": 59,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43707,7 +41833,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "start | end | left | right | center | justify | match-parent",
-            "relevance": 94,
+            "relevance": 93,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43835,7 +41961,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'text-decoration-line'> || <'text-decoration-style'> || <'text-decoration-color'> || <'text-decoration-thickness'>",
-            "relevance": 92,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43946,7 +42072,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "solid | double | dotted | dashed | wavy",
-            "relevance": 52,
+            "relevance": 51,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43970,7 +42096,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "<length-percentage> && hanging? && each-line?",
-            "relevance": 68,
+            "relevance": 69,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44148,7 +42274,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | optimizeSpeed | optimizeLegibility | geometricPrecision",
-            "relevance": 69,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44177,7 +42303,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | <shadow-t>#",
-            "relevance": 75,
+            "relevance": 74,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44219,7 +42345,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | capitalize | uppercase | lowercase | full-width | full-size-kana",
-            "relevance": 86,
+            "relevance": 85,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44374,7 +42500,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | none | [ [ pan-x | pan-left | pan-right ] || [ pan-y | pan-up | pan-down ] || pinch-zoom ] | manipulation",
-            "relevance": 69,
+            "relevance": 68,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44583,7 +42709,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<single-transition>#",
-            "relevance": 89,
+            "relevance": 88,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44609,7 +42735,7 @@ const webCustomData_cssData = {
                 "O12.1"
             ],
             "syntax": "<time>#",
-            "relevance": 63,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44632,7 +42758,7 @@ const webCustomData_cssData = {
                 "O12.1"
             ],
             "syntax": "<time>#",
-            "relevance": 64,
+            "relevance": 65,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44665,7 +42791,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | <single-transition-property>#",
-            "relevance": 67,
+            "relevance": 68,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44688,7 +42814,7 @@ const webCustomData_cssData = {
                 "O12.1"
             ],
             "syntax": "<easing-function>#",
-            "relevance": 63,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45124,7 +43250,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | text | none | contain | all",
-            "relevance": 80,
+            "relevance": 81,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -47504,7 +45630,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | <animateable-feature>#",
-            "relevance": 64,
+            "relevance": 63,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -47597,7 +45723,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | break-word",
-            "relevance": 77,
+            "relevance": 78,
             "description": "Specifies whether the UA may break within a word to prevent overflow when an otherwise-unbreakable string is too long to fit.",
             "restrictions": [
                 "enum"
@@ -47740,18 +45866,9 @@ const webCustomData_cssData = {
         },
         {
             "name": "-moz-binding",
-            "status": "obsolete",
+            "status": "nonstandard",
             "syntax": "<url> | none",
             "relevance": 0,
-            "browsers": [
-                "FF1"
-            ],
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/CSS/-moz-binding"
-                }
-            ],
             "description": "The -moz-binding CSS property is used by Mozilla-based applications to attach an XBL binding to a DOM element."
         },
         {
@@ -48390,7 +46507,7 @@ const webCustomData_cssData = {
         {
             "name": "backdrop-filter",
             "syntax": "none | <filter-function-list>",
-            "relevance": 59,
+            "relevance": 58,
             "browsers": [
                 "E17",
                 "FF103",
@@ -48913,7 +47030,7 @@ const webCustomData_cssData = {
         {
             "name": "color-scheme",
             "syntax": "normal | [ light | dark | <custom-ident> ]+ && only?",
-            "relevance": 52,
+            "relevance": 53,
             "browsers": [
                 "E81",
                 "FF96",
@@ -49033,7 +47150,7 @@ const webCustomData_cssData = {
                     "name": "hidden"
                 }
             ],
-            "relevance": 52,
+            "relevance": 51,
             "browsers": [
                 "E85",
                 "FF109",
@@ -49143,7 +47260,7 @@ const webCustomData_cssData = {
                     "name": "none"
                 }
             ],
-            "relevance": 56,
+            "relevance": 57,
             "browsers": [
                 "E79",
                 "C89",
@@ -49160,7 +47277,7 @@ const webCustomData_cssData = {
         {
             "name": "gap",
             "syntax": "<'row-gap'> <'column-gap'>?",
-            "relevance": 61,
+            "relevance": 63,
             "browsers": [
                 "E16",
                 "FF52",
@@ -49211,6 +47328,17 @@ const webCustomData_cssData = {
             "description": "A hyphenate character used at the end of a line."
         },
         {
+            "name": "hyphenate-limit-chars",
+            "syntax": "[ auto | <integer> ]{1,3}",
+            "relevance": 50,
+            "browsers": [
+                "E109",
+                "C109",
+                "O95"
+            ],
+            "description": ""
+        },
+        {
             "name": "image-resolution",
             "status": "experimental",
             "syntax": "[ from-image || <resolution> ] && snap?",
@@ -49223,7 +47351,10 @@ const webCustomData_cssData = {
             "syntax": "normal | [ <number> <integer>? ]",
             "relevance": 50,
             "browsers": [
-                "S9"
+                "E110",
+                "S9",
+                "C110",
+                "O96"
             ],
             "references": [
                 {
@@ -49488,6 +47619,9 @@ const webCustomData_cssData = {
                 }
             ],
             "relevance": 50,
+            "browsers": [
+                "S16.4"
+            ],
             "references": [
                 {
                     "name": "MDN Reference",
@@ -50792,7 +48926,7 @@ const webCustomData_cssData = {
         {
             "name": "scroll-snap-align",
             "syntax": "[ none | start | end | center ]{1,2}",
-            "relevance": 53,
+            "relevance": 52,
             "browsers": [
                 "E79",
                 "FF68",
@@ -50819,7 +48953,7 @@ const webCustomData_cssData = {
                     "name": "always"
                 }
             ],
-            "relevance": 50,
+            "relevance": 51,
             "browsers": [
                 "E79",
                 "FF103",
@@ -50893,10 +49027,10 @@ const webCustomData_cssData = {
         {
             "name": "scroll-timeline",
             "status": "experimental",
-            "syntax": "<scroll-timeline-name> || <scroll-timeline-axis>",
+            "syntax": "<'scroll-timeline-name'> || <'scroll-timeline-axis'>",
             "relevance": 50,
             "browsers": [
-                "FF103"
+                "FF110"
             ],
             "references": [
                 {
@@ -50909,24 +49043,10 @@ const webCustomData_cssData = {
         {
             "name": "scroll-timeline-axis",
             "status": "experimental",
-            "syntax": "block | inline | vertical | horizontal",
-            "values": [
-                {
-                    "name": "block"
-                },
-                {
-                    "name": "inline"
-                },
-                {
-                    "name": "vertical"
-                },
-                {
-                    "name": "horizontal"
-                }
-            ],
+            "syntax": "[ block | inline | vertical | horizontal ]#",
             "relevance": 50,
             "browsers": [
-                "FF103"
+                "FF110"
             ],
             "references": [
                 {
@@ -50939,10 +49059,10 @@ const webCustomData_cssData = {
         {
             "name": "scroll-timeline-name",
             "status": "experimental",
-            "syntax": "none | <custom-ident>",
+            "syntax": "none | <custom-ident>#",
             "relevance": 50,
             "browsers": [
-                "FF103"
+                "FF110"
             ],
             "references": [
                 {
@@ -51271,7 +49391,7 @@ const webCustomData_cssData = {
             "name": "font-display",
             "status": "experimental",
             "syntax": "[ auto | block | swap | fallback | optional ]",
-            "relevance": 72,
+            "relevance": 71,
             "description": "The font-display descriptor determines how a font face is displayed based on whether and when it is downloaded and ready to use."
         },
         {
@@ -52833,7 +50953,8 @@ const webCustomData_cssData = {
             "name": ":user-invalid",
             "status": "experimental",
             "browsers": [
-                "FF88"
+                "FF88",
+                "Spreview"
             ],
             "references": [
                 {
@@ -52847,7 +50968,8 @@ const webCustomData_cssData = {
             "name": ":user-valid",
             "status": "experimental",
             "browsers": [
-                "FF88"
+                "FF88",
+                "Spreview"
             ],
             "references": [
                 {
@@ -53935,10 +52057,10 @@ function getSelectionRanges(document, positions, stylesheet) {
         const applicableRanges = getApplicableRanges(position);
         let current = undefined;
         for (let index = applicableRanges.length - 1; index >= 0; index--) {
-            current = SelectionRange.create(Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
+            current = main.SelectionRange.create(main.Range.create(document.positionAt(applicableRanges[index][0]), document.positionAt(applicableRanges[index][1])), current);
         }
         if (!current) {
-            current = SelectionRange.create(Range.create(position, position));
+            current = main.SelectionRange.create(main.Range.create(position, position));
         }
         return current;
     }
@@ -54017,7 +52139,7 @@ function toPathVariations(target) {
     if (target.endsWith('/')) {
         return [target + 'index.scss', target + '_index.scss'];
     }
-    const targetUri = esm_URI.parse(target);
+    const targetUri = URI.parse(target);
     const basename = Utils.basename(targetUri);
     const dirname = Utils.dirname(targetUri);
     if (basename.startsWith('_')) {
@@ -54109,9 +52231,11 @@ function getLESSLanguageService(options = defaultLanguageServiceOptions) {
     return createFacade(new LESSParser(), new LESSCompletion(options, cssDataManager), new CSSHover(options && options.clientCapabilities, cssDataManager), new CSSNavigation(options && options.fileSystemProvider, true), new CSSCodeActions(cssDataManager), new CSSValidation(cssDataManager), cssDataManager);
 }
 
+// EXTERNAL MODULE: ./src/utils.ts
+var utils = __webpack_require__(6297);
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-var main = __webpack_require__(294);
-;// CONCATENATED MODULE: ./type-converters/common-converters.ts
+var browser_main = __webpack_require__(294);
+;// CONCATENATED MODULE: ./src/type-converters/common-converters.ts
 
 
 var common_converters_CommonConverter;
@@ -54141,42 +52265,42 @@ var common_converters_CommonConverter;
         switch(kind){
             case "primitiveType":
             case "keyword":
-                return main.CompletionItemKind.Keyword;
+                return browser_main.CompletionItemKind.Keyword;
             case "variable":
             case "localVariable":
-                return main.CompletionItemKind.Variable;
+                return browser_main.CompletionItemKind.Variable;
             case "memberVariable":
             case "memberGetAccessor":
             case "memberSetAccessor":
-                return main.CompletionItemKind.Field;
+                return browser_main.CompletionItemKind.Field;
             case "function":
             case "memberFunction":
             case "constructSignature":
             case "callSignature":
             case "indexSignature":
-                return main.CompletionItemKind.Function;
+                return browser_main.CompletionItemKind.Function;
             case "enum":
-                return main.CompletionItemKind.Enum;
+                return browser_main.CompletionItemKind.Enum;
             case "module":
-                return main.CompletionItemKind.Module;
+                return browser_main.CompletionItemKind.Module;
             case "class":
-                return main.CompletionItemKind.Class;
+                return browser_main.CompletionItemKind.Class;
             case "interface":
-                return main.CompletionItemKind.Interface;
+                return browser_main.CompletionItemKind.Interface;
             case "warning":
-                return main.CompletionItemKind.File;
+                return browser_main.CompletionItemKind.File;
         }
-        return main.CompletionItemKind.Property;
+        return browser_main.CompletionItemKind.Property;
     }
     CommonConverter.convertKind = convertKind;
     function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
         if (!errorMessagesToIgnore) return diagnostics;
-        return diagnostics.filter((el)=>!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+        return diagnostics.filter((el)=>!(0,utils/* checkValueAgainstRegexpArray */.$p)(el[fieldName], errorMessagesToIgnore));
     }
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
-;// CONCATENATED MODULE: ./type-converters/lsp-converters.ts
+;// CONCATENATED MODULE: ./src/type-converters/lsp-converters.ts
 
 
 
@@ -54353,7 +52477,8 @@ function toTooltip(hover) {
     if (content.length === 0) return;
     //TODO: it could be merged within all ranges in future
     let lspRange = (_hover_find = hover.find((el)=>{
-        return el === null || el === void 0 ? void 0 : el.range;
+        var _el;
+        return (_el = el) === null || _el === void 0 ? void 0 : _el.range;
     })) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
     let range;
     if (lspRange) range = toRange(lspRange);
@@ -54368,11 +52493,12 @@ function toTooltip(hover) {
 function fromSignatureHelp(signatureHelp) {
     if (!signatureHelp) return;
     let content = signatureHelp.map((el)=>{
+        var _el, _el1;
         if (!el) return;
-        let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
+        let signatureIndex = ((_el = el) === null || _el === void 0 ? void 0 : _el.activeSignature) || 0;
         let activeSignature = el.signatures[signatureIndex];
         if (!activeSignature) return;
-        let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
+        let activeParam = (_el1 = el) === null || _el1 === void 0 ? void 0 : _el1.activeParameter;
         let contents = activeSignature.label;
         if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
             let param = activeSignature.parameters[activeParam].label;
@@ -54416,17 +52542,17 @@ function fromAceDelta(delta, eol) {
 }
 function filterDiagnostics(diagnostics, filterErrors) {
     return common_converters_CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el)=>{
-        if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
-            el.severity = main.DiagnosticSeverity.Warning;
-        } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
-            el.severity = main.DiagnosticSeverity.Information;
+        if ((0,utils/* checkValueAgainstRegexpArray */.$p)(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
+            el.severity = browser_main.DiagnosticSeverity.Warning;
+        } else if ((0,utils/* checkValueAgainstRegexpArray */.$p)(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
+            el.severity = browser_main.DiagnosticSeverity.Information;
         }
         return el;
     });
 }
 
-;// CONCATENATED MODULE: ./services/css/css-service.ts
-function css_service_define_property(obj, key, value) {
+;// CONCATENATED MODULE: ./src/services/css/css-service.ts
+function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -54443,7 +52569,7 @@ function css_service_define_property(obj, key, value) {
 
 
 
-class CssService extends BaseService {
+class CssService extends base_service.BaseService {
     $initLanguageService() {
         switch(this.mode){
             case "less":
@@ -54465,7 +52591,7 @@ class CssService extends BaseService {
         var _this_globalOptions;
         this.$defaultFormatOptions.tabSize = options.tabSize;
         this.$defaultFormatOptions.insertSpaces = options.insertSpaces;
-        return mergeObjects((_this_globalOptions = this.globalOptions) === null || _this_globalOptions === void 0 ? void 0 : _this_globalOptions.formatOptions, this.$defaultFormatOptions);
+        return (0,utils/* mergeObjects */.PM)((_this_globalOptions = this.globalOptions) === null || _this_globalOptions === void 0 ? void 0 : _this_globalOptions.formatOptions, this.$defaultFormatOptions);
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
@@ -54502,9 +52628,9 @@ class CssService extends BaseService {
     }
     constructor(mode){
         super(mode);
-        css_service_define_property(this, "$service", void 0);
-        css_service_define_property(this, "$languageId", void 0);
-        css_service_define_property(this, "$defaultFormatOptions", {
+        _define_property(this, "$service", void 0);
+        _define_property(this, "$languageId", void 0);
+        _define_property(this, "$defaultFormatOptions", {
             newlineBetweenRules: true,
             newlineBetweenSelectors: true,
             preserveNewLines: true,

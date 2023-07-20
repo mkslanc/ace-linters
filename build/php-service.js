@@ -2536,18 +2536,23 @@ var ThrowTypeError = $gOPD
 	: throwTypeError;
 
 var hasSymbols = __webpack_require__(2636)();
+var hasProto = __webpack_require__(8486)();
 
-var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+var getProto = Object.getPrototypeOf || (
+	hasProto
+		? function (x) { return x.__proto__; } // eslint-disable-line no-proto
+		: null
+);
 
 var needsEval = {};
 
-var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
+var TypedArray = typeof Uint8Array === 'undefined' || !getProto ? undefined : getProto(Uint8Array);
 
 var INTRINSICS = {
 	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
 	'%Array%': Array,
 	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
-	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
+	'%ArrayIteratorPrototype%': hasSymbols && getProto ? getProto([][Symbol.iterator]()) : undefined,
 	'%AsyncFromSyncIteratorPrototype%': undefined,
 	'%AsyncFunction%': needsEval,
 	'%AsyncGenerator%': needsEval,
@@ -2555,6 +2560,8 @@ var INTRINSICS = {
 	'%AsyncIteratorPrototype%': needsEval,
 	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
 	'%BigInt%': typeof BigInt === 'undefined' ? undefined : BigInt,
+	'%BigInt64Array%': typeof BigInt64Array === 'undefined' ? undefined : BigInt64Array,
+	'%BigUint64Array%': typeof BigUint64Array === 'undefined' ? undefined : BigUint64Array,
 	'%Boolean%': Boolean,
 	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
 	'%Date%': Date,
@@ -2575,10 +2582,10 @@ var INTRINSICS = {
 	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
 	'%isFinite%': isFinite,
 	'%isNaN%': isNaN,
-	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
+	'%IteratorPrototype%': hasSymbols && getProto ? getProto(getProto([][Symbol.iterator]())) : undefined,
 	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
 	'%Map%': typeof Map === 'undefined' ? undefined : Map,
-	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols || !getProto ? undefined : getProto(new Map()[Symbol.iterator]()),
 	'%Math%': Math,
 	'%Number%': Number,
 	'%Object%': Object,
@@ -2591,10 +2598,10 @@ var INTRINSICS = {
 	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
 	'%RegExp%': RegExp,
 	'%Set%': typeof Set === 'undefined' ? undefined : Set,
-	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols || !getProto ? undefined : getProto(new Set()[Symbol.iterator]()),
 	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
 	'%String%': String,
-	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
+	'%StringIteratorPrototype%': hasSymbols && getProto ? getProto(''[Symbol.iterator]()) : undefined,
 	'%Symbol%': hasSymbols ? Symbol : undefined,
 	'%SyntaxError%': $SyntaxError,
 	'%ThrowTypeError%': ThrowTypeError,
@@ -2609,6 +2616,16 @@ var INTRINSICS = {
 	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
 	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
 };
+
+if (getProto) {
+	try {
+		null.error; // eslint-disable-line no-unused-expressions
+	} catch (e) {
+		// https://github.com/tc39/proposal-shadowrealm/pull/384#issuecomment-1364264229
+		var errorProto = getProto(getProto(e));
+		INTRINSICS['%Error.prototype%'] = errorProto;
+	}
+}
 
 var doEval = function doEval(name) {
 	var value;
@@ -2625,7 +2642,7 @@ var doEval = function doEval(name) {
 		}
 	} else if (name === '%AsyncIteratorPrototype%') {
 		var gen = doEval('%AsyncGenerator%');
-		if (gen) {
+		if (gen && getProto) {
 			value = getProto(gen.prototype);
 		}
 	}
@@ -2890,6 +2907,25 @@ hasPropertyDescriptors.hasArrayLengthDefineBug = function hasArrayLengthDefineBu
 };
 
 module.exports = hasPropertyDescriptors;
+
+
+/***/ }),
+
+/***/ 8486:
+/***/ ((module) => {
+
+"use strict";
+
+
+var test = {
+	foo: {}
+};
+
+var $Object = Object;
+
+module.exports = function hasProto() {
+	return { __proto__: test }.foo === test.foo && !({ __proto__: null } instanceof $Object);
+};
 
 
 /***/ }),
@@ -3314,63 +3350,10 @@ module.exports = function shimNumberIsNaN() {
 "use strict";
 
 
-var forEach = __webpack_require__(3243);
-var availableTypedArrays = __webpack_require__(2191);
-var callBound = __webpack_require__(2680);
-
-var $toString = callBound('Object.prototype.toString');
-var hasToStringTag = __webpack_require__(7226)();
-var gOPD = __webpack_require__(326);
-
-var g = typeof globalThis === 'undefined' ? __webpack_require__.g : globalThis;
-var typedArrays = availableTypedArrays();
-
-var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
-	for (var i = 0; i < array.length; i += 1) {
-		if (array[i] === value) {
-			return i;
-		}
-	}
-	return -1;
-};
-var $slice = callBound('String.prototype.slice');
-var toStrTags = {};
-var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
-if (hasToStringTag && gOPD && getPrototypeOf) {
-	forEach(typedArrays, function (typedArray) {
-		var arr = new g[typedArray]();
-		if (Symbol.toStringTag in arr) {
-			var proto = getPrototypeOf(arr);
-			var descriptor = gOPD(proto, Symbol.toStringTag);
-			if (!descriptor) {
-				var superProto = getPrototypeOf(proto);
-				descriptor = gOPD(superProto, Symbol.toStringTag);
-			}
-			toStrTags[typedArray] = descriptor.get;
-		}
-	});
-}
-
-var tryTypedArrays = function tryAllTypedArrays(value) {
-	var anyTrue = false;
-	forEach(toStrTags, function (getter, typedArray) {
-		if (!anyTrue) {
-			try {
-				anyTrue = getter.call(value) === typedArray;
-			} catch (e) { /**/ }
-		}
-	});
-	return anyTrue;
-};
+var whichTypedArray = __webpack_require__(2094);
 
 module.exports = function isTypedArray(value) {
-	if (!value || typeof value !== 'object') { return false; }
-	if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-		var tag = $slice($toString(value), 8, -1);
-		return $indexOf(typedArrays, tag) > -1;
-	}
-	if (!gOPD) { return false; }
-	return tryTypedArrays(value);
+	return !!whichTypedArray(value);
 };
 
 
@@ -3852,7 +3835,119 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ 534:
+/***/ 4487:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BaseService: () => (/* binding */ BaseService)
+/* harmony export */ });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6297);
+/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4881);
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+class BaseService {
+    addDocument(document) {
+        this.documents[document.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.create(document.uri, document.languageId, document.version, document.text);
+    //TODO:
+    /*if (options)
+            this.setSessionOptions(sessionID, options);*/ }
+    getDocument(uri) {
+        return this.documents[uri];
+    }
+    removeDocument(document) {
+        delete this.documents[document.uri];
+        if (this.options[document.uri]) {
+            delete this.options[document.uri];
+        }
+    }
+    getDocumentValue(uri) {
+        var _this_getDocument;
+        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
+    }
+    setValue(identifier, value) {
+        let document = this.getDocument(identifier.uri);
+        if (document) {
+            document = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.create(document.uri, document.languageId, document.version, value);
+            this.documents[document.uri] = document;
+        }
+    }
+    setGlobalOptions(options) {
+        this.globalOptions = options !== null && options !== void 0 ? options : {};
+    }
+    setOptions(sessionID, options, merge = false) {
+        this.options[sessionID] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_1__/* .mergeObjects */ .PM)(options, this.options[sessionID]) : options;
+    }
+    getOption(sessionID, optionName) {
+        if (this.options[sessionID] && this.options[sessionID][optionName]) {
+            return this.options[sessionID][optionName];
+        } else {
+            return this.globalOptions[optionName];
+        }
+    }
+    applyDeltas(identifier, deltas) {
+        let document = this.getDocument(identifier.uri);
+        if (document) vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.update(document, deltas, identifier.version);
+    }
+    async doComplete(document, position) {
+        return null;
+    }
+    async doHover(document, position) {
+        return null;
+    }
+    async doResolve(item) {
+        return null;
+    }
+    async doValidation(document) {
+        return [];
+    }
+    format(document, range, options) {
+        return [];
+    }
+    async provideSignatureHelp(document, position) {
+        return null;
+    }
+    async findDocumentHighlights(document, position) {
+        return [];
+    }
+    get optionsToFilterDiagnostics() {
+        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
+        return {
+            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
+            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
+            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
+            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
+            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
+            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
+        };
+    }
+    constructor(mode){
+        _define_property(this, "mode", void 0);
+        _define_property(this, "documents", {});
+        _define_property(this, "options", {});
+        _define_property(this, "globalOptions", {});
+        _define_property(this, "serviceData", void 0);
+        this.mode = mode;
+    }
+}
+
+
+/***/ }),
+
+/***/ 2469:
 /***/ ((__unused_webpack_module, exports) => {
 
 /*
@@ -12928,6 +13023,79 @@ exports.t = PHP;
 
 /***/ }),
 
+/***/ 6297:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   $p: () => (/* binding */ checkValueAgainstRegexpArray),
+/* harmony export */   PM: () => (/* binding */ mergeObjects)
+/* harmony export */ });
+/* unused harmony exports notEmpty, mergeRanges */
+function mergeObjects(obj1, obj2) {
+    if (!obj1) return obj2;
+    if (!obj2) return obj1;
+    const mergedObjects = {
+        ...obj2,
+        ...obj1
+    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+    for (const key of Object.keys(mergedObjects)){
+        if (obj1[key] && obj2[key]) {
+            if (Array.isArray(obj1[key])) {
+                mergedObjects[key] = obj1[key].concat(obj2[key]);
+            } else if (Array.isArray(obj2[key])) {
+                mergedObjects[key] = obj2[key].concat(obj1[key]);
+            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+            }
+        }
+    }
+    return mergedObjects;
+}
+function notEmpty(value) {
+    return value !== null && value !== undefined;
+}
+//taken with small changes from ace-code
+function mergeRanges(ranges) {
+    var list = ranges;
+    list = list.sort(function(a, b) {
+        return comparePoints(a.start, b.start);
+    });
+    var next = list[0], range;
+    for(var i = 1; i < list.length; i++){
+        range = next;
+        next = list[i];
+        var cmp = comparePoints(range.end, next.start);
+        if (cmp < 0) continue;
+        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (comparePoints(range.end, next.end) < 0) {
+            range.end.row = next.end.row;
+            range.end.column = next.end.column;
+        }
+        list.splice(i, 1);
+        next = range;
+        i--;
+    }
+    return list;
+}
+function comparePoints(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+}
+function checkValueAgainstRegexpArray(value, regexpArray) {
+    if (!regexpArray) {
+        return false;
+    }
+    for(let i = 0; i < regexpArray.length; i++){
+        if (regexpArray[i].test(value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+/***/ }),
+
 /***/ 82:
 /***/ ((module) => {
 
@@ -14051,14 +14219,14 @@ ril_1.default.install();
 const api_1 = __webpack_require__(5247);
 __exportStar(__webpack_require__(5247), exports);
 class BrowserMessageReader extends api_1.AbstractMessageReader {
-    constructor(context) {
+    constructor(port) {
         super();
         this._onData = new api_1.Emitter();
         this._messageListener = (event) => {
             this._onData.fire(event.data);
         };
-        context.addEventListener('error', (event) => this.fireError(event));
-        context.onmessage = this._messageListener;
+        port.addEventListener('error', (event) => this.fireError(event));
+        port.onmessage = this._messageListener;
     }
     listen(callback) {
         return this._onData.event(callback);
@@ -14066,15 +14234,15 @@ class BrowserMessageReader extends api_1.AbstractMessageReader {
 }
 exports.BrowserMessageReader = BrowserMessageReader;
 class BrowserMessageWriter extends api_1.AbstractMessageWriter {
-    constructor(context) {
+    constructor(port) {
         super();
-        this.context = context;
+        this.port = port;
         this.errorCount = 0;
-        context.addEventListener('error', (event) => this.fireError(event));
+        port.addEventListener('error', (event) => this.fireError(event));
     }
     write(msg) {
         try {
-            this.context.postMessage(msg);
+            this.port.postMessage(msg);
             return Promise.resolve();
         }
         catch (error) {
@@ -14100,7 +14268,7 @@ function createMessageConnection(reader, writer, logger, options) {
     return (0, api_1.createMessageConnection)(reader, writer, logger, options);
 }
 exports.createMessageConnection = createMessageConnection;
-//# sourceMappingURL=main.js.map
+
 
 /***/ }),
 
@@ -14115,11 +14283,8 @@ exports.createMessageConnection = createMessageConnection;
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const ral_1 = __webpack_require__(5706);
-const disposable_1 = __webpack_require__(8437);
-const events_1 = __webpack_require__(5165);
-const messageBuffer_1 = __webpack_require__(8652);
-class MessageBuffer extends messageBuffer_1.AbstractMessageBuffer {
+const api_1 = __webpack_require__(5247);
+class MessageBuffer extends api_1.AbstractMessageBuffer {
     constructor(encoding = 'utf-8') {
         super(encoding);
         this.asciiDecoder = new TextDecoder('ascii');
@@ -14154,28 +14319,28 @@ MessageBuffer.emptyBuffer = new Uint8Array(0);
 class ReadableStreamWrapper {
     constructor(socket) {
         this.socket = socket;
-        this._onData = new events_1.Emitter();
+        this._onData = new api_1.Emitter();
         this._messageListener = (event) => {
             const blob = event.data;
             blob.arrayBuffer().then((buffer) => {
                 this._onData.fire(new Uint8Array(buffer));
             }, () => {
-                (0, ral_1.default)().console.error(`Converting blob to array buffer failed.`);
+                (0, api_1.RAL)().console.error(`Converting blob to array buffer failed.`);
             });
         };
         this.socket.addEventListener('message', this._messageListener);
     }
     onClose(listener) {
         this.socket.addEventListener('close', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
     }
     onError(listener) {
         this.socket.addEventListener('error', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
     }
     onEnd(listener) {
         this.socket.addEventListener('end', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
     }
     onData(listener) {
         return this._onData.event(listener);
@@ -14187,15 +14352,15 @@ class WritableStreamWrapper {
     }
     onClose(listener) {
         this.socket.addEventListener('close', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
     }
     onError(listener) {
         this.socket.addEventListener('error', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
     }
     onEnd(listener) {
         this.socket.addEventListener('end', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
+        return api_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
     }
     write(data, encoding) {
         if (typeof data === 'string') {
@@ -14263,12 +14428,12 @@ function RIL() {
 }
 (function (RIL) {
     function install() {
-        ral_1.default.install(_ril);
+        api_1.RAL.install(_ril);
     }
     RIL.install = install;
 })(RIL || (RIL = {}));
 exports["default"] = RIL;
-//# sourceMappingURL=ril.js.map
+
 
 /***/ }),
 
@@ -14283,8 +14448,8 @@ exports["default"] = RIL;
  * ------------------------------------------------------------------------------------------ */
 /// <reference path="../../typings/thenable.d.ts" />
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TraceFormat = exports.TraceValues = exports.Trace = exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
-exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = void 0;
+exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
+exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = void 0;
 const messages_1 = __webpack_require__(9141);
 Object.defineProperty(exports, "Message", ({ enumerable: true, get: function () { return messages_1.Message; } }));
 Object.defineProperty(exports, "RequestType", ({ enumerable: true, get: function () { return messages_1.RequestType; } }));
@@ -14324,6 +14489,9 @@ Object.defineProperty(exports, "Emitter", ({ enumerable: true, get: function () 
 const cancellation_1 = __webpack_require__(415);
 Object.defineProperty(exports, "CancellationTokenSource", ({ enumerable: true, get: function () { return cancellation_1.CancellationTokenSource; } }));
 Object.defineProperty(exports, "CancellationToken", ({ enumerable: true, get: function () { return cancellation_1.CancellationToken; } }));
+const sharedArrayCancellation_1 = __webpack_require__(178);
+Object.defineProperty(exports, "SharedArraySenderStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArraySenderStrategy; } }));
+Object.defineProperty(exports, "SharedArrayReceiverStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArrayReceiverStrategy; } }));
 const messageReader_1 = __webpack_require__(451);
 Object.defineProperty(exports, "MessageReader", ({ enumerable: true, get: function () { return messageReader_1.MessageReader; } }));
 Object.defineProperty(exports, "AbstractMessageReader", ({ enumerable: true, get: function () { return messageReader_1.AbstractMessageReader; } }));
@@ -14332,6 +14500,8 @@ const messageWriter_1 = __webpack_require__(1251);
 Object.defineProperty(exports, "MessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.MessageWriter; } }));
 Object.defineProperty(exports, "AbstractMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.AbstractMessageWriter; } }));
 Object.defineProperty(exports, "WriteableStreamMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.WriteableStreamMessageWriter; } }));
+const messageBuffer_1 = __webpack_require__(8652);
+Object.defineProperty(exports, "AbstractMessageBuffer", ({ enumerable: true, get: function () { return messageBuffer_1.AbstractMessageBuffer; } }));
 const connection_1 = __webpack_require__(1908);
 Object.defineProperty(exports, "ConnectionStrategy", ({ enumerable: true, get: function () { return connection_1.ConnectionStrategy; } }));
 Object.defineProperty(exports, "ConnectionOptions", ({ enumerable: true, get: function () { return connection_1.ConnectionOptions; } }));
@@ -14349,9 +14519,10 @@ Object.defineProperty(exports, "ConnectionError", ({ enumerable: true, get: func
 Object.defineProperty(exports, "CancellationReceiverStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationReceiverStrategy; } }));
 Object.defineProperty(exports, "CancellationSenderStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationSenderStrategy; } }));
 Object.defineProperty(exports, "CancellationStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationStrategy; } }));
+Object.defineProperty(exports, "MessageStrategy", ({ enumerable: true, get: function () { return connection_1.MessageStrategy; } }));
 const ral_1 = __webpack_require__(5706);
 exports.RAL = ral_1.default;
-//# sourceMappingURL=api.js.map
+
 
 /***/ }),
 
@@ -14455,7 +14626,7 @@ class CancellationTokenSource {
     }
 }
 exports.CancellationTokenSource = CancellationTokenSource;
-//# sourceMappingURL=cancellation.js.map
+
 
 /***/ }),
 
@@ -14469,7 +14640,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createMessageConnection = exports.ConnectionOptions = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
+exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
 const ral_1 = __webpack_require__(5706);
 const Is = __webpack_require__(8811);
 const messages_1 = __webpack_require__(9141);
@@ -14630,6 +14801,22 @@ var ConnectionStrategy;
     }
     ConnectionStrategy.is = is;
 })(ConnectionStrategy = exports.ConnectionStrategy || (exports.ConnectionStrategy = {}));
+var IdCancellationReceiverStrategy;
+(function (IdCancellationReceiverStrategy) {
+    function is(value) {
+        const candidate = value;
+        return candidate && (candidate.kind === undefined || candidate.kind === 'id') && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+    }
+    IdCancellationReceiverStrategy.is = is;
+})(IdCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy || (exports.IdCancellationReceiverStrategy = {}));
+var RequestCancellationReceiverStrategy;
+(function (RequestCancellationReceiverStrategy) {
+    function is(value) {
+        const candidate = value;
+        return candidate && candidate.kind === 'request' && Is.func(candidate.createCancellationTokenSource) && (candidate.dispose === undefined || Is.func(candidate.dispose));
+    }
+    RequestCancellationReceiverStrategy.is = is;
+})(RequestCancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy || (exports.RequestCancellationReceiverStrategy = {}));
 var CancellationReceiverStrategy;
 (function (CancellationReceiverStrategy) {
     CancellationReceiverStrategy.Message = Object.freeze({
@@ -14638,8 +14825,7 @@ var CancellationReceiverStrategy;
         }
     });
     function is(value) {
-        const candidate = value;
-        return candidate && Is.func(candidate.createCancellationTokenSource);
+        return IdCancellationReceiverStrategy.is(value) || RequestCancellationReceiverStrategy.is(value);
     }
     CancellationReceiverStrategy.is = is;
 })(CancellationReceiverStrategy = exports.CancellationReceiverStrategy || (exports.CancellationReceiverStrategy = {}));
@@ -14669,11 +14855,19 @@ var CancellationStrategy;
     }
     CancellationStrategy.is = is;
 })(CancellationStrategy = exports.CancellationStrategy || (exports.CancellationStrategy = {}));
+var MessageStrategy;
+(function (MessageStrategy) {
+    function is(value) {
+        const candidate = value;
+        return candidate && Is.func(candidate.handleMessage);
+    }
+    MessageStrategy.is = is;
+})(MessageStrategy = exports.MessageStrategy || (exports.MessageStrategy = {}));
 var ConnectionOptions;
 (function (ConnectionOptions) {
     function is(value) {
         const candidate = value;
-        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy));
+        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy) || MessageStrategy.is(candidate.messageStrategy));
     }
     ConnectionOptions.is = is;
 })(ConnectionOptions = exports.ConnectionOptions || (exports.ConnectionOptions = {}));
@@ -14776,23 +14970,32 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             processMessageQueue();
         });
     }
+    function handleMessage(message) {
+        if (messages_1.Message.isRequest(message)) {
+            handleRequest(message);
+        }
+        else if (messages_1.Message.isNotification(message)) {
+            handleNotification(message);
+        }
+        else if (messages_1.Message.isResponse(message)) {
+            handleResponse(message);
+        }
+        else {
+            handleInvalidMessage(message);
+        }
+    }
     function processMessageQueue() {
         if (messageQueue.size === 0) {
             return;
         }
         const message = messageQueue.shift();
         try {
-            if (messages_1.Message.isRequest(message)) {
-                handleRequest(message);
-            }
-            else if (messages_1.Message.isNotification(message)) {
-                handleNotification(message);
-            }
-            else if (messages_1.Message.isResponse(message)) {
-                handleResponse(message);
+            const messageStrategy = options?.messageStrategy;
+            if (MessageStrategy.is(messageStrategy)) {
+                messageStrategy.handleMessage(message, handleMessage);
             }
             else {
-                handleInvalidMessage(message);
+                handleMessage(message);
             }
         }
         finally {
@@ -14892,7 +15095,9 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
         const startTime = Date.now();
         if (requestHandler || starRequestHandler) {
             const tokenKey = requestMessage.id ?? String(Date.now()); //
-            const cancellationSource = cancellationStrategy.receiver.createCancellationTokenSource(tokenKey);
+            const cancellationSource = IdCancellationReceiverStrategy.is(cancellationStrategy.receiver)
+                ? cancellationStrategy.receiver.createCancellationTokenSource(tokenKey)
+                : cancellationStrategy.receiver.createCancellationTokenSource(requestMessage);
             if (requestMessage.id !== null && knownCanceledRequests.has(requestMessage.id)) {
                 cancellationSource.cancel();
             }
@@ -15378,7 +15583,10 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                 params: messageParams
             };
             traceSendingNotification(notificationMessage);
-            return messageWriter.write(notificationMessage).catch(() => logger.error(`Sending notification failed.`));
+            return messageWriter.write(notificationMessage).catch((error) => {
+                logger.error(`Sending notification failed.`);
+                throw error;
+            });
         },
         onNotification: (type, handler) => {
             throwIfClosedOrDisposed();
@@ -15419,6 +15627,8 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
             };
         },
         sendProgress: (_type, token, value) => {
+            // This should not await but simple return to ensure that we don't have another
+            // async scheduling. Otherwise one send could overtake another send.
             return connection.sendNotification(ProgressNotification.type, { token, value });
         },
         onUnhandledProgress: unhandledProgressEmitter.event,
@@ -15482,13 +15692,17 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     }
                 });
             }
-            const result = new Promise((resolve, reject) => {
-                const requestMessage = {
-                    jsonrpc: version,
-                    id: id,
-                    method: method,
-                    params: messageParams
-                };
+            const requestMessage = {
+                jsonrpc: version,
+                id: id,
+                method: method,
+                params: messageParams
+            };
+            traceSendingRequest(requestMessage);
+            if (typeof cancellationStrategy.sender.enableCancellation === 'function') {
+                cancellationStrategy.sender.enableCancellation(requestMessage);
+            }
+            return new Promise(async (resolve, reject) => {
                 const resolveWithCleanup = (r) => {
                     resolve(r);
                     cancellationStrategy.sender.cleanup(id);
@@ -15499,21 +15713,18 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
                     cancellationStrategy.sender.cleanup(id);
                     disposable?.dispose();
                 };
-                let responsePromise = { method: method, timerStart: Date.now(), resolve: resolveWithCleanup, reject: rejectWithCleanup };
-                traceSendingRequest(requestMessage);
+                const responsePromise = { method: method, timerStart: Date.now(), resolve: resolveWithCleanup, reject: rejectWithCleanup };
                 try {
-                    messageWriter.write(requestMessage).catch(() => logger.error(`Sending request failed.`));
-                }
-                catch (e) {
-                    // Writing the message failed. So we need to reject the promise.
-                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, e.message ? e.message : 'Unknown reason'));
-                    responsePromise = null;
-                }
-                if (responsePromise) {
+                    await messageWriter.write(requestMessage);
                     responsePromises.set(id, responsePromise);
                 }
+                catch (error) {
+                    logger.error(`Sending request failed.`);
+                    // Writing the message failed. So we need to reject the promise.
+                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, error.message ? error.message : 'Unknown reason'));
+                    throw error;
+                }
             });
-            return result;
         },
         onRequest: (type, handler) => {
             throwIfClosedOrDisposed();
@@ -15635,7 +15846,7 @@ function createMessageConnection(messageReader, messageWriter, _logger, options)
     return connection;
 }
 exports.createMessageConnection = createMessageConnection;
-//# sourceMappingURL=connection.js.map
+
 
 /***/ }),
 
@@ -15659,7 +15870,7 @@ var Disposable;
     }
     Disposable.create = create;
 })(Disposable = exports.Disposable || (exports.Disposable = {}));
-//# sourceMappingURL=disposable.js.map
+
 
 /***/ }),
 
@@ -15795,7 +16006,7 @@ class Emitter {
 }
 exports.Emitter = Emitter;
 Emitter._noop = function () { };
-//# sourceMappingURL=events.js.map
+
 
 /***/ }),
 
@@ -15838,7 +16049,7 @@ function stringArray(value) {
     return array(value) && value.every(elem => string(elem));
 }
 exports.stringArray = stringArray;
-//# sourceMappingURL=is.js.map
+
 
 /***/ }),
 
@@ -16244,7 +16455,7 @@ class LRUCache extends LinkedMap {
     }
 }
 exports.LRUCache = LRUCache;
-//# sourceMappingURL=linkedMap.js.map
+
 
 /***/ }),
 
@@ -16276,7 +16487,7 @@ class AbstractMessageBuffer {
         this._chunks.push(toAppend);
         this._totalLength += toAppend.byteLength;
     }
-    tryReadHeaders() {
+    tryReadHeaders(lowerCaseKeys = false) {
         if (this._chunks.length === 0) {
             return undefined;
         }
@@ -16342,7 +16553,7 @@ class AbstractMessageBuffer {
             }
             const key = header.substr(0, index);
             const value = header.substr(index + 1).trim();
-            result.set(key, value);
+            result.set(lowerCaseKeys ? key.toLowerCase() : key, value);
         }
         return result;
     }
@@ -16404,7 +16615,7 @@ class AbstractMessageBuffer {
     }
 }
 exports.AbstractMessageBuffer = AbstractMessageBuffer;
-//# sourceMappingURL=messageBuffer.js.map
+
 
 /***/ }),
 
@@ -16422,6 +16633,7 @@ exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.Me
 const ral_1 = __webpack_require__(5706);
 const Is = __webpack_require__(8811);
 const events_1 = __webpack_require__(5165);
+const semaphore_1 = __webpack_require__(2339);
 var MessageReader;
 (function (MessageReader) {
     function is(value) {
@@ -16519,6 +16731,7 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
         this._partialMessageTimeout = 10000;
         this.nextMessageLength = -1;
         this.messageToken = 0;
+        this.readSemaphore = new semaphore_1.Semaphore(1);
     }
     set partialMessageTimeout(timeout) {
         this._partialMessageTimeout = timeout;
@@ -16542,17 +16755,19 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
         this.buffer.append(data);
         while (true) {
             if (this.nextMessageLength === -1) {
-                const headers = this.buffer.tryReadHeaders();
+                const headers = this.buffer.tryReadHeaders(true);
                 if (!headers) {
                     return;
                 }
-                const contentLength = headers.get('Content-Length');
+                const contentLength = headers.get('content-length');
                 if (!contentLength) {
-                    throw new Error('Header must provide a Content-Length property.');
+                    this.fireError(new Error('Header must provide a Content-Length property.'));
+                    return;
                 }
                 const length = parseInt(contentLength);
                 if (isNaN(length)) {
-                    throw new Error('Content-Length value must be a number.');
+                    this.fireError(new Error('Content-Length value must be a number.'));
+                    return;
                 }
                 this.nextMessageLength = length;
             }
@@ -16564,20 +16779,17 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
             }
             this.clearPartialMessageTimer();
             this.nextMessageLength = -1;
-            let p;
-            if (this.options.contentDecoder !== undefined) {
-                p = this.options.contentDecoder.decode(body);
-            }
-            else {
-                p = Promise.resolve(body);
-            }
-            p.then((value) => {
-                this.options.contentTypeDecoder.decode(value, this.options).then((msg) => {
-                    this.callback(msg);
-                }, (error) => {
-                    this.fireError(error);
-                });
-            }, (error) => {
+            // Make sure that we convert one received message after the
+            // other. Otherwise it could happen that a decoding of a second
+            // smaller message finished before the decoding of a first larger
+            // message and then we would deliver the second message first.
+            this.readSemaphore.lock(async () => {
+                const bytes = this.options.contentDecoder !== undefined
+                    ? await this.options.contentDecoder.decode(body)
+                    : body;
+                const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
+                this.callback(message);
+            }).catch((error) => {
                 this.fireError(error);
             });
         }
@@ -16603,7 +16815,7 @@ class ReadableStreamMessageReader extends AbstractMessageReader {
     }
 }
 exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
-//# sourceMappingURL=messageReader.js.map
+
 
 /***/ }),
 
@@ -16726,7 +16938,7 @@ class WriteableStreamMessageWriter extends AbstractMessageWriter {
     }
 }
 exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
-//# sourceMappingURL=messageWriter.js.map
+
 
 /***/ }),
 
@@ -17040,7 +17252,7 @@ var Message;
     }
     Message.isResponse = isResponse;
 })(Message = exports.Message || (exports.Message = {}));
-//# sourceMappingURL=messages.js.map
+
 
 /***/ }),
 
@@ -17071,7 +17283,7 @@ function RAL() {
     RAL.install = install;
 })(RAL || (RAL = {}));
 exports["default"] = RAL;
-//# sourceMappingURL=ral.js.map
+
 
 /***/ }),
 
@@ -17147,7 +17359,91 @@ class Semaphore {
     }
 }
 exports.Semaphore = Semaphore;
-//# sourceMappingURL=semaphore.js.map
+
+
+/***/ }),
+
+/***/ 178:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
+const cancellation_1 = __webpack_require__(415);
+var CancellationState;
+(function (CancellationState) {
+    CancellationState.Continue = 0;
+    CancellationState.Cancelled = 1;
+})(CancellationState || (CancellationState = {}));
+class SharedArraySenderStrategy {
+    constructor() {
+        this.buffers = new Map();
+    }
+    enableCancellation(request) {
+        if (request.id === null) {
+            return;
+        }
+        const buffer = new SharedArrayBuffer(4);
+        const data = new Int32Array(buffer, 0, 1);
+        data[0] = CancellationState.Continue;
+        this.buffers.set(request.id, buffer);
+        request.$cancellationData = buffer;
+    }
+    async sendCancellation(_conn, id) {
+        const buffer = this.buffers.get(id);
+        if (buffer === undefined) {
+            return;
+        }
+        const data = new Int32Array(buffer, 0, 1);
+        Atomics.store(data, 0, CancellationState.Cancelled);
+    }
+    cleanup(id) {
+        this.buffers.delete(id);
+    }
+    dispose() {
+        this.buffers.clear();
+    }
+}
+exports.SharedArraySenderStrategy = SharedArraySenderStrategy;
+class SharedArrayBufferCancellationToken {
+    constructor(buffer) {
+        this.data = new Int32Array(buffer, 0, 1);
+    }
+    get isCancellationRequested() {
+        return Atomics.load(this.data, 0) === CancellationState.Cancelled;
+    }
+    get onCancellationRequested() {
+        throw new Error(`Cancellation over SharedArrayBuffer doesn't support cancellation events`);
+    }
+}
+class SharedArrayBufferCancellationTokenSource {
+    constructor(buffer) {
+        this.token = new SharedArrayBufferCancellationToken(buffer);
+    }
+    cancel() {
+    }
+    dispose() {
+    }
+}
+class SharedArrayReceiverStrategy {
+    constructor() {
+        this.kind = 'request';
+    }
+    createCancellationTokenSource(request) {
+        const buffer = request.$cancellationData;
+        if (buffer === undefined) {
+            return new cancellation_1.CancellationTokenSource();
+        }
+        return new SharedArrayBufferCancellationTokenSource(buffer);
+    }
+}
+exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
+
 
 /***/ }),
 
@@ -17183,7 +17479,7 @@ function createProtocolConnection(reader, writer, logger, options) {
     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
 }
 exports.createProtocolConnection = createProtocolConnection;
-//# sourceMappingURL=main.js.map
+
 
 /***/ }),
 
@@ -17268,7 +17564,7 @@ var LSPErrorCodes;
     */
     LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
 })(LSPErrorCodes = exports.LSPErrorCodes || (exports.LSPErrorCodes = {}));
-//# sourceMappingURL=api.js.map
+
 
 /***/ }),
 
@@ -17291,7 +17587,7 @@ function createProtocolConnection(input, output, logger, options) {
     return (0, vscode_jsonrpc_1.createMessageConnection)(input, output, logger, options);
 }
 exports.createProtocolConnection = createProtocolConnection;
-//# sourceMappingURL=connection.js.map
+
 
 /***/ }),
 
@@ -17343,7 +17639,7 @@ class ProtocolNotificationType extends vscode_jsonrpc_1.NotificationType {
     }
 }
 exports.ProtocolNotificationType = ProtocolNotificationType;
-//# sourceMappingURL=messages.js.map
+
 
 /***/ }),
 
@@ -17393,7 +17689,7 @@ var CallHierarchyOutgoingCallsRequest;
     CallHierarchyOutgoingCallsRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
 })(CallHierarchyOutgoingCallsRequest = exports.CallHierarchyOutgoingCallsRequest || (exports.CallHierarchyOutgoingCallsRequest = {}));
-//# sourceMappingURL=protocol.callHierarchy.js.map
+
 
 /***/ }),
 
@@ -17411,8 +17707,8 @@ exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to list all color symbols found in a given text document. The request's
- * parameter is of type [DocumentColorParams](#DocumentColorParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link DocumentColorParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */
 var DocumentColorRequest;
@@ -17423,8 +17719,8 @@ var DocumentColorRequest;
 })(DocumentColorRequest = exports.DocumentColorRequest || (exports.DocumentColorRequest = {}));
 /**
  * A request to list all presentation for a color. The request's
- * parameter is of type [ColorPresentationParams](#ColorPresentationParams) the
- * response is of type [ColorInformation[]](#ColorInformation) or a Thenable
+ * parameter is of type {@link ColorPresentationParams} the
+ * response is of type {@link ColorInformation ColorInformation[]} or a Thenable
  * that resolves to such.
  */
 var ColorPresentationRequest;
@@ -17433,7 +17729,7 @@ var ColorPresentationRequest;
     ColorPresentationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
 })(ColorPresentationRequest = exports.ColorPresentationRequest || (exports.ColorPresentationRequest = {}));
-//# sourceMappingURL=protocol.colorProvider.js.map
+
 
 /***/ }),
 
@@ -17465,7 +17761,7 @@ var ConfigurationRequest;
     ConfigurationRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
 })(ConfigurationRequest = exports.ConfigurationRequest || (exports.ConfigurationRequest = {}));
-//# sourceMappingURL=protocol.configuration.js.map
+
 
 /***/ }),
 
@@ -17486,8 +17782,8 @@ let __noDynamicImport;
 /**
  * A request to resolve the type definition locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Declaration](#Declaration)
- * or a typed array of [DeclarationLink](#DeclarationLink) or a Thenable that resolves
+ * (#TextDocumentPositionParams) the response is of type {@link Declaration}
+ * or a typed array of {@link DeclarationLink} or a Thenable that resolves
  * to such.
  */
 var DeclarationRequest;
@@ -17496,7 +17792,7 @@ var DeclarationRequest;
     DeclarationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
 })(DeclarationRequest = exports.DeclarationRequest || (exports.DeclarationRequest = {}));
-//# sourceMappingURL=protocol.declaration.js.map
+
 
 /***/ }),
 
@@ -17575,10 +17871,10 @@ var WorkspaceDiagnosticRequest;
 var DiagnosticRefreshRequest;
 (function (DiagnosticRefreshRequest) {
     DiagnosticRefreshRequest.method = `workspace/diagnostic/refresh`;
-    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    DiagnosticRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
 })(DiagnosticRefreshRequest = exports.DiagnosticRefreshRequest || (exports.DiagnosticRefreshRequest = {}));
-//# sourceMappingURL=protocol.diagnostic.js.map
+
 
 /***/ }),
 
@@ -17614,6 +17910,10 @@ var FileOperationPatternKind;
 /**
  * The will create files request is sent from the client to the server before files are actually
  * created as long as the creation is triggered from within the client.
+ *
+ * The request can return a `WorkspaceEdit` which will be applied to workspace before the
+ * files are created. Hence the `WorkspaceEdit` can not manipulate the content of the file
+ * to be created.
  *
  * @since 3.16.0
  */
@@ -17683,7 +17983,7 @@ var WillDeleteFilesRequest;
     WillDeleteFilesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
 })(WillDeleteFilesRequest = exports.WillDeleteFilesRequest || (exports.WillDeleteFilesRequest = {}));
-//# sourceMappingURL=protocol.fileOperations.js.map
+
 
 /***/ }),
 
@@ -17701,8 +18001,8 @@ exports.FoldingRangeRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide folding ranges in a document. The request's
- * parameter is of type [FoldingRangeParams](#FoldingRangeParams), the
- * response is of type [FoldingRangeList](#FoldingRangeList) or a Thenable
+ * parameter is of type {@link FoldingRangeParams}, the
+ * response is of type {@link FoldingRangeList} or a Thenable
  * that resolves to such.
  */
 var FoldingRangeRequest;
@@ -17711,7 +18011,7 @@ var FoldingRangeRequest;
     FoldingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     FoldingRangeRequest.type = new messages_1.ProtocolRequestType(FoldingRangeRequest.method);
 })(FoldingRangeRequest = exports.FoldingRangeRequest || (exports.FoldingRangeRequest = {}));
-//# sourceMappingURL=protocol.foldingRange.js.map
+
 
 /***/ }),
 
@@ -17732,7 +18032,7 @@ let __noDynamicImport;
 /**
  * A request to resolve the implementation locations of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPositionParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */
 var ImplementationRequest;
@@ -17741,7 +18041,7 @@ var ImplementationRequest;
     ImplementationRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
 })(ImplementationRequest = exports.ImplementationRequest || (exports.ImplementationRequest = {}));
-//# sourceMappingURL=protocol.implementation.js.map
+
 
 /***/ }),
 
@@ -17759,8 +18059,8 @@ exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.Inla
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide inlay hints in a document. The request's parameter is of
- * type [InlayHintsParams](#InlayHintsParams), the response is of type
- * [InlayHint[]](#InlayHint[]) or a Thenable that resolves to such.
+ * type {@link InlayHintsParams}, the response is of type
+ * {@link InlayHint InlayHint[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */
@@ -17772,8 +18072,8 @@ var InlayHintRequest;
 })(InlayHintRequest = exports.InlayHintRequest || (exports.InlayHintRequest = {}));
 /**
  * A request to resolve additional properties for an inlay hint.
- * The request's parameter is of type [InlayHint](#InlayHint), the response is
- * of type [InlayHint](#InlayHint) or a Thenable that resolves to such.
+ * The request's parameter is of type {@link InlayHint}, the response is
+ * of type {@link InlayHint} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */
@@ -17789,10 +18089,10 @@ var InlayHintResolveRequest;
 var InlayHintRefreshRequest;
 (function (InlayHintRefreshRequest) {
     InlayHintRefreshRequest.method = `workspace/inlayHint/refresh`;
-    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    InlayHintRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
 })(InlayHintRefreshRequest = exports.InlayHintRefreshRequest || (exports.InlayHintRefreshRequest = {}));
-//# sourceMappingURL=protocol.inlayHint.js.map
+
 
 /***/ }),
 
@@ -17810,8 +18110,8 @@ exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide inline values in a document. The request's parameter is of
- * type [InlineValueParams](#InlineValueParams), the response is of type
- * [InlineValue[]](#InlineValue[]) or a Thenable that resolves to such.
+ * type {@link InlineValueParams}, the response is of type
+ * {@link InlineValue InlineValue[]} or a Thenable that resolves to such.
  *
  * @since 3.17.0
  */
@@ -17827,10 +18127,10 @@ var InlineValueRequest;
 var InlineValueRefreshRequest;
 (function (InlineValueRefreshRequest) {
     InlineValueRefreshRequest.method = `workspace/inlineValue/refresh`;
-    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    InlineValueRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
 })(InlineValueRefreshRequest = exports.InlineValueRefreshRequest || (exports.InlineValueRefreshRequest = {}));
-//# sourceMappingURL=protocol.inlineValue.js.map
+
 
 /***/ }),
 
@@ -17931,7 +18231,7 @@ Object.defineProperty(exports, "DidCloseNotebookDocumentNotification", ({ enumer
 let __noDynamicImport;
 /**
  * The TextDocumentFilter namespace provides helper functions to work with
- * [TextDocumentFilter](#TextDocumentFilter) literals.
+ * {@link TextDocumentFilter} literals.
  *
  * @since 3.17.0
  */
@@ -17945,7 +18245,7 @@ var TextDocumentFilter;
 })(TextDocumentFilter = exports.TextDocumentFilter || (exports.TextDocumentFilter = {}));
 /**
  * The NotebookDocumentFilter namespace provides helper functions to work with
- * [NotebookDocumentFilter](#NotebookDocumentFilter) literals.
+ * {@link NotebookDocumentFilter} literals.
  *
  * @since 3.17.0
  */
@@ -17959,7 +18259,7 @@ var NotebookDocumentFilter;
 })(NotebookDocumentFilter = exports.NotebookDocumentFilter || (exports.NotebookDocumentFilter = {}));
 /**
  * The NotebookCellTextDocumentFilter namespace provides helper functions to work with
- * [NotebookCellTextDocumentFilter](#NotebookCellTextDocumentFilter) literals.
+ * {@link NotebookCellTextDocumentFilter} literals.
  *
  * @since 3.17.0
  */
@@ -17975,7 +18275,7 @@ var NotebookCellTextDocumentFilter;
 })(NotebookCellTextDocumentFilter = exports.NotebookCellTextDocumentFilter || (exports.NotebookCellTextDocumentFilter = {}));
 /**
  * The DocumentSelector namespace provides helper functions to work with
- * [DocumentSelector](#DocumentSelector)s.
+ * {@link DocumentSelector}s.
  */
 var DocumentSelector;
 (function (DocumentSelector) {
@@ -18059,7 +18359,7 @@ var FailureHandlingKind;
 var PositionEncodingKind;
 (function (PositionEncodingKind) {
     /**
-     * Character offsets count UTF-8 code units.
+     * Character offsets count UTF-8 code units (e.g. bytes).
      */
     PositionEncodingKind.UTF8 = 'utf-8';
     /**
@@ -18072,7 +18372,7 @@ var PositionEncodingKind;
     /**
      * Character offsets count UTF-32 code units.
      *
-     * Implementation note: these are the same as Unicode code points,
+     * Implementation note: these are the same as Unicode codepoints,
      * so this `PositionEncodingKind` may also be used for an
      * encoding-agnostic representation of character offsets.
      */
@@ -18080,7 +18380,7 @@ var PositionEncodingKind;
 })(PositionEncodingKind = exports.PositionEncodingKind || (exports.PositionEncodingKind = {}));
 /**
  * The StaticRegistrationOptions namespace provides helper functions to work with
- * [StaticRegistrationOptions](#StaticRegistrationOptions) literals.
+ * {@link StaticRegistrationOptions} literals.
  */
 var StaticRegistrationOptions;
 (function (StaticRegistrationOptions) {
@@ -18092,7 +18392,7 @@ var StaticRegistrationOptions;
 })(StaticRegistrationOptions = exports.StaticRegistrationOptions || (exports.StaticRegistrationOptions = {}));
 /**
  * The TextDocumentRegistrationOptions namespace provides helper functions to work with
- * [TextDocumentRegistrationOptions](#TextDocumentRegistrationOptions) literals.
+ * {@link TextDocumentRegistrationOptions} literals.
  */
 var TextDocumentRegistrationOptions;
 (function (TextDocumentRegistrationOptions) {
@@ -18104,7 +18404,7 @@ var TextDocumentRegistrationOptions;
 })(TextDocumentRegistrationOptions = exports.TextDocumentRegistrationOptions || (exports.TextDocumentRegistrationOptions = {}));
 /**
  * The WorkDoneProgressOptions namespace provides helper functions to work with
- * [WorkDoneProgressOptions](#WorkDoneProgressOptions) literals.
+ * {@link WorkDoneProgressOptions} literals.
  */
 var WorkDoneProgressOptions;
 (function (WorkDoneProgressOptions) {
@@ -18122,8 +18422,8 @@ var WorkDoneProgressOptions;
 /**
  * The initialize request is sent from the client to the server.
  * It is sent once as the request after starting up the server.
- * The requests parameter is of type [InitializeParams](#InitializeParams)
- * the response if of type [InitializeResult](#InitializeResult) of a Thenable that
+ * The requests parameter is of type {@link InitializeParams}
+ * the response if of type {@link InitializeResult} of a Thenable that
  * resolves to such.
  */
 var InitializeRequest;
@@ -18476,12 +18776,12 @@ var CompletionTriggerKind;
 })(CompletionTriggerKind = exports.CompletionTriggerKind || (exports.CompletionTriggerKind = {}));
 /**
  * Request to request completion at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response
- * is of type [CompletionItem[]](#CompletionItem) or [CompletionList](#CompletionList)
+ * parameter is of type {@link TextDocumentPosition} the response
+ * is of type {@link CompletionItem CompletionItem[]} or {@link CompletionList}
  * or a Thenable that resolves to such.
  *
- * The request can delay the computation of the [`detail`](#CompletionItem.detail)
- * and [`documentation`](#CompletionItem.documentation) properties to the `completionItem/resolve`
+ * The request can delay the computation of the {@link CompletionItem.detail `detail`}
+ * and {@link CompletionItem.documentation `documentation`} properties to the `completionItem/resolve`
  * request. However, properties that are needed for the initial sorting and filtering, like `sortText`,
  * `filterText`, `insertText`, and `textEdit`, must not be changed during resolve.
  */
@@ -18493,8 +18793,8 @@ var CompletionRequest;
 })(CompletionRequest = exports.CompletionRequest || (exports.CompletionRequest = {}));
 /**
  * Request to resolve additional information for a given completion item.The request's
- * parameter is of type [CompletionItem](#CompletionItem) the response
- * is of type [CompletionItem](#CompletionItem) or a Thenable that resolves to such.
+ * parameter is of type {@link CompletionItem} the response
+ * is of type {@link CompletionItem} or a Thenable that resolves to such.
  */
 var CompletionResolveRequest;
 (function (CompletionResolveRequest) {
@@ -18504,8 +18804,8 @@ var CompletionResolveRequest;
 })(CompletionResolveRequest = exports.CompletionResolveRequest || (exports.CompletionResolveRequest = {}));
 /**
  * Request to request hover information at a given text document position. The request's
- * parameter is of type [TextDocumentPosition](#TextDocumentPosition) the response is of
- * type [Hover](#Hover) or a Thenable that resolves to such.
+ * parameter is of type {@link TextDocumentPosition} the response is of
+ * type {@link Hover} or a Thenable that resolves to such.
  */
 var HoverRequest;
 (function (HoverRequest) {
@@ -18542,8 +18842,8 @@ var SignatureHelpRequest;
 /**
  * A request to resolve the definition location of a symbol at a given text
  * document position. The request's parameter is of type [TextDocumentPosition]
- * (#TextDocumentPosition) the response is of either type [Definition](#Definition)
- * or a typed array of [DefinitionLink](#DefinitionLink) or a Thenable that resolves
+ * (#TextDocumentPosition) the response is of either type {@link Definition}
+ * or a typed array of {@link DefinitionLink} or a Thenable that resolves
  * to such.
  */
 var DefinitionRequest;
@@ -18555,8 +18855,8 @@ var DefinitionRequest;
 /**
  * A request to resolve project-wide references for the symbol denoted
  * by the given text document position. The request's parameter is of
- * type [ReferenceParams](#ReferenceParams) the response is of type
- * [Location[]](#Location) or a Thenable that resolves to such.
+ * type {@link ReferenceParams} the response is of type
+ * {@link Location Location[]} or a Thenable that resolves to such.
  */
 var ReferencesRequest;
 (function (ReferencesRequest) {
@@ -18565,7 +18865,7 @@ var ReferencesRequest;
     ReferencesRequest.type = new messages_1.ProtocolRequestType(ReferencesRequest.method);
 })(ReferencesRequest = exports.ReferencesRequest || (exports.ReferencesRequest = {}));
 /**
- * Request to resolve a [DocumentHighlight](#DocumentHighlight) for a given
+ * Request to resolve a {@link DocumentHighlight} for a given
  * text document position. The request's parameter is of type [TextDocumentPosition]
  * (#TextDocumentPosition) the request response is of type [DocumentHighlight[]]
  * (#DocumentHighlight) or a Thenable that resolves to such.
@@ -18578,8 +18878,8 @@ var DocumentHighlightRequest;
 })(DocumentHighlightRequest = exports.DocumentHighlightRequest || (exports.DocumentHighlightRequest = {}));
 /**
  * A request to list all symbols found in a given text document. The request's
- * parameter is of type [TextDocumentIdentifier](#TextDocumentIdentifier) the
- * response is of type [SymbolInformation[]](#SymbolInformation) or a Thenable
+ * parameter is of type {@link TextDocumentIdentifier} the
+ * response is of type {@link SymbolInformation SymbolInformation[]} or a Thenable
  * that resolves to such.
  */
 var DocumentSymbolRequest;
@@ -18599,8 +18899,8 @@ var CodeActionRequest;
 })(CodeActionRequest = exports.CodeActionRequest || (exports.CodeActionRequest = {}));
 /**
  * Request to resolve additional information for a given code action.The request's
- * parameter is of type [CodeAction](#CodeAction) the response
- * is of type [CodeAction](#CodeAction) or a Thenable that resolves to such.
+ * parameter is of type {@link CodeAction} the response
+ * is of type {@link CodeAction} or a Thenable that resolves to such.
  */
 var CodeActionResolveRequest;
 (function (CodeActionResolveRequest) {
@@ -18610,8 +18910,8 @@ var CodeActionResolveRequest;
 })(CodeActionResolveRequest = exports.CodeActionResolveRequest || (exports.CodeActionResolveRequest = {}));
 /**
  * A request to list project-wide symbols matching the query string given
- * by the [WorkspaceSymbolParams](#WorkspaceSymbolParams). The response is
- * of type [SymbolInformation[]](#SymbolInformation) or a Thenable that
+ * by the {@link WorkspaceSymbolParams}. The response is
+ * of type {@link SymbolInformation SymbolInformation[]} or a Thenable that
  * resolves to such.
  *
  * @since 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
@@ -18677,8 +18977,8 @@ var DocumentLinkRequest;
 })(DocumentLinkRequest = exports.DocumentLinkRequest || (exports.DocumentLinkRequest = {}));
 /**
  * Request to resolve additional information for a given document link. The request's
- * parameter is of type [DocumentLink](#DocumentLink) the response
- * is of type [DocumentLink](#DocumentLink) or a Thenable that resolves to such.
+ * parameter is of type {@link DocumentLink} the response
+ * is of type {@link DocumentLink} or a Thenable that resolves to such.
  */
 var DocumentLinkResolveRequest;
 (function (DocumentLinkResolveRequest) {
@@ -18761,7 +19061,7 @@ var ApplyWorkspaceEditRequest;
     ApplyWorkspaceEditRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType('workspace/applyEdit');
 })(ApplyWorkspaceEditRequest = exports.ApplyWorkspaceEditRequest || (exports.ApplyWorkspaceEditRequest = {}));
-//# sourceMappingURL=protocol.js.map
+
 
 /***/ }),
 
@@ -18788,7 +19088,7 @@ var LinkedEditingRangeRequest;
     LinkedEditingRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
 })(LinkedEditingRangeRequest = exports.LinkedEditingRangeRequest || (exports.LinkedEditingRangeRequest = {}));
-//# sourceMappingURL=protocol.linkedEditingRange.js.map
+
 
 /***/ }),
 
@@ -18855,8 +19155,8 @@ var MonikerKind;
 })(MonikerKind = exports.MonikerKind || (exports.MonikerKind = {}));
 /**
  * A request to get the moniker of a symbol at a given text document position.
- * The request parameter is of type [TextDocumentPositionParams](#TextDocumentPositionParams).
- * The response is of type [Moniker[]](#Moniker[]) or `null`.
+ * The request parameter is of type {@link TextDocumentPositionParams}.
+ * The response is of type {@link Moniker Moniker[]} or `null`.
  */
 var MonikerRequest;
 (function (MonikerRequest) {
@@ -18864,7 +19164,7 @@ var MonikerRequest;
     MonikerRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
 })(MonikerRequest = exports.MonikerRequest || (exports.MonikerRequest = {}));
-//# sourceMappingURL=protocol.moniker.js.map
+
 
 /***/ }),
 
@@ -19086,7 +19386,7 @@ var DidCloseNotebookDocumentNotification;
     DidCloseNotebookDocumentNotification.type = new messages_1.ProtocolNotificationType(DidCloseNotebookDocumentNotification.method);
     DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
 })(DidCloseNotebookDocumentNotification = exports.DidCloseNotebookDocumentNotification || (exports.DidCloseNotebookDocumentNotification = {}));
-//# sourceMappingURL=protocol.notebook.js.map
+
 
 /***/ }),
 
@@ -19131,7 +19431,7 @@ var WorkDoneProgressCancelNotification;
     WorkDoneProgressCancelNotification.messageDirection = messages_1.MessageDirection.clientToServer;
     WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
 })(WorkDoneProgressCancelNotification = exports.WorkDoneProgressCancelNotification || (exports.WorkDoneProgressCancelNotification = {}));
-//# sourceMappingURL=protocol.progress.js.map
+
 
 /***/ }),
 
@@ -19149,8 +19449,8 @@ exports.SelectionRangeRequest = void 0;
 const messages_1 = __webpack_require__(8599);
 /**
  * A request to provide selection ranges in a document. The request's
- * parameter is of type [SelectionRangeParams](#SelectionRangeParams), the
- * response is of type [SelectionRange[]](#SelectionRange[]) or a Thenable
+ * parameter is of type {@link SelectionRangeParams}, the
+ * response is of type {@link SelectionRange SelectionRange[]} or a Thenable
  * that resolves to such.
  */
 var SelectionRangeRequest;
@@ -19159,7 +19459,7 @@ var SelectionRangeRequest;
     SelectionRangeRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
 })(SelectionRangeRequest = exports.SelectionRangeRequest || (exports.SelectionRangeRequest = {}));
-//# sourceMappingURL=protocol.selectionRange.js.map
+
 
 /***/ }),
 
@@ -19221,10 +19521,10 @@ var SemanticTokensRangeRequest;
 var SemanticTokensRefreshRequest;
 (function (SemanticTokensRefreshRequest) {
     SemanticTokensRefreshRequest.method = `workspace/semanticTokens/refresh`;
-    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.clientToServer;
+    SemanticTokensRefreshRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
 })(SemanticTokensRefreshRequest = exports.SemanticTokensRefreshRequest || (exports.SemanticTokensRefreshRequest = {}));
-//# sourceMappingURL=protocol.semanticTokens.js.map
+
 
 /***/ }),
 
@@ -19254,7 +19554,7 @@ var ShowDocumentRequest;
     ShowDocumentRequest.messageDirection = messages_1.MessageDirection.serverToClient;
     ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
 })(ShowDocumentRequest = exports.ShowDocumentRequest || (exports.ShowDocumentRequest = {}));
-//# sourceMappingURL=protocol.showDocument.js.map
+
 
 /***/ }),
 
@@ -19274,8 +19574,8 @@ const messages_1 = __webpack_require__(8599);
 let __noDynamicImport;
 /**
  * A request to resolve the type definition locations of a symbol at a given text
- * document position. The request's parameter is of type [TextDocumentPositioParams]
- * (#TextDocumentPositionParams) the response is of type [Definition](#Definition) or a
+ * document position. The request's parameter is of type [TextDocumentPositionParams]
+ * (#TextDocumentPositionParams) the response is of type {@link Definition} or a
  * Thenable that resolves to such.
  */
 var TypeDefinitionRequest;
@@ -19284,7 +19584,7 @@ var TypeDefinitionRequest;
     TypeDefinitionRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
 })(TypeDefinitionRequest = exports.TypeDefinitionRequest || (exports.TypeDefinitionRequest = {}));
-//# sourceMappingURL=protocol.typeDefinition.js.map
+
 
 /***/ }),
 
@@ -19334,7 +19634,7 @@ var TypeHierarchySubtypesRequest;
     TypeHierarchySubtypesRequest.messageDirection = messages_1.MessageDirection.clientToServer;
     TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
 })(TypeHierarchySubtypesRequest = exports.TypeHierarchySubtypesRequest || (exports.TypeHierarchySubtypesRequest = {}));
-//# sourceMappingURL=protocol.typeHierarchy.js.map
+
 
 /***/ }),
 
@@ -19369,7 +19669,7 @@ var DidChangeWorkspaceFoldersNotification;
     DidChangeWorkspaceFoldersNotification.messageDirection = messages_1.MessageDirection.clientToServer;
     DidChangeWorkspaceFoldersNotification.type = new messages_1.ProtocolNotificationType(DidChangeWorkspaceFoldersNotification.method);
 })(DidChangeWorkspaceFoldersNotification = exports.DidChangeWorkspaceFoldersNotification || (exports.DidChangeWorkspaceFoldersNotification = {}));
-//# sourceMappingURL=protocol.workspaceFolder.js.map
+
 
 /***/ }),
 
@@ -19423,7 +19723,297 @@ function objectLiteral(value) {
     return value !== null && typeof value === 'object';
 }
 exports.objectLiteral = objectLiteral;
-//# sourceMappingURL=is.js.map
+
+
+/***/ }),
+
+/***/ 4881:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   n: () => (/* binding */ TextDocument)
+/* harmony export */ });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+var FullTextDocument = /** @class */ (function () {
+    function FullTextDocument(uri, languageId, version, content) {
+        this._uri = uri;
+        this._languageId = languageId;
+        this._version = version;
+        this._content = content;
+        this._lineOffsets = undefined;
+    }
+    Object.defineProperty(FullTextDocument.prototype, "uri", {
+        get: function () {
+            return this._uri;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "languageId", {
+        get: function () {
+            return this._languageId;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "version", {
+        get: function () {
+            return this._version;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    FullTextDocument.prototype.getText = function (range) {
+        if (range) {
+            var start = this.offsetAt(range.start);
+            var end = this.offsetAt(range.end);
+            return this._content.substring(start, end);
+        }
+        return this._content;
+    };
+    FullTextDocument.prototype.update = function (changes, version) {
+        for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
+            var change = changes_1[_i];
+            if (FullTextDocument.isIncremental(change)) {
+                // makes sure start is before end
+                var range = getWellformedRange(change.range);
+                // update content
+                var startOffset = this.offsetAt(range.start);
+                var endOffset = this.offsetAt(range.end);
+                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+                // update the offsets
+                var startLine = Math.max(range.start.line, 0);
+                var endLine = Math.max(range.end.line, 0);
+                var lineOffsets = this._lineOffsets;
+                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
+                if (endLine - startLine === addedLineOffsets.length) {
+                    for (var i = 0, len = addedLineOffsets.length; i < len; i++) {
+                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
+                    }
+                }
+                else {
+                    if (addedLineOffsets.length < 10000) {
+                        lineOffsets.splice.apply(lineOffsets, __spreadArray([startLine + 1, endLine - startLine], addedLineOffsets, false));
+                    }
+                    else { // avoid too many arguments for splice
+                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
+                    }
+                }
+                var diff = change.text.length - (endOffset - startOffset);
+                if (diff !== 0) {
+                    for (var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
+                        lineOffsets[i] = lineOffsets[i] + diff;
+                    }
+                }
+            }
+            else if (FullTextDocument.isFull(change)) {
+                this._content = change.text;
+                this._lineOffsets = undefined;
+            }
+            else {
+                throw new Error('Unknown change event received');
+            }
+        }
+        this._version = version;
+    };
+    FullTextDocument.prototype.getLineOffsets = function () {
+        if (this._lineOffsets === undefined) {
+            this._lineOffsets = computeLineOffsets(this._content, true);
+        }
+        return this._lineOffsets;
+    };
+    FullTextDocument.prototype.positionAt = function (offset) {
+        offset = Math.max(Math.min(offset, this._content.length), 0);
+        var lineOffsets = this.getLineOffsets();
+        var low = 0, high = lineOffsets.length;
+        if (high === 0) {
+            return { line: 0, character: offset };
+        }
+        while (low < high) {
+            var mid = Math.floor((low + high) / 2);
+            if (lineOffsets[mid] > offset) {
+                high = mid;
+            }
+            else {
+                low = mid + 1;
+            }
+        }
+        // low is the least x for which the line offset is larger than the current offset
+        // or array.length if no line offset is larger than the current offset
+        var line = low - 1;
+        return { line: line, character: offset - lineOffsets[line] };
+    };
+    FullTextDocument.prototype.offsetAt = function (position) {
+        var lineOffsets = this.getLineOffsets();
+        if (position.line >= lineOffsets.length) {
+            return this._content.length;
+        }
+        else if (position.line < 0) {
+            return 0;
+        }
+        var lineOffset = lineOffsets[position.line];
+        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
+        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
+    };
+    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
+        get: function () {
+            return this.getLineOffsets().length;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    FullTextDocument.isIncremental = function (event) {
+        var candidate = event;
+        return candidate !== undefined && candidate !== null &&
+            typeof candidate.text === 'string' && candidate.range !== undefined &&
+            (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
+    };
+    FullTextDocument.isFull = function (event) {
+        var candidate = event;
+        return candidate !== undefined && candidate !== null &&
+            typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
+    };
+    return FullTextDocument;
+}());
+var TextDocument;
+(function (TextDocument) {
+    /**
+     * Creates a new text document.
+     *
+     * @param uri The document's uri.
+     * @param languageId  The document's language Id.
+     * @param version The document's initial version number.
+     * @param content The document's content.
+     */
+    function create(uri, languageId, version, content) {
+        return new FullTextDocument(uri, languageId, version, content);
+    }
+    TextDocument.create = create;
+    /**
+     * Updates a TextDocument by modifying its content.
+     *
+     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
+     * @param changes the changes to apply to the document.
+     * @param version the changes version for the document.
+     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
+     *
+     */
+    function update(document, changes, version) {
+        if (document instanceof FullTextDocument) {
+            document.update(changes, version);
+            return document;
+        }
+        else {
+            throw new Error('TextDocument.update: document must be created by TextDocument.create');
+        }
+    }
+    TextDocument.update = update;
+    function applyEdits(document, edits) {
+        var text = document.getText();
+        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function (a, b) {
+            var diff = a.range.start.line - b.range.start.line;
+            if (diff === 0) {
+                return a.range.start.character - b.range.start.character;
+            }
+            return diff;
+        });
+        var lastModifiedOffset = 0;
+        var spans = [];
+        for (var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++) {
+            var e = sortedEdits_1[_i];
+            var startOffset = document.offsetAt(e.range.start);
+            if (startOffset < lastModifiedOffset) {
+                throw new Error('Overlapping edit');
+            }
+            else if (startOffset > lastModifiedOffset) {
+                spans.push(text.substring(lastModifiedOffset, startOffset));
+            }
+            if (e.newText.length) {
+                spans.push(e.newText);
+            }
+            lastModifiedOffset = document.offsetAt(e.range.end);
+        }
+        spans.push(text.substr(lastModifiedOffset));
+        return spans.join('');
+    }
+    TextDocument.applyEdits = applyEdits;
+})(TextDocument || (TextDocument = {}));
+function mergeSort(data, compare) {
+    if (data.length <= 1) {
+        // sorted
+        return data;
+    }
+    var p = (data.length / 2) | 0;
+    var left = data.slice(0, p);
+    var right = data.slice(p);
+    mergeSort(left, compare);
+    mergeSort(right, compare);
+    var leftIdx = 0;
+    var rightIdx = 0;
+    var i = 0;
+    while (leftIdx < left.length && rightIdx < right.length) {
+        var ret = compare(left[leftIdx], right[rightIdx]);
+        if (ret <= 0) {
+            // smaller_equal -> take left to preserve order
+            data[i++] = left[leftIdx++];
+        }
+        else {
+            // greater -> take right
+            data[i++] = right[rightIdx++];
+        }
+    }
+    while (leftIdx < left.length) {
+        data[i++] = left[leftIdx++];
+    }
+    while (rightIdx < right.length) {
+        data[i++] = right[rightIdx++];
+    }
+    return data;
+}
+function computeLineOffsets(text, isAtLineStart, textOffset) {
+    if (textOffset === void 0) { textOffset = 0; }
+    var result = isAtLineStart ? [textOffset] : [];
+    for (var i = 0; i < text.length; i++) {
+        var ch = text.charCodeAt(i);
+        if (ch === 13 /* CharCode.CarriageReturn */ || ch === 10 /* CharCode.LineFeed */) {
+            if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
+                i++;
+            }
+            result.push(textOffset + i + 1);
+        }
+    }
+    return result;
+}
+function getWellformedRange(range) {
+    var start = range.start;
+    var end = range.end;
+    if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
+        return { start: end, end: start };
+    }
+    return range;
+}
+function getWellformedEdit(textEdit) {
+    var range = getWellformedRange(textEdit.range);
+    if (range !== textEdit.range) {
+        return { newText: textEdit.newText, range: range };
+    }
+    return textEdit;
+}
+
 
 /***/ }),
 
@@ -19433,81 +20023,81 @@ exports.objectLiteral = objectLiteral;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AnnotatedTextEdit": () => (/* binding */ AnnotatedTextEdit),
-/* harmony export */   "ChangeAnnotation": () => (/* binding */ ChangeAnnotation),
-/* harmony export */   "ChangeAnnotationIdentifier": () => (/* binding */ ChangeAnnotationIdentifier),
-/* harmony export */   "CodeAction": () => (/* binding */ CodeAction),
-/* harmony export */   "CodeActionContext": () => (/* binding */ CodeActionContext),
-/* harmony export */   "CodeActionKind": () => (/* binding */ CodeActionKind),
-/* harmony export */   "CodeActionTriggerKind": () => (/* binding */ CodeActionTriggerKind),
-/* harmony export */   "CodeDescription": () => (/* binding */ CodeDescription),
-/* harmony export */   "CodeLens": () => (/* binding */ CodeLens),
-/* harmony export */   "Color": () => (/* binding */ Color),
-/* harmony export */   "ColorInformation": () => (/* binding */ ColorInformation),
-/* harmony export */   "ColorPresentation": () => (/* binding */ ColorPresentation),
-/* harmony export */   "Command": () => (/* binding */ Command),
-/* harmony export */   "CompletionItem": () => (/* binding */ CompletionItem),
-/* harmony export */   "CompletionItemKind": () => (/* binding */ CompletionItemKind),
-/* harmony export */   "CompletionItemLabelDetails": () => (/* binding */ CompletionItemLabelDetails),
-/* harmony export */   "CompletionItemTag": () => (/* binding */ CompletionItemTag),
-/* harmony export */   "CompletionList": () => (/* binding */ CompletionList),
-/* harmony export */   "CreateFile": () => (/* binding */ CreateFile),
-/* harmony export */   "DeleteFile": () => (/* binding */ DeleteFile),
-/* harmony export */   "Diagnostic": () => (/* binding */ Diagnostic),
-/* harmony export */   "DiagnosticRelatedInformation": () => (/* binding */ DiagnosticRelatedInformation),
-/* harmony export */   "DiagnosticSeverity": () => (/* binding */ DiagnosticSeverity),
-/* harmony export */   "DiagnosticTag": () => (/* binding */ DiagnosticTag),
-/* harmony export */   "DocumentHighlight": () => (/* binding */ DocumentHighlight),
-/* harmony export */   "DocumentHighlightKind": () => (/* binding */ DocumentHighlightKind),
-/* harmony export */   "DocumentLink": () => (/* binding */ DocumentLink),
-/* harmony export */   "DocumentSymbol": () => (/* binding */ DocumentSymbol),
-/* harmony export */   "DocumentUri": () => (/* binding */ DocumentUri),
-/* harmony export */   "EOL": () => (/* binding */ EOL),
-/* harmony export */   "FoldingRange": () => (/* binding */ FoldingRange),
-/* harmony export */   "FoldingRangeKind": () => (/* binding */ FoldingRangeKind),
-/* harmony export */   "FormattingOptions": () => (/* binding */ FormattingOptions),
-/* harmony export */   "Hover": () => (/* binding */ Hover),
-/* harmony export */   "InlayHint": () => (/* binding */ InlayHint),
-/* harmony export */   "InlayHintKind": () => (/* binding */ InlayHintKind),
-/* harmony export */   "InlayHintLabelPart": () => (/* binding */ InlayHintLabelPart),
-/* harmony export */   "InlineValueContext": () => (/* binding */ InlineValueContext),
-/* harmony export */   "InlineValueEvaluatableExpression": () => (/* binding */ InlineValueEvaluatableExpression),
-/* harmony export */   "InlineValueText": () => (/* binding */ InlineValueText),
-/* harmony export */   "InlineValueVariableLookup": () => (/* binding */ InlineValueVariableLookup),
-/* harmony export */   "InsertReplaceEdit": () => (/* binding */ InsertReplaceEdit),
-/* harmony export */   "InsertTextFormat": () => (/* binding */ InsertTextFormat),
-/* harmony export */   "InsertTextMode": () => (/* binding */ InsertTextMode),
-/* harmony export */   "Location": () => (/* binding */ Location),
-/* harmony export */   "LocationLink": () => (/* binding */ LocationLink),
-/* harmony export */   "MarkedString": () => (/* binding */ MarkedString),
-/* harmony export */   "MarkupContent": () => (/* binding */ MarkupContent),
-/* harmony export */   "MarkupKind": () => (/* binding */ MarkupKind),
-/* harmony export */   "OptionalVersionedTextDocumentIdentifier": () => (/* binding */ OptionalVersionedTextDocumentIdentifier),
-/* harmony export */   "ParameterInformation": () => (/* binding */ ParameterInformation),
-/* harmony export */   "Position": () => (/* binding */ Position),
-/* harmony export */   "Range": () => (/* binding */ Range),
-/* harmony export */   "RenameFile": () => (/* binding */ RenameFile),
-/* harmony export */   "SelectionRange": () => (/* binding */ SelectionRange),
-/* harmony export */   "SemanticTokenModifiers": () => (/* binding */ SemanticTokenModifiers),
-/* harmony export */   "SemanticTokenTypes": () => (/* binding */ SemanticTokenTypes),
-/* harmony export */   "SemanticTokens": () => (/* binding */ SemanticTokens),
-/* harmony export */   "SignatureInformation": () => (/* binding */ SignatureInformation),
-/* harmony export */   "SymbolInformation": () => (/* binding */ SymbolInformation),
-/* harmony export */   "SymbolKind": () => (/* binding */ SymbolKind),
-/* harmony export */   "SymbolTag": () => (/* binding */ SymbolTag),
-/* harmony export */   "TextDocument": () => (/* binding */ TextDocument),
-/* harmony export */   "TextDocumentEdit": () => (/* binding */ TextDocumentEdit),
-/* harmony export */   "TextDocumentIdentifier": () => (/* binding */ TextDocumentIdentifier),
-/* harmony export */   "TextDocumentItem": () => (/* binding */ TextDocumentItem),
-/* harmony export */   "TextEdit": () => (/* binding */ TextEdit),
-/* harmony export */   "URI": () => (/* binding */ URI),
-/* harmony export */   "VersionedTextDocumentIdentifier": () => (/* binding */ VersionedTextDocumentIdentifier),
-/* harmony export */   "WorkspaceChange": () => (/* binding */ WorkspaceChange),
-/* harmony export */   "WorkspaceEdit": () => (/* binding */ WorkspaceEdit),
-/* harmony export */   "WorkspaceFolder": () => (/* binding */ WorkspaceFolder),
-/* harmony export */   "WorkspaceSymbol": () => (/* binding */ WorkspaceSymbol),
-/* harmony export */   "integer": () => (/* binding */ integer),
-/* harmony export */   "uinteger": () => (/* binding */ uinteger)
+/* harmony export */   AnnotatedTextEdit: () => (/* binding */ AnnotatedTextEdit),
+/* harmony export */   ChangeAnnotation: () => (/* binding */ ChangeAnnotation),
+/* harmony export */   ChangeAnnotationIdentifier: () => (/* binding */ ChangeAnnotationIdentifier),
+/* harmony export */   CodeAction: () => (/* binding */ CodeAction),
+/* harmony export */   CodeActionContext: () => (/* binding */ CodeActionContext),
+/* harmony export */   CodeActionKind: () => (/* binding */ CodeActionKind),
+/* harmony export */   CodeActionTriggerKind: () => (/* binding */ CodeActionTriggerKind),
+/* harmony export */   CodeDescription: () => (/* binding */ CodeDescription),
+/* harmony export */   CodeLens: () => (/* binding */ CodeLens),
+/* harmony export */   Color: () => (/* binding */ Color),
+/* harmony export */   ColorInformation: () => (/* binding */ ColorInformation),
+/* harmony export */   ColorPresentation: () => (/* binding */ ColorPresentation),
+/* harmony export */   Command: () => (/* binding */ Command),
+/* harmony export */   CompletionItem: () => (/* binding */ CompletionItem),
+/* harmony export */   CompletionItemKind: () => (/* binding */ CompletionItemKind),
+/* harmony export */   CompletionItemLabelDetails: () => (/* binding */ CompletionItemLabelDetails),
+/* harmony export */   CompletionItemTag: () => (/* binding */ CompletionItemTag),
+/* harmony export */   CompletionList: () => (/* binding */ CompletionList),
+/* harmony export */   CreateFile: () => (/* binding */ CreateFile),
+/* harmony export */   DeleteFile: () => (/* binding */ DeleteFile),
+/* harmony export */   Diagnostic: () => (/* binding */ Diagnostic),
+/* harmony export */   DiagnosticRelatedInformation: () => (/* binding */ DiagnosticRelatedInformation),
+/* harmony export */   DiagnosticSeverity: () => (/* binding */ DiagnosticSeverity),
+/* harmony export */   DiagnosticTag: () => (/* binding */ DiagnosticTag),
+/* harmony export */   DocumentHighlight: () => (/* binding */ DocumentHighlight),
+/* harmony export */   DocumentHighlightKind: () => (/* binding */ DocumentHighlightKind),
+/* harmony export */   DocumentLink: () => (/* binding */ DocumentLink),
+/* harmony export */   DocumentSymbol: () => (/* binding */ DocumentSymbol),
+/* harmony export */   DocumentUri: () => (/* binding */ DocumentUri),
+/* harmony export */   EOL: () => (/* binding */ EOL),
+/* harmony export */   FoldingRange: () => (/* binding */ FoldingRange),
+/* harmony export */   FoldingRangeKind: () => (/* binding */ FoldingRangeKind),
+/* harmony export */   FormattingOptions: () => (/* binding */ FormattingOptions),
+/* harmony export */   Hover: () => (/* binding */ Hover),
+/* harmony export */   InlayHint: () => (/* binding */ InlayHint),
+/* harmony export */   InlayHintKind: () => (/* binding */ InlayHintKind),
+/* harmony export */   InlayHintLabelPart: () => (/* binding */ InlayHintLabelPart),
+/* harmony export */   InlineValueContext: () => (/* binding */ InlineValueContext),
+/* harmony export */   InlineValueEvaluatableExpression: () => (/* binding */ InlineValueEvaluatableExpression),
+/* harmony export */   InlineValueText: () => (/* binding */ InlineValueText),
+/* harmony export */   InlineValueVariableLookup: () => (/* binding */ InlineValueVariableLookup),
+/* harmony export */   InsertReplaceEdit: () => (/* binding */ InsertReplaceEdit),
+/* harmony export */   InsertTextFormat: () => (/* binding */ InsertTextFormat),
+/* harmony export */   InsertTextMode: () => (/* binding */ InsertTextMode),
+/* harmony export */   Location: () => (/* binding */ Location),
+/* harmony export */   LocationLink: () => (/* binding */ LocationLink),
+/* harmony export */   MarkedString: () => (/* binding */ MarkedString),
+/* harmony export */   MarkupContent: () => (/* binding */ MarkupContent),
+/* harmony export */   MarkupKind: () => (/* binding */ MarkupKind),
+/* harmony export */   OptionalVersionedTextDocumentIdentifier: () => (/* binding */ OptionalVersionedTextDocumentIdentifier),
+/* harmony export */   ParameterInformation: () => (/* binding */ ParameterInformation),
+/* harmony export */   Position: () => (/* binding */ Position),
+/* harmony export */   Range: () => (/* binding */ Range),
+/* harmony export */   RenameFile: () => (/* binding */ RenameFile),
+/* harmony export */   SelectionRange: () => (/* binding */ SelectionRange),
+/* harmony export */   SemanticTokenModifiers: () => (/* binding */ SemanticTokenModifiers),
+/* harmony export */   SemanticTokenTypes: () => (/* binding */ SemanticTokenTypes),
+/* harmony export */   SemanticTokens: () => (/* binding */ SemanticTokens),
+/* harmony export */   SignatureInformation: () => (/* binding */ SignatureInformation),
+/* harmony export */   SymbolInformation: () => (/* binding */ SymbolInformation),
+/* harmony export */   SymbolKind: () => (/* binding */ SymbolKind),
+/* harmony export */   SymbolTag: () => (/* binding */ SymbolTag),
+/* harmony export */   TextDocument: () => (/* binding */ TextDocument),
+/* harmony export */   TextDocumentEdit: () => (/* binding */ TextDocumentEdit),
+/* harmony export */   TextDocumentIdentifier: () => (/* binding */ TextDocumentIdentifier),
+/* harmony export */   TextDocumentItem: () => (/* binding */ TextDocumentItem),
+/* harmony export */   TextEdit: () => (/* binding */ TextEdit),
+/* harmony export */   URI: () => (/* binding */ URI),
+/* harmony export */   VersionedTextDocumentIdentifier: () => (/* binding */ VersionedTextDocumentIdentifier),
+/* harmony export */   WorkspaceChange: () => (/* binding */ WorkspaceChange),
+/* harmony export */   WorkspaceEdit: () => (/* binding */ WorkspaceEdit),
+/* harmony export */   WorkspaceFolder: () => (/* binding */ WorkspaceFolder),
+/* harmony export */   WorkspaceSymbol: () => (/* binding */ WorkspaceSymbol),
+/* harmony export */   integer: () => (/* binding */ integer),
+/* harmony export */   uinteger: () => (/* binding */ uinteger)
 /* harmony export */ });
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19548,7 +20138,7 @@ var uinteger;
 })(uinteger || (uinteger = {}));
 /**
  * The Position namespace provides helper functions to work with
- * [Position](#Position) literals.
+ * {@link Position} literals.
  */
 var Position;
 (function (Position) {
@@ -19568,7 +20158,7 @@ var Position;
     }
     Position.create = create;
     /**
-     * Checks whether the given literal conforms to the [Position](#Position) interface.
+     * Checks whether the given literal conforms to the {@link Position} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19578,7 +20168,7 @@ var Position;
 })(Position || (Position = {}));
 /**
  * The Range namespace provides helper functions to work with
- * [Range](#Range) literals.
+ * {@link Range} literals.
  */
 var Range;
 (function (Range) {
@@ -19595,7 +20185,7 @@ var Range;
     }
     Range.create = create;
     /**
-     * Checks whether the given literal conforms to the [Range](#Range) interface.
+     * Checks whether the given literal conforms to the {@link Range} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19605,7 +20195,7 @@ var Range;
 })(Range || (Range = {}));
 /**
  * The Location namespace provides helper functions to work with
- * [Location](#Location) literals.
+ * {@link Location} literals.
  */
 var Location;
 (function (Location) {
@@ -19619,7 +20209,7 @@ var Location;
     }
     Location.create = create;
     /**
-     * Checks whether the given literal conforms to the [Location](#Location) interface.
+     * Checks whether the given literal conforms to the {@link Location} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19629,7 +20219,7 @@ var Location;
 })(Location || (Location = {}));
 /**
  * The LocationLink namespace provides helper functions to work with
- * [LocationLink](#LocationLink) literals.
+ * {@link LocationLink} literals.
  */
 var LocationLink;
 (function (LocationLink) {
@@ -19645,7 +20235,7 @@ var LocationLink;
     }
     LocationLink.create = create;
     /**
-     * Checks whether the given literal conforms to the [LocationLink](#LocationLink) interface.
+     * Checks whether the given literal conforms to the {@link LocationLink} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19657,7 +20247,7 @@ var LocationLink;
 })(LocationLink || (LocationLink = {}));
 /**
  * The Color namespace provides helper functions to work with
- * [Color](#Color) literals.
+ * {@link Color} literals.
  */
 var Color;
 (function (Color) {
@@ -19674,7 +20264,7 @@ var Color;
     }
     Color.create = create;
     /**
-     * Checks whether the given literal conforms to the [Color](#Color) interface.
+     * Checks whether the given literal conforms to the {@link Color} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19687,7 +20277,7 @@ var Color;
 })(Color || (Color = {}));
 /**
  * The ColorInformation namespace provides helper functions to work with
- * [ColorInformation](#ColorInformation) literals.
+ * {@link ColorInformation} literals.
  */
 var ColorInformation;
 (function (ColorInformation) {
@@ -19702,7 +20292,7 @@ var ColorInformation;
     }
     ColorInformation.create = create;
     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19712,7 +20302,7 @@ var ColorInformation;
 })(ColorInformation || (ColorInformation = {}));
 /**
  * The Color namespace provides helper functions to work with
- * [ColorPresentation](#ColorPresentation) literals.
+ * {@link ColorPresentation} literals.
  */
 var ColorPresentation;
 (function (ColorPresentation) {
@@ -19728,7 +20318,7 @@ var ColorPresentation;
     }
     ColorPresentation.create = create;
     /**
-     * Checks whether the given literal conforms to the [ColorInformation](#ColorInformation) interface.
+     * Checks whether the given literal conforms to the {@link ColorInformation} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19758,7 +20348,7 @@ var FoldingRangeKind;
 })(FoldingRangeKind || (FoldingRangeKind = {}));
 /**
  * The folding range namespace provides helper functions to work with
- * [FoldingRange](#FoldingRange) literals.
+ * {@link FoldingRange} literals.
  */
 var FoldingRange;
 (function (FoldingRange) {
@@ -19786,7 +20376,7 @@ var FoldingRange;
     }
     FoldingRange.create = create;
     /**
-     * Checks whether the given literal conforms to the [FoldingRange](#FoldingRange) interface.
+     * Checks whether the given literal conforms to the {@link FoldingRange} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19799,7 +20389,7 @@ var FoldingRange;
 })(FoldingRange || (FoldingRange = {}));
 /**
  * The DiagnosticRelatedInformation namespace provides helper functions to work with
- * [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) literals.
+ * {@link DiagnosticRelatedInformation} literals.
  */
 var DiagnosticRelatedInformation;
 (function (DiagnosticRelatedInformation) {
@@ -19814,7 +20404,7 @@ var DiagnosticRelatedInformation;
     }
     DiagnosticRelatedInformation.create = create;
     /**
-     * Checks whether the given literal conforms to the [DiagnosticRelatedInformation](#DiagnosticRelatedInformation) interface.
+     * Checks whether the given literal conforms to the {@link DiagnosticRelatedInformation} interface.
      */
     function is(value) {
         var candidate = value;
@@ -19880,7 +20470,7 @@ var CodeDescription;
 })(CodeDescription || (CodeDescription = {}));
 /**
  * The Diagnostic namespace provides helper functions to work with
- * [Diagnostic](#Diagnostic) literals.
+ * {@link Diagnostic} literals.
  */
 var Diagnostic;
 (function (Diagnostic) {
@@ -19905,7 +20495,7 @@ var Diagnostic;
     }
     Diagnostic.create = create;
     /**
-     * Checks whether the given literal conforms to the [Diagnostic](#Diagnostic) interface.
+     * Checks whether the given literal conforms to the {@link Diagnostic} interface.
      */
     function is(value) {
         var _a;
@@ -19923,7 +20513,7 @@ var Diagnostic;
 })(Diagnostic || (Diagnostic = {}));
 /**
  * The Command namespace provides helper functions to work with
- * [Command](#Command) literals.
+ * {@link Command} literals.
  */
 var Command;
 (function (Command) {
@@ -19943,7 +20533,7 @@ var Command;
     }
     Command.create = create;
     /**
-     * Checks whether the given literal conforms to the [Command](#Command) interface.
+     * Checks whether the given literal conforms to the {@link Command} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20325,7 +20915,7 @@ var WorkspaceChange = /** @class */ (function () {
     }
     Object.defineProperty(WorkspaceChange.prototype, "edit", {
         /**
-         * Returns the underlying [WorkspaceEdit](#WorkspaceEdit) literal
+         * Returns the underlying {@link WorkspaceEdit} literal
          * use to be returned from a workspace edit operation like rename.
          */
         get: function () {
@@ -20473,7 +21063,7 @@ var WorkspaceChange = /** @class */ (function () {
 
 /**
  * The TextDocumentIdentifier namespace provides helper functions to work with
- * [TextDocumentIdentifier](#TextDocumentIdentifier) literals.
+ * {@link TextDocumentIdentifier} literals.
  */
 var TextDocumentIdentifier;
 (function (TextDocumentIdentifier) {
@@ -20486,7 +21076,7 @@ var TextDocumentIdentifier;
     }
     TextDocumentIdentifier.create = create;
     /**
-     * Checks whether the given literal conforms to the [TextDocumentIdentifier](#TextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentIdentifier} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20496,7 +21086,7 @@ var TextDocumentIdentifier;
 })(TextDocumentIdentifier || (TextDocumentIdentifier = {}));
 /**
  * The VersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) literals.
+ * {@link VersionedTextDocumentIdentifier} literals.
  */
 var VersionedTextDocumentIdentifier;
 (function (VersionedTextDocumentIdentifier) {
@@ -20510,7 +21100,7 @@ var VersionedTextDocumentIdentifier;
     }
     VersionedTextDocumentIdentifier.create = create;
     /**
-     * Checks whether the given literal conforms to the [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link VersionedTextDocumentIdentifier} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20520,7 +21110,7 @@ var VersionedTextDocumentIdentifier;
 })(VersionedTextDocumentIdentifier || (VersionedTextDocumentIdentifier = {}));
 /**
  * The OptionalVersionedTextDocumentIdentifier namespace provides helper functions to work with
- * [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) literals.
+ * {@link OptionalVersionedTextDocumentIdentifier} literals.
  */
 var OptionalVersionedTextDocumentIdentifier;
 (function (OptionalVersionedTextDocumentIdentifier) {
@@ -20534,7 +21124,7 @@ var OptionalVersionedTextDocumentIdentifier;
     }
     OptionalVersionedTextDocumentIdentifier.create = create;
     /**
-     * Checks whether the given literal conforms to the [OptionalVersionedTextDocumentIdentifier](#OptionalVersionedTextDocumentIdentifier) interface.
+     * Checks whether the given literal conforms to the {@link OptionalVersionedTextDocumentIdentifier} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20544,7 +21134,7 @@ var OptionalVersionedTextDocumentIdentifier;
 })(OptionalVersionedTextDocumentIdentifier || (OptionalVersionedTextDocumentIdentifier = {}));
 /**
  * The TextDocumentItem namespace provides helper functions to work with
- * [TextDocumentItem](#TextDocumentItem) literals.
+ * {@link TextDocumentItem} literals.
  */
 var TextDocumentItem;
 (function (TextDocumentItem) {
@@ -20560,7 +21150,7 @@ var TextDocumentItem;
     }
     TextDocumentItem.create = create;
     /**
-     * Checks whether the given literal conforms to the [TextDocumentItem](#TextDocumentItem) interface.
+     * Checks whether the given literal conforms to the {@link TextDocumentItem} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20586,7 +21176,7 @@ var MarkupKind;
      */
     MarkupKind.Markdown = 'markdown';
     /**
-     * Checks whether the given value is a value of the [MarkupKind](#MarkupKind) type.
+     * Checks whether the given value is a value of the {@link MarkupKind} type.
      */
     function is(value) {
         var candidate = value;
@@ -20597,7 +21187,7 @@ var MarkupKind;
 var MarkupContent;
 (function (MarkupContent) {
     /**
-     * Checks whether the given value conforms to the [MarkupContent](#MarkupContent) interface.
+     * Checks whether the given value conforms to the {@link MarkupContent} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20686,7 +21276,7 @@ var InsertReplaceEdit;
     }
     InsertReplaceEdit.create = create;
     /**
-     * Checks whether the given literal conforms to the [InsertReplaceEdit](#InsertReplaceEdit) interface.
+     * Checks whether the given literal conforms to the {@link InsertReplaceEdit} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20774,7 +21364,7 @@ var MarkedString;
     }
     MarkedString.fromPlainText = fromPlainText;
     /**
-     * Checks whether the given value conforms to the [MarkedString](#MarkedString) type.
+     * Checks whether the given value conforms to the {@link MarkedString} type.
      */
     function is(value) {
         var candidate = value;
@@ -20785,7 +21375,7 @@ var MarkedString;
 var Hover;
 (function (Hover) {
     /**
-     * Checks whether the given value conforms to the [Hover](#Hover) interface.
+     * Checks whether the given value conforms to the {@link Hover} interface.
      */
     function is(value) {
         var candidate = value;
@@ -20797,7 +21387,7 @@ var Hover;
 })(Hover || (Hover = {}));
 /**
  * The ParameterInformation namespace provides helper functions to work with
- * [ParameterInformation](#ParameterInformation) literals.
+ * {@link ParameterInformation} literals.
  */
 var ParameterInformation;
 (function (ParameterInformation) {
@@ -20814,7 +21404,7 @@ var ParameterInformation;
 })(ParameterInformation || (ParameterInformation = {}));
 /**
  * The SignatureInformation namespace provides helper functions to work with
- * [SignatureInformation](#SignatureInformation) literals.
+ * {@link SignatureInformation} literals.
  */
 var SignatureInformation;
 (function (SignatureInformation) {
@@ -20857,7 +21447,7 @@ var DocumentHighlightKind;
 })(DocumentHighlightKind || (DocumentHighlightKind = {}));
 /**
  * DocumentHighlight namespace to provide helper functions to work with
- * [DocumentHighlight](#DocumentHighlight) literals.
+ * {@link DocumentHighlight} literals.
  */
 var DocumentHighlight;
 (function (DocumentHighlight) {
@@ -20988,7 +21578,7 @@ var DocumentSymbol;
     }
     DocumentSymbol.create = create;
     /**
-     * Checks whether the given literal conforms to the [DocumentSymbol](#DocumentSymbol) interface.
+     * Checks whether the given literal conforms to the {@link DocumentSymbol} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21096,7 +21686,7 @@ var CodeActionTriggerKind;
 })(CodeActionTriggerKind || (CodeActionTriggerKind = {}));
 /**
  * The CodeActionContext namespace provides helper functions to work with
- * [CodeActionContext](#CodeActionContext) literals.
+ * {@link CodeActionContext} literals.
  */
 var CodeActionContext;
 (function (CodeActionContext) {
@@ -21115,7 +21705,7 @@ var CodeActionContext;
     }
     CodeActionContext.create = create;
     /**
-     * Checks whether the given literal conforms to the [CodeActionContext](#CodeActionContext) interface.
+     * Checks whether the given literal conforms to the {@link CodeActionContext} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21160,7 +21750,7 @@ var CodeAction;
 })(CodeAction || (CodeAction = {}));
 /**
  * The CodeLens namespace provides helper functions to work with
- * [CodeLens](#CodeLens) literals.
+ * {@link CodeLens} literals.
  */
 var CodeLens;
 (function (CodeLens) {
@@ -21176,7 +21766,7 @@ var CodeLens;
     }
     CodeLens.create = create;
     /**
-     * Checks whether the given literal conforms to the [CodeLens](#CodeLens) interface.
+     * Checks whether the given literal conforms to the {@link CodeLens} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21186,7 +21776,7 @@ var CodeLens;
 })(CodeLens || (CodeLens = {}));
 /**
  * The FormattingOptions namespace provides helper functions to work with
- * [FormattingOptions](#FormattingOptions) literals.
+ * {@link FormattingOptions} literals.
  */
 var FormattingOptions;
 (function (FormattingOptions) {
@@ -21198,7 +21788,7 @@ var FormattingOptions;
     }
     FormattingOptions.create = create;
     /**
-     * Checks whether the given literal conforms to the [FormattingOptions](#FormattingOptions) interface.
+     * Checks whether the given literal conforms to the {@link FormattingOptions} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21208,7 +21798,7 @@ var FormattingOptions;
 })(FormattingOptions || (FormattingOptions = {}));
 /**
  * The DocumentLink namespace provides helper functions to work with
- * [DocumentLink](#DocumentLink) literals.
+ * {@link DocumentLink} literals.
  */
 var DocumentLink;
 (function (DocumentLink) {
@@ -21220,7 +21810,7 @@ var DocumentLink;
     }
     DocumentLink.create = create;
     /**
-     * Checks whether the given literal conforms to the [DocumentLink](#DocumentLink) interface.
+     * Checks whether the given literal conforms to the {@link DocumentLink} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21385,7 +21975,7 @@ var InlineValueEvaluatableExpression;
 })(InlineValueEvaluatableExpression || (InlineValueEvaluatableExpression = {}));
 /**
  * The InlineValueContext namespace provides helper functions to work with
- * [InlineValueContext](#InlineValueContext) literals.
+ * {@link InlineValueContext} literals.
  *
  * @since 3.17.0
  */
@@ -21399,7 +21989,7 @@ var InlineValueContext;
     }
     InlineValueContext.create = create;
     /**
-     * Checks whether the given literal conforms to the [InlineValueContext](#InlineValueContext) interface.
+     * Checks whether the given literal conforms to the {@link InlineValueContext} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21490,7 +22080,7 @@ var TextDocument;
     }
     TextDocument.create = create;
     /**
-     * Checks whether the given literal conforms to the [ITextDocument](#ITextDocument) interface.
+     * Checks whether the given literal conforms to the {@link ITextDocument} interface.
      */
     function is(value) {
         var candidate = value;
@@ -21729,6 +22319,7 @@ var Is;
 
 var forEach = __webpack_require__(3243);
 var availableTypedArrays = __webpack_require__(2191);
+var callBind = __webpack_require__(9429);
 var callBound = __webpack_require__(2680);
 var gOPD = __webpack_require__(326);
 
@@ -21739,45 +22330,78 @@ var g = typeof globalThis === 'undefined' ? __webpack_require__.g : globalThis;
 var typedArrays = availableTypedArrays();
 
 var $slice = callBound('String.prototype.slice');
-var toStrTags = {};
 var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+
+var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
+	for (var i = 0; i < array.length; i += 1) {
+		if (array[i] === value) {
+			return i;
+		}
+	}
+	return -1;
+};
+var cache = { __proto__: null };
 if (hasToStringTag && gOPD && getPrototypeOf) {
 	forEach(typedArrays, function (typedArray) {
-		if (typeof g[typedArray] === 'function') {
-			var arr = new g[typedArray]();
-			if (Symbol.toStringTag in arr) {
-				var proto = getPrototypeOf(arr);
-				var descriptor = gOPD(proto, Symbol.toStringTag);
-				if (!descriptor) {
-					var superProto = getPrototypeOf(proto);
-					descriptor = gOPD(superProto, Symbol.toStringTag);
-				}
-				toStrTags[typedArray] = descriptor.get;
+		var arr = new g[typedArray]();
+		if (Symbol.toStringTag in arr) {
+			var proto = getPrototypeOf(arr);
+			var descriptor = gOPD(proto, Symbol.toStringTag);
+			if (!descriptor) {
+				var superProto = getPrototypeOf(proto);
+				descriptor = gOPD(superProto, Symbol.toStringTag);
 			}
+			cache['$' + typedArray] = callBind(descriptor.get);
 		}
+	});
+} else {
+	forEach(typedArrays, function (typedArray) {
+		var arr = new g[typedArray]();
+		cache['$' + typedArray] = callBind(arr.slice);
 	});
 }
 
 var tryTypedArrays = function tryAllTypedArrays(value) {
-	var foundName = false;
-	forEach(toStrTags, function (getter, typedArray) {
-		if (!foundName) {
+	var found = false;
+	forEach(cache, function (getter, typedArray) {
+		if (!found) {
 			try {
-				var name = getter.call(value);
-				if (name === typedArray) {
-					foundName = name;
+				if ('$' + getter(value) === typedArray) {
+					found = $slice(typedArray, 1);
 				}
-			} catch (e) {}
+			} catch (e) { /**/ }
 		}
 	});
-	return foundName;
+	return found;
 };
 
-var isTypedArray = __webpack_require__(198);
+var trySlices = function tryAllSlices(value) {
+	var found = false;
+	forEach(cache, function (getter, name) {
+		if (!found) {
+			try {
+				getter(value);
+				found = $slice(name, 1);
+			} catch (e) { /**/ }
+		}
+	});
+	return found;
+};
 
 module.exports = function whichTypedArray(value) {
-	if (!isTypedArray(value)) { return false; }
-	if (!hasToStringTag || !(Symbol.toStringTag in value)) { return $slice($toString(value), 8, -1); }
+	if (!value || typeof value !== 'object') { return false; }
+	if (!hasToStringTag) {
+		var tag = $slice($toString(value), 8, -1);
+		if ($indexOf(typedArrays, tag) > -1) {
+			return tag;
+		}
+		if (tag !== 'Object') {
+			return false;
+		}
+		// node < 0.6 hits here on real Typed Arrays
+		return trySlices(value);
+	}
+	if (!gOPD) { return null; } // unknown engine
 	return tryTypedArrays(value);
 };
 
@@ -21896,458 +22520,18 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "PhpService": () => (/* binding */ PhpService)
+  PhpService: () => (/* binding */ PhpService)
 });
 
-;// CONCATENATED MODULE: ./utils.ts
-function mergeObjects(obj1, obj2) {
-    if (!obj1) return obj2;
-    if (!obj2) return obj1;
-    const mergedObjects = {
-        ...obj2,
-        ...obj1
-    }; // Give priority to obj1 values by spreading obj2 first, then obj1
-    for (const key of Object.keys(mergedObjects)){
-        if (obj1[key] && obj2[key]) {
-            if (Array.isArray(obj1[key])) {
-                mergedObjects[key] = obj1[key].concat(obj2[key]);
-            } else if (Array.isArray(obj2[key])) {
-                mergedObjects[key] = obj2[key].concat(obj1[key]);
-            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-            }
-        }
-    }
-    return mergedObjects;
-}
-function utils_notEmpty(value) {
-    return value !== null && value !== undefined;
-}
-//taken with small changes from ace-code
-function utils_mergeRanges(ranges) {
-    var list = ranges;
-    list = list.sort(function(a, b) {
-        return comparePoints(a.start, b.start);
-    });
-    var next = list[0], range;
-    for(var i = 1; i < list.length; i++){
-        range = next;
-        next = list[i];
-        var cmp = comparePoints(range.end, next.start);
-        if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
-        if (comparePoints(range.end, next.end) < 0) {
-            range.end.row = next.end.row;
-            range.end.column = next.end.column;
-        }
-        list.splice(i, 1);
-        next = range;
-        i--;
-    }
-    return list;
-}
-function comparePoints(p1, p2) {
-    return p1.row - p2.row || p1.column - p2.column;
-}
-function checkValueAgainstRegexpArray(value, regexpArray) {
-    if (!regexpArray) {
-        return false;
-    }
-    for(let i = 0; i < regexpArray.length; i++){
-        if (regexpArray[i].test(value)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-;// CONCATENATED MODULE: ../../node_modules/vscode-languageserver-textdocument/lib/esm/main.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-var FullTextDocument = /** @class */ (function () {
-    function FullTextDocument(uri, languageId, version, content) {
-        this._uri = uri;
-        this._languageId = languageId;
-        this._version = version;
-        this._content = content;
-        this._lineOffsets = undefined;
-    }
-    Object.defineProperty(FullTextDocument.prototype, "uri", {
-        get: function () {
-            return this._uri;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "languageId", {
-        get: function () {
-            return this._languageId;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "version", {
-        get: function () {
-            return this._version;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.prototype.getText = function (range) {
-        if (range) {
-            var start = this.offsetAt(range.start);
-            var end = this.offsetAt(range.end);
-            return this._content.substring(start, end);
-        }
-        return this._content;
-    };
-    FullTextDocument.prototype.update = function (changes, version) {
-        for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
-            var change = changes_1[_i];
-            if (FullTextDocument.isIncremental(change)) {
-                // makes sure start is before end
-                var range = getWellformedRange(change.range);
-                // update content
-                var startOffset = this.offsetAt(range.start);
-                var endOffset = this.offsetAt(range.end);
-                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
-                // update the offsets
-                var startLine = Math.max(range.start.line, 0);
-                var endLine = Math.max(range.end.line, 0);
-                var lineOffsets = this._lineOffsets;
-                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
-                if (endLine - startLine === addedLineOffsets.length) {
-                    for (var i = 0, len = addedLineOffsets.length; i < len; i++) {
-                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
-                    }
-                }
-                else {
-                    if (addedLineOffsets.length < 10000) {
-                        lineOffsets.splice.apply(lineOffsets, __spreadArray([startLine + 1, endLine - startLine], addedLineOffsets, false));
-                    }
-                    else { // avoid too many arguments for splice
-                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
-                    }
-                }
-                var diff = change.text.length - (endOffset - startOffset);
-                if (diff !== 0) {
-                    for (var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
-                        lineOffsets[i] = lineOffsets[i] + diff;
-                    }
-                }
-            }
-            else if (FullTextDocument.isFull(change)) {
-                this._content = change.text;
-                this._lineOffsets = undefined;
-            }
-            else {
-                throw new Error('Unknown change event received');
-            }
-        }
-        this._version = version;
-    };
-    FullTextDocument.prototype.getLineOffsets = function () {
-        if (this._lineOffsets === undefined) {
-            this._lineOffsets = computeLineOffsets(this._content, true);
-        }
-        return this._lineOffsets;
-    };
-    FullTextDocument.prototype.positionAt = function (offset) {
-        offset = Math.max(Math.min(offset, this._content.length), 0);
-        var lineOffsets = this.getLineOffsets();
-        var low = 0, high = lineOffsets.length;
-        if (high === 0) {
-            return { line: 0, character: offset };
-        }
-        while (low < high) {
-            var mid = Math.floor((low + high) / 2);
-            if (lineOffsets[mid] > offset) {
-                high = mid;
-            }
-            else {
-                low = mid + 1;
-            }
-        }
-        // low is the least x for which the line offset is larger than the current offset
-        // or array.length if no line offset is larger than the current offset
-        var line = low - 1;
-        return { line: line, character: offset - lineOffsets[line] };
-    };
-    FullTextDocument.prototype.offsetAt = function (position) {
-        var lineOffsets = this.getLineOffsets();
-        if (position.line >= lineOffsets.length) {
-            return this._content.length;
-        }
-        else if (position.line < 0) {
-            return 0;
-        }
-        var lineOffset = lineOffsets[position.line];
-        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
-        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-    };
-    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
-        get: function () {
-            return this.getLineOffsets().length;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.isIncremental = function (event) {
-        var candidate = event;
-        return candidate !== undefined && candidate !== null &&
-            typeof candidate.text === 'string' && candidate.range !== undefined &&
-            (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
-    };
-    FullTextDocument.isFull = function (event) {
-        var candidate = event;
-        return candidate !== undefined && candidate !== null &&
-            typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
-    };
-    return FullTextDocument;
-}());
-var TextDocument;
-(function (TextDocument) {
-    /**
-     * Creates a new text document.
-     *
-     * @param uri The document's uri.
-     * @param languageId  The document's language Id.
-     * @param version The document's initial version number.
-     * @param content The document's content.
-     */
-    function create(uri, languageId, version, content) {
-        return new FullTextDocument(uri, languageId, version, content);
-    }
-    TextDocument.create = create;
-    /**
-     * Updates a TextDocument by modifying its content.
-     *
-     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
-     * @param changes the changes to apply to the document.
-     * @param version the changes version for the document.
-     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
-     *
-     */
-    function update(document, changes, version) {
-        if (document instanceof FullTextDocument) {
-            document.update(changes, version);
-            return document;
-        }
-        else {
-            throw new Error('TextDocument.update: document must be created by TextDocument.create');
-        }
-    }
-    TextDocument.update = update;
-    function applyEdits(document, edits) {
-        var text = document.getText();
-        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function (a, b) {
-            var diff = a.range.start.line - b.range.start.line;
-            if (diff === 0) {
-                return a.range.start.character - b.range.start.character;
-            }
-            return diff;
-        });
-        var lastModifiedOffset = 0;
-        var spans = [];
-        for (var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++) {
-            var e = sortedEdits_1[_i];
-            var startOffset = document.offsetAt(e.range.start);
-            if (startOffset < lastModifiedOffset) {
-                throw new Error('Overlapping edit');
-            }
-            else if (startOffset > lastModifiedOffset) {
-                spans.push(text.substring(lastModifiedOffset, startOffset));
-            }
-            if (e.newText.length) {
-                spans.push(e.newText);
-            }
-            lastModifiedOffset = document.offsetAt(e.range.end);
-        }
-        spans.push(text.substr(lastModifiedOffset));
-        return spans.join('');
-    }
-    TextDocument.applyEdits = applyEdits;
-})(TextDocument || (TextDocument = {}));
-function mergeSort(data, compare) {
-    if (data.length <= 1) {
-        // sorted
-        return data;
-    }
-    var p = (data.length / 2) | 0;
-    var left = data.slice(0, p);
-    var right = data.slice(p);
-    mergeSort(left, compare);
-    mergeSort(right, compare);
-    var leftIdx = 0;
-    var rightIdx = 0;
-    var i = 0;
-    while (leftIdx < left.length && rightIdx < right.length) {
-        var ret = compare(left[leftIdx], right[rightIdx]);
-        if (ret <= 0) {
-            // smaller_equal -> take left to preserve order
-            data[i++] = left[leftIdx++];
-        }
-        else {
-            // greater -> take right
-            data[i++] = right[rightIdx++];
-        }
-    }
-    while (leftIdx < left.length) {
-        data[i++] = left[leftIdx++];
-    }
-    while (rightIdx < right.length) {
-        data[i++] = right[rightIdx++];
-    }
-    return data;
-}
-function computeLineOffsets(text, isAtLineStart, textOffset) {
-    if (textOffset === void 0) { textOffset = 0; }
-    var result = isAtLineStart ? [textOffset] : [];
-    for (var i = 0; i < text.length; i++) {
-        var ch = text.charCodeAt(i);
-        if (ch === 13 /* CharCode.CarriageReturn */ || ch === 10 /* CharCode.LineFeed */) {
-            if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
-                i++;
-            }
-            result.push(textOffset + i + 1);
-        }
-    }
-    return result;
-}
-function getWellformedRange(range) {
-    var start = range.start;
-    var end = range.end;
-    if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
-        return { start: end, end: start };
-    }
-    return range;
-}
-function getWellformedEdit(textEdit) {
-    var range = getWellformedRange(textEdit.range);
-    if (range !== textEdit.range) {
-        return { newText: textEdit.newText, range: range };
-    }
-    return textEdit;
-}
-
-;// CONCATENATED MODULE: ./services/base-service.ts
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-
-
-class BaseService {
-    addDocument(document) {
-        this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version, document.text);
-    //TODO:
-    /*if (options)
-            this.setSessionOptions(sessionID, options);*/ }
-    getDocument(uri) {
-        return this.documents[uri];
-    }
-    removeDocument(document) {
-        delete this.documents[document.uri];
-        if (this.options[document.uri]) {
-            delete this.options[document.uri];
-        }
-    }
-    getDocumentValue(uri) {
-        var _this_getDocument;
-        return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
-    }
-    setValue(identifier, value) {
-        let document = this.getDocument(identifier.uri);
-        if (document) {
-            document = TextDocument.create(document.uri, document.languageId, document.version, value);
-            this.documents[document.uri] = document;
-        }
-    }
-    setGlobalOptions(options) {
-        this.globalOptions = options !== null && options !== void 0 ? options : {};
-    }
-    setOptions(sessionID, options, merge = false) {
-        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
-    }
-    getOption(sessionID, optionName) {
-        if (this.options[sessionID] && this.options[sessionID][optionName]) {
-            return this.options[sessionID][optionName];
-        } else {
-            return this.globalOptions[optionName];
-        }
-    }
-    applyDeltas(identifier, deltas) {
-        let document = this.getDocument(identifier.uri);
-        if (document) TextDocument.update(document, deltas, identifier.version);
-    }
-    async doComplete(document, position) {
-        return null;
-    }
-    async doHover(document, position) {
-        return null;
-    }
-    async doResolve(item) {
-        return null;
-    }
-    async doValidation(document) {
-        return [];
-    }
-    format(document, range, options) {
-        return [];
-    }
-    async provideSignatureHelp(document, position) {
-        return null;
-    }
-    async findDocumentHighlights(document, position) {
-        return [];
-    }
-    get optionsToFilterDiagnostics() {
-        var _this_globalOptions_errorCodesToIgnore, _this_globalOptions_errorCodesToTreatAsWarning, _this_globalOptions_errorCodesToTreatAsInfo, _this_globalOptions_errorMessagesToIgnore, _this_globalOptions_errorMessagesToTreatAsWarning, _this_globalOptions_errorMessagesToTreatAsInfo;
-        return {
-            errorCodesToIgnore: (_this_globalOptions_errorCodesToIgnore = this.globalOptions.errorCodesToIgnore) !== null && _this_globalOptions_errorCodesToIgnore !== void 0 ? _this_globalOptions_errorCodesToIgnore : [],
-            errorCodesToTreatAsWarning: (_this_globalOptions_errorCodesToTreatAsWarning = this.globalOptions.errorCodesToTreatAsWarning) !== null && _this_globalOptions_errorCodesToTreatAsWarning !== void 0 ? _this_globalOptions_errorCodesToTreatAsWarning : [],
-            errorCodesToTreatAsInfo: (_this_globalOptions_errorCodesToTreatAsInfo = this.globalOptions.errorCodesToTreatAsInfo) !== null && _this_globalOptions_errorCodesToTreatAsInfo !== void 0 ? _this_globalOptions_errorCodesToTreatAsInfo : [],
-            errorMessagesToIgnore: (_this_globalOptions_errorMessagesToIgnore = this.globalOptions.errorMessagesToIgnore) !== null && _this_globalOptions_errorMessagesToIgnore !== void 0 ? _this_globalOptions_errorMessagesToIgnore : [],
-            errorMessagesToTreatAsWarning: (_this_globalOptions_errorMessagesToTreatAsWarning = this.globalOptions.errorMessagesToTreatAsWarning) !== null && _this_globalOptions_errorMessagesToTreatAsWarning !== void 0 ? _this_globalOptions_errorMessagesToTreatAsWarning : [],
-            errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
-        };
-    }
-    constructor(mode){
-        _define_property(this, "mode", void 0);
-        _define_property(this, "documents", {});
-        _define_property(this, "options", {});
-        _define_property(this, "globalOptions", {});
-        _define_property(this, "serviceData", void 0);
-        this.mode = mode;
-    }
-}
-
-// EXTERNAL MODULE: ./services/php/lib/php.js
-var php = __webpack_require__(534);
+// EXTERNAL MODULE: ./src/services/base-service.ts
+var base_service = __webpack_require__(4487);
+// EXTERNAL MODULE: ./src/services/php/lib/php.js
+var php = __webpack_require__(2469);
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var main = __webpack_require__(294);
-;// CONCATENATED MODULE: ./type-converters/common-converters.ts
+// EXTERNAL MODULE: ./src/utils.ts
+var utils = __webpack_require__(6297);
+;// CONCATENATED MODULE: ./src/type-converters/common-converters.ts
 
 
 var common_converters_CommonConverter;
@@ -22407,12 +22591,12 @@ var common_converters_CommonConverter;
     CommonConverter.convertKind = convertKind;
     function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
         if (!errorMessagesToIgnore) return diagnostics;
-        return diagnostics.filter((el)=>!checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+        return diagnostics.filter((el)=>!(0,utils/* checkValueAgainstRegexpArray */.$p)(el[fieldName], errorMessagesToIgnore));
     }
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
-;// CONCATENATED MODULE: ./type-converters/lsp-converters.ts
+;// CONCATENATED MODULE: ./src/type-converters/lsp-converters.ts
 
 
 
@@ -22589,7 +22773,8 @@ function toTooltip(hover) {
     if (content.length === 0) return;
     //TODO: it could be merged within all ranges in future
     let lspRange = (_hover_find = hover.find((el)=>{
-        return el === null || el === void 0 ? void 0 : el.range;
+        var _el;
+        return (_el = el) === null || _el === void 0 ? void 0 : _el.range;
     })) === null || _hover_find === void 0 ? void 0 : _hover_find.range;
     let range;
     if (lspRange) range = toRange(lspRange);
@@ -22604,11 +22789,12 @@ function toTooltip(hover) {
 function fromSignatureHelp(signatureHelp) {
     if (!signatureHelp) return;
     let content = signatureHelp.map((el)=>{
+        var _el, _el1;
         if (!el) return;
-        let signatureIndex = (el === null || el === void 0 ? void 0 : el.activeSignature) || 0;
+        let signatureIndex = ((_el = el) === null || _el === void 0 ? void 0 : _el.activeSignature) || 0;
         let activeSignature = el.signatures[signatureIndex];
         if (!activeSignature) return;
-        let activeParam = el === null || el === void 0 ? void 0 : el.activeParameter;
+        let activeParam = (_el1 = el) === null || _el1 === void 0 ? void 0 : _el1.activeParameter;
         let contents = activeSignature.label;
         if (activeParam != undefined && activeSignature.parameters && activeSignature.parameters[activeParam]) {
             let param = activeSignature.parameters[activeParam].label;
@@ -22652,17 +22838,17 @@ function fromAceDelta(delta, eol) {
 }
 function filterDiagnostics(diagnostics, filterErrors) {
     return common_converters_CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el)=>{
-        if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
+        if ((0,utils/* checkValueAgainstRegexpArray */.$p)(el.message, filterErrors.errorMessagesToTreatAsWarning)) {
             el.severity = main.DiagnosticSeverity.Warning;
-        } else if (checkValueAgainstRegexpArray(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
+        } else if ((0,utils/* checkValueAgainstRegexpArray */.$p)(el.message, filterErrors.errorMessagesToTreatAsInfo)) {
             el.severity = main.DiagnosticSeverity.Information;
         }
         return el;
     });
 }
 
-;// CONCATENATED MODULE: ./services/php/php-service.ts
-function php_service_define_property(obj, key, value) {
+;// CONCATENATED MODULE: ./src/services/php/php-service.ts
+function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -22678,19 +22864,19 @@ function php_service_define_property(obj, key, value) {
 
 
 
-class PhpService extends BaseService {
+class PhpService extends base_service.BaseService {
     async doValidation(document) {
         let value = this.getDocumentValue(document.uri);
         if (!value) return [];
         if (this.getOption(document.uri, "inline")) {
             value = "<?" + value + "?>";
         }
-        var tokens = php/* PHP.Lexer */.t.Lexer(value, {
+        var tokens = php/* PHP */.t.Lexer(value, {
             short_open_tag: 1
         });
         let errors = [];
         try {
-            new php/* PHP.Parser */.t.Parser(tokens);
+            new php/* PHP */.t.Parser(tokens);
         } catch (e) {
             errors.push({
                 range: {
@@ -22711,7 +22897,7 @@ class PhpService extends BaseService {
     }
     constructor(mode){
         super(mode);
-        php_service_define_property(this, "$service", void 0);
+        _define_property(this, "$service", void 0);
     }
 }
 

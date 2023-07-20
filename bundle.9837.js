@@ -6,12 +6,12 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "WorldState": () => (/* binding */ WorldState),
+/* harmony export */   WorldState: () => (/* binding */ WorldState),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "initThreadPool": () => (/* binding */ initThreadPool),
-/* harmony export */   "start": () => (/* binding */ start),
-/* harmony export */   "wbg_rayon_PoolBuilder": () => (/* binding */ wbg_rayon_PoolBuilder),
-/* harmony export */   "wbg_rayon_start_worker": () => (/* binding */ wbg_rayon_start_worker)
+/* harmony export */   initThreadPool: () => (/* binding */ initThreadPool),
+/* harmony export */   start: () => (/* binding */ start),
+/* harmony export */   wbg_rayon_PoolBuilder: () => (/* binding */ wbg_rayon_PoolBuilder),
+/* harmony export */   wbg_rayon_start_worker: () => (/* binding */ wbg_rayon_start_worker)
 /* harmony export */ });
 /* harmony import */ var _snippets_wasm_bindgen_rayon_7afa899f36665473_src_workerHelpers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3175);
 
@@ -539,7 +539,7 @@ async function init(input, maybe_memory) {
         maximum: 16384,
         shared: true
     });
-    const { instance , module  } = await load(await input, imports);
+    const { instance, module } = await load(await input, imports);
     wasm = instance.exports;
     init.__wbindgen_wasm_module = module;
     wasm.__wbindgen_start();

@@ -49,10 +49,10 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "ServiceManager": () => (/* binding */ ServiceManager)
+  ServiceManager: () => (/* binding */ ServiceManager)
 });
 
-;// CONCATENATED MODULE: ./utils.ts
+;// CONCATENATED MODULE: ./src/utils.ts
 function mergeObjects(obj1, obj2) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
@@ -114,7 +114,7 @@ function checkValueAgainstRegexpArray(value, regexpArray) {
     return false;
 }
 
-;// CONCATENATED MODULE: ./message-types.ts
+;// CONCATENATED MODULE: ./src/message-types.ts
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -289,7 +289,7 @@ var MessageType;
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
 })(MessageType || (MessageType = {}));
 
-;// CONCATENATED MODULE: ./services/service-manager.ts
+;// CONCATENATED MODULE: ./src/services/service-manager.ts
 function service_manager_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
