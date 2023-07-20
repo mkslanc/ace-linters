@@ -6,8 +6,8 @@ import {jsonContent} from "../webworker-lsp/docs-example/json-example";
 
 import {json5Content, json5Schema} from "../webworker-lsp/docs-example/json5-example";
 
-import {AceLanguageClient} from "ace-linters/ace-language-client";
 import {createEditorWithLSP} from "../utils";
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 const webSocket = new WebSocket("ws://localhost:3000/exampleServer");
 

@@ -5,6 +5,7 @@ import {fileURLToPath, URL} from 'url';
 import * as net from 'net';
 import express from 'express';
 import * as rpc from 'vscode-ws-jsonrpc';
+// @ts-ignore
 import * as jsonServer from 'vscode-json-languageserver/out/jsonServer.js'
 import requestLight from "request-light";
 import vscodeUri from "vscode-uri";

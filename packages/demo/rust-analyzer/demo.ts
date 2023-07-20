@@ -3,7 +3,7 @@ import * as event from "ace-code/src/lib/event";
 import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 import * as keyUtil from "ace-code/src/lib/keys";
 
-import {AceLanguageClient} from "ace-linters/ace-language-client";
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {createEditorWithLSP} from "../utils";
 import {rustContent} from "../webworker-lsp/docs-example/rust-example";
 

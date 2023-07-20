@@ -1,4 +1,4 @@
-import {mergeObjects} from "../../utils";
+import {mergeObjects} from "../../src/utils";
 import {expect} from "chai";
 
 describe('mergeObjects', () => {
