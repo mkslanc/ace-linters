@@ -49,6 +49,7 @@
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
+  "files": ["build", "types"],
   "typesVersions": {
     "*": {
       "build/ace-language-client": [
