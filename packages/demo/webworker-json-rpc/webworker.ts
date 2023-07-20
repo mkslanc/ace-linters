@@ -23,7 +23,7 @@ import {
     Diagnostic,
     TextDocument
 } from "vscode-languageserver-protocol";
-import {JsonService} from "ace-linters/json-service";
+import {JsonService} from "ace-linters/build/json-service";
 
 const worker: Worker = self as any;
 const conn = createProtocolConnection(

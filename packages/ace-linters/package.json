@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "0.11.3",
+  "version": "0.12.0",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
@@ -49,62 +49,45 @@
   },
   "main": "build/ace-linters.js",
   "types": "types/index.d.ts",
-  "exports": {
-    ".": "./build/ace-linters.js",
-    "./build/*": "./build/*.js",
-    "./ace-language-client": "./build/ace-language-client.js",
-    "./service-manager": "./build/service-manager.js",
-    "./html-service": "./build/html-service.js",
-    "./css-service": "./build/css-service.js",
-    "./json-service": "./build/json-service.js",
-    "./lua-service": "./build/lua-service.js",
-    "./typescript-service": "./build/typescript-service.js",
-    "./yaml-service": "./build/yaml-service.js",
-    "./xml-service": "./build/xml-service.js",
-    "./php-service": "./build/php-service.js",
-    "./javascript-service": "./build/javascript-service.js",
-    "./python-service": "./build/python-service.js",
-    "./base-service": "./build/base-service.js"
-  },
   "typesVersions": {
     "*": {
-      "ace-language-client": [
+      "build/ace-language-client": [
         "./types/ace-language-client.d.ts"
       ],
-      "service-manager": [
+      "build/service-manager": [
         "./types/services/service-manager.d.ts"
       ],
-      "html-service": [
+      "build/html-service": [
         "./types/services/html/html-service.d.ts"
       ],
-      "css-service": [
+      "build/css-service": [
         "./types/services/css/css-service.d.ts"
       ],
-      "json-service": [
+      "build/json-service": [
         "./types/services/json/json-service.d.ts"
       ],
-      "lua-service": [
+      "build/lua-service": [
         "./types/services/lua/lua-service.d.ts"
       ],
-      "typescript-service": [
+      "build/typescript-service": [
         "./types/services/typescript/typescript-service.d.ts"
       ],
-      "xml-service": [
+      "build/xml-service": [
         "./types/services/xml/xml-service.d.ts"
       ],
-      "php-service": [
+      "build/php-service": [
         "./types/services/php/php-service.d.ts"
       ],
-      "javascript-service": [
+      "build/javascript-service": [
         "./types/services/javascript/javascript-service.d.ts"
       ],
-      "python-service": [
+      "build/python-service": [
         "./types/services/python/python-service.d.ts"
       ],
-      "yaml-service": [
+      "build/yaml-service": [
         "./types/services/yaml/yaml-service.d.ts"
       ],
-      "base-service": [
+      "build/base-service": [
         "./types/services/base-service.d.ts"
       ]
     }

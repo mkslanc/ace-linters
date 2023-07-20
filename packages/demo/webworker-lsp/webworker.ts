@@ -1,4 +1,4 @@
-import {ServiceManager} from "ace-linters/service-manager";
+import {ServiceManager} from "ace-linters/build/service-manager";
 
 let manager = new ServiceManager(self);
 manager.registerService("html", {

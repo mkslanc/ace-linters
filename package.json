@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "0.11.3",
+  "version": "0.12.0",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
     "build": "npm run build:ace-linters && webpack",
