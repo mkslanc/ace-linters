@@ -5,7 +5,7 @@ import * as keyUtil from "ace-code/src/lib/keys";
 
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {createEditorWithLSP} from "../utils";
-import {rustContent} from "../webworker-lsp/docs-example/rust-example";
+import {rustContent} from "../docs-example/rust-example";
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 let mode = {name: "rust", mode: "ace/mode/rust", content: rustContent};

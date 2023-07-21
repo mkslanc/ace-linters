@@ -2,9 +2,9 @@ import "ace-code/esm-resolver";
 import * as event from "ace-code/src/lib/event";
 import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 import * as keyUtil from "ace-code/src/lib/keys";
-import {jsonContent} from "../webworker-lsp/docs-example/json-example";
+import {jsonContent} from "../docs-example/json-example";
 
-import {json5Content, json5Schema} from "../webworker-lsp/docs-example/json5-example";
+import {json5Content, json5Schema} from "../docs-example/json5-example";
 
 import {createEditorWithLSP} from "../utils";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
