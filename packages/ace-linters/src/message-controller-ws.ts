@@ -103,7 +103,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         this.connection.onNotification('textDocument/publishDiagnostics', (
             result: lsp.PublishDiagnosticsParams,
         ) => {
-            this.emit("validate-" + result.uri, result.diagnostics);
+            this.emit("validate-" + result.uri.replace(/^file:\/\/\//, ""), result.diagnostics);
         });
 
         this.connection.onNotification('window/showMessage', (params: lsp.ShowMessageParams) => {
@@ -269,19 +269,31 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         if (!this.isInitialized) {
             return;
         }
-        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
+        if (!(this.serverCapabilities && (this.serverCapabilities.documentRangeFormattingProvider || this.serverCapabilities.documentFormattingProvider))) {
             return;
         }
-        let options: lsp.DocumentRangeFormattingParams = {
-            textDocument: {
-                uri: sessionId,
-            },
-            options: format,
-            range: range
-        };
-        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params: lsp.TextEdit[]) => {
-            callback && callback(params);
-        });
+        if (!this.serverCapabilities.documentRangeFormattingProvider) {
+            let options: lsp.DocumentFormattingParams = {
+                textDocument: {
+                    uri: sessionId,
+                },
+                options: format,
+            };
+            this.postMessage('textDocument/formatting', sessionId, options, (params: lsp.TextEdit[]) => {
+                callback && callback(params);
+            });
+        } else {
+            let options: lsp.DocumentRangeFormattingParams = {
+                textDocument: {
+                    uri: sessionId,
+                },
+                options: format,
+                range: range
+            };
+            this.postMessage('textDocument/rangeFormatting', sessionId, options, (params: lsp.TextEdit[]) => {
+                callback && callback(params);
+            });
+        }
     }
 
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void {
