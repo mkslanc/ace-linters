@@ -2,7 +2,7 @@ import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {createEditorWithLSP} from "../utils";
-import {jsonContent, jsonSchema, jsonSchema2} from "../webworker-lsp/docs-example/json-example";
+import {jsonContent, jsonSchema, jsonSchema2} from "../docs-example/json-example";
 
 import event from "ace-code/src/lib/event";
 

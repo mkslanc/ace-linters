@@ -20,7 +20,8 @@
     "swc-loader": "^0.2.3",
     "text-loader": "latest",
     "webpack": "latest",
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

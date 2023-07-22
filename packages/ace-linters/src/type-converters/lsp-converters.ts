@@ -178,7 +178,10 @@ export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
         if (MarkupContent.is(el.contents)) {
             return fromMarkupContent(el.contents);
         } else if (MarkedString.is(el.contents)) {
-            return "```" + (el.contents as any).value + "```";
+            if (typeof el.contents === "string") {
+                return el.contents;
+            }
+            return "```" + el.contents.value + "```";
         } else {
             let contents = el.contents.map((el) => {
                 if (typeof el !== "string") {

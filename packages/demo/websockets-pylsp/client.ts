@@ -4,7 +4,7 @@ import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 import * as keyUtil from "ace-code/src/lib/keys";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {createEditorWithLSP} from "../utils";
-import {pythonContent} from "../webworker-lsp/docs-example/python-example";
+import {pythonContent} from "../docs-example/python-example";
 
 const webSocket = new WebSocket("ws://localhost:3000");
 

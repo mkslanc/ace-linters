@@ -2,7 +2,7 @@ import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
 import {LanguageProvider} from "ace-linters";
 import {createEditorWithLSP} from "../utils";
-import {jsContent} from "../webworker-lsp/docs-example/javascript-example";
+import {jsContent} from "../docs-example/javascript-example";
 
 import event from "ace-code/src/lib/event";
 
