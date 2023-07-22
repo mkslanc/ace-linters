@@ -48797,6 +48797,9 @@ exports.WorkerClient = function() {
                     if (main.MarkupContent.is(el.contents)) {
                         return fromMarkupContent(el.contents);
                     } else if (main.MarkedString.is(el.contents)) {
+                        if (typeof el.contents === "string") {
+                            return el.contents;
+                        }
                         return "```" + el.contents.value + "```";
                     } else {
                         let contents = el.contents.map((el)=>{
@@ -50214,7 +50217,7 @@ function createEditorWithLSP(mode, i, languageProvider) {
     return editor;
 }
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/javascript-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/javascript-example.js
 var jsContent = `
 class Point { 
   // Normal signature with defaults

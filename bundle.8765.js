@@ -20697,6 +20697,9 @@
                     if (MarkupContent.is(el.contents)) {
                         return fromMarkupContent(el.contents);
                     } else if (MarkedString.is(el.contents)) {
+                        if (typeof el.contents === "string") {
+                            return el.contents;
+                        }
                         return "```" + el.contents.value + "```";
                     } else {
                         let contents = el.contents.map((el)=>{

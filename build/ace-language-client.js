@@ -22648,6 +22648,9 @@ function toTooltip(hover) {
         if (main.MarkupContent.is(el.contents)) {
             return fromMarkupContent(el.contents);
         } else if (main.MarkedString.is(el.contents)) {
+            if (typeof el.contents === "string") {
+                return el.contents;
+            }
             return "```" + el.contents.value + "```";
         } else {
             let contents = el.contents.map((el)=>{
@@ -23627,7 +23630,7 @@ class MessageControllerWS extends events.EventEmitter {
         this.connection = connection;
         this.sendInitialize();
         this.connection.onNotification('textDocument/publishDiagnostics', (result)=>{
-            this.emit("validate-" + result.uri, result.diagnostics);
+            this.emit("validate-" + result.uri.replace(/^file:\/\/\//, ""), result.diagnostics);
         });
         this.connection.onNotification('window/showMessage', (params)=>{
             this.emit('logging', params);
@@ -23771,19 +23774,31 @@ class MessageControllerWS extends events.EventEmitter {
         if (!this.isInitialized) {
             return;
         }
-        if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
+        if (!(this.serverCapabilities && (this.serverCapabilities.documentRangeFormattingProvider || this.serverCapabilities.documentFormattingProvider))) {
             return;
         }
-        let options = {
-            textDocument: {
-                uri: sessionId
-            },
-            options: format,
-            range: range
-        };
-        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params)=>{
-            callback && callback(params);
-        });
+        if (!this.serverCapabilities.documentRangeFormattingProvider) {
+            let options = {
+                textDocument: {
+                    uri: sessionId
+                },
+                options: format
+            };
+            this.postMessage('textDocument/formatting', sessionId, options, (params)=>{
+                callback && callback(params);
+            });
+        } else {
+            let options = {
+                textDocument: {
+                    uri: sessionId
+                },
+                options: format,
+                range: range
+            };
+            this.postMessage('textDocument/rangeFormatting', sessionId, options, (params)=>{
+                callback && callback(params);
+            });
+        }
     }
     setGlobalOptions(serviceName, options, merge) {
         if (!this.isConnected) {

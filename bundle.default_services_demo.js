@@ -48797,6 +48797,9 @@ exports.WorkerClient = function() {
                     if (main.MarkupContent.is(el.contents)) {
                         return fromMarkupContent(el.contents);
                     } else if (main.MarkedString.is(el.contents)) {
+                        if (typeof el.contents === "string") {
+                            return el.contents;
+                        }
                         return "```" + el.contents.value + "```";
                     } else {
                         let contents = el.contents.map((el)=>{
@@ -50152,7 +50155,7 @@ ace.config.setModuleLoader('ace/ext/whitespace', () => __webpack_require__.e(/* 
 
 // EXTERNAL MODULE: ./node_modules/ace-code/src/ext/language_tools.js
 var language_tools = __webpack_require__(11105);
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/html-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/html-example.js
 var htmlContent = `
     <!DOCTYPE html>
 <html>
@@ -50173,7 +50176,7 @@ var htmlContent = `
 </html>
     `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/css-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/css-example.js
 var cssContent = `.text-layer {
     font: 12px Monaco, "Courier New", monospace;
     font-size: 3vmin;
@@ -50219,7 +50222,7 @@ user-zoom: fixed;
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/less-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/less-example.js
 var lessContent = `/* styles.less */
 
 @base: #f938ab;
@@ -50251,7 +50254,7 @@ var lessContent = `/* styles.less */
 
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/scss-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/scss-example.js
 var scssContent = `/* style.scss */
 
 #navbar {
@@ -50274,7 +50277,7 @@ var scssContent = `/* style.scss */
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/typescript-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/typescript-example.js
 var typescriptContent = `
 class Greeter {
   readonly name: string = "world";
@@ -50301,7 +50304,7 @@ class SomeTestClassName {
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/json-example.js
 var jsonContent = `{
        "name": 12
        "country": "Ireland"
@@ -50342,7 +50345,7 @@ var jsonSchema2 = `  {"type": "object",
   }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/javascript-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/javascript-example.js
 var jsContent = `
 class Point { 
   // Normal signature with defaults
@@ -50355,7 +50358,7 @@ class Point {
 nonDefinedVar
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/tsx-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/tsx-example.js
 var tsxContent = `
 var mode: HTMLElement = <div> 
     Typescript + <b> JSX </b> 
@@ -50370,7 +50373,7 @@ class Component extends HTMLFrameElement {
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/jsx-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/jsx-example.js
 var jsxContent = `
 var mode = <div> 
     Javascript + <b> JSX </b> 
@@ -50385,7 +50388,7 @@ class Component extends HTMLFrameElement {
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json5-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/json5-example.js
 var json5Content = `{
        "name": 12,
        "country": "Ireland", //trailing comma + comment
@@ -50412,7 +50415,7 @@ var json5Schema = `{
 
 // EXTERNAL MODULE: ./packages/ace-linters/build/ace-linters.js
 var ace_linters = __webpack_require__(2773);
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/lua-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/lua-example.js
 var luaContent = `--[[--
 num_args takes in 5.1 byte code and extracts the number of arguments
 from its function header.
@@ -50513,7 +50516,7 @@ function createEditorWithLSP(mode, i, languageProvider) {
     return editor;
 }
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/yaml-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/yaml-example.js
 var yamlContent = `
 ---
 product_name: Super Mobile Phone
@@ -50672,7 +50675,7 @@ var yamlSchema = `{
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/php-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/php-example.js
 var phpContent = `
 <?php
 e
@@ -50695,7 +50698,7 @@ echo $output;
 ?>
     `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/xml-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/xml-example.js
 var xmlContent = `
 <people>
    <person eyeColor="violet">
@@ -50734,7 +50737,7 @@ var xmlSchema = `{
 }
 `;
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/python-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/python-example.js
 var pythonContent = `
 import os
 

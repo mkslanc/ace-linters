@@ -52153,6 +52153,9 @@ function _define_property(obj, key, value) {
                     if (main.MarkupContent.is(el.contents)) {
                         return fromMarkupContent(el.contents);
                     } else if (main.MarkedString.is(el.contents)) {
+                        if (typeof el.contents === "string") {
+                            return el.contents;
+                        }
                         return "```" + el.contents.value + "```";
                     } else {
                         let contents = el.contents.map((el)=>{
@@ -53089,7 +53092,7 @@ function _define_property(obj, key, value) {
                     this.connection = connection;
                     this.sendInitialize();
                     this.connection.onNotification('textDocument/publishDiagnostics', (result)=>{
-                        this.emit("validate-" + result.uri, result.diagnostics);
+                        this.emit("validate-" + result.uri.replace(/^file:\/\/\//, ""), result.diagnostics);
                     });
                     this.connection.onNotification('window/showMessage', (params)=>{
                         this.emit('logging', params);
@@ -53233,19 +53236,31 @@ function _define_property(obj, key, value) {
                     if (!this.isInitialized) {
                         return;
                     }
-                    if (!(this.serverCapabilities && this.serverCapabilities.documentRangeFormattingProvider)) {
+                    if (!(this.serverCapabilities && (this.serverCapabilities.documentRangeFormattingProvider || this.serverCapabilities.documentFormattingProvider))) {
                         return;
                     }
-                    let options = {
-                        textDocument: {
-                            uri: sessionId
-                        },
-                        options: format,
-                        range: range
-                    };
-                    this.postMessage('textDocument/rangeFormatting', sessionId, options, (params)=>{
-                        callback && callback(params);
-                    });
+                    if (!this.serverCapabilities.documentRangeFormattingProvider) {
+                        let options = {
+                            textDocument: {
+                                uri: sessionId
+                            },
+                            options: format
+                        };
+                        this.postMessage('textDocument/formatting', sessionId, options, (params)=>{
+                            callback && callback(params);
+                        });
+                    } else {
+                        let options = {
+                            textDocument: {
+                                uri: sessionId
+                            },
+                            options: format,
+                            range: range
+                        };
+                        this.postMessage('textDocument/rangeFormatting', sessionId, options, (params)=>{
+                            callback && callback(params);
+                        });
+                    }
                 }
                 setGlobalOptions(serviceName, options, merge) {
                     if (!this.isConnected) {
@@ -54115,7 +54130,7 @@ function createEditorWithLSP(mode, i, languageProvider) {
     return editor;
 }
 
-;// CONCATENATED MODULE: ./packages/demo/webworker-lsp/docs-example/json-example.js
+;// CONCATENATED MODULE: ./packages/demo/docs-example/json-example.js
 var jsonContent = `{
        "name": 12
        "country": "Ireland"
