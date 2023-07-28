@@ -39,7 +39,7 @@ module.exports = (env, argv) => {
             },
             "base-service": './src/services/base-service.ts',
         },
-        externals: /ace-code/,
+        externals: /ace-code|ace-builds/,
         module: {
             rules: [
                 loader, {

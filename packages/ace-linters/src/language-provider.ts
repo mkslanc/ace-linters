@@ -1,5 +1,4 @@
 import {Ace} from "ace-code";
-import {DescriptionTooltip} from "./components/description-tooltip";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
 import {IMessageController} from "./types/message-controller-interface";
@@ -28,15 +27,16 @@ import {
     SupportedServices,
     Tooltip
 } from "./types/language-service";
+import {HoverTooltip} from "./ace/hover-tooltip";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
-    private $descriptionTooltip: DescriptionTooltip;
     private $signatureTooltip: SignatureTooltip;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     editors: Ace.Editor[] = [];
     options: ProviderOptions;
+    private $hoverTooltip: HoverTooltip;
 
     constructor(messageController: IMessageController, options?: ProviderOptions) {
         this.$messageController = messageController;
@@ -54,7 +54,6 @@ export class LanguageProvider {
         };
         this.options.markdownConverter ??= new showdown.Converter();
         this.$signatureTooltip = new SignatureTooltip(this);
-        this.$descriptionTooltip = new DescriptionTooltip(this);
     }
 
     /**
@@ -129,10 +128,86 @@ export class LanguageProvider {
                         }, 50);
             });
         }
-        this.$descriptionTooltip.registerEditor(editor);
-        this.$signatureTooltip.registerEditor(editor);
+
+        if (this.options.functionality.hover) {
+            if (!this.$hoverTooltip) {
+                this.importAceTooltip().then(ace => {
+                    this.initHoverTooltip.call(this, ace, editor);
+                });
+            } else {
+                this.$initHoverTooltip(editor);
+            }
+        }
+        
+        if (this.options.functionality.signatureHelp) {
+            this.$signatureTooltip.registerEditor(editor);
+        }
 
         this.setStyle(editor);
+    }
+
+    private async importAceTooltip() {
+        try {
+            return await import("ace-code/src/tooltip");
+        } catch(e) {
+            return await import("ace-builds/src-noconflict/ace");
+        }
+    }
+
+    async initHoverTooltip(ace, editor) {
+        if (!this.$hoverTooltip) {
+            try {
+                this.$hoverTooltip = new ace.HoverTooltip();
+            } catch (e) {
+                console.log("ace-tooltip is not found");
+                this.$hoverFallback(editor);
+            }
+        }
+        this.$initHoverTooltip(editor);
+    }
+
+    private $hoverFallback(editor) {
+        this.$hoverTooltip = new HoverTooltip();
+        this.$initHoverTooltip(editor);
+    }
+
+    private $initHoverTooltip(editor) {
+        this.$hoverTooltip.setDataProvider((e, editor) => {
+            let session = editor.session;
+            let docPos = e.getDocumentPosition();
+
+            this.doHover(session, docPos, (hover) => {
+                if (!hover)
+                    return;
+                var errorMarker = session.state?.diagnosticMarkers.getMarkerAtPosition(docPos);
+
+                if (!errorMarker && !hover?.content) return;
+
+                var range = hover?.range || errorMarker?.range;
+                const Range = editor.getSelectionRange().constructor;
+                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
+                var hoverNode = hover && document.createElement("div");
+                if (hoverNode) {
+                    // todo render markdown using ace markdown mode
+                    hoverNode.innerHTML = this.getTooltipText(hover);
+                }
+
+                var domNode = document.createElement('div');
+
+                if (errorMarker) {
+                    var errorDiv = document.createElement('div');
+                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
+                    errorDiv.appendChild(errorText);
+                    domNode.appendChild(errorDiv);
+                }
+
+                if (hoverNode) {
+                    domNode.appendChild(hoverNode);
+                }
+                this.$hoverTooltip.showForRange(editor, range, domNode, e);
+            });
+        });
+        this.$hoverTooltip.addToEditor(editor);
     }
 
     setStyle(editor) {
@@ -160,7 +235,7 @@ export class LanguageProvider {
         this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 
-    getTooltipText(hover: Tooltip): string | undefined {
+    getTooltipText(hover: Tooltip): string {
         return hover.content.type === "markdown" ?
             CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(hover.content.text)) : hover.content.text;
     }
@@ -237,7 +312,7 @@ export class LanguageProvider {
     }
 
     /**
-     * Removes document from all linked services by session id 
+     * Removes document from all linked services by session id
      * @param session
      */
     closeDocument(session: Ace.EditSession, callback?) {
@@ -378,7 +453,7 @@ class SessionLanguageProvider {
             this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
         }
     }
-    
+
     $applyDocumentHiglight = (documentHighlights) => {
         //TODO: place for your code
     };
