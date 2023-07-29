@@ -21795,301 +21795,6 @@ __webpack_require__.d(__webpack_exports__, {
   AceLanguageClient: () => (/* binding */ AceLanguageClient)
 });
 
-;// CONCATENATED MODULE: ./src/ace/tooltip.ts
-
-function _define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-var CLASSNAME = "ace_tooltip";
-//taken from ace-code with small changes
-class Tooltip {
-    $init() {
-        this.$element = document.createElement("div");
-        this.$element.className = "ace_tooltip";
-        this.$element.style.display = "none";
-        this.$parentNode.appendChild(this.$element);
-        return this.$element;
-    }
-    /**
-     * @returns {Element}
-     **/ getElement() {
-        return this.$element || this.$init();
-    }
-    /**
-     * @param {String} text
-     **/ setText(text) {
-        this.getElement().textContent = text;
-    }
-    /**
-     * @param {String} html
-     **/ setHtml(html) {
-        this.getElement().innerHTML = html;
-    }
-    /**
-     * @param {Number} x
-     * @param {Number} y
-     **/ setPosition(x, y) {
-        this.getElement().style.left = x + "px";
-        this.getElement().style.top = y + "px";
-    }
-    /**
-     * @param {String} className
-     **/ setClassName(className) {
-        this.getElement().className += " " + className;
-    }
-    /**
-     * @param {String} text
-     * @param {Number} x
-     * @param {Number} y
-     **/ show(text, x, y) {
-        if (text != null) this.setText(text);
-        if (x != null && y != null) this.setPosition(x, y);
-        if (!this.isOpen) {
-            this.getElement().style.display = "block";
-            this.isOpen = true;
-        }
-    }
-    hide() {
-        if (this.isOpen) {
-            this.getElement().style.display = "none";
-            this.getElement().className = CLASSNAME;
-            this.isOpen = false;
-        }
-    }
-    /**
-     * @returns {Number}
-     **/ getHeight() {
-        return this.getElement().offsetHeight;
-    }
-    /**
-     * @returns {Number}
-     **/ getWidth() {
-        return this.getElement().offsetWidth;
-    }
-    destroy() {
-        this.isOpen = false;
-        if (this.$element && this.$element.parentNode) {
-            this.$element.parentNode.removeChild(this.$element);
-        }
-    }
-    /**
-     * @param {Element} parentNode
-     **/ constructor(parentNode){
-        _define_property(this, "$element", void 0);
-        _define_property(this, "isOpen", void 0);
-        _define_property(this, "$parentNode", void 0);
-        this.isOpen = false;
-        this.$element = null;
-        this.$parentNode = parentNode;
-    }
-}
-
-;// CONCATENATED MODULE: ./src/components/base-tooltip.ts
-function base_tooltip_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-
-class BaseTooltip extends Tooltip {
-    $show() {
-        if (!this.$activeEditor) return;
-        let renderer = this.$activeEditor.renderer;
-        let position = renderer.textToScreenCoordinates(this.row, this.column);
-        let cursorPos = this.$activeEditor.getCursorPosition();
-        this.show(null, position.pageX, position.pageY);
-        let labelHeight = this.getElement().getBoundingClientRect().height;
-        let rect = renderer.scroller.getBoundingClientRect();
-        let isTopdown = true;
-        if (this.row > cursorPos.row) // don't obscure cursor
-        isTopdown = true;
-        else if (this.row < cursorPos.row) // don't obscure cursor
-        isTopdown = false;
-        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) // not enough space above us
-        isTopdown = true;
-        else if (position.pageY + labelHeight > rect.bottom) isTopdown = false;
-        if (!isTopdown) position.pageY -= labelHeight;
-        else position.pageY += renderer.lineHeight;
-        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-        this.show(null, position.pageX, position.pageY);
-    }
-    getElement() {
-        return super.getElement();
-    }
-    hide() {
-        super.hide();
-    }
-    show(param, pageX, pageY) {
-        super.show(param, pageX, pageY);
-        this.$registerEditorEvents();
-    }
-    setHtml(descriptionText) {
-        super.setHtml(descriptionText);
-    }
-    destroy() {
-        this.$hide();
-        this.getElement().removeEventListener("mouseout", this.onMouseOut);
-    }
-    $registerEditorEvents() {
-        this.$activeEditor.on("change", this.$hide);
-        this.$activeEditor.on("mousewheel", this.$hide);
-        //@ts-ignore
-        this.$activeEditor.on("mousedown", this.$hide);
-    }
-    $removeEditorEvents() {
-        this.$activeEditor.off("change", this.$hide);
-        this.$activeEditor.off("mousewheel", this.$hide);
-        //@ts-ignore
-        this.$activeEditor.off("mousedown", this.$hide);
-    }
-    $inactivateEditor() {
-        var _this_$activeEditor;
-        (_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = undefined;
-    }
-    $activateEditor(editor) {
-        if (this.$activeEditor == editor) return;
-        this.$inactivateEditor();
-        this.$activeEditor = editor;
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
-    }
-    constructor(provider){
-        super(document.body);
-        base_tooltip_define_property(this, "provider", void 0);
-        base_tooltip_define_property(this, "$activeEditor", void 0);
-        base_tooltip_define_property(this, "descriptionText", void 0);
-        base_tooltip_define_property(this, "x", void 0);
-        base_tooltip_define_property(this, "y", void 0);
-        base_tooltip_define_property(this, "$mouseMoveTimer", void 0);
-        base_tooltip_define_property(this, "$showTimer", void 0);
-        base_tooltip_define_property(this, "row", void 0);
-        base_tooltip_define_property(this, "column", void 0);
-        base_tooltip_define_property(this, "$hide", ()=>{
-            clearTimeout(this.$mouseMoveTimer);
-            clearTimeout(this.$showTimer);
-            if (this.isOpen) {
-                this.$removeEditorEvents();
-                this.hide();
-            }
-            this.$inactivateEditor();
-        });
-        base_tooltip_define_property(this, "onMouseOut", (e)=>{
-            clearTimeout(this.$mouseMoveTimer);
-            clearTimeout(this.$showTimer);
-            if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
-            //@ts-ignore
-            if (e && e.currentTarget.contains(e.relatedTarget)) return;
-            //@ts-ignore
-            if (!e.relatedTarget.classList.contains("ace_content")) this.$hide();
-        });
-        this.provider = provider;
-        //this is for ace-code version < 1.16.0
-        try {
-            Tooltip.call(this, document.body);
-        } catch (e) {}
-        this.getElement().style.pointerEvents = "auto";
-        this.getElement().style.whiteSpace = "pre-wrap";
-        this.getElement().addEventListener("mouseout", this.onMouseOut);
-    }
-}
-
-;// CONCATENATED MODULE: ./src/components/description-tooltip.ts
-function description_tooltip_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-
-class DescriptionTooltip extends BaseTooltip {
-    registerEditor(editor) {
-        editor.on("mousemove", this.onMouseMove);
-    }
-    update(editor) {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.doHover();
-        } else {
-            this.$mouseMoveTimer = setTimeout(()=>{
-                this.$activateEditor(editor);
-                this.doHover();
-                this.$mouseMoveTimer = undefined;
-            }, 500);
-        }
-    }
-    constructor(...args){
-        super(...args);
-        description_tooltip_define_property(this, "doHover", ()=>{
-            if (!this.provider.options.functionality.hover) return;
-            let renderer = this.$activeEditor.renderer;
-            let screenCoordinates = renderer.pixelToScreenCoordinates(this.x, this.y);
-            let session = this.$activeEditor.session;
-            let docPos = session.screenToDocumentPosition(screenCoordinates.row, screenCoordinates.column);
-            this.provider.doHover(session, docPos, (hover)=>{
-                var _hover_range, _hover_range1, _token;
-                let descriptionText = hover ? this.provider.getTooltipText(hover) : null;
-                if (!hover || !descriptionText) {
-                    this.hide();
-                    return;
-                }
-                let token = session.getTokenAt(docPos.row, docPos.column + 1);
-                var _hover_range_start_row;
-                let row = (_hover_range_start_row = (_hover_range = hover.range) === null || _hover_range === void 0 ? void 0 : _hover_range.start.row) !== null && _hover_range_start_row !== void 0 ? _hover_range_start_row : docPos.row;
-                var _hover_range_start_column, _ref;
-                let column = (_ref = (_hover_range_start_column = (_hover_range1 = hover.range) === null || _hover_range1 === void 0 ? void 0 : _hover_range1.start.column) !== null && _hover_range_start_column !== void 0 ? _hover_range_start_column : (_token = token) === null || _token === void 0 ? void 0 : _token.start) !== null && _ref !== void 0 ? _ref : 0;
-                if (this.descriptionText != descriptionText) {
-                    this.hide();
-                    this.setHtml(descriptionText);
-                    this.descriptionText = descriptionText;
-                } else if (this.row == row && this.column == column && this.isOpen) {
-                    return;
-                }
-                this.row = row;
-                this.column = column;
-                if (this.$mouseMoveTimer) {
-                    this.$show();
-                } else {
-                    this.$showTimer = setTimeout(()=>{
-                        this.$show();
-                        this.$showTimer = undefined;
-                    }, 500);
-                }
-            });
-        });
-        description_tooltip_define_property(this, "onMouseMove", (e)=>{
-            this.x = e.clientX;
-            this.y = e.clientY;
-            this.update(e["editor"]);
-        });
-    }
-}
-
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var main = __webpack_require__(294);
 ;// CONCATENATED MODULE: ./src/utils.ts
@@ -22155,7 +21860,7 @@ function utils_checkValueAgainstRegexpArray(value, regexpArray) {
 }
 
 ;// CONCATENATED MODULE: ./src/ace/range-singleton.ts
-function range_singleton_define_property(obj, key, value) {
+function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -22176,7 +21881,7 @@ class AceRange {
         return AceRange._instance;
     }
 }
-range_singleton_define_property(AceRange, "_instance", void 0);
+_define_property(AceRange, "_instance", void 0);
 
 ;// CONCATENATED MODULE: ./src/type-converters/common-converters.ts
 
@@ -22981,6 +22686,225 @@ function generateLintersImport(cdnUrl, includeLinters) {
 }()`;
 }
 
+;// CONCATENATED MODULE: ./src/ace/tooltip.ts
+
+function tooltip_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+var CLASSNAME = "ace_tooltip";
+//taken from ace-code with small changes
+class Tooltip {
+    $init() {
+        this.$element = document.createElement("div");
+        this.$element.className = CLASSNAME;
+        this.$element.style.display = "none";
+        this.$parentNode.appendChild(this.$element);
+        return this.$element;
+    }
+    /**
+     * @returns {HTMLElement}
+     **/ getElement() {
+        return this.$element || this.$init();
+    }
+    /**
+     * @param {String} text
+     **/ setText(text) {
+        this.getElement().textContent = text;
+    }
+    /**
+     * @param {String} html
+     **/ setHtml(html) {
+        this.getElement().innerHTML = html;
+    }
+    /**
+     * @param {Number} x
+     * @param {Number} y
+     **/ setPosition(x, y) {
+        this.getElement().style.left = x + "px";
+        this.getElement().style.top = y + "px";
+    }
+    /**
+     * @param {String} className
+     **/ setClassName(className) {
+        this.getElement().className += " " + className;
+    }
+    setTheme(theme) {
+        this.getElement().className = CLASSNAME + " " + (theme.isDark ? "ace_dark " : "") + (theme.cssClass || "");
+    }
+    /**
+     * @param {String} text
+     * @param {Number} x
+     * @param {Number} y
+     **/ show(text, x, y) {
+        if (text != null) this.setText(text);
+        if (x != null && y != null) this.setPosition(x, y);
+        if (!this.isOpen) {
+            this.getElement().style.display = "block";
+            this.isOpen = true;
+        }
+    }
+    hide() {
+        if (this.isOpen) {
+            this.getElement().style.display = "none";
+            this.getElement().className = CLASSNAME;
+            this.isOpen = false;
+        }
+    }
+    /**
+     * @returns {Number}
+     **/ getHeight() {
+        return this.getElement().offsetHeight;
+    }
+    /**
+     * @returns {Number}
+     **/ getWidth() {
+        return this.getElement().offsetWidth;
+    }
+    destroy() {
+        this.isOpen = false;
+        if (this.$element && this.$element.parentNode) {
+            this.$element.parentNode.removeChild(this.$element);
+        }
+    }
+    /**
+     * @param {Element} parentNode
+     **/ constructor(parentNode){
+        tooltip_define_property(this, "$element", void 0);
+        tooltip_define_property(this, "isOpen", void 0);
+        tooltip_define_property(this, "$parentNode", void 0);
+        this.isOpen = false;
+        this.$element = null;
+        this.$parentNode = parentNode;
+    }
+}
+
+;// CONCATENATED MODULE: ./src/components/base-tooltip.ts
+function base_tooltip_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+class BaseTooltip extends Tooltip {
+    $show() {
+        if (!this.$activeEditor) return;
+        let renderer = this.$activeEditor.renderer;
+        let position = renderer.textToScreenCoordinates(this.row, this.column);
+        let cursorPos = this.$activeEditor.getCursorPosition();
+        this.show(null, position.pageX, position.pageY);
+        let labelHeight = this.getElement().getBoundingClientRect().height;
+        let rect = renderer.scroller.getBoundingClientRect();
+        let isTopdown = true;
+        if (this.row > cursorPos.row) // don't obscure cursor
+        isTopdown = true;
+        else if (this.row < cursorPos.row) // don't obscure cursor
+        isTopdown = false;
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) // not enough space above us
+        isTopdown = true;
+        else if (position.pageY + labelHeight > rect.bottom) isTopdown = false;
+        if (!isTopdown) position.pageY -= labelHeight;
+        else position.pageY += renderer.lineHeight;
+        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+        this.show(null, position.pageX, position.pageY);
+    }
+    getElement() {
+        return super.getElement();
+    }
+    hide() {
+        super.hide();
+    }
+    show(param, pageX, pageY) {
+        super.show(param, pageX, pageY);
+        this.$registerEditorEvents();
+    }
+    setHtml(descriptionText) {
+        super.setHtml(descriptionText);
+    }
+    destroy() {
+        this.$hide();
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
+    }
+    $registerEditorEvents() {
+        this.$activeEditor.on("change", this.$hide);
+        this.$activeEditor.on("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.on("mousedown", this.$hide);
+    }
+    $removeEditorEvents() {
+        this.$activeEditor.off("change", this.$hide);
+        this.$activeEditor.off("mousewheel", this.$hide);
+        //@ts-ignore
+        this.$activeEditor.off("mousedown", this.$hide);
+    }
+    $inactivateEditor() {
+        var _this_$activeEditor;
+        (_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
+        this.$activeEditor = undefined;
+    }
+    $activateEditor(editor) {
+        if (this.$activeEditor == editor) return;
+        this.$inactivateEditor();
+        this.$activeEditor = editor;
+        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
+    }
+    constructor(provider){
+        super(document.body);
+        base_tooltip_define_property(this, "provider", void 0);
+        base_tooltip_define_property(this, "$activeEditor", void 0);
+        base_tooltip_define_property(this, "descriptionText", void 0);
+        base_tooltip_define_property(this, "x", void 0);
+        base_tooltip_define_property(this, "y", void 0);
+        base_tooltip_define_property(this, "$mouseMoveTimer", void 0);
+        base_tooltip_define_property(this, "$showTimer", void 0);
+        base_tooltip_define_property(this, "row", void 0);
+        base_tooltip_define_property(this, "column", void 0);
+        base_tooltip_define_property(this, "$hide", ()=>{
+            clearTimeout(this.$mouseMoveTimer);
+            clearTimeout(this.$showTimer);
+            if (this.isOpen) {
+                this.$removeEditorEvents();
+                this.hide();
+            }
+            this.$inactivateEditor();
+        });
+        base_tooltip_define_property(this, "onMouseOut", (e)=>{
+            clearTimeout(this.$mouseMoveTimer);
+            clearTimeout(this.$showTimer);
+            if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
+            //@ts-ignore
+            if (e && e.currentTarget.contains(e.relatedTarget)) return;
+            //@ts-ignore
+            if (!e.relatedTarget.classList.contains("ace_content")) this.$hide();
+        });
+        this.provider = provider;
+        //this is for ace-code version < 1.16.0
+        try {
+            Tooltip.call(this, document.body);
+        } catch (e) {}
+        this.getElement().style.pointerEvents = "auto";
+        this.getElement().style.whiteSpace = "pre-wrap";
+        this.getElement().addEventListener("mouseout", this.onMouseOut);
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/components/signature-tooltip.ts
 function signature_tooltip_define_property(obj, key, value) {
     if (key in obj) {
@@ -23155,6 +23079,252 @@ class MarkerGroup {
     }
 }
 
+;// CONCATENATED MODULE: ./src/ace/popupManager.ts
+//taken from ace-code with small changes
+function popupManager_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class PopupManager {
+    addPopup(popup) {
+        this.popups.push(popup);
+        this.updatePopups();
+    }
+    removePopup(popup) {
+        const index = this.popups.indexOf(popup);
+        if (index !== -1) {
+            this.popups.splice(index, 1);
+            this.updatePopups();
+        }
+    }
+    updatePopups() {
+        this.popups.sort((a, b)=>b.priority - a.priority);
+        let visiblepopups = [];
+        for (let popup of this.popups){
+            let shouldDisplay = true;
+            for (let visiblePopup of visiblepopups){
+                if (this.doPopupsOverlap(visiblePopup, popup)) {
+                    shouldDisplay = false;
+                    break;
+                }
+            }
+            if (shouldDisplay) {
+                visiblepopups.push(popup);
+            } else {
+                popup.hide();
+            }
+        }
+    }
+    doPopupsOverlap(popupA, popupB) {
+        const rectA = popupA.getElement().getBoundingClientRect();
+        const rectB = popupB.getElement().getBoundingClientRect();
+        return rectA.left < rectB.right && rectA.right > rectB.left && rectA.top < rectB.bottom && rectA.bottom > rectB.top;
+    }
+    constructor(){
+        popupManager_define_property(this, "popups", void 0);
+        this.popups = [];
+    }
+}
+
+;// CONCATENATED MODULE: ./src/ace/hover-tooltip.ts
+function hover_tooltip_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+let popupManager = new PopupManager();
+//taken from ace-code with small changes
+class HoverTooltip extends Tooltip {
+    addToEditor(editor) {
+        editor.on("mousemove", this.onMouseMove);
+        editor.on("mousedown", this.hide);
+        editor.renderer.getMouseEventTarget().addEventListener("mouseout", this.onMouseOut, true);
+    }
+    removeFromEditor(editor) {
+        editor.off("mousemove", this.onMouseMove);
+        editor.off("mousedown", this.hide);
+        editor.renderer.getMouseEventTarget().removeEventListener("mouseout", this.onMouseOut, true);
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+    }
+    onMouseMove(e, editor) {
+        this.lastEvent = e;
+        this.lastT = Date.now();
+        var isMousePressed = editor.$mouseHandler.isMousePressed;
+        if (this.isOpen) {
+            var pos = this.lastEvent && this.lastEvent.getDocumentPosition();
+            if (!this.range || !this.range.contains(pos.row, pos.column) || isMousePressed || this.isOutsideOfText(this.lastEvent)) {
+                this.hide();
+            }
+        }
+        if (this.timeout || isMousePressed) return;
+        this.lastEvent = e;
+        this.timeout = setTimeout(this.waitForHover, this.idleTime);
+    }
+    waitForHover() {
+        if (this.timeout) clearTimeout(this.timeout);
+        var dt = Date.now() - this.lastT;
+        if (this.idleTime - dt > 10) {
+            this.timeout = setTimeout(this.waitForHover, this.idleTime - dt);
+            return;
+        }
+        this.timeout = null;
+        if (this.lastEvent && !this.isOutsideOfText(this.lastEvent)) {
+            this.$gatherData(this.lastEvent, this.lastEvent.editor);
+        }
+    }
+    isOutsideOfText(e) {
+        var editor = e.editor;
+        var docPos = e.getDocumentPosition();
+        var line = editor.session.getLine(docPos.row);
+        if (docPos.column == line.length) {
+            var screenPos = editor.renderer.pixelToScreenCoordinates(e.clientX, e.clientY);
+            var clippedPos = editor.session.documentToScreenPosition(docPos.row, docPos.column);
+            if (clippedPos.column != screenPos.column || clippedPos.row != screenPos.row) {
+                return true;
+            }
+        }
+        return false;
+    }
+    setDataProvider(value) {
+        this.$gatherData = value;
+    }
+    showForRange(editor, range, domNode, startingEvent) {
+        if (startingEvent && startingEvent != this.lastEvent) return;
+        if (this.isOpen && document.activeElement == this.getElement()) return;
+        var renderer = editor.renderer;
+        if (!this.isOpen) {
+            popupManager.addPopup(this);
+            this.$registerCloseEvents();
+            this.setTheme(renderer.theme);
+        }
+        this.isOpen = true;
+        this.addMarker(range, editor.session);
+        const Range = editor.getSelectionRange().constructor;
+        this.range = Range.fromPoints(range.start, range.end);
+        var element = this.getElement();
+        element.innerHTML = "";
+        element.appendChild(domNode);
+        element.style.display = "block";
+        var position = renderer.textToScreenCoordinates(range.start.row, range.start.column);
+        var cursorPos = editor.getCursorPosition();
+        var labelHeight = element.clientHeight;
+        var rect = renderer.scroller.getBoundingClientRect();
+        var isTopdown = true;
+        if (this.row > cursorPos.row) {
+            // don't obscure cursor
+            isTopdown = true;
+        } else if (this.row < cursorPos.row) {
+            // don't obscure cursor
+            isTopdown = false;
+        }
+        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) {
+            // not enough space above us
+            isTopdown = true;
+        } else if (position.pageY + labelHeight > rect.bottom) {
+            isTopdown = false;
+        }
+        if (!isTopdown) {
+            position.pageY -= labelHeight;
+        } else {
+            position.pageY += renderer.lineHeight;
+        }
+        element.style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
+        this.setPosition(position.pageX, position.pageY);
+    }
+    addMarker(range, session) {
+        if (this.marker) {
+            this.$markerSession.removeMarker(this.marker);
+        }
+        this.$markerSession = session;
+        this.marker = session && session.addMarker(range, "ace_highlight-marker", "text");
+    }
+    hide(e) {
+        if (!e && document.activeElement == this.getElement()) return;
+        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && this.$element && this.$element.contains(e.target)) return;
+        this.lastEvent = null;
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = null;
+        this.addMarker(null);
+        if (this.isOpen) {
+            this.$removeCloseEvents();
+            this.getElement().style.display = "none";
+            this.isOpen = false;
+            popupManager.removePopup(this);
+        }
+    }
+    $registerCloseEvents() {
+        window.addEventListener("keydown", this.hide, true);
+        window.addEventListener("mousewheel", this.hide, true);
+        window.addEventListener("mousedown", this.hide, true);
+    }
+    $removeCloseEvents() {
+        window.removeEventListener("keydown", this.hide, true);
+        window.removeEventListener("mousewheel", this.hide, true);
+        window.removeEventListener("mousedown", this.hide, true);
+    }
+    onMouseOut(e) {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+        this.lastEvent = null;
+        if (!this.isOpen) return;
+        if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
+        if (e && e.currentTarget.contains(e.relatedTarget)) return;
+        if (!e.relatedTarget.classList.contains("ace_content")) this.hide();
+    }
+    constructor(parentNode = document.body){
+        super(parentNode);
+        hover_tooltip_define_property(this, "$gatherData", void 0);
+        hover_tooltip_define_property(this, "timeout", void 0);
+        hover_tooltip_define_property(this, "idleTime", void 0);
+        hover_tooltip_define_property(this, "lastT", void 0);
+        hover_tooltip_define_property(this, "lastEvent", void 0);
+        hover_tooltip_define_property(this, "range", void 0);
+        hover_tooltip_define_property(this, "row", void 0);
+        hover_tooltip_define_property(this, "marker", void 0);
+        hover_tooltip_define_property(this, "$markerSession", void 0);
+        this.timeout = undefined;
+        this.lastT = 0;
+        this.idleTime = 350;
+        this.lastEvent = undefined;
+        this.onMouseOut = this.onMouseOut.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.waitForHover = this.waitForHover.bind(this);
+        this.hide = this.hide.bind(this);
+        var el = this.getElement();
+        el.style.whiteSpace = "pre-wrap";
+        el.style.pointerEvents = "auto";
+        el.addEventListener("mouseout", this.onMouseOut);
+        el.tabIndex = -1;
+        el.addEventListener("blur", (function() {
+            if (!el.contains(document.activeElement)) this.hide();
+        }).bind(this));
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/language-provider.ts
 function language_provider_define_property(obj, key, value) {
     if (key in obj) {
@@ -23239,17 +23409,57 @@ class LanguageProvider {
                 }, 50);
             });
         }
-        this.$descriptionTooltip.registerEditor(editor);
-        this.$signatureTooltip.registerEditor(editor);
+        if (this.options.functionality.hover) {
+            if (!this.$hoverTooltip) {
+                this.$hoverTooltip = new HoverTooltip();
+            } else {
+                this.$initHoverTooltip(editor);
+            }
+        }
+        if (this.options.functionality.signatureHelp) {
+            this.$signatureTooltip.registerEditor(editor);
+        }
         this.setStyle(editor);
     }
+    $initHoverTooltip(editor) {
+        this.$hoverTooltip.setDataProvider((e, editor)=>{
+            let session = editor.session;
+            let docPos = e.getDocumentPosition();
+            this.doHover(session, docPos, (hover)=>{
+                var _this_$getSessionLanguageProvider_state_diagnosticMarkers, _this_$getSessionLanguageProvider_state, _hover, _hover1, _errorMarker;
+                if (!hover) return;
+                var errorMarker = (_this_$getSessionLanguageProvider_state = this.$getSessionLanguageProvider(session).state) === null || _this_$getSessionLanguageProvider_state === void 0 ? void 0 : (_this_$getSessionLanguageProvider_state_diagnosticMarkers = _this_$getSessionLanguageProvider_state.diagnosticMarkers) === null || _this_$getSessionLanguageProvider_state_diagnosticMarkers === void 0 ? void 0 : _this_$getSessionLanguageProvider_state_diagnosticMarkers.getMarkerAtPosition(docPos);
+                if (!errorMarker && !((_hover = hover) === null || _hover === void 0 ? void 0 : _hover.content)) return;
+                var range = ((_hover1 = hover) === null || _hover1 === void 0 ? void 0 : _hover1.range) || ((_errorMarker = errorMarker) === null || _errorMarker === void 0 ? void 0 : _errorMarker.range);
+                const Range = editor.getSelectionRange().constructor;
+                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
+                var hoverNode = hover && document.createElement("div");
+                if (hoverNode) {
+                    // todo render markdown using ace markdown mode
+                    hoverNode.innerHTML = this.getTooltipText(hover);
+                }
+                var domNode = document.createElement('div');
+                if (errorMarker) {
+                    var errorDiv = document.createElement('div');
+                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
+                    errorDiv.appendChild(errorText);
+                    domNode.appendChild(errorDiv);
+                }
+                if (hoverNode) {
+                    domNode.appendChild(hoverNode);
+                }
+                this.$hoverTooltip.showForRange(editor, range, domNode, e);
+            });
+        });
+        this.$hoverTooltip.addToEditor(editor);
+    }
     setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
     margin: 0;
     font-size: 12px;
 }
 
-.ace_tooltip > code, .ace_tooltip > * > code {
+.ace_tooltip code {
     font-style: italic;
     font-size: 11px;
 }
@@ -23372,12 +23582,12 @@ class LanguageProvider {
     constructor(messageController, options){
         var _this_options, _this_options1;
         language_provider_define_property(this, "activeEditor", void 0);
-        language_provider_define_property(this, "$descriptionTooltip", void 0);
         language_provider_define_property(this, "$signatureTooltip", void 0);
         language_provider_define_property(this, "$messageController", void 0);
         language_provider_define_property(this, "$sessionLanguageProviders", {});
         language_provider_define_property(this, "editors", []);
         language_provider_define_property(this, "options", void 0);
+        language_provider_define_property(this, "$hoverTooltip", void 0);
         language_provider_define_property(this, "$registerSession", (session, options)=>{
             var _this_$sessionLanguageProviders, _session_id;
             var _;
@@ -23404,7 +23614,6 @@ class LanguageProvider {
         var _markdownConverter;
         (_markdownConverter = (_this_options1 = this.options).markdownConverter) !== null && _markdownConverter !== void 0 ? _markdownConverter : _this_options1.markdownConverter = new (showdown_default()).Converter();
         this.$signatureTooltip = new SignatureTooltip(this);
-        this.$descriptionTooltip = new DescriptionTooltip(this);
     }
 }
 class SessionLanguageProvider {
