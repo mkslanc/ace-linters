@@ -37981,14 +37981,36 @@
             var main1 = __nested_webpack_require_1985791__(294);
             // EXTERNAL MODULE: ./src/utils.ts
             var utils1 = __nested_webpack_require_1985791__(6297);
+            ; // CONCATENATED MODULE: ./src/ace/range-singleton.ts
+            function _define_property1(obj3, key3, value1) {
+                if (key3 in obj3) {
+                    Object.defineProperty(obj3, key3, {
+                        value: value1,
+                        enumerable: true,
+                        configurable: true,
+                        writable: true
+                    });
+                } else {
+                    obj3[key3] = value1;
+                }
+                return obj3;
+            }
+            class AceRange1 {
+                static getConstructor(editor1) {
+                    if (!AceRange1._instance && editor1) {
+                        AceRange1._instance = editor1.getSelectionRange().constructor;
+                    }
+                    return AceRange1._instance;
+                }
+            }
+            _define_property1(AceRange1, "_instance", void 0);
             ; // CONCATENATED MODULE: ./src/type-converters/common-converters.ts
             var CommonConverter1;
             (function(CommonConverter1) {
-                function normalizeRanges1(completions1, editor1) {
-                    const Range1 = editor1.getSelectionRange().constructor;
+                function normalizeRanges1(completions1) {
                     return completions1 && completions1.map((el1)=>{
                         if (el1["range"]) {
-                            el1["range"] = toRange1(el1["range"], Range1);
+                            el1["range"] = toRange1(el1["range"]);
                         }
                         return el1;
                     });
@@ -37998,10 +38020,12 @@
                     return html1.replace(/<a\s/, "<a target='_blank' ");
                 }
                 CommonConverter1.cleanHtml = cleanHtml1;
-                function toRange1(range1, Range1) {
+                function toRange1(range1) {
                     if (!range1 || !range1.start || !range1.end) {
                         return;
                     }
+                    let Range1 = AceRange1.getConstructor();
+                    // @ts-ignore
                     return Range1.fromPoints(range1.start, range1.end);
                 }
                 CommonConverter1.toRange = toRange1;
@@ -38100,7 +38124,7 @@
                 return severity1;
             }
             ; // CONCATENATED MODULE: ./src/services/xml/xml-service.ts
-            function _define_property1(obj3, key3, value1) {
+            function xml_service_define_property1(obj3, key3, value1) {
                 if (key3 in obj3) {
                     Object.defineProperty(obj3, key3, {
                         value: value1,
@@ -38174,8 +38198,8 @@
                 }
                 constructor(mode1){
                     super(mode1);
-                    _define_property1(this, "$service", void 0);
-                    _define_property1(this, "schemas", {});
+                    xml_service_define_property1(this, "$service", void 0);
+                    xml_service_define_property1(this, "schemas", {});
                 }
             }
         })();

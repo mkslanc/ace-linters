@@ -16208,16 +16208,40 @@ var luaparse = __webpack_require__(7438);
 var main = __webpack_require__(294);
 // EXTERNAL MODULE: ./src/utils.ts
 var utils = __webpack_require__(6297);
+;// CONCATENATED MODULE: ./src/ace/range-singleton.ts
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class AceRange {
+    static getConstructor(editor) {
+        if (!AceRange._instance && editor) {
+            AceRange._instance = editor.getSelectionRange().constructor;
+        }
+        return AceRange._instance;
+    }
+}
+_define_property(AceRange, "_instance", void 0);
+
 ;// CONCATENATED MODULE: ./src/type-converters/common-converters.ts
+
 
 
 var common_converters_CommonConverter;
 (function(CommonConverter) {
-    function normalizeRanges(completions, editor) {
-        const Range = editor.getSelectionRange().constructor;
+    function normalizeRanges(completions) {
         return completions && completions.map((el)=>{
             if (el["range"]) {
-                el["range"] = toRange(el["range"], Range);
+                el["range"] = toRange(el["range"]);
             }
             return el;
         });
@@ -16227,10 +16251,12 @@ var common_converters_CommonConverter;
         return html.replace(/<a\s/, "<a target='_blank' ");
     }
     CommonConverter.cleanHtml = cleanHtml;
-    function toRange(range, Range) {
+    function toRange(range) {
         if (!range || !range.start || !range.end) {
             return;
         }
+        let Range = AceRange.getConstructor();
+        // @ts-ignore
         return Range.fromPoints(range.start, range.end);
     }
     CommonConverter.toRange = toRange;
@@ -16526,9 +16552,25 @@ function filterDiagnostics(diagnostics, filterErrors) {
         return el;
     });
 }
+function fromDocumentHighlights(documentHighlights) {
+    return documentHighlights.map(function(el) {
+        let className = el.kind == 2 ? "language_highlight_read" : el.kind == 3 ? "language_highlight_write" : "language_highlight_text";
+        return toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), className);
+    });
+}
+function toMarkerGroupItem(range, className, tooltipText) {
+    let markerGroupItem = {
+        range: range,
+        className: className
+    };
+    if (tooltipText) {
+        markerGroupItem["tooltipText"] = tooltipText;
+    }
+    return markerGroupItem;
+}
 
 ;// CONCATENATED MODULE: ./src/services/lua/lua-service.ts
-function _define_property(obj, key, value) {
+function lua_service_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -16573,7 +16615,7 @@ class LuaService extends base_service.BaseService {
     }
     constructor(mode){
         super(mode);
-        _define_property(this, "$service", void 0);
+        lua_service_define_property(this, "$service", void 0);
         this.$service = luaparse;
     }
 }

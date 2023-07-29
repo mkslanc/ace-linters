@@ -51670,14 +51670,36 @@ function _define_property(obj, key, value) {
                 }
                 return false;
             }
+            ; // CONCATENATED MODULE: ./src/ace/range-singleton.ts
+            function range_singleton_define_property(obj, key, value) {
+                if (key in obj) {
+                    Object.defineProperty(obj, key, {
+                        value: value,
+                        enumerable: true,
+                        configurable: true,
+                        writable: true
+                    });
+                } else {
+                    obj[key] = value;
+                }
+                return obj;
+            }
+            class AceRange {
+                static getConstructor(editor) {
+                    if (!AceRange._instance && editor) {
+                        AceRange._instance = editor.getSelectionRange().constructor;
+                    }
+                    return AceRange._instance;
+                }
+            }
+            range_singleton_define_property(AceRange, "_instance", void 0);
             ; // CONCATENATED MODULE: ./src/type-converters/common-converters.ts
             var common_converters_CommonConverter;
             (function(CommonConverter1) {
-                function normalizeRanges(completions, editor) {
-                    const Range = editor.getSelectionRange().constructor;
+                function normalizeRanges(completions) {
                     return completions && completions.map((el)=>{
                         if (el["range"]) {
-                            el["range"] = toRange(el["range"], Range);
+                            el["range"] = toRange(el["range"]);
                         }
                         return el;
                     });
@@ -51687,10 +51709,12 @@ function _define_property(obj, key, value) {
                     return html.replace(/<a\s/, "<a target='_blank' ");
                 }
                 CommonConverter1.cleanHtml = cleanHtml;
-                function toRange(range, Range) {
+                function toRange(range) {
                     if (!range || !range.start || !range.end) {
                         return;
                     }
+                    let Range = AceRange.getConstructor();
+                    // @ts-ignore
                     return Range.fromPoints(range.start, range.end);
                 }
                 CommonConverter1.toRange = toRange;
@@ -52244,6 +52268,22 @@ function _define_property(obj, key, value) {
                     return el;
                 });
             }
+            function fromDocumentHighlights(documentHighlights) {
+                return documentHighlights.map(function(el) {
+                    let className = el.kind == 2 ? "language_highlight_read" : el.kind == 3 ? "language_highlight_write" : "language_highlight_text";
+                    return toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), className);
+                });
+            }
+            function toMarkerGroupItem(range, className, tooltipText) {
+                let markerGroupItem = {
+                    range: range,
+                    className: className
+                };
+                if (tooltipText) {
+                    markerGroupItem["tooltipText"] = tooltipText;
+                }
+                return markerGroupItem;
+            }
             // EXTERNAL MODULE: ../../node_modules/showdown/dist/showdown.js
             var showdown = __nested_webpack_require_1123393__(6006);
             var showdown_default = /*#__PURE__*/ __nested_webpack_require_1123393__.n(showdown);
@@ -52517,6 +52557,101 @@ function _define_property(obj, key, value) {
                     });
                 }
             }
+            ; // CONCATENATED MODULE: ./src/ace/marker_group.ts
+            function marker_group_define_property(obj, key, value) {
+                if (key in obj) {
+                    Object.defineProperty(obj, key, {
+                        value: value,
+                        enumerable: true,
+                        configurable: true,
+                        writable: true
+                    });
+                } else {
+                    obj[key] = value;
+                }
+                return obj;
+            }
+            /*
+Potential improvements:
+- use binary search when looking for hover match
+*/ //taken from ace-code with small changes
+            class MarkerGroup {
+                /**
+     * Finds the first marker containing pos
+     * @param {Position} pos
+     * @returns Ace.MarkerGroupItem
+     */ getMarkerAtPosition(pos) {
+                    return this.markers.find(function(marker) {
+                        return marker.range.contains(pos.row, pos.column);
+                    });
+                }
+                /**
+     * Comparator for Array.sort function, which sorts marker definitions by their positions
+     *
+     * @param {Ace.MarkerGroupItem} a first marker.
+     * @param {Ace.MarkerGroupItem} b second marker.
+     * @returns {number} negative number if a should be before b, positive number if b should be before a, 0 otherwise.
+     */ markersComparator(a, b) {
+                    return a.range.start.row - b.range.start.row;
+                }
+                /**
+     * Sets marker definitions to be rendered. Limits the number of markers at MAX_MARKERS.
+     * @param {Ace.MarkerGroupItem[]} markers an array of marker definitions.
+     */ setMarkers(markers) {
+                    this.markers = markers.sort(this.markersComparator).slice(0, this.MAX_MARKERS);
+                    this.session._signal("changeBackMarker");
+                }
+                update(html, markerLayer, session, config) {
+                    if (!this.markers || !this.markers.length) return;
+                    var visibleRangeStartRow = config.firstRow, visibleRangeEndRow = config.lastRow;
+                    var foldLine;
+                    var markersOnOneLine = 0;
+                    var lastRow = 0;
+                    for(var i = 0; i < this.markers.length; i++){
+                        var marker = this.markers[i];
+                        if (marker.range.end.row < visibleRangeStartRow) continue;
+                        if (marker.range.start.row > visibleRangeEndRow) continue;
+                        if (marker.range.start.row === lastRow) {
+                            markersOnOneLine++;
+                        } else {
+                            lastRow = marker.range.start.row;
+                            markersOnOneLine = 0;
+                        }
+                        // do not render too many markers on one line
+                        // because we do not have virtual scroll for horizontal direction
+                        if (markersOnOneLine > 200) {
+                            continue;
+                        }
+                        var markerVisibleRange = marker.range.clipRows(visibleRangeStartRow, visibleRangeEndRow);
+                        if (markerVisibleRange.start.row === markerVisibleRange.end.row && markerVisibleRange.start.column === markerVisibleRange.end.column) {
+                            continue; // visible range is empty
+                        }
+                        var screenRange = markerVisibleRange.toScreenRange(session);
+                        if (screenRange.isEmpty()) {
+                            // we are inside a fold
+                            foldLine = session.getNextFoldLine(markerVisibleRange.end.row, foldLine);
+                            if (foldLine && foldLine.end.row > markerVisibleRange.end.row) {
+                                visibleRangeStartRow = foldLine.end.row;
+                            }
+                            continue;
+                        }
+                        if (screenRange.isMultiLine()) {
+                            markerLayer.drawTextMarker(html, screenRange, marker.className, config);
+                        } else {
+                            markerLayer.drawSingleLineMarker(html, screenRange, marker.className, config);
+                        }
+                    }
+                }
+                constructor(session){
+                    marker_group_define_property(this, "markers", void 0);
+                    marker_group_define_property(this, "session", void 0);
+                    // this caps total amount of markers at 10K
+                    marker_group_define_property(this, "MAX_MARKERS", 10000);
+                    this.markers = [];
+                    this.session = session;
+                    session.addDynamicMarker(this);
+                }
+            }
             ; // CONCATENATED MODULE: ./src/language-provider.ts
             function language_provider_define_property(obj, key, value) {
                 if (key in obj) {
@@ -52568,6 +52703,8 @@ function _define_property(obj, key, value) {
                 }
                 $registerEditor(editor) {
                     this.editors.push(editor);
+                    //init Range singleton
+                    AceRange.getConstructor(editor);
                     editor.setOption("useWorker", false);
                     editor.on("changeSession", ({ session })=>this.$registerSession(session));
                     if (this.options.functionality.completion) {
@@ -52585,7 +52722,7 @@ function _define_property(obj, key, value) {
                             if (!$timer) $timer = setTimeout(()=>{
                                 let cursor = editor.getCursorPosition();
                                 let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
-                                this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                                this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
                                 $timer = undefined;
                             }, 50);
                         });
@@ -52595,7 +52732,47 @@ function _define_property(obj, key, value) {
                     this.setStyle(editor);
                 }
                 setStyle(editor) {
-                    editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {margin: 0;font-size: 12px;} .ace_tooltip > code, .ace_tooltip > * > code {font-style: italic;font-size: 11px;}`, "linters.css");
+                    editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.ace_tooltip > code, .ace_tooltip > * > code {
+    font-style: italic;
+    font-size: 11px;
+}
+
+.language_highlight_error {
+    position: absolute;
+    border-bottom: dotted 1px #e00404;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+.language_highlight_warning {
+    position: absolute;
+    border-bottom: solid 1px #DDC50F;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+.language_highlight_info {
+    position: absolute;
+    border-bottom: dotted 1px #999;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+.language_highlight_text, .language_highlight_read, .language_highlight_write {
+    position: absolute;
+    box-sizing: border-box;
+    border: solid 1px #888;
+    z-index: 2000;
+}
+
+.language_highlight_write {
+    border: solid 1px #F88;
+}`, "linters.css");
                 }
                 setSessionOptions(session, options) {
                     let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
@@ -52634,7 +52811,7 @@ function _define_property(obj, key, value) {
                                         item.completerId = completer.id;
                                         item["fileName"] = fileName;
                                     });
-                                    callback(null, common_converters_CommonConverter.normalizeRanges(completions, editor));
+                                    callback(null, common_converters_CommonConverter.normalizeRanges(completions));
                                 });
                             });
                         },
@@ -52671,7 +52848,7 @@ function _define_property(obj, key, value) {
                 // this.$messageController.dispose(this.$fileName);
                 }
                 /**
-     * Removes document from all linked services by session id 
+     * Removes document from all linked services by session id
      * @param session
      */ closeDocument(session, callback) {
                     let sessionProvider = this.$getSessionLanguageProvider(session);
@@ -52709,7 +52886,7 @@ function _define_property(obj, key, value) {
                         },
                         completionResolve: true,
                         format: true,
-                        documentHighlights: false,
+                        documentHighlights: true,
                         signatureHelp: true
                     };
                     var _markdownConverter;
@@ -52754,6 +52931,10 @@ function _define_property(obj, key, value) {
                     language_provider_define_property(this, "$isConnected", false);
                     language_provider_define_property(this, "$modeIsChanged", false);
                     language_provider_define_property(this, "$options", void 0);
+                    language_provider_define_property(this, "state", {
+                        occurrenceMarkers: null,
+                        diagnosticMarkers: null
+                    });
                     language_provider_define_property(this, "extensions", {
                         "typescript": "ts",
                         "javascript": "js"
@@ -52787,8 +52968,15 @@ function _define_property(obj, key, value) {
                         if (deltas.length) this.$messageController.change(this.fileName, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
                     });
                     language_provider_define_property(this, "$showAnnotations", (diagnostics)=>{
+                        this.session.clearAnnotations();
                         let annotations = toAnnotations(diagnostics);
-                        this.session.setAnnotations(annotations);
+                        if (annotations && annotations.length > 0) {
+                            this.session.setAnnotations(annotations);
+                        }
+                        if (!this.state.diagnosticMarkers) {
+                            this.state.diagnosticMarkers = new MarkerGroup(this.session);
+                        }
+                        this.state.diagnosticMarkers.setMarkers(diagnostics.map((el)=>toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
                     });
                     language_provider_define_property(this, "validate", ()=>{
                         this.$messageController.doValidation(this.fileName, this.$showAnnotations);
@@ -52822,8 +53010,11 @@ function _define_property(obj, key, value) {
                             this.session.replace(toRange(edit.range), edit.newText);
                         }
                     });
-                    language_provider_define_property(this, "$applyDocumentHiglight", (documentHighlights)=>{
-                    //TODO: place for your code
+                    language_provider_define_property(this, "$applyDocumentHighlight", (documentHighlights)=>{
+                        if (!this.state.occurrenceMarkers) {
+                            this.state.occurrenceMarkers = new MarkerGroup(this.session);
+                        }
+                        this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
                     });
                     this.$messageController = messageController;
                     this.session = session;

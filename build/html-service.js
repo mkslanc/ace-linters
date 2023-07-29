@@ -31390,16 +31390,40 @@ function getDefaultHTMLDataProvider() {
 var utils = __webpack_require__(6297);
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var browser_main = __webpack_require__(294);
+;// CONCATENATED MODULE: ./src/ace/range-singleton.ts
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class AceRange {
+    static getConstructor(editor) {
+        if (!AceRange._instance && editor) {
+            AceRange._instance = editor.getSelectionRange().constructor;
+        }
+        return AceRange._instance;
+    }
+}
+_define_property(AceRange, "_instance", void 0);
+
 ;// CONCATENATED MODULE: ./src/type-converters/common-converters.ts
+
 
 
 var CommonConverter;
 (function(CommonConverter) {
-    function normalizeRanges(completions, editor) {
-        const Range = editor.getSelectionRange().constructor;
+    function normalizeRanges(completions) {
         return completions && completions.map((el)=>{
             if (el["range"]) {
-                el["range"] = toRange(el["range"], Range);
+                el["range"] = toRange(el["range"]);
             }
             return el;
         });
@@ -31409,10 +31433,12 @@ var CommonConverter;
         return html.replace(/<a\s/, "<a target='_blank' ");
     }
     CommonConverter.cleanHtml = cleanHtml;
-    function toRange(range, Range) {
+    function toRange(range) {
         if (!range || !range.start || !range.end) {
             return;
         }
+        let Range = AceRange.getConstructor();
+        // @ts-ignore
         return Range.fromPoints(range.start, range.end);
     }
     CommonConverter.toRange = toRange;
@@ -31486,7 +31512,7 @@ function toDiagnostics(diagnostics, filterErrors) {
 }
 
 ;// CONCATENATED MODULE: ./src/services/html/html-service.ts
-function _define_property(obj, key, value) {
+function html_service_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -31548,8 +31574,8 @@ class HtmlService extends base_service.BaseService {
     }
     constructor(mode){
         super(mode);
-        _define_property(this, "$service", void 0);
-        _define_property(this, "defaultValidationOptions", {
+        html_service_define_property(this, "$service", void 0);
+        html_service_define_property(this, "defaultValidationOptions", {
             "attr-no-duplication": true,
             "body-no-duplicates": true,
             "head-body-descendents-html": true,
@@ -31566,7 +31592,7 @@ class HtmlService extends base_service.BaseService {
             "src-not-empty": true,
             "tag-pair": true
         });
-        _define_property(this, "$defaultFormatOptions", {
+        html_service_define_property(this, "$defaultFormatOptions", {
             wrapAttributes: "auto",
             wrapAttributesIndentSize: 120
         });
