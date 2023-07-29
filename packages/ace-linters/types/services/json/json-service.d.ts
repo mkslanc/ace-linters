@@ -8,6 +8,11 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
     schemas: {
         [schemaUri: string]: string;
     };
+    serviceCapabilities: {
+        completionProvider: {
+            triggerCharacters: string[];
+        };
+    };
     constructor(mode: string);
     private $getJsonSchemaUri;
     addDocument(document: TextDocumentItem): void;

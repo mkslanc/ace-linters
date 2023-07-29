@@ -83,8 +83,8 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
-    private $registerSession = (session: Ace.EditSession, options?: ServiceOptions) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, this.$messageController, options);
+    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, options?: ServiceOptions) => {
+        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, editor, this.$messageController, options);
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
@@ -99,13 +99,13 @@ export class LanguageProvider {
     registerEditor(editor: Ace.Editor) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
-        this.$registerSession(editor.session);
+        this.$registerSession(editor.session, editor);
     }
 
     $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session));
+        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
         if (this.options.functionality.completion) {
             this.$registerCompleters(editor);
         }
@@ -257,15 +257,18 @@ class SessionLanguageProvider {
     private $isConnected = false;
     private $modeIsChanged = false;
     private $options: ServiceOptions;
+    private $servicesCapabilities: lsp.ServerCapabilities[];
 
     private extensions = {
         "typescript": "ts",
         "javascript": "js"
     }
+    editor: Ace.Editor;
 
-    constructor(session: Ace.EditSession, messageController: IMessageController, options?: ServiceOptions) {
+    constructor(session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, options?: ServiceOptions) {
         this.$messageController = messageController;
         this.session = session;
+        this.editor = editor;
         this.initFileName();
 
         session.doc["version"] = 0;
@@ -277,8 +280,9 @@ class SessionLanguageProvider {
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 
-    private $connected = () => {
+    private $connected = (capabilities: lsp.ServerCapabilities[]) => {
         this.$isConnected = true;
+        this.setServerCapabilities(capabilities);
         if (this.$modeIsChanged)
             this.$changeMode();
         if (this.$deltaQueue)
@@ -293,8 +297,28 @@ class SessionLanguageProvider {
             return;
         }
         this.$deltaQueue = [];
-        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
+        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
+    
+    private setServerCapabilities(capabilities: lsp.ServerCapabilities[]) {
+        //TODO: this need to take into account all capabilities from all services
+        this.$servicesCapabilities = capabilities;
+        if (capabilities.some((capability) => capability?.completionProvider?.triggerCharacters)) {
+            let completer = this.editor.completers.find((completer) => completer.id === "lspCompleters");
+            if (completer) {
+                let allTriggerCharacters = capabilities.reduce((acc, capability) => {
+                    if (capability.completionProvider?.triggerCharacters) {
+                        return [...acc, ...capability.completionProvider.triggerCharacters];
+                    }
+                    return acc;
+                }, []);
+
+                allTriggerCharacters = [...new Set(allTriggerCharacters)];
+
+                completer.triggerCharacters = allTriggerCharacters;
+            }
+        }
+    }
 
     private initFileName() {
         this.fileName = this.session["id"] + "." + this.$extension;

@@ -28,6 +28,11 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
         newLineCharacter: string;
         convertTabsToSpaces: boolean;
     };
+    serviceCapabilities: {
+        completionProvider: {
+            triggerCharacters: string[];
+        };
+    };
     constructor(mode: string);
     getCompilationSettings(): ts.CompilerOptions;
     getScriptFileNames(): string[];

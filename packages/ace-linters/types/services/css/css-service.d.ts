@@ -7,6 +7,11 @@ export declare class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;
     $languageId: string;
     $defaultFormatOptions: CSSFormatConfiguration;
+    serviceCapabilities: {
+        completionProvider: {
+            triggerCharacters: string[];
+        };
+    };
     constructor(mode: string);
     private $initLanguageService;
     getFormattingOptions(options: CSSFormatConfiguration): CSSFormatConfiguration;

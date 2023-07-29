@@ -12,6 +12,7 @@ export interface LanguageService {
     mode: string;
     globalOptions: any;
     serviceData: ServiceData;
+    serviceCapabilities: lsp.ServerCapabilities;
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;

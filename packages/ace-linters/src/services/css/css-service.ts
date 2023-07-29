@@ -18,6 +18,11 @@ export class CssService extends BaseService implements LanguageService {
         spaceAroundSelectorSeparator: false,
         braceStyle: "collapse"
     }
+    serviceCapabilities = {
+        completionProvider: {
+            triggerCharacters: [":", " ", "-", "/"]
+        }
+    }
     
     constructor(mode: string) {
         super(mode);

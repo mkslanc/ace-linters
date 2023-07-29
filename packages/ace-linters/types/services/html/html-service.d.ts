@@ -23,6 +23,11 @@ export declare class HtmlService extends BaseService<HtmlServiceOptions> impleme
         "tag-pair": boolean;
     };
     $defaultFormatOptions: HTMLFormatConfiguration;
+    serviceCapabilities: {
+        completionProvider: {
+            triggerCharacters: string[];
+        };
+    };
     constructor(mode: string);
     getFormattingOptions(options: HTMLFormatConfiguration): HTMLFormatConfiguration;
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[];

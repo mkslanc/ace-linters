@@ -10,6 +10,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     options: { [sessionID: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
     serviceData: ServiceData;
+    serviceCapabilities: lsp.ServerCapabilities = {};
 
     protected constructor(mode: string) {
         this.mode = mode;

@@ -35,6 +35,12 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements Lang
         wrapAttributesIndentSize: 120
     }
 
+    serviceCapabilities = {
+        completionProvider: {
+            triggerCharacters: ['.', ':', '<', '"', '=', '/']
+        }
+    }
+
     constructor(mode: string) {
         super(mode);
         this.$service = htmlService.getLanguageService();

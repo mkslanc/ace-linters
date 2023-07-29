@@ -57,6 +57,12 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         convertTabsToSpaces: true,
     }
 
+    serviceCapabilities = {
+        completionProvider: {
+            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#', ' ']
+        }
+    }
+
     constructor(mode: string) {
         super(mode);
         this.$service = ts.createLanguageService(this);

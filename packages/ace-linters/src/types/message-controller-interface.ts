@@ -3,7 +3,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import {CompletionService, ServiceFeatures, ServiceOptions, SupportedServices} from "./language-service";
 
 export interface IMessageController {
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: lsp.ServerCapabilities[]) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void)
 
@@ -17,7 +17,7 @@ export interface IMessageController {
 
     change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void): void;
 
-    changeMode(sessionId: string, value: string, mode: string, callback?: () => void);
+    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities: lsp.ServerCapabilities[]) => void);
 
     changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void);
 
