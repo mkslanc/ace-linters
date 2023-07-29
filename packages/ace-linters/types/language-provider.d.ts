@@ -24,9 +24,6 @@ export declare class LanguageProvider {
     private $getFileName;
     registerEditor(editor: Ace.Editor): void;
     $registerEditor(editor: Ace.Editor): void;
-    private importAceTooltip;
-    initHoverTooltip(ace: any, editor: any): Promise<void>;
-    private $hoverFallback;
     private $initHoverTooltip;
     setStyle(editor: any): void;
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType): void;

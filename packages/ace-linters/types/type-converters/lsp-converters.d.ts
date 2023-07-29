@@ -1,4 +1,4 @@
-import { Range, Position, Diagnostic, CompletionItem, Hover, MarkupContent, TextEdit, InsertReplaceEdit, TextDocumentContentChangeEvent, SignatureHelp } from "vscode-languageserver-protocol";
+import { Range, Position, Diagnostic, CompletionItem, Hover, MarkupContent, TextEdit, InsertReplaceEdit, TextDocumentContentChangeEvent, SignatureHelp, DocumentHighlight } from "vscode-languageserver-protocol";
 import type { Ace } from "ace-code";
 import { AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip } from "../types/language-service";
 export declare function fromRange(range: AceRangeData): Range;
@@ -21,3 +21,5 @@ export declare function fromSignatureHelp(signatureHelp: SignatureHelp[] | undef
 export declare function fromMarkupContent(content?: string | MarkupContent): string | undefined;
 export declare function fromAceDelta(delta: Ace.Delta, eol: string): TextDocumentContentChangeEvent;
 export declare function filterDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): Diagnostic[];
+export declare function fromDocumentHighlights(documentHighlights: DocumentHighlight[]): Ace.MarkerGroupItem[];
+export declare function toMarkerGroupItem(range: any, className: any, tooltipText?: any): Ace.MarkerGroupItem;

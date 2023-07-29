@@ -137,9 +137,7 @@ export class LanguageProvider {
 
         if (this.options.functionality.hover) {
             if (!this.$hoverTooltip) {
-                this.importAceTooltip().then(ace => {
-                    this.initHoverTooltip.call(this, ace, editor);
-                });
+                this.$hoverTooltip = new HoverTooltip();
             } else {
                 this.$initHoverTooltip(editor);
             }
@@ -152,31 +150,6 @@ export class LanguageProvider {
         this.setStyle(editor);
     }
 
-    private async importAceTooltip() {
-        try {
-            return await import("ace-code/src/tooltip");
-        } catch(e) {
-            return await import("ace-builds/src-noconflict/ace");
-        }
-    }
-
-    async initHoverTooltip(ace, editor) {
-        if (!this.$hoverTooltip) {
-            try {
-                this.$hoverTooltip = new ace.HoverTooltip();
-            } catch (e) {
-                console.log("ace-tooltip is not found");
-                this.$hoverFallback(editor);
-            }
-        }
-        this.$initHoverTooltip(editor);
-    }
-
-    private $hoverFallback(editor) {
-        this.$hoverTooltip = new HoverTooltip();
-        this.$initHoverTooltip(editor);
-    }
-
     private $initHoverTooltip(editor) {
         this.$hoverTooltip.setDataProvider((e, editor) => {
             let session = editor.session;
@@ -185,7 +158,7 @@ export class LanguageProvider {
             this.doHover(session, docPos, (hover) => {
                 if (!hover)
                     return;
-                var errorMarker = session.state?.diagnosticMarkers.getMarkerAtPosition(docPos);
+                var errorMarker = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkerAtPosition(docPos);
 
                 if (!errorMarker && !hover?.content) return;
 
@@ -217,12 +190,12 @@ export class LanguageProvider {
     }
 
     setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
     margin: 0;
     font-size: 12px;
 }
 
-.ace_tooltip > code, .ace_tooltip > * > code {
+.ace_tooltip code {
     font-style: italic;
     font-size: 11px;
 }
@@ -379,7 +352,7 @@ class SessionLanguageProvider {
     private $modeIsChanged = false;
     private $options: ServiceOptions;
 
-    private state: {
+    state: {
         occurrenceMarkers: MarkerGroup | null,
         diagnosticMarkers: MarkerGroup | null
     } = {
