@@ -12,7 +12,8 @@ import {
     InsertReplaceEdit,
     TextDocumentContentChangeEvent,
     SignatureHelp,
-    DiagnosticSeverity
+    DiagnosticSeverity,
+    DocumentHighlight
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {CommonConverter} from "./common-converters";
@@ -282,4 +283,26 @@ export function filterDiagnostics(diagnostics: Diagnostic[], filterErrors: Filte
         }
         return el;
     })
+}
+
+export function fromDocumentHighlights(documentHighlights: DocumentHighlight[]): Ace.MarkerGroupItem[] {
+    return documentHighlights.map(function (el) {
+        let className = el.kind == 2
+            ? "language_highlight_read"
+            : el.kind == 3
+                ? "language_highlight_write"
+                : "language_highlight_text";
+        return toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), className);
+    });
+}
+
+export function toMarkerGroupItem(range, className, tooltipText?): Ace.MarkerGroupItem {
+    let markerGroupItem = {
+        range: range,
+        className: className
+    }
+    if (tooltipText) {
+        markerGroupItem["tooltipText"] = tooltipText;
+    }
+    return markerGroupItem;
 }
