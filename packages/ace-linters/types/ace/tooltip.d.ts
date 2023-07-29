@@ -8,7 +8,7 @@ export declare class Tooltip {
     constructor(parentNode: any);
     $init(): HTMLDivElement;
     /**
-     * @returns {Element}
+     * @returns {HTMLElement}
      **/
     getElement(): HTMLDivElement;
     /**
@@ -28,6 +28,7 @@ export declare class Tooltip {
      * @param {String} className
      **/
     setClassName(className: any): void;
+    setTheme(theme: any): void;
     /**
      * @param {String} text
      * @param {Number} x

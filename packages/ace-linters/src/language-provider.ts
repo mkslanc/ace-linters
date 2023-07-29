@@ -1,5 +1,4 @@
 import {Ace} from "ace-code";
-import {DescriptionTooltip} from "./components/description-tooltip";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
 import {IMessageController} from "./types/message-controller-interface";
@@ -30,15 +29,16 @@ import {
 } from "./types/language-service";
 import {MarkerGroup} from "./ace/marker_group";
 import {AceRange} from "./ace/range-singleton";
+import {HoverTooltip} from "./ace/hover-tooltip";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
-    private $descriptionTooltip: DescriptionTooltip;
     private $signatureTooltip: SignatureTooltip;
     private readonly $messageController: IMessageController;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     editors: Ace.Editor[] = [];
     options: ProviderOptions;
+    private $hoverTooltip: HoverTooltip;
 
     constructor(messageController: IMessageController, options?: ProviderOptions) {
         this.$messageController = messageController;
@@ -56,7 +56,6 @@ export class LanguageProvider {
         };
         this.options.markdownConverter ??= new showdown.Converter();
         this.$signatureTooltip = new SignatureTooltip(this);
-        this.$descriptionTooltip = new DescriptionTooltip(this);
     }
 
     /**
@@ -135,19 +134,68 @@ export class LanguageProvider {
                         }, 50);
             });
         }
-        this.$descriptionTooltip.registerEditor(editor);
-        this.$signatureTooltip.registerEditor(editor);
+
+        if (this.options.functionality.hover) {
+            if (!this.$hoverTooltip) {
+                this.$hoverTooltip = new HoverTooltip();
+            } else {
+                this.$initHoverTooltip(editor);
+            }
+        }
+        
+        if (this.options.functionality.signatureHelp) {
+            this.$signatureTooltip.registerEditor(editor);
+        }
 
         this.setStyle(editor);
     }
 
+    private $initHoverTooltip(editor) {
+        this.$hoverTooltip.setDataProvider((e, editor) => {
+            let session = editor.session;
+            let docPos = e.getDocumentPosition();
+
+            this.doHover(session, docPos, (hover) => {
+                if (!hover)
+                    return;
+                var errorMarker = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkerAtPosition(docPos);
+
+                if (!errorMarker && !hover?.content) return;
+
+                var range = hover?.range || errorMarker?.range;
+                const Range = editor.getSelectionRange().constructor;
+                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
+                var hoverNode = hover && document.createElement("div");
+                if (hoverNode) {
+                    // todo render markdown using ace markdown mode
+                    hoverNode.innerHTML = this.getTooltipText(hover);
+                }
+
+                var domNode = document.createElement('div');
+
+                if (errorMarker) {
+                    var errorDiv = document.createElement('div');
+                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
+                    errorDiv.appendChild(errorText);
+                    domNode.appendChild(errorDiv);
+                }
+
+                if (hoverNode) {
+                    domNode.appendChild(hoverNode);
+                }
+                this.$hoverTooltip.showForRange(editor, range, domNode, e);
+            });
+        });
+        this.$hoverTooltip.addToEditor(editor);
+    }
+
     setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
     margin: 0;
     font-size: 12px;
 }
 
-.ace_tooltip > code, .ace_tooltip > * > code {
+.ace_tooltip code {
     font-style: italic;
     font-size: 11px;
 }
@@ -206,7 +254,7 @@ export class LanguageProvider {
         this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 
-    getTooltipText(hover: Tooltip): string | undefined {
+    getTooltipText(hover: Tooltip): string {
         return hover.content.type === "markdown" ?
             CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(hover.content.text)) : hover.content.text;
     }
@@ -304,7 +352,7 @@ class SessionLanguageProvider {
     private $modeIsChanged = false;
     private $options: ServiceOptions;
 
-    private state: {
+    state: {
         occurrenceMarkers: MarkerGroup | null,
         diagnosticMarkers: MarkerGroup | null
     } = {

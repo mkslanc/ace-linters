@@ -4,12 +4,12 @@ import * as lsp from "vscode-languageserver-protocol";
 import { ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices, Tooltip } from "./types/language-service";
 export declare class LanguageProvider {
     activeEditor: Ace.Editor;
-    private $descriptionTooltip;
     private $signatureTooltip;
     private readonly $messageController;
     private $sessionLanguageProviders;
     editors: Ace.Editor[];
     options: ProviderOptions;
+    private $hoverTooltip;
     constructor(messageController: IMessageController, options?: ProviderOptions);
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
@@ -24,13 +24,14 @@ export declare class LanguageProvider {
     private $getFileName;
     registerEditor(editor: Ace.Editor): void;
     $registerEditor(editor: Ace.Editor): void;
+    private $initHoverTooltip;
     setStyle(editor: any): void;
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType): void;
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge?: boolean): void;
     configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
     doHover(session: Ace.EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void): void;
     provideSignatureHelp(session: Ace.EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void): void;
-    getTooltipText(hover: Tooltip): string | undefined;
+    getTooltipText(hover: Tooltip): string;
     format: () => void;
     doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void): void;
     doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void): void;

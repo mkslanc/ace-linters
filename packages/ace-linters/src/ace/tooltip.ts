@@ -20,14 +20,14 @@ export class Tooltip {
 
     $init() {
         this.$element = document.createElement("div");
-        this.$element.className = "ace_tooltip";
+        this.$element.className = CLASSNAME;
         this.$element.style.display = "none";
         this.$parentNode.appendChild(this.$element);
         return this.$element;
     }
 
     /**
-     * @returns {Element}
+     * @returns {HTMLElement}
      **/
     getElement() {
         return this.$element || this.$init();
@@ -61,6 +61,11 @@ export class Tooltip {
      **/
     setClassName(className) {
         this.getElement().className += " " + className;
+    }
+
+    setTheme(theme) {
+        this.getElement().className = CLASSNAME + " " +
+            (theme.isDark? "ace_dark " : "") + (theme.cssClass || "");
     }
 
     /**
