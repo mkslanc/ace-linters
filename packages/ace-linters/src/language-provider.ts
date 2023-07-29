@@ -4,12 +4,12 @@ import {CommonConverter} from "./type-converters/common-converters";
 import {IMessageController} from "./types/message-controller-interface";
 import {MessageController} from "./message-controller";
 import {
-    fromAceDelta,
+    fromAceDelta, fromDocumentHighlights,
     fromPoint,
     fromRange, fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
-    toCompletions,
+    toCompletions, toMarkerGroupItem,
     toRange, toResolvedCompletion,
     toTooltip
 } from "./type-converters/lsp-converters";
@@ -27,6 +27,8 @@ import {
     SupportedServices,
     Tooltip
 } from "./types/language-service";
+import {MarkerGroup} from "./ace/marker_group";
+import {AceRange} from "./ace/range-singleton";
 import {HoverTooltip} from "./ace/hover-tooltip";
 
 export class LanguageProvider {
@@ -49,7 +51,7 @@ export class LanguageProvider {
             },
             completionResolve: true,
             format: true,
-            documentHighlights: false,
+            documentHighlights: true,
             signatureHelp: true
         };
         this.options.markdownConverter ??= new showdown.Converter();
@@ -103,6 +105,10 @@ export class LanguageProvider {
 
     $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);
+
+        //init Range singleton
+        AceRange.getConstructor(editor);
+
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session));
         if (this.options.functionality.completion) {
@@ -123,7 +129,7 @@ export class LanguageProvider {
                             let cursor = editor.getCursorPosition();
                             let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
 
-                            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHiglight);
+                            this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
                             $timer = undefined;
                         }, 50);
             });
@@ -211,7 +217,47 @@ export class LanguageProvider {
     }
 
     setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {margin: 0;font-size: 12px;} .ace_tooltip > code, .ace_tooltip > * > code {font-style: italic;font-size: 11px;}`, "linters.css");
+        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip > p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.ace_tooltip > code, .ace_tooltip > * > code {
+    font-style: italic;
+    font-size: 11px;
+}
+
+.language_highlight_error {
+    position: absolute;
+    border-bottom: dotted 1px #e00404;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+.language_highlight_warning {
+    position: absolute;
+    border-bottom: solid 1px #DDC50F;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+.language_highlight_info {
+    position: absolute;
+    border-bottom: dotted 1px #999;
+    z-index: 2000;
+    border-radius: 0;
+}
+
+.language_highlight_text, .language_highlight_read, .language_highlight_write {
+    position: absolute;
+    box-sizing: border-box;
+    border: solid 1px #888;
+    z-index: 2000;
+}
+
+.language_highlight_write {
+    border: solid 1px #F88;
+}`, "linters.css");
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
@@ -271,7 +317,7 @@ export class LanguageProvider {
                             item.completerId = completer.id;
                             item["fileName"] = fileName
                         });
-                        callback(null, CommonConverter.normalizeRanges(completions, editor));
+                        callback(null, CommonConverter.normalizeRanges(completions));
                     });
                 });
             },
@@ -332,6 +378,14 @@ class SessionLanguageProvider {
     private $isConnected = false;
     private $modeIsChanged = false;
     private $options: ServiceOptions;
+
+    private state: {
+        occurrenceMarkers: MarkerGroup | null,
+        diagnosticMarkers: MarkerGroup | null
+    } = {
+        occurrenceMarkers: null,
+        diagnosticMarkers: null
+    }
 
     private extensions = {
         "typescript": "ts",
@@ -409,9 +463,16 @@ class SessionLanguageProvider {
                 fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
     };
 
-    private $showAnnotations = (diagnostics) => {
+    private $showAnnotations = (diagnostics: lsp.Diagnostic[]) => {
+        this.session.clearAnnotations();
         let annotations = toAnnotations(diagnostics)
-        this.session.setAnnotations(annotations);
+        if (annotations && annotations.length > 0) {
+            this.session.setAnnotations(annotations);
+        }
+        if (!this.state.diagnosticMarkers) {
+            this.state.diagnosticMarkers = new MarkerGroup(this.session);
+        }
+        this.state.diagnosticMarkers.setMarkers(diagnostics.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
@@ -454,8 +515,11 @@ class SessionLanguageProvider {
         }
     }
 
-    $applyDocumentHiglight = (documentHighlights) => {
-        //TODO: place for your code
+    $applyDocumentHighlight = (documentHighlights: lsp.DocumentHighlight[]) => {
+        if (!this.state.occurrenceMarkers) {
+            this.state.occurrenceMarkers = new MarkerGroup(this.session);
+        }
+        this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
     };
 
     dispose(callback?) {
