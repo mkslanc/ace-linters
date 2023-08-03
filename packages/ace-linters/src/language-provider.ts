@@ -402,7 +402,7 @@ class SessionLanguageProvider {
         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
     
-    private setServerCapabilities(capabilities: lsp.ServerCapabilities[]) {
+    private setServerCapabilities = (capabilities: lsp.ServerCapabilities[]) => {
         //TODO: this need to take into account all capabilities from all services
         this.$servicesCapabilities = capabilities;
         if (capabilities.some((capability) => capability?.completionProvider?.triggerCharacters)) {
