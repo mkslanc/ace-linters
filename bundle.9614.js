@@ -5897,13 +5897,14 @@
                         _define_property(this, "options", {});
                         _define_property(this, "globalOptions", {});
                         _define_property(this, "serviceData", void 0);
+                        _define_property(this, "serviceCapabilities", {});
                         this.mode = mode;
                     }
                 }
             /***/ },
-            /***/ 6297: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_321790__)=>{
+            /***/ 6297: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_321865__)=>{
                 "use strict";
-                /* harmony export */ __nested_webpack_require_321790__.d(__nested_webpack_exports__, {
+                /* harmony export */ __nested_webpack_require_321865__.d(__nested_webpack_exports__, {
                     /* harmony export */ $p: ()=>/* binding */ checkValueAgainstRegexpArray,
                     /* harmony export */ PM: ()=>/* binding */ mergeObjects
                 });
@@ -5973,14 +5974,14 @@
                     return arg && typeof arg === 'object' && typeof arg.copy === 'function' && typeof arg.fill === 'function' && typeof arg.readUInt8 === 'function';
                 };
             /***/ },
-            /***/ 4895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_325422__)=>{
+            /***/ 4895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_325497__)=>{
                 "use strict";
                 // Currently in sync with Node.js lib/internal/util/types.js
                 // https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
-                var isArgumentsObject = __nested_webpack_require_325422__(2635);
-                var isGeneratorFunction = __nested_webpack_require_325422__(3138);
-                var whichTypedArray = __nested_webpack_require_325422__(2094);
-                var isTypedArray = __nested_webpack_require_325422__(198);
+                var isArgumentsObject = __nested_webpack_require_325497__(2635);
+                var isGeneratorFunction = __nested_webpack_require_325497__(3138);
+                var whichTypedArray = __nested_webpack_require_325497__(2094);
+                var isTypedArray = __nested_webpack_require_325497__(198);
                 function uncurryThis(f) {
                     return f.call.bind(f);
                 }
@@ -6206,9 +6207,9 @@
                     });
                 });
             /***/ },
-            /***/ 3335: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_337898__)=>{
-                /* provided dependency */ var process = __nested_webpack_require_337898__(4406);
-                /* provided dependency */ var console = __nested_webpack_require_337898__(3716);
+            /***/ 3335: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_337973__)=>{
+                /* provided dependency */ var process = __nested_webpack_require_337973__(4406);
+                /* provided dependency */ var console = __nested_webpack_require_337973__(3716);
                 // Copyright Joyent, Inc. and other Node contributors.
                 //
                 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6638,7 +6639,7 @@
                 }
                 // NOTE: These type checking functions intentionally don't use `instanceof`
                 // because it is fragile and can be easily faked with `Object.create()`.
-                exports1.types = __nested_webpack_require_337898__(4895);
+                exports1.types = __nested_webpack_require_337973__(4895);
                 function isArray(ar) {
                     return Array.isArray(ar);
                 }
@@ -6699,7 +6700,7 @@
                     typeof arg === 'undefined';
                 }
                 exports1.isPrimitive = isPrimitive;
-                exports1.isBuffer = __nested_webpack_require_337898__(82);
+                exports1.isBuffer = __nested_webpack_require_337973__(82);
                 function objectToString(o) {
                     return Object.prototype.toString.call(o);
                 }
@@ -6750,7 +6751,7 @@
  * @param {function} ctor Constructor function which needs to inherit the
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
- */ exports1.inherits = __nested_webpack_require_337898__(1285);
+ */ exports1.inherits = __nested_webpack_require_337973__(1285);
                 exports1._extend = function(origin, add) {
                     // Don't do anything if add isn't an object
                     if (!add || !isObject(add)) return origin;
@@ -6860,14 +6861,14 @@
                 }
                 exports1.callbackify = callbackify;
             /***/ },
-            /***/ 1200: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_369496__)=>{
+            /***/ 1200: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_369571__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
- * ----------------------------------------------------------------------------------------- */ module1.exports = __nested_webpack_require_369496__(5953);
+ * ----------------------------------------------------------------------------------------- */ module1.exports = __nested_webpack_require_369571__(5953);
             /***/ },
-            /***/ 5953: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_370055__) {
+            /***/ 5953: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_370130__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6895,11 +6896,11 @@
                     value: true
                 });
                 exports1.createMessageConnection = exports1.BrowserMessageWriter = exports1.BrowserMessageReader = void 0;
-                const ril_1 = __nested_webpack_require_370055__(3632);
+                const ril_1 = __nested_webpack_require_370130__(3632);
                 // Install the browser runtime abstract.
                 ril_1.default.install();
-                const api_1 = __nested_webpack_require_370055__(5247);
-                __exportStar(__nested_webpack_require_370055__(5247), exports1);
+                const api_1 = __nested_webpack_require_370130__(5247);
+                __exportStar(__nested_webpack_require_370130__(5247), exports1);
                 class BrowserMessageReader extends api_1.AbstractMessageReader {
                     listen(callback) {
                         return this._onData.event(callback);
@@ -6951,16 +6952,16 @@
                 }
                 exports1.createMessageConnection = createMessageConnection;
             /***/ },
-            /***/ 3632: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_374470__)=>{
+            /***/ 3632: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_374545__)=>{
                 "use strict";
-                /* provided dependency */ var console = __nested_webpack_require_374470__(3716);
+                /* provided dependency */ var console = __nested_webpack_require_374545__(3716);
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */ Object.defineProperty(exports1, "__esModule", {
                     value: true
                 });
-                const api_1 = __nested_webpack_require_374470__(5247);
+                const api_1 = __nested_webpack_require_374545__(5247);
                 class MessageBuffer extends api_1.AbstractMessageBuffer {
                     emptyBuffer() {
                         return MessageBuffer.emptyBuffer;
@@ -7114,7 +7115,7 @@
                 })(RIL || (RIL = {}));
                 exports1["default"] = RIL;
             /***/ },
-            /***/ 5247: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_382849__)=>{
+            /***/ 5247: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_382924__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7125,7 +7126,7 @@
                 });
                 exports1.ProgressType = exports1.ProgressToken = exports1.createMessageConnection = exports1.NullLogger = exports1.ConnectionOptions = exports1.ConnectionStrategy = exports1.AbstractMessageBuffer = exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = exports1.SharedArrayReceiverStrategy = exports1.SharedArraySenderStrategy = exports1.CancellationToken = exports1.CancellationTokenSource = exports1.Emitter = exports1.Event = exports1.Disposable = exports1.LRUCache = exports1.Touch = exports1.LinkedMap = exports1.ParameterStructures = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.ErrorCodes = exports1.ResponseError = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType0 = exports1.RequestType = exports1.Message = exports1.RAL = void 0;
                 exports1.MessageStrategy = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = void 0;
-                const messages_1 = __nested_webpack_require_382849__(9141);
+                const messages_1 = __nested_webpack_require_382924__(9141);
                 Object.defineProperty(exports1, "Message", {
                     enumerable: true,
                     get: function() {
@@ -7282,7 +7283,7 @@
                         return messages_1.ParameterStructures;
                     }
                 });
-                const linkedMap_1 = __nested_webpack_require_382849__(7040);
+                const linkedMap_1 = __nested_webpack_require_382924__(7040);
                 Object.defineProperty(exports1, "LinkedMap", {
                     enumerable: true,
                     get: function() {
@@ -7301,14 +7302,14 @@
                         return linkedMap_1.Touch;
                     }
                 });
-                const disposable_1 = __nested_webpack_require_382849__(8437);
+                const disposable_1 = __nested_webpack_require_382924__(8437);
                 Object.defineProperty(exports1, "Disposable", {
                     enumerable: true,
                     get: function() {
                         return disposable_1.Disposable;
                     }
                 });
-                const events_1 = __nested_webpack_require_382849__(5165);
+                const events_1 = __nested_webpack_require_382924__(5165);
                 Object.defineProperty(exports1, "Event", {
                     enumerable: true,
                     get: function() {
@@ -7321,7 +7322,7 @@
                         return events_1.Emitter;
                     }
                 });
-                const cancellation_1 = __nested_webpack_require_382849__(415);
+                const cancellation_1 = __nested_webpack_require_382924__(415);
                 Object.defineProperty(exports1, "CancellationTokenSource", {
                     enumerable: true,
                     get: function() {
@@ -7334,7 +7335,7 @@
                         return cancellation_1.CancellationToken;
                     }
                 });
-                const sharedArrayCancellation_1 = __nested_webpack_require_382849__(178);
+                const sharedArrayCancellation_1 = __nested_webpack_require_382924__(178);
                 Object.defineProperty(exports1, "SharedArraySenderStrategy", {
                     enumerable: true,
                     get: function() {
@@ -7347,7 +7348,7 @@
                         return sharedArrayCancellation_1.SharedArrayReceiverStrategy;
                     }
                 });
-                const messageReader_1 = __nested_webpack_require_382849__(451);
+                const messageReader_1 = __nested_webpack_require_382924__(451);
                 Object.defineProperty(exports1, "MessageReader", {
                     enumerable: true,
                     get: function() {
@@ -7366,7 +7367,7 @@
                         return messageReader_1.ReadableStreamMessageReader;
                     }
                 });
-                const messageWriter_1 = __nested_webpack_require_382849__(1251);
+                const messageWriter_1 = __nested_webpack_require_382924__(1251);
                 Object.defineProperty(exports1, "MessageWriter", {
                     enumerable: true,
                     get: function() {
@@ -7385,14 +7386,14 @@
                         return messageWriter_1.WriteableStreamMessageWriter;
                     }
                 });
-                const messageBuffer_1 = __nested_webpack_require_382849__(8652);
+                const messageBuffer_1 = __nested_webpack_require_382924__(8652);
                 Object.defineProperty(exports1, "AbstractMessageBuffer", {
                     enumerable: true,
                     get: function() {
                         return messageBuffer_1.AbstractMessageBuffer;
                     }
                 });
-                const connection_1 = __nested_webpack_require_382849__(1908);
+                const connection_1 = __nested_webpack_require_382924__(1908);
                 Object.defineProperty(exports1, "ConnectionStrategy", {
                     enumerable: true,
                     get: function() {
@@ -7495,10 +7496,10 @@
                         return connection_1.MessageStrategy;
                     }
                 });
-                const ral_1 = __nested_webpack_require_382849__(5706);
+                const ral_1 = __nested_webpack_require_382924__(5706);
                 exports1.RAL = ral_1.default;
             /***/ },
-            /***/ 415: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_400910__)=>{
+            /***/ 415: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_400985__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7507,9 +7508,9 @@
                     value: true
                 });
                 exports1.CancellationTokenSource = exports1.CancellationToken = void 0;
-                const ral_1 = __nested_webpack_require_400910__(5706);
-                const Is = __nested_webpack_require_400910__(8811);
-                const events_1 = __nested_webpack_require_400910__(5165);
+                const ral_1 = __nested_webpack_require_400985__(5706);
+                const Is = __nested_webpack_require_400985__(8811);
+                const events_1 = __nested_webpack_require_400985__(5165);
                 var CancellationToken;
                 (function(CancellationToken) {
                     CancellationToken.None = Object.freeze({
@@ -7597,7 +7598,7 @@
                 }
                 exports1.CancellationTokenSource = CancellationTokenSource;
             /***/ },
-            /***/ 1908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_405844__)=>{
+            /***/ 1908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_405919__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7606,12 +7607,12 @@
                     value: true
                 });
                 exports1.createMessageConnection = exports1.ConnectionOptions = exports1.MessageStrategy = exports1.CancellationStrategy = exports1.CancellationSenderStrategy = exports1.CancellationReceiverStrategy = exports1.RequestCancellationReceiverStrategy = exports1.IdCancellationReceiverStrategy = exports1.ConnectionStrategy = exports1.ConnectionError = exports1.ConnectionErrors = exports1.LogTraceNotification = exports1.SetTraceNotification = exports1.TraceFormat = exports1.TraceValues = exports1.Trace = exports1.NullLogger = exports1.ProgressType = exports1.ProgressToken = void 0;
-                const ral_1 = __nested_webpack_require_405844__(5706);
-                const Is = __nested_webpack_require_405844__(8811);
-                const messages_1 = __nested_webpack_require_405844__(9141);
-                const linkedMap_1 = __nested_webpack_require_405844__(7040);
-                const events_1 = __nested_webpack_require_405844__(5165);
-                const cancellation_1 = __nested_webpack_require_405844__(415);
+                const ral_1 = __nested_webpack_require_405919__(5706);
+                const Is = __nested_webpack_require_405919__(8811);
+                const messages_1 = __nested_webpack_require_405919__(9141);
+                const linkedMap_1 = __nested_webpack_require_405919__(7040);
+                const events_1 = __nested_webpack_require_405919__(5165);
+                const cancellation_1 = __nested_webpack_require_405919__(415);
                 var CancelNotification;
                 (function(CancelNotification) {
                     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -8795,7 +8796,7 @@
                     Disposable.create = create;
                 })(Disposable = exports1.Disposable || (exports1.Disposable = {}));
             /***/ },
-            /***/ 5165: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_476935__)=>{
+            /***/ 5165: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_477010__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8804,7 +8805,7 @@
                     value: true
                 });
                 exports1.Emitter = exports1.Event = void 0;
-                const ral_1 = __nested_webpack_require_476935__(5706);
+                const ral_1 = __nested_webpack_require_477010__(5706);
                 var Event;
                 (function(Event) {
                     const _disposable = {
@@ -9537,7 +9538,7 @@
                 }
                 exports1.AbstractMessageBuffer = AbstractMessageBuffer;
             /***/ },
-            /***/ 451: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_512627__)=>{
+            /***/ 451: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_512702__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9546,10 +9547,10 @@
                     value: true
                 });
                 exports1.ReadableStreamMessageReader = exports1.AbstractMessageReader = exports1.MessageReader = void 0;
-                const ral_1 = __nested_webpack_require_512627__(5706);
-                const Is = __nested_webpack_require_512627__(8811);
-                const events_1 = __nested_webpack_require_512627__(5165);
-                const semaphore_1 = __nested_webpack_require_512627__(2339);
+                const ral_1 = __nested_webpack_require_512702__(5706);
+                const Is = __nested_webpack_require_512702__(8811);
+                const events_1 = __nested_webpack_require_512702__(5165);
+                const semaphore_1 = __nested_webpack_require_512702__(2339);
                 var MessageReader;
                 (function(MessageReader) {
                     function is(value) {
@@ -9736,7 +9737,7 @@
                 }
                 exports1.ReadableStreamMessageReader = ReadableStreamMessageReader;
             /***/ },
-            /***/ 1251: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_523889__)=>{
+            /***/ 1251: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_523964__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9745,10 +9746,10 @@
                     value: true
                 });
                 exports1.WriteableStreamMessageWriter = exports1.AbstractMessageWriter = exports1.MessageWriter = void 0;
-                const ral_1 = __nested_webpack_require_523889__(5706);
-                const Is = __nested_webpack_require_523889__(8811);
-                const semaphore_1 = __nested_webpack_require_523889__(2339);
-                const events_1 = __nested_webpack_require_523889__(5165);
+                const ral_1 = __nested_webpack_require_523964__(5706);
+                const Is = __nested_webpack_require_523964__(8811);
+                const semaphore_1 = __nested_webpack_require_523964__(2339);
+                const events_1 = __nested_webpack_require_523964__(5165);
                 const ContentLength = 'Content-Length: ';
                 const CRLF = '\r\n';
                 var MessageWriter;
@@ -9861,7 +9862,7 @@
                 }
                 exports1.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
             /***/ },
-            /***/ 9141: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_530775__)=>{
+            /***/ 9141: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_530850__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9870,7 +9871,7 @@
                     value: true
                 });
                 exports1.Message = exports1.NotificationType9 = exports1.NotificationType8 = exports1.NotificationType7 = exports1.NotificationType6 = exports1.NotificationType5 = exports1.NotificationType4 = exports1.NotificationType3 = exports1.NotificationType2 = exports1.NotificationType1 = exports1.NotificationType0 = exports1.NotificationType = exports1.RequestType9 = exports1.RequestType8 = exports1.RequestType7 = exports1.RequestType6 = exports1.RequestType5 = exports1.RequestType4 = exports1.RequestType3 = exports1.RequestType2 = exports1.RequestType1 = exports1.RequestType = exports1.RequestType0 = exports1.AbstractMessageSignature = exports1.ParameterStructures = exports1.ResponseError = exports1.ErrorCodes = void 0;
-                const is = __nested_webpack_require_530775__(8811);
+                const is = __nested_webpack_require_530850__(8811);
                 /**
  * Predefined error codes.
  */ var ErrorCodes;
@@ -10177,7 +10178,7 @@
                 })(RAL || (RAL = {}));
                 exports1["default"] = RAL;
             /***/ },
-            /***/ 2339: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_546283__)=>{
+            /***/ 2339: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_546358__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10186,7 +10187,7 @@
                     value: true
                 });
                 exports1.Semaphore = void 0;
-                const ral_1 = __nested_webpack_require_546283__(5706);
+                const ral_1 = __nested_webpack_require_546358__(5706);
                 class Semaphore {
                     lock(thunk) {
                         return new Promise((resolve, reject)=>{
@@ -10250,7 +10251,7 @@
                 }
                 exports1.Semaphore = Semaphore;
             /***/ },
-            /***/ 178: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_549725__)=>{
+            /***/ 178: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_549800__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10259,7 +10260,7 @@
                     value: true
                 });
                 exports1.SharedArrayReceiverStrategy = exports1.SharedArraySenderStrategy = void 0;
-                const cancellation_1 = __nested_webpack_require_549725__(415);
+                const cancellation_1 = __nested_webpack_require_549800__(415);
                 var CancellationState;
                 (function(CancellationState) {
                     CancellationState.Continue = 0;
@@ -10327,7 +10328,7 @@
                 }
                 exports1.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
             /***/ },
-            /***/ 294: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_553628__) {
+            /***/ 294: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_553703__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10355,15 +10356,15 @@
                     value: true
                 });
                 exports1.createProtocolConnection = void 0;
-                const browser_1 = __nested_webpack_require_553628__(1200);
-                __exportStar(__nested_webpack_require_553628__(1200), exports1);
-                __exportStar(__nested_webpack_require_553628__(9372), exports1);
+                const browser_1 = __nested_webpack_require_553703__(1200);
+                __exportStar(__nested_webpack_require_553703__(1200), exports1);
+                __exportStar(__nested_webpack_require_553703__(9372), exports1);
                 function createProtocolConnection(reader, writer, logger, options) {
                     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
                 }
                 exports1.createProtocolConnection = createProtocolConnection;
             /***/ },
-            /***/ 9372: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_555817__) {
+            /***/ 9372: /***/ function(__unused_webpack_module, exports1, __nested_webpack_require_555892__) {
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10391,11 +10392,11 @@
                     value: true
                 });
                 exports1.LSPErrorCodes = exports1.createProtocolConnection = void 0;
-                __exportStar(__nested_webpack_require_555817__(5953), exports1);
-                __exportStar(__nested_webpack_require_555817__(4767), exports1);
-                __exportStar(__nested_webpack_require_555817__(8599), exports1);
-                __exportStar(__nested_webpack_require_555817__(6525), exports1);
-                var connection_1 = __nested_webpack_require_555817__(2798);
+                __exportStar(__nested_webpack_require_555892__(5953), exports1);
+                __exportStar(__nested_webpack_require_555892__(4767), exports1);
+                __exportStar(__nested_webpack_require_555892__(8599), exports1);
+                __exportStar(__nested_webpack_require_555892__(6525), exports1);
+                var connection_1 = __nested_webpack_require_555892__(2798);
                 Object.defineProperty(exports1, "createProtocolConnection", {
                     enumerable: true,
                     get: function() {
@@ -10447,7 +10448,7 @@
     */ LSPErrorCodes.lspReservedErrorRangeEnd = -32800;
                 })(LSPErrorCodes = exports1.LSPErrorCodes || (exports1.LSPErrorCodes = {}));
             /***/ },
-            /***/ 2798: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_559968__)=>{
+            /***/ 2798: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_560043__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10456,7 +10457,7 @@
                     value: true
                 });
                 exports1.createProtocolConnection = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_559968__(5953);
+                const vscode_jsonrpc_1 = __nested_webpack_require_560043__(5953);
                 function createProtocolConnection(input, output, logger, options) {
                     if (vscode_jsonrpc_1.ConnectionStrategy.is(options)) {
                         options = {
@@ -10467,7 +10468,7 @@
                 }
                 exports1.createProtocolConnection = createProtocolConnection;
             /***/ },
-            /***/ 8599: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_561205__)=>{
+            /***/ 8599: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_561280__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10476,7 +10477,7 @@
                     value: true
                 });
                 exports1.ProtocolNotificationType = exports1.ProtocolNotificationType0 = exports1.ProtocolRequestType = exports1.ProtocolRequestType0 = exports1.RegistrationType = exports1.MessageDirection = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_561205__(5953);
+                const vscode_jsonrpc_1 = __nested_webpack_require_561280__(5953);
                 var MessageDirection;
                 (function(MessageDirection) {
                     MessageDirection["clientToServer"] = "clientToServer";
@@ -10514,7 +10515,7 @@
                 }
                 exports1.ProtocolNotificationType = ProtocolNotificationType;
             /***/ },
-            /***/ 4434: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_563931__)=>{
+            /***/ 4434: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_564006__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) TypeFox, Microsoft and others. All rights reserved.
@@ -10523,7 +10524,7 @@
                     value: true
                 });
                 exports1.CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyIncomingCallsRequest = exports1.CallHierarchyPrepareRequest = void 0;
-                const messages_1 = __nested_webpack_require_563931__(8599);
+                const messages_1 = __nested_webpack_require_564006__(8599);
                 /**
  * A request to result a `CallHierarchyItem` in a document at a given position.
  * Can be used as an input to an incoming or outgoing call hierarchy.
@@ -10556,7 +10557,7 @@
                     CallHierarchyOutgoingCallsRequest.type = new messages_1.ProtocolRequestType(CallHierarchyOutgoingCallsRequest.method);
                 })(CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyOutgoingCallsRequest || (exports1.CallHierarchyOutgoingCallsRequest = {}));
             /***/ },
-            /***/ 7908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_566962__)=>{
+            /***/ 7908: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_567037__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10565,7 +10566,7 @@
                     value: true
                 });
                 exports1.ColorPresentationRequest = exports1.DocumentColorRequest = void 0;
-                const messages_1 = __nested_webpack_require_566962__(8599);
+                const messages_1 = __nested_webpack_require_567037__(8599);
                 /**
  * A request to list all color symbols found in a given text document. The request's
  * parameter is of type {@link DocumentColorParams} the
@@ -10589,7 +10590,7 @@
                     ColorPresentationRequest.type = new messages_1.ProtocolRequestType(ColorPresentationRequest.method);
                 })(ColorPresentationRequest = exports1.ColorPresentationRequest || (exports1.ColorPresentationRequest = {}));
             /***/ },
-            /***/ 5442: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_569265__)=>{
+            /***/ 5442: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_569340__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10598,7 +10599,7 @@
                     value: true
                 });
                 exports1.ConfigurationRequest = void 0;
-                const messages_1 = __nested_webpack_require_569265__(8599);
+                const messages_1 = __nested_webpack_require_569340__(8599);
                 //---- Get Configuration request ----
                 /**
  * The 'workspace/configuration' request is sent from the server to the client to fetch a certain
@@ -10615,7 +10616,7 @@
                     ConfigurationRequest.type = new messages_1.ProtocolRequestType(ConfigurationRequest.method);
                 })(ConfigurationRequest = exports1.ConfigurationRequest || (exports1.ConfigurationRequest = {}));
             /***/ },
-            /***/ 7210: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_571047__)=>{
+            /***/ 7210: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_571122__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10624,7 +10625,7 @@
                     value: true
                 });
                 exports1.DeclarationRequest = void 0;
-                const messages_1 = __nested_webpack_require_571047__(8599);
+                const messages_1 = __nested_webpack_require_571122__(8599);
                 // @ts-ignore: to avoid inlining LocationLink as dynamic import
                 let __noDynamicImport;
                 /**
@@ -10640,7 +10641,7 @@
                     DeclarationRequest.type = new messages_1.ProtocolRequestType(DeclarationRequest.method);
                 })(DeclarationRequest = exports1.DeclarationRequest || (exports1.DeclarationRequest = {}));
             /***/ },
-            /***/ 5692: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_572712__)=>{
+            /***/ 5692: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_572787__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10649,9 +10650,9 @@
                     value: true
                 });
                 exports1.DiagnosticRefreshRequest = exports1.WorkspaceDiagnosticRequest = exports1.DocumentDiagnosticRequest = exports1.DocumentDiagnosticReportKind = exports1.DiagnosticServerCancellationData = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_572712__(5953);
-                const Is = __nested_webpack_require_572712__(2523);
-                const messages_1 = __nested_webpack_require_572712__(8599);
+                const vscode_jsonrpc_1 = __nested_webpack_require_572787__(5953);
+                const Is = __nested_webpack_require_572787__(2523);
+                const messages_1 = __nested_webpack_require_572787__(8599);
                 /**
  * @since 3.17.0
  */ var DiagnosticServerCancellationData;
@@ -10710,7 +10711,7 @@
                     DiagnosticRefreshRequest.type = new messages_1.ProtocolRequestType0(DiagnosticRefreshRequest.method);
                 })(DiagnosticRefreshRequest = exports1.DiagnosticRefreshRequest || (exports1.DiagnosticRefreshRequest = {}));
             /***/ },
-            /***/ 6190: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_576956__)=>{
+            /***/ 6190: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_577031__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10719,7 +10720,7 @@
                     value: true
                 });
                 exports1.WillDeleteFilesRequest = exports1.DidDeleteFilesNotification = exports1.DidRenameFilesNotification = exports1.WillRenameFilesRequest = exports1.DidCreateFilesNotification = exports1.WillCreateFilesRequest = exports1.FileOperationPatternKind = void 0;
-                const messages_1 = __nested_webpack_require_576956__(8599);
+                const messages_1 = __nested_webpack_require_577031__(8599);
                 /**
  * A pattern kind describing if a glob pattern matches a file a folder or
  * both.
@@ -10805,7 +10806,7 @@
                     WillDeleteFilesRequest.type = new messages_1.ProtocolRequestType(WillDeleteFilesRequest.method);
                 })(WillDeleteFilesRequest = exports1.WillDeleteFilesRequest || (exports1.WillDeleteFilesRequest = {}));
             /***/ },
-            /***/ 7029: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_582961__)=>{
+            /***/ 7029: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_583036__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10814,7 +10815,7 @@
                     value: true
                 });
                 exports1.FoldingRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_582961__(8599);
+                const messages_1 = __nested_webpack_require_583036__(8599);
                 /**
  * A request to provide folding ranges in a document. The request's
  * parameter is of type {@link FoldingRangeParams}, the
@@ -10827,7 +10828,7 @@
                     FoldingRangeRequest.type = new messages_1.ProtocolRequestType(FoldingRangeRequest.method);
                 })(FoldingRangeRequest = exports1.FoldingRangeRequest || (exports1.FoldingRangeRequest = {}));
             /***/ },
-            /***/ 9380: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_584400__)=>{
+            /***/ 9380: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_584475__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10836,7 +10837,7 @@
                     value: true
                 });
                 exports1.ImplementationRequest = void 0;
-                const messages_1 = __nested_webpack_require_584400__(8599);
+                const messages_1 = __nested_webpack_require_584475__(8599);
                 // @ts-ignore: to avoid inlining LocationLink as dynamic import
                 let __noDynamicImport;
                 /**
@@ -10851,7 +10852,7 @@
                     ImplementationRequest.type = new messages_1.ProtocolRequestType(ImplementationRequest.method);
                 })(ImplementationRequest = exports1.ImplementationRequest || (exports1.ImplementationRequest = {}));
             /***/ },
-            /***/ 6315: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_586049__)=>{
+            /***/ 6315: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_586124__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10860,7 +10861,7 @@
                     value: true
                 });
                 exports1.InlayHintRefreshRequest = exports1.InlayHintResolveRequest = exports1.InlayHintRequest = void 0;
-                const messages_1 = __nested_webpack_require_586049__(8599);
+                const messages_1 = __nested_webpack_require_586124__(8599);
                 /**
  * A request to provide inlay hints in a document. The request's parameter is of
  * type {@link InlayHintsParams}, the response is of type
@@ -10894,7 +10895,7 @@
                     InlayHintRefreshRequest.type = new messages_1.ProtocolRequestType0(InlayHintRefreshRequest.method);
                 })(InlayHintRefreshRequest = exports1.InlayHintRefreshRequest || (exports1.InlayHintRefreshRequest = {}));
             /***/ },
-            /***/ 7425: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_588852__)=>{
+            /***/ 7425: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_588927__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10903,7 +10904,7 @@
                     value: true
                 });
                 exports1.InlineValueRefreshRequest = exports1.InlineValueRequest = void 0;
-                const messages_1 = __nested_webpack_require_588852__(8599);
+                const messages_1 = __nested_webpack_require_588927__(8599);
                 /**
  * A request to provide inline values in a document. The request's parameter is of
  * type {@link InlineValueParams}, the response is of type
@@ -10925,7 +10926,7 @@
                     InlineValueRefreshRequest.type = new messages_1.ProtocolRequestType0(InlineValueRefreshRequest.method);
                 })(InlineValueRefreshRequest = exports1.InlineValueRefreshRequest || (exports1.InlineValueRefreshRequest = {}));
             /***/ },
-            /***/ 6525: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_590918__)=>{
+            /***/ 6525: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_590993__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10936,24 +10937,24 @@
                 exports1.WorkspaceSymbolRequest = exports1.CodeActionResolveRequest = exports1.CodeActionRequest = exports1.DocumentSymbolRequest = exports1.DocumentHighlightRequest = exports1.ReferencesRequest = exports1.DefinitionRequest = exports1.SignatureHelpRequest = exports1.SignatureHelpTriggerKind = exports1.HoverRequest = exports1.CompletionResolveRequest = exports1.CompletionRequest = exports1.CompletionTriggerKind = exports1.PublishDiagnosticsNotification = exports1.WatchKind = exports1.RelativePattern = exports1.FileChangeType = exports1.DidChangeWatchedFilesNotification = exports1.WillSaveTextDocumentWaitUntilRequest = exports1.WillSaveTextDocumentNotification = exports1.TextDocumentSaveReason = exports1.DidSaveTextDocumentNotification = exports1.DidCloseTextDocumentNotification = exports1.DidChangeTextDocumentNotification = exports1.TextDocumentContentChangeEvent = exports1.DidOpenTextDocumentNotification = exports1.TextDocumentSyncKind = exports1.TelemetryEventNotification = exports1.LogMessageNotification = exports1.ShowMessageRequest = exports1.ShowMessageNotification = exports1.MessageType = exports1.DidChangeConfigurationNotification = exports1.ExitNotification = exports1.ShutdownRequest = exports1.InitializedNotification = exports1.InitializeErrorCodes = exports1.InitializeRequest = exports1.WorkDoneProgressOptions = exports1.TextDocumentRegistrationOptions = exports1.StaticRegistrationOptions = exports1.PositionEncodingKind = exports1.FailureHandlingKind = exports1.ResourceOperationKind = exports1.UnregistrationRequest = exports1.RegistrationRequest = exports1.DocumentSelector = exports1.NotebookCellTextDocumentFilter = exports1.NotebookDocumentFilter = exports1.TextDocumentFilter = void 0;
                 exports1.TypeHierarchySubtypesRequest = exports1.TypeHierarchyPrepareRequest = exports1.MonikerRequest = exports1.MonikerKind = exports1.UniquenessLevel = exports1.WillDeleteFilesRequest = exports1.DidDeleteFilesNotification = exports1.WillRenameFilesRequest = exports1.DidRenameFilesNotification = exports1.WillCreateFilesRequest = exports1.DidCreateFilesNotification = exports1.FileOperationPatternKind = exports1.LinkedEditingRangeRequest = exports1.ShowDocumentRequest = exports1.SemanticTokensRegistrationType = exports1.SemanticTokensRefreshRequest = exports1.SemanticTokensRangeRequest = exports1.SemanticTokensDeltaRequest = exports1.SemanticTokensRequest = exports1.TokenFormat = exports1.CallHierarchyPrepareRequest = exports1.CallHierarchyOutgoingCallsRequest = exports1.CallHierarchyIncomingCallsRequest = exports1.WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCreateRequest = exports1.WorkDoneProgress = exports1.SelectionRangeRequest = exports1.DeclarationRequest = exports1.FoldingRangeRequest = exports1.ColorPresentationRequest = exports1.DocumentColorRequest = exports1.ConfigurationRequest = exports1.DidChangeWorkspaceFoldersNotification = exports1.WorkspaceFoldersRequest = exports1.TypeDefinitionRequest = exports1.ImplementationRequest = exports1.ApplyWorkspaceEditRequest = exports1.ExecuteCommandRequest = exports1.PrepareRenameRequest = exports1.RenameRequest = exports1.PrepareSupportDefaultBehavior = exports1.DocumentOnTypeFormattingRequest = exports1.DocumentRangeFormattingRequest = exports1.DocumentFormattingRequest = exports1.DocumentLinkResolveRequest = exports1.DocumentLinkRequest = exports1.CodeLensRefreshRequest = exports1.CodeLensResolveRequest = exports1.CodeLensRequest = exports1.WorkspaceSymbolResolveRequest = void 0;
                 exports1.DidCloseNotebookDocumentNotification = exports1.DidSaveNotebookDocumentNotification = exports1.DidChangeNotebookDocumentNotification = exports1.NotebookCellArrayChange = exports1.DidOpenNotebookDocumentNotification = exports1.NotebookDocumentSyncRegistrationType = exports1.NotebookDocument = exports1.NotebookCell = exports1.ExecutionSummary = exports1.NotebookCellKind = exports1.DiagnosticRefreshRequest = exports1.WorkspaceDiagnosticRequest = exports1.DocumentDiagnosticRequest = exports1.DocumentDiagnosticReportKind = exports1.DiagnosticServerCancellationData = exports1.InlayHintRefreshRequest = exports1.InlayHintResolveRequest = exports1.InlayHintRequest = exports1.InlineValueRefreshRequest = exports1.InlineValueRequest = exports1.TypeHierarchySupertypesRequest = void 0;
-                const messages_1 = __nested_webpack_require_590918__(8599);
-                const vscode_languageserver_types_1 = __nested_webpack_require_590918__(4767);
-                const Is = __nested_webpack_require_590918__(2523);
-                const protocol_implementation_1 = __nested_webpack_require_590918__(9380);
+                const messages_1 = __nested_webpack_require_590993__(8599);
+                const vscode_languageserver_types_1 = __nested_webpack_require_590993__(4767);
+                const Is = __nested_webpack_require_590993__(2523);
+                const protocol_implementation_1 = __nested_webpack_require_590993__(9380);
                 Object.defineProperty(exports1, "ImplementationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_implementation_1.ImplementationRequest;
                     }
                 });
-                const protocol_typeDefinition_1 = __nested_webpack_require_590918__(8642);
+                const protocol_typeDefinition_1 = __nested_webpack_require_590993__(8642);
                 Object.defineProperty(exports1, "TypeDefinitionRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_typeDefinition_1.TypeDefinitionRequest;
                     }
                 });
-                const protocol_workspaceFolder_1 = __nested_webpack_require_590918__(3402);
+                const protocol_workspaceFolder_1 = __nested_webpack_require_590993__(3402);
                 Object.defineProperty(exports1, "WorkspaceFoldersRequest", {
                     enumerable: true,
                     get: function() {
@@ -10966,14 +10967,14 @@
                         return protocol_workspaceFolder_1.DidChangeWorkspaceFoldersNotification;
                     }
                 });
-                const protocol_configuration_1 = __nested_webpack_require_590918__(5442);
+                const protocol_configuration_1 = __nested_webpack_require_590993__(5442);
                 Object.defineProperty(exports1, "ConfigurationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_configuration_1.ConfigurationRequest;
                     }
                 });
-                const protocol_colorProvider_1 = __nested_webpack_require_590918__(7908);
+                const protocol_colorProvider_1 = __nested_webpack_require_590993__(7908);
                 Object.defineProperty(exports1, "DocumentColorRequest", {
                     enumerable: true,
                     get: function() {
@@ -10986,28 +10987,28 @@
                         return protocol_colorProvider_1.ColorPresentationRequest;
                     }
                 });
-                const protocol_foldingRange_1 = __nested_webpack_require_590918__(7029);
+                const protocol_foldingRange_1 = __nested_webpack_require_590993__(7029);
                 Object.defineProperty(exports1, "FoldingRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_foldingRange_1.FoldingRangeRequest;
                     }
                 });
-                const protocol_declaration_1 = __nested_webpack_require_590918__(7210);
+                const protocol_declaration_1 = __nested_webpack_require_590993__(7210);
                 Object.defineProperty(exports1, "DeclarationRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_declaration_1.DeclarationRequest;
                     }
                 });
-                const protocol_selectionRange_1 = __nested_webpack_require_590918__(2392);
+                const protocol_selectionRange_1 = __nested_webpack_require_590993__(2392);
                 Object.defineProperty(exports1, "SelectionRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_selectionRange_1.SelectionRangeRequest;
                     }
                 });
-                const protocol_progress_1 = __nested_webpack_require_590918__(7895);
+                const protocol_progress_1 = __nested_webpack_require_590993__(7895);
                 Object.defineProperty(exports1, "WorkDoneProgress", {
                     enumerable: true,
                     get: function() {
@@ -11026,7 +11027,7 @@
                         return protocol_progress_1.WorkDoneProgressCancelNotification;
                     }
                 });
-                const protocol_callHierarchy_1 = __nested_webpack_require_590918__(4434);
+                const protocol_callHierarchy_1 = __nested_webpack_require_590993__(4434);
                 Object.defineProperty(exports1, "CallHierarchyIncomingCallsRequest", {
                     enumerable: true,
                     get: function() {
@@ -11045,7 +11046,7 @@
                         return protocol_callHierarchy_1.CallHierarchyPrepareRequest;
                     }
                 });
-                const protocol_semanticTokens_1 = __nested_webpack_require_590918__(8489);
+                const protocol_semanticTokens_1 = __nested_webpack_require_590993__(8489);
                 Object.defineProperty(exports1, "TokenFormat", {
                     enumerable: true,
                     get: function() {
@@ -11082,21 +11083,21 @@
                         return protocol_semanticTokens_1.SemanticTokensRegistrationType;
                     }
                 });
-                const protocol_showDocument_1 = __nested_webpack_require_590918__(1541);
+                const protocol_showDocument_1 = __nested_webpack_require_590993__(1541);
                 Object.defineProperty(exports1, "ShowDocumentRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_showDocument_1.ShowDocumentRequest;
                     }
                 });
-                const protocol_linkedEditingRange_1 = __nested_webpack_require_590918__(527);
+                const protocol_linkedEditingRange_1 = __nested_webpack_require_590993__(527);
                 Object.defineProperty(exports1, "LinkedEditingRangeRequest", {
                     enumerable: true,
                     get: function() {
                         return protocol_linkedEditingRange_1.LinkedEditingRangeRequest;
                     }
                 });
-                const protocol_fileOperations_1 = __nested_webpack_require_590918__(6190);
+                const protocol_fileOperations_1 = __nested_webpack_require_590993__(6190);
                 Object.defineProperty(exports1, "FileOperationPatternKind", {
                     enumerable: true,
                     get: function() {
@@ -11139,7 +11140,7 @@
                         return protocol_fileOperations_1.WillDeleteFilesRequest;
                     }
                 });
-                const protocol_moniker_1 = __nested_webpack_require_590918__(1964);
+                const protocol_moniker_1 = __nested_webpack_require_590993__(1964);
                 Object.defineProperty(exports1, "UniquenessLevel", {
                     enumerable: true,
                     get: function() {
@@ -11158,7 +11159,7 @@
                         return protocol_moniker_1.MonikerRequest;
                     }
                 });
-                const protocol_typeHierarchy_1 = __nested_webpack_require_590918__(5318);
+                const protocol_typeHierarchy_1 = __nested_webpack_require_590993__(5318);
                 Object.defineProperty(exports1, "TypeHierarchyPrepareRequest", {
                     enumerable: true,
                     get: function() {
@@ -11177,7 +11178,7 @@
                         return protocol_typeHierarchy_1.TypeHierarchySupertypesRequest;
                     }
                 });
-                const protocol_inlineValue_1 = __nested_webpack_require_590918__(7425);
+                const protocol_inlineValue_1 = __nested_webpack_require_590993__(7425);
                 Object.defineProperty(exports1, "InlineValueRequest", {
                     enumerable: true,
                     get: function() {
@@ -11190,7 +11191,7 @@
                         return protocol_inlineValue_1.InlineValueRefreshRequest;
                     }
                 });
-                const protocol_inlayHint_1 = __nested_webpack_require_590918__(6315);
+                const protocol_inlayHint_1 = __nested_webpack_require_590993__(6315);
                 Object.defineProperty(exports1, "InlayHintRequest", {
                     enumerable: true,
                     get: function() {
@@ -11209,7 +11210,7 @@
                         return protocol_inlayHint_1.InlayHintRefreshRequest;
                     }
                 });
-                const protocol_diagnostic_1 = __nested_webpack_require_590918__(5692);
+                const protocol_diagnostic_1 = __nested_webpack_require_590993__(5692);
                 Object.defineProperty(exports1, "DiagnosticServerCancellationData", {
                     enumerable: true,
                     get: function() {
@@ -11240,7 +11241,7 @@
                         return protocol_diagnostic_1.DiagnosticRefreshRequest;
                     }
                 });
-                const protocol_notebook_1 = __nested_webpack_require_590918__(4460);
+                const protocol_notebook_1 = __nested_webpack_require_590993__(4460);
                 Object.defineProperty(exports1, "NotebookCellKind", {
                     enumerable: true,
                     get: function() {
@@ -12038,7 +12039,7 @@
                     ApplyWorkspaceEditRequest.type = new messages_1.ProtocolRequestType('workspace/applyEdit');
                 })(ApplyWorkspaceEditRequest = exports1.ApplyWorkspaceEditRequest || (exports1.ApplyWorkspaceEditRequest = {}));
             /***/ },
-            /***/ 527: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_660032__)=>{
+            /***/ 527: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_660107__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12047,7 +12048,7 @@
                     value: true
                 });
                 exports1.LinkedEditingRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_660032__(8599);
+                const messages_1 = __nested_webpack_require_660107__(8599);
                 /**
  * A request to provide ranges that can be edited together.
  *
@@ -12059,7 +12060,7 @@
                     LinkedEditingRangeRequest.type = new messages_1.ProtocolRequestType(LinkedEditingRangeRequest.method);
                 })(LinkedEditingRangeRequest = exports1.LinkedEditingRangeRequest || (exports1.LinkedEditingRangeRequest = {}));
             /***/ },
-            /***/ 1964: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_661405__)=>{
+            /***/ 1964: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_661480__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12068,7 +12069,7 @@
                     value: true
                 });
                 exports1.MonikerRequest = exports1.MonikerKind = exports1.UniquenessLevel = void 0;
-                const messages_1 = __nested_webpack_require_661405__(8599);
+                const messages_1 = __nested_webpack_require_661480__(8599);
                 /**
  * Moniker uniqueness level to define scope of the moniker.
  *
@@ -12119,7 +12120,7 @@
                     MonikerRequest.type = new messages_1.ProtocolRequestType(MonikerRequest.method);
                 })(MonikerRequest = exports1.MonikerRequest || (exports1.MonikerRequest = {}));
             /***/ },
-            /***/ 4460: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_664439__)=>{
+            /***/ 4460: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_664514__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12128,9 +12129,9 @@
                     value: true
                 });
                 exports1.DidCloseNotebookDocumentNotification = exports1.DidSaveNotebookDocumentNotification = exports1.DidChangeNotebookDocumentNotification = exports1.NotebookCellArrayChange = exports1.DidOpenNotebookDocumentNotification = exports1.NotebookDocumentSyncRegistrationType = exports1.NotebookDocument = exports1.NotebookCell = exports1.ExecutionSummary = exports1.NotebookCellKind = void 0;
-                const vscode_languageserver_types_1 = __nested_webpack_require_664439__(4767);
-                const Is = __nested_webpack_require_664439__(2523);
-                const messages_1 = __nested_webpack_require_664439__(8599);
+                const vscode_languageserver_types_1 = __nested_webpack_require_664514__(4767);
+                const Is = __nested_webpack_require_664514__(2523);
+                const messages_1 = __nested_webpack_require_664514__(8599);
                 /**
  * A notebook cell kind.
  *
@@ -12342,7 +12343,7 @@
                     DidCloseNotebookDocumentNotification.registrationMethod = NotebookDocumentSyncRegistrationType.method;
                 })(DidCloseNotebookDocumentNotification = exports1.DidCloseNotebookDocumentNotification || (exports1.DidCloseNotebookDocumentNotification = {}));
             /***/ },
-            /***/ 7895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_678016__)=>{
+            /***/ 7895: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_678091__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12351,8 +12352,8 @@
                     value: true
                 });
                 exports1.WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCreateRequest = exports1.WorkDoneProgress = void 0;
-                const vscode_jsonrpc_1 = __nested_webpack_require_678016__(5953);
-                const messages_1 = __nested_webpack_require_678016__(8599);
+                const vscode_jsonrpc_1 = __nested_webpack_require_678091__(5953);
+                const messages_1 = __nested_webpack_require_678091__(8599);
                 var WorkDoneProgress;
                 (function(WorkDoneProgress) {
                     WorkDoneProgress.type = new vscode_jsonrpc_1.ProgressType();
@@ -12380,7 +12381,7 @@
                     WorkDoneProgressCancelNotification.type = new messages_1.ProtocolNotificationType(WorkDoneProgressCancelNotification.method);
                 })(WorkDoneProgressCancelNotification = exports1.WorkDoneProgressCancelNotification || (exports1.WorkDoneProgressCancelNotification = {}));
             /***/ },
-            /***/ 2392: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_680857__)=>{
+            /***/ 2392: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_680932__)=>{
                 "use strict";
                 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12389,7 +12390,7 @@
                     value: true
                 });
                 exports1.SelectionRangeRequest = void 0;
-                const messages_1 = __nested_webpack_require_680857__(8599);
+                const messages_1 = __nested_webpack_require_680932__(8599);
                 /**
  * A request to provide selection ranges in a document. The request's
  * parameter is of type {@link SelectionRangeParams}, the
@@ -12402,7 +12403,7 @@
                     SelectionRangeRequest.type = new messages_1.ProtocolRequestType(SelectionRangeRequest.method);
                 })(SelectionRangeRequest = exports1.SelectionRangeRequest || (exports1.SelectionRangeRequest = {}));
             /***/ },
-            /***/ 8489: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_682337__)=>{
+            /***/ 8489: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_682412__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12411,7 +12412,7 @@
                     value: true
                 });
                 exports1.SemanticTokensRefreshRequest = exports1.SemanticTokensRangeRequest = exports1.SemanticTokensDeltaRequest = exports1.SemanticTokensRequest = exports1.SemanticTokensRegistrationType = exports1.TokenFormat = void 0;
-                const messages_1 = __nested_webpack_require_682337__(8599);
+                const messages_1 = __nested_webpack_require_682412__(8599);
                 //------- 'textDocument/semanticTokens' -----
                 var TokenFormat;
                 (function(TokenFormat) {
@@ -12458,7 +12459,7 @@
                     SemanticTokensRefreshRequest.type = new messages_1.ProtocolRequestType0(SemanticTokensRefreshRequest.method);
                 })(SemanticTokensRefreshRequest = exports1.SemanticTokensRefreshRequest || (exports1.SemanticTokensRefreshRequest = {}));
             /***/ },
-            /***/ 1541: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_686648__)=>{
+            /***/ 1541: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_686723__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12467,7 +12468,7 @@
                     value: true
                 });
                 exports1.ShowDocumentRequest = void 0;
-                const messages_1 = __nested_webpack_require_686648__(8599);
+                const messages_1 = __nested_webpack_require_686723__(8599);
                 /**
  * A request to show a document. This request might open an
  * external program depending on the value of the URI to open.
@@ -12482,7 +12483,7 @@
                     ShowDocumentRequest.type = new messages_1.ProtocolRequestType(ShowDocumentRequest.method);
                 })(ShowDocumentRequest = exports1.ShowDocumentRequest || (exports1.ShowDocumentRequest = {}));
             /***/ },
-            /***/ 8642: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_688126__)=>{
+            /***/ 8642: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_688201__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12491,7 +12492,7 @@
                     value: true
                 });
                 exports1.TypeDefinitionRequest = void 0;
-                const messages_1 = __nested_webpack_require_688126__(8599);
+                const messages_1 = __nested_webpack_require_688201__(8599);
                 // @ts-ignore: to avoid inlining LocatioLink as dynamic import
                 let __noDynamicImport;
                 /**
@@ -12506,7 +12507,7 @@
                     TypeDefinitionRequest.type = new messages_1.ProtocolRequestType(TypeDefinitionRequest.method);
                 })(TypeDefinitionRequest = exports1.TypeDefinitionRequest || (exports1.TypeDefinitionRequest = {}));
             /***/ },
-            /***/ 5318: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_689775__)=>{
+            /***/ 5318: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_689850__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) TypeFox, Microsoft and others. All rights reserved.
@@ -12515,7 +12516,7 @@
                     value: true
                 });
                 exports1.TypeHierarchySubtypesRequest = exports1.TypeHierarchySupertypesRequest = exports1.TypeHierarchyPrepareRequest = void 0;
-                const messages_1 = __nested_webpack_require_689775__(8599);
+                const messages_1 = __nested_webpack_require_689850__(8599);
                 /**
  * A request to result a `TypeHierarchyItem` in a document at a given position.
  * Can be used as an input to a subtypes or supertypes type hierarchy.
@@ -12548,7 +12549,7 @@
                     TypeHierarchySubtypesRequest.type = new messages_1.ProtocolRequestType(TypeHierarchySubtypesRequest.method);
                 })(TypeHierarchySubtypesRequest = exports1.TypeHierarchySubtypesRequest || (exports1.TypeHierarchySubtypesRequest = {}));
             /***/ },
-            /***/ 3402: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_692709__)=>{
+            /***/ 3402: /***/ (__unused_webpack_module, exports1, __nested_webpack_require_692784__)=>{
                 "use strict";
                 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12557,7 +12558,7 @@
                     value: true
                 });
                 exports1.DidChangeWorkspaceFoldersNotification = exports1.WorkspaceFoldersRequest = void 0;
-                const messages_1 = __nested_webpack_require_692709__(8599);
+                const messages_1 = __nested_webpack_require_692784__(8599);
                 /**
  * The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
  */ var WorkspaceFoldersRequest;
@@ -12625,9 +12626,9 @@
                 }
                 exports1.objectLiteral = objectLiteral;
             /***/ },
-            /***/ 4881: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_697604__)=>{
+            /***/ 4881: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_697679__)=>{
                 "use strict";
-                /* harmony export */ __nested_webpack_require_697604__.d(__nested_webpack_exports__, {
+                /* harmony export */ __nested_webpack_require_697679__.d(__nested_webpack_exports__, {
                     /* harmony export */ n: ()=>/* binding */ TextDocument
                 });
                 /* --------------------------------------------------------------------------------------------
@@ -12913,10 +12914,10 @@
                     return textEdit;
                 }
             /***/ },
-            /***/ 4767: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_713428__)=>{
+            /***/ 4767: /***/ (__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_713503__)=>{
                 "use strict";
-                __nested_webpack_require_713428__.r(__nested_webpack_exports__);
-                /* harmony export */ __nested_webpack_require_713428__.d(__nested_webpack_exports__, {
+                __nested_webpack_require_713503__.r(__nested_webpack_exports__);
+                /* harmony export */ __nested_webpack_require_713503__.d(__nested_webpack_exports__, {
                     /* harmony export */ AnnotatedTextEdit: ()=>/* binding */ AnnotatedTextEdit,
                     /* harmony export */ ChangeAnnotation: ()=>/* binding */ ChangeAnnotation,
                     /* harmony export */ ChangeAnnotationIdentifier: ()=>/* binding */ ChangeAnnotationIdentifier,
@@ -15098,16 +15099,16 @@
                     Is.typedArray = typedArray;
                 })(Is || (Is = {}));
             /***/ },
-            /***/ 2094: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_824525__)=>{
+            /***/ 2094: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_824600__)=>{
                 "use strict";
-                var forEach = __nested_webpack_require_824525__(3243);
-                var availableTypedArrays = __nested_webpack_require_824525__(2191);
-                var callBind = __nested_webpack_require_824525__(9429);
-                var callBound = __nested_webpack_require_824525__(2680);
-                var gOPD = __nested_webpack_require_824525__(326);
+                var forEach = __nested_webpack_require_824600__(3243);
+                var availableTypedArrays = __nested_webpack_require_824600__(2191);
+                var callBind = __nested_webpack_require_824600__(9429);
+                var callBound = __nested_webpack_require_824600__(2680);
+                var gOPD = __nested_webpack_require_824600__(326);
                 var $toString = callBound('Object.prototype.toString');
-                var hasToStringTag = __nested_webpack_require_824525__(7226)();
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_824525__.g : globalThis;
+                var hasToStringTag = __nested_webpack_require_824600__(7226)();
+                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_824600__.g : globalThis;
                 var typedArrays = availableTypedArrays();
                 var $slice = callBound('String.prototype.slice');
                 var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
@@ -15187,7 +15188,7 @@
                     return tryTypedArrays(value);
                 };
             /***/ },
-            /***/ 2191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_828772__)=>{
+            /***/ 2191: /***/ (module1, __unused_webpack_exports, __nested_webpack_require_828847__)=>{
                 "use strict";
                 var possibleNames = [
                     'BigInt64Array',
@@ -15202,7 +15203,7 @@
                     'Uint8Array',
                     'Uint8ClampedArray'
                 ];
-                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_828772__.g : globalThis;
+                var g = typeof globalThis === 'undefined' ? __nested_webpack_require_828847__.g : globalThis;
                 module1.exports = function availableTypedArrays() {
                     var out = [];
                     for(var i = 0; i < possibleNames.length; i++){
@@ -15217,7 +15218,7 @@
         /************************************************************************/ /******/ // The module cache
         /******/ var __webpack_module_cache__ = {};
         /******/ /******/ // The require function
-        /******/ function __nested_webpack_require_830038__(moduleId) {
+        /******/ function __nested_webpack_require_830113__(moduleId) {
             /******/ // Check if module is in cache
             /******/ var cachedModule = __webpack_module_cache__[moduleId];
             /******/ if (cachedModule !== undefined) {
@@ -15230,7 +15231,7 @@
                 /******/ exports: {}
             };
             /******/ /******/ // Execute the module function
-            /******/ __webpack_modules__[moduleId].call(module1.exports, module1, module1.exports, __nested_webpack_require_830038__);
+            /******/ __webpack_modules__[moduleId].call(module1.exports, module1, module1.exports, __nested_webpack_require_830113__);
             /******/ /******/ // Flag the module as loaded
             /******/ module1.loaded = true;
             /******/ /******/ // Return the exports of the module
@@ -15238,9 +15239,9 @@
         /******/ }
         /******/ /************************************************************************/ /******/ /* webpack/runtime/define property getters */ /******/ (()=>{
             /******/ // define getter functions for harmony exports
-            /******/ __nested_webpack_require_830038__.d = (exports1, definition)=>{
+            /******/ __nested_webpack_require_830113__.d = (exports1, definition)=>{
                 /******/ for(var key in definition){
-                    /******/ if (__nested_webpack_require_830038__.o(definition, key) && !__nested_webpack_require_830038__.o(exports1, key)) {
+                    /******/ if (__nested_webpack_require_830113__.o(definition, key) && !__nested_webpack_require_830113__.o(exports1, key)) {
                         /******/ Object.defineProperty(exports1, key, {
                             enumerable: true,
                             get: definition[key]
@@ -15250,7 +15251,7 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/global */ /******/ (()=>{
-            /******/ __nested_webpack_require_830038__.g = function() {
+            /******/ __nested_webpack_require_830113__.g = function() {
                 /******/ if (typeof globalThis === 'object') return globalThis;
                 /******/ try {
                     /******/ return this || new Function('return this')();
@@ -15260,11 +15261,11 @@
             /******/ }();
         /******/ })();
         /******/ /******/ /* webpack/runtime/hasOwnProperty shorthand */ /******/ (()=>{
-            /******/ __nested_webpack_require_830038__.o = (obj, prop)=>Object.prototype.hasOwnProperty.call(obj, prop);
+            /******/ __nested_webpack_require_830113__.o = (obj, prop)=>Object.prototype.hasOwnProperty.call(obj, prop);
         /******/ })();
         /******/ /******/ /* webpack/runtime/make namespace object */ /******/ (()=>{
             /******/ // define __esModule on exports
-            /******/ __nested_webpack_require_830038__.r = (exports1)=>{
+            /******/ __nested_webpack_require_830113__.r = (exports1)=>{
                 /******/ if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                     /******/ Object.defineProperty(exports1, Symbol.toStringTag, {
                         value: 'Module'
@@ -15276,7 +15277,7 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/node module decorator */ /******/ (()=>{
-            /******/ __nested_webpack_require_830038__.nmd = (module1)=>{
+            /******/ __nested_webpack_require_830113__.nmd = (module1)=>{
                 /******/ module1.paths = [];
                 /******/ if (!module1.children) module1.children = [];
                 /******/ return module1;
@@ -15287,19 +15288,19 @@
         (()=>{
             "use strict";
             // ESM COMPAT FLAG
-            __nested_webpack_require_830038__.r(__nested_webpack_exports__);
+            __nested_webpack_require_830113__.r(__nested_webpack_exports__);
             // EXPORTS
-            __nested_webpack_require_830038__.d(__nested_webpack_exports__, {
+            __nested_webpack_require_830113__.d(__nested_webpack_exports__, {
                 LuaService: ()=>/* binding */ LuaService
             });
             // EXTERNAL MODULE: ./src/services/base-service.ts
-            var base_service = __nested_webpack_require_830038__(4487);
+            var base_service = __nested_webpack_require_830113__(4487);
             // EXTERNAL MODULE: ../../node_modules/luaparse/luaparse.js
-            var luaparse = __nested_webpack_require_830038__(7438);
+            var luaparse = __nested_webpack_require_830113__(7438);
             // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-            var main = __nested_webpack_require_830038__(294);
+            var main = __nested_webpack_require_830113__(294);
             // EXTERNAL MODULE: ./src/utils.ts
-            var utils = __nested_webpack_require_830038__(6297);
+            var utils = __nested_webpack_require_830113__(6297);
             ; // CONCATENATED MODULE: ./src/ace/range-singleton.ts
             function _define_property(obj, key, value) {
                 if (key in obj) {

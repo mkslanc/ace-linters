@@ -3940,6 +3940,7 @@ class BaseService {
         _define_property(this, "options", {});
         _define_property(this, "globalOptions", {});
         _define_property(this, "serviceData", void 0);
+        _define_property(this, "serviceCapabilities", {});
         this.mode = mode;
     }
 }
@@ -20809,6 +20810,14 @@ class JsonService extends base_service.BaseService {
         super(mode);
         json_service_define_property(this, "$service", void 0);
         json_service_define_property(this, "schemas", {});
+        json_service_define_property(this, "serviceCapabilities", {
+            completionProvider: {
+                triggerCharacters: [
+                    '"',
+                    ':'
+                ]
+            }
+        });
         this.$service = getLanguageService({
             schemaRequestService: (uri)=>{
                 uri = uri.replace("file:///", "");

@@ -28570,6 +28570,7 @@
                         _define_property1(this, "options", {});
                         _define_property1(this, "globalOptions", {});
                         _define_property1(this, "serviceData", void 0);
+                        _define_property1(this, "serviceCapabilities", {});
                         this.mode = mode1;
                     }
                 }
@@ -37890,7 +37891,7 @@
         /************************************************************************/ /******/ // The module cache
         /******/ var __webpack_module_cache__ = {};
         /******/ /******/ // The require function
-        /******/ function __nested_webpack_require_1985791__(moduleId1) {
+        /******/ function __nested_webpack_require_1985867__(moduleId1) {
             /******/ // Check if module is in cache
             /******/ var cachedModule1 = __webpack_module_cache__[moduleId1];
             /******/ if (cachedModule1 !== undefined) {
@@ -37903,7 +37904,7 @@
                 /******/ exports: {}
             };
             /******/ /******/ // Execute the module function
-            /******/ __webpack_modules__[moduleId1].call(module1.exports, module1, module1.exports, __nested_webpack_require_1985791__);
+            /******/ __webpack_modules__[moduleId1].call(module1.exports, module1, module1.exports, __nested_webpack_require_1985867__);
             /******/ /******/ // Flag the module as loaded
             /******/ module1.loaded = true;
             /******/ /******/ // Return the exports of the module
@@ -37911,9 +37912,9 @@
         /******/ }
         /******/ /************************************************************************/ /******/ /* webpack/runtime/define property getters */ /******/ (()=>{
             /******/ // define getter functions for harmony exports
-            /******/ __nested_webpack_require_1985791__.d = (exports1, definition1)=>{
+            /******/ __nested_webpack_require_1985867__.d = (exports1, definition1)=>{
                 /******/ for(var key3 in definition1){
-                    /******/ if (__nested_webpack_require_1985791__.o(definition1, key3) && !__nested_webpack_require_1985791__.o(exports1, key3)) {
+                    /******/ if (__nested_webpack_require_1985867__.o(definition1, key3) && !__nested_webpack_require_1985867__.o(exports1, key3)) {
                         /******/ Object.defineProperty(exports1, key3, {
                             enumerable: true,
                             get: definition1[key3]
@@ -37923,7 +37924,7 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/global */ /******/ (()=>{
-            /******/ __nested_webpack_require_1985791__.g = function() {
+            /******/ __nested_webpack_require_1985867__.g = function() {
                 /******/ if (typeof globalThis === 'object') return globalThis;
                 /******/ try {
                     /******/ return this || new Function('return this')();
@@ -37933,11 +37934,11 @@
             /******/ }();
         /******/ })();
         /******/ /******/ /* webpack/runtime/hasOwnProperty shorthand */ /******/ (()=>{
-            /******/ __nested_webpack_require_1985791__.o = (obj3, prop1)=>Object.prototype.hasOwnProperty.call(obj3, prop1);
+            /******/ __nested_webpack_require_1985867__.o = (obj3, prop1)=>Object.prototype.hasOwnProperty.call(obj3, prop1);
         /******/ })();
         /******/ /******/ /* webpack/runtime/make namespace object */ /******/ (()=>{
             /******/ // define __esModule on exports
-            /******/ __nested_webpack_require_1985791__.r = (exports1)=>{
+            /******/ __nested_webpack_require_1985867__.r = (exports1)=>{
                 /******/ if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
                     /******/ Object.defineProperty(exports1, Symbol.toStringTag, {
                         value: 'Module'
@@ -37949,7 +37950,7 @@
             /******/ };
         /******/ })();
         /******/ /******/ /* webpack/runtime/node module decorator */ /******/ (()=>{
-            /******/ __nested_webpack_require_1985791__.nmd = (module1)=>{
+            /******/ __nested_webpack_require_1985867__.nmd = (module1)=>{
                 /******/ module1.paths = [];
                 /******/ if (!module1.children) module1.children = [];
                 /******/ return module1;
@@ -37960,27 +37961,27 @@
         (()=>{
             "use strict";
             // ESM COMPAT FLAG
-            __nested_webpack_require_1985791__.r(__nested_webpack_exports__);
+            __nested_webpack_require_1985867__.r(__nested_webpack_exports__);
             // EXPORTS
-            __nested_webpack_require_1985791__.d(__nested_webpack_exports__, {
+            __nested_webpack_require_1985867__.d(__nested_webpack_exports__, {
                 XmlService: ()=>/* binding */ XmlService1
             });
             // EXTERNAL MODULE: ./src/services/base-service.ts
-            var base_service1 = __nested_webpack_require_1985791__(4487);
+            var base_service1 = __nested_webpack_require_1985867__(4487);
             // EXTERNAL MODULE: ../../node_modules/@xml-tools/parser/lib/api.js
-            var api1 = __nested_webpack_require_1985791__(3429);
+            var api1 = __nested_webpack_require_1985867__(3429);
             // EXTERNAL MODULE: ../../node_modules/@xml-tools/ast/lib/api.js
-            var lib_api1 = __nested_webpack_require_1985791__(6066);
+            var lib_api1 = __nested_webpack_require_1985867__(6066);
             // EXTERNAL MODULE: ../../node_modules/@xml-tools/constraints/lib/api.js
-            var constraints_lib_api1 = __nested_webpack_require_1985791__(2926);
+            var constraints_lib_api1 = __nested_webpack_require_1985867__(2926);
             // EXTERNAL MODULE: ../../node_modules/@xml-tools/simple-schema/lib/api.js
-            var simple_schema_lib_api1 = __nested_webpack_require_1985791__(6565);
+            var simple_schema_lib_api1 = __nested_webpack_require_1985867__(6565);
             // EXTERNAL MODULE: ../../node_modules/@xml-tools/validation/lib/api.js
-            var validation_lib_api1 = __nested_webpack_require_1985791__(2723);
+            var validation_lib_api1 = __nested_webpack_require_1985867__(2723);
             // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-            var main1 = __nested_webpack_require_1985791__(294);
+            var main1 = __nested_webpack_require_1985867__(294);
             // EXTERNAL MODULE: ./src/utils.ts
-            var utils1 = __nested_webpack_require_1985791__(6297);
+            var utils1 = __nested_webpack_require_1985867__(6297);
             ; // CONCATENATED MODULE: ./src/ace/range-singleton.ts
             function _define_property1(obj3, key3, value1) {
                 if (key3 in obj3) {

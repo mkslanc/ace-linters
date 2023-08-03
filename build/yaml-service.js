@@ -6306,6 +6306,7 @@ class BaseService {
         _define_property(this, "options", {});
         _define_property(this, "globalOptions", {});
         _define_property(this, "serviceData", void 0);
+        _define_property(this, "serviceCapabilities", {});
         this.mode = mode;
     }
 }

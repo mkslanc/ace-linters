@@ -49511,14 +49511,14 @@ Potential improvements:
                 }
                 registerEditor(editor) {
                     if (!this.editors.includes(editor)) this.$registerEditor(editor);
-                    this.$registerSession(editor.session);
+                    this.$registerSession(editor.session, editor);
                 }
                 $registerEditor(editor) {
                     this.editors.push(editor);
                     //init Range singleton
                     AceRange.getConstructor(editor);
                     editor.setOption("useWorker", false);
-                    editor.on("changeSession", ({ session })=>this.$registerSession(session));
+                    editor.on("changeSession", ({ session })=>this.$registerSession(session, editor));
                     if (this.options.functionality.completion) {
                         this.$registerCompleters(editor);
                     }
@@ -49718,10 +49718,10 @@ Potential improvements:
                     language_provider_define_property(this, "editors", []);
                     language_provider_define_property(this, "options", void 0);
                     language_provider_define_property(this, "$hoverTooltip", void 0);
-                    language_provider_define_property(this, "$registerSession", (session, options)=>{
+                    language_provider_define_property(this, "$registerSession", (session, editor, options)=>{
                         var _this_$sessionLanguageProviders, _session_id;
                         var _;
-                        (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(session, this.$messageController, options);
+                        (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(session, editor, this.$messageController, options);
                     });
                     language_provider_define_property(this, "format", ()=>{
                         if (!this.options.functionality.format) return;
@@ -49747,6 +49747,32 @@ Potential improvements:
                 }
             }
             class SessionLanguageProvider {
+                setServerCapabilities(capabilities) {
+                    //TODO: this need to take into account all capabilities from all services
+                    this.$servicesCapabilities = capabilities;
+                    if (capabilities.some((capability)=>{
+                        var _capability_completionProvider, _capability;
+                        return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
+                    })) {
+                        let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
+                        if (completer) {
+                            let allTriggerCharacters = capabilities.reduce((acc, capability)=>{
+                                var _capability_completionProvider;
+                                if ((_capability_completionProvider = capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
+                                    return [
+                                        ...acc,
+                                        ...capability.completionProvider.triggerCharacters
+                                    ];
+                                }
+                                return acc;
+                            }, []);
+                            allTriggerCharacters = [
+                                ...new Set(allTriggerCharacters)
+                            ];
+                            completer.triggerCharacters = allTriggerCharacters;
+                        }
+                    }
+                }
                 initFileName() {
                     this.fileName = this.session["id"] + "." + this.$extension;
                 }
@@ -49774,7 +49800,7 @@ Potential improvements:
                 dispose(callback) {
                     this.$messageController.dispose(this.fileName, callback);
                 }
-                constructor(session, messageController, options){
+                constructor(session, editor, messageController, options){
                     language_provider_define_property(this, "session", void 0);
                     language_provider_define_property(this, "fileName", void 0);
                     language_provider_define_property(this, "$messageController", void 0);
@@ -49782,6 +49808,7 @@ Potential improvements:
                     language_provider_define_property(this, "$isConnected", false);
                     language_provider_define_property(this, "$modeIsChanged", false);
                     language_provider_define_property(this, "$options", void 0);
+                    language_provider_define_property(this, "$servicesCapabilities", void 0);
                     language_provider_define_property(this, "state", {
                         occurrenceMarkers: null,
                         diagnosticMarkers: null
@@ -49790,8 +49817,10 @@ Potential improvements:
                         "typescript": "ts",
                         "javascript": "js"
                     });
-                    language_provider_define_property(this, "$connected", ()=>{
+                    language_provider_define_property(this, "editor", void 0);
+                    language_provider_define_property(this, "$connected", (capabilities)=>{
                         this.$isConnected = true;
+                        this.setServerCapabilities(capabilities);
                         if (this.$modeIsChanged) this.$changeMode();
                         if (this.$deltaQueue) this.$sendDeltaQueue();
                         if (this.$options) this.setOptions(this.$options);
@@ -49802,7 +49831,7 @@ Potential improvements:
                             return;
                         }
                         this.$deltaQueue = [];
-                        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode);
+                        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
                     });
                     language_provider_define_property(this, "$changeListener", (delta)=>{
                         this.session.doc["version"]++;
@@ -49869,6 +49898,7 @@ Potential improvements:
                     });
                     this.$messageController = messageController;
                     this.session = session;
+                    this.editor = editor;
                     this.initFileName();
                     session.doc["version"] = 0;
                     session.doc.on("change", this.$changeListener, true);

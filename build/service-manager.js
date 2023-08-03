@@ -347,10 +347,11 @@ class ServiceManager {
         };
         serviceInstances.forEach((el)=>el.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
+        return serviceInstances;
     }
     async changeDocumentMode(documentIdentifier, value, mode, options) {
         this.removeDocument(documentIdentifier);
-        await this.addDocument(documentIdentifier, value, mode, options);
+        return await this.addDocument(documentIdentifier, value, mode, options);
     }
     removeDocument(document) {
         let services = this.getServicesInstances(document.uri);
@@ -493,11 +494,13 @@ class ServiceManager {
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.init:
-                    await this.addDocument(documentIdentifier, message.value, message.mode, message.options);
+                    var _this;
+                    postMessage["value"] = (_this = await this.addDocument(documentIdentifier, message.value, message.mode, message.options)) === null || _this === void 0 ? void 0 : _this.map((el)=>el.serviceCapabilities);
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
-                    await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options);
+                    var _this1;
+                    postMessage["value"] = (_this1 = await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options)) === null || _this1 === void 0 ? void 0 : _this1.map((el)=>el.serviceCapabilities);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.changeOptions:

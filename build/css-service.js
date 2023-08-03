@@ -3940,6 +3940,7 @@ class BaseService {
         _define_property(this, "options", {});
         _define_property(this, "globalOptions", {});
         _define_property(this, "serviceData", void 0);
+        _define_property(this, "serviceCapabilities", {});
         this.mode = mode;
     }
 }
@@ -52681,6 +52682,16 @@ class CssService extends base_service.BaseService {
             preserveNewLines: true,
             spaceAroundSelectorSeparator: false,
             braceStyle: "collapse"
+        });
+        css_service_define_property(this, "serviceCapabilities", {
+            completionProvider: {
+                triggerCharacters: [
+                    ":",
+                    " ",
+                    "-",
+                    "/"
+                ]
+            }
         });
         this.$initLanguageService();
         this.$service.configure();

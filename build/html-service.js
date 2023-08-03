@@ -5768,6 +5768,7 @@ class BaseService {
         _define_property(this, "options", {});
         _define_property(this, "globalOptions", {});
         _define_property(this, "serviceData", void 0);
+        _define_property(this, "serviceCapabilities", {});
         this.mode = mode;
     }
 }
@@ -31595,6 +31596,18 @@ class HtmlService extends base_service.BaseService {
         html_service_define_property(this, "$defaultFormatOptions", {
             wrapAttributes: "auto",
             wrapAttributesIndentSize: 120
+        });
+        html_service_define_property(this, "serviceCapabilities", {
+            completionProvider: {
+                triggerCharacters: [
+                    '.',
+                    ':',
+                    '<',
+                    '"',
+                    '=',
+                    '/'
+                ]
+            }
         });
         this.$service = getLanguageService();
     }
