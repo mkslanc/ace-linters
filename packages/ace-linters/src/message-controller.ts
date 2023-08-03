@@ -31,7 +31,7 @@ export class MessageController extends EventEmitter implements IMessageControlle
 
     }
     
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
         this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
 
         this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
@@ -68,7 +68,7 @@ export class MessageController extends EventEmitter implements IMessageControlle
         this.postMessage(message, callback)
     }
 
-    changeMode(sessionId: string, value: string, mode: string, callback?: () => void) {
+    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities) => void) {
         this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
     }
 

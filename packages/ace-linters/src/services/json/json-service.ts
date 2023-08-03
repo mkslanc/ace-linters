@@ -14,6 +14,12 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
     $service: VSLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 
+    serviceCapabilities = {
+        completionProvider: {
+            triggerCharacters: ['"', ':']
+        }
+    }
+
     constructor(mode: string) {
         super(mode);
         this.$service = jsonService.getLanguageService({

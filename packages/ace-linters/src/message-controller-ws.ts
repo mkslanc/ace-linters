@@ -123,7 +123,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         });
     }
 
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void) {
         this["on"]("validate-" + sessionId, validationCallback);
 
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
@@ -247,7 +247,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         });
     }
 
-    changeMode(sessionId: string, value: string, mode: string, callback?: () => void): void {
+    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities) => void): void {
     }
 
     changeOptions(sessionId: string, options: any, callback?: () => void): void {//TODO:

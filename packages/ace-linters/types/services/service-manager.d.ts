@@ -9,8 +9,8 @@ export declare class ServiceManager {
     private static $initServiceInstance;
     private $getServicesInstancesByMode;
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge?: boolean): void;
-    addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions): Promise<void>;
-    changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions): Promise<void>;
+    addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions): Promise<LanguageService[] | undefined>;
+    changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions): Promise<LanguageService[] | undefined>;
     removeDocument(document: TextDocumentIdentifier): void;
     getServicesInstances(sessionID: string): LanguageService[];
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[];

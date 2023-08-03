@@ -1,7 +1,13 @@
 import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
-import {LanguageService, ServiceData, ServiceFeatures, ServiceOptions, SupportedFeatures} from "../types/language-service";
+import {
+    LanguageService,
+    ServiceData,
+    ServiceFeatures,
+    ServiceOptions,
+    SupportedFeatures
+} from "../types/language-service";
 
 type Validation = {
     (document: TextDocumentIdentifier, servicesInstances?: LanguageService[]): Promise<void>;
@@ -25,7 +31,7 @@ export class ServiceManager {
             let postMessage = {
                 "type": MessageType.validate,
             };
-            
+
             for (let sessionID of sessionIDList) {
                 let diagnostics = await Promise.all(servicesInstances.map((el) => {
                     return el.doValidation({uri: sessionID});
@@ -35,13 +41,13 @@ export class ServiceManager {
                 ctx.postMessage(postMessage);
             }
         }
-        
+
         let provideValidationForServiceInstance = async (serviceName) => {
             var serviceInstance = this.$services[serviceName].serviceInstance;
             if (serviceInstance)
                 await doValidation(undefined, [serviceInstance]);
         }
-        
+
         ctx.addEventListener("message", async (ev) => {
             let message = ev.data;
             let sessionID = message.sessionId ?? "";
@@ -101,11 +107,11 @@ export class ServiceManager {
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.init: //this should be first message
-                    await this.addDocument(documentIdentifier, message.value, message.mode, message.options);
+                    postMessage["value"] = (await this.addDocument(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
-                    await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options);
+                    postMessage["value"] = (await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.changeOptions:
@@ -191,11 +197,12 @@ export class ServiceManager {
         }
         serviceInstances.forEach((el) => el.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
+        return serviceInstances;
     }
 
     async changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) {
         this.removeDocument(documentIdentifier);
-        await this.addDocument(documentIdentifier, value, mode, options);
+        return await this.addDocument(documentIdentifier, value, mode, options);
     }
 
     removeDocument(document: TextDocumentIdentifier) {

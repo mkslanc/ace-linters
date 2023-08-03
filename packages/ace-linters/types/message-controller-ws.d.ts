@@ -17,7 +17,7 @@ export declare class MessageControllerWS extends events.EventEmitter implements 
     private $connectSocket;
     private $connectWorker;
     private $connect;
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: () => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: any) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
     initSession(textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: any): void;
     close(): void;
     sendInitialize(): void;
@@ -25,7 +25,7 @@ export declare class MessageControllerWS extends events.EventEmitter implements 
     doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): void;
     doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void): void;
     doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void): void;
-    changeMode(sessionId: string, value: string, mode: string, callback?: () => void): void;
+    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities: any) => void): void;
     changeOptions(sessionId: string, options: any, callback?: () => void): void;
     dispose(sessionId: string, callback?: () => void): void;
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void): void;

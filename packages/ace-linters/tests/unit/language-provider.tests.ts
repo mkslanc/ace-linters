@@ -91,6 +91,11 @@ describe('LanguageProvider tests', () => {
         expect(hoverText).to.equal("Plain text");
     })
 
+    it('completer should have html trigger characters', () => {
+        let completer = languageProvider.activeEditor.completers.find((item) => item.id === "lspCompleters");
+        expect(completer.triggerCharacters).to.eql(['.', ':', '<', '"', '=', '/']);
+    });
+
     it('do hover or not, depending on service feature state', (done) => {
         languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
             let hoverText = languageProvider.getTooltipText(hover);

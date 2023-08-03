@@ -11,6 +11,7 @@ export interface LanguageService {
     mode: string;
     globalOptions;
     serviceData: ServiceData;
+    serviceCapabilities: lsp.ServerCapabilities;
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
 
