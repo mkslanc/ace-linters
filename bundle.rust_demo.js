@@ -53103,32 +53103,6 @@ Potential improvements:
                 }
             }
             class SessionLanguageProvider {
-                setServerCapabilities(capabilities) {
-                    //TODO: this need to take into account all capabilities from all services
-                    this.$servicesCapabilities = capabilities;
-                    if (capabilities.some((capability)=>{
-                        var _capability_completionProvider, _capability;
-                        return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
-                    })) {
-                        let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
-                        if (completer) {
-                            let allTriggerCharacters = capabilities.reduce((acc, capability)=>{
-                                var _capability_completionProvider;
-                                if ((_capability_completionProvider = capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
-                                    return [
-                                        ...acc,
-                                        ...capability.completionProvider.triggerCharacters
-                                    ];
-                                }
-                                return acc;
-                            }, []);
-                            allTriggerCharacters = [
-                                ...new Set(allTriggerCharacters)
-                            ];
-                            completer.triggerCharacters = allTriggerCharacters;
-                        }
-                    }
-                }
                 initFileName() {
                     this.fileName = this.session["id"] + "." + this.$extension;
                 }
@@ -53188,6 +53162,32 @@ Potential improvements:
                         }
                         this.$deltaQueue = [];
                         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
+                    });
+                    language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
+                        //TODO: this need to take into account all capabilities from all services
+                        this.$servicesCapabilities = capabilities;
+                        if (capabilities.some((capability)=>{
+                            var _capability_completionProvider, _capability;
+                            return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
+                        })) {
+                            let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
+                            if (completer) {
+                                let allTriggerCharacters = capabilities.reduce((acc, capability)=>{
+                                    var _capability_completionProvider;
+                                    if ((_capability_completionProvider = capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
+                                        return [
+                                            ...acc,
+                                            ...capability.completionProvider.triggerCharacters
+                                        ];
+                                    }
+                                    return acc;
+                                }, []);
+                                allTriggerCharacters = [
+                                    ...new Set(allTriggerCharacters)
+                                ];
+                                completer.triggerCharacters = allTriggerCharacters;
+                            }
+                        }
                     });
                     language_provider_define_property(this, "$changeListener", (delta)=>{
                         this.session.doc["version"]++;
