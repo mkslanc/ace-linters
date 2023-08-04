@@ -1,12 +1,19 @@
 import {expect} from "chai";
-import {Range as AceRange} from "ace-code/src/range";
+import {Range} from "ace-code/src/range";
 import {
     CompletionItemKind,
 } from "vscode-languageserver-protocol";
 import {CommonConverter} from "../../src/type-converters/common-converters";
+import {Editor, VirtualRenderer} from "ace-code";
+import {AceRange} from "../../src/ace/range-singleton";
 
 
 describe('General Converters', () => {
+    before(() => {
+        // @ts-ignore
+        AceRange.getConstructor(new Editor(new VirtualRenderer(document.createElement('div'))));
+    });
+    
     describe('cleanHtml', () => {
         it('should clean the HTML string by replacing <a> tags', () => {
             const html = "<a href='www.example.com'>link</a>";
@@ -18,13 +25,14 @@ describe('General Converters', () => {
     describe('toRange', () => {
         it('should correctly convert a range object to an Ace range', () => {
             const range = {start: {row: 0, column: 0}, end: {row: 1, column: 0}};
-            const expected = AceRange.fromPoints({row: 0, column: 0}, {row: 1, column: 0});
-            expect(CommonConverter.toRange(range, AceRange)).to.deep.equal(expected);
+            
+            const expected = Range.fromPoints({row: 0, column: 0}, {row: 1, column: 0});
+            expect(CommonConverter.toRange(range)).to.deep.equal(expected);
         });
 
         it('should return undefined if the range object is missing start or end properties', () => {
             const range = {start: {row: 0, column: 0}};
-            expect(CommonConverter.toRange(range as any, AceRange)).to.undefined;
+            expect(CommonConverter.toRange(range as any)).to.undefined;
         });
     });
 
