@@ -138,9 +138,8 @@ export class LanguageProvider {
         if (this.options.functionality.hover) {
             if (!this.$hoverTooltip) {
                 this.$hoverTooltip = new HoverTooltip();
-            } else {
-                this.$initHoverTooltip(editor);
-            }
+            } 
+            this.$initHoverTooltip(editor);
         }
         
         if (this.options.functionality.signatureHelp) {
@@ -351,7 +350,7 @@ class SessionLanguageProvider {
     private $isConnected = false;
     private $modeIsChanged = false;
     private $options: ServiceOptions;
-    private $servicesCapabilities: lsp.ServerCapabilities[];
+    private $servicesCapabilities?: lsp.ServerCapabilities[];
 
     state: {
         occurrenceMarkers: MarkerGroup | null,
@@ -402,10 +401,10 @@ class SessionLanguageProvider {
         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
     
-    private setServerCapabilities = (capabilities: lsp.ServerCapabilities[]) => {
+    private setServerCapabilities = (capabilities?: lsp.ServerCapabilities[]) => {
         //TODO: this need to take into account all capabilities from all services
         this.$servicesCapabilities = capabilities;
-        if (capabilities.some((capability) => capability?.completionProvider?.triggerCharacters)) {
+        if (capabilities && capabilities.some((capability) => capability?.completionProvider?.triggerCharacters)) {
             let completer = this.editor.completers.find((completer) => completer.id === "lspCompleters");
             if (completer) {
                 let allTriggerCharacters = capabilities.reduce((acc, capability) => {
