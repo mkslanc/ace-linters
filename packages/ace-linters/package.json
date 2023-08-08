@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",

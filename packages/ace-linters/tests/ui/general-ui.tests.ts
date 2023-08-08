@@ -1,8 +1,8 @@
 import {expect} from "chai";
 import * as puppeteer from 'puppeteer';
 
-const opts = {
-    headless: true,
+const opts: puppeteer.PuppeteerLaunchOptions = {
+    headless: "new",
     slowMo: 0,
     devtools: false
 };
