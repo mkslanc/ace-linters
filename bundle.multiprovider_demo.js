@@ -49542,9 +49542,8 @@ Potential improvements:
                     if (this.options.functionality.hover) {
                         if (!this.$hoverTooltip) {
                             this.$hoverTooltip = new HoverTooltip();
-                        } else {
-                            this.$initHoverTooltip(editor);
                         }
+                        this.$initHoverTooltip(editor);
                     }
                     if (this.options.functionality.signatureHelp) {
                         this.$signatureTooltip.registerEditor(editor);
@@ -49810,7 +49809,7 @@ Potential improvements:
                     language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
                         //TODO: this need to take into account all capabilities from all services
                         this.$servicesCapabilities = capabilities;
-                        if (capabilities.some((capability)=>{
+                        if (capabilities && capabilities.some((capability)=>{
                             var _capability_completionProvider, _capability;
                             return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
                         })) {
