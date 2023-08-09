@@ -24,7 +24,7 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, 
             el.category = DiagnosticCategory.Message;
         }
         return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
-            parseMessageText(el.messageText + " (" + el.code.toString() + ")"), fromTsCategory(el.category));
+            parseMessageText(el.messageText, el.code), fromTsCategory(el.category));
     });
 }
 
@@ -36,18 +36,18 @@ export function toTsOffset(range: lsp.Range, doc: TextDocument) {
 }
 
 export function parseMessageText(
-    diagnosticsText: string | ts.DiagnosticMessageChain | undefined,
+    diagnosticsText: string | ts.DiagnosticMessageChain | undefined, errorCode: number
 ): string {
     if (typeof diagnosticsText === 'string') {
-        return diagnosticsText;
+        return diagnosticsText + " (" + errorCode.toString() + ")\n";
     } else if (diagnosticsText === undefined) {
         return '';
     }
     let result = '';
-    result += diagnosticsText.messageText;
+    result += diagnosticsText.messageText + " (" + diagnosticsText.code.toString() + ")\n";
     if (diagnosticsText.next) {
         for (let next of diagnosticsText.next) {
-            result += parseMessageText(next);
+            result += parseMessageText(next, next.code);
         }
     }
     return result;

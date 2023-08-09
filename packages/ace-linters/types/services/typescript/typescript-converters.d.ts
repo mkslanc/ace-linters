@@ -8,7 +8,7 @@ export declare function toTsOffset(range: lsp.Range, doc: TextDocument): {
     start: number;
     end: number;
 };
-export declare function parseMessageText(diagnosticsText: string | ts.DiagnosticMessageChain | undefined): string;
+export declare function parseMessageText(diagnosticsText: string | ts.DiagnosticMessageChain | undefined, errorCode: number): string;
 export declare function fromTsCategory(category: ts.DiagnosticCategory): 1 | 2 | 3;
 export declare function toTextEdits(textEdits: TextChange[], doc: TextDocument): lsp.TextEdit[];
 export declare function toRange(textSpan: TextSpan | undefined, doc: TextDocument): lsp.Range | undefined;
