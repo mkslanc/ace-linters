@@ -1,12 +1,12 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[9404],{
 
 /***/ 99404:
-/***/ ((module) => {
+/***/ (function(module) {
 
 (function webpackUniversalModuleDefinition1(root1, factory1) {
     if (true) module.exports = factory1();
     else { var i1, a1; }
-})(self, ()=>{
+})(this, ()=>{
     return /******/ (()=>{
         /******/ var __webpack_modules__ = {
             /***/ 6066: /***/ (module1, __unused_webpack_exports1, __webpack_require__1)=>{

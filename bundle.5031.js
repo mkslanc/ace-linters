@@ -1,12 +1,12 @@
 (self["webpackChunkace_linters_root"] = self["webpackChunkace_linters_root"] || []).push([[5031],{
 
 /***/ 5031:
-/***/ ((module) => {
+/***/ (function(module) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
     if (true) module.exports = factory();
     else { var i, a; }
-})(self, ()=>{
+})(this, ()=>{
     return /******/ (()=>{
         /******/ "use strict";
         /******/ // The require scope
