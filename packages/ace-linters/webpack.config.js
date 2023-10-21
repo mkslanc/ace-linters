@@ -65,7 +65,8 @@ module.exports = (env, argv) => {
             publicPath: 'auto',
             library: {
                 type: "umd2"
-            }
+            },
+            globalObject: 'this'
         },
         optimization: {
             minimize: false
