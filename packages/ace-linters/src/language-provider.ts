@@ -515,7 +515,9 @@ class SessionLanguageProvider {
         if (!this.state.occurrenceMarkers) {
             this.state.occurrenceMarkers = new MarkerGroup(this.session);
         }
-        this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+        if (documentHighlights) { //some servers return null, which contradicts spec
+            this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+        }
     };
 
     dispose(callback?) {
