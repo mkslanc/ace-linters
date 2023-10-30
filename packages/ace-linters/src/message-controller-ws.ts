@@ -61,13 +61,13 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         } as lsp.WorkspaceClientCapabilities,
     };
 
-    constructor(mode: WebSocket | Worker) {
+    constructor(mode: WebSocket | Worker, initializationOptions?: { [option: string]: any }) {
         super();
         if (mode instanceof Worker) {
-            this.$connectWorker(mode);
+            this.$connectWorker(mode, initializationOptions);
         } else {
             this.socket = mode;
-            this.$connectSocket();
+            this.$connectSocket(initializationOptions);
         }
     }
 
@@ -75,30 +75,30 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
         throw new Error('Method not implemented.');
     }
 
-    private $connectSocket() {
+    private $connectSocket(initializationOptions) {
         rpc.listen({
             webSocket: this.socket,
             logger: new rpc.ConsoleLogger(),
             onConnection: (connection: rpc.MessageConnection) => {
-                this.$connect(connection);
+                this.$connect(connection, initializationOptions);
             },
         });
     }
 
-    private $connectWorker(worker: Worker) {
+    private $connectWorker(worker: Worker, initializationOptions?: { [option: string]: any }) {
         const connection = createProtocolConnection(
             new BrowserMessageReader(worker),
             new BrowserMessageWriter(worker)
         );
-        this.$connect(connection);
+        this.$connect(connection, initializationOptions);
     }
 
-    private $connect(connection) {
+    private $connect(connection, initializationOptions) {
         connection.listen();
         this.isConnected = true;
 
         this.connection = connection;
-        this.sendInitialize();
+        this.sendInitialize(initializationOptions);
 
         this.connection.onNotification('textDocument/publishDiagnostics', (
             result: lsp.PublishDiagnosticsParams,
@@ -155,13 +155,13 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             this.socket.close();
     }
 
-    sendInitialize() {
+    sendInitialize(initializationOptions) {
         if (!this.isConnected) {
             return;
         }
         const message: lsp.InitializeParams = {
             capabilities: this.clientCapabilities,
-            initializationOptions: null,
+            initializationOptions: initializationOptions,
             processId: null,
             rootUri: "", //TODO: this.documentInfo.rootUri
             workspaceFolders: null,
@@ -242,6 +242,7 @@ export class MessageControllerWS extends events.EventEmitter implements IMessage
             return;
         if (!this.serverCapabilities?.completionProvider?.resolveProvider)
             return;
+        completion["item"].data = {...completion["item"].data, aceFileName: sessionId} //TODO: temporary fix
         this.postMessage('completionItem/resolve', sessionId, completion["item"], (result: lsp.CompletionItem) => {
             callback && callback(result);
         });

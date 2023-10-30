@@ -17,7 +17,7 @@ module.exports = (env, argv) => {
     };
     return {
         cache: true,
-        devtool: 'source-map',
+        devtool: 'inline-source-map',
         entry: {
             default_services_demo: './packages/demo/webworker-lsp/demo.ts',
             webworker_demo: './packages/demo/webworker-json-rpc/demo.ts',
