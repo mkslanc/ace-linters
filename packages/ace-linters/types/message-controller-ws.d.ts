@@ -12,7 +12,9 @@ export declare class MessageControllerWS extends events.EventEmitter implements 
     private connection;
     private requestsQueue;
     clientCapabilities: lsp.ClientCapabilities;
-    constructor(mode: WebSocket | Worker);
+    constructor(mode: WebSocket | Worker, initializationOptions?: {
+        [option: string]: any;
+    });
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
     private $connectSocket;
     private $connectWorker;
@@ -20,7 +22,7 @@ export declare class MessageControllerWS extends events.EventEmitter implements 
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: any) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
     initSession(textDocumentMessage: lsp.DidOpenTextDocumentParams, initCallback: any): void;
     close(): void;
-    sendInitialize(): void;
+    sendInitialize(initializationOptions: any): void;
     change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document: any, callback?: () => void): void;
     doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): void;
     doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void): void;
