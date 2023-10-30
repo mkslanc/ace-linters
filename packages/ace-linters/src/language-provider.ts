@@ -321,6 +321,9 @@ export class LanguageProvider {
                 completer
             ];
         } else {
+            if (!editor.completers) {
+                editor.completers = [];
+            }
             editor.completers.push(completer);
         }
     }
