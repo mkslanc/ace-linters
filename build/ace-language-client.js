@@ -23562,6 +23562,9 @@ class LanguageProvider {
                 completer
             ];
         } else {
+            if (!editor.completers) {
+                editor.completers = [];
+            }
             editor.completers.push(completer);
         }
     }
@@ -23763,7 +23766,9 @@ class SessionLanguageProvider {
             if (!this.state.occurrenceMarkers) {
                 this.state.occurrenceMarkers = new MarkerGroup(this.session);
             }
-            this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+            if (documentHighlights) {
+                this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+            }
         });
         this.$messageController = messageController;
         this.session = session;
@@ -24046,24 +24051,24 @@ class MessageControllerWS extends events.EventEmitter {
     configureFeatures(serviceName, features) {
         throw new Error('Method not implemented.');
     }
-    $connectSocket() {
+    $connectSocket(initializationOptions) {
         listen({
             webSocket: this.socket,
             logger: new ConsoleLogger(),
             onConnection: (connection)=>{
-                this.$connect(connection);
+                this.$connect(connection, initializationOptions);
             }
         });
     }
-    $connectWorker(worker) {
+    $connectWorker(worker, initializationOptions) {
         const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
-        this.$connect(connection);
+        this.$connect(connection, initializationOptions);
     }
-    $connect(connection) {
+    $connect(connection, initializationOptions) {
         connection.listen();
         this.isConnected = true;
         this.connection = connection;
-        this.sendInitialize();
+        this.sendInitialize(initializationOptions);
         this.connection.onNotification('textDocument/publishDiagnostics', (result)=>{
             this.emit("validate-" + result.uri.replace(/^file:\/\/\//, ""), result.diagnostics);
         });
@@ -24106,13 +24111,13 @@ class MessageControllerWS extends events.EventEmitter {
         }
         if (this.socket) this.socket.close();
     }
-    sendInitialize() {
+    sendInitialize(initializationOptions) {
         if (!this.isConnected) {
             return;
         }
         const message = {
             capabilities: this.clientCapabilities,
-            initializationOptions: null,
+            initializationOptions: initializationOptions,
             processId: null,
             rootUri: "",
             workspaceFolders: null
@@ -24189,6 +24194,11 @@ class MessageControllerWS extends events.EventEmitter {
         var _this_serverCapabilities_completionProvider, _this_serverCapabilities;
         if (!this.isInitialized) return;
         if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : (_this_serverCapabilities_completionProvider = _this_serverCapabilities.completionProvider) === null || _this_serverCapabilities_completionProvider === void 0 ? void 0 : _this_serverCapabilities_completionProvider.resolveProvider)) return;
+        completion["item"].data = {
+            ...completion["item"].data,
+            aceFileName: sessionId
+        } //TODO: temporary fix
+        ;
         this.postMessage('completionItem/resolve', sessionId, completion["item"], (result)=>{
             callback && callback(result);
         });
@@ -24288,7 +24298,7 @@ class MessageControllerWS extends events.EventEmitter {
         };
         this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
     }
-    constructor(mode){
+    constructor(mode, initializationOptions){
         super();
         message_controller_ws_define_property(this, "isConnected", false);
         message_controller_ws_define_property(this, "isInitialized", false);
@@ -24348,10 +24358,10 @@ class MessageControllerWS extends events.EventEmitter {
             }
         });
         if (mode instanceof Worker) {
-            this.$connectWorker(mode);
+            this.$connectWorker(mode, initializationOptions);
         } else {
             this.socket = mode;
-            this.$connectSocket();
+            this.$connectSocket(initializationOptions);
         }
     }
 }
@@ -24364,8 +24374,9 @@ class AceLanguageClient {
      *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
      * @param {Worker | WebSocket} mode
      * @param {ProviderOptions} options
-     */ static for(mode, options) {
-        let messageController = new MessageControllerWS(mode);
+     * @param initializationOptions
+     */ static for(mode, options, initializationOptions) {
+        let messageController = new MessageControllerWS(mode, initializationOptions);
         return new LanguageProvider(messageController, options);
     }
 }

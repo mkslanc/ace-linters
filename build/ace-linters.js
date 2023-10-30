@@ -20418,6 +20418,9 @@ class LanguageProvider {
                 completer
             ];
         } else {
+            if (!editor.completers) {
+                editor.completers = [];
+            }
             editor.completers.push(completer);
         }
     }
@@ -20619,7 +20622,9 @@ class SessionLanguageProvider {
             if (!this.state.occurrenceMarkers) {
                 this.state.occurrenceMarkers = new MarkerGroup(this.session);
             }
-            this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+            if (documentHighlights) {
+                this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+            }
         });
         this.$messageController = messageController;
         this.session = session;
