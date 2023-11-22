@@ -188,14 +188,14 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return this.$defaultFormatOptions;
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument || !range)
-            return [];
+            return Promise.resolve([]);
 
         let offset = toTsOffset(range, fullDocument);
         let textEdits = this.$service.getFormattingEditsForRange(document.uri, offset.start, offset.end, this.getFormattingOptions(options));
-        return toTextEdits(textEdits, fullDocument);
+        return Promise.resolve(toTextEdits(textEdits, fullDocument));
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {

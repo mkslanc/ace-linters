@@ -92,12 +92,12 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
         this.$configureService();
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions) {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
-            return [];
+            return Promise.resolve([]);
 
-        return this.$service.format(fullDocument, range, options);
+        return Promise.resolve(this.$service.format(fullDocument, range, options));
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {

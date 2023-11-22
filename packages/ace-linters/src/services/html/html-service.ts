@@ -52,12 +52,12 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements Lang
         return mergeObjects(this.globalOptions?.formatOptions, this.$defaultFormatOptions);
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[] {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration) {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
-            return [];
+            return Promise.resolve([]);
 
-        return this.$service.format(fullDocument, range, this.getFormattingOptions(options));
+        return Promise.resolve(this.$service.format(fullDocument, range, this.getFormattingOptions(options)));
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {

@@ -13,7 +13,7 @@ export interface LanguageService {
     serviceData: ServiceData;
     serviceCapabilities: lsp.ServerCapabilities;
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
 
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 
@@ -221,7 +221,18 @@ export interface ServiceData {
     modes: string,
     serviceInstance?: LanguageService,
     options?: ServiceOptions,
-    features?: ServiceFeatures
+    features?: ServiceFeatures,
+    type?: "webworker" | "socket" | "stdio" | "ipc",
+    connection?: WebSocket,
+    initializationOptions?: { [name: string]: any },
+}
+
+export interface ServerData {
+    modes: string,
+    type: "webworker" | "socket" | "stdio" | "ipc",
+    connection: WebSocket,
+    initializationOptions?: { [name: string]: any },
+    [name: string]: any
 }
 
 export interface FilterDiagnosticsOptions {

@@ -90,6 +90,9 @@
       ],
       "build/base-service": [
         "./types/services/base-service.d.ts"
+      ],
+      "build/language-client": [
+        "./types/services/language-client.d.ts"
       ]
     }
   },

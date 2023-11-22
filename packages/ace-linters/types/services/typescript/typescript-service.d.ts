@@ -48,7 +48,7 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
     getSyntacticDiagnostics(fileName: string): Diagnostic[];
     getSemanticDiagnostics(fileName: string): Diagnostic[];
     getFormattingOptions(options: lsp.FormattingOptions): ts.FormatCodeSettings;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;

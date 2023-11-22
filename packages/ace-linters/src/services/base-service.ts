@@ -81,12 +81,12 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return null;
     }
 
-    async doValidation(document): Promise<lsp.Diagnostic[]> {
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
         return [];
     }
 
-    format(document, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
-        return [];
+    format(document, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
+        return Promise.resolve([]);
     }
 
     async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null> {

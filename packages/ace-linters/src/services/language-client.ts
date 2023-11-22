@@ -1,0 +1,359 @@
+import * as rpc from 'vscode-ws-jsonrpc';
+import * as lsp from "vscode-languageserver-protocol";
+import {
+    BrowserMessageReader,
+    BrowserMessageWriter,
+    createProtocolConnection,
+} from "vscode-languageserver-protocol/browser";
+import {
+    LanguageService,
+    ServiceOptions,
+} from "../types/language-service";
+import {BaseService} from "./base-service";
+import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
+import {MessageType} from "../message-types";
+
+export class LanguageClient extends BaseService implements LanguageService {
+    $service;
+    private isConnected = false;
+    private isInitialized = false;
+    private readonly socket: WebSocket;
+    private serverCapabilities: lsp.ServerCapabilities;
+    private connection: lsp.ProtocolConnection;
+    private requestsQueue: Function[] = [];
+
+    clientCapabilities: lsp.ClientCapabilities = {
+        textDocument: {
+            hover: {
+                dynamicRegistration: true,
+                contentFormat: ['markdown', 'plaintext'],
+            },
+            synchronization: {
+                dynamicRegistration: true,
+                willSave: false,
+                didSave: false,
+                willSaveWaitUntil: false,
+            },
+            formatting: {
+                dynamicRegistration: true
+            },
+            completion: {
+                dynamicRegistration: true,
+                completionItem: {
+                    snippetSupport: true,
+                    commitCharactersSupport: false,
+                    documentationFormat: ['markdown', 'plaintext'],
+                    deprecatedSupport: false,
+                    preselectSupport: false,
+                },
+                contextSupport: false,
+            },
+            signatureHelp: {
+                signatureInformation: {
+                    documentationFormat: ['markdown', 'plaintext'],
+                    activeParameterSupport: true
+                }
+            },
+            documentHighlight: {
+                dynamicRegistration: true
+            }
+        },
+        workspace: {
+            didChangeConfiguration: {
+                dynamicRegistration: true,
+            },
+        } as lsp.WorkspaceClientCapabilities,
+    };
+
+    constructor(mode: string, connectionType: WebSocket | Worker, initializationOptions?: { [option: string]: any }) {
+        super(mode);
+        if (connectionType instanceof Worker) { //TODO: 
+            this.$connectWorker(connectionType, initializationOptions);
+        } else {
+            this.socket = connectionType;
+            this.$connectSocket(initializationOptions);
+        }
+    }
+
+    private $connectSocket(initializationOptions) {
+        rpc.listen({
+            webSocket: this.socket,
+            logger: new rpc.ConsoleLogger(),
+            onConnection: (connection: rpc.MessageConnection) => {
+                this.$connect(connection, initializationOptions);
+            },
+        });
+    }
+
+    private $connectWorker(worker: Worker, initializationOptions?: { [option: string]: any }) {
+        const connection = createProtocolConnection(
+            new BrowserMessageReader(worker),
+            new BrowserMessageWriter(worker)
+        );
+        this.$connect(connection, initializationOptions);
+    }
+
+    private $connect(connection, initializationOptions) {
+        connection.listen();
+        this.isConnected = true;
+
+        this.connection = connection;
+        this.sendInitialize(initializationOptions);
+
+        this.connection.onNotification('textDocument/publishDiagnostics', (
+            result: lsp.PublishDiagnosticsParams,
+        ) => {
+            let postMessage = {
+                "type": MessageType.validate,
+                "sessionId": result.uri.replace(/^file:\/\/\//, ""),
+                "value": result.diagnostics,
+            };
+            //TODO: maybe it could be used in main thread?
+            self.postMessage(postMessage);
+        });
+
+        //TODO: 
+        this.connection.onNotification('window/showMessage', (params: lsp.ShowMessageParams) => {
+            this.showLog(params);
+        });
+
+        this.connection.onRequest('window/showMessageRequest', (params: lsp.ShowMessageRequestParams) => {
+            this.showLog(params);
+        });
+        
+        this.connection.onError((e) => {
+            throw e;
+        });
+
+        this.connection.onClose(() => {
+            this.isConnected = false;
+        });
+    }
+
+    showLog(params: lsp.ShowMessageParams) {
+        switch (params.type) {
+            case 1:
+                console.error(params.message);
+                break;
+            case 2:
+                console.warn(params.message);
+                break;
+            case 3:
+                console.info(params.message);
+                break;
+            case 4:
+                console.log(params.message);
+                break;
+        }
+    }
+
+    addDocument(document: TextDocumentItem) {
+        super.addDocument(document);
+        const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
+            textDocument: document
+        };
+
+        this.enqueueIfNotConnected(() => this.connection.sendNotification('textDocument/didOpen', textDocumentMessage));
+    }
+
+    enqueueIfNotConnected(callback: () => void) {
+        if (!this.isConnected) {
+            this.requestsQueue.push(callback);
+        } else {
+            callback();
+        }
+    }
+
+    removeDocument(document: TextDocumentIdentifier) {
+        super.removeDocument(document);
+        this.enqueueIfNotConnected(() => this.connection.sendNotification('textDocument/didClose', {
+            textDocument: {
+                uri: document.uri
+            }
+        } as lsp.DidCloseTextDocumentParams));
+    }
+
+    /*
+        close() {
+            if (this.connection) {
+                this.connection.dispose();
+            }
+            if (this.socket)
+                this.socket.close();
+        }
+    */
+
+    sendInitialize(initializationOptions) {
+        if (!this.isConnected) {
+            return;
+        }
+        const message: lsp.InitializeParams = {
+            capabilities: this.clientCapabilities,
+            initializationOptions: initializationOptions,
+            processId: null,
+            rootUri: "", //TODO: this.documentInfo.rootUri
+            workspaceFolders: null,
+        };
+
+        this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
+            this.isInitialized = true;
+            this.serverCapabilities = params.capabilities as lsp.ServerCapabilities;
+
+            this.connection.sendNotification('initialized').then(() => {
+                this.connection.sendNotification('workspace/didChangeConfiguration', {
+                    settings: {},
+                });
+
+                this.requestsQueue.forEach((requestCallback) => requestCallback());
+                this.requestsQueue = [];
+            });
+        });
+    }
+
+    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]) {
+        super.applyDeltas(identifier, deltas);
+        if (!this.isConnected) {
+            return;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.textDocumentSync !== lsp.TextDocumentSyncKind.Incremental)) {
+            return this.setValue(identifier, this.getDocument(identifier.uri).getText());
+        }
+        const textDocumentChange: lsp.DidChangeTextDocumentParams = {
+            textDocument: {
+                uri: identifier.uri,
+                version: identifier.version,
+            } as lsp.VersionedTextDocumentIdentifier,
+            contentChanges: deltas,
+        };
+        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
+    }
+
+    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string) {
+        super.setValue(identifier, value);
+        if (!this.isConnected) {
+            return;
+        }
+        const textDocumentChange: lsp.DidChangeTextDocumentParams = {
+            textDocument: {
+                uri: identifier.uri,
+                version: identifier.version,
+            } as lsp.VersionedTextDocumentIdentifier,
+            contentChanges: [{text: value}],
+        };
+        this.connection.sendNotification('textDocument/didChange', textDocumentChange);
+    }
+
+    async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position) {
+        if (!this.isInitialized) {
+            return null;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
+            return null;
+        }
+        let options: lsp.TextDocumentPositionParams = {
+            textDocument: {
+                uri: document.uri,
+            },
+            position: position,
+        };
+        return this.connection.sendRequest('textDocument/hover', options) as Promise<lsp.Hover | null>;
+    }
+
+    async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position) {
+        if (!this.isInitialized) {
+            return null;
+        }
+        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
+            return null;
+        }
+
+        let options: lsp.CompletionParams = {
+            textDocument: {
+                uri: document.uri,
+            },
+            position: position,
+        };
+        return this.connection.sendRequest('textDocument/completion', options) as Promise<lsp.CompletionList | lsp.CompletionItem[] | null>;
+    }
+
+    async doResolve(item: lsp.CompletionItem) {
+        if (!this.isInitialized)
+            return null;
+        if (!this.serverCapabilities?.completionProvider?.resolveProvider)
+            return null;
+        return this.connection.sendRequest('completionItem/resolve', item["item"]) as Promise<lsp.CompletionItem | null>;
+    }
+
+
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
+        //TODO: textDocument/diagnostic capability
+        return [];
+    }
+
+    async format(document: lsp.TextDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions) {
+        if (!this.isInitialized) {
+            return [];
+        }
+        if (!(this.serverCapabilities && (this.serverCapabilities.documentRangeFormattingProvider || this.serverCapabilities.documentFormattingProvider))) {
+            return [];
+        }
+        if (!this.serverCapabilities.documentRangeFormattingProvider) {
+            let options: lsp.DocumentFormattingParams = {
+                textDocument: {
+                    uri: document.uri,
+                },
+                options: format,
+            };
+            return this.connection.sendRequest('textDocument/formatting', options) as Promise<lsp.TextEdit[]>;
+        } else {
+            let options: lsp.DocumentRangeFormattingParams = {
+                textDocument: {
+                    uri: document.uri,
+                },
+                options: format,
+                range: range
+            };
+            return this.connection.sendRequest('textDocument/rangeFormatting', options) as Promise<lsp.TextEdit[]>;
+        }
+    }
+
+    setGlobalOptions(options: ServiceOptions): void {
+        super.setGlobalOptions(options);
+        if (!this.isConnected) {
+            this.requestsQueue.push(() => this.setGlobalOptions(options));
+            return;
+        }
+        const configChanges: lsp.DidChangeConfigurationParams = {
+            settings: options
+        };
+        this.connection.sendNotification('workspace/didChangeConfiguration', configChanges);
+    }
+
+    async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position) {
+        if (!this.isInitialized)
+            return [];
+        if (!this.serverCapabilities?.documentHighlightProvider)
+            return [];
+        let options: lsp.DocumentHighlightParams = {
+            textDocument: {
+                uri: document.uri,
+            },
+            position: position,
+        };
+        return this.connection.sendRequest('textDocument/documentHighlight', options) as Promise<lsp.DocumentHighlight[]>
+    }
+
+    async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position) {
+        if (!this.isInitialized)
+            return null;
+        if (!this.serverCapabilities?.signatureHelpProvider)
+            return null;
+        let options: lsp.SignatureHelpParams = {
+            textDocument: {
+                uri: document.uri,
+            },
+            position: position,
+        };
+        return this.connection.sendRequest('textDocument/signatureHelp', options) as Promise<lsp.SignatureHelp | null>
+    }
+}

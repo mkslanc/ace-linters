@@ -2,7 +2,7 @@ import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {
-    LanguageService,
+    LanguageService, ServerData,
     ServiceData,
     ServiceFeatures,
     ServiceOptions,
@@ -18,7 +18,7 @@ export class ServiceManager {
     $services: { [serviceName: string]: ServiceData } = {};
     private $sessionIDToMode: { [sessionID: string]: string } = {};
 
-    constructor(ctx) {
+    constructor(ctx: Window & typeof globalThis) {
 
         let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
             servicesInstances ??= this.getServicesInstances(document!.uri);
@@ -42,8 +42,11 @@ export class ServiceManager {
             }
         }
 
-        let provideValidationForServiceInstance = async (serviceName) => {
-            var serviceInstance = this.$services[serviceName].serviceInstance;
+        let provideValidationForServiceInstance = async (serviceName: string) => {
+            let service = this.$services[serviceName];
+            if (!service)
+                return;
+            var serviceInstance = service.serviceInstance;
             if (serviceInstance)
                 await doValidation(undefined, [serviceInstance]);
         }
@@ -67,7 +70,7 @@ export class ServiceManager {
                     serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
                         //we will use only first service to format
-                        postMessage["value"] = serviceInstances[0].format(documentIdentifier, message.value, message.format);
+                        postMessage["value"] = await serviceInstances[0].format(documentIdentifier, message.value, message.format);
                     }
                     break;
                 case MessageType.complete:
@@ -150,8 +153,18 @@ export class ServiceManager {
     }
 
     private static async $initServiceInstance(service: ServiceData): Promise<LanguageService> {
-        let module = await service.module();
-        service.serviceInstance = new module[service.className](service.modes);
+        let module
+        if (service.module) { //TODO:
+            module = await service.module();
+            if (service.type && service.type == "socket") { //TODO: all types
+                service.serviceInstance = new module[service.className](service.modes, service.connection, service.initializationOptions);
+            } else {
+                service.serviceInstance = new module[service.className](service.modes);
+            }
+        } else {
+                throw "Unknown service type";
+        }
+        
         if (service.options)
             service.serviceInstance!.setGlobalOptions(service.options);
         service.serviceInstance!.serviceData = service;
@@ -238,8 +251,16 @@ export class ServiceManager {
         this.$services[name] = service;
     }
 
+    registerServer(name: string, server: ServerData) {
+        server.className = "LanguageClient";
+        server.features = this.setDefaultFeaturesState(server.features);
+        this.$services[name] = server as ServiceData;
+    }
+
     configureFeatures(name: string, features: ServiceFeatures) {
         features = this.setDefaultFeaturesState(features);
+        if (!this.$services[name])
+            return;
         this.$services[name].features = features;
     }
 

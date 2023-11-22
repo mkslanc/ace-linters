@@ -78,12 +78,12 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
         this.$configureService("");
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions) {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
-            return [];
+            return Promise.resolve([]);
 
-        return this.$service.doFormat(fullDocument, {}); //TODO: options?
+        return Promise.resolve(this.$service.doFormat(fullDocument, {})); //TODO: options?
     }
 
     async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {

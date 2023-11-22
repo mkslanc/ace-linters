@@ -13,7 +13,7 @@ export interface LanguageService {
     globalOptions: any;
     serviceData: ServiceData;
     serviceCapabilities: lsp.ServerCapabilities;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
@@ -172,12 +172,20 @@ export type ServiceFeatures = {
 };
 export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight";
 export interface ServiceData {
-    module: () => any;
+    module?: () => any;
     className: string;
     modes: string;
     serviceInstance?: LanguageService;
     options?: ServiceOptions;
     features?: ServiceFeatures;
+    type?: "webworker" | "socket" | "stdio" | "ipc";
+    connection?: WebSocket;
+}
+export interface ServerData {
+    modes: string;
+    type: "webworker" | "socket" | "stdio" | "ipc";
+    connection: WebSocket;
+    [name: string]: any;
 }
 export interface FilterDiagnosticsOptions {
     errorCodesToIgnore?: string[];

@@ -14,7 +14,7 @@ export declare class YamlService extends BaseService<YamlServiceOptions> impleme
     removeDocument(document: TextDocumentIdentifier): void;
     setOptions(sessionID: string, options: YamlServiceOptions, merge?: boolean): void;
     setGlobalOptions(options: YamlServiceOptions): void;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<any>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
