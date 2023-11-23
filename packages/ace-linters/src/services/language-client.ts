@@ -112,15 +112,29 @@ export class LanguageClient extends BaseService implements LanguageService {
             self.postMessage(postMessage);
         });
 
-        //TODO: 
         this.connection.onNotification('window/showMessage', (params: lsp.ShowMessageParams) => {
             this.showLog(params);
+        });
+
+        this.connection.onNotification('window/logMessage', (params: lsp.LogMessageParams) => {
+            this.showLog(params);
+        });
+        this.connection.onNotification('$/logTrace', (params: lsp.LogTraceParams) => {
+            this.showTrace(params);
         });
 
         this.connection.onRequest('window/showMessageRequest', (params: lsp.ShowMessageRequestParams) => {
             this.showLog(params);
         });
-        
+
+        this.connection.onRequest('workspace/configuration', (params: lsp.ConfigurationParams) => {
+            console.log(params);
+        });
+
+        this.connection.onRequest('client/registerCapability', (params) => {
+            console.log(params);
+        });
+
         this.connection.onError((e) => {
             throw e;
         });
@@ -142,8 +156,16 @@ export class LanguageClient extends BaseService implements LanguageService {
                 console.info(params.message);
                 break;
             case 4:
+            default:
                 console.log(params.message);
                 break;
+        }
+    }
+
+    showTrace(params: lsp.LogTraceParams) {
+        console.log(params.message);
+        if (params.verbose) {
+            console.log(params.verbose);
         }
     }
 
@@ -199,7 +221,7 @@ export class LanguageClient extends BaseService implements LanguageService {
             this.isInitialized = true;
             this.serverCapabilities = params.capabilities as lsp.ServerCapabilities;
 
-            this.connection.sendNotification('initialized').then(() => {
+            this.connection.sendNotification('initialized', {}).then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
                     settings: {},
                 });
