@@ -173,7 +173,7 @@ export class ServiceManager {
 
         } else {
             module = await service.module();
-            service.serviceInstance = new module["LanguageClient"][service.className](service.modes);
+            service.serviceInstance = new module[service.className](service.modes);
         }
 
         if (service.options || service.initializationOptions) {
