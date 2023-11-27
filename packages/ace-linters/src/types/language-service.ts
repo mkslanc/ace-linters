@@ -10,7 +10,7 @@ export interface LanguageService {
     $service;
     mode: string;
     globalOptions;
-    serviceData: ServiceData;
+    serviceData: ServerData | ServiceData;
     serviceCapabilities: lsp.ServerCapabilities;
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
@@ -215,24 +215,24 @@ export type SupportedFeatures =
     | "signatureHelp"
     | "documentHighlight"
 
-export interface ServiceData {
-    module: () => any,
+export interface ServiceData extends GenericData {
     className: string,
-    modes: string,
-    serviceInstance?: LanguageService,
-    options?: ServiceOptions,
-    features?: ServiceFeatures,
-    type?: "webworker" | "socket" | "stdio" | "ipc",
-    connection?: WebSocket,
-    initializationOptions?: { [name: string]: any },
+    options?: ServiceOptions
 }
 
-export interface ServerData {
+export interface GenericData {
+    initializationOptions?: ServiceOptions,
+    options?: ServiceOptions,
+    serviceInstance?: LanguageService,
     modes: string,
+    className?: string,
+    features?: ServiceFeatures,
+    module: () => any,
+}
+
+export interface ServerData extends GenericData{
     type: "webworker" | "socket" | "stdio" | "ipc",
-    connection: WebSocket,
-    initializationOptions?: { [name: string]: any },
-    [name: string]: any
+    connection: string,
 }
 
 export interface FilterDiagnosticsOptions {

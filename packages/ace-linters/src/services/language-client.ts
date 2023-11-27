@@ -10,7 +10,6 @@ import {
     ServiceOptions,
 } from "../types/language-service";
 import {BaseService} from "./base-service";
-import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {MessageType} from "../message-types";
 
 export class LanguageClient extends BaseService implements LanguageService {
@@ -64,21 +63,22 @@ export class LanguageClient extends BaseService implements LanguageService {
             },
         } as lsp.WorkspaceClientCapabilities,
     };
+    ctx;
 
-    constructor(mode: string, connectionType: WebSocket | Worker, initializationOptions?: { [option: string]: any }) {
-        super(mode);
-        if (connectionType instanceof Worker) { //TODO: 
-            this.$connectWorker(connectionType, initializationOptions);
+    constructor(config: { mode: string, connectionType: "socket" | "worker", url: string, initializationOptions?: { [option: string]: any } }, ctx) {
+        super(config.mode);
+        this.ctx = ctx;
+        if (config.connectionType === "worker") { //TODO: 
+            //this.$connectWorker(connectionType, initializationOptions);
         } else {
-            this.socket = connectionType;
-            this.$connectSocket(initializationOptions);
+            this.socket = new WebSocket(config.url);
+            this.$connectSocket(config.initializationOptions);
         }
     }
 
     private $connectSocket(initializationOptions) {
         rpc.listen({
             webSocket: this.socket,
-            logger: new rpc.ConsoleLogger(),
             onConnection: (connection: rpc.MessageConnection) => {
                 this.$connect(connection, initializationOptions);
             },
@@ -105,11 +105,10 @@ export class LanguageClient extends BaseService implements LanguageService {
         ) => {
             let postMessage = {
                 "type": MessageType.validate,
-                "sessionId": result.uri.replace(/^file:\/\/\//, ""),
+                "sessionId": result.uri.replace(/^file:\/{2,3}/, ""),
                 "value": result.diagnostics,
             };
-            //TODO: maybe it could be used in main thread?
-            self.postMessage(postMessage);
+            this.ctx.postMessage(postMessage);
         });
 
         this.connection.onNotification('window/showMessage', (params: lsp.ShowMessageParams) => {
@@ -169,7 +168,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
     }
 
-    addDocument(document: TextDocumentItem) {
+    addDocument(document: lsp.TextDocumentItem) {
         super.addDocument(document);
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: document
@@ -186,7 +185,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
     }
 
-    removeDocument(document: TextDocumentIdentifier) {
+    removeDocument(document: lsp.TextDocumentIdentifier) {
         super.removeDocument(document);
         this.enqueueIfNotConnected(() => this.connection.sendNotification('textDocument/didClose', {
             textDocument: {

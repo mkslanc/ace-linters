@@ -15,10 +15,16 @@ type Validation = {
 }
 
 export class ServiceManager {
-    $services: { [serviceName: string]: ServiceData } = {};
-    private $sessionIDToMode: { [sessionID: string]: string } = {};
+    $services: {
+        [serviceName: string]: ServiceData | ServerData
+    } = {};
+    private $sessionIDToMode: {
+        [sessionID: string]: string
+    } = {};
+    ctx: {postMessage, addEventListener};
 
-    constructor(ctx: Window & typeof globalThis) {
+    constructor(ctx: {postMessage, addEventListener}) {
+        this.ctx = ctx;
 
         let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
             servicesInstances ??= this.getServicesInstances(document!.uri);
@@ -152,21 +158,28 @@ export class ServiceManager {
         })
     }
 
-    private static async $initServiceInstance(service: ServiceData): Promise<LanguageService> {
+    private static async $initServiceInstance(service: ServiceData | ServerData, ctx): Promise<LanguageService> {
         let module
-        if (service.module) { //TODO:
-            module = await service.module();
-            if (service.type && service.type == "socket") { //TODO: all types
-                service.serviceInstance = new module[service.className](service.modes, service.connection, service.initializationOptions);
-            } else {
-                service.serviceInstance = new module[service.className](service.modes);
-            }
-        } else {
+        if ('type' in service) {
+            if (service.type == "socket") { //TODO: all types
+                module = await service.module();
+                service.serviceInstance = new module["LanguageClient"]({
+                    mode: service.modes, connectionType: service.type,
+                    url: service.connection!,
+                    initializationOptions: service.initializationOptions
+                }, ctx);
+            } else
                 throw "Unknown service type";
+
+        } else {
+            module = await service.module();
+            service.serviceInstance = new module["LanguageClient"][service.className](service.modes);
         }
-        
-        if (service.options)
-            service.serviceInstance!.setGlobalOptions(service.options);
+
+        if (service.options || service.initializationOptions) {
+            service.serviceInstance!.setGlobalOptions(service.options ?? service.initializationOptions ?? {});
+        }
+
         service.serviceInstance!.serviceData = service;
         return service.serviceInstance!;
     }
@@ -178,7 +191,7 @@ export class ServiceManager {
         }
         return Promise.all(services.map(async (service) => {
             if (!service.serviceInstance) {
-                return await ServiceManager.$initServiceInstance(service);
+                return await ServiceManager.$initServiceInstance(service, this.ctx);
             } else {
                 return service.serviceInstance;
             }
@@ -238,7 +251,7 @@ export class ServiceManager {
         return serviceInstances.filter((el) => el.serviceData.features![feature] === true);
     }
 
-    findServicesByMode(mode: string): ServiceData[] {
+    findServicesByMode(mode: string): (ServiceData | ServerData)[] {
         return Object.values(this.$services).filter((el) => {
             let extensions = el.modes.split('|');
             if (extensions.includes(mode))
@@ -254,7 +267,7 @@ export class ServiceManager {
     registerServer(name: string, server: ServerData) {
         server.className = "LanguageClient";
         server.features = this.setDefaultFeaturesState(server.features);
-        this.$services[name] = server as ServiceData;
+        this.$services[name] = server;
     }
 
     configureFeatures(name: string, features: ServiceFeatures) {

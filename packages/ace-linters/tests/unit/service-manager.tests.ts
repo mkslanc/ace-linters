@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {MockWorker} from "./mock-worker";
+import {MockWorker} from "../../src/misc/mock-worker";
 import {ServiceManager} from "../../src/services/service-manager";
 import {BaseService} from "../../src/services/base-service";
 

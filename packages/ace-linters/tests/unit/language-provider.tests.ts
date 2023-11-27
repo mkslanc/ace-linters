@@ -8,7 +8,7 @@ import {LanguageProvider} from "../../src/language-provider";
 import {Mode as JSONMode} from "ace-code/src/mode/json";
 import {Mode as HtmlMode} from "ace-code/src/mode/html";
 import {assert, expect} from "chai";
-import {MockWorker} from "./mock-worker";
+import {MockWorker} from "../../src/misc/mock-worker";
 import {ServiceManager} from "../../src/services/service-manager";
 import {Done} from "mocha";
 import Completion = Ace.Completion;

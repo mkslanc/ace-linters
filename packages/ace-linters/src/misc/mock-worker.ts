@@ -1,10 +1,12 @@
-const EventEmitter = require("events");
+import EventEmitter from "events";
 
-export class MockWorker extends EventEmitter {
+export class MockWorker extends EventEmitter implements Worker {
     $emitter: MockWorker;
+    isProduction?: boolean;
 
-    constructor() {
+    constructor(isProduction?: boolean) {
         super();
+        this.isProduction = isProduction;
     }
 
     onerror(ev) {
@@ -25,13 +27,17 @@ export class MockWorker extends EventEmitter {
     }
 
     postMessage(data, transfer) {
-        setTimeout(() => {
+        if (this.isProduction) {
             this.$emitter.emit("message", {data: data});
-        }, 0);
-
+        } else {
+            setTimeout(() => {
+                this.$emitter.emit("message", {data: data});
+            }, 0);
+        }
     }
 
     removeEventListener(type, listener, options) {
+        this.removeListener(type, listener);
     }
 
     terminate() {
