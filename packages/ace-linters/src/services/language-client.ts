@@ -6,6 +6,7 @@ import {
     createProtocolConnection,
 } from "vscode-languageserver-protocol/browser";
 import {
+    LanguageClientConfig,
     LanguageService,
     ServiceOptions,
 } from "../types/language-service";
@@ -65,14 +66,27 @@ export class LanguageClient extends BaseService implements LanguageService {
     };
     ctx;
 
-    constructor(config: { mode: string, connectionType: "socket" | "worker", url: string, initializationOptions?: { [option: string]: any } }, ctx) {
-        super(config.mode);
+    constructor(serverData: LanguageClientConfig, ctx) {
+        super(serverData.modes);
         this.ctx = ctx;
-        if (config.connectionType === "worker") { //TODO: 
-            //this.$connectWorker(connectionType, initializationOptions);
-        } else {
-            this.socket = new WebSocket(config.url);
-            this.$connectSocket(config.initializationOptions);
+        switch (serverData.type) {
+            case "webworker":
+                if ('worker' in serverData) {
+                    this.$connectWorker(serverData.worker, serverData.initializationOptions);
+                } else {
+                    throw new Error("No worker provided");
+                }
+                break;
+            case "socket":
+                if ('socketUrl' in serverData) {
+                    this.socket = new WebSocket(serverData.socketUrl);
+                    this.$connectSocket(serverData.initializationOptions);
+                } else {
+                    throw new Error("No socketUrl provided");
+                }
+                break;
+            default:
+                throw new Error("Unknown server type: " + serverData.type);
         }
     }
 

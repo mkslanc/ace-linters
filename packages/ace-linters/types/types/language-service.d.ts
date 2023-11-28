@@ -11,7 +11,7 @@ export interface LanguageService {
     $service: any;
     mode: string;
     globalOptions: any;
-    serviceData: ServiceData;
+    serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
@@ -171,22 +171,37 @@ export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
 export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight";
-export interface ServiceData {
-    module?: () => any;
+export interface ServiceConfig extends BaseConfig {
     className: string;
-    modes: string;
-    serviceInstance?: LanguageService;
     options?: ServiceOptions;
-    features?: ServiceFeatures;
-    type?: "webworker" | "socket" | "stdio" | "ipc";
-    connection?: WebSocket;
 }
-export interface ServerData {
+export interface BaseConfig {
+    initializationOptions?: ServiceOptions;
+    options?: ServiceOptions;
+    serviceInstance?: LanguageService;
     modes: string;
-    type: "webworker" | "socket" | "stdio" | "ipc";
-    connection: WebSocket;
-    [name: string]: any;
+    className?: string;
+    features?: ServiceFeatures;
+    module: () => any;
 }
+interface WebWorkerConnection {
+    type: "webworker";
+    worker: Worker;
+}
+interface SocketConnection {
+    type: "socket";
+    socketUrl: string;
+}
+interface StdioConnection {
+    type: "stdio";
+    command: string;
+}
+interface IpcConnection {
+    type: "ipc";
+    ipcPath: string;
+}
+type ConnectionType = WebWorkerConnection | SocketConnection | StdioConnection | IpcConnection;
+export type LanguageClientConfig = BaseConfig & ConnectionType;
 export interface FilterDiagnosticsOptions {
     errorCodesToIgnore?: string[];
     errorCodesToTreatAsWarning?: string[];

@@ -1,7 +1,6 @@
 import * as lsp from "vscode-languageserver-protocol";
-import { LanguageService, ServiceOptions } from "../types/language-service";
+import { LanguageClientConfig, LanguageService, ServiceOptions } from "../types/language-service";
 import { BaseService } from "./base-service";
-import { TextDocumentIdentifier, TextDocumentItem } from "vscode-languageserver-protocol";
 export declare class LanguageClient extends BaseService implements LanguageService {
     $service: any;
     private isConnected;
@@ -11,15 +10,16 @@ export declare class LanguageClient extends BaseService implements LanguageServi
     private connection;
     private requestsQueue;
     clientCapabilities: lsp.ClientCapabilities;
-    constructor(mode: string, connectionType: WebSocket | Worker, initializationOptions?: {
-        [option: string]: any;
-    });
+    ctx: any;
+    constructor(serverData: LanguageClientConfig, ctx: any);
     private $connectSocket;
     private $connectWorker;
     private $connect;
-    addDocument(document: TextDocumentItem): void;
+    showLog(params: lsp.ShowMessageParams): void;
+    showTrace(params: lsp.LogTraceParams): void;
+    addDocument(document: lsp.TextDocumentItem): void;
     enqueueIfNotConnected(callback: () => void): void;
-    removeDocument(document: TextDocumentIdentifier): void;
+    removeDocument(document: lsp.TextDocumentIdentifier): void;
     sendInitialize(initializationOptions: any): void;
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;

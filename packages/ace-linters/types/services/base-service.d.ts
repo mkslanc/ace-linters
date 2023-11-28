@@ -1,6 +1,6 @@
 import * as lsp from "vscode-languageserver-protocol";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { FilterDiagnosticsOptions, LanguageService, ServiceData, ServiceOptions } from "../types/language-service";
+import { FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions } from "../types/language-service";
 export declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service: any;
     mode: string;
@@ -11,7 +11,7 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
         [sessionID: string]: OptionsType;
     };
     globalOptions: OptionsType;
-    serviceData: ServiceData;
+    serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
     protected constructor(mode: string);
     addDocument(document: lsp.TextDocumentItem): void;

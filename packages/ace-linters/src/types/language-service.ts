@@ -10,7 +10,7 @@ export interface LanguageService {
     $service;
     mode: string;
     globalOptions;
-    serviceData: ServerData | ServiceData;
+    serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
@@ -215,12 +215,12 @@ export type SupportedFeatures =
     | "signatureHelp"
     | "documentHighlight"
 
-export interface ServiceData extends GenericData {
+export interface ServiceConfig extends BaseConfig {
     className: string,
     options?: ServiceOptions
 }
 
-export interface GenericData {
+export interface BaseConfig {
     initializationOptions?: ServiceOptions,
     options?: ServiceOptions,
     serviceInstance?: LanguageService,
@@ -230,10 +230,28 @@ export interface GenericData {
     module: () => any,
 }
 
-export interface ServerData extends GenericData{
-    type: "webworker" | "socket" | "stdio" | "ipc",
-    connection: string,
+interface WebWorkerConnection {
+    type: "webworker";
+    worker: Worker;
 }
+
+interface SocketConnection {
+    type: "socket";
+    socketUrl: string;
+}
+
+interface StdioConnection {
+    type: "stdio";
+    command: string;
+}
+
+interface IpcConnection {
+    type: "ipc";
+    ipcPath: string;
+}
+
+type ConnectionType = WebWorkerConnection | SocketConnection | StdioConnection | IpcConnection;
+export type LanguageClientConfig = BaseConfig & ConnectionType;
 
 export interface FilterDiagnosticsOptions {
     errorCodesToIgnore?: string[],
