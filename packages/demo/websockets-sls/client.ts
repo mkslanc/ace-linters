@@ -5,14 +5,20 @@ import * as keyUtil from "ace-code/src/lib/keys";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {createEditorWithLSP} from "../utils";
 import {svelteContent} from "../docs-example/svelte-example";
+import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 
-const webSocket = new WebSocket("ws://localhost:3030");
 
 let modes = [
   {name: "svelte", mode: "ace/mode/html", content: svelteContent},
 ]
 
-let languageProvider = AceLanguageClient.for(webSocket);
+const serverData: LanguageClientConfig = {
+  module: () => import("ace-linters/build/language-client"),
+  modes: "html",
+  type: "socket",
+  socketUrl: "ws://localhost:3030",
+}
+let languageProvider = AceLanguageClient.for(serverData);
 
 let i = 0;
 for (let mode of modes) {

@@ -9,14 +9,21 @@ import event from "ace-code/src/lib/event";
 import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 
 import keyUtil from "ace-code/src/lib/keys";
+import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
 
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+const serverData: LanguageClientConfig = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json",
+    type: "webworker",
+    worker: worker,
+}
 
-let languageProvider = AceLanguageClient.for(worker);
+let languageProvider = AceLanguageClient.for(serverData);
 
 languageProvider.setGlobalOptions("json", {
     schemas: [
