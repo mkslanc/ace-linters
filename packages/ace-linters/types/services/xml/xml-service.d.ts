@@ -7,6 +7,12 @@ export declare class XmlService extends BaseService<XmlServiceOptions> implement
     schemas: {
         [schemaUri: string]: string;
     };
+    serviceCapabilities: {
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
+    };
     constructor(mode: string);
     addDocument(document: TextDocumentItem): void;
     private $getXmlSchemaUri;

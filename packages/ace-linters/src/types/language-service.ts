@@ -228,6 +228,7 @@ export interface BaseConfig {
     className?: string,
     features?: ServiceFeatures,
     module: () => any,
+    id?: string
 }
 
 interface WebWorkerConnection {
@@ -237,7 +238,7 @@ interface WebWorkerConnection {
 
 interface SocketConnection {
     type: "socket";
-    socketUrl: string;
+    socket: WebSocket;
 }
 
 interface StdioConnection {

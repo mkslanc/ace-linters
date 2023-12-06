@@ -27,6 +27,10 @@ export declare class HtmlService extends BaseService<HtmlServiceOptions> impleme
         completionProvider: {
             triggerCharacters: string[];
         };
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
     };
     constructor(mode: string);
     getFormattingOptions(options: HTMLFormatConfiguration): HTMLFormatConfiguration;

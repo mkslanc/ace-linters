@@ -32,6 +32,10 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
         completionProvider: {
             triggerCharacters: string[];
         };
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
     };
     constructor(mode: string);
     getCompilationSettings(): ts.CompilerOptions;

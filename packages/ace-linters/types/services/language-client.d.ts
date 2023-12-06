@@ -6,7 +6,6 @@ export declare class LanguageClient extends BaseService implements LanguageServi
     private isConnected;
     private isInitialized;
     private readonly socket;
-    private serverCapabilities;
     private connection;
     private requestsQueue;
     clientCapabilities: lsp.ClientCapabilities;

@@ -12,6 +12,10 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
         completionProvider: {
             triggerCharacters: string[];
         };
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
     };
     constructor(mode: string);
     private $getJsonSchemaUri;

@@ -4,6 +4,7 @@ import {
     BrowserMessageReader,
     BrowserMessageWriter,
     createProtocolConnection,
+    
 } from "vscode-languageserver-protocol/browser";
 import {
     LanguageClientConfig,
@@ -18,7 +19,6 @@ export class LanguageClient extends BaseService implements LanguageService {
     private isConnected = false;
     private isInitialized = false;
     private readonly socket: WebSocket;
-    private serverCapabilities: lsp.ServerCapabilities;
     private connection: lsp.ProtocolConnection;
     private requestsQueue: Function[] = [];
 
@@ -78,8 +78,8 @@ export class LanguageClient extends BaseService implements LanguageService {
                 }
                 break;
             case "socket":
-                if ('socketUrl' in serverData) {
-                    this.socket = new WebSocket(serverData.socketUrl);
+                if ('socket' in serverData) {
+                    this.socket = serverData.socket;
                     this.$connectSocket(serverData.initializationOptions);
                 } else {
                     throw new Error("No socketUrl provided");
@@ -91,12 +91,22 @@ export class LanguageClient extends BaseService implements LanguageService {
     }
 
     private $connectSocket(initializationOptions) {
-        rpc.listen({
-            webSocket: this.socket,
-            onConnection: (connection: rpc.MessageConnection) => {
-                this.$connect(connection, initializationOptions);
-            },
-        });
+        if (this.socket.readyState === WebSocket.OPEN) {
+            rpc.listen({
+                webSocket: this.socket,
+                onConnection: (connection: rpc.MessageConnection) => {
+                    this.$connect(connection, initializationOptions);
+                },
+            });
+            this.socket.dispatchEvent(new Event('open'));
+        } else {
+            rpc.listen({
+                webSocket: this.socket,
+                onConnection: (connection: rpc.MessageConnection) => {
+                    this.$connect(connection, initializationOptions);
+                },
+            });
+        }
     }
 
     private $connectWorker(worker: Worker, initializationOptions?: { [option: string]: any }) {
@@ -232,7 +242,7 @@ export class LanguageClient extends BaseService implements LanguageService {
 
         this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.isInitialized = true;
-            this.serverCapabilities = params.capabilities as lsp.ServerCapabilities;
+            this.serviceCapabilities = params.capabilities as lsp.ServerCapabilities;
 
             this.connection.sendNotification('initialized', {}).then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
@@ -250,7 +260,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         if (!this.isConnected) {
             return;
         }
-        if (!(this.serverCapabilities && this.serverCapabilities.textDocumentSync !== lsp.TextDocumentSyncKind.Incremental)) {
+        if (!(this.serviceCapabilities && this.serviceCapabilities.textDocumentSync !== lsp.TextDocumentSyncKind.Incremental)) {
             return this.setValue(identifier, this.getDocument(identifier.uri).getText());
         }
         const textDocumentChange: lsp.DidChangeTextDocumentParams = {
@@ -282,7 +292,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         if (!this.isInitialized) {
             return null;
         }
-        if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
+        if (!(this.serviceCapabilities && this.serviceCapabilities.hoverProvider)) {
             return null;
         }
         let options: lsp.TextDocumentPositionParams = {
@@ -298,7 +308,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         if (!this.isInitialized) {
             return null;
         }
-        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
+        if (!(this.serviceCapabilities && this.serviceCapabilities.completionProvider)) {
             return null;
         }
 
@@ -314,7 +324,7 @@ export class LanguageClient extends BaseService implements LanguageService {
     async doResolve(item: lsp.CompletionItem) {
         if (!this.isInitialized)
             return null;
-        if (!this.serverCapabilities?.completionProvider?.resolveProvider)
+        if (!this.serviceCapabilities?.completionProvider?.resolveProvider)
             return null;
         return this.connection.sendRequest('completionItem/resolve', item["item"]) as Promise<lsp.CompletionItem | null>;
     }
@@ -329,10 +339,10 @@ export class LanguageClient extends BaseService implements LanguageService {
         if (!this.isInitialized) {
             return [];
         }
-        if (!(this.serverCapabilities && (this.serverCapabilities.documentRangeFormattingProvider || this.serverCapabilities.documentFormattingProvider))) {
+        if (!(this.serviceCapabilities && (this.serviceCapabilities.documentRangeFormattingProvider || this.serviceCapabilities.documentFormattingProvider))) {
             return [];
         }
-        if (!this.serverCapabilities.documentRangeFormattingProvider) {
+        if (!this.serviceCapabilities.documentRangeFormattingProvider) {
             let options: lsp.DocumentFormattingParams = {
                 textDocument: {
                     uri: document.uri,
@@ -367,7 +377,7 @@ export class LanguageClient extends BaseService implements LanguageService {
     async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position) {
         if (!this.isInitialized)
             return [];
-        if (!this.serverCapabilities?.documentHighlightProvider)
+        if (!this.serviceCapabilities?.documentHighlightProvider)
             return [];
         let options: lsp.DocumentHighlightParams = {
             textDocument: {
@@ -381,7 +391,7 @@ export class LanguageClient extends BaseService implements LanguageService {
     async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position) {
         if (!this.isInitialized)
             return null;
-        if (!this.serverCapabilities?.signatureHelpProvider)
+        if (!this.serviceCapabilities?.signatureHelpProvider)
             return null;
         let options: lsp.SignatureHelpParams = {
             textDocument: {

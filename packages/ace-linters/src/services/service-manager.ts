@@ -18,12 +18,15 @@ export class ServiceManager {
     $services: {
         [serviceName: string]: ServiceConfig | LanguageClientConfig
     } = {};
+    serviceInitPromises: {
+        [serviceName: string]: Promise<LanguageService>;
+    } = {};
     private $sessionIDToMode: {
         [sessionID: string]: string
     } = {};
-    ctx: {postMessage, addEventListener};
+    ctx: { postMessage, addEventListener };
 
-    constructor(ctx: {postMessage, addEventListener}) {
+    constructor(ctx: { postMessage, addEventListener }) {
         this.ctx = ctx;
 
         let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
@@ -34,6 +37,15 @@ export class ServiceManager {
             //this is list of documents linked to services
             let sessionIDList = Object.keys(servicesInstances[0].documents);
             servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
+
+            servicesInstances = servicesInstances.filter((el) => {
+                return el.serviceCapabilities.diagnosticProvider;
+            });
+            
+            if (servicesInstances.length === 0) {
+                return;
+            }
+            
             let postMessage = {
                 "type": MessageType.validate,
             };
@@ -185,13 +197,23 @@ export class ServiceManager {
         if (services.length === 0) {
             return [];
         }
-        return Promise.all(services.map(async (service) => {
-            if (!service.serviceInstance) {
-                return await ServiceManager.$initServiceInstance(service, this.ctx);
-            } else {
-                return service.serviceInstance;
+        return Promise.all(services.map(service => this.initializeService(service)));
+    }
+
+    private async initializeService(service: ServiceConfig | LanguageClientConfig): Promise<LanguageService> {
+        if (!service.serviceInstance) {
+            if (!this.serviceInitPromises[service.id!]) {
+                this.serviceInitPromises[service.id!] = ServiceManager.$initServiceInstance(service, this.ctx)
+                    .then(instance => {
+                        service.serviceInstance = instance;
+                        delete this.serviceInitPromises[service.id!]; // Clean up
+                        return instance;
+                    });
             }
-        }));
+            return this.serviceInitPromises[service.id!];
+        } else {
+            return service.serviceInstance;
+        }
     }
 
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge = false) {
@@ -256,11 +278,13 @@ export class ServiceManager {
     }
 
     registerService(name: string, service: ServiceConfig) {
+        service.id = name;
         service.features = this.setDefaultFeaturesState(service.features);
         this.$services[name] = service;
     }
 
     registerServer(name: string, clientConfig: LanguageClientConfig) {
+        clientConfig.id = name;
         clientConfig.className = "LanguageClient";
         clientConfig.features = this.setDefaultFeaturesState(clientConfig.features);
         this.$services[name] = clientConfig;

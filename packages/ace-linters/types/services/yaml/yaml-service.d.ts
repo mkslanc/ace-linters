@@ -7,6 +7,12 @@ export declare class YamlService extends BaseService<YamlServiceOptions> impleme
     schemas: {
         [schemaUri: string]: string;
     };
+    serviceCapabilities: {
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
+    };
     constructor(mode: string);
     private $getYamlSchemaUri;
     addDocument(document: TextDocumentItem): void;
