@@ -59,6 +59,13 @@ export class JavascriptService extends BaseService<JavascriptServiceOptions> imp
         "no-shadow-restricted-names": 2,
         "no-new-require": 2
     };
+    
+    serviceCapabilities = {
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
+        }
+    }
 
     constructor(mode: string) {
         super(mode);

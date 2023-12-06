@@ -38,6 +38,10 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements Lang
     serviceCapabilities = {
         completionProvider: {
             triggerCharacters: ['.', ':', '<', '"', '=', '/']
+        },
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
         }
     }
 

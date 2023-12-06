@@ -33,7 +33,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         moduleResolution: 99,
         allowSyntheticDefaultImports: true
     };
-    
+
     $defaultFormatOptions = {
         insertSpaceAfterCommaDelimiter: true,
         insertSpaceAfterSemicolonInForStatements: true,
@@ -60,6 +60,10 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
     serviceCapabilities = {
         completionProvider: {
             triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#', ' ']
+        },
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
         }
     }
 
@@ -247,7 +251,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return toResolvedCompletion(resolvedCompletion);
     }
 
-    async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position ): Promise<lsp.SignatureHelp | null> {
+    async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return null;

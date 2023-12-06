@@ -21,6 +21,10 @@ export class CssService extends BaseService implements LanguageService {
     serviceCapabilities = {
         completionProvider: {
             triggerCharacters: [":", " ", "-", "/"]
+        },
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
         }
     }
     

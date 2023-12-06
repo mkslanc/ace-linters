@@ -17,6 +17,10 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
     serviceCapabilities = {
         completionProvider: {
             triggerCharacters: ['"', ':']
+        },
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
         }
     }
 

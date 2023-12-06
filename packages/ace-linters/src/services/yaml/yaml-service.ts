@@ -9,6 +9,13 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
     $service;
     schemas: { [schemaUri: string]: string } = {};
 
+    serviceCapabilities = {
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
+        }
+    }
+
     constructor(mode: string) {
         super(mode);
 
