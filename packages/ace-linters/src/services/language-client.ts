@@ -292,7 +292,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         if (!this.isInitialized) {
             return null;
         }
-        if (!(this.serviceCapabilities && this.serviceCapabilities.hoverProvider)) {
+        if (!this.serviceCapabilities?.hoverProvider) {
             return null;
         }
         let options: lsp.TextDocumentPositionParams = {
@@ -308,7 +308,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         if (!this.isInitialized) {
             return null;
         }
-        if (!(this.serviceCapabilities && this.serviceCapabilities.completionProvider)) {
+        if (!this.serviceCapabilities?.completionProvider) {
             return null;
         }
 
