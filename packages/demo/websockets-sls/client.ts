@@ -16,7 +16,7 @@ const serverData: LanguageClientConfig = {
   module: () => import("ace-linters/build/language-client"),
   modes: "html",
   type: "socket",
-  socketUrl: "ws://localhost:3030",
+  socket: new WebSocket("ws://localhost:3030"),
 }
 let languageProvider = AceLanguageClient.for(serverData);
 
