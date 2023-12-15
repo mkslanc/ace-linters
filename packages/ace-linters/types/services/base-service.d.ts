@@ -1,6 +1,6 @@
 import * as lsp from "vscode-languageserver-protocol";
 import { TextDocument } from "vscode-languageserver-textdocument";
-import { FilterDiagnosticsOptions, LanguageService, ServiceData, ServiceOptions } from "../types/language-service";
+import { FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions } from "../types/language-service";
 export declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service: any;
     mode: string;
@@ -11,7 +11,7 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
         [sessionID: string]: OptionsType;
     };
     globalOptions: OptionsType;
-    serviceData: ServiceData;
+    serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
     protected constructor(mode: string);
     addDocument(document: lsp.TextDocumentItem): void;
@@ -26,8 +26,8 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     doComplete(document: any, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
     doHover(document: any, position: lsp.Position): Promise<lsp.Hover | null>;
     doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
-    doValidation(document: any): Promise<lsp.Diagnostic[]>;
-    format(document: any, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
+    format(document: any, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     get optionsToFilterDiagnostics(): FilterDiagnosticsOptions;

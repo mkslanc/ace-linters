@@ -11,9 +11,9 @@ export interface LanguageService {
     $service: any;
     mode: string;
     globalOptions: any;
-    serviceData: ServiceData;
+    serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
@@ -171,14 +171,38 @@ export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
 export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight";
-export interface ServiceData {
-    module: () => any;
+export interface ServiceConfig extends BaseConfig {
     className: string;
-    modes: string;
-    serviceInstance?: LanguageService;
     options?: ServiceOptions;
-    features?: ServiceFeatures;
 }
+export interface BaseConfig {
+    initializationOptions?: ServiceOptions;
+    options?: ServiceOptions;
+    serviceInstance?: LanguageService;
+    modes: string;
+    className?: string;
+    features?: ServiceFeatures;
+    module: () => any;
+    id?: string;
+}
+interface WebWorkerConnection {
+    type: "webworker";
+    worker: Worker;
+}
+interface SocketConnection {
+    type: "socket";
+    socket: WebSocket;
+}
+interface StdioConnection {
+    type: "stdio";
+    command: string;
+}
+interface IpcConnection {
+    type: "ipc";
+    ipcPath: string;
+}
+type ConnectionType = WebWorkerConnection | SocketConnection | StdioConnection | IpcConnection;
+export type LanguageClientConfig = BaseConfig & ConnectionType;
 export interface FilterDiagnosticsOptions {
     errorCodesToIgnore?: string[];
     errorCodesToTreatAsWarning?: string[];

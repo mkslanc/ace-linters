@@ -8,15 +8,22 @@ import {json5Content, json5Schema} from "../docs-example/json5-example";
 
 import {createEditorWithLSP} from "../utils";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 
-const webSocket = new WebSocket("ws://localhost:3000/exampleServer");
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
-    {name: "json5", mode: "ace/mode/json5", content: json5Content, options: {jsonSchemaUri: "json5Schema"}},
+    {name: "json5", mode: "ace/mode/json5", content: json5Content, options: {jsonSchemaUri: json5Schema}},
 ]
 
-let languageProvider = AceLanguageClient.for(webSocket);
+const serverData: LanguageClientConfig = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json|json5",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"),
+}
+
+let languageProvider = AceLanguageClient.for(serverData);
 let i = 0;
 for (let mode of modes) {
     createEditorWithLSP(mode, i, languageProvider);

@@ -2,7 +2,10 @@
 
 Ace linters is lsp client for Ace editor. It comes with large number of preconfigured easy to use in browser servers.
 
-Example client with pre-defined services:
+If you're uncertain about integrating ace-linters, consult [our diagram on the GitHub Wiki](https://github.com/mkslanc/ace-linters/wiki/Usage-Scenarios-Overview) for a quick setup guide
+tailored to your needs.
+
+### Example client with pre-defined services:
 ```javascript
 import * as ace from "ace-code";
 import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
@@ -21,10 +24,46 @@ let languageProvider = LanguageProvider.create(worker);
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
-
 ``` 
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
+
+## New Features in 1.0.0
+
+- `registerServer` method in `ServiceManager` enables management of both services and servers on the web worker's side.
+  Just add new servers to your webworker like this:
+  ```javascript
+  manager.registerServer("astro", {
+      module: () => import("ace-linters/build/language-client"),
+      modes: "astro",
+      type: "socket", // "socket|worker"
+      socket: new WebSocket("ws://127.0.0.1:3030/astro"),
+      initializationOptions: {
+          typescript: {
+              tsdk: "node_modules/typescript/lib"
+          }
+      }
+  });
+  ```
+- Multiple servers management on main thread. Just register servers like this:
+  ```javascript
+  let servers = [
+      {
+          module: () => import("ace-linters/build/language-client"),
+          modes: "astro",
+          type: "socket",
+          socket: new WebSocket("ws://127.0.0.1:3030/astro"),
+      },
+      {
+          module: () => import("ace-linters/build/language-client"),
+          modes: "svelte",
+          type: "socket",
+          socket: new WebSocket("ws://127.0.0.1:3030/svelte"),
+      }
+  ]
+  let languageProvider = AceLanguageClient.for(servers);
+  ```
+- **Breaking change:** `AceLanguageClient.for` interface was changed
 
 ## Example using script tag from CDN
 ```html
@@ -48,7 +87,7 @@ languageProvider.registerEditor(editor);
 ```
 
 
-Ace linters works in two modes: **WebSockets** and **WebWorkers**.
+Ace linters client currently supports two modes: **WebSockets** and **WebWorkers**.
 
 ## Usage with WebSocket (JSON-RPC)
 
@@ -62,15 +101,19 @@ import {Mode as JSONMode} from "ace-code/src/mode/json"; //any mode you want
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web socket
-const webSocket = new WebSocket("ws://localhost:3000/exampleServer"); // address of your websocket server
-
+const serverData = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json|json5",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
+}
 // Create an Ace editor
 let editor = ace.edit("container", {
     mode: new JSONMode() // Set the mode of the editor to JSON
 });
 
 // Create a language provider for web socket
-let languageProvider = AceLanguageClient.for(webSocket);
+let languageProvider = AceLanguageClient.for(serverData);
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
@@ -91,13 +134,19 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
+const serverData = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json",
+    type: "webworker",
+    worker: worker,
+}
 
 // Create an Ace editor
 let editor = ace.edit("container", {
     mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
-// Create a language provider for web worker (
+// Create a language provider for web worker
 let languageProvider = AceLanguageClient.for(worker);
 
 // Register the editor with the language provider
@@ -118,7 +167,7 @@ languageProvider.registerEditor(editor);
 - Completions
 - Signature Help
 
-[Full list of capabilities](https://github.com/mkslanc/ace-linters/blob/main/Capabilities.md)
+[Full list of capabilities](https://github.com/mkslanc/ace-linters/wiki/Client-LSP-capabilities)
 
 ## Supported languages
 Ace linters supports the following languages by default with webworkers approach:

@@ -18,6 +18,13 @@ export class XmlService extends BaseService<XmlServiceOptions> implements Langua
     $service;
     schemas: { [schemaUri: string]: string } = {};
 
+    serviceCapabilities = {
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
+        }
+    }
+
     constructor(mode: string) {
         super(mode);
     }

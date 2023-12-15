@@ -54,6 +54,12 @@ export declare class JavascriptService extends BaseService<JavascriptServiceOpti
         "no-shadow-restricted-names": number;
         "no-new-require": number;
     };
+    serviceCapabilities: {
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
+    };
     constructor(mode: string);
     get config(): {
         rules: {

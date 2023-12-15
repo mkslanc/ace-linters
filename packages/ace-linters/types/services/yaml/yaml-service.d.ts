@@ -7,6 +7,12 @@ export declare class YamlService extends BaseService<YamlServiceOptions> impleme
     schemas: {
         [schemaUri: string]: string;
     };
+    serviceCapabilities: {
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
+    };
     constructor(mode: string);
     private $getYamlSchemaUri;
     addDocument(document: TextDocumentItem): void;
@@ -14,7 +20,7 @@ export declare class YamlService extends BaseService<YamlServiceOptions> impleme
     removeDocument(document: TextDocumentIdentifier): void;
     setOptions(sessionID: string, options: YamlServiceOptions, merge?: boolean): void;
     setGlobalOptions(options: YamlServiceOptions): void;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<any>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;

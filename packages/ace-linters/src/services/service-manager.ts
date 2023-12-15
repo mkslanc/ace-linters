@@ -2,8 +2,8 @@ import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {
-    LanguageService,
-    ServiceData,
+    LanguageService, LanguageClientConfig,
+    ServiceConfig,
     ServiceFeatures,
     ServiceOptions,
     SupportedFeatures
@@ -15,10 +15,19 @@ type Validation = {
 }
 
 export class ServiceManager {
-    $services: { [serviceName: string]: ServiceData } = {};
-    private $sessionIDToMode: { [sessionID: string]: string } = {};
+    $services: {
+        [serviceName: string]: ServiceConfig | LanguageClientConfig
+    } = {};
+    serviceInitPromises: {
+        [serviceName: string]: Promise<LanguageService>;
+    } = {};
+    private $sessionIDToMode: {
+        [sessionID: string]: string
+    } = {};
+    ctx: { postMessage, addEventListener };
 
-    constructor(ctx) {
+    constructor(ctx: { postMessage, addEventListener }) {
+        this.ctx = ctx;
 
         let doValidation: Validation = async (document?: TextDocumentIdentifier, servicesInstances?: LanguageService[]) => {
             servicesInstances ??= this.getServicesInstances(document!.uri);
@@ -28,6 +37,15 @@ export class ServiceManager {
             //this is list of documents linked to services
             let sessionIDList = Object.keys(servicesInstances[0].documents);
             servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
+
+            servicesInstances = servicesInstances.filter((el) => {
+                return el.serviceCapabilities.diagnosticProvider;
+            });
+            
+            if (servicesInstances.length === 0) {
+                return;
+            }
+            
             let postMessage = {
                 "type": MessageType.validate,
             };
@@ -42,8 +60,11 @@ export class ServiceManager {
             }
         }
 
-        let provideValidationForServiceInstance = async (serviceName) => {
-            var serviceInstance = this.$services[serviceName].serviceInstance;
+        let provideValidationForServiceInstance = async (serviceName: string) => {
+            let service = this.$services[serviceName];
+            if (!service)
+                return;
+            var serviceInstance = service.serviceInstance;
             if (serviceInstance)
                 await doValidation(undefined, [serviceInstance]);
         }
@@ -67,7 +88,7 @@ export class ServiceManager {
                     serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
                         //we will use only first service to format
-                        postMessage["value"] = serviceInstances[0].format(documentIdentifier, message.value, message.format);
+                        postMessage["value"] = await serviceInstances[0].format(documentIdentifier, message.value, message.format);
                     }
                     break;
                 case MessageType.complete:
@@ -149,11 +170,24 @@ export class ServiceManager {
         })
     }
 
-    private static async $initServiceInstance(service: ServiceData): Promise<LanguageService> {
-        let module = await service.module();
-        service.serviceInstance = new module[service.className](service.modes);
-        if (service.options)
-            service.serviceInstance!.setGlobalOptions(service.options);
+    private static async $initServiceInstance(service: ServiceConfig | LanguageClientConfig, ctx): Promise<LanguageService> {
+        let module
+        if ('type' in service) {
+            if (["socket", "webworker"].includes(service.type)) { //TODO: all types
+                module = await service.module();
+                service.serviceInstance = new module["LanguageClient"](service, ctx);
+            } else
+                throw "Unknown service type";
+
+        } else {
+            module = await service.module();
+            service.serviceInstance = new module[service.className](service.modes);
+        }
+
+        if (service.options || service.initializationOptions) {
+            service.serviceInstance!.setGlobalOptions(service.options ?? service.initializationOptions ?? {});
+        }
+
         service.serviceInstance!.serviceData = service;
         return service.serviceInstance!;
     }
@@ -163,13 +197,23 @@ export class ServiceManager {
         if (services.length === 0) {
             return [];
         }
-        return Promise.all(services.map(async (service) => {
-            if (!service.serviceInstance) {
-                return await ServiceManager.$initServiceInstance(service);
-            } else {
-                return service.serviceInstance;
+        return Promise.all(services.map(service => this.initializeService(service)));
+    }
+
+    private async initializeService(service: ServiceConfig | LanguageClientConfig): Promise<LanguageService> {
+        if (!service.serviceInstance) {
+            if (!this.serviceInitPromises[service.id!]) {
+                this.serviceInitPromises[service.id!] = ServiceManager.$initServiceInstance(service, this.ctx)
+                    .then(instance => {
+                        service.serviceInstance = instance;
+                        delete this.serviceInitPromises[service.id!]; // Clean up
+                        return instance;
+                    });
             }
-        }));
+            return this.serviceInitPromises[service.id!];
+        } else {
+            return service.serviceInstance;
+        }
     }
 
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge = false) {
@@ -225,7 +269,7 @@ export class ServiceManager {
         return serviceInstances.filter((el) => el.serviceData.features![feature] === true);
     }
 
-    findServicesByMode(mode: string): ServiceData[] {
+    findServicesByMode(mode: string): (ServiceConfig | LanguageClientConfig)[] {
         return Object.values(this.$services).filter((el) => {
             let extensions = el.modes.split('|');
             if (extensions.includes(mode))
@@ -233,13 +277,23 @@ export class ServiceManager {
         });
     }
 
-    registerService(name: string, service: ServiceData) {
+    registerService(name: string, service: ServiceConfig) {
+        service.id = name;
         service.features = this.setDefaultFeaturesState(service.features);
         this.$services[name] = service;
     }
 
+    registerServer(name: string, clientConfig: LanguageClientConfig) {
+        clientConfig.id = name;
+        clientConfig.className = "LanguageClient";
+        clientConfig.features = this.setDefaultFeaturesState(clientConfig.features);
+        this.$services[name] = clientConfig;
+    }
+
     configureFeatures(name: string, features: ServiceFeatures) {
         features = this.setDefaultFeaturesState(features);
+        if (!this.$services[name])
+            return;
         this.$services[name].features = features;
     }
 

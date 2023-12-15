@@ -1,7 +1,7 @@
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
-import {FilterDiagnosticsOptions, LanguageService, ServiceData, ServiceOptions} from "../types/language-service";
+import {FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions} from "../types/language-service";
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service;
@@ -9,7 +9,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     documents: { [sessionID: string]: TextDocument } = {};
     options: { [sessionID: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
-    serviceData: ServiceData;
+    serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
 
     protected constructor(mode: string) {
@@ -81,12 +81,12 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return null;
     }
 
-    async doValidation(document): Promise<lsp.Diagnostic[]> {
+    async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
         return [];
     }
 
-    format(document, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[] {
-        return [];
+    format(document, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
+        return Promise.resolve([]);
     }
 
     async provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null> {

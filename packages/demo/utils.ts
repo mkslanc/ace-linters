@@ -35,16 +35,15 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
     el.style.float = "left";
     document.body.appendChild(el);
 
-    let editor = ace.edit("container" + i);
-    editor.setOptions({
+    let editor = ace.edit("container" + i, {
+        mode: mode.mode,
+        value: mode.content,
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
-        enableSnippets: true
+        enableSnippets: true,
+        theme: theme,
+        customScrollbar: true
     });
-    editor.setTheme(theme);
-    editor.setOptions({"customScrollbar": true})
-    editor.session.setValue(mode.content);
-    editor.session.setMode(mode.mode);
     
     languageProvider.registerEditor(editor);
 

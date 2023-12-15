@@ -12,6 +12,10 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
         completionProvider: {
             triggerCharacters: string[];
         };
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
     };
     constructor(mode: string);
     private $getJsonSchemaUri;
@@ -20,7 +24,7 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
     removeDocument(document: TextDocumentIdentifier): void;
     setOptions(sessionID: string, options: JsonServiceOptions, merge?: boolean): void;
     setGlobalOptions(options: JsonServiceOptions): void;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;

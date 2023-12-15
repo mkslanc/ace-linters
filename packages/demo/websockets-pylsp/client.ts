@@ -5,14 +5,20 @@ import * as keyUtil from "ace-code/src/lib/keys";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {createEditorWithLSP} from "../utils";
 import {pythonContent} from "../docs-example/python-example";
+import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 
-const webSocket = new WebSocket("ws://localhost:3000");
 
 let modes = [
     {name: "python", mode: "ace/mode/python", content: pythonContent},
 ]
+const serverData: LanguageClientConfig = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "python",
+    type: "socket",
+    socket: new WebSocket("ws://localhost:3000"),
+}
 
-let languageProvider = AceLanguageClient.for(webSocket);
+let languageProvider = AceLanguageClient.for(serverData);
 languageProvider.setGlobalOptions("", {
     "pylsp": {
         "configurationSources": [
@@ -29,6 +35,15 @@ languageProvider.setGlobalOptions("", {
             }
         },
 
+    },
+    initializationOptions: {
+        configuration: {
+            svelte: {
+                plugin: {
+                    typescript: {enable: false}
+                }
+            },
+        }
     }
 });
 let i = 0;

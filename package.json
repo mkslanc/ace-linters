@@ -8,7 +8,7 @@
     "start-dev": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "^1.31.1",
+    "ace-code": "^1.32.1",
     "jsonc-parser": "latest",
     "typescript": "^4.9.5"
   },

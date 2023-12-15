@@ -7,6 +7,13 @@ import {filterDiagnostics} from "../../type-converters/lsp-converters";
 export class LuaService extends BaseService implements LanguageService {
     $service;
 
+    serviceCapabilities = {
+        diagnosticProvider: {
+            interFileDependencies: true,
+            workspaceDiagnostics: true
+        }
+    }
+
     constructor(mode: string) {
         super(mode);
         this.$service = lua;

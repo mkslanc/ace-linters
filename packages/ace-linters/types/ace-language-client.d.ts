@@ -1,13 +1,10 @@
 import { LanguageProvider } from "./language-provider";
-import type { ProviderOptions } from "./types/language-service";
+import type { ProviderOptions, LanguageClientConfig } from "./types/language-service";
 export declare class AceLanguageClient {
     /**
      *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
-     * @param {Worker | WebSocket} mode
+     * @param {LanguageClientConfig | LanguageClientConfig[]} servers
      * @param {ProviderOptions} options
-     * @param initializationOptions
      */
-    static for(mode: Worker | WebSocket, options?: ProviderOptions, initializationOptions?: {
-        [option: string]: any;
-    }): LanguageProvider;
+    static for(servers: LanguageClientConfig | LanguageClientConfig[], options?: ProviderOptions): LanguageProvider;
 }

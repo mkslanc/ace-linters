@@ -27,10 +27,14 @@ export declare class HtmlService extends BaseService<HtmlServiceOptions> impleme
         completionProvider: {
             triggerCharacters: string[];
         };
+        diagnosticProvider: {
+            interFileDependencies: boolean;
+            workspaceDiagnostics: boolean;
+        };
     };
     constructor(mode: string);
     getFormattingOptions(options: HTMLFormatConfiguration): HTMLFormatConfiguration;
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): lsp.TextEdit[];
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: HTMLFormatConfiguration): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
