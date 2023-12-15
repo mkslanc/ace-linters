@@ -508,7 +508,7 @@ class BaseService {
         return [];
     }
     format(document, range, options) {
-        return [];
+        return Promise.resolve([]);
     }
     async provideSignatureHelp(document, position) {
         return null;

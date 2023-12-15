@@ -20522,6 +20522,8 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "editor", void 0);
         language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
+            // @ts-ignore
+            this.session.on("changeMode", this.$changeMode);
             this.setServerCapabilities(capabilities);
             if (this.$modeIsChanged) this.$changeMode();
             if (this.$deltaQueue) this.$sendDeltaQueue();
@@ -20632,8 +20634,6 @@ class SessionLanguageProvider {
         this.initFileName();
         session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
-        // @ts-ignore
-        session.on("changeMode", this.$changeMode);
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 }

@@ -6281,7 +6281,7 @@ class BaseService {
         return [];
     }
     format(document, range, options) {
-        return [];
+        return Promise.resolve([]);
     }
     async provideSignatureHelp(document, position) {
         return null;
@@ -71334,8 +71334,8 @@ class YamlService extends base_service.BaseService {
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) return [];
-        return this.$service.doFormat(fullDocument, {}); //TODO: options?
+        if (!fullDocument) return Promise.resolve([]);
+        return Promise.resolve(this.$service.doFormat(fullDocument, {})); //TODO: options?
     }
     async doHover(document, position) {
         let fullDocument = this.getDocument(document.uri);
@@ -71359,6 +71359,12 @@ class YamlService extends base_service.BaseService {
         super(mode);
         yaml_service_define_property(this, "$service", void 0);
         yaml_service_define_property(this, "schemas", {});
+        yaml_service_define_property(this, "serviceCapabilities", {
+            diagnosticProvider: {
+                interFileDependencies: true,
+                workspaceDiagnostics: true
+            }
+        });
         this.$service = getLanguageService((uri)=>{
             uri = uri.replace("file:///", "");
             let jsonSchema = this.schemas[uri];

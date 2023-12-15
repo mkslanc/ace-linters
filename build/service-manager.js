@@ -10,111 +10,15 @@
 })(this, () => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	// The require scope
-/******/ 	var __webpack_require__ = {};
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
+/******/ 	var __webpack_modules__ = ({
 
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  ServiceManager: () => (/* binding */ ServiceManager)
-});
+/***/ 6002:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-;// CONCATENATED MODULE: ./src/utils.ts
-function mergeObjects(obj1, obj2) {
-    if (!obj1) return obj2;
-    if (!obj2) return obj1;
-    const mergedObjects = {
-        ...obj2,
-        ...obj1
-    }; // Give priority to obj1 values by spreading obj2 first, then obj1
-    for (const key of Object.keys(mergedObjects)){
-        if (obj1[key] && obj2[key]) {
-            if (Array.isArray(obj1[key])) {
-                mergedObjects[key] = obj1[key].concat(obj2[key]);
-            } else if (Array.isArray(obj2[key])) {
-                mergedObjects[key] = obj2[key].concat(obj1[key]);
-            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-            }
-        }
-    }
-    return mergedObjects;
-}
-function notEmpty(value) {
-    return value !== null && value !== undefined;
-}
-//taken with small changes from ace-code
-function mergeRanges(ranges) {
-    var list = ranges;
-    list = list.sort(function(a, b) {
-        return comparePoints(a.start, b.start);
-    });
-    var next = list[0], range;
-    for(var i = 1; i < list.length; i++){
-        range = next;
-        next = list[i];
-        var cmp = comparePoints(range.end, next.start);
-        if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
-        if (comparePoints(range.end, next.end) < 0) {
-            range.end.row = next.end.row;
-            range.end.column = next.end.column;
-        }
-        list.splice(i, 1);
-        next = range;
-        i--;
-    }
-    return list;
-}
-function comparePoints(p1, p2) {
-    return p1.row - p2.row || p1.column - p2.column;
-}
-function checkValueAgainstRegexpArray(value, regexpArray) {
-    if (!regexpArray) {
-        return false;
-    }
-    for(let i = 0; i < regexpArray.length; i++){
-        if (regexpArray[i].test(value)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-;// CONCATENATED MODULE: ./src/message-types.ts
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Cs: () => (/* binding */ MessageType)
+/* harmony export */ });
+/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, DisposeMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage */
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -289,8 +193,147 @@ var MessageType;
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
 })(MessageType || (MessageType = {}));
 
-;// CONCATENATED MODULE: ./src/services/service-manager.ts
-function service_manager_define_property(obj, key, value) {
+
+/***/ }),
+
+/***/ 6297:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Dw: () => (/* binding */ notEmpty),
+/* harmony export */   PM: () => (/* binding */ mergeObjects)
+/* harmony export */ });
+/* unused harmony exports mergeRanges, checkValueAgainstRegexpArray */
+function mergeObjects(obj1, obj2) {
+    if (!obj1) return obj2;
+    if (!obj2) return obj1;
+    const mergedObjects = {
+        ...obj2,
+        ...obj1
+    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+    for (const key of Object.keys(mergedObjects)){
+        if (obj1[key] && obj2[key]) {
+            if (Array.isArray(obj1[key])) {
+                mergedObjects[key] = obj1[key].concat(obj2[key]);
+            } else if (Array.isArray(obj2[key])) {
+                mergedObjects[key] = obj2[key].concat(obj1[key]);
+            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+            }
+        }
+    }
+    return mergedObjects;
+}
+function notEmpty(value) {
+    return value !== null && value !== undefined;
+}
+//taken with small changes from ace-code
+function mergeRanges(ranges) {
+    var list = ranges;
+    list = list.sort(function(a, b) {
+        return comparePoints(a.start, b.start);
+    });
+    var next = list[0], range;
+    for(var i = 1; i < list.length; i++){
+        range = next;
+        next = list[i];
+        var cmp = comparePoints(range.end, next.start);
+        if (cmp < 0) continue;
+        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (comparePoints(range.end, next.end) < 0) {
+            range.end.row = next.end.row;
+            range.end.column = next.end.column;
+        }
+        list.splice(i, 1);
+        next = range;
+        i--;
+    }
+    return list;
+}
+function comparePoints(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+}
+function checkValueAgainstRegexpArray(value, regexpArray) {
+    if (!regexpArray) {
+        return false;
+    }
+    for(let i = 0; i < regexpArray.length; i++){
+        if (regexpArray[i].test(value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ServiceManager: () => (/* binding */ ServiceManager)
+/* harmony export */ });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6297);
+/* harmony import */ var _message_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6002);
+function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -306,10 +349,24 @@ function service_manager_define_property(obj, key, value) {
 
 
 class ServiceManager {
-    static async $initServiceInstance(service) {
-        let module = await service.module();
-        service.serviceInstance = new module[service.className](service.modes);
-        if (service.options) service.serviceInstance.setGlobalOptions(service.options);
+    static async $initServiceInstance(service, ctx) {
+        let module;
+        if ('type' in service) {
+            if ([
+                "socket",
+                "webworker"
+            ].includes(service.type)) {
+                module = await service.module();
+                service.serviceInstance = new module["LanguageClient"](service, ctx);
+            } else throw "Unknown service type";
+        } else {
+            module = await service.module();
+            service.serviceInstance = new module[service.className](service.modes);
+        }
+        if (service.options || service.initializationOptions) {
+            var _service_options, _ref;
+            service.serviceInstance.setGlobalOptions((_ref = (_service_options = service.options) !== null && _service_options !== void 0 ? _service_options : service.initializationOptions) !== null && _ref !== void 0 ? _ref : {});
+        }
         service.serviceInstance.serviceData = service;
         return service.serviceInstance;
     }
@@ -318,18 +375,26 @@ class ServiceManager {
         if (services.length === 0) {
             return [];
         }
-        return Promise.all(services.map(async (service)=>{
-            if (!service.serviceInstance) {
-                return await ServiceManager.$initServiceInstance(service);
-            } else {
-                return service.serviceInstance;
+        return Promise.all(services.map((service)=>this.initializeService(service)));
+    }
+    async initializeService(service) {
+        if (!service.serviceInstance) {
+            if (!this.serviceInitPromises[service.id]) {
+                this.serviceInitPromises[service.id] = ServiceManager.$initServiceInstance(service, this.ctx).then((instance)=>{
+                    service.serviceInstance = instance;
+                    delete this.serviceInitPromises[service.id]; // Clean up
+                    return instance;
+                });
             }
-        }));
+            return this.serviceInitPromises[service.id];
+        } else {
+            return service.serviceInstance;
+        }
     }
     setGlobalOptions(serviceName, options, merge = false) {
         let service = this.$services[serviceName];
         if (!service) return;
-        service.options = merge ? mergeObjects(options, service.options) : options;
+        service.options = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_1__/* .mergeObjects */ .PM)(options, service.options) : options;
         if (service.serviceInstance) {
             service.serviceInstance.setGlobalOptions(service.options);
         }
@@ -364,7 +429,7 @@ class ServiceManager {
         let mode = this.$sessionIDToMode[sessionID];
         if (!mode) return []; //TODO:
         let services = this.findServicesByMode(mode);
-        return services.map((el)=>el.serviceInstance).filter(notEmpty);
+        return services.map((el)=>el.serviceInstance).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
     }
     filterByFeature(serviceInstances, feature) {
         return serviceInstances.filter((el)=>el.serviceData.features[feature] === true);
@@ -376,11 +441,19 @@ class ServiceManager {
         });
     }
     registerService(name, service) {
+        service.id = name;
         service.features = this.setDefaultFeaturesState(service.features);
         this.$services[name] = service;
     }
+    registerServer(name, clientConfig) {
+        clientConfig.id = name;
+        clientConfig.className = "LanguageClient";
+        clientConfig.features = this.setDefaultFeaturesState(clientConfig.features);
+        this.$services[name] = clientConfig;
+    }
     configureFeatures(name, features) {
         features = this.setDefaultFeaturesState(features);
+        if (!this.$services[name]) return;
         this.$services[name].features = features;
     }
     setDefaultFeaturesState(serviceFeatures) {
@@ -403,8 +476,11 @@ class ServiceManager {
         return features;
     }
     constructor(ctx){
-        service_manager_define_property(this, "$services", {});
-        service_manager_define_property(this, "$sessionIDToMode", {});
+        _define_property(this, "$services", {});
+        _define_property(this, "serviceInitPromises", {});
+        _define_property(this, "$sessionIDToMode", {});
+        _define_property(this, "ctx", void 0);
+        this.ctx = ctx;
         let doValidation = async (document, servicesInstances)=>{
             servicesInstances !== null && servicesInstances !== void 0 ? servicesInstances : servicesInstances = this.getServicesInstances(document.uri);
             if (servicesInstances.length === 0) {
@@ -413,8 +489,14 @@ class ServiceManager {
             //this is list of documents linked to services
             let sessionIDList = Object.keys(servicesInstances[0].documents);
             servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
+            servicesInstances = servicesInstances.filter((el)=>{
+                return el.serviceCapabilities.diagnosticProvider;
+            });
+            if (servicesInstances.length === 0) {
+                return;
+            }
             let postMessage = {
-                "type": MessageType.validate
+                "type": _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.validate
             };
             for (let sessionID of sessionIDList){
                 var _ref;
@@ -429,7 +511,9 @@ class ServiceManager {
             }
         };
         let provideValidationForServiceInstance = async (serviceName)=>{
-            var serviceInstance = this.$services[serviceName].serviceInstance;
+            let service = this.$services[serviceName];
+            if (!service) return;
+            var serviceInstance = service.serviceInstance;
             if (serviceInstance) await doValidation(undefined, [
                 serviceInstance
             ]);
@@ -449,22 +533,22 @@ class ServiceManager {
                 version: version
             };
             switch(message["type"]){
-                case MessageType.format:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.format:
                     serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
                         //we will use only first service to format
-                        postMessage["value"] = serviceInstances[0].format(documentIdentifier, message.value, message.format);
+                        postMessage["value"] = await serviceInstances[0].format(documentIdentifier, message.value, message.format);
                     }
                     break;
-                case MessageType.complete:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.complete:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service)=>{
                         return {
                             completions: await service.doComplete(documentIdentifier, message.value),
                             service: service.serviceData.className
                         };
-                    }))).filter(notEmpty);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
                     break;
-                case MessageType.resolveCompletion:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.resolveCompletion:
                     var _this_filterByFeature_find;
                     let serviceName = message.value.service;
                     postMessage["value"] = await ((_this_filterByFeature_find = this.filterByFeature(serviceInstances, "completionResolve").find((service)=>{
@@ -473,63 +557,63 @@ class ServiceManager {
                         }
                     })) === null || _this_filterByFeature_find === void 0 ? void 0 : _this_filterByFeature_find.doResolve(message.value));
                     break;
-                case MessageType.change:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.change:
                     serviceInstances.forEach((service)=>{
                         service.setValue(documentIdentifier, message.value);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.applyDelta:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.applyDelta:
                     serviceInstances.forEach((service)=>{
                         service.applyDeltas(documentIdentifier, message.value);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.hover:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.hover:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service)=>{
                         return service.doHover(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
                     break;
-                case MessageType.validate:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.validate:
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.init:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.init:
                     var _this;
                     postMessage["value"] = (_this = await this.addDocument(documentIdentifier, message.value, message.mode, message.options)) === null || _this === void 0 ? void 0 : _this.map((el)=>el.serviceCapabilities);
                     await doValidation(documentIdentifier);
                     break;
-                case MessageType.changeMode:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeMode:
                     var _this1;
                     postMessage["value"] = (_this1 = await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options)) === null || _this1 === void 0 ? void 0 : _this1.map((el)=>el.serviceCapabilities);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.changeOptions:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeOptions:
                     serviceInstances.forEach((service)=>{
                         service.setOptions(sessionID, message.options);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.dispose:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.dispose:
                     this.removeDocument(documentIdentifier);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.globalOptions:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
                     await provideValidationForServiceInstance(message.serviceName);
                     break;
-                case MessageType.configureFeatures:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.configureFeatures:
                     this.configureFeatures(message.serviceName, message.options);
                     await provideValidationForServiceInstance(message.serviceName);
                     break;
-                case MessageType.signatureHelp:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.signatureHelp:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service)=>{
                         return service.provideSignatureHelp(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
                     break;
-                case MessageType.documentHighlight:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.documentHighlight:
                     let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service)=>{
                         return service.findDocumentHighlights(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
                     postMessage["value"] = highlights.flat();
                     break;
             }
@@ -537,6 +621,8 @@ class ServiceManager {
         });
     }
 }
+
+})();
 
 /******/ 	return __webpack_exports__;
 /******/ })()

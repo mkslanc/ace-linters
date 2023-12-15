@@ -32118,7 +32118,7 @@ class BaseService {
         return [];
     }
     format(document, range, options) {
-        return [];
+        return Promise.resolve([]);
     }
     async provideSignatureHelp(document, position) {
         return null;
@@ -41914,6 +41914,12 @@ class XmlService extends base_service.BaseService {
         super(mode);
         xml_service_define_property(this, "$service", void 0);
         xml_service_define_property(this, "schemas", {});
+        xml_service_define_property(this, "serviceCapabilities", {
+            diagnosticProvider: {
+                interFileDependencies: true,
+                workspaceDiagnostics: true
+            }
+        });
     }
 }
 

@@ -3915,7 +3915,7 @@ class BaseService {
         return [];
     }
     format(document, range, options) {
-        return [];
+        return Promise.resolve([]);
     }
     async provideSignatureHelp(document, position) {
         return null;
@@ -52641,8 +52641,8 @@ class CssService extends base_service.BaseService {
     }
     format(document, range, options) {
         let fullDocument = this.getDocument(document.uri);
-        if (!fullDocument) return [];
-        return this.$service.format(fullDocument, range, this.getFormattingOptions(options));
+        if (!fullDocument) return Promise.resolve([]);
+        return Promise.resolve(this.$service.format(fullDocument, range, this.getFormattingOptions(options)));
     }
     async doHover(document, position) {
         let fullDocument = this.getDocument(document.uri);
@@ -52691,6 +52691,10 @@ class CssService extends base_service.BaseService {
                     "-",
                     "/"
                 ]
+            },
+            diagnosticProvider: {
+                interFileDependencies: true,
+                workspaceDiagnostics: true
             }
         });
         this.$initLanguageService();

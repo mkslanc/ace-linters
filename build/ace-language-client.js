@@ -9501,6 +9501,581 @@ if (true) {
 
 /***/ }),
 
+/***/ 6002:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Cm: () => (/* binding */ ValidateMessage),
+/* harmony export */   Cs: () => (/* binding */ MessageType),
+/* harmony export */   GC: () => (/* binding */ ChangeOptionsMessage),
+/* harmony export */   H4: () => (/* binding */ FormatMessage),
+/* harmony export */   Jm: () => (/* binding */ HoverMessage),
+/* harmony export */   L2: () => (/* binding */ DisposeMessage),
+/* harmony export */   Vr: () => (/* binding */ SignatureHelpMessage),
+/* harmony export */   bX: () => (/* binding */ ConfigureFeaturesMessage),
+/* harmony export */   g6: () => (/* binding */ GlobalOptionsMessage),
+/* harmony export */   ik: () => (/* binding */ ChangeMessage),
+/* harmony export */   k7: () => (/* binding */ InitMessage),
+/* harmony export */   mt: () => (/* binding */ ResolveCompletionMessage),
+/* harmony export */   oB: () => (/* binding */ CompleteMessage),
+/* harmony export */   pi: () => (/* binding */ DocumentHighlightMessage),
+/* harmony export */   s7: () => (/* binding */ ChangeModeMessage),
+/* harmony export */   sE: () => (/* binding */ DeltasMessage)
+/* harmony export */ });
+/* unused harmony export BaseMessage */
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class BaseMessage {
+    constructor(sessionId){
+        _define_property(this, "sessionId", void 0);
+        this.sessionId = sessionId;
+    }
+}
+class InitMessage extends BaseMessage {
+    constructor(sessionId, value, version, mode, options){
+        super(sessionId);
+        _define_property(this, "type", MessageType.init);
+        _define_property(this, "mode", void 0);
+        _define_property(this, "options", void 0);
+        _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
+        this.version = version;
+        this.options = options;
+        this.mode = mode;
+        this.value = value;
+    }
+}
+class FormatMessage extends BaseMessage {
+    constructor(sessionId, value, format){
+        super(sessionId);
+        _define_property(this, "type", MessageType.format);
+        _define_property(this, "value", void 0);
+        _define_property(this, "format", void 0);
+        this.value = value;
+        this.format = format;
+    }
+}
+class CompleteMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.complete);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class ResolveCompletionMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.resolveCompletion);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class HoverMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.hover);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class ValidateMessage extends BaseMessage {
+    constructor(sessionId){
+        super(sessionId);
+        _define_property(this, "type", MessageType.validate);
+    }
+}
+class ChangeMessage extends BaseMessage {
+    constructor(sessionId, value, version){
+        super(sessionId);
+        _define_property(this, "type", MessageType.change);
+        _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
+    }
+}
+class DeltasMessage extends BaseMessage {
+    constructor(sessionId, value, version){
+        super(sessionId);
+        _define_property(this, "type", MessageType.applyDelta);
+        _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
+    }
+}
+class ChangeModeMessage extends BaseMessage {
+    constructor(sessionId, value, mode){
+        super(sessionId);
+        _define_property(this, "type", MessageType.changeMode);
+        _define_property(this, "mode", void 0);
+        _define_property(this, "value", void 0);
+        this.value = value;
+        this.mode = mode;
+    }
+}
+class ChangeOptionsMessage extends BaseMessage {
+    constructor(sessionId, options, merge = false){
+        super(sessionId);
+        _define_property(this, "type", MessageType.changeOptions);
+        _define_property(this, "options", void 0);
+        _define_property(this, "merge", void 0);
+        this.options = options;
+        this.merge = merge;
+    }
+}
+class DisposeMessage extends BaseMessage {
+    constructor(sessionId){
+        super(sessionId);
+        _define_property(this, "type", MessageType.dispose);
+    }
+}
+class GlobalOptionsMessage {
+    constructor(serviceName, options, merge){
+        _define_property(this, "type", MessageType.globalOptions);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "options", void 0);
+        _define_property(this, "merge", void 0);
+        this.serviceName = serviceName;
+        this.options = options;
+        this.merge = merge;
+    }
+}
+class ConfigureFeaturesMessage {
+    constructor(serviceName, options){
+        _define_property(this, "type", MessageType.configureFeatures);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "options", void 0);
+        this.serviceName = serviceName;
+        this.options = options;
+    }
+}
+class SignatureHelpMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.signatureHelp);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class DocumentHighlightMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.documentHighlight);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+var MessageType;
+(function(MessageType) {
+    MessageType[MessageType["init"] = 0] = "init";
+    MessageType[MessageType["format"] = 1] = "format";
+    MessageType[MessageType["complete"] = 2] = "complete";
+    MessageType[MessageType["resolveCompletion"] = 3] = "resolveCompletion";
+    MessageType[MessageType["change"] = 4] = "change";
+    MessageType[MessageType["hover"] = 5] = "hover";
+    MessageType[MessageType["validate"] = 6] = "validate";
+    MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
+    MessageType[MessageType["changeMode"] = 8] = "changeMode";
+    MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
+    MessageType[MessageType["dispose"] = 10] = "dispose";
+    MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
+    MessageType[MessageType["configureFeatures"] = 12] = "configureFeatures";
+    MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
+    MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
+})(MessageType || (MessageType = {}));
+
+
+/***/ }),
+
+/***/ 4827:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ServiceManager: () => (/* binding */ ServiceManager)
+/* harmony export */ });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6297);
+/* harmony import */ var _message_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6002);
+function _define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+class ServiceManager {
+    static async $initServiceInstance(service, ctx) {
+        let module;
+        if ('type' in service) {
+            if ([
+                "socket",
+                "webworker"
+            ].includes(service.type)) {
+                module = await service.module();
+                service.serviceInstance = new module["LanguageClient"](service, ctx);
+            } else throw "Unknown service type";
+        } else {
+            module = await service.module();
+            service.serviceInstance = new module[service.className](service.modes);
+        }
+        if (service.options || service.initializationOptions) {
+            var _service_options, _ref;
+            service.serviceInstance.setGlobalOptions((_ref = (_service_options = service.options) !== null && _service_options !== void 0 ? _service_options : service.initializationOptions) !== null && _ref !== void 0 ? _ref : {});
+        }
+        service.serviceInstance.serviceData = service;
+        return service.serviceInstance;
+    }
+    async $getServicesInstancesByMode(mode) {
+        let services = this.findServicesByMode(mode);
+        if (services.length === 0) {
+            return [];
+        }
+        return Promise.all(services.map((service)=>this.initializeService(service)));
+    }
+    async initializeService(service) {
+        if (!service.serviceInstance) {
+            if (!this.serviceInitPromises[service.id]) {
+                this.serviceInitPromises[service.id] = ServiceManager.$initServiceInstance(service, this.ctx).then((instance)=>{
+                    service.serviceInstance = instance;
+                    delete this.serviceInitPromises[service.id]; // Clean up
+                    return instance;
+                });
+            }
+            return this.serviceInitPromises[service.id];
+        } else {
+            return service.serviceInstance;
+        }
+    }
+    setGlobalOptions(serviceName, options, merge = false) {
+        let service = this.$services[serviceName];
+        if (!service) return;
+        service.options = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_1__/* .mergeObjects */ .PM)(options, service.options) : options;
+        if (service.serviceInstance) {
+            service.serviceInstance.setGlobalOptions(service.options);
+        }
+    }
+    async addDocument(documentIdentifier, documentValue, mode, options) {
+        if (!mode || !/^ace\/mode\//.test(mode)) return;
+        mode = mode.replace("ace/mode/", "");
+        let serviceInstances = await this.$getServicesInstancesByMode(mode);
+        if (serviceInstances.length === 0) return;
+        let documentItem = {
+            uri: documentIdentifier.uri,
+            version: documentIdentifier.version,
+            languageId: mode,
+            text: documentValue
+        };
+        serviceInstances.forEach((el)=>el.addDocument(documentItem));
+        this.$sessionIDToMode[documentIdentifier.uri] = mode;
+        return serviceInstances;
+    }
+    async changeDocumentMode(documentIdentifier, value, mode, options) {
+        this.removeDocument(documentIdentifier);
+        return await this.addDocument(documentIdentifier, value, mode, options);
+    }
+    removeDocument(document) {
+        let services = this.getServicesInstances(document.uri);
+        if (services.length > 0) {
+            services.forEach((el)=>el.removeDocument(document));
+            delete this.$sessionIDToMode[document.uri];
+        }
+    }
+    getServicesInstances(sessionID) {
+        let mode = this.$sessionIDToMode[sessionID];
+        if (!mode) return []; //TODO:
+        let services = this.findServicesByMode(mode);
+        return services.map((el)=>el.serviceInstance).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+    }
+    filterByFeature(serviceInstances, feature) {
+        return serviceInstances.filter((el)=>el.serviceData.features[feature] === true);
+    }
+    findServicesByMode(mode) {
+        return Object.values(this.$services).filter((el)=>{
+            let extensions = el.modes.split('|');
+            if (extensions.includes(mode)) return el;
+        });
+    }
+    registerService(name, service) {
+        service.id = name;
+        service.features = this.setDefaultFeaturesState(service.features);
+        this.$services[name] = service;
+    }
+    registerServer(name, clientConfig) {
+        clientConfig.id = name;
+        clientConfig.className = "LanguageClient";
+        clientConfig.features = this.setDefaultFeaturesState(clientConfig.features);
+        this.$services[name] = clientConfig;
+    }
+    configureFeatures(name, features) {
+        features = this.setDefaultFeaturesState(features);
+        if (!this.$services[name]) return;
+        this.$services[name].features = features;
+    }
+    setDefaultFeaturesState(serviceFeatures) {
+        var _features, _features1, _features2, _features3, _features4, _features5, _features6;
+        let features = serviceFeatures !== null && serviceFeatures !== void 0 ? serviceFeatures : {};
+        var _hover;
+        (_hover = (_features = features).hover) !== null && _hover !== void 0 ? _hover : _features.hover = true;
+        var _completion;
+        (_completion = (_features1 = features).completion) !== null && _completion !== void 0 ? _completion : _features1.completion = true;
+        var _completionResolve;
+        (_completionResolve = (_features2 = features).completionResolve) !== null && _completionResolve !== void 0 ? _completionResolve : _features2.completionResolve = true;
+        var _format;
+        (_format = (_features3 = features).format) !== null && _format !== void 0 ? _format : _features3.format = true;
+        var _diagnostics;
+        (_diagnostics = (_features4 = features).diagnostics) !== null && _diagnostics !== void 0 ? _diagnostics : _features4.diagnostics = true;
+        var _signatureHelp;
+        (_signatureHelp = (_features5 = features).signatureHelp) !== null && _signatureHelp !== void 0 ? _signatureHelp : _features5.signatureHelp = true;
+        var _documentHighlight;
+        (_documentHighlight = (_features6 = features).documentHighlight) !== null && _documentHighlight !== void 0 ? _documentHighlight : _features6.documentHighlight = true;
+        return features;
+    }
+    constructor(ctx){
+        _define_property(this, "$services", {});
+        _define_property(this, "serviceInitPromises", {});
+        _define_property(this, "$sessionIDToMode", {});
+        _define_property(this, "ctx", void 0);
+        this.ctx = ctx;
+        let doValidation = async (document, servicesInstances)=>{
+            servicesInstances !== null && servicesInstances !== void 0 ? servicesInstances : servicesInstances = this.getServicesInstances(document.uri);
+            if (servicesInstances.length === 0) {
+                return;
+            }
+            //this is list of documents linked to services
+            let sessionIDList = Object.keys(servicesInstances[0].documents);
+            servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
+            servicesInstances = servicesInstances.filter((el)=>{
+                return el.serviceCapabilities.diagnosticProvider;
+            });
+            if (servicesInstances.length === 0) {
+                return;
+            }
+            let postMessage = {
+                "type": _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.validate
+            };
+            for (let sessionID of sessionIDList){
+                var _ref;
+                let diagnostics = (_ref = await Promise.all(servicesInstances.map((el)=>{
+                    return el.doValidation({
+                        uri: sessionID
+                    });
+                }))) !== null && _ref !== void 0 ? _ref : [];
+                postMessage["sessionId"] = sessionID;
+                postMessage["value"] = diagnostics.flat();
+                ctx.postMessage(postMessage);
+            }
+        };
+        let provideValidationForServiceInstance = async (serviceName)=>{
+            let service = this.$services[serviceName];
+            if (!service) return;
+            var serviceInstance = service.serviceInstance;
+            if (serviceInstance) await doValidation(undefined, [
+                serviceInstance
+            ]);
+        };
+        ctx.addEventListener("message", async (ev)=>{
+            let message = ev.data;
+            var _message_sessionId;
+            let sessionID = (_message_sessionId = message.sessionId) !== null && _message_sessionId !== void 0 ? _message_sessionId : "";
+            let version = message.version;
+            let postMessage = {
+                "type": message.type,
+                "sessionId": sessionID
+            };
+            let serviceInstances = this.getServicesInstances(sessionID);
+            let documentIdentifier = {
+                uri: sessionID,
+                version: version
+            };
+            switch(message["type"]){
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.format:
+                    serviceInstances = this.filterByFeature(serviceInstances, "format");
+                    if (serviceInstances.length > 0) {
+                        //we will use only first service to format
+                        postMessage["value"] = await serviceInstances[0].format(documentIdentifier, message.value, message.format);
+                    }
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.complete:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service)=>{
+                        return {
+                            completions: await service.doComplete(documentIdentifier, message.value),
+                            service: service.serviceData.className
+                        };
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.resolveCompletion:
+                    var _this_filterByFeature_find;
+                    let serviceName = message.value.service;
+                    postMessage["value"] = await ((_this_filterByFeature_find = this.filterByFeature(serviceInstances, "completionResolve").find((service)=>{
+                        if (service.serviceData.className === serviceName) {
+                            return service;
+                        }
+                    })) === null || _this_filterByFeature_find === void 0 ? void 0 : _this_filterByFeature_find.doResolve(message.value));
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.change:
+                    serviceInstances.forEach((service)=>{
+                        service.setValue(documentIdentifier, message.value);
+                    });
+                    await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.applyDelta:
+                    serviceInstances.forEach((service)=>{
+                        service.applyDeltas(documentIdentifier, message.value);
+                    });
+                    await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.hover:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service)=>{
+                        return service.doHover(documentIdentifier, message.value);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.validate:
+                    postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.init:
+                    var _this;
+                    postMessage["value"] = (_this = await this.addDocument(documentIdentifier, message.value, message.mode, message.options)) === null || _this === void 0 ? void 0 : _this.map((el)=>el.serviceCapabilities);
+                    await doValidation(documentIdentifier);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeMode:
+                    var _this1;
+                    postMessage["value"] = (_this1 = await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options)) === null || _this1 === void 0 ? void 0 : _this1.map((el)=>el.serviceCapabilities);
+                    await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeOptions:
+                    serviceInstances.forEach((service)=>{
+                        service.setOptions(sessionID, message.options);
+                    });
+                    await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.dispose:
+                    this.removeDocument(documentIdentifier);
+                    await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.globalOptions:
+                    this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                    await provideValidationForServiceInstance(message.serviceName);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.configureFeatures:
+                    this.configureFeatures(message.serviceName, message.options);
+                    await provideValidationForServiceInstance(message.serviceName);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.signatureHelp:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service)=>{
+                        return service.provideSignatureHelp(documentIdentifier, message.value);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.documentHighlight:
+                    let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service)=>{
+                        return service.findDocumentHighlights(documentIdentifier, message.value);
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    postMessage["value"] = highlights.flat();
+                    break;
+            }
+            ctx.postMessage(postMessage);
+        });
+    }
+}
+
+
+/***/ }),
+
+/***/ 6297:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   $p: () => (/* binding */ checkValueAgainstRegexpArray),
+/* harmony export */   Dw: () => (/* binding */ notEmpty),
+/* harmony export */   PM: () => (/* binding */ mergeObjects),
+/* harmony export */   lr: () => (/* binding */ mergeRanges)
+/* harmony export */ });
+function mergeObjects(obj1, obj2) {
+    if (!obj1) return obj2;
+    if (!obj2) return obj1;
+    const mergedObjects = {
+        ...obj2,
+        ...obj1
+    }; // Give priority to obj1 values by spreading obj2 first, then obj1
+    for (const key of Object.keys(mergedObjects)){
+        if (obj1[key] && obj2[key]) {
+            if (Array.isArray(obj1[key])) {
+                mergedObjects[key] = obj1[key].concat(obj2[key]);
+            } else if (Array.isArray(obj2[key])) {
+                mergedObjects[key] = obj2[key].concat(obj1[key]);
+            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
+            }
+        }
+    }
+    return mergedObjects;
+}
+function notEmpty(value) {
+    return value !== null && value !== undefined;
+}
+//taken with small changes from ace-code
+function mergeRanges(ranges) {
+    var list = ranges;
+    list = list.sort(function(a, b) {
+        return comparePoints(a.start, b.start);
+    });
+    var next = list[0], range;
+    for(var i = 1; i < list.length; i++){
+        range = next;
+        next = list[i];
+        var cmp = comparePoints(range.end, next.start);
+        if (cmp < 0) continue;
+        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (comparePoints(range.end, next.end) < 0) {
+            range.end.row = next.end.row;
+            range.end.column = next.end.column;
+        }
+        list.splice(i, 1);
+        next = range;
+        i--;
+    }
+    return list;
+}
+function comparePoints(p1, p2) {
+    return p1.row - p2.row || p1.column - p2.column;
+}
+function checkValueAgainstRegexpArray(value, regexpArray) {
+    if (!regexpArray) {
+        return false;
+    }
+    for(let i = 0; i < regexpArray.length; i++){
+        if (regexpArray[i].test(value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+/***/ }),
+
 /***/ 82:
 /***/ ((module) => {
 
@@ -13849,20 +14424,6 @@ class SharedArrayReceiverStrategy {
 }
 exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 
-
-/***/ }),
-
-/***/ 1789:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ----------------------------------------------------------------------------------------- */
-
-
-module.exports = __webpack_require__(294);
 
 /***/ }),
 
@@ -18440,3137 +19001,6 @@ var Is;
 
 /***/ }),
 
-/***/ 2032:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
-const ril_1 = __webpack_require__(2812);
-// Install the browser runtime abstract.
-ril_1.default.install();
-const api_1 = __webpack_require__(8223);
-__exportStar(__webpack_require__(8223), exports);
-class BrowserMessageReader extends api_1.AbstractMessageReader {
-    constructor(context) {
-        super();
-        this._onData = new api_1.Emitter();
-        this._messageListener = (event) => {
-            this._onData.fire(event.data);
-        };
-        context.addEventListener('error', (event) => this.fireError(event));
-        context.onmessage = this._messageListener;
-    }
-    listen(callback) {
-        return this._onData.event(callback);
-    }
-}
-exports.BrowserMessageReader = BrowserMessageReader;
-class BrowserMessageWriter extends api_1.AbstractMessageWriter {
-    constructor(context) {
-        super();
-        this.context = context;
-        this.errorCount = 0;
-        context.addEventListener('error', (event) => this.fireError(event));
-    }
-    write(msg) {
-        try {
-            this.context.postMessage(msg);
-            return Promise.resolve();
-        }
-        catch (error) {
-            this.handleError(error, msg);
-            return Promise.reject(error);
-        }
-    }
-    handleError(error, msg) {
-        this.errorCount++;
-        this.fireError(error, msg, this.errorCount);
-    }
-    end() {
-    }
-}
-exports.BrowserMessageWriter = BrowserMessageWriter;
-function createMessageConnection(reader, writer, logger, options) {
-    if (logger === undefined) {
-        logger = api_1.NullLogger;
-    }
-    if (api_1.ConnectionStrategy.is(options)) {
-        options = { connectionStrategy: options };
-    }
-    return (0, api_1.createMessageConnection)(reader, writer, logger, options);
-}
-exports.createMessageConnection = createMessageConnection;
-//# sourceMappingURL=main.js.map
-
-/***/ }),
-
-/***/ 2812:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var console = __webpack_require__(3716);
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const ral_1 = __webpack_require__(5406);
-const disposable_1 = __webpack_require__(4250);
-const events_1 = __webpack_require__(7257);
-const messageBuffer_1 = __webpack_require__(5947);
-class MessageBuffer extends messageBuffer_1.AbstractMessageBuffer {
-    constructor(encoding = 'utf-8') {
-        super(encoding);
-        this.asciiDecoder = new TextDecoder('ascii');
-    }
-    emptyBuffer() {
-        return MessageBuffer.emptyBuffer;
-    }
-    fromString(value, _encoding) {
-        return (new TextEncoder()).encode(value);
-    }
-    toString(value, encoding) {
-        if (encoding === 'ascii') {
-            return this.asciiDecoder.decode(value);
-        }
-        else {
-            return (new TextDecoder(encoding)).decode(value);
-        }
-    }
-    asNative(buffer, length) {
-        if (length === undefined) {
-            return buffer;
-        }
-        else {
-            return buffer.slice(0, length);
-        }
-    }
-    allocNative(length) {
-        return new Uint8Array(length);
-    }
-}
-MessageBuffer.emptyBuffer = new Uint8Array(0);
-class ReadableStreamWrapper {
-    constructor(socket) {
-        this.socket = socket;
-        this._onData = new events_1.Emitter();
-        this._messageListener = (event) => {
-            const blob = event.data;
-            blob.arrayBuffer().then((buffer) => {
-                this._onData.fire(new Uint8Array(buffer));
-            }, () => {
-                (0, ral_1.default)().console.error(`Converting blob to array buffer failed.`);
-            });
-        };
-        this.socket.addEventListener('message', this._messageListener);
-    }
-    onClose(listener) {
-        this.socket.addEventListener('close', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
-    }
-    onError(listener) {
-        this.socket.addEventListener('error', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
-    }
-    onEnd(listener) {
-        this.socket.addEventListener('end', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
-    }
-    onData(listener) {
-        return this._onData.event(listener);
-    }
-}
-class WritableStreamWrapper {
-    constructor(socket) {
-        this.socket = socket;
-    }
-    onClose(listener) {
-        this.socket.addEventListener('close', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('close', listener));
-    }
-    onError(listener) {
-        this.socket.addEventListener('error', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('error', listener));
-    }
-    onEnd(listener) {
-        this.socket.addEventListener('end', listener);
-        return disposable_1.Disposable.create(() => this.socket.removeEventListener('end', listener));
-    }
-    write(data, encoding) {
-        if (typeof data === 'string') {
-            if (encoding !== undefined && encoding !== 'utf-8') {
-                throw new Error(`In a Browser environments only utf-8 text encoding is supported. But got encoding: ${encoding}`);
-            }
-            this.socket.send(data);
-        }
-        else {
-            this.socket.send(data);
-        }
-        return Promise.resolve();
-    }
-    end() {
-        this.socket.close();
-    }
-}
-const _textEncoder = new TextEncoder();
-const _ril = Object.freeze({
-    messageBuffer: Object.freeze({
-        create: (encoding) => new MessageBuffer(encoding)
-    }),
-    applicationJson: Object.freeze({
-        encoder: Object.freeze({
-            name: 'application/json',
-            encode: (msg, options) => {
-                if (options.charset !== 'utf-8') {
-                    throw new Error(`In a Browser environments only utf-8 text encoding is supported. But got encoding: ${options.charset}`);
-                }
-                return Promise.resolve(_textEncoder.encode(JSON.stringify(msg, undefined, 0)));
-            }
-        }),
-        decoder: Object.freeze({
-            name: 'application/json',
-            decode: (buffer, options) => {
-                if (!(buffer instanceof Uint8Array)) {
-                    throw new Error(`In a Browser environments only Uint8Arrays are supported.`);
-                }
-                return Promise.resolve(JSON.parse(new TextDecoder(options.charset).decode(buffer)));
-            }
-        })
-    }),
-    stream: Object.freeze({
-        asReadableStream: (socket) => new ReadableStreamWrapper(socket),
-        asWritableStream: (socket) => new WritableStreamWrapper(socket)
-    }),
-    console: console,
-    timer: Object.freeze({
-        setTimeout(callback, ms, ...args) {
-            const handle = setTimeout(callback, ms, ...args);
-            return { dispose: () => clearTimeout(handle) };
-        },
-        setImmediate(callback, ...args) {
-            const handle = setTimeout(callback, 0, ...args);
-            return { dispose: () => clearTimeout(handle) };
-        },
-        setInterval(callback, ms, ...args) {
-            const handle = setInterval(callback, ms, ...args);
-            return { dispose: () => clearInterval(handle) };
-        },
-    })
-});
-function RIL() {
-    return _ril;
-}
-(function (RIL) {
-    function install() {
-        ral_1.default.install(_ril);
-    }
-    RIL.install = install;
-})(RIL || (RIL = {}));
-exports["default"] = RIL;
-//# sourceMappingURL=ril.js.map
-
-/***/ }),
-
-/***/ 8223:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-/// <reference path="../../typings/thenable.d.ts" />
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TraceFormat = exports.TraceValues = exports.Trace = exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
-exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = void 0;
-const messages_1 = __webpack_require__(5613);
-Object.defineProperty(exports, "Message", ({ enumerable: true, get: function () { return messages_1.Message; } }));
-Object.defineProperty(exports, "RequestType", ({ enumerable: true, get: function () { return messages_1.RequestType; } }));
-Object.defineProperty(exports, "RequestType0", ({ enumerable: true, get: function () { return messages_1.RequestType0; } }));
-Object.defineProperty(exports, "RequestType1", ({ enumerable: true, get: function () { return messages_1.RequestType1; } }));
-Object.defineProperty(exports, "RequestType2", ({ enumerable: true, get: function () { return messages_1.RequestType2; } }));
-Object.defineProperty(exports, "RequestType3", ({ enumerable: true, get: function () { return messages_1.RequestType3; } }));
-Object.defineProperty(exports, "RequestType4", ({ enumerable: true, get: function () { return messages_1.RequestType4; } }));
-Object.defineProperty(exports, "RequestType5", ({ enumerable: true, get: function () { return messages_1.RequestType5; } }));
-Object.defineProperty(exports, "RequestType6", ({ enumerable: true, get: function () { return messages_1.RequestType6; } }));
-Object.defineProperty(exports, "RequestType7", ({ enumerable: true, get: function () { return messages_1.RequestType7; } }));
-Object.defineProperty(exports, "RequestType8", ({ enumerable: true, get: function () { return messages_1.RequestType8; } }));
-Object.defineProperty(exports, "RequestType9", ({ enumerable: true, get: function () { return messages_1.RequestType9; } }));
-Object.defineProperty(exports, "ResponseError", ({ enumerable: true, get: function () { return messages_1.ResponseError; } }));
-Object.defineProperty(exports, "ErrorCodes", ({ enumerable: true, get: function () { return messages_1.ErrorCodes; } }));
-Object.defineProperty(exports, "NotificationType", ({ enumerable: true, get: function () { return messages_1.NotificationType; } }));
-Object.defineProperty(exports, "NotificationType0", ({ enumerable: true, get: function () { return messages_1.NotificationType0; } }));
-Object.defineProperty(exports, "NotificationType1", ({ enumerable: true, get: function () { return messages_1.NotificationType1; } }));
-Object.defineProperty(exports, "NotificationType2", ({ enumerable: true, get: function () { return messages_1.NotificationType2; } }));
-Object.defineProperty(exports, "NotificationType3", ({ enumerable: true, get: function () { return messages_1.NotificationType3; } }));
-Object.defineProperty(exports, "NotificationType4", ({ enumerable: true, get: function () { return messages_1.NotificationType4; } }));
-Object.defineProperty(exports, "NotificationType5", ({ enumerable: true, get: function () { return messages_1.NotificationType5; } }));
-Object.defineProperty(exports, "NotificationType6", ({ enumerable: true, get: function () { return messages_1.NotificationType6; } }));
-Object.defineProperty(exports, "NotificationType7", ({ enumerable: true, get: function () { return messages_1.NotificationType7; } }));
-Object.defineProperty(exports, "NotificationType8", ({ enumerable: true, get: function () { return messages_1.NotificationType8; } }));
-Object.defineProperty(exports, "NotificationType9", ({ enumerable: true, get: function () { return messages_1.NotificationType9; } }));
-Object.defineProperty(exports, "ParameterStructures", ({ enumerable: true, get: function () { return messages_1.ParameterStructures; } }));
-const linkedMap_1 = __webpack_require__(1414);
-Object.defineProperty(exports, "LinkedMap", ({ enumerable: true, get: function () { return linkedMap_1.LinkedMap; } }));
-Object.defineProperty(exports, "LRUCache", ({ enumerable: true, get: function () { return linkedMap_1.LRUCache; } }));
-Object.defineProperty(exports, "Touch", ({ enumerable: true, get: function () { return linkedMap_1.Touch; } }));
-const disposable_1 = __webpack_require__(4250);
-Object.defineProperty(exports, "Disposable", ({ enumerable: true, get: function () { return disposable_1.Disposable; } }));
-const events_1 = __webpack_require__(7257);
-Object.defineProperty(exports, "Event", ({ enumerable: true, get: function () { return events_1.Event; } }));
-Object.defineProperty(exports, "Emitter", ({ enumerable: true, get: function () { return events_1.Emitter; } }));
-const cancellation_1 = __webpack_require__(1072);
-Object.defineProperty(exports, "CancellationTokenSource", ({ enumerable: true, get: function () { return cancellation_1.CancellationTokenSource; } }));
-Object.defineProperty(exports, "CancellationToken", ({ enumerable: true, get: function () { return cancellation_1.CancellationToken; } }));
-const messageReader_1 = __webpack_require__(207);
-Object.defineProperty(exports, "MessageReader", ({ enumerable: true, get: function () { return messageReader_1.MessageReader; } }));
-Object.defineProperty(exports, "AbstractMessageReader", ({ enumerable: true, get: function () { return messageReader_1.AbstractMessageReader; } }));
-Object.defineProperty(exports, "ReadableStreamMessageReader", ({ enumerable: true, get: function () { return messageReader_1.ReadableStreamMessageReader; } }));
-const messageWriter_1 = __webpack_require__(6214);
-Object.defineProperty(exports, "MessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.MessageWriter; } }));
-Object.defineProperty(exports, "AbstractMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.AbstractMessageWriter; } }));
-Object.defineProperty(exports, "WriteableStreamMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.WriteableStreamMessageWriter; } }));
-const connection_1 = __webpack_require__(7075);
-Object.defineProperty(exports, "ConnectionStrategy", ({ enumerable: true, get: function () { return connection_1.ConnectionStrategy; } }));
-Object.defineProperty(exports, "ConnectionOptions", ({ enumerable: true, get: function () { return connection_1.ConnectionOptions; } }));
-Object.defineProperty(exports, "NullLogger", ({ enumerable: true, get: function () { return connection_1.NullLogger; } }));
-Object.defineProperty(exports, "createMessageConnection", ({ enumerable: true, get: function () { return connection_1.createMessageConnection; } }));
-Object.defineProperty(exports, "ProgressToken", ({ enumerable: true, get: function () { return connection_1.ProgressToken; } }));
-Object.defineProperty(exports, "ProgressType", ({ enumerable: true, get: function () { return connection_1.ProgressType; } }));
-Object.defineProperty(exports, "Trace", ({ enumerable: true, get: function () { return connection_1.Trace; } }));
-Object.defineProperty(exports, "TraceValues", ({ enumerable: true, get: function () { return connection_1.TraceValues; } }));
-Object.defineProperty(exports, "TraceFormat", ({ enumerable: true, get: function () { return connection_1.TraceFormat; } }));
-Object.defineProperty(exports, "SetTraceNotification", ({ enumerable: true, get: function () { return connection_1.SetTraceNotification; } }));
-Object.defineProperty(exports, "LogTraceNotification", ({ enumerable: true, get: function () { return connection_1.LogTraceNotification; } }));
-Object.defineProperty(exports, "ConnectionErrors", ({ enumerable: true, get: function () { return connection_1.ConnectionErrors; } }));
-Object.defineProperty(exports, "ConnectionError", ({ enumerable: true, get: function () { return connection_1.ConnectionError; } }));
-Object.defineProperty(exports, "CancellationReceiverStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationReceiverStrategy; } }));
-Object.defineProperty(exports, "CancellationSenderStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationSenderStrategy; } }));
-Object.defineProperty(exports, "CancellationStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationStrategy; } }));
-const ral_1 = __webpack_require__(5406);
-exports.RAL = ral_1.default;
-//# sourceMappingURL=api.js.map
-
-/***/ }),
-
-/***/ 1072:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CancellationTokenSource = exports.CancellationToken = void 0;
-const ral_1 = __webpack_require__(5406);
-const Is = __webpack_require__(1278);
-const events_1 = __webpack_require__(7257);
-var CancellationToken;
-(function (CancellationToken) {
-    CancellationToken.None = Object.freeze({
-        isCancellationRequested: false,
-        onCancellationRequested: events_1.Event.None
-    });
-    CancellationToken.Cancelled = Object.freeze({
-        isCancellationRequested: true,
-        onCancellationRequested: events_1.Event.None
-    });
-    function is(value) {
-        const candidate = value;
-        return candidate && (candidate === CancellationToken.None
-            || candidate === CancellationToken.Cancelled
-            || (Is.boolean(candidate.isCancellationRequested) && !!candidate.onCancellationRequested));
-    }
-    CancellationToken.is = is;
-})(CancellationToken = exports.CancellationToken || (exports.CancellationToken = {}));
-const shortcutEvent = Object.freeze(function (callback, context) {
-    const handle = (0, ral_1.default)().timer.setTimeout(callback.bind(context), 0);
-    return { dispose() { handle.dispose(); } };
-});
-class MutableToken {
-    constructor() {
-        this._isCancelled = false;
-    }
-    cancel() {
-        if (!this._isCancelled) {
-            this._isCancelled = true;
-            if (this._emitter) {
-                this._emitter.fire(undefined);
-                this.dispose();
-            }
-        }
-    }
-    get isCancellationRequested() {
-        return this._isCancelled;
-    }
-    get onCancellationRequested() {
-        if (this._isCancelled) {
-            return shortcutEvent;
-        }
-        if (!this._emitter) {
-            this._emitter = new events_1.Emitter();
-        }
-        return this._emitter.event;
-    }
-    dispose() {
-        if (this._emitter) {
-            this._emitter.dispose();
-            this._emitter = undefined;
-        }
-    }
-}
-class CancellationTokenSource {
-    get token() {
-        if (!this._token) {
-            // be lazy and create the token only when
-            // actually needed
-            this._token = new MutableToken();
-        }
-        return this._token;
-    }
-    cancel() {
-        if (!this._token) {
-            // save an object by returning the default
-            // cancelled token when cancellation happens
-            // before someone asks for the token
-            this._token = CancellationToken.Cancelled;
-        }
-        else {
-            this._token.cancel();
-        }
-    }
-    dispose() {
-        if (!this._token) {
-            // ensure to initialize with an empty token if we had none
-            this._token = CancellationToken.None;
-        }
-        else if (this._token instanceof MutableToken) {
-            // actually dispose
-            this._token.dispose();
-        }
-    }
-}
-exports.CancellationTokenSource = CancellationTokenSource;
-//# sourceMappingURL=cancellation.js.map
-
-/***/ }),
-
-/***/ 7075:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createMessageConnection = exports.ConnectionOptions = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
-const ral_1 = __webpack_require__(5406);
-const Is = __webpack_require__(1278);
-const messages_1 = __webpack_require__(5613);
-const linkedMap_1 = __webpack_require__(1414);
-const events_1 = __webpack_require__(7257);
-const cancellation_1 = __webpack_require__(1072);
-var CancelNotification;
-(function (CancelNotification) {
-    CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
-})(CancelNotification || (CancelNotification = {}));
-var ProgressToken;
-(function (ProgressToken) {
-    function is(value) {
-        return typeof value === 'string' || typeof value === 'number';
-    }
-    ProgressToken.is = is;
-})(ProgressToken = exports.ProgressToken || (exports.ProgressToken = {}));
-var ProgressNotification;
-(function (ProgressNotification) {
-    ProgressNotification.type = new messages_1.NotificationType('$/progress');
-})(ProgressNotification || (ProgressNotification = {}));
-class ProgressType {
-    constructor() {
-    }
-}
-exports.ProgressType = ProgressType;
-var StarRequestHandler;
-(function (StarRequestHandler) {
-    function is(value) {
-        return Is.func(value);
-    }
-    StarRequestHandler.is = is;
-})(StarRequestHandler || (StarRequestHandler = {}));
-exports.NullLogger = Object.freeze({
-    error: () => { },
-    warn: () => { },
-    info: () => { },
-    log: () => { }
-});
-var Trace;
-(function (Trace) {
-    Trace[Trace["Off"] = 0] = "Off";
-    Trace[Trace["Messages"] = 1] = "Messages";
-    Trace[Trace["Compact"] = 2] = "Compact";
-    Trace[Trace["Verbose"] = 3] = "Verbose";
-})(Trace = exports.Trace || (exports.Trace = {}));
-var TraceValues;
-(function (TraceValues) {
-    /**
-     * Turn tracing off.
-     */
-    TraceValues.Off = 'off';
-    /**
-     * Trace messages only.
-     */
-    TraceValues.Messages = 'messages';
-    /**
-     * Compact message tracing.
-     */
-    TraceValues.Compact = 'compact';
-    /**
-     * Verbose message tracing.
-     */
-    TraceValues.Verbose = 'verbose';
-})(TraceValues = exports.TraceValues || (exports.TraceValues = {}));
-(function (Trace) {
-    function fromString(value) {
-        if (!Is.string(value)) {
-            return Trace.Off;
-        }
-        value = value.toLowerCase();
-        switch (value) {
-            case 'off':
-                return Trace.Off;
-            case 'messages':
-                return Trace.Messages;
-            case 'compact':
-                return Trace.Compact;
-            case 'verbose':
-                return Trace.Verbose;
-            default:
-                return Trace.Off;
-        }
-    }
-    Trace.fromString = fromString;
-    function toString(value) {
-        switch (value) {
-            case Trace.Off:
-                return 'off';
-            case Trace.Messages:
-                return 'messages';
-            case Trace.Compact:
-                return 'compact';
-            case Trace.Verbose:
-                return 'verbose';
-            default:
-                return 'off';
-        }
-    }
-    Trace.toString = toString;
-})(Trace = exports.Trace || (exports.Trace = {}));
-var TraceFormat;
-(function (TraceFormat) {
-    TraceFormat["Text"] = "text";
-    TraceFormat["JSON"] = "json";
-})(TraceFormat = exports.TraceFormat || (exports.TraceFormat = {}));
-(function (TraceFormat) {
-    function fromString(value) {
-        if (!Is.string(value)) {
-            return TraceFormat.Text;
-        }
-        value = value.toLowerCase();
-        if (value === 'json') {
-            return TraceFormat.JSON;
-        }
-        else {
-            return TraceFormat.Text;
-        }
-    }
-    TraceFormat.fromString = fromString;
-})(TraceFormat = exports.TraceFormat || (exports.TraceFormat = {}));
-var SetTraceNotification;
-(function (SetTraceNotification) {
-    SetTraceNotification.type = new messages_1.NotificationType('$/setTrace');
-})(SetTraceNotification = exports.SetTraceNotification || (exports.SetTraceNotification = {}));
-var LogTraceNotification;
-(function (LogTraceNotification) {
-    LogTraceNotification.type = new messages_1.NotificationType('$/logTrace');
-})(LogTraceNotification = exports.LogTraceNotification || (exports.LogTraceNotification = {}));
-var ConnectionErrors;
-(function (ConnectionErrors) {
-    /**
-     * The connection is closed.
-     */
-    ConnectionErrors[ConnectionErrors["Closed"] = 1] = "Closed";
-    /**
-     * The connection got disposed.
-     */
-    ConnectionErrors[ConnectionErrors["Disposed"] = 2] = "Disposed";
-    /**
-     * The connection is already in listening mode.
-     */
-    ConnectionErrors[ConnectionErrors["AlreadyListening"] = 3] = "AlreadyListening";
-})(ConnectionErrors = exports.ConnectionErrors || (exports.ConnectionErrors = {}));
-class ConnectionError extends Error {
-    constructor(code, message) {
-        super(message);
-        this.code = code;
-        Object.setPrototypeOf(this, ConnectionError.prototype);
-    }
-}
-exports.ConnectionError = ConnectionError;
-var ConnectionStrategy;
-(function (ConnectionStrategy) {
-    function is(value) {
-        const candidate = value;
-        return candidate && Is.func(candidate.cancelUndispatched);
-    }
-    ConnectionStrategy.is = is;
-})(ConnectionStrategy = exports.ConnectionStrategy || (exports.ConnectionStrategy = {}));
-var CancellationReceiverStrategy;
-(function (CancellationReceiverStrategy) {
-    CancellationReceiverStrategy.Message = Object.freeze({
-        createCancellationTokenSource(_) {
-            return new cancellation_1.CancellationTokenSource();
-        }
-    });
-    function is(value) {
-        const candidate = value;
-        return candidate && Is.func(candidate.createCancellationTokenSource);
-    }
-    CancellationReceiverStrategy.is = is;
-})(CancellationReceiverStrategy = exports.CancellationReceiverStrategy || (exports.CancellationReceiverStrategy = {}));
-var CancellationSenderStrategy;
-(function (CancellationSenderStrategy) {
-    CancellationSenderStrategy.Message = Object.freeze({
-        sendCancellation(conn, id) {
-            return conn.sendNotification(CancelNotification.type, { id });
-        },
-        cleanup(_) { }
-    });
-    function is(value) {
-        const candidate = value;
-        return candidate && Is.func(candidate.sendCancellation) && Is.func(candidate.cleanup);
-    }
-    CancellationSenderStrategy.is = is;
-})(CancellationSenderStrategy = exports.CancellationSenderStrategy || (exports.CancellationSenderStrategy = {}));
-var CancellationStrategy;
-(function (CancellationStrategy) {
-    CancellationStrategy.Message = Object.freeze({
-        receiver: CancellationReceiverStrategy.Message,
-        sender: CancellationSenderStrategy.Message
-    });
-    function is(value) {
-        const candidate = value;
-        return candidate && CancellationReceiverStrategy.is(candidate.receiver) && CancellationSenderStrategy.is(candidate.sender);
-    }
-    CancellationStrategy.is = is;
-})(CancellationStrategy = exports.CancellationStrategy || (exports.CancellationStrategy = {}));
-var ConnectionOptions;
-(function (ConnectionOptions) {
-    function is(value) {
-        const candidate = value;
-        return candidate && (CancellationStrategy.is(candidate.cancellationStrategy) || ConnectionStrategy.is(candidate.connectionStrategy));
-    }
-    ConnectionOptions.is = is;
-})(ConnectionOptions = exports.ConnectionOptions || (exports.ConnectionOptions = {}));
-var ConnectionState;
-(function (ConnectionState) {
-    ConnectionState[ConnectionState["New"] = 1] = "New";
-    ConnectionState[ConnectionState["Listening"] = 2] = "Listening";
-    ConnectionState[ConnectionState["Closed"] = 3] = "Closed";
-    ConnectionState[ConnectionState["Disposed"] = 4] = "Disposed";
-})(ConnectionState || (ConnectionState = {}));
-function createMessageConnection(messageReader, messageWriter, _logger, options) {
-    const logger = _logger !== undefined ? _logger : exports.NullLogger;
-    let sequenceNumber = 0;
-    let notificationSequenceNumber = 0;
-    let unknownResponseSequenceNumber = 0;
-    const version = '2.0';
-    let starRequestHandler = undefined;
-    const requestHandlers = new Map();
-    let starNotificationHandler = undefined;
-    const notificationHandlers = new Map();
-    const progressHandlers = new Map();
-    let timer;
-    let messageQueue = new linkedMap_1.LinkedMap();
-    let responsePromises = new Map();
-    let knownCanceledRequests = new Set();
-    let requestTokens = new Map();
-    let trace = Trace.Off;
-    let traceFormat = TraceFormat.Text;
-    let tracer;
-    let state = ConnectionState.New;
-    const errorEmitter = new events_1.Emitter();
-    const closeEmitter = new events_1.Emitter();
-    const unhandledNotificationEmitter = new events_1.Emitter();
-    const unhandledProgressEmitter = new events_1.Emitter();
-    const disposeEmitter = new events_1.Emitter();
-    const cancellationStrategy = (options && options.cancellationStrategy) ? options.cancellationStrategy : CancellationStrategy.Message;
-    function createRequestQueueKey(id) {
-        if (id === null) {
-            throw new Error(`Can't send requests with id null since the response can't be correlated.`);
-        }
-        return 'req-' + id.toString();
-    }
-    function createResponseQueueKey(id) {
-        if (id === null) {
-            return 'res-unknown-' + (++unknownResponseSequenceNumber).toString();
-        }
-        else {
-            return 'res-' + id.toString();
-        }
-    }
-    function createNotificationQueueKey() {
-        return 'not-' + (++notificationSequenceNumber).toString();
-    }
-    function addMessageToQueue(queue, message) {
-        if (messages_1.Message.isRequest(message)) {
-            queue.set(createRequestQueueKey(message.id), message);
-        }
-        else if (messages_1.Message.isResponse(message)) {
-            queue.set(createResponseQueueKey(message.id), message);
-        }
-        else {
-            queue.set(createNotificationQueueKey(), message);
-        }
-    }
-    function cancelUndispatched(_message) {
-        return undefined;
-    }
-    function isListening() {
-        return state === ConnectionState.Listening;
-    }
-    function isClosed() {
-        return state === ConnectionState.Closed;
-    }
-    function isDisposed() {
-        return state === ConnectionState.Disposed;
-    }
-    function closeHandler() {
-        if (state === ConnectionState.New || state === ConnectionState.Listening) {
-            state = ConnectionState.Closed;
-            closeEmitter.fire(undefined);
-        }
-        // If the connection is disposed don't sent close events.
-    }
-    function readErrorHandler(error) {
-        errorEmitter.fire([error, undefined, undefined]);
-    }
-    function writeErrorHandler(data) {
-        errorEmitter.fire(data);
-    }
-    messageReader.onClose(closeHandler);
-    messageReader.onError(readErrorHandler);
-    messageWriter.onClose(closeHandler);
-    messageWriter.onError(writeErrorHandler);
-    function triggerMessageQueue() {
-        if (timer || messageQueue.size === 0) {
-            return;
-        }
-        timer = (0, ral_1.default)().timer.setImmediate(() => {
-            timer = undefined;
-            processMessageQueue();
-        });
-    }
-    function processMessageQueue() {
-        if (messageQueue.size === 0) {
-            return;
-        }
-        const message = messageQueue.shift();
-        try {
-            if (messages_1.Message.isRequest(message)) {
-                handleRequest(message);
-            }
-            else if (messages_1.Message.isNotification(message)) {
-                handleNotification(message);
-            }
-            else if (messages_1.Message.isResponse(message)) {
-                handleResponse(message);
-            }
-            else {
-                handleInvalidMessage(message);
-            }
-        }
-        finally {
-            triggerMessageQueue();
-        }
-    }
-    const callback = (message) => {
-        try {
-            // We have received a cancellation message. Check if the message is still in the queue
-            // and cancel it if allowed to do so.
-            if (messages_1.Message.isNotification(message) && message.method === CancelNotification.type.method) {
-                const cancelId = message.params.id;
-                const key = createRequestQueueKey(cancelId);
-                const toCancel = messageQueue.get(key);
-                if (messages_1.Message.isRequest(toCancel)) {
-                    const strategy = options?.connectionStrategy;
-                    const response = (strategy && strategy.cancelUndispatched) ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
-                    if (response && (response.error !== undefined || response.result !== undefined)) {
-                        messageQueue.delete(key);
-                        requestTokens.delete(cancelId);
-                        response.id = toCancel.id;
-                        traceSendingResponse(response, message.method, Date.now());
-                        messageWriter.write(response).catch(() => logger.error(`Sending response for canceled message failed.`));
-                        return;
-                    }
-                }
-                const cancellationToken = requestTokens.get(cancelId);
-                // The request is already running. Cancel the token
-                if (cancellationToken !== undefined) {
-                    cancellationToken.cancel();
-                    traceReceivedNotification(message);
-                    return;
-                }
-                else {
-                    // Remember the cancel but still queue the message to
-                    // clean up state in process message.
-                    knownCanceledRequests.add(cancelId);
-                }
-            }
-            addMessageToQueue(messageQueue, message);
-        }
-        finally {
-            triggerMessageQueue();
-        }
-    };
-    function handleRequest(requestMessage) {
-        if (isDisposed()) {
-            // we return here silently since we fired an event when the
-            // connection got disposed.
-            return;
-        }
-        function reply(resultOrError, method, startTime) {
-            const message = {
-                jsonrpc: version,
-                id: requestMessage.id
-            };
-            if (resultOrError instanceof messages_1.ResponseError) {
-                message.error = resultOrError.toJson();
-            }
-            else {
-                message.result = resultOrError === undefined ? null : resultOrError;
-            }
-            traceSendingResponse(message, method, startTime);
-            messageWriter.write(message).catch(() => logger.error(`Sending response failed.`));
-        }
-        function replyError(error, method, startTime) {
-            const message = {
-                jsonrpc: version,
-                id: requestMessage.id,
-                error: error.toJson()
-            };
-            traceSendingResponse(message, method, startTime);
-            messageWriter.write(message).catch(() => logger.error(`Sending response failed.`));
-        }
-        function replySuccess(result, method, startTime) {
-            // The JSON RPC defines that a response must either have a result or an error
-            // So we can't treat undefined as a valid response result.
-            if (result === undefined) {
-                result = null;
-            }
-            const message = {
-                jsonrpc: version,
-                id: requestMessage.id,
-                result: result
-            };
-            traceSendingResponse(message, method, startTime);
-            messageWriter.write(message).catch(() => logger.error(`Sending response failed.`));
-        }
-        traceReceivedRequest(requestMessage);
-        const element = requestHandlers.get(requestMessage.method);
-        let type;
-        let requestHandler;
-        if (element) {
-            type = element.type;
-            requestHandler = element.handler;
-        }
-        const startTime = Date.now();
-        if (requestHandler || starRequestHandler) {
-            const tokenKey = requestMessage.id ?? String(Date.now()); //
-            const cancellationSource = cancellationStrategy.receiver.createCancellationTokenSource(tokenKey);
-            if (requestMessage.id !== null && knownCanceledRequests.has(requestMessage.id)) {
-                cancellationSource.cancel();
-            }
-            if (requestMessage.id !== null) {
-                requestTokens.set(tokenKey, cancellationSource);
-            }
-            try {
-                let handlerResult;
-                if (requestHandler) {
-                    if (requestMessage.params === undefined) {
-                        if (type !== undefined && type.numberOfParams !== 0) {
-                            replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines ${type.numberOfParams} params but received none.`), requestMessage.method, startTime);
-                            return;
-                        }
-                        handlerResult = requestHandler(cancellationSource.token);
-                    }
-                    else if (Array.isArray(requestMessage.params)) {
-                        if (type !== undefined && type.parameterStructures === messages_1.ParameterStructures.byName) {
-                            replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by name but received parameters by position`), requestMessage.method, startTime);
-                            return;
-                        }
-                        handlerResult = requestHandler(...requestMessage.params, cancellationSource.token);
-                    }
-                    else {
-                        if (type !== undefined && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
-                            replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InvalidParams, `Request ${requestMessage.method} defines parameters by position but received parameters by name`), requestMessage.method, startTime);
-                            return;
-                        }
-                        handlerResult = requestHandler(requestMessage.params, cancellationSource.token);
-                    }
-                }
-                else if (starRequestHandler) {
-                    handlerResult = starRequestHandler(requestMessage.method, requestMessage.params, cancellationSource.token);
-                }
-                const promise = handlerResult;
-                if (!handlerResult) {
-                    requestTokens.delete(tokenKey);
-                    replySuccess(handlerResult, requestMessage.method, startTime);
-                }
-                else if (promise.then) {
-                    promise.then((resultOrError) => {
-                        requestTokens.delete(tokenKey);
-                        reply(resultOrError, requestMessage.method, startTime);
-                    }, error => {
-                        requestTokens.delete(tokenKey);
-                        if (error instanceof messages_1.ResponseError) {
-                            replyError(error, requestMessage.method, startTime);
-                        }
-                        else if (error && Is.string(error.message)) {
-                            replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InternalError, `Request ${requestMessage.method} failed with message: ${error.message}`), requestMessage.method, startTime);
-                        }
-                        else {
-                            replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InternalError, `Request ${requestMessage.method} failed unexpectedly without providing any details.`), requestMessage.method, startTime);
-                        }
-                    });
-                }
-                else {
-                    requestTokens.delete(tokenKey);
-                    reply(handlerResult, requestMessage.method, startTime);
-                }
-            }
-            catch (error) {
-                requestTokens.delete(tokenKey);
-                if (error instanceof messages_1.ResponseError) {
-                    reply(error, requestMessage.method, startTime);
-                }
-                else if (error && Is.string(error.message)) {
-                    replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InternalError, `Request ${requestMessage.method} failed with message: ${error.message}`), requestMessage.method, startTime);
-                }
-                else {
-                    replyError(new messages_1.ResponseError(messages_1.ErrorCodes.InternalError, `Request ${requestMessage.method} failed unexpectedly without providing any details.`), requestMessage.method, startTime);
-                }
-            }
-        }
-        else {
-            replyError(new messages_1.ResponseError(messages_1.ErrorCodes.MethodNotFound, `Unhandled method ${requestMessage.method}`), requestMessage.method, startTime);
-        }
-    }
-    function handleResponse(responseMessage) {
-        if (isDisposed()) {
-            // See handle request.
-            return;
-        }
-        if (responseMessage.id === null) {
-            if (responseMessage.error) {
-                logger.error(`Received response message without id: Error is: \n${JSON.stringify(responseMessage.error, undefined, 4)}`);
-            }
-            else {
-                logger.error(`Received response message without id. No further error information provided.`);
-            }
-        }
-        else {
-            const key = responseMessage.id;
-            const responsePromise = responsePromises.get(key);
-            traceReceivedResponse(responseMessage, responsePromise);
-            if (responsePromise !== undefined) {
-                responsePromises.delete(key);
-                try {
-                    if (responseMessage.error) {
-                        const error = responseMessage.error;
-                        responsePromise.reject(new messages_1.ResponseError(error.code, error.message, error.data));
-                    }
-                    else if (responseMessage.result !== undefined) {
-                        responsePromise.resolve(responseMessage.result);
-                    }
-                    else {
-                        throw new Error('Should never happen.');
-                    }
-                }
-                catch (error) {
-                    if (error.message) {
-                        logger.error(`Response handler '${responsePromise.method}' failed with message: ${error.message}`);
-                    }
-                    else {
-                        logger.error(`Response handler '${responsePromise.method}' failed unexpectedly.`);
-                    }
-                }
-            }
-        }
-    }
-    function handleNotification(message) {
-        if (isDisposed()) {
-            // See handle request.
-            return;
-        }
-        let type = undefined;
-        let notificationHandler;
-        if (message.method === CancelNotification.type.method) {
-            const cancelId = message.params.id;
-            knownCanceledRequests.delete(cancelId);
-            traceReceivedNotification(message);
-            return;
-        }
-        else {
-            const element = notificationHandlers.get(message.method);
-            if (element) {
-                notificationHandler = element.handler;
-                type = element.type;
-            }
-        }
-        if (notificationHandler || starNotificationHandler) {
-            try {
-                traceReceivedNotification(message);
-                if (notificationHandler) {
-                    if (message.params === undefined) {
-                        if (type !== undefined) {
-                            if (type.numberOfParams !== 0 && type.parameterStructures !== messages_1.ParameterStructures.byName) {
-                                logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received none.`);
-                            }
-                        }
-                        notificationHandler();
-                    }
-                    else if (Array.isArray(message.params)) {
-                        // There are JSON-RPC libraries that send progress message as positional params although
-                        // specified as named. So convert them if this is the case.
-                        const params = message.params;
-                        if (message.method === ProgressNotification.type.method && params.length === 2 && ProgressToken.is(params[0])) {
-                            notificationHandler({ token: params[0], value: params[1] });
-                        }
-                        else {
-                            if (type !== undefined) {
-                                if (type.parameterStructures === messages_1.ParameterStructures.byName) {
-                                    logger.error(`Notification ${message.method} defines parameters by name but received parameters by position`);
-                                }
-                                if (type.numberOfParams !== message.params.length) {
-                                    logger.error(`Notification ${message.method} defines ${type.numberOfParams} params but received ${params.length} arguments`);
-                                }
-                            }
-                            notificationHandler(...params);
-                        }
-                    }
-                    else {
-                        if (type !== undefined && type.parameterStructures === messages_1.ParameterStructures.byPosition) {
-                            logger.error(`Notification ${message.method} defines parameters by position but received parameters by name`);
-                        }
-                        notificationHandler(message.params);
-                    }
-                }
-                else if (starNotificationHandler) {
-                    starNotificationHandler(message.method, message.params);
-                }
-            }
-            catch (error) {
-                if (error.message) {
-                    logger.error(`Notification handler '${message.method}' failed with message: ${error.message}`);
-                }
-                else {
-                    logger.error(`Notification handler '${message.method}' failed unexpectedly.`);
-                }
-            }
-        }
-        else {
-            unhandledNotificationEmitter.fire(message);
-        }
-    }
-    function handleInvalidMessage(message) {
-        if (!message) {
-            logger.error('Received empty message.');
-            return;
-        }
-        logger.error(`Received message which is neither a response nor a notification message:\n${JSON.stringify(message, null, 4)}`);
-        // Test whether we find an id to reject the promise
-        const responseMessage = message;
-        if (Is.string(responseMessage.id) || Is.number(responseMessage.id)) {
-            const key = responseMessage.id;
-            const responseHandler = responsePromises.get(key);
-            if (responseHandler) {
-                responseHandler.reject(new Error('The received response has neither a result nor an error property.'));
-            }
-        }
-    }
-    function stringifyTrace(params) {
-        if (params === undefined || params === null) {
-            return undefined;
-        }
-        switch (trace) {
-            case Trace.Verbose:
-                return JSON.stringify(params, null, 4);
-            case Trace.Compact:
-                return JSON.stringify(params);
-            default:
-                return undefined;
-        }
-    }
-    function traceSendingRequest(message) {
-        if (trace === Trace.Off || !tracer) {
-            return;
-        }
-        if (traceFormat === TraceFormat.Text) {
-            let data = undefined;
-            if ((trace === Trace.Verbose || trace === Trace.Compact) && message.params) {
-                data = `Params: ${stringifyTrace(message.params)}\n\n`;
-            }
-            tracer.log(`Sending request '${message.method} - (${message.id})'.`, data);
-        }
-        else {
-            logLSPMessage('send-request', message);
-        }
-    }
-    function traceSendingNotification(message) {
-        if (trace === Trace.Off || !tracer) {
-            return;
-        }
-        if (traceFormat === TraceFormat.Text) {
-            let data = undefined;
-            if (trace === Trace.Verbose || trace === Trace.Compact) {
-                if (message.params) {
-                    data = `Params: ${stringifyTrace(message.params)}\n\n`;
-                }
-                else {
-                    data = 'No parameters provided.\n\n';
-                }
-            }
-            tracer.log(`Sending notification '${message.method}'.`, data);
-        }
-        else {
-            logLSPMessage('send-notification', message);
-        }
-    }
-    function traceSendingResponse(message, method, startTime) {
-        if (trace === Trace.Off || !tracer) {
-            return;
-        }
-        if (traceFormat === TraceFormat.Text) {
-            let data = undefined;
-            if (trace === Trace.Verbose || trace === Trace.Compact) {
-                if (message.error && message.error.data) {
-                    data = `Error data: ${stringifyTrace(message.error.data)}\n\n`;
-                }
-                else {
-                    if (message.result) {
-                        data = `Result: ${stringifyTrace(message.result)}\n\n`;
-                    }
-                    else if (message.error === undefined) {
-                        data = 'No result returned.\n\n';
-                    }
-                }
-            }
-            tracer.log(`Sending response '${method} - (${message.id})'. Processing request took ${Date.now() - startTime}ms`, data);
-        }
-        else {
-            logLSPMessage('send-response', message);
-        }
-    }
-    function traceReceivedRequest(message) {
-        if (trace === Trace.Off || !tracer) {
-            return;
-        }
-        if (traceFormat === TraceFormat.Text) {
-            let data = undefined;
-            if ((trace === Trace.Verbose || trace === Trace.Compact) && message.params) {
-                data = `Params: ${stringifyTrace(message.params)}\n\n`;
-            }
-            tracer.log(`Received request '${message.method} - (${message.id})'.`, data);
-        }
-        else {
-            logLSPMessage('receive-request', message);
-        }
-    }
-    function traceReceivedNotification(message) {
-        if (trace === Trace.Off || !tracer || message.method === LogTraceNotification.type.method) {
-            return;
-        }
-        if (traceFormat === TraceFormat.Text) {
-            let data = undefined;
-            if (trace === Trace.Verbose || trace === Trace.Compact) {
-                if (message.params) {
-                    data = `Params: ${stringifyTrace(message.params)}\n\n`;
-                }
-                else {
-                    data = 'No parameters provided.\n\n';
-                }
-            }
-            tracer.log(`Received notification '${message.method}'.`, data);
-        }
-        else {
-            logLSPMessage('receive-notification', message);
-        }
-    }
-    function traceReceivedResponse(message, responsePromise) {
-        if (trace === Trace.Off || !tracer) {
-            return;
-        }
-        if (traceFormat === TraceFormat.Text) {
-            let data = undefined;
-            if (trace === Trace.Verbose || trace === Trace.Compact) {
-                if (message.error && message.error.data) {
-                    data = `Error data: ${stringifyTrace(message.error.data)}\n\n`;
-                }
-                else {
-                    if (message.result) {
-                        data = `Result: ${stringifyTrace(message.result)}\n\n`;
-                    }
-                    else if (message.error === undefined) {
-                        data = 'No result returned.\n\n';
-                    }
-                }
-            }
-            if (responsePromise) {
-                const error = message.error ? ` Request failed: ${message.error.message} (${message.error.code}).` : '';
-                tracer.log(`Received response '${responsePromise.method} - (${message.id})' in ${Date.now() - responsePromise.timerStart}ms.${error}`, data);
-            }
-            else {
-                tracer.log(`Received response ${message.id} without active response promise.`, data);
-            }
-        }
-        else {
-            logLSPMessage('receive-response', message);
-        }
-    }
-    function logLSPMessage(type, message) {
-        if (!tracer || trace === Trace.Off) {
-            return;
-        }
-        const lspMessage = {
-            isLSPMessage: true,
-            type,
-            message,
-            timestamp: Date.now()
-        };
-        tracer.log(lspMessage);
-    }
-    function throwIfClosedOrDisposed() {
-        if (isClosed()) {
-            throw new ConnectionError(ConnectionErrors.Closed, 'Connection is closed.');
-        }
-        if (isDisposed()) {
-            throw new ConnectionError(ConnectionErrors.Disposed, 'Connection is disposed.');
-        }
-    }
-    function throwIfListening() {
-        if (isListening()) {
-            throw new ConnectionError(ConnectionErrors.AlreadyListening, 'Connection is already listening');
-        }
-    }
-    function throwIfNotListening() {
-        if (!isListening()) {
-            throw new Error('Call listen() first.');
-        }
-    }
-    function undefinedToNull(param) {
-        if (param === undefined) {
-            return null;
-        }
-        else {
-            return param;
-        }
-    }
-    function nullToUndefined(param) {
-        if (param === null) {
-            return undefined;
-        }
-        else {
-            return param;
-        }
-    }
-    function isNamedParam(param) {
-        return param !== undefined && param !== null && !Array.isArray(param) && typeof param === 'object';
-    }
-    function computeSingleParam(parameterStructures, param) {
-        switch (parameterStructures) {
-            case messages_1.ParameterStructures.auto:
-                if (isNamedParam(param)) {
-                    return nullToUndefined(param);
-                }
-                else {
-                    return [undefinedToNull(param)];
-                }
-            case messages_1.ParameterStructures.byName:
-                if (!isNamedParam(param)) {
-                    throw new Error(`Received parameters by name but param is not an object literal.`);
-                }
-                return nullToUndefined(param);
-            case messages_1.ParameterStructures.byPosition:
-                return [undefinedToNull(param)];
-            default:
-                throw new Error(`Unknown parameter structure ${parameterStructures.toString()}`);
-        }
-    }
-    function computeMessageParams(type, params) {
-        let result;
-        const numberOfParams = type.numberOfParams;
-        switch (numberOfParams) {
-            case 0:
-                result = undefined;
-                break;
-            case 1:
-                result = computeSingleParam(type.parameterStructures, params[0]);
-                break;
-            default:
-                result = [];
-                for (let i = 0; i < params.length && i < numberOfParams; i++) {
-                    result.push(undefinedToNull(params[i]));
-                }
-                if (params.length < numberOfParams) {
-                    for (let i = params.length; i < numberOfParams; i++) {
-                        result.push(null);
-                    }
-                }
-                break;
-        }
-        return result;
-    }
-    const connection = {
-        sendNotification: (type, ...args) => {
-            throwIfClosedOrDisposed();
-            let method;
-            let messageParams;
-            if (Is.string(type)) {
-                method = type;
-                const first = args[0];
-                let paramStart = 0;
-                let parameterStructures = messages_1.ParameterStructures.auto;
-                if (messages_1.ParameterStructures.is(first)) {
-                    paramStart = 1;
-                    parameterStructures = first;
-                }
-                let paramEnd = args.length;
-                const numberOfParams = paramEnd - paramStart;
-                switch (numberOfParams) {
-                    case 0:
-                        messageParams = undefined;
-                        break;
-                    case 1:
-                        messageParams = computeSingleParam(parameterStructures, args[paramStart]);
-                        break;
-                    default:
-                        if (parameterStructures === messages_1.ParameterStructures.byName) {
-                            throw new Error(`Received ${numberOfParams} parameters for 'by Name' notification parameter structure.`);
-                        }
-                        messageParams = args.slice(paramStart, paramEnd).map(value => undefinedToNull(value));
-                        break;
-                }
-            }
-            else {
-                const params = args;
-                method = type.method;
-                messageParams = computeMessageParams(type, params);
-            }
-            const notificationMessage = {
-                jsonrpc: version,
-                method: method,
-                params: messageParams
-            };
-            traceSendingNotification(notificationMessage);
-            return messageWriter.write(notificationMessage).catch(() => logger.error(`Sending notification failed.`));
-        },
-        onNotification: (type, handler) => {
-            throwIfClosedOrDisposed();
-            let method;
-            if (Is.func(type)) {
-                starNotificationHandler = type;
-            }
-            else if (handler) {
-                if (Is.string(type)) {
-                    method = type;
-                    notificationHandlers.set(type, { type: undefined, handler });
-                }
-                else {
-                    method = type.method;
-                    notificationHandlers.set(type.method, { type, handler });
-                }
-            }
-            return {
-                dispose: () => {
-                    if (method !== undefined) {
-                        notificationHandlers.delete(method);
-                    }
-                    else {
-                        starNotificationHandler = undefined;
-                    }
-                }
-            };
-        },
-        onProgress: (_type, token, handler) => {
-            if (progressHandlers.has(token)) {
-                throw new Error(`Progress handler for token ${token} already registered`);
-            }
-            progressHandlers.set(token, handler);
-            return {
-                dispose: () => {
-                    progressHandlers.delete(token);
-                }
-            };
-        },
-        sendProgress: (_type, token, value) => {
-            return connection.sendNotification(ProgressNotification.type, { token, value });
-        },
-        onUnhandledProgress: unhandledProgressEmitter.event,
-        sendRequest: (type, ...args) => {
-            throwIfClosedOrDisposed();
-            throwIfNotListening();
-            let method;
-            let messageParams;
-            let token = undefined;
-            if (Is.string(type)) {
-                method = type;
-                const first = args[0];
-                const last = args[args.length - 1];
-                let paramStart = 0;
-                let parameterStructures = messages_1.ParameterStructures.auto;
-                if (messages_1.ParameterStructures.is(first)) {
-                    paramStart = 1;
-                    parameterStructures = first;
-                }
-                let paramEnd = args.length;
-                if (cancellation_1.CancellationToken.is(last)) {
-                    paramEnd = paramEnd - 1;
-                    token = last;
-                }
-                const numberOfParams = paramEnd - paramStart;
-                switch (numberOfParams) {
-                    case 0:
-                        messageParams = undefined;
-                        break;
-                    case 1:
-                        messageParams = computeSingleParam(parameterStructures, args[paramStart]);
-                        break;
-                    default:
-                        if (parameterStructures === messages_1.ParameterStructures.byName) {
-                            throw new Error(`Received ${numberOfParams} parameters for 'by Name' request parameter structure.`);
-                        }
-                        messageParams = args.slice(paramStart, paramEnd).map(value => undefinedToNull(value));
-                        break;
-                }
-            }
-            else {
-                const params = args;
-                method = type.method;
-                messageParams = computeMessageParams(type, params);
-                const numberOfParams = type.numberOfParams;
-                token = cancellation_1.CancellationToken.is(params[numberOfParams]) ? params[numberOfParams] : undefined;
-            }
-            const id = sequenceNumber++;
-            let disposable;
-            if (token) {
-                disposable = token.onCancellationRequested(() => {
-                    const p = cancellationStrategy.sender.sendCancellation(connection, id);
-                    if (p === undefined) {
-                        logger.log(`Received no promise from cancellation strategy when cancelling id ${id}`);
-                        return Promise.resolve();
-                    }
-                    else {
-                        return p.catch(() => {
-                            logger.log(`Sending cancellation messages for id ${id} failed`);
-                        });
-                    }
-                });
-            }
-            const result = new Promise((resolve, reject) => {
-                const requestMessage = {
-                    jsonrpc: version,
-                    id: id,
-                    method: method,
-                    params: messageParams
-                };
-                const resolveWithCleanup = (r) => {
-                    resolve(r);
-                    cancellationStrategy.sender.cleanup(id);
-                    disposable?.dispose();
-                };
-                const rejectWithCleanup = (r) => {
-                    reject(r);
-                    cancellationStrategy.sender.cleanup(id);
-                    disposable?.dispose();
-                };
-                let responsePromise = { method: method, timerStart: Date.now(), resolve: resolveWithCleanup, reject: rejectWithCleanup };
-                traceSendingRequest(requestMessage);
-                try {
-                    messageWriter.write(requestMessage).catch(() => logger.error(`Sending request failed.`));
-                }
-                catch (e) {
-                    // Writing the message failed. So we need to reject the promise.
-                    responsePromise.reject(new messages_1.ResponseError(messages_1.ErrorCodes.MessageWriteError, e.message ? e.message : 'Unknown reason'));
-                    responsePromise = null;
-                }
-                if (responsePromise) {
-                    responsePromises.set(id, responsePromise);
-                }
-            });
-            return result;
-        },
-        onRequest: (type, handler) => {
-            throwIfClosedOrDisposed();
-            let method = null;
-            if (StarRequestHandler.is(type)) {
-                method = undefined;
-                starRequestHandler = type;
-            }
-            else if (Is.string(type)) {
-                method = null;
-                if (handler !== undefined) {
-                    method = type;
-                    requestHandlers.set(type, { handler: handler, type: undefined });
-                }
-            }
-            else {
-                if (handler !== undefined) {
-                    method = type.method;
-                    requestHandlers.set(type.method, { type, handler });
-                }
-            }
-            return {
-                dispose: () => {
-                    if (method === null) {
-                        return;
-                    }
-                    if (method !== undefined) {
-                        requestHandlers.delete(method);
-                    }
-                    else {
-                        starRequestHandler = undefined;
-                    }
-                }
-            };
-        },
-        hasPendingResponse: () => {
-            return responsePromises.size > 0;
-        },
-        trace: async (_value, _tracer, sendNotificationOrTraceOptions) => {
-            let _sendNotification = false;
-            let _traceFormat = TraceFormat.Text;
-            if (sendNotificationOrTraceOptions !== undefined) {
-                if (Is.boolean(sendNotificationOrTraceOptions)) {
-                    _sendNotification = sendNotificationOrTraceOptions;
-                }
-                else {
-                    _sendNotification = sendNotificationOrTraceOptions.sendNotification || false;
-                    _traceFormat = sendNotificationOrTraceOptions.traceFormat || TraceFormat.Text;
-                }
-            }
-            trace = _value;
-            traceFormat = _traceFormat;
-            if (trace === Trace.Off) {
-                tracer = undefined;
-            }
-            else {
-                tracer = _tracer;
-            }
-            if (_sendNotification && !isClosed() && !isDisposed()) {
-                await connection.sendNotification(SetTraceNotification.type, { value: Trace.toString(_value) });
-            }
-        },
-        onError: errorEmitter.event,
-        onClose: closeEmitter.event,
-        onUnhandledNotification: unhandledNotificationEmitter.event,
-        onDispose: disposeEmitter.event,
-        end: () => {
-            messageWriter.end();
-        },
-        dispose: () => {
-            if (isDisposed()) {
-                return;
-            }
-            state = ConnectionState.Disposed;
-            disposeEmitter.fire(undefined);
-            const error = new messages_1.ResponseError(messages_1.ErrorCodes.PendingResponseRejected, 'Pending response rejected since connection got disposed');
-            for (const promise of responsePromises.values()) {
-                promise.reject(error);
-            }
-            responsePromises = new Map();
-            requestTokens = new Map();
-            knownCanceledRequests = new Set();
-            messageQueue = new linkedMap_1.LinkedMap();
-            // Test for backwards compatibility
-            if (Is.func(messageWriter.dispose)) {
-                messageWriter.dispose();
-            }
-            if (Is.func(messageReader.dispose)) {
-                messageReader.dispose();
-            }
-        },
-        listen: () => {
-            throwIfClosedOrDisposed();
-            throwIfListening();
-            state = ConnectionState.Listening;
-            messageReader.listen(callback);
-        },
-        inspect: () => {
-            // eslint-disable-next-line no-console
-            (0, ral_1.default)().console.log('inspect');
-        }
-    };
-    connection.onNotification(LogTraceNotification.type, (params) => {
-        if (trace === Trace.Off || !tracer) {
-            return;
-        }
-        const verbose = trace === Trace.Verbose || trace === Trace.Compact;
-        tracer.log(params.message, verbose ? params.verbose : undefined);
-    });
-    connection.onNotification(ProgressNotification.type, (params) => {
-        const handler = progressHandlers.get(params.token);
-        if (handler) {
-            handler(params.value);
-        }
-        else {
-            unhandledProgressEmitter.fire(params);
-        }
-    });
-    return connection;
-}
-exports.createMessageConnection = createMessageConnection;
-//# sourceMappingURL=connection.js.map
-
-/***/ }),
-
-/***/ 4250:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Disposable = void 0;
-var Disposable;
-(function (Disposable) {
-    function create(func) {
-        return {
-            dispose: func
-        };
-    }
-    Disposable.create = create;
-})(Disposable = exports.Disposable || (exports.Disposable = {}));
-//# sourceMappingURL=disposable.js.map
-
-/***/ }),
-
-/***/ 7257:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Emitter = exports.Event = void 0;
-const ral_1 = __webpack_require__(5406);
-var Event;
-(function (Event) {
-    const _disposable = { dispose() { } };
-    Event.None = function () { return _disposable; };
-})(Event = exports.Event || (exports.Event = {}));
-class CallbackList {
-    add(callback, context = null, bucket) {
-        if (!this._callbacks) {
-            this._callbacks = [];
-            this._contexts = [];
-        }
-        this._callbacks.push(callback);
-        this._contexts.push(context);
-        if (Array.isArray(bucket)) {
-            bucket.push({ dispose: () => this.remove(callback, context) });
-        }
-    }
-    remove(callback, context = null) {
-        if (!this._callbacks) {
-            return;
-        }
-        let foundCallbackWithDifferentContext = false;
-        for (let i = 0, len = this._callbacks.length; i < len; i++) {
-            if (this._callbacks[i] === callback) {
-                if (this._contexts[i] === context) {
-                    // callback & context match => remove it
-                    this._callbacks.splice(i, 1);
-                    this._contexts.splice(i, 1);
-                    return;
-                }
-                else {
-                    foundCallbackWithDifferentContext = true;
-                }
-            }
-        }
-        if (foundCallbackWithDifferentContext) {
-            throw new Error('When adding a listener with a context, you should remove it with the same context');
-        }
-    }
-    invoke(...args) {
-        if (!this._callbacks) {
-            return [];
-        }
-        const ret = [], callbacks = this._callbacks.slice(0), contexts = this._contexts.slice(0);
-        for (let i = 0, len = callbacks.length; i < len; i++) {
-            try {
-                ret.push(callbacks[i].apply(contexts[i], args));
-            }
-            catch (e) {
-                // eslint-disable-next-line no-console
-                (0, ral_1.default)().console.error(e);
-            }
-        }
-        return ret;
-    }
-    isEmpty() {
-        return !this._callbacks || this._callbacks.length === 0;
-    }
-    dispose() {
-        this._callbacks = undefined;
-        this._contexts = undefined;
-    }
-}
-class Emitter {
-    constructor(_options) {
-        this._options = _options;
-    }
-    /**
-     * For the public to allow to subscribe
-     * to events from this Emitter
-     */
-    get event() {
-        if (!this._event) {
-            this._event = (listener, thisArgs, disposables) => {
-                if (!this._callbacks) {
-                    this._callbacks = new CallbackList();
-                }
-                if (this._options && this._options.onFirstListenerAdd && this._callbacks.isEmpty()) {
-                    this._options.onFirstListenerAdd(this);
-                }
-                this._callbacks.add(listener, thisArgs);
-                const result = {
-                    dispose: () => {
-                        if (!this._callbacks) {
-                            // disposable is disposed after emitter is disposed.
-                            return;
-                        }
-                        this._callbacks.remove(listener, thisArgs);
-                        result.dispose = Emitter._noop;
-                        if (this._options && this._options.onLastListenerRemove && this._callbacks.isEmpty()) {
-                            this._options.onLastListenerRemove(this);
-                        }
-                    }
-                };
-                if (Array.isArray(disposables)) {
-                    disposables.push(result);
-                }
-                return result;
-            };
-        }
-        return this._event;
-    }
-    /**
-     * To be kept private to fire an event to
-     * subscribers
-     */
-    fire(event) {
-        if (this._callbacks) {
-            this._callbacks.invoke.call(this._callbacks, event);
-        }
-    }
-    dispose() {
-        if (this._callbacks) {
-            this._callbacks.dispose();
-            this._callbacks = undefined;
-        }
-    }
-}
-exports.Emitter = Emitter;
-Emitter._noop = function () { };
-//# sourceMappingURL=events.js.map
-
-/***/ }),
-
-/***/ 1278:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
-function boolean(value) {
-    return value === true || value === false;
-}
-exports.boolean = boolean;
-function string(value) {
-    return typeof value === 'string' || value instanceof String;
-}
-exports.string = string;
-function number(value) {
-    return typeof value === 'number' || value instanceof Number;
-}
-exports.number = number;
-function error(value) {
-    return value instanceof Error;
-}
-exports.error = error;
-function func(value) {
-    return typeof value === 'function';
-}
-exports.func = func;
-function array(value) {
-    return Array.isArray(value);
-}
-exports.array = array;
-function stringArray(value) {
-    return array(value) && value.every(elem => string(elem));
-}
-exports.stringArray = stringArray;
-//# sourceMappingURL=is.js.map
-
-/***/ }),
-
-/***/ 1414:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LRUCache = exports.LinkedMap = exports.Touch = void 0;
-var Touch;
-(function (Touch) {
-    Touch.None = 0;
-    Touch.First = 1;
-    Touch.AsOld = Touch.First;
-    Touch.Last = 2;
-    Touch.AsNew = Touch.Last;
-})(Touch = exports.Touch || (exports.Touch = {}));
-class LinkedMap {
-    constructor() {
-        this[_a] = 'LinkedMap';
-        this._map = new Map();
-        this._head = undefined;
-        this._tail = undefined;
-        this._size = 0;
-        this._state = 0;
-    }
-    clear() {
-        this._map.clear();
-        this._head = undefined;
-        this._tail = undefined;
-        this._size = 0;
-        this._state++;
-    }
-    isEmpty() {
-        return !this._head && !this._tail;
-    }
-    get size() {
-        return this._size;
-    }
-    get first() {
-        return this._head?.value;
-    }
-    get last() {
-        return this._tail?.value;
-    }
-    has(key) {
-        return this._map.has(key);
-    }
-    get(key, touch = Touch.None) {
-        const item = this._map.get(key);
-        if (!item) {
-            return undefined;
-        }
-        if (touch !== Touch.None) {
-            this.touch(item, touch);
-        }
-        return item.value;
-    }
-    set(key, value, touch = Touch.None) {
-        let item = this._map.get(key);
-        if (item) {
-            item.value = value;
-            if (touch !== Touch.None) {
-                this.touch(item, touch);
-            }
-        }
-        else {
-            item = { key, value, next: undefined, previous: undefined };
-            switch (touch) {
-                case Touch.None:
-                    this.addItemLast(item);
-                    break;
-                case Touch.First:
-                    this.addItemFirst(item);
-                    break;
-                case Touch.Last:
-                    this.addItemLast(item);
-                    break;
-                default:
-                    this.addItemLast(item);
-                    break;
-            }
-            this._map.set(key, item);
-            this._size++;
-        }
-        return this;
-    }
-    delete(key) {
-        return !!this.remove(key);
-    }
-    remove(key) {
-        const item = this._map.get(key);
-        if (!item) {
-            return undefined;
-        }
-        this._map.delete(key);
-        this.removeItem(item);
-        this._size--;
-        return item.value;
-    }
-    shift() {
-        if (!this._head && !this._tail) {
-            return undefined;
-        }
-        if (!this._head || !this._tail) {
-            throw new Error('Invalid list');
-        }
-        const item = this._head;
-        this._map.delete(item.key);
-        this.removeItem(item);
-        this._size--;
-        return item.value;
-    }
-    forEach(callbackfn, thisArg) {
-        const state = this._state;
-        let current = this._head;
-        while (current) {
-            if (thisArg) {
-                callbackfn.bind(thisArg)(current.value, current.key, this);
-            }
-            else {
-                callbackfn(current.value, current.key, this);
-            }
-            if (this._state !== state) {
-                throw new Error(`LinkedMap got modified during iteration.`);
-            }
-            current = current.next;
-        }
-    }
-    keys() {
-        const state = this._state;
-        let current = this._head;
-        const iterator = {
-            [Symbol.iterator]: () => {
-                return iterator;
-            },
-            next: () => {
-                if (this._state !== state) {
-                    throw new Error(`LinkedMap got modified during iteration.`);
-                }
-                if (current) {
-                    const result = { value: current.key, done: false };
-                    current = current.next;
-                    return result;
-                }
-                else {
-                    return { value: undefined, done: true };
-                }
-            }
-        };
-        return iterator;
-    }
-    values() {
-        const state = this._state;
-        let current = this._head;
-        const iterator = {
-            [Symbol.iterator]: () => {
-                return iterator;
-            },
-            next: () => {
-                if (this._state !== state) {
-                    throw new Error(`LinkedMap got modified during iteration.`);
-                }
-                if (current) {
-                    const result = { value: current.value, done: false };
-                    current = current.next;
-                    return result;
-                }
-                else {
-                    return { value: undefined, done: true };
-                }
-            }
-        };
-        return iterator;
-    }
-    entries() {
-        const state = this._state;
-        let current = this._head;
-        const iterator = {
-            [Symbol.iterator]: () => {
-                return iterator;
-            },
-            next: () => {
-                if (this._state !== state) {
-                    throw new Error(`LinkedMap got modified during iteration.`);
-                }
-                if (current) {
-                    const result = { value: [current.key, current.value], done: false };
-                    current = current.next;
-                    return result;
-                }
-                else {
-                    return { value: undefined, done: true };
-                }
-            }
-        };
-        return iterator;
-    }
-    [(_a = Symbol.toStringTag, Symbol.iterator)]() {
-        return this.entries();
-    }
-    trimOld(newSize) {
-        if (newSize >= this.size) {
-            return;
-        }
-        if (newSize === 0) {
-            this.clear();
-            return;
-        }
-        let current = this._head;
-        let currentSize = this.size;
-        while (current && currentSize > newSize) {
-            this._map.delete(current.key);
-            current = current.next;
-            currentSize--;
-        }
-        this._head = current;
-        this._size = currentSize;
-        if (current) {
-            current.previous = undefined;
-        }
-        this._state++;
-    }
-    addItemFirst(item) {
-        // First time Insert
-        if (!this._head && !this._tail) {
-            this._tail = item;
-        }
-        else if (!this._head) {
-            throw new Error('Invalid list');
-        }
-        else {
-            item.next = this._head;
-            this._head.previous = item;
-        }
-        this._head = item;
-        this._state++;
-    }
-    addItemLast(item) {
-        // First time Insert
-        if (!this._head && !this._tail) {
-            this._head = item;
-        }
-        else if (!this._tail) {
-            throw new Error('Invalid list');
-        }
-        else {
-            item.previous = this._tail;
-            this._tail.next = item;
-        }
-        this._tail = item;
-        this._state++;
-    }
-    removeItem(item) {
-        if (item === this._head && item === this._tail) {
-            this._head = undefined;
-            this._tail = undefined;
-        }
-        else if (item === this._head) {
-            // This can only happened if size === 1 which is handle
-            // by the case above.
-            if (!item.next) {
-                throw new Error('Invalid list');
-            }
-            item.next.previous = undefined;
-            this._head = item.next;
-        }
-        else if (item === this._tail) {
-            // This can only happened if size === 1 which is handle
-            // by the case above.
-            if (!item.previous) {
-                throw new Error('Invalid list');
-            }
-            item.previous.next = undefined;
-            this._tail = item.previous;
-        }
-        else {
-            const next = item.next;
-            const previous = item.previous;
-            if (!next || !previous) {
-                throw new Error('Invalid list');
-            }
-            next.previous = previous;
-            previous.next = next;
-        }
-        item.next = undefined;
-        item.previous = undefined;
-        this._state++;
-    }
-    touch(item, touch) {
-        if (!this._head || !this._tail) {
-            throw new Error('Invalid list');
-        }
-        if ((touch !== Touch.First && touch !== Touch.Last)) {
-            return;
-        }
-        if (touch === Touch.First) {
-            if (item === this._head) {
-                return;
-            }
-            const next = item.next;
-            const previous = item.previous;
-            // Unlink the item
-            if (item === this._tail) {
-                // previous must be defined since item was not head but is tail
-                // So there are more than on item in the map
-                previous.next = undefined;
-                this._tail = previous;
-            }
-            else {
-                // Both next and previous are not undefined since item was neither head nor tail.
-                next.previous = previous;
-                previous.next = next;
-            }
-            // Insert the node at head
-            item.previous = undefined;
-            item.next = this._head;
-            this._head.previous = item;
-            this._head = item;
-            this._state++;
-        }
-        else if (touch === Touch.Last) {
-            if (item === this._tail) {
-                return;
-            }
-            const next = item.next;
-            const previous = item.previous;
-            // Unlink the item.
-            if (item === this._head) {
-                // next must be defined since item was not tail but is head
-                // So there are more than on item in the map
-                next.previous = undefined;
-                this._head = next;
-            }
-            else {
-                // Both next and previous are not undefined since item was neither head nor tail.
-                next.previous = previous;
-                previous.next = next;
-            }
-            item.next = undefined;
-            item.previous = this._tail;
-            this._tail.next = item;
-            this._tail = item;
-            this._state++;
-        }
-    }
-    toJSON() {
-        const data = [];
-        this.forEach((value, key) => {
-            data.push([key, value]);
-        });
-        return data;
-    }
-    fromJSON(data) {
-        this.clear();
-        for (const [key, value] of data) {
-            this.set(key, value);
-        }
-    }
-}
-exports.LinkedMap = LinkedMap;
-class LRUCache extends LinkedMap {
-    constructor(limit, ratio = 1) {
-        super();
-        this._limit = limit;
-        this._ratio = Math.min(Math.max(0, ratio), 1);
-    }
-    get limit() {
-        return this._limit;
-    }
-    set limit(limit) {
-        this._limit = limit;
-        this.checkTrim();
-    }
-    get ratio() {
-        return this._ratio;
-    }
-    set ratio(ratio) {
-        this._ratio = Math.min(Math.max(0, ratio), 1);
-        this.checkTrim();
-    }
-    get(key, touch = Touch.AsNew) {
-        return super.get(key, touch);
-    }
-    peek(key) {
-        return super.get(key, Touch.None);
-    }
-    set(key, value) {
-        super.set(key, value, Touch.Last);
-        this.checkTrim();
-        return this;
-    }
-    checkTrim() {
-        if (this.size > this._limit) {
-            this.trimOld(Math.round(this._limit * this._ratio));
-        }
-    }
-}
-exports.LRUCache = LRUCache;
-//# sourceMappingURL=linkedMap.js.map
-
-/***/ }),
-
-/***/ 5947:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AbstractMessageBuffer = void 0;
-const CR = 13;
-const LF = 10;
-const CRLF = '\r\n';
-class AbstractMessageBuffer {
-    constructor(encoding = 'utf-8') {
-        this._encoding = encoding;
-        this._chunks = [];
-        this._totalLength = 0;
-    }
-    get encoding() {
-        return this._encoding;
-    }
-    append(chunk) {
-        const toAppend = typeof chunk === 'string' ? this.fromString(chunk, this._encoding) : chunk;
-        this._chunks.push(toAppend);
-        this._totalLength += toAppend.byteLength;
-    }
-    tryReadHeaders() {
-        if (this._chunks.length === 0) {
-            return undefined;
-        }
-        let state = 0;
-        let chunkIndex = 0;
-        let offset = 0;
-        let chunkBytesRead = 0;
-        row: while (chunkIndex < this._chunks.length) {
-            const chunk = this._chunks[chunkIndex];
-            offset = 0;
-            column: while (offset < chunk.length) {
-                const value = chunk[offset];
-                switch (value) {
-                    case CR:
-                        switch (state) {
-                            case 0:
-                                state = 1;
-                                break;
-                            case 2:
-                                state = 3;
-                                break;
-                            default:
-                                state = 0;
-                        }
-                        break;
-                    case LF:
-                        switch (state) {
-                            case 1:
-                                state = 2;
-                                break;
-                            case 3:
-                                state = 4;
-                                offset++;
-                                break row;
-                            default:
-                                state = 0;
-                        }
-                        break;
-                    default:
-                        state = 0;
-                }
-                offset++;
-            }
-            chunkBytesRead += chunk.byteLength;
-            chunkIndex++;
-        }
-        if (state !== 4) {
-            return undefined;
-        }
-        // The buffer contains the two CRLF at the end. So we will
-        // have two empty lines after the split at the end as well.
-        const buffer = this._read(chunkBytesRead + offset);
-        const result = new Map();
-        const headers = this.toString(buffer, 'ascii').split(CRLF);
-        if (headers.length < 2) {
-            return result;
-        }
-        for (let i = 0; i < headers.length - 2; i++) {
-            const header = headers[i];
-            const index = header.indexOf(':');
-            if (index === -1) {
-                throw new Error('Message header must separate key and value using :');
-            }
-            const key = header.substr(0, index);
-            const value = header.substr(index + 1).trim();
-            result.set(key, value);
-        }
-        return result;
-    }
-    tryReadBody(length) {
-        if (this._totalLength < length) {
-            return undefined;
-        }
-        return this._read(length);
-    }
-    get numberOfBytes() {
-        return this._totalLength;
-    }
-    _read(byteCount) {
-        if (byteCount === 0) {
-            return this.emptyBuffer();
-        }
-        if (byteCount > this._totalLength) {
-            throw new Error(`Cannot read so many bytes!`);
-        }
-        if (this._chunks[0].byteLength === byteCount) {
-            // super fast path, precisely first chunk must be returned
-            const chunk = this._chunks[0];
-            this._chunks.shift();
-            this._totalLength -= byteCount;
-            return this.asNative(chunk);
-        }
-        if (this._chunks[0].byteLength > byteCount) {
-            // fast path, the reading is entirely within the first chunk
-            const chunk = this._chunks[0];
-            const result = this.asNative(chunk, byteCount);
-            this._chunks[0] = chunk.slice(byteCount);
-            this._totalLength -= byteCount;
-            return result;
-        }
-        const result = this.allocNative(byteCount);
-        let resultOffset = 0;
-        let chunkIndex = 0;
-        while (byteCount > 0) {
-            const chunk = this._chunks[chunkIndex];
-            if (chunk.byteLength > byteCount) {
-                // this chunk will survive
-                const chunkPart = chunk.slice(0, byteCount);
-                result.set(chunkPart, resultOffset);
-                resultOffset += byteCount;
-                this._chunks[chunkIndex] = chunk.slice(byteCount);
-                this._totalLength -= byteCount;
-                byteCount -= byteCount;
-            }
-            else {
-                // this chunk will be entirely read
-                result.set(chunk, resultOffset);
-                resultOffset += chunk.byteLength;
-                this._chunks.shift();
-                this._totalLength -= chunk.byteLength;
-                byteCount -= chunk.byteLength;
-            }
-        }
-        return result;
-    }
-}
-exports.AbstractMessageBuffer = AbstractMessageBuffer;
-//# sourceMappingURL=messageBuffer.js.map
-
-/***/ }),
-
-/***/ 207:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
-const ral_1 = __webpack_require__(5406);
-const Is = __webpack_require__(1278);
-const events_1 = __webpack_require__(7257);
-var MessageReader;
-(function (MessageReader) {
-    function is(value) {
-        let candidate = value;
-        return candidate && Is.func(candidate.listen) && Is.func(candidate.dispose) &&
-            Is.func(candidate.onError) && Is.func(candidate.onClose) && Is.func(candidate.onPartialMessage);
-    }
-    MessageReader.is = is;
-})(MessageReader = exports.MessageReader || (exports.MessageReader = {}));
-class AbstractMessageReader {
-    constructor() {
-        this.errorEmitter = new events_1.Emitter();
-        this.closeEmitter = new events_1.Emitter();
-        this.partialMessageEmitter = new events_1.Emitter();
-    }
-    dispose() {
-        this.errorEmitter.dispose();
-        this.closeEmitter.dispose();
-    }
-    get onError() {
-        return this.errorEmitter.event;
-    }
-    fireError(error) {
-        this.errorEmitter.fire(this.asError(error));
-    }
-    get onClose() {
-        return this.closeEmitter.event;
-    }
-    fireClose() {
-        this.closeEmitter.fire(undefined);
-    }
-    get onPartialMessage() {
-        return this.partialMessageEmitter.event;
-    }
-    firePartialMessage(info) {
-        this.partialMessageEmitter.fire(info);
-    }
-    asError(error) {
-        if (error instanceof Error) {
-            return error;
-        }
-        else {
-            return new Error(`Reader received error. Reason: ${Is.string(error.message) ? error.message : 'unknown'}`);
-        }
-    }
-}
-exports.AbstractMessageReader = AbstractMessageReader;
-var ResolvedMessageReaderOptions;
-(function (ResolvedMessageReaderOptions) {
-    function fromOptions(options) {
-        let charset;
-        let result;
-        let contentDecoder;
-        const contentDecoders = new Map();
-        let contentTypeDecoder;
-        const contentTypeDecoders = new Map();
-        if (options === undefined || typeof options === 'string') {
-            charset = options ?? 'utf-8';
-        }
-        else {
-            charset = options.charset ?? 'utf-8';
-            if (options.contentDecoder !== undefined) {
-                contentDecoder = options.contentDecoder;
-                contentDecoders.set(contentDecoder.name, contentDecoder);
-            }
-            if (options.contentDecoders !== undefined) {
-                for (const decoder of options.contentDecoders) {
-                    contentDecoders.set(decoder.name, decoder);
-                }
-            }
-            if (options.contentTypeDecoder !== undefined) {
-                contentTypeDecoder = options.contentTypeDecoder;
-                contentTypeDecoders.set(contentTypeDecoder.name, contentTypeDecoder);
-            }
-            if (options.contentTypeDecoders !== undefined) {
-                for (const decoder of options.contentTypeDecoders) {
-                    contentTypeDecoders.set(decoder.name, decoder);
-                }
-            }
-        }
-        if (contentTypeDecoder === undefined) {
-            contentTypeDecoder = (0, ral_1.default)().applicationJson.decoder;
-            contentTypeDecoders.set(contentTypeDecoder.name, contentTypeDecoder);
-        }
-        return { charset, contentDecoder, contentDecoders, contentTypeDecoder, contentTypeDecoders };
-    }
-    ResolvedMessageReaderOptions.fromOptions = fromOptions;
-})(ResolvedMessageReaderOptions || (ResolvedMessageReaderOptions = {}));
-class ReadableStreamMessageReader extends AbstractMessageReader {
-    constructor(readable, options) {
-        super();
-        this.readable = readable;
-        this.options = ResolvedMessageReaderOptions.fromOptions(options);
-        this.buffer = (0, ral_1.default)().messageBuffer.create(this.options.charset);
-        this._partialMessageTimeout = 10000;
-        this.nextMessageLength = -1;
-        this.messageToken = 0;
-    }
-    set partialMessageTimeout(timeout) {
-        this._partialMessageTimeout = timeout;
-    }
-    get partialMessageTimeout() {
-        return this._partialMessageTimeout;
-    }
-    listen(callback) {
-        this.nextMessageLength = -1;
-        this.messageToken = 0;
-        this.partialMessageTimer = undefined;
-        this.callback = callback;
-        const result = this.readable.onData((data) => {
-            this.onData(data);
-        });
-        this.readable.onError((error) => this.fireError(error));
-        this.readable.onClose(() => this.fireClose());
-        return result;
-    }
-    onData(data) {
-        this.buffer.append(data);
-        while (true) {
-            if (this.nextMessageLength === -1) {
-                const headers = this.buffer.tryReadHeaders();
-                if (!headers) {
-                    return;
-                }
-                const contentLength = headers.get('Content-Length');
-                if (!contentLength) {
-                    throw new Error('Header must provide a Content-Length property.');
-                }
-                const length = parseInt(contentLength);
-                if (isNaN(length)) {
-                    throw new Error('Content-Length value must be a number.');
-                }
-                this.nextMessageLength = length;
-            }
-            const body = this.buffer.tryReadBody(this.nextMessageLength);
-            if (body === undefined) {
-                /** We haven't received the full message yet. */
-                this.setPartialMessageTimer();
-                return;
-            }
-            this.clearPartialMessageTimer();
-            this.nextMessageLength = -1;
-            let p;
-            if (this.options.contentDecoder !== undefined) {
-                p = this.options.contentDecoder.decode(body);
-            }
-            else {
-                p = Promise.resolve(body);
-            }
-            p.then((value) => {
-                this.options.contentTypeDecoder.decode(value, this.options).then((msg) => {
-                    this.callback(msg);
-                }, (error) => {
-                    this.fireError(error);
-                });
-            }, (error) => {
-                this.fireError(error);
-            });
-        }
-    }
-    clearPartialMessageTimer() {
-        if (this.partialMessageTimer) {
-            this.partialMessageTimer.dispose();
-            this.partialMessageTimer = undefined;
-        }
-    }
-    setPartialMessageTimer() {
-        this.clearPartialMessageTimer();
-        if (this._partialMessageTimeout <= 0) {
-            return;
-        }
-        this.partialMessageTimer = (0, ral_1.default)().timer.setTimeout((token, timeout) => {
-            this.partialMessageTimer = undefined;
-            if (token === this.messageToken) {
-                this.firePartialMessage({ messageToken: token, waitingTime: timeout });
-                this.setPartialMessageTimer();
-            }
-        }, this._partialMessageTimeout, this.messageToken, this._partialMessageTimeout);
-    }
-}
-exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
-//# sourceMappingURL=messageReader.js.map
-
-/***/ }),
-
-/***/ 6214:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
-const ral_1 = __webpack_require__(5406);
-const Is = __webpack_require__(1278);
-const semaphore_1 = __webpack_require__(4197);
-const events_1 = __webpack_require__(7257);
-const ContentLength = 'Content-Length: ';
-const CRLF = '\r\n';
-var MessageWriter;
-(function (MessageWriter) {
-    function is(value) {
-        let candidate = value;
-        return candidate && Is.func(candidate.dispose) && Is.func(candidate.onClose) &&
-            Is.func(candidate.onError) && Is.func(candidate.write);
-    }
-    MessageWriter.is = is;
-})(MessageWriter = exports.MessageWriter || (exports.MessageWriter = {}));
-class AbstractMessageWriter {
-    constructor() {
-        this.errorEmitter = new events_1.Emitter();
-        this.closeEmitter = new events_1.Emitter();
-    }
-    dispose() {
-        this.errorEmitter.dispose();
-        this.closeEmitter.dispose();
-    }
-    get onError() {
-        return this.errorEmitter.event;
-    }
-    fireError(error, message, count) {
-        this.errorEmitter.fire([this.asError(error), message, count]);
-    }
-    get onClose() {
-        return this.closeEmitter.event;
-    }
-    fireClose() {
-        this.closeEmitter.fire(undefined);
-    }
-    asError(error) {
-        if (error instanceof Error) {
-            return error;
-        }
-        else {
-            return new Error(`Writer received error. Reason: ${Is.string(error.message) ? error.message : 'unknown'}`);
-        }
-    }
-}
-exports.AbstractMessageWriter = AbstractMessageWriter;
-var ResolvedMessageWriterOptions;
-(function (ResolvedMessageWriterOptions) {
-    function fromOptions(options) {
-        if (options === undefined || typeof options === 'string') {
-            return { charset: options ?? 'utf-8', contentTypeEncoder: (0, ral_1.default)().applicationJson.encoder };
-        }
-        else {
-            return { charset: options.charset ?? 'utf-8', contentEncoder: options.contentEncoder, contentTypeEncoder: options.contentTypeEncoder ?? (0, ral_1.default)().applicationJson.encoder };
-        }
-    }
-    ResolvedMessageWriterOptions.fromOptions = fromOptions;
-})(ResolvedMessageWriterOptions || (ResolvedMessageWriterOptions = {}));
-class WriteableStreamMessageWriter extends AbstractMessageWriter {
-    constructor(writable, options) {
-        super();
-        this.writable = writable;
-        this.options = ResolvedMessageWriterOptions.fromOptions(options);
-        this.errorCount = 0;
-        this.writeSemaphore = new semaphore_1.Semaphore(1);
-        this.writable.onError((error) => this.fireError(error));
-        this.writable.onClose(() => this.fireClose());
-    }
-    async write(msg) {
-        return this.writeSemaphore.lock(async () => {
-            const payload = this.options.contentTypeEncoder.encode(msg, this.options).then((buffer) => {
-                if (this.options.contentEncoder !== undefined) {
-                    return this.options.contentEncoder.encode(buffer);
-                }
-                else {
-                    return buffer;
-                }
-            });
-            return payload.then((buffer) => {
-                const headers = [];
-                headers.push(ContentLength, buffer.byteLength.toString(), CRLF);
-                headers.push(CRLF);
-                return this.doWrite(msg, headers, buffer);
-            }, (error) => {
-                this.fireError(error);
-                throw error;
-            });
-        });
-    }
-    async doWrite(msg, headers, data) {
-        try {
-            await this.writable.write(headers.join(''), 'ascii');
-            return this.writable.write(data);
-        }
-        catch (error) {
-            this.handleError(error, msg);
-            return Promise.reject(error);
-        }
-    }
-    handleError(error, msg) {
-        this.errorCount++;
-        this.fireError(error, msg, this.errorCount);
-    }
-    end() {
-        this.writable.end();
-    }
-}
-exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
-//# sourceMappingURL=messageWriter.js.map
-
-/***/ }),
-
-/***/ 5613:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
-const is = __webpack_require__(1278);
-/**
- * Predefined error codes.
- */
-var ErrorCodes;
-(function (ErrorCodes) {
-    // Defined by JSON RPC
-    ErrorCodes.ParseError = -32700;
-    ErrorCodes.InvalidRequest = -32600;
-    ErrorCodes.MethodNotFound = -32601;
-    ErrorCodes.InvalidParams = -32602;
-    ErrorCodes.InternalError = -32603;
-    /**
-     * This is the start range of JSON RPC reserved error codes.
-     * It doesn't denote a real error code. No application error codes should
-     * be defined between the start and end range. For backwards
-     * compatibility the `ServerNotInitialized` and the `UnknownErrorCode`
-     * are left in the range.
-     *
-     * @since 3.16.0
-    */
-    ErrorCodes.jsonrpcReservedErrorRangeStart = -32099;
-    /** @deprecated use  jsonrpcReservedErrorRangeStart */
-    ErrorCodes.serverErrorStart = -32099;
-    /**
-     * An error occurred when write a message to the transport layer.
-     */
-    ErrorCodes.MessageWriteError = -32099;
-    /**
-     * An error occurred when reading a message from the transport layer.
-     */
-    ErrorCodes.MessageReadError = -32098;
-    /**
-     * The connection got disposed or lost and all pending responses got
-     * rejected.
-     */
-    ErrorCodes.PendingResponseRejected = -32097;
-    /**
-     * The connection is inactive and a use of it failed.
-     */
-    ErrorCodes.ConnectionInactive = -32096;
-    /**
-     * Error code indicating that a server received a notification or
-     * request before the server has received the `initialize` request.
-     */
-    ErrorCodes.ServerNotInitialized = -32002;
-    ErrorCodes.UnknownErrorCode = -32001;
-    /**
-     * This is the end range of JSON RPC reserved error codes.
-     * It doesn't denote a real error code.
-     *
-     * @since 3.16.0
-    */
-    ErrorCodes.jsonrpcReservedErrorRangeEnd = -32000;
-    /** @deprecated use  jsonrpcReservedErrorRangeEnd */
-    ErrorCodes.serverErrorEnd = -32000;
-})(ErrorCodes = exports.ErrorCodes || (exports.ErrorCodes = {}));
-/**
- * An error object return in a response in case a request
- * has failed.
- */
-class ResponseError extends Error {
-    constructor(code, message, data) {
-        super(message);
-        this.code = is.number(code) ? code : ErrorCodes.UnknownErrorCode;
-        this.data = data;
-        Object.setPrototypeOf(this, ResponseError.prototype);
-    }
-    toJson() {
-        const result = {
-            code: this.code,
-            message: this.message
-        };
-        if (this.data !== undefined) {
-            result.data = this.data;
-        }
-        return result;
-    }
-}
-exports.ResponseError = ResponseError;
-class ParameterStructures {
-    constructor(kind) {
-        this.kind = kind;
-    }
-    static is(value) {
-        return value === ParameterStructures.auto || value === ParameterStructures.byName || value === ParameterStructures.byPosition;
-    }
-    toString() {
-        return this.kind;
-    }
-}
-exports.ParameterStructures = ParameterStructures;
-/**
- * The parameter structure is automatically inferred on the number of parameters
- * and the parameter type in case of a single param.
- */
-ParameterStructures.auto = new ParameterStructures('auto');
-/**
- * Forces `byPosition` parameter structure. This is useful if you have a single
- * parameter which has a literal type.
- */
-ParameterStructures.byPosition = new ParameterStructures('byPosition');
-/**
- * Forces `byName` parameter structure. This is only useful when having a single
- * parameter. The library will report errors if used with a different number of
- * parameters.
- */
-ParameterStructures.byName = new ParameterStructures('byName');
-/**
- * An abstract implementation of a MessageType.
- */
-class AbstractMessageSignature {
-    constructor(method, numberOfParams) {
-        this.method = method;
-        this.numberOfParams = numberOfParams;
-    }
-    get parameterStructures() {
-        return ParameterStructures.auto;
-    }
-}
-exports.AbstractMessageSignature = AbstractMessageSignature;
-/**
- * Classes to type request response pairs
- */
-class RequestType0 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 0);
-    }
-}
-exports.RequestType0 = RequestType0;
-class RequestType extends AbstractMessageSignature {
-    constructor(method, _parameterStructures = ParameterStructures.auto) {
-        super(method, 1);
-        this._parameterStructures = _parameterStructures;
-    }
-    get parameterStructures() {
-        return this._parameterStructures;
-    }
-}
-exports.RequestType = RequestType;
-class RequestType1 extends AbstractMessageSignature {
-    constructor(method, _parameterStructures = ParameterStructures.auto) {
-        super(method, 1);
-        this._parameterStructures = _parameterStructures;
-    }
-    get parameterStructures() {
-        return this._parameterStructures;
-    }
-}
-exports.RequestType1 = RequestType1;
-class RequestType2 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 2);
-    }
-}
-exports.RequestType2 = RequestType2;
-class RequestType3 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 3);
-    }
-}
-exports.RequestType3 = RequestType3;
-class RequestType4 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 4);
-    }
-}
-exports.RequestType4 = RequestType4;
-class RequestType5 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 5);
-    }
-}
-exports.RequestType5 = RequestType5;
-class RequestType6 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 6);
-    }
-}
-exports.RequestType6 = RequestType6;
-class RequestType7 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 7);
-    }
-}
-exports.RequestType7 = RequestType7;
-class RequestType8 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 8);
-    }
-}
-exports.RequestType8 = RequestType8;
-class RequestType9 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 9);
-    }
-}
-exports.RequestType9 = RequestType9;
-class NotificationType extends AbstractMessageSignature {
-    constructor(method, _parameterStructures = ParameterStructures.auto) {
-        super(method, 1);
-        this._parameterStructures = _parameterStructures;
-    }
-    get parameterStructures() {
-        return this._parameterStructures;
-    }
-}
-exports.NotificationType = NotificationType;
-class NotificationType0 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 0);
-    }
-}
-exports.NotificationType0 = NotificationType0;
-class NotificationType1 extends AbstractMessageSignature {
-    constructor(method, _parameterStructures = ParameterStructures.auto) {
-        super(method, 1);
-        this._parameterStructures = _parameterStructures;
-    }
-    get parameterStructures() {
-        return this._parameterStructures;
-    }
-}
-exports.NotificationType1 = NotificationType1;
-class NotificationType2 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 2);
-    }
-}
-exports.NotificationType2 = NotificationType2;
-class NotificationType3 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 3);
-    }
-}
-exports.NotificationType3 = NotificationType3;
-class NotificationType4 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 4);
-    }
-}
-exports.NotificationType4 = NotificationType4;
-class NotificationType5 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 5);
-    }
-}
-exports.NotificationType5 = NotificationType5;
-class NotificationType6 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 6);
-    }
-}
-exports.NotificationType6 = NotificationType6;
-class NotificationType7 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 7);
-    }
-}
-exports.NotificationType7 = NotificationType7;
-class NotificationType8 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 8);
-    }
-}
-exports.NotificationType8 = NotificationType8;
-class NotificationType9 extends AbstractMessageSignature {
-    constructor(method) {
-        super(method, 9);
-    }
-}
-exports.NotificationType9 = NotificationType9;
-var Message;
-(function (Message) {
-    /**
-     * Tests if the given message is a request message
-     */
-    function isRequest(message) {
-        const candidate = message;
-        return candidate && is.string(candidate.method) && (is.string(candidate.id) || is.number(candidate.id));
-    }
-    Message.isRequest = isRequest;
-    /**
-     * Tests if the given message is a notification message
-     */
-    function isNotification(message) {
-        const candidate = message;
-        return candidate && is.string(candidate.method) && message.id === void 0;
-    }
-    Message.isNotification = isNotification;
-    /**
-     * Tests if the given message is a response message
-     */
-    function isResponse(message) {
-        const candidate = message;
-        return candidate && (candidate.result !== void 0 || !!candidate.error) && (is.string(candidate.id) || is.number(candidate.id) || candidate.id === null);
-    }
-    Message.isResponse = isResponse;
-})(Message = exports.Message || (exports.Message = {}));
-//# sourceMappingURL=messages.js.map
-
-/***/ }),
-
-/***/ 5406:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-let _ral;
-function RAL() {
-    if (_ral === undefined) {
-        throw new Error(`No runtime abstraction layer installed`);
-    }
-    return _ral;
-}
-(function (RAL) {
-    function install(ral) {
-        if (ral === undefined) {
-            throw new Error(`No runtime abstraction layer provided`);
-        }
-        _ral = ral;
-    }
-    RAL.install = install;
-})(RAL || (RAL = {}));
-exports["default"] = RAL;
-//# sourceMappingURL=ral.js.map
-
-/***/ }),
-
-/***/ 4197:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Semaphore = void 0;
-const ral_1 = __webpack_require__(5406);
-class Semaphore {
-    constructor(capacity = 1) {
-        if (capacity <= 0) {
-            throw new Error('Capacity must be greater than 0');
-        }
-        this._capacity = capacity;
-        this._active = 0;
-        this._waiting = [];
-    }
-    lock(thunk) {
-        return new Promise((resolve, reject) => {
-            this._waiting.push({ thunk, resolve, reject });
-            this.runNext();
-        });
-    }
-    get active() {
-        return this._active;
-    }
-    runNext() {
-        if (this._waiting.length === 0 || this._active === this._capacity) {
-            return;
-        }
-        (0, ral_1.default)().timer.setImmediate(() => this.doRunNext());
-    }
-    doRunNext() {
-        if (this._waiting.length === 0 || this._active === this._capacity) {
-            return;
-        }
-        const next = this._waiting.shift();
-        this._active++;
-        if (this._active > this._capacity) {
-            throw new Error(`To many thunks active`);
-        }
-        try {
-            const result = next.thunk();
-            if (result instanceof Promise) {
-                result.then((value) => {
-                    this._active--;
-                    next.resolve(value);
-                    this.runNext();
-                }, (err) => {
-                    this._active--;
-                    next.reject(err);
-                    this.runNext();
-                });
-            }
-            else {
-                this._active--;
-                next.resolve(result);
-                this.runNext();
-            }
-        }
-        catch (err) {
-            this._active--;
-            next.reject(err);
-            this.runNext();
-        }
-    }
-}
-exports.Semaphore = Semaphore;
-//# sourceMappingURL=semaphore.js.map
-
-/***/ }),
-
 /***/ 2094:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -21797,68 +19227,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var main = __webpack_require__(294);
-;// CONCATENATED MODULE: ./src/utils.ts
-function mergeObjects(obj1, obj2) {
-    if (!obj1) return obj2;
-    if (!obj2) return obj1;
-    const mergedObjects = {
-        ...obj2,
-        ...obj1
-    }; // Give priority to obj1 values by spreading obj2 first, then obj1
-    for (const key of Object.keys(mergedObjects)){
-        if (obj1[key] && obj2[key]) {
-            if (Array.isArray(obj1[key])) {
-                mergedObjects[key] = obj1[key].concat(obj2[key]);
-            } else if (Array.isArray(obj2[key])) {
-                mergedObjects[key] = obj2[key].concat(obj1[key]);
-            } else if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                mergedObjects[key] = mergeObjects(obj1[key], obj2[key]);
-            }
-        }
-    }
-    return mergedObjects;
-}
-function notEmpty(value) {
-    return value !== null && value !== undefined;
-}
-//taken with small changes from ace-code
-function mergeRanges(ranges) {
-    var list = ranges;
-    list = list.sort(function(a, b) {
-        return comparePoints(a.start, b.start);
-    });
-    var next = list[0], range;
-    for(var i = 1; i < list.length; i++){
-        range = next;
-        next = list[i];
-        var cmp = comparePoints(range.end, next.start);
-        if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
-        if (comparePoints(range.end, next.end) < 0) {
-            range.end.row = next.end.row;
-            range.end.column = next.end.column;
-        }
-        list.splice(i, 1);
-        next = range;
-        i--;
-    }
-    return list;
-}
-function comparePoints(p1, p2) {
-    return p1.row - p2.row || p1.column - p2.column;
-}
-function utils_checkValueAgainstRegexpArray(value, regexpArray) {
-    if (!regexpArray) {
-        return false;
-    }
-    for(let i = 0; i < regexpArray.length; i++){
-        if (regexpArray[i].test(value)) {
-            return true;
-        }
-    }
-    return false;
-}
-
+// EXTERNAL MODULE: ./src/utils.ts
+var utils = __webpack_require__(6297);
 ;// CONCATENATED MODULE: ./src/ace/range-singleton.ts
 function _define_property(obj, key, value) {
     if (key in obj) {
@@ -21945,186 +19315,13 @@ var common_converters_CommonConverter;
     CommonConverter.convertKind = convertKind;
     function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
         if (!errorMessagesToIgnore) return diagnostics;
-        return diagnostics.filter((el)=>!utils_checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));
+        return diagnostics.filter((el)=>!(0,utils/* checkValueAgainstRegexpArray */.$p)(el[fieldName], errorMessagesToIgnore));
     }
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
-;// CONCATENATED MODULE: ./src/message-types.ts
-function message_types_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-class BaseMessage {
-    constructor(sessionId){
-        message_types_define_property(this, "sessionId", void 0);
-        this.sessionId = sessionId;
-    }
-}
-class InitMessage extends BaseMessage {
-    constructor(sessionId, value, version, mode, options){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.init);
-        message_types_define_property(this, "mode", void 0);
-        message_types_define_property(this, "options", void 0);
-        message_types_define_property(this, "value", void 0);
-        message_types_define_property(this, "version", void 0);
-        this.version = version;
-        this.options = options;
-        this.mode = mode;
-        this.value = value;
-    }
-}
-class FormatMessage extends BaseMessage {
-    constructor(sessionId, value, format){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.format);
-        message_types_define_property(this, "value", void 0);
-        message_types_define_property(this, "format", void 0);
-        this.value = value;
-        this.format = format;
-    }
-}
-class CompleteMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.complete);
-        message_types_define_property(this, "value", void 0);
-        this.value = value;
-    }
-}
-class ResolveCompletionMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.resolveCompletion);
-        message_types_define_property(this, "value", void 0);
-        this.value = value;
-    }
-}
-class HoverMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.hover);
-        message_types_define_property(this, "value", void 0);
-        this.value = value;
-    }
-}
-class ValidateMessage extends BaseMessage {
-    constructor(sessionId){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.validate);
-    }
-}
-class ChangeMessage extends BaseMessage {
-    constructor(sessionId, value, version){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.change);
-        message_types_define_property(this, "value", void 0);
-        message_types_define_property(this, "version", void 0);
-        this.value = value;
-        this.version = version;
-    }
-}
-class DeltasMessage extends BaseMessage {
-    constructor(sessionId, value, version){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.applyDelta);
-        message_types_define_property(this, "value", void 0);
-        message_types_define_property(this, "version", void 0);
-        this.value = value;
-        this.version = version;
-    }
-}
-class ChangeModeMessage extends BaseMessage {
-    constructor(sessionId, value, mode){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.changeMode);
-        message_types_define_property(this, "mode", void 0);
-        message_types_define_property(this, "value", void 0);
-        this.value = value;
-        this.mode = mode;
-    }
-}
-class ChangeOptionsMessage extends BaseMessage {
-    constructor(sessionId, options, merge = false){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.changeOptions);
-        message_types_define_property(this, "options", void 0);
-        message_types_define_property(this, "merge", void 0);
-        this.options = options;
-        this.merge = merge;
-    }
-}
-class DisposeMessage extends BaseMessage {
-    constructor(sessionId){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.dispose);
-    }
-}
-class GlobalOptionsMessage {
-    constructor(serviceName, options, merge){
-        message_types_define_property(this, "type", MessageType.globalOptions);
-        message_types_define_property(this, "serviceName", void 0);
-        message_types_define_property(this, "options", void 0);
-        message_types_define_property(this, "merge", void 0);
-        this.serviceName = serviceName;
-        this.options = options;
-        this.merge = merge;
-    }
-}
-class ConfigureFeaturesMessage {
-    constructor(serviceName, options){
-        message_types_define_property(this, "type", MessageType.configureFeatures);
-        message_types_define_property(this, "serviceName", void 0);
-        message_types_define_property(this, "options", void 0);
-        this.serviceName = serviceName;
-        this.options = options;
-    }
-}
-class SignatureHelpMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.signatureHelp);
-        message_types_define_property(this, "value", void 0);
-        this.value = value;
-    }
-}
-class DocumentHighlightMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
-        message_types_define_property(this, "type", MessageType.documentHighlight);
-        message_types_define_property(this, "value", void 0);
-        this.value = value;
-    }
-}
-var MessageType;
-(function(MessageType) {
-    MessageType[MessageType["init"] = 0] = "init";
-    MessageType[MessageType["format"] = 1] = "format";
-    MessageType[MessageType["complete"] = 2] = "complete";
-    MessageType[MessageType["resolveCompletion"] = 3] = "resolveCompletion";
-    MessageType[MessageType["change"] = 4] = "change";
-    MessageType[MessageType["hover"] = 5] = "hover";
-    MessageType[MessageType["validate"] = 6] = "validate";
-    MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
-    MessageType[MessageType["changeMode"] = 8] = "changeMode";
-    MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
-    MessageType[MessageType["dispose"] = 10] = "dispose";
-    MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
-    MessageType[MessageType["configureFeatures"] = 12] = "configureFeatures";
-    MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
-    MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
-})(MessageType || (MessageType = {}));
-
+// EXTERNAL MODULE: ./src/message-types.ts
+var message_types = __webpack_require__(6002);
 // EXTERNAL MODULE: ../../node_modules/events/events.js
 var events = __webpack_require__(2699);
 var events_default = /*#__PURE__*/__webpack_require__.n(events);
@@ -22146,54 +19343,54 @@ function message_controller_define_property(obj, key, value) {
 
 class MessageController extends (events_default()) {
     init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
+        this.on(message_types/* MessageType */.Cs.validate.toString() + "-" + sessionId, validationCallback);
+        this.postMessage(new message_types/* InitMessage */.k7(sessionId, document.getValue(), document["version"], mode, options), initCallback);
     }
     doValidation(sessionId, callback) {
-        this.postMessage(new ValidateMessage(sessionId), callback);
+        this.postMessage(new message_types/* ValidateMessage */.Cm(sessionId), callback);
     }
     doComplete(sessionId, position, callback) {
-        this.postMessage(new CompleteMessage(sessionId, position), callback);
+        this.postMessage(new message_types/* CompleteMessage */.oB(sessionId, position), callback);
     }
     doResolve(sessionId, completion, callback) {
-        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
+        this.postMessage(new message_types/* ResolveCompletionMessage */.mt(sessionId, completion), callback);
     }
     format(sessionId, range, format, callback) {
-        this.postMessage(new FormatMessage(sessionId, range, format), callback);
+        this.postMessage(new message_types/* FormatMessage */.H4(sessionId, range, format), callback);
     }
     doHover(sessionId, position, callback) {
-        this.postMessage(new HoverMessage(sessionId, position), callback);
+        this.postMessage(new message_types/* HoverMessage */.Jm(sessionId, position), callback);
     }
     change(sessionId, deltas, document, callback) {
         let message;
         if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+            message = new message_types/* ChangeMessage */.ik(sessionId, document.getValue(), document["version"]);
         } else {
-            message = new DeltasMessage(sessionId, deltas, document["version"]);
+            message = new message_types/* DeltasMessage */.sE(sessionId, deltas, document["version"]);
         }
         this.postMessage(message, callback);
     }
     changeMode(sessionId, value, mode, callback) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
+        this.postMessage(new message_types/* ChangeModeMessage */.s7(sessionId, value, mode), callback);
     }
     changeOptions(sessionId, options, callback, merge = false) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
+        this.postMessage(new message_types/* ChangeOptionsMessage */.GC(sessionId, options, merge), callback);
     }
     dispose(sessionId, callback) {
-        this.postMessage(new DisposeMessage(sessionId), callback);
+        this.postMessage(new message_types/* DisposeMessage */.L2(sessionId), callback);
     }
     setGlobalOptions(serviceName, options, merge = false) {
         // @ts-ignore
-        this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
+        this.$worker.postMessage(new message_types/* GlobalOptionsMessage */.g6(serviceName, options, merge));
     }
     provideSignatureHelp(sessionId, position, callback) {
-        this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
+        this.postMessage(new message_types/* SignatureHelpMessage */.Vr(sessionId, position), callback);
     }
     findDocumentHighlights(sessionId, position, callback) {
-        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
+        this.postMessage(new message_types/* DocumentHighlightMessage */.pi(sessionId, position), callback);
     }
     configureFeatures(serviceName, features) {
-        this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
+        this.$worker.postMessage(new message_types/* ConfigureFeaturesMessage */.bX(serviceName, features));
     }
     postMessage(message, callback) {
         if (callback) {
@@ -22361,7 +19558,7 @@ function toCompletionItem(completion) {
 function getTextEditRange(textEdit) {
     if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
         textEdit = textEdit;
-        let mergedRanges = mergeRanges([
+        let mergedRanges = (0,utils/* mergeRanges */.lr)([
             toRange(textEdit.insert),
             toRange(textEdit.replace)
         ]);
@@ -22393,7 +19590,7 @@ function toTooltip(hover) {
             });
             return contents.join("\n\n");
         }
-    }).filter(notEmpty);
+    }).filter(utils/* notEmpty */.Dw);
     if (content.length === 0) return;
     //TODO: it could be merged within all ranges in future
     let lspRange = (_hover_find = hover.find((el)=>{
@@ -22436,7 +19633,7 @@ function fromSignatureHelp(signatureHelp) {
         } else {
             return contents;
         }
-    }).filter(notEmpty);
+    }).filter(utils/* notEmpty */.Dw);
     if (content.length === 0) return;
     return {
         content: {
@@ -23666,6 +20863,8 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "editor", void 0);
         language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
+            // @ts-ignore
+            this.session.on("changeMode", this.$changeMode);
             this.setServerCapabilities(capabilities);
             if (this.$modeIsChanged) this.$changeMode();
             if (this.$deltaQueue) this.$sendDeltaQueue();
@@ -23776,262 +20975,14 @@ class SessionLanguageProvider {
         this.initFileName();
         session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
-        // @ts-ignore
-        session.on("changeMode", this.$changeMode);
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 }
 
-// EXTERNAL MODULE: ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/browser/main.js
-var browser_main = __webpack_require__(2032);
-// EXTERNAL MODULE: ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messages.js
-var messages = __webpack_require__(5613);
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/disposable.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-class DisposableCollection {
-    disposables = [];
-    dispose() {
-        while (this.disposables.length !== 0) {
-            this.disposables.pop().dispose();
-        }
-    }
-    push(disposable) {
-        const disposables = this.disposables;
-        disposables.push(disposable);
-        return {
-            dispose() {
-                const index = disposables.indexOf(disposable);
-                if (index !== -1) {
-                    disposables.splice(index, 1);
-                }
-            }
-        };
-    }
-}
-
-//# sourceMappingURL=disposable.js.map
-// EXTERNAL MODULE: ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messageReader.js
-var messageReader = __webpack_require__(207);
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/socket/reader.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-class WebSocketMessageReader extends messageReader.AbstractMessageReader {
-    socket;
-    state = 'initial';
-    callback;
-    events = [];
-    constructor(socket) {
-        super();
-        this.socket = socket;
-        this.socket.onMessage(message => this.readMessage(message));
-        this.socket.onError(error => this.fireError(error));
-        this.socket.onClose((code, reason) => {
-            if (code !== 1000) {
-                const error = {
-                    name: '' + code,
-                    message: `Error during socket reconnect: code = ${code}, reason = ${reason}`
-                };
-                this.fireError(error);
-            }
-            this.fireClose();
-        });
-    }
-    listen(callback) {
-        if (this.state === 'initial') {
-            this.state = 'listening';
-            this.callback = callback;
-            while (this.events.length !== 0) {
-                const event = this.events.pop();
-                if (event.message) {
-                    this.readMessage(event.message);
-                }
-                else if (event.error) {
-                    this.fireError(event.error);
-                }
-                else {
-                    this.fireClose();
-                }
-            }
-        }
-        return {
-            dispose: () => {
-                if (this.callback === callback) {
-                    this.callback = undefined;
-                }
-            }
-        };
-    }
-    readMessage(message) {
-        if (this.state === 'initial') {
-            this.events.splice(0, 0, { message });
-        }
-        else if (this.state === 'listening') {
-            try {
-                const data = JSON.parse(message);
-                this.callback(data);
-            }
-            catch (err) {
-                const error = {
-                    name: '' + 400,
-                    message: `Error during message parsing, reason = ${typeof err === 'object' ? err.message : 'unknown'}`
-                };
-                this.fireError(error);
-            }
-        }
-    }
-    fireError(error) {
-        if (this.state === 'initial') {
-            this.events.splice(0, 0, { error });
-        }
-        else if (this.state === 'listening') {
-            super.fireError(error);
-        }
-    }
-    fireClose() {
-        if (this.state === 'initial') {
-            this.events.splice(0, 0, {});
-        }
-        else if (this.state === 'listening') {
-            super.fireClose();
-        }
-        this.state = 'closed';
-    }
-}
-//# sourceMappingURL=reader.js.map
-// EXTERNAL MODULE: ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
-var messageWriter = __webpack_require__(6214);
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/socket/writer.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-class WebSocketMessageWriter extends messageWriter.AbstractMessageWriter {
-    socket;
-    errorCount = 0;
-    constructor(socket) {
-        super();
-        this.socket = socket;
-    }
-    end() {
-    }
-    async write(msg) {
-        try {
-            const content = JSON.stringify(msg);
-            this.socket.send(content);
-        }
-        catch (e) {
-            this.errorCount++;
-            this.fireError(e, msg, this.errorCount);
-        }
-    }
-}
-//# sourceMappingURL=writer.js.map
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/socket/connection.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-
-function createWebSocketConnection(socket, logger) {
-    const messageReader = new WebSocketMessageReader(socket);
-    const messageWriter = new WebSocketMessageWriter(socket);
-    const connection = (0,browser_main.createMessageConnection)(messageReader, messageWriter, logger);
-    connection.onClose(() => connection.dispose());
-    return connection;
-}
-//# sourceMappingURL=connection.js.map
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/socket/index.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-
-
-//# sourceMappingURL=index.js.map
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/logger.js
-/* provided dependency */ var console = __webpack_require__(3716);
-class ConsoleLogger {
-    error(message) {
-        console.error(message);
-    }
-    warn(message) {
-        console.warn(message);
-    }
-    info(message) {
-        console.info(message);
-    }
-    log(message) {
-        console.log(message);
-    }
-    debug(message) {
-        console.debug(message);
-    }
-}
-//# sourceMappingURL=logger.js.map
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/connection.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-function listen(options) {
-    const { webSocket, onConnection } = options;
-    const logger = options.logger || new ConsoleLogger();
-    webSocket.onopen = () => {
-        const socket = toSocket(webSocket);
-        const connection = createWebSocketConnection(socket, logger);
-        onConnection(connection);
-    };
-}
-function toSocket(webSocket) {
-    return {
-        send: content => webSocket.send(content),
-        onMessage: cb => {
-            webSocket.onmessage = event => cb(event.data);
-        },
-        onError: cb => {
-            webSocket.onerror = event => {
-                if ('message' in event) {
-                    cb(event.message);
-                }
-            };
-        },
-        onClose: cb => {
-            webSocket.onclose = event => cb(event.code, event.reason);
-        },
-        dispose: () => webSocket.close()
-    };
-}
-//# sourceMappingURL=connection.js.map
-;// CONCATENATED MODULE: ../../node_modules/vscode-ws-jsonrpc/lib/index.js
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-
-
-
-
-
-//# sourceMappingURL=index.js.map
-// EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/browser.js
-var browser = __webpack_require__(1789);
-;// CONCATENATED MODULE: ./src/message-controller-ws.ts
-function message_controller_ws_define_property(obj, key, value) {
+// EXTERNAL MODULE: ./src/services/service-manager.ts
+var service_manager = __webpack_require__(4827);
+;// CONCATENATED MODULE: ./src/misc/mock-worker.ts
+function mock_worker_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -24045,339 +20996,70 @@ function message_controller_ws_define_property(obj, key, value) {
     return obj;
 }
 
-
-
-class MessageControllerWS extends events.EventEmitter {
-    configureFeatures(serviceName, features) {
-        throw new Error('Method not implemented.');
+class MockWorker extends (events_default()) {
+    onerror(ev) {}
+    onmessage(ev) {}
+    onmessageerror(ev) {}
+    addEventListener(type, listener, options) {
+        this.addListener(type, listener);
     }
-    $connectSocket(initializationOptions) {
-        listen({
-            webSocket: this.socket,
-            logger: new ConsoleLogger(),
-            onConnection: (connection)=>{
-                this.$connect(connection, initializationOptions);
-            }
-        });
+    dispatchEvent(event) {
+        return false;
     }
-    $connectWorker(worker, initializationOptions) {
-        const connection = (0,browser.createProtocolConnection)(new browser.BrowserMessageReader(worker), new browser.BrowserMessageWriter(worker));
-        this.$connect(connection, initializationOptions);
-    }
-    $connect(connection, initializationOptions) {
-        connection.listen();
-        this.isConnected = true;
-        this.connection = connection;
-        this.sendInitialize(initializationOptions);
-        this.connection.onNotification('textDocument/publishDiagnostics', (result)=>{
-            this.emit("validate-" + result.uri.replace(/^file:\/\/\//, ""), result.diagnostics);
-        });
-        this.connection.onNotification('window/showMessage', (params)=>{
-            this.emit('logging', params);
-        });
-        this.connection.onRequest('window/showMessageRequest', (params)=>{
-            this.emit('logging', params);
-        });
-        this.connection.onError((e)=>{
-            this.emit('error', e);
-        });
-        this.connection.onClose(()=>{
-            this.isConnected = false;
-        });
-    }
-    init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this["on"]("validate-" + sessionId, validationCallback);
-        const textDocumentMessage = {
-            textDocument: {
-                uri: sessionId,
-                languageId: mode,
-                text: document.getValue(),
-                version: document["version"]
-            }
-        };
-        if (!this.isConnected) {
-            this.requestsQueue.push(()=>this.initSession(textDocumentMessage, initCallback));
-        } else {
-            this.initSession(textDocumentMessage, initCallback);
-        }
-    }
-    initSession(textDocumentMessage, initCallback) {
-        this.connection.sendNotification('textDocument/didOpen', textDocumentMessage);
-        initCallback();
-    }
-    close() {
-        if (this.connection) {
-            this.connection.dispose();
-        }
-        if (this.socket) this.socket.close();
-    }
-    sendInitialize(initializationOptions) {
-        if (!this.isConnected) {
-            return;
-        }
-        const message = {
-            capabilities: this.clientCapabilities,
-            initializationOptions: initializationOptions,
-            processId: null,
-            rootUri: "",
-            workspaceFolders: null
-        };
-        this.connection.sendRequest("initialize", message).then((params)=>{
-            this.isInitialized = true;
-            this.serverCapabilities = params.capabilities;
-            this.connection.sendNotification('initialized');
-            this.connection.sendNotification('workspace/didChangeConfiguration', {
-                settings: {}
-            });
-            this.requestsQueue.forEach((requestCallback)=>requestCallback());
-            this.requestsQueue = [];
-        });
-    }
-    change(sessionId, deltas, document, callback) {
-        if (!this.isConnected) {
-            return;
-        }
-        const textDocumentChange = {
-            textDocument: {
-                uri: sessionId,
-                version: document["version"]
-            },
-            contentChanges: deltas
-        };
-        this.connection.sendNotification('textDocument/didChange', textDocumentChange).then(()=>callback && callback());
-    }
-    doHover(sessionId, position, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.hoverProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId
-            },
-            position: position
-        };
-        let hoverCallback = (result)=>{
-            callback && callback([
-                result
-            ]);
-        };
-        this.postMessage('textDocument/hover', sessionId, options, hoverCallback);
-    }
-    doComplete(sessionId, position, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && this.serverCapabilities.completionProvider)) {
-            return;
-        }
-        let options = {
-            textDocument: {
-                uri: sessionId
-            },
-            position: position
-        };
-        let completionCallback = (result)=>{
-            let completionService = {
-                completions: result,
-                service: "lsp"
-            };
-            callback && callback([
-                completionService
-            ]);
-        };
-        this.postMessage('textDocument/completion', sessionId, options, completionCallback);
-    }
-    doResolve(sessionId, completion, callback) {
-        var _this_serverCapabilities_completionProvider, _this_serverCapabilities;
-        if (!this.isInitialized) return;
-        if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : (_this_serverCapabilities_completionProvider = _this_serverCapabilities.completionProvider) === null || _this_serverCapabilities_completionProvider === void 0 ? void 0 : _this_serverCapabilities_completionProvider.resolveProvider)) return;
-        completion["item"].data = {
-            ...completion["item"].data,
-            aceFileName: sessionId
-        } //TODO: temporary fix
-        ;
-        this.postMessage('completionItem/resolve', sessionId, completion["item"], (result)=>{
-            callback && callback(result);
-        });
-    }
-    changeMode(sessionId, value, mode, callback) {}
-    changeOptions(sessionId, options, callback) {}
-    dispose(sessionId, callback) {
-        this.connection.sendNotification('textDocument/didClose', {
-            textDocument: {
-                uri: sessionId
-            }
-        });
-    }
-    doValidation(sessionId, callback) {
-    //TODO: textDocument/diagnostic capability
-    }
-    format(sessionId, range, format, callback) {
-        if (!this.isInitialized) {
-            return;
-        }
-        if (!(this.serverCapabilities && (this.serverCapabilities.documentRangeFormattingProvider || this.serverCapabilities.documentFormattingProvider))) {
-            return;
-        }
-        if (!this.serverCapabilities.documentRangeFormattingProvider) {
-            let options = {
-                textDocument: {
-                    uri: sessionId
-                },
-                options: format
-            };
-            this.postMessage('textDocument/formatting', sessionId, options, (params)=>{
-                callback && callback(params);
+    postMessage(data, transfer) {
+        if (this.isProduction) {
+            this.$emitter.emit("message", {
+                data: data
             });
         } else {
-            let options = {
-                textDocument: {
-                    uri: sessionId
-                },
-                options: format,
-                range: range
-            };
-            this.postMessage('textDocument/rangeFormatting', sessionId, options, (params)=>{
-                callback && callback(params);
-            });
+            setTimeout(()=>{
+                this.$emitter.emit("message", {
+                    data: data
+                });
+            }, 0);
         }
     }
-    setGlobalOptions(serviceName, options, merge) {
-        if (!this.isConnected) {
-            this.requestsQueue.push(()=>this.setGlobalOptions(serviceName, options, merge));
-            return;
-        }
-        const configChanges = {
-            settings: options
-        };
-        this.connection.sendNotification('workspace/didChangeConfiguration', configChanges);
+    removeEventListener(type, listener, options) {
+        this.removeListener(type, listener);
     }
-    postMessage(name, sessionId, options, callback) {
-        let eventName = name + "-" + sessionId;
-        let callbackFunction = (data)=>{
-            this["off"](eventName, callbackFunction);
-            callback(data);
-        };
-        this["on"](eventName, callbackFunction);
-        this.connection.sendRequest(name, options).then((params)=>{
-            this.emit(eventName, params);
-        });
+    terminate() {}
+    setEmitter(emitter) {
+        this.$emitter = emitter;
     }
-    findDocumentHighlights(sessionId, position, callback) {
-        var _this_serverCapabilities;
-        if (!this.isInitialized) return;
-        if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.documentHighlightProvider)) return;
-        let options = {
-            textDocument: {
-                uri: sessionId
-            },
-            position: position
-        };
-        let documentHighlightCallback = (result)=>{
-            callback && callback(result);
-        };
-        this.postMessage('textDocument/documentHighlight', sessionId, options, documentHighlightCallback);
-    }
-    provideSignatureHelp(sessionId, position, callback) {
-        var _this_serverCapabilities;
-        if (!this.isInitialized) return;
-        if (!((_this_serverCapabilities = this.serverCapabilities) === null || _this_serverCapabilities === void 0 ? void 0 : _this_serverCapabilities.signatureHelpProvider)) return;
-        let options = {
-            textDocument: {
-                uri: sessionId
-            },
-            position: position
-        };
-        let signatureHelpCallback = (result)=>{
-            callback && callback([
-                result
-            ]);
-        };
-        this.postMessage('textDocument/signatureHelp', sessionId, options, signatureHelpCallback);
-    }
-    constructor(mode, initializationOptions){
+    constructor(isProduction){
         super();
-        message_controller_ws_define_property(this, "isConnected", false);
-        message_controller_ws_define_property(this, "isInitialized", false);
-        message_controller_ws_define_property(this, "socket", void 0);
-        message_controller_ws_define_property(this, "serverCapabilities", void 0);
-        message_controller_ws_define_property(this, "connection", void 0);
-        message_controller_ws_define_property(this, "requestsQueue", []);
-        message_controller_ws_define_property(this, "clientCapabilities", {
-            textDocument: {
-                hover: {
-                    dynamicRegistration: true,
-                    contentFormat: [
-                        'markdown',
-                        'plaintext'
-                    ]
-                },
-                synchronization: {
-                    dynamicRegistration: true,
-                    willSave: false,
-                    didSave: false,
-                    willSaveWaitUntil: false
-                },
-                formatting: {
-                    dynamicRegistration: true
-                },
-                completion: {
-                    dynamicRegistration: true,
-                    completionItem: {
-                        snippetSupport: true,
-                        commitCharactersSupport: false,
-                        documentationFormat: [
-                            'markdown',
-                            'plaintext'
-                        ],
-                        deprecatedSupport: false,
-                        preselectSupport: false
-                    },
-                    contextSupport: false
-                },
-                signatureHelp: {
-                    signatureInformation: {
-                        documentationFormat: [
-                            'markdown',
-                            'plaintext'
-                        ],
-                        activeParameterSupport: true
-                    }
-                },
-                documentHighlight: {
-                    dynamicRegistration: true
-                }
-            },
-            workspace: {
-                didChangeConfiguration: {
-                    dynamicRegistration: true
-                }
-            }
-        });
-        if (mode instanceof Worker) {
-            this.$connectWorker(mode, initializationOptions);
-        } else {
-            this.socket = mode;
-            this.$connectSocket(initializationOptions);
-        }
+        mock_worker_define_property(this, "$emitter", void 0);
+        mock_worker_define_property(this, "isProduction", void 0);
+        this.isProduction = isProduction;
     }
 }
 
 ;// CONCATENATED MODULE: ./src/ace-language-client.ts
 
 
+
+let serviceManager, client;
 class AceLanguageClient {
     /**
      *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
-     * @param {Worker | WebSocket} mode
+     * @param {LanguageClientConfig | LanguageClientConfig[]} servers
      * @param {ProviderOptions} options
-     * @param initializationOptions
-     */ static for(mode, options, initializationOptions) {
-        let messageController = new MessageControllerWS(mode, initializationOptions);
-        return new LanguageProvider(messageController, options);
+     */ static for(servers, options) {
+        if (!serviceManager) {
+            client = new MockWorker(true);
+            let ctx = new MockWorker(true);
+            client.setEmitter(ctx);
+            ctx.setEmitter(client);
+            serviceManager = new service_manager.ServiceManager(ctx);
+        }
+        if (servers instanceof Array) {
+            servers.forEach((serverData, index)=>{
+                serviceManager.registerServer("server" + index, serverData);
+            });
+        } else {
+            serviceManager.registerServer("server", servers);
+        }
+        return LanguageProvider.create(client, options);
     }
 }
 
