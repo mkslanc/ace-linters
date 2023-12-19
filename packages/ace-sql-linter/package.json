@@ -1,0 +1,26 @@
+{
+  "name": "ace-sql-linter",
+  "version": "1.0.0",
+  "scripts": {
+    "clean": "rimraf build",
+    "prebuild": "node prebuild.js",
+    "build": "npm run clean && webpack --mode=production"
+  },
+  "devDependencies": {
+    "dt-sql-parser": "^4.0.0-beta.4.9"
+  },
+  "files": ["build", "types"],
+  "typesVersions": {
+    "*": {
+      "build/mysql-service": [
+        "./types/mysql-service.d.ts"
+      ],
+      "build/pgsql-service": [
+        "./types/pgsql-service.d.ts"
+      ],
+      "build/plsql-service": [
+        "./types/plsql-service.d.ts"
+      ]
+    }
+  }
+}
