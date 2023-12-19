@@ -21,7 +21,10 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
         diagnosticProvider: {
             interFileDependencies: true,
             workspaceDiagnostics: true
-        }
+        },
+        documentRangeFormattingProvider: true,
+        documentFormattingProvider: true,
+        hoverProvider: true
     }
 
     constructor(mode: string) {

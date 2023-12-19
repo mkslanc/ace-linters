@@ -10,10 +10,16 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
     schemas: { [schemaUri: string]: string } = {};
 
     serviceCapabilities = {
+        completionProvider: {
+            resolveProvider: true
+        },
         diagnosticProvider: {
             interFileDependencies: true,
             workspaceDiagnostics: true
-        }
+        },
+        documentRangeFormattingProvider: true,
+        documentFormattingProvider: true,
+        hoverProvider: true
     }
 
     constructor(mode: string) {

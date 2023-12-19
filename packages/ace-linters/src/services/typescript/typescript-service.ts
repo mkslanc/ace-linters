@@ -64,7 +64,12 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         diagnosticProvider: {
             interFileDependencies: true,
             workspaceDiagnostics: true
-        }
+        },
+        documentRangeFormattingProvider: true,
+        documentFormattingProvider: true,
+        documentHighlightProvider: true,
+        hoverProvider: true,
+        signatureHelpProvider: {}
     }
 
     constructor(mode: string) {
