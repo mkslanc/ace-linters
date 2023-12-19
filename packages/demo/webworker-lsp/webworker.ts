@@ -78,3 +78,41 @@ manager.registerService("python", {
     className: "PythonService",
     modes: "python",
 });
+/*manager.registerServer("pythonls", {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "python",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3030/python")
+});
+
+manager.registerServer("svelte", {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "html",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3030/svelte")
+});
+
+manager.registerServer("astro", {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "astro",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3030/astro"),
+    initializationOptions: {
+        typescript: {
+            tsdk: "node_modules/typescript/lib", //path to typescript server
+        }
+    }
+});
+
+manager.registerServer("go", {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "golang",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3030/go")
+});*/
+
+manager.registerService("mysql", {
+    module: () => import("ace-sql-linter/build/mysql-service"),
+    className: "MySQLService",
+    modes: "mysql",
+});
