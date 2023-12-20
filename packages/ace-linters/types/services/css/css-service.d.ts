@@ -10,11 +10,16 @@ export declare class CssService extends BaseService implements LanguageService {
     serviceCapabilities: {
         completionProvider: {
             triggerCharacters: string[];
+            resolveProvider: boolean;
         };
         diagnosticProvider: {
             interFileDependencies: boolean;
             workspaceDiagnostics: boolean;
         };
+        documentRangeFormattingProvider: boolean;
+        documentFormattingProvider: boolean;
+        documentHighlightProvider: boolean;
+        hoverProvider: boolean;
     };
     constructor(mode: string);
     private $initLanguageService;

@@ -36,6 +36,11 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
             interFileDependencies: boolean;
             workspaceDiagnostics: boolean;
         };
+        documentRangeFormattingProvider: boolean;
+        documentFormattingProvider: boolean;
+        documentHighlightProvider: boolean;
+        hoverProvider: boolean;
+        signatureHelpProvider: {};
     };
     constructor(mode: string);
     getCompilationSettings(): ts.CompilerOptions;
