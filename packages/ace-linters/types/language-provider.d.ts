@@ -1,7 +1,7 @@
 import { Ace } from "ace-code";
 import { IMessageController } from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import { ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices, Tooltip } from "./types/language-service";
+import { ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, ServiceStruct, SupportedServices, Tooltip } from "./types/language-service";
 export declare class LanguageProvider {
     activeEditor: Ace.Editor;
     private $signatureTooltip;
@@ -18,6 +18,13 @@ export declare class LanguageProvider {
      * @param {ProviderOptions} options
      */
     static create(worker: Worker, options?: ProviderOptions): LanguageProvider;
+    static fromCdn(customServices: {
+        services: ServiceStruct[];
+        serviceManagerCdn: string;
+        includeDefaultLinters?: {
+            [name in SupportedServices]: boolean;
+        } | true;
+    }, options?: ProviderOptions): LanguageProvider;
     static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider;
     private $registerSession;
     private $getSessionLanguageProvider;

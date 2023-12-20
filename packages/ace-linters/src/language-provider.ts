@@ -23,7 +23,7 @@ import {
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
-    ServiceOptionsMap,
+    ServiceOptionsMap, ServiceStruct,
     SupportedServices,
     Tooltip
 } from "./types/language-service";
@@ -70,16 +70,36 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
-    static fromCdn(cdnUrl: string, options?: ProviderOptions) {
+    static fromCdn(customServices: {
+        services: ServiceStruct[],
+        serviceManagerCdn: string,
+        includeDefaultLinters?: { [name in SupportedServices]: boolean } | true
+    }, options?: ProviderOptions): LanguageProvider
+    static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider
+    static fromCdn(source: string | {
+        services: ServiceStruct[],
+        serviceManagerCdn: string,
+        includeDefaultLinters?: { [name in SupportedServices]: boolean } | boolean
+    }, options?: ProviderOptions) {
         let messageController: IMessageController;
-        if (cdnUrl == "" || !(/^http(s)?:/.test(cdnUrl))) {
-            throw "Url is not valid";
+        let worker: Worker;
+        if (typeof source === "string") {
+            if (source == "" || !(/^http(s)?:/.test(source))) {
+                throw "Url is not valid";
+            }
+            if (source[source.length - 1] == "/") {
+                source = source.substring(0, source.length - 1);
+            }
+            worker = createWorker(source);
+        } else {
+            if (source.includeDefaultLinters == undefined) {
+                source.includeDefaultLinters = true;
+            }
+            worker = createWorker({
+                services: source.services,
+                serviceManagerCdn: source.serviceManagerCdn
+            }, source.includeDefaultLinters);
         }
-        if (cdnUrl[cdnUrl.length - 1] == "/") {
-            cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
-        }
-        let worker = createWorker(cdnUrl);
-        // @ts-ignore
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
     }
@@ -138,10 +158,10 @@ export class LanguageProvider {
         if (this.options.functionality.hover) {
             if (!this.$hoverTooltip) {
                 this.$hoverTooltip = new HoverTooltip();
-            } 
+            }
             this.$initHoverTooltip(editor);
         }
-        
+
         if (this.options.functionality.signatureHelp) {
             this.$signatureTooltip.registerEditor(editor);
         }
@@ -377,7 +397,7 @@ class SessionLanguageProvider {
 
         session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
-        
+
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 
@@ -385,7 +405,7 @@ class SessionLanguageProvider {
         this.$isConnected = true;
         // @ts-ignore
         this.session.on("changeMode", this.$changeMode);
-        
+
         this.setServerCapabilities(capabilities);
         if (this.$modeIsChanged)
             this.$changeMode();
@@ -403,7 +423,7 @@ class SessionLanguageProvider {
         this.$deltaQueue = [];
         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
-    
+
     private setServerCapabilities = (capabilities?: lsp.ServerCapabilities[]) => {
         //TODO: this need to take into account all capabilities from all services
         this.$servicesCapabilities = capabilities;
