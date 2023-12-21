@@ -25,6 +25,8 @@ import event from "ace-code/src/lib/event";
 import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 
 import keyUtil from "ace-code/src/lib/keys";
+import {svelteContent} from "../docs-example/svelte-example";
+import {mysqlContent} from "../docs-example/mysql-example";
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
@@ -35,6 +37,9 @@ let modes = [
     {name: "scss", mode: "ace/mode/scss", content: scssContent},
     {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent},
     {name: "python", mode: "ace/mode/python", content: pythonContent},
+    /*{name: "svelte", mode: "ace/mode/html", content: svelteContent},
+    {name: "astro", mode: "ace/mode/astro", content: svelteContent},
+    {name: "golang", mode: "ace/mode/golang", content: svelteContent},*/
     {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent1},
     {name: "javascript", mode: "ace/mode/javascript", content: jsContent},
     {name: "tsx", mode: "ace/mode/tsx", content: tsxContent},
@@ -42,7 +47,8 @@ let modes = [
     {name: "lua", mode: "ace/mode/lua", content: luaContent},
     {name: "yaml", mode: "ace/mode/yaml", content: yamlContent, options: {schemaUri: "yamlSchema.json"}},
     {name: "xml", mode: "ace/mode/xml", content: xmlContent, options: {schemaUri: "xmlSchema.json"}},
-    {name: "php", mode: "ace/mode/php", content: phpContent}
+    {name: "php", mode: "ace/mode/php", content: phpContent},
+    {name: "mysql", mode: "ace/mode/mysql", content: mysqlContent},
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
@@ -133,7 +139,7 @@ languageProvider.configureServiceFeatures("json", {
     completion: true, completionResolve: true, diagnostics: false, format: true, hover: true
 })
 
-languageProvider.setGlobalOptions("python", {
+languageProvider.setGlobalOptions("pythonls", {
     configuration: {
         "line-length": 120,
     },

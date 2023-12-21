@@ -27,7 +27,8 @@ describe("General ui tests", function () {
     });
 
     it('should not have errors', async function () {
-        await page.waitForSelector("#example");
+        this.timeout(10000);
+        await page.waitForSelector("#finish");
         expect(errors.length).to.eql(0);
     })
 

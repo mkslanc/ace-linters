@@ -42,7 +42,11 @@ export class HtmlService extends BaseService<HtmlServiceOptions> implements Lang
         diagnosticProvider: {
             interFileDependencies: true,
             workspaceDiagnostics: true
-        }
+        },
+        documentRangeFormattingProvider: true,
+        documentFormattingProvider: true,
+        documentHighlightProvider: true,
+        hoverProvider: true
     }
 
     constructor(mode: string) {

@@ -221,4 +221,11 @@ export interface AceRangeData {
         column: number;
     };
 }
+export type ServiceStruct = {
+    name: string;
+    script: string;
+    className: string;
+    modes: string;
+    cdnUrl?: string;
+};
 export {};

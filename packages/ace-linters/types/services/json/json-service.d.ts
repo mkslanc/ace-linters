@@ -16,6 +16,9 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
             interFileDependencies: boolean;
             workspaceDiagnostics: boolean;
         };
+        documentRangeFormattingProvider: boolean;
+        documentFormattingProvider: boolean;
+        hoverProvider: boolean;
     };
     constructor(mode: string);
     private $getJsonSchemaUri;

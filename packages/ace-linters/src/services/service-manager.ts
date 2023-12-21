@@ -1,6 +1,6 @@
 import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
-import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
+import {TextDocumentIdentifier, VersionedTextDocumentIdentifier, ServerCapabilities} from "vscode-languageserver-protocol";
 import {
     LanguageService, LanguageClientConfig,
     ServiceConfig,
@@ -266,7 +266,28 @@ export class ServiceManager {
     }
 
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
-        return serviceInstances.filter((el) => el.serviceData.features![feature] === true);
+        return serviceInstances.filter((el) => {
+            if (!el.serviceData.features![feature]) {
+                return false;
+            }
+            const capabilities = el.serviceCapabilities;
+            switch (feature) {
+                case "hover":
+                    return capabilities.hoverProvider == true;
+                case "completion":
+                    return capabilities.completionProvider != undefined;
+                case "completionResolve":
+                    return capabilities.completionProvider?.resolveProvider === true;
+                case "format":
+                    return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
+                case "diagnostics":
+                    return capabilities.diagnosticProvider != undefined;
+                case "signatureHelp":
+                    return capabilities.signatureHelpProvider != undefined;
+                case "documentHighlight":
+                    return capabilities.documentHighlightProvider == true
+            }
+        });
     }
 
     findServicesByMode(mode: string): (ServiceConfig | LanguageClientConfig)[] {

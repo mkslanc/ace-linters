@@ -38,7 +38,7 @@ module.exports = (env, argv) => {
                 import: './src/services/python/python-service.ts'
             },
             "base-service": './src/services/base-service.ts',
-            "language-client": './src/services/language-client.ts',
+            "language-client": './src/services/language-client.ts'
         },
         externals: /ace-code|ace-builds/,
         module: {

@@ -1,10 +1,12 @@
 {
   "name": "ace-linters-root",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
-    "build": "npm run build:ace-linters && webpack",
-    "start": "npm run build:ace-linters && webpack-dev-server",
+    "build:ace-sql-linter": "cd packages/ace-sql-linter && npm run build",
+    "build:parts": "npm run build:ace-linters && npm run build:ace-sql-linter",
+    "build": "npm run build:parts && webpack",
+    "start": "npm run build:parts && webpack-dev-server",
     "start-dev": "webpack-dev-server"
   },
   "dependencies": {

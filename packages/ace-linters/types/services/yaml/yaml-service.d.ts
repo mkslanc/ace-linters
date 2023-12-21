@@ -8,10 +8,16 @@ export declare class YamlService extends BaseService<YamlServiceOptions> impleme
         [schemaUri: string]: string;
     };
     serviceCapabilities: {
+        completionProvider: {
+            resolveProvider: boolean;
+        };
         diagnosticProvider: {
             interFileDependencies: boolean;
             workspaceDiagnostics: boolean;
         };
+        documentRangeFormattingProvider: boolean;
+        documentFormattingProvider: boolean;
+        hoverProvider: boolean;
     };
     constructor(mode: string);
     private $getYamlSchemaUri;

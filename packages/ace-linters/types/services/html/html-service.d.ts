@@ -31,6 +31,10 @@ export declare class HtmlService extends BaseService<HtmlServiceOptions> impleme
             interFileDependencies: boolean;
             workspaceDiagnostics: boolean;
         };
+        documentRangeFormattingProvider: boolean;
+        documentFormattingProvider: boolean;
+        documentHighlightProvider: boolean;
+        hoverProvider: boolean;
     };
     constructor(mode: string);
     getFormattingOptions(options: HTMLFormatConfiguration): HTMLFormatConfiguration;

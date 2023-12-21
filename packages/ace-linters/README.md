@@ -16,7 +16,7 @@ let worker = new Worker(new URL('./webworker.js', import.meta.url));
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+  mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
 // Create a language provider for web worker (
@@ -181,6 +181,10 @@ Ace linters supports the following languages by default with webworkers approach
 - XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
 - Javascript, JSX *powered by* [Eslint](https://github.com/eslint/eslint)
 - Python *powered by* [Ruff](https://github.com/charliermarsh/ruff)
+
+## Supported languages via extensions
+- MySQL, FlinkSQL, SparkSQL, HiveSQL, TrinoSQL, PostgreSQL, Impala SQL, PL/SQL *with* [ace-sql-linter](https://www.npmjs.com/package/ace-sql-linter)
+
 ## Installation
 
 To install Ace linters, you can use the following command:

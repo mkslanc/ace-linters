@@ -35,7 +35,7 @@
     }
 
     function createScriptBlob(scriptContent) {
-        const scriptBlob = new Blob([scriptContent], { type: 'application/javascript' });
+        const scriptBlob = new Blob([scriptContent], {type: 'application/javascript'});
         return scriptBlob;
     }
 
@@ -45,7 +45,7 @@
     }
 
     async function importScriptFromNetwork(url) {
-        const text= await fetchScript(url);
+        const text = await fetchScript(url);
 
         // Create a Blob with the text content and MIME type "text/javascript".
         const blob = createScriptBlob(text);
@@ -54,8 +54,8 @@
         return createBlobURL(blob);
     }
 
-    async function importJavaScriptFile(url) {
-        const text= await fetchScript(url);
+    async function importJavaScriptFile(url, callback) {
+        const text = await fetchScript(url);
 
         // Create a Blob with the text content and MIME type "text/javascript".
         const blob = createScriptBlob(text);
@@ -70,6 +70,10 @@
         // Add a listener to revoke the object URL when the script has loaded.
         scriptElement.addEventListener("load", () => {
             URL.revokeObjectURL(objectURL);
+            if (!scriptElement.readyState || scriptElement.readyState == "loaded" || scriptElement.readyState
+                == "complete") {
+                callback();
+            }
         });
 
         // Append the script element to the document to execute the JavaScript code.
@@ -77,27 +81,32 @@
     }
 
     const baseLink = "http://127.0.0.1:8080/build";
-
-    importJavaScriptFile( baseLink + "/ace-linters.js").then(async () => {
-        let workerString = `
-    !function () {
-    importScripts("${await importScriptFromNetwork(baseLink + "/service-manager.js")}");
-    let manager = new ServiceManager(self);
-
-    manager.registerService("typescript", {
-        module: () => {
-            importScripts("${await importScriptFromNetwork(baseLink + "/typescript-service.js")}");
-            return {TypescriptService};
-        },
-        className: "TypescriptService",
-        modes: "typescript|tsx|javascript",
-    });}()`;
-        let worker = new Worker(createBlobURL(createScriptBlob(workerString)));
-        let provider = LanguageProvider.create(worker);
+    
+    let provider;
+    importJavaScriptFile(baseLink + "/ace-linters.js", () => {
+        provider = LanguageProvider.fromCdn(baseLink);
+        //let provider = LanguageProvider.create(worker);
         provider.registerEditor(editor);
-    });
-
-
+        const modes = [
+            "json", "typescript", "css", "html", "yaml", "php", "xml", "javascript", "lua", "less", "scss",
+            "python", "css"
+        ];
+        let index = 0;
+        provider.$messageController.$worker.addEventListener("message", (e) => {
+            let message = e.data;
+            if (message.type === 8 || message.type === 0) {
+                console.log(message.value)
+                if (index === modes.length) {
+                    const finish = document.createElement("div");
+                    finish.id = "finish";
+                    document.body.appendChild(finish);
+                    return;
+                }
+                editor.session.setMode("ace/mode/" + modes[index]);
+                index++;
+            }
+        });
+    })
 </script>
 
 
