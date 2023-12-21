@@ -9809,7 +9809,29 @@ class ServiceManager {
         return services.map((el)=>el.serviceInstance).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
     }
     filterByFeature(serviceInstances, feature) {
-        return serviceInstances.filter((el)=>el.serviceData.features[feature] === true);
+        return serviceInstances.filter((el)=>{
+            if (!el.serviceData.features[feature]) {
+                return false;
+            }
+            const capabilities = el.serviceCapabilities;
+            switch(feature){
+                case "hover":
+                    return capabilities.hoverProvider == true;
+                case "completion":
+                    return capabilities.completionProvider != undefined;
+                case "completionResolve":
+                    var _capabilities_completionProvider;
+                    return ((_capabilities_completionProvider = capabilities.completionProvider) === null || _capabilities_completionProvider === void 0 ? void 0 : _capabilities_completionProvider.resolveProvider) === true;
+                case "format":
+                    return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
+                case "diagnostics":
+                    return capabilities.diagnosticProvider != undefined;
+                case "signatureHelp":
+                    return capabilities.signatureHelpProvider != undefined;
+                case "documentHighlight":
+                    return capabilities.documentHighlightProvider == true;
+            }
+        });
     }
     findServicesByMode(mode) {
         return Object.values(this.$services).filter((el)=>{
@@ -19688,199 +19710,131 @@ function toMarkerGroupItem(range, className, tooltipText) {
 var showdown = __webpack_require__(6006);
 var showdown_default = /*#__PURE__*/__webpack_require__.n(showdown);
 ;// CONCATENATED MODULE: ./src/cdn-worker.ts
-function $workerBlob(script) {
+function createWorkerBlob(cdnUrl, services) {
+    var _service_cdnUrl;
     return new Blob([
-        script.toString()
+        `
+        importScripts("${cdnUrl}/service-manager.js");
+        const manager = new ServiceManager(self);
+
+        ${services.map((service)=>`
+            manager.registerService("${service.name}", {
+                module: () => {
+                    importScripts("${(_service_cdnUrl = service.cdnUrl) !== null && _service_cdnUrl !== void 0 ? _service_cdnUrl : cdnUrl}/${service.script}");
+                    return {${service.className}};
+                },
+                className: "${service.className}",
+                modes: "${service.modes}"
+            });
+        `).join('\n')}
+    `
     ], {
-        "type": "application/javascript"
+        type: "application/javascript"
     });
 }
-function createWorker(cdnUrl, includeLinters) {
+function createWorker(source, includeLinters = true) {
     if (typeof Worker == "undefined") return {
         postMessage: function() {},
         terminate: function() {}
     };
-    var blob = $workerBlob(generateLintersImport(cdnUrl, includeLinters));
+    let blob;
+    if (typeof source === "string") {
+        const allServices = getServices(includeLinters);
+        blob = createWorkerBlob(source, allServices);
+    } else {
+        const allServices = [
+            ...source.services,
+            ...getServices(includeLinters)
+        ];
+        const cdnUrl = source.serviceManagerCdn;
+        blob = createWorkerBlob(cdnUrl, allServices);
+    }
     var URL = window.URL || window.webkitURL;
     var blobURL = URL.createObjectURL(blob);
     // calling URL.revokeObjectURL before worker is terminated breaks it on IE Edge
     return new Worker(blobURL);
 }
-function generateLintersImport(cdnUrl, includeLinters) {
-    const jsonService = `manager.registerService("json", {
-        module: () => {
-            importScripts("${cdnUrl}/json-service.js");
-            return {JsonService};
+function getServices(includeLinters = true) {
+    const allServices = [
+        {
+            name: "json",
+            script: "json-service.js",
+            className: "JsonService",
+            modes: "json|json5"
         },
-        className: "JsonService",
-        modes: "json|json5"
-    });`;
-    const htmlService = `manager.registerService("html", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/html-service.js");
-            return {HtmlService};
+        {
+            name: "html",
+            script: "html-service.js",
+            className: "HtmlService",
+            modes: "html"
         },
-        className: "HtmlService",
-        modes: "html"
-    });`;
-    const cssService = `manager.registerService("css", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/css-service.js");
-            return {CssService};
+        {
+            name: "css",
+            script: "css-service.js",
+            className: "CssService",
+            modes: "css"
         },
-        className: "CssService",
-        modes: "css"
-    });`;
-    const lessService = `manager.registerService("less", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/css-service.js");
-            return {CssService};
+        {
+            name: "less",
+            script: "css-service.js",
+            className: "CssService",
+            modes: "less"
         },
-        className: "CssService",
-        modes: "less"
-    });`;
-    const scssService = `manager.registerService("scss", {
-        features: {signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/css-service.js");
-            return {CssService};
+        {
+            name: "scss",
+            script: "css-service.js",
+            className: "CssService",
+            modes: "scss"
         },
-        className: "CssService",
-        modes: "scss"
-    });`;
-    const typeScriptService = `manager.registerService("typescript", {
-        module: () => {
-            importScripts("${cdnUrl}/typescript-service.js");
-            return {TypescriptService};
+        {
+            name: "typescript",
+            script: "typescript-service.js",
+            className: "TypescriptService",
+            modes: "typescript|tsx|javascript|jsx"
         },
-        className: "TypescriptService",
-        modes: "typescript|tsx|javascript|jsx",
-    });`;
-    const luaService = `manager.registerService("lua", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/lua-service.js");
-            return {LuaService};
+        {
+            name: "lua",
+            script: "lua-service.js",
+            className: "LuaService",
+            modes: "lua"
         },
-        className: "LuaService",
-        modes: "lua",
-    });`;
-    const yamlService = `manager.registerService("yaml", {
-        features: {signatureHelp: false, documentHighlight: false},
-        module: () => {
-            importScripts("${cdnUrl}/yaml-service.js");
-            return {YamlService};
+        {
+            name: "yaml",
+            script: "yaml-service.js",
+            className: "YamlService",
+            modes: "yaml"
         },
-        className: "YamlService",
-        modes: "yaml",
-    });`;
-    const xmlService = `manager.registerService("xml", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/xml-service.js");
-            return {XmlService};
+        {
+            name: "xml",
+            script: "xml-service.js",
+            className: "XmlService",
+            modes: "xml"
         },
-        className: "XmlService",
-        modes: "xml",
-    });`;
-    const phpService = `manager.registerService("php", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/php-service.js");
-            return {PhpService};
+        {
+            name: "php",
+            script: "php-service.js",
+            className: "PhpService",
+            modes: "php"
         },
-        className: "PhpService",
-        modes: "php"
-    });`;
-    const javascriptService = `manager.registerService("javascript", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/javascript-service.js");
-            return {JavascriptService};
+        {
+            name: "javascript",
+            script: "javascript-service.js",
+            className: "JavascriptService",
+            modes: "javascript"
         },
-        className: "JavascriptService",
-        modes: "javascript",
-    });`;
-    const pythonService = `manager.registerService("python", {
-        features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-        module: () => {
-            importScripts("${cdnUrl}/python-service.js");
-            return {PythonService};
-        },
-        className: "PythonService",
-        modes: "python",
-    });`;
-    if (!includeLinters) {
-        return `!function () {
-    importScripts("${cdnUrl}/service-manager.js");
-    let manager = new ServiceManager(self);
-    ${[
-            jsonService,
-            htmlService,
-            cssService,
-            lessService,
-            scssService,
-            typeScriptService,
-            luaService,
-            yamlService,
-            xmlService,
-            phpService,
-            pythonService,
-            javascriptService
-        ].join("\n")}
-}()`;
-    }
-    let services = [];
-    Object.entries(includeLinters).forEach(([key, value])=>{
-        if (value) {
-            switch(key){
-                case "javascript":
-                    services.push(javascriptService);
-                    break;
-                case "css":
-                    services.push(cssService);
-                    break;
-                case "html":
-                    services.push(htmlService);
-                    break;
-                case "json":
-                    services.push(jsonService);
-                    break;
-                case "less":
-                    services.push(lessService);
-                    break;
-                case "lua":
-                    services.push(luaService);
-                    break;
-                case "typescript":
-                    services.push(typeScriptService);
-                    break;
-                case "php":
-                    services.push(phpService);
-                    break;
-                case "scss":
-                    services.push(scssService);
-                    break;
-                case "xml":
-                    services.push(xmlService);
-                    break;
-                case "yaml":
-                    services.push(yamlService);
-                    break;
-                case "python":
-                    services.push(pythonService);
-                    break;
-            }
+        {
+            name: "python",
+            script: "python-service.js",
+            className: "PythonService",
+            modes: "python"
         }
-    });
-    return `!function () {
-    importScripts("${cdnUrl}/service-manager.js");
-    let manager = new ServiceManager(self);
-    ${services.join("\n")}
-}()`;
+    ];
+    if (includeLinters === true) {
+        return allServices;
+    } else if (includeLinters === false) {
+        return [];
+    }
+    return allServices.filter((service)=>includeLinters[service.name]);
 }
 
 ;// CONCATENATED MODULE: ./src/ace/tooltip.ts
@@ -20556,16 +20510,26 @@ class LanguageProvider {
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
     }
-    static fromCdn(cdnUrl, options) {
+    static fromCdn(source, options) {
         let messageController;
-        if (cdnUrl == "" || !/^http(s)?:/.test(cdnUrl)) {
-            throw "Url is not valid";
+        let worker;
+        if (typeof source === "string") {
+            if (source == "" || !/^http(s)?:/.test(source)) {
+                throw "Url is not valid";
+            }
+            if (source[source.length - 1] == "/") {
+                source = source.substring(0, source.length - 1);
+            }
+            worker = createWorker(source);
+        } else {
+            if (source.includeDefaultLinters == undefined) {
+                source.includeDefaultLinters = true;
+            }
+            worker = createWorker({
+                services: source.services,
+                serviceManagerCdn: source.serviceManagerCdn
+            }, source.includeDefaultLinters);
         }
-        if (cdnUrl[cdnUrl.length - 1] == "/") {
-            cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1);
-        }
-        let worker = createWorker(cdnUrl);
-        // @ts-ignore
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
     }

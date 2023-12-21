@@ -20820,7 +20820,10 @@ class JsonService extends base_service.BaseService {
             diagnosticProvider: {
                 interFileDependencies: true,
                 workspaceDiagnostics: true
-            }
+            },
+            documentRangeFormattingProvider: true,
+            documentFormattingProvider: true,
+            hoverProvider: true
         });
         this.$service = getLanguageService({
             schemaRequestService: (uri)=>{

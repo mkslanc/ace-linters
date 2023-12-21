@@ -432,7 +432,29 @@ class ServiceManager {
         return services.map((el)=>el.serviceInstance).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
     }
     filterByFeature(serviceInstances, feature) {
-        return serviceInstances.filter((el)=>el.serviceData.features[feature] === true);
+        return serviceInstances.filter((el)=>{
+            if (!el.serviceData.features[feature]) {
+                return false;
+            }
+            const capabilities = el.serviceCapabilities;
+            switch(feature){
+                case "hover":
+                    return capabilities.hoverProvider == true;
+                case "completion":
+                    return capabilities.completionProvider != undefined;
+                case "completionResolve":
+                    var _capabilities_completionProvider;
+                    return ((_capabilities_completionProvider = capabilities.completionProvider) === null || _capabilities_completionProvider === void 0 ? void 0 : _capabilities_completionProvider.resolveProvider) === true;
+                case "format":
+                    return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
+                case "diagnostics":
+                    return capabilities.diagnosticProvider != undefined;
+                case "signatureHelp":
+                    return capabilities.signatureHelpProvider != undefined;
+                case "documentHighlight":
+                    return capabilities.documentHighlightProvider == true;
+            }
+        });
     }
     findServicesByMode(mode) {
         return Object.values(this.$services).filter((el)=>{

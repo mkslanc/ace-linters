@@ -71360,10 +71360,16 @@ class YamlService extends base_service.BaseService {
         yaml_service_define_property(this, "$service", void 0);
         yaml_service_define_property(this, "schemas", {});
         yaml_service_define_property(this, "serviceCapabilities", {
+            completionProvider: {
+                resolveProvider: true
+            },
             diagnosticProvider: {
                 interFileDependencies: true,
                 workspaceDiagnostics: true
-            }
+            },
+            documentRangeFormattingProvider: true,
+            documentFormattingProvider: true,
+            hoverProvider: true
         });
         this.$service = getLanguageService((uri)=>{
             uri = uri.replace("file:///", "");

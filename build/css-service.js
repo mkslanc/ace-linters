@@ -52690,12 +52690,17 @@ class CssService extends base_service.BaseService {
                     " ",
                     "-",
                     "/"
-                ]
+                ],
+                resolveProvider: true
             },
             diagnosticProvider: {
                 interFileDependencies: true,
                 workspaceDiagnostics: true
-            }
+            },
+            documentRangeFormattingProvider: true,
+            documentFormattingProvider: true,
+            documentHighlightProvider: true,
+            hoverProvider: true
         });
         this.$initLanguageService();
         this.$service.configure();
