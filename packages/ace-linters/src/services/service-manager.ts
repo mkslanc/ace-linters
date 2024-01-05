@@ -1,6 +1,6 @@
 import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
-import {TextDocumentIdentifier, VersionedTextDocumentIdentifier, ServerCapabilities} from "vscode-languageserver-protocol";
+import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {
     LanguageService, LanguageClientConfig,
     ServiceConfig,
@@ -133,7 +133,7 @@ export class ServiceManager {
                     break;
                 case MessageType.changeMode:
                     postMessage["value"] = (await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
-                    await doValidation(documentIdentifier, serviceInstances);
+                    await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeOptions:
                     serviceInstances.forEach((service) => {
