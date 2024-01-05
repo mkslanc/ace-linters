@@ -483,6 +483,9 @@ class SessionLanguageProvider {
     };
 
     private $showAnnotations = (diagnostics: lsp.Diagnostic[]) => {
+        if (!diagnostics) {
+            return;
+        }
         this.session.clearAnnotations();
         let annotations = toAnnotations(diagnostics)
         if (annotations && annotations.length > 0) {
@@ -491,7 +494,7 @@ class SessionLanguageProvider {
         if (!this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers = new MarkerGroup(this.session);
         }
-        this.state.diagnosticMarkers.setMarkers(diagnostics.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {

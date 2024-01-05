@@ -61,7 +61,7 @@ export function toPoint(position: Position): Ace.Point {
 }
 
 export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
-    return diagnostics.map((el) => {
+    return diagnostics?.map((el) => {
         return {
             row: el.range.start.line,
             column: el.range.start.character,
