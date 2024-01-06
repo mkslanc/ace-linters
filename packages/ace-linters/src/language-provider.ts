@@ -398,14 +398,16 @@ class SessionLanguageProvider {
         session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
 
+        // @ts-ignore
+        session.on("changeMode", this.$changeMode);
+
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 
     private $connected = (capabilities: lsp.ServerCapabilities[]) => {
         this.$isConnected = true;
         // @ts-ignore
-        this.session.on("changeMode", this.$changeMode);
-
+        
         this.setServerCapabilities(capabilities);
         if (this.$modeIsChanged)
             this.$changeMode();
@@ -483,6 +485,9 @@ class SessionLanguageProvider {
     };
 
     private $showAnnotations = (diagnostics: lsp.Diagnostic[]) => {
+        if (!diagnostics) {
+            return;
+        }
         this.session.clearAnnotations();
         let annotations = toAnnotations(diagnostics)
         if (annotations && annotations.length > 0) {
@@ -491,7 +496,7 @@ class SessionLanguageProvider {
         if (!this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers = new MarkerGroup(this.session);
         }
-        this.state.diagnosticMarkers.setMarkers(diagnostics.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
