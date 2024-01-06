@@ -20481,7 +20481,8 @@ function toPoint(position) {
     };
 }
 function toAnnotations(diagnostics) {
-    return diagnostics.map((el)=>{
+    var _diagnostics;
+    return (_diagnostics = diagnostics) === null || _diagnostics === void 0 ? void 0 : _diagnostics.map((el)=>{
         return {
             row: el.range.start.line,
             column: el.range.start.character,

@@ -19121,7 +19121,8 @@ function toPoint(position) {
     };
 }
 function toAnnotations(diagnostics) {
-    return diagnostics.map((el)=>{
+    var _diagnostics;
+    return (_diagnostics = diagnostics) === null || _diagnostics === void 0 ? void 0 : _diagnostics.map((el)=>{
         return {
             row: el.range.start.line,
             column: el.range.start.character,
@@ -20465,7 +20466,6 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
             // @ts-ignore
-            this.session.on("changeMode", this.$changeMode);
             this.setServerCapabilities(capabilities);
             if (this.$modeIsChanged) this.$changeMode();
             if (this.$deltaQueue) this.$sendDeltaQueue();
@@ -20520,6 +20520,10 @@ class SessionLanguageProvider {
             if (deltas.length) this.$messageController.change(this.fileName, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
         });
         language_provider_define_property(this, "$showAnnotations", (diagnostics)=>{
+            var _diagnostics;
+            if (!diagnostics) {
+                return;
+            }
             this.session.clearAnnotations();
             let annotations = toAnnotations(diagnostics);
             if (annotations && annotations.length > 0) {
@@ -20528,7 +20532,7 @@ class SessionLanguageProvider {
             if (!this.state.diagnosticMarkers) {
                 this.state.diagnosticMarkers = new MarkerGroup(this.session);
             }
-            this.state.diagnosticMarkers.setMarkers(diagnostics.map((el)=>toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+            this.state.diagnosticMarkers.setMarkers((_diagnostics = diagnostics) === null || _diagnostics === void 0 ? void 0 : _diagnostics.map((el)=>toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
         });
         language_provider_define_property(this, "validate", ()=>{
             this.$messageController.doValidation(this.fileName, this.$showAnnotations);
@@ -20576,6 +20580,8 @@ class SessionLanguageProvider {
         this.initFileName();
         session.doc["version"] = 0;
         session.doc.on("change", this.$changeListener, true);
+        // @ts-ignore
+        session.on("changeMode", this.$changeMode);
         this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
     }
 }

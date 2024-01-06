@@ -607,7 +607,7 @@ class ServiceManager {
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeMode:
                     var _this1;
                     postMessage["value"] = (_this1 = await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options)) === null || _this1 === void 0 ? void 0 : _this1.map((el)=>el.serviceCapabilities);
-                    await doValidation(documentIdentifier, serviceInstances);
+                    await doValidation(documentIdentifier);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeOptions:
                     serviceInstances.forEach((service)=>{
