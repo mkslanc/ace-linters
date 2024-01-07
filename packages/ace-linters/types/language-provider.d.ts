@@ -4,8 +4,8 @@ import * as lsp from "vscode-languageserver-protocol";
 import { ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, ServiceStruct, SupportedServices, Tooltip } from "./types/language-service";
 export declare class LanguageProvider {
     activeEditor: Ace.Editor;
-    private $signatureTooltip;
     private readonly $messageController;
+    private $signatureTooltip;
     private $sessionLanguageProviders;
     editors: Ace.Editor[];
     options: ProviderOptions;

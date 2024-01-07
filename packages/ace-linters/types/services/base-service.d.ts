@@ -31,4 +31,5 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     get optionsToFilterDiagnostics(): FilterDiagnosticsOptions;
+    dispose(): Promise<void>;
 }

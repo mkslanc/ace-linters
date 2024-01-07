@@ -68,9 +68,13 @@ export declare class ChangeOptionsMessage extends BaseMessage {
     merge: boolean;
     constructor(sessionId: string, options: ServiceOptions, merge?: boolean);
 }
-export declare class DisposeMessage extends BaseMessage {
+export declare class CloseDocumentMessage extends BaseMessage {
     type: MessageType;
     constructor(sessionId: string);
+}
+export declare class DisposeMessage extends BaseMessage {
+    type: MessageType;
+    constructor();
 }
 export declare class GlobalOptionsMessage {
     type: MessageType;
@@ -106,9 +110,10 @@ export declare enum MessageType {
     applyDelta = 7,
     changeMode = 8,
     changeOptions = 9,
-    dispose = 10,
+    closeDocument = 10,
     globalOptions = 11,
     configureFeatures = 12,
     signatureHelp = 13,
-    documentHighlight = 14
+    documentHighlight = 14,
+    dispose = 15
 }

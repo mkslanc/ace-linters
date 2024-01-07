@@ -19,6 +19,7 @@ export declare class LanguageClient extends BaseService implements LanguageServi
     addDocument(document: lsp.TextDocumentItem): void;
     enqueueIfNotConnected(callback: () => void): void;
     removeDocument(document: lsp.TextDocumentIdentifier): void;
+    dispose(): Promise<void>;
     sendInitialize(initializationOptions: any): void;
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;

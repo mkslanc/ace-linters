@@ -3,6 +3,8 @@ import * as lsp from "vscode-languageserver-protocol";
 import {CompletionService, ServiceFeatures, ServiceOptions, SupportedServices} from "./language-service";
 
 export interface IMessageController {
+    $worker: Worker;
+    
     init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: lsp.ServerCapabilities[]) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void)
@@ -21,8 +23,10 @@ export interface IMessageController {
 
     changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void);
 
-    dispose(sessionId: string, callback?: () => void): void;
-
+    closeDocument(sessionId: string, callback?: () => void): void;
+    
+    dispose(callback: () => void): void;
+    
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
 
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;

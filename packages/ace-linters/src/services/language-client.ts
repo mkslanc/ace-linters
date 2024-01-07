@@ -4,7 +4,7 @@ import {
     BrowserMessageReader,
     BrowserMessageWriter,
     createProtocolConnection,
-    
+
 } from "vscode-languageserver-protocol/browser";
 import {
     LanguageClientConfig,
@@ -218,15 +218,16 @@ export class LanguageClient extends BaseService implements LanguageService {
         } as lsp.DidCloseTextDocumentParams));
     }
 
-    /*
-        close() {
-            if (this.connection) {
-                this.connection.dispose();
-            }
+    async dispose() {
+        if (this.connection) {
+            this.isConnected = false;
+            await this.connection.sendRequest("shutdown");
+            this.connection.sendNotification('exit');
+            this.connection.dispose();
             if (this.socket)
                 this.socket.close();
         }
-    */
+    }
 
     sendInitialize(initializationOptions) {
         if (!this.isConnected) {
