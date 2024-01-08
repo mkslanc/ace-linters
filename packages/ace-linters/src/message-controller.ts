@@ -4,13 +4,13 @@ import {
     ChangeMessage,
     ChangeModeMessage, ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, DisposeMessage, DocumentHighlightMessage,
+    DeltasMessage, CloseDocumentMessage, DocumentHighlightMessage,
     FormatMessage, GlobalOptionsMessage,
     HoverMessage,
     InitMessage, MessageType,
     ResolveCompletionMessage, SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage
+    ValidateMessage, DisposeMessage
 } from "./message-types";
 import {IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -18,7 +18,7 @@ import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, S
 import EventEmitter from "events";
 
 export class MessageController extends EventEmitter implements IMessageController {
-    private $worker: Worker;
+    $worker: Worker;
 
     constructor(worker: Worker) {
         super();
@@ -76,8 +76,12 @@ export class MessageController extends EventEmitter implements IMessageControlle
         this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
     }
 
-    dispose(sessionId: string, callback?: () => void) {
-        this.postMessage(new DisposeMessage(sessionId), callback);
+    closeDocument(sessionId: string, callback?: () => void) {
+        this.postMessage(new CloseDocumentMessage(sessionId), callback);
+    }
+    
+    dispose(callback: () => void) {
+        this.postMessage(new DisposeMessage(), callback);
     }
 
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {

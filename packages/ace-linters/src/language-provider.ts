@@ -33,8 +33,8 @@ import {HoverTooltip} from "./ace/hover-tooltip";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
-    private $signatureTooltip: SignatureTooltip;
     private readonly $messageController: IMessageController;
+    private $signatureTooltip: SignatureTooltip;
     private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     editors: Ace.Editor[] = [];
     options: ProviderOptions;
@@ -349,7 +349,9 @@ export class LanguageProvider {
     }
 
     dispose() {
-        // this.$messageController.dispose(this.$fileName);
+        this.$messageController.dispose(() => {
+            this.$messageController.$worker.terminate();
+        })
     }
 
     /**
@@ -359,7 +361,7 @@ export class LanguageProvider {
     closeDocument(session: Ace.EditSession, callback?) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
         if (sessionProvider) {
-            sessionProvider.dispose(callback);
+            sessionProvider.closeDocument(callback);
             delete this.$sessionLanguageProviders[session["id"]];
         }
     }
@@ -548,7 +550,7 @@ class SessionLanguageProvider {
         }
     };
 
-    dispose(callback?) {
-        this.$messageController.dispose(this.fileName, callback);
+    closeDocument(callback?) {
+        this.$messageController.closeDocument(this.fileName, callback);
     }
 }

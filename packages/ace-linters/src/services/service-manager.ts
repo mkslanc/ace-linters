@@ -141,9 +141,12 @@ export class ServiceManager {
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case MessageType.dispose:
+                case MessageType.closeDocument:
                     this.removeDocument(documentIdentifier);
                     await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case MessageType.dispose:
+                    await this.disposeAll();
                     break;
                 case MessageType.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
@@ -168,6 +171,13 @@ export class ServiceManager {
 
             ctx.postMessage(postMessage);
         })
+    }
+    
+    async disposeAll() {
+        var services = this.$services;
+        for (let serviceName in services) {
+            await services[serviceName]?.serviceInstance?.dispose();  
+        }
     }
 
     private static async $initServiceInstance(service: ServiceConfig | LanguageClientConfig, ctx): Promise<LanguageService> {

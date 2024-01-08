@@ -28,6 +28,7 @@ export interface LanguageService {
     getDocumentValue(uri: string): string | undefined;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
+    dispose(): Promise<void>;
 }
 interface TooltipContent {
     type: CommonConverter.TooltipType;

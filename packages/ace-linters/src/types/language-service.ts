@@ -42,6 +42,8 @@ export interface LanguageService {
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
+    
+    dispose(): Promise<void>;
 }
 
 interface TooltipContent {

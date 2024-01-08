@@ -108,4 +108,8 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         }
     }
 
+    dispose() {
+        return Promise.resolve();
+    }
+
 }

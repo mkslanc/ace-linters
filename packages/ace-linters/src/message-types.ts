@@ -126,11 +126,18 @@ export class ChangeOptionsMessage extends BaseMessage {
     }
 }
 
-export class DisposeMessage extends BaseMessage {
-    type: MessageType = MessageType.dispose;
+export class CloseDocumentMessage extends BaseMessage {
+    type: MessageType = MessageType.closeDocument;
 
     constructor(sessionId: string) {
         super(sessionId);
+    }
+}
+
+export class DisposeMessage extends BaseMessage {
+    type: MessageType = MessageType.dispose;
+    constructor() {
+        super("");
     }
 }
 
@@ -189,9 +196,10 @@ export enum MessageType {
     applyDelta,
     changeMode,
     changeOptions,
-    dispose,
+    closeDocument,
     globalOptions,
     configureFeatures,
     signatureHelp,
-    documentHighlight
+    documentHighlight,
+    dispose
 }

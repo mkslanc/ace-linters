@@ -16,6 +16,7 @@ export declare class ServiceManager {
         postMessage: any;
         addEventListener: any;
     });
+    disposeAll(): Promise<void>;
     private static $initServiceInstance;
     private $getServicesInstancesByMode;
     private initializeService;
