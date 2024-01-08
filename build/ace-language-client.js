@@ -9513,6 +9513,7 @@ if (true) {
 /* harmony export */   Jm: () => (/* binding */ HoverMessage),
 /* harmony export */   L2: () => (/* binding */ DisposeMessage),
 /* harmony export */   Vr: () => (/* binding */ SignatureHelpMessage),
+/* harmony export */   Xl: () => (/* binding */ CloseDocumentMessage),
 /* harmony export */   bX: () => (/* binding */ ConfigureFeaturesMessage),
 /* harmony export */   g6: () => (/* binding */ GlobalOptionsMessage),
 /* harmony export */   ik: () => (/* binding */ ChangeMessage),
@@ -9637,9 +9638,15 @@ class ChangeOptionsMessage extends BaseMessage {
         this.merge = merge;
     }
 }
-class DisposeMessage extends BaseMessage {
+class CloseDocumentMessage extends BaseMessage {
     constructor(sessionId){
         super(sessionId);
+        _define_property(this, "type", MessageType.closeDocument);
+    }
+}
+class DisposeMessage extends BaseMessage {
+    constructor(){
+        super("");
         _define_property(this, "type", MessageType.dispose);
     }
 }
@@ -9691,11 +9698,12 @@ var MessageType;
     MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
     MessageType[MessageType["changeMode"] = 8] = "changeMode";
     MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
-    MessageType[MessageType["dispose"] = 10] = "dispose";
+    MessageType[MessageType["closeDocument"] = 10] = "closeDocument";
     MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
     MessageType[MessageType["configureFeatures"] = 12] = "configureFeatures";
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
+    MessageType[MessageType["dispose"] = 15] = "dispose";
 })(MessageType || (MessageType = {}));
 
 
@@ -9726,6 +9734,13 @@ function _define_property(obj, key, value) {
 
 
 class ServiceManager {
+    async disposeAll() {
+        var services = this.$services;
+        for(let serviceName in services){
+            var _services_serviceName_serviceInstance, _services_serviceName;
+            await ((_services_serviceName = services[serviceName]) === null || _services_serviceName === void 0 ? void 0 : (_services_serviceName_serviceInstance = _services_serviceName.serviceInstance) === null || _services_serviceName_serviceInstance === void 0 ? void 0 : _services_serviceName_serviceInstance.dispose());
+        }
+    }
     static async $initServiceInstance(service, ctx) {
         let module;
         if ('type' in service) {
@@ -9992,9 +10007,12 @@ class ServiceManager {
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.dispose:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.closeDocument:
                     this.removeDocument(documentIdentifier);
                     await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.dispose:
+                    await this.disposeAll();
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);
@@ -19398,8 +19416,11 @@ class MessageController extends (events_default()) {
     changeOptions(sessionId, options, callback, merge = false) {
         this.postMessage(new message_types/* ChangeOptionsMessage */.GC(sessionId, options, merge), callback);
     }
-    dispose(sessionId, callback) {
-        this.postMessage(new message_types/* DisposeMessage */.L2(sessionId), callback);
+    closeDocument(sessionId, callback) {
+        this.postMessage(new message_types/* CloseDocumentMessage */.Xl(sessionId), callback);
+    }
+    dispose(callback) {
+        this.postMessage(new message_types/* DisposeMessage */.L2(), callback);
     }
     setGlobalOptions(serviceName, options, merge = false) {
         // @ts-ignore
@@ -20731,7 +20752,9 @@ class LanguageProvider {
         }
     }
     dispose() {
-    // this.$messageController.dispose(this.$fileName);
+        this.$messageController.dispose(()=>{
+            this.$messageController.$worker.terminate();
+        });
     }
     /**
      * Removes document from all linked services by session id
@@ -20739,15 +20762,15 @@ class LanguageProvider {
      */ closeDocument(session, callback) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
         if (sessionProvider) {
-            sessionProvider.dispose(callback);
+            sessionProvider.closeDocument(callback);
             delete this.$sessionLanguageProviders[session["id"]];
         }
     }
     constructor(messageController, options){
         var _this_options, _this_options1;
         language_provider_define_property(this, "activeEditor", void 0);
-        language_provider_define_property(this, "$signatureTooltip", void 0);
         language_provider_define_property(this, "$messageController", void 0);
+        language_provider_define_property(this, "$signatureTooltip", void 0);
         language_provider_define_property(this, "$sessionLanguageProviders", {});
         language_provider_define_property(this, "editors", []);
         language_provider_define_property(this, "options", void 0);
@@ -20805,8 +20828,8 @@ class SessionLanguageProvider {
         }
         this.$messageController.changeOptions(this.fileName, options);
     }
-    dispose(callback) {
-        this.$messageController.dispose(this.fileName, callback);
+    closeDocument(callback) {
+        this.$messageController.closeDocument(this.fileName, callback);
     }
     constructor(session, editor, messageController, options){
         language_provider_define_property(this, "session", void 0);

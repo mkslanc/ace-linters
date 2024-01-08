@@ -527,6 +527,9 @@ class BaseService {
             errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
         };
     }
+    dispose() {
+        return Promise.resolve();
+    }
     constructor(mode){
         _define_property(this, "mode", void 0);
         _define_property(this, "documents", {});

@@ -18,7 +18,7 @@ return /******/ (() => { // webpackBootstrap
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Cs: () => (/* binding */ MessageType)
 /* harmony export */ });
-/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, DisposeMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage */
+/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, DisposeMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage */
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -132,9 +132,15 @@ class ChangeOptionsMessage extends (/* unused pure expression or super */ null &
         this.merge = merge;
     }
 }
-class DisposeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+class CloseDocumentMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
     constructor(sessionId){
         super(sessionId);
+        _define_property(this, "type", MessageType.closeDocument);
+    }
+}
+class DisposeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+    constructor(){
+        super("");
         _define_property(this, "type", MessageType.dispose);
     }
 }
@@ -186,11 +192,12 @@ var MessageType;
     MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
     MessageType[MessageType["changeMode"] = 8] = "changeMode";
     MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
-    MessageType[MessageType["dispose"] = 10] = "dispose";
+    MessageType[MessageType["closeDocument"] = 10] = "closeDocument";
     MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
     MessageType[MessageType["configureFeatures"] = 12] = "configureFeatures";
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
+    MessageType[MessageType["dispose"] = 15] = "dispose";
 })(MessageType || (MessageType = {}));
 
 
@@ -349,6 +356,13 @@ function _define_property(obj, key, value) {
 
 
 class ServiceManager {
+    async disposeAll() {
+        var services = this.$services;
+        for(let serviceName in services){
+            var _services_serviceName_serviceInstance, _services_serviceName;
+            await ((_services_serviceName = services[serviceName]) === null || _services_serviceName === void 0 ? void 0 : (_services_serviceName_serviceInstance = _services_serviceName.serviceInstance) === null || _services_serviceName_serviceInstance === void 0 ? void 0 : _services_serviceName_serviceInstance.dispose());
+        }
+    }
     static async $initServiceInstance(service, ctx) {
         let module;
         if ('type' in service) {
@@ -615,9 +629,12 @@ class ServiceManager {
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
-                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.dispose:
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.closeDocument:
                     this.removeDocument(documentIdentifier);
                     await doValidation(documentIdentifier, serviceInstances);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.dispose:
+                    await this.disposeAll();
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.globalOptions:
                     this.setGlobalOptions(message.serviceName, message.options, message.merge);

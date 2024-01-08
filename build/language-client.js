@@ -3934,6 +3934,9 @@ class BaseService {
             errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
         };
     }
+    dispose() {
+        return Promise.resolve();
+    }
     constructor(mode){
         _define_property(this, "mode", void 0);
         _define_property(this, "documents", {});
@@ -16958,9 +16961,15 @@ class ChangeOptionsMessage extends (/* unused pure expression or super */ null &
         this.merge = merge;
     }
 }
-class DisposeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+class CloseDocumentMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
     constructor(sessionId){
         super(sessionId);
+        _define_property(this, "type", MessageType.closeDocument);
+    }
+}
+class DisposeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+    constructor(){
+        super("");
         _define_property(this, "type", MessageType.dispose);
     }
 }
@@ -17012,11 +17021,12 @@ var MessageType;
     MessageType[MessageType["applyDelta"] = 7] = "applyDelta";
     MessageType[MessageType["changeMode"] = 8] = "changeMode";
     MessageType[MessageType["changeOptions"] = 9] = "changeOptions";
-    MessageType[MessageType["dispose"] = 10] = "dispose";
+    MessageType[MessageType["closeDocument"] = 10] = "closeDocument";
     MessageType[MessageType["globalOptions"] = 11] = "globalOptions";
     MessageType[MessageType["configureFeatures"] = 12] = "configureFeatures";
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
+    MessageType[MessageType["dispose"] = 15] = "dispose";
 })(MessageType || (MessageType = {}));
 
 ;// CONCATENATED MODULE: ./src/services/language-client.ts
@@ -17145,15 +17155,16 @@ class LanguageClient extends base_service.BaseService {
                 }
             }));
     }
-    /*
-        close() {
-            if (this.connection) {
-                this.connection.dispose();
-            }
-            if (this.socket)
-                this.socket.close();
+    async dispose() {
+        if (this.connection) {
+            this.isConnected = false;
+            await this.connection.sendRequest("shutdown");
+            this.connection.sendNotification('exit');
+            this.connection.dispose();
+            if (this.socket) this.socket.close();
         }
-    */ sendInitialize(initializationOptions) {
+    }
+    sendInitialize(initializationOptions) {
         if (!this.isConnected) {
             return;
         }
