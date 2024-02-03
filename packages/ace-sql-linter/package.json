@@ -20,6 +20,21 @@
       ],
       "build/plsql-service": [
         "./types/plsql-service.d.ts"
+      ],
+      "build/flinksql-service": [
+        "./types/flinksql-service.d.ts"
+      ],
+      "build/hivesql-service": [
+        "./types/hivesql-service.d.ts"
+      ],
+      "build/impalasql-service": [
+        "./types/impalasql-service.d.ts"
+      ],
+      "build/sparksql-service": [
+        "./types/sparksql-service.d.ts"
+      ],
+      "build/trinosql-service": [
+        "./types/trinosql-service.d.ts"
       ]
     }
   }
