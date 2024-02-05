@@ -17188,11 +17188,15 @@ class LanguageClient extends base_service.BaseService {
         });
     }
     applyDeltas(identifier, deltas) {
+        var _this_serviceCapabilities, _this_serviceCapabilities1;
         super.applyDeltas(identifier, deltas);
-        if (!this.isConnected) {
+        if (!this.isConnected || !this.serviceCapabilities) {
             return;
         }
-        if (!(this.serviceCapabilities && this.serviceCapabilities.textDocumentSync !== browser_main.TextDocumentSyncKind.Incremental)) {
+        if (((_this_serviceCapabilities = this.serviceCapabilities) === null || _this_serviceCapabilities === void 0 ? void 0 : _this_serviceCapabilities.textDocumentSync) === browser_main.TextDocumentSyncKind.None) {
+            return;
+        }
+        if (((_this_serviceCapabilities1 = this.serviceCapabilities) === null || _this_serviceCapabilities1 === void 0 ? void 0 : _this_serviceCapabilities1.textDocumentSync) !== browser_main.TextDocumentSyncKind.Incremental) {
             return this.setValue(identifier, this.getDocument(identifier.uri).getText());
         }
         const textDocumentChange = {
@@ -17205,8 +17209,12 @@ class LanguageClient extends base_service.BaseService {
         this.connection.sendNotification('textDocument/didChange', textDocumentChange);
     }
     setValue(identifier, value) {
+        var _this_serviceCapabilities;
         super.setValue(identifier, value);
         if (!this.isConnected) {
+            return;
+        }
+        if (((_this_serviceCapabilities = this.serviceCapabilities) === null || _this_serviceCapabilities === void 0 ? void 0 : _this_serviceCapabilities.textDocumentSync) === browser_main.TextDocumentSyncKind.None) {
             return;
         }
         const textDocumentChange = {
