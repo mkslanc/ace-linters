@@ -258,10 +258,13 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]) {
         super.applyDeltas(identifier, deltas);
-        if (!this.isConnected) {
+        if (!this.isConnected || !this.serviceCapabilities) {
             return;
         }
-        if (!(this.serviceCapabilities && this.serviceCapabilities.textDocumentSync !== lsp.TextDocumentSyncKind.Incremental)) {
+        if (this.serviceCapabilities?.textDocumentSync === lsp.TextDocumentSyncKind.None) {
+            return;
+        }
+        if (this.serviceCapabilities?.textDocumentSync !== lsp.TextDocumentSyncKind.Incremental) {
             return this.setValue(identifier, this.getDocument(identifier.uri).getText());
         }
         const textDocumentChange: lsp.DidChangeTextDocumentParams = {
@@ -277,6 +280,9 @@ export class LanguageClient extends BaseService implements LanguageService {
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string) {
         super.setValue(identifier, value);
         if (!this.isConnected) {
+            return;
+        }
+        if (this.serviceCapabilities?.textDocumentSync === lsp.TextDocumentSyncKind.None) {
             return;
         }
         const textDocumentChange: lsp.DidChangeTextDocumentParams = {
