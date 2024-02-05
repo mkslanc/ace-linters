@@ -1,13 +1,13 @@
 {
   "name": "ace-sql-linter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
     "build": "npm run clean && webpack --mode=production"
   },
   "devDependencies": {
-    "dt-sql-parser": "^4.0.0-beta.4.9"
+    "dt-sql-parser": "^4.0.0-beta.4.11"
   },
   "files": ["build", "types"],
   "typesVersions": {
