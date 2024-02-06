@@ -19,9 +19,13 @@ return /******/ (() => { // webpackBootstrap
 /* harmony export */   PM: () => (/* binding */ mergeObjects)
 /* harmony export */ });
 /* unused harmony exports notEmpty, mergeRanges, checkValueAgainstRegexpArray */
-function mergeObjects(obj1, obj2) {
+function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
+    if (excludeUndefined) {
+        obj1 = excludeUndefinedValues(obj1);
+        obj2 = excludeUndefinedValues(obj2);
+    }
     const mergedObjects = {
         ...obj2,
         ...obj1
@@ -38,6 +42,10 @@ function mergeObjects(obj1, obj2) {
         }
     }
     return mergedObjects;
+}
+function excludeUndefinedValues(obj) {
+    const filteredEntries = Object.entries(obj).filter(([_, value])=>value !== undefined);
+    return Object.fromEntries(filteredEntries);
 }
 function notEmpty(value) {
     return value !== null && value !== undefined;

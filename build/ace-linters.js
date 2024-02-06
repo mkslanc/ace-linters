@@ -18654,9 +18654,13 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
 var main = __webpack_require__(294);
 ;// CONCATENATED MODULE: ./src/utils.ts
-function mergeObjects(obj1, obj2) {
+function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
+    if (excludeUndefined) {
+        obj1 = excludeUndefinedValues(obj1);
+        obj2 = excludeUndefinedValues(obj2);
+    }
     const mergedObjects = {
         ...obj2,
         ...obj1
@@ -18673,6 +18677,10 @@ function mergeObjects(obj1, obj2) {
         }
     }
     return mergedObjects;
+}
+function excludeUndefinedValues(obj) {
+    const filteredEntries = Object.entries(obj).filter(([_, value])=>value !== undefined);
+    return Object.fromEntries(filteredEntries);
 }
 function notEmpty(value) {
     return value !== null && value !== undefined;
