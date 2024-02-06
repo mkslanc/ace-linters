@@ -1,8 +1,12 @@
 
-export function mergeObjects(obj1, obj2) {
+export function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
-
+    if (excludeUndefined) {
+        obj1 = excludeUndefinedValues(obj1);
+        obj2 = excludeUndefinedValues(obj2);
+    }
+    
     const mergedObjects = { ...obj2, ...obj1 }; // Give priority to obj1 values by spreading obj2 first, then obj1
 
     for (const key of Object.keys(mergedObjects)) {
@@ -18,6 +22,11 @@ export function mergeObjects(obj1, obj2) {
     }
 
     return mergedObjects;
+}
+
+function excludeUndefinedValues<T extends object>(obj: T): Partial<T> {
+    const filteredEntries = Object.entries(obj).filter(([_, value]) => value !== undefined);
+    return Object.fromEntries(filteredEntries) as Partial<T>;
 }
 
 export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
