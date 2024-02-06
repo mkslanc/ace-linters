@@ -31,7 +31,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         onlyVisible: false,
         module: 99,
         moduleResolution: 99,
-        allowSyntheticDefaultImports: true
+        allowSyntheticDefaultImports: true,
+        moduleDetection: 3
     };
 
     $defaultFormatOptions = {
@@ -59,7 +60,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     serviceCapabilities = {
         completionProvider: {
-            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#', ' ']
+            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#']
         },
         diagnosticProvider: {
             interFileDependencies: true,
@@ -78,7 +79,21 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
     }
 
     getCompilationSettings(): ts.CompilerOptions {
-        return mergeObjects(this.globalOptions?.compilerOptions, this.$defaultCompilerOptions);
+        const parseConfigHost = {
+            fileExists: () => {
+                return true
+            },
+            readFile: () => {
+                return ""
+            },
+            readDirectory: () => {
+                return []
+            },
+            useCaseSensitiveFileNames: true
+        };
+        let options = ts.parseJsonConfigFileContent(this.globalOptions, parseConfigHost, "");
+        options = mergeObjects(options.options, this.globalOptions?.compilerOptions, true);
+        return mergeObjects(options, this.$defaultCompilerOptions);
     }
 
     getScriptFileNames(): string[] {

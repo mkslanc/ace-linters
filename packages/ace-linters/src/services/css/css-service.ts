@@ -20,7 +20,7 @@ export class CssService extends BaseService implements LanguageService {
     }
     serviceCapabilities = {
         completionProvider: {
-            triggerCharacters: [":", " ", "-", "/"],
+            triggerCharacters: [":", "-", "/"],
             resolveProvider: true
         },
         diagnosticProvider: {

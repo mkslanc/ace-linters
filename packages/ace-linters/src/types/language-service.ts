@@ -108,7 +108,7 @@ interface ExtraLib {
 }
 
 export interface TsServiceOptions extends ServiceOptionsWithErrorCodes{
-    compilerOptions?: ts.CompilerOptions,
+    compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums,
     extraLibs?: {
         [path: string]: ExtraLib;
     },
