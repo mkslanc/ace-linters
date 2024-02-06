@@ -60,7 +60,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     serviceCapabilities = {
         completionProvider: {
-            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#', ' ']
+            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#']
         },
         diagnosticProvider: {
             interFileDependencies: true,
