@@ -147,7 +147,7 @@ let editor = ace.edit("container", {
 });
 
 // Create a language provider for web worker
-let languageProvider = AceLanguageClient.for(worker);
+let languageProvider = AceLanguageClient.for(serverData);
 
 // Register the editor with the language provider
 languageProvider.registerEditor(editor);
