@@ -397,7 +397,7 @@ class SessionLanguageProvider {
         this.editor = editor;
         this.initFileName();
 
-        session.doc["version"] = 0;
+        session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
 
         // @ts-ignore
