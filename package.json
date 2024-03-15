@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
     "build:ace-sql-linter": "cd packages/ace-sql-linter && npm run build",
