@@ -1,5 +1,7 @@
 import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
+import {LanguageProvider} from "ace-linters";
+import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {htmlContent} from "../docs-example/html-example";
 import {cssContent} from "../docs-example/css-example";
 import {lessContent} from "../docs-example/less-example";
@@ -7,25 +9,14 @@ import {scssContent} from "../docs-example/scss-example";
 import {typescriptContent, typescriptContent1} from "../docs-example/typescript-example";
 import {jsonSchema, jsonContent, jsonSchema2} from "../docs-example/json-example";
 import {jsContent} from "../docs-example/javascript-example";
-
 import {tsxContent} from "../docs-example/tsx-example";
 import {jsxContent} from "../docs-example/jsx-example";
 import {json5Content, json5Schema} from "../docs-example/json5-example";
-
-import {LanguageProvider} from "ace-linters";
 import {luaContent} from "../docs-example/lua-example";
-import {createEditorWithLSP} from "../utils";
 import {yamlContent, yamlSchema} from "../docs-example/yaml-example";
 import {phpContent} from "../docs-example/php-example";
 import {xmlContent, xmlSchema} from "../docs-example/xml-example";
 import {pythonContent} from "../docs-example/python-example";
-
-import event from "ace-code/src/lib/event";
-
-import {HashHandler} from "ace-code/src/keyboard/hash_handler";
-
-import keyUtil from "ace-code/src/lib/keys";
-import {svelteContent} from "../docs-example/svelte-example";
 import {mysqlContent} from "../docs-example/mysql-example";
 
 let modes = [
@@ -161,21 +152,4 @@ languageProvider.setGlobalOptions("json", {
     },]
 }, true);
 
-let menuKb = new HashHandler([
-    {
-        bindKey: "Ctrl-Shift-B",
-        name: "format",
-        exec: function () {
-            languageProvider.format();
-        }
-    }
-]);
-
-event.addCommandKeyListener(window, function (e, hashId, keyCode) {
-    let keyString = keyUtil.keyCodeToString(keyCode);
-    let command = menuKb.findKeyCommand(hashId, keyString);
-    if (command) {
-        command.exec();
-        e.preventDefault();
-    }
-});
+addFormatCommand(languageProvider);

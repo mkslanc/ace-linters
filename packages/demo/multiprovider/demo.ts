@@ -1,14 +1,8 @@
 import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
 import {LanguageProvider} from "ace-linters";
-import {createEditorWithLSP} from "../utils";
+import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {jsContent} from "../docs-example/javascript-example";
-
-import event from "ace-code/src/lib/event";
-
-import {HashHandler} from "ace-code/src/keyboard/hash_handler";
-
-import keyUtil from "ace-code/src/lib/keys";
 
 let modes = [
     {name: "javascript validated by EsLint, with hover, autocompletion and format of Typescript", mode: "ace/mode/javascript", content: jsContent},
@@ -30,21 +24,5 @@ languageProvider.setGlobalOptions("typescript", {
         jsx: 1
     }
 });
-let menuKb = new HashHandler([
-    {
-        bindKey: "Ctrl-Shift-B",
-        name: "format",
-        exec: function () {
-            languageProvider.format();
-        }
-    }
-]);
 
-event.addCommandKeyListener(window, function (e, hashId, keyCode) {
-    let keyString = keyUtil.keyCodeToString(keyCode);
-    let command = menuKb.findKeyCommand(hashId, keyString);
-    if (command) {
-        command.exec();
-        e.preventDefault();
-    }
-});
+addFormatCommand(languageProvider);

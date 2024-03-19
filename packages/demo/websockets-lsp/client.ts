@@ -1,12 +1,9 @@
 import "ace-code/esm-resolver";
-import * as event from "ace-code/src/lib/event";
-import {HashHandler} from "ace-code/src/keyboard/hash_handler";
-import * as keyUtil from "ace-code/src/lib/keys";
 import {jsonContent} from "../docs-example/json-example";
 
 import {json5Content, json5Schema} from "../docs-example/json5-example";
 
-import {createEditorWithLSP} from "../utils";
+import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 
@@ -30,21 +27,4 @@ for (let mode of modes) {
     i++;
 }
 
-let menuKb = new HashHandler([
-    {
-        bindKey: "Ctrl-Shift-B",
-        name: "format",
-        exec: function () {
-            languageProvider.format();
-        }
-    }
-]);
-
-event.addCommandKeyListener(window, function (e, hashId, keyCode) {
-    let keyString = keyUtil.keyCodeToString(keyCode);
-    let command = menuKb.findKeyCommand(hashId, keyString);
-    if (command) {
-        command.exec();
-        e.preventDefault();
-    }
-});
+addFormatCommand(languageProvider);
