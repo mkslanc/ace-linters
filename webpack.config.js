@@ -26,6 +26,7 @@ module.exports = (env, argv) => {
             multiprovider_demo: './packages/demo/multiprovider/demo.ts',
             pylsp_websocket_demo: './packages/demo/websockets-pylsp/client.ts',
             svelte_demo: './packages/demo/websockets-sls/client.ts',
+            change_mode_demo: './packages/demo/webworker-change-mode/demo.ts',
         },
         mode: "production",
         module: {
