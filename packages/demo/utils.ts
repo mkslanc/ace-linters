@@ -1,9 +1,10 @@
 import * as ace from "ace-code";
 import "ace-code/src/ext/language_tools";
-
-
+import event from "ace-code/src/lib/event";
+import {HashHandler} from "ace-code/src/keyboard/hash_handler";
+import keyUtil from "ace-code/src/lib/keys";
 import * as theme from "ace-code/src/theme/textmate";
-import {LanguageProvider} from "ace-linters";
+import type {LanguageProvider} from "ace-linters";
 
 export function createCloseButton(el) {
     let closeButton = document.createElement("span");
@@ -58,4 +59,24 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
         closeButton.remove();
     }
     return editor;
+}
+
+export function addFormatCommand(languageProvider: LanguageProvider) {
+    let menuKb = new HashHandler([
+        {
+            bindKey: "Ctrl-Shift-B",
+            name: "format",
+            exec: function () {
+                languageProvider.format();
+            }
+        }
+    ]);
+    event.addCommandKeyListener(window, function (e, hashId, keyCode) {
+        let keyString = keyUtil.keyCodeToString(keyCode);
+        let command = menuKb.findKeyCommand(hashId, keyString);
+        if (command) {
+            command.exec();
+            e.preventDefault();
+        }
+    });
 }
