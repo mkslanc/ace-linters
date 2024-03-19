@@ -20497,6 +20497,10 @@ class SessionLanguageProvider {
                 return;
             }
             this.$deltaQueue = [];
+            this.session.clearAnnotations();
+            if (this.state.diagnosticMarkers) {
+                this.state.diagnosticMarkers.setMarkers([]);
+            }
             this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
         });
         language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
@@ -20582,6 +20586,7 @@ class SessionLanguageProvider {
             }
         });
         language_provider_define_property(this, "$applyFormat", (edits)=>{
+            edits !== null && edits !== void 0 ? edits : edits = [];
             for (let edit of edits.reverse()){
                 this.session.replace(toRange(edit.range), edit.newText);
             }
