@@ -425,6 +425,12 @@ class SessionLanguageProvider {
             return;
         }
         this.$deltaQueue = [];
+
+        this.session.clearAnnotations();
+        if (this.state.diagnosticMarkers) {
+            this.state.diagnosticMarkers.setMarkers([]);
+        }
+        
         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
 
@@ -536,6 +542,7 @@ class SessionLanguageProvider {
     }
 
     private $applyFormat = (edits: lsp.TextEdit[]) => {
+        edits ??= [];
         for (let edit of edits.reverse()) {
             this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
         }
