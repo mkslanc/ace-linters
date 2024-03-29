@@ -22,7 +22,7 @@ export declare class LanguageProvider {
         services: ServiceStruct[];
         serviceManagerCdn: string;
         includeDefaultLinters?: {
-            [name in SupportedServices]: boolean;
+            [name in SupportedServices]: boolean | undefined;
         } | true;
     }, options?: ProviderOptions): LanguageProvider;
     static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider;

@@ -73,13 +73,13 @@ export class LanguageProvider {
     static fromCdn(customServices: {
         services: ServiceStruct[],
         serviceManagerCdn: string,
-        includeDefaultLinters?: { [name in SupportedServices]: boolean } | true
+        includeDefaultLinters?: { [name in SupportedServices]: boolean | undefined } | true
     }, options?: ProviderOptions): LanguageProvider
     static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider
     static fromCdn(source: string | {
         services: ServiceStruct[],
         serviceManagerCdn: string,
-        includeDefaultLinters?: { [name in SupportedServices]: boolean } | boolean
+        includeDefaultLinters?: { [name in SupportedServices]: boolean | undefined } | boolean
     }, options?: ProviderOptions) {
         let messageController: IMessageController;
         let worker: Worker;

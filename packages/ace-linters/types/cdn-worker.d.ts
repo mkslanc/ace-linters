@@ -3,7 +3,7 @@ export declare function createWorker(services: {
     services: ServiceStruct[];
     serviceManagerCdn: string;
 }, includeLinters?: {
-    [name in SupportedServices]: boolean;
+    [name in SupportedServices]: boolean | undefined;
 } | boolean): Worker;
 export declare function createWorker(cdnUrl: string, includeLinters?: {
     [name in SupportedServices]: boolean;
