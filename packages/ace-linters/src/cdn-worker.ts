@@ -21,12 +21,12 @@ function createWorkerBlob(cdnUrl: string, services: ServiceStruct[]) {
 export function createWorker(services: {
     services: ServiceStruct[],
     serviceManagerCdn: string
-}, includeLinters?: { [name in SupportedServices]: boolean } | boolean): Worker
+}, includeLinters?: { [name in SupportedServices]: boolean | undefined } | boolean): Worker
 export function createWorker(cdnUrl: string, includeLinters?: { [name in SupportedServices]: boolean } | boolean): Worker
 export function createWorker(source: string | {
     services: ServiceStruct[],
     serviceManagerCdn: string
-}, includeLinters: { [name in SupportedServices]: boolean } | boolean = true) {
+}, includeLinters: { [name in SupportedServices]: boolean | undefined } | boolean = true) {
     if (typeof Worker == "undefined") return {
         postMessage: function () {
         },
@@ -50,7 +50,7 @@ export function createWorker(source: string | {
     return new Worker(blobURL);
 }
 
-function getServices(includeLinters: { [name in SupportedServices]: boolean } | boolean = true): ServiceStruct[] {
+function getServices(includeLinters: { [name in SupportedServices]: boolean | undefined } | boolean = true): ServiceStruct[] {
     const allServices = [
         {
             name: "json",
