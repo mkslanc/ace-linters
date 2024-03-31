@@ -113,7 +113,7 @@ function getServices(includeLinters: { [name in SupportedServices]: boolean | un
             modes: "php",
         },
         {
-            name: "javascript",
+            name: "eslint",
             script: "javascript-service.js",
             className: "JavascriptService",
             modes: "javascript",
@@ -132,5 +132,10 @@ function getServices(includeLinters: { [name in SupportedServices]: boolean | un
         return [];
     }
 
-    return allServices.filter(service => includeLinters[service.name]);
+    return allServices.filter(service => {
+        if (includeLinters.javascript) { // left for backward compatibility
+            return includeLinters["eslint"];
+        }
+        return includeLinters[service.name]
+    });
 }

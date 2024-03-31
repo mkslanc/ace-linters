@@ -146,7 +146,11 @@ export interface ServiceOptionsMap {
     yaml: YamlServiceOptions;
     php: PhpServiceOptions;
     xml: XmlServiceOptions;
+    /**
+     * @deprecated would be removed in next iterations
+     */
     javascript: JavascriptServiceOptions;
+    eslint: JavascriptServiceOptions;
     python: PythonServiceOptions;
     css: CssServiceOptions;
     less: CssServiceOptions;
@@ -154,7 +158,7 @@ export interface ServiceOptionsMap {
     lua: LuaServiceOptions;
     [serviceName: string]: any;
 }
-export type SupportedServices = "json" | "json5" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | "javascript" | "lua" | "less" | "scss" | "python";
+export type SupportedServices = "json" | "json5" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | /** @deprecated would be removed in next iterations */ "javascript" | "eslint" | "lua" | "less" | "scss" | "python";
 export interface ProviderOptions {
     functionality: {
         hover: boolean;

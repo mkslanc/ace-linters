@@ -166,7 +166,11 @@ export interface ServiceOptionsMap {
     yaml: YamlServiceOptions,
     php: PhpServiceOptions,
     xml: XmlServiceOptions,
+    /**
+     * @deprecated would be removed in next iterations
+     */
     javascript: JavascriptServiceOptions,
+    eslint: JavascriptServiceOptions,
     python: PythonServiceOptions,
     css: CssServiceOptions,
     less: CssServiceOptions,
@@ -184,7 +188,9 @@ export type SupportedServices =
     | "yaml"
     | "php"
     | "xml"
-    | "javascript"
+    
+    | /** @deprecated would be removed in next iterations */"javascript"
+    | "eslint"
     | "lua"
     | "less"
     | "scss"
