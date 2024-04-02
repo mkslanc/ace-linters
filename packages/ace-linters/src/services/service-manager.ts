@@ -168,6 +168,13 @@ export class ServiceManager {
                     }))).filter(notEmpty);
                     postMessage["value"] = highlights.flat();
                     break;
+                case MessageType.getSemanticTokens:
+                    serviceInstances = this.filterByFeature(serviceInstances, "semanticTokens");
+                    if (serviceInstances.length > 0) {
+                        //we will use only first service
+                        postMessage["value"] = await serviceInstances[0].getFullSemanticTokens(documentIdentifier);
+                    }
+                    break;
             }
 
             ctx.postMessage(postMessage);
@@ -319,7 +326,9 @@ export class ServiceManager {
                 case "signatureHelp":
                     return capabilities.signatureHelpProvider != undefined;
                 case "documentHighlight":
-                    return capabilities.documentHighlightProvider == true
+                    return capabilities.documentHighlightProvider == true;
+                case "semanticTokens":
+                    return capabilities.semanticTokensProvider != undefined;
             }
         });
     }
@@ -364,6 +373,7 @@ export class ServiceManager {
         features.diagnostics ??= true;
         features.signatureHelp ??= true;
         features.documentHighlight ??= true;
+        features.semanticTokens ??= true;
         return features;
     }
 }

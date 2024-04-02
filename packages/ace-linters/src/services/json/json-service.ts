@@ -8,7 +8,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import * as jsonService from 'vscode-json-languageservice';
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {JsonServiceOptions, LanguageService} from "../../types/language-service";
-import {filterDiagnostics} from "../../type-converters/lsp-converters";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class JsonService extends BaseService<JsonServiceOptions> implements LanguageService {
     $service: VSLanguageService;

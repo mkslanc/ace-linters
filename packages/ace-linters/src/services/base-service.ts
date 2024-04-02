@@ -108,6 +108,10 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             errorMessagesToTreatAsInfo: this.globalOptions.errorMessagesToTreatAsInfo ?? [],
         }
     }
+    
+    getSemanticTokens(document: lsp.TextDocumentIdentifier): Promise<lsp.SemanticTokens | null> {
+        return Promise.resolve(null);
+    }
 
     dispose() {
         return Promise.resolve();

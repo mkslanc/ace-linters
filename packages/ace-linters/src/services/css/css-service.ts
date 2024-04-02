@@ -6,7 +6,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import * as cssService from 'vscode-css-languageservice';
 import {mergeObjects} from "../../utils";
 import {LanguageService} from "../../types/language-service";
-import {filterDiagnostics} from "../../type-converters/lsp-converters";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;

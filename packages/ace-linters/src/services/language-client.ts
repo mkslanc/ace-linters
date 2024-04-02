@@ -56,6 +56,20 @@ export class LanguageClient extends BaseService implements LanguageService {
             },
             documentHighlight: {
                 dynamicRegistration: true
+            },
+            semanticTokens: {
+                multilineTokenSupport: false,
+                overlappingTokenSupport: false,
+                tokenTypes: [],
+                tokenModifiers: [],
+                formats: ["relative"],
+                requests: {
+                    full: {
+                        delta: false
+                    },
+                    range: false
+                },
+                augmentsSyntaxTokens: true
             }
         },
         workspace: {
@@ -192,7 +206,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
     }
 
-    addDocument(document: lsp.TextDocumentItem) {
+    addDocument(document: lsp.TextDocumentItem) {//TODO: this need to be async to avoid race condition
         super.addDocument(document);
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: document
@@ -420,5 +434,18 @@ export class LanguageClient extends BaseService implements LanguageService {
             position: position,
         };
         return this.connection.sendRequest('textDocument/signatureHelp', options) as Promise<lsp.SignatureHelp | null>
+    }
+
+    async getSemanticTokens(document: lsp.TextDocumentIdentifier) {
+        if (!this.isInitialized)
+            return null;
+        if (!this.serviceCapabilities?.semanticTokensProvider?.full)
+            return null;
+        let options: lsp.SemanticTokensParams = {
+            textDocument: {
+                uri: document.uri,
+            },
+        };
+        return this.connection.sendRequest('textDocument/semanticTokens/full', options) as Promise<lsp.SemanticTokens | null>
     }
 }

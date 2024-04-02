@@ -44,6 +44,8 @@ export interface LanguageService {
 
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
     
+    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> 
+    
     dispose(): Promise<void>;
 }
 
@@ -206,7 +208,8 @@ export interface ProviderOptions {
         completionResolve: boolean,
         format: boolean,
         documentHighlights: boolean,
-        signatureHelp: boolean
+        signatureHelp: boolean,
+        semanticTokens: boolean
     },
     markdownConverter?: MarkDownConverter
 }
@@ -223,6 +226,8 @@ export type SupportedFeatures =
     | "diagnostics"
     | "signatureHelp"
     | "documentHighlight"
+    | "semanticTokens"
+
 
 export interface ServiceConfig extends BaseConfig {
     className: string,

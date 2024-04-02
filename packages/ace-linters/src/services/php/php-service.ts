@@ -2,7 +2,7 @@ import {BaseService} from "../base-service";
 import * as lsp from "vscode-languageserver-protocol";
 import {PHP} from "./lib/php";
 import {LanguageService, PhpServiceOptions} from "../../types/language-service";
-import {filterDiagnostics} from "../../type-converters/lsp-converters";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class PhpService extends BaseService<PhpServiceOptions> implements LanguageService {
     $service;

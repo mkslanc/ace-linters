@@ -185,6 +185,16 @@ export class DocumentHighlightMessage extends BaseMessage {
     }
 }
 
+export class GetSemanticTokensMessage extends BaseMessage {
+    type: MessageType = MessageType.getSemanticTokens;
+    value: lsp.Range; 
+
+    constructor(sessionId: string, value: lsp.Range) {
+        super(sessionId);
+        this.value = value;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -201,7 +211,7 @@ export enum MessageType {
     configureFeatures,
     signatureHelp,
     documentHighlight,
-    dispose
     dispose,
     capabilitiesChange,
+    getSemanticTokens
 }

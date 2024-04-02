@@ -10,7 +10,7 @@ import {
     InitMessage, MessageType,
     ResolveCompletionMessage, SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage, DisposeMessage
+    ValidateMessage, DisposeMessage, GetSemanticTokensMessage
 } from "./message-types";
 import {IMessageController, InitCallbacks} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -36,7 +36,7 @@ export class MessageController extends EventEmitter implements IMessageControlle
         // somewhere
         this.on(MessageType.capabilitiesChange.toString() + "-" + sessionId, callbacks.changeCapabilitiesCallback);
 
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
+        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), callbacks.initCallback);
     }
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void) {
@@ -101,6 +101,10 @@ export class MessageController extends EventEmitter implements IMessageControlle
 
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
+    }
+
+    getSemanticTokens(sessionId: string, range: lsp.Range,  callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
+        this.postMessage(new GetSemanticTokensMessage(sessionId, range), callback);
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

@@ -39,5 +39,7 @@ export interface IMessageController {
     
     provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void);
 
-    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void)
+    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void);
+
+    getSemanticTokens(sessionId: string, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void);
 }
