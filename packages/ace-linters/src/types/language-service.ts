@@ -8,6 +8,7 @@ import {MarkDownConverter} from "./converters";
 export interface LanguageService {
     documents: { [sessionID: string]: TextDocument };
     $service;
+    serviceName: string;
     mode: string;
     globalOptions;
     serviceData: LanguageClientConfig | ServiceConfig;

@@ -375,7 +375,7 @@ class SessionLanguageProvider {
     private $isConnected = false;
     private $modeIsChanged = false;
     private $options: ServiceOptions;
-    private $servicesCapabilities?: lsp.ServerCapabilities[];
+    private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
 
     state: {
         occurrenceMarkers: MarkerGroup | null,
@@ -407,6 +407,16 @@ class SessionLanguageProvider {
     }
 
     private $connected = (capabilities: lsp.ServerCapabilities[]) => {
+        
+        let initCallbacks = {
+            "initCallback": this.$connected,
+            "validationCallback": this.$showAnnotations,
+            "changeCapabilitiesCallback": this.setServerCapabilities
+        }
+
+        this.$messageController.init(this.fileName, session.doc, this.$mode, options, initCallbacks);
+    }
+    private $connected = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
         this.$isConnected = true;
         // @ts-ignore
         
@@ -434,10 +444,14 @@ class SessionLanguageProvider {
         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
 
-    private setServerCapabilities = (capabilities?: lsp.ServerCapabilities[]) => {
-        //TODO: this need to take into account all capabilities from all services
-        this.$servicesCapabilities = capabilities;
-        if (capabilities && capabilities.some((capability) => capability?.completionProvider?.triggerCharacters)) {
+    private setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
+        if (!capabilities)
+            return;
+        this.$servicesCapabilities = {...capabilities};
+
+        let hasTriggerChars = Object.values(capabilities).some((capability) => capability?.completionProvider?.triggerCharacters);
+
+        if (hasTriggerChars) {
             let completer = this.editor.completers.find((completer) => completer.id === "lspCompleters");
             if (completer) {
                 let allTriggerCharacters = capabilities.reduce((acc, capability) => {

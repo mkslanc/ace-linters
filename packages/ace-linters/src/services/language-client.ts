@@ -244,6 +244,19 @@ export class LanguageClient extends BaseService implements LanguageService {
         this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.isInitialized = true;
             this.serviceCapabilities = params.capabilities as lsp.ServerCapabilities;
+            
+            const serviceName = this.serviceName;
+            Object.keys(this.documents).forEach((sessionId) => {
+                const postMessage = {
+                    "type": MessageType.capabilitiesChange,
+                    "value": {
+                        [serviceName]: this.serviceCapabilities
+                    },
+                    sessionId: sessionId
+                };
+                this.ctx.postMessage(postMessage);
+            });
+            
 
             this.connection.sendNotification('initialized', {}).then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {

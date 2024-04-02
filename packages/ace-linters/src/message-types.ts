@@ -202,4 +202,6 @@ export enum MessageType {
     signatureHelp,
     documentHighlight,
     dispose
+    dispose,
+    capabilitiesChange,
 }

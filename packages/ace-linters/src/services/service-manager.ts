@@ -2,7 +2,8 @@ import {mergeObjects, notEmpty} from "../utils";
 import {MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {
-    LanguageService, LanguageClientConfig,
+    LanguageClientConfig,
+    LanguageService,
     ServiceConfig,
     ServiceFeatures,
     ServiceOptions,
@@ -41,11 +42,11 @@ export class ServiceManager {
             servicesInstances = servicesInstances.filter((el) => {
                 return el.serviceCapabilities.diagnosticProvider;
             });
-            
+
             if (servicesInstances.length === 0) {
                 return;
             }
-            
+
             let postMessage = {
                 "type": MessageType.validate,
             };
@@ -128,11 +129,11 @@ export class ServiceManager {
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.init: //this should be first message
-                    postMessage["value"] = (await this.addDocument(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument)
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
-                    postMessage["value"] = (await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode)
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeOptions:
@@ -172,11 +173,24 @@ export class ServiceManager {
             ctx.postMessage(postMessage);
         })
     }
-    
+
+    private async getServicesCapabilitiesAfterCallback(documentIdentifier: VersionedTextDocumentIdentifier, message,
+                                                       callback: (documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) => Promise<{
+                                                           [p: string]: ServiceConfig | LanguageClientConfig
+                                                       } | never[] | undefined>) {
+        let services = await callback(documentIdentifier, message.value, message.mode, message.options);
+        if (services) {
+            return Object.keys(services).reduce((acc, key) => {
+                acc[key] = services![key]?.serviceInstance?.serviceCapabilities || null;
+                return acc;
+            }, {});
+        }
+    }
+
     async disposeAll() {
         var services = this.$services;
         for (let serviceName in services) {
-            await services[serviceName]?.serviceInstance?.dispose();  
+            await services[serviceName]?.serviceInstance?.dispose();
         }
     }
 
@@ -202,26 +216,36 @@ export class ServiceManager {
         return service.serviceInstance!;
     }
 
-    private async $getServicesInstancesByMode(mode: string): Promise<LanguageService[]> {
+    private async $getServicesInstancesByMode(mode: string) {
         let services = this.findServicesByMode(mode);
-        if (services.length === 0) {
+        if (Object.keys(services).length === 0) {
             return [];
         }
-        return Promise.all(services.map(service => this.initializeService(service)));
+
+        for (let serviceName in services) {
+            await this.initializeService(serviceName)
+        }
+
+        return services;
     }
 
-    private async initializeService(service: ServiceConfig | LanguageClientConfig): Promise<LanguageService> {
+    private async initializeService(serviceName: string): Promise<LanguageService> {
+        let service = this.$services[serviceName];
         if (!service.serviceInstance) {
             if (!this.serviceInitPromises[service.id!]) {
                 this.serviceInitPromises[service.id!] = ServiceManager.$initServiceInstance(service, this.ctx)
                     .then(instance => {
                         service.serviceInstance = instance;
+                        service.serviceInstance.serviceName = serviceName;
                         delete this.serviceInitPromises[service.id!]; // Clean up
                         return instance;
                     });
             }
             return this.serviceInitPromises[service.id!];
         } else {
+            if (!service.serviceInstance.serviceName) {
+                service.serviceInstance.serviceName = serviceName;
+            }
             return service.serviceInstance;
         }
     }
@@ -240,8 +264,8 @@ export class ServiceManager {
         if (!mode || !/^ace\/mode\//.test(mode))
             return;
         mode = mode.replace("ace/mode/", "");
-        let serviceInstances = await this.$getServicesInstancesByMode(mode);
-        if (serviceInstances.length === 0)
+        let services = await this.$getServicesInstancesByMode(mode);
+        if (Object.keys(services).length === 0)
             return;
         let documentItem = {
             uri: documentIdentifier.uri,
@@ -249,9 +273,9 @@ export class ServiceManager {
             languageId: mode,
             text: documentValue
         }
-        serviceInstances.forEach((el) => el.addDocument(documentItem));
+        Object.values(services).forEach((el) => el.serviceInstance!.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
-        return serviceInstances;
+        return services;
     }
 
     async changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) {
@@ -272,7 +296,7 @@ export class ServiceManager {
         if (!mode)
             return []; //TODO:
         let services = this.findServicesByMode(mode);
-        return services.map((el) => el.serviceInstance).filter(notEmpty);
+        return Object.values(services).map((el) => el.serviceInstance).filter(notEmpty);
     }
 
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
@@ -300,12 +324,15 @@ export class ServiceManager {
         });
     }
 
-    findServicesByMode(mode: string): (ServiceConfig | LanguageClientConfig)[] {
-        return Object.values(this.$services).filter((el) => {
-            let extensions = el.modes.split('|');
-            if (extensions.includes(mode))
-                return el;
-        });
+    findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
+        let servicesWithName = {};
+        Object.entries(this.$services).forEach(([key, value]) => {
+                let extensions = value.modes.split('|');
+                if (extensions.includes(mode))
+                    servicesWithName[key] = this.$services[key];
+            }
+        )
+        return servicesWithName;
     }
 
     registerService(name: string, service: ServiceConfig) {

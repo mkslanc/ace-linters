@@ -12,7 +12,7 @@ import {
     ConfigureFeaturesMessage,
     ValidateMessage, DisposeMessage
 } from "./message-types";
-import {IMessageController} from "./types/message-controller-interface";
+import {IMessageController, InitCallbacks} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
 import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types/language-service";
 import EventEmitter from "events";
@@ -31,8 +31,10 @@ export class MessageController extends EventEmitter implements IMessageControlle
 
     }
     
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
-        this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, callbacks: InitCallbacks): void {
+        this.on(MessageType.validate.toString() + "-" + sessionId, callbacks.validationCallback); //TODO: need off
+        // somewhere
+        this.on(MessageType.capabilitiesChange.toString() + "-" + sessionId, callbacks.changeCapabilitiesCallback);
 
         this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
     }

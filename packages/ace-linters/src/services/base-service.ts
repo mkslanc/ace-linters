@@ -5,6 +5,7 @@ import {FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service;
+    serviceName: string;
     mode: string;
     documents: { [sessionID: string]: TextDocument } = {};
     options: { [sessionID: string]: OptionsType } = {};
