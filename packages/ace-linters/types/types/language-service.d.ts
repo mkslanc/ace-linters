@@ -9,6 +9,7 @@ export interface LanguageService {
         [sessionID: string]: TextDocument;
     };
     $service: any;
+    serviceName: string;
     mode: string;
     globalOptions: any;
     serviceData: LanguageClientConfig | ServiceConfig;
@@ -28,6 +29,7 @@ export interface LanguageService {
     getDocumentValue(uri: string): string | undefined;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
+    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
     dispose(): Promise<void>;
 }
 interface TooltipContent {
@@ -169,13 +171,14 @@ export interface ProviderOptions {
         format: boolean;
         documentHighlights: boolean;
         signatureHelp: boolean;
+        semanticTokens: boolean;
     };
     markdownConverter?: MarkDownConverter;
 }
 export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens";
 export interface ServiceConfig extends BaseConfig {
     className: string;
     options?: ServiceOptions;

@@ -6,6 +6,7 @@ import {ServiceFeatures, ServiceOptions, SupportedServices} from "./types/langua
 export abstract class BaseMessage {
     abstract type: MessageType;
     sessionId: string;
+    version?: number;
 
     protected constructor(sessionId) {
         this.sessionId = sessionId;
@@ -13,7 +14,7 @@ export abstract class BaseMessage {
 }
 
 export class InitMessage extends BaseMessage {
-    type: MessageType = MessageType.init;
+    type: MessageType.init = MessageType.init;
     mode: string;
     options?: { [key: string]: any };
     value: string;
@@ -29,7 +30,7 @@ export class InitMessage extends BaseMessage {
 }
 
 export class FormatMessage extends BaseMessage {
-    type: MessageType = MessageType.format;
+    type: MessageType.format = MessageType.format;
     value: lsp.Range;
     format: FormattingOptions;
 
@@ -41,7 +42,7 @@ export class FormatMessage extends BaseMessage {
 }
 
 export class CompleteMessage extends BaseMessage {
-    type: MessageType = MessageType.complete;
+    type: MessageType.complete = MessageType.complete;
     value: lsp.Position;
 
     constructor(sessionId: string, value: lsp.Position) {
@@ -51,7 +52,7 @@ export class CompleteMessage extends BaseMessage {
 }
 
 export class ResolveCompletionMessage extends BaseMessage {
-    type: MessageType = MessageType.resolveCompletion;
+    type: MessageType.resolveCompletion = MessageType.resolveCompletion;
     value: lsp.CompletionItem;
 
     constructor(sessionId: string, value: lsp.CompletionItem) {
@@ -61,7 +62,7 @@ export class ResolveCompletionMessage extends BaseMessage {
 }
 
 export class HoverMessage extends BaseMessage {
-    type: MessageType = MessageType.hover;
+    type: MessageType.hover = MessageType.hover;
     value: lsp.Position;
 
     constructor(sessionId: string, value: lsp.Position) {
@@ -71,7 +72,7 @@ export class HoverMessage extends BaseMessage {
 }
 
 export class ValidateMessage extends BaseMessage {
-    type: MessageType = MessageType.validate;
+    type: MessageType.validate = MessageType.validate;
 
     constructor(sessionId: string) {
         super(sessionId);
@@ -79,7 +80,7 @@ export class ValidateMessage extends BaseMessage {
 }
 
 export class ChangeMessage extends BaseMessage {
-    type: MessageType = MessageType.change;
+    type: MessageType.change = MessageType.change;
     value: string;
     version: number
 
@@ -91,7 +92,7 @@ export class ChangeMessage extends BaseMessage {
 }
 
 export class DeltasMessage extends BaseMessage {
-    type: MessageType = MessageType.applyDelta;
+    type: MessageType.applyDelta = MessageType.applyDelta;
     value: Ace.Delta[];
     version: number;
 
@@ -103,7 +104,7 @@ export class DeltasMessage extends BaseMessage {
 }
 
 export class ChangeModeMessage extends BaseMessage {
-    type: MessageType = MessageType.changeMode;
+    type: MessageType.changeMode = MessageType.changeMode;
     mode: string;
     value: string;
 
@@ -115,7 +116,7 @@ export class ChangeModeMessage extends BaseMessage {
 }
 
 export class ChangeOptionsMessage extends BaseMessage {
-    type: MessageType = MessageType.changeOptions;
+    type: MessageType.changeOptions = MessageType.changeOptions;
     options: ServiceOptions;
     merge: boolean;
 
@@ -127,7 +128,7 @@ export class ChangeOptionsMessage extends BaseMessage {
 }
 
 export class CloseDocumentMessage extends BaseMessage {
-    type: MessageType = MessageType.closeDocument;
+    type: MessageType.closeDocument = MessageType.closeDocument;
 
     constructor(sessionId: string) {
         super(sessionId);
@@ -135,14 +136,14 @@ export class CloseDocumentMessage extends BaseMessage {
 }
 
 export class DisposeMessage extends BaseMessage {
-    type: MessageType = MessageType.dispose;
+    type: MessageType.dispose = MessageType.dispose;
     constructor() {
         super("");
     }
 }
 
 export class GlobalOptionsMessage {
-    type: MessageType = MessageType.globalOptions;
+    type: MessageType.globalOptions = MessageType.globalOptions;
     serviceName: SupportedServices;
     options: ServiceOptions;
     merge: boolean;
@@ -155,7 +156,7 @@ export class GlobalOptionsMessage {
 }
 
 export class ConfigureFeaturesMessage {
-    type: MessageType = MessageType.configureFeatures;
+    type: MessageType.configureFeatures = MessageType.configureFeatures;
     serviceName: SupportedServices;
     options: ServiceFeatures;
 
@@ -166,7 +167,7 @@ export class ConfigureFeaturesMessage {
 }
 
 export class SignatureHelpMessage extends BaseMessage {
-    type: MessageType = MessageType.signatureHelp;
+    type: MessageType.signatureHelp = MessageType.signatureHelp;
     value: lsp.Position;
 
     constructor(sessionId: string, value: lsp.Position) {
@@ -176,7 +177,7 @@ export class SignatureHelpMessage extends BaseMessage {
 }
 
 export class DocumentHighlightMessage extends BaseMessage {
-    type: MessageType = MessageType.documentHighlight;
+    type: MessageType.documentHighlight = MessageType.documentHighlight;
     value: lsp.Position;
 
     constructor(sessionId: string, value: lsp.Position) {
@@ -186,7 +187,7 @@ export class DocumentHighlightMessage extends BaseMessage {
 }
 
 export class GetSemanticTokensMessage extends BaseMessage {
-    type: MessageType = MessageType.getSemanticTokens;
+    type: MessageType.getSemanticTokens = MessageType.getSemanticTokens;
     value: lsp.Range; 
 
     constructor(sessionId: string, value: lsp.Range) {
@@ -215,3 +216,7 @@ export enum MessageType {
     capabilitiesChange,
     getSemanticTokens
 }
+
+export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | 
+    HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | 
+    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage; 

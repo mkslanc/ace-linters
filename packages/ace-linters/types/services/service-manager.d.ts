@@ -1,5 +1,5 @@
 import { TextDocumentIdentifier, VersionedTextDocumentIdentifier } from "vscode-languageserver-protocol";
-import { LanguageService, LanguageClientConfig, ServiceConfig, ServiceFeatures, ServiceOptions, SupportedFeatures } from "../types/language-service";
+import { LanguageClientConfig, LanguageService, ServiceConfig, ServiceFeatures, ServiceOptions, SupportedFeatures } from "../types/language-service";
 export declare class ServiceManager {
     $services: {
         [serviceName: string]: ServiceConfig | LanguageClientConfig;
@@ -16,17 +16,26 @@ export declare class ServiceManager {
         postMessage: any;
         addEventListener: any;
     });
+    private getServicesCapabilitiesAfterCallback;
+    aggregateFeatureResponses(serviceInstances: LanguageService[], feature: SupportedFeatures, methodName: string, documentIdentifier: VersionedTextDocumentIdentifier, value: any): Promise<any[]>;
+    applyOptionsToServices(serviceInstances: LanguageService[], sessionID: string, options: ServiceOptions): void;
     disposeAll(): Promise<void>;
     private static $initServiceInstance;
     private $getServicesInstancesByMode;
     private initializeService;
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge?: boolean): void;
-    addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions): Promise<LanguageService[] | undefined>;
-    changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions): Promise<LanguageService[] | undefined>;
+    addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions): Promise<never[] | {
+        [serviceName: string]: LanguageClientConfig | ServiceConfig;
+    } | undefined>;
+    changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions): Promise<never[] | {
+        [serviceName: string]: LanguageClientConfig | ServiceConfig;
+    } | undefined>;
     removeDocument(document: TextDocumentIdentifier): void;
     getServicesInstances(sessionID: string): LanguageService[];
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[];
-    findServicesByMode(mode: string): (ServiceConfig | LanguageClientConfig)[];
+    findServicesByMode(mode: string): {
+        [serviceName: string]: (ServiceConfig | LanguageClientConfig);
+    };
     registerService(name: string, service: ServiceConfig): void;
     registerServer(name: string, clientConfig: LanguageClientConfig): void;
     configureFeatures(name: string, features: ServiceFeatures): void;

@@ -31,4 +31,5 @@ export declare class LanguageClient extends BaseService implements LanguageServi
     setGlobalOptions(options: ServiceOptions): void;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
+    getSemanticTokens(document: lsp.TextDocumentIdentifier): Promise<lsp.SemanticTokens | null>;
 }

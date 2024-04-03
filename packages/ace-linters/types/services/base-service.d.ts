@@ -3,6 +3,7 @@ import { TextDocument } from "vscode-languageserver-textdocument";
 import { FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions } from "../types/language-service";
 export declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service: any;
+    serviceName: string;
     mode: string;
     documents: {
         [sessionID: string]: TextDocument;
@@ -31,5 +32,6 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     get optionsToFilterDiagnostics(): FilterDiagnosticsOptions;
+    getSemanticTokens(document: lsp.TextDocumentIdentifier): Promise<lsp.SemanticTokens | null>;
     dispose(): Promise<void>;
 }

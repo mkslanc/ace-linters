@@ -1,5 +1,5 @@
 import {mergeObjects, notEmpty} from "../utils";
-import {MessageType} from "../message-types";
+import {AllMessages, MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {
     LanguageClientConfig,
@@ -71,9 +71,9 @@ export class ServiceManager {
         }
 
         ctx.addEventListener("message", async (ev) => {
-            let message = ev.data;
-            let sessionID = message.sessionId ?? "";
-            let version = message.version;
+            let message: AllMessages = ev.data;
+            let sessionID = message["sessionId"] ?? "";
+            let version = message["version"];
             let postMessage = {
                 "type": message.type,
                 "sessionId": sessionID,
@@ -84,7 +84,7 @@ export class ServiceManager {
                 uri: sessionID,
                 version: version
             };
-            switch (message["type"] as MessageType) {
+            switch (message.type) {
                 case MessageType.format:
                     serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
@@ -95,13 +95,13 @@ export class ServiceManager {
                 case MessageType.complete:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service) => {
                         return {
-                            completions: await service.doComplete(documentIdentifier, message.value),
+                            completions: await service.doComplete(documentIdentifier, message["value"]),
                             service: service.serviceData.className
                         };
                     }))).filter(notEmpty);
                     break;
                 case MessageType.resolveCompletion:
-                    let serviceName = message.value.service;
+                    let serviceName = message.value["service"];
                     postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
                         if (service.serviceData.className === serviceName) {
                             return service;
@@ -110,36 +110,32 @@ export class ServiceManager {
                     break;
                 case MessageType.change:
                     serviceInstances.forEach((service) => {
-                        service.setValue(documentIdentifier, message.value);
+                        service.setValue(documentIdentifier, message["value"]);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.applyDelta:
                     serviceInstances.forEach((service) => {
-                        service.applyDeltas(documentIdentifier, message.value);
+                        service.applyDeltas(documentIdentifier, message["value"]);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.hover:
-                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service) => {
-                        return service.doHover(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "hover", "doHover", documentIdentifier, message.value);
                     break;
                 case MessageType.validate:
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.init: //this should be first message
-                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument)
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument.bind(this))
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
-                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode)
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode.bind(this))
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeOptions:
-                    serviceInstances.forEach((service) => {
-                        service.setOptions(sessionID, message.options);
-                    });
+                    this.applyOptionsToServices(serviceInstances, sessionID, message.options);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.closeDocument:
@@ -158,21 +154,17 @@ export class ServiceManager {
                     await provideValidationForServiceInstance(message.serviceName);
                     break;
                 case MessageType.signatureHelp:
-                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service) => {
-                        return service.provideSignatureHelp(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "signatureHelp", "provideSignatureHelp", documentIdentifier, message.value);
                     break;
                 case MessageType.documentHighlight:
-                    let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service) => {
-                        return service.findDocumentHighlights(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    let highlights = await this.aggregateFeatureResponses(serviceInstances, "documentHighlight", "findDocumentHighlights", documentIdentifier, message.value);
                     postMessage["value"] = highlights.flat();
                     break;
                 case MessageType.getSemanticTokens:
                     serviceInstances = this.filterByFeature(serviceInstances, "semanticTokens");
                     if (serviceInstances.length > 0) {
                         //we will use only first service
-                        postMessage["value"] = await serviceInstances[0].getFullSemanticTokens(documentIdentifier);
+                        postMessage["value"] = await serviceInstances[0].getSemanticTokens(documentIdentifier, message.value);
                     }
                     break;
             }
@@ -192,6 +184,24 @@ export class ServiceManager {
                 return acc;
             }, {});
         }
+    }
+    
+    async aggregateFeatureResponses(
+        serviceInstances: LanguageService[],
+        feature: SupportedFeatures,
+        methodName: string,
+        documentIdentifier: VersionedTextDocumentIdentifier,
+        value: any
+    ) {
+        return (await Promise.all(this.filterByFeature(serviceInstances, feature).map(async (service) => {
+            return service[methodName](documentIdentifier, value);
+        }))).filter(notEmpty);
+    }
+
+    applyOptionsToServices(serviceInstances: LanguageService[], sessionID: string, options: ServiceOptions) {
+        serviceInstances.forEach((service) => {
+            service.setOptions(sessionID, options);
+        });
     }
 
     async disposeAll() {

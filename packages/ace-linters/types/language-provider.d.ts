@@ -40,6 +40,7 @@ export declare class LanguageProvider {
     provideSignatureHelp(session: Ace.EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void): void;
     getTooltipText(hover: Tooltip): string;
     format: () => void;
+    getSemanticTokens(): void;
     doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void): void;
     doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void): void;
     $registerCompleters(editor: Ace.Editor): void;
