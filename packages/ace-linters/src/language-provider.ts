@@ -420,6 +420,9 @@ class SessionLanguageProvider {
         this.addSemanticTokenSupport(session); //TODO: ?
         // @ts-ignore
         session.on("changeMode", this.$changeMode);
+        if (this.$provider.options.functionality.semanticTokens) {
+            session.on("changeScrollTop", () => this.getSemanticTokens());
+        }
         
         let initCallbacks = {
             "initCallback": this.$connected,
@@ -514,13 +517,13 @@ class SessionLanguageProvider {
             }
         }
 
-        let hasSemanticTokensProviderFull = Object.values(capabilities).some((capability) => {
-            if (capability?.semanticTokensProvider?.full) {
+        let hasSemanticTokensProvider = Object.values(capabilities).some((capability) => {
+            if (capability?.semanticTokensProvider) {
                 this.semanticTokensLegend = capability.semanticTokensProvider.legend;
                 return true;
             }
         });
-        if (hasSemanticTokensProviderFull) {
+        if (hasSemanticTokensProvider) {
             this.getSemanticTokens();
         }
     }
@@ -549,7 +552,9 @@ class SessionLanguageProvider {
         this.session.doc["version"]++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
-            setTimeout(this.$sendDeltaQueue, 0);
+            setTimeout(()=> this.$sendDeltaQueue(() => {
+                this.getSemanticTokens();
+            }), 0);
         }
         this.$deltaQueue.push(delta);
     }
@@ -630,8 +635,8 @@ class SessionLanguageProvider {
                 column: 0
             },
             end: {
-                row: this.editor.renderer.getLastVisibleRow(),
-                column: this.session.getLine(lastRow).length - 1
+                row: this.editor.renderer.getLastVisibleRow() + 1,
+                column: this.session.getLine(lastRow).length
             }
         }
         //

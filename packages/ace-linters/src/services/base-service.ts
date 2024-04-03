@@ -109,7 +109,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         }
     }
     
-    getSemanticTokens(document: lsp.TextDocumentIdentifier): Promise<lsp.SemanticTokens | null> {
+    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> {
         return Promise.resolve(null);
     }
 

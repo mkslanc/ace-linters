@@ -258,7 +258,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.isInitialized = true;
             this.serviceCapabilities = params.capabilities as lsp.ServerCapabilities;
-            
+            console.log(this.serviceCapabilities);
             const serviceName = this.serviceName;
             Object.keys(this.documents).forEach((sessionId) => {
                 const postMessage = {
@@ -436,16 +436,27 @@ export class LanguageClient extends BaseService implements LanguageService {
         return this.connection.sendRequest('textDocument/signatureHelp', options) as Promise<lsp.SignatureHelp | null>
     }
 
-    async getSemanticTokens(document: lsp.TextDocumentIdentifier) {
+    async getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range) {
         if (!this.isInitialized)
             return null;
-        if (!this.serviceCapabilities?.semanticTokensProvider?.full)
+        if (!this.serviceCapabilities?.semanticTokensProvider)
             return null;
-        let options: lsp.SemanticTokensParams = {
-            textDocument: {
-                uri: document.uri,
-            },
-        };
-        return this.connection.sendRequest('textDocument/semanticTokens/full', options) as Promise<lsp.SemanticTokens | null>
+        if (!this.serviceCapabilities.semanticTokensProvider.range) {
+            let options: lsp.SemanticTokensParams = {
+                textDocument: {
+                    uri: document.uri,
+                },
+            };
+            return this.connection.sendRequest('textDocument/semanticTokens/full', options) as Promise<lsp.SemanticTokens | null>
+        } else {
+            let options: lsp.SemanticTokensRangeParams = {
+                textDocument: {
+                    uri: document.uri,
+                },
+                range: range,
+            };
+            return this.connection.sendRequest('textDocument/semanticTokens/range', options) as Promise<lsp.SemanticTokens | null>
+        }
+        
     }
 }
