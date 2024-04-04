@@ -1,4 +1,5 @@
 import {Ace} from "ace-code";
+import {SemanticTokens} from "vscode-languageserver-types";
 
 type TokenModifier = 'declaration' | 'static' | 'async' | 'readonly' | 'defaultLibrary' | 'local' | string;
 type TokenType = 'class' | 'enum' | 'interface' | 'namespace' | 'typeParameter' | 'type' | 'parameter' | 'variable' | 'enumMember' | 'property' | 'function' | 'method' | 'event' | string;
@@ -53,35 +54,56 @@ export function parseSemanticTokens(tokens: number[], tokenTypes: TokenType[], t
 }
 
 function toAceTokenType(tokenType: TokenType, tokenModifiers: TokenModifier[]): string {
+    let modifiers = "";
+    let type = tokenType;
+    if (tokenModifiers.length > 0) {
+        modifiers = "." + tokenModifiers.join(".");
+    }
+    
     switch (tokenType) {
         case "class":
-            return "support.class";
+            type = "entity.name.type.class";
+            break;
+        case "struct": 
+            type = "storage.type.struct";
+            break;
         case "enum":
+            type = "entity.name.type.enum";
             break;
         case "interface":
+            type = "entity.name.type.interface";
             break;
         case "namespace":
+            type = "entity.name.namespace";
             break;
         case "typeParameter":
             break;
         case "type":
+            type = "entity.name.type";
             break;
         case "parameter":
+            type = "variable.parameter";
             break;
         case "variable":
-            return "variable";
+            type = "entity.name.variable";
+            break;
         case "enumMember":
+            type = "variable.other.enummember";
             break;
         case "property":
-            return "keyword";
+            type = "variable.other.property";
+            break;
         case "function":
-            return "entity.name.function";
+            type = "entity.name.function";
+            break;
         case "method":
-            return "entity.name.function";
+            type = "entity.name.function.member";
+            break;
         case "event":
+            type = "variable.other.event";
             break;
     }
-    return tokenType; //TODO: 
+    return type + modifiers; 
 }
 
 export function mergeTokens(aceTokens: Ace.Token[], decodedTokens: DecodedToken[]): Ace.Token[] {
@@ -169,5 +191,74 @@ export class DecodedSemanticTokens {
             }
             return a.row - b.row;
         });
+    }
+}
+
+//vscode-languageserver
+export class SemanticTokensBuilder {
+
+    private _id!: number;
+
+    private _prevLine!: number;
+    private _prevChar!: number;
+    private _data!: number[];
+    private _dataLen!: number;
+
+    private _prevData: number[] | undefined;
+
+    constructor() {
+        this._prevData = undefined;
+        this.initialize();
+    }
+
+    private initialize() {
+        this._id = Date.now();
+        this._prevLine = 0;
+        this._prevChar = 0;
+        this._data = [];
+        this._dataLen = 0;
+    }
+
+    public push(line: number, char: number, length: number, tokenType: number, tokenModifiers: number): void {
+        let pushLine = line;
+        let pushChar = char;
+        if (this._dataLen > 0) {
+            pushLine -= this._prevLine;
+            if (pushLine === 0) {
+                pushChar -= this._prevChar;
+            }
+        }
+
+        this._data[this._dataLen++] = pushLine;
+        this._data[this._dataLen++] = pushChar;
+        this._data[this._dataLen++] = length;
+        this._data[this._dataLen++] = tokenType;
+        this._data[this._dataLen++] = tokenModifiers;
+
+        this._prevLine = line;
+        this._prevChar = char;
+    }
+
+    public get id(): string {
+        return this._id.toString();
+    }
+
+    public previousResult(id: string) {
+        if (this.id === id) {
+            this._prevData = this._data;
+        }
+        this.initialize();
+    }
+
+    public build(): SemanticTokens {
+        this._prevData = undefined;
+        return {
+            resultId: this.id,
+            data: this._data
+        };
+    }
+
+    public canBuildEdits(): boolean {
+        return this._prevData !== undefined;
     }
 }

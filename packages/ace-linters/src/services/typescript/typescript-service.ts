@@ -3,20 +3,22 @@ import * as ts from './lib/typescriptServices';
 import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
-    fromTsDiagnostics,
+    fromTsDiagnostics, getTokenModifierFromClassification, getTokenTypeFromClassification,
     JsxEmit,
-    ScriptTarget,
+    ScriptTarget, SemanticClassificationFormat,
     toCompletions,
     toDocumentHighlights,
     toHover,
     toResolvedCompletion,
     toSignatureHelp,
-    toTextEdits,
+    toTextEdits, toTextSpan,
     toTsOffset
 } from "./typescript-converters";
 import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../../utils";
 import {LanguageService, TsServiceOptions} from "../../types/language-service";
+import {TextDocumentIdentifier} from "vscode-languageserver-protocol";
+import {SemanticTokensBuilder} from "../../type-converters/lsp/semantic-tokens";
 
 export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, LanguageService {
     $service: ts.LanguageService;
@@ -70,7 +72,15 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         documentFormattingProvider: true,
         documentHighlightProvider: true,
         hoverProvider: true,
-        signatureHelpProvider: {}
+        signatureHelpProvider: {},
+        semanticTokensProvider: {
+            legend: {
+                tokenTypes: ['class', 'enum', 'interface', 'namespace', 'typeParameter', 'type', 'parameter', 'variable', 'enumMember', 'property', 'function', 'method'],
+                tokenModifiers: ['async', 'declaration', 'readonly', 'static', 'local', 'defaultLibrary']
+            },
+            range: true,
+            full: true
+        }
     }
 
     constructor(mode: string) {
@@ -288,5 +298,42 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         //TODO: this could work with all opened documents
         let highlights = this.$service.getDocumentHighlights(document.uri, offset, [document.uri]);
         return toDocumentHighlights(highlights, fullDocument);
+    }
+    
+    async getSemanticTokens(document: TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return null;
+        let classifications = this.$service.getEncodedSemanticClassifications(document.uri, toTextSpan(range, fullDocument), SemanticClassificationFormat.TwentyTwenty);
+        if (!classifications) {
+            return null;
+        }
+        
+        let tokensSpans = classifications.spans;
+        const builder = new SemanticTokensBuilder();
+        for (let i = 0; i < tokensSpans.length;) {
+            const offset = tokensSpans[i++];
+            const length = tokensSpans[i++];
+            const tsClassification = tokensSpans[i++];
+
+            const tokenType = getTokenTypeFromClassification(tsClassification);
+            if (tokenType === undefined) {
+                continue;
+            }
+
+            const tokenModifiers = getTokenModifierFromClassification(tsClassification);
+
+            const startPos = fullDocument.positionAt(offset);
+            const endPos = fullDocument.positionAt(offset + length);
+
+            for (let line = startPos.line; line <= endPos.line; line++) {
+                const startCharacter = (line === startPos.line ? startPos.character : 0);
+                let textOnLine = fullDocument.getText({start: {line: line, character: 0}, end: {line: line, character: Infinity}});
+                const endCharacter = (line === endPos.line ? endPos.character : textOnLine.length);
+                builder.push(line, startCharacter, endCharacter - startCharacter, tokenType, tokenModifiers);
+            }
+        }
+
+        return builder.build();
     }
 }

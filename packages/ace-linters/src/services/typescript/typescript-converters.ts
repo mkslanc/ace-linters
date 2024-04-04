@@ -35,6 +35,15 @@ export function toTsOffset(range: lsp.Range, doc: TextDocument) {
     }
 }
 
+export function toTextSpan(range: lsp.Range, doc: TextDocument) {
+    const start = doc.offsetAt(range.start);
+    const end = doc.offsetAt(range.end);
+    return {
+        start: start,
+        length: end - start
+    }
+}
+
 export function parseMessageText(
     diagnosticsText: string | ts.DiagnosticMessageChain | undefined, errorCode: number
 ): string {
@@ -209,6 +218,27 @@ export function toDocumentHighlights(highlights: ts.DocumentHighlights[] | undef
                     : lsp.DocumentHighlightKind.Text
         }
     }));
+}
+
+export function getTokenTypeFromClassification(tsClassification: number): number | undefined {
+    if (tsClassification > TokenEncodingConsts.modifierMask) {
+        return (tsClassification >> TokenEncodingConsts.typeOffset) - 1;
+    }
+    return undefined;
+}
+
+export function getTokenModifierFromClassification(tsClassification: number) {
+    return tsClassification & TokenEncodingConsts.modifierMask;
+}
+
+export enum SemanticClassificationFormat {
+    Original = "original",
+    TwentyTwenty = "2020",
+}
+
+enum TokenEncodingConsts {
+    typeOffset = 8,
+    modifierMask = 255
 }
 
 export enum ScriptKind {
