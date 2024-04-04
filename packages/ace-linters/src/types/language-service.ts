@@ -200,16 +200,16 @@ export type SupportedServices =
     | "python";
 
 export interface ProviderOptions {
-    functionality: {
-        hover: boolean,
-        completion: {
+    functionality?: {
+        hover?: boolean,
+        completion?: {
             overwriteCompleters: boolean
         } | false,
-        completionResolve: boolean,
-        format: boolean,
-        documentHighlights: boolean,
-        signatureHelp: boolean,
-        semanticTokens: boolean
+        completionResolve?: boolean,
+        format?: boolean,
+        documentHighlights?: boolean,
+        signatureHelp?: boolean,
+        semanticTokens?: boolean
     },
     markdownConverter?: MarkDownConverter
 }

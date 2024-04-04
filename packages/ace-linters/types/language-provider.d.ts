@@ -26,6 +26,7 @@ export declare class LanguageProvider {
         } | true;
     }, options?: ProviderOptions): LanguageProvider;
     static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider;
+    setProviderOptions(options?: ProviderOptions): void;
     private $registerSession;
     private $getSessionLanguageProvider;
     private $getFileName;

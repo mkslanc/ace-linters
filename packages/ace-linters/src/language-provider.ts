@@ -47,23 +47,10 @@ export class LanguageProvider {
 
     constructor(messageController: IMessageController, options?: ProviderOptions) {
         this.$messageController = messageController;
-
-        this.options = options ?? {} as ProviderOptions;
-        this.options.functionality ??= {
-            hover: true,
-            completion: {
-                overwriteCompleters: true
-            },
-            completionResolve: true,
-            format: true,
-            documentHighlights: true,
-            signatureHelp: true,
-            semanticTokens: true
-        };
-        this.options.markdownConverter ??= new showdown.Converter();
+        this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
     }
-
+    
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
@@ -110,6 +97,32 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
+    setProviderOptions(options?: ProviderOptions) {
+        const defaultFunctionalities = {
+            hover: true,
+            completion: { overwriteCompleters: true },
+            completionResolve: true,
+            format: true,
+            documentHighlights: true,
+            signatureHelp: true,
+            semanticTokens: false, //experimental functionality
+        };
+
+        this.options = options ?? {};
+
+        this.options.functionality = typeof this.options.functionality === 'object' ? this.options.functionality : {};
+
+        Object.entries(defaultFunctionalities).forEach(([key, value]) => {
+            // Check if the functionality has not been defined in the provided options
+            if (this.options.functionality![key] === undefined) {
+                // If not, set it to its default value
+                this.options.functionality![key] = value;
+            }
+        });
+
+        this.options.markdownConverter ||= new showdown.Converter();
+    }
+
     private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, options?: ServiceOptions) => {
         this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController, options);
     }
@@ -137,7 +150,7 @@ export class LanguageProvider {
 
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
-        if (this.options.functionality.completion) {
+        if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
         }
         this.activeEditor ??= editor;
@@ -145,7 +158,7 @@ export class LanguageProvider {
             this.activeEditor = editor;
         });
 
-        if (this.options.functionality.documentHighlights) {
+        if (this.options.functionality!.documentHighlights) {
             var $timer
             // @ts-ignore
             editor.on("changeSelection", () => {
@@ -161,14 +174,14 @@ export class LanguageProvider {
             });
         }
 
-        if (this.options.functionality.hover) {
+        if (this.options.functionality!.hover) {
             if (!this.$hoverTooltip) {
                 this.$hoverTooltip = new HoverTooltip();
             }
             this.$initHoverTooltip(editor);
         }
 
-        if (this.options.functionality.signatureHelp) {
+        if (this.options.functionality!.signatureHelp) {
             this.$signatureTooltip.registerEditor(editor);
         }
 
@@ -285,7 +298,7 @@ export class LanguageProvider {
     }
 
     format = () => {
-        if (!this.options.functionality.format)
+        if (!this.options.functionality!.format)
             return;
 
         let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
@@ -293,7 +306,7 @@ export class LanguageProvider {
     }
 
     getSemanticTokens() {
-        if (!this.options.functionality.semanticTokens)
+        if (!this.options.functionality!.semanticTokens)
             return;
 
         let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
@@ -328,7 +341,7 @@ export class LanguageProvider {
                 });
             },
             getDocTooltip: (item: Ace.Completion) => {
-                if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                if (this.options.functionality!.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
                     this.doResolve(item, (completionItem?) => {
                         item["isResolved"] = true;
                         if (!completionItem)
@@ -350,7 +363,7 @@ export class LanguageProvider {
             },
             id: "lspCompleters"
         }
-        if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
+        if (this.options.functionality!.completion && this.options.functionality!.completion.overwriteCompleters) {
             editor.completers = [
                 completer
             ];
@@ -420,7 +433,7 @@ class SessionLanguageProvider {
         this.addSemanticTokenSupport(session); //TODO: ?
         // @ts-ignore
         session.on("changeMode", this.$changeMode);
-        if (this.$provider.options.functionality.semanticTokens) {
+        if (this.$provider.options.functionality!.semanticTokens) {
             session.on("changeScrollTop", () => this.getSemanticTokens());
         }
         
@@ -625,7 +638,7 @@ class SessionLanguageProvider {
     }
 
     getSemanticTokens() {
-        if (!this.$provider.options.functionality.semanticTokens)
+        if (!this.$provider.options.functionality!.semanticTokens)
             return;
         //TODO: improve this 
         let lastRow = this.editor.renderer.getLastVisibleRow();
@@ -639,8 +652,6 @@ class SessionLanguageProvider {
                 column: this.session.getLine(lastRow).length
             }
         }
-        //
-        //TODO: resultId use
         
         this.$messageController.getSemanticTokens(this.fileName, fromRange(visibleRange), (tokens) => {
                 if (!tokens) {

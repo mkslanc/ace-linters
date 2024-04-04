@@ -162,16 +162,16 @@ export interface ServiceOptionsMap {
 }
 export type SupportedServices = "json" | "json5" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | /** @deprecated would be removed in next iterations */ "javascript" | "eslint" | "lua" | "less" | "scss" | "python";
 export interface ProviderOptions {
-    functionality: {
-        hover: boolean;
-        completion: {
+    functionality?: {
+        hover?: boolean;
+        completion?: {
             overwriteCompleters: boolean;
         } | false;
-        completionResolve: boolean;
-        format: boolean;
-        documentHighlights: boolean;
-        signatureHelp: boolean;
-        semanticTokens: boolean;
+        completionResolve?: boolean;
+        format?: boolean;
+        documentHighlights?: boolean;
+        signatureHelp?: boolean;
+        semanticTokens?: boolean;
     };
     markdownConverter?: MarkDownConverter;
 }
