@@ -28,6 +28,14 @@ languageProvider.registerEditor(editor);
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
 
+## New Features in 1.2.0
+- add `setProviderOptions` method to `LanguageProvider` to set options for client.
+- add experimental semantic tokens support (turned off by default). To turn on semantic tokens, set `semanticTokens` to
+  `true` in `setProviderOptions` method or use it in `create` or `fromCdn` methods like that
+```javascript
+LanguageProvider.create(worker, {functionality: {semanticTokens: true}})
+```
+
 ## New Features in 1.0.0
 
 - `registerServer` method in `ServiceManager` enables management of both services and servers on the web worker's side.

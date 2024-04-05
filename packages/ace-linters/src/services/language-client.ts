@@ -67,7 +67,7 @@ export class LanguageClient extends BaseService implements LanguageService {
                     full: {
                         delta: false
                     },
-                    range: false
+                    range: true
                 },
                 augmentsSyntaxTokens: true
             }

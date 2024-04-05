@@ -28,6 +28,14 @@ languageProvider.registerEditor(editor);
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
 
+## New Features in 1.2.0
+- add `setProviderOptions` method to `LanguageProvider` to set options for client.
+- add experimental semantic tokens support (turned off by default). To turn on semantic tokens, set `semanticTokens` to
+  `true` in `setProviderOptions` method or use it in `create` or `fromCdn` methods like that
+```javascript
+LanguageProvider.create(worker, {functionality: {semanticTokens: true}})
+```
+
 ## New Features in 1.0.0
 
 - `registerServer` method in `ServiceManager` enables management of both services and servers on the web worker's side.
@@ -73,16 +81,16 @@ languageProvider.registerEditor(editor);
 <div id="editor" style="height: 100px">some text</div>
 
 <script>
-    ace.require("ace/ext/language_tools"); //To allow autocompletion
-    var CssMode = ace.require("ace/mode/css").Mode;
-    var editor = ace.edit("editor", {
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
-        mode: new CssMode()
-    });
+  ace.require("ace/ext/language_tools"); //To allow autocompletion
+  var CssMode = ace.require("ace/mode/css").Mode;
+  var editor = ace.edit("editor", {
+    enableBasicAutocompletion: true,
+    enableLiveAutocompletion: true,
+    mode: new CssMode()
+  });
 
-    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
-    provider.registerEditor(editor);
+  var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
+  provider.registerEditor(editor);
 </script>
 ```
 
@@ -102,14 +110,14 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web socket
 const serverData = {
-    module: () => import("ace-linters/build/language-client"),
-    modes: "json|json5",
-    type: "socket",
-    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
+  module: () => import("ace-linters/build/language-client"),
+  modes: "json|json5",
+  type: "socket",
+  socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
 }
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new JSONMode() // Set the mode of the editor to JSON
+  mode: new JSONMode() // Set the mode of the editor to JSON
 });
 
 // Create a language provider for web socket
@@ -135,15 +143,15 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
 const serverData = {
-    module: () => import("ace-linters/build/language-client"),
-    modes: "json",
-    type: "webworker",
-    worker: worker,
+  module: () => import("ace-linters/build/language-client"),
+  modes: "json",
+  type: "webworker",
+  worker: worker,
 }
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+  mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
 // Create a language provider for web worker
