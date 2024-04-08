@@ -1,5 +1,7 @@
 import {ServiceStruct, SupportedServices} from "./types/language-service";
 
+type IncludeLinters = Partial<{ [name in SupportedServices]: boolean | undefined }> | boolean;
+
 function createWorkerBlob(cdnUrl: string, services: ServiceStruct[]) {
     return new Blob([`
         importScripts("${cdnUrl}/service-manager.js");
@@ -21,12 +23,16 @@ function createWorkerBlob(cdnUrl: string, services: ServiceStruct[]) {
 export function createWorker(services: {
     services: ServiceStruct[],
     serviceManagerCdn: string
-}, includeLinters?: { [name in SupportedServices]: boolean | undefined } | boolean): Worker
-export function createWorker(cdnUrl: string, includeLinters?: { [name in SupportedServices]: boolean } | boolean): Worker
+}, includeLinters?: IncludeLinters): Worker
+export function createWorker(cdnUrl: string, includeLinters?: IncludeLinters): Worker
 export function createWorker(source: string | {
     services: ServiceStruct[],
     serviceManagerCdn: string
-}, includeLinters: { [name in SupportedServices]: boolean | undefined } | boolean = true) {
+}, includeLinters?: IncludeLinters) {
+    if (includeLinters === undefined) {// if `includeLinters` is not defined, set it to true
+        includeLinters = true;
+    }
+
     if (typeof Worker == "undefined") return {
         postMessage: function () {
         },
@@ -50,7 +56,7 @@ export function createWorker(source: string | {
     return new Worker(blobURL);
 }
 
-function getServices(includeLinters: { [name in SupportedServices]: boolean | undefined } | boolean = true): ServiceStruct[] {
+export function getServices(includeLinters?: IncludeLinters): ServiceStruct[] {
     const allServices = [
         {
             name: "json",
@@ -126,16 +132,18 @@ function getServices(includeLinters: { [name in SupportedServices]: boolean | un
         }
     ];
 
-    if (includeLinters === true) {
+    if (includeLinters === true || includeLinters === undefined) {
         return allServices;
     } else if (includeLinters === false) {
         return [];
     }
 
+    if (includeLinters.javascript) { // left for backward compatibility
+        includeLinters.eslint = includeLinters.javascript;
+        delete includeLinters.javascript;
+    }
+
     return allServices.filter(service => {
-        if (includeLinters.javascript) { // left for backward compatibility
-            return includeLinters["eslint"];
-        }
         return includeLinters[service.name]
     });
 }
