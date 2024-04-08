@@ -101,7 +101,8 @@ describe('ServiceManager tests', () => {
                 format: true,
                 diagnostics: true,
                 documentHighlight: true,
-                signatureHelp: true
+                signatureHelp: true,
+                semanticTokens: true,
             };
             
             //@ts-ignore;
