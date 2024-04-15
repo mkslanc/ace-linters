@@ -12,8 +12,8 @@
     "vscode-languageserver-textdocument": "^1.0.0"
   },
   "devDependencies": {
-    "yaml-language-server": "^1.11.0",
-    "esbuild": "^0.17.4"
+    "yaml-language-server": "^1.14.0",
+    "esbuild": "^0.20.2"
   },
   "main": "./dist/index.js"
 }
