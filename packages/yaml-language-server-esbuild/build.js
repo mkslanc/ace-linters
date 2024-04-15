@@ -4,7 +4,7 @@ import {build} from 'esbuild';
 import {copyFile} from "fs";
 
 await build({
-    entryPoints: ['src/index.js'],
+    entryPoints: ['src/index.ts'],
     bundle: true,
     logLevel: 'info',
     outdir: './dist',
@@ -49,5 +49,8 @@ await build({
 });
 
 await copyFile(fileURLToPath(new URL("dist/index.js", import.meta.url)), fileURLToPath(new URL("../ace-linters/src/services/yaml/lib/index.js", import.meta.url)), (err) => {
+    if (err) throw err;
+});
+await copyFile(fileURLToPath(new URL("src/index.ts", import.meta.url)), fileURLToPath(new URL("../ace-linters/src/services/yaml/lib/index.d.ts", import.meta.url)), (err) => {
     if (err) throw err;
 });

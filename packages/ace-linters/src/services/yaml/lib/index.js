@@ -9,7 +9,7 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
 }) : x)(function(x) {
   if (typeof require !== "undefined")
     return require.apply(this, arguments);
-  throw new Error('Dynamic require of "' + x + '" is not supported');
+  throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -1931,7 +1931,7 @@ var require_standalone = __commonJS({
         var ir = function(e) {
           return e && e.Math == Math && e;
         };
-        pu.exports = ir(typeof globalThis == "object" && globalThis) || ir(typeof window == "object" && window) || ir(typeof self == "object" && self) || ir(typeof global == "object" && global) || function() {
+        pu.exports = ir(typeof globalThis == "object" && globalThis) || ir(typeof window == "object" && window) || ir(typeof self == "object" && self) || ir(typeof global == "object" && global) || /* @__PURE__ */ function() {
           return this;
         }() || Function("return this")();
       });
@@ -2504,7 +2504,7 @@ var require_standalone = __commonJS({
         Mi.exports = String(qi) === "[object z]";
       });
       var Nn = xe((Cy, $i) => {
-        var Qp = Ri(), Zp = ot(), xr = Vt(), ef = bt(), tf = ef("toStringTag"), rf = Object, nf = xr(function() {
+        var Qp = Ri(), Zp = ot(), xr = Vt(), ef = bt(), tf = ef("toStringTag"), rf = Object, nf = xr(/* @__PURE__ */ function() {
           return arguments;
         }()) == "Arguments", uf = function(e, r) {
           try {
@@ -18949,7 +18949,7 @@ var require_lodash = __commonJS({
           }
           return new LodashWrapper(value);
         }
-        var baseCreate = function() {
+        var baseCreate = /* @__PURE__ */ function() {
           function object() {
           }
           return function(proto) {
@@ -22256,7 +22256,7 @@ var require_lodash = __commonJS({
         var gte = createRelationalOperation(function(value, other) {
           return value >= other;
         });
-        var isArguments = baseIsArguments(function() {
+        var isArguments = baseIsArguments(/* @__PURE__ */ function() {
           return arguments;
         }()) ? baseIsArguments : function(value) {
           return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
@@ -23807,7 +23807,7 @@ var require_events = __commonJS({
         this._contexts = void 0;
       }
     };
-    var Emitter = class {
+    var Emitter = class _Emitter {
       constructor(_options) {
         this._options = _options;
       }
@@ -23831,7 +23831,7 @@ var require_events = __commonJS({
                   return;
                 }
                 this._callbacks.remove(listener, thisArgs);
-                result.dispose = Emitter._noop;
+                result.dispose = _Emitter._noop;
                 if (this._options && this._options.onLastListenerRemove && this._callbacks.isEmpty()) {
                   this._options.onLastListenerRemove(this);
                 }
@@ -24025,13 +24025,13 @@ var require_ril = __commonJS({
     var disposable_1 = require_disposable();
     var events_1 = require_events();
     var messageBuffer_1 = require_messageBuffer();
-    var MessageBuffer = class extends messageBuffer_1.AbstractMessageBuffer {
+    var MessageBuffer = class _MessageBuffer extends messageBuffer_1.AbstractMessageBuffer {
       constructor(encoding = "utf-8") {
         super(encoding);
         this.asciiDecoder = new TextDecoder("ascii");
       }
       emptyBuffer() {
-        return MessageBuffer.emptyBuffer;
+        return _MessageBuffer.emptyBuffer;
       }
       fromString(value, _encoding) {
         return new TextEncoder().encode(value);
@@ -24232,12 +24232,12 @@ var require_messages = __commonJS({
       ErrorCodes2.jsonrpcReservedErrorRangeEnd = -32e3;
       ErrorCodes2.serverErrorEnd = ErrorCodes2.jsonrpcReservedErrorRangeEnd;
     })(ErrorCodes = exports.ErrorCodes || (exports.ErrorCodes = {}));
-    var ResponseError = class extends Error {
+    var ResponseError = class _ResponseError extends Error {
       constructor(code, message, data) {
         super(message);
         this.code = is.number(code) ? code : ErrorCodes.UnknownErrorCode;
         this.data = data;
-        Object.setPrototypeOf(this, ResponseError.prototype);
+        Object.setPrototypeOf(this, _ResponseError.prototype);
       }
       toJson() {
         return {
@@ -24248,12 +24248,12 @@ var require_messages = __commonJS({
       }
     };
     exports.ResponseError = ResponseError;
-    var ParameterStructures = class {
+    var ParameterStructures = class _ParameterStructures {
       constructor(kind) {
         this.kind = kind;
       }
       static is(value) {
-        return value === ParameterStructures.auto || value === ParameterStructures.byName || value === ParameterStructures.byPosition;
+        return value === _ParameterStructures.auto || value === _ParameterStructures.byName || value === _ParameterStructures.byPosition;
       }
       toString() {
         return this.kind;
@@ -25382,11 +25382,11 @@ var require_connection = __commonJS({
       ConnectionErrors2[ConnectionErrors2["Disposed"] = 2] = "Disposed";
       ConnectionErrors2[ConnectionErrors2["AlreadyListening"] = 3] = "AlreadyListening";
     })(ConnectionErrors = exports.ConnectionErrors || (exports.ConnectionErrors = {}));
-    var ConnectionError = class extends Error {
+    var ConnectionError = class _ConnectionError extends Error {
       constructor(code, message) {
         super(message);
         this.code = code;
-        Object.setPrototypeOf(this, ConnectionError.prototype);
+        Object.setPrototypeOf(this, _ConnectionError.prototype);
       }
     };
     exports.ConnectionError = ConnectionError;
@@ -27749,52 +27749,52 @@ var require_uuid = __commonJS({
         return this.asHex() === other.asHex();
       }
     };
-    var V4UUID = class extends ValueUUID {
+    var V4UUID = class _V4UUID extends ValueUUID {
       constructor() {
         super([
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
           "-",
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
           "-",
           "4",
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
           "-",
-          V4UUID._oneOf(V4UUID._timeHighBits),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
+          _V4UUID._oneOf(_V4UUID._timeHighBits),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
           "-",
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex(),
-          V4UUID._randomHex()
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex(),
+          _V4UUID._randomHex()
         ].join(""));
       }
       static _oneOf(array) {
         return array[Math.floor(array.length * Math.random())];
       }
       static _randomHex() {
-        return V4UUID._oneOf(V4UUID._chars);
+        return _V4UUID._oneOf(_V4UUID._chars);
       }
     };
     V4UUID._chars = ["0", "1", "2", "3", "4", "5", "6", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"];
@@ -27831,11 +27831,11 @@ var require_progress = __commonJS({
     exports.attachPartialResult = exports.ProgressFeature = exports.attachWorkDone = void 0;
     var vscode_languageserver_protocol_1 = require_main3();
     var uuid_1 = require_uuid();
-    var WorkDoneProgressReporterImpl = class {
+    var WorkDoneProgressReporterImpl = class _WorkDoneProgressReporterImpl {
       constructor(_connection, _token) {
         this._connection = _connection;
         this._token = _token;
-        WorkDoneProgressReporterImpl.Instances.set(this._token, this);
+        _WorkDoneProgressReporterImpl.Instances.set(this._token, this);
       }
       begin(title, percentage, message, cancellable) {
         let param = {
@@ -27862,7 +27862,7 @@ var require_progress = __commonJS({
         this._connection.sendProgress(vscode_languageserver_protocol_1.WorkDoneProgress.type, this._token, param);
       }
       done() {
-        WorkDoneProgressReporterImpl.Instances.delete(this._token);
+        _WorkDoneProgressReporterImpl.Instances.delete(this._token);
         this._connection.sendProgress(vscode_languageserver_protocol_1.WorkDoneProgress.type, this._token, { kind: "end" });
       }
     };
@@ -30216,7 +30216,7 @@ var LIB;
     }
     var u = "", l = "/", p = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/, g = function() {
       function e3(t3, e4, r2, n2, o2, i2) {
-        void 0 === i2 && (i2 = false), "object" == typeof t3 ? (this.scheme = t3.scheme || u, this.authority = t3.authority || u, this.path = t3.path || u, this.query = t3.query || u, this.fragment = t3.fragment || u) : (this.scheme = function(t4, e5) {
+        void 0 === i2 && (i2 = false), "object" == typeof t3 ? (this.scheme = t3.scheme || u, this.authority = t3.authority || u, this.path = t3.path || u, this.query = t3.query || u, this.fragment = t3.fragment || u) : (this.scheme = /* @__PURE__ */ function(t4, e5) {
           return t4 || e5 ? t4 : "file";
         }(t3, i2), this.authority = e4 || u, this.path = function(t4, e5) {
           switch (t4) {
@@ -30762,7 +30762,7 @@ function loadMessageBundle() {
 }
 
 // ../../node_modules/yaml-language-server/node_modules/vscode-json-languageservice/lib/esm/parser/jsonParser.js
-var __extends = function() {
+var __extends = /* @__PURE__ */ function() {
   var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
       d2.__proto__ = b2;
@@ -31888,7 +31888,7 @@ var SchemaHandle = (
 );
 var UnresolvedSchema = (
   /** @class */
-  function() {
+  /* @__PURE__ */ function() {
     function UnresolvedSchema2(schema4, errors) {
       if (errors === void 0) {
         errors = [];
@@ -32585,15 +32585,15 @@ var escapeChars = {
   "}": "%7D"
 };
 var escapeTagName = (tn) => tn.replace(/[!,[\]{}]/g, (ch) => escapeChars[ch]);
-var Directives = class {
+var Directives = class _Directives {
   constructor(yaml, tags) {
     this.docStart = null;
     this.docEnd = false;
-    this.yaml = Object.assign({}, Directives.defaultYaml, yaml);
-    this.tags = Object.assign({}, Directives.defaultTags, tags);
+    this.yaml = Object.assign({}, _Directives.defaultYaml, yaml);
+    this.tags = Object.assign({}, _Directives.defaultTags, tags);
   }
   clone() {
-    const copy = new Directives(this.yaml, this.tags);
+    const copy = new _Directives(this.yaml, this.tags);
     copy.docStart = this.docStart;
     return copy;
   }
@@ -32602,7 +32602,7 @@ var Directives = class {
    * update the stream state according to the current version's spec.
    */
   atDocument() {
-    const res = new Directives(this.yaml, this.tags);
+    const res = new _Directives(this.yaml, this.tags);
     switch (this.yaml.version) {
       case "1.1":
         this.atNextDocument = true;
@@ -32610,10 +32610,10 @@ var Directives = class {
       case "1.2":
         this.atNextDocument = false;
         this.yaml = {
-          explicit: Directives.defaultYaml.explicit,
+          explicit: _Directives.defaultYaml.explicit,
           version: "1.2"
         };
-        this.tags = Object.assign({}, Directives.defaultTags);
+        this.tags = Object.assign({}, _Directives.defaultTags);
         break;
     }
     return res;
@@ -32624,8 +32624,8 @@ var Directives = class {
    */
   add(line, onError) {
     if (this.atNextDocument) {
-      this.yaml = { explicit: Directives.defaultYaml.explicit, version: "1.1" };
-      this.tags = Object.assign({}, Directives.defaultTags);
+      this.yaml = { explicit: _Directives.defaultYaml.explicit, version: "1.1" };
+      this.tags = Object.assign({}, _Directives.defaultTags);
       this.atNextDocument = false;
     }
     const parts = line.trim().split(/[ \t]+/);
@@ -33851,7 +33851,7 @@ function createPair(key, value, ctx) {
   const v = createNode(value, void 0, ctx);
   return new Pair(k, v);
 }
-var Pair = class {
+var Pair = class _Pair {
   constructor(key, value = null) {
     Object.defineProperty(this, NODE_TYPE, { value: PAIR });
     this.key = key;
@@ -33863,7 +33863,7 @@ var Pair = class {
       key = key.clone(schema4);
     if (isNode(value))
       value = value.clone(schema4);
-    return new Pair(key, value);
+    return new _Pair(key, value);
   }
   toJSON(_2, ctx) {
     const pair = (ctx == null ? void 0 : ctx.mapAsMap) ? /* @__PURE__ */ new Map() : {};
@@ -34606,7 +34606,7 @@ var pairs = {
 };
 
 // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/omap.js
-var YAMLOMap = class extends YAMLSeq {
+var YAMLOMap = class _YAMLOMap extends YAMLSeq {
   constructor() {
     super();
     this.add = YAMLMap.prototype.add.bind(this);
@@ -34614,7 +34614,7 @@ var YAMLOMap = class extends YAMLSeq {
     this.get = YAMLMap.prototype.get.bind(this);
     this.has = YAMLMap.prototype.has.bind(this);
     this.set = YAMLMap.prototype.set.bind(this);
-    this.tag = YAMLOMap.tag;
+    this.tag = _YAMLOMap.tag;
   }
   /**
    * If `ctx` is given, the return type is actually `Map<unknown, unknown>`,
@@ -34803,10 +34803,10 @@ var intHex2 = {
 };
 
 // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/set.js
-var YAMLSet = class extends YAMLMap {
+var YAMLSet = class _YAMLSet extends YAMLMap {
   constructor(schema4) {
     super(schema4);
-    this.tag = YAMLSet.tag;
+    this.tag = _YAMLSet.tag;
   }
   add(key) {
     let pair;
@@ -35046,7 +35046,7 @@ function getTags(customTags, schemaName) {
 
 // ../../node_modules/yaml/browser/dist/schema/Schema.js
 var sortMapEntriesByKey = (a2, b) => a2.key < b.key ? -1 : a2.key > b.key ? 1 : 0;
-var Schema = class {
+var Schema = class _Schema {
   constructor({ compat, customTags, merge, resolveKnownTags, schema: schema4, sortMapEntries, toStringDefaults }) {
     this.compat = Array.isArray(compat) ? getTags(compat, "compat") : compat ? getTags(null, compat) : null;
     this.merge = !!merge;
@@ -35060,7 +35060,7 @@ var Schema = class {
     this.sortMapEntries = typeof sortMapEntries === "function" ? sortMapEntries : sortMapEntries === true ? sortMapEntriesByKey : null;
   }
   clone() {
-    const copy = Object.create(Schema.prototype, Object.getOwnPropertyDescriptors(this));
+    const copy = Object.create(_Schema.prototype, Object.getOwnPropertyDescriptors(this));
     copy.tags = this.tags.slice();
     return copy;
   }
@@ -35183,7 +35183,7 @@ function applyReviver(reviver, obj, key, val) {
 }
 
 // ../../node_modules/yaml/browser/dist/doc/Document.js
-var Document = class {
+var Document = class _Document {
   constructor(value, replacer, options) {
     this.commentBefore = null;
     this.comment = null;
@@ -35227,7 +35227,7 @@ var Document = class {
    * Custom Node values that inherit from `Object` still refer to their original instances.
    */
   clone() {
-    const copy = Object.create(Document.prototype, {
+    const copy = Object.create(_Document.prototype, {
       [NODE_TYPE]: { value: DOC }
     });
     copy.commentBefore = this.commentBefore;
@@ -41196,7 +41196,7 @@ var EnumMatch2;
   EnumMatch3[EnumMatch3["Key"] = 0] = "Key";
   EnumMatch3[EnumMatch3["Enum"] = 1] = "Enum";
 })(EnumMatch2 || (EnumMatch2 = {}));
-var SchemaCollector2 = class {
+var SchemaCollector2 = class _SchemaCollector {
   constructor(focusOffset = -1, exclude = null) {
     this.focusOffset = focusOffset;
     this.exclude = exclude;
@@ -41212,7 +41212,7 @@ var SchemaCollector2 = class {
     return (this.focusOffset === -1 || contains3(node, this.focusOffset)) && node !== this.exclude;
   }
   newSub() {
-    return new SchemaCollector2(-1, this.exclude);
+    return new _SchemaCollector(-1, this.exclude);
   }
 };
 var NoOpSchemaCollector2 = class {
@@ -42518,7 +42518,7 @@ function _visit2(path5, item, visitor) {
 }
 
 // ../../node_modules/yaml-language-server/lib/esm/languageservice/parser/yaml-documents.js
-var SingleYAMLDocument = class extends JSONDocument2 {
+var SingleYAMLDocument = class _SingleYAMLDocument extends JSONDocument2 {
   constructor(lineCounter) {
     super(null, []);
     this.lineCounter = lineCounter;
@@ -42527,7 +42527,7 @@ var SingleYAMLDocument = class extends JSONDocument2 {
    * Create a deep copy of this document
    */
   clone() {
-    const copy = new SingleYAMLDocument(this.lineCounter);
+    const copy = new _SingleYAMLDocument(this.lineCounter);
     copy.isKubernetes = this.isKubernetes;
     copy.disableAdditionalProperties = this.disableAdditionalProperties;
     copy.uri = this.uri;
