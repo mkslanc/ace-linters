@@ -648,7 +648,7 @@ class SessionLanguageProvider {
                 column: 0
             },
             end: {
-                row: this.editor.renderer.getLastVisibleRow() + 1,
+                row: lastRow + 1,
                 column: this.session.getLine(lastRow).length
             }
         }
