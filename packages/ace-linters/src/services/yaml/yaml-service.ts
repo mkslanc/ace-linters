@@ -25,17 +25,22 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
     constructor(mode: string) {
         super(mode);
 
-        this.$service = getLanguageService((uri) => {
-            uri = uri.replace("file:///", "");
-            let jsonSchema = this.schemas[uri];
-            if (jsonSchema)
-                return Promise.resolve(jsonSchema);
-            return Promise.reject(`Unable to load schema at ${uri}`);
-            //@ts-ignore
-        }, null, null, null, null);
+        this.$service = getLanguageService({
+            schemaRequestService: (uri) => {
+                uri = uri.replace("file:///", "");
+                let jsonSchema = this.schemas[uri];
+                if (jsonSchema)
+                    return Promise.resolve(jsonSchema);
+                return Promise.reject(`Unable to load schema at ${uri}`);
+            }, workspaceContext: {
+                resolveRelativePath: (relativePath, resource) => {
+                    return relativePath + resource;
+                }
+            }
+        });
     }
 
-    private $getYamlSchemaUri(sessionID): string | undefined {
+    private $getYamlSchemaUri(sessionID: string): string | undefined {
         return this.getOption(sessionID, "schemaUri");
     }
 

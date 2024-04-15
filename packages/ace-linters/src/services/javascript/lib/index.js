@@ -9,7 +9,7 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
 }) : x)(function(x) {
   if (typeof require !== "undefined")
     return require.apply(this, arguments);
-  throw new Error('Dynamic require of "' + x + '" is not supported');
+  throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __commonJS = (cb, mod) => function __require2() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -5732,7 +5732,7 @@ var require_eslint_scope = __commonJS({
     var READ = 1;
     var WRITE = 2;
     var RW = READ | WRITE;
-    var Reference = class {
+    var Reference = class _Reference {
       constructor(ident, scope, flag, writeExpr, maybeImplicitGlobal, partial, init) {
         this.identifier = ident;
         this.from = scope;
@@ -5760,7 +5760,7 @@ var require_eslint_scope = __commonJS({
        * @returns {boolean} write
        */
       isWrite() {
-        return !!(this.flag & Reference.WRITE);
+        return !!(this.flag & _Reference.WRITE);
       }
       /**
        * Whether the reference is readable.
@@ -5768,7 +5768,7 @@ var require_eslint_scope = __commonJS({
        * @returns {boolean} read
        */
       isRead() {
-        return !!(this.flag & Reference.READ);
+        return !!(this.flag & _Reference.READ);
       }
       /**
        * Whether the reference is read-only.
@@ -5776,7 +5776,7 @@ var require_eslint_scope = __commonJS({
        * @returns {boolean} read only
        */
       isReadOnly() {
-        return this.flag === Reference.READ;
+        return this.flag === _Reference.READ;
       }
       /**
        * Whether the reference is write-only.
@@ -5784,7 +5784,7 @@ var require_eslint_scope = __commonJS({
        * @returns {boolean} write only
        */
       isWriteOnly() {
-        return this.flag === Reference.WRITE;
+        return this.flag === _Reference.WRITE;
       }
       /**
        * Whether the reference is read-write.
@@ -5792,7 +5792,7 @@ var require_eslint_scope = __commonJS({
        * @returns {boolean} read write
        */
       isReadWrite() {
-        return this.flag === Reference.RW;
+        return this.flag === _Reference.RW;
       }
     };
     Reference.READ = READ;
@@ -14147,7 +14147,7 @@ var require_lodash = __commonJS({
     var nativeNow = Date.now;
     var Map2 = getNative(root, "Map");
     var nativeCreate = getNative(Object, "create");
-    var baseCreate = function() {
+    var baseCreate = /* @__PURE__ */ function() {
       function object() {
       }
       return function(proto) {
@@ -14672,7 +14672,7 @@ var require_lodash = __commonJS({
     function eq(value, other) {
       return value === other || value !== value && other !== other;
     }
-    var isArguments = baseIsArguments(function() {
+    var isArguments = baseIsArguments(/* @__PURE__ */ function() {
       return arguments;
     }()) ? baseIsArguments : function(value) {
       return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
@@ -15011,7 +15011,7 @@ var require_uri_all = __commonJS({
       }
       var URI_PROTOCOL = buildExps(false);
       var IRI_PROTOCOL = buildExps(true);
-      var slicedToArray = function() {
+      var slicedToArray = /* @__PURE__ */ function() {
         function sliceIterator(arr, i) {
           var _arr = [];
           var _n = true;
@@ -16633,7 +16633,7 @@ var require_fast_json_stable_stringify = __commonJS({
       if (typeof opts === "function")
         opts = { cmp: opts };
       var cycles = typeof opts.cycles === "boolean" ? opts.cycles : false;
-      var cmp = opts.cmp && function(f) {
+      var cmp = opts.cmp && /* @__PURE__ */ function(f) {
         return function(node) {
           return function(a, b) {
             var aobj = { key: a, value: node[a] };
@@ -24256,7 +24256,7 @@ var require_browser = __commonJS({
     exports.load = load;
     exports.useColors = useColors;
     exports.storage = localstorage();
-    exports.destroy = (() => {
+    exports.destroy = /* @__PURE__ */ (() => {
       let warned = false;
       return () => {
         if (!warned) {
@@ -24436,7 +24436,7 @@ var require_traverser = __commonJS({
       }
       return keys;
     }
-    var Traverser = class {
+    var Traverser = class _Traverser {
       constructor() {
         this._current = null;
         this._parents = [];
@@ -24548,7 +24548,7 @@ var require_traverser = __commonJS({
        * @returns {void}
        */
       static traverse(node, options) {
-        new Traverser().traverse(node, options);
+        new _Traverser().traverse(node, options);
       }
       /**
        * The default visitor keys.
@@ -27643,7 +27643,7 @@ var require_code_path_segment = __commonJS({
     function isReachable(segment) {
       return segment.reachable;
     }
-    var CodePathSegment = class {
+    var CodePathSegment = class _CodePathSegment {
       /**
        * @param {string} id An identifier.
        * @param {CodePathSegment[]} allPrevSegments An array of the previous segments.
@@ -27681,7 +27681,7 @@ var require_code_path_segment = __commonJS({
        * @returns {CodePathSegment} The created segment.
        */
       static newRoot(id) {
-        return new CodePathSegment(id, [], true);
+        return new _CodePathSegment(id, [], true);
       }
       /**
        * Creates a segment that follows given segments.
@@ -27690,9 +27690,9 @@ var require_code_path_segment = __commonJS({
        * @returns {CodePathSegment} The created segment.
        */
       static newNext(id, allPrevSegments) {
-        return new CodePathSegment(
+        return new _CodePathSegment(
           id,
-          CodePathSegment.flattenUnusedSegments(allPrevSegments),
+          _CodePathSegment.flattenUnusedSegments(allPrevSegments),
           allPrevSegments.some(isReachable)
         );
       }
@@ -27703,8 +27703,8 @@ var require_code_path_segment = __commonJS({
        * @returns {CodePathSegment} The created segment.
        */
       static newUnreachable(id, allPrevSegments) {
-        const segment = new CodePathSegment(id, CodePathSegment.flattenUnusedSegments(allPrevSegments), false);
-        CodePathSegment.markUsed(segment);
+        const segment = new _CodePathSegment(id, _CodePathSegment.flattenUnusedSegments(allPrevSegments), false);
+        _CodePathSegment.markUsed(segment);
         return segment;
       }
       /**
@@ -27716,7 +27716,7 @@ var require_code_path_segment = __commonJS({
        * @returns {CodePathSegment} The created segment.
        */
       static newDisconnected(id, allPrevSegments) {
-        return new CodePathSegment(id, [], allPrevSegments.some(isReachable));
+        return new _CodePathSegment(id, [], allPrevSegments.some(isReachable));
       }
       /**
        * Makes a given segment being used.
@@ -27822,7 +27822,7 @@ var require_fork_context = __commonJS({
       }
       return currentSegments;
     }
-    var ForkContext = class {
+    var ForkContext = class _ForkContext {
       /**
        * @param {IdGenerator} idGenerator An identifier generator for segments.
        * @param {ForkContext|null} upper An upper fork context.
@@ -27932,7 +27932,7 @@ var require_fork_context = __commonJS({
        * @returns {ForkContext} New fork context.
        */
       static newRoot(idGenerator) {
-        const context = new ForkContext(idGenerator, null, 1);
+        const context = new _ForkContext(idGenerator, null, 1);
         context.add([CodePathSegment.newRoot(idGenerator.next())]);
         return context;
       }
@@ -27943,7 +27943,7 @@ var require_fork_context = __commonJS({
        * @returns {ForkContext} New fork context.
        */
       static newEmpty(parentContext, forkLeavingPath) {
-        return new ForkContext(
+        return new _ForkContext(
           parentContext.idGenerator,
           parentContext,
           (forkLeavingPath ? 2 : 1) * parentContext.count
@@ -29913,7 +29913,7 @@ var require_Func = __commonJS({
       return f(y, x);
     });
     fix = function(f) {
-      return function(g) {
+      return /* @__PURE__ */ function(g) {
         return function() {
           return f(g(g)).apply(null, arguments);
         };
@@ -33825,7 +33825,7 @@ var require_lazy_loading_rule_map = __commonJS({
   "../../node_modules/eslint/lib/rules/utils/lazy-loading-rule-map.js"(exports, module) {
     "use strict";
     var debug = require_browser()("eslint:rules");
-    var LazyLoadingRuleMap = class extends Map {
+    var LazyLoadingRuleMap = class _LazyLoadingRuleMap extends Map {
       /**
        * Initialize this map.
        * @param {Array<[string, function(): Rule]>} loaders The rule loaders.
@@ -33847,7 +33847,7 @@ var require_lazy_loading_rule_map = __commonJS({
             ];
           }) : loaders
         );
-        Object.defineProperty(LazyLoadingRuleMap.prototype, "set", {
+        Object.defineProperty(_LazyLoadingRuleMap.prototype, "set", {
           configurable: true,
           value: void 0
         });
@@ -38507,7 +38507,7 @@ var require_Graphemer = __commonJS({
     var boundaries_1 = require_boundaries();
     var GraphemerHelper_1 = __importDefault(require_GraphemerHelper());
     var GraphemerIterator_1 = __importDefault(require_GraphemerIterator());
-    var Graphemer = class {
+    var Graphemer = class _Graphemer {
       /**
        * Returns the next grapheme break in the string after the given index
        * @param string {string}
@@ -38525,8 +38525,8 @@ var require_Graphemer = __commonJS({
           return string.length;
         }
         const prevCP = GraphemerHelper_1.default.codePointAt(string, index);
-        const prev = Graphemer.getGraphemeBreakProperty(prevCP);
-        const prevEmoji = Graphemer.getEmojiProperty(prevCP);
+        const prev = _Graphemer.getGraphemeBreakProperty(prevCP);
+        const prevEmoji = _Graphemer.getEmojiProperty(prevCP);
         const mid = [];
         const midEmoji = [];
         for (let i = index + 1; i < string.length; i++) {
@@ -38534,8 +38534,8 @@ var require_Graphemer = __commonJS({
             continue;
           }
           const nextCP = GraphemerHelper_1.default.codePointAt(string, i);
-          const next = Graphemer.getGraphemeBreakProperty(nextCP);
-          const nextEmoji = Graphemer.getEmojiProperty(nextCP);
+          const next = _Graphemer.getGraphemeBreakProperty(nextCP);
+          const nextEmoji = _Graphemer.getEmojiProperty(nextCP);
           if (GraphemerHelper_1.default.shouldBreak(prev, mid, next, prevEmoji, midEmoji, nextEmoji)) {
             return i;
           }
@@ -38553,7 +38553,7 @@ var require_Graphemer = __commonJS({
         const res = [];
         let index = 0;
         let brk;
-        while ((brk = Graphemer.nextBreak(str, index)) < str.length) {
+        while ((brk = _Graphemer.nextBreak(str, index)) < str.length) {
           res.push(str.slice(index, brk));
           index = brk;
         }
@@ -38568,7 +38568,7 @@ var require_Graphemer = __commonJS({
        * @returns {GraphemerIterator}
        */
       iterateGraphemes(str) {
-        return new GraphemerIterator_1.default(str, Graphemer.nextBreak);
+        return new GraphemerIterator_1.default(str, _Graphemer.nextBreak);
       }
       /**
        * Returns the number of grapheme clusters in the given string
@@ -38579,7 +38579,7 @@ var require_Graphemer = __commonJS({
         let count = 0;
         let index = 0;
         let brk;
-        while ((brk = Graphemer.nextBreak(str, index)) < str.length) {
+        while ((brk = _Graphemer.nextBreak(str, index)) < str.length) {
           index = brk;
           count++;
         }
@@ -81281,7 +81281,7 @@ var require_doctrine = __commonJS({
       function sliceSource(source, index, last) {
         return source.slice(index, last);
       }
-      hasOwnProperty = function() {
+      hasOwnProperty = /* @__PURE__ */ function() {
         var func = Object.prototype.hasOwnProperty;
         return function hasOwnProperty2(obj, name) {
           return func.call(obj, name);
@@ -84511,7 +84511,7 @@ var require_object_schema = __commonJS({
         throw new TypeError(`Definition for key "${name}" must have a validate() method.`);
       }
     }
-    var ObjectSchema = class {
+    var ObjectSchema = class _ObjectSchema {
       /**
        * Creates a new instance.
        */
@@ -84524,7 +84524,7 @@ var require_object_schema = __commonJS({
         for (const key of Object.keys(definitions)) {
           validateDefinition(key, definitions[key]);
           if (typeof definitions[key].schema === "object") {
-            const schema = new ObjectSchema(definitions[key].schema);
+            const schema = new _ObjectSchema(definitions[key].schema);
             definitions[key] = {
               ...definitions[key],
               merge(first = {}, second = {}) {
