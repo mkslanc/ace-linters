@@ -8,7 +8,6 @@ export declare class LanguageClient extends BaseService implements LanguageServi
     private readonly socket;
     private connection;
     private requestsQueue;
-    clientCapabilities: lsp.ClientCapabilities;
     ctx: any;
     constructor(serverData: LanguageClientConfig, ctx: any);
     private $connectSocket;
