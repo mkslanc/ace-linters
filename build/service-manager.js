@@ -18,7 +18,7 @@ return /******/ (() => { // webpackBootstrap
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Cs: () => (/* binding */ MessageType)
 /* harmony export */ });
-/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, DisposeMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage */
+/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, DisposeMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage, GetSemanticTokensMessage */
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -35,6 +35,7 @@ function _define_property(obj, key, value) {
 class BaseMessage {
     constructor(sessionId){
         _define_property(this, "sessionId", void 0);
+        _define_property(this, "version", void 0);
         this.sessionId = sessionId;
     }
 }
@@ -180,6 +181,14 @@ class DocumentHighlightMessage extends (/* unused pure expression or super */ nu
         this.value = value;
     }
 }
+class GetSemanticTokensMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.getSemanticTokens);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -198,6 +207,8 @@ var MessageType;
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
     MessageType[MessageType["dispose"] = 15] = "dispose";
+    MessageType[MessageType["capabilitiesChange"] = 16] = "capabilitiesChange";
+    MessageType[MessageType["getSemanticTokens"] = 17] = "getSemanticTokens";
 })(MessageType || (MessageType = {}));
 
 
@@ -364,6 +375,26 @@ function _define_property(obj, key, value) {
 
 
 class ServiceManager {
+    async getServicesCapabilitiesAfterCallback(documentIdentifier, message, callback) {
+        let services = await callback(documentIdentifier, message.value, message.mode, message.options);
+        if (services) {
+            return Object.keys(services).reduce((acc, key)=>{
+                var _services_key_serviceInstance, _services_key;
+                acc[key] = ((_services_key = services[key]) === null || _services_key === void 0 ? void 0 : (_services_key_serviceInstance = _services_key.serviceInstance) === null || _services_key_serviceInstance === void 0 ? void 0 : _services_key_serviceInstance.serviceCapabilities) || null;
+                return acc;
+            }, {});
+        }
+    }
+    async aggregateFeatureResponses(serviceInstances, feature, methodName, documentIdentifier, value) {
+        return (await Promise.all(this.filterByFeature(serviceInstances, feature).map(async (service)=>{
+            return service[methodName](documentIdentifier, value);
+        }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+    }
+    applyOptionsToServices(serviceInstances, sessionID, options) {
+        serviceInstances.forEach((service)=>{
+            service.setOptions(sessionID, options);
+        });
+    }
     async disposeAll() {
         var services = this.$services;
         for(let serviceName in services){
@@ -394,22 +425,30 @@ class ServiceManager {
     }
     async $getServicesInstancesByMode(mode) {
         let services = this.findServicesByMode(mode);
-        if (services.length === 0) {
+        if (Object.keys(services).length === 0) {
             return [];
         }
-        return Promise.all(services.map((service)=>this.initializeService(service)));
+        for(let serviceName in services){
+            await this.initializeService(serviceName);
+        }
+        return services;
     }
-    async initializeService(service) {
+    async initializeService(serviceName) {
+        let service = this.$services[serviceName];
         if (!service.serviceInstance) {
             if (!this.serviceInitPromises[service.id]) {
                 this.serviceInitPromises[service.id] = ServiceManager.$initServiceInstance(service, this.ctx).then((instance)=>{
                     service.serviceInstance = instance;
+                    service.serviceInstance.serviceName = serviceName;
                     delete this.serviceInitPromises[service.id]; // Clean up
                     return instance;
                 });
             }
             return this.serviceInitPromises[service.id];
         } else {
+            if (!service.serviceInstance.serviceName) {
+                service.serviceInstance.serviceName = serviceName;
+            }
             return service.serviceInstance;
         }
     }
@@ -424,17 +463,17 @@ class ServiceManager {
     async addDocument(documentIdentifier, documentValue, mode, options) {
         if (!mode || !/^ace\/mode\//.test(mode)) return;
         mode = mode.replace("ace/mode/", "");
-        let serviceInstances = await this.$getServicesInstancesByMode(mode);
-        if (serviceInstances.length === 0) return;
+        let services = await this.$getServicesInstancesByMode(mode);
+        if (Object.keys(services).length === 0) return;
         let documentItem = {
             uri: documentIdentifier.uri,
             version: documentIdentifier.version,
             languageId: mode,
             text: documentValue
         };
-        serviceInstances.forEach((el)=>el.addDocument(documentItem));
+        Object.values(services).forEach((el)=>el.serviceInstance.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
-        return serviceInstances;
+        return services;
     }
     async changeDocumentMode(documentIdentifier, value, mode, options) {
         this.removeDocument(documentIdentifier);
@@ -451,7 +490,7 @@ class ServiceManager {
         let mode = this.$sessionIDToMode[sessionID];
         if (!mode) return []; //TODO:
         let services = this.findServicesByMode(mode);
-        return services.map((el)=>el.serviceInstance).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+        return Object.values(services).map((el)=>el.serviceInstance).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
     }
     filterByFeature(serviceInstances, feature) {
         return serviceInstances.filter((el)=>{
@@ -475,14 +514,18 @@ class ServiceManager {
                     return capabilities.signatureHelpProvider != undefined;
                 case "documentHighlight":
                     return capabilities.documentHighlightProvider == true;
+                case "semanticTokens":
+                    return capabilities.semanticTokensProvider != undefined;
             }
         });
     }
     findServicesByMode(mode) {
-        return Object.values(this.$services).filter((el)=>{
-            let extensions = el.modes.split('|');
-            if (extensions.includes(mode)) return el;
+        let servicesWithName = {};
+        Object.entries(this.$services).forEach(([key, value])=>{
+            let extensions = value.modes.split('|');
+            if (extensions.includes(mode)) servicesWithName[key] = this.$services[key];
         });
+        return servicesWithName;
     }
     registerService(name, service) {
         service.id = name;
@@ -501,7 +544,7 @@ class ServiceManager {
         this.$services[name].features = features;
     }
     setDefaultFeaturesState(serviceFeatures) {
-        var _features, _features1, _features2, _features3, _features4, _features5, _features6;
+        var _features, _features1, _features2, _features3, _features4, _features5, _features6, _features7;
         let features = serviceFeatures !== null && serviceFeatures !== void 0 ? serviceFeatures : {};
         var _hover;
         (_hover = (_features = features).hover) !== null && _hover !== void 0 ? _hover : _features.hover = true;
@@ -517,6 +560,8 @@ class ServiceManager {
         (_signatureHelp = (_features5 = features).signatureHelp) !== null && _signatureHelp !== void 0 ? _signatureHelp : _features5.signatureHelp = true;
         var _documentHighlight;
         (_documentHighlight = (_features6 = features).documentHighlight) !== null && _documentHighlight !== void 0 ? _documentHighlight : _features6.documentHighlight = true;
+        var _semanticTokens;
+        (_semanticTokens = (_features7 = features).semanticTokens) !== null && _semanticTokens !== void 0 ? _semanticTokens : _features7.semanticTokens = true;
         return features;
     }
     constructor(ctx){
@@ -565,8 +610,8 @@ class ServiceManager {
         ctx.addEventListener("message", async (ev)=>{
             let message = ev.data;
             var _message_sessionId;
-            let sessionID = (_message_sessionId = message.sessionId) !== null && _message_sessionId !== void 0 ? _message_sessionId : "";
-            let version = message.version;
+            let sessionID = (_message_sessionId = message["sessionId"]) !== null && _message_sessionId !== void 0 ? _message_sessionId : "";
+            let version = message["version"];
             let postMessage = {
                 "type": message.type,
                 "sessionId": sessionID
@@ -576,7 +621,7 @@ class ServiceManager {
                 uri: sessionID,
                 version: version
             };
-            switch(message["type"]){
+            switch(message.type){
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.format:
                     serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
@@ -587,14 +632,14 @@ class ServiceManager {
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.complete:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service)=>{
                         return {
-                            completions: await service.doComplete(documentIdentifier, message.value),
+                            completions: await service.doComplete(documentIdentifier, message["value"]),
                             service: service.serviceData.className
                         };
                     }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.resolveCompletion:
                     var _this_filterByFeature_find;
-                    let serviceName = message.value.service;
+                    let serviceName = message.value["service"];
                     postMessage["value"] = await ((_this_filterByFeature_find = this.filterByFeature(serviceInstances, "completionResolve").find((service)=>{
                         if (service.serviceData.className === serviceName) {
                             return service;
@@ -603,38 +648,32 @@ class ServiceManager {
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.change:
                     serviceInstances.forEach((service)=>{
-                        service.setValue(documentIdentifier, message.value);
+                        service.setValue(documentIdentifier, message["value"]);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.applyDelta:
                     serviceInstances.forEach((service)=>{
-                        service.applyDeltas(documentIdentifier, message.value);
+                        service.applyDeltas(documentIdentifier, message["value"]);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.hover:
-                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service)=>{
-                        return service.doHover(documentIdentifier, message.value);
-                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "hover", "doHover", documentIdentifier, message.value);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.validate:
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.init:
-                    var _this;
-                    postMessage["value"] = (_this = await this.addDocument(documentIdentifier, message.value, message.mode, message.options)) === null || _this === void 0 ? void 0 : _this.map((el)=>el.serviceCapabilities);
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument.bind(this));
                     await doValidation(documentIdentifier);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeMode:
-                    var _this1;
-                    postMessage["value"] = (_this1 = await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options)) === null || _this1 === void 0 ? void 0 : _this1.map((el)=>el.serviceCapabilities);
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode.bind(this));
                     await doValidation(documentIdentifier);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.changeOptions:
-                    serviceInstances.forEach((service)=>{
-                        service.setOptions(sessionID, message.options);
-                    });
+                    this.applyOptionsToServices(serviceInstances, sessionID, message.options);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.closeDocument:
@@ -653,15 +692,18 @@ class ServiceManager {
                     await provideValidationForServiceInstance(message.serviceName);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.signatureHelp:
-                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service)=>{
-                        return service.provideSignatureHelp(documentIdentifier, message.value);
-                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "signatureHelp", "provideSignatureHelp", documentIdentifier, message.value);
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.documentHighlight:
-                    let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service)=>{
-                        return service.findDocumentHighlights(documentIdentifier, message.value);
-                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .Dw);
+                    let highlights = await this.aggregateFeatureResponses(serviceInstances, "documentHighlight", "findDocumentHighlights", documentIdentifier, message.value);
                     postMessage["value"] = highlights.flat();
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Cs.getSemanticTokens:
+                    serviceInstances = this.filterByFeature(serviceInstances, "semanticTokens");
+                    if (serviceInstances.length > 0) {
+                        //we will use only first service
+                        postMessage["value"] = await serviceInstances[0].getSemanticTokens(documentIdentifier, message.value);
+                    }
                     break;
             }
             ctx.postMessage(postMessage);

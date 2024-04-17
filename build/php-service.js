@@ -3934,10 +3934,14 @@ class BaseService {
             errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
         };
     }
+    getSemanticTokens(document, range) {
+        return Promise.resolve(null);
+    }
     dispose() {
         return Promise.resolve();
     }
     constructor(mode){
+        _define_property(this, "serviceName", void 0);
         _define_property(this, "mode", void 0);
         _define_property(this, "documents", {});
         _define_property(this, "options", {});
@@ -22634,7 +22638,7 @@ var common_converters_CommonConverter;
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(common_converters_CommonConverter || (common_converters_CommonConverter = {}));
 
-;// CONCATENATED MODULE: ./src/type-converters/lsp-converters.ts
+;// CONCATENATED MODULE: ./src/type-converters/lsp/lsp-converters.ts
 
 
 

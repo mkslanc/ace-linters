@@ -18831,6 +18831,7 @@ function message_types_define_property(obj, key, value) {
 class BaseMessage {
     constructor(sessionId){
         message_types_define_property(this, "sessionId", void 0);
+        message_types_define_property(this, "version", void 0);
         this.sessionId = sessionId;
     }
 }
@@ -18976,6 +18977,14 @@ class DocumentHighlightMessage extends BaseMessage {
         this.value = value;
     }
 }
+class GetSemanticTokensMessage extends BaseMessage {
+    constructor(sessionId, value){
+        super(sessionId);
+        message_types_define_property(this, "type", MessageType.getSemanticTokens);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -18994,6 +19003,8 @@ var MessageType;
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
     MessageType[MessageType["dispose"] = 15] = "dispose";
+    MessageType[MessageType["capabilitiesChange"] = 16] = "capabilitiesChange";
+    MessageType[MessageType["getSemanticTokens"] = 17] = "getSemanticTokens";
 })(MessageType || (MessageType = {}));
 
 // EXTERNAL MODULE: ../../node_modules/events/events.js
@@ -19016,9 +19027,11 @@ function message_controller_define_property(obj, key, value) {
 
 
 class MessageController extends (events_default()) {
-    init(sessionId, document, mode, options, initCallback, validationCallback) {
-        this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
+    init(sessionId, document, mode, options, callbacks) {
+        this.on(MessageType.validate.toString() + "-" + sessionId, callbacks.validationCallback); //TODO: need off
+        // somewhere
+        this.on(MessageType.capabilitiesChange.toString() + "-" + sessionId, callbacks.changeCapabilitiesCallback);
+        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), callbacks.initCallback);
     }
     doValidation(sessionId, callback) {
         this.postMessage(new ValidateMessage(sessionId), callback);
@@ -19069,6 +19082,9 @@ class MessageController extends (events_default()) {
     configureFeatures(serviceName, features) {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
     }
+    getSemanticTokens(sessionId, range, callback) {
+        this.postMessage(new GetSemanticTokensMessage(sessionId, range), callback);
+    }
     postMessage(message, callback) {
         if (callback) {
             let eventName = message.type.toString() + "-" + message.sessionId;
@@ -19091,7 +19107,7 @@ class MessageController extends (events_default()) {
     }
 }
 
-;// CONCATENATED MODULE: ./src/type-converters/lsp-converters.ts
+;// CONCATENATED MODULE: ./src/type-converters/lsp/lsp-converters.ts
 
 
 
@@ -19388,7 +19404,10 @@ function createWorkerBlob(cdnUrl, services) {
         type: "application/javascript"
     });
 }
-function createWorker(source, includeLinters = true) {
+function createWorker(source, includeLinters) {
+    if (includeLinters === undefined) {
+        includeLinters = true;
+    }
     if (typeof Worker == "undefined") return {
         postMessage: function() {},
         terminate: function() {}
@@ -19410,7 +19429,7 @@ function createWorker(source, includeLinters = true) {
     // calling URL.revokeObjectURL before worker is terminated breaks it on IE Edge
     return new Worker(blobURL);
 }
-function getServices(includeLinters = true) {
+function getServices(includeLinters) {
     const allServices = [
         {
             name: "json",
@@ -19473,7 +19492,7 @@ function getServices(includeLinters = true) {
             modes: "php"
         },
         {
-            name: "javascript",
+            name: "eslint",
             script: "javascript-service.js",
             className: "JavascriptService",
             modes: "javascript"
@@ -19485,12 +19504,18 @@ function getServices(includeLinters = true) {
             modes: "python"
         }
     ];
-    if (includeLinters === true) {
+    if (includeLinters === true || includeLinters === undefined) {
         return allServices;
     } else if (includeLinters === false) {
         return [];
     }
-    return allServices.filter((service)=>includeLinters[service.name]);
+    if (includeLinters.javascript) {
+        includeLinters.eslint = includeLinters.javascript;
+        delete includeLinters.javascript;
+    }
+    return allServices.filter((service)=>{
+        return includeLinters[service.name];
+    });
 }
 
 ;// CONCATENATED MODULE: ./src/ace/tooltip.ts
@@ -20132,6 +20157,238 @@ class HoverTooltip extends Tooltip {
     }
 }
 
+;// CONCATENATED MODULE: ./src/type-converters/lsp/semantic-tokens.ts
+function semantic_tokens_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function decodeModifiers(modifierFlag, tokenModifiersLegend) {
+    const modifiers = [];
+    for(let i = 0; i < tokenModifiersLegend.length; i++){
+        if (modifierFlag & 1 << i) {
+            modifiers.push(tokenModifiersLegend[i]);
+        }
+    }
+    return modifiers;
+}
+function parseSemanticTokens(tokens, tokenTypes, tokenModifiersLegend) {
+    if (tokens.length % 5 !== 0) {
+        return;
+    }
+    const decodedTokens = [];
+    let line = 0;
+    let startColumn = 0;
+    for(let i = 0; i < tokens.length; i += 5){
+        line += tokens[i];
+        if (tokens[i] === 0) {
+            startColumn += tokens[i + 1];
+        } else {
+            startColumn = tokens[i + 1];
+        }
+        const length = tokens[i + 2];
+        const tokenTypeIndex = tokens[i + 3];
+        const tokenModifierFlag = tokens[i + 4];
+        const tokenType = tokenTypes[tokenTypeIndex];
+        const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
+        decodedTokens.push({
+            row: line,
+            startColumn: startColumn,
+            length,
+            type: toAceTokenType(tokenType, tokenModifiers)
+        });
+    }
+    return new DecodedSemanticTokens(decodedTokens);
+}
+function toAceTokenType(tokenType, tokenModifiers) {
+    let modifiers = "";
+    let type = tokenType;
+    if (tokenModifiers.length > 0) {
+        modifiers = "." + tokenModifiers.join(".");
+    }
+    switch(tokenType){
+        case "class":
+            type = "entity.name.type.class";
+            break;
+        case "struct":
+            type = "storage.type.struct";
+            break;
+        case "enum":
+            type = "entity.name.type.enum";
+            break;
+        case "interface":
+            type = "entity.name.type.interface";
+            break;
+        case "namespace":
+            type = "entity.name.namespace";
+            break;
+        case "typeParameter":
+            break;
+        case "type":
+            type = "entity.name.type";
+            break;
+        case "parameter":
+            type = "variable.parameter";
+            break;
+        case "variable":
+            type = "entity.name.variable";
+            break;
+        case "enumMember":
+            type = "variable.other.enummember";
+            break;
+        case "property":
+            type = "variable.other.property";
+            break;
+        case "function":
+            type = "entity.name.function";
+            break;
+        case "method":
+            type = "entity.name.function.member";
+            break;
+        case "event":
+            type = "variable.other.event";
+            break;
+    }
+    return type + modifiers;
+}
+function mergeTokens(aceTokens, decodedTokens) {
+    let mergedTokens = [];
+    let currentCharIndex = 0; // Keeps track of the character index across Ace tokens
+    let aceTokenIndex = 0; // Index within the aceTokens array
+    decodedTokens.forEach((semanticToken)=>{
+        let semanticStart = semanticToken.startColumn;
+        let semanticEnd = semanticStart + semanticToken.length;
+        // Process leading Ace tokens that don't overlap with the semantic token
+        while(aceTokenIndex < aceTokens.length && currentCharIndex + aceTokens[aceTokenIndex].value.length <= semanticStart){
+            mergedTokens.push(aceTokens[aceTokenIndex]);
+            currentCharIndex += aceTokens[aceTokenIndex].value.length;
+            aceTokenIndex++;
+        }
+        // Process overlapping Ace tokens
+        while(aceTokenIndex < aceTokens.length && currentCharIndex < semanticEnd){
+            let aceToken = aceTokens[aceTokenIndex];
+            let aceTokenEnd = currentCharIndex + aceToken.value.length;
+            let overlapStart = Math.max(currentCharIndex, semanticStart);
+            let overlapEnd = Math.min(aceTokenEnd, semanticEnd);
+            if (currentCharIndex < semanticStart) {
+                // Part of Ace token is before semantic token; add this part to mergedTokens
+                let beforeSemantic = {
+                    ...aceToken,
+                    value: aceToken.value.substring(0, semanticStart - currentCharIndex)
+                };
+                mergedTokens.push(beforeSemantic);
+            }
+            // Middle part (overlapped by semantic token)
+            let middle = {
+                type: semanticToken.type,
+                value: aceToken.value.substring(overlapStart - currentCharIndex, overlapEnd - currentCharIndex)
+            };
+            mergedTokens.push(middle);
+            if (aceTokenEnd > semanticEnd) {
+                // If Ace token extends beyond the semantic token, prepare the remaining part for future processing
+                let afterSemantic = {
+                    ...aceToken,
+                    value: aceToken.value.substring(semanticEnd - currentCharIndex)
+                };
+                // Add the afterSemantic as a new token to process in subsequent iterations
+                currentCharIndex = semanticEnd; // Update currentCharIndex to reflect the start of afterSemantic
+                aceTokens.splice(aceTokenIndex, 1, afterSemantic); // Replace the current token with afterSemantic for correct processing in the next iteration
+                break; // Move to the next semantic token without incrementing aceTokenIndex
+            }
+            // If the entire Ace token is covered by the semantic token, proceed to the next Ace token
+            currentCharIndex = aceTokenEnd;
+            aceTokenIndex++;
+        }
+    });
+    // Add remaining Ace tokens that were not overlapped by any semantic tokens
+    while(aceTokenIndex < aceTokens.length){
+        mergedTokens.push(aceTokens[aceTokenIndex]);
+        aceTokenIndex++;
+    }
+    return mergedTokens;
+}
+class DecodedSemanticTokens {
+    getByRow(row) {
+        return this.tokens.filter((token)=>token.row === row);
+    }
+    sortTokens(tokens) {
+        return tokens.sort((a, b)=>{
+            if (a.row === b.row) {
+                return a.startColumn - b.startColumn;
+            }
+            return a.row - b.row;
+        });
+    }
+    constructor(tokens){
+        semantic_tokens_define_property(this, "tokens", void 0);
+        this.tokens = this.sortTokens(tokens);
+    }
+}
+//vscode-languageserver
+class SemanticTokensBuilder {
+    initialize() {
+        this._id = Date.now();
+        this._prevLine = 0;
+        this._prevChar = 0;
+        this._data = [];
+        this._dataLen = 0;
+    }
+    push(line, char, length, tokenType, tokenModifiers) {
+        let pushLine = line;
+        let pushChar = char;
+        if (this._dataLen > 0) {
+            pushLine -= this._prevLine;
+            if (pushLine === 0) {
+                pushChar -= this._prevChar;
+            }
+        }
+        this._data[this._dataLen++] = pushLine;
+        this._data[this._dataLen++] = pushChar;
+        this._data[this._dataLen++] = length;
+        this._data[this._dataLen++] = tokenType;
+        this._data[this._dataLen++] = tokenModifiers;
+        this._prevLine = line;
+        this._prevChar = char;
+    }
+    get id() {
+        return this._id.toString();
+    }
+    previousResult(id) {
+        if (this.id === id) {
+            this._prevData = this._data;
+        }
+        this.initialize();
+    }
+    build() {
+        this._prevData = undefined;
+        return {
+            resultId: this.id,
+            data: this._data
+        };
+    }
+    canBuildEdits() {
+        return this._prevData !== undefined;
+    }
+    constructor(){
+        semantic_tokens_define_property(this, "_id", void 0);
+        semantic_tokens_define_property(this, "_prevLine", void 0);
+        semantic_tokens_define_property(this, "_prevChar", void 0);
+        semantic_tokens_define_property(this, "_data", void 0);
+        semantic_tokens_define_property(this, "_dataLen", void 0);
+        semantic_tokens_define_property(this, "_prevData", void 0);
+        this._prevData = undefined;
+        this.initialize();
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/language-provider.ts
 function language_provider_define_property(obj, key, value) {
     if (key in obj) {
@@ -20146,6 +20403,7 @@ function language_provider_define_property(obj, key, value) {
     }
     return obj;
 }
+
 
 
 
@@ -20188,6 +20446,30 @@ class LanguageProvider {
         }
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
+    }
+    setProviderOptions(options) {
+        var _this_options;
+        const defaultFunctionalities = {
+            hover: true,
+            completion: {
+                overwriteCompleters: true
+            },
+            completionResolve: true,
+            format: true,
+            documentHighlights: true,
+            signatureHelp: true,
+            semanticTokens: false
+        };
+        this.options = options !== null && options !== void 0 ? options : {};
+        this.options.functionality = typeof this.options.functionality === 'object' ? this.options.functionality : {};
+        Object.entries(defaultFunctionalities).forEach(([key, value])=>{
+            // Check if the functionality has not been defined in the provided options
+            if (this.options.functionality[key] === undefined) {
+                // If not, set it to its default value
+                this.options.functionality[key] = value;
+            }
+        });
+        (_this_options = this.options).markdownConverter || (_this_options.markdownConverter = new (showdown_default()).Converter());
     }
     $getSessionLanguageProvider(session) {
         return this.$sessionLanguageProviders[session["id"]];
@@ -20331,6 +20613,11 @@ class LanguageProvider {
     getTooltipText(hover) {
         return hover.content.type === "markdown" ? common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(hover.content.text)) : hover.content.text;
     }
+    getSemanticTokens() {
+        if (!this.options.functionality.semanticTokens) return;
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+        sessionLanguageProvider.getSemanticTokens();
+    }
     doComplete(editor, session, callback) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completions)=>completions && callback(toCompletions(completions)));
@@ -20393,6 +20680,7 @@ class LanguageProvider {
     /**
      * Removes document from all linked services by session id
      * @param session
+     * @param [callback]
      */ closeDocument(session, callback) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
         if (sessionProvider) {
@@ -20401,7 +20689,6 @@ class LanguageProvider {
         }
     }
     constructor(messageController, options){
-        var _this_options, _this_options1;
         language_provider_define_property(this, "activeEditor", void 0);
         language_provider_define_property(this, "$messageController", void 0);
         language_provider_define_property(this, "$signatureTooltip", void 0);
@@ -20412,7 +20699,7 @@ class LanguageProvider {
         language_provider_define_property(this, "$registerSession", (session, editor, options)=>{
             var _this_$sessionLanguageProviders, _session_id;
             var _;
-            (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(session, editor, this.$messageController, options);
+            (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(this, session, editor, this.$messageController, options);
         });
         language_provider_define_property(this, "format", ()=>{
             if (!this.options.functionality.format) return;
@@ -20420,24 +20707,36 @@ class LanguageProvider {
             sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
         });
         this.$messageController = messageController;
-        this.options = options !== null && options !== void 0 ? options : {};
-        var _functionality;
-        (_functionality = (_this_options = this.options).functionality) !== null && _functionality !== void 0 ? _functionality : _this_options.functionality = {
-            hover: true,
-            completion: {
-                overwriteCompleters: true
-            },
-            completionResolve: true,
-            format: true,
-            documentHighlights: true,
-            signatureHelp: true
-        };
-        var _markdownConverter;
-        (_markdownConverter = (_this_options1 = this.options).markdownConverter) !== null && _markdownConverter !== void 0 ? _markdownConverter : _this_options1.markdownConverter = new (showdown_default()).Converter();
+        this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
     }
 }
 class SessionLanguageProvider {
+    addSemanticTokenSupport(session) {
+        let bgTokenizer = session.bgTokenizer;
+        session.setSemanticTokens = (tokens)=>{
+            bgTokenizer.semanticTokens = tokens;
+        };
+        bgTokenizer.$tokenizeRow = (row)=>{
+            var line = bgTokenizer.doc.getLine(row);
+            var state = bgTokenizer.states[row - 1];
+            var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
+            if (bgTokenizer.states[row] + "" !== data.state + "") {
+                bgTokenizer.states[row] = data.state;
+                bgTokenizer.lines[row + 1] = null;
+                if (bgTokenizer.currentLine > row + 1) bgTokenizer.currentLine = row + 1;
+            } else if (bgTokenizer.currentLine == row) {
+                bgTokenizer.currentLine = row + 1;
+            }
+            if (bgTokenizer.semanticTokens) {
+                let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
+                if (decodedTokens) {
+                    data.tokens = mergeTokens(data.tokens, decodedTokens);
+                }
+            }
+            return bgTokenizer.lines[row] = data.tokens;
+        };
+    }
     initFileName() {
         this.fileName = this.session["id"] + "." + this.$extension;
     }
@@ -20462,10 +20761,46 @@ class SessionLanguageProvider {
         }
         this.$messageController.changeOptions(this.fileName, options);
     }
+    getSemanticTokens() {
+        if (!this.$provider.options.functionality.semanticTokens) return;
+        //TODO: improve this 
+        let lastRow = this.editor.renderer.getLastVisibleRow();
+        let visibleRange = {
+            start: {
+                row: this.editor.renderer.getFirstVisibleRow(),
+                column: 0
+            },
+            end: {
+                row: lastRow + 1,
+                column: this.session.getLine(lastRow).length
+            }
+        };
+        this.$messageController.getSemanticTokens(this.fileName, fromRange(visibleRange), (tokens)=>{
+            if (!tokens) {
+                return;
+            }
+            let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend.tokenTypes, this.semanticTokensLegend.tokenModifiers);
+            this.session.setSemanticTokens(decodedTokens);
+            let bgTokenizer = this.session.bgTokenizer;
+            bgTokenizer.running = setTimeout(()=>{
+                var _bgTokenizer_semanticTokens, _bgTokenizer, _bgTokenizer_semanticTokens1, _bgTokenizer1;
+                if (((_bgTokenizer = bgTokenizer) === null || _bgTokenizer === void 0 ? void 0 : (_bgTokenizer_semanticTokens = _bgTokenizer.semanticTokens) === null || _bgTokenizer_semanticTokens === void 0 ? void 0 : _bgTokenizer_semanticTokens.tokens) && ((_bgTokenizer1 = bgTokenizer) === null || _bgTokenizer1 === void 0 ? void 0 : (_bgTokenizer_semanticTokens1 = _bgTokenizer1.semanticTokens) === null || _bgTokenizer_semanticTokens1 === void 0 ? void 0 : _bgTokenizer_semanticTokens1.tokens.length) > 0) {
+                    var _bgTokenizer_semanticTokens2, _bgTokenizer2;
+                    let startRow = (_bgTokenizer2 = bgTokenizer) === null || _bgTokenizer2 === void 0 ? void 0 : (_bgTokenizer_semanticTokens2 = _bgTokenizer2.semanticTokens) === null || _bgTokenizer_semanticTokens2 === void 0 ? void 0 : _bgTokenizer_semanticTokens2.tokens[0].row;
+                    bgTokenizer.currentLine = startRow;
+                    bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
+                } else {
+                    bgTokenizer.currentLine = 0;
+                    bgTokenizer.lines = [];
+                }
+                bgTokenizer.$worker();
+            }, 20);
+        });
+    }
     closeDocument(callback) {
         this.$messageController.closeDocument(this.fileName, callback);
     }
-    constructor(session, editor, messageController, options){
+    constructor(provider, session, editor, messageController, options){
         language_provider_define_property(this, "session", void 0);
         language_provider_define_property(this, "fileName", void 0);
         language_provider_define_property(this, "$messageController", void 0);
@@ -20483,6 +20818,8 @@ class SessionLanguageProvider {
             "javascript": "js"
         });
         language_provider_define_property(this, "editor", void 0);
+        language_provider_define_property(this, "semanticTokensLegend", void 0);
+        language_provider_define_property(this, "$provider", void 0);
         language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
             // @ts-ignore
@@ -20501,39 +20838,52 @@ class SessionLanguageProvider {
             if (this.state.diagnosticMarkers) {
                 this.state.diagnosticMarkers.setMarkers([]);
             }
+            this.session.setSemanticTokens(undefined); //clear all semantic tokens
             this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
         });
         language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
-            //TODO: this need to take into account all capabilities from all services
-            this.$servicesCapabilities = capabilities;
-            if (capabilities && capabilities.some((capability)=>{
+            if (!capabilities) return;
+            this.$servicesCapabilities = {
+                ...capabilities
+            };
+            let hasTriggerChars = Object.values(capabilities).some((capability)=>{
                 var _capability_completionProvider, _capability;
                 return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
-            })) {
+            });
+            if (hasTriggerChars) {
                 let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
                 if (completer) {
-                    let allTriggerCharacters = capabilities.reduce((acc, capability)=>{
-                        var _capability_completionProvider;
-                        if ((_capability_completionProvider = capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
-                            return [
-                                ...acc,
-                                ...capability.completionProvider.triggerCharacters
-                            ];
+                    let allTriggerCharacters = [];
+                    Object.values(capabilities).forEach((capability)=>{
+                        var _capability_completionProvider, _capability;
+                        if ((_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
+                            allTriggerCharacters.push(...capability.completionProvider.triggerCharacters);
                         }
-                        return acc;
-                    }, []);
+                    });
                     allTriggerCharacters = [
                         ...new Set(allTriggerCharacters)
                     ];
                     completer.triggerCharacters = allTriggerCharacters;
                 }
             }
+            let hasSemanticTokensProvider = Object.values(capabilities).some((capability)=>{
+                var _capability;
+                if ((_capability = capability) === null || _capability === void 0 ? void 0 : _capability.semanticTokensProvider) {
+                    this.semanticTokensLegend = capability.semanticTokensProvider.legend;
+                    return true;
+                }
+            });
+            if (hasSemanticTokensProvider) {
+                this.getSemanticTokens();
+            }
         });
         language_provider_define_property(this, "$changeListener", (delta)=>{
             this.session.doc["version"]++;
             if (!this.$deltaQueue) {
                 this.$deltaQueue = [];
-                setTimeout(this.$sendDeltaQueue, 0);
+                setTimeout(()=>this.$sendDeltaQueue(()=>{
+                        this.getSemanticTokens();
+                    }), 0);
             }
             this.$deltaQueue.push(delta);
         });
@@ -20599,15 +20949,25 @@ class SessionLanguageProvider {
                 this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
             }
         });
+        this.$provider = provider;
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
         this.initFileName();
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
+        this.addSemanticTokenSupport(session); //TODO: ?
         // @ts-ignore
         session.on("changeMode", this.$changeMode);
-        this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
+        if (this.$provider.options.functionality.semanticTokens) {
+            session.on("changeScrollTop", ()=>this.getSemanticTokens());
+        }
+        let initCallbacks = {
+            "initCallback": this.$connected,
+            "validationCallback": this.$showAnnotations,
+            "changeCapabilitiesCallback": this.setServerCapabilities
+        };
+        this.$messageController.init(this.fileName, session.doc, this.$mode, options, initCallbacks);
     }
 }
 

@@ -3934,10 +3934,14 @@ class BaseService {
             errorMessagesToTreatAsInfo: (_this_globalOptions_errorMessagesToTreatAsInfo = this.globalOptions.errorMessagesToTreatAsInfo) !== null && _this_globalOptions_errorMessagesToTreatAsInfo !== void 0 ? _this_globalOptions_errorMessagesToTreatAsInfo : []
         };
     }
+    getSemanticTokens(document, range) {
+        return Promise.resolve(null);
+    }
     dispose() {
         return Promise.resolve();
     }
     constructor(mode){
+        _define_property(this, "serviceName", void 0);
         _define_property(this, "mode", void 0);
         _define_property(this, "documents", {});
         _define_property(this, "options", {});
@@ -16872,6 +16876,7 @@ function _define_property(obj, key, value) {
 class BaseMessage {
     constructor(sessionId){
         _define_property(this, "sessionId", void 0);
+        _define_property(this, "version", void 0);
         this.sessionId = sessionId;
     }
 }
@@ -17017,6 +17022,14 @@ class DocumentHighlightMessage extends (/* unused pure expression or super */ nu
         this.value = value;
     }
 }
+class GetSemanticTokensMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
+    constructor(sessionId, value){
+        super(sessionId);
+        _define_property(this, "type", MessageType.getSemanticTokens);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -17035,6 +17048,8 @@ var MessageType;
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
     MessageType[MessageType["dispose"] = 15] = "dispose";
+    MessageType[MessageType["capabilitiesChange"] = 16] = "capabilitiesChange";
+    MessageType[MessageType["getSemanticTokens"] = 17] = "getSemanticTokens";
 })(MessageType || (MessageType = {}));
 
 ;// CONCATENATED MODULE: ./src/services/language-client.ts
@@ -17186,6 +17201,17 @@ class LanguageClient extends base_service.BaseService {
         this.connection.sendRequest("initialize", message).then((params)=>{
             this.isInitialized = true;
             this.serviceCapabilities = params.capabilities;
+            const serviceName = this.serviceName;
+            Object.keys(this.documents).forEach((sessionId)=>{
+                const postMessage = {
+                    "type": MessageType.capabilitiesChange,
+                    "value": {
+                        [serviceName]: this.serviceCapabilities
+                    },
+                    sessionId: sessionId
+                };
+                this.ctx.postMessage(postMessage);
+            });
             this.connection.sendNotification('initialized', {}).then(()=>{
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
                     settings: {}
@@ -17341,6 +17367,27 @@ class LanguageClient extends base_service.BaseService {
         };
         return this.connection.sendRequest('textDocument/signatureHelp', options);
     }
+    async getSemanticTokens(document, range) {
+        var _this_serviceCapabilities;
+        if (!this.isInitialized) return null;
+        if (!((_this_serviceCapabilities = this.serviceCapabilities) === null || _this_serviceCapabilities === void 0 ? void 0 : _this_serviceCapabilities.semanticTokensProvider)) return null;
+        if (!this.serviceCapabilities.semanticTokensProvider.range) {
+            let options = {
+                textDocument: {
+                    uri: document.uri
+                }
+            };
+            return this.connection.sendRequest('textDocument/semanticTokens/full', options);
+        } else {
+            let options = {
+                textDocument: {
+                    uri: document.uri
+                },
+                range: range
+            };
+            return this.connection.sendRequest('textDocument/semanticTokens/range', options);
+        }
+    }
     constructor(serverData, ctx){
         super(serverData.modes);
         language_client_define_property(this, "$service", void 0);
@@ -17392,6 +17439,22 @@ class LanguageClient extends base_service.BaseService {
                 },
                 documentHighlight: {
                     dynamicRegistration: true
+                },
+                semanticTokens: {
+                    multilineTokenSupport: false,
+                    overlappingTokenSupport: false,
+                    tokenTypes: [],
+                    tokenModifiers: [],
+                    formats: [
+                        "relative"
+                    ],
+                    requests: {
+                        full: {
+                            delta: false
+                        },
+                        range: true
+                    },
+                    augmentsSyntaxTokens: true
                 }
             },
             workspace: {
