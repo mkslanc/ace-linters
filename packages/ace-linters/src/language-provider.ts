@@ -384,6 +384,7 @@ export class LanguageProvider {
     /**
      * Removes document from all linked services by session id
      * @param session
+     * @param [callback]
      */
     closeDocument(session: Ace.EditSession, callback?) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
