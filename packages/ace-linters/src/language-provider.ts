@@ -12,7 +12,7 @@ import {
     toCompletions, toMarkerGroupItem,
     toRange, toResolvedCompletion,
     toTooltip
-} from "./type-converters/lsp-converters";
+} from "./type-converters/lsp/lsp-converters";
 import * as lsp from "vscode-languageserver-protocol";
 
 import showdown from "showdown";
@@ -30,6 +30,11 @@ import {
 import {MarkerGroup} from "./ace/marker_group";
 import {AceRange} from "./ace/range-singleton";
 import {HoverTooltip} from "./ace/hover-tooltip";
+import {
+    DecodedSemanticTokens,
+    mergeTokens,
+    parseSemanticTokens
+} from "./type-converters/lsp/semantic-tokens";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -42,22 +47,10 @@ export class LanguageProvider {
 
     constructor(messageController: IMessageController, options?: ProviderOptions) {
         this.$messageController = messageController;
-
-        this.options = options ?? {} as ProviderOptions;
-        this.options.functionality ??= {
-            hover: true,
-            completion: {
-                overwriteCompleters: true
-            },
-            completionResolve: true,
-            format: true,
-            documentHighlights: true,
-            signatureHelp: true
-        };
-        this.options.markdownConverter ??= new showdown.Converter();
+        this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
     }
-
+    
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
@@ -104,8 +97,34 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
+    setProviderOptions(options?: ProviderOptions) {
+        const defaultFunctionalities = {
+            hover: true,
+            completion: { overwriteCompleters: true },
+            completionResolve: true,
+            format: true,
+            documentHighlights: true,
+            signatureHelp: true,
+            semanticTokens: false, //experimental functionality
+        };
+
+        this.options = options ?? {};
+
+        this.options.functionality = typeof this.options.functionality === 'object' ? this.options.functionality : {};
+
+        Object.entries(defaultFunctionalities).forEach(([key, value]) => {
+            // Check if the functionality has not been defined in the provided options
+            if (this.options.functionality![key] === undefined) {
+                // If not, set it to its default value
+                this.options.functionality![key] = value;
+            }
+        });
+
+        this.options.markdownConverter ||= new showdown.Converter();
+    }
+
     private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, options?: ServiceOptions) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(session, editor, this.$messageController, options);
+        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController, options);
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
@@ -131,7 +150,7 @@ export class LanguageProvider {
 
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
-        if (this.options.functionality.completion) {
+        if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
         }
         this.activeEditor ??= editor;
@@ -139,7 +158,7 @@ export class LanguageProvider {
             this.activeEditor = editor;
         });
 
-        if (this.options.functionality.documentHighlights) {
+        if (this.options.functionality!.documentHighlights) {
             var $timer
             // @ts-ignore
             editor.on("changeSelection", () => {
@@ -155,14 +174,14 @@ export class LanguageProvider {
             });
         }
 
-        if (this.options.functionality.hover) {
+        if (this.options.functionality!.hover) {
             if (!this.$hoverTooltip) {
                 this.$hoverTooltip = new HoverTooltip();
             }
             this.$initHoverTooltip(editor);
         }
 
-        if (this.options.functionality.signatureHelp) {
+        if (this.options.functionality!.signatureHelp) {
             this.$signatureTooltip.registerEditor(editor);
         }
 
@@ -279,11 +298,19 @@ export class LanguageProvider {
     }
 
     format = () => {
-        if (!this.options.functionality.format)
+        if (!this.options.functionality!.format)
             return;
 
         let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
         sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
+    }
+
+    getSemanticTokens() {
+        if (!this.options.functionality!.semanticTokens)
+            return;
+
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+        sessionLanguageProvider.getSemanticTokens();
     }
 
     doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void) {
@@ -314,7 +341,7 @@ export class LanguageProvider {
                 });
             },
             getDocTooltip: (item: Ace.Completion) => {
-                if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                if (this.options.functionality!.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
                     this.doResolve(item, (completionItem?) => {
                         item["isResolved"] = true;
                         if (!completionItem)
@@ -336,7 +363,7 @@ export class LanguageProvider {
             },
             id: "lspCompleters"
         }
-        if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
+        if (this.options.functionality!.completion && this.options.functionality!.completion.overwriteCompleters) {
             editor.completers = [
                 completer
             ];
@@ -357,6 +384,7 @@ export class LanguageProvider {
     /**
      * Removes document from all linked services by session id
      * @param session
+     * @param [callback]
      */
     closeDocument(session: Ace.EditSession, callback?) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
@@ -375,7 +403,7 @@ class SessionLanguageProvider {
     private $isConnected = false;
     private $modeIsChanged = false;
     private $options: ServiceOptions;
-    private $servicesCapabilities?: lsp.ServerCapabilities[];
+    private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
 
     state: {
         occurrenceMarkers: MarkerGroup | null,
@@ -391,7 +419,11 @@ class SessionLanguageProvider {
     }
     editor: Ace.Editor;
 
-    constructor(session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, options?: ServiceOptions) {
+    private semanticTokensLegend?: lsp.SemanticTokensLegend;
+    private $provider: LanguageProvider;
+
+    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, options?: ServiceOptions) {
+        this.$provider = provider;
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
@@ -399,17 +431,57 @@ class SessionLanguageProvider {
 
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
-
+        this.addSemanticTokenSupport(session); //TODO: ?
         // @ts-ignore
         session.on("changeMode", this.$changeMode);
+        if (this.$provider.options.functionality!.semanticTokens) {
+            session.on("changeScrollTop", () => this.getSemanticTokens());
+        }
+        
+        let initCallbacks = {
+            "initCallback": this.$connected,
+            "validationCallback": this.$showAnnotations,
+            "changeCapabilitiesCallback": this.setServerCapabilities
+        }
 
-        this.$messageController.init(this.fileName, session.doc, this.$mode, options, this.$connected, this.$showAnnotations);
+        this.$messageController.init(this.fileName, session.doc, this.$mode, options, initCallbacks);
     }
 
-    private $connected = (capabilities: lsp.ServerCapabilities[]) => {
+    addSemanticTokenSupport(session: Ace.EditSession) {
+        let bgTokenizer = session.bgTokenizer;
+        session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
+            bgTokenizer.semanticTokens = tokens;
+        }
+        
+        bgTokenizer.$tokenizeRow = (row: number) => {
+            var line = bgTokenizer.doc.getLine(row);
+            var state = bgTokenizer.states[row - 1];
+            var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
+
+            if (bgTokenizer.states[row] + "" !== data.state + "") {
+                bgTokenizer.states[row] = data.state;
+                bgTokenizer.lines[row + 1] = null;
+                if (bgTokenizer.currentLine > row + 1)
+                    bgTokenizer.currentLine = row + 1;
+            } else if (bgTokenizer.currentLine == row) {
+                bgTokenizer.currentLine = row + 1;
+            }
+
+            if (bgTokenizer.semanticTokens) {
+                let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
+                if (decodedTokens) {
+                    data.tokens = mergeTokens(data.tokens, decodedTokens);
+                }
+            }
+
+            return bgTokenizer.lines[row] = data.tokens;
+        }
+    }
+    
+    private $connected = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
         this.$isConnected = true;
         // @ts-ignore
-        
+
         this.setServerCapabilities(capabilities);
         if (this.$modeIsChanged)
             this.$changeMode();
@@ -430,27 +502,43 @@ class SessionLanguageProvider {
         if (this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers.setMarkers([]);
         }
-        
+
+        this.session.setSemanticTokens(undefined); //clear all semantic tokens
+
         this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
     };
 
-    private setServerCapabilities = (capabilities?: lsp.ServerCapabilities[]) => {
-        //TODO: this need to take into account all capabilities from all services
-        this.$servicesCapabilities = capabilities;
-        if (capabilities && capabilities.some((capability) => capability?.completionProvider?.triggerCharacters)) {
+    private setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
+        if (!capabilities)
+            return;
+        this.$servicesCapabilities = {...capabilities};
+
+        let hasTriggerChars = Object.values(capabilities).some((capability) => capability?.completionProvider?.triggerCharacters);
+
+        if (hasTriggerChars) {
             let completer = this.editor.completers.find((completer) => completer.id === "lspCompleters");
             if (completer) {
-                let allTriggerCharacters = capabilities.reduce((acc, capability) => {
-                    if (capability.completionProvider?.triggerCharacters) {
-                        return [...acc, ...capability.completionProvider.triggerCharacters];
+                let allTriggerCharacters: string[] = [];
+                Object.values(capabilities).forEach((capability) => {
+                    if (capability?.completionProvider?.triggerCharacters) {
+                        allTriggerCharacters.push(...capability.completionProvider.triggerCharacters);
                     }
-                    return acc;
-                }, []);
+                });
 
                 allTriggerCharacters = [...new Set(allTriggerCharacters)];
 
                 completer.triggerCharacters = allTriggerCharacters;
             }
+        }
+
+        let hasSemanticTokensProvider = Object.values(capabilities).some((capability) => {
+            if (capability?.semanticTokensProvider) {
+                this.semanticTokensLegend = capability.semanticTokensProvider.legend;
+                return true;
+            }
+        });
+        if (hasSemanticTokensProvider) {
+            this.getSemanticTokens();
         }
     }
 
@@ -478,7 +566,9 @@ class SessionLanguageProvider {
         this.session.doc["version"]++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
-            setTimeout(this.$sendDeltaQueue, 0);
+            setTimeout(()=> this.$sendDeltaQueue(() => {
+                this.getSemanticTokens();
+            }), 0);
         }
         this.$deltaQueue.push(delta);
     }
@@ -546,6 +636,44 @@ class SessionLanguageProvider {
         for (let edit of edits.reverse()) {
             this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
         }
+    }
+
+    getSemanticTokens() {
+        if (!this.$provider.options.functionality!.semanticTokens)
+            return;
+        //TODO: improve this 
+        let lastRow = this.editor.renderer.getLastVisibleRow();
+        let visibleRange: AceRangeData = {
+            start: {
+                row: this.editor.renderer.getFirstVisibleRow(), 
+                column: 0
+            },
+            end: {
+                row: lastRow + 1,
+                column: this.session.getLine(lastRow).length
+            }
+        }
+        
+        this.$messageController.getSemanticTokens(this.fileName, fromRange(visibleRange), (tokens) => {
+                if (!tokens) {
+                    return;
+                }
+                let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend!.tokenTypes, this.semanticTokensLegend!.tokenModifiers);
+                this.session.setSemanticTokens(decodedTokens);
+                let bgTokenizer = this.session.bgTokenizer;
+                bgTokenizer.running = setTimeout(() => {
+                    if (bgTokenizer?.semanticTokens?.tokens && bgTokenizer?.semanticTokens?.tokens.length > 0) {
+                        let startRow: number = bgTokenizer?.semanticTokens?.tokens[0].row;
+                        bgTokenizer.currentLine = startRow;
+                        bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);        
+                    } else {
+                        bgTokenizer.currentLine = 0;
+                        bgTokenizer.lines = [];
+                    }
+                    bgTokenizer.$worker();
+                }, 20);
+            }
+        );
     }
 
     $applyDocumentHighlight = (documentHighlights: lsp.DocumentHighlight[]) => {

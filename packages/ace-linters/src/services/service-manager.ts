@@ -1,8 +1,9 @@
 import {mergeObjects, notEmpty} from "../utils";
-import {MessageType} from "../message-types";
+import {AllMessages, MessageType} from "../message-types";
 import {TextDocumentIdentifier, VersionedTextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {
-    LanguageService, LanguageClientConfig,
+    LanguageClientConfig,
+    LanguageService,
     ServiceConfig,
     ServiceFeatures,
     ServiceOptions,
@@ -41,11 +42,11 @@ export class ServiceManager {
             servicesInstances = servicesInstances.filter((el) => {
                 return el.serviceCapabilities.diagnosticProvider;
             });
-            
+
             if (servicesInstances.length === 0) {
                 return;
             }
-            
+
             let postMessage = {
                 "type": MessageType.validate,
             };
@@ -70,9 +71,9 @@ export class ServiceManager {
         }
 
         ctx.addEventListener("message", async (ev) => {
-            let message = ev.data;
-            let sessionID = message.sessionId ?? "";
-            let version = message.version;
+            let message: AllMessages = ev.data;
+            let sessionID = message["sessionId"] ?? "";
+            let version = message["version"];
             let postMessage = {
                 "type": message.type,
                 "sessionId": sessionID,
@@ -83,7 +84,7 @@ export class ServiceManager {
                 uri: sessionID,
                 version: version
             };
-            switch (message["type"] as MessageType) {
+            switch (message.type) {
                 case MessageType.format:
                     serviceInstances = this.filterByFeature(serviceInstances, "format");
                     if (serviceInstances.length > 0) {
@@ -94,13 +95,13 @@ export class ServiceManager {
                 case MessageType.complete:
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service) => {
                         return {
-                            completions: await service.doComplete(documentIdentifier, message.value),
+                            completions: await service.doComplete(documentIdentifier, message["value"]),
                             service: service.serviceData.className
                         };
                     }))).filter(notEmpty);
                     break;
                 case MessageType.resolveCompletion:
-                    let serviceName = message.value.service;
+                    let serviceName = message.value["service"];
                     postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
                         if (service.serviceData.className === serviceName) {
                             return service;
@@ -109,36 +110,32 @@ export class ServiceManager {
                     break;
                 case MessageType.change:
                     serviceInstances.forEach((service) => {
-                        service.setValue(documentIdentifier, message.value);
+                        service.setValue(documentIdentifier, message["value"]);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.applyDelta:
                     serviceInstances.forEach((service) => {
-                        service.applyDeltas(documentIdentifier, message.value);
+                        service.applyDeltas(documentIdentifier, message["value"]);
                     });
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.hover:
-                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "hover").map(async (service) => {
-                        return service.doHover(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "hover", "doHover", documentIdentifier, message.value);
                     break;
                 case MessageType.validate:
                     postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.init: //this should be first message
-                    postMessage["value"] = (await this.addDocument(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument.bind(this))
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeMode:
-                    postMessage["value"] = (await this.changeDocumentMode(documentIdentifier, message.value, message.mode, message.options))?.map((el) => el.serviceCapabilities);
+                    postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode.bind(this))
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeOptions:
-                    serviceInstances.forEach((service) => {
-                        service.setOptions(sessionID, message.options);
-                    });
+                    this.applyOptionsToServices(serviceInstances, sessionID, message.options);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.closeDocument:
@@ -157,26 +154,60 @@ export class ServiceManager {
                     await provideValidationForServiceInstance(message.serviceName);
                     break;
                 case MessageType.signatureHelp:
-                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "signatureHelp").map(async (service) => {
-                        return service.provideSignatureHelp(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "signatureHelp", "provideSignatureHelp", documentIdentifier, message.value);
                     break;
                 case MessageType.documentHighlight:
-                    let highlights = (await Promise.all(this.filterByFeature(serviceInstances, "documentHighlight").map(async (service) => {
-                        return service.findDocumentHighlights(documentIdentifier, message.value);
-                    }))).filter(notEmpty);
+                    let highlights = await this.aggregateFeatureResponses(serviceInstances, "documentHighlight", "findDocumentHighlights", documentIdentifier, message.value);
                     postMessage["value"] = highlights.flat();
+                    break;
+                case MessageType.getSemanticTokens:
+                    serviceInstances = this.filterByFeature(serviceInstances, "semanticTokens");
+                    if (serviceInstances.length > 0) {
+                        //we will use only first service
+                        postMessage["value"] = await serviceInstances[0].getSemanticTokens(documentIdentifier, message.value);
+                    }
                     break;
             }
 
             ctx.postMessage(postMessage);
         })
     }
+
+    private async getServicesCapabilitiesAfterCallback(documentIdentifier: VersionedTextDocumentIdentifier, message,
+                                                       callback: (documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) => Promise<{
+                                                           [p: string]: ServiceConfig | LanguageClientConfig
+                                                       } | never[] | undefined>) {
+        let services = await callback(documentIdentifier, message.value, message.mode, message.options);
+        if (services) {
+            return Object.keys(services).reduce((acc, key) => {
+                acc[key] = services![key]?.serviceInstance?.serviceCapabilities || null;
+                return acc;
+            }, {});
+        }
+    }
     
+    async aggregateFeatureResponses(
+        serviceInstances: LanguageService[],
+        feature: SupportedFeatures,
+        methodName: string,
+        documentIdentifier: VersionedTextDocumentIdentifier,
+        value: any
+    ) {
+        return (await Promise.all(this.filterByFeature(serviceInstances, feature).map(async (service) => {
+            return service[methodName](documentIdentifier, value);
+        }))).filter(notEmpty);
+    }
+
+    applyOptionsToServices(serviceInstances: LanguageService[], sessionID: string, options: ServiceOptions) {
+        serviceInstances.forEach((service) => {
+            service.setOptions(sessionID, options);
+        });
+    }
+
     async disposeAll() {
         var services = this.$services;
         for (let serviceName in services) {
-            await services[serviceName]?.serviceInstance?.dispose();  
+            await services[serviceName]?.serviceInstance?.dispose();
         }
     }
 
@@ -202,26 +233,36 @@ export class ServiceManager {
         return service.serviceInstance!;
     }
 
-    private async $getServicesInstancesByMode(mode: string): Promise<LanguageService[]> {
+    private async $getServicesInstancesByMode(mode: string) {
         let services = this.findServicesByMode(mode);
-        if (services.length === 0) {
+        if (Object.keys(services).length === 0) {
             return [];
         }
-        return Promise.all(services.map(service => this.initializeService(service)));
+
+        for (let serviceName in services) {
+            await this.initializeService(serviceName)
+        }
+
+        return services;
     }
 
-    private async initializeService(service: ServiceConfig | LanguageClientConfig): Promise<LanguageService> {
+    private async initializeService(serviceName: string): Promise<LanguageService> {
+        let service = this.$services[serviceName];
         if (!service.serviceInstance) {
             if (!this.serviceInitPromises[service.id!]) {
                 this.serviceInitPromises[service.id!] = ServiceManager.$initServiceInstance(service, this.ctx)
                     .then(instance => {
                         service.serviceInstance = instance;
+                        service.serviceInstance.serviceName = serviceName;
                         delete this.serviceInitPromises[service.id!]; // Clean up
                         return instance;
                     });
             }
             return this.serviceInitPromises[service.id!];
         } else {
+            if (!service.serviceInstance.serviceName) {
+                service.serviceInstance.serviceName = serviceName;
+            }
             return service.serviceInstance;
         }
     }
@@ -240,8 +281,8 @@ export class ServiceManager {
         if (!mode || !/^ace\/mode\//.test(mode))
             return;
         mode = mode.replace("ace/mode/", "");
-        let serviceInstances = await this.$getServicesInstancesByMode(mode);
-        if (serviceInstances.length === 0)
+        let services = await this.$getServicesInstancesByMode(mode);
+        if (Object.keys(services).length === 0)
             return;
         let documentItem = {
             uri: documentIdentifier.uri,
@@ -249,9 +290,9 @@ export class ServiceManager {
             languageId: mode,
             text: documentValue
         }
-        serviceInstances.forEach((el) => el.addDocument(documentItem));
+        Object.values(services).forEach((el) => el.serviceInstance!.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
-        return serviceInstances;
+        return services;
     }
 
     async changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) {
@@ -272,7 +313,7 @@ export class ServiceManager {
         if (!mode)
             return []; //TODO:
         let services = this.findServicesByMode(mode);
-        return services.map((el) => el.serviceInstance).filter(notEmpty);
+        return Object.values(services).map((el) => el.serviceInstance).filter(notEmpty);
     }
 
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
@@ -295,17 +336,22 @@ export class ServiceManager {
                 case "signatureHelp":
                     return capabilities.signatureHelpProvider != undefined;
                 case "documentHighlight":
-                    return capabilities.documentHighlightProvider == true
+                    return capabilities.documentHighlightProvider == true;
+                case "semanticTokens":
+                    return capabilities.semanticTokensProvider != undefined;
             }
         });
     }
 
-    findServicesByMode(mode: string): (ServiceConfig | LanguageClientConfig)[] {
-        return Object.values(this.$services).filter((el) => {
-            let extensions = el.modes.split('|');
-            if (extensions.includes(mode))
-                return el;
-        });
+    findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
+        let servicesWithName = {};
+        Object.entries(this.$services).forEach(([key, value]) => {
+                let extensions = value.modes.split('|');
+                if (extensions.includes(mode))
+                    servicesWithName[key] = this.$services[key];
+            }
+        )
+        return servicesWithName;
     }
 
     registerService(name: string, service: ServiceConfig) {
@@ -337,6 +383,7 @@ export class ServiceManager {
         features.diagnostics ??= true;
         features.signatureHelp ??= true;
         features.documentHighlight ??= true;
+        features.semanticTokens ??= true;
         return features;
     }
 }

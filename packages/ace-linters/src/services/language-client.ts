@@ -56,6 +56,20 @@ export class LanguageClient extends BaseService implements LanguageService {
             },
             documentHighlight: {
                 dynamicRegistration: true
+            },
+            semanticTokens: {
+                multilineTokenSupport: false,
+                overlappingTokenSupport: false,
+                tokenTypes: [],
+                tokenModifiers: [],
+                formats: ["relative"],
+                requests: {
+                    full: {
+                        delta: false
+                    },
+                    range: true
+                },
+                augmentsSyntaxTokens: true
             }
         },
         workspace: {
@@ -192,7 +206,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
     }
 
-    addDocument(document: lsp.TextDocumentItem) {
+    addDocument(document: lsp.TextDocumentItem) {//TODO: this need to be async to avoid race condition
         super.addDocument(document);
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: document
@@ -244,6 +258,18 @@ export class LanguageClient extends BaseService implements LanguageService {
         this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.isInitialized = true;
             this.serviceCapabilities = params.capabilities as lsp.ServerCapabilities;
+            const serviceName = this.serviceName;
+            Object.keys(this.documents).forEach((sessionId) => {
+                const postMessage = {
+                    "type": MessageType.capabilitiesChange,
+                    "value": {
+                        [serviceName]: this.serviceCapabilities
+                    },
+                    sessionId: sessionId
+                };
+                this.ctx.postMessage(postMessage);
+            });
+            
 
             this.connection.sendNotification('initialized', {}).then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
@@ -407,5 +433,29 @@ export class LanguageClient extends BaseService implements LanguageService {
             position: position,
         };
         return this.connection.sendRequest('textDocument/signatureHelp', options) as Promise<lsp.SignatureHelp | null>
+    }
+
+    async getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range) {
+        if (!this.isInitialized)
+            return null;
+        if (!this.serviceCapabilities?.semanticTokensProvider)
+            return null;
+        if (!this.serviceCapabilities.semanticTokensProvider.range) {
+            let options: lsp.SemanticTokensParams = {
+                textDocument: {
+                    uri: document.uri,
+                },
+            };
+            return this.connection.sendRequest('textDocument/semanticTokens/full', options) as Promise<lsp.SemanticTokens | null>
+        } else {
+            let options: lsp.SemanticTokensRangeParams = {
+                textDocument: {
+                    uri: document.uri,
+                },
+                range: range,
+            };
+            return this.connection.sendRequest('textDocument/semanticTokens/range', options) as Promise<lsp.SemanticTokens | null>
+        }
+        
     }
 }

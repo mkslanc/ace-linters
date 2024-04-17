@@ -3,6 +3,7 @@ import * as ts from './lib/typescriptServices';
 import { Diagnostic } from './lib/typescriptServices';
 import * as lsp from "vscode-languageserver-protocol";
 import { LanguageService, TsServiceOptions } from "../../types/language-service";
+import { TextDocumentIdentifier } from "vscode-languageserver-protocol";
 export declare class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, LanguageService {
     $service: ts.LanguageService;
     $defaultCompilerOptions: ts.CompilerOptions;
@@ -41,6 +42,14 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
         documentHighlightProvider: boolean;
         hoverProvider: boolean;
         signatureHelpProvider: {};
+        semanticTokensProvider: {
+            legend: {
+                tokenTypes: string[];
+                tokenModifiers: string[];
+            };
+            range: boolean;
+            full: boolean;
+        };
     };
     constructor(mode: string);
     getCompilationSettings(): ts.CompilerOptions;
@@ -64,4 +73,5 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
     doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
+    getSemanticTokens(document: TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
 }

@@ -5,6 +5,7 @@ import {FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     abstract $service;
+    serviceName: string;
     mode: string;
     documents: { [sessionID: string]: TextDocument } = {};
     options: { [sessionID: string]: OptionsType } = {};
@@ -106,6 +107,10 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             errorMessagesToTreatAsWarning: this.globalOptions.errorMessagesToTreatAsWarning ?? [],
             errorMessagesToTreatAsInfo: this.globalOptions.errorMessagesToTreatAsInfo ?? [],
         }
+    }
+    
+    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> {
+        return Promise.resolve(null);
     }
 
     dispose() {

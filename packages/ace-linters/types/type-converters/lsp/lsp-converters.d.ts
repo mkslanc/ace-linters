@@ -1,6 +1,6 @@
 import { Range, Position, Diagnostic, CompletionItem, Hover, MarkupContent, TextEdit, InsertReplaceEdit, TextDocumentContentChangeEvent, SignatureHelp, DocumentHighlight } from "vscode-languageserver-protocol";
 import type { Ace } from "ace-code";
-import { AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip } from "../types/language-service";
+import { AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip } from "../../types/language-service";
 export declare function fromRange(range: AceRangeData): Range;
 export declare function rangeFromPositions(start: Position, end: Position): Range;
 export declare function toRange(range: Range): AceRangeData;

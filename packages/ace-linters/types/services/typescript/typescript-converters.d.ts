@@ -8,6 +8,10 @@ export declare function toTsOffset(range: lsp.Range, doc: TextDocument): {
     start: number;
     end: number;
 };
+export declare function toTextSpan(range: lsp.Range, doc: TextDocument): {
+    start: number;
+    length: number;
+};
 export declare function parseMessageText(diagnosticsText: string | ts.DiagnosticMessageChain | undefined, errorCode: number): string;
 export declare function fromTsCategory(category: ts.DiagnosticCategory): 1 | 2 | 3;
 export declare function toTextEdits(textEdits: TextChange[], doc: TextDocument): lsp.TextEdit[];
@@ -19,6 +23,12 @@ export declare function toCompletions(completionInfo: CompletionInfo, doc: TextD
 export declare function toResolvedCompletion(entry: CompletionEntryDetails): lsp.CompletionItem;
 export declare function toSignatureHelp(signatureItems: SignatureHelpItems | undefined): lsp.SignatureHelp | null;
 export declare function toDocumentHighlights(highlights: ts.DocumentHighlights[] | undefined, doc: TextDocument): lsp.DocumentHighlight[];
+export declare function getTokenTypeFromClassification(tsClassification: number): number | undefined;
+export declare function getTokenModifierFromClassification(tsClassification: number): number;
+export declare enum SemanticClassificationFormat {
+    Original = "original",
+    TwentyTwenty = "2020"
+}
 export declare enum ScriptKind {
     Unknown = 0,
     JS = 1,

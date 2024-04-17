@@ -24,7 +24,7 @@ export class SignatureTooltip extends BaseTooltip {
     };
 
     provideSignatureHelp = () => {
-        if (!this.provider.options.functionality.signatureHelp)
+        if (!this.provider.options.functionality!.signatureHelp)
             return;
         let cursor = this.$activeEditor!.getCursorPosition();
         let session = this.$activeEditor!.session;

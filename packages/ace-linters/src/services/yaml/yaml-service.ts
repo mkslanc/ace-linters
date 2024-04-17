@@ -3,7 +3,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import {getLanguageService} from "./lib";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {LanguageService, YamlServiceOptions} from "../../types/language-service";
-import {filterDiagnostics} from "../../type-converters/lsp-converters";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class YamlService extends BaseService<YamlServiceOptions> implements LanguageService {
     $service;

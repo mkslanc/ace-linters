@@ -16,11 +16,11 @@ import {
     DocumentHighlight
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
-import {CommonConverter} from "./common-converters";
-import {AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip} from "../types/language-service";
-import {checkValueAgainstRegexpArray, notEmpty} from "../utils";
+import {CommonConverter} from "../common-converters";
+import {AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip} from "../../types/language-service";
+import {checkValueAgainstRegexpArray, notEmpty} from "../../utils";
 
-import {mergeRanges} from "../utils";
+import {mergeRanges} from "../../utils";
 
 export function fromRange(range: AceRangeData): Range {
     return {

@@ -8,6 +8,7 @@ import {MarkDownConverter} from "./converters";
 export interface LanguageService {
     documents: { [sessionID: string]: TextDocument };
     $service;
+    serviceName: string;
     mode: string;
     globalOptions;
     serviceData: LanguageClientConfig | ServiceConfig;
@@ -42,6 +43,8 @@ export interface LanguageService {
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
+    
+    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> 
     
     dispose(): Promise<void>;
 }
@@ -166,7 +169,11 @@ export interface ServiceOptionsMap {
     yaml: YamlServiceOptions,
     php: PhpServiceOptions,
     xml: XmlServiceOptions,
+    /**
+     * @deprecated would be removed in next iterations
+     */
     javascript: JavascriptServiceOptions,
+    eslint: JavascriptServiceOptions,
     python: PythonServiceOptions,
     css: CssServiceOptions,
     less: CssServiceOptions,
@@ -184,22 +191,25 @@ export type SupportedServices =
     | "yaml"
     | "php"
     | "xml"
-    | "javascript"
+    
+    | /** @deprecated would be removed in next iterations */"javascript"
+    | "eslint"
     | "lua"
     | "less"
     | "scss"
     | "python";
 
 export interface ProviderOptions {
-    functionality: {
-        hover: boolean,
-        completion: {
+    functionality?: {
+        hover?: boolean,
+        completion?: {
             overwriteCompleters: boolean
         } | false,
-        completionResolve: boolean,
-        format: boolean,
-        documentHighlights: boolean,
-        signatureHelp: boolean
+        completionResolve?: boolean,
+        format?: boolean,
+        documentHighlights?: boolean,
+        signatureHelp?: boolean,
+        semanticTokens?: boolean
     },
     markdownConverter?: MarkDownConverter
 }
@@ -216,6 +226,8 @@ export type SupportedFeatures =
     | "diagnostics"
     | "signatureHelp"
     | "documentHighlight"
+    | "semanticTokens"
+
 
 export interface ServiceConfig extends BaseConfig {
     className: string,

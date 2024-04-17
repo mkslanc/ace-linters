@@ -2,7 +2,7 @@ import {BaseService} from "../base-service";
 import * as lua from "luaparse";
 import * as lsp from "vscode-languageserver-protocol";
 import {LanguageService} from "../../types/language-service";
-import {filterDiagnostics} from "../../type-converters/lsp-converters";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class LuaService extends BaseService implements LanguageService {
     $service;

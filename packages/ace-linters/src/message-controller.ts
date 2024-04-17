@@ -10,9 +10,9 @@ import {
     InitMessage, MessageType,
     ResolveCompletionMessage, SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage, DisposeMessage
+    ValidateMessage, DisposeMessage, GetSemanticTokensMessage
 } from "./message-types";
-import {IMessageController} from "./types/message-controller-interface";
+import {IMessageController, InitCallbacks} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
 import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types/language-service";
 import EventEmitter from "events";
@@ -31,10 +31,12 @@ export class MessageController extends EventEmitter implements IMessageControlle
 
     }
     
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void {
-        this.on(MessageType.validate.toString() + "-" + sessionId, validationCallback);
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, callbacks: InitCallbacks): void {
+        this.on(MessageType.validate.toString() + "-" + sessionId, callbacks.validationCallback); //TODO: need off
+        // somewhere
+        this.on(MessageType.capabilitiesChange.toString() + "-" + sessionId, callbacks.changeCapabilitiesCallback);
 
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), initCallback);
+        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), callbacks.initCallback);
     }
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void) {
@@ -99,6 +101,10 @@ export class MessageController extends EventEmitter implements IMessageControlle
 
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
+    }
+
+    getSemanticTokens(sessionId: string, range: lsp.Range,  callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
+        this.postMessage(new GetSemanticTokensMessage(sessionId, range), callback);
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {

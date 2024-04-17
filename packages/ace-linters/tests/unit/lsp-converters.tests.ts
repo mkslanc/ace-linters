@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import * as Converter from "../../src/type-converters/lsp-converters";
+import * as Converter from "../../src/type-converters/lsp/lsp-converters";
 
 import {Range as AceRange} from "ace-code/src/range";
 import {
@@ -18,7 +18,7 @@ import {
     toCompletionItem,
     toCompletions,
     toResolvedCompletion, toTooltip
-} from "../../src/type-converters/lsp-converters";
+} from "../../src/type-converters/lsp/lsp-converters";
 import {CompletionService, Tooltip} from "../../src/types/language-service";
 
 

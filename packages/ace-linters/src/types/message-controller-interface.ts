@@ -2,10 +2,16 @@ import {Ace} from "ace-code";
 import * as lsp from "vscode-languageserver-protocol";
 import {CompletionService, ServiceFeatures, ServiceOptions, SupportedServices} from "./language-service";
 
+
+export interface InitCallbacks {
+    initCallback: (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => void;
+    validationCallback: (annotations: lsp.Diagnostic[]) => void;
+    changeCapabilitiesCallback: (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => void;
+}
 export interface IMessageController {
     $worker: Worker;
     
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: lsp.ServerCapabilities[]) => void, validationCallback: (annotations: lsp.Diagnostic[]) => void): void;
+    init(sessionId: string, document: Ace.Document, mode: string, options: any, callbacks: InitCallbacks): void;
 
     doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void)
 
@@ -19,7 +25,7 @@ export interface IMessageController {
 
     change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void): void;
 
-    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities: lsp.ServerCapabilities[]) => void);
+    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => void);
 
     changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void);
 
@@ -33,5 +39,7 @@ export interface IMessageController {
     
     provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void);
 
-    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void)
+    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void);
+
+    getSemanticTokens(sessionId: string, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void);
 }
