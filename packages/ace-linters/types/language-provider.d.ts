@@ -18,14 +18,24 @@ export declare class LanguageProvider {
      * @param {ProviderOptions} options
      */
     static create(worker: Worker, options?: ProviderOptions): LanguageProvider;
+    /**
+     * method to create LanguageProvider from CDN
+     * @param customServices
+     * @param options
+     * @param includeDefaultLinters by default would include all linters
+     */
     static fromCdn(customServices: {
         services: ServiceStruct[];
         serviceManagerCdn: string;
         includeDefaultLinters?: {
-            [name in SupportedServices]: boolean | undefined;
-        } | true;
-    }, options?: ProviderOptions): LanguageProvider;
-    static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider;
+            [name in SupportedServices]?: boolean;
+        } | boolean;
+    }, options?: ProviderOptions, includeDefaultLinters?: {
+        [name in SupportedServices]?: boolean;
+    } | boolean): LanguageProvider;
+    static fromCdn(cdnUrl: string, options?: ProviderOptions, includeDefaultLinters?: {
+        [name in SupportedServices]?: boolean;
+    } | boolean): LanguageProvider;
     setProviderOptions(options?: ProviderOptions): void;
     private $registerSession;
     private $getSessionLanguageProvider;
