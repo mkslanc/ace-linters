@@ -83,7 +83,7 @@ interface ExtraLib {
     content: string;
     version: number;
 }
-export interface TsServiceOptions extends ServiceOptionsWithErrorCodes {
+export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
     compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums;
     extraLibs?: {
         [path: string]: ExtraLib;
@@ -133,7 +133,7 @@ export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessage
         [rule: string]: any;
     };
 }
-export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes {
+export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
     configuration: {
         [name: string]: any;
     };

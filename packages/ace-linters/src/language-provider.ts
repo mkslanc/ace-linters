@@ -63,17 +63,23 @@ export class LanguageProvider {
         return new LanguageProvider(messageController, options);
     }
 
+    /**
+     * method to create LanguageProvider from CDN
+     * @param customServices
+     * @param options
+     * @param includeDefaultLinters by default would include all linters
+     */
     static fromCdn(customServices: {
         services: ServiceStruct[],
         serviceManagerCdn: string,
-        includeDefaultLinters?: { [name in SupportedServices]: boolean | undefined } | true
-    }, options?: ProviderOptions): LanguageProvider
-    static fromCdn(cdnUrl: string, options?: ProviderOptions): LanguageProvider
+        includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean
+    }, options?: ProviderOptions, includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean): LanguageProvider
+    static fromCdn(cdnUrl: string, options?: ProviderOptions, includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean): LanguageProvider
     static fromCdn(source: string | {
         services: ServiceStruct[],
         serviceManagerCdn: string,
-        includeDefaultLinters?: { [name in SupportedServices]: boolean | undefined } | boolean
-    }, options?: ProviderOptions) {
+        includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean
+    }, options?: ProviderOptions, includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean) {
         let messageController: IMessageController;
         let worker: Worker;
         if (typeof source === "string") {
@@ -83,7 +89,7 @@ export class LanguageProvider {
             if (source[source.length - 1] == "/") {
                 source = source.substring(0, source.length - 1);
             }
-            worker = createWorker(source);
+            worker = createWorker(source, includeDefaultLinters);
         } else {
             if (source.includeDefaultLinters == undefined) {
                 source.includeDefaultLinters = true;
@@ -91,7 +97,7 @@ export class LanguageProvider {
             worker = createWorker({
                 services: source.services,
                 serviceManagerCdn: source.serviceManagerCdn
-            }, source.includeDefaultLinters);
+            }, source.includeDefaultLinters ?? includeDefaultLinters);
         }
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
