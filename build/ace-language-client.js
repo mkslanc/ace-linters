@@ -20830,7 +20830,7 @@ class LanguageProvider {
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
     }
-    static fromCdn(source, options) {
+    static fromCdn(source, options, includeDefaultLinters) {
         let messageController;
         let worker;
         if (typeof source === "string") {
@@ -20840,15 +20840,16 @@ class LanguageProvider {
             if (source[source.length - 1] == "/") {
                 source = source.substring(0, source.length - 1);
             }
-            worker = createWorker(source);
+            worker = createWorker(source, includeDefaultLinters);
         } else {
             if (source.includeDefaultLinters == undefined) {
                 source.includeDefaultLinters = true;
             }
+            var _source_includeDefaultLinters;
             worker = createWorker({
                 services: source.services,
                 serviceManagerCdn: source.serviceManagerCdn
-            }, source.includeDefaultLinters);
+            }, (_source_includeDefaultLinters = source.includeDefaultLinters) !== null && _source_includeDefaultLinters !== void 0 ? _source_includeDefaultLinters : includeDefaultLinters);
         }
         messageController = new MessageController(worker);
         return new LanguageProvider(messageController, options);
