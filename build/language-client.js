@@ -3948,6 +3948,73 @@ class BaseService {
         _define_property(this, "globalOptions", {});
         _define_property(this, "serviceData", void 0);
         _define_property(this, "serviceCapabilities", {});
+        _define_property(this, "clientCapabilities", {
+            textDocument: {
+                hover: {
+                    dynamicRegistration: true,
+                    contentFormat: [
+                        'markdown',
+                        'plaintext'
+                    ]
+                },
+                synchronization: {
+                    dynamicRegistration: true,
+                    willSave: false,
+                    didSave: false,
+                    willSaveWaitUntil: false
+                },
+                formatting: {
+                    dynamicRegistration: true
+                },
+                completion: {
+                    dynamicRegistration: true,
+                    completionItem: {
+                        snippetSupport: true,
+                        commitCharactersSupport: false,
+                        documentationFormat: [
+                            'markdown',
+                            'plaintext'
+                        ],
+                        deprecatedSupport: false,
+                        preselectSupport: false
+                    },
+                    contextSupport: false
+                },
+                signatureHelp: {
+                    signatureInformation: {
+                        documentationFormat: [
+                            'markdown',
+                            'plaintext'
+                        ],
+                        activeParameterSupport: true
+                    }
+                },
+                documentHighlight: {
+                    dynamicRegistration: true
+                },
+                semanticTokens: {
+                    multilineTokenSupport: false,
+                    overlappingTokenSupport: false,
+                    tokenTypes: [],
+                    tokenModifiers: [],
+                    formats: [
+                        "relative"
+                    ],
+                    requests: {
+                        full: {
+                            delta: false
+                        },
+                        range: true
+                    },
+                    augmentsSyntaxTokens: true
+                }
+            },
+            workspace: {
+                didChangeConfiguration: {
+                    dynamicRegistration: true
+                }
+            }
+        });
         this.mode = mode;
     }
 }
@@ -17396,73 +17463,6 @@ class LanguageClient extends base_service.BaseService {
         language_client_define_property(this, "socket", void 0);
         language_client_define_property(this, "connection", void 0);
         language_client_define_property(this, "requestsQueue", []);
-        language_client_define_property(this, "clientCapabilities", {
-            textDocument: {
-                hover: {
-                    dynamicRegistration: true,
-                    contentFormat: [
-                        'markdown',
-                        'plaintext'
-                    ]
-                },
-                synchronization: {
-                    dynamicRegistration: true,
-                    willSave: false,
-                    didSave: false,
-                    willSaveWaitUntil: false
-                },
-                formatting: {
-                    dynamicRegistration: true
-                },
-                completion: {
-                    dynamicRegistration: true,
-                    completionItem: {
-                        snippetSupport: true,
-                        commitCharactersSupport: false,
-                        documentationFormat: [
-                            'markdown',
-                            'plaintext'
-                        ],
-                        deprecatedSupport: false,
-                        preselectSupport: false
-                    },
-                    contextSupport: false
-                },
-                signatureHelp: {
-                    signatureInformation: {
-                        documentationFormat: [
-                            'markdown',
-                            'plaintext'
-                        ],
-                        activeParameterSupport: true
-                    }
-                },
-                documentHighlight: {
-                    dynamicRegistration: true
-                },
-                semanticTokens: {
-                    multilineTokenSupport: false,
-                    overlappingTokenSupport: false,
-                    tokenTypes: [],
-                    tokenModifiers: [],
-                    formats: [
-                        "relative"
-                    ],
-                    requests: {
-                        full: {
-                            delta: false
-                        },
-                        range: true
-                    },
-                    augmentsSyntaxTokens: true
-                }
-            },
-            workspace: {
-                didChangeConfiguration: {
-                    dynamicRegistration: true
-                }
-            }
-        });
         language_client_define_property(this, "ctx", void 0);
         this.ctx = ctx;
         switch(serverData.type){
