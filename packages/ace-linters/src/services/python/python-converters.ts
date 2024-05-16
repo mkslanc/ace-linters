@@ -4,6 +4,7 @@ import {
 import * as lsp from "vscode-languageserver-protocol";
 import {DiagnosticSeverity} from "vscode-languageserver-protocol";
 import {FilterDiagnosticsOptions} from "../../types/language-service";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export function toRange(location: { row: number, column: number }, endLocation: { row: number, column: number }): lsp.Range {
     return {
@@ -19,7 +20,7 @@ export function toRange(location: { row: number, column: number }, endLocation: 
 }
 
 export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
-    return diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code)).map((el) => {
+    const lspDiagnostics = diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code)).map((el) => {
         let severity: DiagnosticSeverity = DiagnosticSeverity.Error;
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code)) {
             severity = DiagnosticSeverity.Warning;
@@ -32,4 +33,6 @@ export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDia
             severity: severity,
         }
     });
+    
+    return filterDiagnostics(lspDiagnostics, filterErrors);
 }

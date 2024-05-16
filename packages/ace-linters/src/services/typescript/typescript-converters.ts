@@ -13,9 +13,10 @@ import {TextDocument} from "vscode-languageserver-textdocument";
 import {CommonConverter} from "../../type-converters/common-converters";
 import convertKind = CommonConverter.convertKind;
 import {FilterDiagnosticsOptions} from "../../types/language-service";
+import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
-    return diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
+    const lspDiagnostics =diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code.toString())) {
@@ -26,6 +27,7 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, 
         return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
             parseMessageText(el.messageText, el.code), fromTsCategory(el.category));
     });
+    return filterDiagnostics(lspDiagnostics, filterErrors);
 }
 
 export function toTsOffset(range: lsp.Range, doc: TextDocument) {
