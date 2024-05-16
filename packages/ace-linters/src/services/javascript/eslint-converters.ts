@@ -32,5 +32,5 @@ export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDia
     if (!diagnostics) {
         return [];
     }
-    return CommonConverter.excludeByErrorMessage(diagnostics).map((error) => toDiagnostic(error, filterErrors));
+    return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((error) => toDiagnostic(error, filterErrors));
 }
