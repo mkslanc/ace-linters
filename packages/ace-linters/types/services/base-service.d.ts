@@ -14,6 +14,7 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     globalOptions: OptionsType;
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
+    clientCapabilities: lsp.ClientCapabilities;
     protected constructor(mode: string);
     addDocument(document: lsp.TextDocumentItem): void;
     getDocument(uri: string): TextDocument;

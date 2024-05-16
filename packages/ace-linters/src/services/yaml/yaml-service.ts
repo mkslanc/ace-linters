@@ -36,7 +36,9 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
                 resolveRelativePath: (relativePath, resource) => {
                     return relativePath + resource;
                 }
-            }
+            },
+            // @ts-ignore
+            clientCapabilities: this.clientCapabilities
         });
     }
 
