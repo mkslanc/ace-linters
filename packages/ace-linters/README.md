@@ -81,16 +81,15 @@ LanguageProvider.create(worker, {functionality: {semanticTokens: true}})
 <div id="editor" style="height: 100px">some text</div>
 
 <script>
-  ace.require("ace/ext/language_tools"); //To allow autocompletion
-  var CssMode = ace.require("ace/mode/css").Mode;
-  var editor = ace.edit("editor", {
-    enableBasicAutocompletion: true,
-    enableLiveAutocompletion: true,
-    mode: new CssMode()
-  });
+    ace.require("ace/ext/language_tools"); //To allow autocompletion
+    var editor = ace.edit("editor", {
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
+      mode: "ace/mode/css"
+    });
 
-  var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
-  provider.registerEditor(editor);
+    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
+    provider.registerEditor(editor);
 </script>
 ```
 
@@ -110,14 +109,14 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web socket
 const serverData = {
-  module: () => import("ace-linters/build/language-client"),
-  modes: "json|json5",
-  type: "socket",
-  socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json|json5",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
 }
 // Create an Ace editor
 let editor = ace.edit("container", {
-  mode: new JSONMode() // Set the mode of the editor to JSON
+    mode: new JSONMode() // Set the mode of the editor to JSON
 });
 
 // Create a language provider for web socket
