@@ -82,11 +82,10 @@ LanguageProvider.create(worker, {functionality: {semanticTokens: true}})
 
 <script>
     ace.require("ace/ext/language_tools"); //To allow autocompletion
-    var CssMode = ace.require("ace/mode/css").Mode;
     var editor = ace.edit("editor", {
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
-        mode: new CssMode()
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
+      mode: "ace/mode/css"
     });
 
     var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
