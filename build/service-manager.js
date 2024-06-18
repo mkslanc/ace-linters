@@ -114,13 +114,15 @@ class DeltasMessage extends (/* unused pure expression or super */ null && (Base
     }
 }
 class ChangeModeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    constructor(sessionId, value, mode){
+    constructor(sessionId, value, version, mode){
         super(sessionId);
         _define_property(this, "type", MessageType.changeMode);
         _define_property(this, "mode", void 0);
         _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
         this.value = value;
         this.mode = mode;
+        this.version = version;
     }
 }
 class ChangeOptionsMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {

@@ -17022,13 +17022,15 @@ class DeltasMessage extends (/* unused pure expression or super */ null && (Base
     }
 }
 class ChangeModeMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
-    constructor(sessionId, value, mode){
+    constructor(sessionId, value, version, mode){
         super(sessionId);
         _define_property(this, "type", MessageType.changeMode);
         _define_property(this, "mode", void 0);
         _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
         this.value = value;
         this.mode = mode;
+        this.version = version;
     }
 }
 class ChangeOptionsMessage extends (/* unused pure expression or super */ null && (BaseMessage)) {
@@ -17231,7 +17233,7 @@ class LanguageClient extends base_service.BaseService {
         this.enqueueIfNotConnected(()=>this.connection.sendNotification('textDocument/didOpen', textDocumentMessage));
     }
     enqueueIfNotConnected(callback) {
-        if (!this.isConnected) {
+        if (!this.isConnected || !this.isInitialized) {
             this.requestsQueue.push(callback);
         } else {
             callback();
@@ -17401,14 +17403,10 @@ class LanguageClient extends base_service.BaseService {
     }
     setGlobalOptions(options) {
         super.setGlobalOptions(options);
-        if (!this.isConnected) {
-            this.requestsQueue.push(()=>this.setGlobalOptions(options));
-            return;
-        }
         const configChanges = {
             settings: options
         };
-        this.connection.sendNotification('workspace/didChangeConfiguration', configChanges);
+        this.enqueueIfNotConnected(()=>this.connection.sendNotification('workspace/didChangeConfiguration', configChanges));
     }
     async findDocumentHighlights(document, position) {
         var _this_serviceCapabilities;

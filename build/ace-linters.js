@@ -18910,13 +18910,15 @@ class DeltasMessage extends BaseMessage {
     }
 }
 class ChangeModeMessage extends BaseMessage {
-    constructor(sessionId, value, mode){
+    constructor(sessionId, value, version, mode){
         super(sessionId);
         message_types_define_property(this, "type", MessageType.changeMode);
         message_types_define_property(this, "mode", void 0);
         message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "version", void 0);
         this.value = value;
         this.mode = mode;
+        this.version = version;
     }
 }
 class ChangeOptionsMessage extends BaseMessage {
@@ -19057,8 +19059,8 @@ class MessageController extends (events_default()) {
         }
         this.postMessage(message, callback);
     }
-    changeMode(sessionId, value, mode, callback) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
+    changeMode(sessionId, value, version, mode, callback) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, version, mode), callback);
     }
     changeOptions(sessionId, options, callback, merge = false) {
         this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
@@ -19171,8 +19173,11 @@ function toCompletion(item) {
     let kind = itemKind ? Object.keys(main.CompletionItemKind)[Object.values(main.CompletionItemKind).indexOf(itemKind)] : undefined;
     var _item_textEdit_newText, _ref;
     let text = (_ref = (_item_textEdit_newText = (_item_textEdit = item.textEdit) === null || _item_textEdit === void 0 ? void 0 : _item_textEdit.newText) !== null && _item_textEdit_newText !== void 0 ? _item_textEdit_newText : item.insertText) !== null && _ref !== void 0 ? _ref : item.label;
+    // filtering would happen on ace editor side
+    // TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
+    text = item.filterText && !text.startsWith(item.filterText) ? item.filterText + text : text;
     let command = ((_item_command = item.command) === null || _item_command === void 0 ? void 0 : _item_command.command) == "editor.action.triggerSuggest" ? "startAutocomplete" : undefined;
-    let range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
+    let range = item.textEdit ? getTextEditRange(item.textEdit, item.filterText) : undefined;
     let completion = {
         meta: kind,
         caption: item.label,
@@ -19249,16 +19254,16 @@ function toCompletionItem(completion) {
     completionItem["service"] = completion["service"]; //TODO:
     return completionItem;
 }
-function getTextEditRange(textEdit) {
-    if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
-        textEdit = textEdit;
+function getTextEditRange(textEdit, filterText) {
+    const filterLength = filterText ? filterText.length : 0;
+    if ("insert" in textEdit && "replace" in textEdit) {
         let mergedRanges = mergeRanges([
             toRange(textEdit.insert),
             toRange(textEdit.replace)
         ]);
         return mergedRanges[0];
     } else {
-        textEdit = textEdit;
+        textEdit.range.start.character -= filterLength;
         return toRange(textEdit.range);
     }
 }
@@ -20840,7 +20845,8 @@ class SessionLanguageProvider {
                 this.state.diagnosticMarkers.setMarkers([]);
             }
             this.session.setSemanticTokens(undefined); //clear all semantic tokens
-            this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
+            let newVersion = this.session.doc["version"]++;
+            this.$messageController.changeMode(this.fileName, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
         });
         language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
             if (!capabilities) return;
