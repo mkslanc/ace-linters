@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "scripts": {
     "build:ace-linters": "cd packages/ace-linters && npm run build",
     "build:ace-sql-linter": "cd packages/ace-sql-linter && npm run build",
@@ -10,7 +10,7 @@
     "start-dev": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "^1.33.2",
+    "ace-code": "^1.35.0",
     "jsonc-parser": "latest",
     "typescript": "^5.3.3"
   },
