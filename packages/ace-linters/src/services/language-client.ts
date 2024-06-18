@@ -160,7 +160,7 @@ export class LanguageClient extends BaseService implements LanguageService {
     }
 
     enqueueIfNotConnected(callback: () => void) {
-        if (!this.isConnected) {
+        if (!this.isConnected || !this.isInitialized) {
             this.requestsQueue.push(callback);
         } else {
             callback();
@@ -341,14 +341,10 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     setGlobalOptions(options: ServiceOptions): void {
         super.setGlobalOptions(options);
-        if (!this.isConnected) {
-            this.requestsQueue.push(() => this.setGlobalOptions(options));
-            return;
-        }
         const configChanges: lsp.DidChangeConfigurationParams = {
             settings: options
         };
-        this.connection.sendNotification('workspace/didChangeConfiguration', configChanges);
+        this.enqueueIfNotConnected(() => this.connection.sendNotification('workspace/didChangeConfiguration', configChanges));
     }
 
     async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position) {

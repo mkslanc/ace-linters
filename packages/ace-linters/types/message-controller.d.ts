@@ -15,7 +15,7 @@ export declare class MessageController extends EventEmitter implements IMessageC
     format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void): void;
     doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): void;
     change(sessionId: string, deltas: any, document: Ace.Document, callback?: () => void): void;
-    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities: any) => void): void;
+    changeMode(sessionId: string, value: string, version: number, mode: string, callback?: (capabilities: any) => void): void;
     changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void, merge?: boolean): void;
     closeDocument(sessionId: string, callback?: () => void): void;
     dispose(callback: () => void): void;

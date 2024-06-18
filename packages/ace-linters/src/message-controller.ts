@@ -70,8 +70,8 @@ export class MessageController extends EventEmitter implements IMessageControlle
         this.postMessage(message, callback)
     }
 
-    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities) => void) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, mode), callback);
+    changeMode(sessionId: string, value: string, version: number, mode: string, callback?: (capabilities) => void) {
+        this.postMessage(new ChangeModeMessage(sessionId, value, version, mode), callback);
     }
 
     changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void, merge = false) {

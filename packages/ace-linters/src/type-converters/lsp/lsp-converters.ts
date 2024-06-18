@@ -75,8 +75,12 @@ export function toCompletion(item: CompletionItem) {
     let itemKind = item.kind;
     let kind = itemKind ? Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(itemKind)] : undefined;
     let text = item.textEdit?.newText ?? item.insertText ?? item.label;
+    // filtering would happen on ace editor side
+    // TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
+    text = item.filterText && !text.startsWith(item.filterText) ? item.filterText + text : text;
+    
     let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-    let range = item.textEdit ? getTextEditRange(item.textEdit) : undefined;
+    let range = item.textEdit ? getTextEditRange(item.textEdit, item.filterText) : undefined;
     let completion = {
         meta: kind,
         caption: item.label,
@@ -159,13 +163,13 @@ export function toCompletionItem(completion: Ace.Completion): CompletionItem {
     return completionItem;
 }
 
-export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): AceRangeData {
-    if (textEdit.hasOwnProperty("insert") && textEdit.hasOwnProperty("replace")) {
-        textEdit = textEdit as InsertReplaceEdit;
+export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit, filterText?: string): AceRangeData {
+    const filterLength = filterText ? filterText.length : 0;
+    if ("insert" in textEdit && "replace" in textEdit) { //TODO: maybe we need to compensate here too
         let mergedRanges = mergeRanges([toRange(textEdit.insert), toRange(textEdit.replace)]);
         return mergedRanges[0];
     } else {
-        textEdit = textEdit as TextEdit;
+        textEdit.range.start.character -= filterLength;
         return toRange(textEdit.range);
     }
 }
