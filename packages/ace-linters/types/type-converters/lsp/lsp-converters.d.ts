@@ -15,7 +15,7 @@ export declare function toCompletion(item: CompletionItem): {
 export declare function toCompletions(completions: CompletionService[]): Ace.Completion[];
 export declare function toResolvedCompletion(completion: Ace.Completion, item: CompletionItem): Ace.Completion;
 export declare function toCompletionItem(completion: Ace.Completion): CompletionItem;
-export declare function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit): AceRangeData;
+export declare function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit, filterText?: string): AceRangeData;
 export declare function toTooltip(hover: Hover[] | undefined): Tooltip | undefined;
 export declare function fromSignatureHelp(signatureHelp: SignatureHelp[] | undefined): Tooltip | undefined;
 export declare function fromMarkupContent(content?: string | MarkupContent): string | undefined;

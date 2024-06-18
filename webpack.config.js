@@ -27,6 +27,7 @@ module.exports = (env, argv) => {
             pylsp_websocket_demo: './packages/demo/websockets-pylsp/client.ts',
             svelte_demo: './packages/demo/websockets-sls/client.ts',
             change_mode_demo: './packages/demo/webworker-change-mode/demo.ts',
+            lsp_ai_demo: './packages/demo/websockets-lsp-ai/client.ts',
         },
         mode: "production",
         module: {

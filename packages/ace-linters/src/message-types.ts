@@ -107,11 +107,13 @@ export class ChangeModeMessage extends BaseMessage {
     type: MessageType.changeMode = MessageType.changeMode;
     mode: string;
     value: string;
+    version: number;
 
-    constructor(sessionId: string, value: string, mode: string) {
+    constructor(sessionId: string, value: string, version: number, mode: string) {
         super(sessionId);
         this.value = value;
         this.mode = mode;
+        this.version = version;
     }
 }
 

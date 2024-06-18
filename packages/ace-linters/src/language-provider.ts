@@ -331,7 +331,7 @@ export class LanguageProvider {
 
 
     $registerCompleters(editor: Ace.Editor) {
-        let completer = {
+        let completer: Ace.Completer = {
             getCompletions: async (editor, session, pos, prefix, callback) => {
                 this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
                     this.doComplete(editor, session, (completions) => {
@@ -510,8 +510,8 @@ class SessionLanguageProvider {
         }
 
         this.session.setSemanticTokens(undefined); //clear all semantic tokens
-
-        this.$messageController.changeMode(this.fileName, this.session.getValue(), this.$mode, this.setServerCapabilities);
+        let newVersion = this.session.doc["version"]++;
+        this.$messageController.changeMode(this.fileName, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
     };
 
     private setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {

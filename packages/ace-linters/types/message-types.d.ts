@@ -61,7 +61,8 @@ export declare class ChangeModeMessage extends BaseMessage {
     type: MessageType.changeMode;
     mode: string;
     value: string;
-    constructor(sessionId: string, value: string, mode: string);
+    version: number;
+    constructor(sessionId: string, value: string, version: number, mode: string);
 }
 export declare class ChangeOptionsMessage extends BaseMessage {
     type: MessageType.changeOptions;

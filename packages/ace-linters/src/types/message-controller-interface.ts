@@ -25,7 +25,7 @@ export interface IMessageController {
 
     change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void): void;
 
-    changeMode(sessionId: string, value: string, mode: string, callback?: (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => void);
+    changeMode(sessionId: string, value: string, version: number, mode: string, callback?: (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => void);
 
     changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void);
 
