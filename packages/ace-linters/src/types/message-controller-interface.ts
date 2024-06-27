@@ -42,4 +42,6 @@ export interface IMessageController {
     findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void);
 
     getSemanticTokens(sessionId: string, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void);
+
+    getCodeActions(sessionId: string, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void);
 }

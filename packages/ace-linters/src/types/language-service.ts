@@ -44,7 +44,9 @@ export interface LanguageService {
 
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
     
-    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> 
+    getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>
+    
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>
     
     dispose(): Promise<void>;
 }
@@ -227,6 +229,7 @@ export type SupportedFeatures =
     | "signatureHelp"
     | "documentHighlight"
     | "semanticTokens"
+    | "codeAction"
 
 
 export interface ServiceConfig extends BaseConfig {

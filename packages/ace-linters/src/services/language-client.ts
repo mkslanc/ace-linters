@@ -398,4 +398,19 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
         
     }
+
+    async getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext) {
+        if (!this.isInitialized)
+            return null;
+        if (!this.serviceCapabilities?.codeActionProvider)
+            return null;
+        let options: lsp.CodeActionParams = {
+            textDocument: {
+                uri: document.uri,
+            },
+            range: range,
+            context: context,
+        };
+        return this.connection.sendRequest('textDocument/codeAction', options) as Promise<(lsp.Command | lsp.CodeAction)[] | null>
+    }
 }

@@ -93,10 +93,10 @@ export class ChangeMessage extends BaseMessage {
 
 export class DeltasMessage extends BaseMessage {
     type: MessageType.applyDelta = MessageType.applyDelta;
-    value: Ace.Delta[];
+    value: lsp.TextDocumentContentChangeEvent[];
     version: number;
 
-    constructor(sessionId: string, value: Ace.Delta[], version: number) {
+    constructor(sessionId: string, value: lsp.TextDocumentContentChangeEvent[], version: number) {
         super(sessionId);
         this.value = value;
         this.version = version;
@@ -198,6 +198,18 @@ export class GetSemanticTokensMessage extends BaseMessage {
     }
 }
 
+export class GetCodeActionsMessage extends BaseMessage {
+    type: MessageType.getCodeActions = MessageType.getCodeActions;
+    value: lsp.Range;
+    context: lsp.CodeActionContext;
+
+    constructor(sessionId: string, value: lsp.Range, context: lsp.CodeActionContext) {
+        super(sessionId);
+        this.value = value;
+        this.context = context;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -216,9 +228,10 @@ export enum MessageType {
     documentHighlight,
     dispose,
     capabilitiesChange,
-    getSemanticTokens
+    getSemanticTokens,
+    getCodeActions
 }
 
 export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | 
     HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | 
-    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage; 
+    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage; 
