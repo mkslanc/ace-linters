@@ -6,7 +6,7 @@ import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-pr
 import {MarkDownConverter} from "./converters";
 
 export interface LanguageService {
-    documents: { [sessionID: string]: TextDocument };
+    documents: { [documentUri: string]: TextDocument };
     $service;
     serviceName: string;
     mode: string;
@@ -30,7 +30,7 @@ export interface LanguageService {
 
     addDocument(document: TextDocumentItem);
 
-    setOptions(sessionID: string, options: ServiceOptions, merge?: boolean); //TODO:
+    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean); //TODO:
 
     setGlobalOptions(options: ServiceOptions); //TODO:
 

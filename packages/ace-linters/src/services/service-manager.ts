@@ -23,7 +23,7 @@ export class ServiceManager {
         [serviceName: string]: Promise<LanguageService>;
     } = {};
     private $sessionIDToMode: {
-        [sessionID: string]: string
+        [documentUri: string]: string
     } = {};
     ctx: { postMessage, addEventListener };
 
@@ -36,7 +36,7 @@ export class ServiceManager {
                 return;
             }
             //this is list of documents linked to services
-            let sessionIDList = Object.keys(servicesInstances[0].documents);
+            let documentUrisList = Object.keys(servicesInstances[0].documents);
             servicesInstances = this.filterByFeature(servicesInstances, "diagnostics");
 
             servicesInstances = servicesInstances.filter((el) => {
@@ -51,11 +51,11 @@ export class ServiceManager {
                 "type": MessageType.validate,
             };
 
-            for (let sessionID of sessionIDList) {
+            for (let documentUri of documentUrisList) {
                 let diagnostics = await Promise.all(servicesInstances.map((el) => {
-                    return el.doValidation({uri: sessionID});
+                    return el.doValidation({uri: documentUri});
                 })) ?? [];
-                postMessage["sessionId"] = sessionID;
+                postMessage["documentUri"] = documentUri;
                 postMessage["value"] = diagnostics.flat();
                 ctx.postMessage(postMessage);
             }
@@ -73,15 +73,17 @@ export class ServiceManager {
         ctx.addEventListener("message", async (ev) => {
             let message: AllMessages = ev.data;
             let sessionID = message["sessionId"] ?? "";
+            let documentUri = message["documentUri"] ?? "";
             let version = message["version"];
             let postMessage = {
                 "type": message.type,
                 "sessionId": sessionID,
+                "callbackId": message["callbackId"]
             };
 
-            let serviceInstances = this.getServicesInstances(sessionID);
+            let serviceInstances = this.getServicesInstances(documentUri);
             let documentIdentifier = {
-                uri: sessionID,
+                uri: documentUri,
                 version: version
             };
             switch (message.type) {
@@ -135,7 +137,7 @@ export class ServiceManager {
                     await doValidation(documentIdentifier);
                     break;
                 case MessageType.changeOptions:
-                    this.applyOptionsToServices(serviceInstances, sessionID, message.options);
+                    this.applyOptionsToServices(serviceInstances, documentUri, message.options);
                     await doValidation(documentIdentifier, serviceInstances);
                     break;
                 case MessageType.closeDocument:
@@ -206,9 +208,9 @@ export class ServiceManager {
         }))).filter(notEmpty);
     }
 
-    applyOptionsToServices(serviceInstances: LanguageService[], sessionID: string, options: ServiceOptions) {
+    applyOptionsToServices(serviceInstances: LanguageService[], documentUri: string, options: ServiceOptions) {
         serviceInstances.forEach((service) => {
-            service.setOptions(sessionID, options);
+            service.setOptions(documentUri, options);
         });
     }
 
@@ -316,8 +318,8 @@ export class ServiceManager {
         }
     }
 
-    getServicesInstances(sessionID: string): LanguageService[] {
-        let mode = this.$sessionIDToMode[sessionID];
+    getServicesInstances(documentUri: string): LanguageService[] {
+        let mode = this.$sessionIDToMode[documentUri];
         if (!mode)
             return []; //TODO:
         let services = this.findServicesByMode(mode);

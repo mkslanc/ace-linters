@@ -71,6 +71,25 @@ export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
     });
 }
 
+export function fromAnnotations(annotations: Ace.Annotation[]): Diagnostic[] {
+    return annotations?.map((el) => {
+        return {
+            range: {
+                start: {
+                    line: el.row!,
+                    character: el.column!
+                },
+                end: {
+                    line: el.row!,
+                    character: el.column!
+                }
+            },
+            message: el.text,
+            severity: el.type === "error" ? 1 : el.type === "warning" ? 2 : 3,
+        };
+    });
+}
+
 export function toCompletion(item: CompletionItem) {
     let itemKind = item.kind;
     let kind = itemKind ? Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(itemKind)] : undefined;

@@ -4,6 +4,7 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a2, b) => (typeof require !== "undefined" ? require : a2)[b]
 }) : x)(function(x) {
@@ -34,6 +35,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
 // ../../node_modules/yaml-language-server/node_modules/vscode-languageserver-types/lib/umd/main.js
 var require_main = __commonJS({
@@ -29990,7 +29995,7 @@ var ParseErrorCode;
   ParseErrorCode2[ParseErrorCode2["InvalidCharacter"] = 16] = "InvalidCharacter";
 })(ParseErrorCode || (ParseErrorCode = {}));
 
-// ../../node_modules/vscode-uri/lib/esm/index.js
+// ../../node_modules/vscode-uri/lib/esm/index.mjs
 var LIB;
 (() => {
   "use strict";
@@ -30000,7 +30005,7 @@ var LIB;
         throw new TypeError("Path must be a string. Received " + JSON.stringify(t3));
     }
     function r2(t3, e3) {
-      for (var r3, n3 = "", o = 0, i = -1, a2 = 0, h = 0; h <= t3.length; ++h) {
+      for (var r3, n3 = "", i = 0, o = -1, s = 0, h = 0; h <= t3.length; ++h) {
         if (h < t3.length)
           r3 = t3.charCodeAt(h);
         else {
@@ -30009,49 +30014,49 @@ var LIB;
           r3 = 47;
         }
         if (47 === r3) {
-          if (i === h - 1 || 1 === a2)
+          if (o === h - 1 || 1 === s)
             ;
-          else if (i !== h - 1 && 2 === a2) {
-            if (n3.length < 2 || 2 !== o || 46 !== n3.charCodeAt(n3.length - 1) || 46 !== n3.charCodeAt(n3.length - 2)) {
+          else if (o !== h - 1 && 2 === s) {
+            if (n3.length < 2 || 2 !== i || 46 !== n3.charCodeAt(n3.length - 1) || 46 !== n3.charCodeAt(n3.length - 2)) {
               if (n3.length > 2) {
-                var s = n3.lastIndexOf("/");
-                if (s !== n3.length - 1) {
-                  -1 === s ? (n3 = "", o = 0) : o = (n3 = n3.slice(0, s)).length - 1 - n3.lastIndexOf("/"), i = h, a2 = 0;
+                var a2 = n3.lastIndexOf("/");
+                if (a2 !== n3.length - 1) {
+                  -1 === a2 ? (n3 = "", i = 0) : i = (n3 = n3.slice(0, a2)).length - 1 - n3.lastIndexOf("/"), o = h, s = 0;
                   continue;
                 }
               } else if (2 === n3.length || 1 === n3.length) {
-                n3 = "", o = 0, i = h, a2 = 0;
+                n3 = "", i = 0, o = h, s = 0;
                 continue;
               }
             }
-            e3 && (n3.length > 0 ? n3 += "/.." : n3 = "..", o = 2);
+            e3 && (n3.length > 0 ? n3 += "/.." : n3 = "..", i = 2);
           } else
-            n3.length > 0 ? n3 += "/" + t3.slice(i + 1, h) : n3 = t3.slice(i + 1, h), o = h - i - 1;
-          i = h, a2 = 0;
+            n3.length > 0 ? n3 += "/" + t3.slice(o + 1, h) : n3 = t3.slice(o + 1, h), i = h - o - 1;
+          o = h, s = 0;
         } else
-          46 === r3 && -1 !== a2 ? ++a2 : a2 = -1;
+          46 === r3 && -1 !== s ? ++s : s = -1;
       }
       return n3;
     }
     var n2 = { resolve: function() {
-      for (var t3, n3 = "", o = false, i = arguments.length - 1; i >= -1 && !o; i--) {
-        var a2;
-        i >= 0 ? a2 = arguments[i] : (void 0 === t3 && (t3 = process.cwd()), a2 = t3), e2(a2), 0 !== a2.length && (n3 = a2 + "/" + n3, o = 47 === a2.charCodeAt(0));
+      for (var t3, n3 = "", i = false, o = arguments.length - 1; o >= -1 && !i; o--) {
+        var s;
+        o >= 0 ? s = arguments[o] : (void 0 === t3 && (t3 = process.cwd()), s = t3), e2(s), 0 !== s.length && (n3 = s + "/" + n3, i = 47 === s.charCodeAt(0));
       }
-      return n3 = r2(n3, !o), o ? n3.length > 0 ? "/" + n3 : "/" : n3.length > 0 ? n3 : ".";
+      return n3 = r2(n3, !i), i ? n3.length > 0 ? "/" + n3 : "/" : n3.length > 0 ? n3 : ".";
     }, normalize: function(t3) {
       if (e2(t3), 0 === t3.length)
         return ".";
-      var n3 = 47 === t3.charCodeAt(0), o = 47 === t3.charCodeAt(t3.length - 1);
-      return 0 !== (t3 = r2(t3, !n3)).length || n3 || (t3 = "."), t3.length > 0 && o && (t3 += "/"), n3 ? "/" + t3 : t3;
+      var n3 = 47 === t3.charCodeAt(0), i = 47 === t3.charCodeAt(t3.length - 1);
+      return 0 !== (t3 = r2(t3, !n3)).length || n3 || (t3 = "."), t3.length > 0 && i && (t3 += "/"), n3 ? "/" + t3 : t3;
     }, isAbsolute: function(t3) {
       return e2(t3), t3.length > 0 && 47 === t3.charCodeAt(0);
     }, join: function() {
       if (0 === arguments.length)
         return ".";
       for (var t3, r3 = 0; r3 < arguments.length; ++r3) {
-        var o = arguments[r3];
-        e2(o), o.length > 0 && (void 0 === t3 ? t3 = o : t3 += "/" + o);
+        var i = arguments[r3];
+        e2(i), i.length > 0 && (void 0 === t3 ? t3 = i : t3 += "/" + i);
       }
       return void 0 === t3 ? "." : n2.normalize(t3);
     }, relative: function(t3, r3) {
@@ -30059,86 +30064,86 @@ var LIB;
         return "";
       if ((t3 = n2.resolve(t3)) === (r3 = n2.resolve(r3)))
         return "";
-      for (var o = 1; o < t3.length && 47 === t3.charCodeAt(o); ++o)
+      for (var i = 1; i < t3.length && 47 === t3.charCodeAt(i); ++i)
         ;
-      for (var i = t3.length, a2 = i - o, h = 1; h < r3.length && 47 === r3.charCodeAt(h); ++h)
+      for (var o = t3.length, s = o - i, h = 1; h < r3.length && 47 === r3.charCodeAt(h); ++h)
         ;
-      for (var s = r3.length - h, c = a2 < s ? a2 : s, f2 = -1, u = 0; u <= c; ++u) {
+      for (var a2 = r3.length - h, c = s < a2 ? s : a2, f2 = -1, u = 0; u <= c; ++u) {
         if (u === c) {
-          if (s > c) {
+          if (a2 > c) {
             if (47 === r3.charCodeAt(h + u))
               return r3.slice(h + u + 1);
             if (0 === u)
               return r3.slice(h + u);
           } else
-            a2 > c && (47 === t3.charCodeAt(o + u) ? f2 = u : 0 === u && (f2 = 0));
+            s > c && (47 === t3.charCodeAt(i + u) ? f2 = u : 0 === u && (f2 = 0));
           break;
         }
-        var l = t3.charCodeAt(o + u);
+        var l = t3.charCodeAt(i + u);
         if (l !== r3.charCodeAt(h + u))
           break;
         47 === l && (f2 = u);
       }
-      var p = "";
-      for (u = o + f2 + 1; u <= i; ++u)
-        u !== i && 47 !== t3.charCodeAt(u) || (0 === p.length ? p += ".." : p += "/..");
-      return p.length > 0 ? p + r3.slice(h + f2) : (h += f2, 47 === r3.charCodeAt(h) && ++h, r3.slice(h));
+      var g = "";
+      for (u = i + f2 + 1; u <= o; ++u)
+        u !== o && 47 !== t3.charCodeAt(u) || (0 === g.length ? g += ".." : g += "/..");
+      return g.length > 0 ? g + r3.slice(h + f2) : (h += f2, 47 === r3.charCodeAt(h) && ++h, r3.slice(h));
     }, _makeLong: function(t3) {
       return t3;
     }, dirname: function(t3) {
       if (e2(t3), 0 === t3.length)
         return ".";
-      for (var r3 = t3.charCodeAt(0), n3 = 47 === r3, o = -1, i = true, a2 = t3.length - 1; a2 >= 1; --a2)
-        if (47 === (r3 = t3.charCodeAt(a2))) {
-          if (!i) {
-            o = a2;
+      for (var r3 = t3.charCodeAt(0), n3 = 47 === r3, i = -1, o = true, s = t3.length - 1; s >= 1; --s)
+        if (47 === (r3 = t3.charCodeAt(s))) {
+          if (!o) {
+            i = s;
             break;
           }
         } else
-          i = false;
-      return -1 === o ? n3 ? "/" : "." : n3 && 1 === o ? "//" : t3.slice(0, o);
+          o = false;
+      return -1 === i ? n3 ? "/" : "." : n3 && 1 === i ? "//" : t3.slice(0, i);
     }, basename: function(t3, r3) {
       if (void 0 !== r3 && "string" != typeof r3)
         throw new TypeError('"ext" argument must be a string');
       e2(t3);
-      var n3, o = 0, i = -1, a2 = true;
+      var n3, i = 0, o = -1, s = true;
       if (void 0 !== r3 && r3.length > 0 && r3.length <= t3.length) {
         if (r3.length === t3.length && r3 === t3)
           return "";
-        var h = r3.length - 1, s = -1;
+        var h = r3.length - 1, a2 = -1;
         for (n3 = t3.length - 1; n3 >= 0; --n3) {
           var c = t3.charCodeAt(n3);
           if (47 === c) {
-            if (!a2) {
-              o = n3 + 1;
+            if (!s) {
+              i = n3 + 1;
               break;
             }
           } else
-            -1 === s && (a2 = false, s = n3 + 1), h >= 0 && (c === r3.charCodeAt(h) ? -1 == --h && (i = n3) : (h = -1, i = s));
+            -1 === a2 && (s = false, a2 = n3 + 1), h >= 0 && (c === r3.charCodeAt(h) ? -1 == --h && (o = n3) : (h = -1, o = a2));
         }
-        return o === i ? i = s : -1 === i && (i = t3.length), t3.slice(o, i);
+        return i === o ? o = a2 : -1 === o && (o = t3.length), t3.slice(i, o);
       }
       for (n3 = t3.length - 1; n3 >= 0; --n3)
         if (47 === t3.charCodeAt(n3)) {
-          if (!a2) {
-            o = n3 + 1;
+          if (!s) {
+            i = n3 + 1;
             break;
           }
         } else
-          -1 === i && (a2 = false, i = n3 + 1);
-      return -1 === i ? "" : t3.slice(o, i);
+          -1 === o && (s = false, o = n3 + 1);
+      return -1 === o ? "" : t3.slice(i, o);
     }, extname: function(t3) {
       e2(t3);
-      for (var r3 = -1, n3 = 0, o = -1, i = true, a2 = 0, h = t3.length - 1; h >= 0; --h) {
-        var s = t3.charCodeAt(h);
-        if (47 !== s)
-          -1 === o && (i = false, o = h + 1), 46 === s ? -1 === r3 ? r3 = h : 1 !== a2 && (a2 = 1) : -1 !== r3 && (a2 = -1);
-        else if (!i) {
+      for (var r3 = -1, n3 = 0, i = -1, o = true, s = 0, h = t3.length - 1; h >= 0; --h) {
+        var a2 = t3.charCodeAt(h);
+        if (47 !== a2)
+          -1 === i && (o = false, i = h + 1), 46 === a2 ? -1 === r3 ? r3 = h : 1 !== s && (s = 1) : -1 !== r3 && (s = -1);
+        else if (!o) {
           n3 = h + 1;
           break;
         }
       }
-      return -1 === r3 || -1 === o || 0 === a2 || 1 === a2 && r3 === o - 1 && r3 === n3 + 1 ? "" : t3.slice(r3, o);
+      return -1 === r3 || -1 === i || 0 === s || 1 === s && r3 === i - 1 && r3 === n3 + 1 ? "" : t3.slice(r3, i);
     }, format: function(t3) {
       if (null === t3 || "object" != typeof t3)
         throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof t3);
@@ -30151,25 +30156,25 @@ var LIB;
       var r3 = { root: "", dir: "", base: "", ext: "", name: "" };
       if (0 === t3.length)
         return r3;
-      var n3, o = t3.charCodeAt(0), i = 47 === o;
-      i ? (r3.root = "/", n3 = 1) : n3 = 0;
-      for (var a2 = -1, h = 0, s = -1, c = true, f2 = t3.length - 1, u = 0; f2 >= n3; --f2)
-        if (47 !== (o = t3.charCodeAt(f2)))
-          -1 === s && (c = false, s = f2 + 1), 46 === o ? -1 === a2 ? a2 = f2 : 1 !== u && (u = 1) : -1 !== a2 && (u = -1);
+      var n3, i = t3.charCodeAt(0), o = 47 === i;
+      o ? (r3.root = "/", n3 = 1) : n3 = 0;
+      for (var s = -1, h = 0, a2 = -1, c = true, f2 = t3.length - 1, u = 0; f2 >= n3; --f2)
+        if (47 !== (i = t3.charCodeAt(f2)))
+          -1 === a2 && (c = false, a2 = f2 + 1), 46 === i ? -1 === s ? s = f2 : 1 !== u && (u = 1) : -1 !== s && (u = -1);
         else if (!c) {
           h = f2 + 1;
           break;
         }
-      return -1 === a2 || -1 === s || 0 === u || 1 === u && a2 === s - 1 && a2 === h + 1 ? -1 !== s && (r3.base = r3.name = 0 === h && i ? t3.slice(1, s) : t3.slice(h, s)) : (0 === h && i ? (r3.name = t3.slice(1, a2), r3.base = t3.slice(1, s)) : (r3.name = t3.slice(h, a2), r3.base = t3.slice(h, s)), r3.ext = t3.slice(a2, s)), h > 0 ? r3.dir = t3.slice(0, h - 1) : i && (r3.dir = "/"), r3;
+      return -1 === s || -1 === a2 || 0 === u || 1 === u && s === a2 - 1 && s === h + 1 ? -1 !== a2 && (r3.base = r3.name = 0 === h && o ? t3.slice(1, a2) : t3.slice(h, a2)) : (0 === h && o ? (r3.name = t3.slice(1, s), r3.base = t3.slice(1, a2)) : (r3.name = t3.slice(h, s), r3.base = t3.slice(h, a2)), r3.ext = t3.slice(s, a2)), h > 0 ? r3.dir = t3.slice(0, h - 1) : o && (r3.dir = "/"), r3;
     }, sep: "/", delimiter: ":", win32: null, posix: null };
     n2.posix = n2, t2.exports = n2;
   } }, e = {};
   function r(n2) {
-    var o = e[n2];
-    if (void 0 !== o)
-      return o.exports;
-    var i = e[n2] = { exports: {} };
-    return t[n2](i, i.exports, r), i.exports;
+    var i = e[n2];
+    if (void 0 !== i)
+      return i.exports;
+    var o = e[n2] = { exports: {} };
+    return t[n2](o, o.exports, r), o.exports;
   }
   r.d = (t2, e2) => {
     for (var n2 in e2)
@@ -30179,192 +30184,194 @@ var LIB;
   };
   var n = {};
   (() => {
-    var t2;
-    if (r.r(n), r.d(n, { URI: () => g, Utils: () => O }), "object" == typeof process)
+    let t2;
+    if (r.r(n), r.d(n, { URI: () => f2, Utils: () => P }), "object" == typeof process)
       t2 = "win32" === process.platform;
     else if ("object" == typeof navigator) {
-      var e2 = navigator.userAgent;
-      t2 = e2.indexOf("Windows") >= 0;
+      let e3 = navigator.userAgent;
+      t2 = e3.indexOf("Windows") >= 0;
     }
-    var o, i, a2 = (o = function(t3, e3) {
-      return o = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(t4, e4) {
-        t4.__proto__ = e4;
-      } || function(t4, e4) {
-        for (var r2 in e4)
-          Object.prototype.hasOwnProperty.call(e4, r2) && (t4[r2] = e4[r2]);
-      }, o(t3, e3);
-    }, function(t3, e3) {
-      if ("function" != typeof e3 && null !== e3)
-        throw new TypeError("Class extends value " + String(e3) + " is not a constructor or null");
-      function r2() {
-        this.constructor = t3;
-      }
-      o(t3, e3), t3.prototype = null === e3 ? Object.create(e3) : (r2.prototype = e3.prototype, new r2());
-    }), h = /^\w[\w\d+.-]*$/, s = /^\//, c = /^\/\//;
-    function f2(t3, e3) {
-      if (!t3.scheme && e3)
-        throw new Error('[UriError]: Scheme is missing: {scheme: "", authority: "'.concat(t3.authority, '", path: "').concat(t3.path, '", query: "').concat(t3.query, '", fragment: "').concat(t3.fragment, '"}'));
-      if (t3.scheme && !h.test(t3.scheme))
+    const e2 = /^\w[\w\d+.-]*$/, i = /^\//, o = /^\/\//;
+    function s(t3, r2) {
+      if (!t3.scheme && r2)
+        throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t3.authority}", path: "${t3.path}", query: "${t3.query}", fragment: "${t3.fragment}"}`);
+      if (t3.scheme && !e2.test(t3.scheme))
         throw new Error("[UriError]: Scheme contains illegal characters.");
       if (t3.path) {
         if (t3.authority) {
-          if (!s.test(t3.path))
+          if (!i.test(t3.path))
             throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character');
-        } else if (c.test(t3.path))
+        } else if (o.test(t3.path))
           throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
       }
     }
-    var u = "", l = "/", p = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/, g = function() {
-      function e3(t3, e4, r2, n2, o2, i2) {
-        void 0 === i2 && (i2 = false), "object" == typeof t3 ? (this.scheme = t3.scheme || u, this.authority = t3.authority || u, this.path = t3.path || u, this.query = t3.query || u, this.fragment = t3.fragment || u) : (this.scheme = /* @__PURE__ */ function(t4, e5) {
-          return t4 || e5 ? t4 : "file";
-        }(t3, i2), this.authority = e4 || u, this.path = function(t4, e5) {
+    const h = "", a2 = "/", c = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+    class f2 {
+      constructor(t3, e3, r2, n2, i2, o2 = false) {
+        __publicField(this, "scheme");
+        __publicField(this, "authority");
+        __publicField(this, "path");
+        __publicField(this, "query");
+        __publicField(this, "fragment");
+        "object" == typeof t3 ? (this.scheme = t3.scheme || h, this.authority = t3.authority || h, this.path = t3.path || h, this.query = t3.query || h, this.fragment = t3.fragment || h) : (this.scheme = /* @__PURE__ */ function(t4, e4) {
+          return t4 || e4 ? t4 : "file";
+        }(t3, o2), this.authority = e3 || h, this.path = function(t4, e4) {
           switch (t4) {
             case "https":
             case "http":
             case "file":
-              e5 ? e5[0] !== l && (e5 = l + e5) : e5 = l;
+              e4 ? e4[0] !== a2 && (e4 = a2 + e4) : e4 = a2;
           }
-          return e5;
-        }(this.scheme, r2 || u), this.query = n2 || u, this.fragment = o2 || u, f2(this, i2));
+          return e4;
+        }(this.scheme, r2 || h), this.query = n2 || h, this.fragment = i2 || h, s(this, o2));
       }
-      return e3.isUri = function(t3) {
-        return t3 instanceof e3 || !!t3 && "string" == typeof t3.authority && "string" == typeof t3.fragment && "string" == typeof t3.path && "string" == typeof t3.query && "string" == typeof t3.scheme && "string" == typeof t3.fsPath && "function" == typeof t3.with && "function" == typeof t3.toString;
-      }, Object.defineProperty(e3.prototype, "fsPath", { get: function() {
-        return C(this, false);
-      }, enumerable: false, configurable: true }), e3.prototype.with = function(t3) {
+      static isUri(t3) {
+        return t3 instanceof f2 || !!t3 && "string" == typeof t3.authority && "string" == typeof t3.fragment && "string" == typeof t3.path && "string" == typeof t3.query && "string" == typeof t3.scheme && "string" == typeof t3.fsPath && "function" == typeof t3.with && "function" == typeof t3.toString;
+      }
+      get fsPath() {
+        return m(this, false);
+      }
+      with(t3) {
         if (!t3)
           return this;
-        var e4 = t3.scheme, r2 = t3.authority, n2 = t3.path, o2 = t3.query, i2 = t3.fragment;
-        return void 0 === e4 ? e4 = this.scheme : null === e4 && (e4 = u), void 0 === r2 ? r2 = this.authority : null === r2 && (r2 = u), void 0 === n2 ? n2 = this.path : null === n2 && (n2 = u), void 0 === o2 ? o2 = this.query : null === o2 && (o2 = u), void 0 === i2 ? i2 = this.fragment : null === i2 && (i2 = u), e4 === this.scheme && r2 === this.authority && n2 === this.path && o2 === this.query && i2 === this.fragment ? this : new v(e4, r2, n2, o2, i2);
-      }, e3.parse = function(t3, e4) {
-        void 0 === e4 && (e4 = false);
-        var r2 = p.exec(t3);
-        return r2 ? new v(r2[2] || u, _2(r2[4] || u), _2(r2[5] || u), _2(r2[7] || u), _2(r2[9] || u), e4) : new v(u, u, u, u, u);
-      }, e3.file = function(e4) {
-        var r2 = u;
-        if (t2 && (e4 = e4.replace(/\\/g, l)), e4[0] === l && e4[1] === l) {
-          var n2 = e4.indexOf(l, 2);
-          -1 === n2 ? (r2 = e4.substring(2), e4 = l) : (r2 = e4.substring(2, n2), e4 = e4.substring(n2) || l);
+        let { scheme: e3, authority: r2, path: n2, query: i2, fragment: o2 } = t3;
+        return void 0 === e3 ? e3 = this.scheme : null === e3 && (e3 = h), void 0 === r2 ? r2 = this.authority : null === r2 && (r2 = h), void 0 === n2 ? n2 = this.path : null === n2 && (n2 = h), void 0 === i2 ? i2 = this.query : null === i2 && (i2 = h), void 0 === o2 ? o2 = this.fragment : null === o2 && (o2 = h), e3 === this.scheme && r2 === this.authority && n2 === this.path && i2 === this.query && o2 === this.fragment ? this : new l(e3, r2, n2, i2, o2);
+      }
+      static parse(t3, e3 = false) {
+        const r2 = c.exec(t3);
+        return r2 ? new l(r2[2] || h, C(r2[4] || h), C(r2[5] || h), C(r2[7] || h), C(r2[9] || h), e3) : new l(h, h, h, h, h);
+      }
+      static file(e3) {
+        let r2 = h;
+        if (t2 && (e3 = e3.replace(/\\/g, a2)), e3[0] === a2 && e3[1] === a2) {
+          const t3 = e3.indexOf(a2, 2);
+          -1 === t3 ? (r2 = e3.substring(2), e3 = a2) : (r2 = e3.substring(2, t3), e3 = e3.substring(t3) || a2);
         }
-        return new v("file", r2, e4, u, u);
-      }, e3.from = function(t3) {
-        var e4 = new v(t3.scheme, t3.authority, t3.path, t3.query, t3.fragment);
-        return f2(e4, true), e4;
-      }, e3.prototype.toString = function(t3) {
-        return void 0 === t3 && (t3 = false), A2(this, t3);
-      }, e3.prototype.toJSON = function() {
+        return new l("file", r2, e3, h, h);
+      }
+      static from(t3) {
+        const e3 = new l(t3.scheme, t3.authority, t3.path, t3.query, t3.fragment);
+        return s(e3, true), e3;
+      }
+      toString(t3 = false) {
+        return y(this, t3);
+      }
+      toJSON() {
         return this;
-      }, e3.revive = function(t3) {
+      }
+      static revive(t3) {
         if (t3) {
-          if (t3 instanceof e3)
+          if (t3 instanceof f2)
             return t3;
-          var r2 = new v(t3);
-          return r2._formatted = t3.external, r2._fsPath = t3._sep === d ? t3.fsPath : null, r2;
+          {
+            const e3 = new l(t3);
+            return e3._formatted = t3.external, e3._fsPath = t3._sep === u ? t3.fsPath : null, e3;
+          }
         }
         return t3;
-      }, e3;
-    }(), d = t2 ? 1 : void 0, v = function(t3) {
-      function e3() {
-        var e4 = null !== t3 && t3.apply(this, arguments) || this;
-        return e4._formatted = null, e4._fsPath = null, e4;
       }
-      return a2(e3, t3), Object.defineProperty(e3.prototype, "fsPath", { get: function() {
-        return this._fsPath || (this._fsPath = C(this, false)), this._fsPath;
-      }, enumerable: false, configurable: true }), e3.prototype.toString = function(t4) {
-        return void 0 === t4 && (t4 = false), t4 ? A2(this, true) : (this._formatted || (this._formatted = A2(this, false)), this._formatted);
-      }, e3.prototype.toJSON = function() {
-        var t4 = { $mid: 1 };
-        return this._fsPath && (t4.fsPath = this._fsPath, t4._sep = d), this._formatted && (t4.external = this._formatted), this.path && (t4.path = this.path), this.scheme && (t4.scheme = this.scheme), this.authority && (t4.authority = this.authority), this.query && (t4.query = this.query), this.fragment && (t4.fragment = this.fragment), t4;
-      }, e3;
-    }(g), y = ((i = {})[58] = "%3A", i[47] = "%2F", i[63] = "%3F", i[35] = "%23", i[91] = "%5B", i[93] = "%5D", i[64] = "%40", i[33] = "%21", i[36] = "%24", i[38] = "%26", i[39] = "%27", i[40] = "%28", i[41] = "%29", i[42] = "%2A", i[43] = "%2B", i[44] = "%2C", i[59] = "%3B", i[61] = "%3D", i[32] = "%20", i);
-    function m(t3, e3, r2) {
-      for (var n2 = void 0, o2 = -1, i2 = 0; i2 < t3.length; i2++) {
-        var a3 = t3.charCodeAt(i2);
-        if (a3 >= 97 && a3 <= 122 || a3 >= 65 && a3 <= 90 || a3 >= 48 && a3 <= 57 || 45 === a3 || 46 === a3 || 95 === a3 || 126 === a3 || e3 && 47 === a3 || r2 && 91 === a3 || r2 && 93 === a3 || r2 && 58 === a3)
-          -1 !== o2 && (n2 += encodeURIComponent(t3.substring(o2, i2)), o2 = -1), void 0 !== n2 && (n2 += t3.charAt(i2));
+    }
+    const u = t2 ? 1 : void 0;
+    class l extends f2 {
+      constructor() {
+        super(...arguments);
+        __publicField(this, "_formatted", null);
+        __publicField(this, "_fsPath", null);
+      }
+      get fsPath() {
+        return this._fsPath || (this._fsPath = m(this, false)), this._fsPath;
+      }
+      toString(t3 = false) {
+        return t3 ? y(this, true) : (this._formatted || (this._formatted = y(this, false)), this._formatted);
+      }
+      toJSON() {
+        const t3 = { $mid: 1 };
+        return this._fsPath && (t3.fsPath = this._fsPath, t3._sep = u), this._formatted && (t3.external = this._formatted), this.path && (t3.path = this.path), this.scheme && (t3.scheme = this.scheme), this.authority && (t3.authority = this.authority), this.query && (t3.query = this.query), this.fragment && (t3.fragment = this.fragment), t3;
+      }
+    }
+    const g = { 58: "%3A", 47: "%2F", 63: "%3F", 35: "%23", 91: "%5B", 93: "%5D", 64: "%40", 33: "%21", 36: "%24", 38: "%26", 39: "%27", 40: "%28", 41: "%29", 42: "%2A", 43: "%2B", 44: "%2C", 59: "%3B", 61: "%3D", 32: "%20" };
+    function d(t3, e3, r2) {
+      let n2, i2 = -1;
+      for (let o2 = 0; o2 < t3.length; o2++) {
+        const s2 = t3.charCodeAt(o2);
+        if (s2 >= 97 && s2 <= 122 || s2 >= 65 && s2 <= 90 || s2 >= 48 && s2 <= 57 || 45 === s2 || 46 === s2 || 95 === s2 || 126 === s2 || e3 && 47 === s2 || r2 && 91 === s2 || r2 && 93 === s2 || r2 && 58 === s2)
+          -1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2, o2)), i2 = -1), void 0 !== n2 && (n2 += t3.charAt(o2));
         else {
-          void 0 === n2 && (n2 = t3.substr(0, i2));
-          var h2 = y[a3];
-          void 0 !== h2 ? (-1 !== o2 && (n2 += encodeURIComponent(t3.substring(o2, i2)), o2 = -1), n2 += h2) : -1 === o2 && (o2 = i2);
+          void 0 === n2 && (n2 = t3.substr(0, o2));
+          const e4 = g[s2];
+          void 0 !== e4 ? (-1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2, o2)), i2 = -1), n2 += e4) : -1 === i2 && (i2 = o2);
         }
       }
-      return -1 !== o2 && (n2 += encodeURIComponent(t3.substring(o2))), void 0 !== n2 ? n2 : t3;
+      return -1 !== i2 && (n2 += encodeURIComponent(t3.substring(i2))), void 0 !== n2 ? n2 : t3;
     }
-    function b(t3) {
-      for (var e3 = void 0, r2 = 0; r2 < t3.length; r2++) {
-        var n2 = t3.charCodeAt(r2);
-        35 === n2 || 63 === n2 ? (void 0 === e3 && (e3 = t3.substr(0, r2)), e3 += y[n2]) : void 0 !== e3 && (e3 += t3[r2]);
+    function p(t3) {
+      let e3;
+      for (let r2 = 0; r2 < t3.length; r2++) {
+        const n2 = t3.charCodeAt(r2);
+        35 === n2 || 63 === n2 ? (void 0 === e3 && (e3 = t3.substr(0, r2)), e3 += g[n2]) : void 0 !== e3 && (e3 += t3[r2]);
       }
       return void 0 !== e3 ? e3 : t3;
     }
-    function C(e3, r2) {
-      var n2;
-      return n2 = e3.authority && e3.path.length > 1 && "file" === e3.scheme ? "//".concat(e3.authority).concat(e3.path) : 47 === e3.path.charCodeAt(0) && (e3.path.charCodeAt(1) >= 65 && e3.path.charCodeAt(1) <= 90 || e3.path.charCodeAt(1) >= 97 && e3.path.charCodeAt(1) <= 122) && 58 === e3.path.charCodeAt(2) ? r2 ? e3.path.substr(1) : e3.path[1].toLowerCase() + e3.path.substr(2) : e3.path, t2 && (n2 = n2.replace(/\//g, "\\")), n2;
+    function m(e3, r2) {
+      let n2;
+      return n2 = e3.authority && e3.path.length > 1 && "file" === e3.scheme ? `//${e3.authority}${e3.path}` : 47 === e3.path.charCodeAt(0) && (e3.path.charCodeAt(1) >= 65 && e3.path.charCodeAt(1) <= 90 || e3.path.charCodeAt(1) >= 97 && e3.path.charCodeAt(1) <= 122) && 58 === e3.path.charCodeAt(2) ? r2 ? e3.path.substr(1) : e3.path[1].toLowerCase() + e3.path.substr(2) : e3.path, t2 && (n2 = n2.replace(/\//g, "\\")), n2;
     }
-    function A2(t3, e3) {
-      var r2 = e3 ? b : m, n2 = "", o2 = t3.scheme, i2 = t3.authority, a3 = t3.path, h2 = t3.query, s2 = t3.fragment;
-      if (o2 && (n2 += o2, n2 += ":"), (i2 || "file" === o2) && (n2 += l, n2 += l), i2) {
-        var c2 = i2.indexOf("@");
-        if (-1 !== c2) {
-          var f3 = i2.substr(0, c2);
-          i2 = i2.substr(c2 + 1), -1 === (c2 = f3.lastIndexOf(":")) ? n2 += r2(f3, false, false) : (n2 += r2(f3.substr(0, c2), false, false), n2 += ":", n2 += r2(f3.substr(c2 + 1), false, true)), n2 += "@";
+    function y(t3, e3) {
+      const r2 = e3 ? p : d;
+      let n2 = "", { scheme: i2, authority: o2, path: s2, query: h2, fragment: c2 } = t3;
+      if (i2 && (n2 += i2, n2 += ":"), (o2 || "file" === i2) && (n2 += a2, n2 += a2), o2) {
+        let t4 = o2.indexOf("@");
+        if (-1 !== t4) {
+          const e4 = o2.substr(0, t4);
+          o2 = o2.substr(t4 + 1), t4 = e4.lastIndexOf(":"), -1 === t4 ? n2 += r2(e4, false, false) : (n2 += r2(e4.substr(0, t4), false, false), n2 += ":", n2 += r2(e4.substr(t4 + 1), false, true)), n2 += "@";
         }
-        -1 === (c2 = (i2 = i2.toLowerCase()).lastIndexOf(":")) ? n2 += r2(i2, false, true) : (n2 += r2(i2.substr(0, c2), false, true), n2 += i2.substr(c2));
+        o2 = o2.toLowerCase(), t4 = o2.lastIndexOf(":"), -1 === t4 ? n2 += r2(o2, false, true) : (n2 += r2(o2.substr(0, t4), false, true), n2 += o2.substr(t4));
       }
-      if (a3) {
-        if (a3.length >= 3 && 47 === a3.charCodeAt(0) && 58 === a3.charCodeAt(2))
-          (u2 = a3.charCodeAt(1)) >= 65 && u2 <= 90 && (a3 = "/".concat(String.fromCharCode(u2 + 32), ":").concat(a3.substr(3)));
-        else if (a3.length >= 2 && 58 === a3.charCodeAt(1)) {
-          var u2;
-          (u2 = a3.charCodeAt(0)) >= 65 && u2 <= 90 && (a3 = "".concat(String.fromCharCode(u2 + 32), ":").concat(a3.substr(2)));
+      if (s2) {
+        if (s2.length >= 3 && 47 === s2.charCodeAt(0) && 58 === s2.charCodeAt(2)) {
+          const t4 = s2.charCodeAt(1);
+          t4 >= 65 && t4 <= 90 && (s2 = `/${String.fromCharCode(t4 + 32)}:${s2.substr(3)}`);
+        } else if (s2.length >= 2 && 58 === s2.charCodeAt(1)) {
+          const t4 = s2.charCodeAt(0);
+          t4 >= 65 && t4 <= 90 && (s2 = `${String.fromCharCode(t4 + 32)}:${s2.substr(2)}`);
         }
-        n2 += r2(a3, true, false);
+        n2 += r2(s2, true, false);
       }
-      return h2 && (n2 += "?", n2 += r2(h2, false, false)), s2 && (n2 += "#", n2 += e3 ? s2 : m(s2, false, false)), n2;
+      return h2 && (n2 += "?", n2 += r2(h2, false, false)), c2 && (n2 += "#", n2 += e3 ? c2 : d(c2, false, false)), n2;
     }
-    function w(t3) {
+    function v(t3) {
       try {
         return decodeURIComponent(t3);
-      } catch (e3) {
-        return t3.length > 3 ? t3.substr(0, 3) + w(t3.substr(3)) : t3;
+      } catch {
+        return t3.length > 3 ? t3.substr(0, 3) + v(t3.substr(3)) : t3;
       }
     }
-    var x = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
-    function _2(t3) {
-      return t3.match(x) ? t3.replace(x, function(t4) {
-        return w(t4);
-      }) : t3;
+    const b = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+    function C(t3) {
+      return t3.match(b) ? t3.replace(b, (t4) => v(t4)) : t3;
     }
-    var O, P = r(470), j = function(t3, e3, r2) {
-      if (r2 || 2 === arguments.length)
-        for (var n2, o2 = 0, i2 = e3.length; o2 < i2; o2++)
-          !n2 && o2 in e3 || (n2 || (n2 = Array.prototype.slice.call(e3, 0, o2)), n2[o2] = e3[o2]);
-      return t3.concat(n2 || Array.prototype.slice.call(e3));
-    }, I = P.posix || P, U = "/";
+    var A2 = r(470);
+    const w = A2.posix || A2, x = "/";
+    var P;
     !function(t3) {
-      t3.joinPath = function(t4) {
-        for (var e3 = [], r2 = 1; r2 < arguments.length; r2++)
-          e3[r2 - 1] = arguments[r2];
-        return t4.with({ path: I.join.apply(I, j([t4.path], e3, false)) });
-      }, t3.resolvePath = function(t4) {
-        for (var e3 = [], r2 = 1; r2 < arguments.length; r2++)
-          e3[r2 - 1] = arguments[r2];
-        var n2 = t4.path, o2 = false;
-        n2[0] !== U && (n2 = U + n2, o2 = true);
-        var i2 = I.resolve.apply(I, j([n2], e3, false));
-        return o2 && i2[0] === U && !t4.authority && (i2 = i2.substring(1)), t4.with({ path: i2 });
+      t3.joinPath = function(t4, ...e3) {
+        return t4.with({ path: w.join(t4.path, ...e3) });
+      }, t3.resolvePath = function(t4, ...e3) {
+        let r2 = t4.path, n2 = false;
+        r2[0] !== x && (r2 = x + r2, n2 = true);
+        let i2 = w.resolve(r2, ...e3);
+        return n2 && i2[0] === x && !t4.authority && (i2 = i2.substring(1)), t4.with({ path: i2 });
       }, t3.dirname = function(t4) {
-        if (0 === t4.path.length || t4.path === U)
+        if (0 === t4.path.length || t4.path === x)
           return t4;
-        var e3 = I.dirname(t4.path);
+        let e3 = w.dirname(t4.path);
         return 1 === e3.length && 46 === e3.charCodeAt(0) && (e3 = ""), t4.with({ path: e3 });
       }, t3.basename = function(t4) {
-        return I.basename(t4.path);
+        return w.basename(t4.path);
       }, t3.extname = function(t4) {
-        return I.extname(t4.path);
+        return w.extname(t4.path);
       };
-    }(O || (O = {}));
+    }(P || (P = {}));
   })(), LIB = n;
 })();
 var { URI, Utils } = LIB;

@@ -87,7 +87,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         ) => {
             let postMessage = {
                 "type": MessageType.validate,
-                "sessionId": result.uri.replace(/^file:\/{2,3}/, ""),
+                "documentUri": result.uri,
                 "value": result.diagnostics,
             };
             this.ctx.postMessage(postMessage);
@@ -203,13 +203,13 @@ export class LanguageClient extends BaseService implements LanguageService {
             this.isInitialized = true;
             this.serviceCapabilities = params.capabilities as lsp.ServerCapabilities;
             const serviceName = this.serviceName;
-            Object.keys(this.documents).forEach((sessionId) => {
+            Object.keys(this.documents).forEach((documentUri) => {
                 const postMessage = {
                     "type": MessageType.capabilitiesChange,
                     "value": {
                         [serviceName]: this.serviceCapabilities
                     },
-                    sessionId: sessionId
+                    documentUri: documentUri
                 };
                 this.ctx.postMessage(postMessage);
             });

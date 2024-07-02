@@ -1,15 +1,19 @@
-import {Ace} from "ace-code";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import * as lsp from "vscode-languageserver-protocol";
 import {ServiceFeatures, ServiceOptions, SupportedServices} from "./types/language-service";
+import {ComboDocumentIdentifier} from "./types/message-controller-interface";
 
 export abstract class BaseMessage {
     abstract type: MessageType;
     sessionId: string;
+    documentUri: lsp.DocumentUri;
     version?: number;
+    callbackId: number;
 
-    protected constructor(sessionId) {
-        this.sessionId = sessionId;
+    protected constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number) {
+        this.sessionId = documentIdentifier.sessionId;
+        this.documentUri = documentIdentifier.documentUri;
+        this.callbackId = callbackId;
     }
 }
 
@@ -20,8 +24,8 @@ export class InitMessage extends BaseMessage {
     value: string;
     version: number;
 
-    constructor(sessionId: string, value: string, version: number, mode: string, options?: { [p: string]: any }) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number, mode: string, options?: { [p: string]: any }) {
+        super(documentIdentifier, callbackId);
         this.version = version;
         this.options = options;
         this.mode = mode;
@@ -34,8 +38,8 @@ export class FormatMessage extends BaseMessage {
     value: lsp.Range;
     format: FormattingOptions;
 
-    constructor(sessionId: string, value: lsp.Range, format) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Range, format) {
+        super(documentIdentifier, callbackId);
         this.value = value;
         this.format = format;
     }
@@ -45,8 +49,8 @@ export class CompleteMessage extends BaseMessage {
     type: MessageType.complete = MessageType.complete;
     value: lsp.Position;
 
-    constructor(sessionId: string, value: lsp.Position) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Position) {
+        super(documentIdentifier, callbackId);
         this.value = value;
     }
 }
@@ -55,8 +59,8 @@ export class ResolveCompletionMessage extends BaseMessage {
     type: MessageType.resolveCompletion = MessageType.resolveCompletion;
     value: lsp.CompletionItem;
 
-    constructor(sessionId: string, value: lsp.CompletionItem) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.CompletionItem) {
+        super(documentIdentifier, callbackId);
         this.value = value;
     }
 }
@@ -65,8 +69,8 @@ export class HoverMessage extends BaseMessage {
     type: MessageType.hover = MessageType.hover;
     value: lsp.Position;
 
-    constructor(sessionId: string, value: lsp.Position) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Position) {
+        super(documentIdentifier, callbackId);
         this.value = value;
     }
 }
@@ -74,8 +78,8 @@ export class HoverMessage extends BaseMessage {
 export class ValidateMessage extends BaseMessage {
     type: MessageType.validate = MessageType.validate;
 
-    constructor(sessionId: string) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number) {
+        super(documentIdentifier, callbackId);
     }
 }
 
@@ -84,8 +88,8 @@ export class ChangeMessage extends BaseMessage {
     value: string;
     version: number
 
-    constructor(sessionId: string, value: string, version: number) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number) {
+        super(documentIdentifier, callbackId);
         this.value = value;
         this.version = version;
     }
@@ -96,8 +100,8 @@ export class DeltasMessage extends BaseMessage {
     value: lsp.TextDocumentContentChangeEvent[];
     version: number;
 
-    constructor(sessionId: string, value: lsp.TextDocumentContentChangeEvent[], version: number) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.TextDocumentContentChangeEvent[], version: number) {
+        super(documentIdentifier, callbackId);
         this.value = value;
         this.version = version;
     }
@@ -109,8 +113,8 @@ export class ChangeModeMessage extends BaseMessage {
     value: string;
     version: number;
 
-    constructor(sessionId: string, value: string, version: number, mode: string) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number, mode: string) {
+        super(documentIdentifier, callbackId);
         this.value = value;
         this.mode = mode;
         this.version = version;
@@ -122,8 +126,8 @@ export class ChangeOptionsMessage extends BaseMessage {
     options: ServiceOptions;
     merge: boolean;
 
-    constructor(sessionId: string, options: ServiceOptions, merge: boolean = false) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, options: ServiceOptions, merge: boolean = false) {
+        super(documentIdentifier, callbackId);
         this.options = options;
         this.merge = merge;
     }
@@ -132,15 +136,17 @@ export class ChangeOptionsMessage extends BaseMessage {
 export class CloseDocumentMessage extends BaseMessage {
     type: MessageType.closeDocument = MessageType.closeDocument;
 
-    constructor(sessionId: string) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number) {
+        super(documentIdentifier, callbackId);
     }
 }
 
-export class DisposeMessage extends BaseMessage {
+export class DisposeMessage {
     type: MessageType.dispose = MessageType.dispose;
-    constructor() {
-        super("");
+    callbackId: number;
+    
+    constructor(callbackId: number) {
+        this.callbackId = callbackId;
     }
 }
 
@@ -172,8 +178,8 @@ export class SignatureHelpMessage extends BaseMessage {
     type: MessageType.signatureHelp = MessageType.signatureHelp;
     value: lsp.Position;
 
-    constructor(sessionId: string, value: lsp.Position) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Position) {
+        super(documentIdentifier, callbackId);
         this.value = value;
     }
 }
@@ -182,8 +188,8 @@ export class DocumentHighlightMessage extends BaseMessage {
     type: MessageType.documentHighlight = MessageType.documentHighlight;
     value: lsp.Position;
 
-    constructor(sessionId: string, value: lsp.Position) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Position) {
+        super(documentIdentifier, callbackId);
         this.value = value;
     }
 }
@@ -192,8 +198,8 @@ export class GetSemanticTokensMessage extends BaseMessage {
     type: MessageType.getSemanticTokens = MessageType.getSemanticTokens;
     value: lsp.Range; 
 
-    constructor(sessionId: string, value: lsp.Range) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Range) {
+        super(documentIdentifier, callbackId);
         this.value = value;
     }
 }
@@ -203,8 +209,8 @@ export class GetCodeActionsMessage extends BaseMessage {
     value: lsp.Range;
     context: lsp.CodeActionContext;
 
-    constructor(sessionId: string, value: lsp.Range, context: lsp.CodeActionContext) {
-        super(sessionId);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Range, context: lsp.CodeActionContext) {
+        super(documentIdentifier, callbackId);
         this.value = value;
         this.context = context;
     }

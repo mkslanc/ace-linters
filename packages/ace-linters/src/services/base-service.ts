@@ -7,8 +7,8 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     abstract $service;
     serviceName: string;
     mode: string;
-    documents: { [sessionID: string]: TextDocument } = {};
-    options: { [sessionID: string]: OptionsType } = {};
+    documents: { [documentUri: lsp.DocumentUri]: TextDocument } = {};
+    options: { [documentUri: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
@@ -123,13 +123,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         this.globalOptions = options ?? {} as OptionsType;
     }
 
-    setOptions(sessionID: string, options: OptionsType, merge = false) {
-        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
+    setOptions(documentUri: string, options: OptionsType, merge = false) {
+        this.options[documentUri] = merge ? mergeObjects(options, this.options[documentUri]) : options;
     }
 
-    getOption<T extends keyof OptionsType>(sessionID: string, optionName: T): OptionsType[T] {
-        if (this.options[sessionID] && this.options[sessionID][optionName]) {
-            return this.options[sessionID][optionName];
+    getOption<T extends keyof OptionsType>(documentUri: string, optionName: T): OptionsType[T] {
+        if (this.options[documentUri] && this.options[documentUri][optionName]) {
+            return this.options[documentUri][optionName];
         } else {
             return this.globalOptions[optionName];
         }
