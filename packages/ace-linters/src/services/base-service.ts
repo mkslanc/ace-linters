@@ -15,6 +15,17 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
+            diagnostic: {
+                dynamicRegistration: true,
+                relatedDocumentSupport: true
+            },
+            publishDiagnostics: {
+                relatedInformation: true,
+                versionSupport: false,
+                tagSupport: {
+                    valueSet: [lsp.DiagnosticTag.Unnecessary, lsp.DiagnosticTag.Deprecated]
+                }
+            },
             hover: {
                 dynamicRegistration: true,
                 contentFormat: ['markdown', 'plaintext'],
@@ -61,6 +72,9 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                     range: true
                 },
                 augmentsSyntaxTokens: true
+            },
+            codeAction: {
+                dynamicRegistration: true
             }
         },
         workspace: {
@@ -174,4 +188,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return Promise.resolve();
     }
 
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null> {
+        return Promise.resolve(null);
+    }
 }

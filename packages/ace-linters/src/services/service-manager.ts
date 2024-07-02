@@ -167,6 +167,10 @@ export class ServiceManager {
                         postMessage["value"] = await serviceInstances[0].getSemanticTokens(documentIdentifier, message.value);
                     }
                     break;
+                case MessageType.getCodeActions:
+                    let codeActions = await this.aggregateFeatureResponses(serviceInstances, "codeAction", "getCodeActions", documentIdentifier, [message.value, message.context] );
+                    postMessage["value"] = codeActions.flat();
+                    break;
             }
 
             ctx.postMessage(postMessage);
@@ -191,10 +195,14 @@ export class ServiceManager {
         feature: SupportedFeatures,
         methodName: string,
         documentIdentifier: VersionedTextDocumentIdentifier,
-        value: any
+        attrs: any | any[]
     ) {
         return (await Promise.all(this.filterByFeature(serviceInstances, feature).map(async (service) => {
-            return service[methodName](documentIdentifier, value);
+            if (Array.isArray(attrs)) {
+                return service[methodName](documentIdentifier, ...attrs);
+            } else {
+                return service[methodName](documentIdentifier, attrs);
+            }
         }))).filter(notEmpty);
     }
 
@@ -339,6 +347,8 @@ export class ServiceManager {
                     return capabilities.documentHighlightProvider == true;
                 case "semanticTokens":
                     return capabilities.semanticTokensProvider != undefined;
+                case "codeAction":
+                    return capabilities.codeActionProvider != undefined;
             }
         });
     }
@@ -384,6 +394,7 @@ export class ServiceManager {
         features.signatureHelp ??= true;
         features.documentHighlight ??= true;
         features.semanticTokens ??= true;
+        features.codeAction ??= true;
         return features;
     }
 }

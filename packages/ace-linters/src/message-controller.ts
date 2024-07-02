@@ -10,7 +10,7 @@ import {
     InitMessage, MessageType,
     ResolveCompletionMessage, SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage, DisposeMessage, GetSemanticTokensMessage
+    ValidateMessage, DisposeMessage, GetSemanticTokensMessage, GetCodeActionsMessage
 } from "./message-types";
 import {IMessageController, InitCallbacks} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -59,7 +59,7 @@ export class MessageController extends EventEmitter implements IMessageControlle
         this.postMessage(new HoverMessage(sessionId, position), callback)
     }
 
-    change(sessionId: string, deltas, document: Ace.Document, callback?: () => void) {
+    change(sessionId: string, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void) {
         let message: BaseMessage;
         if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
             message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
@@ -105,6 +105,10 @@ export class MessageController extends EventEmitter implements IMessageControlle
 
     getSemanticTokens(sessionId: string, range: lsp.Range,  callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
         this.postMessage(new GetSemanticTokensMessage(sessionId, range), callback);
+    }
+
+    getCodeActions(sessionId: string, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void) {
+        this.postMessage(new GetCodeActionsMessage(sessionId, range, context), callback);
     }
 
     postMessage(message: BaseMessage, callback?: (any) => void) {
