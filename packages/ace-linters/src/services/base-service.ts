@@ -7,14 +7,25 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     abstract $service;
     serviceName: string;
     mode: string;
-    documents: { [sessionID: string]: TextDocument } = {};
-    options: { [sessionID: string]: OptionsType } = {};
+    documents: { [documentUri: lsp.DocumentUri]: TextDocument } = {};
+    options: { [documentUri: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
     
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
+            diagnostic: {
+                dynamicRegistration: true,
+                relatedDocumentSupport: true
+            },
+            publishDiagnostics: {
+                relatedInformation: true,
+                versionSupport: false,
+                tagSupport: {
+                    valueSet: [lsp.DiagnosticTag.Unnecessary, lsp.DiagnosticTag.Deprecated]
+                }
+            },
             hover: {
                 dynamicRegistration: true,
                 contentFormat: ['markdown', 'plaintext'],
@@ -61,6 +72,9 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                     range: true
                 },
                 augmentsSyntaxTokens: true
+            },
+            codeAction: {
+                dynamicRegistration: true
             }
         },
         workspace: {
@@ -109,13 +123,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         this.globalOptions = options ?? {} as OptionsType;
     }
 
-    setOptions(sessionID: string, options: OptionsType, merge = false) {
-        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
+    setOptions(documentUri: string, options: OptionsType, merge = false) {
+        this.options[documentUri] = merge ? mergeObjects(options, this.options[documentUri]) : options;
     }
 
-    getOption<T extends keyof OptionsType>(sessionID: string, optionName: T): OptionsType[T] {
-        if (this.options[sessionID] && this.options[sessionID][optionName]) {
-            return this.options[sessionID][optionName];
+    getOption<T extends keyof OptionsType>(documentUri: string, optionName: T): OptionsType[T] {
+        if (this.options[documentUri] && this.options[documentUri][optionName]) {
+            return this.options[documentUri][optionName];
         } else {
             return this.globalOptions[optionName];
         }
@@ -174,4 +188,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return Promise.resolve();
     }
 
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null> {
+        return Promise.resolve(null);
+    }
 }
