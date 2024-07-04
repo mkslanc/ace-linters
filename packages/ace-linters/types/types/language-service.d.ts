@@ -6,7 +6,7 @@ import { TextDocumentIdentifier, TextDocumentItem } from "vscode-languageserver-
 import { MarkDownConverter } from "./converters";
 export interface LanguageService {
     documents: {
-        [sessionID: string]: TextDocument;
+        [documentUri: string]: TextDocument;
     };
     $service: any;
     serviceName: string;
@@ -22,7 +22,7 @@ export interface LanguageService {
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): any;
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): any;
     addDocument(document: TextDocumentItem): any;
-    setOptions(sessionID: string, options: ServiceOptions, merge?: boolean): any;
+    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean): any;
     setGlobalOptions(options: ServiceOptions): any;
     getDocument(uri: string): TextDocument;
     removeDocument(document: TextDocumentIdentifier): any;
@@ -30,6 +30,7 @@ export interface LanguageService {
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
     dispose(): Promise<void>;
 }
 interface TooltipContent {
@@ -174,11 +175,12 @@ export interface ProviderOptions {
         semanticTokens?: boolean;
     };
     markdownConverter?: MarkDownConverter;
+    workspaceUrl?: string;
 }
 export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction";
 export interface ServiceConfig extends BaseConfig {
     className: string;
     options?: ServiceOptions;

@@ -7,6 +7,7 @@ export declare function toRange(range: Range): AceRangeData;
 export declare function fromPoint(point: Ace.Point): Position;
 export declare function toPoint(position: Position): Ace.Point;
 export declare function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[];
+export declare function fromAnnotations(annotations: Ace.Annotation[]): Diagnostic[];
 export declare function toCompletion(item: CompletionItem): {
     meta: string | undefined;
     caption: string;

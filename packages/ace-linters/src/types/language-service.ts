@@ -213,7 +213,8 @@ export interface ProviderOptions {
         signatureHelp?: boolean,
         semanticTokens?: boolean
     },
-    markdownConverter?: MarkDownConverter
+    markdownConverter?: MarkDownConverter,
+    workspaceUrl?: string
 }
 
 export type ServiceFeatures = {

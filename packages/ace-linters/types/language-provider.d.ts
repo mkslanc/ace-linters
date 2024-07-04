@@ -1,16 +1,22 @@
 import { Ace } from "ace-code";
-import { IMessageController } from "./types/message-controller-interface";
+import { ComboDocumentIdentifier, IMessageController } from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
 import { ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, ServiceStruct, SupportedServices, Tooltip } from "./types/language-service";
+import { MarkerGroup } from "./ace/marker_group";
 export declare class LanguageProvider {
     activeEditor: Ace.Editor;
     private readonly $messageController;
     private $signatureTooltip;
-    private $sessionLanguageProviders;
+    $sessionLanguageProviders: {
+        [sessionID: string]: SessionLanguageProvider;
+    };
     editors: Ace.Editor[];
     options: ProviderOptions;
     private $hoverTooltip;
-    constructor(messageController: IMessageController, options?: ProviderOptions);
+    $urisToSessionsIds: {
+        [uri: string]: string;
+    };
+    private constructor();
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
@@ -40,7 +46,14 @@ export declare class LanguageProvider {
     private $registerSession;
     private $getSessionLanguageProvider;
     private $getFileName;
-    registerEditor(editor: Ace.Editor): void;
+    /**
+     * Registers an Ace editor instance with the language provider.
+     * @param editor - The Ace editor instance to register.
+     * @param filePath - The full file path associated with the editor.
+     */
+    registerEditor(editor: Ace.Editor, filePath?: string): void;
+    codeActionCallback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void;
+    setCodeActionCallback(callback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void): void;
     $registerEditor(editor: Ace.Editor): void;
     private $initHoverTooltip;
     setStyle(editor: any): void;
@@ -63,3 +76,54 @@ export declare class LanguageProvider {
      */
     closeDocument(session: Ace.EditSession, callback?: any): void;
 }
+declare class SessionLanguageProvider {
+    session: Ace.EditSession;
+    documentUri: string;
+    private $messageController;
+    private $deltaQueue;
+    private $isConnected;
+    private $modeIsChanged;
+    private $options;
+    private $servicesCapabilities?;
+    state: {
+        occurrenceMarkers: MarkerGroup | null;
+        diagnosticMarkers: MarkerGroup | null;
+    };
+    private extensions;
+    editor: Ace.Editor;
+    private semanticTokensLegend?;
+    private $provider;
+    /**
+     * Constructs a new instance of the `SessionLanguageProvider` class.
+     *
+     * @param provider - The `LanguageProvider` instance.
+     * @param session - The Ace editor session.
+     * @param editor - The Ace editor instance.
+     * @param messageController - The `IMessageController` instance for handling messages.
+     * @param options - Optional service options.
+     * @param filePath - Associated file path (optional). Would be transformed to URI format
+     */
+    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, options?: ServiceOptions, filePath?: string);
+    get comboDocumentIdentifier(): ComboDocumentIdentifier;
+    addSemanticTokenSupport(session: Ace.EditSession): void;
+    private $connected;
+    private $changeMode;
+    setServerCapabilities: (capabilities: {
+        [serviceName: string]: lsp.ServerCapabilities<any>;
+    }) => void;
+    private initDocumentUri;
+    private get $extension();
+    private get $mode();
+    private get $format();
+    private $changeListener;
+    $sendDeltaQueue: (callback?: any) => any;
+    $showAnnotations: (diagnostics: lsp.Diagnostic[]) => void;
+    setOptions<OptionsType extends ServiceOptions>(options: OptionsType): void;
+    validate: () => void;
+    format: () => void;
+    private $applyFormat;
+    getSemanticTokens(): void;
+    $applyDocumentHighlight: (documentHighlights: lsp.DocumentHighlight[]) => void;
+    closeDocument(callback?: any): void;
+}
+export {};

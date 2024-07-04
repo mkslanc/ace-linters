@@ -6,10 +6,10 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     serviceName: string;
     mode: string;
     documents: {
-        [sessionID: string]: TextDocument;
+        [documentUri: lsp.DocumentUri]: TextDocument;
     };
     options: {
-        [sessionID: string]: OptionsType;
+        [documentUri: string]: OptionsType;
     };
     globalOptions: OptionsType;
     serviceData: ServiceConfig;
@@ -22,8 +22,8 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     getDocumentValue(uri: string): string | undefined;
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
     setGlobalOptions(options: OptionsType): void;
-    setOptions(sessionID: string, options: OptionsType, merge?: boolean): void;
-    getOption<T extends keyof OptionsType>(sessionID: string, optionName: T): OptionsType[T];
+    setOptions(documentUri: string, options: OptionsType, merge?: boolean): void;
+    getOption<T extends keyof OptionsType>(documentUri: string, optionName: T): OptionsType[T];
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
     doComplete(document: any, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
     doHover(document: any, position: lsp.Position): Promise<lsp.Hover | null>;
@@ -35,4 +35,5 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     get optionsToFilterDiagnostics(): FilterDiagnosticsOptions;
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
     dispose(): Promise<void>;
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
 }

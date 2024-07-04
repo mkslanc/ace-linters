@@ -46,11 +46,15 @@ export class LanguageProvider {
     options: ProviderOptions;
     private $hoverTooltip: HoverTooltip;
     $urisToSessionsIds: { [uri: string]: string } = {};
+    //private workspaceUri: string;
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
+        /*if (options?.workspaceUrl) {
+            this.workspaceUri = URI.file(options?.workspaceUrl).toString();
+        }*/
     }
 
     /**
@@ -150,6 +154,13 @@ export class LanguageProvider {
             this.$registerEditor(editor);
         this.$registerSession(editor.session, editor, undefined, filePath);
     }
+
+    codeActionCallback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void;
+
+    setCodeActionCallback(callback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void) {
+        this.codeActionCallback = callback;
+    }
+
 
     $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);

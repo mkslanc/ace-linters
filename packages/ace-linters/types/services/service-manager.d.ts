@@ -17,8 +17,8 @@ export declare class ServiceManager {
         addEventListener: any;
     });
     private getServicesCapabilitiesAfterCallback;
-    aggregateFeatureResponses(serviceInstances: LanguageService[], feature: SupportedFeatures, methodName: string, documentIdentifier: VersionedTextDocumentIdentifier, value: any): Promise<any[]>;
-    applyOptionsToServices(serviceInstances: LanguageService[], sessionID: string, options: ServiceOptions): void;
+    aggregateFeatureResponses(serviceInstances: LanguageService[], feature: SupportedFeatures, methodName: string, documentIdentifier: VersionedTextDocumentIdentifier, attrs: any | any[]): Promise<any[]>;
+    applyOptionsToServices(serviceInstances: LanguageService[], documentUri: string, options: ServiceOptions): void;
     disposeAll(): Promise<void>;
     private static $initServiceInstance;
     private $getServicesInstancesByMode;
@@ -31,7 +31,7 @@ export declare class ServiceManager {
         [serviceName: string]: LanguageClientConfig | ServiceConfig;
     } | undefined>;
     removeDocument(document: TextDocumentIdentifier): void;
-    getServicesInstances(sessionID: string): LanguageService[];
+    getServicesInstances(documentUri: string): LanguageService[];
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[];
     findServicesByMode(mode: string): {
         [serviceName: string]: (ServiceConfig | LanguageClientConfig);
