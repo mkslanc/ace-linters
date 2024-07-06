@@ -81,6 +81,9 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             didChangeConfiguration: {
                 dynamicRegistration: true,
             },
+            executeCommand: {
+                dynamicRegistration: true
+            }
         } as lsp.WorkspaceClientCapabilities,
     };
 
@@ -189,6 +192,10 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     }
 
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null> {
+        return Promise.resolve(null);
+    }
+
+    executeCommand(command: string, args?: any[]): Promise<any | null> {
         return Promise.resolve(null);
     }
 }

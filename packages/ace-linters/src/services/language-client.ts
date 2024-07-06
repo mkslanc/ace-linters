@@ -413,4 +413,17 @@ export class LanguageClient extends BaseService implements LanguageService {
         };
         return this.connection.sendRequest('textDocument/codeAction', options) as Promise<(lsp.Command | lsp.CodeAction)[] | null>
     }
+    
+    executeCommand(command: string, args?: lsp.LSPAny[]) {
+        if (!this.isInitialized)
+            return Promise.resolve(null);
+        if (!this.serviceCapabilities?.executeCommandProvider || !this.serviceCapabilities?.executeCommandProvider.commands.includes(command))
+            return Promise.resolve(null);
+        let options: lsp.ExecuteCommandParams = {
+            command,
+            arguments: args
+        };
+        return this.connection.sendRequest('workspace/executeCommand', options) as Promise<any>
+    }
+    
 }

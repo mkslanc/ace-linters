@@ -216,6 +216,21 @@ export class GetCodeActionsMessage extends BaseMessage {
     }
 }
 
+export class ExecuteCommandMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.executeCommand = MessageType.executeCommand;
+    value: string;
+    args: any[] | undefined;
+    
+    constructor(serviceName: string, callbackId: number, command: string, args?: any[]) {
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = command;
+        this.args = args;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -235,9 +250,10 @@ export enum MessageType {
     dispose,
     capabilitiesChange,
     getSemanticTokens,
-    getCodeActions
+    getCodeActions,
+    executeCommand
 }
 
 export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | 
     HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | 
-    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage; 
+    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage; 

@@ -19,7 +19,7 @@ import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
 import {
-    AceRangeData,
+    AceRangeData, CodeActionsByService,
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
@@ -155,10 +155,14 @@ export class LanguageProvider {
         this.$registerSession(editor.session, editor, undefined, filePath);
     }
 
-    codeActionCallback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void;
+    codeActionCallback: (codeActions: CodeActionsByService[]) => void;
 
-    setCodeActionCallback(callback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void) {
+    setCodeActionCallback(callback: (codeActions: CodeActionsByService[]) => void) {
         this.codeActionCallback = callback;
+    }
+
+    executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void {
+        this.$messageController.executeCommand(serviceName, command, args, callback); //TODO:
     }
 
 
@@ -169,7 +173,7 @@ export class LanguageProvider {
         AceRange.getConstructor(editor);
 
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
+        editor.on("changeSession", ({session}) => this.$registerSession(session, editor, undefined, session["documentUri"]));
         if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
         }
@@ -193,6 +197,21 @@ export class LanguageProvider {
                         }, 50);
             });
         }
+
+        //TODO: functionality
+        var actionTimer
+        // @ts-ignore
+        editor.on("changeSelection", () => {
+            if (!actionTimer)
+                actionTimer =
+                    setTimeout(() => {
+                        let selection = editor.getSelection().getRange();
+                        let cursor = editor.getCursorPosition();
+                        let diagnostics = fromAnnotations(editor.session.getAnnotations().filter((el) => el.row === cursor.row));
+                        this.$messageController.getCodeActions(this.$getFileName(editor.session), fromRange(selection), {diagnostics}, this.codeActionCallback);
+                        actionTimer = undefined;
+                    }, 50);
+        });
 
         if (this.options.functionality!.hover) {
             if (!this.$hoverTooltip) {

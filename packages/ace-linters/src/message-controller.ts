@@ -10,11 +10,18 @@ import {
     InitMessage, MessageType,
     ResolveCompletionMessage, SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage, DisposeMessage, GetSemanticTokensMessage, GetCodeActionsMessage
+    ValidateMessage, DisposeMessage, GetSemanticTokensMessage, GetCodeActionsMessage, ExecuteCommandMessage
 } from "./message-types";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types/language-service";
+import {
+    CodeActionsByService,
+    CompletionService,
+    ServiceFeatures,
+    ServiceOptions,
+    ServiceOptionsMap,
+    SupportedServices
+} from "./types/language-service";
 import type {LanguageProvider} from "./language-provider";
 
 export class MessageController implements IMessageController {
@@ -126,11 +133,15 @@ export class MessageController implements IMessageController {
         this.postMessage(new GetSemanticTokensMessage(documentIdentifier, this.callbackId++, range), callback);
     }
 
-    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void) {
+    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: CodeActionsByService[]) => void) {
         this.postMessage(new GetCodeActionsMessage(documentIdentifier, this.callbackId++, range, context), callback);
     }
 
-    postMessage(message: BaseMessage | DisposeMessage, callback?: (any) => void) {
+    executeCommand(serviceName: string, command: string, args?: any[],  callback?: (result: any) => void) {
+        this.postMessage(new ExecuteCommandMessage(serviceName, this.callbackId++, command, args), callback);
+    }
+
+    postMessage(message: BaseMessage | DisposeMessage | ExecuteCommandMessage, callback?: (any) => void) {
         if (callback) {
             this.callbacks[message.callbackId] = callback;
         }

@@ -31,6 +31,7 @@ export interface LanguageService {
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
+    executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
     dispose(): Promise<void>;
 }
 interface TooltipContent {
@@ -180,7 +181,7 @@ export interface ProviderOptions {
 export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
 export interface ServiceConfig extends BaseConfig {
     className: string;
     options?: ServiceOptions;
@@ -238,4 +239,8 @@ export type ServiceStruct = {
     modes: string;
     cdnUrl?: string;
 };
+export interface CodeActionsByService {
+    codeActions: (lsp.Command | lsp.CodeAction)[] | null;
+    service: string;
+}
 export {};

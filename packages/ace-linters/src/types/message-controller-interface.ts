@@ -1,6 +1,12 @@
 import {Ace} from "ace-code";
 import * as lsp from "vscode-languageserver-protocol";
-import {CompletionService, ServiceFeatures, ServiceOptions, SupportedServices} from "./language-service";
+import {
+    CodeActionsByService,
+    CompletionService,
+    ServiceFeatures,
+    ServiceOptions,
+    SupportedServices
+} from "./language-service";
 
 export interface ComboDocumentIdentifier {
     sessionId: string;
@@ -42,5 +48,7 @@ export interface IMessageController {
 
     getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void);
 
-    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void);
+    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: CodeActionsByService[]) => void);
+
+    executeCommand(serviceName: string, command: string, args?: any[],  callback?: (result: any) => void);
 }

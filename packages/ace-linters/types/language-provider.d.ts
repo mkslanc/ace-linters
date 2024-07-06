@@ -1,7 +1,7 @@
 import { Ace } from "ace-code";
 import { ComboDocumentIdentifier, IMessageController } from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import { ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, ServiceStruct, SupportedServices, Tooltip } from "./types/language-service";
+import { CodeActionsByService, ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, ServiceStruct, SupportedServices, Tooltip } from "./types/language-service";
 import { MarkerGroup } from "./ace/marker_group";
 export declare class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -52,8 +52,9 @@ export declare class LanguageProvider {
      * @param filePath - The full file path associated with the editor.
      */
     registerEditor(editor: Ace.Editor, filePath?: string): void;
-    codeActionCallback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void;
-    setCodeActionCallback(callback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void): void;
+    codeActionCallback: (codeActions: CodeActionsByService[]) => void;
+    setCodeActionCallback(callback: (codeActions: CodeActionsByService[]) => void): void;
+    executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void;
     $registerEditor(editor: Ace.Editor): void;
     private $initHoverTooltip;
     setStyle(editor: any): void;
