@@ -180,6 +180,9 @@ export class ServiceManager {
                 case MessageType.executeCommand:
                     postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.executeCommand(message.value, message.args);
                     break;
+                case MessageType.appliedEdit:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendAppliedResult(message.value, message.callbackId);
+                    break;
             }
 
             ctx.postMessage(postMessage);

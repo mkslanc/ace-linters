@@ -2,15 +2,26 @@ import {Ace} from "ace-code";
 import {
     BaseMessage,
     ChangeMessage,
-    ChangeModeMessage, ChangeOptionsMessage,
+    ChangeModeMessage,
+    ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, CloseDocumentMessage, DocumentHighlightMessage,
-    FormatMessage, GlobalOptionsMessage,
+    DeltasMessage,
+    CloseDocumentMessage,
+    DocumentHighlightMessage,
+    FormatMessage,
+    GlobalOptionsMessage,
     HoverMessage,
-    InitMessage, MessageType,
-    ResolveCompletionMessage, SignatureHelpMessage,
+    InitMessage,
+    MessageType,
+    ResolveCompletionMessage,
+    SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage, DisposeMessage, GetSemanticTokensMessage, GetCodeActionsMessage, ExecuteCommandMessage
+    ValidateMessage,
+    DisposeMessage,
+    GetSemanticTokensMessage,
+    GetCodeActionsMessage,
+    ExecuteCommandMessage,
+    AppliedEditMessage
 } from "./message-types";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -51,6 +62,11 @@ export class MessageController implements IMessageController {
                 } else {
                     this.provider.$sessionLanguageProviders[sessionId]?.setServerCapabilities(message.value);
                 }
+            } else if (message.type === MessageType.applyEdit) {
+                const applied = (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => {
+                    this.$worker.postMessage(new AppliedEditMessage(result, serviceName, message.callbackId));
+                }
+                this.provider.applyEdit(message.value, message.serviceName, applied);
             } else {
                 if (this.callbacks[callbackId]) {
                     this.callbacks[callbackId](message.value);

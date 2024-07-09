@@ -231,6 +231,19 @@ export class ExecuteCommandMessage {
     }
 }
 
+export class AppliedEditMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.appliedEdit = MessageType.appliedEdit;
+    value: lsp.ApplyWorkspaceEditResult;
+
+    constructor(value: lsp.ApplyWorkspaceEditResult, serviceName: string, callbackId: number) {
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = value;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -251,9 +264,11 @@ export enum MessageType {
     capabilitiesChange,
     getSemanticTokens,
     getCodeActions,
-    executeCommand
+    executeCommand,
+    applyEdit,
+    appliedEdit
 }
 
 export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | 
     HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | 
-    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage; 
+    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage | AppliedEditMessage; 

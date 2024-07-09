@@ -49,6 +49,8 @@ export interface LanguageService {
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>
 
     executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
+
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
     
     dispose(): Promise<void>;
 }

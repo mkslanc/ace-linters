@@ -83,7 +83,8 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             },
             executeCommand: {
                 dynamicRegistration: true
-            }
+            },
+            applyEdit: true
         } as lsp.WorkspaceClientCapabilities,
     };
 
@@ -197,5 +198,8 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
 
     executeCommand(command: string, args?: any[]): Promise<any | null> {
         return Promise.resolve(null);
+    }
+
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
     }
 }

@@ -164,6 +164,28 @@ export class LanguageProvider {
     executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void {
         this.$messageController.executeCommand(serviceName, command, args, callback); //TODO:
     }
+    
+    applyEdit(workspaceEdit: lsp.WorkspaceEdit, serviceName: string, callback: (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => void) {
+        if (workspaceEdit.changes) {
+            for (let uri in workspaceEdit.changes) {
+                if (!this.$urisToSessionsIds[uri]) {
+                    callback({
+                        applied: false,
+                        failureReason: "No session found for uri " + uri
+                    }, serviceName);
+                    return;
+                }                
+            }
+            for (let uri in workspaceEdit.changes) {
+                let sessionId = this.$urisToSessionsIds[uri];
+                let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                sessionLanguageProvider.applyEdits(workspaceEdit.changes[uri]);
+            }
+            callback({
+                applied: true,
+            }, serviceName);
+        }           
+    }
 
 
     $registerEditor(editor: Ace.Editor) {
@@ -680,11 +702,11 @@ class SessionLanguageProvider {
                 }];
         }
         for (let range of aceRangeDatas) {
-            this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.$applyFormat);
+            this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
         }
     }
 
-    private $applyFormat = (edits: lsp.TextEdit[]) => {
+    applyEdits = (edits: lsp.TextEdit[]) => {
         edits ??= [];
         for (let edit of edits.reverse()) {
             this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
