@@ -84,7 +84,12 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             executeCommand: {
                 dynamicRegistration: true
             },
-            applyEdit: true
+            applyEdit: true,
+            workspaceEdit: {
+                failureHandling: "abort",
+                normalizesLineEndings: false,
+                documentChanges: false
+            },
         } as lsp.WorkspaceClientCapabilities,
     };
 

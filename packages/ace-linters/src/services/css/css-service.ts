@@ -7,6 +7,7 @@ import * as cssService from 'vscode-css-languageservice';
 import {mergeObjects} from "../../utils";
 import {LanguageService} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
+import {TextDocumentIdentifier} from "vscode-languageserver-protocol";
 
 export class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;
@@ -30,7 +31,8 @@ export class CssService extends BaseService implements LanguageService {
         documentRangeFormattingProvider: true,
         documentFormattingProvider: true,
         documentHighlightProvider: true,
-        hoverProvider: true
+        hoverProvider: true,
+        codeActionProvider: true
     }
     
     constructor(mode: string) {
@@ -109,5 +111,14 @@ export class CssService extends BaseService implements LanguageService {
         const cssDocument = this.$service.parseStylesheet(fullDocument);
         const highlights = this.$service.findDocumentHighlights(fullDocument, position, cssDocument);
         return Promise.resolve(highlights);
+    }
+    
+    getCodeActions(document: TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return Promise.resolve(null);
+        const cssDocument = this.$service.parseStylesheet(fullDocument);
+        const codeActions = this.$service.doCodeActions2(fullDocument, range, context, cssDocument);
+        return Promise.resolve(codeActions);
     }
 }

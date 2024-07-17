@@ -36,6 +36,9 @@ import {
     parseSemanticTokens
 } from "./type-converters/lsp/semantic-tokens";
 import {URI} from "vscode-uri";
+import {LightbulbWidget} from "./components/lightbulb";
+import {AceVirtualRenderer} from "./ace/renderer-singleton";
+import {AceEditor} from "./ace/editor-singleton";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -46,15 +49,12 @@ export class LanguageProvider {
     options: ProviderOptions;
     private $hoverTooltip: HoverTooltip;
     $urisToSessionsIds: { [uri: string]: string } = {};
-    //private workspaceUri: string;
+    private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
-        /*if (options?.workspaceUrl) {
-            this.workspaceUri = URI.file(options?.workspaceUrl).toString();
-        }*/
     }
 
     /**
@@ -114,6 +114,7 @@ export class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
+            codeActions: true
         };
 
         this.options = options ?? {};
@@ -164,38 +165,69 @@ export class LanguageProvider {
     executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void {
         this.$messageController.executeCommand(serviceName, command, args, callback); //TODO:
     }
-    
-    applyEdit(workspaceEdit: lsp.WorkspaceEdit, serviceName: string, callback: (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => void) {
+
+    applyEdit(workspaceEdit: lsp.WorkspaceEdit, serviceName: string, callback?: (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => void) {
         if (workspaceEdit.changes) {
             for (let uri in workspaceEdit.changes) {
                 if (!this.$urisToSessionsIds[uri]) {
-                    callback({
+                    callback && callback({
                         applied: false,
                         failureReason: "No session found for uri " + uri
                     }, serviceName);
                     return;
-                }                
+                }
             }
             for (let uri in workspaceEdit.changes) {
                 let sessionId = this.$urisToSessionsIds[uri];
                 let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
                 sessionLanguageProvider.applyEdits(workspaceEdit.changes[uri]);
             }
-            callback({
+            callback && callback({
                 applied: true,
             }, serviceName);
-        }           
+        }
+        // some servers doesn't respect missing capability
+        if (workspaceEdit.documentChanges) {
+            for (let change of workspaceEdit.documentChanges) {
+                if ("kind" in change) {
+                    // we don't support create/rename/remove stuff
+                    return;
+                }
+                if ("textDocument" in change) {
+                    let uri = change.textDocument.uri;
+                    if (!this.$urisToSessionsIds[uri]) {
+                        callback && callback({
+                            applied: false,
+                            failureReason: "No session found for uri " + uri
+                        }, serviceName);
+                        return;
+                    }
+                }
+            }
+            for (let change of workspaceEdit.documentChanges) {
+                if ("textDocument" in change) {
+                    let sessionId = this.$urisToSessionsIds[change.textDocument.uri];
+                    let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                    sessionLanguageProvider.applyEdits(change.edits);
+                }
+            }
+            callback && callback({
+                applied: true,
+            }, serviceName);
+        }
     }
-
 
     $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);
 
-        //init Range singleton
+        //init singletons
         AceRange.getConstructor(editor);
-
+        AceVirtualRenderer.getConstructor(editor);
+        AceEditor.getConstructor(editor);
+        
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session, editor, undefined, session["documentUri"]));
+
         if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
         }
@@ -220,20 +252,9 @@ export class LanguageProvider {
             });
         }
 
-        //TODO: functionality
-        var actionTimer
-        // @ts-ignore
-        editor.on("changeSelection", () => {
-            if (!actionTimer)
-                actionTimer =
-                    setTimeout(() => {
-                        let selection = editor.getSelection().getRange();
-                        let cursor = editor.getCursorPosition();
-                        let diagnostics = fromAnnotations(editor.session.getAnnotations().filter((el) => el.row === cursor.row));
-                        this.$messageController.getCodeActions(this.$getFileName(editor.session), fromRange(selection), {diagnostics}, this.codeActionCallback);
-                        actionTimer = undefined;
-                    }, 50);
-        });
+        if (this.options.functionality!.codeActions) {
+            this.$provideCodeActions(editor);
+        }
 
         if (this.options.functionality!.hover) {
             if (!this.$hoverTooltip) {
@@ -247,6 +268,43 @@ export class LanguageProvider {
         }
 
         this.setStyle(editor);
+    }
+
+    private $provideCodeActions(editor: Ace.Editor) {
+        const lightBulb = new LightbulbWidget(editor);
+        this.$lightBulbWidgets[editor.id] = lightBulb;
+        lightBulb.setExecuteActionCallback((action, serviceName) => {
+            for (let id in this.$lightBulbWidgets) {
+                this.$lightBulbWidgets[id].hideAll();
+            }
+            if (typeof action.command === "string") {
+                this.executeCommand(action.command, serviceName, action["arguments"]);
+            } else {
+                if (action.command) {
+                    this.executeCommand(action.command.command, serviceName, action.command.arguments);
+                } else if ("edit" in action) {
+                    this.applyEdit(action.edit!, serviceName);
+                }
+            }
+        });
+
+        var actionTimer
+        // @ts-ignore
+        editor.on("changeSelection", () => {
+            if (!actionTimer)
+                actionTimer =
+                    setTimeout(() => {
+                        //TODO: no need to send request on empty
+                        let selection = editor.getSelection().getRange();
+                        let cursor = editor.getCursorPosition();
+                        let diagnostics = fromAnnotations(editor.session.getAnnotations().filter((el) => el.row === cursor.row));
+                        this.$messageController.getCodeActions(this.$getFileName(editor.session), fromRange(selection), {diagnostics}, (codeActions) => {
+                            lightBulb.setCodeActions(codeActions);
+                            lightBulb.showLightbulb();
+                        });
+                        actionTimer = undefined;
+                    }, 500);
+        });
     }
 
     private $initHoverTooltip(editor) {
@@ -330,6 +388,100 @@ export class LanguageProvider {
 .language_highlight_write {
     border: solid 1px #F88;
 }`, "linters.css");
+
+        editor.renderer["$textLayer"].dom.importCssString(`
+.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+    background-color: #CAD6FA;
+    z-index: 1;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+    background-color: #3a674e;
+}
+.ace_editor.ace_autocomplete .ace_line-hover {
+    border: 1px solid #abbffe;
+    margin-top: -1px;
+    background: rgba(233,233,253,0.4);
+    position: absolute;
+    z-index: 2;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_line-hover {
+    border: 1px solid rgba(109, 150, 13, 0.8);
+    background: rgba(58, 103, 78, 0.62);
+}
+.ace_completion-meta {
+    opacity: 0.5;
+    margin-left: 0.9em;
+}
+.ace_completion-message {
+    margin-left: 0.9em;
+    color: blue;
+}
+.ace_editor.ace_autocomplete .ace_completion-highlight{
+    color: #2d69c7;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_completion-highlight{
+    color: #93ca12;
+}
+.ace_editor.ace_autocomplete {
+    width: 300px;
+    z-index: 200000;
+    border: 1px lightgray solid;
+    position: fixed;
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+    line-height: 1.4;
+    background: #fefefe;
+    color: #111;
+}
+.ace_dark.ace_editor.ace_autocomplete {
+    border: 1px #484747 solid;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.51);
+    line-height: 1.4;
+    background: #25282c;
+    color: #c1c1c1;
+}
+.ace_autocomplete .ace_text-layer  {
+    width: calc(100% - 8px);
+}
+.ace_autocomplete .ace_line {
+    display: flex;
+    align-items: center;
+}
+.ace_autocomplete .ace_line > * {
+    min-width: 0;
+    flex: 0 0 auto;
+}
+.ace_autocomplete .ace_line .ace_ {
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ace_autocomplete .ace_completion-spacer {
+    flex: 1;
+}
+.ace_autocomplete.ace_loading:after  {
+    content: "";
+    position: absolute;
+    top: 0px;
+    height: 2px;
+    width: 8%;
+    background: blue;
+    z-index: 100;
+    animation: ace_progress 3s infinite linear;
+    animation-delay: 300ms;
+    transform: translateX(-100%) scaleX(1);
+}
+@keyframes ace_progress {
+    0% { transform: translateX(-100%) scaleX(1) }
+    50% { transform: translateX(625%) scaleX(2) } 
+    100% { transform: translateX(1500%) scaleX(3) } 
+}
+@media (prefers-reduced-motion) {
+    .ace_autocomplete.ace_loading:after {
+        transform: translateX(625%) scaleX(2);
+        animation: none;
+     }
+}
+`, "autocompletion.css", false);
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
@@ -511,7 +663,7 @@ class SessionLanguageProvider {
 
         this.$messageController.init(this.comboDocumentIdentifier, session.doc, this.$mode, options, this.$connected);
     }
-    
+
     get comboDocumentIdentifier(): ComboDocumentIdentifier {
         return {
             documentUri: this.documentUri,

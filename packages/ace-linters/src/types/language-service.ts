@@ -215,7 +215,8 @@ export interface ProviderOptions {
         format?: boolean,
         documentHighlights?: boolean,
         signatureHelp?: boolean,
-        semanticTokens?: boolean
+        semanticTokens?: boolean,
+        codeActions?: boolean
     },
     markdownConverter?: MarkDownConverter,
     workspaceUrl?: string
