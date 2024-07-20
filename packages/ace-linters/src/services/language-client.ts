@@ -21,6 +21,8 @@ export class LanguageClient extends BaseService implements LanguageService {
     private readonly socket: WebSocket;
     private connection: lsp.ProtocolConnection;
     private requestsQueue: Function[] = [];
+    callbackId = 0;
+    callbacks = {};
     
     ctx;
 
@@ -116,6 +118,26 @@ export class LanguageClient extends BaseService implements LanguageService {
             console.log(params);
         });
 
+        this.connection.onRequest('workspace/applyEdit', async (params: lsp.ApplyWorkspaceEditParams) => {
+            return new Promise((resolve, reject) => {
+                const callbackId = this.callbackId++;
+                this.callbacks[callbackId] = (result) => {
+                    if (result.applied) {
+                        resolve(result);
+                    } else {
+                        reject(new Error(result.failureReason));
+                    }
+                };
+                let postMessage = {
+                    "type": MessageType.applyEdit,
+                    "serviceName": this.serviceName,
+                    "value": params.edit,
+                    "callbackId": callbackId,
+                };
+                this.ctx.postMessage(postMessage);
+            });
+        });
+
         this.connection.onError((e) => {
             throw e;
         });
@@ -123,6 +145,13 @@ export class LanguageClient extends BaseService implements LanguageService {
         this.connection.onClose(() => {
             this.isConnected = false;
         });
+    }
+    
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
+       if (!this.isConnected || !this.callbacks[callbackId]) {
+           return;
+       }
+       this.callbacks[callbackId](result);
     }
 
     showLog(params: lsp.ShowMessageParams) {
@@ -413,4 +442,17 @@ export class LanguageClient extends BaseService implements LanguageService {
         };
         return this.connection.sendRequest('textDocument/codeAction', options) as Promise<(lsp.Command | lsp.CodeAction)[] | null>
     }
+    
+    executeCommand(command: string, args?: lsp.LSPAny[]) {
+        if (!this.isInitialized)
+            return Promise.resolve(null);
+        if (!this.serviceCapabilities?.executeCommandProvider || !this.serviceCapabilities?.executeCommandProvider.commands.includes(command))
+            return Promise.resolve(null);
+        let options: lsp.ExecuteCommandParams = {
+            command,
+            arguments: args
+        };
+        return this.connection.sendRequest('workspace/executeCommand', options) as Promise<any>
+    }
+    
 }

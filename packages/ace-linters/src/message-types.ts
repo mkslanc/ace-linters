@@ -216,6 +216,34 @@ export class GetCodeActionsMessage extends BaseMessage {
     }
 }
 
+export class ExecuteCommandMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.executeCommand = MessageType.executeCommand;
+    value: string;
+    args: any[] | undefined;
+    
+    constructor(serviceName: string, callbackId: number, command: string, args?: any[]) {
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = command;
+        this.args = args;
+    }
+}
+
+export class AppliedEditMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.appliedEdit = MessageType.appliedEdit;
+    value: lsp.ApplyWorkspaceEditResult;
+
+    constructor(value: lsp.ApplyWorkspaceEditResult, serviceName: string, callbackId: number) {
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = value;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -235,9 +263,12 @@ export enum MessageType {
     dispose,
     capabilitiesChange,
     getSemanticTokens,
-    getCodeActions
+    getCodeActions,
+    executeCommand,
+    applyEdit,
+    appliedEdit
 }
 
 export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | 
     HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | 
-    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage; 
+    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage | AppliedEditMessage; 

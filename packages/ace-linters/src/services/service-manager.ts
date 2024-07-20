@@ -170,8 +170,18 @@ export class ServiceManager {
                     }
                     break;
                 case MessageType.getCodeActions:
-                    let codeActions = await this.aggregateFeatureResponses(serviceInstances, "codeAction", "getCodeActions", documentIdentifier, [message.value, message.context] );
-                    postMessage["value"] = codeActions.flat();
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "codeAction").map(async (service) => {
+                        return {
+                            codeActions: await service.getCodeActions(documentIdentifier, message.value, message.context),
+                            service: service.serviceName
+                        };
+                    }))).filter(notEmpty);
+                    break;
+                case MessageType.executeCommand:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.executeCommand(message.value, message.args);
+                    break;
+                case MessageType.appliedEdit:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendAppliedResult(message.value, message.callbackId);
                     break;
             }
 
@@ -207,7 +217,7 @@ export class ServiceManager {
             }
         }))).filter(notEmpty);
     }
-
+    
     applyOptionsToServices(serviceInstances: LanguageService[], documentUri: string, options: ServiceOptions) {
         serviceInstances.forEach((service) => {
             service.setOptions(documentUri, options);
@@ -351,6 +361,8 @@ export class ServiceManager {
                     return capabilities.semanticTokensProvider != undefined;
                 case "codeAction":
                     return capabilities.codeActionProvider != undefined;
+                case "executeCommand":
+                    return capabilities.executeCommandProvider != undefined;
             }
         });
     }
@@ -397,6 +409,7 @@ export class ServiceManager {
         features.documentHighlight ??= true;
         features.semanticTokens ??= true;
         features.codeAction ??= true;
+        features.executeCommand ??= true;
         return features;
     }
 }

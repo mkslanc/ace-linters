@@ -36,4 +36,5 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
     dispose(): Promise<void>;
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
+    executeCommand(command: string, args?: any[]): Promise<any | null>;
 }

@@ -16,7 +16,7 @@ import {FilterDiagnosticsOptions} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
-    const lspDiagnostics =diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
+    const lspDiagnostics = diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code.toString())) {
@@ -25,7 +25,7 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, 
             el.category = DiagnosticCategory.Message;
         }
         return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
-            parseMessageText(el.messageText, el.code), fromTsCategory(el.category));
+            parseMessageText(el.messageText, el.code), fromTsCategory(el.category), el.code);
     });
     return filterDiagnostics(lspDiagnostics, filterErrors);
 }
@@ -231,6 +231,45 @@ export function getTokenTypeFromClassification(tsClassification: number): number
 
 export function getTokenModifierFromClassification(tsClassification: number) {
     return tsClassification & TokenEncodingConsts.modifierMask;
+}
+
+export function diagnosticsToErrorCodes(diagnostics: lsp.Diagnostic[]): number[] {
+    return diagnostics.map((el) => {
+        return Number(el.code);
+    }).filter(code => !isNaN(code));
+}
+
+export function toCodeActions(codeFixes: readonly ts.CodeFixAction[], doc: TextDocument): lsp.CodeAction[] {
+    return codeFixes
+        .filter((fix) => {
+            // Removes any 'make a new file'-type code fix
+            return fix.changes.filter((change) => change.isNewFile).length === 0;
+        })
+        .map((fix) => {
+
+            const edit: lsp.WorkspaceEdit = {
+                changes: {}
+            };
+            edit.changes![doc.uri] = [];
+
+            for (const change of fix.changes) {
+                if (change.fileName == doc.uri) {
+
+                }
+                for (const textChange of change.textChanges) {
+                    edit.changes![doc.uri].push({
+                        range: toRange(textChange.span, doc)!,
+                        newText: textChange.newText
+                    });
+                }
+            }
+
+            return {
+                title: fix.description,
+                edit,
+                kind: 'quickfix'
+            };
+        });
 }
 
 export enum SemanticClassificationFormat {

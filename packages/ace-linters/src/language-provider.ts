@@ -19,7 +19,7 @@ import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
 import {
-    AceRangeData,
+    AceRangeData, CodeActionsByService,
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
@@ -36,6 +36,10 @@ import {
     parseSemanticTokens
 } from "./type-converters/lsp/semantic-tokens";
 import {URI} from "vscode-uri";
+import {LightbulbWidget} from "./components/lightbulb";
+import {AceVirtualRenderer} from "./ace/renderer-singleton";
+import {AceEditor} from "./ace/editor-singleton";
+import {setStyles} from "./misc/styles";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -46,15 +50,13 @@ export class LanguageProvider {
     options: ProviderOptions;
     private $hoverTooltip: HoverTooltip;
     $urisToSessionsIds: { [uri: string]: string } = {};
-    //private workspaceUri: string;
+    private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
+    private stylesEmbedded: boolean;
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
-        /*if (options?.workspaceUrl) {
-            this.workspaceUri = URI.file(options?.workspaceUrl).toString();
-        }*/
     }
 
     /**
@@ -114,6 +116,7 @@ export class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
+            codeActions: true
         };
 
         this.options = options ?? {};
@@ -155,21 +158,78 @@ export class LanguageProvider {
         this.$registerSession(editor.session, editor, undefined, filePath);
     }
 
-    codeActionCallback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void;
+    codeActionCallback: (codeActions: CodeActionsByService[]) => void;
 
-    setCodeActionCallback(callback: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void) {
+    setCodeActionCallback(callback: (codeActions: CodeActionsByService[]) => void) {
         this.codeActionCallback = callback;
     }
 
+    executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void {
+        this.$messageController.executeCommand(serviceName, command, args, callback); //TODO:
+    }
+
+    applyEdit(workspaceEdit: lsp.WorkspaceEdit, serviceName: string, callback?: (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => void) {
+        if (workspaceEdit.changes) {
+            for (let uri in workspaceEdit.changes) {
+                if (!this.$urisToSessionsIds[uri]) {
+                    callback && callback({
+                        applied: false,
+                        failureReason: "No session found for uri " + uri
+                    }, serviceName);
+                    return;
+                }
+            }
+            for (let uri in workspaceEdit.changes) {
+                let sessionId = this.$urisToSessionsIds[uri];
+                let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                sessionLanguageProvider.applyEdits(workspaceEdit.changes[uri]);
+            }
+            callback && callback({
+                applied: true,
+            }, serviceName);
+        }
+        // some servers doesn't respect missing capability
+        if (workspaceEdit.documentChanges) {
+            for (let change of workspaceEdit.documentChanges) {
+                if ("kind" in change) {
+                    // we don't support create/rename/remove stuff
+                    return;
+                }
+                if ("textDocument" in change) {
+                    let uri = change.textDocument.uri;
+                    if (!this.$urisToSessionsIds[uri]) {
+                        callback && callback({
+                            applied: false,
+                            failureReason: "No session found for uri " + uri
+                        }, serviceName);
+                        return;
+                    }
+                }
+            }
+            for (let change of workspaceEdit.documentChanges) {
+                if ("textDocument" in change) {
+                    let sessionId = this.$urisToSessionsIds[change.textDocument.uri];
+                    let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                    sessionLanguageProvider.applyEdits(change.edits);
+                }
+            }
+            callback && callback({
+                applied: true,
+            }, serviceName);
+        }
+    }
 
     $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);
 
-        //init Range singleton
+        //init singletons
         AceRange.getConstructor(editor);
+        AceVirtualRenderer.getConstructor(editor);
+        AceEditor.getConstructor(editor);
 
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
+        editor.on("changeSession", ({session}) => this.$registerSession(session, editor, undefined, session["documentUri"]));
+
         if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
         }
@@ -194,6 +254,10 @@ export class LanguageProvider {
             });
         }
 
+        if (this.options.functionality!.codeActions) {
+            this.$provideCodeActions(editor);
+        }
+
         if (this.options.functionality!.hover) {
             if (!this.$hoverTooltip) {
                 this.$hoverTooltip = new HoverTooltip();
@@ -205,7 +269,44 @@ export class LanguageProvider {
             this.$signatureTooltip.registerEditor(editor);
         }
 
-        this.setStyle(editor);
+        this.setStyles(editor);
+    }
+
+    private $provideCodeActions(editor: Ace.Editor) {
+        const lightBulb = new LightbulbWidget(editor);
+        this.$lightBulbWidgets[editor.id] = lightBulb;
+        lightBulb.setExecuteActionCallback((action, serviceName) => {
+            for (let id in this.$lightBulbWidgets) {
+                this.$lightBulbWidgets[id].hideAll();
+            }
+            if (typeof action.command === "string") {
+                this.executeCommand(action.command, serviceName, action["arguments"]);
+            } else {
+                if (action.command) {
+                    this.executeCommand(action.command.command, serviceName, action.command.arguments);
+                } else if ("edit" in action) {
+                    this.applyEdit(action.edit!, serviceName);
+                }
+            }
+        });
+
+        var actionTimer
+        // @ts-ignore
+        editor.on("changeSelection", () => {
+            if (!actionTimer)
+                actionTimer =
+                    setTimeout(() => {
+                        //TODO: no need to send request on empty
+                        let selection = editor.getSelection().getRange();
+                        let cursor = editor.getCursorPosition();
+                        let diagnostics = fromAnnotations(editor.session.getAnnotations().filter((el) => el.row === cursor.row));
+                        this.$messageController.getCodeActions(this.$getFileName(editor.session), fromRange(selection), {diagnostics}, (codeActions) => {
+                            lightBulb.setCodeActions(codeActions);
+                            lightBulb.showLightbulb();
+                        });
+                        actionTimer = undefined;
+                    }, 500);
+        });
     }
 
     private $initHoverTooltip(editor) {
@@ -247,48 +348,11 @@ export class LanguageProvider {
         this.$hoverTooltip.addToEditor(editor);
     }
 
-    setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
-    margin: 0;
-    font-size: 12px;
-}
-
-.ace_tooltip code {
-    font-style: italic;
-    font-size: 11px;
-}
-
-.language_highlight_error {
-    position: absolute;
-    border-bottom: dotted 1px #e00404;
-    z-index: 2000;
-    border-radius: 0;
-}
-
-.language_highlight_warning {
-    position: absolute;
-    border-bottom: solid 1px #DDC50F;
-    z-index: 2000;
-    border-radius: 0;
-}
-
-.language_highlight_info {
-    position: absolute;
-    border-bottom: dotted 1px #999;
-    z-index: 2000;
-    border-radius: 0;
-}
-
-.language_highlight_text, .language_highlight_read, .language_highlight_write {
-    position: absolute;
-    box-sizing: border-box;
-    border: solid 1px #888;
-    z-index: 2000;
-}
-
-.language_highlight_write {
-    border: solid 1px #F88;
-}`, "linters.css");
+    private setStyles(editor) {
+        if (!this.stylesEmbedded) {
+            setStyles(editor);
+            this.stylesEmbedded = true;
+        }
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
@@ -470,7 +534,7 @@ class SessionLanguageProvider {
 
         this.$messageController.init(this.comboDocumentIdentifier, session.doc, this.$mode, options, this.$connected);
     }
-    
+
     get comboDocumentIdentifier(): ComboDocumentIdentifier {
         return {
             documentUri: this.documentUri,
@@ -661,11 +725,11 @@ class SessionLanguageProvider {
                 }];
         }
         for (let range of aceRangeDatas) {
-            this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.$applyFormat);
+            this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
         }
     }
 
-    private $applyFormat = (edits: lsp.TextEdit[]) => {
+    applyEdits = (edits: lsp.TextEdit[]) => {
         edits ??= [];
         for (let edit of edits.reverse()) {
             this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);

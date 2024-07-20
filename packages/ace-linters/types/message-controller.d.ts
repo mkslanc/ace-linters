@@ -1,8 +1,8 @@
 import { Ace } from "ace-code";
-import { BaseMessage, DisposeMessage } from "./message-types";
+import { BaseMessage, DisposeMessage, ExecuteCommandMessage } from "./message-types";
 import { ComboDocumentIdentifier, IMessageController } from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import { CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices } from "./types/language-service";
+import { CodeActionsByService, CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices } from "./types/language-service";
 import type { LanguageProvider } from "./language-provider";
 export declare class MessageController implements IMessageController {
     $worker: Worker;
@@ -28,6 +28,7 @@ export declare class MessageController implements IMessageController {
     findDocumentHighlights(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void): void;
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
     getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void): void;
-    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: (lsp.Command | lsp.CodeAction)[] | null) => void): void;
-    postMessage(message: BaseMessage | DisposeMessage, callback?: (any: any) => void): void;
+    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: CodeActionsByService[]) => void): void;
+    executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): void;
+    postMessage(message: BaseMessage | DisposeMessage | ExecuteCommandMessage, callback?: (any: any) => void): void;
 }

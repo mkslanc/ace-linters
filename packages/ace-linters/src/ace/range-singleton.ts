@@ -1,9 +1,9 @@
-import {Range} from "ace-code";
+import {Ace} from "ace-code";
 
 export class AceRange {
-    private static _instance: Range;
+    private static _instance: new (...args: any[]) => Ace.Range & { [property: string]: any; };
 
-    static getConstructor(editor?: any): Range {
+    static getConstructor(editor?: any): new (...args: any[]) => Ace.Range & { [property: string]: any; } {
         if (!AceRange._instance && editor) {
             AceRange._instance = editor.getSelectionRange().constructor;
         }

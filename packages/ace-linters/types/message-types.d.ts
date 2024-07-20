@@ -115,6 +115,14 @@ export declare class GetCodeActionsMessage extends BaseMessage {
     context: lsp.CodeActionContext;
     constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Range, context: lsp.CodeActionContext);
 }
+export declare class ExecuteCommandMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.executeCommand;
+    value: string;
+    args: any[] | undefined;
+    constructor(serviceName: string, callbackId: number, command: string, args?: any[]);
+}
 export declare enum MessageType {
     init = 0,
     format = 1,
@@ -134,6 +142,7 @@ export declare enum MessageType {
     dispose = 15,
     capabilitiesChange = 16,
     getSemanticTokens = 17,
-    getCodeActions = 18
+    getCodeActions = 18,
+    executeCommand = 19
 }
-export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage;
+export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage;
