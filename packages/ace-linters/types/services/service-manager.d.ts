@@ -12,6 +12,7 @@ export declare class ServiceManager {
         postMessage: any;
         addEventListener: any;
     };
+    workspaceUri?: string;
     constructor(ctx: {
         postMessage: any;
         addEventListener: any;
@@ -19,11 +20,12 @@ export declare class ServiceManager {
     private getServicesCapabilitiesAfterCallback;
     aggregateFeatureResponses(serviceInstances: LanguageService[], feature: SupportedFeatures, methodName: string, documentIdentifier: VersionedTextDocumentIdentifier, attrs: any | any[]): Promise<any[]>;
     applyOptionsToServices(serviceInstances: LanguageService[], documentUri: string, options: ServiceOptions): void;
-    disposeAll(): Promise<void>;
+    closeAllConnections(): Promise<void>;
     private static $initServiceInstance;
     private $getServicesInstancesByMode;
     private initializeService;
     setGlobalOptions(serviceName: string, options: ServiceOptions, merge?: boolean): void;
+    setWorkspace(workspaceUri: string): void;
     addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions): Promise<never[] | {
         [serviceName: string]: LanguageClientConfig | ServiceConfig;
     } | undefined>;

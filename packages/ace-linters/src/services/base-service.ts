@@ -12,6 +12,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     globalOptions: OptionsType = {} as OptionsType;
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
+    workspaceUri?: string;
     
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
@@ -93,16 +94,14 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         } as lsp.WorkspaceClientCapabilities,
     };
 
-    protected constructor(mode: string) {
+    protected constructor(mode: string, workspaceUri?: string) {
         this.mode = mode;
+        this.workspaceUri = workspaceUri;
     }
 
     addDocument(document: lsp.TextDocumentItem) {
         this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version,
             (document as lsp.TextDocumentItem).text)
-        //TODO:
-        /*if (options)
-            this.setSessionOptions(sessionID, options);*/
     }
 
     getDocument(uri: string): TextDocument {
@@ -130,6 +129,11 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
 
     setGlobalOptions(options: OptionsType) {
         this.globalOptions = options ?? {} as OptionsType;
+    }
+
+
+    setWorkspace(workspaceUri: string) {
+        this.workspaceUri = workspaceUri;
     }
 
     setOptions(documentUri: string, options: OptionsType, merge = false) {
@@ -194,6 +198,10 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     }
 
     dispose() {
+        return Promise.resolve();
+    }
+
+    closeConnection() {
         return Promise.resolve();
     }
 

@@ -24,7 +24,9 @@ export class InitMessage extends BaseMessage {
     value: string;
     version: number;
 
-    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number, mode: string, options?: { [p: string]: any }) {
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number, mode: string, options?: {
+        [p: string]: any
+    }) {
         super(documentIdentifier, callbackId);
         this.version = version;
         this.options = options;
@@ -141,10 +143,10 @@ export class CloseDocumentMessage extends BaseMessage {
     }
 }
 
-export class DisposeMessage {
-    type: MessageType.dispose = MessageType.dispose;
+export class CloseConnectionMessage {
+    type: MessageType.closeConnection = MessageType.closeConnection;
     callbackId: number;
-    
+
     constructor(callbackId: number) {
         this.callbackId = callbackId;
     }
@@ -196,7 +198,7 @@ export class DocumentHighlightMessage extends BaseMessage {
 
 export class GetSemanticTokensMessage extends BaseMessage {
     type: MessageType.getSemanticTokens = MessageType.getSemanticTokens;
-    value: lsp.Range; 
+    value: lsp.Range;
 
     constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Range) {
         super(documentIdentifier, callbackId);
@@ -216,13 +218,22 @@ export class GetCodeActionsMessage extends BaseMessage {
     }
 }
 
+export class SetWorkspaceMessage {
+    type: MessageType.setWorkspace = MessageType.setWorkspace;
+    value: string;
+
+    constructor(value: string) {
+        this.value = value;
+    }
+}
+
 export class ExecuteCommandMessage {
     callbackId: number;
     serviceName: string;
     type: MessageType.executeCommand = MessageType.executeCommand;
     value: string;
     args: any[] | undefined;
-    
+
     constructor(serviceName: string, callbackId: number, command: string, args?: any[]) {
         this.serviceName = serviceName;
         this.callbackId = callbackId;
@@ -260,15 +271,37 @@ export enum MessageType {
     configureFeatures,
     signatureHelp,
     documentHighlight,
-    dispose,
+    closeConnection,
     capabilitiesChange,
     getSemanticTokens,
     getCodeActions,
     executeCommand,
     applyEdit,
-    appliedEdit
+    appliedEdit,
+    setWorkspace
 }
 
-export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | 
-    HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | 
-    GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage | AppliedEditMessage; 
+export type AllMessages =
+    InitMessage
+    | FormatMessage
+    | CompleteMessage
+    | ResolveCompletionMessage
+    | ChangeMessage
+    |
+    HoverMessage
+    | ValidateMessage
+    | DeltasMessage
+    | ChangeModeMessage
+    | ChangeOptionsMessage
+    | CloseDocumentMessage
+    |
+    GlobalOptionsMessage
+    | ConfigureFeaturesMessage
+    | SignatureHelpMessage
+    | DocumentHighlightMessage
+    | CloseConnectionMessage
+    | GetSemanticTokensMessage
+    | GetCodeActionsMessage
+    | ExecuteCommandMessage
+    | AppliedEditMessage
+    | SetWorkspaceMessage;

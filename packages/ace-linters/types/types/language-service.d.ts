@@ -14,6 +14,7 @@ export interface LanguageService {
     globalOptions: any;
     serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
+    workspaceUri?: string;
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
@@ -32,7 +33,10 @@ export interface LanguageService {
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
     executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
     dispose(): Promise<void>;
+    closeConnection(): Promise<void>;
+    setWorkspace(workspaceUri: string): void;
 }
 interface TooltipContent {
     type: CommonConverter.TooltipType;
@@ -174,9 +178,11 @@ export interface ProviderOptions {
         documentHighlights?: boolean;
         signatureHelp?: boolean;
         semanticTokens?: boolean;
+        codeActions?: boolean;
     };
     markdownConverter?: MarkDownConverter;
-    workspaceUrl?: string;
+    requireFilePath?: boolean;
+    workspacePath?: string;
 }
 export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;

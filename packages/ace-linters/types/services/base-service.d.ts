@@ -14,14 +14,16 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     globalOptions: OptionsType;
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
+    workspaceUri?: string;
     clientCapabilities: lsp.ClientCapabilities;
-    protected constructor(mode: string);
+    protected constructor(mode: string, workspaceUri?: string);
     addDocument(document: lsp.TextDocumentItem): void;
     getDocument(uri: string): TextDocument;
     removeDocument(document: lsp.TextDocumentIdentifier): void;
     getDocumentValue(uri: string): string | undefined;
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
     setGlobalOptions(options: OptionsType): void;
+    setWorkspace(workspaceUri: string): void;
     setOptions(documentUri: string, options: OptionsType, merge?: boolean): void;
     getOption<T extends keyof OptionsType>(documentUri: string, optionName: T): OptionsType[T];
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
@@ -35,6 +37,8 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     get optionsToFilterDiagnostics(): FilterDiagnosticsOptions;
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
     dispose(): Promise<void>;
+    closeConnection(): Promise<void>;
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
     executeCommand(command: string, args?: any[]): Promise<any | null>;
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
 }

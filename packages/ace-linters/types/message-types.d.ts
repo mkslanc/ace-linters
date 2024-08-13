@@ -76,8 +76,8 @@ export declare class CloseDocumentMessage extends BaseMessage {
     type: MessageType.closeDocument;
     constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number);
 }
-export declare class DisposeMessage {
-    type: MessageType.dispose;
+export declare class CloseConnectionMessage {
+    type: MessageType.closeConnection;
     callbackId: number;
     constructor(callbackId: number);
 }
@@ -115,6 +115,11 @@ export declare class GetCodeActionsMessage extends BaseMessage {
     context: lsp.CodeActionContext;
     constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Range, context: lsp.CodeActionContext);
 }
+export declare class SetWorkspaceMessage {
+    type: MessageType.setWorkspace;
+    value: string;
+    constructor(value: string);
+}
 export declare class ExecuteCommandMessage {
     callbackId: number;
     serviceName: string;
@@ -122,6 +127,13 @@ export declare class ExecuteCommandMessage {
     value: string;
     args: any[] | undefined;
     constructor(serviceName: string, callbackId: number, command: string, args?: any[]);
+}
+export declare class AppliedEditMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.appliedEdit;
+    value: lsp.ApplyWorkspaceEditResult;
+    constructor(value: lsp.ApplyWorkspaceEditResult, serviceName: string, callbackId: number);
 }
 export declare enum MessageType {
     init = 0,
@@ -139,10 +151,13 @@ export declare enum MessageType {
     configureFeatures = 12,
     signatureHelp = 13,
     documentHighlight = 14,
-    dispose = 15,
+    closeConnection = 15,
     capabilitiesChange = 16,
     getSemanticTokens = 17,
     getCodeActions = 18,
-    executeCommand = 19
+    executeCommand = 19,
+    applyEdit = 20,
+    appliedEdit = 21,
+    setWorkspace = 22
 }
-export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | DisposeMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage;
+export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | CloseConnectionMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage | AppliedEditMessage | SetWorkspaceMessage;

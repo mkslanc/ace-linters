@@ -1,121 +1,98 @@
-import "ace-code/esm-resolver";
-import {AceLanguageClient} from "ace-linters/build/ace-language-client";
-import {addFormatCommand, createEditorWithLSP} from "../utils";
-import {typescriptContent} from "../docs-example/typescript-example";
-import {LanguageClientConfig} from "ace-linters/types/types/language-service";
-import {createEditSession} from "ace-code";
+import {AceLayout, Box, TabManager, Button, dom, AceTreeWrapper, FileSystemWeb, Pane, AceEditor, Tab} from "ace-layout";
+import {addFormatCommand} from "../utils";
+import {Ace} from "ace-code";
+import {LanguageProvider} from "ace-linters";
 
+let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let modes = [
-    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent},
-]
-const serverData: LanguageClientConfig = {
-    module: () => import("ace-linters/build/language-client"),
-    modes: "typescript",
-    type: "socket",
-    socket: new WebSocket("ws://localhost:3030/typescript"),
-}
-
-let languageProvider = AceLanguageClient.for(serverData, {
-    functionality: {
-        //documentHighlights: false,
-        //signatureHelp: false,
-    }
-});
-
-const editor= createEditorWithLSP(modes[0], 0, languageProvider);
-
+let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
+languageProvider.requireFilePath = true;
 addFormatCommand(languageProvider);
 
+let fileTree: Box;
+let editorBox: Box;
 
+//document.body.innerHTML = "";
+let base = new Box({
+    vertical: false,
+    0: fileTree = new Box({
+        size: 200,
+    }),
+    1: editorBox = new Box({
+        isMain: true,
+        0: new Pane()
+    })
+});
 
+new AceLayout(base);
+window["fileTreeWrapper"] = fileTree;
+let fileSystem = new FileSystemWeb();
+let aceTree = new AceTreeWrapper();
 
-/////// fileAPI part
-
-
-// Import the necessary types
-interface FileSystemFileHandle {
-    getFile: () => Promise<File>;
+function renderFileTree() {
+    let button = new Button({value: "Open Folder"});
+    let buttonWrapper = ["div", {}, button.render()];
+    let aceTreeWrapper = ["div", {style: "height: 100%"}, aceTree.element];
+    button.element.addEventListener("click", openInfo);
+    dom.buildDom(["div", {style: "height: 100%"}, buttonWrapper, aceTreeWrapper], fileTree.element);
 }
 
-interface FileSystemDirectoryHandle {
-    getDirectory: (name: string, options?: { create?: boolean }) => Promise<FileSystemDirectoryHandle>;
-    getFile: (name: string, options?: { create?: boolean }) => Promise<FileSystemFileHandle>;
-    entries: () => AsyncIterableIterator<FileSystemHandle>;
-}
 
-// Function to open a file
-async function openFile() {
-    // Check for File System Access API support
-    if (!('showOpenFilePicker' in window)) {
-        console.error('File System Access API is not supported in this browser.');
-        return;
-    }
+base.render();
+let onResize = function () {
+    base.setBox(0, 0, window.innerWidth, window.innerHeight)
+};
+renderFileTree();
+onResize();
+document.body.appendChild(base.element);
+window.onresize = onResize;
 
-    try {
-        // Open the file picker
-        const [fileHandle]: FileSystemFileHandle[] = await (window as any).showOpenFilePicker();
-        const file = await fileHandle.getFile();
-        const content = await readFileContent(file);
-        languageProvider.closeDocument(editor.session);
-        
-        let session = createEditSession(content, "ace/mode/typescript");
-        session["documentUri"] = file.name;
-        editor.setSession(session);
-        
-        document.getElementById('titleId').innerText = file.name;
-        console.log(`File: ${file.name}`);
-        console.log(`Content: ${content}`);
-    } catch (error) {
-        console.error('Error opening file:', error);
-    }
-}
+let tabManager = TabManager.getInstance({
+    containers: {
+        main: editorBox
+    },
+    fileSystem: fileSystem
+});
 
-async function openDirectory() {
-    // Check for File System Access API support
-    if (!('showDirectoryPicker' in window)) {
-        console.error('File System Access API is not supported in this browser.');
-        return;
-    }
+tabManager.fileSystem?.on("openFile", (treeNode) => {
+    let tab = tabManager.getTab(treeNode.path) as Tab<Ace.EditSession>;
 
-    try {
-        // Open the directory picker
-        const directoryHandle: FileSystemDirectoryHandle = await (window as any).showDirectoryPicker();
+    languageProvider.registerEditor((tab.editor as AceEditor).editor);
+    let path = treeNode.path.substring(treeNode.path.indexOf("/", 1));
+    languageProvider.setSessionFilePath(tab.session, `${languageProvider.workspaceUri || ""}${path}`);
+});
 
-        // Read the contents of the directory
-        await loadRecursively(directoryHandle, "")
-    } catch (error) {
-        console.error('Error opening directory:', error);
-    }
-}
+tabManager.restoreFrom(localStorage);
 
-async function loadRecursively(directoryHandle: FileSystemDirectoryHandle, path: string) {
-    for await (const entry of directoryHandle.entries()) {
-        const entryPath = `${path}/${entry[0]}`;
-        if (entry[1].kind === 'file') {
-            const fileHandle = entry[1];
-            const file = await fileHandle.getFile();
-            console.log(`File: ${entryPath}`);
-            // Uncomment below if you want to read file content
-            // const content = await readFileContent(file);
-            // console.log(`Content: ${content}`);
-        } else if (entry[1].kind === 'directory') {
-            const directory = entry[1];
-            console.log(`Directory: ${entryPath}`);
-            await loadRecursively(directory, entryPath);
-        }
-    }
-}
-
-// Function to read file content
-async function readFileContent(file: File): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsText(file);
+async function openFolder() {
+    let nodes = await fileSystem.open();
+    setWorkspace();
+    aceTree.updateTreeData(nodes);
+    aceTree.element.addEventListener("item-click", (evt: CustomEvent) => {
+        fileSystem.openFile(evt.detail);
     });
 }
 
-document.getElementById('openDirectoryButton')?.addEventListener('click', openDirectory);
-document.getElementById('openFileButton')?.addEventListener('click', openFile);
+function openInfo() {
+    var popup = document.getElementById("info-popup");
+    popup.style.display = "block";
+    document.getElementById("okayBtn").onclick = function () {
+        openFolder();
+        popup.style.display = "none";
+    };
+}
+
+function setWorkspace() {
+    var popup = document.getElementById("workspace-popup");
+    popup.style.display = "block";
+    var span = document.querySelector(".popup-content .close");
+    span.onclick = function() {
+        popup.style.display = "none";
+    }
+    document.getElementById("confirmBtn").onclick = function() {
+        var dirPath = document.getElementById("filePath").value;
+        alert("File path confirmed: " + dirPath);
+        popup.style.display = "none";
+        languageProvider.changeWorkspaceFolder(dirPath);
+    }
+}
