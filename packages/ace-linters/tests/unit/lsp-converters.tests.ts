@@ -148,12 +148,14 @@ describe('Converters from/to Language Server Protocol', () => {
                     row: 0,
                     column: 0,
                     text: "Error message 1",
-                    type: "error"
+                    type: "error",
+                    code: undefined
                 }, {
                     row: 5,
                     column: 0,
                     text: "Warning message 2",
-                    type: "warning"
+                    type: "warning",
+                    code: undefined
                 },
             ];
 

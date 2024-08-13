@@ -12,23 +12,11 @@ var getAriaId = function (index) {
 var _navigator = typeof navigator == "object" ? navigator : {userAgent: ""};
 
 var ua = _navigator.userAgent || "";
-var isSafari = parseFloat(ua.split(" Safari/")[1]) && !exports.isChrome || undefined;
+var isSafari = parseFloat(ua.split(" Safari/")[1]) || undefined;
 // Safari requires different ARIA A11Y attributes compared to other browsers
 var popupAriaRole = isSafari ? "menu" : "listbox";
 var optionAriaRole = isSafari ? "menuitem" : "option";
 var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
-
-const removeCssClass = function(el, name) {
-    var classes = el.className.split(/\s+/g);
-    while (true) {
-        var index = classes.indexOf(name);
-        if (index == -1) {
-            break;
-        }
-        classes.splice(index, 1);
-    }
-    el.className = classes.join(" ");
-};
 
 /**
  *

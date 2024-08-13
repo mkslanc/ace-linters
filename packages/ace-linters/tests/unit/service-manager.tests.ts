@@ -95,12 +95,14 @@ describe('ServiceManager tests', () => {
     describe('set features state', () => {
         it('should enable all default features', () => {
             const expectedFeatures = {
+                codeAction: true,
                 hover: true,
                 completion: true,
                 completionResolve: true,
                 format: true,
                 diagnostics: true,
                 documentHighlight: true,
+                executeCommand: true,
                 signatureHelp: true,
                 semanticTokens: true,
             };
