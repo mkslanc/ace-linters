@@ -1,10 +1,10 @@
 import {Ace} from "ace-code";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
-import {IMessageController} from "./types/message-controller-interface";
+import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import {MessageController} from "./message-controller";
 import {
-    fromAceDelta, fromDocumentHighlights,
+    fromAceDelta, fromAnnotations, fromDocumentHighlights,
     fromPoint,
     fromRange, fromSignatureHelp,
     toAnnotations,
@@ -19,7 +19,7 @@ import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
 import {
-    AceRangeData,
+    AceRangeData, CodeActionsByService,
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
@@ -35,22 +35,35 @@ import {
     mergeTokens,
     parseSemanticTokens
 } from "./type-converters/lsp/semantic-tokens";
+import {URI} from "vscode-uri";
+import {LightbulbWidget} from "./components/lightbulb";
+import {AceVirtualRenderer} from "./ace/renderer-singleton";
+import {AceEditor} from "./ace/editor-singleton";
+import {setStyles} from "./misc/styles";
+import {convertToUri} from "./utils";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
     private readonly $messageController: IMessageController;
     private $signatureTooltip: SignatureTooltip;
-    private $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
+    $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
     editors: Ace.Editor[] = [];
     options: ProviderOptions;
     private $hoverTooltip: HoverTooltip;
+    $urisToSessionsIds: { [uri: string]: string } = {};
+    workspaceUri: string;
+    requireFilePath: boolean = false;
+    private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
+    private stylesEmbedded: boolean;
 
-    constructor(messageController: IMessageController, options?: ProviderOptions) {
-        this.$messageController = messageController;
+    private constructor(worker: Worker, options?: ProviderOptions) {
+        this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
     }
-    
+
+
+
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
@@ -58,9 +71,7 @@ export class LanguageProvider {
      * @param {ProviderOptions} options
      */
     static create(worker: Worker, options?: ProviderOptions) {
-        let messageController: IMessageController;
-        messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, options);
+        return new LanguageProvider(worker, options);
     }
 
     /**
@@ -80,7 +91,6 @@ export class LanguageProvider {
         serviceManagerCdn: string,
         includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean
     }, options?: ProviderOptions, includeDefaultLinters?: { [name in SupportedServices]?: boolean } | boolean) {
-        let messageController: IMessageController;
         let worker: Worker;
         if (typeof source === "string") {
             if (source == "" || !(/^http(s)?:/.test(source))) {
@@ -99,19 +109,19 @@ export class LanguageProvider {
                 serviceManagerCdn: source.serviceManagerCdn
             }, source.includeDefaultLinters ?? includeDefaultLinters);
         }
-        messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, options);
+        return new LanguageProvider(worker, options);
     }
 
     setProviderOptions(options?: ProviderOptions) {
         const defaultFunctionalities = {
             hover: true,
-            completion: { overwriteCompleters: true },
+            completion: {overwriteCompleters: true},
             completionResolve: true,
             format: true,
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
+            codeActions: true
         };
 
         this.options = options ?? {};
@@ -127,10 +137,22 @@ export class LanguageProvider {
         });
 
         this.options.markdownConverter ||= new showdown.Converter();
+        this.requireFilePath = this.options.requireFilePath ?? false;
+        if (options?.workspacePath) {
+            this.workspaceUri = convertToUri(options.workspacePath);
+        }
     }
 
-    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, options?: ServiceOptions) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController, options);
+    /**
+     * @param session
+     * @param filePath - The full file path associated with the editor.
+     */
+    setSessionFilePath(session: Ace.EditSession, filePath: string) {
+        this.$getSessionLanguageProvider(session)?.setFilePath(filePath);
+    }
+
+    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor) => {
+        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController);
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
@@ -139,23 +161,91 @@ export class LanguageProvider {
 
     private $getFileName(session: Ace.EditSession) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-        return sessionLanguageProvider.fileName;
+        return sessionLanguageProvider.comboDocumentIdentifier;
     }
 
+    /**
+     * Registers an Ace editor instance with the language provider.
+     * @param editor - The Ace editor instance to register.
+     */
     registerEditor(editor: Ace.Editor) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
         this.$registerSession(editor.session, editor);
     }
 
+    codeActionCallback: (codeActions: CodeActionsByService[]) => void;
+
+    setCodeActionCallback(callback: (codeActions: CodeActionsByService[]) => void) {
+        this.codeActionCallback = callback;
+    }
+
+    executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void {
+        this.$messageController.executeCommand(serviceName, command, args, callback); //TODO:
+    }
+
+    applyEdit(workspaceEdit: lsp.WorkspaceEdit, serviceName: string, callback?: (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => void) {
+        if (workspaceEdit.changes) {
+            for (let uri in workspaceEdit.changes) {
+                if (!this.$urisToSessionsIds[uri]) {
+                    callback && callback({
+                        applied: false,
+                        failureReason: "No session found for uri " + uri
+                    }, serviceName);
+                    return;
+                }
+            }
+            for (let uri in workspaceEdit.changes) {
+                let sessionId = this.$urisToSessionsIds[uri];
+                let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                sessionLanguageProvider.applyEdits(workspaceEdit.changes[uri]);
+            }
+            callback && callback({
+                applied: true,
+            }, serviceName);
+        }
+        // some servers doesn't respect missing capability
+        if (workspaceEdit.documentChanges) {
+            for (let change of workspaceEdit.documentChanges) {
+                if ("kind" in change) {
+                    // we don't support create/rename/remove stuff
+                    return;
+                }
+                if ("textDocument" in change) {
+                    let uri = change.textDocument.uri;
+                    if (!this.$urisToSessionsIds[uri]) {
+                        callback && callback({
+                            applied: false,
+                            failureReason: "No session found for uri " + uri
+                        }, serviceName);
+                        return;
+                    }
+                }
+            }
+            for (let change of workspaceEdit.documentChanges) {
+                if ("textDocument" in change) {
+                    let sessionId = this.$urisToSessionsIds[change.textDocument.uri];
+                    let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                    sessionLanguageProvider.applyEdits(change.edits);
+                }
+            }
+            callback && callback({
+                applied: true,
+            }, serviceName);
+        }
+    }
+
     $registerEditor(editor: Ace.Editor) {
         this.editors.push(editor);
 
-        //init Range singleton
+        //init singletons
         AceRange.getConstructor(editor);
+        AceVirtualRenderer.getConstructor(editor);
+        AceEditor.getConstructor(editor);
 
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
+
         if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
         }
@@ -180,6 +270,10 @@ export class LanguageProvider {
             });
         }
 
+        if (this.options.functionality!.codeActions) {
+            this.$provideCodeActions(editor);
+        }
+
         if (this.options.functionality!.hover) {
             if (!this.$hoverTooltip) {
                 this.$hoverTooltip = new HoverTooltip();
@@ -191,7 +285,44 @@ export class LanguageProvider {
             this.$signatureTooltip.registerEditor(editor);
         }
 
-        this.setStyle(editor);
+        this.setStyles(editor);
+    }
+
+    private $provideCodeActions(editor: Ace.Editor) {
+        const lightBulb = new LightbulbWidget(editor);
+        this.$lightBulbWidgets[editor.id] = lightBulb;
+        lightBulb.setExecuteActionCallback((action, serviceName) => {
+            for (let id in this.$lightBulbWidgets) {
+                this.$lightBulbWidgets[id].hideAll();
+            }
+            if (typeof action.command === "string") {
+                this.executeCommand(action.command, serviceName, action["arguments"]);
+            } else {
+                if (action.command) {
+                    this.executeCommand(action.command.command, serviceName, action.command.arguments);
+                } else if ("edit" in action) {
+                    this.applyEdit(action.edit!, serviceName);
+                }
+            }
+        });
+
+        var actionTimer
+        // @ts-ignore
+        editor.on("changeSelection", () => {
+            if (!actionTimer)
+                actionTimer =
+                    setTimeout(() => {
+                        //TODO: no need to send request on empty
+                        let selection = editor.getSelection().getRange();
+                        let cursor = editor.getCursorPosition();
+                        let diagnostics = fromAnnotations(editor.session.getAnnotations().filter((el) => el.row === cursor.row));
+                        this.$messageController.getCodeActions(this.$getFileName(editor.session), fromRange(selection), {diagnostics}, (codeActions) => {
+                            lightBulb.setCodeActions(codeActions);
+                            lightBulb.showLightbulb();
+                        });
+                        actionTimer = undefined;
+                    }, 500);
+        });
     }
 
     private $initHoverTooltip(editor) {
@@ -233,57 +364,37 @@ export class LanguageProvider {
         this.$hoverTooltip.addToEditor(editor);
     }
 
-    setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
-    margin: 0;
-    font-size: 12px;
-}
+    private setStyles(editor) {
+        if (!this.stylesEmbedded) {
+            setStyles(editor);
+            this.stylesEmbedded = true;
+        }
+    }
 
-.ace_tooltip code {
-    font-style: italic;
-    font-size: 11px;
-}
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
+        this.$messageController.setGlobalOptions(serviceName, options, merge);
+    }
 
-.language_highlight_error {
-    position: absolute;
-    border-bottom: dotted 1px #e00404;
-    z-index: 2000;
-    border-radius: 0;
-}
-
-.language_highlight_warning {
-    position: absolute;
-    border-bottom: solid 1px #DDC50F;
-    z-index: 2000;
-    border-radius: 0;
-}
-
-.language_highlight_info {
-    position: absolute;
-    border-bottom: dotted 1px #999;
-    z-index: 2000;
-    border-radius: 0;
-}
-
-.language_highlight_text, .language_highlight_read, .language_highlight_write {
-    position: absolute;
-    box-sizing: border-box;
-    border: solid 1px #888;
-    z-index: 2000;
-}
-
-.language_highlight_write {
-    border: solid 1px #F88;
-}`, "linters.css");
+    /**
+     * Sets the workspace URI for the language provider.
+     *
+     * If the provided URI is the same as the current workspace URI, no action is taken.
+     * Otherwise, the workspace URI is updated and the message controller is notified.
+     *
+     * Not all servers support changing of workspace URI.
+     *
+     * @param workspaceUri - The new workspace URI. Could be simple path, not URI itself.
+     */
+    changeWorkspaceFolder(workspaceUri: string) {
+        if (workspaceUri === this.workspaceUri)
+            return;
+        this.workspaceUri = convertToUri(workspaceUri);
+        this.$messageController.setWorkspace(workspaceUri);
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
-    }
-
-    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
-        this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
     configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures) {
@@ -381,8 +492,8 @@ export class LanguageProvider {
         }
     }
 
-    dispose() {
-        this.$messageController.dispose(() => {
+    closeConnection() {
+        this.$messageController.closeConnection(() => {
             this.$messageController.$worker.terminate();
         })
     }
@@ -403,12 +514,14 @@ export class LanguageProvider {
 
 class SessionLanguageProvider {
     session: Ace.EditSession;
-    fileName: string;
+    documentUri: string;
     private $messageController: IMessageController;
     private $deltaQueue: Ace.Delta[] | null;
     private $isConnected = false;
     private $modeIsChanged = false;
-    private $options: ServiceOptions;
+    private $options?: ServiceOptions;
+    private $filePath: string;
+    private $isFilePathRequired = false;
     private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
 
     state: {
@@ -428,12 +541,20 @@ class SessionLanguageProvider {
     private semanticTokensLegend?: lsp.SemanticTokensLegend;
     private $provider: LanguageProvider;
 
-    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, options?: ServiceOptions) {
+    /**
+     * Constructs a new instance of the `SessionLanguageProvider` class.
+     *
+     * @param provider - The `LanguageProvider` instance.
+     * @param session - The Ace editor session.
+     * @param editor - The Ace editor instance.
+     * @param messageController - The `IMessageController` instance for handling messages.
+     */
+    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController) {
         this.$provider = provider;
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
-        this.initFileName();
+        this.$isFilePathRequired = provider.requireFilePath;
 
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
@@ -443,14 +564,32 @@ class SessionLanguageProvider {
         if (this.$provider.options.functionality!.semanticTokens) {
             session.on("changeScrollTop", () => this.getSemanticTokens());
         }
-        
-        let initCallbacks = {
-            "initCallback": this.$connected,
-            "validationCallback": this.$showAnnotations,
-            "changeCapabilitiesCallback": this.setServerCapabilities
-        }
 
-        this.$messageController.init(this.fileName, session.doc, this.$mode, options, initCallbacks);
+        this.$init();
+    }
+
+    get comboDocumentIdentifier(): ComboDocumentIdentifier {
+        return {
+            documentUri: this.documentUri,
+            sessionId: this.session["id"]
+        };
+    }
+
+    /**
+     * @param filePath
+     */
+    setFilePath(filePath: string) {
+        if (this.$filePath !== undefined)//TODO change file path
+            return;
+        this.$filePath = filePath;
+        this.$init();
+    }
+
+    private $init() {
+        if (this.$isFilePathRequired && this.$filePath === undefined)
+            return;
+        this.initDocumentUri();
+        this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
     }
 
     addSemanticTokenSupport(session: Ace.EditSession) {
@@ -458,7 +597,7 @@ class SessionLanguageProvider {
         session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
             bgTokenizer.semanticTokens = tokens;
         }
-        
+
         bgTokenizer.$tokenizeRow = (row: number) => {
             var line = bgTokenizer.doc.getLine(row);
             var state = bgTokenizer.states[row - 1];
@@ -483,7 +622,7 @@ class SessionLanguageProvider {
             return bgTokenizer.lines[row] = data.tokens;
         }
     }
-    
+
     private $connected = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
         this.$isConnected = true;
         // @ts-ignore
@@ -511,10 +650,10 @@ class SessionLanguageProvider {
 
         this.session.setSemanticTokens(undefined); //clear all semantic tokens
         let newVersion = this.session.doc["version"]++;
-        this.$messageController.changeMode(this.fileName, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+        this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
     };
 
-    private setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
+    setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
         if (!capabilities)
             return;
         this.$servicesCapabilities = {...capabilities};
@@ -548,8 +687,10 @@ class SessionLanguageProvider {
         }
     }
 
-    private initFileName() {
-        this.fileName = this.session["id"] + "." + this.$extension;
+    private initDocumentUri() {
+        let filePath = this.$filePath ?? this.session["id"] + "." + this.$extension;
+        this.documentUri = convertToUri(filePath);
+        this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
     }
 
     private get $extension() {
@@ -572,7 +713,7 @@ class SessionLanguageProvider {
         this.session.doc["version"]++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
-            setTimeout(()=> this.$sendDeltaQueue(() => {
+            setTimeout(() => this.$sendDeltaQueue(() => {
                 this.getSemanticTokens();
             }), 0);
         }
@@ -584,11 +725,11 @@ class SessionLanguageProvider {
         if (!deltas) return callback && callback();
         this.$deltaQueue = null;
         if (deltas.length)
-            this.$messageController.change(this.fileName, deltas.map((delta) =>
+            this.$messageController.change(this.comboDocumentIdentifier, deltas.map((delta) =>
                 fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
     };
 
-    private $showAnnotations = (diagnostics: lsp.Diagnostic[]) => {
+    $showAnnotations = (diagnostics: lsp.Diagnostic[]) => {
         if (!diagnostics) {
             return;
         }
@@ -608,11 +749,11 @@ class SessionLanguageProvider {
             this.$options = options;
             return;
         }
-        this.$messageController.changeOptions(this.fileName, options);
+        this.$messageController.changeOptions(this.comboDocumentIdentifier, options);
     }
 
     validate = () => {
-        this.$messageController.doValidation(this.fileName, this.$showAnnotations);
+        this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
     }
 
     format = () => {
@@ -633,11 +774,11 @@ class SessionLanguageProvider {
                 }];
         }
         for (let range of aceRangeDatas) {
-            this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
+            this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
         }
     }
 
-    private $applyFormat = (edits: lsp.TextEdit[]) => {
+    applyEdits = (edits: lsp.TextEdit[]) => {
         edits ??= [];
         for (let edit of edits.reverse()) {
             this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
@@ -651,7 +792,7 @@ class SessionLanguageProvider {
         let lastRow = this.editor.renderer.getLastVisibleRow();
         let visibleRange: AceRangeData = {
             start: {
-                row: this.editor.renderer.getFirstVisibleRow(), 
+                row: this.editor.renderer.getFirstVisibleRow(),
                 column: 0
             },
             end: {
@@ -659,8 +800,8 @@ class SessionLanguageProvider {
                 column: this.session.getLine(lastRow).length
             }
         }
-        
-        this.$messageController.getSemanticTokens(this.fileName, fromRange(visibleRange), (tokens) => {
+
+        this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), (tokens) => {
                 if (!tokens) {
                     return;
                 }
@@ -671,7 +812,7 @@ class SessionLanguageProvider {
                     if (bgTokenizer?.semanticTokens?.tokens && bgTokenizer?.semanticTokens?.tokens.length > 0) {
                         let startRow: number = bgTokenizer?.semanticTokens?.tokens[0].row;
                         bgTokenizer.currentLine = startRow;
-                        bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);        
+                        bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
                     } else {
                         bgTokenizer.currentLine = 0;
                         bgTokenizer.lines = [];
@@ -692,6 +833,6 @@ class SessionLanguageProvider {
     };
 
     closeDocument(callback?) {
-        this.$messageController.closeDocument(this.fileName, callback);
+        this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
     }
 }

@@ -1,24 +1,32 @@
 import * as lsp from "vscode-languageserver-protocol";
 import { LanguageClientConfig, LanguageService, ServiceOptions } from "../types/language-service";
 import { BaseService } from "./base-service";
+import { WorkspaceFolder } from "vscode-languageserver-protocol";
 export declare class LanguageClient extends BaseService implements LanguageService {
     $service: any;
     private isConnected;
     private isInitialized;
-    private readonly socket;
+    private socket;
     private connection;
     private requestsQueue;
+    callbackId: number;
+    callbacks: {};
+    serverData: LanguageClientConfig;
     ctx: any;
-    constructor(serverData: LanguageClientConfig, ctx: any);
+    constructor(serverData: LanguageClientConfig, ctx: any, workspaceUri?: string);
+    private $connect;
     private $connectSocket;
     private $connectWorker;
-    private $connect;
+    private $initConnection;
+    private $reconnect;
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
     showLog(params: lsp.ShowMessageParams): void;
     showTrace(params: lsp.LogTraceParams): void;
     addDocument(document: lsp.TextDocumentItem): void;
     enqueueIfNotConnected(callback: () => void): void;
     removeDocument(document: lsp.TextDocumentIdentifier): void;
     dispose(): Promise<void>;
+    closeConnection(): Promise<void>;
     sendInitialize(initializationOptions: any): void;
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
@@ -28,7 +36,11 @@ export declare class LanguageClient extends BaseService implements LanguageServi
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     setGlobalOptions(options: ServiceOptions): void;
+    setWorkspace(workspaceUri: string): Promise<unknown>;
+    get workspaceFolder(): WorkspaceFolder;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
+    executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any>;
 }

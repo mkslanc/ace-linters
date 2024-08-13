@@ -3,9 +3,10 @@ import * as ts from './lib/typescriptServices';
 import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
+    diagnosticsToErrorCodes,
     fromTsDiagnostics, getTokenModifierFromClassification, getTokenTypeFromClassification,
     JsxEmit,
-    ScriptTarget, SemanticClassificationFormat,
+    ScriptTarget, SemanticClassificationFormat, toCodeActions,
     toCompletions,
     toDocumentHighlights,
     toHover,
@@ -80,7 +81,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
             },
             range: true,
             full: true
-        }
+        },
+        codeActionProvider: true,
     }
 
     constructor(mode: string) {
@@ -299,7 +301,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         let highlights = this.$service.getDocumentHighlights(document.uri, offset, [document.uri]);
         return toDocumentHighlights(highlights, fullDocument);
     }
-    
+
     async getSemanticTokens(document: TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
@@ -308,7 +310,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         if (!classifications) {
             return null;
         }
-        
+
         let tokensSpans = classifications.spans;
         const builder = new SemanticTokensBuilder();
         for (let i = 0; i < tokensSpans.length;) {
@@ -328,12 +330,25 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
             for (let line = startPos.line; line <= endPos.line; line++) {
                 const startCharacter = (line === startPos.line ? startPos.character : 0);
-                let textOnLine = fullDocument.getText({start: {line: line, character: 0}, end: {line: line, character: Infinity}});
+                let textOnLine = fullDocument.getText({
+                    start: {line: line, character: 0},
+                    end: {line: line, character: Infinity}
+                });
                 const endCharacter = (line === endPos.line ? endPos.character : textOnLine.length);
                 builder.push(line, startCharacter, endCharacter - startCharacter, tokenType, tokenModifiers);
             }
         }
 
         return builder.build();
+    }
+
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null> {
+        let fullDocument = this.getDocument(document.uri);
+        if (!fullDocument)
+            return Promise.resolve(null);
+        let offset = toTsOffset(range, fullDocument);
+        let codeErrors = diagnosticsToErrorCodes(context.diagnostics);
+
+        return Promise.resolve(toCodeActions(this.$service.getCodeFixesAtPosition(document.uri, offset.start, offset.end, codeErrors, this.$defaultFormatOptions, {}), fullDocument));
     }
 }

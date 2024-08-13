@@ -6,13 +6,14 @@ import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-pr
 import {MarkDownConverter} from "./converters";
 
 export interface LanguageService {
-    documents: { [sessionID: string]: TextDocument };
+    documents: { [documentUri: string]: TextDocument };
     $service;
     serviceName: string;
     mode: string;
     globalOptions;
     serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
+    workspaceUri?: string;
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
 
@@ -30,7 +31,7 @@ export interface LanguageService {
 
     addDocument(document: TextDocumentItem);
 
-    setOptions(sessionID: string, options: ServiceOptions, merge?: boolean); //TODO:
+    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean); //TODO:
 
     setGlobalOptions(options: ServiceOptions); //TODO:
 
@@ -47,8 +48,16 @@ export interface LanguageService {
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>
     
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>
+
+    executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
+
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
     
     dispose(): Promise<void>;
+
+    closeConnection(): Promise<void>;
+
+    setWorkspace(workspaceUri: string): void;
 }
 
 interface TooltipContent {
@@ -211,9 +220,12 @@ export interface ProviderOptions {
         format?: boolean,
         documentHighlights?: boolean,
         signatureHelp?: boolean,
-        semanticTokens?: boolean
+        semanticTokens?: boolean,
+        codeActions?: boolean
     },
-    markdownConverter?: MarkDownConverter
+    markdownConverter?: MarkDownConverter,
+    requireFilePath?: boolean,
+    workspacePath?: string, // this would be transformed to workspaceUri
 }
 
 export type ServiceFeatures = {
@@ -230,6 +242,7 @@ export type SupportedFeatures =
     | "documentHighlight"
     | "semanticTokens"
     | "codeAction"
+    | "executeCommand"
 
 
 export interface ServiceConfig extends BaseConfig {
@@ -297,4 +310,9 @@ export type ServiceStruct = {
     className: string,
     modes: string,
     cdnUrl?: string
+}
+
+export interface CodeActionsByService {
+    codeActions: (lsp.Command | lsp.CodeAction)[] | null
+    service: string    
 }

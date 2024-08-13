@@ -1,3 +1,4 @@
+import {URI} from "vscode-uri";
 
 export function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
@@ -6,8 +7,8 @@ export function mergeObjects(obj1, obj2, excludeUndefined = false) {
         obj1 = excludeUndefinedValues(obj1);
         obj2 = excludeUndefinedValues(obj2);
     }
-    
-    const mergedObjects = { ...obj2, ...obj1 }; // Give priority to obj1 values by spreading obj2 first, then obj1
+
+    const mergedObjects = {...obj2, ...obj1}; // Give priority to obj1 values by spreading obj2 first, then obj1
 
     for (const key of Object.keys(mergedObjects)) {
         if (obj1[key] && obj2[key]) {
@@ -77,4 +78,12 @@ export function checkValueAgainstRegexpArray(value: string, regexpArray?: RegExp
         }
     }
     return false;
+}
+
+export function convertToUri(filePath: string) {
+    //already URI
+    if (filePath.startsWith("file:///")) {
+        return filePath;
+    }
+    return URI.file(filePath).toString();
 }
