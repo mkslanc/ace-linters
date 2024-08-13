@@ -13,60 +13,60 @@ import {
 } from "../types/language-service";
 import {BaseService} from "./base-service";
 import {MessageType} from "../message-types";
+import {URI} from "vscode-uri";
+import {WorkspaceFolder} from "vscode-languageserver-protocol";
 
 export class LanguageClient extends BaseService implements LanguageService {
     $service;
     private isConnected = false;
     private isInitialized = false;
-    private readonly socket: WebSocket;
+    private socket: WebSocket;
     private connection: lsp.ProtocolConnection;
     private requestsQueue: Function[] = [];
     callbackId = 0;
     callbacks = {};
-    
+
+    serverData: LanguageClientConfig;
     ctx;
 
-    constructor(serverData: LanguageClientConfig, ctx) {
-        super(serverData.modes);
+    constructor(serverData: LanguageClientConfig, ctx, workspaceUri?: string) {
+        super(serverData.modes, workspaceUri);
         this.ctx = ctx;
-        switch (serverData.type) {
+        this.serverData = serverData;
+        this.$connect();
+    }
+
+    private $connect() {
+        switch (this.serverData.type) {
             case "webworker":
-                if ('worker' in serverData) {
-                    this.$connectWorker(serverData.worker, serverData.initializationOptions);
+                if ('worker' in this.serverData) {
+                    this.$connectWorker(this.serverData.worker, this.serverData.initializationOptions);
                 } else {
                     throw new Error("No worker provided");
                 }
                 break;
             case "socket":
-                if ('socket' in serverData) {
-                    this.socket = serverData.socket;
-                    this.$connectSocket(serverData.initializationOptions);
+                if ('socket' in this.serverData) {
+                    this.socket = this.serverData.socket;
+                    this.$connectSocket(this.serverData.initializationOptions);
                 } else {
                     throw new Error("No socketUrl provided");
                 }
                 break;
             default:
-                throw new Error("Unknown server type: " + serverData.type);
+                throw new Error("Unknown server type: " + this.serverData.type);
         }
     }
 
     private $connectSocket(initializationOptions) {
-        if (this.socket.readyState === WebSocket.OPEN) {
-            rpc.listen({
-                webSocket: this.socket,
-                onConnection: (connection: rpc.MessageConnection) => {
-                    this.$connect(connection, initializationOptions);
-                },
-            });
+        rpc.listen({
+            webSocket: this.socket,
+            onConnection: (connection: rpc.MessageConnection) => {
+                this.$initConnection(connection, initializationOptions);
+            },
+        });
+        if (this.socket.readyState === WebSocket.OPEN)
             this.socket.dispatchEvent(new Event('open'));
-        } else {
-            rpc.listen({
-                webSocket: this.socket,
-                onConnection: (connection: rpc.MessageConnection) => {
-                    this.$connect(connection, initializationOptions);
-                },
-            });
-        }
     }
 
     private $connectWorker(worker: Worker, initializationOptions?: { [option: string]: any }) {
@@ -74,10 +74,10 @@ export class LanguageClient extends BaseService implements LanguageService {
             new BrowserMessageReader(worker),
             new BrowserMessageWriter(worker)
         );
-        this.$connect(connection, initializationOptions);
+        this.$initConnection(connection, initializationOptions);
     }
 
-    private $connect(connection, initializationOptions) {
+    private $initConnection(connection, initializationOptions) {
         connection.listen();
         this.isConnected = true;
 
@@ -146,6 +146,12 @@ export class LanguageClient extends BaseService implements LanguageService {
             this.isConnected = false;
         });
     }
+
+    private async $reconnect() {
+        Object.values(this.documents).forEach(document => this.removeDocument(document));
+        await this.dispose();
+        this.$connect();
+    }
     
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
        if (!this.isConnected || !this.callbacks[callbackId]) {
@@ -206,27 +212,32 @@ export class LanguageClient extends BaseService implements LanguageService {
     }
 
     async dispose() {
-        if (this.connection) {
-            this.isConnected = false;
-            await this.connection.sendRequest("shutdown");
-            this.connection.sendNotification('exit');
-            this.connection.dispose();
-            if (this.socket)
-                this.socket.close();
-        }
+        this.connection?.dispose();
+    }
+
+    async closeConnection() {
+        if (!this.connection)
+            return;
+        await this.dispose();
+        await this.connection.sendRequest("shutdown");
+        await this.connection.sendNotification('exit');
+        if (this.socket)
+            this.socket.close();
+        this.isConnected = false;
     }
 
     sendInitialize(initializationOptions) {
-        if (!this.isConnected) {
+        if (!this.isConnected)
             return;
-        }
         const message: lsp.InitializeParams = {
             capabilities: this.clientCapabilities,
             initializationOptions: initializationOptions,
             processId: null,
-            rootUri: "", //TODO: this.documentInfo.rootUri
-            workspaceFolders: null,
+            rootUri: null, //TODO: this.documentInfo.rootUri
         };
+        if (this.workspaceUri) {
+            message.workspaceFolders = [this.workspaceFolder];
+        }
 
         this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.isInitialized = true;
@@ -374,6 +385,27 @@ export class LanguageClient extends BaseService implements LanguageService {
             settings: options
         };
         this.enqueueIfNotConnected(() => this.connection.sendNotification('workspace/didChangeConfiguration', configChanges));
+    }
+
+
+    setWorkspace(workspaceUri: string) {
+        super.setWorkspace(workspaceUri);
+        if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) {
+            return this.$reconnect();
+        }
+        const message: lsp.WorkspaceFoldersChangeEvent = {
+            added: [this.workspaceFolder],
+            removed: []
+        };
+        return this.connection.sendRequest('workspace/didChangeWorkspaceFolders', message);
+    }
+
+    get workspaceFolder(): WorkspaceFolder {
+        let workspaceUri = this.workspaceUri!;
+        return {
+            uri: URI.file(workspaceUri).toString(),
+            name: workspaceUri.split("/").pop()!,
+        }
     }
 
     async findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position) {

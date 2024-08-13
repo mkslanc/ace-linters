@@ -17,11 +17,12 @@ import {
     SignatureHelpMessage,
     ConfigureFeaturesMessage,
     ValidateMessage,
-    DisposeMessage,
+    CloseConnectionMessage,
     GetSemanticTokensMessage,
     GetCodeActionsMessage,
     ExecuteCommandMessage,
-    AppliedEditMessage
+    AppliedEditMessage,
+    SetWorkspaceMessage
 } from "./message-types";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -34,6 +35,7 @@ import {
     SupportedServices
 } from "./types/language-service";
 import type {LanguageProvider} from "./language-provider";
+import {URI} from "vscode-uri";
 
 export class MessageController implements IMessageController {
     $worker: Worker;
@@ -48,17 +50,14 @@ export class MessageController implements IMessageController {
         this.$worker.addEventListener("message", (e) => {
             const message = e.data;
             const callbackId = message.callbackId;
-            
+
             if (message.type === MessageType.validate || message.type === MessageType.capabilitiesChange) {
-                if (!message.documentUri) {
-                    return;
-                }
-                const sessionId = this.provider.$urisToSessionsIds[message.documentUri];
+                const sessionId = this.getSessionIdByUri(message.documentUri);
                 if (!sessionId) {
                     return;
                 }
                 if (message.type === MessageType.validate) {
-                    this.provider.$sessionLanguageProviders[sessionId]?.$showAnnotations(message.value); 
+                    this.provider.$sessionLanguageProviders[sessionId]?.$showAnnotations(message.value);
                 } else {
                     this.provider.$sessionLanguageProviders[sessionId]?.setServerCapabilities(message.value);
                 }
@@ -76,8 +75,17 @@ export class MessageController implements IMessageController {
         });
 
     }
-    
-    init(documentIdentifier: ComboDocumentIdentifier, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => void): void {
+
+    private getSessionIdByUri(documentUri: lsp.DocumentUri): string | undefined {
+        if (!documentUri) {
+            return;
+        }
+        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[URI.parse(documentUri).toString()];
+    }
+
+    init(documentIdentifier: ComboDocumentIdentifier, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: {
+        [serviceName: string]: lsp.ServerCapabilities
+    }) => void): void {
         this.postMessage(new InitMessage(documentIdentifier, this.callbackId++, document.getValue(), document["version"], mode, options), initCallback);
     }
 
@@ -123,9 +131,9 @@ export class MessageController implements IMessageController {
     closeDocument(documentIdentifier: ComboDocumentIdentifier, callback?: () => void) {
         this.postMessage(new CloseDocumentMessage(documentIdentifier, this.callbackId++), callback);
     }
-    
-    dispose(callback: () => void) {
-        this.postMessage(new DisposeMessage(this.callbackId++), callback);
+
+    closeConnection(callback: () => void) {
+        this.postMessage(new CloseConnectionMessage(this.callbackId++), callback);
     }
 
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
@@ -145,7 +153,7 @@ export class MessageController implements IMessageController {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
     }
 
-    getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range,  callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
+    getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
         this.postMessage(new GetSemanticTokensMessage(documentIdentifier, this.callbackId++, range), callback);
     }
 
@@ -157,11 +165,15 @@ export class MessageController implements IMessageController {
         this.postMessage(new ExecuteCommandMessage(serviceName, this.callbackId++, command, args), callback);
     }
 
-    postMessage(message: BaseMessage | DisposeMessage | ExecuteCommandMessage, callback?: (any) => void) {
+    setWorkspace(workspaceUri: string, callback?: () => void) {
+        this.$worker.postMessage(new SetWorkspaceMessage(workspaceUri));
+    }
+
+    postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any) => void) {
         if (callback) {
             this.callbacks[message.callbackId] = callback;
         }
         this.$worker.postMessage(message);
     }
-    
+
 }

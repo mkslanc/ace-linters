@@ -36,7 +36,7 @@ export interface IMessageController {
 
     closeDocument(documentIdentifier: ComboDocumentIdentifier, callback?: () => void): void;
     
-    dispose(callback: () => void): void;
+    closeConnection(callback: () => void): void;
     
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
 
@@ -51,4 +51,6 @@ export interface IMessageController {
     getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: CodeActionsByService[]) => void);
 
     executeCommand(serviceName: string, command: string, args?: any[],  callback?: (result: any) => void);
+
+    setWorkspace(workspaceUri: string, callback?: () => void): void;
 }

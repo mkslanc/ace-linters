@@ -40,6 +40,7 @@ import {LightbulbWidget} from "./components/lightbulb";
 import {AceVirtualRenderer} from "./ace/renderer-singleton";
 import {AceEditor} from "./ace/editor-singleton";
 import {setStyles} from "./misc/styles";
+import {convertToUri} from "./utils";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -50,6 +51,8 @@ export class LanguageProvider {
     options: ProviderOptions;
     private $hoverTooltip: HoverTooltip;
     $urisToSessionsIds: { [uri: string]: string } = {};
+    workspaceUri: string;
+    requireFilePath: boolean = false;
     private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
     private stylesEmbedded: boolean;
 
@@ -58,6 +61,8 @@ export class LanguageProvider {
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
     }
+
+
 
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
@@ -132,10 +137,22 @@ export class LanguageProvider {
         });
 
         this.options.markdownConverter ||= new showdown.Converter();
+        this.requireFilePath = this.options.requireFilePath ?? false;
+        if (options?.workspacePath) {
+            this.workspaceUri = convertToUri(options.workspacePath);
+        }
     }
 
-    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, options?: ServiceOptions, filePath?: string) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController, options, filePath);
+    /**
+     * @param session
+     * @param filePath - The full file path associated with the editor.
+     */
+    setSessionFilePath(session: Ace.EditSession, filePath: string) {
+        this.$getSessionLanguageProvider(session)?.setFilePath(filePath);
+    }
+
+    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor) => {
+        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController);
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
@@ -150,12 +167,11 @@ export class LanguageProvider {
     /**
      * Registers an Ace editor instance with the language provider.
      * @param editor - The Ace editor instance to register.
-     * @param filePath - The full file path associated with the editor.
      */
-    registerEditor(editor: Ace.Editor, filePath?: string) {
+    registerEditor(editor: Ace.Editor) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
-        this.$registerSession(editor.session, editor, undefined, filePath);
+        this.$registerSession(editor.session, editor);
     }
 
     codeActionCallback: (codeActions: CodeActionsByService[]) => void;
@@ -228,7 +244,7 @@ export class LanguageProvider {
         AceEditor.getConstructor(editor);
 
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session, editor, undefined, session["documentUri"]));
+        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
 
         if (this.options.functionality!.completion) {
             this.$registerCompleters(editor);
@@ -355,13 +371,30 @@ export class LanguageProvider {
         }
     }
 
+    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
+        this.$messageController.setGlobalOptions(serviceName, options, merge);
+    }
+
+    /**
+     * Sets the workspace URI for the language provider.
+     *
+     * If the provided URI is the same as the current workspace URI, no action is taken.
+     * Otherwise, the workspace URI is updated and the message controller is notified.
+     *
+     * Not all servers support changing of workspace URI.
+     *
+     * @param workspaceUri - The new workspace URI. Could be simple path, not URI itself.
+     */
+    changeWorkspaceFolder(workspaceUri: string) {
+        if (workspaceUri === this.workspaceUri)
+            return;
+        this.workspaceUri = convertToUri(workspaceUri);
+        this.$messageController.setWorkspace(workspaceUri);
+    }
+
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
-    }
-
-    setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
-        this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
 
     configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures) {
@@ -459,8 +492,8 @@ export class LanguageProvider {
         }
     }
 
-    dispose() {
-        this.$messageController.dispose(() => {
+    closeConnection() {
+        this.$messageController.closeConnection(() => {
             this.$messageController.$worker.terminate();
         })
     }
@@ -486,7 +519,9 @@ class SessionLanguageProvider {
     private $deltaQueue: Ace.Delta[] | null;
     private $isConnected = false;
     private $modeIsChanged = false;
-    private $options: ServiceOptions;
+    private $options?: ServiceOptions;
+    private $filePath: string;
+    private $isFilePathRequired = false;
     private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
 
     state: {
@@ -513,15 +548,13 @@ class SessionLanguageProvider {
      * @param session - The Ace editor session.
      * @param editor - The Ace editor instance.
      * @param messageController - The `IMessageController` instance for handling messages.
-     * @param options - Optional service options.
-     * @param filePath - Associated file path (optional). Would be transformed to URI format
      */
-    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, options?: ServiceOptions, filePath?: string) {
+    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController) {
         this.$provider = provider;
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
-        this.initDocumentUri(filePath);
+        this.$isFilePathRequired = provider.requireFilePath;
 
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
@@ -532,7 +565,7 @@ class SessionLanguageProvider {
             session.on("changeScrollTop", () => this.getSemanticTokens());
         }
 
-        this.$messageController.init(this.comboDocumentIdentifier, session.doc, this.$mode, options, this.$connected);
+        this.$init();
     }
 
     get comboDocumentIdentifier(): ComboDocumentIdentifier {
@@ -540,6 +573,23 @@ class SessionLanguageProvider {
             documentUri: this.documentUri,
             sessionId: this.session["id"]
         };
+    }
+
+    /**
+     * @param filePath
+     */
+    setFilePath(filePath: string) {
+        if (this.$filePath !== undefined)//TODO change file path
+            return;
+        this.$filePath = filePath;
+        this.$init();
+    }
+
+    private $init() {
+        if (this.$isFilePathRequired && this.$filePath === undefined)
+            return;
+        this.initDocumentUri();
+        this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
     }
 
     addSemanticTokenSupport(session: Ace.EditSession) {
@@ -637,10 +687,9 @@ class SessionLanguageProvider {
         }
     }
 
-    private initDocumentUri(filePath?: string) {
-        filePath ??= this.session["id"] + "." + this.$extension;
-        this.documentUri = URI.file(filePath).toString();
-        this.session["documentUri"] = this.documentUri; //TODO: just in case 
+    private initDocumentUri() {
+        let filePath = this.$filePath ?? this.session["id"] + "." + this.$extension;
+        this.documentUri = convertToUri(filePath);
         this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
     }
 

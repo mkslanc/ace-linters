@@ -13,6 +13,7 @@ export interface LanguageService {
     globalOptions;
     serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
+    workspaceUri?: string;
 
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
 
@@ -53,6 +54,10 @@ export interface LanguageService {
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
     
     dispose(): Promise<void>;
+
+    closeConnection(): Promise<void>;
+
+    setWorkspace(workspaceUri: string): void;
 }
 
 interface TooltipContent {
@@ -219,7 +224,8 @@ export interface ProviderOptions {
         codeActions?: boolean
     },
     markdownConverter?: MarkDownConverter,
-    workspaceUrl?: string
+    requireFilePath?: boolean,
+    workspacePath?: string, // this would be transformed to workspaceUri
 }
 
 export type ServiceFeatures = {

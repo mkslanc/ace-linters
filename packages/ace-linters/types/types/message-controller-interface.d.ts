@@ -21,7 +21,7 @@ export interface IMessageController {
     }) => void): any;
     changeOptions(documentIdentifier: ComboDocumentIdentifier, options: ServiceOptions, callback?: () => void): any;
     closeDocument(documentIdentifier: ComboDocumentIdentifier, callback?: () => void): void;
-    dispose(callback: () => void): void;
+    closeConnection(callback: () => void): void;
     setGlobalOptions(serviceName: string, options: any, merge?: boolean): void;
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
     provideSignatureHelp(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void): any;
@@ -29,4 +29,5 @@ export interface IMessageController {
     getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void): any;
     getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: CodeActionsByService[]) => void): any;
     executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): any;
+    setWorkspace(workspaceUri: string, callback?: () => void): void;
 }

@@ -25,6 +25,8 @@ export declare function toSignatureHelp(signatureItems: SignatureHelpItems | und
 export declare function toDocumentHighlights(highlights: ts.DocumentHighlights[] | undefined, doc: TextDocument): lsp.DocumentHighlight[];
 export declare function getTokenTypeFromClassification(tsClassification: number): number | undefined;
 export declare function getTokenModifierFromClassification(tsClassification: number): number;
+export declare function diagnosticsToErrorCodes(diagnostics: lsp.Diagnostic[]): number[];
+export declare function toCodeActions(codeFixes: readonly ts.CodeFixAction[], doc: TextDocument): lsp.CodeAction[];
 export declare enum SemanticClassificationFormat {
     Original = "original",
     TwentyTwenty = "2020"
