@@ -11,12 +11,12 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 1696:
+/***/ 6093:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var process = __webpack_require__(4406);
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var process = __webpack_require__(9907);
+/* provided dependency */ var console = __webpack_require__(4364);
 // Currently in sync with Node.js lib/assert.js
 // https://github.com/nodejs/node/commit/2a51ae424a513ec9a6aa3466baa0cc1d55dd4f3b
 // Originally from narwhal.js (http://narwhaljs.org)
@@ -44,7 +44,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = __webpack_require__(7515),
+var _require = __webpack_require__(1342),
     _require$codes = _require.codes,
     ERR_AMBIGUOUS_ARGUMENT = _require$codes.ERR_AMBIGUOUS_ARGUMENT,
     ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
@@ -52,17 +52,17 @@ var _require = __webpack_require__(7515),
     ERR_INVALID_RETURN_VALUE = _require$codes.ERR_INVALID_RETURN_VALUE,
     ERR_MISSING_ARGS = _require$codes.ERR_MISSING_ARGS;
 
-var AssertionError = __webpack_require__(4082);
+var AssertionError = __webpack_require__(9801);
 
-var _require2 = __webpack_require__(3335),
+var _require2 = __webpack_require__(6827),
     inspect = _require2.inspect;
 
-var _require$types = (__webpack_require__(3335).types),
+var _require$types = (__webpack_require__(6827).types),
     isPromise = _require$types.isPromise,
     isRegExp = _require$types.isRegExp;
 
-var objectAssign = Object.assign ? Object.assign : (__webpack_require__(4956).assign);
-var objectIs = Object.is ? Object.is : __webpack_require__(4679);
+var objectAssign = Object.assign ? Object.assign : (__webpack_require__(3046).assign);
+var objectIs = Object.is ? Object.is : __webpack_require__(5968);
 var errorCache = new Map();
 var isDeepEqual;
 var isDeepStrictEqual;
@@ -71,7 +71,7 @@ var findNodeAround;
 var decoder;
 
 function lazyLoadComparison() {
-  var comparison = __webpack_require__(6796);
+  var comparison = __webpack_require__(5656);
 
   isDeepEqual = comparison.isDeepEqual;
   isDeepStrictEqual = comparison.isDeepStrictEqual;
@@ -651,11 +651,11 @@ assert.strict.strict = assert.strict;
 
 /***/ }),
 
-/***/ 4082:
+/***/ 9801:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var process = __webpack_require__(4406);
+/* provided dependency */ var process = __webpack_require__(9907);
 // Currently in sync with Node.js lib/internal/assert/assertion_error.js
 // https://github.com/nodejs/node/commit/0817840f775032169ddd70c85ac059f18ffcc81c
 
@@ -690,10 +690,10 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var _require = __webpack_require__(3335),
+var _require = __webpack_require__(6827),
     inspect = _require.inspect;
 
-var _require2 = __webpack_require__(7515),
+var _require2 = __webpack_require__(1342),
     ERR_INVALID_ARG_TYPE = _require2.codes.ERR_INVALID_ARG_TYPE; // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
 
 
@@ -1160,7 +1160,7 @@ module.exports = AssertionError;
 
 /***/ }),
 
-/***/ 7515:
+/***/ 1342:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1280,7 +1280,7 @@ function includes(str, search, start) {
 
 createErrorType('ERR_AMBIGUOUS_ARGUMENT', 'The "%s" argument is ambiguous. %s', TypeError);
 createErrorType('ERR_INVALID_ARG_TYPE', function (name, expected, actual) {
-  if (assert === undefined) assert = __webpack_require__(1696);
+  if (assert === undefined) assert = __webpack_require__(6093);
   assert(typeof name === 'string', "'name' must be a string"); // determiner: 'must be' or 'must not be'
 
   var determiner;
@@ -1308,7 +1308,7 @@ createErrorType('ERR_INVALID_ARG_TYPE', function (name, expected, actual) {
 }, TypeError);
 createErrorType('ERR_INVALID_ARG_VALUE', function (name, value) {
   var reason = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'is invalid';
-  if (util === undefined) util = __webpack_require__(3335);
+  if (util === undefined) util = __webpack_require__(6827);
   var inspected = util.inspect(value);
 
   if (inspected.length > 128) {
@@ -1333,7 +1333,7 @@ createErrorType('ERR_MISSING_ARGS', function () {
     args[_key] = arguments[_key];
   }
 
-  if (assert === undefined) assert = __webpack_require__(1696);
+  if (assert === undefined) assert = __webpack_require__(6093);
   assert(args.length > 0, 'At least one arg needs to be specified');
   var msg = 'The ';
   var len = args.length;
@@ -1362,7 +1362,7 @@ module.exports.codes = codes;
 
 /***/ }),
 
-/***/ 6796:
+/***/ 5656:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -1398,11 +1398,11 @@ var arrayFromMap = function arrayFromMap(map) {
   return array;
 };
 
-var objectIs = Object.is ? Object.is : __webpack_require__(4679);
+var objectIs = Object.is ? Object.is : __webpack_require__(5968);
 var objectGetOwnPropertySymbols = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : function () {
   return [];
 };
-var numberIsNaN = Number.isNaN ? Number.isNaN : __webpack_require__(4782);
+var numberIsNaN = Number.isNaN ? Number.isNaN : __webpack_require__(7838);
 
 function uncurryThis(f) {
   return f.call.bind(f);
@@ -1412,7 +1412,7 @@ var hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
 var propertyIsEnumerable = uncurryThis(Object.prototype.propertyIsEnumerable);
 var objectToString = uncurryThis(Object.prototype.toString);
 
-var _require$types = (__webpack_require__(3335).types),
+var _require$types = (__webpack_require__(6827).types),
     isAnyArrayBuffer = _require$types.isAnyArrayBuffer,
     isArrayBufferView = _require$types.isArrayBufferView,
     isDate = _require$types.isDate,
@@ -2057,15 +2057,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2680:
+/***/ 9818:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(7286);
+var GetIntrinsic = __webpack_require__(528);
 
-var callBind = __webpack_require__(9429);
+var callBind = __webpack_require__(8498);
 
 var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
 
@@ -2080,14 +2080,14 @@ module.exports = function callBoundIntrinsic(name, allowMissing) {
 
 /***/ }),
 
-/***/ 9429:
+/***/ 8498:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(4090);
-var GetIntrinsic = __webpack_require__(7286);
+var bind = __webpack_require__(9138);
+var GetIntrinsic = __webpack_require__(528);
 
 var $apply = GetIntrinsic('%Function.prototype.apply%');
 var $call = GetIntrinsic('%Function.prototype.call%');
@@ -2135,12 +2135,12 @@ if ($defineProperty) {
 
 /***/ }),
 
-/***/ 3716:
+/***/ 4364:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /*global window, global*/
-var util = __webpack_require__(3335)
-var assert = __webpack_require__(1696)
+var util = __webpack_require__(6827)
+var assert = __webpack_require__(6093)
 function now() { return new Date().getTime() }
 
 var slice = Array.prototype.slice
@@ -2229,13 +2229,13 @@ function consoleAssert(expression) {
 
 /***/ }),
 
-/***/ 4926:
+/***/ 1857:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var keys = __webpack_require__(3464);
+var keys = __webpack_require__(9228);
 var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
 
 var toStr = Object.prototype.toString;
@@ -2246,7 +2246,7 @@ var isFunction = function (fn) {
 	return typeof fn === 'function' && toStr.call(fn) === '[object Function]';
 };
 
-var hasPropertyDescriptors = __webpack_require__(1181)();
+var hasPropertyDescriptors = __webpack_require__(7239)();
 
 var supportsDescriptors = origDefineProperty && hasPropertyDescriptors;
 
@@ -2290,7 +2290,7 @@ module.exports = defineProperties;
 
 /***/ }),
 
-/***/ 4956:
+/***/ 3046:
 /***/ ((module) => {
 
 "use strict";
@@ -2344,519 +2344,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2699:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var console = __webpack_require__(3716);
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-var R = typeof Reflect === 'object' ? Reflect : null
-var ReflectApply = R && typeof R.apply === 'function'
-  ? R.apply
-  : function ReflectApply(target, receiver, args) {
-    return Function.prototype.apply.call(target, receiver, args);
-  }
-
-var ReflectOwnKeys
-if (R && typeof R.ownKeys === 'function') {
-  ReflectOwnKeys = R.ownKeys
-} else if (Object.getOwnPropertySymbols) {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target)
-      .concat(Object.getOwnPropertySymbols(target));
-  };
-} else {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target);
-  };
-}
-
-function ProcessEmitWarning(warning) {
-  if (console && console.warn) console.warn(warning);
-}
-
-var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
-  return value !== value;
-}
-
-function EventEmitter() {
-  EventEmitter.init.call(this);
-}
-module.exports = EventEmitter;
-module.exports.once = once;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._eventsCount = 0;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-var defaultMaxListeners = 10;
-
-function checkListener(listener) {
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
-}
-
-Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
-  enumerable: true,
-  get: function() {
-    return defaultMaxListeners;
-  },
-  set: function(arg) {
-    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
-      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
-    }
-    defaultMaxListeners = arg;
-  }
-});
-
-EventEmitter.init = function() {
-
-  if (this._events === undefined ||
-      this._events === Object.getPrototypeOf(this)._events) {
-    this._events = Object.create(null);
-    this._eventsCount = 0;
-  }
-
-  this._maxListeners = this._maxListeners || undefined;
-};
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
-  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
-    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
-  }
-  this._maxListeners = n;
-  return this;
-};
-
-function _getMaxListeners(that) {
-  if (that._maxListeners === undefined)
-    return EventEmitter.defaultMaxListeners;
-  return that._maxListeners;
-}
-
-EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return _getMaxListeners(this);
-};
-
-EventEmitter.prototype.emit = function emit(type) {
-  var args = [];
-  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
-  var doError = (type === 'error');
-
-  var events = this._events;
-  if (events !== undefined)
-    doError = (doError && events.error === undefined);
-  else if (!doError)
-    return false;
-
-  // If there is no 'error' event listener then throw.
-  if (doError) {
-    var er;
-    if (args.length > 0)
-      er = args[0];
-    if (er instanceof Error) {
-      // Note: The comments on the `throw` lines are intentional, they show
-      // up in Node's output if this results in an unhandled exception.
-      throw er; // Unhandled 'error' event
-    }
-    // At least give some kind of context to the user
-    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
-    err.context = er;
-    throw err; // Unhandled 'error' event
-  }
-
-  var handler = events[type];
-
-  if (handler === undefined)
-    return false;
-
-  if (typeof handler === 'function') {
-    ReflectApply(handler, this, args);
-  } else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      ReflectApply(listeners[i], this, args);
-  }
-
-  return true;
-};
-
-function _addListener(target, type, listener, prepend) {
-  var m;
-  var events;
-  var existing;
-
-  checkListener(listener);
-
-  events = target._events;
-  if (events === undefined) {
-    events = target._events = Object.create(null);
-    target._eventsCount = 0;
-  } else {
-    // To avoid recursion in the case that type === "newListener"! Before
-    // adding it to the listeners, first emit "newListener".
-    if (events.newListener !== undefined) {
-      target.emit('newListener', type,
-                  listener.listener ? listener.listener : listener);
-
-      // Re-assign `events` because a newListener handler could have caused the
-      // this._events to be assigned to a new object
-      events = target._events;
-    }
-    existing = events[type];
-  }
-
-  if (existing === undefined) {
-    // Optimize the case of one listener. Don't need the extra array object.
-    existing = events[type] = listener;
-    ++target._eventsCount;
-  } else {
-    if (typeof existing === 'function') {
-      // Adding the second element, need to change to array.
-      existing = events[type] =
-        prepend ? [listener, existing] : [existing, listener];
-      // If we've already got an array, just append.
-    } else if (prepend) {
-      existing.unshift(listener);
-    } else {
-      existing.push(listener);
-    }
-
-    // Check for listener leak
-    m = _getMaxListeners(target);
-    if (m > 0 && existing.length > m && !existing.warned) {
-      existing.warned = true;
-      // No error code for this since it is a Warning
-      // eslint-disable-next-line no-restricted-syntax
-      var w = new Error('Possible EventEmitter memory leak detected. ' +
-                          existing.length + ' ' + String(type) + ' listeners ' +
-                          'added. Use emitter.setMaxListeners() to ' +
-                          'increase limit');
-      w.name = 'MaxListenersExceededWarning';
-      w.emitter = target;
-      w.type = type;
-      w.count = existing.length;
-      ProcessEmitWarning(w);
-    }
-  }
-
-  return target;
-}
-
-EventEmitter.prototype.addListener = function addListener(type, listener) {
-  return _addListener(this, type, listener, false);
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.prependListener =
-    function prependListener(type, listener) {
-      return _addListener(this, type, listener, true);
-    };
-
-function onceWrapper() {
-  if (!this.fired) {
-    this.target.removeListener(this.type, this.wrapFn);
-    this.fired = true;
-    if (arguments.length === 0)
-      return this.listener.call(this.target);
-    return this.listener.apply(this.target, arguments);
-  }
-}
-
-function _onceWrap(target, type, listener) {
-  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
-  var wrapped = onceWrapper.bind(state);
-  wrapped.listener = listener;
-  state.wrapFn = wrapped;
-  return wrapped;
-}
-
-EventEmitter.prototype.once = function once(type, listener) {
-  checkListener(listener);
-  this.on(type, _onceWrap(this, type, listener));
-  return this;
-};
-
-EventEmitter.prototype.prependOnceListener =
-    function prependOnceListener(type, listener) {
-      checkListener(listener);
-      this.prependListener(type, _onceWrap(this, type, listener));
-      return this;
-    };
-
-// Emits a 'removeListener' event if and only if the listener was removed.
-EventEmitter.prototype.removeListener =
-    function removeListener(type, listener) {
-      var list, events, position, i, originalListener;
-
-      checkListener(listener);
-
-      events = this._events;
-      if (events === undefined)
-        return this;
-
-      list = events[type];
-      if (list === undefined)
-        return this;
-
-      if (list === listener || list.listener === listener) {
-        if (--this._eventsCount === 0)
-          this._events = Object.create(null);
-        else {
-          delete events[type];
-          if (events.removeListener)
-            this.emit('removeListener', type, list.listener || listener);
-        }
-      } else if (typeof list !== 'function') {
-        position = -1;
-
-        for (i = list.length - 1; i >= 0; i--) {
-          if (list[i] === listener || list[i].listener === listener) {
-            originalListener = list[i].listener;
-            position = i;
-            break;
-          }
-        }
-
-        if (position < 0)
-          return this;
-
-        if (position === 0)
-          list.shift();
-        else {
-          spliceOne(list, position);
-        }
-
-        if (list.length === 1)
-          events[type] = list[0];
-
-        if (events.removeListener !== undefined)
-          this.emit('removeListener', type, originalListener || listener);
-      }
-
-      return this;
-    };
-
-EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-
-EventEmitter.prototype.removeAllListeners =
-    function removeAllListeners(type) {
-      var listeners, events, i;
-
-      events = this._events;
-      if (events === undefined)
-        return this;
-
-      // not listening for removeListener, no need to emit
-      if (events.removeListener === undefined) {
-        if (arguments.length === 0) {
-          this._events = Object.create(null);
-          this._eventsCount = 0;
-        } else if (events[type] !== undefined) {
-          if (--this._eventsCount === 0)
-            this._events = Object.create(null);
-          else
-            delete events[type];
-        }
-        return this;
-      }
-
-      // emit removeListener for all listeners on all events
-      if (arguments.length === 0) {
-        var keys = Object.keys(events);
-        var key;
-        for (i = 0; i < keys.length; ++i) {
-          key = keys[i];
-          if (key === 'removeListener') continue;
-          this.removeAllListeners(key);
-        }
-        this.removeAllListeners('removeListener');
-        this._events = Object.create(null);
-        this._eventsCount = 0;
-        return this;
-      }
-
-      listeners = events[type];
-
-      if (typeof listeners === 'function') {
-        this.removeListener(type, listeners);
-      } else if (listeners !== undefined) {
-        // LIFO order
-        for (i = listeners.length - 1; i >= 0; i--) {
-          this.removeListener(type, listeners[i]);
-        }
-      }
-
-      return this;
-    };
-
-function _listeners(target, type, unwrap) {
-  var events = target._events;
-
-  if (events === undefined)
-    return [];
-
-  var evlistener = events[type];
-  if (evlistener === undefined)
-    return [];
-
-  if (typeof evlistener === 'function')
-    return unwrap ? [evlistener.listener || evlistener] : [evlistener];
-
-  return unwrap ?
-    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
-}
-
-EventEmitter.prototype.listeners = function listeners(type) {
-  return _listeners(this, type, true);
-};
-
-EventEmitter.prototype.rawListeners = function rawListeners(type) {
-  return _listeners(this, type, false);
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  if (typeof emitter.listenerCount === 'function') {
-    return emitter.listenerCount(type);
-  } else {
-    return listenerCount.call(emitter, type);
-  }
-};
-
-EventEmitter.prototype.listenerCount = listenerCount;
-function listenerCount(type) {
-  var events = this._events;
-
-  if (events !== undefined) {
-    var evlistener = events[type];
-
-    if (typeof evlistener === 'function') {
-      return 1;
-    } else if (evlistener !== undefined) {
-      return evlistener.length;
-    }
-  }
-
-  return 0;
-}
-
-EventEmitter.prototype.eventNames = function eventNames() {
-  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
-};
-
-function arrayClone(arr, n) {
-  var copy = new Array(n);
-  for (var i = 0; i < n; ++i)
-    copy[i] = arr[i];
-  return copy;
-}
-
-function spliceOne(list, index) {
-  for (; index + 1 < list.length; index++)
-    list[index] = list[index + 1];
-  list.pop();
-}
-
-function unwrapListeners(arr) {
-  var ret = new Array(arr.length);
-  for (var i = 0; i < ret.length; ++i) {
-    ret[i] = arr[i].listener || arr[i];
-  }
-  return ret;
-}
-
-function once(emitter, name) {
-  return new Promise(function (resolve, reject) {
-    function errorListener(err) {
-      emitter.removeListener(name, resolver);
-      reject(err);
-    }
-
-    function resolver() {
-      if (typeof emitter.removeListener === 'function') {
-        emitter.removeListener('error', errorListener);
-      }
-      resolve([].slice.call(arguments));
-    };
-
-    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
-    if (name !== 'error') {
-      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
-    }
-  });
-}
-
-function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
-  if (typeof emitter.on === 'function') {
-    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
-  }
-}
-
-function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
-  if (typeof emitter.on === 'function') {
-    if (flags.once) {
-      emitter.once(name, listener);
-    } else {
-      emitter.on(name, listener);
-    }
-  } else if (typeof emitter.addEventListener === 'function') {
-    // EventTarget does not have `error` event semantics like Node
-    // EventEmitters, we do not listen for `error` events here.
-    emitter.addEventListener(name, function wrapListener(arg) {
-      // IE does not have builtin `{ once: true }` support so we
-      // have to do it manually.
-      if (flags.once) {
-        emitter.removeEventListener(name, wrapListener);
-      }
-      listener(arg);
-    });
-  } else {
-    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
-  }
-}
-
-
-/***/ }),
-
-/***/ 3243:
+/***/ 705:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var isCallable = __webpack_require__(9680);
+var isCallable = __webpack_require__(9617);
 
 var toStr = Object.prototype.toString;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -2920,7 +2414,7 @@ module.exports = forEach;
 
 /***/ }),
 
-/***/ 7795:
+/***/ 8794:
 /***/ ((module) => {
 
 "use strict";
@@ -2980,20 +2474,20 @@ module.exports = function bind(that) {
 
 /***/ }),
 
-/***/ 4090:
+/***/ 9138:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(7795);
+var implementation = __webpack_require__(8794);
 
 module.exports = Function.prototype.bind || implementation;
 
 
 /***/ }),
 
-/***/ 7286:
+/***/ 528:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3041,8 +2535,8 @@ var ThrowTypeError = $gOPD
 	}())
 	: throwTypeError;
 
-var hasSymbols = __webpack_require__(2636)();
-var hasProto = __webpack_require__(8486)();
+var hasSymbols = __webpack_require__(3558)();
+var hasProto = __webpack_require__(6869)();
 
 var getProto = Object.getPrototypeOf || (
 	hasProto
@@ -3212,8 +2706,8 @@ var LEGACY_ALIASES = {
 	'%WeakSetPrototype%': ['WeakSet', 'prototype']
 };
 
-var bind = __webpack_require__(4090);
-var hasOwn = __webpack_require__(3198);
+var bind = __webpack_require__(9138);
+var hasOwn = __webpack_require__(2571);
 var $concat = bind.call(Function.call, Array.prototype.concat);
 var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
 var $replace = bind.call(Function.call, String.prototype.replace);
@@ -3352,13 +2846,13 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 
 /***/ }),
 
-/***/ 326:
+/***/ 9336:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(7286);
+var GetIntrinsic = __webpack_require__(528);
 
 var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
 
@@ -3376,13 +2870,13 @@ module.exports = $gOPD;
 
 /***/ }),
 
-/***/ 1181:
+/***/ 7239:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(7286);
+var GetIntrinsic = __webpack_require__(528);
 
 var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
 
@@ -3417,7 +2911,7 @@ module.exports = hasPropertyDescriptors;
 
 /***/ }),
 
-/***/ 8486:
+/***/ 6869:
 /***/ ((module) => {
 
 "use strict";
@@ -3436,14 +2930,14 @@ module.exports = function hasProto() {
 
 /***/ }),
 
-/***/ 2636:
+/***/ 3558:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 var origSymbol = typeof Symbol !== 'undefined' && Symbol;
-var hasSymbolSham = __webpack_require__(6679);
+var hasSymbolSham = __webpack_require__(2908);
 
 module.exports = function hasNativeSymbols() {
 	if (typeof origSymbol !== 'function') { return false; }
@@ -3457,7 +2951,7 @@ module.exports = function hasNativeSymbols() {
 
 /***/ }),
 
-/***/ 6679:
+/***/ 2908:
 /***/ ((module) => {
 
 "use strict";
@@ -3507,13 +3001,13 @@ module.exports = function hasSymbols() {
 
 /***/ }),
 
-/***/ 7226:
+/***/ 1913:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var hasSymbols = __webpack_require__(6679);
+var hasSymbols = __webpack_require__(2908);
 
 module.exports = function hasToStringTagShams() {
 	return hasSymbols() && !!Symbol.toStringTag;
@@ -3522,20 +3016,20 @@ module.exports = function hasToStringTagShams() {
 
 /***/ }),
 
-/***/ 3198:
+/***/ 2571:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(4090);
+var bind = __webpack_require__(9138);
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
 
 /***/ }),
 
-/***/ 1285:
+/***/ 5615:
 /***/ ((module) => {
 
 if (typeof Object.create === 'function') {
@@ -3569,14 +3063,14 @@ if (typeof Object.create === 'function') {
 
 /***/ }),
 
-/***/ 2635:
+/***/ 5387:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var hasToStringTag = __webpack_require__(7226)();
-var callBound = __webpack_require__(2680);
+var hasToStringTag = __webpack_require__(1913)();
+var callBound = __webpack_require__(9818);
 
 var $toString = callBound('Object.prototype.toString');
 
@@ -3610,7 +3104,7 @@ module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArgum
 
 /***/ }),
 
-/***/ 9680:
+/***/ 9617:
 /***/ ((module) => {
 
 "use strict";
@@ -3719,7 +3213,7 @@ module.exports = reflectApply
 
 /***/ }),
 
-/***/ 3138:
+/***/ 2625:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3728,7 +3222,7 @@ module.exports = reflectApply
 var toStr = Object.prototype.toString;
 var fnToStr = Function.prototype.toString;
 var isFnRegex = /^\s*(?:function)?\*/;
-var hasToStringTag = __webpack_require__(7226)();
+var hasToStringTag = __webpack_require__(1913)();
 var getProto = Object.getPrototypeOf;
 var getGeneratorFunc = function () { // eslint-disable-line consistent-return
 	if (!hasToStringTag) {
@@ -3765,7 +3259,7 @@ module.exports = function isGeneratorFunction(fn) {
 
 /***/ }),
 
-/***/ 7053:
+/***/ 8006:
 /***/ ((module) => {
 
 "use strict";
@@ -3780,18 +3274,18 @@ module.exports = function isNaN(value) {
 
 /***/ }),
 
-/***/ 4782:
+/***/ 7838:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var callBind = __webpack_require__(9429);
-var define = __webpack_require__(4926);
+var callBind = __webpack_require__(8498);
+var define = __webpack_require__(1857);
 
-var implementation = __webpack_require__(7053);
-var getPolyfill = __webpack_require__(755);
-var shim = __webpack_require__(5346);
+var implementation = __webpack_require__(8006);
+var getPolyfill = __webpack_require__(1591);
+var shim = __webpack_require__(1641);
 
 var polyfill = callBind(getPolyfill(), Number);
 
@@ -3808,13 +3302,13 @@ module.exports = polyfill;
 
 /***/ }),
 
-/***/ 755:
+/***/ 1591:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(7053);
+var implementation = __webpack_require__(8006);
 
 module.exports = function getPolyfill() {
 	if (Number.isNaN && Number.isNaN(NaN) && !Number.isNaN('a')) {
@@ -3826,14 +3320,14 @@ module.exports = function getPolyfill() {
 
 /***/ }),
 
-/***/ 5346:
+/***/ 1641:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var define = __webpack_require__(4926);
-var getPolyfill = __webpack_require__(755);
+var define = __webpack_require__(1857);
+var getPolyfill = __webpack_require__(1591);
 
 /* http://www.ecma-international.org/ecma-262/6.0/#sec-number.isnan */
 
@@ -3850,13 +3344,13 @@ module.exports = function shimNumberIsNaN() {
 
 /***/ }),
 
-/***/ 198:
+/***/ 5943:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var whichTypedArray = __webpack_require__(2094);
+var whichTypedArray = __webpack_require__(2730);
 
 module.exports = function isTypedArray(value) {
 	return !!whichTypedArray(value);
@@ -3865,7 +3359,7 @@ module.exports = function isTypedArray(value) {
 
 /***/ }),
 
-/***/ 8169:
+/***/ 2372:
 /***/ ((module) => {
 
 "use strict";
@@ -3892,18 +3386,18 @@ module.exports = function is(a, b) {
 
 /***/ }),
 
-/***/ 4679:
+/***/ 5968:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var define = __webpack_require__(4926);
-var callBind = __webpack_require__(9429);
+var define = __webpack_require__(1857);
+var callBind = __webpack_require__(8498);
 
-var implementation = __webpack_require__(8169);
-var getPolyfill = __webpack_require__(8070);
-var shim = __webpack_require__(191);
+var implementation = __webpack_require__(2372);
+var getPolyfill = __webpack_require__(1937);
+var shim = __webpack_require__(5087);
 
 var polyfill = callBind(getPolyfill(), Object);
 
@@ -3918,13 +3412,13 @@ module.exports = polyfill;
 
 /***/ }),
 
-/***/ 8070:
+/***/ 1937:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(8169);
+var implementation = __webpack_require__(2372);
 
 module.exports = function getPolyfill() {
 	return typeof Object.is === 'function' ? Object.is : implementation;
@@ -3933,14 +3427,14 @@ module.exports = function getPolyfill() {
 
 /***/ }),
 
-/***/ 191:
+/***/ 5087:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var getPolyfill = __webpack_require__(8070);
-var define = __webpack_require__(4926);
+var getPolyfill = __webpack_require__(1937);
+var define = __webpack_require__(1857);
 
 module.exports = function shimObjectIs() {
 	var polyfill = getPolyfill();
@@ -3955,7 +3449,7 @@ module.exports = function shimObjectIs() {
 
 /***/ }),
 
-/***/ 5691:
+/***/ 8160:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3966,7 +3460,7 @@ if (!Object.keys) {
 	// modified from https://github.com/es-shims/es5-shim
 	var has = Object.prototype.hasOwnProperty;
 	var toStr = Object.prototype.toString;
-	var isArgs = __webpack_require__(801); // eslint-disable-line global-require
+	var isArgs = __webpack_require__(968); // eslint-disable-line global-require
 	var isEnumerable = Object.prototype.propertyIsEnumerable;
 	var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
 	var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
@@ -4085,17 +3579,17 @@ module.exports = keysShim;
 
 /***/ }),
 
-/***/ 3464:
+/***/ 9228:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 var slice = Array.prototype.slice;
-var isArgs = __webpack_require__(801);
+var isArgs = __webpack_require__(968);
 
 var origKeys = Object.keys;
-var keysShim = origKeys ? function keys(o) { return origKeys(o); } : __webpack_require__(5691);
+var keysShim = origKeys ? function keys(o) { return origKeys(o); } : __webpack_require__(8160);
 
 var originalKeys = Object.keys;
 
@@ -4125,7 +3619,7 @@ module.exports = keysShim;
 
 /***/ }),
 
-/***/ 801:
+/***/ 968:
 /***/ ((module) => {
 
 "use strict";
@@ -4150,7 +3644,7 @@ module.exports = function isArguments(value) {
 
 /***/ }),
 
-/***/ 4406:
+/***/ 9907:
 /***/ ((module) => {
 
 // shim for using process in browser
@@ -4341,10 +3835,10 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ 6006:
+/***/ 8583:
 /***/ (function(module, exports, __webpack_require__) {
 
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var console = __webpack_require__(4364);
 var __WEBPACK_AMD_DEFINE_RESULT__;;/*! showdown v 2.1.0 - 21-04-2022 */
 (function(){
 /**
@@ -9501,7 +8995,7 @@ if (true) {
 
 /***/ }),
 
-/***/ 82:
+/***/ 5272:
 /***/ ((module) => {
 
 module.exports = function isBuffer(arg) {
@@ -9513,7 +9007,7 @@ module.exports = function isBuffer(arg) {
 
 /***/ }),
 
-/***/ 4895:
+/***/ 1531:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -9522,10 +9016,10 @@ module.exports = function isBuffer(arg) {
 
 
 
-var isArgumentsObject = __webpack_require__(2635);
-var isGeneratorFunction = __webpack_require__(3138);
-var whichTypedArray = __webpack_require__(2094);
-var isTypedArray = __webpack_require__(198);
+var isArgumentsObject = __webpack_require__(5387);
+var isGeneratorFunction = __webpack_require__(2625);
+var whichTypedArray = __webpack_require__(2730);
+var isTypedArray = __webpack_require__(5943);
 
 function uncurryThis(f) {
   return f.call.bind(f);
@@ -9855,11 +9349,11 @@ exports.isAnyArrayBuffer = isAnyArrayBuffer;
 
 /***/ }),
 
-/***/ 3335:
+/***/ 6827:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-/* provided dependency */ var process = __webpack_require__(4406);
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var process = __webpack_require__(9907);
+/* provided dependency */ var console = __webpack_require__(4364);
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -10326,7 +9820,7 @@ function reduceToSingleString(output, base, braces) {
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
-exports.types = __webpack_require__(4895);
+exports.types = __webpack_require__(1531);
 
 function isArray(ar) {
   return Array.isArray(ar);
@@ -10407,7 +9901,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(82);
+exports.isBuffer = __webpack_require__(5272);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -10451,7 +9945,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(1285);
+exports.inherits = __webpack_require__(5615);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -10579,7 +10073,7 @@ exports.callbackify = callbackify;
 
 /***/ }),
 
-/***/ 1200:
+/***/ 9208:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -10589,11 +10083,11 @@ exports.callbackify = callbackify;
  * ----------------------------------------------------------------------------------------- */
 
 
-module.exports = __webpack_require__(5953);
+module.exports = __webpack_require__(9110);
 
 /***/ }),
 
-/***/ 5953:
+/***/ 9110:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -10618,11 +10112,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
-const ril_1 = __webpack_require__(3632);
+const ril_1 = __webpack_require__(3312);
 // Install the browser runtime abstract.
 ril_1.default.install();
-const api_1 = __webpack_require__(5247);
-__exportStar(__webpack_require__(5247), exports);
+const api_1 = __webpack_require__(7672);
+__exportStar(__webpack_require__(7672), exports);
 class BrowserMessageReader extends api_1.AbstractMessageReader {
     constructor(port) {
         super();
@@ -10677,18 +10171,18 @@ exports.createMessageConnection = createMessageConnection;
 
 /***/ }),
 
-/***/ 3632:
+/***/ 3312:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var console = __webpack_require__(4364);
 
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const api_1 = __webpack_require__(5247);
+const api_1 = __webpack_require__(7672);
 class MessageBuffer extends api_1.AbstractMessageBuffer {
     constructor(encoding = 'utf-8') {
         super(encoding);
@@ -10842,7 +10336,7 @@ exports["default"] = RIL;
 
 /***/ }),
 
-/***/ 5247:
+/***/ 7672:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -10855,7 +10349,7 @@ exports["default"] = RIL;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
 exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = void 0;
-const messages_1 = __webpack_require__(9141);
+const messages_1 = __webpack_require__(7162);
 Object.defineProperty(exports, "Message", ({ enumerable: true, get: function () { return messages_1.Message; } }));
 Object.defineProperty(exports, "RequestType", ({ enumerable: true, get: function () { return messages_1.RequestType; } }));
 Object.defineProperty(exports, "RequestType0", ({ enumerable: true, get: function () { return messages_1.RequestType0; } }));
@@ -10882,32 +10376,32 @@ Object.defineProperty(exports, "NotificationType7", ({ enumerable: true, get: fu
 Object.defineProperty(exports, "NotificationType8", ({ enumerable: true, get: function () { return messages_1.NotificationType8; } }));
 Object.defineProperty(exports, "NotificationType9", ({ enumerable: true, get: function () { return messages_1.NotificationType9; } }));
 Object.defineProperty(exports, "ParameterStructures", ({ enumerable: true, get: function () { return messages_1.ParameterStructures; } }));
-const linkedMap_1 = __webpack_require__(7040);
+const linkedMap_1 = __webpack_require__(1109);
 Object.defineProperty(exports, "LinkedMap", ({ enumerable: true, get: function () { return linkedMap_1.LinkedMap; } }));
 Object.defineProperty(exports, "LRUCache", ({ enumerable: true, get: function () { return linkedMap_1.LRUCache; } }));
 Object.defineProperty(exports, "Touch", ({ enumerable: true, get: function () { return linkedMap_1.Touch; } }));
-const disposable_1 = __webpack_require__(8437);
+const disposable_1 = __webpack_require__(8844);
 Object.defineProperty(exports, "Disposable", ({ enumerable: true, get: function () { return disposable_1.Disposable; } }));
-const events_1 = __webpack_require__(5165);
+const events_1 = __webpack_require__(2479);
 Object.defineProperty(exports, "Event", ({ enumerable: true, get: function () { return events_1.Event; } }));
 Object.defineProperty(exports, "Emitter", ({ enumerable: true, get: function () { return events_1.Emitter; } }));
-const cancellation_1 = __webpack_require__(415);
+const cancellation_1 = __webpack_require__(6957);
 Object.defineProperty(exports, "CancellationTokenSource", ({ enumerable: true, get: function () { return cancellation_1.CancellationTokenSource; } }));
 Object.defineProperty(exports, "CancellationToken", ({ enumerable: true, get: function () { return cancellation_1.CancellationToken; } }));
-const sharedArrayCancellation_1 = __webpack_require__(178);
+const sharedArrayCancellation_1 = __webpack_require__(3489);
 Object.defineProperty(exports, "SharedArraySenderStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArraySenderStrategy; } }));
 Object.defineProperty(exports, "SharedArrayReceiverStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArrayReceiverStrategy; } }));
-const messageReader_1 = __webpack_require__(451);
+const messageReader_1 = __webpack_require__(656);
 Object.defineProperty(exports, "MessageReader", ({ enumerable: true, get: function () { return messageReader_1.MessageReader; } }));
 Object.defineProperty(exports, "AbstractMessageReader", ({ enumerable: true, get: function () { return messageReader_1.AbstractMessageReader; } }));
 Object.defineProperty(exports, "ReadableStreamMessageReader", ({ enumerable: true, get: function () { return messageReader_1.ReadableStreamMessageReader; } }));
-const messageWriter_1 = __webpack_require__(1251);
+const messageWriter_1 = __webpack_require__(9036);
 Object.defineProperty(exports, "MessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.MessageWriter; } }));
 Object.defineProperty(exports, "AbstractMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.AbstractMessageWriter; } }));
 Object.defineProperty(exports, "WriteableStreamMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.WriteableStreamMessageWriter; } }));
-const messageBuffer_1 = __webpack_require__(8652);
+const messageBuffer_1 = __webpack_require__(9805);
 Object.defineProperty(exports, "AbstractMessageBuffer", ({ enumerable: true, get: function () { return messageBuffer_1.AbstractMessageBuffer; } }));
-const connection_1 = __webpack_require__(1908);
+const connection_1 = __webpack_require__(4054);
 Object.defineProperty(exports, "ConnectionStrategy", ({ enumerable: true, get: function () { return connection_1.ConnectionStrategy; } }));
 Object.defineProperty(exports, "ConnectionOptions", ({ enumerable: true, get: function () { return connection_1.ConnectionOptions; } }));
 Object.defineProperty(exports, "NullLogger", ({ enumerable: true, get: function () { return connection_1.NullLogger; } }));
@@ -10925,13 +10419,13 @@ Object.defineProperty(exports, "CancellationReceiverStrategy", ({ enumerable: tr
 Object.defineProperty(exports, "CancellationSenderStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationSenderStrategy; } }));
 Object.defineProperty(exports, "CancellationStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationStrategy; } }));
 Object.defineProperty(exports, "MessageStrategy", ({ enumerable: true, get: function () { return connection_1.MessageStrategy; } }));
-const ral_1 = __webpack_require__(5706);
+const ral_1 = __webpack_require__(5091);
 exports.RAL = ral_1.default;
 
 
 /***/ }),
 
-/***/ 415:
+/***/ 6957:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -10942,9 +10436,9 @@ exports.RAL = ral_1.default;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CancellationTokenSource = exports.CancellationToken = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const events_1 = __webpack_require__(5165);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const events_1 = __webpack_require__(2479);
 var CancellationToken;
 (function (CancellationToken) {
     CancellationToken.None = Object.freeze({
@@ -11035,7 +10529,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
 
 /***/ }),
 
-/***/ 1908:
+/***/ 4054:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -11046,12 +10540,12 @@ exports.CancellationTokenSource = CancellationTokenSource;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const messages_1 = __webpack_require__(9141);
-const linkedMap_1 = __webpack_require__(7040);
-const events_1 = __webpack_require__(5165);
-const cancellation_1 = __webpack_require__(415);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const messages_1 = __webpack_require__(7162);
+const linkedMap_1 = __webpack_require__(1109);
+const events_1 = __webpack_require__(2479);
+const cancellation_1 = __webpack_require__(6957);
 var CancelNotification;
 (function (CancelNotification) {
     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -12255,7 +11749,7 @@ exports.createMessageConnection = createMessageConnection;
 
 /***/ }),
 
-/***/ 8437:
+/***/ 8844:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -12279,7 +11773,7 @@ var Disposable;
 
 /***/ }),
 
-/***/ 5165:
+/***/ 2479:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -12290,7 +11784,7 @@ var Disposable;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Emitter = exports.Event = void 0;
-const ral_1 = __webpack_require__(5706);
+const ral_1 = __webpack_require__(5091);
 var Event;
 (function (Event) {
     const _disposable = { dispose() { } };
@@ -12415,7 +11909,7 @@ Emitter._noop = function () { };
 
 /***/ }),
 
-/***/ 8811:
+/***/ 6618:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -12458,7 +11952,7 @@ exports.stringArray = stringArray;
 
 /***/ }),
 
-/***/ 7040:
+/***/ 1109:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -12864,7 +12358,7 @@ exports.LRUCache = LRUCache;
 
 /***/ }),
 
-/***/ 8652:
+/***/ 9805:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -13024,7 +12518,7 @@ exports.AbstractMessageBuffer = AbstractMessageBuffer;
 
 /***/ }),
 
-/***/ 451:
+/***/ 656:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -13035,10 +12529,10 @@ exports.AbstractMessageBuffer = AbstractMessageBuffer;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const events_1 = __webpack_require__(5165);
-const semaphore_1 = __webpack_require__(2339);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const events_1 = __webpack_require__(2479);
+const semaphore_1 = __webpack_require__(418);
 var MessageReader;
 (function (MessageReader) {
     function is(value) {
@@ -13224,7 +12718,7 @@ exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 
 /***/ }),
 
-/***/ 1251:
+/***/ 9036:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -13235,10 +12729,10 @@ exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const semaphore_1 = __webpack_require__(2339);
-const events_1 = __webpack_require__(5165);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const semaphore_1 = __webpack_require__(418);
+const events_1 = __webpack_require__(2479);
 const ContentLength = 'Content-Length: ';
 const CRLF = '\r\n';
 var MessageWriter;
@@ -13347,7 +12841,7 @@ exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 
 /***/ }),
 
-/***/ 9141:
+/***/ 7162:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -13358,7 +12852,7 @@ exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
-const is = __webpack_require__(8811);
+const is = __webpack_require__(6618);
 /**
  * Predefined error codes.
  */
@@ -13661,7 +13155,7 @@ var Message;
 
 /***/ }),
 
-/***/ 5706:
+/***/ 5091:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -13692,7 +13186,7 @@ exports["default"] = RAL;
 
 /***/ }),
 
-/***/ 2339:
+/***/ 418:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -13703,7 +13197,7 @@ exports["default"] = RAL;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Semaphore = void 0;
-const ral_1 = __webpack_require__(5706);
+const ral_1 = __webpack_require__(5091);
 class Semaphore {
     constructor(capacity = 1) {
         if (capacity <= 0) {
@@ -13768,7 +13262,7 @@ exports.Semaphore = Semaphore;
 
 /***/ }),
 
-/***/ 178:
+/***/ 3489:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -13779,7 +13273,7 @@ exports.Semaphore = Semaphore;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
-const cancellation_1 = __webpack_require__(415);
+const cancellation_1 = __webpack_require__(6957);
 var CancellationState;
 (function (CancellationState) {
     CancellationState.Continue = 0;
@@ -13852,7 +13346,7 @@ exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 
 /***/ }),
 
-/***/ 294:
+/***/ 5501:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -13877,9 +13371,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createProtocolConnection = void 0;
-const browser_1 = __webpack_require__(1200);
-__exportStar(__webpack_require__(1200), exports);
-__exportStar(__webpack_require__(9372), exports);
+const browser_1 = __webpack_require__(9208);
+__exportStar(__webpack_require__(9208), exports);
+__exportStar(__webpack_require__(3147), exports);
 function createProtocolConnection(reader, writer, logger, options) {
     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
 }
@@ -13888,7 +13382,7 @@ exports.createProtocolConnection = createProtocolConnection;
 
 /***/ }),
 
-/***/ 9372:
+/***/ 3147:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -13913,11 +13407,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
-__exportStar(__webpack_require__(5953), exports);
-__exportStar(__webpack_require__(4767), exports);
-__exportStar(__webpack_require__(8599), exports);
-__exportStar(__webpack_require__(6525), exports);
-var connection_1 = __webpack_require__(2798);
+__exportStar(__webpack_require__(9110), exports);
+__exportStar(__webpack_require__(7717), exports);
+__exportStar(__webpack_require__(8431), exports);
+__exportStar(__webpack_require__(1815), exports);
+var connection_1 = __webpack_require__(291);
 Object.defineProperty(exports, "createProtocolConnection", ({ enumerable: true, get: function () { return connection_1.createProtocolConnection; } }));
 var LSPErrorCodes;
 (function (LSPErrorCodes) {
@@ -13973,7 +13467,7 @@ var LSPErrorCodes;
 
 /***/ }),
 
-/***/ 2798:
+/***/ 291:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -13984,7 +13478,7 @@ var LSPErrorCodes;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createProtocolConnection = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
 function createProtocolConnection(input, output, logger, options) {
     if (vscode_jsonrpc_1.ConnectionStrategy.is(options)) {
         options = { connectionStrategy: options };
@@ -13996,7 +13490,7 @@ exports.createProtocolConnection = createProtocolConnection;
 
 /***/ }),
 
-/***/ 8599:
+/***/ 8431:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14007,7 +13501,7 @@ exports.createProtocolConnection = createProtocolConnection;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
 var MessageDirection;
 (function (MessageDirection) {
     MessageDirection["clientToServer"] = "clientToServer";
@@ -14048,7 +13542,7 @@ exports.ProtocolNotificationType = ProtocolNotificationType;
 
 /***/ }),
 
-/***/ 4434:
+/***/ 7602:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14059,7 +13553,7 @@ exports.ProtocolNotificationType = ProtocolNotificationType;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to result a `CallHierarchyItem` in a document at a given position.
  * Can be used as an input to an incoming or outgoing call hierarchy.
@@ -14098,7 +13592,7 @@ var CallHierarchyOutgoingCallsRequest;
 
 /***/ }),
 
-/***/ 7908:
+/***/ 3747:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14109,7 +13603,7 @@ var CallHierarchyOutgoingCallsRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to list all color symbols found in a given text document. The request's
  * parameter is of type {@link DocumentColorParams} the
@@ -14138,7 +13632,7 @@ var ColorPresentationRequest;
 
 /***/ }),
 
-/***/ 5442:
+/***/ 7639:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14149,7 +13643,7 @@ var ColorPresentationRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ConfigurationRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 //---- Get Configuration request ----
 /**
  * The 'workspace/configuration' request is sent from the server to the client to fetch a certain
@@ -14170,7 +13664,7 @@ var ConfigurationRequest;
 
 /***/ }),
 
-/***/ 7210:
+/***/ 5581:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14181,7 +13675,7 @@ var ConfigurationRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DeclarationRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 // @ts-ignore: to avoid inlining LocationLink as dynamic import
 let __noDynamicImport;
 /**
@@ -14201,7 +13695,7 @@ var DeclarationRequest;
 
 /***/ }),
 
-/***/ 5692:
+/***/ 1494:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14212,9 +13706,9 @@ var DeclarationRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
-const Is = __webpack_require__(2523);
-const messages_1 = __webpack_require__(8599);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
+const Is = __webpack_require__(8633);
+const messages_1 = __webpack_require__(8431);
 /**
  * @since 3.17.0
  */
@@ -14283,7 +13777,7 @@ var DiagnosticRefreshRequest;
 
 /***/ }),
 
-/***/ 6190:
+/***/ 4781:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14294,7 +13788,7 @@ var DiagnosticRefreshRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A pattern kind describing if a glob pattern matches a file a folder or
  * both.
@@ -14392,7 +13886,7 @@ var WillDeleteFilesRequest;
 
 /***/ }),
 
-/***/ 7029:
+/***/ 1203:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14403,7 +13897,7 @@ var WillDeleteFilesRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FoldingRangeRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide folding ranges in a document. The request's
  * parameter is of type {@link FoldingRangeParams}, the
@@ -14420,7 +13914,7 @@ var FoldingRangeRequest;
 
 /***/ }),
 
-/***/ 9380:
+/***/ 7287:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14431,7 +13925,7 @@ var FoldingRangeRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ImplementationRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 // @ts-ignore: to avoid inlining LocationLink as dynamic import
 let __noDynamicImport;
 /**
@@ -14450,7 +13944,7 @@ var ImplementationRequest;
 
 /***/ }),
 
-/***/ 6315:
+/***/ 9383:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14461,7 +13955,7 @@ var ImplementationRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide inlay hints in a document. The request's parameter is of
  * type {@link InlayHintsParams}, the response is of type
@@ -14501,7 +13995,7 @@ var InlayHintRefreshRequest;
 
 /***/ }),
 
-/***/ 7425:
+/***/ 3491:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14512,7 +14006,7 @@ var InlayHintRefreshRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide inline values in a document. The request's parameter is of
  * type {@link InlineValueParams}, the response is of type
@@ -14539,7 +14033,7 @@ var InlineValueRefreshRequest;
 
 /***/ }),
 
-/***/ 6525:
+/***/ 1815:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -14552,47 +14046,47 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = exports.CodeActionRequest = exports.DocumentSymbolRequest = exports.DocumentHighlightRequest = exports.ReferencesRequest = exports.DefinitionRequest = exports.SignatureHelpRequest = exports.SignatureHelpTriggerKind = exports.HoverRequest = exports.CompletionResolveRequest = exports.CompletionRequest = exports.CompletionTriggerKind = exports.PublishDiagnosticsNotification = exports.WatchKind = exports.RelativePattern = exports.FileChangeType = exports.DidChangeWatchedFilesNotification = exports.WillSaveTextDocumentWaitUntilRequest = exports.WillSaveTextDocumentNotification = exports.TextDocumentSaveReason = exports.DidSaveTextDocumentNotification = exports.DidCloseTextDocumentNotification = exports.DidChangeTextDocumentNotification = exports.TextDocumentContentChangeEvent = exports.DidOpenTextDocumentNotification = exports.TextDocumentSyncKind = exports.TelemetryEventNotification = exports.LogMessageNotification = exports.ShowMessageRequest = exports.ShowMessageNotification = exports.MessageType = exports.DidChangeConfigurationNotification = exports.ExitNotification = exports.ShutdownRequest = exports.InitializedNotification = exports.InitializeErrorCodes = exports.InitializeRequest = exports.WorkDoneProgressOptions = exports.TextDocumentRegistrationOptions = exports.StaticRegistrationOptions = exports.PositionEncodingKind = exports.FailureHandlingKind = exports.ResourceOperationKind = exports.UnregistrationRequest = exports.RegistrationRequest = exports.DocumentSelector = exports.NotebookCellTextDocumentFilter = exports.NotebookDocumentFilter = exports.TextDocumentFilter = void 0;
 exports.TypeHierarchySubtypesRequest = exports.TypeHierarchyPrepareRequest = exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.WillRenameFilesRequest = exports.DidRenameFilesNotification = exports.WillCreateFilesRequest = exports.DidCreateFilesNotification = exports.FileOperationPatternKind = exports.LinkedEditingRangeRequest = exports.ShowDocumentRequest = exports.SemanticTokensRegistrationType = exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.TokenFormat = exports.CallHierarchyPrepareRequest = exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = exports.SelectionRangeRequest = exports.DeclarationRequest = exports.FoldingRangeRequest = exports.ColorPresentationRequest = exports.DocumentColorRequest = exports.ConfigurationRequest = exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = exports.TypeDefinitionRequest = exports.ImplementationRequest = exports.ApplyWorkspaceEditRequest = exports.ExecuteCommandRequest = exports.PrepareRenameRequest = exports.RenameRequest = exports.PrepareSupportDefaultBehavior = exports.DocumentOnTypeFormattingRequest = exports.DocumentRangeFormattingRequest = exports.DocumentFormattingRequest = exports.DocumentLinkResolveRequest = exports.DocumentLinkRequest = exports.CodeLensRefreshRequest = exports.CodeLensResolveRequest = exports.CodeLensRequest = exports.WorkspaceSymbolResolveRequest = void 0;
 exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = exports.InlineValueRefreshRequest = exports.InlineValueRequest = exports.TypeHierarchySupertypesRequest = void 0;
-const messages_1 = __webpack_require__(8599);
-const vscode_languageserver_types_1 = __webpack_require__(4767);
-const Is = __webpack_require__(2523);
-const protocol_implementation_1 = __webpack_require__(9380);
+const messages_1 = __webpack_require__(8431);
+const vscode_languageserver_types_1 = __webpack_require__(7717);
+const Is = __webpack_require__(8633);
+const protocol_implementation_1 = __webpack_require__(7287);
 Object.defineProperty(exports, "ImplementationRequest", ({ enumerable: true, get: function () { return protocol_implementation_1.ImplementationRequest; } }));
-const protocol_typeDefinition_1 = __webpack_require__(8642);
+const protocol_typeDefinition_1 = __webpack_require__(9264);
 Object.defineProperty(exports, "TypeDefinitionRequest", ({ enumerable: true, get: function () { return protocol_typeDefinition_1.TypeDefinitionRequest; } }));
-const protocol_workspaceFolder_1 = __webpack_require__(3402);
+const protocol_workspaceFolder_1 = __webpack_require__(6860);
 Object.defineProperty(exports, "WorkspaceFoldersRequest", ({ enumerable: true, get: function () { return protocol_workspaceFolder_1.WorkspaceFoldersRequest; } }));
 Object.defineProperty(exports, "DidChangeWorkspaceFoldersNotification", ({ enumerable: true, get: function () { return protocol_workspaceFolder_1.DidChangeWorkspaceFoldersNotification; } }));
-const protocol_configuration_1 = __webpack_require__(5442);
+const protocol_configuration_1 = __webpack_require__(7639);
 Object.defineProperty(exports, "ConfigurationRequest", ({ enumerable: true, get: function () { return protocol_configuration_1.ConfigurationRequest; } }));
-const protocol_colorProvider_1 = __webpack_require__(7908);
+const protocol_colorProvider_1 = __webpack_require__(3747);
 Object.defineProperty(exports, "DocumentColorRequest", ({ enumerable: true, get: function () { return protocol_colorProvider_1.DocumentColorRequest; } }));
 Object.defineProperty(exports, "ColorPresentationRequest", ({ enumerable: true, get: function () { return protocol_colorProvider_1.ColorPresentationRequest; } }));
-const protocol_foldingRange_1 = __webpack_require__(7029);
+const protocol_foldingRange_1 = __webpack_require__(1203);
 Object.defineProperty(exports, "FoldingRangeRequest", ({ enumerable: true, get: function () { return protocol_foldingRange_1.FoldingRangeRequest; } }));
-const protocol_declaration_1 = __webpack_require__(7210);
+const protocol_declaration_1 = __webpack_require__(5581);
 Object.defineProperty(exports, "DeclarationRequest", ({ enumerable: true, get: function () { return protocol_declaration_1.DeclarationRequest; } }));
-const protocol_selectionRange_1 = __webpack_require__(2392);
+const protocol_selectionRange_1 = __webpack_require__(1530);
 Object.defineProperty(exports, "SelectionRangeRequest", ({ enumerable: true, get: function () { return protocol_selectionRange_1.SelectionRangeRequest; } }));
-const protocol_progress_1 = __webpack_require__(7895);
+const protocol_progress_1 = __webpack_require__(4166);
 Object.defineProperty(exports, "WorkDoneProgress", ({ enumerable: true, get: function () { return protocol_progress_1.WorkDoneProgress; } }));
 Object.defineProperty(exports, "WorkDoneProgressCreateRequest", ({ enumerable: true, get: function () { return protocol_progress_1.WorkDoneProgressCreateRequest; } }));
 Object.defineProperty(exports, "WorkDoneProgressCancelNotification", ({ enumerable: true, get: function () { return protocol_progress_1.WorkDoneProgressCancelNotification; } }));
-const protocol_callHierarchy_1 = __webpack_require__(4434);
+const protocol_callHierarchy_1 = __webpack_require__(7602);
 Object.defineProperty(exports, "CallHierarchyIncomingCallsRequest", ({ enumerable: true, get: function () { return protocol_callHierarchy_1.CallHierarchyIncomingCallsRequest; } }));
 Object.defineProperty(exports, "CallHierarchyOutgoingCallsRequest", ({ enumerable: true, get: function () { return protocol_callHierarchy_1.CallHierarchyOutgoingCallsRequest; } }));
 Object.defineProperty(exports, "CallHierarchyPrepareRequest", ({ enumerable: true, get: function () { return protocol_callHierarchy_1.CallHierarchyPrepareRequest; } }));
-const protocol_semanticTokens_1 = __webpack_require__(8489);
+const protocol_semanticTokens_1 = __webpack_require__(2067);
 Object.defineProperty(exports, "TokenFormat", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.TokenFormat; } }));
 Object.defineProperty(exports, "SemanticTokensRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRequest; } }));
 Object.defineProperty(exports, "SemanticTokensDeltaRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensDeltaRequest; } }));
 Object.defineProperty(exports, "SemanticTokensRangeRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRangeRequest; } }));
 Object.defineProperty(exports, "SemanticTokensRefreshRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRefreshRequest; } }));
 Object.defineProperty(exports, "SemanticTokensRegistrationType", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRegistrationType; } }));
-const protocol_showDocument_1 = __webpack_require__(1541);
+const protocol_showDocument_1 = __webpack_require__(4333);
 Object.defineProperty(exports, "ShowDocumentRequest", ({ enumerable: true, get: function () { return protocol_showDocument_1.ShowDocumentRequest; } }));
-const protocol_linkedEditingRange_1 = __webpack_require__(527);
+const protocol_linkedEditingRange_1 = __webpack_require__(2249);
 Object.defineProperty(exports, "LinkedEditingRangeRequest", ({ enumerable: true, get: function () { return protocol_linkedEditingRange_1.LinkedEditingRangeRequest; } }));
-const protocol_fileOperations_1 = __webpack_require__(6190);
+const protocol_fileOperations_1 = __webpack_require__(4781);
 Object.defineProperty(exports, "FileOperationPatternKind", ({ enumerable: true, get: function () { return protocol_fileOperations_1.FileOperationPatternKind; } }));
 Object.defineProperty(exports, "DidCreateFilesNotification", ({ enumerable: true, get: function () { return protocol_fileOperations_1.DidCreateFilesNotification; } }));
 Object.defineProperty(exports, "WillCreateFilesRequest", ({ enumerable: true, get: function () { return protocol_fileOperations_1.WillCreateFilesRequest; } }));
@@ -14600,28 +14094,28 @@ Object.defineProperty(exports, "DidRenameFilesNotification", ({ enumerable: true
 Object.defineProperty(exports, "WillRenameFilesRequest", ({ enumerable: true, get: function () { return protocol_fileOperations_1.WillRenameFilesRequest; } }));
 Object.defineProperty(exports, "DidDeleteFilesNotification", ({ enumerable: true, get: function () { return protocol_fileOperations_1.DidDeleteFilesNotification; } }));
 Object.defineProperty(exports, "WillDeleteFilesRequest", ({ enumerable: true, get: function () { return protocol_fileOperations_1.WillDeleteFilesRequest; } }));
-const protocol_moniker_1 = __webpack_require__(1964);
+const protocol_moniker_1 = __webpack_require__(7684);
 Object.defineProperty(exports, "UniquenessLevel", ({ enumerable: true, get: function () { return protocol_moniker_1.UniquenessLevel; } }));
 Object.defineProperty(exports, "MonikerKind", ({ enumerable: true, get: function () { return protocol_moniker_1.MonikerKind; } }));
 Object.defineProperty(exports, "MonikerRequest", ({ enumerable: true, get: function () { return protocol_moniker_1.MonikerRequest; } }));
-const protocol_typeHierarchy_1 = __webpack_require__(5318);
+const protocol_typeHierarchy_1 = __webpack_require__(7062);
 Object.defineProperty(exports, "TypeHierarchyPrepareRequest", ({ enumerable: true, get: function () { return protocol_typeHierarchy_1.TypeHierarchyPrepareRequest; } }));
 Object.defineProperty(exports, "TypeHierarchySubtypesRequest", ({ enumerable: true, get: function () { return protocol_typeHierarchy_1.TypeHierarchySubtypesRequest; } }));
 Object.defineProperty(exports, "TypeHierarchySupertypesRequest", ({ enumerable: true, get: function () { return protocol_typeHierarchy_1.TypeHierarchySupertypesRequest; } }));
-const protocol_inlineValue_1 = __webpack_require__(7425);
+const protocol_inlineValue_1 = __webpack_require__(3491);
 Object.defineProperty(exports, "InlineValueRequest", ({ enumerable: true, get: function () { return protocol_inlineValue_1.InlineValueRequest; } }));
 Object.defineProperty(exports, "InlineValueRefreshRequest", ({ enumerable: true, get: function () { return protocol_inlineValue_1.InlineValueRefreshRequest; } }));
-const protocol_inlayHint_1 = __webpack_require__(6315);
+const protocol_inlayHint_1 = __webpack_require__(9383);
 Object.defineProperty(exports, "InlayHintRequest", ({ enumerable: true, get: function () { return protocol_inlayHint_1.InlayHintRequest; } }));
 Object.defineProperty(exports, "InlayHintResolveRequest", ({ enumerable: true, get: function () { return protocol_inlayHint_1.InlayHintResolveRequest; } }));
 Object.defineProperty(exports, "InlayHintRefreshRequest", ({ enumerable: true, get: function () { return protocol_inlayHint_1.InlayHintRefreshRequest; } }));
-const protocol_diagnostic_1 = __webpack_require__(5692);
+const protocol_diagnostic_1 = __webpack_require__(1494);
 Object.defineProperty(exports, "DiagnosticServerCancellationData", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DiagnosticServerCancellationData; } }));
 Object.defineProperty(exports, "DocumentDiagnosticReportKind", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DocumentDiagnosticReportKind; } }));
 Object.defineProperty(exports, "DocumentDiagnosticRequest", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DocumentDiagnosticRequest; } }));
 Object.defineProperty(exports, "WorkspaceDiagnosticRequest", ({ enumerable: true, get: function () { return protocol_diagnostic_1.WorkspaceDiagnosticRequest; } }));
 Object.defineProperty(exports, "DiagnosticRefreshRequest", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DiagnosticRefreshRequest; } }));
-const protocol_notebook_1 = __webpack_require__(4460);
+const protocol_notebook_1 = __webpack_require__(4792);
 Object.defineProperty(exports, "NotebookCellKind", ({ enumerable: true, get: function () { return protocol_notebook_1.NotebookCellKind; } }));
 Object.defineProperty(exports, "ExecutionSummary", ({ enumerable: true, get: function () { return protocol_notebook_1.ExecutionSummary; } }));
 Object.defineProperty(exports, "NotebookCell", ({ enumerable: true, get: function () { return protocol_notebook_1.NotebookCell; } }));
@@ -15470,7 +14964,7 @@ var ApplyWorkspaceEditRequest;
 
 /***/ }),
 
-/***/ 527:
+/***/ 2249:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15481,7 +14975,7 @@ var ApplyWorkspaceEditRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LinkedEditingRangeRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide ranges that can be edited together.
  *
@@ -15497,7 +14991,7 @@ var LinkedEditingRangeRequest;
 
 /***/ }),
 
-/***/ 1964:
+/***/ 7684:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15508,7 +15002,7 @@ var LinkedEditingRangeRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * Moniker uniqueness level to define scope of the moniker.
  *
@@ -15573,7 +15067,7 @@ var MonikerRequest;
 
 /***/ }),
 
-/***/ 4460:
+/***/ 4792:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15584,9 +15078,9 @@ var MonikerRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
-const vscode_languageserver_types_1 = __webpack_require__(4767);
-const Is = __webpack_require__(2523);
-const messages_1 = __webpack_require__(8599);
+const vscode_languageserver_types_1 = __webpack_require__(7717);
+const Is = __webpack_require__(8633);
+const messages_1 = __webpack_require__(8431);
 /**
  * A notebook cell kind.
  *
@@ -15795,7 +15289,7 @@ var DidCloseNotebookDocumentNotification;
 
 /***/ }),
 
-/***/ 7895:
+/***/ 4166:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15806,8 +15300,8 @@ var DidCloseNotebookDocumentNotification;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
-const messages_1 = __webpack_require__(8599);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
+const messages_1 = __webpack_require__(8431);
 var WorkDoneProgress;
 (function (WorkDoneProgress) {
     WorkDoneProgress.type = new vscode_jsonrpc_1.ProgressType();
@@ -15840,7 +15334,7 @@ var WorkDoneProgressCancelNotification;
 
 /***/ }),
 
-/***/ 2392:
+/***/ 1530:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15851,7 +15345,7 @@ var WorkDoneProgressCancelNotification;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionRangeRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide selection ranges in a document. The request's
  * parameter is of type {@link SelectionRangeParams}, the
@@ -15868,7 +15362,7 @@ var SelectionRangeRequest;
 
 /***/ }),
 
-/***/ 8489:
+/***/ 2067:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15879,7 +15373,7 @@ var SelectionRangeRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 //------- 'textDocument/semanticTokens' -----
 var TokenFormat;
 (function (TokenFormat) {
@@ -15933,7 +15427,7 @@ var SemanticTokensRefreshRequest;
 
 /***/ }),
 
-/***/ 1541:
+/***/ 4333:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15944,7 +15438,7 @@ var SemanticTokensRefreshRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ShowDocumentRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to show a document. This request might open an
  * external program depending on the value of the URI to open.
@@ -15963,7 +15457,7 @@ var ShowDocumentRequest;
 
 /***/ }),
 
-/***/ 8642:
+/***/ 9264:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -15974,7 +15468,7 @@ var ShowDocumentRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TypeDefinitionRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 // @ts-ignore: to avoid inlining LocatioLink as dynamic import
 let __noDynamicImport;
 /**
@@ -15993,7 +15487,7 @@ var TypeDefinitionRequest;
 
 /***/ }),
 
-/***/ 5318:
+/***/ 7062:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -16004,7 +15498,7 @@ var TypeDefinitionRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to result a `TypeHierarchyItem` in a document at a given position.
  * Can be used as an input to a subtypes or supertypes type hierarchy.
@@ -16043,7 +15537,7 @@ var TypeHierarchySubtypesRequest;
 
 /***/ }),
 
-/***/ 3402:
+/***/ 6860:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -16054,7 +15548,7 @@ var TypeHierarchySubtypesRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
  */
@@ -16078,7 +15572,7 @@ var DidChangeWorkspaceFoldersNotification;
 
 /***/ }),
 
-/***/ 2523:
+/***/ 8633:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -16132,7 +15626,7 @@ exports.objectLiteral = objectLiteral;
 
 /***/ }),
 
-/***/ 4767:
+/***/ 7717:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -18426,20 +17920,20 @@ var Is;
 
 /***/ }),
 
-/***/ 2094:
+/***/ 2730:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var forEach = __webpack_require__(3243);
-var availableTypedArrays = __webpack_require__(2191);
-var callBind = __webpack_require__(9429);
-var callBound = __webpack_require__(2680);
-var gOPD = __webpack_require__(326);
+var forEach = __webpack_require__(705);
+var availableTypedArrays = __webpack_require__(4834);
+var callBind = __webpack_require__(8498);
+var callBound = __webpack_require__(9818);
+var gOPD = __webpack_require__(9336);
 
 var $toString = callBound('Object.prototype.toString');
-var hasToStringTag = __webpack_require__(7226)();
+var hasToStringTag = __webpack_require__(1913)();
 
 var g = typeof globalThis === 'undefined' ? __webpack_require__.g : globalThis;
 var typedArrays = availableTypedArrays();
@@ -18523,7 +18017,7 @@ module.exports = function whichTypedArray(value) {
 
 /***/ }),
 
-/***/ 2191:
+/***/ 4834:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -18652,8 +18146,13 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-var main = __webpack_require__(294);
+var main = __webpack_require__(5501);
+;// CONCATENATED MODULE: ../../node_modules/vscode-uri/lib/esm/index.mjs
+/* provided dependency */ var process = __webpack_require__(9907);
+var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",i=0,o=-1,s=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(o===h-1||1===s);else if(o!==h-1&&2===s){if(n.length<2||2!==i||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var a=n.lastIndexOf("/");if(a!==n.length-1){-1===a?(n="",i=0):i=(n=n.slice(0,a)).length-1-n.lastIndexOf("/"),o=h,s=0;continue}}else if(2===n.length||1===n.length){n="",i=0,o=h,s=0;continue}e&&(n.length>0?n+="/..":n="..",i=2)}else n.length>0?n+="/"+t.slice(o+1,h):n=t.slice(o+1,h),i=h-o-1;o=h,s=0}else 46===r&&-1!==s?++s:s=-1}return n}var n={resolve:function(){for(var t,n="",i=!1,o=arguments.length-1;o>=-1&&!i;o--){var s;o>=0?s=arguments[o]:(void 0===t&&(t=process.cwd()),s=t),e(s),0!==s.length&&(n=s+"/"+n,i=47===s.charCodeAt(0))}return n=r(n,!i),i?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),i=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&i&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var i=arguments[r];e(i),i.length>0&&(void 0===t?t=i:t+="/"+i)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var i=1;i<t.length&&47===t.charCodeAt(i);++i);for(var o=t.length,s=o-i,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var a=r.length-h,c=s<a?s:a,f=-1,u=0;u<=c;++u){if(u===c){if(a>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else s>c&&(47===t.charCodeAt(i+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(i+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var g="";for(u=i+f+1;u<=o;++u)u!==o&&47!==t.charCodeAt(u)||(0===g.length?g+="..":g+="/..");return g.length>0?g+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,i=-1,o=!0,s=t.length-1;s>=1;--s)if(47===(r=t.charCodeAt(s))){if(!o){i=s;break}}else o=!1;return-1===i?n?"/":".":n&&1===i?"//":t.slice(0,i)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,i=0,o=-1,s=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,a=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!s){i=n+1;break}}else-1===a&&(s=!1,a=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(o=n):(h=-1,o=a))}return i===o?o=a:-1===o&&(o=t.length),t.slice(i,o)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!s){i=n+1;break}}else-1===o&&(s=!1,o=n+1);return-1===o?"":t.slice(i,o)},extname:function(t){e(t);for(var r=-1,n=0,i=-1,o=!0,s=0,h=t.length-1;h>=0;--h){var a=t.charCodeAt(h);if(47!==a)-1===i&&(o=!1,i=h+1),46===a?-1===r?r=h:1!==s&&(s=1):-1!==r&&(s=-1);else if(!o){n=h+1;break}}return-1===r||-1===i||0===s||1===s&&r===i-1&&r===n+1?"":t.slice(r,i)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,i=t.charCodeAt(0),o=47===i;o?(r.root="/",n=1):n=0;for(var s=-1,h=0,a=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(i=t.charCodeAt(f)))-1===a&&(c=!1,a=f+1),46===i?-1===s?s=f:1!==u&&(u=1):-1!==s&&(u=-1);else if(!c){h=f+1;break}return-1===s||-1===a||0===u||1===u&&s===a-1&&s===h+1?-1!==a&&(r.base=r.name=0===h&&o?t.slice(1,a):t.slice(h,a)):(0===h&&o?(r.name=t.slice(1,s),r.base=t.slice(1,a)):(r.name=t.slice(h,s),r.base=t.slice(h,a)),r.ext=t.slice(s,a)),h>0?r.dir=t.slice(0,h-1):o&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var i=e[n];if(void 0!==i)return i.exports;var o=e[n]={exports:{}};return t[n](o,o.exports,r),o.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};(()=>{let t;if(r.r(n),r.d(n,{URI:()=>f,Utils:()=>P}),"object"==typeof process)t="win32"===process.platform;else if("object"==typeof navigator){let e=navigator.userAgent;t=e.indexOf("Windows")>=0}const e=/^\w[\w\d+.-]*$/,i=/^\//,o=/^\/\//;function s(t,r){if(!t.scheme&&r)throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);if(t.scheme&&!e.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!i.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(o.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}const h="",a="/",c=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;class f{static isUri(t){return t instanceof f||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString}scheme;authority;path;query;fragment;constructor(t,e,r,n,i,o=!1){"object"==typeof t?(this.scheme=t.scheme||h,this.authority=t.authority||h,this.path=t.path||h,this.query=t.query||h,this.fragment=t.fragment||h):(this.scheme=function(t,e){return t||e?t:"file"}(t,o),this.authority=e||h,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==a&&(e=a+e):e=a}return e}(this.scheme,r||h),this.query=n||h,this.fragment=i||h,s(this,o))}get fsPath(){return m(this,!1)}with(t){if(!t)return this;let{scheme:e,authority:r,path:n,query:i,fragment:o}=t;return void 0===e?e=this.scheme:null===e&&(e=h),void 0===r?r=this.authority:null===r&&(r=h),void 0===n?n=this.path:null===n&&(n=h),void 0===i?i=this.query:null===i&&(i=h),void 0===o?o=this.fragment:null===o&&(o=h),e===this.scheme&&r===this.authority&&n===this.path&&i===this.query&&o===this.fragment?this:new l(e,r,n,i,o)}static parse(t,e=!1){const r=c.exec(t);return r?new l(r[2]||h,C(r[4]||h),C(r[5]||h),C(r[7]||h),C(r[9]||h),e):new l(h,h,h,h,h)}static file(e){let r=h;if(t&&(e=e.replace(/\\/g,a)),e[0]===a&&e[1]===a){const t=e.indexOf(a,2);-1===t?(r=e.substring(2),e=a):(r=e.substring(2,t),e=e.substring(t)||a)}return new l("file",r,e,h,h)}static from(t){const e=new l(t.scheme,t.authority,t.path,t.query,t.fragment);return s(e,!0),e}toString(t=!1){return y(this,t)}toJSON(){return this}static revive(t){if(t){if(t instanceof f)return t;{const e=new l(t);return e._formatted=t.external,e._fsPath=t._sep===u?t.fsPath:null,e}}return t}}const u=t?1:void 0;class l extends f{_formatted=null;_fsPath=null;get fsPath(){return this._fsPath||(this._fsPath=m(this,!1)),this._fsPath}toString(t=!1){return t?y(this,!0):(this._formatted||(this._formatted=y(this,!1)),this._formatted)}toJSON(){const t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=u),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t}}const g={58:"%3A",47:"%2F",63:"%3F",35:"%23",91:"%5B",93:"%5D",64:"%40",33:"%21",36:"%24",38:"%26",39:"%27",40:"%28",41:"%29",42:"%2A",43:"%2B",44:"%2C",59:"%3B",61:"%3D",32:"%20"};function d(t,e,r){let n,i=-1;for(let o=0;o<t.length;o++){const s=t.charCodeAt(o);if(s>=97&&s<=122||s>=65&&s<=90||s>=48&&s<=57||45===s||46===s||95===s||126===s||e&&47===s||r&&91===s||r&&93===s||r&&58===s)-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),void 0!==n&&(n+=t.charAt(o));else{void 0===n&&(n=t.substr(0,o));const e=g[s];void 0!==e?(-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),n+=e):-1===i&&(i=o)}}return-1!==i&&(n+=encodeURIComponent(t.substring(i))),void 0!==n?n:t}function p(t){let e;for(let r=0;r<t.length;r++){const n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=g[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function m(e,r){let n;return n=e.authority&&e.path.length>1&&"file"===e.scheme?`//${e.authority}${e.path}`:47===e.path.charCodeAt(0)&&(e.path.charCodeAt(1)>=65&&e.path.charCodeAt(1)<=90||e.path.charCodeAt(1)>=97&&e.path.charCodeAt(1)<=122)&&58===e.path.charCodeAt(2)?r?e.path.substr(1):e.path[1].toLowerCase()+e.path.substr(2):e.path,t&&(n=n.replace(/\//g,"\\")),n}function y(t,e){const r=e?p:d;let n="",{scheme:i,authority:o,path:s,query:h,fragment:c}=t;if(i&&(n+=i,n+=":"),(o||"file"===i)&&(n+=a,n+=a),o){let t=o.indexOf("@");if(-1!==t){const e=o.substr(0,t);o=o.substr(t+1),t=e.lastIndexOf(":"),-1===t?n+=r(e,!1,!1):(n+=r(e.substr(0,t),!1,!1),n+=":",n+=r(e.substr(t+1),!1,!0)),n+="@"}o=o.toLowerCase(),t=o.lastIndexOf(":"),-1===t?n+=r(o,!1,!0):(n+=r(o.substr(0,t),!1,!0),n+=o.substr(t))}if(s){if(s.length>=3&&47===s.charCodeAt(0)&&58===s.charCodeAt(2)){const t=s.charCodeAt(1);t>=65&&t<=90&&(s=`/${String.fromCharCode(t+32)}:${s.substr(3)}`)}else if(s.length>=2&&58===s.charCodeAt(1)){const t=s.charCodeAt(0);t>=65&&t<=90&&(s=`${String.fromCharCode(t+32)}:${s.substr(2)}`)}n+=r(s,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),c&&(n+="#",n+=e?c:d(c,!1,!1)),n}function v(t){try{return decodeURIComponent(t)}catch{return t.length>3?t.substr(0,3)+v(t.substr(3)):t}}const b=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function C(t){return t.match(b)?t.replace(b,(t=>v(t))):t}var A=r(470);const w=A.posix||A,x="/";var P;!function(t){t.joinPath=function(t,...e){return t.with({path:w.join(t.path,...e)})},t.resolvePath=function(t,...e){let r=t.path,n=!1;r[0]!==x&&(r=x+r,n=!0);let i=w.resolve(r,...e);return n&&i[0]===x&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===x)return t;let e=w.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return w.basename(t.path)},t.extname=function(t){return w.extname(t.path)}}(P||(P={}))})(),LIB=n})();const{URI,Utils}=LIB;
+//# sourceMappingURL=index.mjs.map
 ;// CONCATENATED MODULE: ./src/utils.ts
+
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
@@ -18721,6 +18220,13 @@ function utils_checkValueAgainstRegexpArray(value, regexpArray) {
         }
     }
     return false;
+}
+function convertToUri(filePath) {
+    //already URI
+    if (filePath.startsWith("file:///")) {
+        return filePath;
+    }
+    return URI.file(filePath).toString();
 }
 
 ;// CONCATENATED MODULE: ./src/ace/range-singleton.ts
@@ -18829,15 +18335,19 @@ function message_types_define_property(obj, key, value) {
     return obj;
 }
 class BaseMessage {
-    constructor(sessionId){
+    constructor(documentIdentifier, callbackId){
         message_types_define_property(this, "sessionId", void 0);
+        message_types_define_property(this, "documentUri", void 0);
         message_types_define_property(this, "version", void 0);
-        this.sessionId = sessionId;
+        message_types_define_property(this, "callbackId", void 0);
+        this.sessionId = documentIdentifier.sessionId;
+        this.documentUri = documentIdentifier.documentUri;
+        this.callbackId = callbackId;
     }
 }
 class InitMessage extends BaseMessage {
-    constructor(sessionId, value, version, mode, options){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value, version, mode, options){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.init);
         message_types_define_property(this, "mode", void 0);
         message_types_define_property(this, "options", void 0);
@@ -18850,8 +18360,8 @@ class InitMessage extends BaseMessage {
     }
 }
 class FormatMessage extends BaseMessage {
-    constructor(sessionId, value, format){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value, format){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.format);
         message_types_define_property(this, "value", void 0);
         message_types_define_property(this, "format", void 0);
@@ -18860,38 +18370,38 @@ class FormatMessage extends BaseMessage {
     }
 }
 class CompleteMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.complete);
         message_types_define_property(this, "value", void 0);
         this.value = value;
     }
 }
 class ResolveCompletionMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.resolveCompletion);
         message_types_define_property(this, "value", void 0);
         this.value = value;
     }
 }
 class HoverMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.hover);
         message_types_define_property(this, "value", void 0);
         this.value = value;
     }
 }
 class ValidateMessage extends BaseMessage {
-    constructor(sessionId){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.validate);
     }
 }
 class ChangeMessage extends BaseMessage {
-    constructor(sessionId, value, version){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value, version){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.change);
         message_types_define_property(this, "value", void 0);
         message_types_define_property(this, "version", void 0);
@@ -18900,8 +18410,8 @@ class ChangeMessage extends BaseMessage {
     }
 }
 class DeltasMessage extends BaseMessage {
-    constructor(sessionId, value, version){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value, version){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.applyDelta);
         message_types_define_property(this, "value", void 0);
         message_types_define_property(this, "version", void 0);
@@ -18910,8 +18420,8 @@ class DeltasMessage extends BaseMessage {
     }
 }
 class ChangeModeMessage extends BaseMessage {
-    constructor(sessionId, value, version, mode){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value, version, mode){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.changeMode);
         message_types_define_property(this, "mode", void 0);
         message_types_define_property(this, "value", void 0);
@@ -18922,8 +18432,8 @@ class ChangeModeMessage extends BaseMessage {
     }
 }
 class ChangeOptionsMessage extends BaseMessage {
-    constructor(sessionId, options, merge = false){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, options, merge = false){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.changeOptions);
         message_types_define_property(this, "options", void 0);
         message_types_define_property(this, "merge", void 0);
@@ -18932,15 +18442,16 @@ class ChangeOptionsMessage extends BaseMessage {
     }
 }
 class CloseDocumentMessage extends BaseMessage {
-    constructor(sessionId){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.closeDocument);
     }
 }
-class DisposeMessage extends BaseMessage {
-    constructor(){
-        super("");
-        message_types_define_property(this, "type", MessageType.dispose);
+class CloseConnectionMessage {
+    constructor(callbackId){
+        message_types_define_property(this, "type", MessageType.closeConnection);
+        message_types_define_property(this, "callbackId", void 0);
+        this.callbackId = callbackId;
     }
 }
 class GlobalOptionsMessage {
@@ -18964,26 +18475,67 @@ class ConfigureFeaturesMessage {
     }
 }
 class SignatureHelpMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.signatureHelp);
         message_types_define_property(this, "value", void 0);
         this.value = value;
     }
 }
 class DocumentHighlightMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.documentHighlight);
         message_types_define_property(this, "value", void 0);
         this.value = value;
     }
 }
 class GetSemanticTokensMessage extends BaseMessage {
-    constructor(sessionId, value){
-        super(sessionId);
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
         message_types_define_property(this, "type", MessageType.getSemanticTokens);
         message_types_define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class GetCodeActionsMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value, context){
+        super(documentIdentifier, callbackId);
+        message_types_define_property(this, "type", MessageType.getCodeActions);
+        message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "context", void 0);
+        this.value = value;
+        this.context = context;
+    }
+}
+class SetWorkspaceMessage {
+    constructor(value){
+        message_types_define_property(this, "type", MessageType.setWorkspace);
+        message_types_define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class ExecuteCommandMessage {
+    constructor(serviceName, callbackId, command, args){
+        message_types_define_property(this, "callbackId", void 0);
+        message_types_define_property(this, "serviceName", void 0);
+        message_types_define_property(this, "type", MessageType.executeCommand);
+        message_types_define_property(this, "value", void 0);
+        message_types_define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = command;
+        this.args = args;
+    }
+}
+class AppliedEditMessage {
+    constructor(value, serviceName, callbackId){
+        message_types_define_property(this, "callbackId", void 0);
+        message_types_define_property(this, "serviceName", void 0);
+        message_types_define_property(this, "type", MessageType.appliedEdit);
+        message_types_define_property(this, "value", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
         this.value = value;
     }
 }
@@ -19004,14 +18556,16 @@ var MessageType;
     MessageType[MessageType["configureFeatures"] = 12] = "configureFeatures";
     MessageType[MessageType["signatureHelp"] = 13] = "signatureHelp";
     MessageType[MessageType["documentHighlight"] = 14] = "documentHighlight";
-    MessageType[MessageType["dispose"] = 15] = "dispose";
+    MessageType[MessageType["closeConnection"] = 15] = "closeConnection";
     MessageType[MessageType["capabilitiesChange"] = 16] = "capabilitiesChange";
     MessageType[MessageType["getSemanticTokens"] = 17] = "getSemanticTokens";
+    MessageType[MessageType["getCodeActions"] = 18] = "getCodeActions";
+    MessageType[MessageType["executeCommand"] = 19] = "executeCommand";
+    MessageType[MessageType["applyEdit"] = 20] = "applyEdit";
+    MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
+    MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
 })(MessageType || (MessageType = {}));
 
-// EXTERNAL MODULE: ../../node_modules/events/events.js
-var events = __webpack_require__(2699);
-var events_default = /*#__PURE__*/__webpack_require__.n(events);
 ;// CONCATENATED MODULE: ./src/message-controller.ts
 function message_controller_define_property(obj, key, value) {
     if (key in obj) {
@@ -19028,83 +18582,116 @@ function message_controller_define_property(obj, key, value) {
 }
 
 
-class MessageController extends (events_default()) {
-    init(sessionId, document, mode, options, callbacks) {
-        this.on(MessageType.validate.toString() + "-" + sessionId, callbacks.validationCallback); //TODO: need off
-        // somewhere
-        this.on(MessageType.capabilitiesChange.toString() + "-" + sessionId, callbacks.changeCapabilitiesCallback);
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), callbacks.initCallback);
+class MessageController {
+    getSessionIdByUri(documentUri) {
+        if (!documentUri) {
+            return;
+        }
+        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[URI.parse(documentUri).toString()];
     }
-    doValidation(sessionId, callback) {
-        this.postMessage(new ValidateMessage(sessionId), callback);
+    init(documentIdentifier, document, mode, options, initCallback) {
+        this.postMessage(new InitMessage(documentIdentifier, this.callbackId++, document.getValue(), document["version"], mode, options), initCallback);
     }
-    doComplete(sessionId, position, callback) {
-        this.postMessage(new CompleteMessage(sessionId, position), callback);
+    doValidation(documentIdentifier, callback) {
+        this.postMessage(new ValidateMessage(documentIdentifier, this.callbackId++), callback);
     }
-    doResolve(sessionId, completion, callback) {
-        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
+    doComplete(documentIdentifier, position, callback) {
+        this.postMessage(new CompleteMessage(documentIdentifier, this.callbackId++, position), callback);
     }
-    format(sessionId, range, format, callback) {
-        this.postMessage(new FormatMessage(sessionId, range, format), callback);
+    doResolve(documentIdentifier, completion, callback) {
+        this.postMessage(new ResolveCompletionMessage(documentIdentifier, this.callbackId++, completion), callback);
     }
-    doHover(sessionId, position, callback) {
-        this.postMessage(new HoverMessage(sessionId, position), callback);
+    format(documentIdentifier, range, format, callback) {
+        this.postMessage(new FormatMessage(documentIdentifier, this.callbackId++, range, format), callback);
     }
-    change(sessionId, deltas, document, callback) {
+    doHover(documentIdentifier, position, callback) {
+        this.postMessage(new HoverMessage(documentIdentifier, this.callbackId++, position), callback);
+    }
+    change(documentIdentifier, deltas, document, callback) {
         let message;
         if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+            message = new ChangeMessage(documentIdentifier, this.callbackId++, document.getValue(), document["version"]);
         } else {
-            message = new DeltasMessage(sessionId, deltas, document["version"]);
+            message = new DeltasMessage(documentIdentifier, this.callbackId++, deltas, document["version"]);
         }
         this.postMessage(message, callback);
     }
-    changeMode(sessionId, value, version, mode, callback) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, version, mode), callback);
+    changeMode(documentIdentifier, value, version, mode, callback) {
+        this.postMessage(new ChangeModeMessage(documentIdentifier, this.callbackId++, value, version, mode), callback);
     }
-    changeOptions(sessionId, options, callback, merge = false) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
+    changeOptions(documentIdentifier, options, callback, merge = false) {
+        this.postMessage(new ChangeOptionsMessage(documentIdentifier, this.callbackId++, options, merge), callback);
     }
-    closeDocument(sessionId, callback) {
-        this.postMessage(new CloseDocumentMessage(sessionId), callback);
+    closeDocument(documentIdentifier, callback) {
+        this.postMessage(new CloseDocumentMessage(documentIdentifier, this.callbackId++), callback);
     }
-    dispose(callback) {
-        this.postMessage(new DisposeMessage(), callback);
+    closeConnection(callback) {
+        this.postMessage(new CloseConnectionMessage(this.callbackId++), callback);
     }
     setGlobalOptions(serviceName, options, merge = false) {
         // @ts-ignore
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
-    provideSignatureHelp(sessionId, position, callback) {
-        this.postMessage(new SignatureHelpMessage(sessionId, position), callback);
+    provideSignatureHelp(documentIdentifier, position, callback) {
+        this.postMessage(new SignatureHelpMessage(documentIdentifier, this.callbackId++, position), callback);
     }
-    findDocumentHighlights(sessionId, position, callback) {
-        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback);
+    findDocumentHighlights(documentIdentifier, position, callback) {
+        this.postMessage(new DocumentHighlightMessage(documentIdentifier, this.callbackId++, position), callback);
     }
     configureFeatures(serviceName, features) {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
     }
-    getSemanticTokens(sessionId, range, callback) {
-        this.postMessage(new GetSemanticTokensMessage(sessionId, range), callback);
+    getSemanticTokens(documentIdentifier, range, callback) {
+        this.postMessage(new GetSemanticTokensMessage(documentIdentifier, this.callbackId++, range), callback);
+    }
+    getCodeActions(documentIdentifier, range, context, callback) {
+        this.postMessage(new GetCodeActionsMessage(documentIdentifier, this.callbackId++, range, context), callback);
+    }
+    executeCommand(serviceName, command, args, callback) {
+        this.postMessage(new ExecuteCommandMessage(serviceName, this.callbackId++, command, args), callback);
+    }
+    setWorkspace(workspaceUri, callback) {
+        this.$worker.postMessage(new SetWorkspaceMessage(workspaceUri));
     }
     postMessage(message, callback) {
         if (callback) {
-            let eventName = message.type.toString() + "-" + message.sessionId;
-            let callbackFunction = (data)=>{
-                this.off(eventName, callbackFunction);
-                callback(data);
-            };
-            this.on(eventName, callbackFunction);
+            this.callbacks[message.callbackId] = callback;
         }
         this.$worker.postMessage(message);
     }
-    constructor(worker){
-        super();
+    constructor(worker, provider){
         message_controller_define_property(this, "$worker", void 0);
+        message_controller_define_property(this, "callbacks", {});
+        message_controller_define_property(this, "callbackId", 1);
+        message_controller_define_property(this, "provider", void 0);
         this.$worker = worker;
+        this.provider = provider;
         this.$worker.addEventListener("message", (e)=>{
-            let message = e.data;
-            this.emit(message.type + "-" + message.sessionId, message.value);
+            const message = e.data;
+            const callbackId = message.callbackId;
+            if (message.type === MessageType.validate || message.type === MessageType.capabilitiesChange) {
+                const sessionId = this.getSessionIdByUri(message.documentUri);
+                if (!sessionId) {
+                    return;
+                }
+                if (message.type === MessageType.validate) {
+                    var _this_provider_$sessionLanguageProviders_sessionId;
+                    (_this_provider_$sessionLanguageProviders_sessionId = this.provider.$sessionLanguageProviders[sessionId]) === null || _this_provider_$sessionLanguageProviders_sessionId === void 0 ? void 0 : _this_provider_$sessionLanguageProviders_sessionId.$showAnnotations(message.value);
+                } else {
+                    var _this_provider_$sessionLanguageProviders_sessionId1;
+                    (_this_provider_$sessionLanguageProviders_sessionId1 = this.provider.$sessionLanguageProviders[sessionId]) === null || _this_provider_$sessionLanguageProviders_sessionId1 === void 0 ? void 0 : _this_provider_$sessionLanguageProviders_sessionId1.setServerCapabilities(message.value);
+                }
+            } else if (message.type === MessageType.applyEdit) {
+                const applied = (result, serviceName)=>{
+                    this.$worker.postMessage(new AppliedEditMessage(result, serviceName, message.callbackId));
+                };
+                this.provider.applyEdit(message.value, message.serviceName, applied);
+            } else {
+                if (this.callbacks[callbackId]) {
+                    this.callbacks[callbackId](message.value);
+                    delete this.callbacks[callbackId];
+                }
+            }
         });
     }
 }
@@ -19163,7 +18750,28 @@ function toAnnotations(diagnostics) {
             row: el.range.start.line,
             column: el.range.start.character,
             text: el.message,
-            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
+            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info",
+            code: el.code
+        };
+    });
+}
+function fromAnnotations(annotations) {
+    var _annotations;
+    return (_annotations = annotations) === null || _annotations === void 0 ? void 0 : _annotations.map((el)=>{
+        return {
+            range: {
+                start: {
+                    line: el.row,
+                    character: el.column
+                },
+                end: {
+                    line: el.row,
+                    character: el.column
+                }
+            },
+            message: el.text,
+            severity: el.type === "error" ? 1 : el.type === "warning" ? 2 : 3,
+            code: el["code"]
         };
     });
 }
@@ -19384,7 +18992,7 @@ function toMarkerGroupItem(range, className, tooltipText) {
 }
 
 // EXTERNAL MODULE: ../../node_modules/showdown/dist/showdown.js
-var showdown = __webpack_require__(6006);
+var showdown = __webpack_require__(8583);
 var showdown_default = /*#__PURE__*/__webpack_require__.n(showdown);
 ;// CONCATENATED MODULE: ./src/cdn-worker.ts
 function createWorkerBlob(cdnUrl, services) {
@@ -20394,8 +20002,437 @@ class SemanticTokensBuilder {
     }
 }
 
-;// CONCATENATED MODULE: ./src/language-provider.ts
-function language_provider_define_property(obj, key, value) {
+;// CONCATENATED MODULE: ./src/ace/renderer-singleton.ts
+function renderer_singleton_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class AceVirtualRenderer {
+    static getConstructor(editor) {
+        if (!AceVirtualRenderer._instance && editor) {
+            AceVirtualRenderer._instance = editor.renderer.constructor;
+        }
+        return AceVirtualRenderer._instance;
+    }
+}
+renderer_singleton_define_property(AceVirtualRenderer, "_instance", void 0);
+
+;// CONCATENATED MODULE: ./src/ace/editor-singleton.ts
+function editor_singleton_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class AceEditor {
+    static getConstructor(editor) {
+        if (!AceEditor._instance && editor) {
+            AceEditor._instance = editor.constructor;
+        }
+        return AceEditor._instance;
+    }
+}
+editor_singleton_define_property(AceEditor, "_instance", void 0);
+
+;// CONCATENATED MODULE: ./src/ace/acePopup.ts
+
+
+
+var getAriaId = function(index) {
+    return `suggest-aria-id:${index}`;
+};
+var _navigator = typeof navigator == "object" ? navigator : {
+    userAgent: ""
+};
+var ua = _navigator.userAgent || "";
+var isSafari = parseFloat(ua.split(" Safari/")[1]) || undefined;
+// Safari requires different ARIA A11Y attributes compared to other browsers
+var popupAriaRole = isSafari ? "menu" : "listbox";
+var optionAriaRole = isSafari ? "menuitem" : "option";
+var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
+/**
+ *
+ * @param {HTMLElement} [el]
+ * @return {Editor}
+ */ var $singleLineEditor = function(el) {
+    var Renderer = AceVirtualRenderer.getConstructor();
+    var Editor = AceEditor.getConstructor();
+    var renderer = new Renderer(el);
+    renderer.$maxLines = 4;
+    var editor = new Editor(renderer);
+    editor.setHighlightActiveLine(false);
+    editor.setShowPrintMargin(false);
+    editor.renderer.setShowGutter(false);
+    editor.renderer.setHighlightGutterLine(false);
+    editor.$mouseHandler.$focusTimeout = 0;
+    editor.$highlightTagPending = true;
+    return editor;
+};
+/**
+ * This object is used in some places where needed to show popups - like prompt; autocomplete etc.
+ */ class AcePopup {
+    /**
+     * Creates and renders single line editor in popup window. If `parentNode` param is isset, then attaching it to this element.
+     * @param {Element} [parentNode]
+     */ constructor(parentNode){
+        var el = document.createElement("div");
+        var popup = $singleLineEditor(el);
+        var Range = AceRange.getConstructor();
+        if (parentNode) {
+            parentNode.appendChild(el);
+        }
+        el.style.display = "none";
+        popup.renderer.content.style.cursor = "default";
+        popup.renderer.setStyle("ace_autocomplete");
+        // Set aria attributes for the popup
+        popup.renderer["$textLayer"].element.setAttribute("role", popupAriaRole);
+        // popup.renderer.$textLayer.element.setAttribute("aria-roledescription", nls("autocomplete.popup.aria-roledescription", "Autocomplete suggestions"));
+        // popup.renderer.$textLayer.element.setAttribute("aria-label", nls("autocomplete.popup.aria-label", "Autocomplete suggestions"));
+        popup.renderer["textarea"].setAttribute("aria-hidden", "true");
+        popup.setOption("displayIndentGuides", false);
+        popup.setOption("dragDelay", 150);
+        var noop = function() {};
+        popup.focus = noop;
+        popup.$isFocused = true;
+        popup.renderer["$cursorLayer"].restartTimer = noop;
+        popup.renderer["$cursorLayer"].element.style.opacity = "0";
+        popup.renderer["$maxLines"] = 8;
+        popup.renderer["$keepTextAreaAtCursor"] = false;
+        popup.setHighlightActiveLine(false);
+        // set default highlight color
+        // @ts-ignore
+        popup.session.highlight("");
+        popup.session["$searchHighlight"].clazz = "ace_highlight-marker";
+        // @ts-ignore
+        popup.on("mousedown", function(e) {
+            var pos = e.getDocumentPosition();
+            // @ts-ignore
+            popup.selection.moveToPosition(pos);
+            selectionMarker.start.row = selectionMarker.end.row = pos.row;
+            e.stop();
+        });
+        var lastMouseEvent;
+        var hoverMarker = new Range(-1, 0, -1, Infinity);
+        var selectionMarker = new Range(-1, 0, -1, Infinity);
+        selectionMarker.id = popup.session.addMarker(selectionMarker, "ace_active-line", "fullLine");
+        popup.setSelectOnHover = function(val) {
+            if (!val) {
+                hoverMarker.id = popup.session.addMarker(hoverMarker, "ace_line-hover", "fullLine");
+            } else if (hoverMarker.id) {
+                popup.session.removeMarker(hoverMarker.id);
+                hoverMarker.id = null;
+            }
+        };
+        popup.setSelectOnHover(false);
+        popup.on("mousemove", function(e) {
+            if (!lastMouseEvent) {
+                lastMouseEvent = e;
+                return;
+            }
+            if (lastMouseEvent.x == e.x && lastMouseEvent.y == e.y) {
+                return;
+            }
+            lastMouseEvent = e;
+            lastMouseEvent.scrollTop = popup.renderer.scrollTop;
+            popup.isMouseOver = true;
+            var row = lastMouseEvent.getDocumentPosition().row;
+            if (hoverMarker.start.row != row) {
+                if (!hoverMarker.id) popup.setRow(row);
+                setHoverMarker(row);
+            }
+        });
+        popup.renderer.on("beforeRender", function() {
+            if (lastMouseEvent && hoverMarker.start.row != -1) {
+                lastMouseEvent.$pos = null;
+                var row = lastMouseEvent.getDocumentPosition().row;
+                if (!hoverMarker.id) popup.setRow(row);
+                setHoverMarker(row, true);
+            }
+        });
+        popup.renderer.on("afterRender", function() {
+            var row = popup.getRow();
+            var t = popup.renderer["$textLayer"];
+            var selected = /** @type {HTMLElement|null} */ t.element.childNodes[row - t.config.firstRow];
+            var el = document.activeElement; // Active element is textarea of main editor
+            if (selected !== popup.selectedNode && popup.selectedNode) {
+                var _el;
+                popup.renderer["$textLayer"].dom.removeCssClass(popup.selectedNode, "ace_selected");
+                (_el = el) === null || _el === void 0 ? void 0 : _el.removeAttribute("aria-activedescendant");
+                popup.selectedNode.removeAttribute(ariaActiveState);
+                popup.selectedNode.removeAttribute("id");
+            }
+            popup.selectedNode = selected;
+            if (selected) {
+                var _el1;
+                popup.renderer["$textLayer"].dom.addCssClass(selected, "ace_selected");
+                var ariaId = getAriaId(row);
+                selected.id = ariaId;
+                t.element.setAttribute("aria-activedescendant", ariaId);
+                (_el1 = el) === null || _el1 === void 0 ? void 0 : _el1.setAttribute("aria-activedescendant", ariaId);
+                selected.setAttribute("role", optionAriaRole);
+                // selected.setAttribute("aria-roledescription", nls("autocomplete.popup.item.aria-roledescription", "item"));
+                selected.setAttribute("aria-label", popup.getData(row).caption || popup.getData(row).value);
+                selected.setAttribute("aria-setsize", popup.data.length);
+                selected.setAttribute("aria-posinset", row + 1);
+                selected.setAttribute("aria-describedby", "doc-tooltip");
+                selected.setAttribute(ariaActiveState, "true");
+            }
+        });
+        var hideHoverMarker = function() {
+            setHoverMarker(-1);
+        };
+        var setHoverMarker = function(row, suppressRedraw) {
+            if (row !== hoverMarker.start.row) {
+                hoverMarker.start.row = hoverMarker.end.row = row;
+                if (!suppressRedraw) {
+                    // @ts-ignore
+                    popup.session._emit("changeBackMarker");
+                }
+                popup._emit("changeHoverMarker");
+            }
+        };
+        popup.getHoveredRow = function() {
+            return hoverMarker.start.row;
+        };
+        popup.container.addEventListener("mouseout", function() {
+            popup.isMouseOver = false;
+            hideHoverMarker();
+        });
+        // @ts-ignore
+        popup.on("hide", hideHoverMarker);
+        // @ts-ignore
+        popup.on("changeSelection", hideHoverMarker);
+        popup.session.doc.getLength = function() {
+            return popup.data.length;
+        };
+        popup.session.doc.getLine = function(i) {
+            var data = popup.data[i];
+            if (typeof data == "string") return data;
+            return data && data.value || "";
+        };
+        var bgTokenizer = popup.session.bgTokenizer;
+        bgTokenizer.$tokenizeRow = function(row) {
+            /**@type {import("../../ace-internal").Ace.Completion &{name?, className?, matchMask?, message?}}*/ var data = popup.data[row];
+            var tokens = [];
+            if (!data) return tokens;
+            if (typeof data == "string") data = {
+                value: data
+            };
+            var caption = data.caption || data.value || data.name;
+            function addToken(value, className) {
+                value && tokens.push({
+                    type: (data.className || "") + (className || ""),
+                    value: value
+                });
+            }
+            var lower = caption.toLowerCase();
+            var filterText = (popup.filterText || "").toLowerCase();
+            var lastIndex = 0;
+            var lastI = 0;
+            for(var i = 0; i <= filterText.length; i++){
+                if (i != lastI && (data.matchMask & 1 << i || i == filterText.length)) {
+                    var sub = filterText.slice(lastI, i);
+                    lastI = i;
+                    var index = lower.indexOf(sub, lastIndex);
+                    if (index == -1) continue;
+                    addToken(caption.slice(lastIndex, index), "");
+                    lastIndex = index + sub.length;
+                    addToken(caption.slice(index, lastIndex), "completion-highlight");
+                }
+            }
+            addToken(caption.slice(lastIndex, caption.length), "");
+            tokens.push({
+                type: "completion-spacer",
+                value: " "
+            });
+            if (data.meta) tokens.push({
+                type: "completion-meta",
+                value: data.meta
+            });
+            if (data.message) tokens.push({
+                type: "completion-message",
+                value: data.message
+            });
+            return tokens;
+        };
+        bgTokenizer.$updateOnChange = noop;
+        bgTokenizer.start = noop;
+        popup.session["$computeWidth"] = function() {
+            return this.screenWidth = 0;
+        };
+        // public
+        popup.isOpen = false;
+        popup.isTopdown = false;
+        popup.autoSelect = true;
+        popup.filterText = "";
+        popup.isMouseOver = false;
+        popup.data = [];
+        popup.setData = function(list, filterText) {
+            popup.filterText = filterText || "";
+            popup.setValue("\n".repeat(list.length), -1);
+            popup.data = list || [];
+            popup.setRow(0);
+        };
+        popup.getData = function(row) {
+            return popup.data[row];
+        };
+        popup.getRow = function() {
+            return selectionMarker.start.row;
+        };
+        popup.setRow = function(line) {
+            line = Math.max(this.autoSelect ? 0 : -1, Math.min(this.data.length - 1, line));
+            if (selectionMarker.start.row != line) {
+                popup.selection.clearSelection();
+                selectionMarker.start.row = selectionMarker.end.row = line || 0;
+                // @ts-ignore
+                popup.session._emit("changeBackMarker");
+                popup.moveCursorTo(line || 0, 0);
+                if (popup.isOpen) popup._signal("select");
+            }
+        };
+        // @ts-ignore
+        popup.on("changeSelection", function() {
+            if (popup.isOpen) {
+                popup.setRow(popup.selection.lead.row);
+            }
+            // @ts-ignore
+            popup.renderer.scrollCursorIntoView();
+        });
+        popup.hide = function() {
+            this.container.style.display = "none";
+            popup.anchorPos = null;
+            popup.anchor = null;
+            if (popup.isOpen) {
+                popup.isOpen = false;
+                this._signal("hide");
+            }
+        };
+        /**
+         * Tries to show the popup anchored to the given position and anchors.
+         * If the anchor is not specified it tries to align to bottom and right as much as possible.
+         * If the popup does not have enough space to be rendered with the given anchors, it returns false without rendering the popup.
+         * The forceShow flag can be used to render the popup in these cases, which slides the popup so it entirely fits on the screen.
+         * @param {{top: number, left: number}} pos
+         * @param {number} lineHeight
+         * @param {"top" | "bottom" | undefined} anchor
+         * @param {boolean} forceShow
+         * @returns {boolean}
+         */ popup.tryShow = function(pos, lineHeight, anchor, forceShow) {
+            if (!forceShow && popup.isOpen && popup.anchorPos && popup.anchor && popup.anchorPos.top === pos.top && popup.anchorPos.left === pos.left && popup.anchor === anchor) {
+                return true;
+            }
+            var el = this.container;
+            var screenHeight = window.innerHeight;
+            var screenWidth = window.innerWidth;
+            var renderer = this.renderer;
+            // var maxLines = Math.min(renderer.$maxLines, this.session.getLength());
+            var maxH = renderer.$maxLines * lineHeight * 1.4;
+            var dims = {
+                top: 0,
+                bottom: 0,
+                left: 0
+            };
+            var spaceBelow = screenHeight - pos.top - 3 * this.$borderSize - lineHeight;
+            var spaceAbove = pos.top - 3 * this.$borderSize;
+            if (!anchor) {
+                if (spaceAbove <= spaceBelow || spaceBelow >= maxH) {
+                    anchor = "bottom";
+                } else {
+                    anchor = "top";
+                }
+            }
+            if (anchor === "top") {
+                dims.bottom = pos.top - this.$borderSize;
+                dims.top = dims.bottom - maxH;
+            } else if (anchor === "bottom") {
+                dims.top = pos.top + lineHeight + this.$borderSize;
+                dims.bottom = dims.top + maxH;
+            }
+            var fitsX = dims.top >= 0 && dims.bottom <= screenHeight;
+            if (!forceShow && !fitsX) {
+                return false;
+            }
+            if (!fitsX) {
+                if (anchor === "top") {
+                    renderer.$maxPixelHeight = spaceAbove;
+                } else {
+                    renderer.$maxPixelHeight = spaceBelow;
+                }
+            } else {
+                renderer.$maxPixelHeight = null;
+            }
+            if (anchor === "top") {
+                el.style.top = "";
+                el.style.bottom = screenHeight - dims.bottom + "px";
+                popup.isTopdown = false;
+            } else {
+                el.style.top = dims.top + "px";
+                el.style.bottom = "";
+                popup.isTopdown = true;
+            }
+            el.style.display = "";
+            var left = pos.left;
+            if (left + el.offsetWidth > screenWidth) left = screenWidth - el.offsetWidth;
+            el.style.left = left + "px";
+            el.style.right = "";
+            if (!popup.isOpen) {
+                popup.isOpen = true;
+                this._signal("show");
+                lastMouseEvent = null;
+            }
+            popup.anchorPos = pos;
+            popup.anchor = anchor;
+            return true;
+        };
+        popup.show = function(pos, lineHeight, topdownOnly) {
+            this.tryShow(pos, lineHeight, topdownOnly ? "bottom" : undefined, true);
+        };
+        popup.goTo = function(where) {
+            var row = this.getRow();
+            var max = this.session.getLength() - 1;
+            switch(where){
+                case "up":
+                    row = row <= 0 ? max : row - 1;
+                    break;
+                case "down":
+                    row = row >= max ? -1 : row + 1;
+                    break;
+                case "start":
+                    row = 0;
+                    break;
+                case "end":
+                    row = max;
+                    break;
+            }
+            this.setRow(row);
+        };
+        popup.getTextLeftOffset = function() {
+            return this.$borderSize + this.renderer.$padding + this.$imageSize;
+        };
+        popup.$imageSize = 0;
+        popup.$borderSize = 1;
+        return popup;
+    }
+}
+
+;// CONCATENATED MODULE: ./src/components/lightbulb.ts
+function lightbulb_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
             value: value,
@@ -20409,156 +20446,145 @@ function language_provider_define_property(obj, key, value) {
     return obj;
 }
 
-
-
-
-
-
-
-
-
-
-class LanguageProvider {
-    /**
-     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
-     *  webworker
-     * @param {Worker} worker
-     * @param {ProviderOptions} options
-     */ static create(worker, options) {
-        let messageController;
-        messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, options);
+class LightbulbWidget {
+    setEditorListeners(editor) {
+        //@ts-expect-error
+        editor.on("changeSelection", this.hideAll);
+        editor.on("focus", this.hideAll);
+        editor.renderer.on("afterRender", this.setPosition);
     }
-    static fromCdn(source, options, includeDefaultLinters) {
-        let messageController;
-        let worker;
-        if (typeof source === "string") {
-            if (source == "" || !/^http(s)?:/.test(source)) {
-                throw "Url is not valid";
-            }
-            if (source[source.length - 1] == "/") {
-                source = source.substring(0, source.length - 1);
-            }
-            worker = createWorker(source, includeDefaultLinters);
-        } else {
-            if (source.includeDefaultLinters == undefined) {
-                source.includeDefaultLinters = true;
-            }
-            var _source_includeDefaultLinters;
-            worker = createWorker({
-                services: source.services,
-                serviceManagerCdn: source.serviceManagerCdn
-            }, (_source_includeDefaultLinters = source.includeDefaultLinters) !== null && _source_includeDefaultLinters !== void 0 ? _source_includeDefaultLinters : includeDefaultLinters);
+    removeListeners() {
+        this.editor.off("changeSelection", this.hideAll);
+        this.editor.off("focus", this.hideAll);
+        this.editor.session.off("changeScrollTop", this.setPosition);
+        this.editor.session.off("changeScrollLeft", this.setPosition);
+    }
+    setExecuteActionCallback(callback) {
+        this.executeActionCallback = callback;
+    }
+    createLightbulb() {
+        this.lightbulb = document.createElement("div");
+        this.lightbulb.id = "lightbulb";
+        this.lightbulb.style.display = 'none';
+        this.lightbulb.style.position = 'absolute';
+        this.lightbulb.style.width = this.lightBulbWidth + 'px';
+        this.lightbulb.style.height = this.lightBulbHeight + 'px';
+        this.lightbulb.style.zIndex = "999";
+        this.lightbulb.style.background = 'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgdmlld0JveD0iNi4yMTM2IDIuMjk4MSAxMi42OTI0IDE4LjYzMjgiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgPHBhdGggZD0iTSAxNi43ODEgNC4wOCBDIDE1LjQzMyAyLjc1MiAxMy42MiAyLjA5OCAxMS44MSAyLjM1MiBDIDguOTUyIDIuNzU0IDYuNjY4IDUuMjE0IDYuMjc4IDguMzA4IEMgNS45ODYgMTAuNjE2IDYuNjk2IDEyLjg0NSA4LjIyNyAxNC40MjQgQyA5LjE4NyAxNS40MTUgOS43MzkgMTYuNzgzIDkuNzM5IDE4LjE3NSBMIDE1LjM5NiAxOC4xODkgQyAxNS4zOTYgMTYuODc2IDE1LjkxMSAxNS40MTggMTYuODc1IDE0LjQzNSBDIDE4LjE2NSAxMy4xMTYgMTguOTA2IDExLjI0OSAxOC45MDYgOS4zMTQgQyAxOC45MDYgNy4zMTcgMTguMTMzIDUuNDEgMTYuNzgxIDQuMDggWiIgc3R5bGU9ImZpbGw6IHJnYigyNTIsIDE5NSwgODcpOyIgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgMCwgLTEuNDIxMDg1NDcxNTIwMjAwNGUtMTQpIi8+DQogIDxyZWN0IHg9IjguMzgiIHk9IjIzMy42NzkiIHdpZHRoPSI0LjMxMyIgaGVpZ2h0PSIwLjAxMSIgc3R5bGU9ImZpbGw6IHJnYigyMTYsIDIxNiwgMjE2KTsgc3Ryb2tlOiByZ2IoMCwgMCwgMCk7IiB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAtMSwgMi4wNzg5ODQxMDcxNjIxODUsIDI1Mi45MzUzNDM1OTU5NDE5NikiLz4NCiAgPHJlY3QgeD0iLTExLjY2NSIgeT0iLTIzLjU5NSIgd2lkdGg9IjMuMDk4IiBzdHlsZT0iZmlsbDogcmdiKDIxNiwgMjE2LCAyMTYpOyBzdHJva2U6IHJnYigwLCAwLCAwKTsiIHRyYW5zZm9ybT0ibWF0cml4KDAuOTk5OTgxOTk5Mzk3Mjc3OSwgLTAuMDA2MDUyOTk5NzU3MjMwMjgxLCAwLCAxLjAwMDAxODAwMDYwMjcyMjIsIDIyLjcyOTA4NDk0NDQxNjMwNywgNDQuNDQ0NjczNDQ4NDU5MDg1KSIgaGVpZ2h0PSIwLjAxMSIvPg0KPC9zdmc+) no-repeat center center';
+        this.lightbulb.style.cursor = 'pointer';
+        this.lightbulb.setAttribute('role', 'button');
+        this.lightbulb.setAttribute('aria-label', 'Show code actions');
+        this.editor.container.appendChild(this.lightbulb);
+        this.lightbulb.addEventListener('click', (event)=>{
+            this.showMenu(event.clientX, event.clientY);
+        });
+    }
+    setCodeActions(actions) {
+        this.codeActions = actions;
+    }
+    showMenu(x, y) {
+        if (this.codeActions.length === 0) {
+            return;
         }
-        messageController = new MessageController(worker);
-        return new LanguageProvider(messageController, options);
+        this.setDataToPopup();
+        //@ts-expect-error wrong public API 
+        this.popup.show({
+            top: y,
+            left: x
+        }, 12, false);
     }
-    setProviderOptions(options) {
-        var _this_options;
-        const defaultFunctionalities = {
-            hover: true,
-            completion: {
-                overwriteCompleters: true
-            },
-            completionResolve: true,
-            format: true,
-            documentHighlights: true,
-            signatureHelp: true,
-            semanticTokens: false
+    isEmpty() {
+        if (this.codeActions.length === 0) {
+            return true;
+        }
+        for (let actionsByService of this.codeActions){
+            if (actionsByService.codeActions && actionsByService.codeActions.length > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    setDataToPopup() {
+        let codeActions = [];
+        this.codeActions.forEach((codeActionsByService)=>{
+            var _codeActionsByService_codeActions;
+            (_codeActionsByService_codeActions = codeActionsByService.codeActions) === null || _codeActionsByService_codeActions === void 0 ? void 0 : _codeActionsByService_codeActions.forEach((action)=>{
+                codeActions.push({
+                    value: action.title,
+                    //@ts-expect-error 
+                    serviceName: codeActionsByService.service,
+                    action: action
+                });
+            });
+        });
+        this.popup.setData(codeActions, "");
+    }
+    executeAction(action, serviceName) {
+        this.executeActionCallback && this.executeActionCallback(action, serviceName);
+        this.hideLightbulb();
+    }
+    showLightbulb() {
+        if (this.isEmpty()) {
+            return;
+        }
+        this.setPosition();
+        this.lightbulb.style.display = 'block';
+    }
+    hideLightbulb() {
+        this.lightbulb.style.display = 'none';
+    }
+    calculatePosition() {
+        const gutterCenter = Math.round(this.editor.renderer["gutterWidth"] / 2 - this.lightBulbWidth);
+        const firstRow = this.editor.renderer.getFirstVisibleRow();
+        const cursor = this.editor.getCursorPosition();
+        const lineHeight = this.editor.renderer.lineHeight;
+        return {
+            x: gutterCenter,
+            y: (cursor.row - firstRow) * lineHeight
         };
-        this.options = options !== null && options !== void 0 ? options : {};
-        this.options.functionality = typeof this.options.functionality === 'object' ? this.options.functionality : {};
-        Object.entries(defaultFunctionalities).forEach(([key, value])=>{
-            // Check if the functionality has not been defined in the provided options
-            if (this.options.functionality[key] === undefined) {
-                // If not, set it to its default value
-                this.options.functionality[key] = value;
-            }
+    }
+    dispose() {
+        this.removeListeners();
+        document.body.removeChild(this.lightbulb);
+    }
+    constructor(editor, executeActionCallback){
+        lightbulb_define_property(this, "codeActions", void 0);
+        lightbulb_define_property(this, "lightbulb", void 0);
+        lightbulb_define_property(this, "popup", void 0);
+        lightbulb_define_property(this, "executeActionCallback", void 0);
+        lightbulb_define_property(this, "editor", void 0);
+        lightbulb_define_property(this, "lightBulbWidth", 10);
+        lightbulb_define_property(this, "lightBulbHeight", 16);
+        lightbulb_define_property(this, "hideAll", ()=>{
+            this.hideLightbulb();
+            this.popup.hide();
         });
-        (_this_options = this.options).markdownConverter || (_this_options.markdownConverter = new (showdown_default()).Converter());
-    }
-    $getSessionLanguageProvider(session) {
-        return this.$sessionLanguageProviders[session["id"]];
-    }
-    $getFileName(session) {
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
-        return sessionLanguageProvider.fileName;
-    }
-    registerEditor(editor) {
-        if (!this.editors.includes(editor)) this.$registerEditor(editor);
-        this.$registerSession(editor.session, editor);
-    }
-    $registerEditor(editor) {
-        this.editors.push(editor);
-        //init Range singleton
-        AceRange.getConstructor(editor);
-        editor.setOption("useWorker", false);
-        editor.on("changeSession", ({ session })=>this.$registerSession(session, editor));
-        if (this.options.functionality.completion) {
-            this.$registerCompleters(editor);
-        }
-        var _this_activeEditor;
-        (_this_activeEditor = this.activeEditor) !== null && _this_activeEditor !== void 0 ? _this_activeEditor : this.activeEditor = editor;
-        editor.on("focus", ()=>{
-            this.activeEditor = editor;
+        lightbulb_define_property(this, "setPosition", ()=>{
+            const position = this.calculatePosition();
+            this.lightbulb.style.left = `${position.x}px`;
+            this.lightbulb.style.top = `${position.y}px`;
         });
-        if (this.options.functionality.documentHighlights) {
-            var $timer;
+        this.editor = editor;
+        this.codeActions = [];
+        this.executeActionCallback = executeActionCallback;
+        // @ts-ignore
+        this.popup = new AcePopup(editor.container || document.body || document.documentElement);
+        //@ts-expect-error
+        this.popup.on("click", (e)=>{
+            const selectedRow = this.popup.getData(this.popup.getRow());
             // @ts-ignore
-            editor.on("changeSelection", ()=>{
-                if (!$timer) $timer = setTimeout(()=>{
-                    let cursor = editor.getCursorPosition();
-                    let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
-                    this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
-                    $timer = undefined;
-                }, 50);
-            });
-        }
-        if (this.options.functionality.hover) {
-            if (!this.$hoverTooltip) {
-                this.$hoverTooltip = new HoverTooltip();
-            }
-            this.$initHoverTooltip(editor);
-        }
-        if (this.options.functionality.signatureHelp) {
-            this.$signatureTooltip.registerEditor(editor);
-        }
-        this.setStyle(editor);
-    }
-    $initHoverTooltip(editor) {
-        this.$hoverTooltip.setDataProvider((e, editor)=>{
-            let session = editor.session;
-            let docPos = e.getDocumentPosition();
-            this.doHover(session, docPos, (hover)=>{
-                var _this_$getSessionLanguageProvider_state_diagnosticMarkers, _this_$getSessionLanguageProvider_state, _hover, _hover1, _errorMarker;
-                if (!hover) return;
-                var errorMarker = (_this_$getSessionLanguageProvider_state = this.$getSessionLanguageProvider(session).state) === null || _this_$getSessionLanguageProvider_state === void 0 ? void 0 : (_this_$getSessionLanguageProvider_state_diagnosticMarkers = _this_$getSessionLanguageProvider_state.diagnosticMarkers) === null || _this_$getSessionLanguageProvider_state_diagnosticMarkers === void 0 ? void 0 : _this_$getSessionLanguageProvider_state_diagnosticMarkers.getMarkerAtPosition(docPos);
-                if (!errorMarker && !((_hover = hover) === null || _hover === void 0 ? void 0 : _hover.content)) return;
-                var range = ((_hover1 = hover) === null || _hover1 === void 0 ? void 0 : _hover1.range) || ((_errorMarker = errorMarker) === null || _errorMarker === void 0 ? void 0 : _errorMarker.range);
-                const Range = editor.getSelectionRange().constructor;
-                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
-                var hoverNode = hover && document.createElement("div");
-                if (hoverNode) {
-                    // todo render markdown using ace markdown mode
-                    hoverNode.innerHTML = this.getTooltipText(hover);
-                }
-                var domNode = document.createElement('div');
-                if (errorMarker) {
-                    var errorDiv = document.createElement('div');
-                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
-                    errorDiv.appendChild(errorText);
-                    domNode.appendChild(errorDiv);
-                }
-                if (hoverNode) {
-                    domNode.appendChild(hoverNode);
-                }
-                this.$hoverTooltip.showForRange(editor, range, domNode, e);
-            });
+            this.executeAction(selectedRow.action, selectedRow.serviceName);
+            this.popup.hide();
+            e.stop();
         });
-        this.$hoverTooltip.addToEditor(editor);
+        this.setEditorListeners(editor);
+        this.createLightbulb();
     }
-    setStyle(editor) {
-        editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
+}
+
+;// CONCATENATED MODULE: ./src/misc/styles.ts
+function setStyles(editor) {
+    editor.renderer["$textLayer"].dom.importCssString(`.ace_tooltip * {
     margin: 0;
     font-size: 12px;
 }
@@ -20599,13 +20625,404 @@ class LanguageProvider {
 .language_highlight_write {
     border: solid 1px #F88;
 }`, "linters.css");
+    editor.renderer["$textLayer"].dom.importCssString(`
+.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+    background-color: #CAD6FA;
+    z-index: 1;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+    background-color: #3a674e;
+}
+.ace_editor.ace_autocomplete .ace_line-hover {
+    border: 1px solid #abbffe;
+    margin-top: -1px;
+    background: rgba(233,233,253,0.4);
+    position: absolute;
+    z-index: 2;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_line-hover {
+    border: 1px solid rgba(109, 150, 13, 0.8);
+    background: rgba(58, 103, 78, 0.62);
+}
+.ace_completion-meta {
+    opacity: 0.5;
+    margin-left: 0.9em;
+}
+.ace_completion-message {
+    margin-left: 0.9em;
+    color: blue;
+}
+.ace_editor.ace_autocomplete .ace_completion-highlight{
+    color: #2d69c7;
+}
+.ace_dark.ace_editor.ace_autocomplete .ace_completion-highlight{
+    color: #93ca12;
+}
+.ace_editor.ace_autocomplete {
+    width: 300px;
+    z-index: 200000;
+    border: 1px lightgray solid;
+    position: fixed;
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+    line-height: 1.4;
+    background: #fefefe;
+    color: #111;
+}
+.ace_dark.ace_editor.ace_autocomplete {
+    border: 1px #484747 solid;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.51);
+    line-height: 1.4;
+    background: #25282c;
+    color: #c1c1c1;
+}
+.ace_autocomplete .ace_text-layer  {
+    width: calc(100% - 8px);
+}
+.ace_autocomplete .ace_line {
+    display: flex;
+    align-items: center;
+}
+.ace_autocomplete .ace_line > * {
+    min-width: 0;
+    flex: 0 0 auto;
+}
+.ace_autocomplete .ace_line .ace_ {
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ace_autocomplete .ace_completion-spacer {
+    flex: 1;
+}
+.ace_autocomplete.ace_loading:after  {
+    content: "";
+    position: absolute;
+    top: 0px;
+    height: 2px;
+    width: 8%;
+    background: blue;
+    z-index: 100;
+    animation: ace_progress 3s infinite linear;
+    animation-delay: 300ms;
+    transform: translateX(-100%) scaleX(1);
+}
+@keyframes ace_progress {
+    0% { transform: translateX(-100%) scaleX(1) }
+    50% { transform: translateX(625%) scaleX(2) } 
+    100% { transform: translateX(1500%) scaleX(3) } 
+}
+@media (prefers-reduced-motion) {
+    .ace_autocomplete.ace_loading:after {
+        transform: translateX(625%) scaleX(2);
+        animation: none;
+     }
+}
+`, "autocompletion.css", false);
+}
+
+;// CONCATENATED MODULE: ./src/language-provider.ts
+function language_provider_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class LanguageProvider {
+    /**
+     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  webworker
+     * @param {Worker} worker
+     * @param {ProviderOptions} options
+     */ static create(worker, options) {
+        return new LanguageProvider(worker, options);
+    }
+    static fromCdn(source, options, includeDefaultLinters) {
+        let worker;
+        if (typeof source === "string") {
+            if (source == "" || !/^http(s)?:/.test(source)) {
+                throw "Url is not valid";
+            }
+            if (source[source.length - 1] == "/") {
+                source = source.substring(0, source.length - 1);
+            }
+            worker = createWorker(source, includeDefaultLinters);
+        } else {
+            if (source.includeDefaultLinters == undefined) {
+                source.includeDefaultLinters = true;
+            }
+            var _source_includeDefaultLinters;
+            worker = createWorker({
+                services: source.services,
+                serviceManagerCdn: source.serviceManagerCdn
+            }, (_source_includeDefaultLinters = source.includeDefaultLinters) !== null && _source_includeDefaultLinters !== void 0 ? _source_includeDefaultLinters : includeDefaultLinters);
+        }
+        return new LanguageProvider(worker, options);
+    }
+    setProviderOptions(options) {
+        var _options;
+        var _this_options;
+        const defaultFunctionalities = {
+            hover: true,
+            completion: {
+                overwriteCompleters: true
+            },
+            completionResolve: true,
+            format: true,
+            documentHighlights: true,
+            signatureHelp: true,
+            semanticTokens: false,
+            codeActions: true
+        };
+        this.options = options !== null && options !== void 0 ? options : {};
+        this.options.functionality = typeof this.options.functionality === 'object' ? this.options.functionality : {};
+        Object.entries(defaultFunctionalities).forEach(([key, value])=>{
+            // Check if the functionality has not been defined in the provided options
+            if (this.options.functionality[key] === undefined) {
+                // If not, set it to its default value
+                this.options.functionality[key] = value;
+            }
+        });
+        (_this_options = this.options).markdownConverter || (_this_options.markdownConverter = new (showdown_default()).Converter());
+        var _this_options_requireFilePath;
+        this.requireFilePath = (_this_options_requireFilePath = this.options.requireFilePath) !== null && _this_options_requireFilePath !== void 0 ? _this_options_requireFilePath : false;
+        if ((_options = options) === null || _options === void 0 ? void 0 : _options.workspacePath) {
+            this.workspaceUri = convertToUri(options.workspacePath);
+        }
+    }
+    /**
+     * @param session
+     * @param filePath - The full file path associated with the editor.
+     */ setSessionFilePath(session, filePath) {
+        var _this_$getSessionLanguageProvider;
+        (_this_$getSessionLanguageProvider = this.$getSessionLanguageProvider(session)) === null || _this_$getSessionLanguageProvider === void 0 ? void 0 : _this_$getSessionLanguageProvider.setFilePath(filePath);
+    }
+    $getSessionLanguageProvider(session) {
+        return this.$sessionLanguageProviders[session["id"]];
+    }
+    $getFileName(session) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        return sessionLanguageProvider.comboDocumentIdentifier;
+    }
+    /**
+     * Registers an Ace editor instance with the language provider.
+     * @param editor - The Ace editor instance to register.
+     */ registerEditor(editor) {
+        if (!this.editors.includes(editor)) this.$registerEditor(editor);
+        this.$registerSession(editor.session, editor);
+    }
+    setCodeActionCallback(callback) {
+        this.codeActionCallback = callback;
+    }
+    executeCommand(command, serviceName, args, callback) {
+        this.$messageController.executeCommand(serviceName, command, args, callback); //TODO:
+    }
+    applyEdit(workspaceEdit, serviceName, callback) {
+        if (workspaceEdit.changes) {
+            for(let uri in workspaceEdit.changes){
+                if (!this.$urisToSessionsIds[uri]) {
+                    callback && callback({
+                        applied: false,
+                        failureReason: "No session found for uri " + uri
+                    }, serviceName);
+                    return;
+                }
+            }
+            for(let uri in workspaceEdit.changes){
+                let sessionId = this.$urisToSessionsIds[uri];
+                let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                sessionLanguageProvider.applyEdits(workspaceEdit.changes[uri]);
+            }
+            callback && callback({
+                applied: true
+            }, serviceName);
+        }
+        // some servers doesn't respect missing capability
+        if (workspaceEdit.documentChanges) {
+            for (let change of workspaceEdit.documentChanges){
+                if ("kind" in change) {
+                    // we don't support create/rename/remove stuff
+                    return;
+                }
+                if ("textDocument" in change) {
+                    let uri = change.textDocument.uri;
+                    if (!this.$urisToSessionsIds[uri]) {
+                        callback && callback({
+                            applied: false,
+                            failureReason: "No session found for uri " + uri
+                        }, serviceName);
+                        return;
+                    }
+                }
+            }
+            for (let change of workspaceEdit.documentChanges){
+                if ("textDocument" in change) {
+                    let sessionId = this.$urisToSessionsIds[change.textDocument.uri];
+                    let sessionLanguageProvider = this.$sessionLanguageProviders[sessionId];
+                    sessionLanguageProvider.applyEdits(change.edits);
+                }
+            }
+            callback && callback({
+                applied: true
+            }, serviceName);
+        }
+    }
+    $registerEditor(editor) {
+        this.editors.push(editor);
+        //init singletons
+        AceRange.getConstructor(editor);
+        AceVirtualRenderer.getConstructor(editor);
+        AceEditor.getConstructor(editor);
+        editor.setOption("useWorker", false);
+        editor.on("changeSession", ({ session })=>this.$registerSession(session, editor));
+        if (this.options.functionality.completion) {
+            this.$registerCompleters(editor);
+        }
+        var _this_activeEditor;
+        (_this_activeEditor = this.activeEditor) !== null && _this_activeEditor !== void 0 ? _this_activeEditor : this.activeEditor = editor;
+        editor.on("focus", ()=>{
+            this.activeEditor = editor;
+        });
+        if (this.options.functionality.documentHighlights) {
+            var $timer;
+            // @ts-ignore
+            editor.on("changeSelection", ()=>{
+                if (!$timer) $timer = setTimeout(()=>{
+                    let cursor = editor.getCursorPosition();
+                    let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+                    this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
+                    $timer = undefined;
+                }, 50);
+            });
+        }
+        if (this.options.functionality.codeActions) {
+            this.$provideCodeActions(editor);
+        }
+        if (this.options.functionality.hover) {
+            if (!this.$hoverTooltip) {
+                this.$hoverTooltip = new HoverTooltip();
+            }
+            this.$initHoverTooltip(editor);
+        }
+        if (this.options.functionality.signatureHelp) {
+            this.$signatureTooltip.registerEditor(editor);
+        }
+        this.setStyles(editor);
+    }
+    $provideCodeActions(editor) {
+        const lightBulb = new LightbulbWidget(editor);
+        this.$lightBulbWidgets[editor.id] = lightBulb;
+        lightBulb.setExecuteActionCallback((action, serviceName)=>{
+            for(let id in this.$lightBulbWidgets){
+                this.$lightBulbWidgets[id].hideAll();
+            }
+            if (typeof action.command === "string") {
+                this.executeCommand(action.command, serviceName, action["arguments"]);
+            } else {
+                if (action.command) {
+                    this.executeCommand(action.command.command, serviceName, action.command.arguments);
+                } else if ("edit" in action) {
+                    this.applyEdit(action.edit, serviceName);
+                }
+            }
+        });
+        var actionTimer;
+        // @ts-ignore
+        editor.on("changeSelection", ()=>{
+            if (!actionTimer) actionTimer = setTimeout(()=>{
+                //TODO: no need to send request on empty
+                let selection = editor.getSelection().getRange();
+                let cursor = editor.getCursorPosition();
+                let diagnostics = fromAnnotations(editor.session.getAnnotations().filter((el)=>el.row === cursor.row));
+                this.$messageController.getCodeActions(this.$getFileName(editor.session), fromRange(selection), {
+                    diagnostics
+                }, (codeActions)=>{
+                    lightBulb.setCodeActions(codeActions);
+                    lightBulb.showLightbulb();
+                });
+                actionTimer = undefined;
+            }, 500);
+        });
+    }
+    $initHoverTooltip(editor) {
+        this.$hoverTooltip.setDataProvider((e, editor)=>{
+            let session = editor.session;
+            let docPos = e.getDocumentPosition();
+            this.doHover(session, docPos, (hover)=>{
+                var _this_$getSessionLanguageProvider_state_diagnosticMarkers, _this_$getSessionLanguageProvider_state, _hover, _hover1, _errorMarker;
+                if (!hover) return;
+                var errorMarker = (_this_$getSessionLanguageProvider_state = this.$getSessionLanguageProvider(session).state) === null || _this_$getSessionLanguageProvider_state === void 0 ? void 0 : (_this_$getSessionLanguageProvider_state_diagnosticMarkers = _this_$getSessionLanguageProvider_state.diagnosticMarkers) === null || _this_$getSessionLanguageProvider_state_diagnosticMarkers === void 0 ? void 0 : _this_$getSessionLanguageProvider_state_diagnosticMarkers.getMarkerAtPosition(docPos);
+                if (!errorMarker && !((_hover = hover) === null || _hover === void 0 ? void 0 : _hover.content)) return;
+                var range = ((_hover1 = hover) === null || _hover1 === void 0 ? void 0 : _hover1.range) || ((_errorMarker = errorMarker) === null || _errorMarker === void 0 ? void 0 : _errorMarker.range);
+                const Range = editor.getSelectionRange().constructor;
+                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
+                var hoverNode = hover && document.createElement("div");
+                if (hoverNode) {
+                    // todo render markdown using ace markdown mode
+                    hoverNode.innerHTML = this.getTooltipText(hover);
+                }
+                var domNode = document.createElement('div');
+                if (errorMarker) {
+                    var errorDiv = document.createElement('div');
+                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
+                    errorDiv.appendChild(errorText);
+                    domNode.appendChild(errorDiv);
+                }
+                if (hoverNode) {
+                    domNode.appendChild(hoverNode);
+                }
+                this.$hoverTooltip.showForRange(editor, range, domNode, e);
+            });
+        });
+        this.$hoverTooltip.addToEditor(editor);
+    }
+    setStyles(editor) {
+        if (!this.stylesEmbedded) {
+            setStyles(editor);
+            this.stylesEmbedded = true;
+        }
+    }
+    setGlobalOptions(serviceName, options, merge = false) {
+        this.$messageController.setGlobalOptions(serviceName, options, merge);
+    }
+    /**
+     * Sets the workspace URI for the language provider.
+     *
+     * If the provided URI is the same as the current workspace URI, no action is taken.
+     * Otherwise, the workspace URI is updated and the message controller is notified.
+     *
+     * Not all servers support changing of workspace URI.
+     *
+     * @param workspaceUri - The new workspace URI. Could be simple path, not URI itself.
+     */ changeWorkspaceFolder(workspaceUri) {
+        if (workspaceUri === this.workspaceUri) return;
+        this.workspaceUri = convertToUri(workspaceUri);
+        this.$messageController.setWorkspace(workspaceUri);
     }
     setSessionOptions(session, options) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
-    }
-    setGlobalOptions(serviceName, options, merge = false) {
-        this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
     configureServiceFeatures(serviceName, features) {
         this.$messageController.configureFeatures(serviceName, features);
@@ -20678,8 +21095,8 @@ class LanguageProvider {
             editor.completers.push(completer);
         }
     }
-    dispose() {
-        this.$messageController.dispose(()=>{
+    closeConnection() {
+        this.$messageController.closeConnection(()=>{
             this.$messageController.$worker.terminate();
         });
     }
@@ -20694,7 +21111,7 @@ class LanguageProvider {
             delete this.$sessionLanguageProviders[session["id"]];
         }
     }
-    constructor(messageController, options){
+    constructor(worker, options){
         language_provider_define_property(this, "activeEditor", void 0);
         language_provider_define_property(this, "$messageController", void 0);
         language_provider_define_property(this, "$signatureTooltip", void 0);
@@ -20702,22 +21119,46 @@ class LanguageProvider {
         language_provider_define_property(this, "editors", []);
         language_provider_define_property(this, "options", void 0);
         language_provider_define_property(this, "$hoverTooltip", void 0);
-        language_provider_define_property(this, "$registerSession", (session, editor, options)=>{
+        language_provider_define_property(this, "$urisToSessionsIds", {});
+        language_provider_define_property(this, "workspaceUri", void 0);
+        language_provider_define_property(this, "requireFilePath", false);
+        language_provider_define_property(this, "$lightBulbWidgets", {});
+        language_provider_define_property(this, "stylesEmbedded", void 0);
+        language_provider_define_property(this, "$registerSession", (session, editor)=>{
             var _this_$sessionLanguageProviders, _session_id;
             var _;
-            (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(this, session, editor, this.$messageController, options);
+            (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(this, session, editor, this.$messageController);
         });
+        language_provider_define_property(this, "codeActionCallback", void 0);
         language_provider_define_property(this, "format", ()=>{
             if (!this.options.functionality.format) return;
             let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
             sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
         });
-        this.$messageController = messageController;
+        this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
     }
 }
 class SessionLanguageProvider {
+    get comboDocumentIdentifier() {
+        return {
+            documentUri: this.documentUri,
+            sessionId: this.session["id"]
+        };
+    }
+    /**
+     * @param filePath
+     */ setFilePath(filePath) {
+        if (this.$filePath !== undefined) return;
+        this.$filePath = filePath;
+        this.$init();
+    }
+    $init() {
+        if (this.$isFilePathRequired && this.$filePath === undefined) return;
+        this.initDocumentUri();
+        this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
+    }
     addSemanticTokenSupport(session) {
         let bgTokenizer = session.bgTokenizer;
         session.setSemanticTokens = (tokens)=>{
@@ -20743,8 +21184,11 @@ class SessionLanguageProvider {
             return bgTokenizer.lines[row] = data.tokens;
         };
     }
-    initFileName() {
-        this.fileName = this.session["id"] + "." + this.$extension;
+    initDocumentUri() {
+        var _this_$filePath;
+        let filePath = (_this_$filePath = this.$filePath) !== null && _this_$filePath !== void 0 ? _this_$filePath : this.session["id"] + "." + this.$extension;
+        this.documentUri = convertToUri(filePath);
+        this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
     }
     get $extension() {
         let mode = this.$mode.replace("ace/mode/", "");
@@ -20765,7 +21209,7 @@ class SessionLanguageProvider {
             this.$options = options;
             return;
         }
-        this.$messageController.changeOptions(this.fileName, options);
+        this.$messageController.changeOptions(this.comboDocumentIdentifier, options);
     }
     getSemanticTokens() {
         if (!this.$provider.options.functionality.semanticTokens) return;
@@ -20781,7 +21225,7 @@ class SessionLanguageProvider {
                 column: this.session.getLine(lastRow).length
             }
         };
-        this.$messageController.getSemanticTokens(this.fileName, fromRange(visibleRange), (tokens)=>{
+        this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), (tokens)=>{
             if (!tokens) {
                 return;
             }
@@ -20804,16 +21248,25 @@ class SessionLanguageProvider {
         });
     }
     closeDocument(callback) {
-        this.$messageController.closeDocument(this.fileName, callback);
+        this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
     }
-    constructor(provider, session, editor, messageController, options){
+    /**
+     * Constructs a new instance of the `SessionLanguageProvider` class.
+     *
+     * @param provider - The `LanguageProvider` instance.
+     * @param session - The Ace editor session.
+     * @param editor - The Ace editor instance.
+     * @param messageController - The `IMessageController` instance for handling messages.
+     */ constructor(provider, session, editor, messageController){
         language_provider_define_property(this, "session", void 0);
-        language_provider_define_property(this, "fileName", void 0);
+        language_provider_define_property(this, "documentUri", void 0);
         language_provider_define_property(this, "$messageController", void 0);
         language_provider_define_property(this, "$deltaQueue", void 0);
         language_provider_define_property(this, "$isConnected", false);
         language_provider_define_property(this, "$modeIsChanged", false);
         language_provider_define_property(this, "$options", void 0);
+        language_provider_define_property(this, "$filePath", void 0);
+        language_provider_define_property(this, "$isFilePathRequired", false);
         language_provider_define_property(this, "$servicesCapabilities", void 0);
         language_provider_define_property(this, "state", {
             occurrenceMarkers: null,
@@ -20846,7 +21299,7 @@ class SessionLanguageProvider {
             }
             this.session.setSemanticTokens(undefined); //clear all semantic tokens
             let newVersion = this.session.doc["version"]++;
-            this.$messageController.changeMode(this.fileName, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+            this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
         });
         language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
             if (!capabilities) return;
@@ -20898,7 +21351,7 @@ class SessionLanguageProvider {
             let deltas = this.$deltaQueue;
             if (!deltas) return callback && callback();
             this.$deltaQueue = null;
-            if (deltas.length) this.$messageController.change(this.fileName, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
+            if (deltas.length) this.$messageController.change(this.comboDocumentIdentifier, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
         });
         language_provider_define_property(this, "$showAnnotations", (diagnostics)=>{
             var _diagnostics;
@@ -20916,7 +21369,7 @@ class SessionLanguageProvider {
             this.state.diagnosticMarkers.setMarkers((_diagnostics = diagnostics) === null || _diagnostics === void 0 ? void 0 : _diagnostics.map((el)=>toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
         });
         language_provider_define_property(this, "validate", ()=>{
-            this.$messageController.doValidation(this.fileName, this.$showAnnotations);
+            this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
         });
         language_provider_define_property(this, "format", ()=>{
             let selectionRanges = this.session.getSelection().getAllRanges();
@@ -20939,10 +21392,10 @@ class SessionLanguageProvider {
                 ];
             }
             for (let range of aceRangeDatas){
-                this.$messageController.format(this.fileName, fromRange(range), $format, this.$applyFormat);
+                this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
             }
         });
-        language_provider_define_property(this, "$applyFormat", (edits)=>{
+        language_provider_define_property(this, "applyEdits", (edits)=>{
             edits !== null && edits !== void 0 ? edits : edits = [];
             for (let edit of edits.reverse()){
                 this.session.replace(toRange(edit.range), edit.newText);
@@ -20960,7 +21413,7 @@ class SessionLanguageProvider {
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
-        this.initFileName();
+        this.$isFilePathRequired = provider.requireFilePath;
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
         this.addSemanticTokenSupport(session); //TODO: ?
@@ -20969,12 +21422,7 @@ class SessionLanguageProvider {
         if (this.$provider.options.functionality.semanticTokens) {
             session.on("changeScrollTop", ()=>this.getSemanticTokens());
         }
-        let initCallbacks = {
-            "initCallback": this.$connected,
-            "validationCallback": this.$showAnnotations,
-            "changeCapabilitiesCallback": this.setServerCapabilities
-        };
-        this.$messageController.init(this.fileName, session.doc, this.$mode, options, initCallbacks);
+        this.$init();
     }
 }
 

@@ -11,12 +11,12 @@
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 6066:
+/***/ 1542:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { buildAst } = __webpack_require__(8538);
-const { accept } = __webpack_require__(9502);
-const { DEFAULT_NS } = __webpack_require__(544);
+const { buildAst } = __webpack_require__(7523);
+const { accept } = __webpack_require__(24);
+const { DEFAULT_NS } = __webpack_require__(8319);
 
 module.exports = {
   buildAst: buildAst,
@@ -27,10 +27,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8538:
+/***/ 7523:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { BaseXmlCstVisitor } = __webpack_require__(3429);
+const { BaseXmlCstVisitor } = __webpack_require__(7882);
 const {
   last,
   forEach,
@@ -41,15 +41,15 @@ const {
   isEmpty,
   isArray,
   assign,
-} = __webpack_require__(6635);
+} = __webpack_require__(5250);
 const {
   findNextTextualToken,
   isXMLNamespaceKey,
   getXMLNamespaceKeyPrefix,
-} = __webpack_require__(851);
+} = __webpack_require__(1875);
 
-const { getAstChildrenReflective } = __webpack_require__(3863);
-const { DEFAULT_NS } = __webpack_require__(544);
+const { getAstChildrenReflective } = __webpack_require__(8831);
+const { DEFAULT_NS } = __webpack_require__(8319);
 
 /**
  * @param {DocumentCstNode} docCst
@@ -491,7 +491,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 544:
+/***/ 8319:
 /***/ ((module) => {
 
 module.exports = {
@@ -501,10 +501,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3863:
+/***/ 8831:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { reduce, has, isArray } = __webpack_require__(6635);
+const { reduce, has, isArray } = __webpack_require__(5250);
 
 function getAstChildrenReflective(astParent) {
   const astChildren = reduce(
@@ -533,11 +533,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9502:
+/***/ 24:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { forEach, isFunction } = __webpack_require__(6635);
-const { getAstChildrenReflective } = __webpack_require__(3863);
+const { forEach, isFunction } = __webpack_require__(5250);
+const { getAstChildrenReflective } = __webpack_require__(8831);
 
 /**
  * @param {XMLAstNode} node
@@ -601,14 +601,14 @@ module.exports = {
 
 /***/ }),
 
-/***/ 851:
+/***/ 1875:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { findNextTextualToken } = __webpack_require__(539);
+const { findNextTextualToken } = __webpack_require__(2266);
 const {
   isXMLNamespaceKey,
   getXMLNamespaceKeyPrefix,
-} = __webpack_require__(2708);
+} = __webpack_require__(2370);
 
 module.exports = {
   findNextTextualToken: findNextTextualToken,
@@ -619,10 +619,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 539:
+/***/ 2266:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { findIndex } = __webpack_require__(6635);
+const { findIndex } = __webpack_require__(5250);
 
 function findNextTextualToken(tokenVector, prevTokenEndOffset) {
   // The TokenVector is sorted, so we could use a BinarySearch to optimize performance
@@ -659,7 +659,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2708:
+/***/ 2370:
 /***/ ((module) => {
 
 // The xml parser takes care of validating the attribute name.
@@ -720,16 +720,16 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2926:
+/***/ 30:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { validate } = __webpack_require__(2723);
+const { validate } = __webpack_require__(8737);
 const {
   validateUniqueAttributeKeys,
-} = __webpack_require__(2965);
+} = __webpack_require__(4232);
 const {
   validateTagClosingNameMatch,
-} = __webpack_require__(9198);
+} = __webpack_require__(8403);
 
 /**
  * @param {XMLDocument} ast
@@ -753,7 +753,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9198:
+/***/ 8403:
 /***/ ((module) => {
 
 /**
@@ -804,10 +804,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2965:
+/***/ 4232:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { groupBy, pickBy, reduce, map, filter } = __webpack_require__(6635);
+const { groupBy, pickBy, reduce, map, filter } = __webpack_require__(5250);
 
 /**
  * @param {XMLElement} elem
@@ -848,11 +848,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3429:
+/***/ 7882:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { xmlLexer } = __webpack_require__(2229);
-const { xmlParser } = __webpack_require__(3083);
+const { xmlLexer } = __webpack_require__(3799);
+const { xmlParser } = __webpack_require__(8322);
 
 module.exports = {
   parse: function parse(text) {
@@ -876,10 +876,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2229:
+/***/ 3799:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { createToken: createTokenOrg, Lexer } = __webpack_require__(3877);
+const { createToken: createTokenOrg, Lexer } = __webpack_require__(397);
 
 // A little mini DSL for easier lexer definition.
 const fragments = {};
@@ -1089,11 +1089,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3083:
+/***/ 8322:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { CstParser, tokenMatcher } = __webpack_require__(3877);
-const { tokensDictionary: t } = __webpack_require__(2229);
+const { CstParser, tokenMatcher } = __webpack_require__(397);
+const { tokensDictionary: t } = __webpack_require__(3799);
 
 class Parser extends CstParser {
   constructor() {
@@ -1307,11 +1307,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 6565:
+/***/ 7728:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { getSchemaValidators } = __webpack_require__(9172);
-const { getSchemaSuggestionsProviders } = __webpack_require__(2770);
+const { getSchemaValidators } = __webpack_require__(2258);
+const { getSchemaSuggestionsProviders } = __webpack_require__(4638);
 
 module.exports = {
   getSchemaValidators: getSchemaValidators,
@@ -1321,10 +1321,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9291:
+/***/ 1851:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { difference, map } = __webpack_require__(6635);
+const { difference, map } = __webpack_require__(5250);
 
 /**
  * @param {XMLElement} elementNode
@@ -1358,10 +1358,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9961:
+/***/ 2650:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { has, isRegExp, forEach, isArray } = __webpack_require__(6635);
+const { has, isRegExp, forEach, isArray } = __webpack_require__(5250);
 
 /**
  * @param {XMLAttribute} attributeNode
@@ -1405,11 +1405,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 5844:
+/***/ 2548:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { difference, map, filter, has, pickBy } = __webpack_require__(6635);
-const { DEFAULT_NS } = __webpack_require__(6066);
+const { difference, map, filter, has, pickBy } = __webpack_require__(5250);
+const { DEFAULT_NS } = __webpack_require__(1542);
 
 // https://www.w3.org/TR/2009/REC-xml-names-20091208/#NT-PrefixedName
 const NAMESPACE_PATTERN = /^(?:([^:]*):)?([^:]*)$/;
@@ -1508,15 +1508,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2770:
+/***/ 4638:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { attributeNameCompletion } = __webpack_require__(9291);
+const { attributeNameCompletion } = __webpack_require__(1851);
 const {
   attributeValueCompletion,
-} = __webpack_require__(9961);
-const { elementNameCompletion } = __webpack_require__(5844);
-const { findElementXssDef, findAttributeXssDef } = __webpack_require__(760);
+} = __webpack_require__(2650);
+const { elementNameCompletion } = __webpack_require__(2548);
+const { findElementXssDef, findAttributeXssDef } = __webpack_require__(8317);
 
 function getSchemaSuggestionsProviders(schema) {
   const attributeNameProvider = buildAttributeNameProvider(schema);
@@ -1577,32 +1577,32 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9172:
+/***/ 2258:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { validateAttributeValue } = __webpack_require__(4998);
+const { validateAttributeValue } = __webpack_require__(7578);
 
 const {
   validateDuplicateSubElements,
-} = __webpack_require__(8087);
+} = __webpack_require__(1688);
 
 const {
   validateRequiredAttributes,
-} = __webpack_require__(4610);
+} = __webpack_require__(5587);
 
 const {
   validateRequiredSubElements,
-} = __webpack_require__(6717);
+} = __webpack_require__(6762);
 
 const {
   validateUnknownAttributes,
-} = __webpack_require__(2877);
+} = __webpack_require__(6336);
 
 const {
   validateUnknownSubElements,
-} = __webpack_require__(7855);
+} = __webpack_require__(1573);
 
-const { findAttributeXssDef, findElementXssDef } = __webpack_require__(760);
+const { findAttributeXssDef, findElementXssDef } = __webpack_require__(8317);
 
 function getSchemaValidators(schema) {
   const attributeValidator = buildAttributeValidator(schema);
@@ -1683,10 +1683,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 760:
+/***/ 8317:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { drop, map, forEach, first } = __webpack_require__(6635);
+const { drop, map, forEach, first } = __webpack_require__(5250);
 
 /**
  * @param {XMLAttribute} attribNode
@@ -1759,11 +1759,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4998:
+/***/ 7578:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { isRegExp, isArray, includes, has } = __webpack_require__(6635);
-const { tokenToOffsetPosition } = __webpack_require__(3899);
+const { isRegExp, isArray, includes, has } = __webpack_require__(5250);
+const { tokenToOffsetPosition } = __webpack_require__(4663);
 
 /**
  * @param {XMLAttribute} attributeNode
@@ -1823,11 +1823,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 8087:
+/***/ 1688:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { map, forEach, includes, filter, groupBy } = __webpack_require__(6635);
-const { tokenToOffsetPosition } = __webpack_require__(3899);
+const { map, forEach, includes, filter, groupBy } = __webpack_require__(5250);
+const { tokenToOffsetPosition } = __webpack_require__(4663);
 
 /**
  * @param {XMLElement} elem
@@ -1872,11 +1872,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4610:
+/***/ 5587:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { map, filter, difference } = __webpack_require__(6635);
-const { tokenToOffsetPosition } = __webpack_require__(3899);
+const { map, filter, difference } = __webpack_require__(5250);
+const { tokenToOffsetPosition } = __webpack_require__(4663);
 
 /**
  * @param {XMLElement} elem
@@ -1918,11 +1918,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 6717:
+/***/ 6762:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { map, filter, difference } = __webpack_require__(6635);
-const { tokenToOffsetPosition } = __webpack_require__(3899);
+const { map, filter, difference } = __webpack_require__(5250);
+const { tokenToOffsetPosition } = __webpack_require__(4663);
 
 /**
  * @param {XMLElement} elem
@@ -1964,12 +1964,12 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2877:
+/***/ 6336:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { map, includes, forEach } = __webpack_require__(6635);
-const { isXMLNamespaceKey } = __webpack_require__(851);
-const { tokenToOffsetPosition } = __webpack_require__(3899);
+const { map, includes, forEach } = __webpack_require__(5250);
+const { isXMLNamespaceKey } = __webpack_require__(1875);
+const { tokenToOffsetPosition } = __webpack_require__(4663);
 
 /**
  * @param {XMLElement} elem
@@ -2017,11 +2017,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 7855:
+/***/ 1573:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { map, forEach, includes } = __webpack_require__(6635);
-const { tokenToOffsetPosition } = __webpack_require__(3899);
+const { map, forEach, includes } = __webpack_require__(5250);
+const { tokenToOffsetPosition } = __webpack_require__(4663);
 
 /**
  * @param {XMLElement} elem
@@ -2064,10 +2064,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3899:
+/***/ 4663:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { pick } = __webpack_require__(6635);
+const { pick } = __webpack_require__(5250);
 
 function tokenToOffsetPosition(token) {
   return pick(token, ["startOffset", "endOffset"]);
@@ -2080,10 +2080,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2723:
+/***/ 8737:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { validate } = __webpack_require__(1583);
+const { validate } = __webpack_require__(3251);
 
 module.exports = {
   validate: validate,
@@ -2092,11 +2092,11 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1583:
+/***/ 3251:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-const { accept } = __webpack_require__(6066);
-const { defaultsDeep, flatMap } = __webpack_require__(6635);
+const { accept } = __webpack_require__(1542);
+const { defaultsDeep, flatMap } = __webpack_require__(5250);
 
 function validate(options) {
   const actualOptions = defaultsDeep(options, {
@@ -2136,12 +2136,12 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1696:
+/***/ 6093:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var process = __webpack_require__(4406);
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var process = __webpack_require__(9907);
+/* provided dependency */ var console = __webpack_require__(4364);
 // Currently in sync with Node.js lib/assert.js
 // https://github.com/nodejs/node/commit/2a51ae424a513ec9a6aa3466baa0cc1d55dd4f3b
 // Originally from narwhal.js (http://narwhaljs.org)
@@ -2169,7 +2169,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _require = __webpack_require__(7515),
+var _require = __webpack_require__(1342),
     _require$codes = _require.codes,
     ERR_AMBIGUOUS_ARGUMENT = _require$codes.ERR_AMBIGUOUS_ARGUMENT,
     ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
@@ -2177,17 +2177,17 @@ var _require = __webpack_require__(7515),
     ERR_INVALID_RETURN_VALUE = _require$codes.ERR_INVALID_RETURN_VALUE,
     ERR_MISSING_ARGS = _require$codes.ERR_MISSING_ARGS;
 
-var AssertionError = __webpack_require__(4082);
+var AssertionError = __webpack_require__(9801);
 
-var _require2 = __webpack_require__(3335),
+var _require2 = __webpack_require__(6827),
     inspect = _require2.inspect;
 
-var _require$types = (__webpack_require__(3335).types),
+var _require$types = (__webpack_require__(6827).types),
     isPromise = _require$types.isPromise,
     isRegExp = _require$types.isRegExp;
 
-var objectAssign = Object.assign ? Object.assign : (__webpack_require__(4956).assign);
-var objectIs = Object.is ? Object.is : __webpack_require__(4679);
+var objectAssign = Object.assign ? Object.assign : (__webpack_require__(3046).assign);
+var objectIs = Object.is ? Object.is : __webpack_require__(5968);
 var errorCache = new Map();
 var isDeepEqual;
 var isDeepStrictEqual;
@@ -2196,7 +2196,7 @@ var findNodeAround;
 var decoder;
 
 function lazyLoadComparison() {
-  var comparison = __webpack_require__(6796);
+  var comparison = __webpack_require__(5656);
 
   isDeepEqual = comparison.isDeepEqual;
   isDeepStrictEqual = comparison.isDeepStrictEqual;
@@ -2776,11 +2776,11 @@ assert.strict.strict = assert.strict;
 
 /***/ }),
 
-/***/ 4082:
+/***/ 9801:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var process = __webpack_require__(4406);
+/* provided dependency */ var process = __webpack_require__(9907);
 // Currently in sync with Node.js lib/internal/assert/assertion_error.js
 // https://github.com/nodejs/node/commit/0817840f775032169ddd70c85ac059f18ffcc81c
 
@@ -2815,10 +2815,10 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var _require = __webpack_require__(3335),
+var _require = __webpack_require__(6827),
     inspect = _require.inspect;
 
-var _require2 = __webpack_require__(7515),
+var _require2 = __webpack_require__(1342),
     ERR_INVALID_ARG_TYPE = _require2.codes.ERR_INVALID_ARG_TYPE; // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
 
 
@@ -3285,7 +3285,7 @@ module.exports = AssertionError;
 
 /***/ }),
 
-/***/ 7515:
+/***/ 1342:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3405,7 +3405,7 @@ function includes(str, search, start) {
 
 createErrorType('ERR_AMBIGUOUS_ARGUMENT', 'The "%s" argument is ambiguous. %s', TypeError);
 createErrorType('ERR_INVALID_ARG_TYPE', function (name, expected, actual) {
-  if (assert === undefined) assert = __webpack_require__(1696);
+  if (assert === undefined) assert = __webpack_require__(6093);
   assert(typeof name === 'string', "'name' must be a string"); // determiner: 'must be' or 'must not be'
 
   var determiner;
@@ -3433,7 +3433,7 @@ createErrorType('ERR_INVALID_ARG_TYPE', function (name, expected, actual) {
 }, TypeError);
 createErrorType('ERR_INVALID_ARG_VALUE', function (name, value) {
   var reason = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'is invalid';
-  if (util === undefined) util = __webpack_require__(3335);
+  if (util === undefined) util = __webpack_require__(6827);
   var inspected = util.inspect(value);
 
   if (inspected.length > 128) {
@@ -3458,7 +3458,7 @@ createErrorType('ERR_MISSING_ARGS', function () {
     args[_key] = arguments[_key];
   }
 
-  if (assert === undefined) assert = __webpack_require__(1696);
+  if (assert === undefined) assert = __webpack_require__(6093);
   assert(args.length > 0, 'At least one arg needs to be specified');
   var msg = 'The ';
   var len = args.length;
@@ -3487,7 +3487,7 @@ module.exports.codes = codes;
 
 /***/ }),
 
-/***/ 6796:
+/***/ 5656:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -3523,11 +3523,11 @@ var arrayFromMap = function arrayFromMap(map) {
   return array;
 };
 
-var objectIs = Object.is ? Object.is : __webpack_require__(4679);
+var objectIs = Object.is ? Object.is : __webpack_require__(5968);
 var objectGetOwnPropertySymbols = Object.getOwnPropertySymbols ? Object.getOwnPropertySymbols : function () {
   return [];
 };
-var numberIsNaN = Number.isNaN ? Number.isNaN : __webpack_require__(4782);
+var numberIsNaN = Number.isNaN ? Number.isNaN : __webpack_require__(7838);
 
 function uncurryThis(f) {
   return f.call.bind(f);
@@ -3537,7 +3537,7 @@ var hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
 var propertyIsEnumerable = uncurryThis(Object.prototype.propertyIsEnumerable);
 var objectToString = uncurryThis(Object.prototype.toString);
 
-var _require$types = (__webpack_require__(3335).types),
+var _require$types = (__webpack_require__(6827).types),
     isAnyArrayBuffer = _require$types.isAnyArrayBuffer,
     isArrayBufferView = _require$types.isArrayBufferView,
     isDate = _require$types.isDate,
@@ -4182,15 +4182,15 @@ module.exports = {
 
 /***/ }),
 
-/***/ 2680:
+/***/ 9818:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(7286);
+var GetIntrinsic = __webpack_require__(528);
 
-var callBind = __webpack_require__(9429);
+var callBind = __webpack_require__(8498);
 
 var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
 
@@ -4205,14 +4205,14 @@ module.exports = function callBoundIntrinsic(name, allowMissing) {
 
 /***/ }),
 
-/***/ 9429:
+/***/ 8498:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(4090);
-var GetIntrinsic = __webpack_require__(7286);
+var bind = __webpack_require__(9138);
+var GetIntrinsic = __webpack_require__(528);
 
 var $apply = GetIntrinsic('%Function.prototype.apply%');
 var $call = GetIntrinsic('%Function.prototype.call%');
@@ -4260,7 +4260,7 @@ if ($defineProperty) {
 
 /***/ }),
 
-/***/ 3877:
+/***/ 397:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4321,9 +4321,9 @@ __webpack_require__.d(__webpack_exports__, {
 var VERSION = "7.1.1";
 //# sourceMappingURL=version.js.map
 // EXTERNAL MODULE: ../../node_modules/chevrotain/lib_esm/src/utils/utils.js
-var utils = __webpack_require__(1481);
+var utils = __webpack_require__(3831);
 // EXTERNAL MODULE: ../../node_modules/regexp-to-ast/lib/regexp-to-ast.js
-var regexp_to_ast = __webpack_require__(4844);
+var regexp_to_ast = __webpack_require__(710);
 ;// CONCATENATED MODULE: ../../node_modules/chevrotain/lib_esm/src/scan/reg_exp_parser.js
 
 var regExpAstCache = {};
@@ -4376,7 +4376,7 @@ function getOptimizedStartCodesIndices(regExp, ensureOptimizations) {
         // TODO: only the else branch needs to be ignored, try to fix with newer prettier / tsc
         if (e.message === complementErrorMessage) {
             if (ensureOptimizations) {
-                (0,utils/* PRINT_WARNING */.rr)("" + failedOptimizationPrefixMsg +
+                (0,utils/* PRINT_WARNING */.x5)("" + failedOptimizationPrefixMsg +
                     ("\tUnable to optimize: < " + regExp.toString() + " >\n") +
                     "\tComplement Sets cannot be automatically optimized.\n" +
                     "\tThis will disable the lexer's first char optimizations.\n" +
@@ -4390,7 +4390,7 @@ function getOptimizedStartCodesIndices(regExp, ensureOptimizations) {
                     "\n\tThis will disable the lexer's first char optimizations.\n" +
                         "\tSee: https://sap.github.io/chevrotain/docs/guide/resolving_lexer_errors.html#REGEXP_PARSING for details.";
             }
-            (0,utils/* PRINT_ERROR */.WB)(failedOptimizationPrefixMsg + "\n" +
+            (0,utils/* PRINT_ERROR */.Zi)(failedOptimizationPrefixMsg + "\n" +
                 ("\tFailed parsing: < " + regExp.toString() + " >\n") +
                 ("\tUsing the regexp-to-ast library version: " + regexp_to_ast.VERSION + "\n") +
                 "\tPlease open an issue at: https://github.com/bd82/regexp-to-ast/issues" +
@@ -4434,7 +4434,7 @@ function firstCharOptimizedIndices(ast, result, ignoreCase) {
                         if (atom.complement === true) {
                             throw Error(complementErrorMessage);
                         }
-                        (0,utils/* forEach */.Ed)(atom.value, function (code) {
+                        (0,utils/* forEach */.jJ)(atom.value, function (code) {
                             if (typeof code === "number") {
                                 addOptimizedIdxToResult(code, result, ignoreCase);
                             }
@@ -4493,7 +4493,7 @@ function firstCharOptimizedIndices(ast, result, ignoreCase) {
             throw Error("non exhaustive match!");
     }
     // console.log(Object.keys(result).length)
-    return (0,utils/* values */.VO)(result);
+    return (0,utils/* values */.zu)(result);
 }
 function addOptimizedIdxToResult(code, result, ignoreCase) {
     var optimizedCharIdx = charCodeToOptimizedIndex(code);
@@ -4519,14 +4519,14 @@ function handleIgnoreCase(code, result) {
     }
 }
 function findCode(setNode, targetCharCodes) {
-    return (0,utils/* find */.sE)(setNode.value, function (codeOrRange) {
+    return (0,utils/* find */.I6)(setNode.value, function (codeOrRange) {
         if (typeof codeOrRange === "number") {
-            return (0,utils/* contains */.r3)(targetCharCodes, codeOrRange);
+            return (0,utils/* contains */.gR)(targetCharCodes, codeOrRange);
         }
         else {
             // range
             var range_1 = codeOrRange;
-            return ((0,utils/* find */.sE)(targetCharCodes, function (targetCode) { return range_1.from <= targetCode && targetCode <= range_1.to; }) !== undefined);
+            return ((0,utils/* find */.I6)(targetCharCodes, function (targetCode) { return range_1.from <= targetCode && targetCode <= range_1.to; }) !== undefined);
         }
     });
 }
@@ -4537,8 +4537,8 @@ function isWholeOptional(ast) {
     if (!ast.value) {
         return false;
     }
-    return (0,utils/* isArray */.kJ)(ast.value)
-        ? (0,utils/* every */.yW)(ast.value, isWholeOptional)
+    return (0,utils/* isArray */.cy)(ast.value)
+        ? (0,utils/* every */.Si)(ast.value, isWholeOptional)
         : isWholeOptional(ast.value);
 }
 var CharCodeFinder = /** @class */ (function (_super) {
@@ -4567,7 +4567,7 @@ var CharCodeFinder = /** @class */ (function (_super) {
         _super.prototype.visitChildren.call(this, node);
     };
     CharCodeFinder.prototype.visitCharacter = function (node) {
-        if ((0,utils/* contains */.r3)(this.targetCharCodes, node.value)) {
+        if ((0,utils/* contains */.gR)(this.targetCharCodes, node.value)) {
             this.found = true;
         }
     };
@@ -4593,8 +4593,8 @@ function canMatchCharCode(charCodes, pattern) {
         return charCodeFinder.found;
     }
     else {
-        return ((0,utils/* find */.sE)(pattern, function (char) {
-            return (0,utils/* contains */.r3)(charCodes, char.charCodeAt(0));
+        return ((0,utils/* find */.I6)(pattern, function (char) {
+            return (0,utils/* contains */.gR)(charCodes, char.charCodeAt(0));
         }) !== undefined);
     }
 }
@@ -4629,7 +4629,7 @@ function enableSticky() {
     SUPPORT_STICKY = true;
 }
 function analyzeTokenTypes(tokenTypes, options) {
-    options = (0,utils/* defaults */.ce)(options, {
+    options = (0,utils/* defaults */.NT)(options, {
         useSticky: SUPPORT_STICKY,
         debug: false,
         safeMode: false,
@@ -4643,7 +4643,7 @@ function analyzeTokenTypes(tokenTypes, options) {
     });
     var onlyRelevantTypes;
     tracer("Reject Lexer.NA", function () {
-        onlyRelevantTypes = (0,utils/* reject */.d1)(tokenTypes, function (currType) {
+        onlyRelevantTypes = (0,utils/* reject */.ku)(tokenTypes, function (currType) {
             return currType[PATTERN] === Lexer.NA;
         });
     });
@@ -4651,10 +4651,10 @@ function analyzeTokenTypes(tokenTypes, options) {
     var allTransformedPatterns;
     tracer("Transform Patterns", function () {
         hasCustom = false;
-        allTransformedPatterns = (0,utils/* map */.UI)(onlyRelevantTypes, function (currType) {
+        allTransformedPatterns = (0,utils/* map */.Tj)(onlyRelevantTypes, function (currType) {
             var currPattern = currType[PATTERN];
             /* istanbul ignore else */
-            if ((0,utils/* isRegExp */.Kj)(currPattern)) {
+            if ((0,utils/* isRegExp */.gd)(currPattern)) {
                 var regExpSource = currPattern.source;
                 if (regExpSource.length === 1 &&
                     // only these regExp meta characters which can appear in a length one regExp
@@ -4667,7 +4667,7 @@ function analyzeTokenTypes(tokenTypes, options) {
                 else if (regExpSource.length === 2 &&
                     regExpSource[0] === "\\" &&
                     // not a meta character
-                    !(0,utils/* contains */.r3)([
+                    !(0,utils/* contains */.gR)([
                         "d",
                         "D",
                         "s",
@@ -4696,12 +4696,12 @@ function analyzeTokenTypes(tokenTypes, options) {
                         : addStartOfInput(currPattern);
                 }
             }
-            else if ((0,utils/* isFunction */.mf)(currPattern)) {
+            else if ((0,utils/* isFunction */.Tn)(currPattern)) {
                 hasCustom = true;
                 // CustomPatternMatcherFunc - custom patterns do not require any transformations, only wrapping in a RegExp Like object
                 return { exec: currPattern };
             }
-            else if ((0,utils/* has */.e$)(currPattern, "exec")) {
+            else if ((0,utils/* has */.zy)(currPattern, "exec")) {
                 hasCustom = true;
                 // ICustomPattern
                 return currPattern;
@@ -4729,42 +4729,42 @@ function analyzeTokenTypes(tokenTypes, options) {
     var patternIdxToPushMode;
     var patternIdxToPopMode;
     tracer("misc mapping", function () {
-        patternIdxToType = (0,utils/* map */.UI)(onlyRelevantTypes, function (currType) { return currType.tokenTypeIdx; });
-        patternIdxToGroup = (0,utils/* map */.UI)(onlyRelevantTypes, function (clazz) {
+        patternIdxToType = (0,utils/* map */.Tj)(onlyRelevantTypes, function (currType) { return currType.tokenTypeIdx; });
+        patternIdxToGroup = (0,utils/* map */.Tj)(onlyRelevantTypes, function (clazz) {
             var groupName = clazz.GROUP;
             /* istanbul ignore next */
             if (groupName === Lexer.SKIPPED) {
                 return undefined;
             }
-            else if ((0,utils/* isString */.HD)(groupName)) {
+            else if ((0,utils/* isString */.Kg)(groupName)) {
                 return groupName;
             }
-            else if ((0,utils/* isUndefined */.o8)(groupName)) {
+            else if ((0,utils/* isUndefined */.b0)(groupName)) {
                 return false;
             }
             else {
                 throw Error("non exhaustive match");
             }
         });
-        patternIdxToLongerAltIdx = (0,utils/* map */.UI)(onlyRelevantTypes, function (clazz) {
+        patternIdxToLongerAltIdx = (0,utils/* map */.Tj)(onlyRelevantTypes, function (clazz) {
             var longerAltType = clazz.LONGER_ALT;
             if (longerAltType) {
-                var longerAltIdx = (0,utils/* indexOf */.cq)(onlyRelevantTypes, longerAltType);
+                var longerAltIdx = (0,utils/* indexOf */.qh)(onlyRelevantTypes, longerAltType);
                 return longerAltIdx;
             }
         });
-        patternIdxToPushMode = (0,utils/* map */.UI)(onlyRelevantTypes, function (clazz) { return clazz.PUSH_MODE; });
-        patternIdxToPopMode = (0,utils/* map */.UI)(onlyRelevantTypes, function (clazz) {
-            return (0,utils/* has */.e$)(clazz, "POP_MODE");
+        patternIdxToPushMode = (0,utils/* map */.Tj)(onlyRelevantTypes, function (clazz) { return clazz.PUSH_MODE; });
+        patternIdxToPopMode = (0,utils/* map */.Tj)(onlyRelevantTypes, function (clazz) {
+            return (0,utils/* has */.zy)(clazz, "POP_MODE");
         });
     });
     var patternIdxToCanLineTerminator;
     tracer("Line Terminator Handling", function () {
         var lineTerminatorCharCodes = getCharCodes(options.lineTerminatorCharacters);
-        patternIdxToCanLineTerminator = (0,utils/* map */.UI)(onlyRelevantTypes, function (tokType) { return false; });
+        patternIdxToCanLineTerminator = (0,utils/* map */.Tj)(onlyRelevantTypes, function (tokType) { return false; });
         if (options.positionTracking !== "onlyOffset") {
-            patternIdxToCanLineTerminator = (0,utils/* map */.UI)(onlyRelevantTypes, function (tokType) {
-                if ((0,utils/* has */.e$)(tokType, "LINE_BREAKS")) {
+            patternIdxToCanLineTerminator = (0,utils/* map */.Tj)(onlyRelevantTypes, function (tokType) {
+                if ((0,utils/* has */.zy)(tokType, "LINE_BREAKS")) {
                     return tokType.LINE_BREAKS;
                 }
                 else {
@@ -4780,16 +4780,16 @@ function analyzeTokenTypes(tokenTypes, options) {
     var emptyGroups;
     var patternIdxToConfig;
     tracer("Misc Mapping #2", function () {
-        patternIdxToIsCustom = (0,utils/* map */.UI)(onlyRelevantTypes, isCustomPattern);
-        patternIdxToShort = (0,utils/* map */.UI)(allTransformedPatterns, isShortPattern);
-        emptyGroups = (0,utils/* reduce */.u4)(onlyRelevantTypes, function (acc, clazz) {
+        patternIdxToIsCustom = (0,utils/* map */.Tj)(onlyRelevantTypes, isCustomPattern);
+        patternIdxToShort = (0,utils/* map */.Tj)(allTransformedPatterns, isShortPattern);
+        emptyGroups = (0,utils/* reduce */.TS)(onlyRelevantTypes, function (acc, clazz) {
             var groupName = clazz.GROUP;
-            if ((0,utils/* isString */.HD)(groupName) && !(groupName === Lexer.SKIPPED)) {
+            if ((0,utils/* isString */.Kg)(groupName) && !(groupName === Lexer.SKIPPED)) {
                 acc[groupName] = [];
             }
             return acc;
         }, {});
-        patternIdxToConfig = (0,utils/* map */.UI)(allTransformedPatterns, function (x, idx) {
+        patternIdxToConfig = (0,utils/* map */.Tj)(allTransformedPatterns, function (x, idx) {
             return {
                 pattern: allTransformedPatterns[idx],
                 longerAlt: patternIdxToLongerAltIdx[idx],
@@ -4808,15 +4808,15 @@ function analyzeTokenTypes(tokenTypes, options) {
     var charCodeToPatternIdxToConfig = [];
     if (!options.safeMode) {
         tracer("First Char Optimization", function () {
-            charCodeToPatternIdxToConfig = (0,utils/* reduce */.u4)(onlyRelevantTypes, function (result, currTokType, idx) {
+            charCodeToPatternIdxToConfig = (0,utils/* reduce */.TS)(onlyRelevantTypes, function (result, currTokType, idx) {
                 if (typeof currTokType.PATTERN === "string") {
                     var charCode = currTokType.PATTERN.charCodeAt(0);
                     var optimizedIdx = charCodeToOptimizedIndex(charCode);
                     addToMapOfArrays(result, optimizedIdx, patternIdxToConfig[idx]);
                 }
-                else if ((0,utils/* isArray */.kJ)(currTokType.START_CHARS_HINT)) {
+                else if ((0,utils/* isArray */.cy)(currTokType.START_CHARS_HINT)) {
                     var lastOptimizedIdx_1;
-                    (0,utils/* forEach */.Ed)(currTokType.START_CHARS_HINT, function (charOrInt) {
+                    (0,utils/* forEach */.jJ)(currTokType.START_CHARS_HINT, function (charOrInt) {
                         var charCode = typeof charOrInt === "string"
                             ? charOrInt.charCodeAt(0)
                             : charOrInt;
@@ -4831,11 +4831,11 @@ function analyzeTokenTypes(tokenTypes, options) {
                         }
                     });
                 }
-                else if ((0,utils/* isRegExp */.Kj)(currTokType.PATTERN)) {
+                else if ((0,utils/* isRegExp */.gd)(currTokType.PATTERN)) {
                     if (currTokType.PATTERN.unicode) {
                         canBeOptimized = false;
                         if (options.ensureOptimizations) {
-                            (0,utils/* PRINT_ERROR */.WB)("" + failedOptimizationPrefixMsg +
+                            (0,utils/* PRINT_ERROR */.Zi)("" + failedOptimizationPrefixMsg +
                                 ("\tUnable to analyze < " + currTokType.PATTERN.toString() + " > pattern.\n") +
                                 "\tThe regexp unicode flag is not currently supported by the regexp-to-ast library.\n" +
                                 "\tThis will disable the lexer's first char optimizations.\n" +
@@ -4847,20 +4847,20 @@ function analyzeTokenTypes(tokenTypes, options) {
                         /* istanbul ignore if */
                         // start code will only be empty given an empty regExp or failure of regexp-to-ast library
                         // the first should be a different validation and the second cannot be tested.
-                        if ((0,utils/* isEmpty */.xb)(optimizedCodes)) {
+                        if ((0,utils/* isEmpty */.Im)(optimizedCodes)) {
                             // we cannot understand what codes may start possible matches
                             // The optimization correctness requires knowing start codes for ALL patterns.
                             // Not actually sure this is an error, no debug message
                             canBeOptimized = false;
                         }
-                        (0,utils/* forEach */.Ed)(optimizedCodes, function (code) {
+                        (0,utils/* forEach */.jJ)(optimizedCodes, function (code) {
                             addToMapOfArrays(result, code, patternIdxToConfig[idx]);
                         });
                     }
                 }
                 else {
                     if (options.ensureOptimizations) {
-                        (0,utils/* PRINT_ERROR */.WB)("" + failedOptimizationPrefixMsg +
+                        (0,utils/* PRINT_ERROR */.Zi)("" + failedOptimizationPrefixMsg +
                             ("\tTokenType: <" + currTokType.name + "> is using a custom token pattern without providing <start_chars_hint> parameter.\n") +
                             "\tThis will disable the lexer's first char optimizations.\n" +
                             "\tFor details See: https://sap.github.io/chevrotain/docs/guide/resolving_lexer_errors.html#CUSTOM_OPTIMIZE");
@@ -4872,7 +4872,7 @@ function analyzeTokenTypes(tokenTypes, options) {
         });
     }
     tracer("ArrayPacking", function () {
-        charCodeToPatternIdxToConfig = (0,utils/* packArray */.X0)(charCodeToPatternIdxToConfig);
+        charCodeToPatternIdxToConfig = (0,utils/* packArray */.VS)(charCodeToPatternIdxToConfig);
     });
     return {
         emptyGroups: emptyGroups,
@@ -4897,8 +4897,8 @@ function validatePatterns(tokenTypes, validModesNames) {
 }
 function validateRegExpPattern(tokenTypes) {
     var errors = [];
-    var withRegExpPatterns = (0,utils/* filter */.hX)(tokenTypes, function (currTokType) {
-        return (0,utils/* isRegExp */.Kj)(currTokType[PATTERN]);
+    var withRegExpPatterns = (0,utils/* filter */.pb)(tokenTypes, function (currTokType) {
+        return (0,utils/* isRegExp */.gd)(currTokType[PATTERN]);
     });
     errors = errors.concat(findEndOfInputAnchor(withRegExpPatterns));
     errors = errors.concat(findStartOfInputAnchor(withRegExpPatterns));
@@ -4908,10 +4908,10 @@ function validateRegExpPattern(tokenTypes) {
     return errors;
 }
 function findMissingPatterns(tokenTypes) {
-    var tokenTypesWithMissingPattern = (0,utils/* filter */.hX)(tokenTypes, function (currType) {
-        return !(0,utils/* has */.e$)(currType, PATTERN);
+    var tokenTypesWithMissingPattern = (0,utils/* filter */.pb)(tokenTypes, function (currType) {
+        return !(0,utils/* has */.zy)(currType, PATTERN);
     });
-    var errors = (0,utils/* map */.UI)(tokenTypesWithMissingPattern, function (currType) {
+    var errors = (0,utils/* map */.Tj)(tokenTypesWithMissingPattern, function (currType) {
         return {
             message: "Token Type: ->" +
                 currType.name +
@@ -4920,18 +4920,18 @@ function findMissingPatterns(tokenTypes) {
             tokenTypes: [currType]
         };
     });
-    var valid = (0,utils/* difference */.e5)(tokenTypes, tokenTypesWithMissingPattern);
+    var valid = (0,utils/* difference */.iv)(tokenTypes, tokenTypesWithMissingPattern);
     return { errors: errors, valid: valid };
 }
 function findInvalidPatterns(tokenTypes) {
-    var tokenTypesWithInvalidPattern = (0,utils/* filter */.hX)(tokenTypes, function (currType) {
+    var tokenTypesWithInvalidPattern = (0,utils/* filter */.pb)(tokenTypes, function (currType) {
         var pattern = currType[PATTERN];
-        return (!(0,utils/* isRegExp */.Kj)(pattern) &&
-            !(0,utils/* isFunction */.mf)(pattern) &&
-            !(0,utils/* has */.e$)(pattern, "exec") &&
-            !(0,utils/* isString */.HD)(pattern));
+        return (!(0,utils/* isRegExp */.gd)(pattern) &&
+            !(0,utils/* isFunction */.Tn)(pattern) &&
+            !(0,utils/* has */.zy)(pattern, "exec") &&
+            !(0,utils/* isString */.Kg)(pattern));
     });
-    var errors = (0,utils/* map */.UI)(tokenTypesWithInvalidPattern, function (currType) {
+    var errors = (0,utils/* map */.Tj)(tokenTypesWithInvalidPattern, function (currType) {
         return {
             message: "Token Type: ->" +
                 currType.name +
@@ -4941,7 +4941,7 @@ function findInvalidPatterns(tokenTypes) {
             tokenTypes: [currType]
         };
     });
-    var valid = (0,utils/* difference */.e5)(tokenTypes, tokenTypesWithInvalidPattern);
+    var valid = (0,utils/* difference */.iv)(tokenTypes, tokenTypesWithInvalidPattern);
     return { errors: errors, valid: valid };
 }
 var end_of_input = /[^\\][\$]/;
@@ -4958,7 +4958,7 @@ function findEndOfInputAnchor(tokenTypes) {
         };
         return EndAnchorFinder;
     }(regexp_to_ast.BaseRegExpVisitor));
-    var invalidRegex = (0,utils/* filter */.hX)(tokenTypes, function (currType) {
+    var invalidRegex = (0,utils/* filter */.pb)(tokenTypes, function (currType) {
         var pattern = currType[PATTERN];
         try {
             var regexpAst = getRegExpAst(pattern);
@@ -4972,7 +4972,7 @@ function findEndOfInputAnchor(tokenTypes) {
             return end_of_input.test(pattern.source);
         }
     });
-    var errors = (0,utils/* map */.UI)(invalidRegex, function (currType) {
+    var errors = (0,utils/* map */.Tj)(invalidRegex, function (currType) {
         return {
             message: "Unexpected RegExp Anchor Error:\n" +
                 "\tToken Type: ->" +
@@ -4987,11 +4987,11 @@ function findEndOfInputAnchor(tokenTypes) {
     return errors;
 }
 function findEmptyMatchRegExps(tokenTypes) {
-    var matchesEmptyString = (0,utils/* filter */.hX)(tokenTypes, function (currType) {
+    var matchesEmptyString = (0,utils/* filter */.pb)(tokenTypes, function (currType) {
         var pattern = currType[PATTERN];
         return pattern.test("");
     });
-    var errors = (0,utils/* map */.UI)(matchesEmptyString, function (currType) {
+    var errors = (0,utils/* map */.Tj)(matchesEmptyString, function (currType) {
         return {
             message: "Token Type: ->" +
                 currType.name +
@@ -5016,7 +5016,7 @@ function findStartOfInputAnchor(tokenTypes) {
         };
         return StartAnchorFinder;
     }(regexp_to_ast.BaseRegExpVisitor));
-    var invalidRegex = (0,utils/* filter */.hX)(tokenTypes, function (currType) {
+    var invalidRegex = (0,utils/* filter */.pb)(tokenTypes, function (currType) {
         var pattern = currType[PATTERN];
         try {
             var regexpAst = getRegExpAst(pattern);
@@ -5030,7 +5030,7 @@ function findStartOfInputAnchor(tokenTypes) {
             return start_of_input.test(pattern.source);
         }
     });
-    var errors = (0,utils/* map */.UI)(invalidRegex, function (currType) {
+    var errors = (0,utils/* map */.Tj)(invalidRegex, function (currType) {
         return {
             message: "Unexpected RegExp Anchor Error:\n" +
                 "\tToken Type: ->" +
@@ -5045,11 +5045,11 @@ function findStartOfInputAnchor(tokenTypes) {
     return errors;
 }
 function findUnsupportedFlags(tokenTypes) {
-    var invalidFlags = (0,utils/* filter */.hX)(tokenTypes, function (currType) {
+    var invalidFlags = (0,utils/* filter */.pb)(tokenTypes, function (currType) {
         var pattern = currType[PATTERN];
         return pattern instanceof RegExp && (pattern.multiline || pattern.global);
     });
-    var errors = (0,utils/* map */.UI)(invalidFlags, function (currType) {
+    var errors = (0,utils/* map */.Tj)(invalidFlags, function (currType) {
         return {
             message: "Token Type: ->" +
                 currType.name +
@@ -5063,10 +5063,10 @@ function findUnsupportedFlags(tokenTypes) {
 // This can only test for identical duplicate RegExps, not semantically equivalent ones.
 function findDuplicatePatterns(tokenTypes) {
     var found = [];
-    var identicalPatterns = (0,utils/* map */.UI)(tokenTypes, function (outerType) {
-        return (0,utils/* reduce */.u4)(tokenTypes, function (result, innerType) {
+    var identicalPatterns = (0,utils/* map */.Tj)(tokenTypes, function (outerType) {
+        return (0,utils/* reduce */.TS)(tokenTypes, function (result, innerType) {
             if (outerType.PATTERN.source === innerType.PATTERN.source &&
-                !(0,utils/* contains */.r3)(found, innerType) &&
+                !(0,utils/* contains */.gR)(found, innerType) &&
                 innerType.PATTERN !== Lexer.NA) {
                 // this avoids duplicates in the result, each Token Type may only appear in one "set"
                 // in essence we are creating Equivalence classes on equality relation.
@@ -5077,15 +5077,15 @@ function findDuplicatePatterns(tokenTypes) {
             return result;
         }, []);
     });
-    identicalPatterns = (0,utils/* compact */.oA)(identicalPatterns);
-    var duplicatePatterns = (0,utils/* filter */.hX)(identicalPatterns, function (currIdenticalSet) {
+    identicalPatterns = (0,utils/* compact */.oE)(identicalPatterns);
+    var duplicatePatterns = (0,utils/* filter */.pb)(identicalPatterns, function (currIdenticalSet) {
         return currIdenticalSet.length > 1;
     });
-    var errors = (0,utils/* map */.UI)(duplicatePatterns, function (setOfIdentical) {
-        var tokenTypeNames = (0,utils/* map */.UI)(setOfIdentical, function (currType) {
+    var errors = (0,utils/* map */.Tj)(duplicatePatterns, function (setOfIdentical) {
+        var tokenTypeNames = (0,utils/* map */.Tj)(setOfIdentical, function (currType) {
             return currType.name;
         });
-        var dupPatternSrc = (0,utils/* first */.Ps)(setOfIdentical).PATTERN;
+        var dupPatternSrc = (0,utils/* first */.$1)(setOfIdentical).PATTERN;
         return {
             message: "The same RegExp pattern ->" + dupPatternSrc + "<-" +
                 ("has been used in all of the following Token Types: " + tokenTypeNames.join(", ") + " <-"),
@@ -5096,14 +5096,14 @@ function findDuplicatePatterns(tokenTypes) {
     return errors;
 }
 function findInvalidGroupType(tokenTypes) {
-    var invalidTypes = (0,utils/* filter */.hX)(tokenTypes, function (clazz) {
-        if (!(0,utils/* has */.e$)(clazz, "GROUP")) {
+    var invalidTypes = (0,utils/* filter */.pb)(tokenTypes, function (clazz) {
+        if (!(0,utils/* has */.zy)(clazz, "GROUP")) {
             return false;
         }
         var group = clazz.GROUP;
-        return group !== Lexer.SKIPPED && group !== Lexer.NA && !(0,utils/* isString */.HD)(group);
+        return group !== Lexer.SKIPPED && group !== Lexer.NA && !(0,utils/* isString */.Kg)(group);
     });
-    var errors = (0,utils/* map */.UI)(invalidTypes, function (currType) {
+    var errors = (0,utils/* map */.Tj)(invalidTypes, function (currType) {
         return {
             message: "Token Type: ->" +
                 currType.name +
@@ -5115,10 +5115,10 @@ function findInvalidGroupType(tokenTypes) {
     return errors;
 }
 function findModesThatDoNotExist(tokenTypes, validModes) {
-    var invalidModes = (0,utils/* filter */.hX)(tokenTypes, function (clazz) {
-        return (clazz.PUSH_MODE !== undefined && !(0,utils/* contains */.r3)(validModes, clazz.PUSH_MODE));
+    var invalidModes = (0,utils/* filter */.pb)(tokenTypes, function (clazz) {
+        return (clazz.PUSH_MODE !== undefined && !(0,utils/* contains */.gR)(validModes, clazz.PUSH_MODE));
     });
-    var errors = (0,utils/* map */.UI)(invalidModes, function (tokType) {
+    var errors = (0,utils/* map */.Tj)(invalidModes, function (tokType) {
         var msg = "Token Type: ->" + tokType.name + "<- static 'PUSH_MODE' value cannot refer to a Lexer Mode ->" + tokType.PUSH_MODE + "<-" +
             "which does not exist";
         return {
@@ -5131,23 +5131,23 @@ function findModesThatDoNotExist(tokenTypes, validModes) {
 }
 function findUnreachablePatterns(tokenTypes) {
     var errors = [];
-    var canBeTested = (0,utils/* reduce */.u4)(tokenTypes, function (result, tokType, idx) {
+    var canBeTested = (0,utils/* reduce */.TS)(tokenTypes, function (result, tokType, idx) {
         var pattern = tokType.PATTERN;
         if (pattern === Lexer.NA) {
             return result;
         }
         // a more comprehensive validation for all forms of regExps would require
         // deeper regExp analysis capabilities
-        if ((0,utils/* isString */.HD)(pattern)) {
+        if ((0,utils/* isString */.Kg)(pattern)) {
             result.push({ str: pattern, idx: idx, tokenType: tokType });
         }
-        else if ((0,utils/* isRegExp */.Kj)(pattern) && noMetaChar(pattern)) {
+        else if ((0,utils/* isRegExp */.gd)(pattern) && noMetaChar(pattern)) {
             result.push({ str: pattern.source, idx: idx, tokenType: tokType });
         }
         return result;
     }, []);
-    (0,utils/* forEach */.Ed)(tokenTypes, function (tokType, testIdx) {
-        (0,utils/* forEach */.Ed)(canBeTested, function (_a) {
+    (0,utils/* forEach */.jJ)(tokenTypes, function (tokType, testIdx) {
+        (0,utils/* forEach */.jJ)(canBeTested, function (_a) {
             var str = _a.str, idx = _a.idx, tokenType = _a.tokenType;
             if (testIdx < idx && testTokenType(str, tokType.PATTERN)) {
                 var msg = "Token: ->" + tokenType.name + "<- can never be matched.\n" +
@@ -5166,15 +5166,15 @@ function findUnreachablePatterns(tokenTypes) {
 }
 function testTokenType(str, pattern) {
     /* istanbul ignore else */
-    if ((0,utils/* isRegExp */.Kj)(pattern)) {
+    if ((0,utils/* isRegExp */.gd)(pattern)) {
         var regExpArray = pattern.exec(str);
         return regExpArray !== null && regExpArray.index === 0;
     }
-    else if ((0,utils/* isFunction */.mf)(pattern)) {
+    else if ((0,utils/* isFunction */.Tn)(pattern)) {
         // maintain the API of custom patterns
         return pattern(str, 0, [], {});
     }
-    else if ((0,utils/* has */.e$)(pattern, "exec")) {
+    else if ((0,utils/* has */.zy)(pattern, "exec")) {
         // maintain the API of custom patterns
         return pattern.exec(str, 0, [], {});
     }
@@ -5202,7 +5202,7 @@ function noMetaChar(regExp) {
         "+",
         "{"
     ];
-    return ((0,utils/* find */.sE)(metaChars, function (char) { return regExp.source.indexOf(char) !== -1; }) === undefined);
+    return ((0,utils/* find */.I6)(metaChars, function (char) { return regExp.source.indexOf(char) !== -1; }) === undefined);
 }
 function addStartOfInput(pattern) {
     var flags = pattern.ignoreCase ? "i" : "";
@@ -5219,7 +5219,7 @@ function addStickyFlag(pattern) {
 function performRuntimeChecks(lexerDefinition, trackLines, lineTerminatorCharacters) {
     var errors = [];
     // some run time checks to help the end users.
-    if (!(0,utils/* has */.e$)(lexerDefinition, DEFAULT_MODE)) {
+    if (!(0,utils/* has */.zy)(lexerDefinition, DEFAULT_MODE)) {
         errors.push({
             message: "A MultiMode Lexer cannot be initialized without a <" +
                 DEFAULT_MODE +
@@ -5227,7 +5227,7 @@ function performRuntimeChecks(lexerDefinition, trackLines, lineTerminatorCharact
             type: LexerDefinitionErrorType.MULTI_MODE_LEXER_WITHOUT_DEFAULT_MODE
         });
     }
-    if (!(0,utils/* has */.e$)(lexerDefinition, MODES)) {
+    if (!(0,utils/* has */.zy)(lexerDefinition, MODES)) {
         errors.push({
             message: "A MultiMode Lexer cannot be initialized without a <" +
                 MODES +
@@ -5235,19 +5235,19 @@ function performRuntimeChecks(lexerDefinition, trackLines, lineTerminatorCharact
             type: LexerDefinitionErrorType.MULTI_MODE_LEXER_WITHOUT_MODES_PROPERTY
         });
     }
-    if ((0,utils/* has */.e$)(lexerDefinition, MODES) &&
-        (0,utils/* has */.e$)(lexerDefinition, DEFAULT_MODE) &&
-        !(0,utils/* has */.e$)(lexerDefinition.modes, lexerDefinition.defaultMode)) {
+    if ((0,utils/* has */.zy)(lexerDefinition, MODES) &&
+        (0,utils/* has */.zy)(lexerDefinition, DEFAULT_MODE) &&
+        !(0,utils/* has */.zy)(lexerDefinition.modes, lexerDefinition.defaultMode)) {
         errors.push({
             message: "A MultiMode Lexer cannot be initialized with a " + DEFAULT_MODE + ": <" + lexerDefinition.defaultMode + ">" +
                 "which does not exist\n",
             type: LexerDefinitionErrorType.MULTI_MODE_LEXER_DEFAULT_MODE_VALUE_DOES_NOT_EXIST
         });
     }
-    if ((0,utils/* has */.e$)(lexerDefinition, MODES)) {
-        (0,utils/* forEach */.Ed)(lexerDefinition.modes, function (currModeValue, currModeName) {
-            (0,utils/* forEach */.Ed)(currModeValue, function (currTokType, currIdx) {
-                if ((0,utils/* isUndefined */.o8)(currTokType)) {
+    if ((0,utils/* has */.zy)(lexerDefinition, MODES)) {
+        (0,utils/* forEach */.jJ)(lexerDefinition.modes, function (currModeValue, currModeName) {
+            (0,utils/* forEach */.jJ)(currModeValue, function (currTokType, currIdx) {
+                if ((0,utils/* isUndefined */.b0)(currTokType)) {
                     errors.push({
                         message: "A Lexer cannot be initialized using an undefined Token Type. Mode:" +
                             ("<" + currModeName + "> at index: <" + currIdx + ">\n"),
@@ -5262,11 +5262,11 @@ function performRuntimeChecks(lexerDefinition, trackLines, lineTerminatorCharact
 function performWarningRuntimeChecks(lexerDefinition, trackLines, lineTerminatorCharacters) {
     var warnings = [];
     var hasAnyLineBreak = false;
-    var allTokenTypes = (0,utils/* compact */.oA)((0,utils/* flatten */.xH)((0,utils/* mapValues */.Q8)(lexerDefinition.modes, function (tokTypes) { return tokTypes; })));
-    var concreteTokenTypes = (0,utils/* reject */.d1)(allTokenTypes, function (currType) { return currType[PATTERN] === Lexer.NA; });
+    var allTokenTypes = (0,utils/* compact */.oE)((0,utils/* flatten */.Bq)((0,utils/* mapValues */.LG)(lexerDefinition.modes, function (tokTypes) { return tokTypes; })));
+    var concreteTokenTypes = (0,utils/* reject */.ku)(allTokenTypes, function (currType) { return currType[PATTERN] === Lexer.NA; });
     var terminatorCharCodes = getCharCodes(lineTerminatorCharacters);
     if (trackLines) {
-        (0,utils/* forEach */.Ed)(concreteTokenTypes, function (tokType) {
+        (0,utils/* forEach */.jJ)(concreteTokenTypes, function (tokType) {
             var currIssue = checkLineBreaksIssues(tokType, terminatorCharCodes);
             if (currIssue !== false) {
                 var message = buildLineBreakIssueMessage(tokType, currIssue);
@@ -5279,7 +5279,7 @@ function performWarningRuntimeChecks(lexerDefinition, trackLines, lineTerminator
             }
             else {
                 // we don't want to attempt to scan if the user explicitly specified the line_breaks option.
-                if ((0,utils/* has */.e$)(tokType, "LINE_BREAKS")) {
+                if ((0,utils/* has */.zy)(tokType, "LINE_BREAKS")) {
                     if (tokType.LINE_BREAKS === true) {
                         hasAnyLineBreak = true;
                     }
@@ -5306,11 +5306,11 @@ function performWarningRuntimeChecks(lexerDefinition, trackLines, lineTerminator
 }
 function cloneEmptyGroups(emptyGroups) {
     var clonedResult = {};
-    var groupKeys = (0,utils/* keys */.XP)(emptyGroups);
-    (0,utils/* forEach */.Ed)(groupKeys, function (currKey) {
+    var groupKeys = (0,utils/* keys */.HP)(emptyGroups);
+    (0,utils/* forEach */.jJ)(groupKeys, function (currKey) {
         var currGroupValue = emptyGroups[currKey];
         /* istanbul ignore else */
-        if ((0,utils/* isArray */.kJ)(currGroupValue)) {
+        if ((0,utils/* isArray */.cy)(currGroupValue)) {
             clonedResult[currKey] = [];
         }
         else {
@@ -5323,18 +5323,18 @@ function cloneEmptyGroups(emptyGroups) {
 function isCustomPattern(tokenType) {
     var pattern = tokenType.PATTERN;
     /* istanbul ignore else */
-    if ((0,utils/* isRegExp */.Kj)(pattern)) {
+    if ((0,utils/* isRegExp */.gd)(pattern)) {
         return false;
     }
-    else if ((0,utils/* isFunction */.mf)(pattern)) {
+    else if ((0,utils/* isFunction */.Tn)(pattern)) {
         // CustomPatternMatcherFunc - custom patterns do not require any transformations, only wrapping in a RegExp Like object
         return true;
     }
-    else if ((0,utils/* has */.e$)(pattern, "exec")) {
+    else if ((0,utils/* has */.zy)(pattern, "exec")) {
         // ICustomPattern
         return true;
     }
-    else if ((0,utils/* isString */.HD)(pattern)) {
+    else if ((0,utils/* isString */.Kg)(pattern)) {
         return false;
     }
     else {
@@ -5342,7 +5342,7 @@ function isCustomPattern(tokenType) {
     }
 }
 function isShortPattern(pattern) {
-    if ((0,utils/* isString */.HD)(pattern) && pattern.length === 1) {
+    if ((0,utils/* isString */.Kg)(pattern) && pattern.length === 1) {
         return pattern.charCodeAt(0);
     }
     else {
@@ -5377,14 +5377,14 @@ var LineTerminatorOptimizedTester = {
     lastIndex: 0
 };
 function checkLineBreaksIssues(tokType, lineTerminatorCharCodes) {
-    if ((0,utils/* has */.e$)(tokType, "LINE_BREAKS")) {
+    if ((0,utils/* has */.zy)(tokType, "LINE_BREAKS")) {
         // if the user explicitly declared the line_breaks option we will respect their choice
         // and assume it is correct.
         return false;
     }
     else {
         /* istanbul ignore else */
-        if ((0,utils/* isRegExp */.Kj)(tokType.PATTERN)) {
+        if ((0,utils/* isRegExp */.gd)(tokType.PATTERN)) {
             try {
                 canMatchCharCode(lineTerminatorCharCodes, tokType.PATTERN);
             }
@@ -5397,7 +5397,7 @@ function checkLineBreaksIssues(tokType, lineTerminatorCharCodes) {
             }
             return false;
         }
-        else if ((0,utils/* isString */.HD)(tokType.PATTERN)) {
+        else if ((0,utils/* isString */.Kg)(tokType.PATTERN)) {
             // string literal patterns can always be analyzed to detect line terminator usage
             return false;
         }
@@ -5428,8 +5428,8 @@ function buildLineBreakIssueMessage(tokType, details) {
     }
 }
 function getCharCodes(charsOrCodes) {
-    var charCodes = (0,utils/* map */.UI)(charsOrCodes, function (numOrString) {
-        if ((0,utils/* isString */.HD)(numOrString) && numOrString.length > 0) {
+    var charCodes = (0,utils/* map */.Tj)(charsOrCodes, function (numOrString) {
+        if ((0,utils/* isString */.Kg)(numOrString) && numOrString.length > 0) {
             return numOrString.charCodeAt(0);
         }
         else {
@@ -5477,7 +5477,7 @@ function charCodeToOptimizedIndex(charCode) {
  */
 var charCodeToOptimizedIdxMap = [];
 function initCharCodeToOptimizedIndexMap() {
-    if ((0,utils/* isEmpty */.xb)(charCodeToOptimizedIdxMap)) {
+    if ((0,utils/* isEmpty */.Im)(charCodeToOptimizedIdxMap)) {
         charCodeToOptimizedIdxMap = new Array(65536);
         for (var i = 0; i < 65536; i++) {
             /* tslint:disable */
@@ -5514,19 +5514,19 @@ function augmentTokenTypes(tokenTypes) {
     // fill up the categoryMatches
     assignCategoriesMapProp(tokenTypesAndParents);
     assignCategoriesTokensProp(tokenTypesAndParents);
-    (0,utils/* forEach */.Ed)(tokenTypesAndParents, function (tokType) {
+    (0,utils/* forEach */.jJ)(tokenTypesAndParents, function (tokType) {
         tokType.isParent = tokType.categoryMatches.length > 0;
     });
 }
 function expandCategories(tokenTypes) {
-    var result = (0,utils/* cloneArr */.Qw)(tokenTypes);
+    var result = (0,utils/* cloneArr */.T9)(tokenTypes);
     var categories = tokenTypes;
     var searching = true;
     while (searching) {
-        categories = (0,utils/* compact */.oA)((0,utils/* flatten */.xH)((0,utils/* map */.UI)(categories, function (currTokType) { return currTokType.CATEGORIES; })));
-        var newCategories = (0,utils/* difference */.e5)(categories, result);
+        categories = (0,utils/* compact */.oE)((0,utils/* flatten */.Bq)((0,utils/* map */.Tj)(categories, function (currTokType) { return currTokType.CATEGORIES; })));
+        var newCategories = (0,utils/* difference */.iv)(categories, result);
         result = result.concat(newCategories);
-        if ((0,utils/* isEmpty */.xb)(newCategories)) {
+        if ((0,utils/* isEmpty */.Im)(newCategories)) {
             searching = false;
         }
         else {
@@ -5536,14 +5536,14 @@ function expandCategories(tokenTypes) {
     return result;
 }
 function assignTokenDefaultProps(tokenTypes) {
-    (0,utils/* forEach */.Ed)(tokenTypes, function (currTokType) {
+    (0,utils/* forEach */.jJ)(tokenTypes, function (currTokType) {
         if (!hasShortKeyProperty(currTokType)) {
             tokenIdxToClass[tokenShortNameIdx] = currTokType;
             currTokType.tokenTypeIdx = tokenShortNameIdx++;
         }
         // CATEGORIES? : TokenType | TokenType[]
         if (hasCategoriesProperty(currTokType) &&
-            !(0,utils/* isArray */.kJ)(currTokType.CATEGORIES)
+            !(0,utils/* isArray */.cy)(currTokType.CATEGORIES)
         // &&
         // !isUndefined(currTokType.CATEGORIES.PATTERN)
         ) {
@@ -5561,45 +5561,45 @@ function assignTokenDefaultProps(tokenTypes) {
     });
 }
 function assignCategoriesTokensProp(tokenTypes) {
-    (0,utils/* forEach */.Ed)(tokenTypes, function (currTokType) {
+    (0,utils/* forEach */.jJ)(tokenTypes, function (currTokType) {
         // avoid duplications
         currTokType.categoryMatches = [];
-        (0,utils/* forEach */.Ed)(currTokType.categoryMatchesMap, function (val, key) {
+        (0,utils/* forEach */.jJ)(currTokType.categoryMatchesMap, function (val, key) {
             currTokType.categoryMatches.push(tokenIdxToClass[key].tokenTypeIdx);
         });
     });
 }
 function assignCategoriesMapProp(tokenTypes) {
-    (0,utils/* forEach */.Ed)(tokenTypes, function (currTokType) {
+    (0,utils/* forEach */.jJ)(tokenTypes, function (currTokType) {
         singleAssignCategoriesToksMap([], currTokType);
     });
 }
 function singleAssignCategoriesToksMap(path, nextNode) {
-    (0,utils/* forEach */.Ed)(path, function (pathNode) {
+    (0,utils/* forEach */.jJ)(path, function (pathNode) {
         nextNode.categoryMatchesMap[pathNode.tokenTypeIdx] = true;
     });
-    (0,utils/* forEach */.Ed)(nextNode.CATEGORIES, function (nextCategory) {
+    (0,utils/* forEach */.jJ)(nextNode.CATEGORIES, function (nextCategory) {
         var newPath = path.concat(nextNode);
         // avoids infinite loops due to cyclic categories.
-        if (!(0,utils/* contains */.r3)(newPath, nextCategory)) {
+        if (!(0,utils/* contains */.gR)(newPath, nextCategory)) {
             singleAssignCategoriesToksMap(newPath, nextCategory);
         }
     });
 }
 function hasShortKeyProperty(tokType) {
-    return (0,utils/* has */.e$)(tokType, "tokenTypeIdx");
+    return (0,utils/* has */.zy)(tokType, "tokenTypeIdx");
 }
 function hasCategoriesProperty(tokType) {
-    return (0,utils/* has */.e$)(tokType, "CATEGORIES");
+    return (0,utils/* has */.zy)(tokType, "CATEGORIES");
 }
 function hasExtendingTokensTypesProperty(tokType) {
-    return (0,utils/* has */.e$)(tokType, "categoryMatches");
+    return (0,utils/* has */.zy)(tokType, "categoryMatches");
 }
 function hasExtendingTokensTypesMapProperty(tokType) {
-    return (0,utils/* has */.e$)(tokType, "categoryMatchesMap");
+    return (0,utils/* has */.zy)(tokType, "categoryMatchesMap");
 }
 function isTokenType(tokType) {
-    return (0,utils/* has */.e$)(tokType, "tokenTypeIdx");
+    return (0,utils/* has */.zy)(tokType, "tokenTypeIdx");
 }
 //# sourceMappingURL=tokens.js.map
 ;// CONCATENATED MODULE: ../../node_modules/chevrotain/lib_esm/src/scan/lexer_errors_public.js
@@ -5613,7 +5613,7 @@ var defaultLexerErrorProvider = {
 };
 //# sourceMappingURL=lexer_errors_public.js.map
 ;// CONCATENATED MODULE: ../../node_modules/chevrotain/lib_esm/src/scan/lexer_public.js
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var console = __webpack_require__(4364);
 
 
 
@@ -5672,7 +5672,7 @@ var Lexer = /** @class */ (function () {
                 "a boolean 2nd argument is no longer supported");
         }
         // todo: defaults func?
-        this.config = (0,utils/* merge */.TS)(DEFAULT_LEXER_CONFIG, config);
+        this.config = (0,utils/* merge */.h1)(DEFAULT_LEXER_CONFIG, config);
         var traceInitVal = this.config.traceInitPerf;
         if (traceInitVal === true) {
             this.traceInitMaxIdent = Infinity;
@@ -5705,15 +5705,15 @@ var Lexer = /** @class */ (function () {
                 _this.trackStartLines = /full|onlyStart/i.test(_this.config.positionTracking);
                 _this.trackEndLines = /full/i.test(_this.config.positionTracking);
                 // Convert SingleModeLexerDefinition into a IMultiModeLexerDefinition.
-                if ((0,utils/* isArray */.kJ)(lexerDefinition)) {
+                if ((0,utils/* isArray */.cy)(lexerDefinition)) {
                     actualDefinition = { modes: {} };
-                    actualDefinition.modes[DEFAULT_MODE] = (0,utils/* cloneArr */.Qw)(lexerDefinition);
+                    actualDefinition.modes[DEFAULT_MODE] = (0,utils/* cloneArr */.T9)(lexerDefinition);
                     actualDefinition[DEFAULT_MODE] = DEFAULT_MODE;
                 }
                 else {
                     // no conversion needed, input should already be a IMultiModeLexerDefinition
                     hasOnlySingleMode = false;
-                    actualDefinition = (0,utils/* cloneObj */.Cl)(lexerDefinition);
+                    actualDefinition = (0,utils/* cloneObj */.lR)(lexerDefinition);
                 }
             });
             if (_this.config.skipValidations === false) {
@@ -5730,11 +5730,11 @@ var Lexer = /** @class */ (function () {
                 : {};
             // an error of undefined TokenTypes will be detected in "performRuntimeChecks" above.
             // this transformation is to increase robustness in the case of partially invalid lexer definition.
-            (0,utils/* forEach */.Ed)(actualDefinition.modes, function (currModeValue, currModeName) {
-                actualDefinition.modes[currModeName] = (0,utils/* reject */.d1)(currModeValue, function (currTokType) { return (0,utils/* isUndefined */.o8)(currTokType); });
+            (0,utils/* forEach */.jJ)(actualDefinition.modes, function (currModeValue, currModeName) {
+                actualDefinition.modes[currModeName] = (0,utils/* reject */.ku)(currModeValue, function (currTokType) { return (0,utils/* isUndefined */.b0)(currTokType); });
             });
-            var allModeNames = (0,utils/* keys */.XP)(actualDefinition.modes);
-            (0,utils/* forEach */.Ed)(actualDefinition.modes, function (currModDef, currModName) {
+            var allModeNames = (0,utils/* keys */.HP)(actualDefinition.modes);
+            (0,utils/* forEach */.jJ)(actualDefinition.modes, function (currModDef, currModName) {
                 _this.TRACE_INIT("Mode: <" + currModName + "> processing", function () {
                     _this.modes.push(currModName);
                     if (_this.config.skipValidations === false) {
@@ -5745,7 +5745,7 @@ var Lexer = /** @class */ (function () {
                     // If definition errors were encountered, the analysis phase may fail unexpectedly/
                     // Considering a lexer with definition errors may never be used, there is no point
                     // to performing the analysis anyhow...
-                    if ((0,utils/* isEmpty */.xb)(_this.lexerDefinitionErrors)) {
+                    if ((0,utils/* isEmpty */.Im)(_this.lexerDefinitionErrors)) {
                         augmentTokenTypes(currModDef);
                         var currAnalyzeResult_1;
                         _this.TRACE_INIT("analyzeTokenTypes", function () {
@@ -5762,7 +5762,7 @@ var Lexer = /** @class */ (function () {
                             currAnalyzeResult_1.patternIdxToConfig;
                         _this.charCodeToPatternIdxToConfig[currModName] =
                             currAnalyzeResult_1.charCodeToPatternIdxToConfig;
-                        _this.emptyGroups = (0,utils/* merge */.TS)(_this.emptyGroups, currAnalyzeResult_1.emptyGroups);
+                        _this.emptyGroups = (0,utils/* merge */.h1)(_this.emptyGroups, currAnalyzeResult_1.emptyGroups);
                         _this.hasCustom = currAnalyzeResult_1.hasCustom || _this.hasCustom;
                         _this.canModeBeOptimized[currModName] =
                             currAnalyzeResult_1.canBeOptimized;
@@ -5770,38 +5770,38 @@ var Lexer = /** @class */ (function () {
                 });
             });
             _this.defaultMode = actualDefinition.defaultMode;
-            if (!(0,utils/* isEmpty */.xb)(_this.lexerDefinitionErrors) &&
+            if (!(0,utils/* isEmpty */.Im)(_this.lexerDefinitionErrors) &&
                 !_this.config.deferDefinitionErrorsHandling) {
-                var allErrMessages = (0,utils/* map */.UI)(_this.lexerDefinitionErrors, function (error) {
+                var allErrMessages = (0,utils/* map */.Tj)(_this.lexerDefinitionErrors, function (error) {
                     return error.message;
                 });
                 var allErrMessagesString = allErrMessages.join("-----------------------\n");
                 throw new Error("Errors detected in definition of Lexer:\n" + allErrMessagesString);
             }
             // Only print warning if there are no errors, This will avoid pl
-            (0,utils/* forEach */.Ed)(_this.lexerDefinitionWarning, function (warningDescriptor) {
-                (0,utils/* PRINT_WARNING */.rr)(warningDescriptor.message);
+            (0,utils/* forEach */.jJ)(_this.lexerDefinitionWarning, function (warningDescriptor) {
+                (0,utils/* PRINT_WARNING */.x5)(warningDescriptor.message);
             });
             _this.TRACE_INIT("Choosing sub-methods implementations", function () {
                 // Choose the relevant internal implementations for this specific parser.
                 // These implementations should be in-lined by the JavaScript engine
                 // to provide optimal performance in each scenario.
                 if (SUPPORT_STICKY) {
-                    _this.chopInput = utils/* IDENTITY */.Wd;
+                    _this.chopInput = utils/* IDENTITY */.zK;
                     _this.match = _this.matchWithTest;
                 }
                 else {
-                    _this.updateLastIndex = utils/* NOOP */.dG;
+                    _this.updateLastIndex = utils/* NOOP */.tE;
                     _this.match = _this.matchWithExec;
                 }
                 if (hasOnlySingleMode) {
-                    _this.handleModes = utils/* NOOP */.dG;
+                    _this.handleModes = utils/* NOOP */.tE;
                 }
                 if (_this.trackStartLines === false) {
-                    _this.computeNewColumn = utils/* IDENTITY */.Wd;
+                    _this.computeNewColumn = utils/* IDENTITY */.zK;
                 }
                 if (_this.trackEndLines === false) {
-                    _this.updateTokenEndLineColumnLocation = utils/* NOOP */.dG;
+                    _this.updateTokenEndLineColumnLocation = utils/* NOOP */.tE;
                 }
                 if (/full/i.test(_this.config.positionTracking)) {
                     _this.createTokenInstance = _this.createFullToken;
@@ -5825,13 +5825,13 @@ var Lexer = /** @class */ (function () {
                 }
             });
             _this.TRACE_INIT("Failed Optimization Warnings", function () {
-                var unOptimizedModes = (0,utils/* reduce */.u4)(_this.canModeBeOptimized, function (cannotBeOptimized, canBeOptimized, modeName) {
+                var unOptimizedModes = (0,utils/* reduce */.TS)(_this.canModeBeOptimized, function (cannotBeOptimized, canBeOptimized, modeName) {
                     if (canBeOptimized === false) {
                         cannotBeOptimized.push(modeName);
                     }
                     return cannotBeOptimized;
                 }, []);
-                if (config.ensureOptimizations && !(0,utils/* isEmpty */.xb)(unOptimizedModes)) {
+                if (config.ensureOptimizations && !(0,utils/* isEmpty */.Im)(unOptimizedModes)) {
                     throw Error("Lexer Modes: < " + unOptimizedModes.join(", ") + " > cannot be optimized.\n" +
                         '\t Disable the "ensureOptimizations" lexer config flag to silently ignore this and run the lexer in an un-optimized mode.\n' +
                         "\t Or inspect the console log for details on how to resolve these issues.");
@@ -5841,14 +5841,14 @@ var Lexer = /** @class */ (function () {
                 clearRegExpParserCache();
             });
             _this.TRACE_INIT("toFastProperties", function () {
-                (0,utils/* toFastProperties */.SV)(_this);
+                (0,utils/* toFastProperties */.Bl)(_this);
             });
         });
     }
     Lexer.prototype.tokenize = function (text, initialMode) {
         if (initialMode === void 0) { initialMode = this.defaultMode; }
-        if (!(0,utils/* isEmpty */.xb)(this.lexerDefinitionErrors)) {
-            var allErrMessages = (0,utils/* map */.UI)(this.lexerDefinitionErrors, function (error) {
+        if (!(0,utils/* isEmpty */.Im)(this.lexerDefinitionErrors)) {
+            var allErrMessages = (0,utils/* map */.Tj)(this.lexerDefinitionErrors, function (error) {
                 return error.message;
             });
             var allErrMessagesString = allErrMessages.join("-----------------------\n");
@@ -5922,7 +5922,7 @@ var Lexer = /** @class */ (function () {
             }
             else {
                 modeStack.pop();
-                var newMode = (0,utils/* last */.Z$)(modeStack);
+                var newMode = (0,utils/* last */.HV)(modeStack);
                 patternIdxToConfig = _this.patternIdxToConfig[newMode];
                 currCharCodeToPatternIdxToConfig = _this.charCodeToPatternIdxToConfig[newMode];
                 currModePatternsLength = patternIdxToConfig.length;
@@ -6256,7 +6256,7 @@ var Lexer = /** @class */ (function () {
             if (this.traceInitIndent < this.traceInitMaxIdent) {
                 console.log(indent + "--> <" + phaseDesc + ">");
             }
-            var _a = (0,utils/* timer */.HT)(phaseImpl), time = _a.time, value = _a.value;
+            var _a = (0,utils/* timer */.O1)(phaseImpl), time = _a.time, value = _a.value;
             /* istanbul ignore next - Difficult to reproduce specific performance behavior (>10ms) in tests */
             var traceMethod = time > 10 ? console.warn : console.log;
             if (this.traceInitIndent < this.traceInitMaxIdent) {
@@ -6292,7 +6292,7 @@ function tokenName(tokType) {
     return tokType.name;
 }
 function hasTokenLabel(obj) {
-    return (0,utils/* isString */.HD)(obj.LABEL) && obj.LABEL !== "";
+    return (0,utils/* isString */.Kg)(obj.LABEL) && obj.LABEL !== "";
 }
 var PARENT = "parent";
 var CATEGORIES = "categories";
@@ -6310,37 +6310,37 @@ function createTokenInternal(config) {
     var pattern = config.pattern;
     var tokenType = {};
     tokenType.name = config.name;
-    if (!(0,utils/* isUndefined */.o8)(pattern)) {
+    if (!(0,utils/* isUndefined */.b0)(pattern)) {
         tokenType.PATTERN = pattern;
     }
-    if ((0,utils/* has */.e$)(config, PARENT)) {
+    if ((0,utils/* has */.zy)(config, PARENT)) {
         throw ("The parent property is no longer supported.\n" +
             "See: https://github.com/SAP/chevrotain/issues/564#issuecomment-349062346 for details.");
     }
-    if ((0,utils/* has */.e$)(config, CATEGORIES)) {
+    if ((0,utils/* has */.zy)(config, CATEGORIES)) {
         // casting to ANY as this will be fixed inside `augmentTokenTypes``
         tokenType.CATEGORIES = config[CATEGORIES];
     }
     augmentTokenTypes([tokenType]);
-    if ((0,utils/* has */.e$)(config, LABEL)) {
+    if ((0,utils/* has */.zy)(config, LABEL)) {
         tokenType.LABEL = config[LABEL];
     }
-    if ((0,utils/* has */.e$)(config, GROUP)) {
+    if ((0,utils/* has */.zy)(config, GROUP)) {
         tokenType.GROUP = config[GROUP];
     }
-    if ((0,utils/* has */.e$)(config, POP_MODE)) {
+    if ((0,utils/* has */.zy)(config, POP_MODE)) {
         tokenType.POP_MODE = config[POP_MODE];
     }
-    if ((0,utils/* has */.e$)(config, PUSH_MODE)) {
+    if ((0,utils/* has */.zy)(config, PUSH_MODE)) {
         tokenType.PUSH_MODE = config[PUSH_MODE];
     }
-    if ((0,utils/* has */.e$)(config, LONGER_ALT)) {
+    if ((0,utils/* has */.zy)(config, LONGER_ALT)) {
         tokenType.LONGER_ALT = config[LONGER_ALT];
     }
-    if ((0,utils/* has */.e$)(config, LINE_BREAKS)) {
+    if ((0,utils/* has */.zy)(config, LINE_BREAKS)) {
         tokenType.LINE_BREAKS = config[LINE_BREAKS];
     }
-    if ((0,utils/* has */.e$)(config, START_CHARS_HINT)) {
+    if ((0,utils/* has */.zy)(config, START_CHARS_HINT)) {
         tokenType.START_CHARS_HINT = config[START_CHARS_HINT];
     }
     return tokenType;
@@ -6396,7 +6396,7 @@ var AbstractProduction = /** @class */ (function () {
     });
     AbstractProduction.prototype.accept = function (visitor) {
         visitor.visit(this);
-        (0,utils/* forEach */.Ed)(this.definition, function (prod) {
+        (0,utils/* forEach */.jJ)(this.definition, function (prod) {
             prod.accept(visitor);
         });
     };
@@ -6408,7 +6408,7 @@ var NonTerminal = /** @class */ (function (_super) {
     function NonTerminal(options) {
         var _this = _super.call(this, []) || this;
         _this.idx = 1;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     Object.defineProperty(NonTerminal.prototype, "definition", {
@@ -6436,7 +6436,7 @@ var Rule = /** @class */ (function (_super) {
     function Rule(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.orgText = "";
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return Rule;
@@ -6447,7 +6447,7 @@ var Alternative = /** @class */ (function (_super) {
     function Alternative(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.ignoreAmbiguities = false;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return Alternative;
@@ -6458,7 +6458,7 @@ var Option = /** @class */ (function (_super) {
     function Option(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.idx = 1;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return Option;
@@ -6469,7 +6469,7 @@ var RepetitionMandatory = /** @class */ (function (_super) {
     function RepetitionMandatory(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.idx = 1;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return RepetitionMandatory;
@@ -6480,7 +6480,7 @@ var RepetitionMandatoryWithSeparator = /** @class */ (function (_super) {
     function RepetitionMandatoryWithSeparator(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.idx = 1;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return RepetitionMandatoryWithSeparator;
@@ -6491,7 +6491,7 @@ var Repetition = /** @class */ (function (_super) {
     function Repetition(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.idx = 1;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return Repetition;
@@ -6502,7 +6502,7 @@ var RepetitionWithSeparator = /** @class */ (function (_super) {
     function RepetitionWithSeparator(options) {
         var _this = _super.call(this, options.definition) || this;
         _this.idx = 1;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     return RepetitionWithSeparator;
@@ -6515,7 +6515,7 @@ var Alternation = /** @class */ (function (_super) {
         _this.idx = 1;
         _this.ignoreAmbiguities = false;
         _this.hasPredicates = false;
-        (0,utils/* assign */.f0)(_this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(_this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
         return _this;
     }
     Object.defineProperty(Alternation.prototype, "definition", {
@@ -6534,7 +6534,7 @@ var Alternation = /** @class */ (function (_super) {
 var Terminal = /** @class */ (function () {
     function Terminal(options) {
         this.idx = 1;
-        (0,utils/* assign */.f0)(this, (0,utils/* pick */.ei)(options, function (v) { return v !== undefined; }));
+        (0,utils/* assign */.kp)(this, (0,utils/* pick */.Up)(options, function (v) { return v !== undefined; }));
     }
     Terminal.prototype.accept = function (visitor) {
         visitor.visit(this);
@@ -6543,11 +6543,11 @@ var Terminal = /** @class */ (function () {
 }());
 
 function serializeGrammar(topRules) {
-    return (0,utils/* map */.UI)(topRules, serializeProduction);
+    return (0,utils/* map */.Tj)(topRules, serializeProduction);
 }
 function serializeProduction(node) {
     function convertDefinition(definition) {
-        return (0,utils/* map */.UI)(definition, serializeProduction);
+        return (0,utils/* map */.Tj)(definition, serializeProduction);
     }
     /* istanbul ignore else */
     if (node instanceof NonTerminal) {
@@ -6616,7 +6616,7 @@ function serializeProduction(node) {
         };
         var pattern = node.terminalType.PATTERN;
         if (node.terminalType.PATTERN) {
-            serializedTerminal.pattern = (0,utils/* isRegExp */.Kj)(pattern)
+            serializedTerminal.pattern = (0,utils/* isRegExp */.gd)(pattern)
                 ? pattern.source
                 : pattern;
         }
@@ -6647,8 +6647,8 @@ var RestWalker = /** @class */ (function () {
     RestWalker.prototype.walk = function (prod, prevRest) {
         var _this = this;
         if (prevRest === void 0) { prevRest = []; }
-        (0,utils/* forEach */.Ed)(prod.definition, function (subProd, index) {
-            var currRest = (0,utils/* drop */.Cw)(prod.definition, index + 1);
+        (0,utils/* forEach */.jJ)(prod.definition, function (subProd, index) {
+            var currRest = (0,utils/* drop */.gv)(prod.definition, index + 1);
             /* istanbul ignore else */
             if (subProd instanceof NonTerminal) {
                 _this.walkProdRef(subProd, currRest, prevRest);
@@ -6723,7 +6723,7 @@ var RestWalker = /** @class */ (function () {
         // ABC(D|E|F)G => when finding the (D|E|F) the rest is G
         var fullOrRest = currRest.concat(prevRest);
         // walk all different alternatives
-        (0,utils/* forEach */.Ed)(orProd.definition, function (alt) {
+        (0,utils/* forEach */.jJ)(orProd.definition, function (alt) {
             // wrapping each alternative in a single definition wrapper
             // to avoid errors in computing the rest of that alternative in the invocation to computeInProdFollows
             // (otherwise for OR([alt1,alt2]) alt2 will be considered in 'rest' of alt1
@@ -6831,11 +6831,11 @@ function isOptionalProd(prod, alreadyVisited) {
     // may be indirectly optional ((A?B?C?) | (D?E?F?))
     if (prod instanceof Alternation) {
         // for OR its enough for just one of the alternatives to be optional
-        return (0,utils/* some */.G)(prod.definition, function (subProd) {
+        return (0,utils/* some */.zN)(prod.definition, function (subProd) {
             return isOptionalProd(subProd, alreadyVisited);
         });
     }
-    else if (prod instanceof NonTerminal && (0,utils/* contains */.r3)(alreadyVisited, prod)) {
+    else if (prod instanceof NonTerminal && (0,utils/* contains */.gR)(alreadyVisited, prod)) {
         // avoiding stack overflow due to infinite recursion
         return false;
     }
@@ -6843,7 +6843,7 @@ function isOptionalProd(prod, alreadyVisited) {
         if (prod instanceof NonTerminal) {
             alreadyVisited.push(prod);
         }
-        return (0,utils/* every */.yW)(prod.definition, function (subProd) {
+        return (0,utils/* every */.Si)(prod.definition, function (subProd) {
             return isOptionalProd(subProd, alreadyVisited);
         });
     }
@@ -6912,14 +6912,14 @@ var DslMethodsCollectorVisitor = /** @class */ (function (_super) {
     };
     DslMethodsCollectorVisitor.prototype.visitTerminal = function (terminal) {
         var key = terminal.terminalType.name + this.separator + "Terminal";
-        if (!(0,utils/* has */.e$)(this.dslMethods, key)) {
+        if (!(0,utils/* has */.zy)(this.dslMethods, key)) {
             this.dslMethods[key] = [];
         }
         this.dslMethods[key].push(terminal);
     };
     DslMethodsCollectorVisitor.prototype.visitNonTerminal = function (subrule) {
         var key = subrule.nonTerminalName + this.separator + "Terminal";
-        if (!(0,utils/* has */.e$)(this.dslMethods, key)) {
+        if (!(0,utils/* has */.zy)(this.dslMethods, key)) {
             this.dslMethods[key] = [];
         }
         this.dslMethods[key].push(subrule);
@@ -7001,13 +7001,13 @@ function firstForSequence(prod) {
         nextSubProdIdx = nextSubProdIdx + 1;
         hasInnerProdsRemaining = seq.length > nextSubProdIdx;
     }
-    return (0,utils/* uniq */.jj)(firstSet);
+    return (0,utils/* uniq */.sb)(firstSet);
 }
 function firstForBranching(prod) {
-    var allAlternativesFirsts = (0,utils/* map */.UI)(prod.definition, function (innerProd) {
+    var allAlternativesFirsts = (0,utils/* map */.Tj)(prod.definition, function (innerProd) {
         return first(innerProd);
     });
-    return (0,utils/* uniq */.jj)((0,utils/* flatten */.xH)(allAlternativesFirsts));
+    return (0,utils/* uniq */.sb)((0,utils/* flatten */.Bq)(allAlternativesFirsts));
 }
 function firstForTerminal(terminal) {
     return [terminal.terminalType];
@@ -7066,9 +7066,9 @@ var ResyncFollowsWalker = /** @class */ (function (_super) {
 
 function computeAllProdsFollows(topProductions) {
     var reSyncFollows = {};
-    (0,utils/* forEach */.Ed)(topProductions, function (topProd) {
+    (0,utils/* forEach */.jJ)(topProductions, function (topProd) {
         var currRefsFollow = new ResyncFollowsWalker(topProd).startWalking();
-        (0,utils/* assign */.f0)(reSyncFollows, currRefsFollow);
+        (0,utils/* assign */.kp)(reSyncFollows, currRefsFollow);
     });
     return reSyncFollows;
 }
@@ -7104,17 +7104,17 @@ var defaultParserErrorProvider = {
         var expectedPathsPerAlt = _a.expectedPathsPerAlt, actual = _a.actual, previous = _a.previous, customUserDescription = _a.customUserDescription, ruleName = _a.ruleName;
         var errPrefix = "Expecting: ";
         // TODO: issue: No Viable Alternative Error may have incomplete details. #502
-        var actualText = (0,utils/* first */.Ps)(actual).image;
+        var actualText = (0,utils/* first */.$1)(actual).image;
         var errSuffix = "\nbut found: '" + actualText + "'";
         if (customUserDescription) {
             return errPrefix + customUserDescription + errSuffix;
         }
         else {
-            var allLookAheadPaths = (0,utils/* reduce */.u4)(expectedPathsPerAlt, function (result, currAltPaths) { return result.concat(currAltPaths); }, []);
-            var nextValidTokenSequences = (0,utils/* map */.UI)(allLookAheadPaths, function (currPath) {
-                return "[" + (0,utils/* map */.UI)(currPath, function (currTokenType) { return tokenLabel(currTokenType); }).join(", ") + "]";
+            var allLookAheadPaths = (0,utils/* reduce */.TS)(expectedPathsPerAlt, function (result, currAltPaths) { return result.concat(currAltPaths); }, []);
+            var nextValidTokenSequences = (0,utils/* map */.Tj)(allLookAheadPaths, function (currPath) {
+                return "[" + (0,utils/* map */.Tj)(currPath, function (currTokenType) { return tokenLabel(currTokenType); }).join(", ") + "]";
             });
-            var nextValidSequenceItems = (0,utils/* map */.UI)(nextValidTokenSequences, function (itemMsg, idx) { return "  " + (idx + 1) + ". " + itemMsg; });
+            var nextValidSequenceItems = (0,utils/* map */.Tj)(nextValidTokenSequences, function (itemMsg, idx) { return "  " + (idx + 1) + ". " + itemMsg; });
             var calculatedDescription = "one of these possible Token sequences:\n" + nextValidSequenceItems.join("\n");
             return errPrefix + calculatedDescription + errSuffix;
         }
@@ -7123,14 +7123,14 @@ var defaultParserErrorProvider = {
         var expectedIterationPaths = _a.expectedIterationPaths, actual = _a.actual, customUserDescription = _a.customUserDescription, ruleName = _a.ruleName;
         var errPrefix = "Expecting: ";
         // TODO: issue: No Viable Alternative Error may have incomplete details. #502
-        var actualText = (0,utils/* first */.Ps)(actual).image;
+        var actualText = (0,utils/* first */.$1)(actual).image;
         var errSuffix = "\nbut found: '" + actualText + "'";
         if (customUserDescription) {
             return errPrefix + customUserDescription + errSuffix;
         }
         else {
-            var nextValidTokenSequences = (0,utils/* map */.UI)(expectedIterationPaths, function (currPath) {
-                return "[" + (0,utils/* map */.UI)(currPath, function (currTokenType) { return tokenLabel(currTokenType); }).join(",") + "]";
+            var nextValidTokenSequences = (0,utils/* map */.Tj)(expectedIterationPaths, function (currPath) {
+                return "[" + (0,utils/* map */.Tj)(currPath, function (currTokenType) { return tokenLabel(currTokenType); }).join(",") + "]";
             });
             var calculatedDescription = "expecting at least one iteration which starts with one of these possible Token sequences::\n  " +
                 ("<" + nextValidTokenSequences.join(" ,") + ">");
@@ -7164,7 +7164,7 @@ var defaultGrammarValidatorErrorProvider = {
             }
         }
         var topLevelName = topLevelRule.name;
-        var duplicateProd = (0,utils/* first */.Ps)(duplicateProds);
+        var duplicateProd = (0,utils/* first */.$1)(duplicateProds);
         var index = duplicateProd.idx;
         var dslName = getProductionDslName(duplicateProd);
         var extraArgument = getExtraProductionArgument(duplicateProd);
@@ -7184,7 +7184,7 @@ var defaultGrammarValidatorErrorProvider = {
         return errMsg;
     },
     buildAlternationPrefixAmbiguityError: function (options) {
-        var pathMsg = (0,utils/* map */.UI)(options.prefixPath, function (currTok) {
+        var pathMsg = (0,utils/* map */.Tj)(options.prefixPath, function (currTok) {
             return tokenLabel(currTok);
         }).join(", ");
         var occurrence = options.alternation.idx === 0 ? "" : options.alternation.idx;
@@ -7196,7 +7196,7 @@ var defaultGrammarValidatorErrorProvider = {
         return errMsg;
     },
     buildAlternationAmbiguityError: function (options) {
-        var pathMsg = (0,utils/* map */.UI)(options.prefixPath, function (currtok) {
+        var pathMsg = (0,utils/* map */.Tj)(options.prefixPath, function (currtok) {
             return tokenLabel(currtok);
         }).join(", ");
         var occurrence = options.alternation.idx === 0 ? "" : options.alternation.idx;
@@ -7237,7 +7237,7 @@ var defaultGrammarValidatorErrorProvider = {
     },
     buildLeftRecursionError: function (options) {
         var ruleName = options.topLevelRule.name;
-        var pathNames = utils/* map */.UI(options.leftRecursionPath, function (currRule) { return currRule.name; });
+        var pathNames = utils/* map */.Tj(options.leftRecursionPath, function (currRule) { return currRule.name; });
         var leftRecursivePath = ruleName + " --> " + pathNames
             .concat([ruleName])
             .join(" --> ");
@@ -7300,7 +7300,7 @@ var GastRefResolverVisitor = /** @class */ (function (_super) {
     }
     GastRefResolverVisitor.prototype.resolveRefs = function () {
         var _this = this;
-        (0,utils/* forEach */.Ed)((0,utils/* values */.VO)(this.nameToTopRule), function (prod) {
+        (0,utils/* forEach */.jJ)((0,utils/* values */.zu)(this.nameToTopRule), function (prod) {
             _this.currTopLevel = prod;
             prod.accept(_this);
         });
@@ -7361,8 +7361,8 @@ var AbstractNextPossibleTokensWalker = /** @class */ (function (_super) {
             throw Error("The path does not start with the walker's top Rule!");
         }
         // immutable for the win
-        this.ruleStack = (0,utils/* cloneArr */.Qw)(this.path.ruleStack).reverse(); // intelij bug requires assertion
-        this.occurrenceStack = (0,utils/* cloneArr */.Qw)(this.path.occurrenceStack).reverse(); // intelij bug requires assertion
+        this.ruleStack = (0,utils/* cloneArr */.T9)(this.path.ruleStack).reverse(); // intelij bug requires assertion
+        this.occurrenceStack = (0,utils/* cloneArr */.T9)(this.path.occurrenceStack).reverse(); // intelij bug requires assertion
         // already verified that the first production is valid, we now seek the 2nd production
         this.ruleStack.pop();
         this.occurrenceStack.pop();
@@ -7388,7 +7388,7 @@ var AbstractNextPossibleTokensWalker = /** @class */ (function (_super) {
     };
     AbstractNextPossibleTokensWalker.prototype.updateExpectedNext = function () {
         // need to consume the Terminal
-        if ((0,utils/* isEmpty */.xb)(this.ruleStack)) {
+        if ((0,utils/* isEmpty */.Im)(this.ruleStack)) {
             // must reset nextProductionXXX to avoid walking down another Top Level production while what we are
             // really seeking is the last Terminal...
             this.nextProductionName = "";
@@ -7459,7 +7459,7 @@ var NextTerminalAfterManyWalker = /** @class */ (function (_super) {
     }
     NextTerminalAfterManyWalker.prototype.walkMany = function (manyProd, currRest, prevRest) {
         if (manyProd.idx === this.occurrence) {
-            var firstAfterMany = (0,utils/* first */.Ps)(currRest.concat(prevRest));
+            var firstAfterMany = (0,utils/* first */.$1)(currRest.concat(prevRest));
             this.result.isEndOfRule = firstAfterMany === undefined;
             if (firstAfterMany instanceof Terminal) {
                 this.result.token = firstAfterMany.terminalType;
@@ -7480,7 +7480,7 @@ var NextTerminalAfterManySepWalker = /** @class */ (function (_super) {
     }
     NextTerminalAfterManySepWalker.prototype.walkManySep = function (manySepProd, currRest, prevRest) {
         if (manySepProd.idx === this.occurrence) {
-            var firstAfterManySep = (0,utils/* first */.Ps)(currRest.concat(prevRest));
+            var firstAfterManySep = (0,utils/* first */.$1)(currRest.concat(prevRest));
             this.result.isEndOfRule = firstAfterManySep === undefined;
             if (firstAfterManySep instanceof Terminal) {
                 this.result.token = firstAfterManySep.terminalType;
@@ -7501,7 +7501,7 @@ var NextTerminalAfterAtLeastOneWalker = /** @class */ (function (_super) {
     }
     NextTerminalAfterAtLeastOneWalker.prototype.walkAtLeastOne = function (atLeastOneProd, currRest, prevRest) {
         if (atLeastOneProd.idx === this.occurrence) {
-            var firstAfterAtLeastOne = (0,utils/* first */.Ps)(currRest.concat(prevRest));
+            var firstAfterAtLeastOne = (0,utils/* first */.$1)(currRest.concat(prevRest));
             this.result.isEndOfRule = firstAfterAtLeastOne === undefined;
             if (firstAfterAtLeastOne instanceof Terminal) {
                 this.result.token = firstAfterAtLeastOne.terminalType;
@@ -7523,7 +7523,7 @@ var NextTerminalAfterAtLeastOneSepWalker = /** @class */ (function (_super) {
     }
     NextTerminalAfterAtLeastOneSepWalker.prototype.walkAtLeastOneSep = function (atleastOneSepProd, currRest, prevRest) {
         if (atleastOneSepProd.idx === this.occurrence) {
-            var firstAfterfirstAfterAtLeastOneSep = (0,utils/* first */.Ps)(currRest.concat(prevRest));
+            var firstAfterfirstAfterAtLeastOneSep = (0,utils/* first */.$1)(currRest.concat(prevRest));
             this.result.isEndOfRule = firstAfterfirstAfterAtLeastOneSep === undefined;
             if (firstAfterfirstAfterAtLeastOneSep instanceof Terminal) {
                 this.result.token = firstAfterfirstAfterAtLeastOneSep.terminalType;
@@ -7540,12 +7540,12 @@ var NextTerminalAfterAtLeastOneSepWalker = /** @class */ (function (_super) {
 function possiblePathsFrom(targetDef, maxLength, currPath) {
     if (currPath === void 0) { currPath = []; }
     // avoid side effects
-    currPath = (0,utils/* cloneArr */.Qw)(currPath);
+    currPath = (0,utils/* cloneArr */.T9)(currPath);
     var result = [];
     var i = 0;
     // TODO: avoid inner funcs
     function remainingPathWith(nextDef) {
-        return nextDef.concat((0,utils/* drop */.Cw)(targetDef, i + 1));
+        return nextDef.concat((0,utils/* drop */.gv)(targetDef, i + 1));
     }
     // TODO: avoid inner funcs
     function getAlternativesForProd(definition) {
@@ -7605,11 +7605,11 @@ function possiblePathsFrom(targetDef, maxLength, currPath) {
             result = getAlternativesForProd(newDef);
         }
         else if (prod instanceof Alternation) {
-            (0,utils/* forEach */.Ed)(prod.definition, function (currAlt) {
+            (0,utils/* forEach */.jJ)(prod.definition, function (currAlt) {
                 // TODO: this is a limited check for empty alternatives
                 //   It would prevent a common case of infinite loops during parser initialization.
                 //   However **in-directly** empty alternatives may still cause issues.
-                if ((0,utils/* isEmpty */.xb)(currAlt.definition) === false) {
+                if ((0,utils/* isEmpty */.Im)(currAlt.definition) === false) {
                     result = getAlternativesForProd(currAlt.definition);
                 }
             });
@@ -7625,7 +7625,7 @@ function possiblePathsFrom(targetDef, maxLength, currPath) {
     }
     result.push({
         partialPath: currPath,
-        suffixDef: (0,utils/* drop */.Cw)(targetDef, i)
+        suffixDef: (0,utils/* drop */.gv)(targetDef, i)
     });
     return result;
 }
@@ -7645,12 +7645,12 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
         ruleStack: [],
         occurrenceStack: []
     });
-    while (!(0,utils/* isEmpty */.xb)(possiblePaths)) {
+    while (!(0,utils/* isEmpty */.Im)(possiblePaths)) {
         var currPath = possiblePaths.pop();
         // skip alternatives if no more results can be found (assuming deterministic grammar with fixed lookahead)
         if (currPath === EXIT_ALTERNATIVE) {
             if (foundCompletePath &&
-                (0,utils/* last */.Z$)(possiblePaths).idx <= minimalAlternativesIndex) {
+                (0,utils/* last */.HV)(possiblePaths).idx <= minimalAlternativesIndex) {
                 // remove irrelevant alternative
                 possiblePaths.pop();
             }
@@ -7661,7 +7661,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
         var currRuleStack = currPath.ruleStack;
         var currOccurrenceStack = currPath.occurrenceStack;
         // For Example: an empty path could exist in a valid grammar in the case of an EMPTY_ALT
-        if ((0,utils/* isEmpty */.xb)(currDef)) {
+        if ((0,utils/* isEmpty */.Im)(currDef)) {
             continue;
         }
         var prod = currDef[0];
@@ -7669,9 +7669,9 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
         if (prod === EXIT_NON_TERMINAL) {
             var nextPath = {
                 idx: currIdx,
-                def: (0,utils/* drop */.Cw)(currDef),
-                ruleStack: (0,utils/* dropRight */.j7)(currRuleStack),
-                occurrenceStack: (0,utils/* dropRight */.j7)(currOccurrenceStack)
+                def: (0,utils/* drop */.gv)(currDef),
+                ruleStack: (0,utils/* dropRight */.gc)(currRuleStack),
+                occurrenceStack: (0,utils/* dropRight */.gc)(currOccurrenceStack)
             };
             possiblePaths.push(nextPath);
         }
@@ -7683,7 +7683,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
                 if (tokMatcher(actualToken, prod.terminalType)) {
                     var nextPath = {
                         idx: nextIdx,
-                        def: (0,utils/* drop */.Cw)(currDef),
+                        def: (0,utils/* drop */.gv)(currDef),
                         ruleStack: currRuleStack,
                         occurrenceStack: currOccurrenceStack
                     };
@@ -7706,13 +7706,13 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
             }
         }
         else if (prod instanceof NonTerminal) {
-            var newRuleStack = (0,utils/* cloneArr */.Qw)(currRuleStack);
+            var newRuleStack = (0,utils/* cloneArr */.T9)(currRuleStack);
             newRuleStack.push(prod.nonTerminalName);
-            var newOccurrenceStack = (0,utils/* cloneArr */.Qw)(currOccurrenceStack);
+            var newOccurrenceStack = (0,utils/* cloneArr */.T9)(currOccurrenceStack);
             newOccurrenceStack.push(prod.idx);
             var nextPath = {
                 idx: currIdx,
-                def: prod.definition.concat(EXIT_NON_TERMINAL_ARR, (0,utils/* drop */.Cw)(currDef)),
+                def: prod.definition.concat(EXIT_NON_TERMINAL_ARR, (0,utils/* drop */.gv)(currDef)),
                 ruleStack: newRuleStack,
                 occurrenceStack: newOccurrenceStack
             };
@@ -7722,7 +7722,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
             // the order of alternatives is meaningful, FILO (Last path will be traversed first).
             var nextPathWithout = {
                 idx: currIdx,
-                def: (0,utils/* drop */.Cw)(currDef),
+                def: (0,utils/* drop */.gv)(currDef),
                 ruleStack: currRuleStack,
                 occurrenceStack: currOccurrenceStack
             };
@@ -7731,7 +7731,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
             possiblePaths.push(EXIT_ALTERNATIVE);
             var nextPathWith = {
                 idx: currIdx,
-                def: prod.definition.concat((0,utils/* drop */.Cw)(currDef)),
+                def: prod.definition.concat((0,utils/* drop */.gv)(currDef)),
                 ruleStack: currRuleStack,
                 occurrenceStack: currOccurrenceStack
             };
@@ -7743,7 +7743,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
                 definition: prod.definition,
                 idx: prod.idx
             });
-            var nextDef = prod.definition.concat([secondIteration], (0,utils/* drop */.Cw)(currDef));
+            var nextDef = prod.definition.concat([secondIteration], (0,utils/* drop */.gv)(currDef));
             var nextPath = {
                 idx: currIdx,
                 def: nextDef,
@@ -7761,7 +7761,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
                 definition: [separatorGast].concat(prod.definition),
                 idx: prod.idx
             });
-            var nextDef = prod.definition.concat([secondIteration], (0,utils/* drop */.Cw)(currDef));
+            var nextDef = prod.definition.concat([secondIteration], (0,utils/* drop */.gv)(currDef));
             var nextPath = {
                 idx: currIdx,
                 def: nextDef,
@@ -7774,7 +7774,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
             // the order of alternatives is meaningful, FILO (Last path will be traversed first).
             var nextPathWithout = {
                 idx: currIdx,
-                def: (0,utils/* drop */.Cw)(currDef),
+                def: (0,utils/* drop */.gv)(currDef),
                 ruleStack: currRuleStack,
                 occurrenceStack: currOccurrenceStack
             };
@@ -7788,7 +7788,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
                 definition: [separatorGast].concat(prod.definition),
                 idx: prod.idx
             });
-            var nextDef = prod.definition.concat([nthRepetition], (0,utils/* drop */.Cw)(currDef));
+            var nextDef = prod.definition.concat([nthRepetition], (0,utils/* drop */.gv)(currDef));
             var nextPathWith = {
                 idx: currIdx,
                 def: nextDef,
@@ -7801,7 +7801,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
             // the order of alternatives is meaningful, FILO (Last path will be traversed first).
             var nextPathWithout = {
                 idx: currIdx,
-                def: (0,utils/* drop */.Cw)(currDef),
+                def: (0,utils/* drop */.gv)(currDef),
                 ruleStack: currRuleStack,
                 occurrenceStack: currOccurrenceStack
             };
@@ -7813,7 +7813,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
                 definition: prod.definition,
                 idx: prod.idx
             });
-            var nextDef = prod.definition.concat([nthRepetition], (0,utils/* drop */.Cw)(currDef));
+            var nextDef = prod.definition.concat([nthRepetition], (0,utils/* drop */.gv)(currDef));
             var nextPathWith = {
                 idx: currIdx,
                 def: nextDef,
@@ -7828,7 +7828,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
                 var currAlt = prod.definition[i];
                 var currAltPath = {
                     idx: currIdx,
-                    def: currAlt.definition.concat((0,utils/* drop */.Cw)(currDef)),
+                    def: currAlt.definition.concat((0,utils/* drop */.gv)(currDef)),
                     ruleStack: currRuleStack,
                     occurrenceStack: currOccurrenceStack
                 };
@@ -7839,7 +7839,7 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
         else if (prod instanceof Alternative) {
             possiblePaths.push({
                 idx: currIdx,
-                def: prod.definition.concat((0,utils/* drop */.Cw)(currDef)),
+                def: prod.definition.concat((0,utils/* drop */.gv)(currDef)),
                 ruleStack: currRuleStack,
                 occurrenceStack: currOccurrenceStack
             });
@@ -7855,9 +7855,9 @@ function nextPossibleTokensAfter(initialDef, tokenVector, tokMatcher, maxLookAhe
     return result;
 }
 function expandTopLevelRule(topRule, currIdx, currRuleStack, currOccurrenceStack) {
-    var newRuleStack = (0,utils/* cloneArr */.Qw)(currRuleStack);
+    var newRuleStack = (0,utils/* cloneArr */.T9)(currRuleStack);
     newRuleStack.push(topRule.name);
-    var newCurrOccurrenceStack = (0,utils/* cloneArr */.Qw)(currOccurrenceStack);
+    var newCurrOccurrenceStack = (0,utils/* cloneArr */.T9)(currOccurrenceStack);
     // top rule is always assumed to have been called with occurrence index 1
     newCurrOccurrenceStack.push(1);
     return {
@@ -7949,8 +7949,8 @@ function buildLookaheadFuncForOptionalProd(occurrence, ruleGrammar, k, dynamicTo
 }
 function buildAlternativesLookAheadFunc(alts, hasPredicates, tokenMatcher, dynamicTokensEnabled) {
     var numOfAlts = alts.length;
-    var areAllOneTokenLookahead = (0,utils/* every */.yW)(alts, function (currAlt) {
-        return (0,utils/* every */.yW)(currAlt, function (currPath) {
+    var areAllOneTokenLookahead = (0,utils/* every */.Si)(alts, function (currAlt) {
+        return (0,utils/* every */.Si)(currAlt, function (currPath) {
             return currPath.length === 1;
         });
     });
@@ -7963,7 +7963,7 @@ function buildAlternativesLookAheadFunc(alts, hasPredicates, tokenMatcher, dynam
             // unfortunately the predicates must be extracted every single time
             // as they cannot be cached due to references to parameters(vars) which are no longer valid.
             // note that in the common case of no predicates, no cpu time will be wasted on this (see else block)
-            var predicates = (0,utils/* map */.UI)(orAlts, function (currAlt) { return currAlt.GATE; });
+            var predicates = (0,utils/* map */.Tj)(orAlts, function (currAlt) { return currAlt.GATE; });
             for (var t = 0; t < numOfAlts; t++) {
                 var currAlt = alts[t];
                 var currNumOfPaths = currAlt.length;
@@ -7997,16 +7997,16 @@ function buildAlternativesLookAheadFunc(alts, hasPredicates, tokenMatcher, dynam
     else if (areAllOneTokenLookahead && !dynamicTokensEnabled) {
         // optimized (common) case of all the lookaheads paths requiring only
         // a single token lookahead. These Optimizations cannot work if dynamically defined Tokens are used.
-        var singleTokenAlts = (0,utils/* map */.UI)(alts, function (currAlt) {
-            return (0,utils/* flatten */.xH)(currAlt);
+        var singleTokenAlts = (0,utils/* map */.Tj)(alts, function (currAlt) {
+            return (0,utils/* flatten */.Bq)(currAlt);
         });
-        var choiceToAlt_1 = (0,utils/* reduce */.u4)(singleTokenAlts, function (result, currAlt, idx) {
-            (0,utils/* forEach */.Ed)(currAlt, function (currTokType) {
-                if (!(0,utils/* has */.e$)(result, currTokType.tokenTypeIdx)) {
+        var choiceToAlt_1 = (0,utils/* reduce */.TS)(singleTokenAlts, function (result, currAlt, idx) {
+            (0,utils/* forEach */.jJ)(currAlt, function (currTokType) {
+                if (!(0,utils/* has */.zy)(result, currTokType.tokenTypeIdx)) {
                     result[currTokType.tokenTypeIdx] = idx;
                 }
-                (0,utils/* forEach */.Ed)(currTokType.categoryMatches, function (currExtendingType) {
-                    if (!(0,utils/* has */.e$)(result, currExtendingType)) {
+                (0,utils/* forEach */.jJ)(currTokType.categoryMatches, function (currExtendingType) {
+                    if (!(0,utils/* has */.zy)(result, currExtendingType)) {
                         result[currExtendingType] = idx;
                     }
                 });
@@ -8055,16 +8055,16 @@ function buildAlternativesLookAheadFunc(alts, hasPredicates, tokenMatcher, dynam
     }
 }
 function buildSingleAlternativeLookaheadFunction(alt, tokenMatcher, dynamicTokensEnabled) {
-    var areAllOneTokenLookahead = (0,utils/* every */.yW)(alt, function (currPath) {
+    var areAllOneTokenLookahead = (0,utils/* every */.Si)(alt, function (currPath) {
         return currPath.length === 1;
     });
     var numOfPaths = alt.length;
     // optimized (common) case of all the lookaheads paths requiring only
     // a single token lookahead.
     if (areAllOneTokenLookahead && !dynamicTokensEnabled) {
-        var singleTokensTypes = (0,utils/* flatten */.xH)(alt);
+        var singleTokensTypes = (0,utils/* flatten */.Bq)(alt);
         if (singleTokensTypes.length === 1 &&
-            (0,utils/* isEmpty */.xb)(singleTokensTypes[0].categoryMatches)) {
+            (0,utils/* isEmpty */.Im)(singleTokensTypes[0].categoryMatches)) {
             var expectedTokenType = singleTokensTypes[0];
             var expectedTokenUniqueKey_1 = expectedTokenType.tokenTypeIdx;
             return function () {
@@ -8072,9 +8072,9 @@ function buildSingleAlternativeLookaheadFunction(alt, tokenMatcher, dynamicToken
             };
         }
         else {
-            var choiceToAlt_2 = (0,utils/* reduce */.u4)(singleTokensTypes, function (result, currTokType, idx) {
+            var choiceToAlt_2 = (0,utils/* reduce */.TS)(singleTokensTypes, function (result, currTokType, idx) {
                 result[currTokType.tokenTypeIdx] = true;
-                (0,utils/* forEach */.Ed)(currTokType.categoryMatches, function (currExtendingType) {
+                (0,utils/* forEach */.jJ)(currTokType.categoryMatches, function (currExtendingType) {
                     result[currExtendingType] = true;
                 });
                 return result;
@@ -8245,13 +8245,13 @@ function isUniquePrefixHash(altKnownPathsKeys, searchPathKeys, idx) {
     return true;
 }
 function lookAheadSequenceFromAlternatives(altsDefs, k) {
-    var partialAlts = (0,utils/* map */.UI)(altsDefs, function (currAlt) { return possiblePathsFrom([currAlt], 1); });
+    var partialAlts = (0,utils/* map */.Tj)(altsDefs, function (currAlt) { return possiblePathsFrom([currAlt], 1); });
     var finalResult = initializeArrayOfArrays(partialAlts.length);
-    var altsHashes = (0,utils/* map */.UI)(partialAlts, function (currAltPaths) {
+    var altsHashes = (0,utils/* map */.Tj)(partialAlts, function (currAltPaths) {
         var dict = {};
-        (0,utils/* forEach */.Ed)(currAltPaths, function (item) {
+        (0,utils/* forEach */.jJ)(currAltPaths, function (item) {
             var keys = pathToHashKeys(item.partialPath);
-            (0,utils/* forEach */.Ed)(keys, function (currKey) {
+            (0,utils/* forEach */.jJ)(keys, function (currKey) {
                 dict[currKey] = true;
             });
         });
@@ -8271,7 +8271,7 @@ function lookAheadSequenceFromAlternatives(altsDefs, k) {
                 var prefixKeys = pathToHashKeys(currPathPrefix);
                 var isUnique = isUniquePrefixHash(altsHashes, prefixKeys, altIdx);
                 // End of the line for this path.
-                if (isUnique || (0,utils/* isEmpty */.xb)(suffixDef) || currPathPrefix.length === k) {
+                if (isUnique || (0,utils/* isEmpty */.Im)(suffixDef) || currPathPrefix.length === k) {
                     var currAltResult = finalResult[altIdx];
                     // TODO: Can we implement a containsPath using Maps/Dictionaries?
                     if (containsPath(currAltResult, currPathPrefix) === false) {
@@ -8288,9 +8288,9 @@ function lookAheadSequenceFromAlternatives(altsDefs, k) {
                     var newPartialPathsAndSuffixes = possiblePathsFrom(suffixDef, pathLength + 1, currPathPrefix);
                     newData[altIdx] = newData[altIdx].concat(newPartialPathsAndSuffixes);
                     // Update keys for new known paths
-                    (0,utils/* forEach */.Ed)(newPartialPathsAndSuffixes, function (item) {
+                    (0,utils/* forEach */.jJ)(newPartialPathsAndSuffixes, function (item) {
                         var prefixKeys = pathToHashKeys(item.partialPath);
-                        (0,utils/* forEach */.Ed)(prefixKeys, function (key) {
+                        (0,utils/* forEach */.jJ)(prefixKeys, function (key) {
                             altsHashes[altIdx][key] = true;
                         });
                     });
@@ -8340,16 +8340,16 @@ function containsPath(alternative, searchPath) {
 }
 function isStrictPrefixOfPath(prefix, other) {
     return (prefix.length < other.length &&
-        (0,utils/* every */.yW)(prefix, function (tokType, idx) {
+        (0,utils/* every */.Si)(prefix, function (tokType, idx) {
             var otherTokType = other[idx];
             return (tokType === otherTokType ||
                 otherTokType.categoryMatchesMap[tokType.tokenTypeIdx]);
         }));
 }
 function areTokenCategoriesNotUsed(lookAheadPaths) {
-    return (0,utils/* every */.yW)(lookAheadPaths, function (singleAltPaths) {
-        return (0,utils/* every */.yW)(singleAltPaths, function (singlePath) {
-            return (0,utils/* every */.yW)(singlePath, function (token) { return (0,utils/* isEmpty */.xb)(token.categoryMatches); });
+    return (0,utils/* every */.Si)(lookAheadPaths, function (singleAltPaths) {
+        return (0,utils/* every */.Si)(singleAltPaths, function (singlePath) {
+            return (0,utils/* every */.Si)(singlePath, function (token) { return (0,utils/* isEmpty */.Im)(token.categoryMatches); });
         });
     });
 }
@@ -8377,10 +8377,10 @@ var checks_extends = (undefined && undefined.__extends) || (function () {
 
 
 function validateGrammar(topLevels, globalMaxLookahead, tokenTypes, errMsgProvider, grammarName) {
-    var duplicateErrors = utils/* map */.UI(topLevels, function (currTopLevel) {
+    var duplicateErrors = utils/* map */.Tj(topLevels, function (currTopLevel) {
         return validateDuplicateProductions(currTopLevel, errMsgProvider);
     });
-    var leftRecursionErrors = utils/* map */.UI(topLevels, function (currTopRule) {
+    var leftRecursionErrors = utils/* map */.Tj(topLevels, function (currTopRule) {
         return validateNoLeftRecursion(currTopRule, currTopRule, errMsgProvider);
     });
     var emptyAltErrors = [];
@@ -8388,34 +8388,34 @@ function validateGrammar(topLevels, globalMaxLookahead, tokenTypes, errMsgProvid
     var emptyRepetitionErrors = [];
     // left recursion could cause infinite loops in the following validations.
     // It is safest to first have the user fix the left recursion errors first and only then examine Further issues.
-    if ((0,utils/* every */.yW)(leftRecursionErrors, utils/* isEmpty */.xb)) {
-        emptyAltErrors = (0,utils/* map */.UI)(topLevels, function (currTopRule) {
+    if ((0,utils/* every */.Si)(leftRecursionErrors, utils/* isEmpty */.Im)) {
+        emptyAltErrors = (0,utils/* map */.Tj)(topLevels, function (currTopRule) {
             return validateEmptyOrAlternative(currTopRule, errMsgProvider);
         });
-        ambiguousAltsErrors = (0,utils/* map */.UI)(topLevels, function (currTopRule) {
+        ambiguousAltsErrors = (0,utils/* map */.Tj)(topLevels, function (currTopRule) {
             return validateAmbiguousAlternationAlternatives(currTopRule, globalMaxLookahead, errMsgProvider);
         });
         emptyRepetitionErrors = validateSomeNonEmptyLookaheadPath(topLevels, globalMaxLookahead, errMsgProvider);
     }
     var termsNamespaceConflictErrors = checkTerminalAndNoneTerminalsNameSpace(topLevels, tokenTypes, errMsgProvider);
-    var tooManyAltsErrors = (0,utils/* map */.UI)(topLevels, function (curRule) {
+    var tooManyAltsErrors = (0,utils/* map */.Tj)(topLevels, function (curRule) {
         return validateTooManyAlts(curRule, errMsgProvider);
     });
-    var duplicateRulesError = (0,utils/* map */.UI)(topLevels, function (curRule) {
+    var duplicateRulesError = (0,utils/* map */.Tj)(topLevels, function (curRule) {
         return validateRuleDoesNotAlreadyExist(curRule, topLevels, grammarName, errMsgProvider);
     });
-    return (utils/* flatten */.xH(duplicateErrors.concat(emptyRepetitionErrors, leftRecursionErrors, emptyAltErrors, ambiguousAltsErrors, termsNamespaceConflictErrors, tooManyAltsErrors, duplicateRulesError)));
+    return (utils/* flatten */.Bq(duplicateErrors.concat(emptyRepetitionErrors, leftRecursionErrors, emptyAltErrors, ambiguousAltsErrors, termsNamespaceConflictErrors, tooManyAltsErrors, duplicateRulesError)));
 }
 function validateDuplicateProductions(topLevelRule, errMsgProvider) {
     var collectorVisitor = new OccurrenceValidationCollector();
     topLevelRule.accept(collectorVisitor);
     var allRuleProductions = collectorVisitor.allProductions;
-    var productionGroups = utils/* groupBy */.vM(allRuleProductions, identifyProductionForDuplicates);
-    var duplicates = utils/* pick */.ei(productionGroups, function (currGroup) {
+    var productionGroups = utils/* groupBy */.$z(allRuleProductions, identifyProductionForDuplicates);
+    var duplicates = utils/* pick */.Up(productionGroups, function (currGroup) {
         return currGroup.length > 1;
     });
-    var errors = utils/* map */.UI(utils/* values */.VO(duplicates), function (currDuplicates) {
-        var firstProd = utils/* first */.Ps(currDuplicates);
+    var errors = utils/* map */.Tj(utils/* values */.zu(duplicates), function (currDuplicates) {
+        var firstProd = utils/* first */.$1(currDuplicates);
         var msg = errMsgProvider.buildDuplicateFoundError(topLevelRule, currDuplicates);
         var dslName = getProductionDslName(firstProd);
         var defError = {
@@ -8483,7 +8483,7 @@ var OccurrenceValidationCollector = /** @class */ (function (_super) {
 
 function validateRuleDoesNotAlreadyExist(rule, allRules, className, errMsgProvider) {
     var errors = [];
-    var occurrences = (0,utils/* reduce */.u4)(allRules, function (result, curRule) {
+    var occurrences = (0,utils/* reduce */.TS)(allRules, function (result, curRule) {
         if (curRule.name === rule.name) {
             return result + 1;
         }
@@ -8508,7 +8508,7 @@ function validateRuleDoesNotAlreadyExist(rule, allRules, className, errMsgProvid
 function validateRuleIsOverridden(ruleName, definedRulesNames, className) {
     var errors = [];
     var errMsg;
-    if (!utils/* contains */.r3(definedRulesNames, ruleName)) {
+    if (!utils/* contains */.gR(definedRulesNames, ruleName)) {
         errMsg =
             "Invalid rule override, rule: ->" + ruleName + "<- cannot be overridden in the grammar: ->" + className + "<-" +
                 "as it is not defined in any of the super grammars ";
@@ -8524,12 +8524,12 @@ function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path) {
     if (path === void 0) { path = []; }
     var errors = [];
     var nextNonTerminals = getFirstNoneTerminal(currRule.definition);
-    if (utils/* isEmpty */.xb(nextNonTerminals)) {
+    if (utils/* isEmpty */.Im(nextNonTerminals)) {
         return [];
     }
     else {
         var ruleName = topRule.name;
-        var foundLeftRecursion = utils/* contains */.r3(nextNonTerminals, topRule);
+        var foundLeftRecursion = utils/* contains */.gR(nextNonTerminals, topRule);
         if (foundLeftRecursion) {
             errors.push({
                 message: errMsgProvider.buildLeftRecursionError({
@@ -8542,21 +8542,21 @@ function validateNoLeftRecursion(topRule, currRule, errMsgProvider, path) {
         }
         // we are only looking for cyclic paths leading back to the specific topRule
         // other cyclic paths are ignored, we still need this difference to avoid infinite loops...
-        var validNextSteps = utils/* difference */.e5(nextNonTerminals, path.concat([topRule]));
-        var errorsFromNextSteps = utils/* map */.UI(validNextSteps, function (currRefRule) {
-            var newPath = utils/* cloneArr */.Qw(path);
+        var validNextSteps = utils/* difference */.iv(nextNonTerminals, path.concat([topRule]));
+        var errorsFromNextSteps = utils/* map */.Tj(validNextSteps, function (currRefRule) {
+            var newPath = utils/* cloneArr */.T9(path);
             newPath.push(currRefRule);
             return validateNoLeftRecursion(topRule, currRefRule, errMsgProvider, newPath);
         });
-        return errors.concat(utils/* flatten */.xH(errorsFromNextSteps));
+        return errors.concat(utils/* flatten */.Bq(errorsFromNextSteps));
     }
 }
 function getFirstNoneTerminal(definition) {
     var result = [];
-    if (utils/* isEmpty */.xb(definition)) {
+    if (utils/* isEmpty */.Im(definition)) {
         return result;
     }
-    var firstProd = utils/* first */.Ps(definition);
+    var firstProd = utils/* first */.$1(definition);
     /* istanbul ignore else */
     if (firstProd instanceof NonTerminal) {
         result.push(firstProd.referencedRule);
@@ -8571,7 +8571,7 @@ function getFirstNoneTerminal(definition) {
     }
     else if (firstProd instanceof Alternation) {
         // each sub definition in alternation is a FLAT
-        result = utils/* flatten */.xH(utils/* map */.UI(firstProd.definition, function (currSubDef) {
+        result = utils/* flatten */.Bq(utils/* map */.Tj(firstProd.definition, function (currSubDef) {
             return getFirstNoneTerminal(currSubDef.definition);
         }));
     }
@@ -8584,7 +8584,7 @@ function getFirstNoneTerminal(definition) {
     var isFirstOptional = isOptionalProd(firstProd);
     var hasMore = definition.length > 1;
     if (isFirstOptional && hasMore) {
-        var rest = utils/* drop */.Cw(definition);
+        var rest = utils/* drop */.gv(definition);
         return result.concat(getFirstNoneTerminal(rest));
     }
     else {
@@ -8607,11 +8607,11 @@ function validateEmptyOrAlternative(topLevelRule, errMsgProvider) {
     var orCollector = new OrCollector();
     topLevelRule.accept(orCollector);
     var ors = orCollector.alternations;
-    var errors = utils/* reduce */.u4(ors, function (errors, currOr) {
-        var exceptLast = utils/* dropRight */.j7(currOr.definition);
-        var currErrors = utils/* map */.UI(exceptLast, function (currAlternative, currAltIdx) {
+    var errors = utils/* reduce */.TS(ors, function (errors, currOr) {
+        var exceptLast = utils/* dropRight */.gc(currOr.definition);
+        var currErrors = utils/* map */.Tj(exceptLast, function (currAlternative, currAltIdx) {
             var possibleFirstInAlt = nextPossibleTokensAfter([currAlternative], [], null, 1);
-            if (utils/* isEmpty */.xb(possibleFirstInAlt)) {
+            if (utils/* isEmpty */.Im(possibleFirstInAlt)) {
                 return {
                     message: errMsgProvider.buildEmptyAlternationError({
                         topLevelRule: topLevelRule,
@@ -8628,7 +8628,7 @@ function validateEmptyOrAlternative(topLevelRule, errMsgProvider) {
                 return null;
             }
         });
-        return errors.concat(utils/* compact */.oA(currErrors));
+        return errors.concat(utils/* compact */.oE(currErrors));
     }, []);
     return errors;
 }
@@ -8638,8 +8638,8 @@ function validateAmbiguousAlternationAlternatives(topLevelRule, globalMaxLookahe
     var ors = orCollector.alternations;
     // New Handling of ignoring ambiguities
     // - https://github.com/SAP/chevrotain/issues/869
-    ors = (0,utils/* reject */.d1)(ors, function (currOr) { return currOr.ignoreAmbiguities === true; });
-    var errors = utils/* reduce */.u4(ors, function (result, currOr) {
+    ors = (0,utils/* reject */.ku)(ors, function (currOr) { return currOr.ignoreAmbiguities === true; });
+    var errors = utils/* reduce */.TS(ors, function (result, currOr) {
         var currOccurrence = currOr.idx;
         var actualMaxLookahead = currOr.maxLookahead || globalMaxLookahead;
         var alternatives = getLookaheadPathsForOr(currOccurrence, topLevelRule, actualMaxLookahead, currOr);
@@ -8675,7 +8675,7 @@ function validateTooManyAlts(topLevelRule, errMsgProvider) {
     var orCollector = new OrCollector();
     topLevelRule.accept(orCollector);
     var ors = orCollector.alternations;
-    var errors = utils/* reduce */.u4(ors, function (errors, currOr) {
+    var errors = utils/* reduce */.TS(ors, function (errors, currOr) {
         if (currOr.definition.length > 255) {
             errors.push({
                 message: errMsgProvider.buildTooManyAlternativesError({
@@ -8693,17 +8693,17 @@ function validateTooManyAlts(topLevelRule, errMsgProvider) {
 }
 function validateSomeNonEmptyLookaheadPath(topLevelRules, maxLookahead, errMsgProvider) {
     var errors = [];
-    (0,utils/* forEach */.Ed)(topLevelRules, function (currTopRule) {
+    (0,utils/* forEach */.jJ)(topLevelRules, function (currTopRule) {
         var collectorVisitor = new RepetionCollector();
         currTopRule.accept(collectorVisitor);
         var allRuleProductions = collectorVisitor.allProductions;
-        (0,utils/* forEach */.Ed)(allRuleProductions, function (currProd) {
+        (0,utils/* forEach */.jJ)(allRuleProductions, function (currProd) {
             var prodType = getProdType(currProd);
             var actualMaxLookahead = currProd.maxLookahead || maxLookahead;
             var currOccurrence = currProd.idx;
             var paths = getLookaheadPathsForOptionalProd(currOccurrence, currTopRule, prodType, actualMaxLookahead);
             var pathsInsideProduction = paths[0];
-            if ((0,utils/* isEmpty */.xb)((0,utils/* flatten */.xH)(pathsInsideProduction))) {
+            if ((0,utils/* isEmpty */.Im)((0,utils/* flatten */.Bq)(pathsInsideProduction))) {
                 var errMsg = errMsgProvider.buildEmptyRepetitionError({
                     topLevelRule: currTopRule,
                     repetition: currProd
@@ -8720,14 +8720,14 @@ function validateSomeNonEmptyLookaheadPath(topLevelRules, maxLookahead, errMsgPr
 }
 function checkAlternativesAmbiguities(alternatives, alternation, rule, errMsgProvider) {
     var foundAmbiguousPaths = [];
-    var identicalAmbiguities = (0,utils/* reduce */.u4)(alternatives, function (result, currAlt, currAltIdx) {
+    var identicalAmbiguities = (0,utils/* reduce */.TS)(alternatives, function (result, currAlt, currAltIdx) {
         // ignore (skip) ambiguities with this alternative
         if (alternation.definition[currAltIdx].ignoreAmbiguities === true) {
             return result;
         }
-        (0,utils/* forEach */.Ed)(currAlt, function (currPath) {
+        (0,utils/* forEach */.jJ)(currAlt, function (currPath) {
             var altsCurrPathAppearsIn = [currAltIdx];
-            (0,utils/* forEach */.Ed)(alternatives, function (currOtherAlt, currOtherAltIdx) {
+            (0,utils/* forEach */.jJ)(alternatives, function (currOtherAlt, currOtherAltIdx) {
                 if (currAltIdx !== currOtherAltIdx &&
                     containsPath(currOtherAlt, currPath) &&
                     // ignore (skip) ambiguities with this "other" alternative
@@ -8746,8 +8746,8 @@ function checkAlternativesAmbiguities(alternatives, alternation, rule, errMsgPro
         });
         return result;
     }, []);
-    var currErrors = utils/* map */.UI(identicalAmbiguities, function (currAmbDescriptor) {
-        var ambgIndices = (0,utils/* map */.UI)(currAmbDescriptor.alts, function (currAltIdx) { return currAltIdx + 1; });
+    var currErrors = utils/* map */.Tj(identicalAmbiguities, function (currAmbDescriptor) {
+        var ambgIndices = (0,utils/* map */.Tj)(currAmbDescriptor.alts, function (currAltIdx) { return currAltIdx + 1; });
         var currMessage = errMsgProvider.buildAlternationAmbiguityError({
             topLevelRule: rule,
             alternation: alternation,
@@ -8767,13 +8767,13 @@ function checkAlternativesAmbiguities(alternatives, alternation, rule, errMsgPro
 function checkPrefixAlternativesAmbiguities(alternatives, alternation, rule, errMsgProvider) {
     var errors = [];
     // flatten
-    var pathsAndIndices = (0,utils/* reduce */.u4)(alternatives, function (result, currAlt, idx) {
-        var currPathsAndIdx = (0,utils/* map */.UI)(currAlt, function (currPath) {
+    var pathsAndIndices = (0,utils/* reduce */.TS)(alternatives, function (result, currAlt, idx) {
+        var currPathsAndIdx = (0,utils/* map */.Tj)(currAlt, function (currPath) {
             return { idx: idx, path: currPath };
         });
         return result.concat(currPathsAndIdx);
     }, []);
-    (0,utils/* forEach */.Ed)(pathsAndIndices, function (currPathAndIdx) {
+    (0,utils/* forEach */.jJ)(pathsAndIndices, function (currPathAndIdx) {
         var alternativeGast = alternation.definition[currPathAndIdx.idx];
         // ignore (skip) ambiguities with this alternative
         if (alternativeGast.ignoreAmbiguities === true) {
@@ -8781,7 +8781,7 @@ function checkPrefixAlternativesAmbiguities(alternatives, alternation, rule, err
         }
         var targetIdx = currPathAndIdx.idx;
         var targetPath = currPathAndIdx.path;
-        var prefixAmbiguitiesPathsAndIndices = (0,utils/* findAll */.Oq)(pathsAndIndices, function (searchPathAndIdx) {
+        var prefixAmbiguitiesPathsAndIndices = (0,utils/* findAll */.JW)(pathsAndIndices, function (searchPathAndIdx) {
             // prefix ambiguity can only be created from lower idx (higher priority) path
             return (
             // ignore (skip) ambiguities with this "other" alternative
@@ -8792,7 +8792,7 @@ function checkPrefixAlternativesAmbiguities(alternatives, alternation, rule, err
                 // will be be detected using a different validation.
                 isStrictPrefixOfPath(searchPathAndIdx.path, targetPath));
         });
-        var currPathPrefixErrors = (0,utils/* map */.UI)(prefixAmbiguitiesPathsAndIndices, function (currAmbPathAndIdx) {
+        var currPathPrefixErrors = (0,utils/* map */.Tj)(prefixAmbiguitiesPathsAndIndices, function (currAmbPathAndIdx) {
             var ambgIndices = [currAmbPathAndIdx.idx + 1, targetIdx + 1];
             var occurrence = alternation.idx === 0 ? "" : alternation.idx;
             var message = errMsgProvider.buildAlternationPrefixAmbiguityError({
@@ -8815,10 +8815,10 @@ function checkPrefixAlternativesAmbiguities(alternatives, alternation, rule, err
 }
 function checkTerminalAndNoneTerminalsNameSpace(topLevels, tokenTypes, errMsgProvider) {
     var errors = [];
-    var tokenNames = (0,utils/* map */.UI)(tokenTypes, function (currToken) { return currToken.name; });
-    (0,utils/* forEach */.Ed)(topLevels, function (currRule) {
+    var tokenNames = (0,utils/* map */.Tj)(tokenTypes, function (currToken) { return currToken.name; });
+    (0,utils/* forEach */.jJ)(topLevels, function (currRule) {
         var currRuleName = currRule.name;
-        if ((0,utils/* contains */.r3)(tokenNames, currRuleName)) {
+        if ((0,utils/* contains */.gR)(tokenNames, currRuleName)) {
             var errMsg = errMsgProvider.buildNamespaceConflictError(currRule);
             errors.push({
                 message: errMsg,
@@ -8837,27 +8837,27 @@ function checkTerminalAndNoneTerminalsNameSpace(topLevels, tokenTypes, errMsgPro
 
 
 function gast_resolver_public_resolveGrammar(options) {
-    options = (0,utils/* defaults */.ce)(options, {
+    options = (0,utils/* defaults */.NT)(options, {
         errMsgProvider: defaultGrammarResolverErrorProvider
     });
     var topRulesTable = {};
-    (0,utils/* forEach */.Ed)(options.rules, function (rule) {
+    (0,utils/* forEach */.jJ)(options.rules, function (rule) {
         topRulesTable[rule.name] = rule;
     });
     return resolveGrammar(topRulesTable, options.errMsgProvider);
 }
 function gast_resolver_public_validateGrammar(options) {
-    options = (0,utils/* defaults */.ce)(options, {
+    options = (0,utils/* defaults */.NT)(options, {
         errMsgProvider: defaultGrammarValidatorErrorProvider
     });
     return validateGrammar(options.rules, options.maxLookahead, options.tokenTypes, options.errMsgProvider, options.grammarName);
 }
 function assignOccurrenceIndices(options) {
-    (0,utils/* forEach */.Ed)(options.rules, function (currRule) {
+    (0,utils/* forEach */.jJ)(options.rules, function (currRule) {
         var methodsCollector = new DslMethodsCollectorVisitor();
         currRule.accept(methodsCollector);
-        (0,utils/* forEach */.Ed)(methodsCollector.dslMethods, function (methods) {
-            (0,utils/* forEach */.Ed)(methods, function (currMethod, arrIdx) {
+        (0,utils/* forEach */.jJ)(methodsCollector.dslMethods, function (methods) {
+            (0,utils/* forEach */.jJ)(methods, function (currMethod, arrIdx) {
                 currMethod.idx = arrIdx + 1;
             });
         });
@@ -8893,7 +8893,7 @@ Object.freeze(RECOGNITION_EXCEPTION_NAMES);
 // hacks to bypass no support for custom Errors in javascript/typescript
 function isRecognitionException(error) {
     // can't do instanceof on hacked custom js exceptions
-    return (0,utils/* contains */.r3)(RECOGNITION_EXCEPTION_NAMES, error.name);
+    return (0,utils/* contains */.gR)(RECOGNITION_EXCEPTION_NAMES, error.name);
 }
 var RecognitionException = /** @class */ (function (_super) {
     exceptions_public_extends(RecognitionException, _super);
@@ -8978,7 +8978,7 @@ var Recoverable = /** @class */ (function () {
     Recoverable.prototype.initRecoverable = function (config) {
         this.firstAfterRepMap = {};
         this.resyncFollows = {};
-        this.recoveryEnabled = (0,utils/* has */.e$)(config, "recoveryEnabled")
+        this.recoveryEnabled = (0,utils/* has */.zy)(config, "recoveryEnabled")
             ? config.recoveryEnabled
             : DEFAULT_PARSER_CONFIG.recoveryEnabled;
         // performance optimization, NOOP will be inlined which
@@ -9017,7 +9017,7 @@ var Recoverable = /** @class */ (function () {
             });
             var error = new MismatchedTokenException(msg, nextTokenWithoutResync, _this.LA(0));
             // the first token here will be the original cause of the error, this is not part of the resyncedTokens property.
-            error.resyncedTokens = (0,utils/* dropRight */.j7)(resyncedTokens);
+            error.resyncedTokens = (0,utils/* dropRight */.gc)(resyncedTokens);
             _this.SAVE_ERROR(error);
         };
         while (!passedResyncPoint) {
@@ -9101,11 +9101,11 @@ var Recoverable = /** @class */ (function () {
             return false;
         }
         // must know the possible following tokens to perform single token insertion
-        if ((0,utils/* isEmpty */.xb)(follows)) {
+        if ((0,utils/* isEmpty */.Im)(follows)) {
             return false;
         }
         var mismatchedTok = this.LA(1);
-        var isMisMatchedTokInFollows = (0,utils/* find */.sE)(follows, function (possibleFollowsTokType) {
+        var isMisMatchedTokInFollows = (0,utils/* find */.I6)(follows, function (possibleFollowsTokType) {
             return _this.tokenMatcher(mismatchedTok, possibleFollowsTokType);
         }) !== undefined;
         return isMisMatchedTokInFollows;
@@ -9117,7 +9117,7 @@ var Recoverable = /** @class */ (function () {
     Recoverable.prototype.isInCurrentRuleReSyncSet = function (tokenTypeIdx) {
         var followKey = this.getCurrFollowKey();
         var currentRuleReSyncSet = this.getFollowSetFromFollowKey(followKey);
-        return (0,utils/* contains */.r3)(currentRuleReSyncSet, tokenTypeIdx);
+        return (0,utils/* contains */.gR)(currentRuleReSyncSet, tokenTypeIdx);
     };
     Recoverable.prototype.findReSyncTokenType = function () {
         var allPossibleReSyncTokTypes = this.flattenFollowSet();
@@ -9126,7 +9126,7 @@ var Recoverable = /** @class */ (function () {
         var k = 2;
         while (true) {
             var nextTokenType = nextToken.tokenType;
-            if ((0,utils/* contains */.r3)(allPossibleReSyncTokTypes, nextTokenType)) {
+            if ((0,utils/* contains */.gR)(allPossibleReSyncTokTypes, nextTokenType)) {
                 return nextTokenType;
             }
             nextToken = this.LA(k);
@@ -9151,7 +9151,7 @@ var Recoverable = /** @class */ (function () {
         var _this = this;
         var explicitRuleStack = this.RULE_STACK;
         var explicitOccurrenceStack = this.RULE_OCCURRENCE_STACK;
-        return (0,utils/* map */.UI)(explicitRuleStack, function (ruleName, idx) {
+        return (0,utils/* map */.Tj)(explicitRuleStack, function (ruleName, idx) {
             if (idx === 0) {
                 return EOF_FOLLOW_KEY;
             }
@@ -9164,10 +9164,10 @@ var Recoverable = /** @class */ (function () {
     };
     Recoverable.prototype.flattenFollowSet = function () {
         var _this = this;
-        var followStack = (0,utils/* map */.UI)(this.buildFullFollowKeyStack(), function (currKey) {
+        var followStack = (0,utils/* map */.Tj)(this.buildFullFollowKeyStack(), function (currKey) {
             return _this.getFollowSetFromFollowKey(currKey);
         });
-        return (0,utils/* flatten */.xH)(followStack);
+        return (0,utils/* flatten */.Bq)(followStack);
     };
     Recoverable.prototype.getFollowSetFromFollowKey = function (followKey) {
         if (followKey === EOF_FOLLOW_KEY) {
@@ -9192,7 +9192,7 @@ var Recoverable = /** @class */ (function () {
             this.addToResyncTokens(nextTok, resyncedTokens);
         }
         // the last token is not part of the error.
-        return (0,utils/* dropRight */.j7)(resyncedTokens);
+        return (0,utils/* dropRight */.gc)(resyncedTokens);
     };
     Recoverable.prototype.attemptInRepetitionRecovery = function (prodFunc, args, lookaheadFunc, dslMethodIdx, prodOccurrence, nextToksWalker, notStuck) {
         // by default this is a NO-OP
@@ -9200,7 +9200,7 @@ var Recoverable = /** @class */ (function () {
     };
     Recoverable.prototype.getCurrentGrammarPath = function (tokType, tokIdxInRule) {
         var pathRuleStack = this.getHumanReadableRuleStack();
-        var pathOccurrenceStack = (0,utils/* cloneArr */.Qw)(this.RULE_OCCURRENCE_STACK);
+        var pathOccurrenceStack = (0,utils/* cloneArr */.T9)(this.RULE_OCCURRENCE_STACK);
         var grammarPath = {
             ruleStack: pathRuleStack,
             occurrenceStack: pathOccurrenceStack,
@@ -9211,7 +9211,7 @@ var Recoverable = /** @class */ (function () {
     };
     Recoverable.prototype.getHumanReadableRuleStack = function () {
         var _this = this;
-        return (0,utils/* map */.UI)(this.RULE_STACK, function (currShortName) {
+        return (0,utils/* map */.Tj)(this.RULE_STACK, function (currShortName) {
             return _this.shortRuleNameToFullName(currShortName);
         });
     };
@@ -9291,18 +9291,18 @@ var LooksAhead = /** @class */ (function () {
     function LooksAhead() {
     }
     LooksAhead.prototype.initLooksAhead = function (config) {
-        this.dynamicTokensEnabled = (0,utils/* has */.e$)(config, "dynamicTokensEnabled")
+        this.dynamicTokensEnabled = (0,utils/* has */.zy)(config, "dynamicTokensEnabled")
             ? config.dynamicTokensEnabled
             : DEFAULT_PARSER_CONFIG.dynamicTokensEnabled;
-        this.maxLookahead = (0,utils/* has */.e$)(config, "maxLookahead")
+        this.maxLookahead = (0,utils/* has */.zy)(config, "maxLookahead")
             ? config.maxLookahead
             : DEFAULT_PARSER_CONFIG.maxLookahead;
         /* istanbul ignore next - Using plain array as dictionary will be tested on older node.js versions and IE11 */
-        this.lookAheadFuncsCache = (0,utils/* isES2015MapSupported */.dU)() ? new Map() : [];
+        this.lookAheadFuncsCache = (0,utils/* isES2015MapSupported */.rF)() ? new Map() : [];
         // Performance optimization on newer engines that support ES6 Map
         // For larger Maps this is slightly faster than using a plain object (array in our case).
         /* istanbul ignore else - The else branch will be tested on older node.js versions and IE11 */
-        if ((0,utils/* isES2015MapSupported */.dU)()) {
+        if ((0,utils/* isES2015MapSupported */.rF)()) {
             this.getLaFuncFromCache = this.getLaFuncFromMap;
             this.setLaFuncCache = this.setLaFuncCacheUsingMap;
         }
@@ -9313,10 +9313,10 @@ var LooksAhead = /** @class */ (function () {
     };
     LooksAhead.prototype.preComputeLookaheadFunctions = function (rules) {
         var _this = this;
-        (0,utils/* forEach */.Ed)(rules, function (currRule) {
+        (0,utils/* forEach */.jJ)(rules, function (currRule) {
             _this.TRACE_INIT(currRule.name + " Rule Lookahead", function () {
                 var _a = collectMethods(currRule), alternation = _a.alternation, repetition = _a.repetition, option = _a.option, repetitionMandatory = _a.repetitionMandatory, repetitionMandatoryWithSeparator = _a.repetitionMandatoryWithSeparator, repetitionWithSeparator = _a.repetitionWithSeparator;
-                (0,utils/* forEach */.Ed)(alternation, function (currProd) {
+                (0,utils/* forEach */.jJ)(alternation, function (currProd) {
                     var prodIdx = currProd.idx === 0 ? "" : currProd.idx;
                     _this.TRACE_INIT("" + getProductionDslName(currProd) + prodIdx, function () {
                         var laFunc = buildLookaheadFuncForOr(currProd.idx, currRule, currProd.maxLookahead || _this.maxLookahead, currProd.hasPredicates, _this.dynamicTokensEnabled, _this.lookAheadBuilderForAlternatives);
@@ -9324,19 +9324,19 @@ var LooksAhead = /** @class */ (function () {
                         _this.setLaFuncCache(key, laFunc);
                     });
                 });
-                (0,utils/* forEach */.Ed)(repetition, function (currProd) {
+                (0,utils/* forEach */.jJ)(repetition, function (currProd) {
                     _this.computeLookaheadFunc(currRule, currProd.idx, MANY_IDX, PROD_TYPE.REPETITION, currProd.maxLookahead, getProductionDslName(currProd));
                 });
-                (0,utils/* forEach */.Ed)(option, function (currProd) {
+                (0,utils/* forEach */.jJ)(option, function (currProd) {
                     _this.computeLookaheadFunc(currRule, currProd.idx, OPTION_IDX, PROD_TYPE.OPTION, currProd.maxLookahead, getProductionDslName(currProd));
                 });
-                (0,utils/* forEach */.Ed)(repetitionMandatory, function (currProd) {
+                (0,utils/* forEach */.jJ)(repetitionMandatory, function (currProd) {
                     _this.computeLookaheadFunc(currRule, currProd.idx, AT_LEAST_ONE_IDX, PROD_TYPE.REPETITION_MANDATORY, currProd.maxLookahead, getProductionDslName(currProd));
                 });
-                (0,utils/* forEach */.Ed)(repetitionMandatoryWithSeparator, function (currProd) {
+                (0,utils/* forEach */.jJ)(repetitionMandatoryWithSeparator, function (currProd) {
                     _this.computeLookaheadFunc(currRule, currProd.idx, AT_LEAST_ONE_SEP_IDX, PROD_TYPE.REPETITION_MANDATORY_WITH_SEPARATOR, currProd.maxLookahead, getProductionDslName(currProd));
                 });
-                (0,utils/* forEach */.Ed)(repetitionWithSeparator, function (currProd) {
+                (0,utils/* forEach */.jJ)(repetitionWithSeparator, function (currProd) {
                     _this.computeLookaheadFunc(currRule, currProd.idx, MANY_SEP_IDX, PROD_TYPE.REPETITION_WITH_SEPARATOR, currProd.maxLookahead, getProductionDslName(currProd));
                 });
             });
@@ -9486,7 +9486,7 @@ function functionName(func) {
 function defineNameProp(obj, nameValue) {
     var namePropDescriptor = Object.getOwnPropertyDescriptor(obj, NAME);
     /* istanbul ignore else -> will only run in old versions of node.js */
-    if ((0,utils/* isUndefined */.o8)(namePropDescriptor) || namePropDescriptor.configurable) {
+    if ((0,utils/* isUndefined */.b0)(namePropDescriptor) || namePropDescriptor.configurable) {
         Object.defineProperty(obj, NAME, {
             enumerable: false,
             configurable: true,
@@ -9503,7 +9503,7 @@ function defineNameProp(obj, nameValue) {
 
 
 function defaultVisit(ctx, param) {
-    var childrenNames = (0,utils/* keys */.XP)(ctx);
+    var childrenNames = (0,utils/* keys */.HP)(ctx);
     var childrenNamesLength = childrenNames.length;
     for (var i = 0; i < childrenNamesLength; i++) {
         var currChildName = childrenNames[i];
@@ -9529,21 +9529,21 @@ function createBaseSemanticVisitorConstructor(grammarName, ruleNames) {
     var semanticProto = {
         visit: function (cstNode, param) {
             // enables writing more concise visitor methods when CstNode has only a single child
-            if ((0,utils/* isArray */.kJ)(cstNode)) {
+            if ((0,utils/* isArray */.cy)(cstNode)) {
                 // A CST Node's children dictionary can never have empty arrays as values
                 // If a key is defined there will be at least one element in the corresponding value array.
                 cstNode = cstNode[0];
             }
             // enables passing optional CstNodes concisely.
-            if ((0,utils/* isUndefined */.o8)(cstNode)) {
+            if ((0,utils/* isUndefined */.b0)(cstNode)) {
                 return undefined;
             }
             return this[cstNode.name](cstNode.children, param);
         },
         validateVisitor: function () {
             var semanticDefinitionErrors = validateVisitor(this, ruleNames);
-            if (!(0,utils/* isEmpty */.xb)(semanticDefinitionErrors)) {
-                var errorMessages = (0,utils/* map */.UI)(semanticDefinitionErrors, function (currDefError) { return currDefError.msg; });
+            if (!(0,utils/* isEmpty */.Im)(semanticDefinitionErrors)) {
+                var errorMessages = (0,utils/* map */.Tj)(semanticDefinitionErrors, function (currDefError) { return currDefError.msg; });
                 throw Error("Errors Detected in CST Visitor <" + functionName(this.constructor) + ">:\n\t" + ("" + errorMessages.join("\n\n").replace(/\n/g, "\n\t")));
             }
         }
@@ -9560,7 +9560,7 @@ function createBaseVisitorConstructorWithDefaults(grammarName, ruleNames, baseCo
     // name?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FFunction%2Fname
     defineNameProp(derivedConstructor, grammarName + "BaseSemanticsWithDefaults");
     var withDefaultsProto = Object.create(baseConstructor.prototype);
-    (0,utils/* forEach */.Ed)(ruleNames, function (ruleName) {
+    (0,utils/* forEach */.jJ)(ruleNames, function (ruleName) {
         withDefaultsProto[ruleName] = defaultVisit;
     });
     derivedConstructor.prototype = withDefaultsProto;
@@ -9578,8 +9578,8 @@ function validateVisitor(visitorInstance, ruleNames) {
     return missingErrors.concat(redundantErrors);
 }
 function validateMissingCstMethods(visitorInstance, ruleNames) {
-    var errors = (0,utils/* map */.UI)(ruleNames, function (currRuleName) {
-        if (!(0,utils/* isFunction */.mf)(visitorInstance[currRuleName])) {
+    var errors = (0,utils/* map */.Tj)(ruleNames, function (currRuleName) {
+        if (!(0,utils/* isFunction */.Tn)(visitorInstance[currRuleName])) {
             return {
                 msg: "Missing visitor method: <" + currRuleName + "> on " + functionName(visitorInstance.constructor) + " CST Visitor.",
                 type: CstVisitorDefinitionError.MISSING_METHOD,
@@ -9587,15 +9587,15 @@ function validateMissingCstMethods(visitorInstance, ruleNames) {
             };
         }
     });
-    return (0,utils/* compact */.oA)(errors);
+    return (0,utils/* compact */.oE)(errors);
 }
 var VALID_PROP_NAMES = ["constructor", "visit", "validateVisitor"];
 function validateRedundantMethods(visitorInstance, ruleNames) {
     var errors = [];
     for (var prop in visitorInstance) {
-        if ((0,utils/* isFunction */.mf)(visitorInstance[prop]) &&
-            !(0,utils/* contains */.r3)(VALID_PROP_NAMES, prop) &&
-            !(0,utils/* contains */.r3)(ruleNames, prop)) {
+        if ((0,utils/* isFunction */.Tn)(visitorInstance[prop]) &&
+            !(0,utils/* contains */.gR)(VALID_PROP_NAMES, prop) &&
+            !(0,utils/* contains */.gR)(ruleNames, prop)) {
             errors.push({
                 msg: "Redundant visitor method: <" + prop + "> on " + functionName(visitorInstance.constructor) + " CST Visitor\n" +
                     "There is no Grammar Rule corresponding to this method's name.\n",
@@ -9622,27 +9622,27 @@ var TreeBuilder = /** @class */ (function () {
         this.CST_STACK = [];
         // outputCst is no longer exposed/defined in the pubic API
         this.outputCst = config.outputCst;
-        this.nodeLocationTracking = (0,utils/* has */.e$)(config, "nodeLocationTracking")
+        this.nodeLocationTracking = (0,utils/* has */.zy)(config, "nodeLocationTracking")
             ? config.nodeLocationTracking
             : DEFAULT_PARSER_CONFIG.nodeLocationTracking;
         if (!this.outputCst) {
-            this.cstInvocationStateUpdate = utils/* NOOP */.dG;
-            this.cstFinallyStateUpdate = utils/* NOOP */.dG;
-            this.cstPostTerminal = utils/* NOOP */.dG;
-            this.cstPostNonTerminal = utils/* NOOP */.dG;
-            this.cstPostRule = utils/* NOOP */.dG;
+            this.cstInvocationStateUpdate = utils/* NOOP */.tE;
+            this.cstFinallyStateUpdate = utils/* NOOP */.tE;
+            this.cstPostTerminal = utils/* NOOP */.tE;
+            this.cstPostNonTerminal = utils/* NOOP */.tE;
+            this.cstPostRule = utils/* NOOP */.tE;
         }
         else {
             if (/full/i.test(this.nodeLocationTracking)) {
                 if (this.recoveryEnabled) {
                     this.setNodeLocationFromToken = setNodeLocationFull;
                     this.setNodeLocationFromNode = setNodeLocationFull;
-                    this.cstPostRule = utils/* NOOP */.dG;
+                    this.cstPostRule = utils/* NOOP */.tE;
                     this.setInitialNodeLocation = this.setInitialNodeLocationFullRecovery;
                 }
                 else {
-                    this.setNodeLocationFromToken = utils/* NOOP */.dG;
-                    this.setNodeLocationFromNode = utils/* NOOP */.dG;
+                    this.setNodeLocationFromToken = utils/* NOOP */.tE;
+                    this.setNodeLocationFromNode = utils/* NOOP */.tE;
                     this.cstPostRule = this.cstPostRuleFull;
                     this.setInitialNodeLocation = this.setInitialNodeLocationFullRegular;
                 }
@@ -9651,21 +9651,21 @@ var TreeBuilder = /** @class */ (function () {
                 if (this.recoveryEnabled) {
                     this.setNodeLocationFromToken = setNodeLocationOnlyOffset;
                     this.setNodeLocationFromNode = setNodeLocationOnlyOffset;
-                    this.cstPostRule = utils/* NOOP */.dG;
+                    this.cstPostRule = utils/* NOOP */.tE;
                     this.setInitialNodeLocation = this.setInitialNodeLocationOnlyOffsetRecovery;
                 }
                 else {
-                    this.setNodeLocationFromToken = utils/* NOOP */.dG;
-                    this.setNodeLocationFromNode = utils/* NOOP */.dG;
+                    this.setNodeLocationFromToken = utils/* NOOP */.tE;
+                    this.setNodeLocationFromNode = utils/* NOOP */.tE;
                     this.cstPostRule = this.cstPostRuleOnlyOffset;
                     this.setInitialNodeLocation = this.setInitialNodeLocationOnlyOffsetRegular;
                 }
             }
             else if (/none/i.test(this.nodeLocationTracking)) {
-                this.setNodeLocationFromToken = utils/* NOOP */.dG;
-                this.setNodeLocationFromNode = utils/* NOOP */.dG;
-                this.cstPostRule = utils/* NOOP */.dG;
-                this.setInitialNodeLocation = utils/* NOOP */.dG;
+                this.setNodeLocationFromToken = utils/* NOOP */.tE;
+                this.setNodeLocationFromNode = utils/* NOOP */.tE;
+                this.cstPostRule = utils/* NOOP */.tE;
+                this.setInitialNodeLocation = utils/* NOOP */.tE;
             }
             else {
                 throw Error("Invalid <nodeLocationTracking> config option: \"" + config.nodeLocationTracking + "\"");
@@ -9768,16 +9768,16 @@ var TreeBuilder = /** @class */ (function () {
         this.setNodeLocationFromNode(preCstNode.location, ruleCstResult.location);
     };
     TreeBuilder.prototype.getBaseCstVisitorConstructor = function () {
-        if ((0,utils/* isUndefined */.o8)(this.baseCstVisitorConstructor)) {
-            var newBaseCstVisitorConstructor = createBaseSemanticVisitorConstructor(this.className, (0,utils/* keys */.XP)(this.gastProductionsCache));
+        if ((0,utils/* isUndefined */.b0)(this.baseCstVisitorConstructor)) {
+            var newBaseCstVisitorConstructor = createBaseSemanticVisitorConstructor(this.className, (0,utils/* keys */.HP)(this.gastProductionsCache));
             this.baseCstVisitorConstructor = newBaseCstVisitorConstructor;
             return newBaseCstVisitorConstructor;
         }
         return this.baseCstVisitorConstructor;
     };
     TreeBuilder.prototype.getBaseCstVisitorConstructorWithDefaults = function () {
-        if ((0,utils/* isUndefined */.o8)(this.baseCstVisitorWithDefaultsConstructor)) {
-            var newConstructor = createBaseVisitorConstructorWithDefaults(this.className, (0,utils/* keys */.XP)(this.gastProductionsCache), this.getBaseCstVisitorConstructor());
+        if ((0,utils/* isUndefined */.b0)(this.baseCstVisitorWithDefaultsConstructor)) {
+            var newConstructor = createBaseVisitorConstructorWithDefaults(this.className, (0,utils/* keys */.HP)(this.gastProductionsCache), this.getBaseCstVisitorConstructor());
             this.baseCstVisitorWithDefaultsConstructor = newConstructor;
             return newConstructor;
         }
@@ -10159,7 +10159,7 @@ var RecognizerApi = /** @class */ (function () {
     };
     RecognizerApi.prototype.RULE = function (name, implementation, config) {
         if (config === void 0) { config = DEFAULT_RULE_CONFIG; }
-        if ((0,utils/* contains */.r3)(this.definedRulesNames, name)) {
+        if ((0,utils/* contains */.gR)(this.definedRulesNames, name)) {
             var errMsg = defaultGrammarValidatorErrorProvider.buildDuplicateRuleNameError({
                 topLevelRule: name,
                 grammarName: this.className
@@ -10214,7 +10214,7 @@ var RecognizerApi = /** @class */ (function () {
         return this.gastProductionsCache;
     };
     RecognizerApi.prototype.getSerializedGastProductions = function () {
-        return serializeGrammar((0,utils/* values */.VO)(this.gastProductionsCache));
+        return serializeGrammar((0,utils/* values */.zu)(this.gastProductionsCache));
     };
     return RecognizerApi;
 }());
@@ -10251,16 +10251,16 @@ var RecognizerEngine = /** @class */ (function () {
         this.RULE_STACK = [];
         this.RULE_OCCURRENCE_STACK = [];
         this.gastProductionsCache = {};
-        if ((0,utils/* has */.e$)(config, "serializedGrammar")) {
+        if ((0,utils/* has */.zy)(config, "serializedGrammar")) {
             throw Error("The Parser's configuration can no longer contain a <serializedGrammar> property.\n" +
                 "\tSee: https://sap.github.io/chevrotain/docs/changes/BREAKING_CHANGES.html#_6-0-0\n" +
                 "\tFor Further details.");
         }
-        if ((0,utils/* isArray */.kJ)(tokenVocabulary)) {
+        if ((0,utils/* isArray */.cy)(tokenVocabulary)) {
             // This only checks for Token vocabularies provided as arrays.
             // That is good enough because the main objective is to detect users of pre-V4.0 APIs
             // rather than all edge cases of empty Token vocabularies.
-            if ((0,utils/* isEmpty */.xb)(tokenVocabulary)) {
+            if ((0,utils/* isEmpty */.Im)(tokenVocabulary)) {
                 throw Error("A Token Vocabulary cannot be empty.\n" +
                     "\tNote that the first argument for the parser constructor\n" +
                     "\tis no longer a Token vector (since v4.0).");
@@ -10271,23 +10271,23 @@ var RecognizerEngine = /** @class */ (function () {
                     "\tFor Further details.");
             }
         }
-        if ((0,utils/* isArray */.kJ)(tokenVocabulary)) {
-            this.tokensMap = (0,utils/* reduce */.u4)(tokenVocabulary, function (acc, tokType) {
+        if ((0,utils/* isArray */.cy)(tokenVocabulary)) {
+            this.tokensMap = (0,utils/* reduce */.TS)(tokenVocabulary, function (acc, tokType) {
                 acc[tokType.name] = tokType;
                 return acc;
             }, {});
         }
-        else if ((0,utils/* has */.e$)(tokenVocabulary, "modes") &&
-            (0,utils/* every */.yW)((0,utils/* flatten */.xH)((0,utils/* values */.VO)(tokenVocabulary.modes)), isTokenType)) {
-            var allTokenTypes = (0,utils/* flatten */.xH)((0,utils/* values */.VO)(tokenVocabulary.modes));
-            var uniqueTokens = (0,utils/* uniq */.jj)(allTokenTypes);
-            this.tokensMap = (0,utils/* reduce */.u4)(uniqueTokens, function (acc, tokType) {
+        else if ((0,utils/* has */.zy)(tokenVocabulary, "modes") &&
+            (0,utils/* every */.Si)((0,utils/* flatten */.Bq)((0,utils/* values */.zu)(tokenVocabulary.modes)), isTokenType)) {
+            var allTokenTypes = (0,utils/* flatten */.Bq)((0,utils/* values */.zu)(tokenVocabulary.modes));
+            var uniqueTokens = (0,utils/* uniq */.sb)(allTokenTypes);
+            this.tokensMap = (0,utils/* reduce */.TS)(uniqueTokens, function (acc, tokType) {
                 acc[tokType.name] = tokType;
                 return acc;
             }, {});
         }
-        else if ((0,utils/* isObject */.Kn)(tokenVocabulary)) {
-            this.tokensMap = (0,utils/* cloneObj */.Cl)(tokenVocabulary);
+        else if ((0,utils/* isObject */.Gv)(tokenVocabulary)) {
+            this.tokensMap = (0,utils/* cloneObj */.lR)(tokenVocabulary);
         }
         else {
             throw new Error("<tokensDictionary> argument must be An Array of Token constructors," +
@@ -10298,24 +10298,24 @@ var RecognizerEngine = /** @class */ (function () {
         /* tslint:disable */
         this.tokensMap["EOF"] = EOF;
         // TODO: This check may not be accurate for multi mode lexers
-        var noTokenCategoriesUsed = (0,utils/* every */.yW)((0,utils/* values */.VO)(tokenVocabulary), function (tokenConstructor) { return (0,utils/* isEmpty */.xb)(tokenConstructor.categoryMatches); });
+        var noTokenCategoriesUsed = (0,utils/* every */.Si)((0,utils/* values */.zu)(tokenVocabulary), function (tokenConstructor) { return (0,utils/* isEmpty */.Im)(tokenConstructor.categoryMatches); });
         this.tokenMatcher = noTokenCategoriesUsed
             ? tokenStructuredMatcherNoCategories
             : tokenStructuredMatcher;
         // Because ES2015+ syntax should be supported for creating Token classes
         // We cannot assume that the Token classes were created using the "extendToken" utilities
         // Therefore we must augment the Token classes both on Lexer initialization and on Parser initialization
-        augmentTokenTypes((0,utils/* values */.VO)(this.tokensMap));
+        augmentTokenTypes((0,utils/* values */.zu)(this.tokensMap));
     };
     RecognizerEngine.prototype.defineRule = function (ruleName, impl, config) {
         if (this.selfAnalysisDone) {
             throw Error("Grammar rule <" + ruleName + "> may not be defined after the 'performSelfAnalysis' method has been called'\n" +
                 "Make sure that all grammar rule definitions are done before 'performSelfAnalysis' is called.");
         }
-        var resyncEnabled = (0,utils/* has */.e$)(config, "resyncEnabled")
+        var resyncEnabled = (0,utils/* has */.zy)(config, "resyncEnabled")
             ? config.resyncEnabled
             : DEFAULT_RULE_CONFIG.resyncEnabled;
-        var recoveryValueFunc = (0,utils/* has */.e$)(config, "recoveryValueFunc")
+        var recoveryValueFunc = (0,utils/* has */.zy)(config, "recoveryValueFunc")
             ? config.recoveryValueFunc
             : DEFAULT_RULE_CONFIG.recoveryValueFunc;
         // performance optimization: Use small integers as keys for the longer human readable "full" rule names.
@@ -10611,7 +10611,7 @@ var RecognizerEngine = /** @class */ (function () {
     };
     RecognizerEngine.prototype.orInternal = function (altsOrOpts, occurrence) {
         var laKey = this.getKeyForAutomaticLookahead(OR_IDX, occurrence);
-        var alts = (0,utils/* isArray */.kJ)(altsOrOpts)
+        var alts = (0,utils/* isArray */.cy)(altsOrOpts)
             ? altsOrOpts
             : altsOrOpts.DEF;
         var laFunc = this.getLaFuncFromCache(laKey);
@@ -10724,7 +10724,7 @@ var RecognizerEngine = /** @class */ (function () {
     RecognizerEngine.prototype.saveRecogState = function () {
         // errors is a getter which will clone the errors array
         var savedErrors = this.errors;
-        var savedRuleStack = (0,utils/* cloneArr */.Qw)(this.RULE_STACK);
+        var savedRuleStack = (0,utils/* cloneArr */.T9)(this.RULE_STACK);
         return {
             errors: savedErrors,
             lexerState: this.exportLexerState(),
@@ -10782,7 +10782,7 @@ var ErrorHandler = /** @class */ (function () {
     }
     ErrorHandler.prototype.initErrorHandler = function (config) {
         this._errors = [];
-        this.errorMessageProvider = (0,utils/* has */.e$)(config, "errorMessageProvider")
+        this.errorMessageProvider = (0,utils/* has */.zy)(config, "errorMessageProvider")
             ? config.errorMessageProvider
             : DEFAULT_PARSER_CONFIG.errorMessageProvider;
     };
@@ -10790,7 +10790,7 @@ var ErrorHandler = /** @class */ (function () {
         if (isRecognitionException(error)) {
             error.context = {
                 ruleStack: this.getHumanReadableRuleStack(),
-                ruleOccurrenceStack: (0,utils/* cloneArr */.Qw)(this.RULE_OCCURRENCE_STACK)
+                ruleOccurrenceStack: (0,utils/* cloneArr */.T9)(this.RULE_OCCURRENCE_STACK)
             };
             this._errors.push(error);
             return error;
@@ -10801,7 +10801,7 @@ var ErrorHandler = /** @class */ (function () {
     };
     Object.defineProperty(ErrorHandler.prototype, "errors", {
         get: function () {
-            return (0,utils/* cloneArr */.Qw)(this._errors);
+            return (0,utils/* cloneArr */.T9)(this._errors);
         },
         set: function (newErrors) {
             this._errors = newErrors;
@@ -10861,7 +10861,7 @@ var ContentAssist = /** @class */ (function () {
     ContentAssist.prototype.initContentAssist = function () { };
     ContentAssist.prototype.computeContentAssist = function (startRuleName, precedingInput) {
         var startRuleGast = this.gastProductionsCache[startRuleName];
-        if ((0,utils/* isUndefined */.o8)(startRuleGast)) {
+        if ((0,utils/* isUndefined */.b0)(startRuleGast)) {
             throw Error("Rule ->" + startRuleName + "<- does not exist in this grammar.");
         }
         return nextPossibleTokensAfter([startRuleGast], precedingInput, this.tokenMatcher, this.maxLookahead);
@@ -10869,7 +10869,7 @@ var ContentAssist = /** @class */ (function () {
     // TODO: should this be a member method or a utility? it does not have any state or usage of 'this'...
     // TODO: should this be more explicitly part of the public API?
     ContentAssist.prototype.getNextPossibleTokenTypes = function (grammarPath) {
-        var topRuleName = (0,utils/* first */.Ps)(grammarPath.ruleStack);
+        var topRuleName = (0,utils/* first */.$1)(grammarPath.ruleStack);
         var gastProductions = this.getGAstProductions();
         var topProduction = gastProductions[topRuleName];
         var nextPossibleTokenTypes = new NextAfterTokenWalker(topProduction, grammarPath).startWalking();
@@ -11078,14 +11078,14 @@ var GastRecorder = /** @class */ (function () {
     };
     GastRecorder.prototype.subruleInternalRecord = function (ruleToCall, occurrence, options) {
         assertMethodIdxIsValid(occurrence);
-        if (!ruleToCall || (0,utils/* has */.e$)(ruleToCall, "ruleName") === false) {
+        if (!ruleToCall || (0,utils/* has */.zy)(ruleToCall, "ruleName") === false) {
             var error = new Error("<SUBRULE" + getIdxSuffix(occurrence) + "> argument is invalid" +
                 (" expecting a Parser method reference but got: <" + JSON.stringify(ruleToCall) + ">") +
                 ("\n inside top level rule: <" + this.recordingProdStack[0].name + ">"));
             error.KNOWN_RECORDER_ERROR = true;
             throw error;
         }
-        var prevProd = (0,utils/* peek */.fj)(this.recordingProdStack);
+        var prevProd = (0,utils/* peek */.se)(this.recordingProdStack);
         var ruleName = ruleToCall["ruleName"];
         var newNoneTerminal = new NonTerminal({
             idx: occurrence,
@@ -11105,7 +11105,7 @@ var GastRecorder = /** @class */ (function () {
             error.KNOWN_RECORDER_ERROR = true;
             throw error;
         }
-        var prevProd = (0,utils/* peek */.fj)(this.recordingProdStack);
+        var prevProd = (0,utils/* peek */.se)(this.recordingProdStack);
         var newNoneTerminal = new Terminal({
             idx: occurrence,
             terminalType: tokType
@@ -11119,13 +11119,13 @@ var GastRecorder = /** @class */ (function () {
 function recordProd(prodConstructor, mainProdArg, occurrence, handleSep) {
     if (handleSep === void 0) { handleSep = false; }
     assertMethodIdxIsValid(occurrence);
-    var prevProd = (0,utils/* peek */.fj)(this.recordingProdStack);
-    var grammarAction = (0,utils/* isFunction */.mf)(mainProdArg) ? mainProdArg : mainProdArg.DEF;
+    var prevProd = (0,utils/* peek */.se)(this.recordingProdStack);
+    var grammarAction = (0,utils/* isFunction */.Tn)(mainProdArg) ? mainProdArg : mainProdArg.DEF;
     var newProd = new prodConstructor({ definition: [], idx: occurrence });
     if (handleSep) {
         newProd.separator = mainProdArg.SEP;
     }
-    if ((0,utils/* has */.e$)(mainProdArg, "MAX_LOOKAHEAD")) {
+    if ((0,utils/* has */.zy)(mainProdArg, "MAX_LOOKAHEAD")) {
         newProd.maxLookahead = mainProdArg.MAX_LOOKAHEAD;
     }
     this.recordingProdStack.push(newProd);
@@ -11137,29 +11137,29 @@ function recordProd(prodConstructor, mainProdArg, occurrence, handleSep) {
 function recordOrProd(mainProdArg, occurrence) {
     var _this = this;
     assertMethodIdxIsValid(occurrence);
-    var prevProd = (0,utils/* peek */.fj)(this.recordingProdStack);
+    var prevProd = (0,utils/* peek */.se)(this.recordingProdStack);
     // Only an array of alternatives
-    var hasOptions = (0,utils/* isArray */.kJ)(mainProdArg) === false;
+    var hasOptions = (0,utils/* isArray */.cy)(mainProdArg) === false;
     var alts = hasOptions === false ? mainProdArg : mainProdArg.DEF;
     var newOrProd = new Alternation({
         definition: [],
         idx: occurrence,
         ignoreAmbiguities: hasOptions && mainProdArg.IGNORE_AMBIGUITIES === true
     });
-    if ((0,utils/* has */.e$)(mainProdArg, "MAX_LOOKAHEAD")) {
+    if ((0,utils/* has */.zy)(mainProdArg, "MAX_LOOKAHEAD")) {
         newOrProd.maxLookahead = mainProdArg.MAX_LOOKAHEAD;
     }
-    var hasPredicates = (0,utils/* some */.G)(alts, function (currAlt) { return (0,utils/* isFunction */.mf)(currAlt.GATE); });
+    var hasPredicates = (0,utils/* some */.zN)(alts, function (currAlt) { return (0,utils/* isFunction */.Tn)(currAlt.GATE); });
     newOrProd.hasPredicates = hasPredicates;
     prevProd.definition.push(newOrProd);
-    (0,utils/* forEach */.Ed)(alts, function (currAlt) {
+    (0,utils/* forEach */.jJ)(alts, function (currAlt) {
         var currAltFlat = new Alternative({ definition: [] });
         newOrProd.definition.push(currAltFlat);
-        if ((0,utils/* has */.e$)(currAlt, "IGNORE_AMBIGUITIES")) {
+        if ((0,utils/* has */.zy)(currAlt, "IGNORE_AMBIGUITIES")) {
             currAltFlat.ignoreAmbiguities = currAlt.IGNORE_AMBIGUITIES;
         }
         // **implicit** ignoreAmbiguities due to usage of gate
-        else if ((0,utils/* has */.e$)(currAlt, "GATE")) {
+        else if ((0,utils/* has */.zy)(currAlt, "GATE")) {
             currAltFlat.ignoreAmbiguities = true;
         }
         _this.recordingProdStack.push(currAltFlat);
@@ -11183,7 +11183,7 @@ function assertMethodIdxIsValid(idx) {
 }
 //# sourceMappingURL=gast_recorder.js.map
 ;// CONCATENATED MODULE: ../../node_modules/chevrotain/lib_esm/src/parse/parser/traits/perf_tracer.js
-/* provided dependency */ var perf_tracer_console = __webpack_require__(3716);
+/* provided dependency */ var perf_tracer_console = __webpack_require__(4364);
 
 
 /**
@@ -11193,7 +11193,7 @@ var PerformanceTracer = /** @class */ (function () {
     function PerformanceTracer() {
     }
     PerformanceTracer.prototype.initPerformanceTracer = function (config) {
-        if ((0,utils/* has */.e$)(config, "traceInitPerf")) {
+        if ((0,utils/* has */.zy)(config, "traceInitPerf")) {
             var userTraceInitPerf = config.traceInitPerf;
             var traceIsNumber = typeof userTraceInitPerf === "number";
             this.traceInitMaxIdent = traceIsNumber
@@ -11218,7 +11218,7 @@ var PerformanceTracer = /** @class */ (function () {
             if (this.traceInitIndent < this.traceInitMaxIdent) {
                 perf_tracer_console.log(indent + "--> <" + phaseDesc + ">");
             }
-            var _a = (0,utils/* timer */.HT)(phaseImpl), time = _a.time, value = _a.value;
+            var _a = (0,utils/* timer */.O1)(phaseImpl), time = _a.time, value = _a.value;
             /* istanbul ignore next - Difficult to reproduce specific performance behavior (>10ms) in tests */
             var traceMethod = time > 10 ? perf_tracer_console.warn : perf_tracer_console.log;
             if (this.traceInitIndent < this.traceInitMaxIdent) {
@@ -11316,13 +11316,13 @@ var Parser = /** @class */ (function () {
         that.initContentAssist();
         that.initGastRecorder(config);
         that.initPerformanceTracer(config);
-        if ((0,utils/* has */.e$)(config, "ignoredIssues")) {
+        if ((0,utils/* has */.zy)(config, "ignoredIssues")) {
             throw new Error("The <ignoredIssues> IParserConfig property has been deprecated.\n\t" +
                 "Please use the <IGNORE_AMBIGUITIES> flag on the relevant DSL method instead.\n\t" +
                 "See: https://sap.github.io/chevrotain/docs/guide/resolving_grammar_errors.html#IGNORING_AMBIGUITIES\n\t" +
                 "For further details.");
         }
-        this.skipValidations = (0,utils/* has */.e$)(config, "skipValidations")
+        this.skipValidations = (0,utils/* has */.zy)(config, "skipValidations")
             ? config.skipValidations
             : DEFAULT_PARSER_CONFIG.skipValidations;
     }
@@ -11343,13 +11343,13 @@ var Parser = /** @class */ (function () {
                 // Without this voodoo magic the parser would be x3-x4 slower
                 // It seems it is better to invoke `toFastProperties` **before**
                 // Any manipulations of the `this` object done during the recording phase.
-                (0,utils/* toFastProperties */.SV)(_this);
+                (0,utils/* toFastProperties */.Bl)(_this);
             });
             _this.TRACE_INIT("Grammar Recording", function () {
                 try {
                     _this.enableRecording();
                     // Building the GAST
-                    (0,utils/* forEach */.Ed)(_this.definedRulesNames, function (currRuleName) {
+                    (0,utils/* forEach */.jJ)(_this.definedRulesNames, function (currRuleName) {
                         var wrappedRule = _this[currRuleName];
                         var originalGrammarAction = wrappedRule["originalGrammarAction"];
                         var recordedRuleGast = undefined;
@@ -11366,18 +11366,18 @@ var Parser = /** @class */ (function () {
             var resolverErrors = [];
             _this.TRACE_INIT("Grammar Resolving", function () {
                 resolverErrors = gast_resolver_public_resolveGrammar({
-                    rules: (0,utils/* values */.VO)(_this.gastProductionsCache)
+                    rules: (0,utils/* values */.zu)(_this.gastProductionsCache)
                 });
                 _this.definitionErrors.push.apply(_this.definitionErrors, resolverErrors); // mutability for the win?
             });
             _this.TRACE_INIT("Grammar Validations", function () {
                 // only perform additional grammar validations IFF no resolving errors have occurred.
                 // as unresolved grammar may lead to unhandled runtime exceptions in the follow up validations.
-                if ((0,utils/* isEmpty */.xb)(resolverErrors) && _this.skipValidations === false) {
+                if ((0,utils/* isEmpty */.Im)(resolverErrors) && _this.skipValidations === false) {
                     var validationErrors = gast_resolver_public_validateGrammar({
-                        rules: (0,utils/* values */.VO)(_this.gastProductionsCache),
+                        rules: (0,utils/* values */.zu)(_this.gastProductionsCache),
                         maxLookahead: _this.maxLookahead,
-                        tokenTypes: (0,utils/* values */.VO)(_this.tokensMap),
+                        tokenTypes: (0,utils/* values */.zu)(_this.tokensMap),
                         errMsgProvider: defaultGrammarValidatorErrorProvider,
                         grammarName: className
                     });
@@ -11385,21 +11385,21 @@ var Parser = /** @class */ (function () {
                 }
             });
             // this analysis may fail if the grammar is not perfectly valid
-            if ((0,utils/* isEmpty */.xb)(_this.definitionErrors)) {
+            if ((0,utils/* isEmpty */.Im)(_this.definitionErrors)) {
                 // The results of these computations are not needed unless error recovery is enabled.
                 if (_this.recoveryEnabled) {
                     _this.TRACE_INIT("computeAllProdsFollows", function () {
-                        var allFollows = computeAllProdsFollows((0,utils/* values */.VO)(_this.gastProductionsCache));
+                        var allFollows = computeAllProdsFollows((0,utils/* values */.zu)(_this.gastProductionsCache));
                         _this.resyncFollows = allFollows;
                     });
                 }
                 _this.TRACE_INIT("ComputeLookaheadFunctions", function () {
-                    _this.preComputeLookaheadFunctions((0,utils/* values */.VO)(_this.gastProductionsCache));
+                    _this.preComputeLookaheadFunctions((0,utils/* values */.zu)(_this.gastProductionsCache));
                 });
             }
             if (!Parser.DEFER_DEFINITION_ERRORS_HANDLING &&
-                !(0,utils/* isEmpty */.xb)(_this.definitionErrors)) {
-                defErrorsMsgs = (0,utils/* map */.UI)(_this.definitionErrors, function (defError) { return defError.message; });
+                !(0,utils/* isEmpty */.Im)(_this.definitionErrors)) {
+                defErrorsMsgs = (0,utils/* map */.Tj)(_this.definitionErrors, function (defError) { return defError.message; });
                 throw new Error("Parser Definition Errors detected:\n " + defErrorsMsgs.join("\n-------------------------------\n"));
             }
         });
@@ -11414,7 +11414,7 @@ var Parser = /** @class */ (function () {
     return Parser;
 }());
 
-(0,utils/* applyMixins */.ef)(Parser, [
+(0,utils/* applyMixins */.XJ)(Parser, [
     Recoverable,
     LooksAhead,
     TreeBuilder,
@@ -11431,7 +11431,7 @@ var CstParser = /** @class */ (function (_super) {
     function CstParser(tokenVocabulary, config) {
         if (config === void 0) { config = DEFAULT_PARSER_CONFIG; }
         var _this = this;
-        var configClone = (0,utils/* cloneObj */.Cl)(config);
+        var configClone = (0,utils/* cloneObj */.lR)(config);
         configClone.outputCst = true;
         _this = _super.call(this, tokenVocabulary, configClone) || this;
         return _this;
@@ -11444,7 +11444,7 @@ var EmbeddedActionsParser = /** @class */ (function (_super) {
     function EmbeddedActionsParser(tokenVocabulary, config) {
         if (config === void 0) { config = DEFAULT_PARSER_CONFIG; }
         var _this = this;
-        var configClone = (0,utils/* cloneObj */.Cl)(config);
+        var configClone = (0,utils/* cloneObj */.lR)(config);
         configClone.outputCst = false;
         _this = _super.call(this, tokenVocabulary, configClone) || this;
         return _this;
@@ -11488,7 +11488,7 @@ function genClass(options) {
     return result;
 }
 function genAllRules(rules) {
-    var rulesText = (0,utils/* map */.UI)(rules, function (currRule) {
+    var rulesText = (0,utils/* map */.Tj)(rules, function (currRule) {
         return genRule(currRule, 1);
     });
     return rulesText.join("\n");
@@ -11509,7 +11509,7 @@ function genNonTerminal(prod, n) {
 }
 function genAlternation(prod, n) {
     var result = indent(n, "$.OR" + prod.idx + "([") + NL;
-    var alts = (0,utils/* map */.UI)(prod.definition, function (altDef) { return genSingleAlt(altDef, n + 1); });
+    var alts = (0,utils/* map */.Tj)(prod.definition, function (altDef) { return genSingleAlt(altDef, n + 1); });
     result += alts.join("," + NL);
     result += NL + indent(n, "])" + NL);
     return result;
@@ -11578,7 +11578,7 @@ function genDefFunction(definition, n) {
 }
 function genDefinition(def, n) {
     var result = "";
-    (0,utils/* forEach */.Ed)(def, function (prod) {
+    (0,utils/* forEach */.jJ)(def, function (prod) {
         result += genProd(prod, n + 1);
     });
     return result;
@@ -11599,7 +11599,7 @@ function generateParserFactory(options) {
     return function (config) {
         return constructorWrapper(options.tokenVocabulary, config, 
         // TODO: check how the require is transpiled/webpacked
-        __webpack_require__(3877));
+        __webpack_require__(397));
     };
 }
 function generateParserModule(options) {
@@ -11607,7 +11607,7 @@ function generateParserModule(options) {
 }
 //# sourceMappingURL=generate_public.js.map
 ;// CONCATENATED MODULE: ../../node_modules/chevrotain/lib_esm/src/api.js
-/* provided dependency */ var api_console = __webpack_require__(3716);
+/* provided dependency */ var api_console = __webpack_require__(4364);
 /* istanbul ignore file - tricky to import some things from this module during testing */
 // semantic version
 
@@ -11645,61 +11645,61 @@ var api_Parser = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 1481:
+/***/ 3831:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Cl: () => (/* binding */ cloneObj),
-/* harmony export */   Cw: () => (/* binding */ drop),
-/* harmony export */   Ed: () => (/* binding */ forEach),
-/* harmony export */   G: () => (/* binding */ some),
-/* harmony export */   HD: () => (/* binding */ isString),
-/* harmony export */   HT: () => (/* binding */ timer),
-/* harmony export */   Kj: () => (/* binding */ isRegExp),
-/* harmony export */   Kn: () => (/* binding */ isObject),
-/* harmony export */   Oq: () => (/* binding */ findAll),
-/* harmony export */   Ps: () => (/* binding */ first),
-/* harmony export */   Q8: () => (/* binding */ mapValues),
-/* harmony export */   Qw: () => (/* binding */ cloneArr),
-/* harmony export */   SV: () => (/* binding */ toFastProperties),
-/* harmony export */   TS: () => (/* binding */ merge),
-/* harmony export */   UI: () => (/* binding */ map),
-/* harmony export */   VO: () => (/* binding */ values),
-/* harmony export */   WB: () => (/* binding */ PRINT_ERROR),
-/* harmony export */   Wd: () => (/* binding */ IDENTITY),
-/* harmony export */   X0: () => (/* binding */ packArray),
-/* harmony export */   XP: () => (/* binding */ keys),
-/* harmony export */   Z$: () => (/* binding */ last),
-/* harmony export */   ce: () => (/* binding */ defaults),
-/* harmony export */   cq: () => (/* binding */ indexOf),
-/* harmony export */   d1: () => (/* binding */ reject),
-/* harmony export */   dG: () => (/* binding */ NOOP),
-/* harmony export */   dU: () => (/* binding */ isES2015MapSupported),
-/* harmony export */   e$: () => (/* binding */ has),
-/* harmony export */   e5: () => (/* binding */ difference),
-/* harmony export */   ef: () => (/* binding */ applyMixins),
-/* harmony export */   ei: () => (/* binding */ pick),
-/* harmony export */   f0: () => (/* binding */ assign),
-/* harmony export */   fj: () => (/* binding */ peek),
-/* harmony export */   hX: () => (/* binding */ filter),
-/* harmony export */   j7: () => (/* binding */ dropRight),
-/* harmony export */   jj: () => (/* binding */ uniq),
-/* harmony export */   kJ: () => (/* binding */ isArray),
-/* harmony export */   mf: () => (/* binding */ isFunction),
-/* harmony export */   o8: () => (/* binding */ isUndefined),
-/* harmony export */   oA: () => (/* binding */ compact),
-/* harmony export */   r3: () => (/* binding */ contains),
-/* harmony export */   rr: () => (/* binding */ PRINT_WARNING),
-/* harmony export */   sE: () => (/* binding */ find),
-/* harmony export */   u4: () => (/* binding */ reduce),
-/* harmony export */   vM: () => (/* binding */ groupBy),
-/* harmony export */   xH: () => (/* binding */ flatten),
-/* harmony export */   xb: () => (/* binding */ isEmpty),
-/* harmony export */   yW: () => (/* binding */ every)
+/* harmony export */   $1: () => (/* binding */ first),
+/* harmony export */   $z: () => (/* binding */ groupBy),
+/* harmony export */   Bl: () => (/* binding */ toFastProperties),
+/* harmony export */   Bq: () => (/* binding */ flatten),
+/* harmony export */   Gv: () => (/* binding */ isObject),
+/* harmony export */   HP: () => (/* binding */ keys),
+/* harmony export */   HV: () => (/* binding */ last),
+/* harmony export */   I6: () => (/* binding */ find),
+/* harmony export */   Im: () => (/* binding */ isEmpty),
+/* harmony export */   JW: () => (/* binding */ findAll),
+/* harmony export */   Kg: () => (/* binding */ isString),
+/* harmony export */   LG: () => (/* binding */ mapValues),
+/* harmony export */   NT: () => (/* binding */ defaults),
+/* harmony export */   O1: () => (/* binding */ timer),
+/* harmony export */   Si: () => (/* binding */ every),
+/* harmony export */   T9: () => (/* binding */ cloneArr),
+/* harmony export */   TS: () => (/* binding */ reduce),
+/* harmony export */   Tj: () => (/* binding */ map),
+/* harmony export */   Tn: () => (/* binding */ isFunction),
+/* harmony export */   Up: () => (/* binding */ pick),
+/* harmony export */   VS: () => (/* binding */ packArray),
+/* harmony export */   XJ: () => (/* binding */ applyMixins),
+/* harmony export */   Zi: () => (/* binding */ PRINT_ERROR),
+/* harmony export */   b0: () => (/* binding */ isUndefined),
+/* harmony export */   cy: () => (/* binding */ isArray),
+/* harmony export */   gR: () => (/* binding */ contains),
+/* harmony export */   gc: () => (/* binding */ dropRight),
+/* harmony export */   gd: () => (/* binding */ isRegExp),
+/* harmony export */   gv: () => (/* binding */ drop),
+/* harmony export */   h1: () => (/* binding */ merge),
+/* harmony export */   iv: () => (/* binding */ difference),
+/* harmony export */   jJ: () => (/* binding */ forEach),
+/* harmony export */   kp: () => (/* binding */ assign),
+/* harmony export */   ku: () => (/* binding */ reject),
+/* harmony export */   lR: () => (/* binding */ cloneObj),
+/* harmony export */   oE: () => (/* binding */ compact),
+/* harmony export */   pb: () => (/* binding */ filter),
+/* harmony export */   qh: () => (/* binding */ indexOf),
+/* harmony export */   rF: () => (/* binding */ isES2015MapSupported),
+/* harmony export */   sb: () => (/* binding */ uniq),
+/* harmony export */   se: () => (/* binding */ peek),
+/* harmony export */   tE: () => (/* binding */ NOOP),
+/* harmony export */   x5: () => (/* binding */ PRINT_WARNING),
+/* harmony export */   zK: () => (/* binding */ IDENTITY),
+/* harmony export */   zN: () => (/* binding */ some),
+/* harmony export */   zu: () => (/* binding */ values),
+/* harmony export */   zy: () => (/* binding */ has)
 /* harmony export */ });
 /* unused harmony exports partial, sortBy, zipObject, assignNoOverwrite */
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var console = __webpack_require__(4364);
 /*
  Utils using lodash style API. (not necessarily 100% compliant) for functional and other utils.
  These utils should replace usage of lodash in the production code base. not because they are any better...
@@ -12120,12 +12120,12 @@ function timer(func) {
 
 /***/ }),
 
-/***/ 3716:
+/***/ 4364:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 /*global window, global*/
-var util = __webpack_require__(3335)
-var assert = __webpack_require__(1696)
+var util = __webpack_require__(6827)
+var assert = __webpack_require__(6093)
 function now() { return new Date().getTime() }
 
 var slice = Array.prototype.slice
@@ -12214,13 +12214,13 @@ function consoleAssert(expression) {
 
 /***/ }),
 
-/***/ 4926:
+/***/ 1857:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var keys = __webpack_require__(3464);
+var keys = __webpack_require__(9228);
 var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
 
 var toStr = Object.prototype.toString;
@@ -12231,7 +12231,7 @@ var isFunction = function (fn) {
 	return typeof fn === 'function' && toStr.call(fn) === '[object Function]';
 };
 
-var hasPropertyDescriptors = __webpack_require__(1181)();
+var hasPropertyDescriptors = __webpack_require__(7239)();
 
 var supportsDescriptors = origDefineProperty && hasPropertyDescriptors;
 
@@ -12275,7 +12275,7 @@ module.exports = defineProperties;
 
 /***/ }),
 
-/***/ 4956:
+/***/ 3046:
 /***/ ((module) => {
 
 "use strict";
@@ -12329,13 +12329,13 @@ module.exports = {
 
 /***/ }),
 
-/***/ 3243:
+/***/ 705:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var isCallable = __webpack_require__(9680);
+var isCallable = __webpack_require__(9617);
 
 var toStr = Object.prototype.toString;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -12399,7 +12399,7 @@ module.exports = forEach;
 
 /***/ }),
 
-/***/ 7795:
+/***/ 8794:
 /***/ ((module) => {
 
 "use strict";
@@ -12459,20 +12459,20 @@ module.exports = function bind(that) {
 
 /***/ }),
 
-/***/ 4090:
+/***/ 9138:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(7795);
+var implementation = __webpack_require__(8794);
 
 module.exports = Function.prototype.bind || implementation;
 
 
 /***/ }),
 
-/***/ 7286:
+/***/ 528:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -12520,8 +12520,8 @@ var ThrowTypeError = $gOPD
 	}())
 	: throwTypeError;
 
-var hasSymbols = __webpack_require__(2636)();
-var hasProto = __webpack_require__(8486)();
+var hasSymbols = __webpack_require__(3558)();
+var hasProto = __webpack_require__(6869)();
 
 var getProto = Object.getPrototypeOf || (
 	hasProto
@@ -12691,8 +12691,8 @@ var LEGACY_ALIASES = {
 	'%WeakSetPrototype%': ['WeakSet', 'prototype']
 };
 
-var bind = __webpack_require__(4090);
-var hasOwn = __webpack_require__(3198);
+var bind = __webpack_require__(9138);
+var hasOwn = __webpack_require__(2571);
 var $concat = bind.call(Function.call, Array.prototype.concat);
 var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
 var $replace = bind.call(Function.call, String.prototype.replace);
@@ -12831,13 +12831,13 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 
 /***/ }),
 
-/***/ 326:
+/***/ 9336:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(7286);
+var GetIntrinsic = __webpack_require__(528);
 
 var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
 
@@ -12855,13 +12855,13 @@ module.exports = $gOPD;
 
 /***/ }),
 
-/***/ 1181:
+/***/ 7239:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(7286);
+var GetIntrinsic = __webpack_require__(528);
 
 var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
 
@@ -12896,7 +12896,7 @@ module.exports = hasPropertyDescriptors;
 
 /***/ }),
 
-/***/ 8486:
+/***/ 6869:
 /***/ ((module) => {
 
 "use strict";
@@ -12915,14 +12915,14 @@ module.exports = function hasProto() {
 
 /***/ }),
 
-/***/ 2636:
+/***/ 3558:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 var origSymbol = typeof Symbol !== 'undefined' && Symbol;
-var hasSymbolSham = __webpack_require__(6679);
+var hasSymbolSham = __webpack_require__(2908);
 
 module.exports = function hasNativeSymbols() {
 	if (typeof origSymbol !== 'function') { return false; }
@@ -12936,7 +12936,7 @@ module.exports = function hasNativeSymbols() {
 
 /***/ }),
 
-/***/ 6679:
+/***/ 2908:
 /***/ ((module) => {
 
 "use strict";
@@ -12986,13 +12986,13 @@ module.exports = function hasSymbols() {
 
 /***/ }),
 
-/***/ 7226:
+/***/ 1913:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var hasSymbols = __webpack_require__(6679);
+var hasSymbols = __webpack_require__(2908);
 
 module.exports = function hasToStringTagShams() {
 	return hasSymbols() && !!Symbol.toStringTag;
@@ -13001,20 +13001,20 @@ module.exports = function hasToStringTagShams() {
 
 /***/ }),
 
-/***/ 3198:
+/***/ 2571:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var bind = __webpack_require__(4090);
+var bind = __webpack_require__(9138);
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
 
 /***/ }),
 
-/***/ 1285:
+/***/ 5615:
 /***/ ((module) => {
 
 if (typeof Object.create === 'function') {
@@ -13048,14 +13048,14 @@ if (typeof Object.create === 'function') {
 
 /***/ }),
 
-/***/ 2635:
+/***/ 5387:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var hasToStringTag = __webpack_require__(7226)();
-var callBound = __webpack_require__(2680);
+var hasToStringTag = __webpack_require__(1913)();
+var callBound = __webpack_require__(9818);
 
 var $toString = callBound('Object.prototype.toString');
 
@@ -13089,7 +13089,7 @@ module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArgum
 
 /***/ }),
 
-/***/ 9680:
+/***/ 9617:
 /***/ ((module) => {
 
 "use strict";
@@ -13198,7 +13198,7 @@ module.exports = reflectApply
 
 /***/ }),
 
-/***/ 3138:
+/***/ 2625:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -13207,7 +13207,7 @@ module.exports = reflectApply
 var toStr = Object.prototype.toString;
 var fnToStr = Function.prototype.toString;
 var isFnRegex = /^\s*(?:function)?\*/;
-var hasToStringTag = __webpack_require__(7226)();
+var hasToStringTag = __webpack_require__(1913)();
 var getProto = Object.getPrototypeOf;
 var getGeneratorFunc = function () { // eslint-disable-line consistent-return
 	if (!hasToStringTag) {
@@ -13244,7 +13244,7 @@ module.exports = function isGeneratorFunction(fn) {
 
 /***/ }),
 
-/***/ 7053:
+/***/ 8006:
 /***/ ((module) => {
 
 "use strict";
@@ -13259,18 +13259,18 @@ module.exports = function isNaN(value) {
 
 /***/ }),
 
-/***/ 4782:
+/***/ 7838:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var callBind = __webpack_require__(9429);
-var define = __webpack_require__(4926);
+var callBind = __webpack_require__(8498);
+var define = __webpack_require__(1857);
 
-var implementation = __webpack_require__(7053);
-var getPolyfill = __webpack_require__(755);
-var shim = __webpack_require__(5346);
+var implementation = __webpack_require__(8006);
+var getPolyfill = __webpack_require__(1591);
+var shim = __webpack_require__(1641);
 
 var polyfill = callBind(getPolyfill(), Number);
 
@@ -13287,13 +13287,13 @@ module.exports = polyfill;
 
 /***/ }),
 
-/***/ 755:
+/***/ 1591:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(7053);
+var implementation = __webpack_require__(8006);
 
 module.exports = function getPolyfill() {
 	if (Number.isNaN && Number.isNaN(NaN) && !Number.isNaN('a')) {
@@ -13305,14 +13305,14 @@ module.exports = function getPolyfill() {
 
 /***/ }),
 
-/***/ 5346:
+/***/ 1641:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var define = __webpack_require__(4926);
-var getPolyfill = __webpack_require__(755);
+var define = __webpack_require__(1857);
+var getPolyfill = __webpack_require__(1591);
 
 /* http://www.ecma-international.org/ecma-262/6.0/#sec-number.isnan */
 
@@ -13329,13 +13329,13 @@ module.exports = function shimNumberIsNaN() {
 
 /***/ }),
 
-/***/ 198:
+/***/ 5943:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var whichTypedArray = __webpack_require__(2094);
+var whichTypedArray = __webpack_require__(2730);
 
 module.exports = function isTypedArray(value) {
 	return !!whichTypedArray(value);
@@ -13344,7 +13344,7 @@ module.exports = function isTypedArray(value) {
 
 /***/ }),
 
-/***/ 6635:
+/***/ 5250:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* module decorator */ module = __webpack_require__.nmd(module);
@@ -30553,7 +30553,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
-/***/ 8169:
+/***/ 2372:
 /***/ ((module) => {
 
 "use strict";
@@ -30580,18 +30580,18 @@ module.exports = function is(a, b) {
 
 /***/ }),
 
-/***/ 4679:
+/***/ 5968:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var define = __webpack_require__(4926);
-var callBind = __webpack_require__(9429);
+var define = __webpack_require__(1857);
+var callBind = __webpack_require__(8498);
 
-var implementation = __webpack_require__(8169);
-var getPolyfill = __webpack_require__(8070);
-var shim = __webpack_require__(191);
+var implementation = __webpack_require__(2372);
+var getPolyfill = __webpack_require__(1937);
+var shim = __webpack_require__(5087);
 
 var polyfill = callBind(getPolyfill(), Object);
 
@@ -30606,13 +30606,13 @@ module.exports = polyfill;
 
 /***/ }),
 
-/***/ 8070:
+/***/ 1937:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var implementation = __webpack_require__(8169);
+var implementation = __webpack_require__(2372);
 
 module.exports = function getPolyfill() {
 	return typeof Object.is === 'function' ? Object.is : implementation;
@@ -30621,14 +30621,14 @@ module.exports = function getPolyfill() {
 
 /***/ }),
 
-/***/ 191:
+/***/ 5087:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var getPolyfill = __webpack_require__(8070);
-var define = __webpack_require__(4926);
+var getPolyfill = __webpack_require__(1937);
+var define = __webpack_require__(1857);
 
 module.exports = function shimObjectIs() {
 	var polyfill = getPolyfill();
@@ -30643,7 +30643,7 @@ module.exports = function shimObjectIs() {
 
 /***/ }),
 
-/***/ 5691:
+/***/ 8160:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -30654,7 +30654,7 @@ if (!Object.keys) {
 	// modified from https://github.com/es-shims/es5-shim
 	var has = Object.prototype.hasOwnProperty;
 	var toStr = Object.prototype.toString;
-	var isArgs = __webpack_require__(801); // eslint-disable-line global-require
+	var isArgs = __webpack_require__(968); // eslint-disable-line global-require
 	var isEnumerable = Object.prototype.propertyIsEnumerable;
 	var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
 	var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
@@ -30773,17 +30773,17 @@ module.exports = keysShim;
 
 /***/ }),
 
-/***/ 3464:
+/***/ 9228:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
 var slice = Array.prototype.slice;
-var isArgs = __webpack_require__(801);
+var isArgs = __webpack_require__(968);
 
 var origKeys = Object.keys;
-var keysShim = origKeys ? function keys(o) { return origKeys(o); } : __webpack_require__(5691);
+var keysShim = origKeys ? function keys(o) { return origKeys(o); } : __webpack_require__(8160);
 
 var originalKeys = Object.keys;
 
@@ -30813,7 +30813,7 @@ module.exports = keysShim;
 
 /***/ }),
 
-/***/ 801:
+/***/ 968:
 /***/ ((module) => {
 
 "use strict";
@@ -30838,7 +30838,7 @@ module.exports = function isArguments(value) {
 
 /***/ }),
 
-/***/ 4406:
+/***/ 9907:
 /***/ ((module) => {
 
 // shim for using process in browser
@@ -31029,7 +31029,7 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ 4844:
+/***/ 710:
 /***/ (function(module, exports) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;;(function(root, factory) {
@@ -32038,15 +32038,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 
-/***/ 4487:
+/***/ 2125:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BaseService: () => (/* binding */ BaseService)
 /* harmony export */ });
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6297);
-/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4881);
+/* harmony import */ var vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5501);
+/* harmony import */ var vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7770);
+/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8778);
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -32062,12 +32064,11 @@ function _define_property(obj, key, value) {
 }
 
 
+
 class BaseService {
     addDocument(document) {
-        this.documents[document.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.create(document.uri, document.languageId, document.version, document.text);
-    //TODO:
-    /*if (options)
-            this.setSessionOptions(sessionID, options);*/ }
+        this.documents[document.uri] = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_1__/* .TextDocument */ .V.create(document.uri, document.languageId, document.version, document.text);
+    }
     getDocument(uri) {
         return this.documents[uri];
     }
@@ -32084,26 +32085,29 @@ class BaseService {
     setValue(identifier, value) {
         let document = this.getDocument(identifier.uri);
         if (document) {
-            document = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.create(document.uri, document.languageId, document.version, value);
+            document = vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_1__/* .TextDocument */ .V.create(document.uri, document.languageId, document.version, value);
             this.documents[document.uri] = document;
         }
     }
     setGlobalOptions(options) {
         this.globalOptions = options !== null && options !== void 0 ? options : {};
     }
-    setOptions(sessionID, options, merge = false) {
-        this.options[sessionID] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_1__/* .mergeObjects */ .PM)(options, this.options[sessionID]) : options;
+    setWorkspace(workspaceUri) {
+        this.workspaceUri = workspaceUri;
     }
-    getOption(sessionID, optionName) {
-        if (this.options[sessionID] && this.options[sessionID][optionName]) {
-            return this.options[sessionID][optionName];
+    setOptions(documentUri, options, merge = false) {
+        this.options[documentUri] = merge ? (0,_utils__WEBPACK_IMPORTED_MODULE_2__/* .mergeObjects */ .rL)(options, this.options[documentUri]) : options;
+    }
+    getOption(documentUri, optionName) {
+        if (this.options[documentUri] && this.options[documentUri][optionName]) {
+            return this.options[documentUri][optionName];
         } else {
             return this.globalOptions[optionName];
         }
     }
     applyDeltas(identifier, deltas) {
         let document = this.getDocument(identifier.uri);
-        if (document) vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_0__/* .TextDocument */ .n.update(document, deltas, identifier.version);
+        if (document) vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_1__/* .TextDocument */ .V.update(document, deltas, identifier.version);
     }
     async doComplete(document, position) {
         return null;
@@ -32143,7 +32147,17 @@ class BaseService {
     dispose() {
         return Promise.resolve();
     }
-    constructor(mode){
+    closeConnection() {
+        return Promise.resolve();
+    }
+    getCodeActions(document, range, context) {
+        return Promise.resolve(null);
+    }
+    executeCommand(command, args) {
+        return Promise.resolve(null);
+    }
+    sendAppliedResult(result, callbackId) {}
+    constructor(mode, workspaceUri){
         _define_property(this, "serviceName", void 0);
         _define_property(this, "mode", void 0);
         _define_property(this, "documents", {});
@@ -32151,8 +32165,23 @@ class BaseService {
         _define_property(this, "globalOptions", {});
         _define_property(this, "serviceData", void 0);
         _define_property(this, "serviceCapabilities", {});
+        _define_property(this, "workspaceUri", void 0);
         _define_property(this, "clientCapabilities", {
             textDocument: {
+                diagnostic: {
+                    dynamicRegistration: true,
+                    relatedDocumentSupport: true
+                },
+                publishDiagnostics: {
+                    relatedInformation: true,
+                    versionSupport: false,
+                    tagSupport: {
+                        valueSet: [
+                            vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.DiagnosticTag.Unnecessary,
+                            vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__.DiagnosticTag.Deprecated
+                        ]
+                    }
+                },
                 hover: {
                     dynamicRegistration: true,
                     contentFormat: [
@@ -32210,30 +32239,44 @@ class BaseService {
                         range: true
                     },
                     augmentsSyntaxTokens: true
+                },
+                codeAction: {
+                    dynamicRegistration: true
                 }
             },
             workspace: {
                 didChangeConfiguration: {
                     dynamicRegistration: true
+                },
+                executeCommand: {
+                    dynamicRegistration: true
+                },
+                applyEdit: true,
+                workspaceEdit: {
+                    failureHandling: "abort",
+                    normalizesLineEndings: false,
+                    documentChanges: false
                 }
             }
         });
         this.mode = mode;
+        this.workspaceUri = workspaceUri;
     }
 }
 
 
 /***/ }),
 
-/***/ 6297:
+/***/ 7770:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   $p: () => (/* binding */ checkValueAgainstRegexpArray),
-/* harmony export */   PM: () => (/* binding */ mergeObjects)
+/* harmony export */   Tk: () => (/* binding */ checkValueAgainstRegexpArray),
+/* harmony export */   rL: () => (/* binding */ mergeObjects)
 /* harmony export */ });
-/* unused harmony exports notEmpty, mergeRanges */
+/* unused harmony exports notEmpty, mergeRanges, convertToUri */
+
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
@@ -32302,11 +32345,18 @@ function checkValueAgainstRegexpArray(value, regexpArray) {
     }
     return false;
 }
+function convertToUri(filePath) {
+    //already URI
+    if (filePath.startsWith("file:///")) {
+        return filePath;
+    }
+    return URI.file(filePath).toString();
+}
 
 
 /***/ }),
 
-/***/ 82:
+/***/ 5272:
 /***/ ((module) => {
 
 module.exports = function isBuffer(arg) {
@@ -32318,7 +32368,7 @@ module.exports = function isBuffer(arg) {
 
 /***/ }),
 
-/***/ 4895:
+/***/ 1531:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -32327,10 +32377,10 @@ module.exports = function isBuffer(arg) {
 
 
 
-var isArgumentsObject = __webpack_require__(2635);
-var isGeneratorFunction = __webpack_require__(3138);
-var whichTypedArray = __webpack_require__(2094);
-var isTypedArray = __webpack_require__(198);
+var isArgumentsObject = __webpack_require__(5387);
+var isGeneratorFunction = __webpack_require__(2625);
+var whichTypedArray = __webpack_require__(2730);
+var isTypedArray = __webpack_require__(5943);
 
 function uncurryThis(f) {
   return f.call.bind(f);
@@ -32660,11 +32710,11 @@ exports.isAnyArrayBuffer = isAnyArrayBuffer;
 
 /***/ }),
 
-/***/ 3335:
+/***/ 6827:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
-/* provided dependency */ var process = __webpack_require__(4406);
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var process = __webpack_require__(9907);
+/* provided dependency */ var console = __webpack_require__(4364);
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -33131,7 +33181,7 @@ function reduceToSingleString(output, base, braces) {
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
-exports.types = __webpack_require__(4895);
+exports.types = __webpack_require__(1531);
 
 function isArray(ar) {
   return Array.isArray(ar);
@@ -33212,7 +33262,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(82);
+exports.isBuffer = __webpack_require__(5272);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -33256,7 +33306,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(1285);
+exports.inherits = __webpack_require__(5615);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -33384,7 +33434,7 @@ exports.callbackify = callbackify;
 
 /***/ }),
 
-/***/ 1200:
+/***/ 9208:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -33394,11 +33444,11 @@ exports.callbackify = callbackify;
  * ----------------------------------------------------------------------------------------- */
 
 
-module.exports = __webpack_require__(5953);
+module.exports = __webpack_require__(9110);
 
 /***/ }),
 
-/***/ 5953:
+/***/ 9110:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -33423,11 +33473,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createMessageConnection = exports.BrowserMessageWriter = exports.BrowserMessageReader = void 0;
-const ril_1 = __webpack_require__(3632);
+const ril_1 = __webpack_require__(3312);
 // Install the browser runtime abstract.
 ril_1.default.install();
-const api_1 = __webpack_require__(5247);
-__exportStar(__webpack_require__(5247), exports);
+const api_1 = __webpack_require__(7672);
+__exportStar(__webpack_require__(7672), exports);
 class BrowserMessageReader extends api_1.AbstractMessageReader {
     constructor(port) {
         super();
@@ -33482,18 +33532,18 @@ exports.createMessageConnection = createMessageConnection;
 
 /***/ }),
 
-/***/ 3632:
+/***/ 3312:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var console = __webpack_require__(3716);
+/* provided dependency */ var console = __webpack_require__(4364);
 
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const api_1 = __webpack_require__(5247);
+const api_1 = __webpack_require__(7672);
 class MessageBuffer extends api_1.AbstractMessageBuffer {
     constructor(encoding = 'utf-8') {
         super(encoding);
@@ -33647,7 +33697,7 @@ exports["default"] = RIL;
 
 /***/ }),
 
-/***/ 5247:
+/***/ 7672:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -33660,7 +33710,7 @@ exports["default"] = RIL;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
 exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = void 0;
-const messages_1 = __webpack_require__(9141);
+const messages_1 = __webpack_require__(7162);
 Object.defineProperty(exports, "Message", ({ enumerable: true, get: function () { return messages_1.Message; } }));
 Object.defineProperty(exports, "RequestType", ({ enumerable: true, get: function () { return messages_1.RequestType; } }));
 Object.defineProperty(exports, "RequestType0", ({ enumerable: true, get: function () { return messages_1.RequestType0; } }));
@@ -33687,32 +33737,32 @@ Object.defineProperty(exports, "NotificationType7", ({ enumerable: true, get: fu
 Object.defineProperty(exports, "NotificationType8", ({ enumerable: true, get: function () { return messages_1.NotificationType8; } }));
 Object.defineProperty(exports, "NotificationType9", ({ enumerable: true, get: function () { return messages_1.NotificationType9; } }));
 Object.defineProperty(exports, "ParameterStructures", ({ enumerable: true, get: function () { return messages_1.ParameterStructures; } }));
-const linkedMap_1 = __webpack_require__(7040);
+const linkedMap_1 = __webpack_require__(1109);
 Object.defineProperty(exports, "LinkedMap", ({ enumerable: true, get: function () { return linkedMap_1.LinkedMap; } }));
 Object.defineProperty(exports, "LRUCache", ({ enumerable: true, get: function () { return linkedMap_1.LRUCache; } }));
 Object.defineProperty(exports, "Touch", ({ enumerable: true, get: function () { return linkedMap_1.Touch; } }));
-const disposable_1 = __webpack_require__(8437);
+const disposable_1 = __webpack_require__(8844);
 Object.defineProperty(exports, "Disposable", ({ enumerable: true, get: function () { return disposable_1.Disposable; } }));
-const events_1 = __webpack_require__(5165);
+const events_1 = __webpack_require__(2479);
 Object.defineProperty(exports, "Event", ({ enumerable: true, get: function () { return events_1.Event; } }));
 Object.defineProperty(exports, "Emitter", ({ enumerable: true, get: function () { return events_1.Emitter; } }));
-const cancellation_1 = __webpack_require__(415);
+const cancellation_1 = __webpack_require__(6957);
 Object.defineProperty(exports, "CancellationTokenSource", ({ enumerable: true, get: function () { return cancellation_1.CancellationTokenSource; } }));
 Object.defineProperty(exports, "CancellationToken", ({ enumerable: true, get: function () { return cancellation_1.CancellationToken; } }));
-const sharedArrayCancellation_1 = __webpack_require__(178);
+const sharedArrayCancellation_1 = __webpack_require__(3489);
 Object.defineProperty(exports, "SharedArraySenderStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArraySenderStrategy; } }));
 Object.defineProperty(exports, "SharedArrayReceiverStrategy", ({ enumerable: true, get: function () { return sharedArrayCancellation_1.SharedArrayReceiverStrategy; } }));
-const messageReader_1 = __webpack_require__(451);
+const messageReader_1 = __webpack_require__(656);
 Object.defineProperty(exports, "MessageReader", ({ enumerable: true, get: function () { return messageReader_1.MessageReader; } }));
 Object.defineProperty(exports, "AbstractMessageReader", ({ enumerable: true, get: function () { return messageReader_1.AbstractMessageReader; } }));
 Object.defineProperty(exports, "ReadableStreamMessageReader", ({ enumerable: true, get: function () { return messageReader_1.ReadableStreamMessageReader; } }));
-const messageWriter_1 = __webpack_require__(1251);
+const messageWriter_1 = __webpack_require__(9036);
 Object.defineProperty(exports, "MessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.MessageWriter; } }));
 Object.defineProperty(exports, "AbstractMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.AbstractMessageWriter; } }));
 Object.defineProperty(exports, "WriteableStreamMessageWriter", ({ enumerable: true, get: function () { return messageWriter_1.WriteableStreamMessageWriter; } }));
-const messageBuffer_1 = __webpack_require__(8652);
+const messageBuffer_1 = __webpack_require__(9805);
 Object.defineProperty(exports, "AbstractMessageBuffer", ({ enumerable: true, get: function () { return messageBuffer_1.AbstractMessageBuffer; } }));
-const connection_1 = __webpack_require__(1908);
+const connection_1 = __webpack_require__(4054);
 Object.defineProperty(exports, "ConnectionStrategy", ({ enumerable: true, get: function () { return connection_1.ConnectionStrategy; } }));
 Object.defineProperty(exports, "ConnectionOptions", ({ enumerable: true, get: function () { return connection_1.ConnectionOptions; } }));
 Object.defineProperty(exports, "NullLogger", ({ enumerable: true, get: function () { return connection_1.NullLogger; } }));
@@ -33730,13 +33780,13 @@ Object.defineProperty(exports, "CancellationReceiverStrategy", ({ enumerable: tr
 Object.defineProperty(exports, "CancellationSenderStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationSenderStrategy; } }));
 Object.defineProperty(exports, "CancellationStrategy", ({ enumerable: true, get: function () { return connection_1.CancellationStrategy; } }));
 Object.defineProperty(exports, "MessageStrategy", ({ enumerable: true, get: function () { return connection_1.MessageStrategy; } }));
-const ral_1 = __webpack_require__(5706);
+const ral_1 = __webpack_require__(5091);
 exports.RAL = ral_1.default;
 
 
 /***/ }),
 
-/***/ 415:
+/***/ 6957:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -33747,9 +33797,9 @@ exports.RAL = ral_1.default;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CancellationTokenSource = exports.CancellationToken = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const events_1 = __webpack_require__(5165);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const events_1 = __webpack_require__(2479);
 var CancellationToken;
 (function (CancellationToken) {
     CancellationToken.None = Object.freeze({
@@ -33840,7 +33890,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
 
 /***/ }),
 
-/***/ 1908:
+/***/ 4054:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -33851,12 +33901,12 @@ exports.CancellationTokenSource = CancellationTokenSource;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const messages_1 = __webpack_require__(9141);
-const linkedMap_1 = __webpack_require__(7040);
-const events_1 = __webpack_require__(5165);
-const cancellation_1 = __webpack_require__(415);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const messages_1 = __webpack_require__(7162);
+const linkedMap_1 = __webpack_require__(1109);
+const events_1 = __webpack_require__(2479);
+const cancellation_1 = __webpack_require__(6957);
 var CancelNotification;
 (function (CancelNotification) {
     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -35060,7 +35110,7 @@ exports.createMessageConnection = createMessageConnection;
 
 /***/ }),
 
-/***/ 8437:
+/***/ 8844:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -35084,7 +35134,7 @@ var Disposable;
 
 /***/ }),
 
-/***/ 5165:
+/***/ 2479:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -35095,7 +35145,7 @@ var Disposable;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Emitter = exports.Event = void 0;
-const ral_1 = __webpack_require__(5706);
+const ral_1 = __webpack_require__(5091);
 var Event;
 (function (Event) {
     const _disposable = { dispose() { } };
@@ -35220,7 +35270,7 @@ Emitter._noop = function () { };
 
 /***/ }),
 
-/***/ 8811:
+/***/ 6618:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -35263,7 +35313,7 @@ exports.stringArray = stringArray;
 
 /***/ }),
 
-/***/ 7040:
+/***/ 1109:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -35669,7 +35719,7 @@ exports.LRUCache = LRUCache;
 
 /***/ }),
 
-/***/ 8652:
+/***/ 9805:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -35829,7 +35879,7 @@ exports.AbstractMessageBuffer = AbstractMessageBuffer;
 
 /***/ }),
 
-/***/ 451:
+/***/ 656:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -35840,10 +35890,10 @@ exports.AbstractMessageBuffer = AbstractMessageBuffer;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const events_1 = __webpack_require__(5165);
-const semaphore_1 = __webpack_require__(2339);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const events_1 = __webpack_require__(2479);
+const semaphore_1 = __webpack_require__(418);
 var MessageReader;
 (function (MessageReader) {
     function is(value) {
@@ -36029,7 +36079,7 @@ exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 
 /***/ }),
 
-/***/ 1251:
+/***/ 9036:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36040,10 +36090,10 @@ exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
-const ral_1 = __webpack_require__(5706);
-const Is = __webpack_require__(8811);
-const semaphore_1 = __webpack_require__(2339);
-const events_1 = __webpack_require__(5165);
+const ral_1 = __webpack_require__(5091);
+const Is = __webpack_require__(6618);
+const semaphore_1 = __webpack_require__(418);
+const events_1 = __webpack_require__(2479);
 const ContentLength = 'Content-Length: ';
 const CRLF = '\r\n';
 var MessageWriter;
@@ -36152,7 +36202,7 @@ exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 
 /***/ }),
 
-/***/ 9141:
+/***/ 7162:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36163,7 +36213,7 @@ exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
-const is = __webpack_require__(8811);
+const is = __webpack_require__(6618);
 /**
  * Predefined error codes.
  */
@@ -36466,7 +36516,7 @@ var Message;
 
 /***/ }),
 
-/***/ 5706:
+/***/ 5091:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -36497,7 +36547,7 @@ exports["default"] = RAL;
 
 /***/ }),
 
-/***/ 2339:
+/***/ 418:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36508,7 +36558,7 @@ exports["default"] = RAL;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Semaphore = void 0;
-const ral_1 = __webpack_require__(5706);
+const ral_1 = __webpack_require__(5091);
 class Semaphore {
     constructor(capacity = 1) {
         if (capacity <= 0) {
@@ -36573,7 +36623,7 @@ exports.Semaphore = Semaphore;
 
 /***/ }),
 
-/***/ 178:
+/***/ 3489:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36584,7 +36634,7 @@ exports.Semaphore = Semaphore;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
-const cancellation_1 = __webpack_require__(415);
+const cancellation_1 = __webpack_require__(6957);
 var CancellationState;
 (function (CancellationState) {
     CancellationState.Continue = 0;
@@ -36657,7 +36707,7 @@ exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 
 /***/ }),
 
-/***/ 294:
+/***/ 5501:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -36682,9 +36732,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createProtocolConnection = void 0;
-const browser_1 = __webpack_require__(1200);
-__exportStar(__webpack_require__(1200), exports);
-__exportStar(__webpack_require__(9372), exports);
+const browser_1 = __webpack_require__(9208);
+__exportStar(__webpack_require__(9208), exports);
+__exportStar(__webpack_require__(3147), exports);
 function createProtocolConnection(reader, writer, logger, options) {
     return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
 }
@@ -36693,7 +36743,7 @@ exports.createProtocolConnection = createProtocolConnection;
 
 /***/ }),
 
-/***/ 9372:
+/***/ 3147:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -36718,11 +36768,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LSPErrorCodes = exports.createProtocolConnection = void 0;
-__exportStar(__webpack_require__(5953), exports);
-__exportStar(__webpack_require__(4767), exports);
-__exportStar(__webpack_require__(8599), exports);
-__exportStar(__webpack_require__(6525), exports);
-var connection_1 = __webpack_require__(2798);
+__exportStar(__webpack_require__(9110), exports);
+__exportStar(__webpack_require__(7717), exports);
+__exportStar(__webpack_require__(8431), exports);
+__exportStar(__webpack_require__(1815), exports);
+var connection_1 = __webpack_require__(291);
 Object.defineProperty(exports, "createProtocolConnection", ({ enumerable: true, get: function () { return connection_1.createProtocolConnection; } }));
 var LSPErrorCodes;
 (function (LSPErrorCodes) {
@@ -36778,7 +36828,7 @@ var LSPErrorCodes;
 
 /***/ }),
 
-/***/ 2798:
+/***/ 291:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36789,7 +36839,7 @@ var LSPErrorCodes;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createProtocolConnection = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
 function createProtocolConnection(input, output, logger, options) {
     if (vscode_jsonrpc_1.ConnectionStrategy.is(options)) {
         options = { connectionStrategy: options };
@@ -36801,7 +36851,7 @@ exports.createProtocolConnection = createProtocolConnection;
 
 /***/ }),
 
-/***/ 8599:
+/***/ 8431:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36812,7 +36862,7 @@ exports.createProtocolConnection = createProtocolConnection;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ProtocolNotificationType = exports.ProtocolNotificationType0 = exports.ProtocolRequestType = exports.ProtocolRequestType0 = exports.RegistrationType = exports.MessageDirection = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
 var MessageDirection;
 (function (MessageDirection) {
     MessageDirection["clientToServer"] = "clientToServer";
@@ -36853,7 +36903,7 @@ exports.ProtocolNotificationType = ProtocolNotificationType;
 
 /***/ }),
 
-/***/ 4434:
+/***/ 7602:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36864,7 +36914,7 @@ exports.ProtocolNotificationType = ProtocolNotificationType;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.CallHierarchyPrepareRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to result a `CallHierarchyItem` in a document at a given position.
  * Can be used as an input to an incoming or outgoing call hierarchy.
@@ -36903,7 +36953,7 @@ var CallHierarchyOutgoingCallsRequest;
 
 /***/ }),
 
-/***/ 7908:
+/***/ 3747:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36914,7 +36964,7 @@ var CallHierarchyOutgoingCallsRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ColorPresentationRequest = exports.DocumentColorRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to list all color symbols found in a given text document. The request's
  * parameter is of type {@link DocumentColorParams} the
@@ -36943,7 +36993,7 @@ var ColorPresentationRequest;
 
 /***/ }),
 
-/***/ 5442:
+/***/ 7639:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36954,7 +37004,7 @@ var ColorPresentationRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ConfigurationRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 //---- Get Configuration request ----
 /**
  * The 'workspace/configuration' request is sent from the server to the client to fetch a certain
@@ -36975,7 +37025,7 @@ var ConfigurationRequest;
 
 /***/ }),
 
-/***/ 7210:
+/***/ 5581:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -36986,7 +37036,7 @@ var ConfigurationRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DeclarationRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 // @ts-ignore: to avoid inlining LocationLink as dynamic import
 let __noDynamicImport;
 /**
@@ -37006,7 +37056,7 @@ var DeclarationRequest;
 
 /***/ }),
 
-/***/ 5692:
+/***/ 1494:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37017,9 +37067,9 @@ var DeclarationRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
-const Is = __webpack_require__(2523);
-const messages_1 = __webpack_require__(8599);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
+const Is = __webpack_require__(8633);
+const messages_1 = __webpack_require__(8431);
 /**
  * @since 3.17.0
  */
@@ -37088,7 +37138,7 @@ var DiagnosticRefreshRequest;
 
 /***/ }),
 
-/***/ 6190:
+/***/ 4781:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37099,7 +37149,7 @@ var DiagnosticRefreshRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.DidRenameFilesNotification = exports.WillRenameFilesRequest = exports.DidCreateFilesNotification = exports.WillCreateFilesRequest = exports.FileOperationPatternKind = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A pattern kind describing if a glob pattern matches a file a folder or
  * both.
@@ -37197,7 +37247,7 @@ var WillDeleteFilesRequest;
 
 /***/ }),
 
-/***/ 7029:
+/***/ 1203:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37208,7 +37258,7 @@ var WillDeleteFilesRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.FoldingRangeRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide folding ranges in a document. The request's
  * parameter is of type {@link FoldingRangeParams}, the
@@ -37225,7 +37275,7 @@ var FoldingRangeRequest;
 
 /***/ }),
 
-/***/ 9380:
+/***/ 7287:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37236,7 +37286,7 @@ var FoldingRangeRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ImplementationRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 // @ts-ignore: to avoid inlining LocationLink as dynamic import
 let __noDynamicImport;
 /**
@@ -37255,7 +37305,7 @@ var ImplementationRequest;
 
 /***/ }),
 
-/***/ 6315:
+/***/ 9383:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37266,7 +37316,7 @@ var ImplementationRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide inlay hints in a document. The request's parameter is of
  * type {@link InlayHintsParams}, the response is of type
@@ -37306,7 +37356,7 @@ var InlayHintRefreshRequest;
 
 /***/ }),
 
-/***/ 7425:
+/***/ 3491:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37317,7 +37367,7 @@ var InlayHintRefreshRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.InlineValueRefreshRequest = exports.InlineValueRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide inline values in a document. The request's parameter is of
  * type {@link InlineValueParams}, the response is of type
@@ -37344,7 +37394,7 @@ var InlineValueRefreshRequest;
 
 /***/ }),
 
-/***/ 6525:
+/***/ 1815:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -37357,47 +37407,47 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WorkspaceSymbolRequest = exports.CodeActionResolveRequest = exports.CodeActionRequest = exports.DocumentSymbolRequest = exports.DocumentHighlightRequest = exports.ReferencesRequest = exports.DefinitionRequest = exports.SignatureHelpRequest = exports.SignatureHelpTriggerKind = exports.HoverRequest = exports.CompletionResolveRequest = exports.CompletionRequest = exports.CompletionTriggerKind = exports.PublishDiagnosticsNotification = exports.WatchKind = exports.RelativePattern = exports.FileChangeType = exports.DidChangeWatchedFilesNotification = exports.WillSaveTextDocumentWaitUntilRequest = exports.WillSaveTextDocumentNotification = exports.TextDocumentSaveReason = exports.DidSaveTextDocumentNotification = exports.DidCloseTextDocumentNotification = exports.DidChangeTextDocumentNotification = exports.TextDocumentContentChangeEvent = exports.DidOpenTextDocumentNotification = exports.TextDocumentSyncKind = exports.TelemetryEventNotification = exports.LogMessageNotification = exports.ShowMessageRequest = exports.ShowMessageNotification = exports.MessageType = exports.DidChangeConfigurationNotification = exports.ExitNotification = exports.ShutdownRequest = exports.InitializedNotification = exports.InitializeErrorCodes = exports.InitializeRequest = exports.WorkDoneProgressOptions = exports.TextDocumentRegistrationOptions = exports.StaticRegistrationOptions = exports.PositionEncodingKind = exports.FailureHandlingKind = exports.ResourceOperationKind = exports.UnregistrationRequest = exports.RegistrationRequest = exports.DocumentSelector = exports.NotebookCellTextDocumentFilter = exports.NotebookDocumentFilter = exports.TextDocumentFilter = void 0;
 exports.TypeHierarchySubtypesRequest = exports.TypeHierarchyPrepareRequest = exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = exports.WillDeleteFilesRequest = exports.DidDeleteFilesNotification = exports.WillRenameFilesRequest = exports.DidRenameFilesNotification = exports.WillCreateFilesRequest = exports.DidCreateFilesNotification = exports.FileOperationPatternKind = exports.LinkedEditingRangeRequest = exports.ShowDocumentRequest = exports.SemanticTokensRegistrationType = exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.TokenFormat = exports.CallHierarchyPrepareRequest = exports.CallHierarchyOutgoingCallsRequest = exports.CallHierarchyIncomingCallsRequest = exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = exports.SelectionRangeRequest = exports.DeclarationRequest = exports.FoldingRangeRequest = exports.ColorPresentationRequest = exports.DocumentColorRequest = exports.ConfigurationRequest = exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = exports.TypeDefinitionRequest = exports.ImplementationRequest = exports.ApplyWorkspaceEditRequest = exports.ExecuteCommandRequest = exports.PrepareRenameRequest = exports.RenameRequest = exports.PrepareSupportDefaultBehavior = exports.DocumentOnTypeFormattingRequest = exports.DocumentRangeFormattingRequest = exports.DocumentFormattingRequest = exports.DocumentLinkResolveRequest = exports.DocumentLinkRequest = exports.CodeLensRefreshRequest = exports.CodeLensResolveRequest = exports.CodeLensRequest = exports.WorkspaceSymbolResolveRequest = void 0;
 exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = exports.DiagnosticRefreshRequest = exports.WorkspaceDiagnosticRequest = exports.DocumentDiagnosticRequest = exports.DocumentDiagnosticReportKind = exports.DiagnosticServerCancellationData = exports.InlayHintRefreshRequest = exports.InlayHintResolveRequest = exports.InlayHintRequest = exports.InlineValueRefreshRequest = exports.InlineValueRequest = exports.TypeHierarchySupertypesRequest = void 0;
-const messages_1 = __webpack_require__(8599);
-const vscode_languageserver_types_1 = __webpack_require__(4767);
-const Is = __webpack_require__(2523);
-const protocol_implementation_1 = __webpack_require__(9380);
+const messages_1 = __webpack_require__(8431);
+const vscode_languageserver_types_1 = __webpack_require__(7717);
+const Is = __webpack_require__(8633);
+const protocol_implementation_1 = __webpack_require__(7287);
 Object.defineProperty(exports, "ImplementationRequest", ({ enumerable: true, get: function () { return protocol_implementation_1.ImplementationRequest; } }));
-const protocol_typeDefinition_1 = __webpack_require__(8642);
+const protocol_typeDefinition_1 = __webpack_require__(9264);
 Object.defineProperty(exports, "TypeDefinitionRequest", ({ enumerable: true, get: function () { return protocol_typeDefinition_1.TypeDefinitionRequest; } }));
-const protocol_workspaceFolder_1 = __webpack_require__(3402);
+const protocol_workspaceFolder_1 = __webpack_require__(6860);
 Object.defineProperty(exports, "WorkspaceFoldersRequest", ({ enumerable: true, get: function () { return protocol_workspaceFolder_1.WorkspaceFoldersRequest; } }));
 Object.defineProperty(exports, "DidChangeWorkspaceFoldersNotification", ({ enumerable: true, get: function () { return protocol_workspaceFolder_1.DidChangeWorkspaceFoldersNotification; } }));
-const protocol_configuration_1 = __webpack_require__(5442);
+const protocol_configuration_1 = __webpack_require__(7639);
 Object.defineProperty(exports, "ConfigurationRequest", ({ enumerable: true, get: function () { return protocol_configuration_1.ConfigurationRequest; } }));
-const protocol_colorProvider_1 = __webpack_require__(7908);
+const protocol_colorProvider_1 = __webpack_require__(3747);
 Object.defineProperty(exports, "DocumentColorRequest", ({ enumerable: true, get: function () { return protocol_colorProvider_1.DocumentColorRequest; } }));
 Object.defineProperty(exports, "ColorPresentationRequest", ({ enumerable: true, get: function () { return protocol_colorProvider_1.ColorPresentationRequest; } }));
-const protocol_foldingRange_1 = __webpack_require__(7029);
+const protocol_foldingRange_1 = __webpack_require__(1203);
 Object.defineProperty(exports, "FoldingRangeRequest", ({ enumerable: true, get: function () { return protocol_foldingRange_1.FoldingRangeRequest; } }));
-const protocol_declaration_1 = __webpack_require__(7210);
+const protocol_declaration_1 = __webpack_require__(5581);
 Object.defineProperty(exports, "DeclarationRequest", ({ enumerable: true, get: function () { return protocol_declaration_1.DeclarationRequest; } }));
-const protocol_selectionRange_1 = __webpack_require__(2392);
+const protocol_selectionRange_1 = __webpack_require__(1530);
 Object.defineProperty(exports, "SelectionRangeRequest", ({ enumerable: true, get: function () { return protocol_selectionRange_1.SelectionRangeRequest; } }));
-const protocol_progress_1 = __webpack_require__(7895);
+const protocol_progress_1 = __webpack_require__(4166);
 Object.defineProperty(exports, "WorkDoneProgress", ({ enumerable: true, get: function () { return protocol_progress_1.WorkDoneProgress; } }));
 Object.defineProperty(exports, "WorkDoneProgressCreateRequest", ({ enumerable: true, get: function () { return protocol_progress_1.WorkDoneProgressCreateRequest; } }));
 Object.defineProperty(exports, "WorkDoneProgressCancelNotification", ({ enumerable: true, get: function () { return protocol_progress_1.WorkDoneProgressCancelNotification; } }));
-const protocol_callHierarchy_1 = __webpack_require__(4434);
+const protocol_callHierarchy_1 = __webpack_require__(7602);
 Object.defineProperty(exports, "CallHierarchyIncomingCallsRequest", ({ enumerable: true, get: function () { return protocol_callHierarchy_1.CallHierarchyIncomingCallsRequest; } }));
 Object.defineProperty(exports, "CallHierarchyOutgoingCallsRequest", ({ enumerable: true, get: function () { return protocol_callHierarchy_1.CallHierarchyOutgoingCallsRequest; } }));
 Object.defineProperty(exports, "CallHierarchyPrepareRequest", ({ enumerable: true, get: function () { return protocol_callHierarchy_1.CallHierarchyPrepareRequest; } }));
-const protocol_semanticTokens_1 = __webpack_require__(8489);
+const protocol_semanticTokens_1 = __webpack_require__(2067);
 Object.defineProperty(exports, "TokenFormat", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.TokenFormat; } }));
 Object.defineProperty(exports, "SemanticTokensRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRequest; } }));
 Object.defineProperty(exports, "SemanticTokensDeltaRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensDeltaRequest; } }));
 Object.defineProperty(exports, "SemanticTokensRangeRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRangeRequest; } }));
 Object.defineProperty(exports, "SemanticTokensRefreshRequest", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRefreshRequest; } }));
 Object.defineProperty(exports, "SemanticTokensRegistrationType", ({ enumerable: true, get: function () { return protocol_semanticTokens_1.SemanticTokensRegistrationType; } }));
-const protocol_showDocument_1 = __webpack_require__(1541);
+const protocol_showDocument_1 = __webpack_require__(4333);
 Object.defineProperty(exports, "ShowDocumentRequest", ({ enumerable: true, get: function () { return protocol_showDocument_1.ShowDocumentRequest; } }));
-const protocol_linkedEditingRange_1 = __webpack_require__(527);
+const protocol_linkedEditingRange_1 = __webpack_require__(2249);
 Object.defineProperty(exports, "LinkedEditingRangeRequest", ({ enumerable: true, get: function () { return protocol_linkedEditingRange_1.LinkedEditingRangeRequest; } }));
-const protocol_fileOperations_1 = __webpack_require__(6190);
+const protocol_fileOperations_1 = __webpack_require__(4781);
 Object.defineProperty(exports, "FileOperationPatternKind", ({ enumerable: true, get: function () { return protocol_fileOperations_1.FileOperationPatternKind; } }));
 Object.defineProperty(exports, "DidCreateFilesNotification", ({ enumerable: true, get: function () { return protocol_fileOperations_1.DidCreateFilesNotification; } }));
 Object.defineProperty(exports, "WillCreateFilesRequest", ({ enumerable: true, get: function () { return protocol_fileOperations_1.WillCreateFilesRequest; } }));
@@ -37405,28 +37455,28 @@ Object.defineProperty(exports, "DidRenameFilesNotification", ({ enumerable: true
 Object.defineProperty(exports, "WillRenameFilesRequest", ({ enumerable: true, get: function () { return protocol_fileOperations_1.WillRenameFilesRequest; } }));
 Object.defineProperty(exports, "DidDeleteFilesNotification", ({ enumerable: true, get: function () { return protocol_fileOperations_1.DidDeleteFilesNotification; } }));
 Object.defineProperty(exports, "WillDeleteFilesRequest", ({ enumerable: true, get: function () { return protocol_fileOperations_1.WillDeleteFilesRequest; } }));
-const protocol_moniker_1 = __webpack_require__(1964);
+const protocol_moniker_1 = __webpack_require__(7684);
 Object.defineProperty(exports, "UniquenessLevel", ({ enumerable: true, get: function () { return protocol_moniker_1.UniquenessLevel; } }));
 Object.defineProperty(exports, "MonikerKind", ({ enumerable: true, get: function () { return protocol_moniker_1.MonikerKind; } }));
 Object.defineProperty(exports, "MonikerRequest", ({ enumerable: true, get: function () { return protocol_moniker_1.MonikerRequest; } }));
-const protocol_typeHierarchy_1 = __webpack_require__(5318);
+const protocol_typeHierarchy_1 = __webpack_require__(7062);
 Object.defineProperty(exports, "TypeHierarchyPrepareRequest", ({ enumerable: true, get: function () { return protocol_typeHierarchy_1.TypeHierarchyPrepareRequest; } }));
 Object.defineProperty(exports, "TypeHierarchySubtypesRequest", ({ enumerable: true, get: function () { return protocol_typeHierarchy_1.TypeHierarchySubtypesRequest; } }));
 Object.defineProperty(exports, "TypeHierarchySupertypesRequest", ({ enumerable: true, get: function () { return protocol_typeHierarchy_1.TypeHierarchySupertypesRequest; } }));
-const protocol_inlineValue_1 = __webpack_require__(7425);
+const protocol_inlineValue_1 = __webpack_require__(3491);
 Object.defineProperty(exports, "InlineValueRequest", ({ enumerable: true, get: function () { return protocol_inlineValue_1.InlineValueRequest; } }));
 Object.defineProperty(exports, "InlineValueRefreshRequest", ({ enumerable: true, get: function () { return protocol_inlineValue_1.InlineValueRefreshRequest; } }));
-const protocol_inlayHint_1 = __webpack_require__(6315);
+const protocol_inlayHint_1 = __webpack_require__(9383);
 Object.defineProperty(exports, "InlayHintRequest", ({ enumerable: true, get: function () { return protocol_inlayHint_1.InlayHintRequest; } }));
 Object.defineProperty(exports, "InlayHintResolveRequest", ({ enumerable: true, get: function () { return protocol_inlayHint_1.InlayHintResolveRequest; } }));
 Object.defineProperty(exports, "InlayHintRefreshRequest", ({ enumerable: true, get: function () { return protocol_inlayHint_1.InlayHintRefreshRequest; } }));
-const protocol_diagnostic_1 = __webpack_require__(5692);
+const protocol_diagnostic_1 = __webpack_require__(1494);
 Object.defineProperty(exports, "DiagnosticServerCancellationData", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DiagnosticServerCancellationData; } }));
 Object.defineProperty(exports, "DocumentDiagnosticReportKind", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DocumentDiagnosticReportKind; } }));
 Object.defineProperty(exports, "DocumentDiagnosticRequest", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DocumentDiagnosticRequest; } }));
 Object.defineProperty(exports, "WorkspaceDiagnosticRequest", ({ enumerable: true, get: function () { return protocol_diagnostic_1.WorkspaceDiagnosticRequest; } }));
 Object.defineProperty(exports, "DiagnosticRefreshRequest", ({ enumerable: true, get: function () { return protocol_diagnostic_1.DiagnosticRefreshRequest; } }));
-const protocol_notebook_1 = __webpack_require__(4460);
+const protocol_notebook_1 = __webpack_require__(4792);
 Object.defineProperty(exports, "NotebookCellKind", ({ enumerable: true, get: function () { return protocol_notebook_1.NotebookCellKind; } }));
 Object.defineProperty(exports, "ExecutionSummary", ({ enumerable: true, get: function () { return protocol_notebook_1.ExecutionSummary; } }));
 Object.defineProperty(exports, "NotebookCell", ({ enumerable: true, get: function () { return protocol_notebook_1.NotebookCell; } }));
@@ -38275,7 +38325,7 @@ var ApplyWorkspaceEditRequest;
 
 /***/ }),
 
-/***/ 527:
+/***/ 2249:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38286,7 +38336,7 @@ var ApplyWorkspaceEditRequest;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LinkedEditingRangeRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide ranges that can be edited together.
  *
@@ -38302,7 +38352,7 @@ var LinkedEditingRangeRequest;
 
 /***/ }),
 
-/***/ 1964:
+/***/ 7684:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38313,7 +38363,7 @@ var LinkedEditingRangeRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.MonikerRequest = exports.MonikerKind = exports.UniquenessLevel = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * Moniker uniqueness level to define scope of the moniker.
  *
@@ -38378,7 +38428,7 @@ var MonikerRequest;
 
 /***/ }),
 
-/***/ 4460:
+/***/ 4792:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38389,9 +38439,9 @@ var MonikerRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DidCloseNotebookDocumentNotification = exports.DidSaveNotebookDocumentNotification = exports.DidChangeNotebookDocumentNotification = exports.NotebookCellArrayChange = exports.DidOpenNotebookDocumentNotification = exports.NotebookDocumentSyncRegistrationType = exports.NotebookDocument = exports.NotebookCell = exports.ExecutionSummary = exports.NotebookCellKind = void 0;
-const vscode_languageserver_types_1 = __webpack_require__(4767);
-const Is = __webpack_require__(2523);
-const messages_1 = __webpack_require__(8599);
+const vscode_languageserver_types_1 = __webpack_require__(7717);
+const Is = __webpack_require__(8633);
+const messages_1 = __webpack_require__(8431);
 /**
  * A notebook cell kind.
  *
@@ -38600,7 +38650,7 @@ var DidCloseNotebookDocumentNotification;
 
 /***/ }),
 
-/***/ 7895:
+/***/ 4166:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38611,8 +38661,8 @@ var DidCloseNotebookDocumentNotification;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.WorkDoneProgressCancelNotification = exports.WorkDoneProgressCreateRequest = exports.WorkDoneProgress = void 0;
-const vscode_jsonrpc_1 = __webpack_require__(5953);
-const messages_1 = __webpack_require__(8599);
+const vscode_jsonrpc_1 = __webpack_require__(9110);
+const messages_1 = __webpack_require__(8431);
 var WorkDoneProgress;
 (function (WorkDoneProgress) {
     WorkDoneProgress.type = new vscode_jsonrpc_1.ProgressType();
@@ -38645,7 +38695,7 @@ var WorkDoneProgressCancelNotification;
 
 /***/ }),
 
-/***/ 2392:
+/***/ 1530:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38656,7 +38706,7 @@ var WorkDoneProgressCancelNotification;
  *--------------------------------------------------------------------------------------------*/
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SelectionRangeRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to provide selection ranges in a document. The request's
  * parameter is of type {@link SelectionRangeParams}, the
@@ -38673,7 +38723,7 @@ var SelectionRangeRequest;
 
 /***/ }),
 
-/***/ 8489:
+/***/ 2067:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38684,7 +38734,7 @@ var SelectionRangeRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SemanticTokensRefreshRequest = exports.SemanticTokensRangeRequest = exports.SemanticTokensDeltaRequest = exports.SemanticTokensRequest = exports.SemanticTokensRegistrationType = exports.TokenFormat = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 //------- 'textDocument/semanticTokens' -----
 var TokenFormat;
 (function (TokenFormat) {
@@ -38738,7 +38788,7 @@ var SemanticTokensRefreshRequest;
 
 /***/ }),
 
-/***/ 1541:
+/***/ 4333:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38749,7 +38799,7 @@ var SemanticTokensRefreshRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ShowDocumentRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to show a document. This request might open an
  * external program depending on the value of the URI to open.
@@ -38768,7 +38818,7 @@ var ShowDocumentRequest;
 
 /***/ }),
 
-/***/ 8642:
+/***/ 9264:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38779,7 +38829,7 @@ var ShowDocumentRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TypeDefinitionRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 // @ts-ignore: to avoid inlining LocatioLink as dynamic import
 let __noDynamicImport;
 /**
@@ -38798,7 +38848,7 @@ var TypeDefinitionRequest;
 
 /***/ }),
 
-/***/ 5318:
+/***/ 7062:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38809,7 +38859,7 @@ var TypeDefinitionRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.TypeHierarchySubtypesRequest = exports.TypeHierarchySupertypesRequest = exports.TypeHierarchyPrepareRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * A request to result a `TypeHierarchyItem` in a document at a given position.
  * Can be used as an input to a subtypes or supertypes type hierarchy.
@@ -38848,7 +38898,7 @@ var TypeHierarchySubtypesRequest;
 
 /***/ }),
 
-/***/ 3402:
+/***/ 6860:
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -38859,7 +38909,7 @@ var TypeHierarchySubtypesRequest;
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DidChangeWorkspaceFoldersNotification = exports.WorkspaceFoldersRequest = void 0;
-const messages_1 = __webpack_require__(8599);
+const messages_1 = __webpack_require__(8431);
 /**
  * The `workspace/workspaceFolders` is sent from the server to the client to fetch the open workspace folders.
  */
@@ -38883,7 +38933,7 @@ var DidChangeWorkspaceFoldersNotification;
 
 /***/ }),
 
-/***/ 2523:
+/***/ 8633:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -38937,12 +38987,12 @@ exports.objectLiteral = objectLiteral;
 
 /***/ }),
 
-/***/ 4881:
+/***/ 8778:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   n: () => (/* binding */ TextDocument)
+/* harmony export */   V: () => (/* binding */ TextDocument)
 /* harmony export */ });
 /* --------------------------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39227,7 +39277,7 @@ function getWellformedEdit(textEdit) {
 
 /***/ }),
 
-/***/ 4767:
+/***/ 7717:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -41521,20 +41571,20 @@ var Is;
 
 /***/ }),
 
-/***/ 2094:
+/***/ 2730:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
-var forEach = __webpack_require__(3243);
-var availableTypedArrays = __webpack_require__(2191);
-var callBind = __webpack_require__(9429);
-var callBound = __webpack_require__(2680);
-var gOPD = __webpack_require__(326);
+var forEach = __webpack_require__(705);
+var availableTypedArrays = __webpack_require__(4834);
+var callBind = __webpack_require__(8498);
+var callBound = __webpack_require__(9818);
+var gOPD = __webpack_require__(9336);
 
 var $toString = callBound('Object.prototype.toString');
-var hasToStringTag = __webpack_require__(7226)();
+var hasToStringTag = __webpack_require__(1913)();
 
 var g = typeof globalThis === 'undefined' ? __webpack_require__.g : globalThis;
 var typedArrays = availableTypedArrays();
@@ -41618,7 +41668,7 @@ module.exports = function whichTypedArray(value) {
 
 /***/ }),
 
-/***/ 2191:
+/***/ 4834:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -41683,6 +41733,18 @@ module.exports = function availableTypedArrays() {
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -41746,21 +41808,21 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ./src/services/base-service.ts
-var base_service = __webpack_require__(4487);
+var base_service = __webpack_require__(2125);
 // EXTERNAL MODULE: ../../node_modules/@xml-tools/parser/lib/api.js
-var api = __webpack_require__(3429);
+var api = __webpack_require__(7882);
 // EXTERNAL MODULE: ../../node_modules/@xml-tools/ast/lib/api.js
-var lib_api = __webpack_require__(6066);
+var lib_api = __webpack_require__(1542);
 // EXTERNAL MODULE: ../../node_modules/@xml-tools/constraints/lib/api.js
-var constraints_lib_api = __webpack_require__(2926);
+var constraints_lib_api = __webpack_require__(30);
 // EXTERNAL MODULE: ../../node_modules/@xml-tools/simple-schema/lib/api.js
-var simple_schema_lib_api = __webpack_require__(6565);
+var simple_schema_lib_api = __webpack_require__(7728);
 // EXTERNAL MODULE: ../../node_modules/@xml-tools/validation/lib/api.js
-var validation_lib_api = __webpack_require__(2723);
+var validation_lib_api = __webpack_require__(8737);
 // EXTERNAL MODULE: ../../node_modules/vscode-languageserver-protocol/lib/browser/main.js
-var main = __webpack_require__(294);
+var main = __webpack_require__(5501);
 // EXTERNAL MODULE: ./src/utils.ts
-var utils = __webpack_require__(6297);
+var utils = __webpack_require__(7770);
 ;// CONCATENATED MODULE: ./src/ace/range-singleton.ts
 function _define_property(obj, key, value) {
     if (key in obj) {
@@ -41847,7 +41909,7 @@ var CommonConverter;
     CommonConverter.convertKind = convertKind;
     function excludeByErrorMessage(diagnostics, errorMessagesToIgnore, fieldName = "message") {
         if (!errorMessagesToIgnore) return diagnostics;
-        return diagnostics.filter((el)=>!(0,utils/* checkValueAgainstRegexpArray */.$p)(el[fieldName], errorMessagesToIgnore));
+        return diagnostics.filter((el)=>!(0,utils/* checkValueAgainstRegexpArray */.Tk)(el[fieldName], errorMessagesToIgnore));
     }
     CommonConverter.excludeByErrorMessage = excludeByErrorMessage;
 })(CommonConverter || (CommonConverter = {}));
@@ -41902,9 +41964,9 @@ function toDiagnosticSeverity(issueSeverity) {
 }
 function determineDiagnosticSeverity(message, filterErrors, issueSeverity) {
     let severity;
-    if ((0,utils/* checkValueAgainstRegexpArray */.$p)(message, filterErrors.errorMessagesToTreatAsWarning)) {
+    if ((0,utils/* checkValueAgainstRegexpArray */.Tk)(message, filterErrors.errorMessagesToTreatAsWarning)) {
         severity = main.DiagnosticSeverity.Warning;
-    } else if ((0,utils/* checkValueAgainstRegexpArray */.$p)(message, filterErrors.errorMessagesToTreatAsInfo)) {
+    } else if ((0,utils/* checkValueAgainstRegexpArray */.Tk)(message, filterErrors.errorMessagesToTreatAsInfo)) {
         severity = main.DiagnosticSeverity.Information;
     } else {
         severity = toDiagnosticSeverity(issueSeverity);
