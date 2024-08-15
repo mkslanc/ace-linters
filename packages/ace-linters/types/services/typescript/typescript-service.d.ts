@@ -50,6 +50,7 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
             range: boolean;
             full: boolean;
         };
+        codeActionProvider: boolean;
     };
     constructor(mode: string);
     getCompilationSettings(): ts.CompilerOptions;
@@ -74,4 +75,5 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     getSemanticTokens(document: TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
 }

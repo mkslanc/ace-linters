@@ -20,6 +20,7 @@ export function createModeNameText(el, name) {
     modeName.style.margin = "0";
     modeName.style.paddingRight = "10px";
     modeName.style.float = "left";
+    modeName.id = "titleId";
     el.appendChild(modeName);
     return modeName;
 }

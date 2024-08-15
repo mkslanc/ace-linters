@@ -61,12 +61,33 @@ export function toPoint(position: Position): Ace.Point {
 }
 
 export function toAnnotations(diagnostics: Diagnostic[]): Ace.Annotation[] {
-    return diagnostics?.map((el) => {
+    return diagnostics?.map((el) => {//TODO: code errors
         return {
             row: el.range.start.line,
             column: el.range.start.character,
             text: el.message,
-            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info"
+            type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info",
+            code: el.code
+        };
+    });
+}
+
+export function fromAnnotations(annotations: Ace.Annotation[]): Diagnostic[] {
+    return annotations?.map((el) => {
+        return {
+            range: {
+                start: {
+                    line: el.row!,
+                    character: el.column!
+                },
+                end: {
+                    line: el.row!,
+                    character: el.column!
+                }
+            },
+            message: el.text,
+            severity: el.type === "error" ? 1 : el.type === "warning" ? 2 : 3,
+            code: el["code"]
         };
     });
 }

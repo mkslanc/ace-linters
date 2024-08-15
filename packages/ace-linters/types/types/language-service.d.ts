@@ -6,7 +6,7 @@ import { TextDocumentIdentifier, TextDocumentItem } from "vscode-languageserver-
 import { MarkDownConverter } from "./converters";
 export interface LanguageService {
     documents: {
-        [sessionID: string]: TextDocument;
+        [documentUri: string]: TextDocument;
     };
     $service: any;
     serviceName: string;
@@ -14,6 +14,7 @@ export interface LanguageService {
     globalOptions: any;
     serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
+    workspaceUri?: string;
     format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
     doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
     doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
@@ -22,7 +23,7 @@ export interface LanguageService {
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): any;
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): any;
     addDocument(document: TextDocumentItem): any;
-    setOptions(sessionID: string, options: ServiceOptions, merge?: boolean): any;
+    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean): any;
     setGlobalOptions(options: ServiceOptions): any;
     getDocument(uri: string): TextDocument;
     removeDocument(document: TextDocumentIdentifier): any;
@@ -30,7 +31,12 @@ export interface LanguageService {
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
+    executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
     dispose(): Promise<void>;
+    closeConnection(): Promise<void>;
+    setWorkspace(workspaceUri: string): void;
 }
 interface TooltipContent {
     type: CommonConverter.TooltipType;
@@ -172,13 +178,16 @@ export interface ProviderOptions {
         documentHighlights?: boolean;
         signatureHelp?: boolean;
         semanticTokens?: boolean;
+        codeActions?: boolean;
     };
     markdownConverter?: MarkDownConverter;
+    requireFilePath?: boolean;
+    workspacePath?: string;
 }
 export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
 export interface ServiceConfig extends BaseConfig {
     className: string;
     options?: ServiceOptions;
@@ -236,4 +245,8 @@ export type ServiceStruct = {
     modes: string;
     cdnUrl?: string;
 };
+export interface CodeActionsByService {
+    codeActions: (lsp.Command | lsp.CodeAction)[] | null;
+    service: string;
+}
 export {};

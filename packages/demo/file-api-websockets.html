@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ace linters File API Websocket demo</title>
+    <style>
+        /* Popup container - can be anything you want */
+        .popup {
+            display: block;
+            position: fixed; /* Stay in place */
+            z-index: 9999; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        /* Popup content */
+        .popup-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 15px;
+            border: 1px solid #888;
+            width: 30%; /* Could be more or less, depending on screen size */
+        }
+
+        /* Close button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .example-text {
+            font-size: 14px;
+            color: #6f6f6f;
+        }
+
+        #error_message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<!-- The Popup -->
+<div id="info-popup" class="popup" style="display: none">
+    <!-- Popup content -->
+    <div class="popup-content">
+        <h2>Don't forget to copy the full path to set workspace</h2>
+        <br/>
+        <button id="okayBtn">Okay</button>
+    </div>
+</div>
+
+<div id="workspace-popup" class="popup" style="display: none">
+    <!-- Popup content -->
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <h2>Absolute path to parent directory of workspace:</h2>
+        <div class="example-text">
+            <span>for <b>C:\projects\project-name</b></span><br/>
+            <span>e.g.: <b>C:\projects</b></span><br/>
+            <span>e.g.: <b>/home/projects</b></span>
+            <br/><br/>
+            <span id="error_message">Without correct workspace path servers (some) wouldn't locate files, which would
+                lead to errors in all capabilities</span><br/>
+        </div>
+        <br/>
+
+
+        <input type="text" id="filePath" placeholder="Enter workspace path" style="width: 80%">
+        <button id="confirmBtn">Confirm</button>
+    </div>
+</div>
+<script src="bundle.file_api_websockets_demo.js"></script>
+</body>
+</html>

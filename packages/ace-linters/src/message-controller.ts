@@ -2,88 +2,138 @@ import {Ace} from "ace-code";
 import {
     BaseMessage,
     ChangeMessage,
-    ChangeModeMessage, ChangeOptionsMessage,
+    ChangeModeMessage,
+    ChangeOptionsMessage,
     CompleteMessage,
-    DeltasMessage, CloseDocumentMessage, DocumentHighlightMessage,
-    FormatMessage, GlobalOptionsMessage,
+    DeltasMessage,
+    CloseDocumentMessage,
+    DocumentHighlightMessage,
+    FormatMessage,
+    GlobalOptionsMessage,
     HoverMessage,
-    InitMessage, MessageType,
-    ResolveCompletionMessage, SignatureHelpMessage,
+    InitMessage,
+    MessageType,
+    ResolveCompletionMessage,
+    SignatureHelpMessage,
     ConfigureFeaturesMessage,
-    ValidateMessage, DisposeMessage, GetSemanticTokensMessage
+    ValidateMessage,
+    CloseConnectionMessage,
+    GetSemanticTokensMessage,
+    GetCodeActionsMessage,
+    ExecuteCommandMessage,
+    AppliedEditMessage,
+    SetWorkspaceMessage
 } from "./message-types";
-import {IMessageController, InitCallbacks} from "./types/message-controller-interface";
+import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
-import {CompletionService, ServiceFeatures, ServiceOptions, ServiceOptionsMap, SupportedServices} from "./types/language-service";
-import EventEmitter from "events";
+import {
+    CodeActionsByService,
+    CompletionService,
+    ServiceFeatures,
+    ServiceOptions,
+    ServiceOptionsMap,
+    SupportedServices
+} from "./types/language-service";
+import type {LanguageProvider} from "./language-provider";
+import {URI} from "vscode-uri";
 
-export class MessageController extends EventEmitter implements IMessageController {
+export class MessageController implements IMessageController {
     $worker: Worker;
+    callbacks = {};
+    callbackId = 1;
+    private provider: LanguageProvider;
 
-    constructor(worker: Worker) {
-        super();
+    constructor(worker: Worker, provider: LanguageProvider) {
         this.$worker = worker;
+        this.provider = provider;
 
         this.$worker.addEventListener("message", (e) => {
-            let message = e.data;
-            this.emit(message.type + "-" + message.sessionId, message.value);
+            const message = e.data;
+            const callbackId = message.callbackId;
+
+            if (message.type === MessageType.validate || message.type === MessageType.capabilitiesChange) {
+                const sessionId = this.getSessionIdByUri(message.documentUri);
+                if (!sessionId) {
+                    return;
+                }
+                if (message.type === MessageType.validate) {
+                    this.provider.$sessionLanguageProviders[sessionId]?.$showAnnotations(message.value);
+                } else {
+                    this.provider.$sessionLanguageProviders[sessionId]?.setServerCapabilities(message.value);
+                }
+            } else if (message.type === MessageType.applyEdit) {
+                const applied = (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => {
+                    this.$worker.postMessage(new AppliedEditMessage(result, serviceName, message.callbackId));
+                }
+                this.provider.applyEdit(message.value, message.serviceName, applied);
+            } else {
+                if (this.callbacks[callbackId]) {
+                    this.callbacks[callbackId](message.value);
+                    delete this.callbacks[callbackId];
+                }
+            }
         });
 
     }
-    
-    init(sessionId: string, document: Ace.Document, mode: string, options: any, callbacks: InitCallbacks): void {
-        this.on(MessageType.validate.toString() + "-" + sessionId, callbacks.validationCallback); //TODO: need off
-        // somewhere
-        this.on(MessageType.capabilitiesChange.toString() + "-" + sessionId, callbacks.changeCapabilitiesCallback);
 
-        this.postMessage(new InitMessage(sessionId, document.getValue(), document["version"], mode, options), callbacks.initCallback);
+    private getSessionIdByUri(documentUri: lsp.DocumentUri): string | undefined {
+        if (!documentUri) {
+            return;
+        }
+        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[URI.parse(documentUri).toString()];
     }
 
-    doValidation(sessionId: string, callback?: (annotations: lsp.Diagnostic[]) => void) {
-        this.postMessage(new ValidateMessage(sessionId), callback);
+    init(documentIdentifier: ComboDocumentIdentifier, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: {
+        [serviceName: string]: lsp.ServerCapabilities
+    }) => void): void {
+        this.postMessage(new InitMessage(documentIdentifier, this.callbackId++, document.getValue(), document["version"], mode, options), initCallback);
     }
 
-    doComplete(sessionId: string, position: lsp.Position, callback?: (completions: CompletionService[]) => void) {
-        this.postMessage(new CompleteMessage(sessionId, position), callback);
+    doValidation(documentIdentifier: ComboDocumentIdentifier, callback?: (annotations: lsp.Diagnostic[]) => void) {
+        this.postMessage(new ValidateMessage(documentIdentifier, this.callbackId++), callback);
     }
 
-    doResolve(sessionId: string, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void) {
-        this.postMessage(new ResolveCompletionMessage(sessionId, completion), callback);
+    doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void) {
+        this.postMessage(new CompleteMessage(documentIdentifier, this.callbackId++, position), callback);
     }
 
-    format(sessionId: string, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void) {
-        this.postMessage(new FormatMessage(sessionId, range, format), callback);
+    doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void) {
+        this.postMessage(new ResolveCompletionMessage(documentIdentifier, this.callbackId++, completion), callback);
     }
 
-    doHover(sessionId: string, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void) {
-        this.postMessage(new HoverMessage(sessionId, position), callback)
+    format(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void) {
+        this.postMessage(new FormatMessage(documentIdentifier, this.callbackId++, range, format), callback);
     }
 
-    change(sessionId: string, deltas, document: Ace.Document, callback?: () => void) {
+    doHover(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void) {
+        this.postMessage(new HoverMessage(documentIdentifier, this.callbackId++, position), callback)
+    }
+
+    change(documentIdentifier: ComboDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void) {
         let message: BaseMessage;
         if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-            message = new ChangeMessage(sessionId, document.getValue(), document["version"]);
+            message = new ChangeMessage(documentIdentifier, this.callbackId++, document.getValue(), document["version"]);
         } else {
-            message = new DeltasMessage(sessionId, deltas, document["version"]);
+            message = new DeltasMessage(documentIdentifier, this.callbackId++, deltas, document["version"]);
         }
 
         this.postMessage(message, callback)
     }
 
-    changeMode(sessionId: string, value: string, version: number, mode: string, callback?: (capabilities) => void) {
-        this.postMessage(new ChangeModeMessage(sessionId, value, version, mode), callback);
+    changeMode(documentIdentifier: ComboDocumentIdentifier, value: string, version: number, mode: string, callback?: (capabilities) => void) {
+        this.postMessage(new ChangeModeMessage(documentIdentifier, this.callbackId++, value, version, mode), callback);
     }
 
-    changeOptions(sessionId: string, options: ServiceOptions, callback?: () => void, merge = false) {
-        this.postMessage(new ChangeOptionsMessage(sessionId, options, merge), callback);
+    changeOptions(documentIdentifier: ComboDocumentIdentifier, options: ServiceOptions, callback?: () => void, merge = false) {
+        this.postMessage(new ChangeOptionsMessage(documentIdentifier, this.callbackId++, options, merge), callback);
     }
 
-    closeDocument(sessionId: string, callback?: () => void) {
-        this.postMessage(new CloseDocumentMessage(sessionId), callback);
+    closeDocument(documentIdentifier: ComboDocumentIdentifier, callback?: () => void) {
+        this.postMessage(new CloseDocumentMessage(documentIdentifier, this.callbackId++), callback);
     }
-    
-    dispose(callback: () => void) {
-        this.postMessage(new DisposeMessage(), callback);
+
+    closeConnection(callback: () => void) {
+        this.postMessage(new CloseConnectionMessage(this.callbackId++), callback);
     }
 
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge = false) {
@@ -91,31 +141,39 @@ export class MessageController extends EventEmitter implements IMessageControlle
         this.$worker.postMessage(new GlobalOptionsMessage(serviceName, options, merge));
     }
 
-    provideSignatureHelp(sessionId: string, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void) {
-        this.postMessage(new SignatureHelpMessage(sessionId, position), callback)
+    provideSignatureHelp(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void) {
+        this.postMessage(new SignatureHelpMessage(documentIdentifier, this.callbackId++, position), callback)
     }
 
-    findDocumentHighlights(sessionId: string, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void) {
-        this.postMessage(new DocumentHighlightMessage(sessionId, position), callback)
+    findDocumentHighlights(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void) {
+        this.postMessage(new DocumentHighlightMessage(documentIdentifier, this.callbackId++, position), callback)
     }
 
     configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void {
         this.$worker.postMessage(new ConfigureFeaturesMessage(serviceName, features));
     }
 
-    getSemanticTokens(sessionId: string, range: lsp.Range,  callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
-        this.postMessage(new GetSemanticTokensMessage(sessionId, range), callback);
+    getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void) {
+        this.postMessage(new GetSemanticTokensMessage(documentIdentifier, this.callbackId++, range), callback);
     }
 
-    postMessage(message: BaseMessage, callback?: (any) => void) {
+    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: CodeActionsByService[]) => void) {
+        this.postMessage(new GetCodeActionsMessage(documentIdentifier, this.callbackId++, range, context), callback);
+    }
+
+    executeCommand(serviceName: string, command: string, args?: any[],  callback?: (result: any) => void) {
+        this.postMessage(new ExecuteCommandMessage(serviceName, this.callbackId++, command, args), callback);
+    }
+
+    setWorkspace(workspaceUri: string, callback?: () => void) {
+        this.$worker.postMessage(new SetWorkspaceMessage(workspaceUri));
+    }
+
+    postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any) => void) {
         if (callback) {
-            let eventName = message.type.toString() + "-" + message.sessionId;
-            let callbackFunction = (data) => {
-                this.off(eventName, callbackFunction);
-                callback(data);
-            }
-            this.on(eventName, callbackFunction);
+            this.callbacks[message.callbackId] = callback;
         }
         this.$worker.postMessage(message);
     }
+
 }

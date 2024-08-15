@@ -7,14 +7,26 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     abstract $service;
     serviceName: string;
     mode: string;
-    documents: { [sessionID: string]: TextDocument } = {};
-    options: { [sessionID: string]: OptionsType } = {};
+    documents: { [documentUri: lsp.DocumentUri]: TextDocument } = {};
+    options: { [documentUri: string]: OptionsType } = {};
     globalOptions: OptionsType = {} as OptionsType;
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
+    workspaceUri?: string;
     
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
+            diagnostic: {
+                dynamicRegistration: true,
+                relatedDocumentSupport: true
+            },
+            publishDiagnostics: {
+                relatedInformation: true,
+                versionSupport: false,
+                tagSupport: {
+                    valueSet: [lsp.DiagnosticTag.Unnecessary, lsp.DiagnosticTag.Deprecated]
+                }
+            },
             hover: {
                 dynamicRegistration: true,
                 contentFormat: ['markdown', 'plaintext'],
@@ -61,25 +73,35 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                     range: true
                 },
                 augmentsSyntaxTokens: true
+            },
+            codeAction: {
+                dynamicRegistration: true
             }
         },
         workspace: {
             didChangeConfiguration: {
                 dynamicRegistration: true,
             },
+            executeCommand: {
+                dynamicRegistration: true
+            },
+            applyEdit: true,
+            workspaceEdit: {
+                failureHandling: "abort",
+                normalizesLineEndings: false,
+                documentChanges: false
+            },
         } as lsp.WorkspaceClientCapabilities,
     };
 
-    protected constructor(mode: string) {
+    protected constructor(mode: string, workspaceUri?: string) {
         this.mode = mode;
+        this.workspaceUri = workspaceUri;
     }
 
     addDocument(document: lsp.TextDocumentItem) {
         this.documents[document.uri] = TextDocument.create(document.uri, document.languageId, document.version,
             (document as lsp.TextDocumentItem).text)
-        //TODO:
-        /*if (options)
-            this.setSessionOptions(sessionID, options);*/
     }
 
     getDocument(uri: string): TextDocument {
@@ -109,13 +131,18 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         this.globalOptions = options ?? {} as OptionsType;
     }
 
-    setOptions(sessionID: string, options: OptionsType, merge = false) {
-        this.options[sessionID] = merge ? mergeObjects(options, this.options[sessionID]) : options;
+
+    setWorkspace(workspaceUri: string) {
+        this.workspaceUri = workspaceUri;
     }
 
-    getOption<T extends keyof OptionsType>(sessionID: string, optionName: T): OptionsType[T] {
-        if (this.options[sessionID] && this.options[sessionID][optionName]) {
-            return this.options[sessionID][optionName];
+    setOptions(documentUri: string, options: OptionsType, merge = false) {
+        this.options[documentUri] = merge ? mergeObjects(options, this.options[documentUri]) : options;
+    }
+
+    getOption<T extends keyof OptionsType>(documentUri: string, optionName: T): OptionsType[T] {
+        if (this.options[documentUri] && this.options[documentUri][optionName]) {
+            return this.options[documentUri][optionName];
         } else {
             return this.globalOptions[optionName];
         }
@@ -174,4 +201,18 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return Promise.resolve();
     }
 
+    closeConnection() {
+        return Promise.resolve();
+    }
+
+    getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null> {
+        return Promise.resolve(null);
+    }
+
+    executeCommand(command: string, args?: any[]): Promise<any | null> {
+        return Promise.resolve(null);
+    }
+
+    sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
+    }
 }

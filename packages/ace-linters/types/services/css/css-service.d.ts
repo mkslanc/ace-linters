@@ -3,6 +3,7 @@ import { CSSFormatConfiguration } from "vscode-css-languageservice/lib/umd/cssLa
 import { BaseService } from "../base-service";
 import * as lsp from "vscode-languageserver-protocol";
 import { LanguageService } from "../../types/language-service";
+import { TextDocumentIdentifier } from "vscode-languageserver-protocol";
 export declare class CssService extends BaseService implements LanguageService {
     $service: VSLanguageService;
     $languageId: string;
@@ -20,6 +21,7 @@ export declare class CssService extends BaseService implements LanguageService {
         documentFormattingProvider: boolean;
         documentHighlightProvider: boolean;
         hoverProvider: boolean;
+        codeActionProvider: boolean;
     };
     constructor(mode: string);
     private $initLanguageService;
@@ -30,4 +32,5 @@ export declare class CssService extends BaseService implements LanguageService {
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
     doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
+    getCodeActions(document: TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
 }
