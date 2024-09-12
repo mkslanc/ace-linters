@@ -30,6 +30,17 @@ export class MarkerGroup {
     }
 
     /**
+     * Finds all markers that contain the given position.
+     * @param {Position} pos - The position to search for.
+     * @returns {Ace.MarkerGroupItem[]} - An array of all markers that contain the given position.
+     */
+    getMarkersAtPosition(pos) {
+        return this.markers.filter(function (marker) {
+            return marker.range.contains(pos.row, pos.column);
+        });
+    }
+
+    /**
      * Comparator for Array.sort function, which sorts marker definitions by their positions
      *
      * @param {Ace.MarkerGroupItem} a first marker.

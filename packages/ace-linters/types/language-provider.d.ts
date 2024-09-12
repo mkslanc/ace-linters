@@ -67,6 +67,8 @@ export declare class LanguageProvider {
     $registerEditor(editor: Ace.Editor): void;
     private $provideCodeActions;
     private $initHoverTooltip;
+    private createHoverNode;
+    private createErrorNode;
     private setStyles;
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge?: boolean): void;
     /**

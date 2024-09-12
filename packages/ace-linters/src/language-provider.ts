@@ -326,42 +326,43 @@ export class LanguageProvider {
     }
 
     private $initHoverTooltip(editor) {
+        const Range = editor.getSelectionRange().constructor;
+
         this.$hoverTooltip.setDataProvider((e, editor) => {
-            let session = editor.session;
-            let docPos = e.getDocumentPosition();
+            const session = editor.session;
+            const docPos = e.getDocumentPosition();
 
             this.doHover(session, docPos, (hover) => {
-                if (!hover)
-                    return;
-                var errorMarker = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkerAtPosition(docPos);
+                const errorMarkers = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkersAtPosition(docPos) ?? [];
+                const hasHoverContent = hover?.content;
+                if (errorMarkers.length === 0 && !hasHoverContent) return;
 
-                if (!errorMarker && !hover?.content) return;
-
-                var range = hover?.range || errorMarker?.range;
-                const Range = editor.getSelectionRange().constructor;
+                var range = hover?.range ?? errorMarkers[0]?.range;
                 range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
-                var hoverNode = hover && document.createElement("div");
-                if (hoverNode) {
-                    // todo render markdown using ace markdown mode
-                    hoverNode.innerHTML = this.getTooltipText(hover);
-                }
+                const hoverNode = hasHoverContent ? this.createHoverNode(hover) : null;
+                const errorNode = errorMarkers.length > 0 ? this.createErrorNode(errorMarkers) : null;
 
-                var domNode = document.createElement('div');
+                const domNode = document.createElement('div');
+                if (errorNode) domNode.appendChild(errorNode);
+                if (hoverNode) domNode.appendChild(hoverNode);
 
-                if (errorMarker) {
-                    var errorDiv = document.createElement('div');
-                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
-                    errorDiv.appendChild(errorText);
-                    domNode.appendChild(errorDiv);
-                }
-
-                if (hoverNode) {
-                    domNode.appendChild(hoverNode);
-                }
                 this.$hoverTooltip.showForRange(editor, range, domNode, e);
             });
         });
         this.$hoverTooltip.addToEditor(editor);
+    }
+
+
+    private createHoverNode(hover) {
+        const hoverNode = document.createElement("div");
+        hoverNode.innerHTML = this.getTooltipText(hover);
+        return hoverNode;
+    }
+
+    private createErrorNode(errorMarkers) {
+        const errorDiv = document.createElement('div');
+        errorDiv.textContent = errorMarkers.map(el => el.tooltipText.trim()).join("\n");
+        return errorDiv;
     }
 
     private setStyles(editor) {

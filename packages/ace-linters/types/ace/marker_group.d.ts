@@ -10,6 +10,12 @@ export declare class MarkerGroup {
      */
     getMarkerAtPosition(pos: any): any;
     /**
+     * Finds all markers that contain the given position.
+     * @param {Position} pos - The position to search for.
+     * @returns {Ace.MarkerGroupItem[]} - An array of all markers that contain the given position.
+     */
+    getMarkersAtPosition(pos: any): any[];
+    /**
      * Comparator for Array.sort function, which sorts marker definitions by their positions
      *
      * @param {Ace.MarkerGroupItem} a first marker.
