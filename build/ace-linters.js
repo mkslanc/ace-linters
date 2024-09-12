@@ -19457,6 +19457,15 @@ class MarkerGroup {
         });
     }
     /**
+     * Finds all markers that contain the given position.
+     * @param {Position} pos - The position to search for.
+     * @returns {Ace.MarkerGroupItem[]} - An array of all markers that contain the given position.
+     */ getMarkersAtPosition(pos) {
+        return this.markers.filter(function(marker) {
+            return marker.range.contains(pos.row, pos.column);
+        });
+    }
+    /**
      * Comparator for Array.sort function, which sorts marker definitions by their positions
      *
      * @param {Ace.MarkerGroupItem} a first marker.
@@ -20966,36 +20975,38 @@ class LanguageProvider {
         });
     }
     $initHoverTooltip(editor) {
+        const Range = editor.getSelectionRange().constructor;
         this.$hoverTooltip.setDataProvider((e, editor)=>{
-            let session = editor.session;
-            let docPos = e.getDocumentPosition();
+            const session = editor.session;
+            const docPos = e.getDocumentPosition();
             this.doHover(session, docPos, (hover)=>{
-                var _this_$getSessionLanguageProvider_state_diagnosticMarkers, _this_$getSessionLanguageProvider_state, _hover, _hover1, _errorMarker;
-                if (!hover) return;
-                var errorMarker = (_this_$getSessionLanguageProvider_state = this.$getSessionLanguageProvider(session).state) === null || _this_$getSessionLanguageProvider_state === void 0 ? void 0 : (_this_$getSessionLanguageProvider_state_diagnosticMarkers = _this_$getSessionLanguageProvider_state.diagnosticMarkers) === null || _this_$getSessionLanguageProvider_state_diagnosticMarkers === void 0 ? void 0 : _this_$getSessionLanguageProvider_state_diagnosticMarkers.getMarkerAtPosition(docPos);
-                if (!errorMarker && !((_hover = hover) === null || _hover === void 0 ? void 0 : _hover.content)) return;
-                var range = ((_hover1 = hover) === null || _hover1 === void 0 ? void 0 : _hover1.range) || ((_errorMarker = errorMarker) === null || _errorMarker === void 0 ? void 0 : _errorMarker.range);
-                const Range = editor.getSelectionRange().constructor;
+                var _this_$getSessionLanguageProvider_state_diagnosticMarkers, _this_$getSessionLanguageProvider_state, _hover, _hover1, _errorMarkers_;
+                var _this_$getSessionLanguageProvider_state_diagnosticMarkers_getMarkersAtPosition;
+                const errorMarkers = (_this_$getSessionLanguageProvider_state_diagnosticMarkers_getMarkersAtPosition = (_this_$getSessionLanguageProvider_state = this.$getSessionLanguageProvider(session).state) === null || _this_$getSessionLanguageProvider_state === void 0 ? void 0 : (_this_$getSessionLanguageProvider_state_diagnosticMarkers = _this_$getSessionLanguageProvider_state.diagnosticMarkers) === null || _this_$getSessionLanguageProvider_state_diagnosticMarkers === void 0 ? void 0 : _this_$getSessionLanguageProvider_state_diagnosticMarkers.getMarkersAtPosition(docPos)) !== null && _this_$getSessionLanguageProvider_state_diagnosticMarkers_getMarkersAtPosition !== void 0 ? _this_$getSessionLanguageProvider_state_diagnosticMarkers_getMarkersAtPosition : [];
+                const hasHoverContent = (_hover = hover) === null || _hover === void 0 ? void 0 : _hover.content;
+                if (errorMarkers.length === 0 && !hasHoverContent) return;
+                var _hover_range;
+                var range = (_hover_range = (_hover1 = hover) === null || _hover1 === void 0 ? void 0 : _hover1.range) !== null && _hover_range !== void 0 ? _hover_range : (_errorMarkers_ = errorMarkers[0]) === null || _errorMarkers_ === void 0 ? void 0 : _errorMarkers_.range;
                 range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
-                var hoverNode = hover && document.createElement("div");
-                if (hoverNode) {
-                    // todo render markdown using ace markdown mode
-                    hoverNode.innerHTML = this.getTooltipText(hover);
-                }
-                var domNode = document.createElement('div');
-                if (errorMarker) {
-                    var errorDiv = document.createElement('div');
-                    var errorText = document.createTextNode(errorMarker.tooltipText.trim());
-                    errorDiv.appendChild(errorText);
-                    domNode.appendChild(errorDiv);
-                }
-                if (hoverNode) {
-                    domNode.appendChild(hoverNode);
-                }
+                const hoverNode = hasHoverContent ? this.createHoverNode(hover) : null;
+                const errorNode = errorMarkers.length > 0 ? this.createErrorNode(errorMarkers) : null;
+                const domNode = document.createElement('div');
+                if (errorNode) domNode.appendChild(errorNode);
+                if (hoverNode) domNode.appendChild(hoverNode);
                 this.$hoverTooltip.showForRange(editor, range, domNode, e);
             });
         });
         this.$hoverTooltip.addToEditor(editor);
+    }
+    createHoverNode(hover) {
+        const hoverNode = document.createElement("div");
+        hoverNode.innerHTML = this.getTooltipText(hover);
+        return hoverNode;
+    }
+    createErrorNode(errorMarkers) {
+        const errorDiv = document.createElement('div');
+        errorDiv.textContent = errorMarkers.map((el)=>el.tooltipText.trim()).join("\n");
+        return errorDiv;
     }
     setStyles(editor) {
         if (!this.stylesEmbedded) {
