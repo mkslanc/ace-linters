@@ -143,18 +143,21 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
     }
 
     $getDocument(fileName: string): string | undefined {
-        let text: string;
-        let document = this.getDocument(fileName);
+        const fileNameWithoutUri = fileName.replace("file:///", "");
+        let document = this.getDocument(fileName) ?? this.getDocument(fileNameWithoutUri);
         if (document) {
-            text = document.getText();
-        } else if (fileName in libFileMap) {
-            text = libFileMap[fileName];
-        } else if (fileName in this.$extraLibs) {
-            text = this.$extraLibs[fileName].content;
-        } else {
-            return;
+            return document.getText();
         }
-        return text;
+        if (fileName in libFileMap) {
+            return libFileMap[fileName];
+        }
+        if (fileName in this.$extraLibs) {
+            return this.$extraLibs[fileName].content;
+        }
+        if (fileNameWithoutUri in this.$extraLibs) {
+            return this.$extraLibs[fileNameWithoutUri].content;
+        }
+        return;
     }
 
     getScriptKind?(fileName: string): ts.ScriptKind {

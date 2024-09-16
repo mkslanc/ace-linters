@@ -51,6 +51,16 @@ export function createEditorWithLSP(mode, i: number, languageProvider: LanguageP
 
     let options = mode.options ?? {};
     languageProvider.setSessionOptions(editor.session, options);
+    
+    
+    /**
+     * Sets the file path for the current editor session.
+     * This allows the language provider to associate the editor session with a specific file path,
+     * which can be useful for features like code formatting, diagnostics, and other language-specific functionality.
+     */
+    if (mode.filePath) {
+        languageProvider.setSessionFilePath(editor.session, mode.filePath);
+    }
 
     closeButton.onclick = () => {
         languageProvider.closeDocument(editor.session);
