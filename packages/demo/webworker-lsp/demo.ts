@@ -26,12 +26,12 @@ let modes = [
     {name: "css", mode: "ace/mode/css", content: cssContent},
     {name: "less", mode: "ace/mode/less", content: lessContent},
     {name: "scss", mode: "ace/mode/scss", content: scssContent},
-    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent},
+    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent, filePath: "someLibDir/index.ts"},
     {name: "python", mode: "ace/mode/python", content: pythonContent},
     /*{name: "svelte", mode: "ace/mode/html", content: svelteContent},
     {name: "astro", mode: "ace/mode/astro", content: svelteContent},
     {name: "golang", mode: "ace/mode/golang", content: svelteContent},*/
-    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent1},
+    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent1, filePath: "anotherFile.ts"},
     {name: "javascript", mode: "ace/mode/javascript", content: jsContent},
     {name: "tsx", mode: "ace/mode/tsx", content: tsxContent},
     {name: "jsx", mode: "ace/mode/javascript", content: jsxContent, options: {jsx: true}}, //TODO:
@@ -57,8 +57,29 @@ languageProvider.setGlobalOptions("json", {
 languageProvider.setGlobalOptions("typescript", {
     errorCodesToTreatAsWarning: [
         "2540"
-    ]
+    ],
+    extraLibs: {
+        "libDeclaration.d.ts": {
+            content:
+                `declare class ChainableOne {
+    chainableTwo: ChainableTwo;
+    setAlpha(value: string): this;
+    setBeta(value: number): ChainableTwo;
+}
+
+declare class ChainableTwo {
+    setGamma(value: boolean): this;
+    addAlpha(value: string): ChainableOne;
+}`,
+            version: 1
+        },
+        "dir/file.ts": {
+            content: "export var data = new ChainableOne();",
+            version: 1
+        }
+    }
 });
+
 
 languageProvider.setGlobalOptions("javascript", {
     errorMessagesToTreatAsInfo: [
