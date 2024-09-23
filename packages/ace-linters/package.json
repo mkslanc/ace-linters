@@ -23,7 +23,7 @@
   "dependencies": {
     "vscode-html-languageservice": "^5.0.6",
     "vscode-css-languageservice": "^6.2.6",
-    "vscode-json-languageservice": "^5.3.5",
+    "vscode-json-languageservice": "^5.4.1",
     "vscode-languageserver-protocol": "^3.17.3",
     "vscode-languageserver-textdocument": "^1.0.8",
     "vscode-languageserver-types": "^3.17.3",
@@ -46,7 +46,7 @@
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
-    "puppeteer": "^19.9.1",
+    "puppeteer": "^23.4.0",
     "http-server": "^14.1.1"
   },
   "main": "build/ace-linters.js",

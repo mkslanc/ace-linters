@@ -1,5 +1,5 @@
 import {
-    LanguageService as VSLanguageService,
+    LanguageService as JsonLanguageService,
     SchemaConfiguration
 } from "vscode-json-languageservice";
 import {BaseService} from "../base-service";
@@ -11,7 +11,7 @@ import {JsonServiceOptions, LanguageService} from "../../types/language-service"
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class JsonService extends BaseService<JsonServiceOptions> implements LanguageService {
-    $service: VSLanguageService;
+    $service: JsonLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 
     serviceCapabilities = {
@@ -35,31 +35,39 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
                 let jsonSchema = this.schemas[uri];
                 if (jsonSchema)
                     return Promise.resolve(jsonSchema);
+                if (typeof fetch !== 'undefined' && /^https?:\/\//.test(uri)) {
+                    return fetch(uri).then((response) => response.text());
+                }
+                
                 return Promise.reject(`Unable to load schema at ${uri}`);
             }
         });
     }
 
-    private $getJsonSchemaUri(sessionID): string | undefined {
-        return this.getOption(sessionID, "schemaUri");
+    private $getJsonSchemaUri(documentUri: string): string | undefined {
+        return this.getOption(documentUri, "schemaUri");
     }
 
     addDocument(document: TextDocumentItem) {
         super.addDocument(document);
         this.$configureService(document.uri);
     }
-
-    private $configureService(sessionID?: string) {
-        let schemas = this.getOption(sessionID ?? "", "schemas");
-        let sessionIDs = sessionID ? [] : Object.keys(this.documents);
+    
+    getSchemaOption(documentUri?: string) {
+        return this.getOption(documentUri ?? "", "schemas");
+    }
+    
+    private $configureService(documentUri?: string) {
+        let schemas = this.getSchemaOption(documentUri);
+        let sessionIDs = documentUri ? [] : Object.keys(this.documents);
         schemas?.forEach((el) => {
-            if (sessionID) {
-                if (this.$getJsonSchemaUri(sessionID) == el.uri) {
+            if (documentUri) {
+                if (this.$getJsonSchemaUri(documentUri) == el.uri) {
                     el.fileMatch ??= [];
-                    el.fileMatch.push(sessionID);
+                    el.fileMatch.push(documentUri);
                 }
             } else {
-                el.fileMatch = sessionIDs.filter(sessionID => this.$getJsonSchemaUri(sessionID) == el.uri);
+                el.fileMatch = sessionIDs.filter(documentUri => this.$getJsonSchemaUri(documentUri) == el.uri);
             }
             let schema = el.schema ?? this.schemas[el.uri];
             if (schema)
@@ -68,11 +76,16 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
             el.schema = undefined;
         });
 
+        this.$configureJsonService(schemas as SchemaConfiguration[]);
+
+    }
+    
+    $configureJsonService(schemas: SchemaConfiguration[]) {
         this.$service.configure({
             schemas: schemas as SchemaConfiguration[],
-            allowComments: this.mode === "json5"
+            allowComments: this.mode === "json5",
+            validate: true
         });
-
     }
 
     removeDocument(document: TextDocumentIdentifier) {
@@ -83,15 +96,12 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
                 el.fileMatch = el.fileMatch?.filter((pattern) => pattern != document.uri);
             }
         });
-        this.$service.configure({
-            schemas: schemas as SchemaConfiguration[],
-            allowComments: this.mode === "json5"
-        });
+        this.$configureJsonService(schemas as SchemaConfiguration[]);
     }
 
-    setOptions(sessionID: string, options: JsonServiceOptions, merge = false) {
-        super.setOptions(sessionID, options, merge);
-        this.$configureService(sessionID);
+    setOptions(documentUri: string, options: JsonServiceOptions, merge = false) {
+        super.setOptions(documentUri, options, merge);
+        this.$configureService(documentUri);
     }
 
     setGlobalOptions(options: JsonServiceOptions) {
@@ -132,7 +142,8 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
             return null;
 
         let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        return this.$service.doComplete(fullDocument, position, jsonDocument);
+        const completions = await this.$service.doComplete(fullDocument, position, jsonDocument);
+        return completions;
     }
 
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem> {
