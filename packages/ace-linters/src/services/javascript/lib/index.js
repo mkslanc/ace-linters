@@ -522,6 +522,62 @@ var require_shams2 = __commonJS({
   }
 });
 
+// ../../node_modules/es-errors/index.js
+var require_es_errors = __commonJS({
+  "../../node_modules/es-errors/index.js"(exports, module) {
+    "use strict";
+    module.exports = Error;
+  }
+});
+
+// ../../node_modules/es-errors/eval.js
+var require_eval = __commonJS({
+  "../../node_modules/es-errors/eval.js"(exports, module) {
+    "use strict";
+    module.exports = EvalError;
+  }
+});
+
+// ../../node_modules/es-errors/range.js
+var require_range = __commonJS({
+  "../../node_modules/es-errors/range.js"(exports, module) {
+    "use strict";
+    module.exports = RangeError;
+  }
+});
+
+// ../../node_modules/es-errors/ref.js
+var require_ref = __commonJS({
+  "../../node_modules/es-errors/ref.js"(exports, module) {
+    "use strict";
+    module.exports = ReferenceError;
+  }
+});
+
+// ../../node_modules/es-errors/syntax.js
+var require_syntax = __commonJS({
+  "../../node_modules/es-errors/syntax.js"(exports, module) {
+    "use strict";
+    module.exports = SyntaxError;
+  }
+});
+
+// ../../node_modules/es-errors/type.js
+var require_type = __commonJS({
+  "../../node_modules/es-errors/type.js"(exports, module) {
+    "use strict";
+    module.exports = TypeError;
+  }
+});
+
+// ../../node_modules/es-errors/uri.js
+var require_uri = __commonJS({
+  "../../node_modules/es-errors/uri.js"(exports, module) {
+    "use strict";
+    module.exports = URIError;
+  }
+});
+
 // ../../node_modules/has-symbols/index.js
 var require_has_symbols = __commonJS({
   "../../node_modules/has-symbols/index.js"(exports, module) {
@@ -565,39 +621,65 @@ var require_implementation = __commonJS({
   "../../node_modules/function-bind/implementation.js"(exports, module) {
     "use strict";
     var ERROR_MESSAGE = "Function.prototype.bind called on incompatible ";
-    var slice = Array.prototype.slice;
     var toStr = Object.prototype.toString;
+    var max = Math.max;
     var funcType = "[object Function]";
+    var concatty = function concatty2(a, b) {
+      var arr = [];
+      for (var i = 0; i < a.length; i += 1) {
+        arr[i] = a[i];
+      }
+      for (var j = 0; j < b.length; j += 1) {
+        arr[j + a.length] = b[j];
+      }
+      return arr;
+    };
+    var slicy = function slicy2(arrLike, offset) {
+      var arr = [];
+      for (var i = offset || 0, j = 0; i < arrLike.length; i += 1, j += 1) {
+        arr[j] = arrLike[i];
+      }
+      return arr;
+    };
+    var joiny = function(arr, joiner) {
+      var str = "";
+      for (var i = 0; i < arr.length; i += 1) {
+        str += arr[i];
+        if (i + 1 < arr.length) {
+          str += joiner;
+        }
+      }
+      return str;
+    };
     module.exports = function bind(that) {
       var target = this;
-      if (typeof target !== "function" || toStr.call(target) !== funcType) {
+      if (typeof target !== "function" || toStr.apply(target) !== funcType) {
         throw new TypeError(ERROR_MESSAGE + target);
       }
-      var args = slice.call(arguments, 1);
+      var args = slicy(arguments, 1);
       var bound;
       var binder = function() {
         if (this instanceof bound) {
           var result = target.apply(
             this,
-            args.concat(slice.call(arguments))
+            concatty(args, arguments)
           );
           if (Object(result) === result) {
             return result;
           }
           return this;
-        } else {
-          return target.apply(
-            that,
-            args.concat(slice.call(arguments))
-          );
         }
+        return target.apply(
+          that,
+          concatty(args, arguments)
+        );
       };
-      var boundLength = Math.max(0, target.length - args.length);
+      var boundLength = max(0, target.length - args.length);
       var boundArgs = [];
       for (var i = 0; i < boundLength; i++) {
-        boundArgs.push("$" + i);
+        boundArgs[i] = "$" + i;
       }
-      bound = Function("binder", "return function (" + boundArgs.join(",") + "){ return binder.apply(this,arguments); }")(binder);
+      bound = Function("binder", "return function (" + joiny(boundArgs, ",") + "){ return binder.apply(this,arguments); }")(binder);
       if (target.prototype) {
         var Empty = function Empty2() {
         };
@@ -619,12 +701,14 @@ var require_function_bind = __commonJS({
   }
 });
 
-// ../../node_modules/has/src/index.js
-var require_src = __commonJS({
-  "../../node_modules/has/src/index.js"(exports, module) {
+// ../../node_modules/hasown/index.js
+var require_hasown = __commonJS({
+  "../../node_modules/hasown/index.js"(exports, module) {
     "use strict";
+    var call = Function.prototype.call;
+    var $hasOwn = Object.prototype.hasOwnProperty;
     var bind = require_function_bind();
-    module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
+    module.exports = bind.call(call, $hasOwn);
   }
 });
 
@@ -633,9 +717,14 @@ var require_get_intrinsic = __commonJS({
   "../../node_modules/get-intrinsic/index.js"(exports, module) {
     "use strict";
     var undefined2;
-    var $SyntaxError = SyntaxError;
+    var $Error = require_es_errors();
+    var $EvalError = require_eval();
+    var $RangeError = require_range();
+    var $ReferenceError = require_ref();
+    var $SyntaxError = require_syntax();
+    var $TypeError = require_type();
+    var $URIError = require_uri();
     var $Function = Function;
-    var $TypeError = TypeError;
     var getEvalledConstructor = function(expressionSyntax) {
       try {
         return $Function('"use strict"; return (' + expressionSyntax + ").constructor;")();
@@ -673,6 +762,7 @@ var require_get_intrinsic = __commonJS({
     var needsEval = {};
     var TypedArray = typeof Uint8Array === "undefined" || !getProto ? undefined2 : getProto(Uint8Array);
     var INTRINSICS = {
+      __proto__: null,
       "%AggregateError%": typeof AggregateError === "undefined" ? undefined2 : AggregateError,
       "%Array%": Array,
       "%ArrayBuffer%": typeof ArrayBuffer === "undefined" ? undefined2 : ArrayBuffer,
@@ -693,10 +783,10 @@ var require_get_intrinsic = __commonJS({
       "%decodeURIComponent%": decodeURIComponent,
       "%encodeURI%": encodeURI,
       "%encodeURIComponent%": encodeURIComponent,
-      "%Error%": Error,
+      "%Error%": $Error,
       "%eval%": eval,
       // eslint-disable-line no-eval
-      "%EvalError%": EvalError,
+      "%EvalError%": $EvalError,
       "%Float32Array%": typeof Float32Array === "undefined" ? undefined2 : Float32Array,
       "%Float64Array%": typeof Float64Array === "undefined" ? undefined2 : Float64Array,
       "%FinalizationRegistry%": typeof FinalizationRegistry === "undefined" ? undefined2 : FinalizationRegistry,
@@ -718,8 +808,8 @@ var require_get_intrinsic = __commonJS({
       "%parseInt%": parseInt,
       "%Promise%": typeof Promise === "undefined" ? undefined2 : Promise,
       "%Proxy%": typeof Proxy === "undefined" ? undefined2 : Proxy,
-      "%RangeError%": RangeError,
-      "%ReferenceError%": ReferenceError,
+      "%RangeError%": $RangeError,
+      "%ReferenceError%": $ReferenceError,
       "%Reflect%": typeof Reflect === "undefined" ? undefined2 : Reflect,
       "%RegExp%": RegExp,
       "%Set%": typeof Set === "undefined" ? undefined2 : Set,
@@ -736,7 +826,7 @@ var require_get_intrinsic = __commonJS({
       "%Uint8ClampedArray%": typeof Uint8ClampedArray === "undefined" ? undefined2 : Uint8ClampedArray,
       "%Uint16Array%": typeof Uint16Array === "undefined" ? undefined2 : Uint16Array,
       "%Uint32Array%": typeof Uint32Array === "undefined" ? undefined2 : Uint32Array,
-      "%URIError%": URIError,
+      "%URIError%": $URIError,
       "%WeakMap%": typeof WeakMap === "undefined" ? undefined2 : WeakMap,
       "%WeakRef%": typeof WeakRef === "undefined" ? undefined2 : WeakRef,
       "%WeakSet%": typeof WeakSet === "undefined" ? undefined2 : WeakSet
@@ -773,6 +863,7 @@ var require_get_intrinsic = __commonJS({
       return value;
     };
     var LEGACY_ALIASES = {
+      __proto__: null,
       "%ArrayBufferPrototype%": ["ArrayBuffer", "prototype"],
       "%ArrayPrototype%": ["Array", "prototype"],
       "%ArrayProto_entries%": ["Array", "prototype", "entries"],
@@ -826,7 +917,7 @@ var require_get_intrinsic = __commonJS({
       "%WeakSetPrototype%": ["WeakSet", "prototype"]
     };
     var bind = require_function_bind();
-    var hasOwn = require_src();
+    var hasOwn = require_hasown();
     var $concat = bind.call(Function.call, Array.prototype.concat);
     var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
     var $replace = bind.call(Function.call, String.prototype.replace);
@@ -935,38 +1026,186 @@ var require_get_intrinsic = __commonJS({
   }
 });
 
+// ../../node_modules/es-define-property/index.js
+var require_es_define_property = __commonJS({
+  "../../node_modules/es-define-property/index.js"(exports, module) {
+    "use strict";
+    var GetIntrinsic = require_get_intrinsic();
+    var $defineProperty = GetIntrinsic("%Object.defineProperty%", true) || false;
+    if ($defineProperty) {
+      try {
+        $defineProperty({}, "a", { value: 1 });
+      } catch (e) {
+        $defineProperty = false;
+      }
+    }
+    module.exports = $defineProperty;
+  }
+});
+
+// ../../node_modules/gopd/index.js
+var require_gopd = __commonJS({
+  "../../node_modules/gopd/index.js"(exports, module) {
+    "use strict";
+    var GetIntrinsic = require_get_intrinsic();
+    var $gOPD = GetIntrinsic("%Object.getOwnPropertyDescriptor%", true);
+    if ($gOPD) {
+      try {
+        $gOPD([], "length");
+      } catch (e) {
+        $gOPD = null;
+      }
+    }
+    module.exports = $gOPD;
+  }
+});
+
+// ../../node_modules/define-data-property/index.js
+var require_define_data_property = __commonJS({
+  "../../node_modules/define-data-property/index.js"(exports, module) {
+    "use strict";
+    var $defineProperty = require_es_define_property();
+    var $SyntaxError = require_syntax();
+    var $TypeError = require_type();
+    var gopd = require_gopd();
+    module.exports = function defineDataProperty(obj, property, value) {
+      if (!obj || typeof obj !== "object" && typeof obj !== "function") {
+        throw new $TypeError("`obj` must be an object or a function`");
+      }
+      if (typeof property !== "string" && typeof property !== "symbol") {
+        throw new $TypeError("`property` must be a string or a symbol`");
+      }
+      if (arguments.length > 3 && typeof arguments[3] !== "boolean" && arguments[3] !== null) {
+        throw new $TypeError("`nonEnumerable`, if provided, must be a boolean or null");
+      }
+      if (arguments.length > 4 && typeof arguments[4] !== "boolean" && arguments[4] !== null) {
+        throw new $TypeError("`nonWritable`, if provided, must be a boolean or null");
+      }
+      if (arguments.length > 5 && typeof arguments[5] !== "boolean" && arguments[5] !== null) {
+        throw new $TypeError("`nonConfigurable`, if provided, must be a boolean or null");
+      }
+      if (arguments.length > 6 && typeof arguments[6] !== "boolean") {
+        throw new $TypeError("`loose`, if provided, must be a boolean");
+      }
+      var nonEnumerable = arguments.length > 3 ? arguments[3] : null;
+      var nonWritable = arguments.length > 4 ? arguments[4] : null;
+      var nonConfigurable = arguments.length > 5 ? arguments[5] : null;
+      var loose = arguments.length > 6 ? arguments[6] : false;
+      var desc = !!gopd && gopd(obj, property);
+      if ($defineProperty) {
+        $defineProperty(obj, property, {
+          configurable: nonConfigurable === null && desc ? desc.configurable : !nonConfigurable,
+          enumerable: nonEnumerable === null && desc ? desc.enumerable : !nonEnumerable,
+          value,
+          writable: nonWritable === null && desc ? desc.writable : !nonWritable
+        });
+      } else if (loose || !nonEnumerable && !nonWritable && !nonConfigurable) {
+        obj[property] = value;
+      } else {
+        throw new $SyntaxError("This environment does not support defining a property as non-configurable, non-writable, or non-enumerable.");
+      }
+    };
+  }
+});
+
+// ../../node_modules/has-property-descriptors/index.js
+var require_has_property_descriptors = __commonJS({
+  "../../node_modules/has-property-descriptors/index.js"(exports, module) {
+    "use strict";
+    var $defineProperty = require_es_define_property();
+    var hasPropertyDescriptors = function hasPropertyDescriptors2() {
+      return !!$defineProperty;
+    };
+    hasPropertyDescriptors.hasArrayLengthDefineBug = function hasArrayLengthDefineBug() {
+      if (!$defineProperty) {
+        return null;
+      }
+      try {
+        return $defineProperty([], "length", { value: 1 }).length !== 1;
+      } catch (e) {
+        return true;
+      }
+    };
+    module.exports = hasPropertyDescriptors;
+  }
+});
+
+// ../../node_modules/set-function-length/index.js
+var require_set_function_length = __commonJS({
+  "../../node_modules/set-function-length/index.js"(exports, module) {
+    "use strict";
+    var GetIntrinsic = require_get_intrinsic();
+    var define2 = require_define_data_property();
+    var hasDescriptors = require_has_property_descriptors()();
+    var gOPD = require_gopd();
+    var $TypeError = require_type();
+    var $floor = GetIntrinsic("%Math.floor%");
+    module.exports = function setFunctionLength(fn, length) {
+      if (typeof fn !== "function") {
+        throw new $TypeError("`fn` is not a function");
+      }
+      if (typeof length !== "number" || length < 0 || length > 4294967295 || $floor(length) !== length) {
+        throw new $TypeError("`length` must be a positive 32-bit integer");
+      }
+      var loose = arguments.length > 2 && !!arguments[2];
+      var functionLengthIsConfigurable = true;
+      var functionLengthIsWritable = true;
+      if ("length" in fn && gOPD) {
+        var desc = gOPD(fn, "length");
+        if (desc && !desc.configurable) {
+          functionLengthIsConfigurable = false;
+        }
+        if (desc && !desc.writable) {
+          functionLengthIsWritable = false;
+        }
+      }
+      if (functionLengthIsConfigurable || functionLengthIsWritable || !loose) {
+        if (hasDescriptors) {
+          define2(
+            /** @type {Parameters<define>[0]} */
+            fn,
+            "length",
+            length,
+            true,
+            true
+          );
+        } else {
+          define2(
+            /** @type {Parameters<define>[0]} */
+            fn,
+            "length",
+            length
+          );
+        }
+      }
+      return fn;
+    };
+  }
+});
+
 // ../../node_modules/call-bind/index.js
 var require_call_bind = __commonJS({
   "../../node_modules/call-bind/index.js"(exports, module) {
     "use strict";
     var bind = require_function_bind();
     var GetIntrinsic = require_get_intrinsic();
+    var setFunctionLength = require_set_function_length();
+    var $TypeError = require_type();
     var $apply = GetIntrinsic("%Function.prototype.apply%");
     var $call = GetIntrinsic("%Function.prototype.call%");
     var $reflectApply = GetIntrinsic("%Reflect.apply%", true) || bind.call($call, $apply);
-    var $gOPD = GetIntrinsic("%Object.getOwnPropertyDescriptor%", true);
-    var $defineProperty = GetIntrinsic("%Object.defineProperty%", true);
+    var $defineProperty = require_es_define_property();
     var $max = GetIntrinsic("%Math.max%");
-    if ($defineProperty) {
-      try {
-        $defineProperty({}, "a", { value: 1 });
-      } catch (e) {
-        $defineProperty = null;
-      }
-    }
     module.exports = function callBind(originalFunction) {
-      var func = $reflectApply(bind, $call, arguments);
-      if ($gOPD && $defineProperty) {
-        var desc = $gOPD(func, "length");
-        if (desc.configurable) {
-          $defineProperty(
-            func,
-            "length",
-            { value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) }
-          );
-        }
+      if (typeof originalFunction !== "function") {
+        throw new $TypeError("a function is required");
       }
-      return func;
+      var func = $reflectApply(bind, $call, arguments);
+      return setFunctionLength(
+        func,
+        1 + $max(0, originalFunction.length - (arguments.length - 1)),
+        true
+      );
     };
     var applyBind = function applyBind2() {
       return $reflectApply(bind, $apply, arguments);
@@ -1268,23 +1507,6 @@ var require_available_typed_arrays = __commonJS({
       }
       return out;
     };
-  }
-});
-
-// ../../node_modules/gopd/index.js
-var require_gopd = __commonJS({
-  "../../node_modules/gopd/index.js"(exports, module) {
-    "use strict";
-    var GetIntrinsic = require_get_intrinsic();
-    var $gOPD = GetIntrinsic("%Object.getOwnPropertyDescriptor%", true);
-    if ($gOPD) {
-      try {
-        $gOPD([], "length");
-      } catch (e) {
-        $gOPD = null;
-      }
-    }
-    module.exports = $gOPD;
   }
 });
 
@@ -3121,37 +3343,6 @@ var require_object_keys = __commonJS({
       return Object.keys || keysShim;
     };
     module.exports = keysShim;
-  }
-});
-
-// ../../node_modules/has-property-descriptors/index.js
-var require_has_property_descriptors = __commonJS({
-  "../../node_modules/has-property-descriptors/index.js"(exports, module) {
-    "use strict";
-    var GetIntrinsic = require_get_intrinsic();
-    var $defineProperty = GetIntrinsic("%Object.defineProperty%", true);
-    var hasPropertyDescriptors = function hasPropertyDescriptors2() {
-      if ($defineProperty) {
-        try {
-          $defineProperty({}, "a", { value: 1 });
-          return true;
-        } catch (e) {
-          return false;
-        }
-      }
-      return false;
-    };
-    hasPropertyDescriptors.hasArrayLengthDefineBug = function hasArrayLengthDefineBug() {
-      if (!hasPropertyDescriptors()) {
-        return null;
-      }
-      try {
-        return $defineProperty([], "length", { value: 1 }).length !== 1;
-      } catch (e) {
-        return true;
-      }
-    };
-    module.exports = hasPropertyDescriptors;
   }
 });
 
@@ -17590,7 +17781,7 @@ var require_formats = __commonJS({
 });
 
 // ../../node_modules/ajv/lib/dotjs/ref.js
-var require_ref = __commonJS({
+var require_ref2 = __commonJS({
   "../../node_modules/ajv/lib/dotjs/ref.js"(exports, module) {
     "use strict";
     module.exports = function generate_ref(it, $keyword, $ruleType) {
@@ -20124,7 +20315,7 @@ var require_dotjs = __commonJS({
   "../../node_modules/ajv/lib/dotjs/index.js"(exports, module) {
     "use strict";
     module.exports = {
-      "$ref": require_ref(),
+      "$ref": require_ref2(),
       allOf: require_allOf(),
       anyOf: require_anyOf(),
       "$comment": require_comment(),
@@ -84633,7 +84824,7 @@ var require_object_schema = __commonJS({
 });
 
 // ../../node_modules/@humanwhocodes/object-schema/src/index.js
-var require_src2 = __commonJS({
+var require_src = __commonJS({
   "../../node_modules/@humanwhocodes/object-schema/src/index.js"(exports) {
     exports.ObjectSchema = require_object_schema().ObjectSchema;
     exports.MergeStrategy = require_merge_strategy().MergeStrategy;
@@ -84648,7 +84839,7 @@ var require_api = __commonJS({
     var path = require_path_browserify();
     var minimatch = require_minimatch();
     var createDebug = require_browser();
-    var objectSchema = require_src2();
+    var objectSchema = require_src();
     function assertIsArray(value) {
       if (!Array.isArray(value)) {
         throw new TypeError("Expected value to be an array.");
@@ -86153,7 +86344,7 @@ var require_eslint_recommended = __commonJS({
 });
 
 // ../../node_modules/@eslint/js/src/index.js
-var require_src3 = __commonJS({
+var require_src2 = __commonJS({
   "../../node_modules/@eslint/js/src/index.js"(exports, module) {
     "use strict";
     module.exports = {
@@ -86173,7 +86364,7 @@ var require_flat_config_array = __commonJS({
     var { flatConfigSchema } = require_flat_config_schema();
     var { RuleValidator } = require_rule_validator();
     var { defaultConfig } = require_default_config();
-    var jsPlugin = require_src3();
+    var jsPlugin = require_src2();
     var ruleValidator = new RuleValidator();
     function splitPluginIdentifier(identifier) {
       const parts = identifier.split("/");
