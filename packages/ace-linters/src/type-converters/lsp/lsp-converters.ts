@@ -96,12 +96,30 @@ export function toCompletion(item: CompletionItem) {
     let itemKind = item.kind;
     let kind = itemKind ? Object.keys(CompletionItemKind)[Object.values(CompletionItemKind).indexOf(itemKind)] : undefined;
     let text = item.textEdit?.newText ?? item.insertText ?? item.label;
+
+    let filterText: string | undefined;
+
     // filtering would happen on ace editor side
-    // TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
-    text = item.filterText && !text.startsWith(item.filterText) ? item.filterText + text : text;
+    //TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
+    if (item.filterText) {
+        const firstWordMatch = item.filterText.match(/\w+/);
+        const firstWord = firstWordMatch ? firstWordMatch[0] : null;
+        if (firstWord) {
+            const wordRegex = new RegExp(`\\b${firstWord}\\b`, 'i');
+            if (!wordRegex.test(text)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        } else {
+            if (!text.includes(item.filterText)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        }
+    }
     
     let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
-    let range = item.textEdit ? getTextEditRange(item.textEdit, item.filterText) : undefined;
+    let range = item.textEdit ? getTextEditRange(item.textEdit, filterText) : undefined;
     let completion = {
         meta: kind,
         caption: item.label,
@@ -123,7 +141,6 @@ export function toCompletion(item: CompletionItem) {
     // server to use for resolving
     return completion;
 }
-
 
 export function toCompletions(completions: CompletionService[]): Ace.Completion[] {
     if (completions.length > 0) {
