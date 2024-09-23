@@ -2088,38 +2088,26 @@ module.exports = function callBoundIntrinsic(name, allowMissing) {
 
 var bind = __webpack_require__(9138);
 var GetIntrinsic = __webpack_require__(528);
+var setFunctionLength = __webpack_require__(6108);
 
+var $TypeError = __webpack_require__(3468);
 var $apply = GetIntrinsic('%Function.prototype.apply%');
 var $call = GetIntrinsic('%Function.prototype.call%');
 var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
 
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
-var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
+var $defineProperty = __webpack_require__(4940);
 var $max = GetIntrinsic('%Math.max%');
 
-if ($defineProperty) {
-	try {
-		$defineProperty({}, 'a', { value: 1 });
-	} catch (e) {
-		// IE 8 has a broken defineProperty
-		$defineProperty = null;
-	}
-}
-
 module.exports = function callBind(originalFunction) {
-	var func = $reflectApply(bind, $call, arguments);
-	if ($gOPD && $defineProperty) {
-		var desc = $gOPD(func, 'length');
-		if (desc.configurable) {
-			// original length, plus the receiver, minus any additional arguments (after the receiver)
-			$defineProperty(
-				func,
-				'length',
-				{ value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) }
-			);
-		}
+	if (typeof originalFunction !== 'function') {
+		throw new $TypeError('a function is required');
 	}
-	return func;
+	var func = $reflectApply(bind, $call, arguments);
+	return setFunctionLength(
+		func,
+		1 + $max(0, originalFunction.length - (arguments.length - 1)),
+		true
+	);
 };
 
 var applyBind = function applyBind() {
@@ -2229,6 +2217,70 @@ function consoleAssert(expression) {
 
 /***/ }),
 
+/***/ 686:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var $defineProperty = __webpack_require__(4940);
+
+var $SyntaxError = __webpack_require__(5731);
+var $TypeError = __webpack_require__(3468);
+
+var gopd = __webpack_require__(9336);
+
+/** @type {import('.')} */
+module.exports = function defineDataProperty(
+	obj,
+	property,
+	value
+) {
+	if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) {
+		throw new $TypeError('`obj` must be an object or a function`');
+	}
+	if (typeof property !== 'string' && typeof property !== 'symbol') {
+		throw new $TypeError('`property` must be a string or a symbol`');
+	}
+	if (arguments.length > 3 && typeof arguments[3] !== 'boolean' && arguments[3] !== null) {
+		throw new $TypeError('`nonEnumerable`, if provided, must be a boolean or null');
+	}
+	if (arguments.length > 4 && typeof arguments[4] !== 'boolean' && arguments[4] !== null) {
+		throw new $TypeError('`nonWritable`, if provided, must be a boolean or null');
+	}
+	if (arguments.length > 5 && typeof arguments[5] !== 'boolean' && arguments[5] !== null) {
+		throw new $TypeError('`nonConfigurable`, if provided, must be a boolean or null');
+	}
+	if (arguments.length > 6 && typeof arguments[6] !== 'boolean') {
+		throw new $TypeError('`loose`, if provided, must be a boolean');
+	}
+
+	var nonEnumerable = arguments.length > 3 ? arguments[3] : null;
+	var nonWritable = arguments.length > 4 ? arguments[4] : null;
+	var nonConfigurable = arguments.length > 5 ? arguments[5] : null;
+	var loose = arguments.length > 6 ? arguments[6] : false;
+
+	/* @type {false | TypedPropertyDescriptor<unknown>} */
+	var desc = !!gopd && gopd(obj, property);
+
+	if ($defineProperty) {
+		$defineProperty(obj, property, {
+			configurable: nonConfigurable === null && desc ? desc.configurable : !nonConfigurable,
+			enumerable: nonEnumerable === null && desc ? desc.enumerable : !nonEnumerable,
+			value: value,
+			writable: nonWritable === null && desc ? desc.writable : !nonWritable
+		});
+	} else if (loose || (!nonEnumerable && !nonWritable && !nonConfigurable)) {
+		// must fall back to [[Set]], and was not explicitly asked to make non-enumerable, non-writable, or non-configurable
+		obj[property] = value; // eslint-disable-line no-param-reassign
+	} else {
+		throw new $SyntaxError('This environment does not support defining a property as non-configurable, non-writable, or non-enumerable.');
+	}
+};
+
+
+/***/ }),
+
 /***/ 1857:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -2286,6 +2338,114 @@ var defineProperties = function (object, map) {
 defineProperties.supportsDescriptors = !!supportsDescriptors;
 
 module.exports = defineProperties;
+
+
+/***/ }),
+
+/***/ 4940:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var GetIntrinsic = __webpack_require__(528);
+
+/** @type {import('.')} */
+var $defineProperty = GetIntrinsic('%Object.defineProperty%', true) || false;
+if ($defineProperty) {
+	try {
+		$defineProperty({}, 'a', { value: 1 });
+	} catch (e) {
+		// IE 8 has a broken defineProperty
+		$defineProperty = false;
+	}
+}
+
+module.exports = $defineProperty;
+
+
+/***/ }),
+
+/***/ 6729:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('./eval')} */
+module.exports = EvalError;
+
+
+/***/ }),
+
+/***/ 9838:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('.')} */
+module.exports = Error;
+
+
+/***/ }),
+
+/***/ 1155:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('./range')} */
+module.exports = RangeError;
+
+
+/***/ }),
+
+/***/ 4943:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('./ref')} */
+module.exports = ReferenceError;
+
+
+/***/ }),
+
+/***/ 5731:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('./syntax')} */
+module.exports = SyntaxError;
+
+
+/***/ }),
+
+/***/ 3468:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('./type')} */
+module.exports = TypeError;
+
+
+/***/ }),
+
+/***/ 2140:
+/***/ ((module) => {
+
+"use strict";
+
+
+/** @type {import('./uri')} */
+module.exports = URIError;
 
 
 /***/ }),
@@ -2423,43 +2583,75 @@ module.exports = forEach;
 /* eslint no-invalid-this: 1 */
 
 var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
-var slice = Array.prototype.slice;
 var toStr = Object.prototype.toString;
+var max = Math.max;
 var funcType = '[object Function]';
+
+var concatty = function concatty(a, b) {
+    var arr = [];
+
+    for (var i = 0; i < a.length; i += 1) {
+        arr[i] = a[i];
+    }
+    for (var j = 0; j < b.length; j += 1) {
+        arr[j + a.length] = b[j];
+    }
+
+    return arr;
+};
+
+var slicy = function slicy(arrLike, offset) {
+    var arr = [];
+    for (var i = offset || 0, j = 0; i < arrLike.length; i += 1, j += 1) {
+        arr[j] = arrLike[i];
+    }
+    return arr;
+};
+
+var joiny = function (arr, joiner) {
+    var str = '';
+    for (var i = 0; i < arr.length; i += 1) {
+        str += arr[i];
+        if (i + 1 < arr.length) {
+            str += joiner;
+        }
+    }
+    return str;
+};
 
 module.exports = function bind(that) {
     var target = this;
-    if (typeof target !== 'function' || toStr.call(target) !== funcType) {
+    if (typeof target !== 'function' || toStr.apply(target) !== funcType) {
         throw new TypeError(ERROR_MESSAGE + target);
     }
-    var args = slice.call(arguments, 1);
+    var args = slicy(arguments, 1);
 
     var bound;
     var binder = function () {
         if (this instanceof bound) {
             var result = target.apply(
                 this,
-                args.concat(slice.call(arguments))
+                concatty(args, arguments)
             );
             if (Object(result) === result) {
                 return result;
             }
             return this;
-        } else {
-            return target.apply(
-                that,
-                args.concat(slice.call(arguments))
-            );
         }
+        return target.apply(
+            that,
+            concatty(args, arguments)
+        );
+
     };
 
-    var boundLength = Math.max(0, target.length - args.length);
+    var boundLength = max(0, target.length - args.length);
     var boundArgs = [];
     for (var i = 0; i < boundLength; i++) {
-        boundArgs.push('$' + i);
+        boundArgs[i] = '$' + i;
     }
 
-    bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
+    bound = Function('binder', 'return function (' + joiny(boundArgs, ',') + '){ return binder.apply(this,arguments); }')(binder);
 
     if (target.prototype) {
         var Empty = function Empty() {};
@@ -2495,9 +2687,15 @@ module.exports = Function.prototype.bind || implementation;
 
 var undefined;
 
-var $SyntaxError = SyntaxError;
+var $Error = __webpack_require__(9838);
+var $EvalError = __webpack_require__(6729);
+var $RangeError = __webpack_require__(1155);
+var $ReferenceError = __webpack_require__(4943);
+var $SyntaxError = __webpack_require__(5731);
+var $TypeError = __webpack_require__(3468);
+var $URIError = __webpack_require__(2140);
+
 var $Function = Function;
-var $TypeError = TypeError;
 
 // eslint-disable-next-line consistent-return
 var getEvalledConstructor = function (expressionSyntax) {
@@ -2549,6 +2747,7 @@ var needsEval = {};
 var TypedArray = typeof Uint8Array === 'undefined' || !getProto ? undefined : getProto(Uint8Array);
 
 var INTRINSICS = {
+	__proto__: null,
 	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
 	'%Array%': Array,
 	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
@@ -2569,9 +2768,9 @@ var INTRINSICS = {
 	'%decodeURIComponent%': decodeURIComponent,
 	'%encodeURI%': encodeURI,
 	'%encodeURIComponent%': encodeURIComponent,
-	'%Error%': Error,
+	'%Error%': $Error,
 	'%eval%': eval, // eslint-disable-line no-eval
-	'%EvalError%': EvalError,
+	'%EvalError%': $EvalError,
 	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
 	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
 	'%FinalizationRegistry%': typeof FinalizationRegistry === 'undefined' ? undefined : FinalizationRegistry,
@@ -2593,8 +2792,8 @@ var INTRINSICS = {
 	'%parseInt%': parseInt,
 	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
 	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
-	'%RangeError%': RangeError,
-	'%ReferenceError%': ReferenceError,
+	'%RangeError%': $RangeError,
+	'%ReferenceError%': $ReferenceError,
 	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
 	'%RegExp%': RegExp,
 	'%Set%': typeof Set === 'undefined' ? undefined : Set,
@@ -2611,7 +2810,7 @@ var INTRINSICS = {
 	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
 	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
 	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
-	'%URIError%': URIError,
+	'%URIError%': $URIError,
 	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
 	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
 	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
@@ -2653,6 +2852,7 @@ var doEval = function doEval(name) {
 };
 
 var LEGACY_ALIASES = {
+	__proto__: null,
 	'%ArrayBufferPrototype%': ['ArrayBuffer', 'prototype'],
 	'%ArrayPrototype%': ['Array', 'prototype'],
 	'%ArrayProto_entries%': ['Array', 'prototype', 'entries'],
@@ -2707,7 +2907,7 @@ var LEGACY_ALIASES = {
 };
 
 var bind = __webpack_require__(9138);
-var hasOwn = __webpack_require__(2571);
+var hasOwn = __webpack_require__(8554);
 var $concat = bind.call(Function.call, Array.prototype.concat);
 var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
 var $replace = bind.call(Function.call, String.prototype.replace);
@@ -2876,26 +3076,15 @@ module.exports = $gOPD;
 "use strict";
 
 
-var GetIntrinsic = __webpack_require__(528);
-
-var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
+var $defineProperty = __webpack_require__(4940);
 
 var hasPropertyDescriptors = function hasPropertyDescriptors() {
-	if ($defineProperty) {
-		try {
-			$defineProperty({}, 'a', { value: 1 });
-			return true;
-		} catch (e) {
-			// IE 8 has a broken defineProperty
-			return false;
-		}
-	}
-	return false;
+	return !!$defineProperty;
 };
 
 hasPropertyDescriptors.hasArrayLengthDefineBug = function hasArrayLengthDefineBug() {
 	// node v0.6 has a bug where array lengths can be Set but not Defined
-	if (!hasPropertyDescriptors()) {
+	if (!$defineProperty) {
 		return null;
 	}
 	try {
@@ -3016,15 +3205,18 @@ module.exports = function hasToStringTagShams() {
 
 /***/ }),
 
-/***/ 2571:
+/***/ 8554:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
 
+var call = Function.prototype.call;
+var $hasOwn = Object.prototype.hasOwnProperty;
 var bind = __webpack_require__(9138);
 
-module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
+/** @type {import('.')} */
+module.exports = bind.call(call, $hasOwn);
 
 
 /***/ }),
@@ -3835,6 +4027,56 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ 6108:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+var GetIntrinsic = __webpack_require__(528);
+var define = __webpack_require__(686);
+var hasDescriptors = __webpack_require__(7239)();
+var gOPD = __webpack_require__(9336);
+
+var $TypeError = __webpack_require__(3468);
+var $floor = GetIntrinsic('%Math.floor%');
+
+/** @type {import('.')} */
+module.exports = function setFunctionLength(fn, length) {
+	if (typeof fn !== 'function') {
+		throw new $TypeError('`fn` is not a function');
+	}
+	if (typeof length !== 'number' || length < 0 || length > 0xFFFFFFFF || $floor(length) !== length) {
+		throw new $TypeError('`length` must be a positive 32-bit integer');
+	}
+
+	var loose = arguments.length > 2 && !!arguments[2];
+
+	var functionLengthIsConfigurable = true;
+	var functionLengthIsWritable = true;
+	if ('length' in fn && gOPD) {
+		var desc = gOPD(fn, 'length');
+		if (desc && !desc.configurable) {
+			functionLengthIsConfigurable = false;
+		}
+		if (desc && !desc.writable) {
+			functionLengthIsWritable = false;
+		}
+	}
+
+	if (functionLengthIsConfigurable || functionLengthIsWritable || !loose) {
+		if (hasDescriptors) {
+			define(/** @type {Parameters<define>[0]} */ (fn), 'length', length, true, true);
+		} else {
+			define(/** @type {Parameters<define>[0]} */ (fn), 'length', length);
+		}
+	}
+	return fn;
+};
+
+
+/***/ }),
+
 /***/ 2125:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -3845,7 +4087,7 @@ process.umask = function() { return 0; };
 /* harmony import */ var vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5501);
 /* harmony import */ var vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vscode_languageserver_protocol__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7770);
-/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8778);
+/* harmony import */ var vscode_languageserver_textdocument__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8041);
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -10797,296 +11039,6 @@ exports.objectLiteral = objectLiteral;
 
 /***/ }),
 
-/***/ 8778:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   V: () => (/* binding */ TextDocument)
-/* harmony export */ });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-var __spreadArray = (undefined && undefined.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-var FullTextDocument = /** @class */ (function () {
-    function FullTextDocument(uri, languageId, version, content) {
-        this._uri = uri;
-        this._languageId = languageId;
-        this._version = version;
-        this._content = content;
-        this._lineOffsets = undefined;
-    }
-    Object.defineProperty(FullTextDocument.prototype, "uri", {
-        get: function () {
-            return this._uri;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "languageId", {
-        get: function () {
-            return this._languageId;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(FullTextDocument.prototype, "version", {
-        get: function () {
-            return this._version;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.prototype.getText = function (range) {
-        if (range) {
-            var start = this.offsetAt(range.start);
-            var end = this.offsetAt(range.end);
-            return this._content.substring(start, end);
-        }
-        return this._content;
-    };
-    FullTextDocument.prototype.update = function (changes, version) {
-        for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
-            var change = changes_1[_i];
-            if (FullTextDocument.isIncremental(change)) {
-                // makes sure start is before end
-                var range = getWellformedRange(change.range);
-                // update content
-                var startOffset = this.offsetAt(range.start);
-                var endOffset = this.offsetAt(range.end);
-                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
-                // update the offsets
-                var startLine = Math.max(range.start.line, 0);
-                var endLine = Math.max(range.end.line, 0);
-                var lineOffsets = this._lineOffsets;
-                var addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
-                if (endLine - startLine === addedLineOffsets.length) {
-                    for (var i = 0, len = addedLineOffsets.length; i < len; i++) {
-                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
-                    }
-                }
-                else {
-                    if (addedLineOffsets.length < 10000) {
-                        lineOffsets.splice.apply(lineOffsets, __spreadArray([startLine + 1, endLine - startLine], addedLineOffsets, false));
-                    }
-                    else { // avoid too many arguments for splice
-                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
-                    }
-                }
-                var diff = change.text.length - (endOffset - startOffset);
-                if (diff !== 0) {
-                    for (var i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
-                        lineOffsets[i] = lineOffsets[i] + diff;
-                    }
-                }
-            }
-            else if (FullTextDocument.isFull(change)) {
-                this._content = change.text;
-                this._lineOffsets = undefined;
-            }
-            else {
-                throw new Error('Unknown change event received');
-            }
-        }
-        this._version = version;
-    };
-    FullTextDocument.prototype.getLineOffsets = function () {
-        if (this._lineOffsets === undefined) {
-            this._lineOffsets = computeLineOffsets(this._content, true);
-        }
-        return this._lineOffsets;
-    };
-    FullTextDocument.prototype.positionAt = function (offset) {
-        offset = Math.max(Math.min(offset, this._content.length), 0);
-        var lineOffsets = this.getLineOffsets();
-        var low = 0, high = lineOffsets.length;
-        if (high === 0) {
-            return { line: 0, character: offset };
-        }
-        while (low < high) {
-            var mid = Math.floor((low + high) / 2);
-            if (lineOffsets[mid] > offset) {
-                high = mid;
-            }
-            else {
-                low = mid + 1;
-            }
-        }
-        // low is the least x for which the line offset is larger than the current offset
-        // or array.length if no line offset is larger than the current offset
-        var line = low - 1;
-        return { line: line, character: offset - lineOffsets[line] };
-    };
-    FullTextDocument.prototype.offsetAt = function (position) {
-        var lineOffsets = this.getLineOffsets();
-        if (position.line >= lineOffsets.length) {
-            return this._content.length;
-        }
-        else if (position.line < 0) {
-            return 0;
-        }
-        var lineOffset = lineOffsets[position.line];
-        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
-        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
-    };
-    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
-        get: function () {
-            return this.getLineOffsets().length;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    FullTextDocument.isIncremental = function (event) {
-        var candidate = event;
-        return candidate !== undefined && candidate !== null &&
-            typeof candidate.text === 'string' && candidate.range !== undefined &&
-            (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
-    };
-    FullTextDocument.isFull = function (event) {
-        var candidate = event;
-        return candidate !== undefined && candidate !== null &&
-            typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
-    };
-    return FullTextDocument;
-}());
-var TextDocument;
-(function (TextDocument) {
-    /**
-     * Creates a new text document.
-     *
-     * @param uri The document's uri.
-     * @param languageId  The document's language Id.
-     * @param version The document's initial version number.
-     * @param content The document's content.
-     */
-    function create(uri, languageId, version, content) {
-        return new FullTextDocument(uri, languageId, version, content);
-    }
-    TextDocument.create = create;
-    /**
-     * Updates a TextDocument by modifying its content.
-     *
-     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
-     * @param changes the changes to apply to the document.
-     * @param version the changes version for the document.
-     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
-     *
-     */
-    function update(document, changes, version) {
-        if (document instanceof FullTextDocument) {
-            document.update(changes, version);
-            return document;
-        }
-        else {
-            throw new Error('TextDocument.update: document must be created by TextDocument.create');
-        }
-    }
-    TextDocument.update = update;
-    function applyEdits(document, edits) {
-        var text = document.getText();
-        var sortedEdits = mergeSort(edits.map(getWellformedEdit), function (a, b) {
-            var diff = a.range.start.line - b.range.start.line;
-            if (diff === 0) {
-                return a.range.start.character - b.range.start.character;
-            }
-            return diff;
-        });
-        var lastModifiedOffset = 0;
-        var spans = [];
-        for (var _i = 0, sortedEdits_1 = sortedEdits; _i < sortedEdits_1.length; _i++) {
-            var e = sortedEdits_1[_i];
-            var startOffset = document.offsetAt(e.range.start);
-            if (startOffset < lastModifiedOffset) {
-                throw new Error('Overlapping edit');
-            }
-            else if (startOffset > lastModifiedOffset) {
-                spans.push(text.substring(lastModifiedOffset, startOffset));
-            }
-            if (e.newText.length) {
-                spans.push(e.newText);
-            }
-            lastModifiedOffset = document.offsetAt(e.range.end);
-        }
-        spans.push(text.substr(lastModifiedOffset));
-        return spans.join('');
-    }
-    TextDocument.applyEdits = applyEdits;
-})(TextDocument || (TextDocument = {}));
-function mergeSort(data, compare) {
-    if (data.length <= 1) {
-        // sorted
-        return data;
-    }
-    var p = (data.length / 2) | 0;
-    var left = data.slice(0, p);
-    var right = data.slice(p);
-    mergeSort(left, compare);
-    mergeSort(right, compare);
-    var leftIdx = 0;
-    var rightIdx = 0;
-    var i = 0;
-    while (leftIdx < left.length && rightIdx < right.length) {
-        var ret = compare(left[leftIdx], right[rightIdx]);
-        if (ret <= 0) {
-            // smaller_equal -> take left to preserve order
-            data[i++] = left[leftIdx++];
-        }
-        else {
-            // greater -> take right
-            data[i++] = right[rightIdx++];
-        }
-    }
-    while (leftIdx < left.length) {
-        data[i++] = left[leftIdx++];
-    }
-    while (rightIdx < right.length) {
-        data[i++] = right[rightIdx++];
-    }
-    return data;
-}
-function computeLineOffsets(text, isAtLineStart, textOffset) {
-    if (textOffset === void 0) { textOffset = 0; }
-    var result = isAtLineStart ? [textOffset] : [];
-    for (var i = 0; i < text.length; i++) {
-        var ch = text.charCodeAt(i);
-        if (ch === 13 /* CharCode.CarriageReturn */ || ch === 10 /* CharCode.LineFeed */) {
-            if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
-                i++;
-            }
-            result.push(textOffset + i + 1);
-        }
-    }
-    return result;
-}
-function getWellformedRange(range) {
-    var start = range.start;
-    var end = range.end;
-    if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
-        return { start: end, end: start };
-    }
-    return range;
-}
-function getWellformedEdit(textEdit) {
-    var range = getWellformedRange(textEdit.range);
-    if (range !== textEdit.range) {
-        return { newText: textEdit.newText, range: range };
-    }
-    return textEdit;
-}
-
-
-/***/ }),
-
 /***/ 7717:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -16640,6 +16592,281 @@ module.exports = function availableTypedArrays() {
 	}
 	return out;
 };
+
+
+/***/ }),
+
+/***/ 8041:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   V: () => (/* binding */ TextDocument)
+/* harmony export */ });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+class FullTextDocument {
+    constructor(uri, languageId, version, content) {
+        this._uri = uri;
+        this._languageId = languageId;
+        this._version = version;
+        this._content = content;
+        this._lineOffsets = undefined;
+    }
+    get uri() {
+        return this._uri;
+    }
+    get languageId() {
+        return this._languageId;
+    }
+    get version() {
+        return this._version;
+    }
+    getText(range) {
+        if (range) {
+            const start = this.offsetAt(range.start);
+            const end = this.offsetAt(range.end);
+            return this._content.substring(start, end);
+        }
+        return this._content;
+    }
+    update(changes, version) {
+        for (const change of changes) {
+            if (FullTextDocument.isIncremental(change)) {
+                // makes sure start is before end
+                const range = getWellformedRange(change.range);
+                // update content
+                const startOffset = this.offsetAt(range.start);
+                const endOffset = this.offsetAt(range.end);
+                this._content = this._content.substring(0, startOffset) + change.text + this._content.substring(endOffset, this._content.length);
+                // update the offsets
+                const startLine = Math.max(range.start.line, 0);
+                const endLine = Math.max(range.end.line, 0);
+                let lineOffsets = this._lineOffsets;
+                const addedLineOffsets = computeLineOffsets(change.text, false, startOffset);
+                if (endLine - startLine === addedLineOffsets.length) {
+                    for (let i = 0, len = addedLineOffsets.length; i < len; i++) {
+                        lineOffsets[i + startLine + 1] = addedLineOffsets[i];
+                    }
+                }
+                else {
+                    if (addedLineOffsets.length < 10000) {
+                        lineOffsets.splice(startLine + 1, endLine - startLine, ...addedLineOffsets);
+                    }
+                    else { // avoid too many arguments for splice
+                        this._lineOffsets = lineOffsets = lineOffsets.slice(0, startLine + 1).concat(addedLineOffsets, lineOffsets.slice(endLine + 1));
+                    }
+                }
+                const diff = change.text.length - (endOffset - startOffset);
+                if (diff !== 0) {
+                    for (let i = startLine + 1 + addedLineOffsets.length, len = lineOffsets.length; i < len; i++) {
+                        lineOffsets[i] = lineOffsets[i] + diff;
+                    }
+                }
+            }
+            else if (FullTextDocument.isFull(change)) {
+                this._content = change.text;
+                this._lineOffsets = undefined;
+            }
+            else {
+                throw new Error('Unknown change event received');
+            }
+        }
+        this._version = version;
+    }
+    getLineOffsets() {
+        if (this._lineOffsets === undefined) {
+            this._lineOffsets = computeLineOffsets(this._content, true);
+        }
+        return this._lineOffsets;
+    }
+    positionAt(offset) {
+        offset = Math.max(Math.min(offset, this._content.length), 0);
+        const lineOffsets = this.getLineOffsets();
+        let low = 0, high = lineOffsets.length;
+        if (high === 0) {
+            return { line: 0, character: offset };
+        }
+        while (low < high) {
+            const mid = Math.floor((low + high) / 2);
+            if (lineOffsets[mid] > offset) {
+                high = mid;
+            }
+            else {
+                low = mid + 1;
+            }
+        }
+        // low is the least x for which the line offset is larger than the current offset
+        // or array.length if no line offset is larger than the current offset
+        const line = low - 1;
+        offset = this.ensureBeforeEOL(offset, lineOffsets[line]);
+        return { line, character: offset - lineOffsets[line] };
+    }
+    offsetAt(position) {
+        const lineOffsets = this.getLineOffsets();
+        if (position.line >= lineOffsets.length) {
+            return this._content.length;
+        }
+        else if (position.line < 0) {
+            return 0;
+        }
+        const lineOffset = lineOffsets[position.line];
+        if (position.character <= 0) {
+            return lineOffset;
+        }
+        const nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
+        const offset = Math.min(lineOffset + position.character, nextLineOffset);
+        return this.ensureBeforeEOL(offset, lineOffset);
+    }
+    ensureBeforeEOL(offset, lineOffset) {
+        while (offset > lineOffset && isEOL(this._content.charCodeAt(offset - 1))) {
+            offset--;
+        }
+        return offset;
+    }
+    get lineCount() {
+        return this.getLineOffsets().length;
+    }
+    static isIncremental(event) {
+        const candidate = event;
+        return candidate !== undefined && candidate !== null &&
+            typeof candidate.text === 'string' && candidate.range !== undefined &&
+            (candidate.rangeLength === undefined || typeof candidate.rangeLength === 'number');
+    }
+    static isFull(event) {
+        const candidate = event;
+        return candidate !== undefined && candidate !== null &&
+            typeof candidate.text === 'string' && candidate.range === undefined && candidate.rangeLength === undefined;
+    }
+}
+var TextDocument;
+(function (TextDocument) {
+    /**
+     * Creates a new text document.
+     *
+     * @param uri The document's uri.
+     * @param languageId  The document's language Id.
+     * @param version The document's initial version number.
+     * @param content The document's content.
+     */
+    function create(uri, languageId, version, content) {
+        return new FullTextDocument(uri, languageId, version, content);
+    }
+    TextDocument.create = create;
+    /**
+     * Updates a TextDocument by modifying its content.
+     *
+     * @param document the document to update. Only documents created by TextDocument.create are valid inputs.
+     * @param changes the changes to apply to the document.
+     * @param version the changes version for the document.
+     * @returns The updated TextDocument. Note: That's the same document instance passed in as first parameter.
+     *
+     */
+    function update(document, changes, version) {
+        if (document instanceof FullTextDocument) {
+            document.update(changes, version);
+            return document;
+        }
+        else {
+            throw new Error('TextDocument.update: document must be created by TextDocument.create');
+        }
+    }
+    TextDocument.update = update;
+    function applyEdits(document, edits) {
+        const text = document.getText();
+        const sortedEdits = mergeSort(edits.map(getWellformedEdit), (a, b) => {
+            const diff = a.range.start.line - b.range.start.line;
+            if (diff === 0) {
+                return a.range.start.character - b.range.start.character;
+            }
+            return diff;
+        });
+        let lastModifiedOffset = 0;
+        const spans = [];
+        for (const e of sortedEdits) {
+            const startOffset = document.offsetAt(e.range.start);
+            if (startOffset < lastModifiedOffset) {
+                throw new Error('Overlapping edit');
+            }
+            else if (startOffset > lastModifiedOffset) {
+                spans.push(text.substring(lastModifiedOffset, startOffset));
+            }
+            if (e.newText.length) {
+                spans.push(e.newText);
+            }
+            lastModifiedOffset = document.offsetAt(e.range.end);
+        }
+        spans.push(text.substr(lastModifiedOffset));
+        return spans.join('');
+    }
+    TextDocument.applyEdits = applyEdits;
+})(TextDocument || (TextDocument = {}));
+function mergeSort(data, compare) {
+    if (data.length <= 1) {
+        // sorted
+        return data;
+    }
+    const p = (data.length / 2) | 0;
+    const left = data.slice(0, p);
+    const right = data.slice(p);
+    mergeSort(left, compare);
+    mergeSort(right, compare);
+    let leftIdx = 0;
+    let rightIdx = 0;
+    let i = 0;
+    while (leftIdx < left.length && rightIdx < right.length) {
+        const ret = compare(left[leftIdx], right[rightIdx]);
+        if (ret <= 0) {
+            // smaller_equal -> take left to preserve order
+            data[i++] = left[leftIdx++];
+        }
+        else {
+            // greater -> take right
+            data[i++] = right[rightIdx++];
+        }
+    }
+    while (leftIdx < left.length) {
+        data[i++] = left[leftIdx++];
+    }
+    while (rightIdx < right.length) {
+        data[i++] = right[rightIdx++];
+    }
+    return data;
+}
+function computeLineOffsets(text, isAtLineStart, textOffset = 0) {
+    const result = isAtLineStart ? [textOffset] : [];
+    for (let i = 0; i < text.length; i++) {
+        const ch = text.charCodeAt(i);
+        if (isEOL(ch)) {
+            if (ch === 13 /* CharCode.CarriageReturn */ && i + 1 < text.length && text.charCodeAt(i + 1) === 10 /* CharCode.LineFeed */) {
+                i++;
+            }
+            result.push(textOffset + i + 1);
+        }
+    }
+    return result;
+}
+function isEOL(char) {
+    return char === 13 /* CharCode.CarriageReturn */ || char === 10 /* CharCode.LineFeed */;
+}
+function getWellformedRange(range) {
+    const start = range.start;
+    const end = range.end;
+    if (start.line > end.line || (start.line === end.line && start.character > end.character)) {
+        return { start: end, end: start };
+    }
+    return range;
+}
+function getWellformedEdit(textEdit) {
+    const range = getWellformedRange(textEdit.range);
+    if (range !== textEdit.range) {
+        return { newText: textEdit.newText, range };
+    }
+    return textEdit;
+}
 
 
 /***/ })
