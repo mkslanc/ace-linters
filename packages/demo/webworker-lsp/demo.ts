@@ -59,18 +59,30 @@ languageProvider.setGlobalOptions("typescript", {
         "2540"
     ],
     extraLibs: {
-        "libDeclaration.d.ts": {
+        "node_modules/lib-declaration/lib-declaration.d.ts": {
             content:
-                `declare class ChainableOne {
+                `export class ChainableOne {
     chainableTwo: ChainableTwo;
     setAlpha(value: string): this;
     setBeta(value: number): ChainableTwo;
 }
 
-declare class ChainableTwo {
+export class ChainableTwo {
     setGamma(value: boolean): this;
     addAlpha(value: string): ChainableOne;
 }`,
+            version: 1
+        },
+        // you don't need this config if declaration named `node_modules/lib-declaration/index.d.ts` (for
+        // `lib-declaration` module)
+        "node_modules/lib-declaration/package.json": {
+            content:
+                `{
+    "name": "lib-declaration",
+    "version": "1.3.3",
+    "typings": "./lib-declaration.d.ts",
+}
+`,
             version: 1
         },
         "dir/file.ts": {

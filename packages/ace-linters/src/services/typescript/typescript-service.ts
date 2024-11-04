@@ -171,6 +171,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
                 return ts.ScriptKind.JS;
             case 'jsx':
                 return ts.ScriptKind.JSX;
+            case 'json':
+                return ts.ScriptKind.JSON;
             default:
                 return this.getCompilationSettings().allowJs ? ts.ScriptKind.JS : ts.ScriptKind.TS;
         }
