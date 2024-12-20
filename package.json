@@ -10,10 +10,10 @@
     "start-dev": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "^1.35.0",
+    "ace-code": "^1.37.0",
     "ace-layout": "latest",
     "jsonc-parser": "latest",
-    "typescript": "^5.3.3"
+    "typescript": "^5.6.3"
   },
   "devDependencies": {
     "@types/node": "^20.4.2",

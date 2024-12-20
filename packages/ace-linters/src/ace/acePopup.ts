@@ -49,6 +49,7 @@ export class AcePopup {
     /**
      * Creates and renders single line editor in popup window. If `parentNode` param is isset, then attaching it to this element.
      * @param {Element} [parentNode]
+     * @return {Ace.AcePopup}
      */
     constructor(parentNode) {
         var el = document.createElement("div");
@@ -88,10 +89,8 @@ export class AcePopup {
         popup.session.highlight("");
         popup.session["$searchHighlight"].clazz = "ace_highlight-marker";
 
-        // @ts-ignore
         popup.on("mousedown", function(e) {
             var pos = e.getDocumentPosition();
-            // @ts-ignore
             popup.selection.moveToPosition(pos);
             selectionMarker.start.row = selectionMarker.end.row = pos.row;
             e.stop();
@@ -106,7 +105,7 @@ export class AcePopup {
                 hoverMarker.id = popup.session.addMarker(hoverMarker, "ace_line-hover", "fullLine");
             } else if (hoverMarker.id) {
                 popup.session.removeMarker(hoverMarker.id);
-                hoverMarker.id = null;
+                hoverMarker.id = undefined;
             }
         };
         popup.setSelectOnHover(false);
@@ -186,7 +185,6 @@ export class AcePopup {
         });
         // @ts-ignore
         popup.on("hide", hideHoverMarker);
-        // @ts-ignore
         popup.on("changeSelection", hideHoverMarker);
 
         popup.session.doc.getLength = function() {
@@ -283,13 +281,11 @@ export class AcePopup {
             }
         };
 
-        // @ts-ignore
         popup.on("changeSelection", function() {
             if (popup.isOpen)
-                { // @ts-ignore
+                {
                     popup.setRow(popup.selection.lead.row);
                 }
-            // @ts-ignore
             popup.renderer.scrollCursorIntoView();
         });
 

@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { LanguageProvider } from "../language-provider";
 import type { Ace } from "ace-code";
 import { Tooltip } from "../ace/tooltip";

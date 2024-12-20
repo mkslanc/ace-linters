@@ -405,7 +405,7 @@ export class ServiceManager {
         this.$services[name] = clientConfig;
     }
 
-    configureFeatures(name: string, features: ServiceFeatures) {
+    configureFeatures(name: string, features?: ServiceFeatures) {
         features = this.setDefaultFeaturesState(features);
         if (!this.$services[name])
             return;

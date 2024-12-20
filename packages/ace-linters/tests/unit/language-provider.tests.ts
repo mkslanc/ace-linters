@@ -27,7 +27,6 @@ describe('LanguageProvider tests', () => {
             done();
         }
 
-        // @ts-ignore
         currEditor.session.on("changeAnnotation", checkAnnotations);
     }
 
@@ -53,7 +52,7 @@ describe('LanguageProvider tests', () => {
         <h1 style="color:red">Juhu Kinners</h1>
     </body>
 </html>
-    `,// @ts-ignore
+    `,
             mode: new HtmlMode()
         });
 
@@ -165,7 +164,6 @@ describe('LanguageProvider tests', () => {
             jsonEditorEl = document.createElement('div');
             jsonEditor = ace.edit(jsonEditorEl, {
                 value: '{"property": "value"}',
-                // @ts-ignore
                 mode: new JSONMode()
             });
 

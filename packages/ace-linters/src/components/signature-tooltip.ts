@@ -4,7 +4,6 @@ import {BaseTooltip} from "./base-tooltip";
 export class SignatureTooltip extends BaseTooltip {
     
     registerEditor(editor: Ace.Editor) {
-        // @ts-ignore
         editor.on("changeSelection", () => this.onChangeSelection(editor));
     }
     

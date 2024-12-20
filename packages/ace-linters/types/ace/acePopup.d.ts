@@ -5,6 +5,7 @@ export declare class AcePopup {
     /**
      * Creates and renders single line editor in popup window. If `parentNode` param is isset, then attaching it to this element.
      * @param {Element} [parentNode]
+     * @return {Ace.AcePopup}
      */
     constructor(parentNode: any);
 }

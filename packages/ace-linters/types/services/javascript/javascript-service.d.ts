@@ -108,7 +108,7 @@ export declare class JavascriptService extends BaseService<JavascriptServiceOpti
             meteor: boolean;
         };
         globals: {
-            [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable";
+            [name: string]: boolean | "readonly" | "off" | "readable" | "writable" | "writeable";
         };
         parserOptions: {
             [option: string]: any;

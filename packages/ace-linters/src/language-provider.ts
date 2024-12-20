@@ -1,4 +1,6 @@
 import {Ace} from "ace-code";
+import "./types/ace-extension";
+
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
@@ -256,7 +258,6 @@ export class LanguageProvider {
 
         if (this.options.functionality!.documentHighlights) {
             var $timer
-            // @ts-ignore
             editor.on("changeSelection", () => {
                 if (!$timer)
                     $timer =
@@ -307,7 +308,6 @@ export class LanguageProvider {
         });
 
         var actionTimer
-        // @ts-ignore
         editor.on("changeSelection", () => {
             if (!actionTimer)
                 actionTimer =
@@ -560,7 +560,6 @@ class SessionLanguageProvider {
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
         this.addSemanticTokenSupport(session); //TODO: ?
-        // @ts-ignore
         session.on("changeMode", this.$changeMode);
         if (this.$provider.options.functionality!.semanticTokens) {
             session.on("changeScrollTop", () => this.getSemanticTokens());
@@ -626,7 +625,6 @@ class SessionLanguageProvider {
 
     private $connected = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
         this.$isConnected = true;
-        // @ts-ignore
 
         this.setServerCapabilities(capabilities);
         if (this.$modeIsChanged)
@@ -809,6 +807,8 @@ class SessionLanguageProvider {
                 let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend!.tokenTypes, this.semanticTokensLegend!.tokenModifiers);
                 this.session.setSemanticTokens(decodedTokens);
                 let bgTokenizer = this.session.bgTokenizer;
+
+                //@ts-ignore
                 bgTokenizer.running = setTimeout(() => {
                     if (bgTokenizer?.semanticTokens?.tokens && bgTokenizer?.semanticTokens?.tokens.length > 0) {
                         let startRow: number = bgTokenizer?.semanticTokens?.tokens[0].row;

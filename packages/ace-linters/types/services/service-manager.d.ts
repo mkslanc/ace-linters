@@ -18,7 +18,7 @@ export declare class ServiceManager {
         addEventListener: any;
     });
     private getServicesCapabilitiesAfterCallback;
-    aggregateFeatureResponses(serviceInstances: LanguageService[], feature: SupportedFeatures, methodName: string, documentIdentifier: VersionedTextDocumentIdentifier, attrs: any | any[]): Promise<any[]>;
+    aggregateFeatureResponses(serviceInstances: LanguageService[], feature: SupportedFeatures, methodName: string, documentIdentifier: VersionedTextDocumentIdentifier, attrs: any | any[]): Promise<any>;
     applyOptionsToServices(serviceInstances: LanguageService[], documentUri: string, options: ServiceOptions): void;
     closeAllConnections(): Promise<void>;
     private static $initServiceInstance;
@@ -40,6 +40,6 @@ export declare class ServiceManager {
     };
     registerService(name: string, service: ServiceConfig): void;
     registerServer(name: string, clientConfig: LanguageClientConfig): void;
-    configureFeatures(name: string, features: ServiceFeatures): void;
+    configureFeatures(name: string, features?: ServiceFeatures): void;
     setDefaultFeaturesState(serviceFeatures?: ServiceFeatures): ServiceFeatures;
 }

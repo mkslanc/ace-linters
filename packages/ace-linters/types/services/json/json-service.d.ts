@@ -26,8 +26,8 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
     addDocument(document: TextDocumentItem): void;
     getSchemaOption(documentUri?: string): {
         uri: string;
-        fileMatch?: string[] | undefined;
-        schema?: string | undefined;
+        fileMatch?: string[];
+        schema?: string;
     }[] | undefined;
     private $configureService;
     $configureJsonService(schemas: SchemaConfiguration[]): void;

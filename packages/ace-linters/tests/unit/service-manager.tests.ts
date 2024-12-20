@@ -107,7 +107,6 @@ describe('ServiceManager tests', () => {
                 semanticTokens: true,
             };
             
-            //@ts-ignore;
             manager.configureFeatures("css");
             let features = manager.$services["css"].features;
             expect(features).deep.equal(expectedFeatures);
