@@ -1,11 +1,13 @@
 const ts = require('typescript');
-const {rmSync} = require("fs");
+const fs = require("fs");
 
 const configFile = ts.readConfigFile('./tsconfig.json', ts.sys.readFile).config;
 
 let { options, fileNames } = ts.parseJsonConfigFileContent(configFile, ts.sys, './');
 
-rmSync("./types", { recursive: true });
+if (fs.existsSync("./types")) {
+    fs.rmSync("./types", {recursive: true});
+}
 
 options = { ...options, allowJs: false, declaration: true, emitDeclarationOnly: true };
 

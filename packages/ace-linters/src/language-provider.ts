@@ -684,6 +684,8 @@ class SessionLanguageProvider {
         if (hasSemanticTokensProvider) {
             this.getSemanticTokens();
         }
+        //TODO: we should restrict range formatting if any of services is only has full format capabilities
+        //or we shoudl use service with full format capability instead of range one's
     }
 
     private initDocumentUri() {

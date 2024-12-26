@@ -129,6 +129,7 @@ export function getServices(includeLinters?: IncludeLinters): ServiceStruct[] {
             script: "python-service.js",
             className: "PythonService",
             modes: "python",
+            cdnUrl: "https://www.unpkg.com/ace-python-ruff-linter/build"
         }
     ];
 

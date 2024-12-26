@@ -1,4 +1,4 @@
-import { Ace, EditSession } from "ace-code";
+import { Ace } from "ace-code";
 import "./types/ace-extension";
 import { ComboDocumentIdentifier, IMessageController } from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -135,7 +135,7 @@ declare class SessionLanguageProvider {
      */
     setFilePath(filePath: string): void;
     private $init;
-    addSemanticTokenSupport(session: EditSession): void;
+    addSemanticTokenSupport(session: Ace.EditSession): void;
     private $connected;
     private $changeMode;
     setServerCapabilities: (capabilities: {

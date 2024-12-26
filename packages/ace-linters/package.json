@@ -84,9 +84,6 @@
       "build/javascript-service": [
         "./types/services/javascript/javascript-service.d.ts"
       ],
-      "build/python-service": [
-        "./types/services/python/python-service.d.ts"
-      ],
       "build/yaml-service": [
         "./types/services/yaml/yaml-service.d.ts"
       ],

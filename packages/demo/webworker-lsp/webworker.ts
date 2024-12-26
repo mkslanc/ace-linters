@@ -73,8 +73,8 @@ manager.registerService("javascript", {
     modes: "javascript",
 });
 manager.registerService("python", {
-    features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-    module: () => import("ace-linters/build/python-service"),
+    features: {completion: false, completionResolve: false, diagnostics: true, format: true, hover: false, documentHighlight: false, signatureHelp: false},
+    module: () => import("ace-python-ruff-linter/build/python-service"),
     className: "PythonService",
     modes: "python",
 });

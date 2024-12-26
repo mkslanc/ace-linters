@@ -3,19 +3,20 @@ const fs = require('fs');
 const path = require('path');
 
 const srcPaths = [
-    path.join(__dirname, 'src/services/typescript/lib/', 'typescriptServices.d.ts'),
-    path.join(__dirname, 'src/services/python/pkg/', 'ruff_wasm.d.ts')
+    path.join(__dirname, 'src/services/typescript/lib/', 'typescriptServices.d.ts')
 ];
 
 const destDirs = [
-    path.join(__dirname, 'types/services/typescript/lib/'), path.join(__dirname, 'types/services/python/pkg/')
+    path.join(__dirname, 'types/services/typescript/lib/')
 ];
 
 const destPaths = [
-    path.join(destDirs[0], 'typescriptServices.d.ts'), path.join(destDirs[1], 'ruff_wasm.d.ts')
+    path.join(destDirs[0], 'typescriptServices.d.ts')
 ];
 
-fs.rmSync("./types", { recursive: true });
+if (fs.existsSync("./types")) {
+    fs.rmSync("./types", {recursive: true});
+}
 
 const configFile = ts.readConfigFile('./tsconfig.json', ts.sys.readFile).config;
 
