@@ -18,6 +18,7 @@ import {phpContent} from "../docs-example/php-example";
 import {xmlContent, xmlSchema} from "../docs-example/xml-example";
 import {pythonContent} from "../docs-example/python-example";
 import {mysqlContent} from "../docs-example/mysql-example";
+import {clangContent} from "../docs-example/clang-example";
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
@@ -40,6 +41,7 @@ let modes = [
     {name: "xml", mode: "ace/mode/xml", content: xmlContent, options: {schemaUri: "xmlSchema.json"}},
     {name: "php", mode: "ace/mode/php", content: phpContent},
     {name: "mysql", mode: "ace/mode/mysql", content: mysqlContent},
+    {name: "clang", mode: "ace/mode/c_cpp", content: clangContent},
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 

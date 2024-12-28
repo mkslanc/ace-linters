@@ -116,3 +116,9 @@ manager.registerService("mysql", {
     className: "MySQLService",
     modes: "mysql",
 });
+
+manager.registerService("clang", {
+    module: () => import("ace-clang-linter/build/ace-clang-linter"),
+    className: "AceClangLinter",
+    modes: "c_cpp",
+});
