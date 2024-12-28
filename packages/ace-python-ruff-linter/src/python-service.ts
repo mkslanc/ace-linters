@@ -69,10 +69,14 @@ export class PythonService extends BaseService<PythonServiceOptions> implements 
         return toDiagnostics(diagnostics, this.optionsToFilterDiagnostics);
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
+    async format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return Promise.resolve([]);
+
+        if (!this.initOutput)
+            await this.init();
+
         const text = fullDocument.getText(range);
         this.setFormattingOptions(options);
 
