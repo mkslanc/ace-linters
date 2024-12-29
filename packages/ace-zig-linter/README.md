@@ -1,20 +1,21 @@
-# [Linter Name]
+# Ace Zig Linter
 
-[Linter Name] is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for [mode-name]. It integrates seamlessly with Ace Linters, enhancing your Ace editor with linting and analysis capabilities based on the LSP standard.
+Ace Zig Linter is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for zig. 
+It integrates seamlessly with Ace Linters, enhancing your Ace editor with linting and analysis capabilities based on the LSP standard.
 
 ## Key Features
 
-- **LSP Compatibility**: Implements LSP features supported by the [mode-name] language server.
+- **LSP Compatibility**: Implements LSP features supported by the zig language server.
 - **Seamless Integration**: Works effortlessly with Ace Linters and the Ace editor.
 - **Easy Setup**: Quick and straightforward integration into your existing environment.
 
 ## Installation
 
-To install [Linter Name], run the following commands:
+To install Ace Zig Linter, run the following commands:
 
 ```bash
 npm install ace-linters
-npm install [linter-name]
+npm install ace-zig-linter
 ```
 
 ## Usage
@@ -24,10 +25,10 @@ npm install [linter-name]
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
 
-   manager.registerService("[linter-name]", {
-       module: () => import("[linter-name]/build/[linter-name]"),
-       className: "[LinterClassName]",
-       modes: "[mode-name]",
+   manager.registerService("ace-zig-linter", {
+       module: () => import("ace-zig-linter/build/ace-zig-linter"),
+       className: "AceZigLinter",
+       modes: "zig",
    });
    ```
 
@@ -45,16 +46,16 @@ npm install [linter-name]
     var editor = ace.edit("editor", {
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
-        mode: "ace/mode/[mode-name]"
+        mode: "ace/mode/zig"
     });
 
     var services = [{
-        name: "[linter-name]",
-        className: "[LinterClassName]",
-        modes: "[mode-name]",
-        script: "build/[linter-name].js",
+        name: "ace-zig-linter",
+        className: "AceZigLinter",
+        modes: "zig",
+        script: "build/ace-zig-linter.js",
         // url to your cdn provider
-        cdnUrl: "https://www.unpkg.com/[linter-name]"
+        cdnUrl: "https://www.unpkg.com/ace-zig-linter"
     }]
 
     let provider = LanguageProvider.fromCdn({
@@ -73,11 +74,10 @@ npm install [linter-name]
 This linter supports the following features:
 
 - **format**: Provides code formatting.
-- **diagnostics**: Reports errors and warnings.
 
-## Supported Versions
+## Powered by
 
-- [Language/framework] version X.X and above.
+- [zig-fmt](https://github.com/wasm-fmt/zig_fmt/pkgs/npm/zig_fmt) A wasm based zig formatter
 
 ## License
 

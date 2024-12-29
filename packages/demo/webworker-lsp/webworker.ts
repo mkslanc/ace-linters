@@ -122,3 +122,9 @@ manager.registerService("clang", {
     className: "AceClangLinter",
     modes: "c_cpp",
 });
+
+manager.registerService("zig", {
+    module: () => import("ace-zig-linter/build/ace-zig-linter"),
+    className: "AceZigLinter",
+    modes: "zig",
+});
