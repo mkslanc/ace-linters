@@ -1,7 +1,7 @@
 import * as lsp from "vscode-languageserver-protocol";
 import {FilterDiagnosticsOptions} from "ace-linters/src/types/language-service";
 import {CommonConverter} from "ace-linters/src/type-converters/common-converters";
-import {CaretPosition, Suggestions} from "dt-sql-parser/dist/parser/common/basic-parser-types";
+import {CaretPosition, Suggestions} from "dt-sql-parser/dist/parser/common/types";
 
 export function toDiagnostics(diagnostics: any[], filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
     return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((el) => {

@@ -1,4 +1,4 @@
-import TrinoSQL from 'dt-sql-parser/dist/parser/trinosql';
+import {TrinoSQL} from 'dt-sql-parser/dist/parser/trino';
 import {BaseSQLService} from "./base-sql-service";
 
 export class TrinoSQLService extends BaseSQLService {

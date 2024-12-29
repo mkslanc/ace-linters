@@ -1,4 +1,4 @@
-import SparkSQL from 'dt-sql-parser/dist/parser/spark';
+import {SparkSQL} from 'dt-sql-parser/dist/parser/spark';
 import {BaseSQLService} from "./base-sql-service";
 
 export class SparkSQLService extends BaseSQLService {

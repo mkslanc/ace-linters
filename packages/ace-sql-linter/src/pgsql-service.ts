@@ -1,8 +1,8 @@
-import PgSQL from 'dt-sql-parser/dist/parser/pgsql';
+import {PostgreSQL} from 'dt-sql-parser/dist/parser/postgresql';
 import {BaseSQLService} from "./base-sql-service";
 
 export class PgSQLService extends BaseSQLService {
-    $service: PgSQL;
+    $service: PostgreSQL;
 
     serviceCapabilities = {
         completionProvider: {
@@ -15,6 +15,6 @@ export class PgSQLService extends BaseSQLService {
     }
     constructor(mode: string) {
         super(mode);
-        this.$service = new PgSQL();
+        this.$service = new PostgreSQL();
     }
 }

@@ -40,7 +40,6 @@ npm install ace-sql-linter
 - TrinoSQL (PrestoSQL) *powered by* [dt-sql-parser](https://github.com/DTStack/dt-sql-parser)
 - PostgreSQL *powered by* [dt-sql-parser](https://github.com/DTStack/dt-sql-parser)
 - Impala SQL *powered by* [dt-sql-parser](https://github.com/DTStack/dt-sql-parser)
-- PL/SQL *powered by* [dt-sql-parser](https://github.com/DTStack/dt-sql-parser)
 
 ## License
 

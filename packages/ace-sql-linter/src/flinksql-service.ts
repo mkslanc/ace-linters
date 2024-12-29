@@ -1,4 +1,4 @@
-import FlinkSQL from 'dt-sql-parser/dist/parser/flinksql';
+import {FlinkSQL} from 'dt-sql-parser/dist/parser/flink';
 import {BaseSQLService} from "./base-sql-service";
 
 export class FlinkSQLService extends BaseSQLService {

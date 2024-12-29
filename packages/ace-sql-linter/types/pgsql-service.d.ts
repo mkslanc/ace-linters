@@ -1,7 +1,7 @@
-import PgSQL from 'dt-sql-parser/dist/parser/pgsql';
+import { PostgreSQL } from 'dt-sql-parser/dist/parser/postgresql';
 import { BaseSQLService } from "./base-sql-service";
 export declare class PgSQLService extends BaseSQLService {
-    $service: PgSQL;
+    $service: PostgreSQL;
     serviceCapabilities: {
         completionProvider: {
             triggerCharacters: string[];

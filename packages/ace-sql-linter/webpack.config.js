@@ -22,7 +22,6 @@ module.exports = (env, argv) => {
         entry: {
             "mysql-service": './src/mysql-service.ts',
             "pgsql-service": './src/pgsql-service.ts',
-            "plsql-service": './src/plsql-service.ts',
             "flinksql-service": './src/flinksql-service.ts',
             "hivesql-service": './src/hivesql-service.ts',
             "impalasql-service": './src/impalasql-service.ts',
