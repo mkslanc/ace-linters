@@ -1,4 +1,4 @@
-import MySQL from 'dt-sql-parser/dist/parser/mysql';
+import { MySQL } from 'dt-sql-parser/dist/parser/mysql';
 import { BaseSQLService } from "./base-sql-service";
 export declare class MySQLService extends BaseSQLService {
     $service: MySQL;

@@ -43,9 +43,9 @@ manager.registerService("typescript", {
     modes: "typescript|tsx|javascript|jsx",
 });
 manager.registerService("lua", {
-    features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-    module: () => import("ace-linters/build/lua-service"),
-    className: "LuaService",
+    features: {completion: false, completionResolve: false, diagnostics: true, format: true, hover: false, documentHighlight: false, signatureHelp: false},
+    module: () => import("ace-lua-linter/build/ace-lua-linter"),
+    className: "AceLuaLinter",
     modes: "lua",
 });
 manager.registerService("yaml", {
@@ -73,8 +73,8 @@ manager.registerService("javascript", {
     modes: "javascript",
 });
 manager.registerService("python", {
-    features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-    module: () => import("ace-linters/build/python-service"),
+    features: {completion: false, completionResolve: false, diagnostics: true, format: true, hover: false, documentHighlight: false, signatureHelp: false},
+    module: () => import("ace-python-ruff-linter/build/python-service"),
     className: "PythonService",
     modes: "python",
 });
@@ -115,4 +115,28 @@ manager.registerService("mysql", {
     module: () => import("ace-sql-linter/build/mysql-service"),
     className: "MySQLService",
     modes: "mysql",
+});
+
+manager.registerService("clang", {
+    module: () => import("ace-clang-linter/build/ace-clang-linter"),
+    className: "AceClangLinter",
+    modes: "c_cpp",
+});
+
+manager.registerService("zig", {
+    module: () => import("ace-zig-linter/build/ace-zig-linter"),
+    className: "AceZigLinter",
+    modes: "zig",
+});
+
+manager.registerService("dart", {
+    module: () => import("ace-dart-linter/build/ace-dart-linter"),
+    className: "AceDartLinter",
+    modes: "dart",
+});
+
+manager.registerService("golang", {
+    module: () => import("ace-go-linter/build/ace-go-linter"),
+    className: "AceGoLinter",
+    modes: "go",
 });

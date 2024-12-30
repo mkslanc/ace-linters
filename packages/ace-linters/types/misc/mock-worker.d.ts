@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import EventEmitter from "events";
 export declare class MockWorker extends EventEmitter implements Worker {
     $emitter: MockWorker;

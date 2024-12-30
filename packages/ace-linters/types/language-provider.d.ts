@@ -1,4 +1,5 @@
 import { Ace } from "ace-code";
+import "./types/ace-extension";
 import { ComboDocumentIdentifier, IMessageController } from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
 import { CodeActionsByService, ProviderOptions, ServiceFeatures, ServiceOptions, ServiceOptionsMap, ServiceStruct, SupportedServices, Tooltip } from "./types/language-service";
@@ -138,7 +139,7 @@ declare class SessionLanguageProvider {
     private $connected;
     private $changeMode;
     setServerCapabilities: (capabilities: {
-        [serviceName: string]: lsp.ServerCapabilities<any>;
+        [serviceName: string]: lsp.ServerCapabilities;
     }) => void;
     private initDocumentUri;
     private get $extension();

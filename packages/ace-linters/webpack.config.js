@@ -33,10 +33,6 @@ module.exports = (env, argv) => {
             "php-service": './src/services/php/php-service.ts',
             "ace-language-client": './src/ace-language-client.ts',
             "javascript-service": './src/services/javascript/javascript-service.ts',
-            "python-service": {
-                chunkLoading: "import-scripts",
-                import: './src/services/python/python-service.ts'
-            },
             "base-service": './src/services/base-service.ts',
             "language-client": './src/services/language-client.ts'
         },

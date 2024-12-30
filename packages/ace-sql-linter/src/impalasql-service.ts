@@ -1,4 +1,4 @@
-import ImpalaSQL from 'dt-sql-parser/dist/parser/impala';
+import {ImpalaSQL} from 'dt-sql-parser/dist/parser/impala';
 import {BaseSQLService} from "./base-sql-service";
 
 export class ImpalaSQLService extends BaseSQLService {

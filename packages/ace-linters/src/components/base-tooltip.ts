@@ -113,14 +113,12 @@ export class BaseTooltip extends Tooltip {
     $registerEditorEvents() {
         this.$activeEditor!.on("change", this.$hide);
         this.$activeEditor!.on("mousewheel", this.$hide);
-        //@ts-ignore
         this.$activeEditor!.on("mousedown", this.$hide);
     }
 
     $removeEditorEvents() {
         this.$activeEditor!.off("change", this.$hide);
         this.$activeEditor!.off("mousewheel", this.$hide);
-        //@ts-ignore
         this.$activeEditor!.off("mousedown", this.$hide);
     }
 

@@ -1,0 +1,26 @@
+{
+  "name": "this-service",
+  "author": "Azat Alimov <mkslanc@gmail.com>",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": "https://github.com/mkslanc/ace-linters/tree/main/packages/this-service",
+  "scripts": {
+    "clean": "rimraf build",
+    "prebuild": "node prebuild.js",
+    "build": "npm run clean && webpack --mode=production"
+  },
+  "devDependencies": {
+
+  },
+  "peerDependencies": {
+    "ace-linters": "^1.3.4"
+  },
+  "files": ["build", "types"],
+  "typesVersions": {
+    "*": {
+      "build/this-service": [
+        "./types/this-service.d.ts"
+      ]
+    }
+  }
+}

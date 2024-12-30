@@ -1,4 +1,4 @@
-import HiveSQL from 'dt-sql-parser/dist/parser/hive';
+import { HiveSQL } from 'dt-sql-parser/dist/parser/hive';
 import { BaseSQLService } from "./base-sql-service";
 export declare class HiveSQLService extends BaseSQLService {
     $service: HiveSQL;

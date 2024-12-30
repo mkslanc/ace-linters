@@ -31,13 +31,11 @@ export class LightbulbWidget implements ILightbulbWidget {
         this.editor = editor;
         this.codeActions = [];
         this.executeActionCallback = executeActionCallback;
-        // @ts-ignore
+        //@ts-ignore
         this.popup = new AcePopup(editor.container || document.body || document.documentElement);
-        //@ts-expect-error
         this.popup.on("click", (e) => {
             const selectedRow = this.popup.getData(this.popup.getRow());
-            // @ts-ignore
-            this.executeAction(selectedRow.action, selectedRow.serviceName);
+            this.executeAction(selectedRow["action"], selectedRow["serviceName"]);
             this.popup.hide();
             e.stop();
         });
@@ -48,7 +46,6 @@ export class LightbulbWidget implements ILightbulbWidget {
     }
 
     setEditorListeners(editor: Ace.Editor) {
-        //@ts-expect-error
         editor.on("changeSelection", this.hideAll);
         editor.on("focus", this.hideAll);
 
@@ -99,7 +96,6 @@ export class LightbulbWidget implements ILightbulbWidget {
             return;
         }
         this.setDataToPopup();
-        //@ts-expect-error wrong public API 
         this.popup.show({top: y, left: x}, 12, false)
     }
 
@@ -121,7 +117,7 @@ export class LightbulbWidget implements ILightbulbWidget {
             codeActionsByService.codeActions?.forEach((action) => {
                     codeActions.push({
                         value: action.title,
-                        //@ts-expect-error 
+                        //@ts-expect-error
                         serviceName: codeActionsByService.service,
                         action: action
                     })
