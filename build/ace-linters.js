@@ -19372,7 +19372,8 @@ function getServices(includeLinters) {
             name: "python",
             script: "python-service.js",
             className: "PythonService",
-            modes: "python"
+            modes: "python",
+            cdnUrl: "https://www.unpkg.com/ace-python-ruff-linter/build"
         }
     ];
     if (includeLinters === true || includeLinters === undefined) {
@@ -19548,13 +19549,11 @@ class BaseTooltip extends Tooltip {
     $registerEditorEvents() {
         this.$activeEditor.on("change", this.$hide);
         this.$activeEditor.on("mousewheel", this.$hide);
-        //@ts-ignore
         this.$activeEditor.on("mousedown", this.$hide);
     }
     $removeEditorEvents() {
         this.$activeEditor.off("change", this.$hide);
         this.$activeEditor.off("mousewheel", this.$hide);
-        //@ts-ignore
         this.$activeEditor.off("mousedown", this.$hide);
     }
     $inactivateEditor() {
@@ -19625,7 +19624,6 @@ function signature_tooltip_define_property(obj, key, value) {
 
 class SignatureTooltip extends BaseTooltip {
     registerEditor(editor) {
-        // @ts-ignore
         editor.on("changeSelection", ()=>this.onChangeSelection(editor));
     }
     update(editor) {
@@ -20357,6 +20355,7 @@ var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
     /**
      * Creates and renders single line editor in popup window. If `parentNode` param is isset, then attaching it to this element.
      * @param {Element} [parentNode]
+     * @return {Ace.AcePopup}
      */ constructor(parentNode){
         var el = document.createElement("div");
         var popup = $singleLineEditor(el);
@@ -20386,10 +20385,8 @@ var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
         // @ts-ignore
         popup.session.highlight("");
         popup.session["$searchHighlight"].clazz = "ace_highlight-marker";
-        // @ts-ignore
         popup.on("mousedown", function(e) {
             var pos = e.getDocumentPosition();
-            // @ts-ignore
             popup.selection.moveToPosition(pos);
             selectionMarker.start.row = selectionMarker.end.row = pos.row;
             e.stop();
@@ -20403,7 +20400,7 @@ var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
                 hoverMarker.id = popup.session.addMarker(hoverMarker, "ace_line-hover", "fullLine");
             } else if (hoverMarker.id) {
                 popup.session.removeMarker(hoverMarker.id);
-                hoverMarker.id = null;
+                hoverMarker.id = undefined;
             }
         };
         popup.setSelectOnHover(false);
@@ -20483,7 +20480,6 @@ var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
         });
         // @ts-ignore
         popup.on("hide", hideHoverMarker);
-        // @ts-ignore
         popup.on("changeSelection", hideHoverMarker);
         popup.session.doc.getLength = function() {
             return popup.data.length;
@@ -20573,12 +20569,10 @@ var ariaActiveState = isSafari ? "aria-current" : "aria-selected";
                 if (popup.isOpen) popup._signal("select");
             }
         };
-        // @ts-ignore
         popup.on("changeSelection", function() {
             if (popup.isOpen) {
                 popup.setRow(popup.selection.lead.row);
             }
-            // @ts-ignore
             popup.renderer.scrollCursorIntoView();
         });
         popup.hide = function() {
@@ -20715,7 +20709,6 @@ function lightbulb_define_property(obj, key, value) {
 
 class LightbulbWidget {
     setEditorListeners(editor) {
-        //@ts-expect-error
         editor.on("changeSelection", this.hideAll);
         editor.on("focus", this.hideAll);
         editor.renderer.on("afterRender", this.setPosition);
@@ -20754,7 +20747,6 @@ class LightbulbWidget {
             return;
         }
         this.setDataToPopup();
-        //@ts-expect-error wrong public API 
         this.popup.show({
             top: y,
             left: x
@@ -20778,7 +20770,7 @@ class LightbulbWidget {
             (_codeActionsByService_codeActions = codeActionsByService.codeActions) === null || _codeActionsByService_codeActions === void 0 ? void 0 : _codeActionsByService_codeActions.forEach((action)=>{
                 codeActions.push({
                     value: action.title,
-                    //@ts-expect-error 
+                    //@ts-expect-error
                     serviceName: codeActionsByService.service,
                     action: action
                 });
@@ -20834,13 +20826,11 @@ class LightbulbWidget {
         this.editor = editor;
         this.codeActions = [];
         this.executeActionCallback = executeActionCallback;
-        // @ts-ignore
+        //@ts-ignore
         this.popup = new AcePopup(editor.container || document.body || document.documentElement);
-        //@ts-expect-error
         this.popup.on("click", (e)=>{
             const selectedRow = this.popup.getData(this.popup.getRow());
-            // @ts-ignore
-            this.executeAction(selectedRow.action, selectedRow.serviceName);
+            this.executeAction(selectedRow["action"], selectedRow["serviceName"]);
             this.popup.hide();
             e.stop();
         });
@@ -21016,6 +21006,7 @@ function language_provider_define_property(obj, key, value) {
 
 
 
+
 class LanguageProvider {
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
@@ -21173,7 +21164,6 @@ class LanguageProvider {
         });
         if (this.options.functionality.documentHighlights) {
             var $timer;
-            // @ts-ignore
             editor.on("changeSelection", ()=>{
                 if (!$timer) $timer = setTimeout(()=>{
                     let cursor = editor.getCursorPosition();
@@ -21215,7 +21205,6 @@ class LanguageProvider {
             }
         });
         var actionTimer;
-        // @ts-ignore
         editor.on("changeSelection", ()=>{
             if (!actionTimer) actionTimer = setTimeout(()=>{
                 //TODO: no need to send request on empty
@@ -21501,6 +21490,7 @@ class SessionLanguageProvider {
             let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend.tokenTypes, this.semanticTokensLegend.tokenModifiers);
             this.session.setSemanticTokens(decodedTokens);
             let bgTokenizer = this.session.bgTokenizer;
+            //@ts-ignore
             bgTokenizer.running = setTimeout(()=>{
                 var _bgTokenizer_semanticTokens, _bgTokenizer, _bgTokenizer_semanticTokens1, _bgTokenizer1;
                 if (((_bgTokenizer = bgTokenizer) === null || _bgTokenizer === void 0 ? void 0 : (_bgTokenizer_semanticTokens = _bgTokenizer.semanticTokens) === null || _bgTokenizer_semanticTokens === void 0 ? void 0 : _bgTokenizer_semanticTokens.tokens) && ((_bgTokenizer1 = bgTokenizer) === null || _bgTokenizer1 === void 0 ? void 0 : (_bgTokenizer_semanticTokens1 = _bgTokenizer1.semanticTokens) === null || _bgTokenizer_semanticTokens1 === void 0 ? void 0 : _bgTokenizer_semanticTokens1.tokens.length) > 0) {
@@ -21550,7 +21540,6 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "$provider", void 0);
         language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
-            // @ts-ignore
             this.setServerCapabilities(capabilities);
             if (this.$modeIsChanged) this.$changeMode();
             if (this.$deltaQueue) this.$sendDeltaQueue();
@@ -21605,6 +21594,8 @@ class SessionLanguageProvider {
             if (hasSemanticTokensProvider) {
                 this.getSemanticTokens();
             }
+        //TODO: we should restrict range formatting if any of services is only has full format capabilities
+        //or we shoudl use service with full format capability instead of range one's
         });
         language_provider_define_property(this, "$changeListener", (delta)=>{
             this.session.doc["version"]++;
@@ -21686,7 +21677,6 @@ class SessionLanguageProvider {
         session.doc["version"] = 1;
         session.doc.on("change", this.$changeListener, true);
         this.addSemanticTokenSupport(session); //TODO: ?
-        // @ts-ignore
         session.on("changeMode", this.$changeMode);
         if (this.$provider.options.functionality.semanticTokens) {
             session.on("changeScrollTop", ()=>this.getSemanticTokens());
