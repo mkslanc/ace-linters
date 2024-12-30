@@ -1,3 +1,6 @@
 {
-  "name": "@ace-linters/demo"
+  "name": "@ace-linters/demo",
+  "scripts": {
+    "build": ""
+  }
 }
