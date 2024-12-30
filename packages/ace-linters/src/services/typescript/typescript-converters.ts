@@ -32,8 +32,8 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, 
 
 export function toTsOffset(range: lsp.Range, doc: TextDocument) {
     return {
-        start: doc.offsetAt(range.start) + 1,
-        end: doc.offsetAt(range.end) + 1
+        start: normalizeOffset(range.start, doc),
+        end: normalizeOffset(range.end, doc)
     }
 }
 
@@ -44,6 +44,11 @@ export function toTextSpan(range: lsp.Range, doc: TextDocument) {
         start: start,
         length: end - start
     }
+}
+
+function normalizeOffset(position: lsp.Position, doc: TextDocument) {
+    const offset = doc.offsetAt(position);
+    return offset >= 0 ? offset : 0;
 }
 
 export function parseMessageText(
