@@ -134,3 +134,9 @@ manager.registerService("dart", {
     className: "AceDartLinter",
     modes: "dart",
 });
+
+manager.registerService("golang", {
+    module: () => import("ace-go-linter/build/ace-go-linter"),
+    className: "AceGoLinter",
+    modes: "go",
+});
