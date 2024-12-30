@@ -1,7 +1,7 @@
 {
   "name": "ace-lua-linter",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "repository": "https://github.com/mkslanc/ace-linters/tree/main/packages/ace-lua-linter",
   "scripts": {

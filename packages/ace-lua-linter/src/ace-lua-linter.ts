@@ -8,7 +8,7 @@ import type {AceLuaLinterOptions} from "./service";
 import * as lsp from "vscode-languageserver-protocol";
 import {filterDiagnostics} from "ace-linters/src/type-converters/lsp/lsp-converters";
 import {mergeObjects} from "ace-linters/src/utils";
-import {toTextEdits} from "ace-clang-linter/src/ace-clang-linter-converters";
+import {toTextEdits} from "./ace-lua-linter-converters";
 
 export class AceLuaLinter extends BaseService<AceLuaLinterOptions> implements LanguageService {
     $service;
