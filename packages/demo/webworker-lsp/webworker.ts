@@ -43,9 +43,9 @@ manager.registerService("typescript", {
     modes: "typescript|tsx|javascript|jsx",
 });
 manager.registerService("lua", {
-    features: {completion: false, completionResolve: false, diagnostics: true, format: false, hover: false, documentHighlight: false, signatureHelp: false},
-    module: () => import("ace-linters/build/lua-service"),
-    className: "LuaService",
+    features: {completion: false, completionResolve: false, diagnostics: true, format: true, hover: false, documentHighlight: false, signatureHelp: false},
+    module: () => import("ace-lua-linter/build/ace-lua-linter"),
+    className: "AceLuaLinter",
     modes: "lua",
 });
 manager.registerService("yaml", {

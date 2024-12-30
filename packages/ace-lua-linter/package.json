@@ -1,0 +1,27 @@
+{
+  "name": "ace-lua-linter",
+  "author": "Azat Alimov <mkslanc@gmail.com>",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": "https://github.com/mkslanc/ace-linters/tree/main/packages/ace-lua-linter",
+  "scripts": {
+    "clean": "rimraf build",
+    "prebuild": "node prebuild.js",
+    "build": "npm run clean && webpack --mode=production"
+  },
+  "devDependencies": {
+    "luaparse": "^0.3.1",
+    "@wasm-fmt/lua_fmt": "^0.1.0"
+  },
+  "peerDependencies": {
+    "ace-linters": "^1.3.4"
+  },
+  "files": ["build", "types"],
+  "typesVersions": {
+    "*": {
+      "build/ace-lua-linter": [
+        "./types/ace-lua-linter.d.ts"
+      ]
+    }
+  }
+}
