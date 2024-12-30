@@ -1,0 +1,1 @@
+export var dartContent = `void main() { print('Hello, World!'); }`;

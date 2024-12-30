@@ -2,6 +2,7 @@
   "name": "ace-python-ruff-linter",
   "author": "Azat Alimov <mkslanc@gmail.com>",
   "version": "1.0.2",
+  "license": "MIT",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",

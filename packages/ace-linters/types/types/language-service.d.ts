@@ -57,12 +57,12 @@ export interface CompletionService {
 export interface ServiceOptions {
     [name: string]: any;
 }
-interface ServiceOptionsWithErrorCodes {
+export interface ServiceOptionsWithErrorCodes {
     errorCodesToIgnore?: string[];
     errorCodesToTreatAsWarning?: string[];
     errorCodesToTreatAsInfo?: string[];
 }
-interface ServiceOptionsWithErrorMessages {
+export interface ServiceOptionsWithErrorMessages {
     errorMessagesToIgnore?: RegExp[];
     errorMessagesToTreatAsWarning?: RegExp[];
     errorMessagesToTreatAsInfo?: RegExp[];

@@ -128,3 +128,9 @@ manager.registerService("zig", {
     className: "AceZigLinter",
     modes: "zig",
 });
+
+manager.registerService("dart", {
+    module: () => import("ace-dart-linter/build/ace-dart-linter"),
+    className: "AceDartLinter",
+    modes: "dart",
+});
