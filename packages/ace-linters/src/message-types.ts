@@ -10,7 +10,7 @@ export abstract class BaseMessage {
     version?: number;
     callbackId: number;
 
-    protected constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number) {
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number) {
         this.sessionId = documentIdentifier.sessionId;
         this.documentUri = documentIdentifier.documentUri;
         this.callbackId = callbackId;
@@ -255,6 +255,18 @@ export class AppliedEditMessage {
     }
 }
 
+export class RenameDocumentMessage extends BaseMessage {
+    type: MessageType.renameDocument = MessageType.renameDocument;
+    value: string;
+    version: number;
+
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number) {
+        super(documentIdentifier, callbackId);
+        this.value = value;
+        this.version = version;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -278,7 +290,8 @@ export enum MessageType {
     executeCommand,
     applyEdit,
     appliedEdit,
-    setWorkspace
+    setWorkspace,
+    renameDocument
 }
 
 export type AllMessages =
@@ -304,4 +317,5 @@ export type AllMessages =
     | GetCodeActionsMessage
     | ExecuteCommandMessage
     | AppliedEditMessage
-    | SetWorkspaceMessage;
+    | SetWorkspaceMessage
+    | RenameDocumentMessage;

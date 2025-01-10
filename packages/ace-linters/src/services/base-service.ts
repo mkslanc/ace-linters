@@ -115,6 +115,12 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         }
     }
 
+    renameDocument(document: lsp.TextDocumentIdentifier, newDocumentUri: string) {
+        this.documents[newDocumentUri] = this.documents[document.uri];
+        this.options[newDocumentUri] = this.options[document.uri];
+        this.removeDocument(document);
+    }
+
     getDocumentValue(uri: string): string | undefined {
         return this.getDocument(uri)?.getText();
     }

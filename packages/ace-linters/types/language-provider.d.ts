@@ -107,11 +107,11 @@ declare class SessionLanguageProvider {
     private $messageController;
     private $deltaQueue;
     private $isConnected;
-    private $modeIsChanged;
     private $options?;
     private $filePath;
     private $isFilePathRequired;
     private $servicesCapabilities?;
+    private $requestsQueue;
     state: {
         occurrenceMarkers: MarkerGroup | null;
         diagnosticMarkers: MarkerGroup | null;
@@ -129,6 +129,7 @@ declare class SessionLanguageProvider {
      * @param messageController - The `IMessageController` instance for handling messages.
      */
     constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController);
+    enqueueIfNotConnected(callback: () => void): void;
     get comboDocumentIdentifier(): ComboDocumentIdentifier;
     /**
      * @param filePath

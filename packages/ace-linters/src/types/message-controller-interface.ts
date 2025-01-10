@@ -53,4 +53,6 @@ export interface IMessageController {
     executeCommand(serviceName: string, command: string, args?: any[],  callback?: (result: any) => void);
 
     setWorkspace(workspaceUri: string, callback?: () => void): void;
+
+    renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
 }
