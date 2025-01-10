@@ -17,6 +17,13 @@ import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
     const lspDiagnostics = diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
+        const tags: lsp.DiagnosticTag[] = [];
+        if (el.reportsUnnecessary) {
+            tags.push(lsp.DiagnosticTag.Unnecessary);
+        }
+        if (el.reportsDeprecated) {
+            tags.push(lsp.DiagnosticTag.Deprecated);
+        }
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code.toString())) {
@@ -24,8 +31,10 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, 
         } else if (filterErrors.errorCodesToTreatAsInfo!.includes(el.code.toString())) {
             el.category = DiagnosticCategory.Message;
         }
-        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
+        let diagnostic = lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
             parseMessageText(el.messageText, el.code), fromTsCategory(el.category), el.code);
+        diagnostic.tags = tags;
+        return diagnostic;
     });
     return filterDiagnostics(lspDiagnostics, filterErrors);
 }
