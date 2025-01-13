@@ -8,7 +8,7 @@ export declare abstract class BaseMessage {
     documentUri: lsp.DocumentUri;
     version?: number;
     callbackId: number;
-    protected constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number);
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number);
 }
 export declare class InitMessage extends BaseMessage {
     type: MessageType.init;
@@ -135,6 +135,12 @@ export declare class AppliedEditMessage {
     value: lsp.ApplyWorkspaceEditResult;
     constructor(value: lsp.ApplyWorkspaceEditResult, serviceName: string, callbackId: number);
 }
+export declare class RenameDocumentMessage extends BaseMessage {
+    type: MessageType.renameDocument;
+    value: string;
+    version: number;
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: string, version: number);
+}
 export declare enum MessageType {
     init = 0,
     format = 1,
@@ -158,6 +164,7 @@ export declare enum MessageType {
     executeCommand = 19,
     applyEdit = 20,
     appliedEdit = 21,
-    setWorkspace = 22
+    setWorkspace = 22,
+    renameDocument = 23
 }
-export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | CloseConnectionMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage | AppliedEditMessage | SetWorkspaceMessage;
+export type AllMessages = InitMessage | FormatMessage | CompleteMessage | ResolveCompletionMessage | ChangeMessage | HoverMessage | ValidateMessage | DeltasMessage | ChangeModeMessage | ChangeOptionsMessage | CloseDocumentMessage | GlobalOptionsMessage | ConfigureFeaturesMessage | SignatureHelpMessage | DocumentHighlightMessage | CloseConnectionMessage | GetSemanticTokensMessage | GetCodeActionsMessage | ExecuteCommandMessage | AppliedEditMessage | SetWorkspaceMessage | RenameDocumentMessage;

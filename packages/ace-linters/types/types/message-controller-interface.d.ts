@@ -30,4 +30,5 @@ export interface IMessageController {
     getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: CodeActionsByService[]) => void): any;
     executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): any;
     setWorkspace(workspaceUri: string, callback?: () => void): void;
+    renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
 }

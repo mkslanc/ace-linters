@@ -27,6 +27,7 @@ export interface LanguageService {
     setGlobalOptions(options: ServiceOptions): any;
     getDocument(uri: string): TextDocument;
     removeDocument(document: TextDocumentIdentifier): any;
+    renameDocument(document: TextDocumentIdentifier, newDocumentUri: string): any;
     getDocumentValue(uri: string): string | undefined;
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;

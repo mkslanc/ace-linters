@@ -189,6 +189,9 @@ export class ServiceManager {
                 case MessageType.setWorkspace:
                     this.setWorkspace(message.value);
                     break;
+                case MessageType.renameDocument:
+                    this.renameDocument(documentIdentifier, message.value);
+                    break;
             }
 
             ctx.postMessage(postMessage);
@@ -327,6 +330,15 @@ export class ServiceManager {
         Object.values(services).forEach((el) => el.serviceInstance!.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
         return services;
+    }
+
+    async renameDocument(documentIdentifier: VersionedTextDocumentIdentifier, newDocumentUri: string) {
+        let services = this.getServicesInstances(documentIdentifier.uri);
+        if (services.length > 0) {
+            services.forEach((el) => el.renameDocument(documentIdentifier, newDocumentUri));
+            this.$sessionIDToMode[newDocumentUri] = this.$sessionIDToMode[documentIdentifier.uri];
+            delete this.$sessionIDToMode[documentIdentifier.uri];
+        }
     }
 
     async changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions) {

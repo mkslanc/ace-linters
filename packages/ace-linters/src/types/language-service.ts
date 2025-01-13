@@ -39,6 +39,8 @@ export interface LanguageService {
 
     removeDocument(document: TextDocumentIdentifier);
 
+    renameDocument(document: TextDocumentIdentifier, newDocumentUri: string);
+
     getDocumentValue(uri: string): string | undefined;
 
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
