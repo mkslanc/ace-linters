@@ -63,8 +63,6 @@ export class LanguageProvider {
         this.$signatureTooltip = new SignatureTooltip(this);
     }
 
-
-
     /**
      *  Creates LanguageProvider using our transport protocol with ability to register different services on same
      *  webworker
@@ -518,11 +516,11 @@ class SessionLanguageProvider {
     private $messageController: IMessageController;
     private $deltaQueue: Ace.Delta[] | null;
     private $isConnected = false;
-    private $modeIsChanged = false;
     private $options?: ServiceOptions;
     private $filePath: string;
     private $isFilePathRequired = false;
     private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
+    private $requestsQueue: Function[] = [];
 
     state: {
         occurrenceMarkers: MarkerGroup | null,
@@ -559,7 +557,7 @@ class SessionLanguageProvider {
         this.editor = editor;
         this.$isFilePathRequired = provider.requireFilePath;
 
-        session.doc["version"] = 1;
+        session.doc.version = 1;
         session.doc.on("change", this.$changeListener, true);
         this.addSemanticTokenSupport(session); //TODO: ?
         session.on("changeMode", this.$changeMode);
@@ -568,6 +566,14 @@ class SessionLanguageProvider {
         }
 
         this.$init();
+    }
+
+    enqueueIfNotConnected(callback: () => void) {
+        if (!this.$isConnected) {
+            this.$requestsQueue.push(callback);
+        } else {
+            callback();
+        }
     }
 
     get comboDocumentIdentifier(): ComboDocumentIdentifier {
@@ -581,11 +587,16 @@ class SessionLanguageProvider {
      * @param filePath
      */
     setFilePath(filePath: string) {
-        if (this.$filePath !== undefined)//TODO change file path
-            return;
-        this.$filePath = filePath;
-        this.$init();
-    }
+        this.enqueueIfNotConnected(() => {
+            this.session.doc.version++;
+            if (this.$filePath !== undefined)//TODO change file path
+                return;
+            this.$filePath = filePath;
+            const previousComboId = this.comboDocumentIdentifier;
+            this.initDocumentUri(true);
+            this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
+        })
+    };
 
     private $init() {
         if (this.$isFilePathRequired && this.$filePath === undefined)
@@ -653,8 +664,10 @@ class SessionLanguageProvider {
         this.$isConnected = true;
 
         this.setServerCapabilities(capabilities);
-        if (this.$modeIsChanged)
-            this.$changeMode();
+
+        this.$requestsQueue.forEach((requestCallback) => requestCallback());
+        this.$requestsQueue = [];
+
         if (this.$deltaQueue)
             this.$sendDeltaQueue();
         if (this.$options)
@@ -662,20 +675,18 @@ class SessionLanguageProvider {
     }
 
     private $changeMode = () => {
-        if (!this.$isConnected) {
-            this.$modeIsChanged = true;
-            return;
-        }
-        this.$deltaQueue = [];
+        this.enqueueIfNotConnected(() => {
+            this.$deltaQueue = [];
 
-        this.session.clearAnnotations();
-        if (this.state.diagnosticMarkers) {
-            this.state.diagnosticMarkers.setMarkers([]);
-        }
+            this.session.clearAnnotations();
+            if (this.state.diagnosticMarkers) {
+                this.state.diagnosticMarkers.setMarkers([]);
+            }
 
-        this.session.setSemanticTokens(undefined); //clear all semantic tokens
-        let newVersion = this.session.doc["version"]++;
-        this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+            this.session.setSemanticTokens(undefined); //clear all semantic tokens
+            let newVersion = this.session.doc.version++;
+            this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+        });
     };
 
     setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
@@ -714,8 +725,11 @@ class SessionLanguageProvider {
         //or we shoudl use service with full format capability instead of range one's
     }
 
-    private initDocumentUri() {
+    private initDocumentUri(isRename = false) {
         let filePath = this.$filePath ?? this.session["id"] + "." + this.$extension;
+        if (isRename) {
+            delete this.$provider.$urisToSessionsIds[this.documentUri];
+        }
         this.documentUri = convertToUri(filePath);
         this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
     }
@@ -737,7 +751,7 @@ class SessionLanguageProvider {
     }
 
     private $changeListener = (delta: Ace.Delta) => {
-        this.session.doc["version"]++;
+        this.session.doc.version++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
             setTimeout(() => this.$sendDeltaQueue(() => {
@@ -760,8 +774,9 @@ class SessionLanguageProvider {
         if (!diagnostics) {
             return;
         }
+
+        let annotations = toAnnotations(diagnostics);
         this.session.clearAnnotations();
-        let annotations = toAnnotations(diagnostics)
         if (annotations && annotations.length > 0) {
             this.session.setAnnotations(annotations);
         }

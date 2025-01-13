@@ -32,5 +32,6 @@ export declare class MessageController implements IMessageController {
     getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: CodeActionsByService[]) => void): void;
     executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): void;
     setWorkspace(workspaceUri: string, callback?: () => void): void;
+    renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
     postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any: any) => void): void;
 }

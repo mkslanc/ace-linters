@@ -29,6 +29,7 @@ export declare class ServiceManager {
     addDocument(documentIdentifier: VersionedTextDocumentIdentifier, documentValue: string, mode: string, options?: ServiceOptions): Promise<never[] | {
         [serviceName: string]: LanguageClientConfig | ServiceConfig;
     } | undefined>;
+    renameDocument(documentIdentifier: VersionedTextDocumentIdentifier, newDocumentUri: string): Promise<void>;
     changeDocumentMode(documentIdentifier: VersionedTextDocumentIdentifier, value: string, mode: string, options: ServiceOptions): Promise<never[] | {
         [serviceName: string]: LanguageClientConfig | ServiceConfig;
     } | undefined>;

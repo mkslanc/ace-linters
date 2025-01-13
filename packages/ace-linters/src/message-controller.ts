@@ -22,7 +22,7 @@ import {
     GetCodeActionsMessage,
     ExecuteCommandMessage,
     AppliedEditMessage,
-    SetWorkspaceMessage
+    SetWorkspaceMessage, RenameDocumentMessage
 } from "./message-types";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
@@ -112,9 +112,9 @@ export class MessageController implements IMessageController {
     change(documentIdentifier: ComboDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void) {
         let message: BaseMessage;
         if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-            message = new ChangeMessage(documentIdentifier, this.callbackId++, document.getValue(), document["version"]);
+            message = new ChangeMessage(documentIdentifier, this.callbackId++, document.getValue(), document.version);
         } else {
-            message = new DeltasMessage(documentIdentifier, this.callbackId++, deltas, document["version"]);
+            message = new DeltasMessage(documentIdentifier, this.callbackId++, deltas, document.version);
         }
 
         this.postMessage(message, callback)
@@ -167,6 +167,10 @@ export class MessageController implements IMessageController {
 
     setWorkspace(workspaceUri: string, callback?: () => void) {
         this.$worker.postMessage(new SetWorkspaceMessage(workspaceUri));
+    }
+
+    renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void {
+        this.$worker.postMessage(new RenameDocumentMessage(documentIdentifier, this.callbackId++, newDocumentUri, version));
     }
 
     postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any) => void) {

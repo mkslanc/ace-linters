@@ -20,6 +20,7 @@ export declare abstract class BaseService<OptionsType extends ServiceOptions = S
     addDocument(document: lsp.TextDocumentItem): void;
     getDocument(uri: string): TextDocument;
     removeDocument(document: lsp.TextDocumentIdentifier): void;
+    renameDocument(document: lsp.TextDocumentIdentifier, newDocumentUri: string): void;
     getDocumentValue(uri: string): string | undefined;
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
     setGlobalOptions(options: OptionsType): void;

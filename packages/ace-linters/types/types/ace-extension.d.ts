@@ -20,3 +20,8 @@ declare module "ace-code/src/tokenizer" {
         };
     }
 }
+declare module "ace-code/src/document" {
+    interface Document {
+        version: number;
+    }
+}
