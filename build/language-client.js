@@ -4117,6 +4117,11 @@ class BaseService {
             delete this.options[document.uri];
         }
     }
+    renameDocument(document, newDocumentUri) {
+        this.documents[newDocumentUri] = this.documents[document.uri];
+        this.options[newDocumentUri] = this.options[document.uri];
+        this.removeDocument(document);
+    }
     getDocumentValue(uri) {
         var _this_getDocument;
         return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();
@@ -17434,6 +17439,16 @@ class AppliedEditMessage {
         this.value = value;
     }
 }
+class RenameDocumentMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value, version){
+        super(documentIdentifier, callbackId);
+        _define_property(this, "type", MessageType.renameDocument);
+        _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -17459,6 +17474,7 @@ var MessageType;
     MessageType[MessageType["applyEdit"] = 20] = "applyEdit";
     MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
     MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
+    MessageType[MessageType["renameDocument"] = 23] = "renameDocument";
 })(MessageType || (MessageType = {}));
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-uri/lib/esm/index.mjs

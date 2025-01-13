@@ -9769,6 +9769,7 @@ if (true) {
 /* harmony export */   m6: () => (/* binding */ ExecuteCommandMessage),
 /* harmony export */   qf: () => (/* binding */ CloseConnectionMessage),
 /* harmony export */   uO: () => (/* binding */ ChangeMessage),
+/* harmony export */   v3: () => (/* binding */ RenameDocumentMessage),
 /* harmony export */   zZ: () => (/* binding */ CompleteMessage)
 /* harmony export */ });
 /* unused harmony export BaseMessage */
@@ -9990,6 +9991,16 @@ class AppliedEditMessage {
         this.value = value;
     }
 }
+class RenameDocumentMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value, version){
+        super(documentIdentifier, callbackId);
+        _define_property(this, "type", MessageType.renameDocument);
+        _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -10015,6 +10026,7 @@ var MessageType;
     MessageType[MessageType["applyEdit"] = 20] = "applyEdit";
     MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
     MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
+    MessageType[MessageType["renameDocument"] = 23] = "renameDocument";
 })(MessageType || (MessageType = {}));
 
 
@@ -10156,6 +10168,14 @@ class ServiceManager {
         Object.values(services).forEach((el)=>el.serviceInstance.addDocument(documentItem));
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
         return services;
+    }
+    async renameDocument(documentIdentifier, newDocumentUri) {
+        let services = this.getServicesInstances(documentIdentifier.uri);
+        if (services.length > 0) {
+            services.forEach((el)=>el.renameDocument(documentIdentifier, newDocumentUri));
+            this.$sessionIDToMode[newDocumentUri] = this.$sessionIDToMode[documentIdentifier.uri];
+            delete this.$sessionIDToMode[documentIdentifier.uri];
+        }
     }
     async changeDocumentMode(documentIdentifier, value, mode, options) {
         this.removeDocument(documentIdentifier);
@@ -10419,6 +10439,9 @@ class ServiceManager {
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.setWorkspace:
                     this.setWorkspace(message.value);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.renameDocument:
+                    this.renameDocument(documentIdentifier, message.value);
                     break;
             }
             ctx.postMessage(postMessage);
@@ -19827,9 +19850,9 @@ class MessageController {
     change(documentIdentifier, deltas, document, callback) {
         let message;
         if (deltas.length > 50 && deltas.length > document.getLength() >> 1) {
-            message = new message_types/* ChangeMessage */.uO(documentIdentifier, this.callbackId++, document.getValue(), document["version"]);
+            message = new message_types/* ChangeMessage */.uO(documentIdentifier, this.callbackId++, document.getValue(), document.version);
         } else {
-            message = new message_types/* DeltasMessage */.Jk(documentIdentifier, this.callbackId++, deltas, document["version"]);
+            message = new message_types/* DeltasMessage */.Jk(documentIdentifier, this.callbackId++, deltas, document.version);
         }
         this.postMessage(message, callback);
     }
@@ -19869,6 +19892,9 @@ class MessageController {
     }
     setWorkspace(workspaceUri, callback) {
         this.$worker.postMessage(new message_types/* SetWorkspaceMessage */.lR(workspaceUri));
+    }
+    renameDocument(documentIdentifier, newDocumentUri, version) {
+        this.$worker.postMessage(new message_types/* RenameDocumentMessage */.v3(documentIdentifier, this.callbackId++, newDocumentUri, version));
     }
     postMessage(message, callback) {
         if (callback) {
@@ -22374,6 +22400,13 @@ class LanguageProvider {
     }
 }
 class SessionLanguageProvider {
+    enqueueIfNotConnected(callback) {
+        if (!this.$isConnected) {
+            this.$requestsQueue.push(callback);
+        } else {
+            callback();
+        }
+    }
     get comboDocumentIdentifier() {
         return {
             documentUri: this.documentUri,
@@ -22383,9 +22416,14 @@ class SessionLanguageProvider {
     /**
      * @param filePath
      */ setFilePath(filePath) {
-        if (this.$filePath !== undefined) return;
-        this.$filePath = filePath;
-        this.$init();
+        this.enqueueIfNotConnected(()=>{
+            this.session.doc.version++;
+            if (this.$filePath !== undefined) return;
+            this.$filePath = filePath;
+            const previousComboId = this.comboDocumentIdentifier;
+            this.initDocumentUri(true);
+            this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
+        });
     }
     $init() {
         if (this.$isFilePathRequired && this.$filePath === undefined) return;
@@ -22417,9 +22455,12 @@ class SessionLanguageProvider {
             return bgTokenizer.lines[row] = data.tokens;
         };
     }
-    initDocumentUri() {
+    initDocumentUri(isRename = false) {
         var _this_$filePath;
         let filePath = (_this_$filePath = this.$filePath) !== null && _this_$filePath !== void 0 ? _this_$filePath : this.session["id"] + "." + this.$extension;
+        if (isRename) {
+            delete this.$provider.$urisToSessionsIds[this.documentUri];
+        }
         this.documentUri = (0,utils/* convertToUri */.de)(filePath);
         this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
     }
@@ -22497,11 +22538,11 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "$messageController", void 0);
         language_provider_define_property(this, "$deltaQueue", void 0);
         language_provider_define_property(this, "$isConnected", false);
-        language_provider_define_property(this, "$modeIsChanged", false);
         language_provider_define_property(this, "$options", void 0);
         language_provider_define_property(this, "$filePath", void 0);
         language_provider_define_property(this, "$isFilePathRequired", false);
         language_provider_define_property(this, "$servicesCapabilities", void 0);
+        language_provider_define_property(this, "$requestsQueue", []);
         language_provider_define_property(this, "state", {
             occurrenceMarkers: null,
             diagnosticMarkers: null
@@ -22516,23 +22557,22 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
             this.setServerCapabilities(capabilities);
-            if (this.$modeIsChanged) this.$changeMode();
+            this.$requestsQueue.forEach((requestCallback)=>requestCallback());
+            this.$requestsQueue = [];
             if (this.$deltaQueue) this.$sendDeltaQueue();
             if (this.$options) this.setOptions(this.$options);
         });
         language_provider_define_property(this, "$changeMode", ()=>{
-            if (!this.$isConnected) {
-                this.$modeIsChanged = true;
-                return;
-            }
-            this.$deltaQueue = [];
-            this.session.clearAnnotations();
-            if (this.state.diagnosticMarkers) {
-                this.state.diagnosticMarkers.setMarkers([]);
-            }
-            this.session.setSemanticTokens(undefined); //clear all semantic tokens
-            let newVersion = this.session.doc["version"]++;
-            this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+            this.enqueueIfNotConnected(()=>{
+                this.$deltaQueue = [];
+                this.session.clearAnnotations();
+                if (this.state.diagnosticMarkers) {
+                    this.state.diagnosticMarkers.setMarkers([]);
+                }
+                this.session.setSemanticTokens(undefined); //clear all semantic tokens
+                let newVersion = this.session.doc.version++;
+                this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+            });
         });
         language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
             if (!capabilities) return;
@@ -22573,7 +22613,7 @@ class SessionLanguageProvider {
         //or we shoudl use service with full format capability instead of range one's
         });
         language_provider_define_property(this, "$changeListener", (delta)=>{
-            this.session.doc["version"]++;
+            this.session.doc.version++;
             if (!this.$deltaQueue) {
                 this.$deltaQueue = [];
                 setTimeout(()=>this.$sendDeltaQueue(()=>{
@@ -22593,8 +22633,8 @@ class SessionLanguageProvider {
             if (!diagnostics) {
                 return;
             }
-            this.session.clearAnnotations();
             let annotations = toAnnotations(diagnostics);
+            this.session.clearAnnotations();
             if (annotations && annotations.length > 0) {
                 this.session.setAnnotations(annotations);
             }
@@ -22649,7 +22689,7 @@ class SessionLanguageProvider {
         this.session = session;
         this.editor = editor;
         this.$isFilePathRequired = provider.requireFilePath;
-        session.doc["version"] = 1;
+        session.doc.version = 1;
         session.doc.on("change", this.$changeListener, true);
         this.addSemanticTokenSupport(session); //TODO: ?
         session.on("changeMode", this.$changeMode);

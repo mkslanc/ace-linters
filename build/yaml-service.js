@@ -6483,6 +6483,11 @@ class BaseService {
             delete this.options[document.uri];
         }
     }
+    renameDocument(document, newDocumentUri) {
+        this.documents[newDocumentUri] = this.documents[document.uri];
+        this.options[newDocumentUri] = this.options[document.uri];
+        this.removeDocument(document);
+    }
     getDocumentValue(uri) {
         var _this_getDocument;
         return (_this_getDocument = this.getDocument(uri)) === null || _this_getDocument === void 0 ? void 0 : _this_getDocument.getText();

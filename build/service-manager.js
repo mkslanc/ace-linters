@@ -18,7 +18,7 @@ return /******/ (() => { // webpackBootstrap
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Go: () => (/* binding */ MessageType)
 /* harmony export */ });
-/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, CloseConnectionMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage, GetSemanticTokensMessage, GetCodeActionsMessage, SetWorkspaceMessage, ExecuteCommandMessage, AppliedEditMessage */
+/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, CloseConnectionMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage, GetSemanticTokensMessage, GetCodeActionsMessage, SetWorkspaceMessage, ExecuteCommandMessage, AppliedEditMessage, RenameDocumentMessage */
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -237,6 +237,16 @@ class AppliedEditMessage {
         this.value = value;
     }
 }
+class RenameDocumentMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value, version){
+        super(documentIdentifier, callbackId);
+        _define_property(this, "type", MessageType.renameDocument);
+        _define_property(this, "value", void 0);
+        _define_property(this, "version", void 0);
+        this.value = value;
+        this.version = version;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -262,6 +272,7 @@ var MessageType;
     MessageType[MessageType["applyEdit"] = 20] = "applyEdit";
     MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
     MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
+    MessageType[MessageType["renameDocument"] = 23] = "renameDocument";
 })(MessageType || (MessageType = {}));
 
 
@@ -546,6 +557,14 @@ class ServiceManager {
         this.$sessionIDToMode[documentIdentifier.uri] = mode;
         return services;
     }
+    async renameDocument(documentIdentifier, newDocumentUri) {
+        let services = this.getServicesInstances(documentIdentifier.uri);
+        if (services.length > 0) {
+            services.forEach((el)=>el.renameDocument(documentIdentifier, newDocumentUri));
+            this.$sessionIDToMode[newDocumentUri] = this.$sessionIDToMode[documentIdentifier.uri];
+            delete this.$sessionIDToMode[documentIdentifier.uri];
+        }
+    }
     async changeDocumentMode(documentIdentifier, value, mode, options) {
         this.removeDocument(documentIdentifier);
         return await this.addDocument(documentIdentifier, value, mode, options);
@@ -808,6 +827,9 @@ class ServiceManager {
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.setWorkspace:
                     this.setWorkspace(message.value);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.renameDocument:
+                    this.renameDocument(documentIdentifier, message.value);
                     break;
             }
             ctx.postMessage(postMessage);
