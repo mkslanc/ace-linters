@@ -1,35 +1,90 @@
 import { expect } from 'chai';
-import { parseSemanticTokens, mergeTokens } from '../../src/type-converters/lsp/semantic-tokens';
+import {
+    parseSemanticTokens,
+    mergeTokens,
+    OriginalSemanticTokens,
+    DecodedToken
+} from '../../src/type-converters/lsp/semantic-tokens';
 
 describe('semanticTokens', () => {
 
     describe('parseSemanticTokens', () => {
+        it('should return undefined for undefined input without additional tokens', () => {
+            expect(parseSemanticTokens(undefined)).to.be.undefined;
+        });
 
-        it('should parse valid tokens', () => {
-            const tokens = [0, 0, 3, 0, 0];
-            const types = ['type'];
-            const modifiers = [];
+        it('should return undefined for invalid token length', () => {
+            const invalidTokens: OriginalSemanticTokens = {
+                tokens: [1, 2, 3], // Invalid length (not divisible by 5)
+                tokenTypes: ['class'],
+                tokenModifiersLegend: ['static']
+            };
+            expect(parseSemanticTokens(invalidTokens)).to.be.undefined;
+        });
 
-            const expected = {
-                "tokens": [
-                    {
-                        "length": 3,
-                        "row": 0,
-                        "startColumn": 0,
-                        "type": "entity.name.type"
-                    }
-                ]
+        it('should parse valid semantic tokens', () => {
+            const originalTokens: OriginalSemanticTokens = {
+                tokens: [0, 5, 3, 0, 1], // line, column, length, typeIndex, modifierFlag
+                tokenTypes: ['class'],
+                tokenModifiersLegend: ['static']
             };
 
-            expect(parseSemanticTokens(tokens, types, modifiers)).to.deep.equal(expected);
+            const result = parseSemanticTokens(originalTokens);
+            expect(result?.tokens).to.have.length(1);
+            expect(result?.tokens[0]).to.deep.equal({
+                row: 0,
+                startColumn: 5,
+                length: 3,
+                type: 'entity.name.type.class.static'
+            });
         });
 
-        it('should return undefined for invalid tokens', () => {
-            const tokens = [0, 0, 3];
-            expect(parseSemanticTokens(tokens, [], [])).to.be.undefined;
+        it('should handle additional tokens', () => {
+            const additionalTokens: DecodedToken[] = [{
+                row: 1,
+                startColumn: 0,
+                length: 5,
+                type: 'entity.name.function'
+            }];
+
+            const result = parseSemanticTokens(undefined, additionalTokens);
+            expect(result?.tokens).to.have.length(1);
+            expect(result?.tokens[0]).to.deep.equal(additionalTokens[0]);
         });
 
+        it('should handle multiple tokens with relative positioning', () => {
+            const originalTokens: OriginalSemanticTokens = {
+                tokens: [
+                    0, 5, 3, 0, 1,  // First token
+                    0, 3, 2, 1, 0   // Second token on same line
+                ],
+                tokenTypes: ['class', 'method'],
+                tokenModifiersLegend: ['static']
+            };
+
+            const result = parseSemanticTokens(originalTokens);
+            expect(result?.tokens).to.have.length(2);
+            expect(result?.tokens[0].startColumn).to.be.equal(5);
+            expect(result?.tokens[1].startColumn).to.be.equal(8); // 5 + 3
+        });
+
+        it('should handle tokens across multiple lines', () => {
+            const originalTokens: OriginalSemanticTokens = {
+                tokens: [
+                    0, 5, 3, 0, 1,  // First line
+                    2, 0, 4, 1, 0   // Jump 2 lines
+                ],
+                tokenTypes: ['class', 'method'],
+                tokenModifiersLegend: ['static']
+            };
+
+            const result = parseSemanticTokens(originalTokens);
+            expect(result?.tokens).to.have.length(2);
+            expect(result?.tokens[0].row).to.be.equal(0);
+            expect(result?.tokens[1].row).to.be.equal(2);
+        });
     });
+
 
 
     describe('mergeTokens', () => {

@@ -120,7 +120,8 @@ export class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
-            codeActions: true
+            codeActions: true,
+            showUnusedDeclarations: true
         };
 
         this.options = options ?? {};
@@ -608,28 +609,6 @@ class SessionLanguageProvider {
     addSemanticTokenSupport(session: Ace.EditSession) {
         let bgTokenizer = session.bgTokenizer;
         session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
-            /*const hasPreviousTokens = bgTokenizer?.semanticTokens?.tokens && bgTokenizer?.semanticTokens?.tokens.length > 0;
-            const hasNewTokens = tokens && tokens.tokens.length > 0;
-
-            if (hasPreviousTokens || hasNewTokens) {
-                let startRow = Number.MAX_SAFE_INTEGER;
-                if (hasPreviousTokens) {
-                    startRow = Math.min(startRow, bgTokenizer!.semanticTokens!.tokens[0].row);
-                }
-                if (hasNewTokens) {
-                    startRow = Math.min(startRow, tokens.tokens[0].row);
-                } else {
-                    startRow = 0;
-                }
-                bgTokenizer.currentLine = startRow;
-                bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
-                if (startRow === 0) {
-                    bgTokenizer.lines[0] = null;
-                }
-            } else {
-                bgTokenizer.currentLine = 0;
-                bgTokenizer.lines = [];
-            }*/
             bgTokenizer.currentLine = 0;
             bgTokenizer.lines = [];
             bgTokenizer.semanticTokens = tokens;
@@ -775,7 +754,9 @@ class SessionLanguageProvider {
             return;
         }
 
-        let annotations = toAnnotations(diagnostics);
+        const filteredDiagnostics = diagnostics.filter((el) => !el?.data?.ignore);
+
+        let annotations = toAnnotations(filteredDiagnostics);
         this.session.clearAnnotations();
         if (annotations && annotations.length > 0) {
             this.session.setAnnotations(annotations);
@@ -783,9 +764,12 @@ class SessionLanguageProvider {
         if (!this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers = new MarkerGroup(this.session);
         }
-        //TODO: show unused option
-        this.setPredefinedTokens(diagnostics);
-        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+
+        if (this.$provider.options.functionality!.showUnusedDeclarations) {
+            this.setPredefinedTokens(diagnostics);
+        }
+
+        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), el?.data?.ignore ? "" : "language_highlight_error", el.message)));
     }
 
     setPredefinedTokens(diagnostics: lsp.Diagnostic[]) {
@@ -800,7 +784,7 @@ class SessionLanguageProvider {
                     row: el.range.start.line,
                     startColumn: el.range.start.character,
                     length: el.range.end.character - el.range.start.character,
-                    type: el.tags[0] === lsp.DiagnosticTag.Deprecated ? "highlight_deprecated": "highlight_unnecessary"
+                    type: el.tags[0] === lsp.DiagnosticTag.Deprecated ? "highlight_deprecated" : "highlight_unnecessary"
                 });
             }
         });
@@ -852,10 +836,11 @@ class SessionLanguageProvider {
     }
 
     getSemanticTokens() {
-        //TODO: disable this when unused var false
-        /*if (!this.$provider.options.functionality!.semanticTokens)
-            return;*/
-        //TODO: improve this 
+        const showSemanticTokens = this.$provider.options.functionality!.semanticTokens;
+        const showUnusedDeclarations = this.$provider.options.functionality!.showUnusedDeclarations;
+        if (!showSemanticTokens && !showUnusedDeclarations)
+            return;
+        //TODO: improve this
         let lastRow = this.editor.renderer.getLastVisibleRow();
         let visibleRange: AceRangeData = {
             start: {
@@ -867,7 +852,7 @@ class SessionLanguageProvider {
                 column: this.session.getLine(lastRow).length
             }
         }
-        if (this.$provider.options.functionality!.semanticTokens) {
+        if (showSemanticTokens) {
             this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), this.$applySemanticTokens);
         } else {
             this.$applySemanticTokens(undefined);

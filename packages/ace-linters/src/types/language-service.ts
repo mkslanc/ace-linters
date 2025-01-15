@@ -223,7 +223,8 @@ export interface ProviderOptions {
         documentHighlights?: boolean,
         signatureHelp?: boolean,
         semanticTokens?: boolean,
-        codeActions?: boolean
+        codeActions?: boolean,
+        showUnusedDeclarations?: boolean
     },
     markdownConverter?: MarkDownConverter,
     requireFilePath?: boolean,
