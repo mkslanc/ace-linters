@@ -63,7 +63,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     serviceCapabilities = {
         completionProvider: {
-            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#']
+            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#'],
+            resolveProvider: true
         },
         diagnosticProvider: {
             interFileDependencies: true,
@@ -273,7 +274,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null> {
         let resolvedCompletion = this.$service.getCompletionEntryDetails(
-            item["fileName"],
+            item["fileName"].documentUri,
             item["position"],
             item.label,
             undefined,

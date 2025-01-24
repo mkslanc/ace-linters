@@ -161,10 +161,14 @@ export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument,
 }
 
 export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.CompletionItem {
+    let documentation = entry.displayParts.map((displayPart) => displayPart.text).join('');
+    if (entry.documentation) {
+        documentation += "\n\n" + entry.documentation.map((displayPart) => displayPart.text).join('');
+    }
     return {
         label: entry.name,
         kind: convertKind(entry.kind),
-        documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
+        documentation: documentation
     };
 }
 
