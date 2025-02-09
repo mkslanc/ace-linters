@@ -120,6 +120,8 @@ declare class SessionLanguageProvider {
     editor: Ace.Editor;
     private semanticTokensLegend?;
     private $provider;
+    private $predefinedTokens;
+    private $firstStaleLine;
     /**
      * Constructs a new instance of the `SessionLanguageProvider` class.
      *
@@ -149,11 +151,14 @@ declare class SessionLanguageProvider {
     private $changeListener;
     $sendDeltaQueue: (callback?: any) => any;
     $showAnnotations: (diagnostics: lsp.Diagnostic[]) => void;
+    setPredefinedTokens(diagnostics: lsp.Diagnostic[]): void;
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType): void;
     validate: () => void;
     format: () => void;
     applyEdits: (edits: lsp.TextEdit[]) => void;
     getSemanticTokens(): void;
+    $applySemanticTokens: (tokens: lsp.SemanticTokens | null | undefined) => void;
+    $runTokenizer(): void;
     $applyDocumentHighlight: (documentHighlights: lsp.DocumentHighlight[]) => void;
     closeDocument(callback?: any): void;
 }

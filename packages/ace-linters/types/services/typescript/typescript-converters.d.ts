@@ -3,7 +3,8 @@ import * as ts from "./lib/typescriptServices";
 import * as lsp from "vscode-languageserver-protocol";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { FilterDiagnosticsOptions } from "../../types/language-service";
-export declare function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[];
+export declare const compilerOptionToErrorCodes: Record<string, Set<number>>;
+export declare function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions, compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums): lsp.Diagnostic[];
 export declare function toTsOffset(range: lsp.Range, doc: TextDocument): {
     start: number;
     end: number;

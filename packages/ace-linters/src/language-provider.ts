@@ -33,8 +33,8 @@ import {MarkerGroup} from "./ace/marker_group";
 import {AceRange} from "./ace/range-singleton";
 import {HoverTooltip} from "./ace/hover-tooltip";
 import {
-    DecodedSemanticTokens,
-    mergeTokens,
+    DecodedSemanticTokens, DecodedToken,
+    mergeTokens, OriginalSemanticTokens,
     parseSemanticTokens
 } from "./type-converters/lsp/semantic-tokens";
 import {LightbulbWidget} from "./components/lightbulb";
@@ -120,7 +120,8 @@ export class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
-            codeActions: true
+            codeActions: true,
+            showUnusedDeclarations: true
         };
 
         this.options = options ?? {};
@@ -539,6 +540,9 @@ class SessionLanguageProvider {
     private semanticTokensLegend?: lsp.SemanticTokensLegend;
     private $provider: LanguageProvider;
 
+    private $predefinedTokens: DecodedToken[] = [];
+    private $firstStaleLine: undefined | number;
+
     /**
      * Constructs a new instance of the `SessionLanguageProvider` class.
      *
@@ -605,6 +609,8 @@ class SessionLanguageProvider {
     addSemanticTokenSupport(session: Ace.EditSession) {
         let bgTokenizer = session.bgTokenizer;
         session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
+            bgTokenizer.currentLine = 0;
+            bgTokenizer.lines = [];
             bgTokenizer.semanticTokens = tokens;
         }
 
@@ -624,7 +630,7 @@ class SessionLanguageProvider {
 
             if (bgTokenizer.semanticTokens) {
                 let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
-                if (decodedTokens) {
+                if (decodedTokens && decodedTokens.length > 0) {
                     data.tokens = mergeTokens(data.tokens, decodedTokens);
                 }
             }
@@ -723,7 +729,7 @@ class SessionLanguageProvider {
         }
     }
 
-    private $changeListener = (delta) => {
+    private $changeListener = (delta: Ace.Delta) => {
         this.session.doc.version++;
         if (!this.$deltaQueue) {
             this.$deltaQueue = [];
@@ -748,7 +754,9 @@ class SessionLanguageProvider {
             return;
         }
 
-        let annotations = toAnnotations(diagnostics);
+        const filteredDiagnostics = diagnostics.filter((el) => !el?.data?.ignore);
+
+        let annotations = toAnnotations(filteredDiagnostics);
         this.session.clearAnnotations();
         if (annotations && annotations.length > 0) {
             this.session.setAnnotations(annotations);
@@ -756,7 +764,34 @@ class SessionLanguageProvider {
         if (!this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers = new MarkerGroup(this.session);
         }
-        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+
+        if (this.$provider.options.functionality!.showUnusedDeclarations) {
+            this.setPredefinedTokens(diagnostics);
+        }
+
+        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), el?.data?.ignore ? "" : "language_highlight_error", el.message)));
+    }
+
+    setPredefinedTokens(diagnostics: lsp.Diagnostic[]) {
+        this.$predefinedTokens = [];
+
+        diagnostics.forEach((el) => {
+            if (el.tags && el.tags.length > 0) {
+                if (!this.$firstStaleLine || el.range.start.line < this.$firstStaleLine) {
+                    this.$firstStaleLine = el.range.start.line;
+                }
+                this.$predefinedTokens.push({
+                    row: el.range.start.line,
+                    startColumn: el.range.start.character,
+                    length: el.range.end.character - el.range.start.character,
+                    type: el.tags[0] === lsp.DiagnosticTag.Deprecated ? "highlight_deprecated" : "highlight_unnecessary"
+                });
+            }
+        });
+
+        if (!this.$provider.options.functionality!.semanticTokens) {
+            this.$applySemanticTokens(undefined);
+        }
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
@@ -801,9 +836,11 @@ class SessionLanguageProvider {
     }
 
     getSemanticTokens() {
-        if (!this.$provider.options.functionality!.semanticTokens)
+        const showSemanticTokens = this.$provider.options.functionality!.semanticTokens;
+        const showUnusedDeclarations = this.$provider.options.functionality!.showUnusedDeclarations;
+        if (!showSemanticTokens && !showUnusedDeclarations)
             return;
-        //TODO: improve this 
+        //TODO: improve this
         let lastRow = this.editor.renderer.getLastVisibleRow();
         let visibleRange: AceRangeData = {
             start: {
@@ -815,29 +852,39 @@ class SessionLanguageProvider {
                 column: this.session.getLine(lastRow).length
             }
         }
+        if (showSemanticTokens) {
+            this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), this.$applySemanticTokens);
+        } else {
+            this.$applySemanticTokens(undefined);
+        }
+    }
 
-        this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), (tokens) => {
-                if (!tokens) {
-                    return;
-                }
-                let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend!.tokenTypes, this.semanticTokensLegend!.tokenModifiers);
-                this.session.setSemanticTokens(decodedTokens);
-                let bgTokenizer = this.session.bgTokenizer;
-
-                //@ts-ignore
-                bgTokenizer.running = setTimeout(() => {
-                    if (bgTokenizer?.semanticTokens?.tokens && bgTokenizer?.semanticTokens?.tokens.length > 0) {
-                        let startRow: number = bgTokenizer?.semanticTokens?.tokens[0].row;
-                        bgTokenizer.currentLine = startRow;
-                        bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
-                    } else {
-                        bgTokenizer.currentLine = 0;
-                        bgTokenizer.lines = [];
-                    }
-                    bgTokenizer.$worker();
-                }, 20);
+    $applySemanticTokens = (tokens: lsp.SemanticTokens | null | undefined) => {
+        if (!tokens && this.$predefinedTokens.length == 0) {
+            this.session.setSemanticTokens(undefined);
+            this.$runTokenizer();
+            return;
+        }
+        let originalTokens: OriginalSemanticTokens | undefined;
+        if (tokens) {
+            originalTokens = {
+                tokens: tokens.data,
+                tokenTypes: this.semanticTokensLegend!.tokenTypes,
+                tokenModifiersLegend: this.semanticTokensLegend!.tokenModifiers
             }
-        );
+        }
+        let decodedTokens = parseSemanticTokens(originalTokens, this.$predefinedTokens);
+
+        this.session.setSemanticTokens(decodedTokens);
+        this.$runTokenizer();
+    }
+
+    $runTokenizer() {
+        let bgTokenizer = this.session.bgTokenizer;
+        //@ts-ignore
+        bgTokenizer.running = setTimeout(() => {
+            bgTokenizer.$worker();
+        }, 20);
     }
 
     $applyDocumentHighlight = (documentHighlights: lsp.DocumentHighlight[]) => {

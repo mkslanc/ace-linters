@@ -15,8 +15,31 @@ import convertKind = CommonConverter.convertKind;
 import {FilterDiagnosticsOptions} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
-export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions): lsp.Diagnostic[] {
+export const compilerOptionToErrorCodes: Record<string, Set<number>> = {
+    noUnusedLocals: new Set([
+        6196, // Variable 'X' is declared but never used.
+        6133, // 'X' is declared but its value is never read.
+        6192, // Class 'X' is declared but its value is never read.
+        6138, // Property 'X' is declared but never used.
+        6200, // Namespace 'X' is declared but its value is never read.
+    ]),
+    noUnusedParameters: new Set([
+        6134, // Parameter 'X' is declared but its value is never read.
+    ]),
+};
+
+export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions, compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums): lsp.Diagnostic[] {
     const lspDiagnostics = diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
+        const tags: lsp.DiagnosticTag[] = [];
+        let ignore = false;
+        if (el.reportsUnnecessary) {
+            tags.push(lsp.DiagnosticTag.Unnecessary);
+            ignore = true;
+        }
+        if (el.reportsDeprecated) {
+            tags.push(lsp.DiagnosticTag.Deprecated);
+        }
+
         let start = el.start ?? 0;
         let length = el.length ?? 1; //TODO:
         if (filterErrors.errorCodesToTreatAsWarning!.includes(el.code.toString())) {
@@ -24,8 +47,20 @@ export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, 
         } else if (filterErrors.errorCodesToTreatAsInfo!.includes(el.code.toString())) {
             el.category = DiagnosticCategory.Message;
         }
-        return lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
+        let diagnostic = lsp.Diagnostic.create(lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
             parseMessageText(el.messageText, el.code), fromTsCategory(el.category), el.code);
+        diagnostic.tags = tags;
+        if (compilerOptions) {
+            if (compilerOptions.noUnusedLocals && compilerOptionToErrorCodes["noUnusedLocals"].has(el.code)) {
+                ignore = false;
+            } else if (compilerOptions.noUnusedParameters && compilerOptionToErrorCodes["noUnusedParameters"].has(el.code)) {
+                ignore = false;
+            }
+        }
+        if (ignore) {
+            diagnostic.data = {ignore: true};
+        }
+        return diagnostic;
     });
     return filterDiagnostics(lspDiagnostics, filterErrors);
 }

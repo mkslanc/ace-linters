@@ -35,7 +35,9 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         module: 99,
         moduleResolution: 99,
         allowSyntheticDefaultImports: true,
-        moduleDetection: 3
+        moduleDetection: 3,
+        noUnusedLocals: true,
+        noUnusedParameters: true
     };
 
     $defaultFormatOptions = {

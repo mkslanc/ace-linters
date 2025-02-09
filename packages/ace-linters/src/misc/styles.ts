@@ -39,7 +39,13 @@ export function setStyles(editor) {
 
 .language_highlight_write {
     border: solid 1px #F88;
-}`, "linters.css");
+}
+
+.ace_highlight_unnecessary {
+    opacity: 0.5;
+}
+
+`, "linters.css");
 
     editor.renderer["$textLayer"].dom.importCssString(`
 .ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {

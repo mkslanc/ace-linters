@@ -11,6 +11,12 @@ export interface DecodedToken {
     type: string,
 }
 
+export interface OriginalSemanticTokens {
+    tokens: number[],
+    tokenTypes: TokenType[],
+    tokenModifiersLegend: TokenModifier[]
+}
+
 function decodeModifiers(modifierFlag: number, tokenModifiersLegend: string[]): TokenModifier[] {
     const modifiers: TokenModifier[] = [];
     for (let i = 0; i < tokenModifiersLegend.length; i++) {
@@ -21,35 +27,40 @@ function decodeModifiers(modifierFlag: number, tokenModifiersLegend: string[]): 
     return modifiers;
 }
 
-export function parseSemanticTokens(tokens: number[], tokenTypes: TokenType[], tokenModifiersLegend: TokenModifier[]): DecodedSemanticTokens | undefined {
-    if (tokens.length % 5 !== 0) {
-        return ;
+export function parseSemanticTokens(originalTokens: OriginalSemanticTokens | undefined, additionalTokens?: DecodedToken[]): DecodedSemanticTokens | undefined {
+    const hasValidTokens = originalTokens?.tokens && originalTokens.tokens.length % 5 === 0;
+    const hasAdditionalTokens = additionalTokens && additionalTokens.length > 0;
+    if (!hasValidTokens && !hasAdditionalTokens) {
+        return;
     }
-    const decodedTokens: DecodedToken[] = [];
-    let line = 0;
-    let startColumn = 0;
-    for (let i = 0; i < tokens.length; i += 5) {
-        line += tokens[i];
-        if (tokens[i] === 0) {
-            startColumn += tokens[i + 1];
-        } else {
-            startColumn = tokens[i + 1];
+    const decodedTokens: DecodedToken[] = additionalTokens ?? [];
+    if (originalTokens) {
+        const {tokens, tokenTypes, tokenModifiersLegend} = originalTokens;
+        let line = 0;
+        let startColumn = 0;
+        for (let i = 0; i < tokens.length; i += 5) {
+            line += tokens[i];
+            if (tokens[i] === 0) {
+                startColumn += tokens[i + 1];
+            } else {
+                startColumn = tokens[i + 1];
+            }
+            const length = tokens[i + 2];
+            const tokenTypeIndex = tokens[i + 3];
+            const tokenModifierFlag = tokens[i + 4];
+
+            const tokenType = tokenTypes[tokenTypeIndex];
+            const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
+
+            decodedTokens.push({
+                row: line,
+                startColumn: startColumn,
+                length,
+                type: toAceTokenType(tokenType, tokenModifiers),
+            });
         }
-        const length = tokens[i + 2];
-        const tokenTypeIndex = tokens[i + 3];
-        const tokenModifierFlag = tokens[i + 4];
-
-        const tokenType = tokenTypes[tokenTypeIndex];
-        const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
-
-        decodedTokens.push({
-            row: line,
-            startColumn: startColumn,
-            length,
-            type: toAceTokenType(tokenType, tokenModifiers),
-        });
     }
-    
+
     return new DecodedSemanticTokens(decodedTokens);
 }
 
@@ -102,6 +113,9 @@ function toAceTokenType(tokenType: TokenType, tokenModifiers: TokenModifier[]): 
         case "event":
             type = "variable.other.event";
             break;
+        case "highlight_unnecessary": {
+            type = "highlight_unnecessary";
+        }
     }
     return type + modifiers; 
 }
@@ -178,6 +192,24 @@ export class DecodedSemanticTokens {
 
     constructor(tokens: DecodedToken[]) {
         this.tokens = this.sortTokens(tokens);
+        this.normalize();
+    }
+
+    private normalize() {
+        const tokenMap = new Map<string, DecodedToken>();
+
+        this.tokens.forEach(token => {
+            const key = `${token.row}:${token.startColumn}:${token.length}`;
+            const existing = tokenMap.get(key);
+
+            if (existing) {
+                existing.type = `${existing.type}.${token.type}`;
+            } else {
+                tokenMap.set(key, {...token});
+            }
+        });
+
+        this.tokens = Array.from(tokenMap.values());
     }
 
     getByRow(row: number) {
