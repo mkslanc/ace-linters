@@ -5,7 +5,7 @@ import {toDiagnostics} from "./eslint-converters";
 import {JavascriptServiceOptions, LanguageService} from "../../types/language-service";
 
 export class JavascriptService extends BaseService<JavascriptServiceOptions> implements LanguageService {
-    $service;
+    private $service;
     $defaultEnv = {
         browser: true,
         amd: true,

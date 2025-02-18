@@ -6,13 +6,13 @@
   },
   "type": "module",
   "dependencies": {
-    "jsonc-parser": "^3.0.0",
-    "path-browserify": "^1.0.0",
-    "prettier": "^2.0.0",
-    "vscode-languageserver-textdocument": "^1.0.0"
   },
   "devDependencies": {
-    "yaml-language-server": "^1.14.0",
+    "jsonc-parser": "^3.0.0",
+    "path-browserify": "^1.0.0",
+    "prettier": "^3.5.1",
+    "vscode-languageserver-textdocument": "^1.0.0",
+    "yaml-language-server": "^1.16.0",
     "esbuild": "^0.20.2"
   },
   "main": "./dist/index.js"

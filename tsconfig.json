@@ -6,7 +6,8 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "module": "commonjs",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noEmit": true
   },
   "include": [
     "./packages/**/*"

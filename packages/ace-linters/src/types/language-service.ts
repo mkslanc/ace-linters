@@ -1,5 +1,5 @@
 import {CommonConverter} from "../type-converters/common-converters";
-import * as ts from "../services/typescript/lib/typescriptServices";
+import ts from "../services/typescript/lib/typescriptOptions";
 import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
@@ -7,7 +7,6 @@ import {MarkDownConverter} from "./converters";
 
 export interface LanguageService {
     documents: { [documentUri: string]: TextDocument };
-    $service;
     serviceName: string;
     mode: string;
     globalOptions;

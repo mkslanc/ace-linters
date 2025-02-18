@@ -11,7 +11,7 @@ import {JsonServiceOptions, LanguageService} from "../../types/language-service"
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class JsonService extends BaseService<JsonServiceOptions> implements LanguageService {
-    $service: JsonLanguageService;
+    private $service: JsonLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 
     serviceCapabilities = {

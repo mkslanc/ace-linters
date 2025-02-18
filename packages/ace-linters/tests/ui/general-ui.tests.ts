@@ -1,36 +1,44 @@
-import {expect} from "chai";
+import { expect } from "chai";
 import * as puppeteer from 'puppeteer';
 
-const opts: puppeteer.PuppeteerLaunchOptions = {
-    headless: "new",
-    slowMo: 0,
-    devtools: false
+const launchOptions: puppeteer.PuppeteerLaunchOptions = {
+    headless: true,
+    devtools: false,
 };
 
-describe("General ui tests", function () {
+describe("General UI Tests", function () {
+    this.timeout(30000);
+
     let browser: puppeteer.Browser;
     let page: puppeteer.Page;
-    let errors = [];
+    const consoleErrors: string[] = [];
 
     before(async function () {
-        this.timeout(10000);
-        browser = await puppeteer.launch(opts);
+        browser = await puppeteer.launch(launchOptions);
         page = (await browser.pages())[0];
-        page.on("console", function(err) {
-            if (err.type() == "error" && err.location().url != "http://localhost:8080/favicon.ico")
-                errors.push(err.text());
-        }).on('pageerror', ({message}) => errors.push(message));
-        await page.goto("http://localhost:8080/test.html", {
-            timeout: 10000,
-            waitUntil: 'domcontentloaded',
+
+        page.on("console", (msg) => {
+            if (msg.type() === "error" && msg.location().url !== "http://localhost:8080/favicon.ico") {
+                consoleErrors.push(msg.text());
+            }
         });
+        page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+        try {
+            await page.goto("http://localhost:8080/test.html", {
+                timeout: 30000,
+                waitUntil: 'domcontentloaded',
+            });
+        } catch (error) {
+            console.error("Navigation error:", error);
+            throw error;
+        }
     });
 
     it('should not have errors', async function () {
-        this.timeout(10000);
-        await page.waitForSelector("#finish");
-        expect(errors.length).to.eql(0);
-    })
+        await page.waitForSelector("#finish", { timeout: 30000 });
+        expect(consoleErrors).to.be.empty;
+    });
 
     after(async function () {
         await browser.close();

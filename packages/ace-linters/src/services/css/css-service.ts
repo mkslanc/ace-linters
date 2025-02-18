@@ -10,7 +10,7 @@ import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 import {TextDocumentIdentifier} from "vscode-languageserver-protocol";
 
 export class CssService extends BaseService implements LanguageService {
-    $service: VSLanguageService;
+    private $service: VSLanguageService;
     $languageId: string;
     $defaultFormatOptions: CSSFormatConfiguration = {
         newlineBetweenRules: true,

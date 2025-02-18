@@ -1,7 +1,6 @@
 import { Ace } from 'ace-code';
 import * as lsp from 'vscode-languageserver-protocol';
-import { CompletionItemKind, TextDocumentIdentifier, TextDocumentItem } from 'vscode-languageserver-protocol';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { CompletionItemKind } from 'vscode-languageserver-protocol';
 
 export interface DecodedToken {
 	row: number;
@@ -392,40 +391,6 @@ declare namespace ts {
 export interface MarkDownConverter {
 	makeHtml(markdownText: string): string;
 }
-export interface LanguageService {
-	documents: {
-		[documentUri: string]: TextDocument;
-	};
-	serviceName: string;
-	mode: string;
-	globalOptions: any;
-	serviceData: LanguageClientConfig | ServiceConfig;
-	serviceCapabilities: lsp.ServerCapabilities;
-	workspaceUri?: string;
-	format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
-	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
-	doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
-	doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
-	doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
-	setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): any;
-	applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): any;
-	addDocument(document: TextDocumentItem): any;
-	setOptions(documentUri: string, options: ServiceOptions, merge?: boolean): any;
-	setGlobalOptions(options: ServiceOptions): any;
-	getDocument(uri: string): TextDocument;
-	removeDocument(document: TextDocumentIdentifier): any;
-	renameDocument(document: TextDocumentIdentifier, newDocumentUri: string): any;
-	getDocumentValue(uri: string): string | undefined;
-	provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
-	findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
-	getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;
-	getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
-	executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
-	sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
-	dispose(): Promise<void>;
-	closeConnection(): Promise<void>;
-	setWorkspace(workspaceUri: string): void;
-}
 export interface TooltipContent {
 	type: CommonConverter.TooltipType;
 	text: string;
@@ -572,38 +537,6 @@ export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
 };
 export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
-export interface ServiceConfig extends BaseConfig {
-	className: string;
-	options?: ServiceOptions;
-}
-export interface BaseConfig {
-	initializationOptions?: ServiceOptions;
-	options?: ServiceOptions;
-	serviceInstance?: LanguageService;
-	modes: string;
-	className?: string;
-	features?: ServiceFeatures;
-	module: () => any;
-	id?: string;
-}
-export interface WebWorkerConnection {
-	type: "webworker";
-	worker: Worker;
-}
-export interface SocketConnection {
-	type: "socket";
-	socket: WebSocket;
-}
-export interface StdioConnection {
-	type: "stdio";
-	command: string;
-}
-export interface IpcConnection {
-	type: "ipc";
-	ipcPath: string;
-}
-export type ConnectionType = WebWorkerConnection | SocketConnection | StdioConnection | IpcConnection;
-export type LanguageClientConfig = BaseConfig & ConnectionType;
 export interface AceRangeData {
 	start: {
 		row: number;
@@ -688,7 +621,7 @@ declare class MarkerGroup {
 	setMarkers(markers: any): void;
 	update(html: any, markerLayer: any, session: any, config: any): void;
 }
-declare class LanguageProvider {
+export declare class LanguageProvider {
 	activeEditor: Ace.Editor;
 	private readonly $messageController;
 	private $signatureTooltip;
@@ -841,13 +774,83 @@ declare class SessionLanguageProvider {
 	$applyDocumentHighlight: (documentHighlights: lsp.DocumentHighlight[]) => void;
 	closeDocument(callback?: any): void;
 }
-export declare class AceLanguageClient {
-	/**
-	 *  Creates LanguageProvider for any Language Server to connect with JSON-RPC (webworker, websocket)
-	 * @param {LanguageClientConfig | LanguageClientConfig[]} servers
-	 * @param {ProviderOptions} options
-	 */
-	static for(servers: LanguageClientConfig | LanguageClientConfig[], options?: ProviderOptions): LanguageProvider;
+declare abstract class BaseMessage {
+	abstract type: MessageType;
+	sessionId: string;
+	documentUri: lsp.DocumentUri;
+	version?: number;
+	callbackId: number;
+	constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number);
+}
+declare class CloseConnectionMessage {
+	type: MessageType.closeConnection;
+	callbackId: number;
+	constructor(callbackId: number);
+}
+declare class ExecuteCommandMessage {
+	callbackId: number;
+	serviceName: string;
+	type: MessageType.executeCommand;
+	value: string;
+	args: any[] | undefined;
+	constructor(serviceName: string, callbackId: number, command: string, args?: any[]);
+}
+declare enum MessageType {
+	init = 0,
+	format = 1,
+	complete = 2,
+	resolveCompletion = 3,
+	change = 4,
+	hover = 5,
+	validate = 6,
+	applyDelta = 7,
+	changeMode = 8,
+	changeOptions = 9,
+	closeDocument = 10,
+	globalOptions = 11,
+	configureFeatures = 12,
+	signatureHelp = 13,
+	documentHighlight = 14,
+	closeConnection = 15,
+	capabilitiesChange = 16,
+	getSemanticTokens = 17,
+	getCodeActions = 18,
+	executeCommand = 19,
+	applyEdit = 20,
+	appliedEdit = 21,
+	setWorkspace = 22,
+	renameDocument = 23
+}
+export declare class MessageController implements IMessageController {
+	$worker: Worker;
+	callbacks: {};
+	callbackId: number;
+	private provider;
+	constructor(worker: Worker, provider: LanguageProvider);
+	private getSessionIdByUri;
+	init(documentIdentifier: ComboDocumentIdentifier, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: {
+		[serviceName: string]: lsp.ServerCapabilities;
+	}) => void): void;
+	doValidation(documentIdentifier: ComboDocumentIdentifier, callback?: (annotations: lsp.Diagnostic[]) => void): void;
+	doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void): void;
+	doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void): void;
+	format(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void): void;
+	doHover(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): void;
+	change(documentIdentifier: ComboDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[], document: Ace.Document, callback?: () => void): void;
+	changeMode(documentIdentifier: ComboDocumentIdentifier, value: string, version: number, mode: string, callback?: (capabilities: any) => void): void;
+	changeOptions(documentIdentifier: ComboDocumentIdentifier, options: ServiceOptions, callback?: () => void, merge?: boolean): void;
+	closeDocument(documentIdentifier: ComboDocumentIdentifier, callback?: () => void): void;
+	closeConnection(callback: () => void): void;
+	setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T, options: ServiceOptionsMap[T], merge?: boolean): void;
+	provideSignatureHelp(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (signatureHelp: lsp.SignatureHelp[]) => void): void;
+	findDocumentHighlights(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (documentHighlights: lsp.DocumentHighlight[]) => void): void;
+	configureFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
+	getSemanticTokens(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, callback?: (semanticTokens: lsp.SemanticTokens | null) => void): void;
+	getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: CodeActionsByService[]) => void): void;
+	executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): void;
+	setWorkspace(workspaceUri: string, callback?: () => void): void;
+	renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
+	postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any: any) => void): void;
 }
 
 export {};

@@ -61,7 +61,7 @@ export class LanguageClient extends BaseService implements LanguageService {
     private $connectSocket(initializationOptions) {
         rpc.listen({
             webSocket: this.socket,
-            onConnection: (connection: rpc.MessageConnection) => {
+            onConnection: (connection) => {
                 this.$initConnection(connection, initializationOptions);
             },
         });

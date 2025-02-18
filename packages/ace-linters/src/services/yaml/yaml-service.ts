@@ -4,9 +4,10 @@ import {getLanguageService} from "./lib";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {LanguageService, YamlServiceOptions} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
+import {LanguageService as YamlLanguageService} from "yaml-language-server/lib/esm/languageservice/yamlLanguageService";
 
 export class YamlService extends BaseService<YamlServiceOptions> implements LanguageService {
-    $service;
+    private $service: YamlLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 
     serviceCapabilities = {
@@ -37,7 +38,6 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
                     return relativePath + resource;
                 }
             },
-            // @ts-ignore
             clientCapabilities: this.clientCapabilities
         });
     }
@@ -66,12 +66,12 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
         });
 
         this.$service.configure({
+            //@ts-ignore
             schemas: schemas,
             hover: true,
             validate: true,
             completion: true,
-            format: true,
-            customTags: false
+            format: true
         });
     }
 
@@ -84,6 +84,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
             }
         });
         this.$service.configure({
+            //@ts-ignore
             schemas: schemas
         });
     }
@@ -98,7 +99,7 @@ export class YamlService extends BaseService<YamlServiceOptions> implements Lang
         this.$configureService("");
     }
 
-    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions) {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return Promise.resolve([]);
