@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && webpack",

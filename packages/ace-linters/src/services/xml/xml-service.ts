@@ -15,7 +15,7 @@ import {TextDocumentItem} from "vscode-languageserver-protocol";
 import {LanguageService, XmlServiceOptions} from "../../types/language-service";
 
 export class XmlService extends BaseService<XmlServiceOptions> implements LanguageService {
-    $service;
+    private $service;
     schemas: { [schemaUri: string]: string } = {};
 
     serviceCapabilities = {

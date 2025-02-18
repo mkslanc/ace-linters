@@ -1,59 +1,91 @@
-const ts = require('typescript');
 const fs = require('fs');
-const path = require('path');
-
-const srcPaths = [
-    path.join(__dirname, 'src/services/typescript/lib/', 'typescriptServices.d.ts')
-];
-
-const destDirs = [
-    path.join(__dirname, 'types/services/typescript/lib/')
-];
-
-const destPaths = [
-    path.join(destDirs[0], 'typescriptServices.d.ts')
-];
+const {generateDtsBundle} = require("dts-bundle-generator");
 
 if (fs.existsSync("./types")) {
     fs.rmSync("./types", {recursive: true});
 }
 
-const configFile = ts.readConfigFile('./tsconfig.json', ts.sys.readFile).config;
-
-let {
-    options,
-    fileNames
-} = ts.parseJsonConfigFileContent(configFile, ts.sys, './');
-
-options = {
-    ...options,
-    allowJs: false,
-    declaration: true,
-    emitDeclarationOnly: true
+/** @type import('dts-bundle-generator/config-schema').OutputOptions */
+const commonOutputParams = {
+    inlineDeclareGlobals: false,
+    noBanner: true
 };
 
-const program = ts.createProgram(fileNames, options);
-
-const emitResult = program.emit();
-
-const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
-allDiagnostics.forEach(diagnostic => {
-    if (diagnostic.file) {
-        const {
-            line,
-            character
-        } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
-        const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-        console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+const entries = [
+    {
+        filePath: './src/index.ts',
+        outFile: './types/ace-linters.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/service-manager.ts',
+        outFile: './types/service-manager.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/html/html-service.ts',
+        outFile: './types/html-service.d.ts',
+        output: commonOutputParams,
+        libraries: {
+            inlinedLibraries: ["vscode-html-languageservice"]
+        }
+    }, {
+        filePath: './src/services/css/css-service.ts',
+        outFile: './types/css-service.d.ts',
+        output: commonOutputParams,
+        libraries: {
+            inlinedLibraries: ["vscode-css-languageservice"]
+        }
+    }, {
+        filePath: './src/services/json/json-service.ts',
+        outFile: './types/json-service.d.ts',
+        output: commonOutputParams,
+        libraries: {
+            inlinedLibraries: ["vscode-json-languageservice"]
+        }
+    }, {
+        filePath: './src/services/lua/lua-service.ts',
+        outFile: './types/lua-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/typescript/typescript-service.ts',
+        outFile: './types/typescript-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/yaml/yaml-service.ts',
+        outFile: './types/yaml-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/xml/xml-service.ts',
+        outFile: './types/xml-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/php/php-service.ts',
+        outFile: './types/php-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/ace-language-client.ts',
+        outFile: './types/ace-language-client.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/javascript/javascript-service.ts',
+        outFile: './types/javascript-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/base-service.ts',
+        outFile: './types/base-service.d.ts',
+        output: commonOutputParams
+    }, {
+        filePath: './src/services/language-client.ts',
+        outFile: './types/language-client.d.ts',
+        output: commonOutputParams
     }
-    else {
-        console.log(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
-    }
-});
+];
 
-destDirs.forEach((destDir, index) => {
-    fs.mkdirSync(destDir, {recursive: true});
-    fs.copyFileSync(srcPaths[index], destPaths[index]);
+const bundles = generateDtsBundle(entries, {preferredConfigPath: './tsconfig.json'});
+
+fs.mkdirSync("./types");
+
+bundles.forEach((bundle, index) => {
+    fs.writeFileSync(entries[index].outFile, bundle);
 });
 
 console.log('Prebuild script completed successfully');

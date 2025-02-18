@@ -5,7 +5,7 @@ import {LanguageService} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class LuaService extends BaseService implements LanguageService {
-    $service;
+    private $service;
 
     serviceCapabilities = {
         diagnosticProvider: {

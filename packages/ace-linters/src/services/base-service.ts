@@ -4,7 +4,6 @@ import {TextDocument} from "vscode-languageserver-textdocument";
 import {FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions} from "../types/language-service";
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
-    abstract $service;
     serviceName: string;
     mode: string;
     documents: { [documentUri: lsp.DocumentUri]: TextDocument } = {};
@@ -176,7 +175,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return [];
     }
 
-    format(document, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
         return Promise.resolve([]);
     }
 

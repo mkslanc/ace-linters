@@ -5,7 +5,7 @@ import {LanguageService, PhpServiceOptions} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
 
 export class PhpService extends BaseService<PhpServiceOptions> implements LanguageService {
-    $service;
+    private $service;
 
     serviceCapabilities = {
         diagnosticProvider: {

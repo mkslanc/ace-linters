@@ -10,7 +10,7 @@ import {HtmlServiceOptions, LanguageService} from "../../types/language-service"
 import {toDiagnostics} from "./html-converters";
 
 export class HtmlService extends BaseService<HtmlServiceOptions> implements LanguageService {
-    $service: VSLanguageService;
+    private $service: VSLanguageService;
 
     defaultValidationOptions = {
         "attr-no-duplication": true,
