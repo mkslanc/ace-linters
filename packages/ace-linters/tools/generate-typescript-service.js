@@ -63,8 +63,9 @@ export var typescript = ts;
     fs.writeFileSync(path.join(TYPESCRIPT_LIB_DESTINATION, 'typescriptServices.js'), stripSourceMaps(tsServices_esm));
 
     let dtsServices = fs.readFileSync(path.join(TYPESCRIPT_LIB_SOURCE, 'typescript.d.ts')).toString();
-    let anotherCompilerOptions = transformEnumProperties(dtsServices);
-    fs.writeFileSync(path.join(TYPESCRIPT_LIB_DESTINATION, 'typescriptServices.d.ts'), generatedNote + dtsServices + "\n" + anotherCompilerOptions);
+    const anotherCompilerOptions = transformEnumProperties(dtsServices);
+    fs.writeFileSync(path.join(TYPESCRIPT_LIB_DESTINATION, 'typescriptServices.d.ts'), generatedNote + dtsServices + "\n");
+    fs.writeFileSync(path.join(TYPESCRIPT_LIB_DESTINATION, 'typescriptOptions.d.ts'), generatedNote + "\n" + anotherCompilerOptions + "\n\n export = ts;");
 })();
 
 function importLibs() {
