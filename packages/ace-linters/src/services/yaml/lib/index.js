@@ -5800,7 +5800,7 @@ var require_core = __commonJS({
         uriResolver
       };
     }
-    var Ajv = class {
+    var Ajv2 = class {
       constructor(opts = {}) {
         this.schemas = {};
         this.refs = {};
@@ -6170,9 +6170,9 @@ var require_core = __commonJS({
         }
       }
     };
-    Ajv.ValidationError = validation_error_1.default;
-    Ajv.MissingRefError = ref_error_1.default;
-    exports.default = Ajv;
+    Ajv2.ValidationError = validation_error_1.default;
+    Ajv2.MissingRefError = ref_error_1.default;
+    exports.default = Ajv2;
     function checkOptions(checkOpts, options, msg, log = "error") {
       for (const key in checkOpts) {
         const opt = key;
@@ -7986,6 +7986,352 @@ var require_draft7 = __commonJS({
   }
 });
 
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/types.js
+var require_types = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.DiscrError = void 0;
+    var DiscrError;
+    (function(DiscrError2) {
+      DiscrError2["Tag"] = "tag";
+      DiscrError2["Mapping"] = "mapping";
+    })(DiscrError || (exports.DiscrError = DiscrError = {}));
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/index.js
+var require_discriminator = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var codegen_1 = require_codegen();
+    var types_1 = require_types();
+    var compile_1 = require_compile();
+    var ref_error_1 = require_ref_error();
+    var util_1 = require_util();
+    var error = {
+      message: ({ params: { discrError, tagName } }) => discrError === types_1.DiscrError.Tag ? `tag "${tagName}" must be string` : `value of tag "${tagName}" must be in oneOf`,
+      params: ({ params: { discrError, tag, tagName } }) => (0, codegen_1._)`{error: ${discrError}, tag: ${tagName}, tagValue: ${tag}}`
+    };
+    var def = {
+      keyword: "discriminator",
+      type: "object",
+      schemaType: "object",
+      error,
+      code(cxt) {
+        const { gen, data, schema: schema4, parentSchema, it } = cxt;
+        const { oneOf } = parentSchema;
+        if (!it.opts.discriminator) {
+          throw new Error("discriminator: requires discriminator option");
+        }
+        const tagName = schema4.propertyName;
+        if (typeof tagName != "string")
+          throw new Error("discriminator: requires propertyName");
+        if (schema4.mapping)
+          throw new Error("discriminator: mapping is not supported");
+        if (!oneOf)
+          throw new Error("discriminator: requires oneOf keyword");
+        const valid = gen.let("valid", false);
+        const tag = gen.const("tag", (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(tagName)}`);
+        gen.if((0, codegen_1._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
+        cxt.ok(valid);
+        function validateMapping() {
+          const mapping = getMapping();
+          gen.if(false);
+          for (const tagValue in mapping) {
+            gen.elseIf((0, codegen_1._)`${tag} === ${tagValue}`);
+            gen.assign(valid, applyTagSchema(mapping[tagValue]));
+          }
+          gen.else();
+          cxt.error(false, { discrError: types_1.DiscrError.Mapping, tag, tagName });
+          gen.endIf();
+        }
+        function applyTagSchema(schemaProp) {
+          const _valid = gen.name("valid");
+          const schCxt = cxt.subschema({ keyword: "oneOf", schemaProp }, _valid);
+          cxt.mergeEvaluated(schCxt, codegen_1.Name);
+          return _valid;
+        }
+        function getMapping() {
+          var _a;
+          const oneOfMapping = {};
+          const topRequired = hasRequired(parentSchema);
+          let tagRequired = true;
+          for (let i = 0; i < oneOf.length; i++) {
+            let sch = oneOf[i];
+            if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1.schemaHasRulesButRef)(sch, it.self.RULES)) {
+              const ref = sch.$ref;
+              sch = compile_1.resolveRef.call(it.self, it.schemaEnv.root, it.baseId, ref);
+              if (sch instanceof compile_1.SchemaEnv)
+                sch = sch.schema;
+              if (sch === void 0)
+                throw new ref_error_1.default(it.opts.uriResolver, it.baseId, ref);
+            }
+            const propSch = (_a = sch === null || sch === void 0 ? void 0 : sch.properties) === null || _a === void 0 ? void 0 : _a[tagName];
+            if (typeof propSch != "object") {
+              throw new Error(`discriminator: oneOf subschemas (or referenced schemas) must have "properties/${tagName}"`);
+            }
+            tagRequired = tagRequired && (topRequired || hasRequired(sch));
+            addMappings(propSch, i);
+          }
+          if (!tagRequired)
+            throw new Error(`discriminator: "${tagName}" must be required`);
+          return oneOfMapping;
+          function hasRequired({ required }) {
+            return Array.isArray(required) && required.includes(tagName);
+          }
+          function addMappings(sch, i) {
+            if (sch.const) {
+              addMapping(sch.const, i);
+            } else if (sch.enum) {
+              for (const tagValue of sch.enum) {
+                addMapping(tagValue, i);
+              }
+            } else {
+              throw new Error(`discriminator: "properties/${tagName}" must have "const" or "enum"`);
+            }
+          }
+          function addMapping(tagValue, i) {
+            if (typeof tagValue != "string" || tagValue in oneOfMapping) {
+              throw new Error(`discriminator: "${tagName}" values must be unique strings`);
+            }
+            oneOfMapping[tagValue] = i;
+          }
+        }
+      }
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-draft-07.json
+var require_json_schema_draft_07 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports, module) {
+    module.exports = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      $id: "http://json-schema.org/draft-07/schema#",
+      title: "Core schema meta-schema",
+      definitions: {
+        schemaArray: {
+          type: "array",
+          minItems: 1,
+          items: { $ref: "#" }
+        },
+        nonNegativeInteger: {
+          type: "integer",
+          minimum: 0
+        },
+        nonNegativeIntegerDefault0: {
+          allOf: [{ $ref: "#/definitions/nonNegativeInteger" }, { default: 0 }]
+        },
+        simpleTypes: {
+          enum: ["array", "boolean", "integer", "null", "number", "object", "string"]
+        },
+        stringArray: {
+          type: "array",
+          items: { type: "string" },
+          uniqueItems: true,
+          default: []
+        }
+      },
+      type: ["object", "boolean"],
+      properties: {
+        $id: {
+          type: "string",
+          format: "uri-reference"
+        },
+        $schema: {
+          type: "string",
+          format: "uri"
+        },
+        $ref: {
+          type: "string",
+          format: "uri-reference"
+        },
+        $comment: {
+          type: "string"
+        },
+        title: {
+          type: "string"
+        },
+        description: {
+          type: "string"
+        },
+        default: true,
+        readOnly: {
+          type: "boolean",
+          default: false
+        },
+        examples: {
+          type: "array",
+          items: true
+        },
+        multipleOf: {
+          type: "number",
+          exclusiveMinimum: 0
+        },
+        maximum: {
+          type: "number"
+        },
+        exclusiveMaximum: {
+          type: "number"
+        },
+        minimum: {
+          type: "number"
+        },
+        exclusiveMinimum: {
+          type: "number"
+        },
+        maxLength: { $ref: "#/definitions/nonNegativeInteger" },
+        minLength: { $ref: "#/definitions/nonNegativeIntegerDefault0" },
+        pattern: {
+          type: "string",
+          format: "regex"
+        },
+        additionalItems: { $ref: "#" },
+        items: {
+          anyOf: [{ $ref: "#" }, { $ref: "#/definitions/schemaArray" }],
+          default: true
+        },
+        maxItems: { $ref: "#/definitions/nonNegativeInteger" },
+        minItems: { $ref: "#/definitions/nonNegativeIntegerDefault0" },
+        uniqueItems: {
+          type: "boolean",
+          default: false
+        },
+        contains: { $ref: "#" },
+        maxProperties: { $ref: "#/definitions/nonNegativeInteger" },
+        minProperties: { $ref: "#/definitions/nonNegativeIntegerDefault0" },
+        required: { $ref: "#/definitions/stringArray" },
+        additionalProperties: { $ref: "#" },
+        definitions: {
+          type: "object",
+          additionalProperties: { $ref: "#" },
+          default: {}
+        },
+        properties: {
+          type: "object",
+          additionalProperties: { $ref: "#" },
+          default: {}
+        },
+        patternProperties: {
+          type: "object",
+          additionalProperties: { $ref: "#" },
+          propertyNames: { format: "regex" },
+          default: {}
+        },
+        dependencies: {
+          type: "object",
+          additionalProperties: {
+            anyOf: [{ $ref: "#" }, { $ref: "#/definitions/stringArray" }]
+          }
+        },
+        propertyNames: { $ref: "#" },
+        const: true,
+        enum: {
+          type: "array",
+          items: true,
+          minItems: 1,
+          uniqueItems: true
+        },
+        type: {
+          anyOf: [
+            { $ref: "#/definitions/simpleTypes" },
+            {
+              type: "array",
+              items: { $ref: "#/definitions/simpleTypes" },
+              minItems: 1,
+              uniqueItems: true
+            }
+          ]
+        },
+        format: { type: "string" },
+        contentMediaType: { type: "string" },
+        contentEncoding: { type: "string" },
+        if: { $ref: "#" },
+        then: { $ref: "#" },
+        else: { $ref: "#" },
+        allOf: { $ref: "#/definitions/schemaArray" },
+        anyOf: { $ref: "#/definitions/schemaArray" },
+        oneOf: { $ref: "#/definitions/schemaArray" },
+        not: { $ref: "#" }
+      },
+      default: true
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/ajv.js
+var require_ajv = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/ajv.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MissingRefError = exports.ValidationError = exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = exports.Ajv = void 0;
+    var core_1 = require_core();
+    var draft7_1 = require_draft7();
+    var discriminator_1 = require_discriminator();
+    var draft7MetaSchema = require_json_schema_draft_07();
+    var META_SUPPORT_DATA = ["/properties"];
+    var META_SCHEMA_ID = "http://json-schema.org/draft-07/schema";
+    var Ajv2 = class extends core_1.default {
+      _addVocabularies() {
+        super._addVocabularies();
+        draft7_1.default.forEach((v) => this.addVocabulary(v));
+        if (this.opts.discriminator)
+          this.addKeyword(discriminator_1.default);
+      }
+      _addDefaultMetaSchema() {
+        super._addDefaultMetaSchema();
+        if (!this.opts.meta)
+          return;
+        const metaSchema = this.opts.$data ? this.$dataMetaSchema(draft7MetaSchema, META_SUPPORT_DATA) : draft7MetaSchema;
+        this.addMetaSchema(metaSchema, META_SCHEMA_ID, false);
+        this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
+      }
+      defaultMeta() {
+        return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
+      }
+    };
+    exports.Ajv = Ajv2;
+    module.exports = exports = Ajv2;
+    module.exports.Ajv = Ajv2;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Ajv2;
+    var validate_1 = require_validate();
+    Object.defineProperty(exports, "KeywordCxt", { enumerable: true, get: function() {
+      return validate_1.KeywordCxt;
+    } });
+    var codegen_1 = require_codegen();
+    Object.defineProperty(exports, "_", { enumerable: true, get: function() {
+      return codegen_1._;
+    } });
+    Object.defineProperty(exports, "str", { enumerable: true, get: function() {
+      return codegen_1.str;
+    } });
+    Object.defineProperty(exports, "stringify", { enumerable: true, get: function() {
+      return codegen_1.stringify;
+    } });
+    Object.defineProperty(exports, "nil", { enumerable: true, get: function() {
+      return codegen_1.nil;
+    } });
+    Object.defineProperty(exports, "Name", { enumerable: true, get: function() {
+      return codegen_1.Name;
+    } });
+    Object.defineProperty(exports, "CodeGen", { enumerable: true, get: function() {
+      return codegen_1.CodeGen;
+    } });
+    var validation_error_1 = require_validation_error();
+    Object.defineProperty(exports, "ValidationError", { enumerable: true, get: function() {
+      return validation_error_1.default;
+    } });
+    var ref_error_1 = require_ref_error();
+    Object.defineProperty(exports, "MissingRefError", { enumerable: true, get: function() {
+      return ref_error_1.default;
+    } });
+  }
+});
+
 // ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/dynamicAnchor.js
 var require_dynamicAnchor = __commonJS({
   "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/dynamicAnchor.js"(exports) {
@@ -8302,125 +8648,6 @@ var require_unevaluated = __commonJS({
     var unevaluatedItems_1 = require_unevaluatedItems();
     var unevaluated = [unevaluatedProperties_1.default, unevaluatedItems_1.default];
     exports.default = unevaluated;
-  }
-});
-
-// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/types.js
-var require_types = __commonJS({
-  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.DiscrError = void 0;
-    var DiscrError;
-    (function(DiscrError2) {
-      DiscrError2["Tag"] = "tag";
-      DiscrError2["Mapping"] = "mapping";
-    })(DiscrError || (exports.DiscrError = DiscrError = {}));
-  }
-});
-
-// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/index.js
-var require_discriminator = __commonJS({
-  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var codegen_1 = require_codegen();
-    var types_1 = require_types();
-    var compile_1 = require_compile();
-    var ref_error_1 = require_ref_error();
-    var util_1 = require_util();
-    var error = {
-      message: ({ params: { discrError, tagName } }) => discrError === types_1.DiscrError.Tag ? `tag "${tagName}" must be string` : `value of tag "${tagName}" must be in oneOf`,
-      params: ({ params: { discrError, tag, tagName } }) => (0, codegen_1._)`{error: ${discrError}, tag: ${tagName}, tagValue: ${tag}}`
-    };
-    var def = {
-      keyword: "discriminator",
-      type: "object",
-      schemaType: "object",
-      error,
-      code(cxt) {
-        const { gen, data, schema: schema4, parentSchema, it } = cxt;
-        const { oneOf } = parentSchema;
-        if (!it.opts.discriminator) {
-          throw new Error("discriminator: requires discriminator option");
-        }
-        const tagName = schema4.propertyName;
-        if (typeof tagName != "string")
-          throw new Error("discriminator: requires propertyName");
-        if (schema4.mapping)
-          throw new Error("discriminator: mapping is not supported");
-        if (!oneOf)
-          throw new Error("discriminator: requires oneOf keyword");
-        const valid = gen.let("valid", false);
-        const tag = gen.const("tag", (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(tagName)}`);
-        gen.if((0, codegen_1._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
-        cxt.ok(valid);
-        function validateMapping() {
-          const mapping = getMapping();
-          gen.if(false);
-          for (const tagValue in mapping) {
-            gen.elseIf((0, codegen_1._)`${tag} === ${tagValue}`);
-            gen.assign(valid, applyTagSchema(mapping[tagValue]));
-          }
-          gen.else();
-          cxt.error(false, { discrError: types_1.DiscrError.Mapping, tag, tagName });
-          gen.endIf();
-        }
-        function applyTagSchema(schemaProp) {
-          const _valid = gen.name("valid");
-          const schCxt = cxt.subschema({ keyword: "oneOf", schemaProp }, _valid);
-          cxt.mergeEvaluated(schCxt, codegen_1.Name);
-          return _valid;
-        }
-        function getMapping() {
-          var _a;
-          const oneOfMapping = {};
-          const topRequired = hasRequired(parentSchema);
-          let tagRequired = true;
-          for (let i = 0; i < oneOf.length; i++) {
-            let sch = oneOf[i];
-            if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1.schemaHasRulesButRef)(sch, it.self.RULES)) {
-              const ref = sch.$ref;
-              sch = compile_1.resolveRef.call(it.self, it.schemaEnv.root, it.baseId, ref);
-              if (sch instanceof compile_1.SchemaEnv)
-                sch = sch.schema;
-              if (sch === void 0)
-                throw new ref_error_1.default(it.opts.uriResolver, it.baseId, ref);
-            }
-            const propSch = (_a = sch === null || sch === void 0 ? void 0 : sch.properties) === null || _a === void 0 ? void 0 : _a[tagName];
-            if (typeof propSch != "object") {
-              throw new Error(`discriminator: oneOf subschemas (or referenced schemas) must have "properties/${tagName}"`);
-            }
-            tagRequired = tagRequired && (topRequired || hasRequired(sch));
-            addMappings(propSch, i);
-          }
-          if (!tagRequired)
-            throw new Error(`discriminator: "${tagName}" must be required`);
-          return oneOfMapping;
-          function hasRequired({ required }) {
-            return Array.isArray(required) && required.includes(tagName);
-          }
-          function addMappings(sch, i) {
-            if (sch.const) {
-              addMapping(sch.const, i);
-            } else if (sch.enum) {
-              for (const tagValue of sch.enum) {
-                addMapping(tagValue, i);
-              }
-            } else {
-              throw new Error(`discriminator: "properties/${tagName}" must have "const" or "enum"`);
-            }
-          }
-          function addMapping(tagValue, i) {
-            if (typeof tagValue != "string" || tagValue in oneOfMapping) {
-              throw new Error(`discriminator: "${tagName}" values must be unique strings`);
-            }
-            oneOfMapping[tagValue] = i;
-          }
-        }
-      }
-    };
-    exports.default = def;
   }
 });
 
@@ -9693,7 +9920,7 @@ var require_dist = __commonJS({
     var draft4MetaSchema = require_json_schema_draft_04();
     var META_SUPPORT_DATA = ["/properties"];
     var META_SCHEMA_ID = "http://json-schema.org/draft-04/schema";
-    var Ajv = class extends core_1.default {
+    var Ajv2 = class extends core_1.default {
       constructor(opts = {}) {
         super({
           ...opts,
@@ -9718,9 +9945,9 @@ var require_dist = __commonJS({
         return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
       }
     };
-    module.exports = exports = Ajv;
+    module.exports = exports = Ajv2;
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = Ajv;
+    exports.default = Ajv2;
     var core_2 = require_core();
     Object.defineProperty(exports, "KeywordCxt", { enumerable: true, get: function() {
       return core_2.KeywordCxt;
@@ -43022,18 +43249,12 @@ function isModeline(lineText) {
   return matchModeline !== null && matchModeline.length === 1;
 }
 
-// src/fillers/ajv.js
-var AJVStub = class {
-  compile() {
-    return () => true;
-  }
-};
-
 // ../../node_modules/yaml-language-server/lib/esm/languageservice/services/yamlSchemaService.js
+var import_ajv = __toESM(require_ajv());
 var import__ = __toESM(require__());
 var import__2 = __toESM(require__2());
 var import_ajv_draft_04 = __toESM(require_dist());
-var ajv = new AJVStub();
+var ajv = new import_ajv.default();
 var ajv04 = new import_ajv_draft_04.default();
 var ajv2019 = new import__.default();
 var ajv2020 = new import__2.default();

@@ -1,46 +1,148 @@
-import { expect } from "chai";
-import * as puppeteer from 'puppeteer';
+import {expect} from "chai";
+import puppeteer, {Browser, Page} from "puppeteer";
+import {MessageType} from "../../src/message-types";
+import {Ace} from "ace-code";
+import {LanguageProvider} from "../../src";
+import {yamlContent, yamlSchema} from "@ace-linters/demo/build/docs-example/yaml-example";
 
-const launchOptions: puppeteer.PuppeteerLaunchOptions = {
-    headless: true,
-    devtools: false,
-};
+interface TestFlags {
+    isInit: boolean;
+    modeChanged: boolean;
+    globalOptionsChanged: boolean;
+    optionsChanged: boolean;
+    changeText: boolean;
+}
 
-describe("General UI Tests", function () {
+declare global {
+    interface Window {
+        testFlags: TestFlags;
+        editor: Ace.Editor;
+        languageProvider: LanguageProvider;
+    }
+}
+
+
+describe("Editor Console Error Tests", function () {
     this.timeout(30000);
+    let browser: Browser, page: Page;
+    let consoleErrors = [];
 
-    let browser: puppeteer.Browser;
-    let page: puppeteer.Page;
-    const consoleErrors: string[] = [];
+    const waitForFlag = async (flag: keyof TestFlags, timeout = 10000) => {
+        await page.waitForFunction(
+            (flagName) => window.testFlags && window.testFlags[flagName] === true,
+            {timeout},
+            flag
+        );
+    };
 
     before(async function () {
-        browser = await puppeteer.launch(launchOptions);
-        page = (await browser.pages())[0];
+        browser = await puppeteer.launch({headless: true});
+        page = await browser.newPage();
 
+        consoleErrors = [];
         page.on("console", (msg) => {
-            if (msg.type() === "error" && msg.location().url !== "http://localhost:8080/favicon.ico") {
+            if (msg.type() === "error") {
                 consoleErrors.push(msg.text());
             }
         });
-        page.on('pageerror', (error) => consoleErrors.push(error.message));
+        page.on("pageerror", (error) => {
+            consoleErrors.push(error.message);
+        });
 
-        try {
-            await page.goto("http://localhost:8080/test.html", {
-                timeout: 30000,
-                waitUntil: 'domcontentloaded',
+        await page.goto("http://localhost:8080/test.html", {waitUntil: "domcontentloaded"});
+        await page.evaluate(function (msgTypes: typeof MessageType) {
+            window.testFlags = {
+                isInit: false,
+                modeChanged: false,
+                globalOptionsChanged: false,
+                optionsChanged: false,
+                changeText: false,
+            };
+
+            window.languageProvider["$messageController"].$worker.addEventListener("message", (e) => {
+                const message = e.data;
+                switch (message.type as MessageType) {
+                    case msgTypes.init:
+                        window.testFlags.isInit = true;
+                        break;
+                    case msgTypes.changeMode:
+                        window.testFlags.modeChanged = true;
+                        console.log(message.value);
+                        break;
+                    case msgTypes.globalOptions:
+                        window.testFlags.globalOptionsChanged = true;
+                        break;
+                    case msgTypes.changeOptions:
+                        window.testFlags.optionsChanged = true;
+                        break;
+                }
             });
-        } catch (error) {
-            console.error("Navigation error:", error);
-            throw error;
-        }
-    });
+        }, MessageType);
 
-    it('should not have errors', async function () {
-        await page.waitForSelector("#finish", { timeout: 30000 });
-        expect(consoleErrors).to.be.empty;
+        await waitForFlag("isInit");
     });
 
     after(async function () {
         await browser.close();
+    });
+
+    it("should not produce errors when switching modes (without extra settings)", async function () {
+
+        const modes = [
+            "typescript", "json", "css", "html", "yaml", "php", "xml", "javascript", "lua", "less", "scss",
+            "python", "css"
+        ];
+        for (const mode of modes) {
+            // Clear errors for each mode.
+            consoleErrors.length = 0;
+
+            await page.evaluate(function (mode) {
+                window.testFlags.modeChanged = false;
+                window.editor.session.setMode("ace/mode/" + mode);
+            }, mode);
+            await waitForFlag("modeChanged");
+            expect(consoleErrors, `Errors found for mode ${mode}`).to.be.empty;
+        }
+    });
+
+    it("should not produce critical errors in YAML mode with specific configuration", async function () {
+        const yamlOptions = {
+            schemas: [
+                {
+                    uri: "yamlSchema.json",
+                    schema: yamlSchema
+                }
+            ],
+        };
+
+        consoleErrors.length = 0;
+        await page.evaluate(function (options) {
+            window.testFlags.globalOptionsChanged = false;
+            window.testFlags.modeChanged = false;
+            window.editor.session.setMode("ace/mode/yaml");
+            window.languageProvider.setGlobalOptions("yaml", options);
+        }, yamlOptions);
+
+        await waitForFlag("globalOptionsChanged");
+
+        await page.evaluate(function () {
+            window.testFlags.optionsChanged = false;
+            window.languageProvider.setSessionOptions(window.editor.session, {schemaUri: "yamlSchema.json"});
+        });
+
+        await waitForFlag("optionsChanged");
+
+        await page.evaluate(function (content) {
+            window.editor.setValue(content);
+            window.editor.clearSelection();
+        }, yamlContent)
+
+        await new Promise(r => setTimeout(r, 1000));
+
+        await page.hover(".ace_meta.ace_tag:first-of-type");
+
+        await new Promise(r => setTimeout(r, 2000));
+
+        expect(consoleErrors, "Critical errors in YAML mode").to.be.empty;
     });
 });
