@@ -138,6 +138,19 @@ export class LanguageClient extends BaseService implements LanguageService {
             });
         });
 
+        this.connection.onRequest('window/showDocument', (params: lsp.ShowDocumentParams) => {
+            return new Promise((resolve, reject) => {
+                const callbackId = this.callbackId++;
+                this.callbacks[callbackId] = (result) => {
+                    resolve(result);
+                };
+                let postMessage = {
+                    "type": MessageType.showDocument, "serviceName": this.serviceName, ...params
+                };
+                this.ctx.postMessage(postMessage);
+            });
+        });
+
         this.connection.onError((e) => {
             throw e;
         });
@@ -152,12 +165,19 @@ export class LanguageClient extends BaseService implements LanguageService {
         await this.dispose();
         this.$connect();
     }
-    
+
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
-       if (!this.isConnected || !this.callbacks[callbackId]) {
-           return;
-       }
-       this.callbacks[callbackId](result);
+        if (!this.isConnected || !this.callbacks[callbackId]) {
+            return;
+        }
+        this.callbacks[callbackId](result);
+    }
+
+    sendResponse(callbackId: number, args?: lsp.LSPAny) {
+        if (!this.isConnected || !this.callbacks[callbackId]) {
+            return;
+        }
+        this.callbacks[callbackId](args);
     }
 
     showLog(params: lsp.ShowMessageParams) {
@@ -253,9 +273,9 @@ export class LanguageClient extends BaseService implements LanguageService {
                 };
                 this.ctx.postMessage(postMessage);
             });
-            
 
-            this.connection.sendNotification('initialized', {}).then(() => {
+
+            this.connection.sendNotification('initialized').then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
                     settings: {},
                 });
@@ -336,6 +356,28 @@ export class LanguageClient extends BaseService implements LanguageService {
             position: position,
         };
         return this.connection.sendRequest('textDocument/completion', options) as Promise<lsp.CompletionList | lsp.CompletionItem[] | null>;
+    }
+
+    async doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position) {
+        if (!this.isInitialized) {
+            return null;
+        }
+        if (!this.serviceCapabilities?.inlineCompletionProvider) {
+            return null;
+        }
+
+        let options: lsp.InlineCompletionParams = {
+            textDocument: {
+                uri: document.uri,
+                // @ts-ignore
+                version: document.version,
+            },
+            position: position,
+            context: {
+                triggerKind: 1,
+            }
+        };
+        return this.connection.sendRequest('textDocument/inlineCompletion', options) as Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>;
     }
 
     async doResolve(item: lsp.CompletionItem) {
@@ -457,7 +499,7 @@ export class LanguageClient extends BaseService implements LanguageService {
             };
             return this.connection.sendRequest('textDocument/semanticTokens/range', options) as Promise<lsp.SemanticTokens | null>
         }
-        
+
     }
 
     async getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext) {
@@ -474,7 +516,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         };
         return this.connection.sendRequest('textDocument/codeAction', options) as Promise<(lsp.Command | lsp.CodeAction)[] | null>
     }
-    
+
     executeCommand(command: string, args?: lsp.LSPAny[]) {
         if (!this.isInitialized)
             return Promise.resolve(null);
@@ -486,5 +528,17 @@ export class LanguageClient extends BaseService implements LanguageService {
         };
         return this.connection.sendRequest('workspace/executeCommand', options) as Promise<any>
     }
-    
+
+    /**
+     * Send a custom request to the server.
+     * @param name
+     * @param args
+     */
+    sendRequest(name: string, args?: lsp.LSPAny) {
+        if (args === undefined || args === null) {
+            return this.connection.sendRequest(name);
+        }
+        return this.connection.sendRequest(name, args);
+    }
+
 }

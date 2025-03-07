@@ -403,6 +403,10 @@ export interface CompletionService {
 	completions: lsp.CompletionItem[] | lsp.CompletionList | null;
 	service: string;
 }
+export interface InlineCompletionService {
+	completions: lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null;
+	service: string;
+}
 export interface ServiceOptions {
 	[name: string]: any;
 }
@@ -522,6 +526,9 @@ export interface ProviderOptions {
 		completion?: {
 			overwriteCompleters: boolean;
 		} | false;
+		inlineCompletion?: {
+			overwriteCompleters: boolean;
+		} | false;
 		completionResolve?: boolean;
 		format?: boolean;
 		documentHighlights?: boolean;
@@ -536,7 +543,7 @@ export interface ProviderOptions {
 export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand" | "inlineCompletion";
 export interface AceRangeData {
 	start: {
 		row: number;
@@ -569,6 +576,7 @@ export interface IMessageController {
 	}) => void): void;
 	doValidation(documentIdentifier: ComboDocumentIdentifier, callback?: (annotations: lsp.Diagnostic[]) => void): any;
 	doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void): any;
+	doInlineComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: InlineCompletionService[]) => void): void;
 	doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void): any;
 	format(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void): any;
 	doHover(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): any;
@@ -588,6 +596,7 @@ export interface IMessageController {
 	executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): any;
 	setWorkspace(workspaceUri: string, callback?: () => void): void;
 	renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
+	sendRequest(serviceName: string, requestName: string, options: any, callback?: (result: any) => void): void;
 }
 declare class MarkerGroup {
 	private markers;
@@ -707,7 +716,8 @@ export declare class LanguageProvider {
 	getTooltipText(hover: Tooltip): string;
 	format: () => void;
 	getSemanticTokens(): void;
-	doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void): void;
+	doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void): void;
+	doInlineComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void): void;
 	doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void): void;
 	$registerCompleters(editor: Ace.Editor): void;
 	closeConnection(): void;
@@ -717,6 +727,15 @@ export declare class LanguageProvider {
 	 * @param [callback]
 	 */
 	closeDocument(session: Ace.EditSession, callback?: any): void;
+	/**
+	 * Sends a request to the message controller.
+	 * @param serviceName - The name of the service/server to send the request to.
+	 * @param method - The method name for the request.
+	 * @param params - The parameters for the request.
+	 * @param callback - An optional callback function that will be called with the result of the request.
+	 */
+	sendRequest(serviceName: string, method: string, params: any, callback?: (result: any) => void): void;
+	showDocument(params: lsp.ShowDocumentParams, serviceName: string, callback?: (result: lsp.LSPAny, serviceName: string) => void): void;
 }
 declare class SessionLanguageProvider {
 	session: Ace.EditSession;
@@ -795,6 +814,14 @@ declare class ExecuteCommandMessage {
 	args: any[] | undefined;
 	constructor(serviceName: string, callbackId: number, command: string, args?: any[]);
 }
+declare class SendRequestMessage {
+	callbackId: number;
+	serviceName: string;
+	type: MessageType.sendRequest;
+	value: string;
+	args?: any;
+	constructor(serviceName: string, callbackId: number, requestName: string, args?: any);
+}
 declare enum MessageType {
 	init = 0,
 	format = 1,
@@ -819,7 +846,11 @@ declare enum MessageType {
 	applyEdit = 20,
 	appliedEdit = 21,
 	setWorkspace = 22,
-	renameDocument = 23
+	renameDocument = 23,
+	sendRequest = 24,
+	showDocument = 25,
+	sendResponse = 26,
+	inlineComplete = 27
 }
 export declare class MessageController implements IMessageController {
 	$worker: Worker;
@@ -833,6 +864,7 @@ export declare class MessageController implements IMessageController {
 	}) => void): void;
 	doValidation(documentIdentifier: ComboDocumentIdentifier, callback?: (annotations: lsp.Diagnostic[]) => void): void;
 	doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void): void;
+	doInlineComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: InlineCompletionService[]) => void): void;
 	doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void): void;
 	format(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void): void;
 	doHover(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): void;
@@ -850,7 +882,8 @@ export declare class MessageController implements IMessageController {
 	executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): void;
 	setWorkspace(workspaceUri: string, callback?: () => void): void;
 	renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
-	postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any: any) => void): void;
+	sendRequest(serviceName: string, requestName: string, args?: any, callback?: (result: any) => void): void;
+	postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage | SendRequestMessage, callback?: (any: any) => void): void;
 }
 
 export {};

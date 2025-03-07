@@ -2,6 +2,7 @@ import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions} from "../types/language-service";
+import {LSPAny} from "vscode-languageserver-protocol";
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
     serviceName: string;
@@ -12,7 +13,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
     workspaceUri?: string;
-    
+
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
             diagnostic: {
@@ -75,6 +76,14 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             },
             codeAction: {
                 dynamicRegistration: true
+            },
+            inlineCompletion: {
+                dynamicRegistration: true
+            }
+        },
+        window: {
+            showDocument: {
+                support: true
             }
         },
         workspace: {
@@ -90,7 +99,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 normalizesLineEndings: false,
                 documentChanges: false
             },
-        } as lsp.WorkspaceClientCapabilities,
+        },
     };
 
     protected constructor(mode: string, workspaceUri?: string) {
@@ -163,6 +172,10 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return null;
     }
 
+    async doInlineComplete(document, position: lsp.Position): Promise<lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null> {
+        return null;
+    }
+
     async doHover(document, position: lsp.Position): Promise<lsp.Hover | null> {
         return null;
     }
@@ -197,7 +210,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             errorMessagesToTreatAsInfo: this.globalOptions.errorMessagesToTreatAsInfo ?? [],
         }
     }
-    
+
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> {
         return Promise.resolve(null);
     }
@@ -219,5 +232,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     }
 
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
+    }
+
+    sendRequest(name: string, args?: LSPAny): Promise<any> {
+        return Promise.resolve(null);
+    }
+
+    sendResponse(callbackId: number, args?: LSPAny) {
+        return;
     }
 }

@@ -21,10 +21,10 @@ export class AceLanguageClient {
         }
         if (servers instanceof Array) {
             servers.forEach((serverData, index) => {
-                serviceManager.registerServer("server" + index, serverData);
+                serviceManager.registerServer(serverData.serviceName ?? "server" + index, serverData);
             });
         } else {
-            serviceManager.registerServer("server", servers);
+            serviceManager.registerServer(servers.serviceName ?? "server", servers);
         }
 
         return LanguageProvider.create(client, options);

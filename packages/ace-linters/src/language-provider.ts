@@ -11,7 +11,7 @@ import {
     fromRange, fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
-    toCompletions, toMarkerGroupItem,
+    toCompletions, toInlineCompletions, toMarkerGroupItem,
     toRange, toResolvedCompletion,
     toTooltip
 } from "./type-converters/lsp/lsp-converters";
@@ -120,7 +120,8 @@ export class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
-            codeActions: true
+            codeActions: true,
+            inlineCompletion: false
         };
 
         this.options = options ?? {};
@@ -428,22 +429,27 @@ export class LanguageProvider {
         sessionLanguageProvider.getSemanticTokens();
     }
 
-    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void) {
+    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completions) => completions && callback(toCompletions(completions)));
+    }
+
+    doInlineComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doInlineComplete(this.$getFileName(session), fromPoint(cursor),
+            (completions) => completions && callback(toInlineCompletions(completions)));
     }
 
     doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
     }
 
-
     $registerCompleters(editor: Ace.Editor) {
         let completer: Ace.Completer = {
             getCompletions: async (editor, session, pos, prefix, callback) => {
                 this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
-                    this.doComplete(editor, session, (completions) => {
+                    const completionCallback = (completions) => {
                         let fileName = this.$getFileName(session);
                         if (!completions)
                             return;
@@ -452,7 +458,12 @@ export class LanguageProvider {
                             item["fileName"] = fileName
                         });
                         callback(null, CommonConverter.normalizeRanges(completions));
-                    });
+                    };
+                    if (this.options.functionality!.inlineCompletion) {
+                        this.doInlineComplete(editor, session, completionCallback);
+                    } else {
+                        this.doComplete(editor, session, completionCallback);
+                    }
                 });
             },
             getDocTooltip: (item: Ace.Completion) => {
@@ -506,6 +517,32 @@ export class LanguageProvider {
         if (sessionProvider) {
             sessionProvider.closeDocument(callback);
             delete this.$sessionLanguageProviders[session["id"]];
+        }
+    }
+
+    /**
+     * Sends a request to the message controller.
+     * @param serviceName - The name of the service/server to send the request to.
+     * @param method - The method name for the request.
+     * @param params - The parameters for the request.
+     * @param callback - An optional callback function that will be called with the result of the request.
+     */
+    sendRequest(serviceName: string, method: string, params: any, callback?: (result: any) => void) {
+        this.$messageController.sendRequest(serviceName, method, params, callback);
+    }
+
+    showDocument(params: lsp.ShowDocumentParams, serviceName: string, callback?: (result: lsp.LSPAny, serviceName: string) => void) {
+        //TODO: implement other params for showDocument (external, takeFocus, selection)
+        try {
+            window.open(params.uri, "_blank");
+            callback && callback({
+                success: true,
+            }, serviceName);
+        } catch (e) {
+            callback && callback({
+                success: false,
+                error: e
+            }, serviceName);
         }
     }
 }

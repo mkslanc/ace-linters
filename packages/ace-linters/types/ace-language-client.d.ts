@@ -406,6 +406,7 @@ export interface LanguageService {
 	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 	doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
 	doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
+	doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>;
 	doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 	setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): any;
 	applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): any;
@@ -425,6 +426,8 @@ export interface LanguageService {
 	dispose(): Promise<void>;
 	closeConnection(): Promise<void>;
 	setWorkspace(workspaceUri: string): void;
+	sendRequest(name: string, args?: lsp.LSPAny): Promise<any>;
+	sendResponse(callbackId: number, args?: lsp.LSPAny): void;
 }
 export interface TooltipContent {
 	type: CommonConverter.TooltipType;
@@ -436,6 +439,10 @@ export interface Tooltip {
 }
 export interface CompletionService {
 	completions: lsp.CompletionItem[] | lsp.CompletionList | null;
+	service: string;
+}
+export interface InlineCompletionService {
+	completions: lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null;
 	service: string;
 }
 export interface ServiceOptions {
@@ -557,6 +564,9 @@ export interface ProviderOptions {
 		completion?: {
 			overwriteCompleters: boolean;
 		} | false;
+		inlineCompletion?: {
+			overwriteCompleters: boolean;
+		} | false;
 		completionResolve?: boolean;
 		format?: boolean;
 		documentHighlights?: boolean;
@@ -571,12 +581,13 @@ export interface ProviderOptions {
 export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand" | "inlineCompletion";
 export interface ServiceConfig extends BaseConfig {
 	className: string;
 	options?: ServiceOptions;
 }
 export interface BaseConfig {
+	serviceName?: string;
 	initializationOptions?: ServiceOptions;
 	options?: ServiceOptions;
 	serviceInstance?: LanguageService;
@@ -636,6 +647,7 @@ export interface IMessageController {
 	}) => void): void;
 	doValidation(documentIdentifier: ComboDocumentIdentifier, callback?: (annotations: lsp.Diagnostic[]) => void): any;
 	doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void): any;
+	doInlineComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: InlineCompletionService[]) => void): void;
 	doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void): any;
 	format(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions, callback?: (edits: lsp.TextEdit[]) => void): any;
 	doHover(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (hover: lsp.Hover[]) => void): any;
@@ -655,6 +667,7 @@ export interface IMessageController {
 	executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void): any;
 	setWorkspace(workspaceUri: string, callback?: () => void): void;
 	renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
+	sendRequest(serviceName: string, requestName: string, options: any, callback?: (result: any) => void): void;
 }
 declare class MarkerGroup {
 	private markers;
@@ -774,7 +787,8 @@ declare class LanguageProvider {
 	getTooltipText(hover: Tooltip): string;
 	format: () => void;
 	getSemanticTokens(): void;
-	doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void): void;
+	doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void): void;
+	doInlineComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void): void;
 	doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void): void;
 	$registerCompleters(editor: Ace.Editor): void;
 	closeConnection(): void;
@@ -784,6 +798,15 @@ declare class LanguageProvider {
 	 * @param [callback]
 	 */
 	closeDocument(session: Ace.EditSession, callback?: any): void;
+	/**
+	 * Sends a request to the message controller.
+	 * @param serviceName - The name of the service/server to send the request to.
+	 * @param method - The method name for the request.
+	 * @param params - The parameters for the request.
+	 * @param callback - An optional callback function that will be called with the result of the request.
+	 */
+	sendRequest(serviceName: string, method: string, params: any, callback?: (result: any) => void): void;
+	showDocument(params: lsp.ShowDocumentParams, serviceName: string, callback?: (result: lsp.LSPAny, serviceName: string) => void): void;
 }
 declare class SessionLanguageProvider {
 	session: Ace.EditSession;

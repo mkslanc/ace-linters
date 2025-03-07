@@ -22,6 +22,8 @@ export interface LanguageService {
 
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
 
+    doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>
+
     doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
@@ -59,6 +61,10 @@ export interface LanguageService {
     closeConnection(): Promise<void>;
 
     setWorkspace(workspaceUri: string): void;
+
+    sendRequest(name: string, args?: lsp.LSPAny) : Promise<any>;
+
+    sendResponse(callbackId: number, args?: lsp.LSPAny): void;
 }
 
 interface TooltipContent {
@@ -78,6 +84,11 @@ export interface TextChange {
 
 export interface CompletionService {
     completions: lsp.CompletionItem[] | lsp.CompletionList | null,
+    service: string
+}
+
+export interface InlineCompletionService {
+    completions: lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null,
     service: string
 }
 
@@ -217,6 +228,9 @@ export interface ProviderOptions {
         completion?: {
             overwriteCompleters: boolean
         } | false,
+        inlineCompletion?: {
+            overwriteCompleters: boolean
+        } | false,
         completionResolve?: boolean,
         format?: boolean,
         documentHighlights?: boolean,
@@ -244,6 +258,7 @@ export type SupportedFeatures =
     | "semanticTokens"
     | "codeAction"
     | "executeCommand"
+    | "inlineCompletion"
 
 
 export interface ServiceConfig extends BaseConfig {
@@ -252,6 +267,7 @@ export interface ServiceConfig extends BaseConfig {
 }
 
 export interface BaseConfig {
+    serviceName?: string,
     initializationOptions?: ServiceOptions,
     options?: ServiceOptions,
     serviceInstance?: LanguageService,
