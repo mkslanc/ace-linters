@@ -685,7 +685,7 @@ class SessionLanguageProvider {
 				if (lspCompleterOptions)
 				{
 					completer.triggerCharacters = allTriggerCharacters.filter((value: string) => !lspCompleterOptions.remove.includes(value)); // Remove trigger characters
-					lspCompleterOptions.add.forEach((value: string) => !completer.triggerCharacters.includes(value) && completer.triggerCharacters.push(value)); // Add trigger characters
+					lspCompleterOptions.add.forEach((value: string) => !completer!.triggerCharacters!.includes(value) && completer!.triggerCharacters!.push(value)); // Add trigger characters
 				}
 				else
 				{
