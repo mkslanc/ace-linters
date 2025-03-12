@@ -218,8 +218,8 @@ export interface LspCompleterOptions {
 
 /** Options regarding the trigger characters */
 export interface TriggerCharacterOptions {
-	add: [string], // The trigger characters to add
-	remove: [string] // The trigger characters to remove
+	add: string[], // The trigger characters to add
+	remove: string[] // The trigger characters to remove
 }
 
 export interface ProviderOptions {
