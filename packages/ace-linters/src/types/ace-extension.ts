@@ -31,3 +31,10 @@ declare module "ace-code/src/document" {
         version: number;
     }
 }
+
+declare module "ace-code/src/editor" {
+    interface Editor {
+        inlineCompleter: any;
+        inlineCompleters: import("ace-code").Ace.Completer[];
+    }
+}

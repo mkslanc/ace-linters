@@ -1,4 +1,7 @@
 import { Ace } from 'ace-code';
+import { CompletionProvider } from 'ace-code/src/autocomplete';
+import { CommandBarTooltip } from 'ace-code/src/ext/command_bar';
+import { InlineAutocomplete } from 'ace-code/src/ext/inline_autocomplete';
 import * as lsp from 'vscode-languageserver-protocol';
 import { CompletionItemKind, TextDocumentIdentifier, TextDocumentItem } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -577,6 +580,11 @@ export interface ProviderOptions {
 	markdownConverter?: MarkDownConverter;
 	requireFilePath?: boolean;
 	workspacePath?: string;
+	aceComponents?: {
+		"InlineAutocomplete"?: typeof InlineAutocomplete;
+		"CommandBarTooltip"?: typeof CommandBarTooltip;
+		"CompletionProvider"?: typeof CompletionProvider;
+	};
 }
 export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
@@ -718,6 +726,8 @@ declare class LanguageProvider {
 	requireFilePath: boolean;
 	private $lightBulbWidgets;
 	private stylesEmbedded;
+	private inlineCompleter?;
+	private doLiveAutocomplete;
 	private constructor();
 	/**
 	 *  Creates LanguageProvider using our transport protocol with ability to register different services on same

@@ -4,6 +4,9 @@ import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {MarkDownConverter} from "./converters";
+import type {InlineAutocomplete} from "ace-code/src/ext/inline_autocomplete";
+import type {CommandBarTooltip} from "ace-code/src/ext/command_bar";
+import type {CompletionProvider} from "ace-code/src/autocomplete";
 
 export interface LanguageService {
     documents: { [documentUri: string]: TextDocument };
@@ -47,22 +50,22 @@ export interface LanguageService {
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
-    
+
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>
-    
+
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>
 
     executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
 
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
-    
+
     dispose(): Promise<void>;
 
     closeConnection(): Promise<void>;
 
     setWorkspace(workspaceUri: string): void;
 
-    sendRequest(name: string, args?: lsp.LSPAny) : Promise<any>;
+    sendRequest(name: string, args?: lsp.LSPAny): Promise<any>;
 
     sendResponse(callbackId: number, args?: lsp.LSPAny): void;
 }
@@ -108,7 +111,7 @@ export interface ServiceOptionsWithErrorMessages {
     errorMessagesToTreatAsInfo?: RegExp[]
 }
 
-export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages {
     schemas?: {
         uri: string,
         fileMatch?: string[],
@@ -119,7 +122,7 @@ export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages{
     trailingCommas?: boolean
 }
 
-export interface YamlServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface YamlServiceOptions extends ServiceOptionsWithErrorMessages {
     schemas?: {
         uri: string,
         fileMatch?: string[],
@@ -133,7 +136,7 @@ interface ExtraLib {
     version: number;
 }
 
-export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages{
+export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
     compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums,
     extraLibs?: {
         [path: string]: ExtraLib;
@@ -159,10 +162,10 @@ export interface PhpServiceOptions extends ServiceOptionsWithErrorMessages {
     inline?: boolean
 }
 
-export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages  {
+export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 
-export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages {
     env?: { [name: string]: boolean } | undefined;
     extends?: string | string[] | undefined;
     globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
@@ -177,11 +180,11 @@ export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessage
     rules?: { [rule: string]: any }
 }
 
-export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages{
+export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
     configuration: { [name: string]: any }
 }
 
-export interface CssServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface CssServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 
 export interface ServiceOptionsMap {
@@ -202,6 +205,7 @@ export interface ServiceOptionsMap {
     less: CssServiceOptions,
     scss: CssServiceOptions,
     lua: LuaServiceOptions,
+
     [serviceName: string]: any
 }
 
@@ -214,7 +218,7 @@ export type SupportedServices =
     | "yaml"
     | "php"
     | "xml"
-    
+
     | /** @deprecated would be removed in next iterations */"javascript"
     | "eslint"
     | "lua"
@@ -241,6 +245,11 @@ export interface ProviderOptions {
     markdownConverter?: MarkDownConverter,
     requireFilePath?: boolean,
     workspacePath?: string, // this would be transformed to workspaceUri
+    aceComponents?: {
+        "InlineAutocomplete"?: typeof InlineAutocomplete,
+        "CommandBarTooltip"?: typeof CommandBarTooltip,
+        "CompletionProvider"?: typeof CompletionProvider,
+    }
 }
 
 export type ServiceFeatures = {
@@ -331,5 +340,5 @@ export type ServiceStruct = {
 
 export interface CodeActionsByService {
     codeActions: (lsp.Command | lsp.CodeAction)[] | null
-    service: string    
+    service: string
 }
