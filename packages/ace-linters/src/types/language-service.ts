@@ -213,13 +213,13 @@ export type SupportedServices =
 
 /** Options for the completer coming from the LSP server */
 export interface LspCompleterOptions {
-	triggerCharacters: TriggerCharacterOptions
+    triggerCharacters: TriggerCharacterOptions
 }
 
 /** Options regarding the trigger characters */
 export interface TriggerCharacterOptions {
-	add: string[], // The trigger characters to add
-	remove: string[] // The trigger characters to remove
+    add: string[], // The trigger characters to add
+    remove: string[] // The trigger characters to remove
 }
 
 export interface ProviderOptions {
@@ -227,7 +227,7 @@ export interface ProviderOptions {
         hover?: boolean,
         completion?: {
             overwriteCompleters: boolean,
-			lspCompleterOptions?: LspCompleterOptions
+            lspCompleterOptions?: LspCompleterOptions
         } | false,
         completionResolve?: boolean,
         format?: boolean,
