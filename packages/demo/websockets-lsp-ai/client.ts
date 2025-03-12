@@ -2,7 +2,6 @@ import "ace-code/esm-resolver";
 import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {jsContent} from "../docs-example/javascript-example";
-import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 import {Ace} from "ace-code";
 import {Autocomplete} from "ace-code/src/autocomplete";
 import "ace-code/src/ext/inline_autocomplete";
