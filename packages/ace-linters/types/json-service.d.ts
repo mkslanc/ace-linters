@@ -225,6 +225,7 @@ export interface JSONSchema {
 	suggestSortText?: string;
 	allowComments?: boolean;
 	allowTrailingCommas?: boolean;
+	completionDetail?: string;
 }
 export interface JSONSchemaMap {
 	[name: string]: JSONSchemaRef;
