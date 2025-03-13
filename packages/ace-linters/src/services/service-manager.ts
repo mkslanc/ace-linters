@@ -87,196 +87,196 @@ export class ServiceManager {
                 uri: documentUri,
                 version: version
             };
-			function handleError (error: Error)
-			{
-				// We shall ignore content modified errors: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#implementationConsiderations: "If clients receive a ContentModified error, it generally should not show it in the UI for the end-user."
-				if (error.message != "Content modified.")
-				{
-					throw (error);
-				}
-			}
+            function handleError (error: Error)
+            {
+                // We shall ignore content modified errors: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#implementationConsiderations: "If clients receive a ContentModified error, it generally should not show it in the UI for the end-user."
+                if (error.message != "Content modified.")
+                {
+                    throw (error);
+                }
+            }
             switch (message.type) {
                 case MessageType.format:
-					try {
-						serviceInstances = this.filterByFeature(serviceInstances, "format");
-						if (serviceInstances.length > 0) {
-							//we will use only first service to format
-							postMessage["value"] = await serviceInstances[0].format(documentIdentifier, message.value, message.format);
-						}
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        serviceInstances = this.filterByFeature(serviceInstances, "format");
+                        if (serviceInstances.length > 0) {
+                            //we will use only first service to format
+                            postMessage["value"] = await serviceInstances[0].format(documentIdentifier, message.value, message.format);
+                        }
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.complete:
-					try {
-						postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service) => {
-							return {
-								completions: await service.doComplete(documentIdentifier, message["value"]),
-								service: service.serviceData.className
-							};
-						}))).filter(notEmpty);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service) => {
+                            return {
+                                completions: await service.doComplete(documentIdentifier, message["value"]),
+                                service: service.serviceData.className
+                            };
+                        }))).filter(notEmpty);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.resolveCompletion:
-					try {
-						let serviceName = message.value["service"];
-						postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
-							if (service.serviceData.className === serviceName) {
-								return service;
-							}
-						})?.doResolve(message.value);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        let serviceName = message.value["service"];
+                        postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
+                            if (service.serviceData.className === serviceName) {
+                                return service;
+                            }
+                        })?.doResolve(message.value);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.change:
-					try {
-						serviceInstances.forEach((service) => {
-							service.setValue(documentIdentifier, message["value"]);
-						});
-						await doValidation(documentIdentifier, serviceInstances);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        serviceInstances.forEach((service) => {
+                            service.setValue(documentIdentifier, message["value"]);
+                        });
+                        await doValidation(documentIdentifier, serviceInstances);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.applyDelta:
-					try {
-						serviceInstances.forEach((service) => {
-							service.applyDeltas(documentIdentifier, message["value"]);
-						});
-						await doValidation(documentIdentifier, serviceInstances);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        serviceInstances.forEach((service) => {
+                            service.applyDeltas(documentIdentifier, message["value"]);
+                        });
+                        await doValidation(documentIdentifier, serviceInstances);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.hover:
-					try {
-						postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "hover", "doHover", documentIdentifier, message.value);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "hover", "doHover", documentIdentifier, message.value);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.validate:
-					try {
-						postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        postMessage["value"] = await doValidation(documentIdentifier, serviceInstances);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.init: //this should be first message
-					try {
-						postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument.bind(this))
-						await doValidation(documentIdentifier);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.addDocument.bind(this))
+                        await doValidation(documentIdentifier);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.changeMode:
-					try {
-						postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode.bind(this))
-						await doValidation(documentIdentifier);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        postMessage["value"] = await this.getServicesCapabilitiesAfterCallback(documentIdentifier, message, this.changeDocumentMode.bind(this))
+                        await doValidation(documentIdentifier);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.changeOptions:
-					try {
-						this.applyOptionsToServices(serviceInstances, documentUri, message.options);
-						await doValidation(documentIdentifier, serviceInstances);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        this.applyOptionsToServices(serviceInstances, documentUri, message.options);
+                        await doValidation(documentIdentifier, serviceInstances);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.closeDocument:
-					try {
-						this.removeDocument(documentIdentifier);
-						await doValidation(documentIdentifier, serviceInstances);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        this.removeDocument(documentIdentifier);
+                        await doValidation(documentIdentifier, serviceInstances);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.closeConnection:
-					try {
-						await this.closeAllConnections();
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        await this.closeAllConnections();
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.globalOptions:
-					try {
-						this.setGlobalOptions(message.serviceName, message.options, message.merge);
-						await provideValidationForServiceInstance(message.serviceName);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        this.setGlobalOptions(message.serviceName, message.options, message.merge);
+                        await provideValidationForServiceInstance(message.serviceName);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.configureFeatures:
-					try {
-						this.configureFeatures(message.serviceName, message.options);
-						await provideValidationForServiceInstance(message.serviceName);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        this.configureFeatures(message.serviceName, message.options);
+                        await provideValidationForServiceInstance(message.serviceName);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.signatureHelp:
-					try {
-						postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "signatureHelp", "provideSignatureHelp", documentIdentifier, message.value);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        postMessage["value"] = await this.aggregateFeatureResponses(serviceInstances, "signatureHelp", "provideSignatureHelp", documentIdentifier, message.value);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.documentHighlight:
-					try {
-						let highlights = await this.aggregateFeatureResponses(serviceInstances, "documentHighlight", "findDocumentHighlights", documentIdentifier, message.value);
-						postMessage["value"] = highlights.flat();
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        let highlights = await this.aggregateFeatureResponses(serviceInstances, "documentHighlight", "findDocumentHighlights", documentIdentifier, message.value);
+                        postMessage["value"] = highlights.flat();
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.getSemanticTokens:
-					try {
-						serviceInstances = this.filterByFeature(serviceInstances, "semanticTokens");
-						if (serviceInstances.length > 0) {
-							//we will use only first service
-							postMessage["value"] = await serviceInstances[0].getSemanticTokens(documentIdentifier, message.value);
-						}
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        serviceInstances = this.filterByFeature(serviceInstances, "semanticTokens");
+                        if (serviceInstances.length > 0) {
+                            //we will use only first service
+                            postMessage["value"] = await serviceInstances[0].getSemanticTokens(documentIdentifier, message.value);
+                        }
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.getCodeActions:
-					try {
-						let value = message.value;
-						let context = message.context;
-						postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "codeAction").map(async (service) => {
-							return {
-								codeActions: await service.getCodeActions(documentIdentifier, value, context),
-								service: service.serviceName
-							};
-						}))).filter(notEmpty);
-					}
-					catch (error) {
-						handleError(error);
-					}
+                    try {
+                        let value = message.value;
+                        let context = message.context;
+                        postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "codeAction").map(async (service) => {
+                            return {
+                                codeActions: await service.getCodeActions(documentIdentifier, value, context),
+                                service: service.serviceName
+                            };
+                        }))).filter(notEmpty);
+                    }
+                    catch (error) {
+                        handleError(error);
+                    }
                     break;
                 case MessageType.executeCommand:
                     postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.executeCommand(message.value, message.args);
