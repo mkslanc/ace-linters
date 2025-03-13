@@ -13,11 +13,18 @@ import {
     TextDocumentContentChangeEvent,
     SignatureHelp,
     DiagnosticSeverity,
-    DocumentHighlight
+    DocumentHighlight,
+    InlineCompletionItem
 } from "vscode-languageserver-protocol";
 import type {Ace} from "ace-code";
 import {CommonConverter} from "../common-converters";
-import {AceRangeData, CompletionService, FilterDiagnosticsOptions, Tooltip} from "../../types/language-service";
+import {
+    AceRangeData,
+    CompletionService,
+    FilterDiagnosticsOptions,
+    InlineCompletionService,
+    Tooltip
+} from "../../types/language-service";
 import {checkValueAgainstRegexpArray, notEmpty} from "../../utils";
 
 import {mergeRanges} from "../../utils";
@@ -144,23 +151,79 @@ export function toCompletion(item: CompletionItem) {
 
 export function toCompletions(completions: CompletionService[]): Ace.Completion[] {
     if (completions.length > 0) {
-        let combinedCompletions = completions.map((el) => {
-            if (!el.completions) {
-                return [];
-            }
-            let allCompletions;
-            if (Array.isArray(el.completions)) {
-                allCompletions = el.completions;
-            } else {
-                allCompletions = el.completions.items;
-            }
-            return allCompletions.map((item) => {
-                item["service"] = el.service;
-                return item;
-            });
-        }).flat();
-
+        let combinedCompletions = getCompletionItems<CompletionItem>(completions);
         return combinedCompletions.map((item) => toCompletion(item) as Ace.Completion)
+    }
+    return [];
+}
+
+function getCompletionItems<T>(completions: CompletionService[] | InlineCompletionService[]): T[] {
+    return completions.map((el) => {
+        if (!el.completions) {
+            return [];
+        }
+        let allCompletions;
+        if (Array.isArray(el.completions)) {
+            allCompletions = el.completions;
+        } else {
+            allCompletions = el.completions.items;
+        }
+        return allCompletions.map((item) => {
+            item["service"] = el.service;
+            return item;
+        });
+    }).flat();
+}
+
+export function toInlineCompletion(item: InlineCompletionItem) {
+    let text = typeof item.insertText === "string" ? item.insertText : item.insertText.value;
+
+    let filterText: string | undefined;
+
+    // filtering would happen on ace editor side
+    //TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
+    if (item.filterText) {
+        const firstWordMatch = item.filterText.match(/\w+/);
+        const firstWord = firstWordMatch ? firstWordMatch[0] : null;
+        if (firstWord) {
+            const wordRegex = new RegExp(`\\b${firstWord}\\b`, 'i');
+            if (!wordRegex.test(text)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        } else {
+            if (!text.includes(item.filterText)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        }
+    }
+
+    let command = (item.command?.command == "editor.action.triggerSuggest") ? "startAutocomplete" : undefined;
+    let range = item.range ? getInlineCompletionRange(item.range, filterText) : undefined;
+    let completion = {
+    };
+
+    completion["command"] = command;
+    completion["range"] = range;
+    completion["item"] = item;
+
+    if (typeof item.insertText !== "string") {
+        completion["snippet"] = text;
+    } else {
+        completion["value"] = text ?? "";
+    }
+    completion["position"] = item["position"];
+    completion["service"] = item["service"]; //TODO: since we have multiple servers, we need to determine which
+    // server to use for resolving
+    return completion;
+}
+
+export function toInlineCompletions(completions: InlineCompletionService[]): Ace.Completion[] {
+    if (completions.length > 0) {
+        let combinedCompletions = getCompletionItems<InlineCompletionItem>(completions);
+
+        return combinedCompletions.map((item) => toInlineCompletion(item) as Ace.Completion)
     }
     return [];
 }
@@ -210,6 +273,12 @@ export function getTextEditRange(textEdit: TextEdit | InsertReplaceEdit, filterT
         textEdit.range.start.character -= filterLength;
         return toRange(textEdit.range);
     }
+}
+
+export function getInlineCompletionRange(range: Range, filterText?: string): AceRangeData {
+    const filterLength = filterText ? filterText.length : 0;
+    range.start.character -= filterLength;
+    return toRange(range);
 }
 
 export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {

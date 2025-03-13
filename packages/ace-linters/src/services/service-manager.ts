@@ -103,6 +103,14 @@ export class ServiceManager {
                         };
                     }))).filter(notEmpty);
                     break;
+                case MessageType.inlineComplete:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "inlineCompletion").map(async (service) => {
+                        return {
+                            completions: await service.doInlineComplete(documentIdentifier, message["value"]),
+                            service: service.serviceData.className
+                        };
+                    }))).filter(notEmpty);
+                    break;
                 case MessageType.resolveCompletion:
                     let serviceName = message.value["service"];
                     postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
@@ -191,6 +199,12 @@ export class ServiceManager {
                     break;
                 case MessageType.renameDocument:
                     this.renameDocument(documentIdentifier, message.value);
+                    break;
+                case MessageType.sendRequest:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendRequest(message.value, message.args);
+                    break;
+                case MessageType.sendResponse:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendResponse(message.callbackId, message.args);
                     break;
             }
 
@@ -375,6 +389,8 @@ export class ServiceManager {
                     return capabilities.completionProvider != undefined;
                 case "completionResolve":
                     return capabilities.completionProvider?.resolveProvider === true;
+                case "inlineCompletion":
+                    return capabilities.inlineCompletionProvider != undefined;
                 case "format":
                     return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
                 case "diagnostics":
@@ -436,6 +452,7 @@ export class ServiceManager {
         features.semanticTokens ??= true;
         features.codeAction ??= true;
         features.executeCommand ??= true;
+        features.inlineCompletion ??= true;
         return features;
     }
 }

@@ -29,6 +29,7 @@ module.exports = (env, argv) => {
             change_mode_demo: './packages/demo/webworker-change-mode/demo.ts',
             lsp_ai_demo: './packages/demo/websockets-lsp-ai/client.ts',
             file_api_websockets_demo: './packages/demo/file-api-websockets/client.ts',
+            copilot: './packages/demo/websockets-copilot/client.ts',
         },
         mode: "production",
         module: {

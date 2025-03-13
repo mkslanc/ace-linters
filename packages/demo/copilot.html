@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta charset="UTF-8">
+    <title>Ace Linters Copilot Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .instructions {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        .instructions h2 {
+            margin-top: 0;
+        }
+        .key-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .key-list li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="instructions">
+    <h2>Inline Autocompletion Commands</h2>
+    <ul class="key-list">
+        <li><strong>Start Autocomplete:</strong> <code>Alt+C</code> (Windows), <code>Option+C</code> (Mac)</li>
+        <li><strong>Next Suggestion:</strong> <code>Alt+]</code></li>
+        <li><strong>Previous Suggestion:</strong> <code>Alt+[</code></li>
+        <li><strong>Accept Suggestion:</strong> <code>Tab</code> or <code>Ctrl+Right</code> (Windows), <code>Tab</code> or <code>Cmd+Right</code> (Mac)</li>
+        <li><strong>Close Suggestions:</strong> <code>Esc</code></li>
+    </ul>
+
+    <h2>GitHub Copilot Authentication</h2>
+    <p>If GitHub Copilot code isn't copied automatically, please check your browser console (F12) for a message like:</p>
+    <pre>
+{
+    "userCode": "ABCD-EFGH",
+    ...
+}
+    </pre>
+    <p>Use the provided <strong>userCode</strong> to authenticate in the window that opens for GitHub Copilot sign-in.</p>
+</div>
+
+<script src="bundle.copilot.js"></script>
+
+</body>
+</html>
