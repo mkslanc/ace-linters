@@ -21320,6 +21320,7 @@ function json_service_define_property(obj, key, value) {
 
 
 
+
 class JsonService extends base_service.BaseService {
     $getJsonSchemaUri(documentUri) {
         return this.getOption(documentUri, "schemaUri");
@@ -21439,6 +21440,12 @@ class JsonService extends base_service.BaseService {
                     return fetch(uri).then((response)=>response.text());
                 }
                 return Promise.reject(`Unable to load schema at ${uri}`);
+            },
+            workspaceContext: {
+                resolveRelativePath: (relativePath, resource)=>{
+                    const base = resource.substr(0, resource.lastIndexOf('/') + 1);
+                    return Utils.resolvePath(json_service_URI.parse(base), relativePath).toString();
+                }
             }
         });
     }
