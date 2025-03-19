@@ -57,6 +57,16 @@ export class CompleteMessage extends BaseMessage {
     }
 }
 
+export class InlineCompleteMessage extends BaseMessage {
+    type: MessageType.inlineComplete = MessageType.inlineComplete;
+    value: lsp.Position;
+
+    constructor(documentIdentifier: ComboDocumentIdentifier, callbackId: number, value: lsp.Position) {
+        super(documentIdentifier, callbackId);
+        this.value = value;
+    }
+}
+
 export class ResolveCompletionMessage extends BaseMessage {
     type: MessageType.resolveCompletion = MessageType.resolveCompletion;
     value: lsp.CompletionItem;
@@ -267,6 +277,34 @@ export class RenameDocumentMessage extends BaseMessage {
     }
 }
 
+export class SendRequestMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.sendRequest = MessageType.sendRequest;
+    value: string;
+    args?: any;
+
+    constructor(serviceName: string, callbackId: number, requestName: string, args?: any) {
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = requestName;
+        this.args = args;
+    }
+}
+
+export class SendResponseMessage {
+    callbackId: number;
+    serviceName: string;
+    type: MessageType.sendResponse = MessageType.sendResponse;
+    args?: any;
+
+    constructor(serviceName: string, callbackId: number, args?: any) {
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.args = args;
+    }
+}
+
 export enum MessageType {
     init,
     format,
@@ -291,7 +329,11 @@ export enum MessageType {
     applyEdit,
     appliedEdit,
     setWorkspace,
-    renameDocument
+    renameDocument,
+    sendRequest,
+    showDocument,
+    sendResponse,
+    inlineComplete
 }
 
 export type AllMessages =
@@ -318,4 +360,7 @@ export type AllMessages =
     | ExecuteCommandMessage
     | AppliedEditMessage
     | SetWorkspaceMessage
-    | RenameDocumentMessage;
+    | RenameDocumentMessage
+    | SendRequestMessage
+    | SendResponseMessage
+    | InlineCompleteMessage;

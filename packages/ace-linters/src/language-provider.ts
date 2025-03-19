@@ -11,7 +11,7 @@ import {
     fromRange, fromSignatureHelp,
     toAnnotations,
     toCompletionItem,
-    toCompletions, toMarkerGroupItem,
+    toCompletions, toInlineCompletions, toMarkerGroupItem,
     toRange, toResolvedCompletion,
     toTooltip
 } from "./type-converters/lsp/lsp-converters";
@@ -42,6 +42,7 @@ import {AceVirtualRenderer} from "./ace/renderer-singleton";
 import {AceEditor} from "./ace/editor-singleton";
 import {setStyles} from "./misc/styles";
 import {convertToUri} from "./utils";
+import {createInlineCompleterAdapter} from "./ace/inline_autocomplete";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -56,6 +57,8 @@ export class LanguageProvider {
     requireFilePath: boolean = false;
     private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
     private stylesEmbedded: boolean;
+    private inlineCompleter?: any;
+    private doLiveAutocomplete: (e) => void;
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
@@ -120,7 +123,8 @@ export class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
-            codeActions: true
+            codeActions: true,
+            inlineCompletion: false
         };
 
         this.options = options ?? {};
@@ -139,6 +143,14 @@ export class LanguageProvider {
         this.requireFilePath = this.options.requireFilePath ?? false;
         if (options?.workspacePath) {
             this.workspaceUri = convertToUri(options.workspacePath);
+        }
+        if (this.options.functionality.inlineCompletion) {
+            if (!this.options.aceComponents?.InlineAutocomplete || !this.options.aceComponents?.CommandBarTooltip || !this.options.aceComponents?.CompletionProvider) {
+                throw new Error("Inline completion requires the InlineAutocomplete and CommandBarTooltip to be defined");
+            }
+            const completerAdapter = createInlineCompleterAdapter(this.options.aceComponents.InlineAutocomplete, this.options.aceComponents.CommandBarTooltip, this.options.aceComponents.CompletionProvider);
+            this.inlineCompleter = completerAdapter.InlineCompleter;
+            this.doLiveAutocomplete = completerAdapter.doLiveAutocomplete;
         }
     }
 
@@ -245,7 +257,7 @@ export class LanguageProvider {
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
 
-        if (this.options.functionality!.completion) {
+        if (this.options.functionality!.completion || this.options.functionality!.inlineCompletion) {
             this.$registerCompleters(editor);
         }
         this.activeEditor ??= editor;
@@ -428,65 +440,107 @@ export class LanguageProvider {
         sessionLanguageProvider.getSemanticTokens();
     }
 
-    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void) {
+    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completions) => completions && callback(toCompletions(completions)));
+    }
+
+    doInlineComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doInlineComplete(this.$getFileName(session), fromPoint(cursor),
+            (completions) => completions && callback(toInlineCompletions(completions)));
     }
 
     doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
     }
 
-
     $registerCompleters(editor: Ace.Editor) {
-        let completer: Ace.Completer = {
-            getCompletions: async (editor, session, pos, prefix, callback) => {
-                this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
-                    this.doComplete(editor, session, (completions) => {
-                        let fileName = this.$getFileName(session);
-                        if (!completions)
-                            return;
-                        completions.forEach((item) => {
-                            item.completerId = completer.id;
-                            item["fileName"] = fileName
-                        });
-                        callback(null, CommonConverter.normalizeRanges(completions));
-                    });
-                });
-            },
-            getDocTooltip: (item: Ace.Completion) => {
-                if (this.options.functionality!.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
-                    this.doResolve(item, (completionItem?) => {
-                        item["isResolved"] = true;
-                        if (!completionItem)
-                            return;
-                        let completion = toResolvedCompletion(item, completionItem);
-                        item.docText = completion.docText;
-                        if (completion.docHTML) {
-                            item.docHTML = completion.docHTML;
-                        } else if (completion["docMarkdown"]) {
-                            item.docHTML = CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(completion["docMarkdown"]));
-                        }
-                        if (editor["completer"]) {
-                            editor["completer"].updateDocTooltip();
-                        }
-
-                    })
-                }
-                return item;
-            },
-            id: "lspCompleters"
+        let completer: Ace.Completer, inlineCompleter: Ace.Completer;
+        if (!this.options.functionality?.completion && !this.options.functionality?.inlineCompletion) {
+            return;
         }
-        if (this.options.functionality!.completion && this.options.functionality!.completion.overwriteCompleters) {
-            editor.completers = [
-                completer
-            ];
-        } else {
-            if (!editor.completers) {
-                editor.completers = [];
+        if (this.options.functionality?.completion && this.options.functionality?.completion.overwriteCompleters) {
+            editor.completers = [];
+        }
+        if (this.options.functionality?.inlineCompletion && this.options.functionality?.inlineCompletion.overwriteCompleters) {
+            editor.inlineCompleters = [];
+        }
+        if (this.options.functionality.completion) {
+            completer = {
+                getCompletions: async (editor, session, pos, prefix, callback) => {
+                    this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
+                        const completionCallback = (completions) => {
+                            let fileName = this.$getFileName(session);
+                            if (!completions)
+                                return;
+                            completions.forEach((item) => {
+                                item.completerId = completer.id;
+                                item["fileName"] = fileName
+                            });
+                            callback(null, CommonConverter.normalizeRanges(completions));
+                        };
+                        this.doComplete(editor, session, completionCallback);
+                    });
+                },
+                getDocTooltip: (item: Ace.Completion) => {
+                    if (this.options.functionality!.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                        this.doResolve(item, (completionItem?) => {
+                            item["isResolved"] = true;
+                            if (!completionItem)
+                                return;
+                            let completion = toResolvedCompletion(item, completionItem);
+                            item.docText = completion.docText;
+                            if (completion.docHTML) {
+                                item.docHTML = completion.docHTML;
+                            } else if (completion["docMarkdown"]) {
+                                item.docHTML = CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(completion["docMarkdown"]));
+                            }
+                            if (editor["completer"]) {
+                                editor["completer"].updateDocTooltip();
+                            }
+
+                        })
+                    }
+                    return item;
+                },
+                id: "lspCompleters"
             }
             editor.completers.push(completer);
+        }
+
+        if (this.options.functionality?.inlineCompletion) {
+            editor.commands.addCommand({
+                name: "startInlineAutocomplete",
+                exec: (editor, options) => {
+                    var completer = this.inlineCompleter?.for(editor);
+                    completer.show(options);
+                },
+                bindKey: {win: "Alt-C", mac: "Option-C"}
+            });
+            editor.commands.on('afterExec', this.doLiveAutocomplete);
+
+            inlineCompleter = {
+                getCompletions: async (editor, session, pos, prefix, callback) => {
+                    this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
+                        const completionCallback = (completions) => {
+                            let fileName = this.$getFileName(session);
+                            if (!completions)
+                                return;
+                            completions.forEach((item) => {
+                                item.completerId = completer.id;
+                                item["fileName"] = fileName
+                            });
+                            callback(null, CommonConverter.normalizeRanges(completions));
+                        };
+                        this.doInlineComplete(editor, session, completionCallback);
+                    });
+                },
+                id: "lspInlineCompleters"
+            }
+            editor.inlineCompleters ??= [];
+            editor.inlineCompleters.push(inlineCompleter);
         }
     }
 
@@ -506,6 +560,32 @@ export class LanguageProvider {
         if (sessionProvider) {
             sessionProvider.closeDocument(callback);
             delete this.$sessionLanguageProviders[session["id"]];
+        }
+    }
+
+    /**
+     * Sends a request to the message controller.
+     * @param serviceName - The name of the service/server to send the request to.
+     * @param method - The method name for the request.
+     * @param params - The parameters for the request.
+     * @param callback - An optional callback function that will be called with the result of the request.
+     */
+    sendRequest(serviceName: string, method: string, params: any, callback?: (result: any) => void) {
+        this.$messageController.sendRequest(serviceName, method, params, callback);
+    }
+
+    showDocument(params: lsp.ShowDocumentParams, serviceName: string, callback?: (result: lsp.LSPAny, serviceName: string) => void) {
+        //TODO: implement other params for showDocument (external, takeFocus, selection)
+        try {
+            window.open(params.uri, "_blank");
+            callback && callback({
+                success: true,
+            }, serviceName);
+        } catch (e) {
+            callback && callback({
+                success: false,
+                error: e
+            }, serviceName);
         }
     }
 }

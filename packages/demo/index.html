@@ -1,59 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Ace linters demo</title>
+    <meta charset="UTF-8" />
+    <title>Ace Linters Demo</title>
     <style>
+        /* Basic reset and typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            background-color: #f2f2f2;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            line-height: 1.6;
         }
 
-        a {
+        /* Header and nav styles */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            margin-right: 2rem;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+        nav li {
+            display: inline-block;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        nav a:hover {
+            background-color: #444;
+        }
+
+        /* Main content container */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Section headings */
+        section {
+            margin-bottom: 2rem;
+            background-color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        section h2 {
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5rem;
+        }
+
+        /* Code blocks */
+        pre, code {
+            background-color: #f2f2f2;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            font-size: 0.9rem;
+        }
+        code {
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+        }
+        pre {
+            padding: 1rem;
+            border-radius: 5px;
+            overflow: auto;
+            margin-bottom: 1rem;
+        }
+
+        /* Demo list styling */
+        .demo-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .demo-list li:last-child {
+            border-bottom: none;
+        }
+        .demo-list a {
             color: #0077ff;
+            font-weight: 500;
             text-decoration: none;
         }
-
-        a:hover {
-            color: #ff7700;
+        .demo-list a:hover {
+            text-decoration: underline;
+        }
+        .demo-list .info {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 0.3rem;
         }
 
-        li {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+        /* Footer */
+        footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin: 2rem 0;
         }
-
-        li:hover {
-            background-color: #ddd;
-        }
-
     </style>
 </head>
 <body>
-<ul>
-    <li><a href="webworker.html">Ace linters LSP with WebWorker demo</a> (with JSON-RPC)</li>
-    <li><a href="default_services.html">Ace linters with WebWorker demo</a> (with default services)</li>
-    <li><a href="change_mode.html">Ace linters with WebWorker change modes demo</a></li>
-    <li><a href="rust_analyzer.html">Ace linters LSP for Rust-Analyzer on WebWorker demo</a></li>
-    <li><a href="websocket.html">Ace linters LSP with Web Socket demo</a> (you need LSP server run on 3000 port)</a>
-    </li>
-    <li><a href="pylsp-websocket.html">Ace linters LSP with Pylsp Web Socket demo</a> (you need <a
-            href="https://github.com/python-lsp/python-lsp-server" target="_blank">Python LSP Server</a> run on
-        3000
-        port)
-    </li>
-    <li><a href="multiprovider.html">Ace linters with WebWorker demo with multiple services for on document</a></li>
-    <li><a href="svelte.html">Ace linters LSP with Svelte Language Server demo</a> (you need <a
-            href="https://github.com/mkslanc/svelte-websockets-language-server" target="_blank">Svelte Language Server
-        WebSocket Wrapper</a> run on
-        3030
-        port)</a></li>
-    <li><a href="lsp-ai.html">Ace linters LSP with LSP-AI Language Server demo</a> (you need <a
-            href="https://github.com/mkslanc/websockets-ls" target="_blank">Language Server WebSocket Bridge</a>)
-        </a></li>
-    <li><a href="file-api-websockets.html">Ace linters LSP with File System Access API demo</a> (you need <a
-            href="https://github.com/mkslanc/websockets-ls" target="_blank">Language Server WebSocket Bridge</a>)
-        </a></li>
-</ul>
+<!-- Header and Navigation -->
+<header>
+    <h1>Ace Linters Demo</h1>
+    <nav>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#demos">Demos</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#license">License</a></li>
+        </ul>
+    </nav>
+</header>
 
+<main>
+    <!-- Introduction Section -->
+    <section id="introduction">
+        <h2>Introduction</h2>
+        <p>
+            <strong>Ace Linters (Ace Language Client)</strong> is an LSP client for the Ace editor.
+            It comes with a large number of preconfigured, easy-to-use, in-browser language servers.
+            If you're uncertain about integrating Ace Linters, consult
+            <a href="https://github.com/mkslanc/ace-linters/wiki/Usage-Scenarios-Overview" target="_blank">
+                our diagram on the GitHub Wiki
+            </a> for a quick setup guide tailored to your needs.
+        </p>
+        <p>
+            Below you’ll find demos, new features, and usage instructions for both WebSocket and WebWorker modes.
+        </p>
+    </section>
+
+    <!-- Demos Section -->
+    <section id="demos">
+        <h2>Demos</h2>
+        <ul class="demo-list">
+            <li>
+                <a href="webworker.html">Ace Linters LSP with WebWorker Demo</a>
+                <div class="info">(with JSON-RPC)</div>
+            </li>
+            <li>
+                <a href="default_services.html">Ace Linters with WebWorker Demo</a>
+                <div class="info">(with default services)</div>
+            </li>
+            <li>
+                <a href="change_mode.html">Ace Linters with WebWorker Change Modes Demo</a>
+            </li>
+            <li>
+                <a href="rust_analyzer.html">Ace Linters LSP for Rust-Analyzer on WebWorker Demo</a>
+            </li>
+            <li>
+                <a href="websocket.html">Ace Linters LSP with WebSocket Demo</a>
+                <div class="info">(Requires LSP server running on port 3000)</div>
+            </li>
+            <li>
+                <a href="pylsp-websocket.html">Ace Linters LSP with Pylsp WebSocket Demo</a>
+                <div class="info">
+                    (Requires <a href="https://github.com/python-lsp/python-lsp-server" target="_blank">Python LSP Server</a> running on port 3000)
+                </div>
+            </li>
+            <li>
+                <a href="multiprovider.html">Ace Linters with WebWorker Demo with Multiple Services</a>
+            </li>
+            <li>
+                <a href="svelte.html">Ace Linters LSP with Svelte Language Server Demo</a>
+                <div class="info">
+                    (Requires <a href="https://github.com/mkslanc/svelte-websockets-language-server" target="_blank">Svelte Language Server WebSocket Wrapper</a> running on port 3030)
+                </div>
+            </li>
+            <li>
+                <a href="lsp-ai.html">Ace Linters LSP with LSP-AI Language Server Demo</a>
+                <div class="info">
+                    (Requires <a href="https://github.com/mkslanc/websockets-ls" target="_blank">Language Server WebSocket Bridge</a> or a plain WebSocket server)
+                </div>
+            </li>
+            <li>
+                <a href="copilot.html">Ace Linters LSP with GitHub Copilot Language Server Demo</a>
+                <div class="info">
+                    (Requires <a href="https://github.com/mkslanc/websockets-ls" target="_blank">Language Server WebSocket Bridge</a> or a plain WebSocket server)
+                </div>
+            </li>
+            <li>
+                <a href="file-api-websockets.html">Ace Linters LSP with File System Access API Demo</a>
+                <div class="info">
+                    (Requires <a href="https://github.com/mkslanc/websockets-ls" target="_blank">Language Server WebSocket Bridge</a> or a plain WebSocket server)
+                </div>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Usage Section -->
+    <section id="usage">
+        <h2>Usage</h2>
+
+        <!-- Example with pre-defined services -->
+        <h3>Example Client with Pre-defined Services</h3>
+        <pre><code>import * as ace from "ace-code";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {LanguageProvider} from "ace-linters/build/ace-linters";
+
+// Create a web worker
+let worker = new Worker(new URL('./webworker.js', import.meta.url));
+
+// Create an Ace editor
+let editor = ace.edit("container", {
+    mode: new TypescriptMode() // Set the mode to Typescript
+});
+
+// Create a language provider for the web worker
+let languageProvider = LanguageProvider.create(worker);
+
+// Register the editor with the language provider
+languageProvider.registerEditor(editor);
+</code></pre>
+
+        <p>
+            <a href="https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts" target="_blank">
+                Example webworker.js with all services
+            </a>
+        </p>
+
+        <!-- Example using script tag from CDN -->
+        <h3>Example Using Script Tag from CDN</h3>
+        <pre><code>&lt;script src="https://www.unpkg.com/ace-builds@latest/src-noconflict/ace.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.unpkg.com/ace-builds@latest/src-noconflict/ext-language_tools.js"&gt;&lt;/script&gt;
+&lt;script src="https://www.unpkg.com/ace-linters@latest/build/ace-linters.js"&gt;&lt;/script&gt;
+&lt;div id="editor" style="height: 100px"&gt;some text&lt;/div&gt;
+
+&lt;script&gt;
+  ace.require("ace/ext/language_tools"); //To allow autocompletion
+  var editor = ace.edit("editor", {
+    enableBasicAutocompletion: true,
+    enableLiveAutocompletion: true,
+    mode: "ace/mode/css"
+  });
+
+  var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
+  provider.registerEditor(editor);
+&lt;/script&gt;
+</code></pre>
+
+        <!-- Usage with WebSockets -->
+        <h3>Usage with WebSocket (JSON-RPC)</h3>
+        <p>
+            In WebSockets mode, you need to start a language server on any port and connect to it via a <code>WebSocket</code>.
+        </p>
+        <pre><code>import * as ace from "ace-code";
+import {Mode as JSONMode} from "ace-code/src/mode/json"; // any mode you want
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+
+const serverData = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json|json5",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // your websocket server address
+}
+
+// Create an Ace editor
+let editor = ace.edit("container", {
+    mode: new JSONMode()
+});
+
+// Create a language provider for WebSocket
+let languageProvider = AceLanguageClient.for(serverData);
+languageProvider.registerEditor(editor);
+</code></pre>
+
+        <!-- Usage with WebWorker -->
+        <h3>Usage with WebWorker (JSON-RPC)</h3>
+        <pre><code>import * as ace from "ace-code";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+
+let worker = new Worker(new URL('./webworker.js', import.meta.url));
+const serverData = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json",
+    type: "webworker",
+    worker: worker,
+}
+
+let editor = ace.edit("container", {
+    mode: new TypescriptMode()
+});
+
+let languageProvider = AceLanguageClient.for(serverData);
+languageProvider.registerEditor(editor);
+</code></pre>
+
+        <p>
+            See the
+            <a href="https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/demo.ts" target="_blank">
+                Example client
+            </a> and
+            <a href="https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/webworker.ts" target="_blank">
+                Example server
+            </a>.
+        </p>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation">
+        <h2>Installation</h2>
+        <p>To install Ace Linters, run:</p>
+        <pre><code>npm install ace-linters</code></pre>
+    </section>
+
+    <!-- License Section -->
+    <section id="license">
+        <h2>License</h2>
+        <p>
+            Ace Linters is released under the
+            <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>.
+        </p>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 Ace Linters. All rights reserved.</p>
+</footer>
 </body>
 </html>
