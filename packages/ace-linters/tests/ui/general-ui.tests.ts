@@ -3,7 +3,7 @@ import puppeteer, {Browser, Page} from "puppeteer";
 import {MessageType} from "../../src/message-types";
 import {Ace} from "ace-code";
 import {LanguageProvider} from "../../src";
-import {yamlContent, yamlSchema} from "@ace-linters/demo/build/docs-example/yaml-example";
+import {yamlContent, yamlSchema} from "./yaml-example";
 
 interface TestFlags {
     isInit: boolean;
@@ -36,7 +36,7 @@ describe("Editor Console Error Tests", function () {
     };
 
     before(async function () {
-        browser = await puppeteer.launch({headless: true});
+        browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
         page = await browser.newPage();
 
         consoleErrors = [];
@@ -83,7 +83,9 @@ describe("Editor Console Error Tests", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (browser) {
+            await browser.close();
+        }
     });
 
     it("should not produce errors when switching modes (without extra settings)", async function () {

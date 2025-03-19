@@ -10,9 +10,8 @@
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
     "build": "npm run clean && npm run build:dependencies && webpack --mode=production",
     "build-dev": "npm run clean && npm run build:dependencies && webpack --mode=development",
-
-    "build-test": "npm run build && webpack --name=test",
-    "start-test-server": "npm run build-test && http-server --cors='*' tests/ui/dist",
+    "copy-build": "node tools/copy-build-for-tests.js",
+    "start-test-server": "npm run copy-build && http-server --cors='*' tests/ui/dist",
     "test:unit": "mocha --config mocha.unit.config.js --exit",
     "test:ui": "mocha --config mocha.ui.config.js --exit",
     "test": "npm run test:unit && npm run test:ui",
