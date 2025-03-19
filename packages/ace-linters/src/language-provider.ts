@@ -683,15 +683,20 @@ class SessionLanguageProvider {
 
                 const triggerCharacterOptions = (typeof this.$provider.options.functionality?.completion == "object") ? this.$provider.options.functionality.completion.lspCompleterOptions?.triggerCharacters : undefined;
                 if (triggerCharacterOptions) {
-                    if ((triggerCharacterOptions.remove) && (triggerCharacterOptions.remove instanceof Array)) {
-                        completer.triggerCharacters = allTriggerCharacters.filter((value: string) => !triggerCharacterOptions.remove.includes(value)); // Remove trigger characters
-                    }
-                    else {
-                        completer.triggerCharacters = allTriggerCharacters;
-                    }
-                    if ((triggerCharacterOptions.add) && (triggerCharacterOptions.add instanceof Array)) {
-                        triggerCharacterOptions.add.forEach((value: string) => !completer!.triggerCharacters!.includes(value) && completer!.triggerCharacters!.push(value)); // Add trigger characters
-                    }
+                    const removeChars: string[] = Array.isArray(triggerCharacterOptions.remove) 
+                        ? triggerCharacterOptions.remove
+                        : [];
+                    const addChars: string[] = Array.isArray(triggerCharacterOptions.add)
+                        ? triggerCharacterOptions.add
+                        : [];
+                    completer.triggerCharacters = allTriggerCharacters.filter(
+                        (char: string) => !removeChars.includes(char)
+                    );
+                    addChars.forEach((char: string) => {
+                        if (!completer!.triggerCharacters!.includes(char)) {
+                            completer!.triggerCharacters!.push(char);
+                        }
+                    });
                 }
                 else {
                     completer.triggerCharacters = allTriggerCharacters;
