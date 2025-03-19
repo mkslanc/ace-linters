@@ -32,9 +32,9 @@ let modes = [
     {name: "scss", mode: "ace/mode/scss", content: scssContent},
     {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent, filePath: "someLibDir/index.ts"},
     {name: "python", mode: "ace/mode/python", content: pythonContent},
-    /*{name: "svelte", mode: "ace/mode/html", content: svelteContent},
-    {name: "astro", mode: "ace/mode/astro", content: svelteContent},
-    {name: "golang", mode: "ace/mode/golang", content: svelteContent},*/
+    /*    {name: "svelte", mode: "ace/mode/html", content: svelteContent},
+        {name: "astro", mode: "ace/mode/astro", content: svelteContent},
+        {name: "golang", mode: "ace/mode/golang", content: svelteContent},*/
     {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent1, filePath: "anotherFile.ts"},
     {name: "javascript", mode: "ace/mode/javascript", content: jsContent},
     {name: "tsx", mode: "ace/mode/tsx", content: tsxContent},

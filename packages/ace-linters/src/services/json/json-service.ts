@@ -9,6 +9,7 @@ import * as jsonService from 'vscode-json-languageservice';
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {JsonServiceOptions, LanguageService} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
+import {URI, Utils} from "vscode-uri";
 
 export class JsonService extends BaseService<JsonServiceOptions> implements LanguageService {
     private $service: JsonLanguageService;
@@ -40,7 +41,13 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
                 }
                 
                 return Promise.reject(`Unable to load schema at ${uri}`);
-            }
+            },
+            workspaceContext: {
+                resolveRelativePath: (relativePath: string, resource: string) => {
+                    const base = resource.substr(0, resource.lastIndexOf('/') + 1);
+                    return Utils.resolvePath(URI.parse(base), relativePath).toString();
+                }
+            },
         });
     }
 

@@ -5,6 +5,8 @@ import {LanguageService} from "ace-linters/src/types/language-service";
 import {fromPosition, toCompletions, toDiagnostics} from "./type-converters/sql-converters";
 
 export abstract class BaseSQLService extends BaseService implements LanguageService {
+    $service;
+
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
