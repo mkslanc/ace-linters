@@ -21681,6 +21681,7 @@ class SessionLanguageProvider {
             if (hasTriggerChars) {
                 let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
                 if (completer) {
+                    var _this_$provider_options_functionality, _this_$provider_options_functionality_completion_lspCompleterOptions;
                     let allTriggerCharacters = [];
                     Object.values(capabilities).forEach((capability)=>{
                         var _capability_completionProvider, _capability;
@@ -21691,7 +21692,19 @@ class SessionLanguageProvider {
                     allTriggerCharacters = [
                         ...new Set(allTriggerCharacters)
                     ];
-                    completer.triggerCharacters = allTriggerCharacters;
+                    const triggerCharacterOptions = typeof ((_this_$provider_options_functionality = this.$provider.options.functionality) === null || _this_$provider_options_functionality === void 0 ? void 0 : _this_$provider_options_functionality.completion) == "object" ? (_this_$provider_options_functionality_completion_lspCompleterOptions = this.$provider.options.functionality.completion.lspCompleterOptions) === null || _this_$provider_options_functionality_completion_lspCompleterOptions === void 0 ? void 0 : _this_$provider_options_functionality_completion_lspCompleterOptions.triggerCharacters : undefined;
+                    if (triggerCharacterOptions) {
+                        const removeChars = Array.isArray(triggerCharacterOptions.remove) ? triggerCharacterOptions.remove : [];
+                        const addChars = Array.isArray(triggerCharacterOptions.add) ? triggerCharacterOptions.add : [];
+                        completer.triggerCharacters = allTriggerCharacters.filter((char)=>!removeChars.includes(char));
+                        addChars.forEach((char)=>{
+                            if (!completer.triggerCharacters.includes(char)) {
+                                completer.triggerCharacters.push(char);
+                            }
+                        });
+                    } else {
+                        completer.triggerCharacters = allTriggerCharacters;
+                    }
                 }
             }
             let hasSemanticTokensProvider = Object.values(capabilities).some((capability)=>{
