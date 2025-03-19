@@ -681,7 +681,26 @@ class SessionLanguageProvider {
 
                 allTriggerCharacters = [...new Set(allTriggerCharacters)];
 
-                completer.triggerCharacters = allTriggerCharacters;
+                const triggerCharacterOptions = (typeof this.$provider.options.functionality?.completion == "object") ? this.$provider.options.functionality.completion.lspCompleterOptions?.triggerCharacters : undefined;
+                if (triggerCharacterOptions) {
+                    const removeChars: string[] = Array.isArray(triggerCharacterOptions.remove) 
+                        ? triggerCharacterOptions.remove
+                        : [];
+                    const addChars: string[] = Array.isArray(triggerCharacterOptions.add)
+                        ? triggerCharacterOptions.add
+                        : [];
+                    completer.triggerCharacters = allTriggerCharacters.filter(
+                        (char: string) => !removeChars.includes(char)
+                    );
+                    addChars.forEach((char: string) => {
+                        if (!completer!.triggerCharacters!.includes(char)) {
+                            completer!.triggerCharacters!.push(char);
+                        }
+                    });
+                }
+                else {
+                    completer.triggerCharacters = allTriggerCharacters;
+                }
             }
         }
 
