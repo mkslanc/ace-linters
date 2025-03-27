@@ -8332,6 +8332,1648 @@ var require_ajv = __commonJS({
   }
 });
 
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/dynamicAnchor.js
+var require_dynamicAnchor = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/dynamicAnchor.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.dynamicAnchor = void 0;
+    var codegen_1 = require_codegen();
+    var names_1 = require_names();
+    var compile_1 = require_compile();
+    var ref_1 = require_ref();
+    var def = {
+      keyword: "$dynamicAnchor",
+      schemaType: "string",
+      code: (cxt) => dynamicAnchor(cxt, cxt.schema)
+    };
+    function dynamicAnchor(cxt, anchor) {
+      const { gen, it } = cxt;
+      it.schemaEnv.root.dynamicAnchors[anchor] = true;
+      const v = (0, codegen_1._)`${names_1.default.dynamicAnchors}${(0, codegen_1.getProperty)(anchor)}`;
+      const validate3 = it.errSchemaPath === "#" ? it.validateName : _getValidate(cxt);
+      gen.if((0, codegen_1._)`!${v}`, () => gen.assign(v, validate3));
+    }
+    exports.dynamicAnchor = dynamicAnchor;
+    function _getValidate(cxt) {
+      const { schemaEnv, schema: schema4, self: self2 } = cxt.it;
+      const { root, baseId, localRefs, meta } = schemaEnv.root;
+      const { schemaId } = self2.opts;
+      const sch = new compile_1.SchemaEnv({ schema: schema4, schemaId, root, baseId, localRefs, meta });
+      compile_1.compileSchema.call(self2, sch);
+      return (0, ref_1.getValidate)(cxt, sch);
+    }
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/dynamicRef.js
+var require_dynamicRef = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/dynamicRef.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.dynamicRef = void 0;
+    var codegen_1 = require_codegen();
+    var names_1 = require_names();
+    var ref_1 = require_ref();
+    var def = {
+      keyword: "$dynamicRef",
+      schemaType: "string",
+      code: (cxt) => dynamicRef(cxt, cxt.schema)
+    };
+    function dynamicRef(cxt, ref) {
+      const { gen, keyword, it } = cxt;
+      if (ref[0] !== "#")
+        throw new Error(`"${keyword}" only supports hash fragment reference`);
+      const anchor = ref.slice(1);
+      if (it.allErrors) {
+        _dynamicRef();
+      } else {
+        const valid = gen.let("valid", false);
+        _dynamicRef(valid);
+        cxt.ok(valid);
+      }
+      function _dynamicRef(valid) {
+        if (it.schemaEnv.root.dynamicAnchors[anchor]) {
+          const v = gen.let("_v", (0, codegen_1._)`${names_1.default.dynamicAnchors}${(0, codegen_1.getProperty)(anchor)}`);
+          gen.if(v, _callRef(v, valid), _callRef(it.validateName, valid));
+        } else {
+          _callRef(it.validateName, valid)();
+        }
+      }
+      function _callRef(validate3, valid) {
+        return valid ? () => gen.block(() => {
+          (0, ref_1.callRef)(cxt, validate3);
+          gen.let(valid, true);
+        }) : () => (0, ref_1.callRef)(cxt, validate3);
+      }
+    }
+    exports.dynamicRef = dynamicRef;
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/recursiveAnchor.js
+var require_recursiveAnchor = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/recursiveAnchor.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var dynamicAnchor_1 = require_dynamicAnchor();
+    var util_1 = require_util();
+    var def = {
+      keyword: "$recursiveAnchor",
+      schemaType: "boolean",
+      code(cxt) {
+        if (cxt.schema)
+          (0, dynamicAnchor_1.dynamicAnchor)(cxt, "");
+        else
+          (0, util_1.checkStrictMode)(cxt.it, "$recursiveAnchor: false is ignored");
+      }
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/recursiveRef.js
+var require_recursiveRef = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/recursiveRef.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var dynamicRef_1 = require_dynamicRef();
+    var def = {
+      keyword: "$recursiveRef",
+      schemaType: "string",
+      code: (cxt) => (0, dynamicRef_1.dynamicRef)(cxt, cxt.schema)
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/index.js
+var require_dynamic = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/dynamic/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var dynamicAnchor_1 = require_dynamicAnchor();
+    var dynamicRef_1 = require_dynamicRef();
+    var recursiveAnchor_1 = require_recursiveAnchor();
+    var recursiveRef_1 = require_recursiveRef();
+    var dynamic = [dynamicAnchor_1.default, dynamicRef_1.default, recursiveAnchor_1.default, recursiveRef_1.default];
+    exports.default = dynamic;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/validation/dependentRequired.js
+var require_dependentRequired = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/validation/dependentRequired.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var dependencies_1 = require_dependencies();
+    var def = {
+      keyword: "dependentRequired",
+      type: "object",
+      schemaType: "object",
+      error: dependencies_1.error,
+      code: (cxt) => (0, dependencies_1.validatePropertyDeps)(cxt)
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/applicator/dependentSchemas.js
+var require_dependentSchemas = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/applicator/dependentSchemas.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var dependencies_1 = require_dependencies();
+    var def = {
+      keyword: "dependentSchemas",
+      type: "object",
+      schemaType: "object",
+      code: (cxt) => (0, dependencies_1.validateSchemaDeps)(cxt)
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/validation/limitContains.js
+var require_limitContains = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/validation/limitContains.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var util_1 = require_util();
+    var def = {
+      keyword: ["maxContains", "minContains"],
+      type: "array",
+      schemaType: "number",
+      code({ keyword, parentSchema, it }) {
+        if (parentSchema.contains === void 0) {
+          (0, util_1.checkStrictMode)(it, `"${keyword}" without "contains" is ignored`);
+        }
+      }
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/next.js
+var require_next = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/next.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var dependentRequired_1 = require_dependentRequired();
+    var dependentSchemas_1 = require_dependentSchemas();
+    var limitContains_1 = require_limitContains();
+    var next = [dependentRequired_1.default, dependentSchemas_1.default, limitContains_1.default];
+    exports.default = next;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/unevaluated/unevaluatedProperties.js
+var require_unevaluatedProperties = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/unevaluated/unevaluatedProperties.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var codegen_1 = require_codegen();
+    var util_1 = require_util();
+    var names_1 = require_names();
+    var error = {
+      message: "must NOT have unevaluated properties",
+      params: ({ params }) => (0, codegen_1._)`{unevaluatedProperty: ${params.unevaluatedProperty}}`
+    };
+    var def = {
+      keyword: "unevaluatedProperties",
+      type: "object",
+      schemaType: ["boolean", "object"],
+      trackErrors: true,
+      error,
+      code(cxt) {
+        const { gen, schema: schema4, data, errsCount, it } = cxt;
+        if (!errsCount)
+          throw new Error("ajv implementation error");
+        const { allErrors, props } = it;
+        if (props instanceof codegen_1.Name) {
+          gen.if((0, codegen_1._)`${props} !== true`, () => gen.forIn("key", data, (key) => gen.if(unevaluatedDynamic(props, key), () => unevaluatedPropCode(key))));
+        } else if (props !== true) {
+          gen.forIn("key", data, (key) => props === void 0 ? unevaluatedPropCode(key) : gen.if(unevaluatedStatic(props, key), () => unevaluatedPropCode(key)));
+        }
+        it.props = true;
+        cxt.ok((0, codegen_1._)`${errsCount} === ${names_1.default.errors}`);
+        function unevaluatedPropCode(key) {
+          if (schema4 === false) {
+            cxt.setParams({ unevaluatedProperty: key });
+            cxt.error();
+            if (!allErrors)
+              gen.break();
+            return;
+          }
+          if (!(0, util_1.alwaysValidSchema)(it, schema4)) {
+            const valid = gen.name("valid");
+            cxt.subschema({
+              keyword: "unevaluatedProperties",
+              dataProp: key,
+              dataPropType: util_1.Type.Str
+            }, valid);
+            if (!allErrors)
+              gen.if((0, codegen_1.not)(valid), () => gen.break());
+          }
+        }
+        function unevaluatedDynamic(evaluatedProps, key) {
+          return (0, codegen_1._)`!${evaluatedProps} || !${evaluatedProps}[${key}]`;
+        }
+        function unevaluatedStatic(evaluatedProps, key) {
+          const ps = [];
+          for (const p in evaluatedProps) {
+            if (evaluatedProps[p] === true)
+              ps.push((0, codegen_1._)`${key} !== ${p}`);
+          }
+          return (0, codegen_1.and)(...ps);
+        }
+      }
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/unevaluated/unevaluatedItems.js
+var require_unevaluatedItems = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/unevaluated/unevaluatedItems.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var codegen_1 = require_codegen();
+    var util_1 = require_util();
+    var error = {
+      message: ({ params: { len } }) => (0, codegen_1.str)`must NOT have more than ${len} items`,
+      params: ({ params: { len } }) => (0, codegen_1._)`{limit: ${len}}`
+    };
+    var def = {
+      keyword: "unevaluatedItems",
+      type: "array",
+      schemaType: ["boolean", "object"],
+      error,
+      code(cxt) {
+        const { gen, schema: schema4, data, it } = cxt;
+        const items = it.items || 0;
+        if (items === true)
+          return;
+        const len = gen.const("len", (0, codegen_1._)`${data}.length`);
+        if (schema4 === false) {
+          cxt.setParams({ len: items });
+          cxt.fail((0, codegen_1._)`${len} > ${items}`);
+        } else if (typeof schema4 == "object" && !(0, util_1.alwaysValidSchema)(it, schema4)) {
+          const valid = gen.var("valid", (0, codegen_1._)`${len} <= ${items}`);
+          gen.if((0, codegen_1.not)(valid), () => validateItems(valid, items));
+          cxt.ok(valid);
+        }
+        it.items = true;
+        function validateItems(valid, from) {
+          gen.forRange("i", from, len, (i) => {
+            cxt.subschema({ keyword: "unevaluatedItems", dataProp: i, dataPropType: util_1.Type.Num }, valid);
+            if (!it.allErrors)
+              gen.if((0, codegen_1.not)(valid), () => gen.break());
+          });
+        }
+      }
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/unevaluated/index.js
+var require_unevaluated = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/unevaluated/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var unevaluatedProperties_1 = require_unevaluatedProperties();
+    var unevaluatedItems_1 = require_unevaluatedItems();
+    var unevaluated = [unevaluatedProperties_1.default, unevaluatedItems_1.default];
+    exports.default = unevaluated;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/schema.json
+var require_schema = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/schema.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/schema",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/core": true,
+        "https://json-schema.org/draft/2019-09/vocab/applicator": true,
+        "https://json-schema.org/draft/2019-09/vocab/validation": true,
+        "https://json-schema.org/draft/2019-09/vocab/meta-data": true,
+        "https://json-schema.org/draft/2019-09/vocab/format": false,
+        "https://json-schema.org/draft/2019-09/vocab/content": true
+      },
+      $recursiveAnchor: true,
+      title: "Core and Validation specifications meta-schema",
+      allOf: [
+        { $ref: "meta/core" },
+        { $ref: "meta/applicator" },
+        { $ref: "meta/validation" },
+        { $ref: "meta/meta-data" },
+        { $ref: "meta/format" },
+        { $ref: "meta/content" }
+      ],
+      type: ["object", "boolean"],
+      properties: {
+        definitions: {
+          $comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
+          type: "object",
+          additionalProperties: { $recursiveRef: "#" },
+          default: {}
+        },
+        dependencies: {
+          $comment: '"dependencies" is no longer a keyword, but schema authors should avoid redefining it to facilitate a smooth transition to "dependentSchemas" and "dependentRequired"',
+          type: "object",
+          additionalProperties: {
+            anyOf: [{ $recursiveRef: "#" }, { $ref: "meta/validation#/$defs/stringArray" }]
+          }
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/applicator.json
+var require_applicator2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/applicator.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/meta/applicator",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/applicator": true
+      },
+      $recursiveAnchor: true,
+      title: "Applicator vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        additionalItems: { $recursiveRef: "#" },
+        unevaluatedItems: { $recursiveRef: "#" },
+        items: {
+          anyOf: [{ $recursiveRef: "#" }, { $ref: "#/$defs/schemaArray" }]
+        },
+        contains: { $recursiveRef: "#" },
+        additionalProperties: { $recursiveRef: "#" },
+        unevaluatedProperties: { $recursiveRef: "#" },
+        properties: {
+          type: "object",
+          additionalProperties: { $recursiveRef: "#" },
+          default: {}
+        },
+        patternProperties: {
+          type: "object",
+          additionalProperties: { $recursiveRef: "#" },
+          propertyNames: { format: "regex" },
+          default: {}
+        },
+        dependentSchemas: {
+          type: "object",
+          additionalProperties: {
+            $recursiveRef: "#"
+          }
+        },
+        propertyNames: { $recursiveRef: "#" },
+        if: { $recursiveRef: "#" },
+        then: { $recursiveRef: "#" },
+        else: { $recursiveRef: "#" },
+        allOf: { $ref: "#/$defs/schemaArray" },
+        anyOf: { $ref: "#/$defs/schemaArray" },
+        oneOf: { $ref: "#/$defs/schemaArray" },
+        not: { $recursiveRef: "#" }
+      },
+      $defs: {
+        schemaArray: {
+          type: "array",
+          minItems: 1,
+          items: { $recursiveRef: "#" }
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/content.json
+var require_content = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/content.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/meta/content",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/content": true
+      },
+      $recursiveAnchor: true,
+      title: "Content vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        contentMediaType: { type: "string" },
+        contentEncoding: { type: "string" },
+        contentSchema: { $recursiveRef: "#" }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/core.json
+var require_core3 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/core.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/meta/core",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/core": true
+      },
+      $recursiveAnchor: true,
+      title: "Core vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        $id: {
+          type: "string",
+          format: "uri-reference",
+          $comment: "Non-empty fragments not allowed.",
+          pattern: "^[^#]*#?$"
+        },
+        $schema: {
+          type: "string",
+          format: "uri"
+        },
+        $anchor: {
+          type: "string",
+          pattern: "^[A-Za-z][-A-Za-z0-9.:_]*$"
+        },
+        $ref: {
+          type: "string",
+          format: "uri-reference"
+        },
+        $recursiveRef: {
+          type: "string",
+          format: "uri-reference"
+        },
+        $recursiveAnchor: {
+          type: "boolean",
+          default: false
+        },
+        $vocabulary: {
+          type: "object",
+          propertyNames: {
+            type: "string",
+            format: "uri"
+          },
+          additionalProperties: {
+            type: "boolean"
+          }
+        },
+        $comment: {
+          type: "string"
+        },
+        $defs: {
+          type: "object",
+          additionalProperties: { $recursiveRef: "#" },
+          default: {}
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/format.json
+var require_format3 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/format.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/meta/format",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/format": true
+      },
+      $recursiveAnchor: true,
+      title: "Format vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        format: { type: "string" }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/meta-data.json
+var require_meta_data = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/meta-data.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/meta/meta-data",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/meta-data": true
+      },
+      $recursiveAnchor: true,
+      title: "Meta-data vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        title: {
+          type: "string"
+        },
+        description: {
+          type: "string"
+        },
+        default: true,
+        deprecated: {
+          type: "boolean",
+          default: false
+        },
+        readOnly: {
+          type: "boolean",
+          default: false
+        },
+        writeOnly: {
+          type: "boolean",
+          default: false
+        },
+        examples: {
+          type: "array",
+          items: true
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/validation.json
+var require_validation2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/meta/validation.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2019-09/schema",
+      $id: "https://json-schema.org/draft/2019-09/meta/validation",
+      $vocabulary: {
+        "https://json-schema.org/draft/2019-09/vocab/validation": true
+      },
+      $recursiveAnchor: true,
+      title: "Validation vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        multipleOf: {
+          type: "number",
+          exclusiveMinimum: 0
+        },
+        maximum: {
+          type: "number"
+        },
+        exclusiveMaximum: {
+          type: "number"
+        },
+        minimum: {
+          type: "number"
+        },
+        exclusiveMinimum: {
+          type: "number"
+        },
+        maxLength: { $ref: "#/$defs/nonNegativeInteger" },
+        minLength: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+        pattern: {
+          type: "string",
+          format: "regex"
+        },
+        maxItems: { $ref: "#/$defs/nonNegativeInteger" },
+        minItems: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+        uniqueItems: {
+          type: "boolean",
+          default: false
+        },
+        maxContains: { $ref: "#/$defs/nonNegativeInteger" },
+        minContains: {
+          $ref: "#/$defs/nonNegativeInteger",
+          default: 1
+        },
+        maxProperties: { $ref: "#/$defs/nonNegativeInteger" },
+        minProperties: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+        required: { $ref: "#/$defs/stringArray" },
+        dependentRequired: {
+          type: "object",
+          additionalProperties: {
+            $ref: "#/$defs/stringArray"
+          }
+        },
+        const: true,
+        enum: {
+          type: "array",
+          items: true
+        },
+        type: {
+          anyOf: [
+            { $ref: "#/$defs/simpleTypes" },
+            {
+              type: "array",
+              items: { $ref: "#/$defs/simpleTypes" },
+              minItems: 1,
+              uniqueItems: true
+            }
+          ]
+        }
+      },
+      $defs: {
+        nonNegativeInteger: {
+          type: "integer",
+          minimum: 0
+        },
+        nonNegativeIntegerDefault0: {
+          $ref: "#/$defs/nonNegativeInteger",
+          default: 0
+        },
+        simpleTypes: {
+          enum: ["array", "boolean", "integer", "null", "number", "object", "string"]
+        },
+        stringArray: {
+          type: "array",
+          items: { type: "string" },
+          uniqueItems: true,
+          default: []
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/index.js
+var require_json_schema_2019_09 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2019-09/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var metaSchema = require_schema();
+    var applicator = require_applicator2();
+    var content = require_content();
+    var core = require_core3();
+    var format5 = require_format3();
+    var metadata = require_meta_data();
+    var validation = require_validation2();
+    var META_SUPPORT_DATA = ["/properties"];
+    function addMetaSchema2019($data) {
+      ;
+      [
+        metaSchema,
+        applicator,
+        content,
+        core,
+        with$data(this, format5),
+        metadata,
+        with$data(this, validation)
+      ].forEach((sch) => this.addMetaSchema(sch, void 0, false));
+      return this;
+      function with$data(ajv2, sch) {
+        return $data ? ajv2.$dataMetaSchema(sch, META_SUPPORT_DATA) : sch;
+      }
+    }
+    exports.default = addMetaSchema2019;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/2019.js
+var require__ = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/2019.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MissingRefError = exports.ValidationError = exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = exports.Ajv2019 = void 0;
+    var core_1 = require_core();
+    var draft7_1 = require_draft7();
+    var dynamic_1 = require_dynamic();
+    var next_1 = require_next();
+    var unevaluated_1 = require_unevaluated();
+    var discriminator_1 = require_discriminator();
+    var json_schema_2019_09_1 = require_json_schema_2019_09();
+    var META_SCHEMA_ID = "https://json-schema.org/draft/2019-09/schema";
+    var Ajv20192 = class extends core_1.default {
+      constructor(opts = {}) {
+        super({
+          ...opts,
+          dynamicRef: true,
+          next: true,
+          unevaluated: true
+        });
+      }
+      _addVocabularies() {
+        super._addVocabularies();
+        this.addVocabulary(dynamic_1.default);
+        draft7_1.default.forEach((v) => this.addVocabulary(v));
+        this.addVocabulary(next_1.default);
+        this.addVocabulary(unevaluated_1.default);
+        if (this.opts.discriminator)
+          this.addKeyword(discriminator_1.default);
+      }
+      _addDefaultMetaSchema() {
+        super._addDefaultMetaSchema();
+        const { $data, meta } = this.opts;
+        if (!meta)
+          return;
+        json_schema_2019_09_1.default.call(this, $data);
+        this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
+      }
+      defaultMeta() {
+        return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
+      }
+    };
+    exports.Ajv2019 = Ajv20192;
+    module.exports = exports = Ajv20192;
+    module.exports.Ajv2019 = Ajv20192;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Ajv20192;
+    var validate_1 = require_validate();
+    Object.defineProperty(exports, "KeywordCxt", { enumerable: true, get: function() {
+      return validate_1.KeywordCxt;
+    } });
+    var codegen_1 = require_codegen();
+    Object.defineProperty(exports, "_", { enumerable: true, get: function() {
+      return codegen_1._;
+    } });
+    Object.defineProperty(exports, "str", { enumerable: true, get: function() {
+      return codegen_1.str;
+    } });
+    Object.defineProperty(exports, "stringify", { enumerable: true, get: function() {
+      return codegen_1.stringify;
+    } });
+    Object.defineProperty(exports, "nil", { enumerable: true, get: function() {
+      return codegen_1.nil;
+    } });
+    Object.defineProperty(exports, "Name", { enumerable: true, get: function() {
+      return codegen_1.Name;
+    } });
+    Object.defineProperty(exports, "CodeGen", { enumerable: true, get: function() {
+      return codegen_1.CodeGen;
+    } });
+    var validation_error_1 = require_validation_error();
+    Object.defineProperty(exports, "ValidationError", { enumerable: true, get: function() {
+      return validation_error_1.default;
+    } });
+    var ref_error_1 = require_ref_error();
+    Object.defineProperty(exports, "MissingRefError", { enumerable: true, get: function() {
+      return ref_error_1.default;
+    } });
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/draft2020.js
+var require_draft2020 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/vocabularies/draft2020.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var core_1 = require_core2();
+    var validation_1 = require_validation();
+    var applicator_1 = require_applicator();
+    var dynamic_1 = require_dynamic();
+    var next_1 = require_next();
+    var unevaluated_1 = require_unevaluated();
+    var format_1 = require_format2();
+    var metadata_1 = require_metadata();
+    var draft2020Vocabularies = [
+      dynamic_1.default,
+      core_1.default,
+      validation_1.default,
+      (0, applicator_1.default)(true),
+      format_1.default,
+      metadata_1.metadataVocabulary,
+      metadata_1.contentVocabulary,
+      next_1.default,
+      unevaluated_1.default
+    ];
+    exports.default = draft2020Vocabularies;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/schema.json
+var require_schema2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/schema.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/schema",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/core": true,
+        "https://json-schema.org/draft/2020-12/vocab/applicator": true,
+        "https://json-schema.org/draft/2020-12/vocab/unevaluated": true,
+        "https://json-schema.org/draft/2020-12/vocab/validation": true,
+        "https://json-schema.org/draft/2020-12/vocab/meta-data": true,
+        "https://json-schema.org/draft/2020-12/vocab/format-annotation": true,
+        "https://json-schema.org/draft/2020-12/vocab/content": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Core and Validation specifications meta-schema",
+      allOf: [
+        { $ref: "meta/core" },
+        { $ref: "meta/applicator" },
+        { $ref: "meta/unevaluated" },
+        { $ref: "meta/validation" },
+        { $ref: "meta/meta-data" },
+        { $ref: "meta/format-annotation" },
+        { $ref: "meta/content" }
+      ],
+      type: ["object", "boolean"],
+      $comment: "This meta-schema also defines keywords that have appeared in previous drafts in order to prevent incompatible extensions as they remain in common use.",
+      properties: {
+        definitions: {
+          $comment: '"definitions" has been replaced by "$defs".',
+          type: "object",
+          additionalProperties: { $dynamicRef: "#meta" },
+          deprecated: true,
+          default: {}
+        },
+        dependencies: {
+          $comment: '"dependencies" has been split and replaced by "dependentSchemas" and "dependentRequired" in order to serve their differing semantics.',
+          type: "object",
+          additionalProperties: {
+            anyOf: [{ $dynamicRef: "#meta" }, { $ref: "meta/validation#/$defs/stringArray" }]
+          },
+          deprecated: true,
+          default: {}
+        },
+        $recursiveAnchor: {
+          $comment: '"$recursiveAnchor" has been replaced by "$dynamicAnchor".',
+          $ref: "meta/core#/$defs/anchorString",
+          deprecated: true
+        },
+        $recursiveRef: {
+          $comment: '"$recursiveRef" has been replaced by "$dynamicRef".',
+          $ref: "meta/core#/$defs/uriReferenceString",
+          deprecated: true
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/applicator.json
+var require_applicator3 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/applicator.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/applicator",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/applicator": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Applicator vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        prefixItems: { $ref: "#/$defs/schemaArray" },
+        items: { $dynamicRef: "#meta" },
+        contains: { $dynamicRef: "#meta" },
+        additionalProperties: { $dynamicRef: "#meta" },
+        properties: {
+          type: "object",
+          additionalProperties: { $dynamicRef: "#meta" },
+          default: {}
+        },
+        patternProperties: {
+          type: "object",
+          additionalProperties: { $dynamicRef: "#meta" },
+          propertyNames: { format: "regex" },
+          default: {}
+        },
+        dependentSchemas: {
+          type: "object",
+          additionalProperties: { $dynamicRef: "#meta" },
+          default: {}
+        },
+        propertyNames: { $dynamicRef: "#meta" },
+        if: { $dynamicRef: "#meta" },
+        then: { $dynamicRef: "#meta" },
+        else: { $dynamicRef: "#meta" },
+        allOf: { $ref: "#/$defs/schemaArray" },
+        anyOf: { $ref: "#/$defs/schemaArray" },
+        oneOf: { $ref: "#/$defs/schemaArray" },
+        not: { $dynamicRef: "#meta" }
+      },
+      $defs: {
+        schemaArray: {
+          type: "array",
+          minItems: 1,
+          items: { $dynamicRef: "#meta" }
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/unevaluated.json
+var require_unevaluated2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/unevaluated.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/unevaluated",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/unevaluated": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Unevaluated applicator vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        unevaluatedItems: { $dynamicRef: "#meta" },
+        unevaluatedProperties: { $dynamicRef: "#meta" }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/content.json
+var require_content2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/content.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/content",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/content": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Content vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        contentEncoding: { type: "string" },
+        contentMediaType: { type: "string" },
+        contentSchema: { $dynamicRef: "#meta" }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/core.json
+var require_core4 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/core.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/core",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/core": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Core vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        $id: {
+          $ref: "#/$defs/uriReferenceString",
+          $comment: "Non-empty fragments not allowed.",
+          pattern: "^[^#]*#?$"
+        },
+        $schema: { $ref: "#/$defs/uriString" },
+        $ref: { $ref: "#/$defs/uriReferenceString" },
+        $anchor: { $ref: "#/$defs/anchorString" },
+        $dynamicRef: { $ref: "#/$defs/uriReferenceString" },
+        $dynamicAnchor: { $ref: "#/$defs/anchorString" },
+        $vocabulary: {
+          type: "object",
+          propertyNames: { $ref: "#/$defs/uriString" },
+          additionalProperties: {
+            type: "boolean"
+          }
+        },
+        $comment: {
+          type: "string"
+        },
+        $defs: {
+          type: "object",
+          additionalProperties: { $dynamicRef: "#meta" }
+        }
+      },
+      $defs: {
+        anchorString: {
+          type: "string",
+          pattern: "^[A-Za-z_][-A-Za-z0-9._]*$"
+        },
+        uriString: {
+          type: "string",
+          format: "uri"
+        },
+        uriReferenceString: {
+          type: "string",
+          format: "uri-reference"
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/format-annotation.json
+var require_format_annotation = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/format-annotation.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/format-annotation",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/format-annotation": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Format vocabulary meta-schema for annotation results",
+      type: ["object", "boolean"],
+      properties: {
+        format: { type: "string" }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/meta-data.json
+var require_meta_data2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/meta-data.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/meta-data",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/meta-data": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Meta-data vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        title: {
+          type: "string"
+        },
+        description: {
+          type: "string"
+        },
+        default: true,
+        deprecated: {
+          type: "boolean",
+          default: false
+        },
+        readOnly: {
+          type: "boolean",
+          default: false
+        },
+        writeOnly: {
+          type: "boolean",
+          default: false
+        },
+        examples: {
+          type: "array",
+          items: true
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/validation.json
+var require_validation3 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/meta/validation.json"(exports, module) {
+    module.exports = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      $id: "https://json-schema.org/draft/2020-12/meta/validation",
+      $vocabulary: {
+        "https://json-schema.org/draft/2020-12/vocab/validation": true
+      },
+      $dynamicAnchor: "meta",
+      title: "Validation vocabulary meta-schema",
+      type: ["object", "boolean"],
+      properties: {
+        type: {
+          anyOf: [
+            { $ref: "#/$defs/simpleTypes" },
+            {
+              type: "array",
+              items: { $ref: "#/$defs/simpleTypes" },
+              minItems: 1,
+              uniqueItems: true
+            }
+          ]
+        },
+        const: true,
+        enum: {
+          type: "array",
+          items: true
+        },
+        multipleOf: {
+          type: "number",
+          exclusiveMinimum: 0
+        },
+        maximum: {
+          type: "number"
+        },
+        exclusiveMaximum: {
+          type: "number"
+        },
+        minimum: {
+          type: "number"
+        },
+        exclusiveMinimum: {
+          type: "number"
+        },
+        maxLength: { $ref: "#/$defs/nonNegativeInteger" },
+        minLength: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+        pattern: {
+          type: "string",
+          format: "regex"
+        },
+        maxItems: { $ref: "#/$defs/nonNegativeInteger" },
+        minItems: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+        uniqueItems: {
+          type: "boolean",
+          default: false
+        },
+        maxContains: { $ref: "#/$defs/nonNegativeInteger" },
+        minContains: {
+          $ref: "#/$defs/nonNegativeInteger",
+          default: 1
+        },
+        maxProperties: { $ref: "#/$defs/nonNegativeInteger" },
+        minProperties: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+        required: { $ref: "#/$defs/stringArray" },
+        dependentRequired: {
+          type: "object",
+          additionalProperties: {
+            $ref: "#/$defs/stringArray"
+          }
+        }
+      },
+      $defs: {
+        nonNegativeInteger: {
+          type: "integer",
+          minimum: 0
+        },
+        nonNegativeIntegerDefault0: {
+          $ref: "#/$defs/nonNegativeInteger",
+          default: 0
+        },
+        simpleTypes: {
+          enum: ["array", "boolean", "integer", "null", "number", "object", "string"]
+        },
+        stringArray: {
+          type: "array",
+          items: { type: "string" },
+          uniqueItems: true,
+          default: []
+        }
+      }
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/index.js
+var require_json_schema_2020_12 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/refs/json-schema-2020-12/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var metaSchema = require_schema2();
+    var applicator = require_applicator3();
+    var unevaluated = require_unevaluated2();
+    var content = require_content2();
+    var core = require_core4();
+    var format5 = require_format_annotation();
+    var metadata = require_meta_data2();
+    var validation = require_validation3();
+    var META_SUPPORT_DATA = ["/properties"];
+    function addMetaSchema2020($data) {
+      ;
+      [
+        metaSchema,
+        applicator,
+        unevaluated,
+        content,
+        core,
+        with$data(this, format5),
+        metadata,
+        with$data(this, validation)
+      ].forEach((sch) => this.addMetaSchema(sch, void 0, false));
+      return this;
+      function with$data(ajv2, sch) {
+        return $data ? ajv2.$dataMetaSchema(sch, META_SUPPORT_DATA) : sch;
+      }
+    }
+    exports.default = addMetaSchema2020;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv/dist/2020.js
+var require__2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv/dist/2020.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MissingRefError = exports.ValidationError = exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = exports.Ajv2020 = void 0;
+    var core_1 = require_core();
+    var draft2020_1 = require_draft2020();
+    var discriminator_1 = require_discriminator();
+    var json_schema_2020_12_1 = require_json_schema_2020_12();
+    var META_SCHEMA_ID = "https://json-schema.org/draft/2020-12/schema";
+    var Ajv20202 = class extends core_1.default {
+      constructor(opts = {}) {
+        super({
+          ...opts,
+          dynamicRef: true,
+          next: true,
+          unevaluated: true
+        });
+      }
+      _addVocabularies() {
+        super._addVocabularies();
+        draft2020_1.default.forEach((v) => this.addVocabulary(v));
+        if (this.opts.discriminator)
+          this.addKeyword(discriminator_1.default);
+      }
+      _addDefaultMetaSchema() {
+        super._addDefaultMetaSchema();
+        const { $data, meta } = this.opts;
+        if (!meta)
+          return;
+        json_schema_2020_12_1.default.call(this, $data);
+        this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
+      }
+      defaultMeta() {
+        return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
+      }
+    };
+    exports.Ajv2020 = Ajv20202;
+    module.exports = exports = Ajv20202;
+    module.exports.Ajv2020 = Ajv20202;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Ajv20202;
+    var validate_1 = require_validate();
+    Object.defineProperty(exports, "KeywordCxt", { enumerable: true, get: function() {
+      return validate_1.KeywordCxt;
+    } });
+    var codegen_1 = require_codegen();
+    Object.defineProperty(exports, "_", { enumerable: true, get: function() {
+      return codegen_1._;
+    } });
+    Object.defineProperty(exports, "str", { enumerable: true, get: function() {
+      return codegen_1.str;
+    } });
+    Object.defineProperty(exports, "stringify", { enumerable: true, get: function() {
+      return codegen_1.stringify;
+    } });
+    Object.defineProperty(exports, "nil", { enumerable: true, get: function() {
+      return codegen_1.nil;
+    } });
+    Object.defineProperty(exports, "Name", { enumerable: true, get: function() {
+      return codegen_1.Name;
+    } });
+    Object.defineProperty(exports, "CodeGen", { enumerable: true, get: function() {
+      return codegen_1.CodeGen;
+    } });
+    var validation_error_1 = require_validation_error();
+    Object.defineProperty(exports, "ValidationError", { enumerable: true, get: function() {
+      return validation_error_1.default;
+    } });
+    var ref_error_1 = require_ref_error();
+    Object.defineProperty(exports, "MissingRefError", { enumerable: true, get: function() {
+      return ref_error_1.default;
+    } });
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/core.js
+var require_core5 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/core.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ref_1 = require_ref();
+    var core = [
+      "$schema",
+      "id",
+      "$defs",
+      { keyword: "$comment" },
+      "definitions",
+      ref_1.default
+    ];
+    exports.default = core;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/validation/limitNumber.js
+var require_limitNumber2 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/validation/limitNumber.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var core_1 = require_core();
+    var codegen_1 = require_codegen();
+    var ops = codegen_1.operators;
+    var KWDs = {
+      maximum: {
+        exclusive: "exclusiveMaximum",
+        ops: [
+          { okStr: "<=", ok: ops.LTE, fail: ops.GT },
+          { okStr: "<", ok: ops.LT, fail: ops.GTE }
+        ]
+      },
+      minimum: {
+        exclusive: "exclusiveMinimum",
+        ops: [
+          { okStr: ">=", ok: ops.GTE, fail: ops.LT },
+          { okStr: ">", ok: ops.GT, fail: ops.LTE }
+        ]
+      }
+    };
+    var error = {
+      message: (cxt) => core_1.str`must be ${kwdOp(cxt).okStr} ${cxt.schemaCode}`,
+      params: (cxt) => core_1._`{comparison: ${kwdOp(cxt).okStr}, limit: ${cxt.schemaCode}}`
+    };
+    var def = {
+      keyword: Object.keys(KWDs),
+      type: "number",
+      schemaType: "number",
+      $data: true,
+      error,
+      code(cxt) {
+        const { data, schemaCode } = cxt;
+        cxt.fail$data(core_1._`${data} ${kwdOp(cxt).fail} ${schemaCode} || isNaN(${data})`);
+      }
+    };
+    function kwdOp(cxt) {
+      var _a;
+      const keyword = cxt.keyword;
+      const opsIdx = ((_a = cxt.parentSchema) === null || _a === void 0 ? void 0 : _a[KWDs[keyword].exclusive]) ? 1 : 0;
+      return KWDs[keyword].ops[opsIdx];
+    }
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/validation/limitNumberExclusive.js
+var require_limitNumberExclusive = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/validation/limitNumberExclusive.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var KWDs = {
+      exclusiveMaximum: "maximum",
+      exclusiveMinimum: "minimum"
+    };
+    var def = {
+      keyword: Object.keys(KWDs),
+      type: "number",
+      schemaType: "boolean",
+      code({ keyword, parentSchema }) {
+        const limitKwd = KWDs[keyword];
+        if (parentSchema[limitKwd] === void 0) {
+          throw new Error(`${keyword} can only be used with ${limitKwd}`);
+        }
+      }
+    };
+    exports.default = def;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/validation/index.js
+var require_validation4 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/validation/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var limitNumber_1 = require_limitNumber2();
+    var limitNumberExclusive_1 = require_limitNumberExclusive();
+    var multipleOf_1 = require_multipleOf();
+    var limitLength_1 = require_limitLength();
+    var pattern_1 = require_pattern();
+    var limitProperties_1 = require_limitProperties();
+    var required_1 = require_required();
+    var limitItems_1 = require_limitItems();
+    var uniqueItems_1 = require_uniqueItems();
+    var const_1 = require_const();
+    var enum_1 = require_enum();
+    var validation = [
+      // number
+      limitNumber_1.default,
+      limitNumberExclusive_1.default,
+      multipleOf_1.default,
+      // string
+      limitLength_1.default,
+      pattern_1.default,
+      // object
+      limitProperties_1.default,
+      required_1.default,
+      // array
+      limitItems_1.default,
+      uniqueItems_1.default,
+      // any
+      { keyword: "type", schemaType: ["string", "array"] },
+      { keyword: "nullable", schemaType: "boolean" },
+      const_1.default,
+      enum_1.default
+    ];
+    exports.default = validation;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/draft4.js
+var require_draft4 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/vocabulary/draft4.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var core_1 = require_core5();
+    var validation_1 = require_validation4();
+    var applicator_1 = require_applicator();
+    var format_1 = require_format2();
+    var metadataVocabulary = ["title", "description", "default"];
+    var draft4Vocabularies = [
+      core_1.default,
+      validation_1.default,
+      applicator_1.default(),
+      format_1.default,
+      metadataVocabulary
+    ];
+    exports.default = draft4Vocabularies;
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/refs/json-schema-draft-04.json
+var require_json_schema_draft_04 = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/refs/json-schema-draft-04.json"(exports, module) {
+    module.exports = {
+      id: "http://json-schema.org/draft-04/schema#",
+      $schema: "http://json-schema.org/draft-04/schema#",
+      description: "Core schema meta-schema",
+      definitions: {
+        schemaArray: {
+          type: "array",
+          minItems: 1,
+          items: { $ref: "#" }
+        },
+        positiveInteger: {
+          type: "integer",
+          minimum: 0
+        },
+        positiveIntegerDefault0: {
+          allOf: [{ $ref: "#/definitions/positiveInteger" }, { default: 0 }]
+        },
+        simpleTypes: {
+          enum: ["array", "boolean", "integer", "null", "number", "object", "string"]
+        },
+        stringArray: {
+          type: "array",
+          items: { type: "string" },
+          minItems: 1,
+          uniqueItems: true
+        }
+      },
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          format: "uri"
+        },
+        $schema: {
+          type: "string",
+          format: "uri"
+        },
+        title: {
+          type: "string"
+        },
+        description: {
+          type: "string"
+        },
+        default: {},
+        multipleOf: {
+          type: "number",
+          minimum: 0,
+          exclusiveMinimum: true
+        },
+        maximum: {
+          type: "number"
+        },
+        exclusiveMaximum: {
+          type: "boolean",
+          default: false
+        },
+        minimum: {
+          type: "number"
+        },
+        exclusiveMinimum: {
+          type: "boolean",
+          default: false
+        },
+        maxLength: { $ref: "#/definitions/positiveInteger" },
+        minLength: { $ref: "#/definitions/positiveIntegerDefault0" },
+        pattern: {
+          type: "string",
+          format: "regex"
+        },
+        additionalItems: {
+          anyOf: [{ type: "boolean" }, { $ref: "#" }],
+          default: {}
+        },
+        items: {
+          anyOf: [{ $ref: "#" }, { $ref: "#/definitions/schemaArray" }],
+          default: {}
+        },
+        maxItems: { $ref: "#/definitions/positiveInteger" },
+        minItems: { $ref: "#/definitions/positiveIntegerDefault0" },
+        uniqueItems: {
+          type: "boolean",
+          default: false
+        },
+        maxProperties: { $ref: "#/definitions/positiveInteger" },
+        minProperties: { $ref: "#/definitions/positiveIntegerDefault0" },
+        required: { $ref: "#/definitions/stringArray" },
+        additionalProperties: {
+          anyOf: [{ type: "boolean" }, { $ref: "#" }],
+          default: {}
+        },
+        definitions: {
+          type: "object",
+          additionalProperties: { $ref: "#" },
+          default: {}
+        },
+        properties: {
+          type: "object",
+          additionalProperties: { $ref: "#" },
+          default: {}
+        },
+        patternProperties: {
+          type: "object",
+          additionalProperties: { $ref: "#" },
+          default: {}
+        },
+        dependencies: {
+          type: "object",
+          additionalProperties: {
+            anyOf: [{ $ref: "#" }, { $ref: "#/definitions/stringArray" }]
+          }
+        },
+        enum: {
+          type: "array",
+          minItems: 1,
+          uniqueItems: true
+        },
+        type: {
+          anyOf: [
+            { $ref: "#/definitions/simpleTypes" },
+            {
+              type: "array",
+              items: { $ref: "#/definitions/simpleTypes" },
+              minItems: 1,
+              uniqueItems: true
+            }
+          ]
+        },
+        allOf: { $ref: "#/definitions/schemaArray" },
+        anyOf: { $ref: "#/definitions/schemaArray" },
+        oneOf: { $ref: "#/definitions/schemaArray" },
+        not: { $ref: "#" }
+      },
+      dependencies: {
+        exclusiveMaximum: ["maximum"],
+        exclusiveMinimum: ["minimum"]
+      },
+      default: {}
+    };
+  }
+});
+
+// ../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/index.js
+var require_dist = __commonJS({
+  "../../node_modules/yaml-language-server/node_modules/ajv-draft-04/dist/index.js"(exports, module) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = void 0;
+    var core_1 = require_core();
+    var draft4_1 = require_draft4();
+    var discriminator_1 = require_discriminator();
+    var draft4MetaSchema = require_json_schema_draft_04();
+    var META_SUPPORT_DATA = ["/properties"];
+    var META_SCHEMA_ID = "http://json-schema.org/draft-04/schema";
+    var Ajv2 = class extends core_1.default {
+      constructor(opts = {}) {
+        super({
+          ...opts,
+          schemaId: "id"
+        });
+      }
+      _addVocabularies() {
+        super._addVocabularies();
+        draft4_1.default.forEach((v) => this.addVocabulary(v));
+        if (this.opts.discriminator)
+          this.addKeyword(discriminator_1.default);
+      }
+      _addDefaultMetaSchema() {
+        super._addDefaultMetaSchema();
+        if (!this.opts.meta)
+          return;
+        const metaSchema = this.opts.$data ? this.$dataMetaSchema(draft4MetaSchema, META_SUPPORT_DATA) : draft4MetaSchema;
+        this.addMetaSchema(metaSchema, META_SCHEMA_ID, false);
+        this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
+      }
+      defaultMeta() {
+        return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
+      }
+    };
+    module.exports = exports = Ajv2;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = Ajv2;
+    var core_2 = require_core();
+    Object.defineProperty(exports, "KeywordCxt", { enumerable: true, get: function() {
+      return core_2.KeywordCxt;
+    } });
+    var core_3 = require_core();
+    Object.defineProperty(exports, "_", { enumerable: true, get: function() {
+      return core_3._;
+    } });
+    Object.defineProperty(exports, "str", { enumerable: true, get: function() {
+      return core_3.str;
+    } });
+    Object.defineProperty(exports, "stringify", { enumerable: true, get: function() {
+      return core_3.stringify;
+    } });
+    Object.defineProperty(exports, "nil", { enumerable: true, get: function() {
+      return core_3.nil;
+    } });
+    Object.defineProperty(exports, "Name", { enumerable: true, get: function() {
+      return core_3.Name;
+    } });
+    Object.defineProperty(exports, "CodeGen", { enumerable: true, get: function() {
+      return core_3.CodeGen;
+    } });
+  }
+});
+
 // ../../node_modules/prettier/standalone.js
 var require_standalone = __commonJS({
   "../../node_modules/prettier/standalone.js"(exports, module) {
@@ -10552,7 +12194,7 @@ in order for it to be formatted.`, cliCategory: "Other" }, tabWidth: { type: "in
         if (!o || i !== "auto")
           return;
         if (o.length > 2)
-          throw new Error("printer.embed has too many parameters. The API changed in Prettier v3. Please update your plugin. See https://prettier.io/docs/plugins#optional-embed");
+          throw new Error("printer.embed has too many parameters. The API changed in Prettier v3. Please update your plugin. See https://prettier.io/docs/en/plugins.html#optional-embed");
         let D = q((_a = o.getVisitorKeys) != null ? _a : a2), l = [];
         d();
         let p = e.stack;
@@ -10900,7 +12542,7 @@ in order for it to be formatted.`, cliCategory: "Other" }, tabWidth: { type: "in
       var Dr = {};
       vt(Dr, { builders: () => $i, printer: () => Mi, utils: () => Vi });
       var $i = { join: Se, line: Ze, softline: $r, hardline: K, literalline: Qe, group: kt, conditionalGroup: Ir, fill: Rr, lineSuffix: Te, lineSuffixBoundary: Hr, cursor: Z, breakParent: he, ifBreak: Yr, trim: Wr, indent: le, indentIfBreak: jr, align: De, addAlignmentToDoc: et, markAsRoot: Lr, dedentToRoot: kr, dedent: Pr, hardlineWithoutBreakParent: ke, literallineWithoutBreakParent: Lt, label: Mr, concat: (e) => e }, Mi = { printDocToString: Ce }, Vi = { willBreak: xr, traverseDoc: Fe, findInDoc: qe, mapDoc: Oe, removeLines: Nr, stripTrailingHardline: Xe, replaceEndOfLine: Or, canBreak: Sr };
-      var cu = "3.5.3";
+      var cu = "3.5.1";
       var cr = {};
       vt(cr, { addDanglingComment: () => re, addLeadingComment: () => ue, addTrailingComment: () => ie, getAlignmentSize: () => ge, getIndentSize: () => fu, getMaxContinuousCount: () => du, getNextNonSpaceNonCommentCharacter: () => pu, getNextNonSpaceNonCommentCharacterIndex: () => no, getPreferredQuote: () => mu, getStringWidth: () => Le, hasNewline: () => V, hasNewlineInRange: () => hu, hasSpaces: () => Eu, isNextLineEmpty: () => so, isNextLineEmptyAfterIndex: () => gt, isPreviousLineEmpty: () => io, makeString: () => Cu, skip: () => Ae, skipEverythingButNewLine: () => ut, skipInlineComment: () => Be, skipNewline: () => W, skipSpaces: () => S, skipToLineEnd: () => nt, skipTrailingComment: () => we, skipWhitespace: () => tn });
       function Ui(e, t) {
@@ -41607,10 +43249,14 @@ function isModeline(lineText) {
 
 // ../../node_modules/yaml-language-server/lib/esm/languageservice/services/yamlSchemaService.js
 var import_ajv = __toESM(require_ajv());
+var import__ = __toESM(require__());
+var import__2 = __toESM(require__2());
+var import_ajv_draft_04 = __toESM(require_dist());
 var ajv = new import_ajv.default();
+var ajv04 = new import_ajv_draft_04.default();
+var ajv2019 = new import__.default();
+var ajv2020 = new import__2.default();
 var localize8 = loadMessageBundle();
-var jsonSchema07 = require_json_schema_draft_07();
-var schema07Validator = ajv.compile(jsonSchema07);
 var MODIFICATION_ACTIONS;
 (function(MODIFICATION_ACTIONS2) {
   MODIFICATION_ACTIONS2[MODIFICATION_ACTIONS2["delete"] = 0] = "delete";
@@ -41676,9 +43322,35 @@ var YAMLSchemaService = class extends JSONSchemaService {
     const resolveErrors = schemaToResolve.errors.slice(0);
     let schema4 = schemaToResolve.schema;
     const contextService = this.contextService;
-    if (!schema07Validator(schema4)) {
+    let validationErrors = [];
+    switch (this.normalizeId(schema4.$schema)) {
+      case ajv04.defaultMeta(): {
+        if (!ajv04.validateSchema(schema4)) {
+          validationErrors = validationErrors.concat(ajv04.errors);
+        }
+        break;
+      }
+      case ajv2019.defaultMeta(): {
+        if (!ajv2019.validateSchema(schema4)) {
+          validationErrors = validationErrors.concat(ajv2019.errors);
+        }
+        break;
+      }
+      case ajv2020.defaultMeta(): {
+        if (!ajv2020.validateSchema(schema4)) {
+          validationErrors = validationErrors.concat(ajv2020.errors);
+        }
+        break;
+      }
+      default:
+        if (!ajv.validateSchema(schema4)) {
+          validationErrors = validationErrors.concat(ajv.errors);
+        }
+        break;
+    }
+    if (validationErrors.length > 0) {
       const errs = [];
-      for (const err of schema07Validator.errors) {
+      for (const err of validationErrors) {
         errs.push(`${err.instancePath} : ${err.message}`);
       }
       resolveErrors.push(`Schema '${getSchemaTitle(schemaToResolve.schema, schemaURL)}' is not valid:

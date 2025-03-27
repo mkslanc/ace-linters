@@ -557,8 +557,8 @@ export interface LspCompleterOptions {
 }
 /** Options regarding the trigger characters */
 export interface TriggerCharacterOptions {
-	add: string[];
-	remove: string[];
+	add?: string[];
+	remove?: string[];
 }
 export interface ProviderOptions {
 	functionality?: {
