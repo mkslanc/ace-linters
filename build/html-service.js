@@ -15774,17 +15774,17 @@ function config(config2) {
       uri = new URL(config2.uri);
     }
     return new Promise((resolve, reject) => {
-      const p = readFileFromUri(uri).then((uriContent) => {
+      readFileFromUri(uri).then((uriContent) => {
         try {
           const content = JSON.parse(uriContent);
           bundle = isBuiltinExtension(content) ? content.contents.bundle : content;
+          resolve();
         } catch (err) {
           reject(err);
         }
       }).catch((err) => {
         reject(err);
       });
-      resolve(p);
     });
   }
 }
@@ -15830,6 +15830,9 @@ function t(...args) {
 }
 var _format2Regexp = /{([^}]+)}/g;
 function format(template, values) {
+  if (Object.keys(values).length === 0) {
+    return template;
+  }
   return template.replace(_format2Regexp, (match, group) => values[group] ?? match);
 }
 function isBuiltinExtension(json) {
@@ -19169,7 +19172,6 @@ class HTMLCompletion {
         };
         const completionParticipants = this.completionParticipants;
         const dataProviders = this.dataManager.getDataProviders().filter(p => p.isApplicable(document.languageId) && (!settings || settings[p.getId()] !== false));
-        const voidElements = this.dataManager.getVoidElements(dataProviders);
         const doesSupportMarkdown = this.doesSupportMarkdown();
         const text = document.getText();
         const offset = document.offsetAt(position);
@@ -19180,6 +19182,7 @@ class HTMLCompletion {
         const scanner = createScanner(text, node.start);
         let currentTag = '';
         let currentAttributeName;
+        let voidElements;
         function getReplaceRange(replaceStart, replaceEnd = offset) {
             if (replaceStart > offset) {
                 replaceStart = offset;
@@ -19265,6 +19268,7 @@ class HTMLCompletion {
             if (settings && settings.hideAutoCompleteProposals) {
                 return result;
             }
+            voidElements ?? (voidElements = this.dataManager.getVoidElements(dataProviders));
             if (!this.dataManager.isVoidElement(tag, voidElements)) {
                 const pos = document.positionAt(tagCloseEnd);
                 result.items.push({
@@ -19607,16 +19611,18 @@ class HTMLCompletion {
         }
         const char = document.getText().charAt(offset - 1);
         if (char === '>') {
-            const voidElements = this.dataManager.getVoidElements(document.languageId);
             const node = htmlDocument.findNodeBefore(offset);
-            if (node && node.tag && !this.dataManager.isVoidElement(node.tag, voidElements) && node.start < offset && (!node.endTagStart || node.endTagStart > offset)) {
-                const scanner = createScanner(document.getText(), node.start);
-                let token = scanner.scan();
-                while (token !== TokenType.EOS && scanner.getTokenEnd() <= offset) {
-                    if (token === TokenType.StartTagClose && scanner.getTokenEnd() === offset) {
-                        return `$0</${node.tag}>`;
+            if (node && node.tag && node.start < offset && (!node.endTagStart || node.endTagStart > offset)) {
+                const voidElements = this.dataManager.getVoidElements(document.languageId);
+                if (!this.dataManager.isVoidElement(node.tag, voidElements)) {
+                    const scanner = createScanner(document.getText(), node.start);
+                    let token = scanner.scan();
+                    while (token !== TokenType.EOS && scanner.getTokenEnd() <= offset) {
+                        if (token === TokenType.StartTagClose && scanner.getTokenEnd() === offset) {
+                            return `$0</${node.tag}>`;
+                        }
+                        token = scanner.scan();
                     }
-                    token = scanner.scan();
                 }
             }
         }
@@ -19630,7 +19636,12 @@ class HTMLCompletion {
                 let token = scanner.scan();
                 while (token !== TokenType.EOS && scanner.getTokenEnd() <= offset) {
                     if (token === TokenType.EndTagOpen && scanner.getTokenEnd() === offset) {
-                        return `${node.tag}>`;
+                        if (document.getText().charAt(offset) !== '>') {
+                            return `${node.tag}>`;
+                        }
+                        else {
+                            return node.tag;
+                        }
                     }
                     token = scanner.scan();
                 }
@@ -19946,7 +19957,7 @@ class HTMLHover {
 }
 function trimQuotes(s) {
     if (s.length <= 1) {
-        return s.replace(/['"]/, '');
+        return s.replace(/['"]/, ''); // CodeQL [SM02383] False positive: The string length is at most one, so we don't need the global flag.
     }
     if (s[0] === `'` || s[0] === `"`) {
         s = s.slice(1);
@@ -19972,7 +19983,7 @@ function js_beautify(js_source_text, options) {
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-css.js
 // copied from js-beautify/js/lib/beautify-css.js
-// version: 1.14.7
+// version: 1.15.4
 /* AUTO-GENERATED. DO NOT MODIFY. */
 /*
 
@@ -20543,10 +20554,10 @@ function Options(options, merge_child_field) {
 
   this.indent_empty_lines = this._get_boolean('indent_empty_lines');
 
-  // valid templating languages ['django', 'erb', 'handlebars', 'php', 'smarty']
-  // For now, 'auto' = all off for javascript, all on for html (and inline javascript).
+  // valid templating languages ['django', 'erb', 'handlebars', 'php', 'smarty', 'angular']
+  // For now, 'auto' = all off for javascript, all except angular on for html (and inline javascript/css).
   // other values ignored
-  this.templating = this._get_selection_list('templating', ['auto', 'none', 'django', 'erb', 'handlebars', 'php', 'smarty'], ['auto']);
+  this.templating = this._get_selection_list('templating', ['auto', 'none', 'angular', 'django', 'erb', 'handlebars', 'php', 'smarty'], ['auto']);
 }
 
 Options.prototype._get_array = function(name, default_value) {
@@ -20943,7 +20954,7 @@ module.exports.Directives = Directives;
 /***/ }),
 /* 14 */,
 /* 15 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_30151__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_30192__) {
 
 /*jshint node:true */
 /*
@@ -20975,8 +20986,8 @@ module.exports.Directives = Directives;
 
 
 
-var Beautifier = (__nested_webpack_require_30151__(16).Beautifier),
-  Options = (__nested_webpack_require_30151__(17).Options);
+var Beautifier = (__nested_webpack_require_30192__(16).Beautifier),
+  Options = (__nested_webpack_require_30192__(17).Options);
 
 function css_beautify(source_text, options) {
   var beautifier = new Beautifier(source_text, options);
@@ -20991,7 +21002,7 @@ module.exports.defaultOptions = function() {
 
 /***/ }),
 /* 16 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_31779__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_31820__) {
 
 /*jshint node:true */
 /*
@@ -21023,10 +21034,10 @@ module.exports.defaultOptions = function() {
 
 
 
-var Options = (__nested_webpack_require_31779__(17).Options);
-var Output = (__nested_webpack_require_31779__(2).Output);
-var InputScanner = (__nested_webpack_require_31779__(8).InputScanner);
-var Directives = (__nested_webpack_require_31779__(13).Directives);
+var Options = (__nested_webpack_require_31820__(17).Options);
+var Output = (__nested_webpack_require_31820__(2).Output);
+var InputScanner = (__nested_webpack_require_31820__(8).InputScanner);
+var Directives = (__nested_webpack_require_31820__(13).Directives);
 
 var directives_core = new Directives(/\/\*/, /\*\//);
 
@@ -21049,18 +21060,18 @@ function Beautifier(source_text, options) {
 
   // https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule
   this.NESTED_AT_RULE = {
-    "@page": true,
-    "@font-face": true,
-    "@keyframes": true,
+    "page": true,
+    "font-face": true,
+    "keyframes": true,
     // also in CONDITIONAL_GROUP_RULE below
-    "@media": true,
-    "@supports": true,
-    "@document": true
+    "media": true,
+    "supports": true,
+    "document": true
   };
   this.CONDITIONAL_GROUP_RULE = {
-    "@media": true,
-    "@supports": true,
-    "@document": true
+    "media": true,
+    "supports": true,
+    "document": true
   };
   this.NON_SEMICOLON_NEWLINE_PROPERTY = [
     "grid-template-areas",
@@ -21188,8 +21199,7 @@ Beautifier.prototype.beautify = function() {
   // label { content: blue }
   var insidePropertyValue = false;
   var enteringConditionalGroup = false;
-  var insideAtExtend = false;
-  var insideAtImport = false;
+  var insideNonNestedAtRule = false;
   var insideScssMap = false;
   var topCharacter = this._ch;
   var insideNonSemiColonValues = false;
@@ -21244,10 +21254,30 @@ Beautifier.prototype.beautify = function() {
 
       // Ensures any new lines following the comment are preserved
       this.eatWhitespace(true);
-    } else if (this._ch === '@' || this._ch === '$') {
+    } else if (this._ch === '$') {
       this.preserveSingleSpace(isAfterSpace);
 
-      // deal with less propery mixins @{...}
+      this.print_string(this._ch);
+
+      // strip trailing space, if present, for hash property checks
+      var variable = this._input.peekUntilAfter(/[: ,;{}()[\]\/='"]/g);
+
+      if (variable.match(/[ :]$/)) {
+        // we have a variable or pseudo-class, add it and insert one space before continuing
+        variable = this.eatString(": ").replace(/\s+$/, '');
+        this.print_string(variable);
+        this._output.space_before_token = true;
+      }
+
+      // might be sass variable
+      if (parenLevel === 0 && variable.indexOf(':') !== -1) {
+        insidePropertyValue = true;
+        this.indent();
+      }
+    } else if (this._ch === '@') {
+      this.preserveSingleSpace(isAfterSpace);
+
+      // deal with less property mixins @{...}
       if (this._input.peek() === '{') {
         this.print_string(this._ch + this.eatString('}'));
       } else {
@@ -21258,29 +21288,26 @@ Beautifier.prototype.beautify = function() {
 
         if (variableOrRule.match(/[ :]$/)) {
           // we have a variable or pseudo-class, add it and insert one space before continuing
-          variableOrRule = this.eatString(": ").replace(/\s$/, '');
+          variableOrRule = this.eatString(": ").replace(/\s+$/, '');
           this.print_string(variableOrRule);
           this._output.space_before_token = true;
         }
 
-        variableOrRule = variableOrRule.replace(/\s$/, '');
+        // might be less variable
+        if (parenLevel === 0 && variableOrRule.indexOf(':') !== -1) {
+          insidePropertyValue = true;
+          this.indent();
 
-        if (variableOrRule === 'extend') {
-          insideAtExtend = true;
-        } else if (variableOrRule === 'import') {
-          insideAtImport = true;
-        }
-
-        // might be a nesting at-rule
-        if (variableOrRule in this.NESTED_AT_RULE) {
+          // might be a nesting at-rule
+        } else if (variableOrRule in this.NESTED_AT_RULE) {
           this._nestedLevel += 1;
           if (variableOrRule in this.CONDITIONAL_GROUP_RULE) {
             enteringConditionalGroup = true;
           }
-          // might be less variable
-        } else if (!insideRule && parenLevel === 0 && variableOrRule.indexOf(':') !== -1) {
-          insidePropertyValue = true;
-          this.indent();
+
+          // might be a non-nested at-rule
+        } else if (parenLevel === 0 && !insidePropertyValue) {
+          insideNonNestedAtRule = true;
         }
       }
     } else if (this._ch === '#' && this._input.peek() === '{') {
@@ -21291,6 +21318,9 @@ Beautifier.prototype.beautify = function() {
         insidePropertyValue = false;
         this.outdent();
       }
+
+      // non nested at rule becomes nested
+      insideNonNestedAtRule = false;
 
       // when entering conditional groups, only rulesets are allowed
       if (enteringConditionalGroup) {
@@ -21332,8 +21362,7 @@ Beautifier.prototype.beautify = function() {
       if (previous_ch === '{') {
         this._output.trim(true);
       }
-      insideAtImport = false;
-      insideAtExtend = false;
+
       if (insidePropertyValue) {
         this.outdent();
         insidePropertyValue = false;
@@ -21367,9 +21396,10 @@ Beautifier.prototype.beautify = function() {
         }
       }
 
-      if ((insideRule || enteringConditionalGroup) && !(this._input.lookBack("&") || this.foundNestedPseudoClass()) && !this._input.lookBack("(") && !insideAtExtend && parenLevel === 0) {
+      if ((insideRule || enteringConditionalGroup) && !(this._input.lookBack("&") || this.foundNestedPseudoClass()) && !this._input.lookBack("(") && !insideNonNestedAtRule && parenLevel === 0) {
         // 'property: value' delimiter
         // which could be in a conditional group query
+
         this.print_string(':');
         if (!insidePropertyValue) {
           insidePropertyValue = true;
@@ -21406,8 +21436,7 @@ Beautifier.prototype.beautify = function() {
           this.outdent();
           insidePropertyValue = false;
         }
-        insideAtExtend = false;
-        insideAtImport = false;
+        insideNonNestedAtRule = false;
         this.print_string(this._ch);
         this.eatWhitespace(true);
 
@@ -21472,7 +21501,7 @@ Beautifier.prototype.beautify = function() {
     } else if (this._ch === ',') {
       this.print_string(this._ch);
       this.eatWhitespace(true);
-      if (this._options.selector_separator_newline && (!insidePropertyValue || insideScssMap) && parenLevel === 0 && !insideAtImport && !insideAtExtend) {
+      if (this._options.selector_separator_newline && (!insidePropertyValue || insideScssMap) && parenLevel === 0 && !insideNonNestedAtRule) {
         this._output.add_new_line();
       } else {
         this._output.space_before_token = true;
@@ -21526,7 +21555,7 @@ module.exports.Beautifier = Beautifier;
 
 /***/ }),
 /* 17 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_49339__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_49930__) {
 
 /*jshint node:true */
 /*
@@ -21558,7 +21587,7 @@ module.exports.Beautifier = Beautifier;
 
 
 
-var BaseOptions = (__nested_webpack_require_49339__(6).Options);
+var BaseOptions = (__nested_webpack_require_49930__(6).Options);
 
 function Options(options) {
   BaseOptions.call(this, options, 'css');
@@ -21593,7 +21622,7 @@ module.exports.Options = Options;
 /******/ 	var __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
-/******/ 	function __nested_webpack_require_51819__(moduleId) {
+/******/ 	function __nested_webpack_require_52410__(moduleId) {
 /******/ 		// Check if module is in cache
 /******/ 		var cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
@@ -21607,7 +21636,7 @@ module.exports.Options = Options;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_51819__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_52410__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -21618,7 +21647,7 @@ module.exports.Options = Options;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __nested_webpack_exports__ = __nested_webpack_require_51819__(15);
+/******/ 	var __nested_webpack_exports__ = __nested_webpack_require_52410__(15);
 /******/ 	legacy_beautify_css = __nested_webpack_exports__;
 /******/ 	
 /******/ })()
@@ -21627,7 +21656,7 @@ module.exports.Options = Options;
 var css_beautify = legacy_beautify_css;
 ;// CONCATENATED MODULE: ../../node_modules/vscode-html-languageservice/lib/esm/beautify/beautify-html.js
 // copied from js-beautify/js/lib/beautify-html.js
-// version: 1.14.7
+// version: 1.15.4
 /* AUTO-GENERATED. DO NOT MODIFY. */
 /*
 
@@ -22270,10 +22299,10 @@ function Options(options, merge_child_field) {
 
   this.indent_empty_lines = this._get_boolean('indent_empty_lines');
 
-  // valid templating languages ['django', 'erb', 'handlebars', 'php', 'smarty']
-  // For now, 'auto' = all off for javascript, all on for html (and inline javascript).
+  // valid templating languages ['django', 'erb', 'handlebars', 'php', 'smarty', 'angular']
+  // For now, 'auto' = all off for javascript, all except angular on for html (and inline javascript/css).
   // other values ignored
-  this.templating = this._get_selection_list('templating', ['auto', 'none', 'django', 'erb', 'handlebars', 'php', 'smarty'], ['auto']);
+  this.templating = this._get_selection_list('templating', ['auto', 'none', 'angular', 'django', 'erb', 'handlebars', 'php', 'smarty'], ['auto']);
 }
 
 Options.prototype._get_array = function(name, default_value) {
@@ -22597,7 +22626,7 @@ module.exports.InputScanner = InputScanner;
 
 /***/ }),
 /* 9 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_30403__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_30444__) {
 
 /*jshint node:true */
 /*
@@ -22629,10 +22658,10 @@ module.exports.InputScanner = InputScanner;
 
 
 
-var InputScanner = (__nested_webpack_require_30403__(8).InputScanner);
-var Token = (__nested_webpack_require_30403__(3).Token);
-var TokenStream = (__nested_webpack_require_30403__(10).TokenStream);
-var WhitespacePattern = (__nested_webpack_require_30403__(11).WhitespacePattern);
+var InputScanner = (__nested_webpack_require_30444__(8).InputScanner);
+var Token = (__nested_webpack_require_30444__(3).Token);
+var TokenStream = (__nested_webpack_require_30444__(10).TokenStream);
+var WhitespacePattern = (__nested_webpack_require_30444__(11).WhitespacePattern);
 
 var TOKEN = {
   START: 'TK_START',
@@ -22827,7 +22856,7 @@ module.exports.TokenStream = TokenStream;
 
 /***/ }),
 /* 11 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_36823__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_36864__) {
 
 /*jshint node:true */
 /*
@@ -22859,7 +22888,7 @@ module.exports.TokenStream = TokenStream;
 
 
 
-var Pattern = (__nested_webpack_require_36823__(12).Pattern);
+var Pattern = (__nested_webpack_require_36864__(12).Pattern);
 
 function WhitespacePattern(input_scanner, parent) {
   Pattern.call(this, input_scanner, parent);
@@ -23106,7 +23135,7 @@ module.exports.Directives = Directives;
 
 /***/ }),
 /* 14 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_45810__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_45851__) {
 
 /*jshint node:true */
 /*
@@ -23138,7 +23167,7 @@ module.exports.Directives = Directives;
 
 
 
-var Pattern = (__nested_webpack_require_45810__(12).Pattern);
+var Pattern = (__nested_webpack_require_45851__(12).Pattern);
 
 
 var template_names = {
@@ -23146,7 +23175,8 @@ var template_names = {
   erb: false,
   handlebars: false,
   php: false,
-  smarty: false
+  smarty: false,
+  angular: false
 };
 
 // This lets templates appear anywhere we would do a readUntil
@@ -23244,6 +23274,10 @@ TemplatablePattern.prototype.__set_templated_pattern = function() {
   if (!this._disabled.handlebars) {
     items.push(this.__patterns.handlebars._starting_pattern.source);
   }
+  if (!this._disabled.angular) {
+    // Handlebars ('{{' and '}}') are also special tokens in Angular)
+    items.push(this.__patterns.handlebars._starting_pattern.source);
+  }
   if (!this._disabled.erb) {
     items.push(this.__patterns.erb._starting_pattern.source);
   }
@@ -23326,7 +23360,7 @@ module.exports.TemplatablePattern = TemplatablePattern;
 /* 16 */,
 /* 17 */,
 /* 18 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_53356__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_53591__) {
 
 /*jshint node:true */
 /*
@@ -23358,8 +23392,8 @@ module.exports.TemplatablePattern = TemplatablePattern;
 
 
 
-var Beautifier = (__nested_webpack_require_53356__(19).Beautifier),
-  Options = (__nested_webpack_require_53356__(20).Options);
+var Beautifier = (__nested_webpack_require_53591__(19).Beautifier),
+  Options = (__nested_webpack_require_53591__(20).Options);
 
 function style_html(html_source, options, js_beautify, css_beautify) {
   var beautifier = new Beautifier(html_source, options, js_beautify, css_beautify);
@@ -23374,7 +23408,7 @@ module.exports.defaultOptions = function() {
 
 /***/ }),
 /* 19 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_55034__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_55269__) {
 
 /*jshint node:true */
 /*
@@ -23406,10 +23440,10 @@ module.exports.defaultOptions = function() {
 
 
 
-var Options = (__nested_webpack_require_55034__(20).Options);
-var Output = (__nested_webpack_require_55034__(2).Output);
-var Tokenizer = (__nested_webpack_require_55034__(21).Tokenizer);
-var TOKEN = (__nested_webpack_require_55034__(21).TOKEN);
+var Options = (__nested_webpack_require_55269__(20).Options);
+var Output = (__nested_webpack_require_55269__(2).Output);
+var Tokenizer = (__nested_webpack_require_55269__(21).Tokenizer);
+var TOKEN = (__nested_webpack_require_55269__(21).TOKEN);
 
 var lineBreak = /\r\n|[\r\n]/;
 var allLineBreaks = /\r\n|[\r\n]/g;
@@ -23487,6 +23521,13 @@ Printer.prototype.print_token = function(token) {
 
 Printer.prototype.indent = function() {
   this.indent_level++;
+};
+
+Printer.prototype.deindent = function() {
+  if (this.indent_level > 0) {
+    this.indent_level--;
+    this._output.set_indent(this.indent_level, this.alignment_size);
+  }
 };
 
 Printer.prototype.get_full_indent = function(level) {
@@ -23662,7 +23703,7 @@ Beautifier.prototype.beautify = function() {
     type: ''
   };
 
-  var last_tag_token = new TagOpenParserToken();
+  var last_tag_token = new TagOpenParserToken(this._options);
 
   var printer = new Printer(this._options, baseIndentString);
   var tokens = new Tokenizer(source_text, this._options).tokenize();
@@ -23674,15 +23715,19 @@ Beautifier.prototype.beautify = function() {
   while (raw_token.type !== TOKEN.EOF) {
 
     if (raw_token.type === TOKEN.TAG_OPEN || raw_token.type === TOKEN.COMMENT) {
-      parser_token = this._handle_tag_open(printer, raw_token, last_tag_token, last_token);
+      parser_token = this._handle_tag_open(printer, raw_token, last_tag_token, last_token, tokens);
       last_tag_token = parser_token;
     } else if ((raw_token.type === TOKEN.ATTRIBUTE || raw_token.type === TOKEN.EQUALS || raw_token.type === TOKEN.VALUE) ||
       (raw_token.type === TOKEN.TEXT && !last_tag_token.tag_complete)) {
-      parser_token = this._handle_inside_tag(printer, raw_token, last_tag_token, tokens);
+      parser_token = this._handle_inside_tag(printer, raw_token, last_tag_token, last_token);
     } else if (raw_token.type === TOKEN.TAG_CLOSE) {
       parser_token = this._handle_tag_close(printer, raw_token, last_tag_token);
     } else if (raw_token.type === TOKEN.TEXT) {
       parser_token = this._handle_text(printer, raw_token, last_tag_token);
+    } else if (raw_token.type === TOKEN.CONTROL_FLOW_OPEN) {
+      parser_token = this._handle_control_flow_open(printer, raw_token);
+    } else if (raw_token.type === TOKEN.CONTROL_FLOW_CLOSE) {
+      parser_token = this._handle_control_flow_close(printer, raw_token);
     } else {
       // This should never happen, but if it does. Print the raw token
       printer.add_raw_token(raw_token);
@@ -23695,6 +23740,38 @@ Beautifier.prototype.beautify = function() {
   var sweet_code = printer._output.get_code(eol);
 
   return sweet_code;
+};
+
+Beautifier.prototype._handle_control_flow_open = function(printer, raw_token) {
+  var parser_token = {
+    text: raw_token.text,
+    type: raw_token.type
+  };
+  printer.set_space_before_token(raw_token.newlines || raw_token.whitespace_before !== '', true);
+  if (raw_token.newlines) {
+    printer.print_preserved_newlines(raw_token);
+  } else {
+    printer.set_space_before_token(raw_token.newlines || raw_token.whitespace_before !== '', true);
+  }
+  printer.print_token(raw_token);
+  printer.indent();
+  return parser_token;
+};
+
+Beautifier.prototype._handle_control_flow_close = function(printer, raw_token) {
+  var parser_token = {
+    text: raw_token.text,
+    type: raw_token.type
+  };
+
+  printer.deindent();
+  if (raw_token.newlines) {
+    printer.print_preserved_newlines(raw_token);
+  } else {
+    printer.set_space_before_token(raw_token.newlines || raw_token.whitespace_before !== '', true);
+  }
+  printer.print_token(raw_token);
+  return parser_token;
 };
 
 Beautifier.prototype._handle_tag_close = function(printer, raw_token, last_tag_token) {
@@ -23735,7 +23812,7 @@ Beautifier.prototype._handle_tag_close = function(printer, raw_token, last_tag_t
   return parser_token;
 };
 
-Beautifier.prototype._handle_inside_tag = function(printer, raw_token, last_tag_token, tokens) {
+Beautifier.prototype._handle_inside_tag = function(printer, raw_token, last_tag_token, last_token) {
   var wrapped = last_tag_token.has_wrapped_attrs;
   var parser_token = {
     text: raw_token.text,
@@ -23756,7 +23833,6 @@ Beautifier.prototype._handle_inside_tag = function(printer, raw_token, last_tag_
   } else {
     if (raw_token.type === TOKEN.ATTRIBUTE) {
       printer.set_space_before_token(true);
-      last_tag_token.attr_count += 1;
     } else if (raw_token.type === TOKEN.EQUALS) { //no space before =
       printer.set_space_before_token(false);
     } else if (raw_token.type === TOKEN.VALUE && raw_token.previous.type === TOKEN.EQUALS) { //no space before value
@@ -23769,29 +23845,15 @@ Beautifier.prototype._handle_inside_tag = function(printer, raw_token, last_tag_
         wrapped = wrapped || raw_token.newlines !== 0;
       }
 
-
-      if (this._is_wrap_attributes_force) {
-        var force_attr_wrap = last_tag_token.attr_count > 1;
-        if (this._is_wrap_attributes_force_expand_multiline && last_tag_token.attr_count === 1) {
-          var is_only_attribute = true;
-          var peek_index = 0;
-          var peek_token;
-          do {
-            peek_token = tokens.peek(peek_index);
-            if (peek_token.type === TOKEN.ATTRIBUTE) {
-              is_only_attribute = false;
-              break;
-            }
-            peek_index += 1;
-          } while (peek_index < 4 && peek_token.type !== TOKEN.EOF && peek_token.type !== TOKEN.TAG_CLOSE);
-
-          force_attr_wrap = !is_only_attribute;
-        }
-
-        if (force_attr_wrap) {
-          printer.print_newline(false);
-          wrapped = true;
-        }
+      // Wrap for 'force' options, and if the number of attributes is at least that specified in 'wrap_attributes_min_attrs':
+      // 1. always wrap the second and beyond attributes
+      // 2. wrap the first attribute only if 'force-expand-multiline' is specified
+      if (this._is_wrap_attributes_force &&
+        last_tag_token.attr_count >= this._options.wrap_attributes_min_attrs &&
+        (last_token.type !== TOKEN.TAG_OPEN || // ie. second attribute and beyond
+          this._is_wrap_attributes_force_expand_multiline)) {
+        printer.print_newline(false);
+        wrapped = true;
       }
     }
     printer.print_token(raw_token);
@@ -23920,12 +23982,12 @@ Beautifier.prototype._print_custom_beatifier_text = function(printer, raw_token,
   }
 };
 
-Beautifier.prototype._handle_tag_open = function(printer, raw_token, last_tag_token, last_token) {
+Beautifier.prototype._handle_tag_open = function(printer, raw_token, last_tag_token, last_token, tokens) {
   var parser_token = this._get_tag_open_token(raw_token);
 
   if ((last_tag_token.is_unformatted || last_tag_token.is_content_unformatted) &&
     !last_tag_token.is_empty_element &&
-    raw_token.type === TOKEN.TAG_OPEN && raw_token.text.indexOf('</') === 0) {
+    raw_token.type === TOKEN.TAG_OPEN && !parser_token.is_start_tag) {
     // End element tags for unformatted or content_unformatted elements
     // are printed raw to keep any newlines inside them exactly the same.
     printer.add_raw_token(raw_token);
@@ -23937,6 +23999,19 @@ Beautifier.prototype._handle_tag_open = function(printer, raw_token, last_tag_to
       printer.set_wrap_point();
     }
     printer.print_token(raw_token);
+  }
+
+  // count the number of attributes
+  if (parser_token.is_start_tag && this._is_wrap_attributes_force) {
+    var peek_index = 0;
+    var peek_token;
+    do {
+      peek_token = tokens.peek(peek_index);
+      if (peek_token.type === TOKEN.ATTRIBUTE) {
+        parser_token.attr_count += 1;
+      }
+      peek_index += 1;
+    } while (peek_token.type !== TOKEN.EOF && peek_token.type !== TOKEN.TAG_CLOSE);
   }
 
   //indent attributes an auto, forced, aligned or forced-align line-wrap
@@ -23951,7 +24026,7 @@ Beautifier.prototype._handle_tag_open = function(printer, raw_token, last_tag_to
   return parser_token;
 };
 
-var TagOpenParserToken = function(parent, raw_token) {
+var TagOpenParserToken = function(options, parent, raw_token) {
   this.parent = parent || null;
   this.text = '';
   this.type = 'TK_TAG_OPEN';
@@ -24018,13 +24093,14 @@ var TagOpenParserToken = function(parent, raw_token) {
     }
 
     // handlebars tags that don't start with # or ^ are single_tags, and so also start and end.
+    // if they start with # or ^, they are still considered single tags if indenting of handlebars is set to false
     this.is_end_tag = this.is_end_tag ||
-      (this.tag_start_char === '{' && (this.text.length < 3 || (/[^#\^]/.test(this.text.charAt(handlebar_starts)))));
+      (this.tag_start_char === '{' && (!options.indent_handlebars || this.text.length < 3 || (/[^#\^]/.test(this.text.charAt(handlebar_starts)))));
   }
 };
 
 Beautifier.prototype._get_tag_open_token = function(raw_token) { //function to get a full tag and parse its type
-  var parser_token = new TagOpenParserToken(this._tag_stack.get_parser_token(), raw_token);
+  var parser_token = new TagOpenParserToken(this._options, this._tag_stack.get_parser_token(), raw_token);
 
   parser_token.alignment_size = this._options.wrap_attributes_indent_size;
 
@@ -24036,7 +24112,7 @@ Beautifier.prototype._get_tag_open_token = function(raw_token) { //function to g
 
   parser_token.is_unformatted = !parser_token.tag_complete && in_array(parser_token.tag_check, this._options.unformatted);
   parser_token.is_content_unformatted = !parser_token.is_empty_element && in_array(parser_token.tag_check, this._options.content_unformatted);
-  parser_token.is_inline_element = in_array(parser_token.tag_name, this._options.inline) || parser_token.tag_name.includes("-") || parser_token.tag_start_char === '{';
+  parser_token.is_inline_element = in_array(parser_token.tag_name, this._options.inline) || (this._options.inline_custom_elements && parser_token.tag_name.includes("-")) || parser_token.tag_start_char === '{';
 
   return parser_token;
 };
@@ -24143,7 +24219,7 @@ Beautifier.prototype._calcluate_parent_multiline = function(printer, parser_toke
 };
 
 //To be used for <p> tag special case:
-var p_closers = ['address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'main', 'nav', 'ol', 'p', 'pre', 'section', 'table', 'ul'];
+var p_closers = ['address', 'article', 'aside', 'blockquote', 'details', 'div', 'dl', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'main', 'menu', 'nav', 'ol', 'p', 'pre', 'section', 'table', 'ul'];
 var p_parent_excludes = ['a', 'audio', 'del', 'ins', 'map', 'noscript', 'video'];
 
 Beautifier.prototype._do_optional_end_element = function(parser_token) {
@@ -24166,7 +24242,7 @@ Beautifier.prototype._do_optional_end_element = function(parser_token) {
 
   } else if (parser_token.tag_name === 'li') {
     // An li element’s end tag may be omitted if the li element is immediately followed by another li element or if there is no more content in the parent element.
-    result = result || this._tag_stack.try_pop('li', ['ol', 'ul']);
+    result = result || this._tag_stack.try_pop('li', ['ol', 'ul', 'menu']);
 
   } else if (parser_token.tag_name === 'dd' || parser_token.tag_name === 'dt') {
     // A dd element’s end tag may be omitted if the dd element is immediately followed by another dd element or a dt element, or if there is no more content in the parent element.
@@ -24258,7 +24334,7 @@ module.exports.Beautifier = Beautifier;
 
 /***/ }),
 /* 20 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_90937__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_93006__) {
 
 /*jshint node:true */
 /*
@@ -24290,7 +24366,7 @@ module.exports.Beautifier = Beautifier;
 
 
 
-var BaseOptions = (__nested_webpack_require_90937__(6).Options);
+var BaseOptions = (__nested_webpack_require_93006__(6).Options);
 
 function Options(options) {
   BaseOptions.call(this, options, 'html');
@@ -24305,6 +24381,7 @@ function Options(options) {
   this.indent_handlebars = this._get_boolean('indent_handlebars', true);
   this.wrap_attributes = this._get_selection('wrap_attributes',
     ['auto', 'force', 'force-aligned', 'force-expand-multiline', 'aligned-multiple', 'preserve', 'preserve-aligned']);
+  this.wrap_attributes_min_attrs = this._get_number('wrap_attributes_min_attrs', 2);
   this.wrap_attributes_indent_size = this._get_number('wrap_attributes_indent_size', this.indent_size);
   this.extra_liners = this._get_array('extra_liners', ['head', 'body', '/html']);
 
@@ -24322,6 +24399,7 @@ function Options(options) {
     // obsolete inline tags
     'acronym', 'big', 'strike', 'tt'
   ]);
+  this.inline_custom_elements = this._get_boolean('inline_custom_elements', true);
   this.void_elements = this._get_array('void_elements', [
     // HTLM void elements - aka self-closing tags - aka singletons
     // https://www.w3.org/html/wg/drafts/html/master/syntax.html#void-elements
@@ -24355,7 +24433,7 @@ module.exports.Options = Options;
 
 /***/ }),
 /* 21 */
-/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_95136__) {
+/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_97373__) {
 
 /*jshint node:true */
 /*
@@ -24387,15 +24465,17 @@ module.exports.Options = Options;
 
 
 
-var BaseTokenizer = (__nested_webpack_require_95136__(9).Tokenizer);
-var BASETOKEN = (__nested_webpack_require_95136__(9).TOKEN);
-var Directives = (__nested_webpack_require_95136__(13).Directives);
-var TemplatablePattern = (__nested_webpack_require_95136__(14).TemplatablePattern);
-var Pattern = (__nested_webpack_require_95136__(12).Pattern);
+var BaseTokenizer = (__nested_webpack_require_97373__(9).Tokenizer);
+var BASETOKEN = (__nested_webpack_require_97373__(9).TOKEN);
+var Directives = (__nested_webpack_require_97373__(13).Directives);
+var TemplatablePattern = (__nested_webpack_require_97373__(14).TemplatablePattern);
+var Pattern = (__nested_webpack_require_97373__(12).Pattern);
 
 var TOKEN = {
   TAG_OPEN: 'TK_TAG_OPEN',
   TAG_CLOSE: 'TK_TAG_CLOSE',
+  CONTROL_FLOW_OPEN: 'TK_CONTROL_FLOW_OPEN',
+  CONTROL_FLOW_CLOSE: 'TK_CONTROL_FLOW_CLOSE',
   ATTRIBUTE: 'TK_ATTRIBUTE',
   EQUALS: 'TK_EQUALS',
   VALUE: 'TK_VALUE',
@@ -24420,11 +24500,13 @@ var Tokenizer = function(input_string, options) {
 
   this.__patterns = {
     word: templatable_reader.until(/[\n\r\t <]/),
+    word_control_flow_close_excluded: templatable_reader.until(/[\n\r\t <}]/),
     single_quote: templatable_reader.until_after(/'/),
     double_quote: templatable_reader.until_after(/"/),
     attribute: templatable_reader.until(/[\n\r\t =>]|\/>/),
     element_name: templatable_reader.until(/[\n\r\t >\/]/),
 
+    angular_control_flow_start: pattern_reader.matching(/\@[a-zA-Z]+[^({]*[({]/),
     handlebars_comment: pattern_reader.starting_with(/{{!--/).until_after(/--}}/),
     handlebars: pattern_reader.starting_with(/{{/).until_after(/}}/),
     handlebars_open: pattern_reader.until(/[\n\r\t }]/),
@@ -24438,6 +24520,7 @@ var Tokenizer = function(input_string, options) {
 
   if (this._options.indent_handlebars) {
     this.__patterns.word = this.__patterns.word.exclude('handlebars');
+    this.__patterns.word_control_flow_close_excluded = this.__patterns.word_control_flow_close_excluded.exclude('handlebars');
   }
 
   this._unformatted_content_delimiter = null;
@@ -24456,14 +24539,16 @@ Tokenizer.prototype._is_comment = function(current_token) { // jshint unused:fal
 };
 
 Tokenizer.prototype._is_opening = function(current_token) {
-  return current_token.type === TOKEN.TAG_OPEN;
+  return current_token.type === TOKEN.TAG_OPEN || current_token.type === TOKEN.CONTROL_FLOW_OPEN;
 };
 
 Tokenizer.prototype._is_closing = function(current_token, open_token) {
-  return current_token.type === TOKEN.TAG_CLOSE &&
+  return (current_token.type === TOKEN.TAG_CLOSE &&
     (open_token && (
       ((current_token.text === '>' || current_token.text === '/>') && open_token.text[0] === '<') ||
-      (current_token.text === '}}' && open_token.text[0] === '{' && open_token.text[1] === '{')));
+      (current_token.text === '}}' && open_token.text[0] === '{' && open_token.text[1] === '{')))
+  ) || (current_token.type === TOKEN.CONTROL_FLOW_CLOSE &&
+    (current_token.text === '}' && open_token.text.endsWith('{')));
 };
 
 Tokenizer.prototype._reset = function() {
@@ -24482,8 +24567,10 @@ Tokenizer.prototype._get_next_token = function(previous_token, open_token) { // 
   token = token || this._read_open_handlebars(c, open_token);
   token = token || this._read_attribute(c, previous_token, open_token);
   token = token || this._read_close(c, open_token);
+  token = token || this._read_script_and_style(c, previous_token);
+  token = token || this._read_control_flows(c, open_token);
   token = token || this._read_raw_content(c, previous_token, open_token);
-  token = token || this._read_content_word(c);
+  token = token || this._read_content_word(c, open_token);
   token = token || this._read_comment_or_cdata(c);
   token = token || this._read_processing(c);
   token = token || this._read_open(c, open_token);
@@ -24548,7 +24635,7 @@ Tokenizer.prototype._read_processing = function(c) { // jshint unused:false
 Tokenizer.prototype._read_open = function(c, open_token) {
   var resulting_string = null;
   var token = null;
-  if (!open_token) {
+  if (!open_token || open_token.type === TOKEN.CONTROL_FLOW_OPEN) {
     if (c === '<') {
 
       resulting_string = this._input.next();
@@ -24565,9 +24652,9 @@ Tokenizer.prototype._read_open = function(c, open_token) {
 Tokenizer.prototype._read_open_handlebars = function(c, open_token) {
   var resulting_string = null;
   var token = null;
-  if (!open_token) {
-    if (this._options.indent_handlebars && c === '{' && this._input.peek(1) === '{') {
-      if (this._input.peek(2) === '!') {
+  if (!open_token || open_token.type === TOKEN.CONTROL_FLOW_OPEN) {
+    if ((this._options.templating.includes('angular') || this._options.indent_handlebars) && c === '{' && this._input.peek(1) === '{') {
+      if (this._options.indent_handlebars && this._input.peek(2) === '!') {
         resulting_string = this.__patterns.handlebars_comment.read();
         resulting_string = resulting_string || this.__patterns.handlebars.read();
         token = this._create_token(TOKEN.COMMENT, resulting_string);
@@ -24580,11 +24667,48 @@ Tokenizer.prototype._read_open_handlebars = function(c, open_token) {
   return token;
 };
 
+Tokenizer.prototype._read_control_flows = function(c, open_token) {
+  var resulting_string = '';
+  var token = null;
+  // Only check for control flows if angular templating is set
+  if (!this._options.templating.includes('angular')) {
+    return token;
+  }
+
+  if (c === '@') {
+    resulting_string = this.__patterns.angular_control_flow_start.read();
+    if (resulting_string === '') {
+      return token;
+    }
+
+    var opening_parentheses_count = resulting_string.endsWith('(') ? 1 : 0;
+    var closing_parentheses_count = 0;
+    // The opening brace of the control flow is where the number of opening and closing parentheses equal
+    // e.g. @if({value: true} !== null) { 
+    while (!(resulting_string.endsWith('{') && opening_parentheses_count === closing_parentheses_count)) {
+      var next_char = this._input.next();
+      if (next_char === null) {
+        break;
+      } else if (next_char === '(') {
+        opening_parentheses_count++;
+      } else if (next_char === ')') {
+        closing_parentheses_count++;
+      }
+      resulting_string += next_char;
+    }
+    token = this._create_token(TOKEN.CONTROL_FLOW_OPEN, resulting_string);
+  } else if (c === '}' && open_token && open_token.type === TOKEN.CONTROL_FLOW_OPEN) {
+    resulting_string = this._input.next();
+    token = this._create_token(TOKEN.CONTROL_FLOW_CLOSE, resulting_string);
+  }
+  return token;
+};
+
 
 Tokenizer.prototype._read_close = function(c, open_token) {
   var resulting_string = null;
   var token = null;
-  if (open_token) {
+  if (open_token && open_token.type === TOKEN.TAG_OPEN) {
     if (open_token.text[0] === '<' && (c === '>' || (c === '/' && this._input.peek(1) === '>'))) {
       resulting_string = this._input.next();
       if (c === '/') { //  for close tag "/>"
@@ -24640,7 +24764,6 @@ Tokenizer.prototype._is_content_unformatted = function(tag_name) {
       this._options.unformatted.indexOf(tag_name) !== -1);
 };
 
-
 Tokenizer.prototype._read_raw_content = function(c, previous_token, open_token) { // jshint unused:false
   var resulting_string = '';
   if (open_token && open_token.text[0] === '{') {
@@ -24649,16 +24772,7 @@ Tokenizer.prototype._read_raw_content = function(c, previous_token, open_token) 
     previous_token.opened.text[0] === '<' && previous_token.text[0] !== '/') {
     // ^^ empty tag has no content 
     var tag_name = previous_token.opened.text.substr(1).toLowerCase();
-    if (tag_name === 'script' || tag_name === 'style') {
-      // Script and style tags are allowed to have comments wrapping their content
-      // or just have regular content.
-      var token = this._read_comment_or_cdata(c);
-      if (token) {
-        token.type = TOKEN.TEXT;
-        return token;
-      }
-      resulting_string = this._input.readUntil(new RegExp('</' + tag_name + '[\\n\\r\\t ]*?>', 'ig'));
-    } else if (this._is_content_unformatted(tag_name)) {
+    if (this._is_content_unformatted(tag_name)) {
 
       resulting_string = this._input.readUntil(new RegExp('</' + tag_name + '[\\n\\r\\t ]*?>', 'ig'));
     }
@@ -24671,7 +24785,27 @@ Tokenizer.prototype._read_raw_content = function(c, previous_token, open_token) 
   return null;
 };
 
-Tokenizer.prototype._read_content_word = function(c) {
+Tokenizer.prototype._read_script_and_style = function(c, previous_token) { // jshint unused:false 
+  if (previous_token.type === TOKEN.TAG_CLOSE && previous_token.opened.text[0] === '<' && previous_token.text[0] !== '/') {
+    var tag_name = previous_token.opened.text.substr(1).toLowerCase();
+    if (tag_name === 'script' || tag_name === 'style') {
+      // Script and style tags are allowed to have comments wrapping their content
+      // or just have regular content.
+      var token = this._read_comment_or_cdata(c);
+      if (token) {
+        token.type = TOKEN.TEXT;
+        return token;
+      }
+      var resulting_string = this._input.readUntil(new RegExp('</' + tag_name + '[\\n\\r\\t ]*?>', 'ig'));
+      if (resulting_string) {
+        return this._create_token(TOKEN.TEXT, resulting_string);
+      }
+    }
+  }
+  return null;
+};
+
+Tokenizer.prototype._read_content_word = function(c, open_token) {
   var resulting_string = '';
   if (this._options.unformatted_content_delimiter) {
     if (c === this._options.unformatted_content_delimiter[0]) {
@@ -24680,11 +24814,12 @@ Tokenizer.prototype._read_content_word = function(c) {
   }
 
   if (!resulting_string) {
-    resulting_string = this.__patterns.word.read();
+    resulting_string = (open_token && open_token.type === TOKEN.CONTROL_FLOW_OPEN) ? this.__patterns.word_control_flow_close_excluded.read() : this.__patterns.word.read();
   }
   if (resulting_string) {
     return this._create_token(TOKEN.TEXT, resulting_string);
   }
+  return null;
 };
 
 module.exports.Tokenizer = Tokenizer;
@@ -24698,7 +24833,7 @@ module.exports.TOKEN = TOKEN;
 /******/ 	var __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
-/******/ 	function __nested_webpack_require_107030__(moduleId) {
+/******/ 	function __nested_webpack_require_112128__(moduleId) {
 /******/ 		// Check if module is in cache
 /******/ 		var cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
@@ -24712,7 +24847,7 @@ module.exports.TOKEN = TOKEN;
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_107030__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_112128__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -24723,7 +24858,7 @@ module.exports.TOKEN = TOKEN;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __nested_webpack_exports__ = __nested_webpack_require_107030__(18);
+/******/ 	var __nested_webpack_exports__ = __nested_webpack_require_112128__(18);
 /******/ 	legacy_beautify_html = __nested_webpack_exports__;
 /******/ 	
 /******/ })()
@@ -24852,7 +24987,10 @@ function getTemplatingFormatOption(options, dflt) {
     if (value === true) {
         return ['auto'];
     }
-    return ['none'];
+    if (value === false || value === dflt || Array.isArray(value) === false) {
+        return ['none'];
+    }
+    return value;
 }
 function computeIndentLevel(content, offset, options) {
     let i = offset;
@@ -24882,7 +25020,7 @@ function isWhitespace(text, offset) {
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-uri/lib/esm/index.mjs
 /* provided dependency */ var process = __webpack_require__(9907);
-var LIB;(()=>{"use strict";var t={470:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",i=0,o=-1,s=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(o===h-1||1===s);else if(o!==h-1&&2===s){if(n.length<2||2!==i||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var a=n.lastIndexOf("/");if(a!==n.length-1){-1===a?(n="",i=0):i=(n=n.slice(0,a)).length-1-n.lastIndexOf("/"),o=h,s=0;continue}}else if(2===n.length||1===n.length){n="",i=0,o=h,s=0;continue}e&&(n.length>0?n+="/..":n="..",i=2)}else n.length>0?n+="/"+t.slice(o+1,h):n=t.slice(o+1,h),i=h-o-1;o=h,s=0}else 46===r&&-1!==s?++s:s=-1}return n}var n={resolve:function(){for(var t,n="",i=!1,o=arguments.length-1;o>=-1&&!i;o--){var s;o>=0?s=arguments[o]:(void 0===t&&(t=process.cwd()),s=t),e(s),0!==s.length&&(n=s+"/"+n,i=47===s.charCodeAt(0))}return n=r(n,!i),i?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),i=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&i&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var i=arguments[r];e(i),i.length>0&&(void 0===t?t=i:t+="/"+i)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var i=1;i<t.length&&47===t.charCodeAt(i);++i);for(var o=t.length,s=o-i,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var a=r.length-h,c=s<a?s:a,f=-1,u=0;u<=c;++u){if(u===c){if(a>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else s>c&&(47===t.charCodeAt(i+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(i+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var g="";for(u=i+f+1;u<=o;++u)u!==o&&47!==t.charCodeAt(u)||(0===g.length?g+="..":g+="/..");return g.length>0?g+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,i=-1,o=!0,s=t.length-1;s>=1;--s)if(47===(r=t.charCodeAt(s))){if(!o){i=s;break}}else o=!1;return-1===i?n?"/":".":n&&1===i?"//":t.slice(0,i)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,i=0,o=-1,s=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,a=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!s){i=n+1;break}}else-1===a&&(s=!1,a=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(o=n):(h=-1,o=a))}return i===o?o=a:-1===o&&(o=t.length),t.slice(i,o)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!s){i=n+1;break}}else-1===o&&(s=!1,o=n+1);return-1===o?"":t.slice(i,o)},extname:function(t){e(t);for(var r=-1,n=0,i=-1,o=!0,s=0,h=t.length-1;h>=0;--h){var a=t.charCodeAt(h);if(47!==a)-1===i&&(o=!1,i=h+1),46===a?-1===r?r=h:1!==s&&(s=1):-1!==r&&(s=-1);else if(!o){n=h+1;break}}return-1===r||-1===i||0===s||1===s&&r===i-1&&r===n+1?"":t.slice(r,i)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,i=t.charCodeAt(0),o=47===i;o?(r.root="/",n=1):n=0;for(var s=-1,h=0,a=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(i=t.charCodeAt(f)))-1===a&&(c=!1,a=f+1),46===i?-1===s?s=f:1!==u&&(u=1):-1!==s&&(u=-1);else if(!c){h=f+1;break}return-1===s||-1===a||0===u||1===u&&s===a-1&&s===h+1?-1!==a&&(r.base=r.name=0===h&&o?t.slice(1,a):t.slice(h,a)):(0===h&&o?(r.name=t.slice(1,s),r.base=t.slice(1,a)):(r.name=t.slice(h,s),r.base=t.slice(h,a)),r.ext=t.slice(s,a)),h>0?r.dir=t.slice(0,h-1):o&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var i=e[n];if(void 0!==i)return i.exports;var o=e[n]={exports:{}};return t[n](o,o.exports,r),o.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};(()=>{let t;if(r.r(n),r.d(n,{URI:()=>f,Utils:()=>P}),"object"==typeof process)t="win32"===process.platform;else if("object"==typeof navigator){let e=navigator.userAgent;t=e.indexOf("Windows")>=0}const e=/^\w[\w\d+.-]*$/,i=/^\//,o=/^\/\//;function s(t,r){if(!t.scheme&&r)throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);if(t.scheme&&!e.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!i.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(o.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}const h="",a="/",c=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;class f{static isUri(t){return t instanceof f||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString}scheme;authority;path;query;fragment;constructor(t,e,r,n,i,o=!1){"object"==typeof t?(this.scheme=t.scheme||h,this.authority=t.authority||h,this.path=t.path||h,this.query=t.query||h,this.fragment=t.fragment||h):(this.scheme=function(t,e){return t||e?t:"file"}(t,o),this.authority=e||h,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==a&&(e=a+e):e=a}return e}(this.scheme,r||h),this.query=n||h,this.fragment=i||h,s(this,o))}get fsPath(){return m(this,!1)}with(t){if(!t)return this;let{scheme:e,authority:r,path:n,query:i,fragment:o}=t;return void 0===e?e=this.scheme:null===e&&(e=h),void 0===r?r=this.authority:null===r&&(r=h),void 0===n?n=this.path:null===n&&(n=h),void 0===i?i=this.query:null===i&&(i=h),void 0===o?o=this.fragment:null===o&&(o=h),e===this.scheme&&r===this.authority&&n===this.path&&i===this.query&&o===this.fragment?this:new l(e,r,n,i,o)}static parse(t,e=!1){const r=c.exec(t);return r?new l(r[2]||h,C(r[4]||h),C(r[5]||h),C(r[7]||h),C(r[9]||h),e):new l(h,h,h,h,h)}static file(e){let r=h;if(t&&(e=e.replace(/\\/g,a)),e[0]===a&&e[1]===a){const t=e.indexOf(a,2);-1===t?(r=e.substring(2),e=a):(r=e.substring(2,t),e=e.substring(t)||a)}return new l("file",r,e,h,h)}static from(t){const e=new l(t.scheme,t.authority,t.path,t.query,t.fragment);return s(e,!0),e}toString(t=!1){return y(this,t)}toJSON(){return this}static revive(t){if(t){if(t instanceof f)return t;{const e=new l(t);return e._formatted=t.external,e._fsPath=t._sep===u?t.fsPath:null,e}}return t}}const u=t?1:void 0;class l extends f{_formatted=null;_fsPath=null;get fsPath(){return this._fsPath||(this._fsPath=m(this,!1)),this._fsPath}toString(t=!1){return t?y(this,!0):(this._formatted||(this._formatted=y(this,!1)),this._formatted)}toJSON(){const t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=u),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t}}const g={58:"%3A",47:"%2F",63:"%3F",35:"%23",91:"%5B",93:"%5D",64:"%40",33:"%21",36:"%24",38:"%26",39:"%27",40:"%28",41:"%29",42:"%2A",43:"%2B",44:"%2C",59:"%3B",61:"%3D",32:"%20"};function d(t,e,r){let n,i=-1;for(let o=0;o<t.length;o++){const s=t.charCodeAt(o);if(s>=97&&s<=122||s>=65&&s<=90||s>=48&&s<=57||45===s||46===s||95===s||126===s||e&&47===s||r&&91===s||r&&93===s||r&&58===s)-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),void 0!==n&&(n+=t.charAt(o));else{void 0===n&&(n=t.substr(0,o));const e=g[s];void 0!==e?(-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),n+=e):-1===i&&(i=o)}}return-1!==i&&(n+=encodeURIComponent(t.substring(i))),void 0!==n?n:t}function p(t){let e;for(let r=0;r<t.length;r++){const n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=g[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function m(e,r){let n;return n=e.authority&&e.path.length>1&&"file"===e.scheme?`//${e.authority}${e.path}`:47===e.path.charCodeAt(0)&&(e.path.charCodeAt(1)>=65&&e.path.charCodeAt(1)<=90||e.path.charCodeAt(1)>=97&&e.path.charCodeAt(1)<=122)&&58===e.path.charCodeAt(2)?r?e.path.substr(1):e.path[1].toLowerCase()+e.path.substr(2):e.path,t&&(n=n.replace(/\//g,"\\")),n}function y(t,e){const r=e?p:d;let n="",{scheme:i,authority:o,path:s,query:h,fragment:c}=t;if(i&&(n+=i,n+=":"),(o||"file"===i)&&(n+=a,n+=a),o){let t=o.indexOf("@");if(-1!==t){const e=o.substr(0,t);o=o.substr(t+1),t=e.lastIndexOf(":"),-1===t?n+=r(e,!1,!1):(n+=r(e.substr(0,t),!1,!1),n+=":",n+=r(e.substr(t+1),!1,!0)),n+="@"}o=o.toLowerCase(),t=o.lastIndexOf(":"),-1===t?n+=r(o,!1,!0):(n+=r(o.substr(0,t),!1,!0),n+=o.substr(t))}if(s){if(s.length>=3&&47===s.charCodeAt(0)&&58===s.charCodeAt(2)){const t=s.charCodeAt(1);t>=65&&t<=90&&(s=`/${String.fromCharCode(t+32)}:${s.substr(3)}`)}else if(s.length>=2&&58===s.charCodeAt(1)){const t=s.charCodeAt(0);t>=65&&t<=90&&(s=`${String.fromCharCode(t+32)}:${s.substr(2)}`)}n+=r(s,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),c&&(n+="#",n+=e?c:d(c,!1,!1)),n}function v(t){try{return decodeURIComponent(t)}catch{return t.length>3?t.substr(0,3)+v(t.substr(3)):t}}const b=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function C(t){return t.match(b)?t.replace(b,(t=>v(t))):t}var A=r(470);const w=A.posix||A,x="/";var P;!function(t){t.joinPath=function(t,...e){return t.with({path:w.join(t.path,...e)})},t.resolvePath=function(t,...e){let r=t.path,n=!1;r[0]!==x&&(r=x+r,n=!0);let i=w.resolve(r,...e);return n&&i[0]===x&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===x)return t;let e=w.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return w.basename(t.path)},t.extname=function(t){return w.extname(t.path)}}(P||(P={}))})(),LIB=n})();const{URI: html_service_URI,Utils}=LIB;
+var LIB;(()=>{"use strict";var t={975:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",i=0,o=-1,s=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(o===h-1||1===s);else if(o!==h-1&&2===s){if(n.length<2||2!==i||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var a=n.lastIndexOf("/");if(a!==n.length-1){-1===a?(n="",i=0):i=(n=n.slice(0,a)).length-1-n.lastIndexOf("/"),o=h,s=0;continue}}else if(2===n.length||1===n.length){n="",i=0,o=h,s=0;continue}e&&(n.length>0?n+="/..":n="..",i=2)}else n.length>0?n+="/"+t.slice(o+1,h):n=t.slice(o+1,h),i=h-o-1;o=h,s=0}else 46===r&&-1!==s?++s:s=-1}return n}var n={resolve:function(){for(var t,n="",i=!1,o=arguments.length-1;o>=-1&&!i;o--){var s;o>=0?s=arguments[o]:(void 0===t&&(t=process.cwd()),s=t),e(s),0!==s.length&&(n=s+"/"+n,i=47===s.charCodeAt(0))}return n=r(n,!i),i?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),i=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&i&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var i=arguments[r];e(i),i.length>0&&(void 0===t?t=i:t+="/"+i)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var i=1;i<t.length&&47===t.charCodeAt(i);++i);for(var o=t.length,s=o-i,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var a=r.length-h,c=s<a?s:a,f=-1,u=0;u<=c;++u){if(u===c){if(a>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else s>c&&(47===t.charCodeAt(i+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(i+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var g="";for(u=i+f+1;u<=o;++u)u!==o&&47!==t.charCodeAt(u)||(0===g.length?g+="..":g+="/..");return g.length>0?g+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,i=-1,o=!0,s=t.length-1;s>=1;--s)if(47===(r=t.charCodeAt(s))){if(!o){i=s;break}}else o=!1;return-1===i?n?"/":".":n&&1===i?"//":t.slice(0,i)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,i=0,o=-1,s=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,a=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!s){i=n+1;break}}else-1===a&&(s=!1,a=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(o=n):(h=-1,o=a))}return i===o?o=a:-1===o&&(o=t.length),t.slice(i,o)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!s){i=n+1;break}}else-1===o&&(s=!1,o=n+1);return-1===o?"":t.slice(i,o)},extname:function(t){e(t);for(var r=-1,n=0,i=-1,o=!0,s=0,h=t.length-1;h>=0;--h){var a=t.charCodeAt(h);if(47!==a)-1===i&&(o=!1,i=h+1),46===a?-1===r?r=h:1!==s&&(s=1):-1!==r&&(s=-1);else if(!o){n=h+1;break}}return-1===r||-1===i||0===s||1===s&&r===i-1&&r===n+1?"":t.slice(r,i)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,i=t.charCodeAt(0),o=47===i;o?(r.root="/",n=1):n=0;for(var s=-1,h=0,a=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(i=t.charCodeAt(f)))-1===a&&(c=!1,a=f+1),46===i?-1===s?s=f:1!==u&&(u=1):-1!==s&&(u=-1);else if(!c){h=f+1;break}return-1===s||-1===a||0===u||1===u&&s===a-1&&s===h+1?-1!==a&&(r.base=r.name=0===h&&o?t.slice(1,a):t.slice(h,a)):(0===h&&o?(r.name=t.slice(1,s),r.base=t.slice(1,a)):(r.name=t.slice(h,s),r.base=t.slice(h,a)),r.ext=t.slice(s,a)),h>0?r.dir=t.slice(0,h-1):o&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var i=e[n];if(void 0!==i)return i.exports;var o=e[n]={exports:{}};return t[n](o,o.exports,r),o.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};let i;if(r.r(n),r.d(n,{URI:()=>l,Utils:()=>I}),"object"==typeof process)i="win32"===process.platform;else if("object"==typeof navigator){let t=navigator.userAgent;i=t.indexOf("Windows")>=0}const o=/^\w[\w\d+.-]*$/,s=/^\//,h=/^\/\//;function a(t,e){if(!t.scheme&&e)throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);if(t.scheme&&!o.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!s.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(h.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}const c="",f="/",u=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;class l{static isUri(t){return t instanceof l||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString}scheme;authority;path;query;fragment;constructor(t,e,r,n,i,o=!1){"object"==typeof t?(this.scheme=t.scheme||c,this.authority=t.authority||c,this.path=t.path||c,this.query=t.query||c,this.fragment=t.fragment||c):(this.scheme=function(t,e){return t||e?t:"file"}(t,o),this.authority=e||c,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==f&&(e=f+e):e=f}return e}(this.scheme,r||c),this.query=n||c,this.fragment=i||c,a(this,o))}get fsPath(){return v(this,!1)}with(t){if(!t)return this;let{scheme:e,authority:r,path:n,query:i,fragment:o}=t;return void 0===e?e=this.scheme:null===e&&(e=c),void 0===r?r=this.authority:null===r&&(r=c),void 0===n?n=this.path:null===n&&(n=c),void 0===i?i=this.query:null===i&&(i=c),void 0===o?o=this.fragment:null===o&&(o=c),e===this.scheme&&r===this.authority&&n===this.path&&i===this.query&&o===this.fragment?this:new d(e,r,n,i,o)}static parse(t,e=!1){const r=u.exec(t);return r?new d(r[2]||c,w(r[4]||c),w(r[5]||c),w(r[7]||c),w(r[9]||c),e):new d(c,c,c,c,c)}static file(t){let e=c;if(i&&(t=t.replace(/\\/g,f)),t[0]===f&&t[1]===f){const r=t.indexOf(f,2);-1===r?(e=t.substring(2),t=f):(e=t.substring(2,r),t=t.substring(r)||f)}return new d("file",e,t,c,c)}static from(t){const e=new d(t.scheme,t.authority,t.path,t.query,t.fragment);return a(e,!0),e}toString(t=!1){return b(this,t)}toJSON(){return this}static revive(t){if(t){if(t instanceof l)return t;{const e=new d(t);return e._formatted=t.external,e._fsPath=t._sep===g?t.fsPath:null,e}}return t}}const g=i?1:void 0;class d extends l{_formatted=null;_fsPath=null;get fsPath(){return this._fsPath||(this._fsPath=v(this,!1)),this._fsPath}toString(t=!1){return t?b(this,!0):(this._formatted||(this._formatted=b(this,!1)),this._formatted)}toJSON(){const t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=g),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t}}const p={58:"%3A",47:"%2F",63:"%3F",35:"%23",91:"%5B",93:"%5D",64:"%40",33:"%21",36:"%24",38:"%26",39:"%27",40:"%28",41:"%29",42:"%2A",43:"%2B",44:"%2C",59:"%3B",61:"%3D",32:"%20"};function m(t,e,r){let n,i=-1;for(let o=0;o<t.length;o++){const s=t.charCodeAt(o);if(s>=97&&s<=122||s>=65&&s<=90||s>=48&&s<=57||45===s||46===s||95===s||126===s||e&&47===s||r&&91===s||r&&93===s||r&&58===s)-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),void 0!==n&&(n+=t.charAt(o));else{void 0===n&&(n=t.substr(0,o));const e=p[s];void 0!==e?(-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),n+=e):-1===i&&(i=o)}}return-1!==i&&(n+=encodeURIComponent(t.substring(i))),void 0!==n?n:t}function y(t){let e;for(let r=0;r<t.length;r++){const n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=p[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function v(t,e){let r;return r=t.authority&&t.path.length>1&&"file"===t.scheme?`//${t.authority}${t.path}`:47===t.path.charCodeAt(0)&&(t.path.charCodeAt(1)>=65&&t.path.charCodeAt(1)<=90||t.path.charCodeAt(1)>=97&&t.path.charCodeAt(1)<=122)&&58===t.path.charCodeAt(2)?e?t.path.substr(1):t.path[1].toLowerCase()+t.path.substr(2):t.path,i&&(r=r.replace(/\//g,"\\")),r}function b(t,e){const r=e?y:m;let n="",{scheme:i,authority:o,path:s,query:h,fragment:a}=t;if(i&&(n+=i,n+=":"),(o||"file"===i)&&(n+=f,n+=f),o){let t=o.indexOf("@");if(-1!==t){const e=o.substr(0,t);o=o.substr(t+1),t=e.lastIndexOf(":"),-1===t?n+=r(e,!1,!1):(n+=r(e.substr(0,t),!1,!1),n+=":",n+=r(e.substr(t+1),!1,!0)),n+="@"}o=o.toLowerCase(),t=o.lastIndexOf(":"),-1===t?n+=r(o,!1,!0):(n+=r(o.substr(0,t),!1,!0),n+=o.substr(t))}if(s){if(s.length>=3&&47===s.charCodeAt(0)&&58===s.charCodeAt(2)){const t=s.charCodeAt(1);t>=65&&t<=90&&(s=`/${String.fromCharCode(t+32)}:${s.substr(3)}`)}else if(s.length>=2&&58===s.charCodeAt(1)){const t=s.charCodeAt(0);t>=65&&t<=90&&(s=`${String.fromCharCode(t+32)}:${s.substr(2)}`)}n+=r(s,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),a&&(n+="#",n+=e?a:m(a,!1,!1)),n}function C(t){try{return decodeURIComponent(t)}catch{return t.length>3?t.substr(0,3)+C(t.substr(3)):t}}const A=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function w(t){return t.match(A)?t.replace(A,(t=>C(t))):t}var x=r(975);const P=x.posix||x,_="/";var I;!function(t){t.joinPath=function(t,...e){return t.with({path:P.join(t.path,...e)})},t.resolvePath=function(t,...e){let r=t.path,n=!1;r[0]!==_&&(r=_+r,n=!0);let i=P.resolve(r,...e);return n&&i[0]===_&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===_)return t;let e=P.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return P.basename(t.path)},t.extname=function(t){return P.extname(t.path)}}(I||(I={})),LIB=n})();const{URI: html_service_URI,Utils}=LIB;
 //# sourceMappingURL=index.mjs.map
 ;// CONCATENATED MODULE: ../../node_modules/vscode-html-languageservice/lib/esm/services/htmlLinks.js
 /*---------------------------------------------------------------------------------------------
@@ -24947,21 +25085,31 @@ function createLink(document, documentContext, attributeValue, startOffset, endO
         endOffset--;
     }
     const workspaceUrl = getWorkspaceUrl(document.uri, tokenContent, documentContext, base);
-    if (!workspaceUrl || !isValidURI(workspaceUrl)) {
+    if (!workspaceUrl) {
         return undefined;
     }
+    const target = validateAndCleanURI(workspaceUrl, document);
     return {
         range: main.Range.create(document.positionAt(startOffset), document.positionAt(endOffset)),
-        target: workspaceUrl
+        target
     };
 }
-function isValidURI(uri) {
+const _hash = '#'.charCodeAt(0);
+function validateAndCleanURI(uriStr, document) {
     try {
-        html_service_URI.parse(uri);
-        return true;
+        let uri = html_service_URI.parse(uriStr);
+        if (uri.scheme === 'file' && uri.query) {
+            // see https://github.com/microsoft/vscode/issues/194577 & https://github.com/microsoft/vscode/issues/206238
+            uri = uri.with({ query: null });
+            uriStr = uri.toString(/* skipEncodig*/ true);
+        }
+        if (uri.scheme === 'file' && uri.fragment && !(uriStr.startsWith(document.uri) && uriStr.charCodeAt(document.uri.length) === _hash)) {
+            return uri.with({ fragment: null }).toString(/* skipEncodig*/ true);
+        }
+        return uriStr;
     }
     catch (e) {
-        return false;
+        return undefined;
     }
 }
 class HTMLDocumentLinks {
@@ -25024,6 +25172,9 @@ class HTMLDocumentLinks {
                     const pos = document.positionAt(offset);
                     link.target = `${localWithHash}${pos.line + 1},${pos.character + 1}`;
                 }
+                else {
+                    link.target = document.uri;
+                }
             }
         }
         return newLinks;
@@ -25082,23 +25233,37 @@ function getTagNameRange(tokenType, document, startOffset) {
 
 function findDocumentSymbols(document, htmlDocument) {
     const symbols = [];
+    const symbols2 = findDocumentSymbols2(document, htmlDocument);
+    for (const symbol of symbols2) {
+        walk(symbol, undefined);
+    }
+    return symbols;
+    function walk(node, parent) {
+        const symbol = main.SymbolInformation.create(node.name, node.kind, node.range, document.uri, parent?.name);
+        symbol.containerName ?? (symbol.containerName = '');
+        symbols.push(symbol);
+        if (node.children) {
+            for (const child of node.children) {
+                walk(child, node);
+            }
+        }
+    }
+}
+function findDocumentSymbols2(document, htmlDocument) {
+    const symbols = [];
     htmlDocument.roots.forEach(node => {
-        provideFileSymbolsInternal(document, node, '', symbols);
+        provideFileSymbolsInternal(document, node, symbols);
     });
     return symbols;
 }
-function provideFileSymbolsInternal(document, node, container, symbols) {
+function provideFileSymbolsInternal(document, node, symbols) {
     const name = nodeToName(node);
-    const location = main.Location.create(document.uri, main.Range.create(document.positionAt(node.start), document.positionAt(node.end)));
-    const symbol = {
-        name: name,
-        location: location,
-        containerName: container,
-        kind: main.SymbolKind.Field
-    };
+    const range = main.Range.create(document.positionAt(node.start), document.positionAt(node.end));
+    const symbol = main.DocumentSymbol.create(name, undefined, main.SymbolKind.Field, range, range);
     symbols.push(symbol);
     node.children.forEach(child => {
-        provideFileSymbolsInternal(document, child, name, symbols);
+        symbol.children ?? (symbol.children = []);
+        provideFileSymbolsInternal(document, child, symbol.children);
     });
 }
 function nodeToName(node) {
@@ -25304,13 +25469,13 @@ class HTMLFolding {
         return result;
     }
     getFoldingRanges(document, context) {
-        const voidElements = this.dataManager.getVoidElements(document.languageId);
         const scanner = createScanner(document.getText());
         let token = scanner.scan();
         const ranges = [];
         const stack = [];
         let lastTagName = null;
         let prevStart = -1;
+        let voidElements;
         function addRange(range) {
             ranges.push(range);
             prevStart = range.startLine;
@@ -25329,7 +25494,11 @@ class HTMLFolding {
                     break;
                 }
                 case TokenType.StartTagClose:
-                    if (!lastTagName || !this.dataManager.isVoidElement(lastTagName, voidElements)) {
+                    if (!lastTagName) {
+                        break;
+                    }
+                    voidElements ?? (voidElements = this.dataManager.getVoidElements(document.languageId));
+                    if (!this.dataManager.isVoidElement(lastTagName, voidElements)) {
                         break;
                     }
                 // fallthrough
@@ -25829,7 +25998,7 @@ const webCustomData_htmlData = {
                     "name": "nonce",
                     "description": {
                         "kind": "markdown",
-                        "value": "A cryptographic nonce (number used once) used to whitelist inline styles in a [style-src Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src). The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource’s policy is otherwise trivial."
+                        "value": "A cryptographic nonce (number used once) used to allow inline styles in a [style-src Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/style-src). The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource’s policy is otherwise trivial."
                     }
                 },
                 {
@@ -27123,7 +27292,11 @@ const webCustomData_htmlData = {
                 },
                 {
                     "name": "loading",
-                    "valueSet": "loading"
+                    "valueSet": "loading",
+                    "description": {
+                        "kind": "markdown",
+                        "value": "Indicates how the browser should load the image."
+                    }
                 },
                 {
                     "name": "referrerpolicy",
@@ -28908,7 +29081,7 @@ const webCustomData_htmlData = {
                     "name": "nonce",
                     "description": {
                         "kind": "markdown",
-                        "value": "A cryptographic nonce (number used once) to whitelist inline scripts in a [script-src Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src). The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource's policy is otherwise trivial."
+                        "value": "A cryptographic nonce (number used once) to list the allowed inline scripts in a [script-src Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/script-src). The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource's policy is otherwise trivial."
                     }
                 },
                 {
@@ -28995,6 +29168,78 @@ const webCustomData_htmlData = {
                     "url": "https://developer.mozilla.org/docs/Web/HTML/Element/canvas"
                 }
             ]
+        },
+        {
+            "name": "slot",
+            "description": {
+                "kind": "markdown",
+                "value": "The slot element is a placeholder inside a web component that you can fill with your own markup, which lets you create separate DOM trees and present them together."
+            },
+            "attributes": [
+                {
+                    "name": "name",
+                    "description": {
+                        "kind": "markdown",
+                        "value": "The slot's name.\nA **named slot** is a `<slot>` element with a `name` attribute."
+                    }
+                }
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/HTML/Element/slot"
+                }
+            ]
+        },
+        {
+            "name": "data",
+            "description": {
+                "kind": "markdown",
+                "value": "The data element links a given piece of content with a machine-readable translation."
+            },
+            "attributes": [
+                {
+                    "name": "value",
+                    "description": {
+                        "kind": "markdown",
+                        "value": "This attribute specifies the machine-readable translation of the content of the element."
+                    }
+                }
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/HTML/Element/data"
+                }
+            ]
+        },
+        {
+            "name": "hgroup",
+            "description": {
+                "kind": "markdown",
+                "value": "The hgroup element represents a heading and related content. It groups a single h1–h6 element with one or more p."
+            },
+            "attributes": [],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/HTML/Element/hgroup"
+                }
+            ]
+        },
+        {
+            "name": "menu",
+            "description": {
+                "kind": "markdown",
+                "value": "The menu element represents an unordered list of interactive items."
+            },
+            "attributes": [],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/HTML/Element/menu"
+                }
+            ]
         }
     ],
     "globalAttributes": [
@@ -29055,13 +29300,7 @@ const webCustomData_htmlData = {
             "description": {
                 "kind": "markdown",
                 "value": "The `[**id**](#attr-id)` of a [`<menu>`](https://developer.mozilla.org/docs/Web/HTML/Element/menu \"The HTML <menu> element represents a group of commands that a user can perform or activate. This includes both list menus, which might appear across the top of a screen, as well as context menus, such as those that might appear underneath a button after it has been clicked.\") to use as the contextual menu for this element."
-            },
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/HTML/Global_attributes/contextmenu"
-                }
-            ]
+            }
         },
         {
             "name": "dir",
@@ -29169,39 +29408,21 @@ const webCustomData_htmlData = {
             "description": {
                 "kind": "markdown",
                 "value": "The unique, global identifier of an item."
-            },
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/HTML/Global_attributes/itemid"
-                }
-            ]
+            }
         },
         {
             "name": "itemprop",
             "description": {
                 "kind": "markdown",
                 "value": "Used to add properties to an item. Every HTML element may have an `itemprop` attribute specified, where an `itemprop` consists of a name and value pair."
-            },
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/HTML/Global_attributes/itemprop"
-                }
-            ]
+            }
         },
         {
             "name": "itemref",
             "description": {
                 "kind": "markdown",
                 "value": "Properties that are not descendants of an element with the `itemscope` attribute can be associated with the item using an `itemref`. It provides a list of element ids (not `itemid`s) with additional properties elsewhere in the document."
-            },
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/HTML/Global_attributes/itemref"
-                }
-            ]
+            }
         },
         {
             "name": "itemscope",
@@ -29209,26 +29430,14 @@ const webCustomData_htmlData = {
                 "kind": "markdown",
                 "value": "`itemscope` (usually) works along with `[itemtype](https://developer.mozilla.org/docs/Web/HTML/Global_attributes#attr-itemtype)` to specify that the HTML contained in a block is about a particular item. `itemscope` creates the Item and defines the scope of the `itemtype` associated with it. `itemtype` is a valid URL of a vocabulary (such as [schema.org](https://schema.org/)) that describes the item and its properties context."
             },
-            "valueSet": "v",
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/HTML/Global_attributes/itemscope"
-                }
-            ]
+            "valueSet": "v"
         },
         {
             "name": "itemtype",
             "description": {
                 "kind": "markdown",
                 "value": "Specifies the URL of the vocabulary that will be used to define `itemprop`s (item properties) in the data structure. `[itemscope](https://developer.mozilla.org/docs/Web/HTML/Global_attributes#attr-itemscope)` is used to set the scope of where in the data structure the vocabulary set by `itemtype` will be active."
-            },
-            "references": [
-                {
-                    "name": "MDN Reference",
-                    "url": "https://developer.mozilla.org/docs/Web/HTML/Global_attributes/itemtype"
-                }
-            ]
+            }
         },
         {
             "name": "lang",
@@ -31667,10 +31876,18 @@ const webCustomData_htmlData = {
             "name": "loading",
             "values": [
                 {
-                    "name": "eager"
+                    "name": "eager",
+                    "description": {
+                        "kind": "markdown",
+                        "value": "Loads the image immediately, regardless of whether or not the image is currently within the visible viewport (this is the default value)."
+                    }
                 },
                 {
-                    "name": "lazy"
+                    "name": "lazy",
+                    "description": {
+                        "kind": "markdown",
+                        "value": "Defers loading the image until it reaches a calculated distance from the viewport, as defined by the browser. The intent is to avoid the network and storage bandwidth needed to handle the image until it's reasonably certain that it will be needed. This generally improves the performance of the content in most typical use cases."
+                    }
                 }
             ]
         },
@@ -31828,6 +32045,7 @@ function getLanguageService(options = defaultLanguageServiceOptions) {
         findDocumentHighlights: findDocumentHighlights,
         findDocumentLinks: htmlDocumentLinks.findDocumentLinks.bind(htmlDocumentLinks),
         findDocumentSymbols: findDocumentSymbols,
+        findDocumentSymbols2: findDocumentSymbols2,
         getFoldingRanges: htmlFolding.getFoldingRanges.bind(htmlFolding),
         getSelectionRanges: htmlSelectionRange.getSelectionRanges.bind(htmlSelectionRange),
         doQuoteComplete: htmlCompletion.doQuoteComplete.bind(htmlCompletion),
