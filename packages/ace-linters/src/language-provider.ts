@@ -669,7 +669,7 @@ class SessionLanguageProvider {
 
         let hasTriggerChars = Object.values(capabilities).some((capability) => capability?.completionProvider?.triggerCharacters);
 
-        if (hasTriggerChars) {
+        if (hasTriggerChars || this.$provider.options.functionality?.completion && this.$provider.options.functionality?.completion.lspCompleterOptions?.triggerCharacters) {
             let completer = this.editor.completers.find((completer) => completer.id === "lspCompleters");
             if (completer) {
                 let allTriggerCharacters: string[] = [];

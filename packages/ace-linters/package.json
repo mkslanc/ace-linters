@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
@@ -20,16 +20,16 @@
     "generate-typescript-service": "node tools/generate-typescript-service.js"
   },
   "dependencies": {
-    "vscode-languageserver-protocol": "^3.17.3",
+    "vscode-languageserver-protocol": "^3.17.5",
     "vscode-languageserver-textdocument": "^1.0.8",
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
-    "vscode-html-languageservice": "^5.0.6",
-    "vscode-css-languageservice": "^6.2.6",
-    "vscode-json-languageservice": "^5.4.1",
+    "vscode-html-languageservice": "^5.3.3",
+    "vscode-css-languageservice": "^6.3.3",
+    "vscode-json-languageservice": "^5.4.4",
     "luaparse": "^0.3.1",
-    "showdown": "latest",
+    "showdown": "^2.1.0",
     "vscode-ws-jsonrpc": "^3.4.0",
     "htmlhint": "^1.1.4",
     "@xml-tools/constraints": "^1.1.1",
