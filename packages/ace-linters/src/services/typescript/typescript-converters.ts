@@ -143,17 +143,35 @@ export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument,
     return completionInfo.entries.map((entry) => {
         let completion = {
             label: entry.name,
-            insertText: entry.name,
             sortText: entry.sortText,
             kind: convertKind(entry.kind),
             position: position,
             entry: entry.name
         }
 
+        /**
+         * The `insertText` is subject to interpretation by the client side.
+         * Some tools might not take the string literally. For example
+         * VS Code when code complete is requested in this example
+         * `con<cursor position>` and a completion item with an `insertText` of
+         * `console` is provided it will only insert `sole`. Therefore it is
+         * recommended to use `textEdit` instead since it avoids additional client
+         * side interpretation.
+         *
+         * https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#completionItem
+         */
+        let completionText = entry.insertText ?? entry.name;
+        let rangeStart = toPosition(position, doc);
+        let rangeEnd = toPosition(position, doc);
+
         if (entry.replacementSpan) {
-            const p1 = toPosition(entry.replacementSpan.start, doc);
-            const p2 = toPosition(entry.replacementSpan.start + entry.replacementSpan.length, doc);
-            completion["range"] = createRangeFromPoints(p1, p2);
+            rangeStart = toPosition(entry.replacementSpan.start, doc);
+            rangeEnd = toPosition(entry.replacementSpan.start + entry.replacementSpan.length, doc);
+        }
+
+        completion["textEdit"] = {
+            range: createRangeFromPoints(rangeStart, rangeEnd),
+            newText: completionText
         }
 
         return completion;
