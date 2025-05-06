@@ -147,4 +147,47 @@ describe("Editor Console Error Tests", function () {
 
         expect(consoleErrors, "Critical errors in YAML mode").to.be.empty;
     });
+
+    it("should handle typescript autocompletion correctly for different cases", async function () {
+        await page.evaluate(() => {
+            window.testFlags.modeChanged = false;
+            window.editor.session.setMode("ace/mode/typescript");
+            window.editor.setValue("");
+        });
+        await waitForFlag("modeChanged");
+
+        await page.click(".ace_content");
+        await page.keyboard.type("win");
+
+        await page.waitForSelector(".ace_selected");
+
+        await page.keyboard.press("Enter");
+
+        const completed = await page.evaluate(() => window.editor.getValue().trim());
+        expect(completed, "Autocompletion result").to.equal("window");
+
+        await page.evaluate(() => {
+            window.testFlags.modeChanged = false;
+            window.editor.setValue(`class A {
+    "with-dashes" = 2;
+};
+
+let a = new A();`);
+            window.editor.clearSelection();
+        });
+        await page.keyboard.press("Enter");
+        await page.keyboard.type("a.");
+        await new Promise(r => setTimeout(r, 100));
+        await page.keyboard.press("Enter");
+
+        const result = await page.evaluate(() => window.editor.getValue().trim());
+        expect(result, "Autocompletion result").to.equal(`class A {
+    "with-dashes" = 2;
+};
+
+let a = new A();
+a.["with-dashes"]`);
+
+    });
+
 });
