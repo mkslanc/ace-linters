@@ -2,7 +2,7 @@ import {Ace} from "ace-code";
 import * as lsp from "vscode-languageserver-protocol";
 import {
     CodeActionsByService,
-    CompletionService,
+    CompletionService, InlineCompletionService,
     ServiceFeatures,
     ServiceOptions,
     SupportedServices
@@ -21,6 +21,8 @@ export interface IMessageController {
     doValidation(documentIdentifier: ComboDocumentIdentifier, callback?: (annotations: lsp.Diagnostic[]) => void)
 
     doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void);
+
+    doInlineComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: InlineCompletionService[]) => void): void;
 
     doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void);
 
@@ -55,4 +57,6 @@ export interface IMessageController {
     setWorkspace(workspaceUri: string, callback?: () => void): void;
 
     renameDocument(documentIdentifier: ComboDocumentIdentifier, newDocumentUri: string, version: number): void;
+
+    sendRequest(serviceName: string, requestName: string, options: any, callback?: (result: any) => void): void;
 }
