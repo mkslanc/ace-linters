@@ -285,7 +285,7 @@ var MessageType;
 /* harmony export */   rL: () => (/* binding */ mergeObjects),
 /* harmony export */   z2: () => (/* binding */ notEmpty)
 /* harmony export */ });
-/* unused harmony exports mergeRanges, checkValueAgainstRegexpArray, convertToUri */
+/* unused harmony exports isEmptyRange, mergeRanges, checkValueAgainstRegexpArray, convertToUri */
 
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
@@ -318,6 +318,9 @@ function excludeUndefinedValues(obj) {
 function notEmpty(value) {
     return value !== null && value !== undefined;
 }
+function isEmptyRange(range) {
+    return range.start.row === range.end.row && range.start.column === range.end.column;
+}
 //taken with small changes from ace-code
 function mergeRanges(ranges) {
     var list = ranges;
@@ -330,7 +333,7 @@ function mergeRanges(ranges) {
         next = list[i];
         var cmp = comparePoints(range.end, next.start);
         if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (cmp == 0 && !isEmptyRange(range) && !isEmptyRange(next)) continue;
         if (comparePoints(range.end, next.end) < 0) {
             range.end.row = next.end.row;
             range.end.column = next.end.column;

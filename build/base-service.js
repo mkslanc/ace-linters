@@ -2292,15 +2292,13 @@ var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbo
 
 var toStr = Object.prototype.toString;
 var concat = Array.prototype.concat;
-var origDefineProperty = Object.defineProperty;
+var defineDataProperty = __webpack_require__(686);
 
 var isFunction = function (fn) {
 	return typeof fn === 'function' && toStr.call(fn) === '[object Function]';
 };
 
-var hasPropertyDescriptors = __webpack_require__(7239)();
-
-var supportsDescriptors = origDefineProperty && hasPropertyDescriptors;
+var supportsDescriptors = __webpack_require__(7239)();
 
 var defineProperty = function (object, name, value, predicate) {
 	if (name in object) {
@@ -2312,15 +2310,11 @@ var defineProperty = function (object, name, value, predicate) {
 			return;
 		}
 	}
+
 	if (supportsDescriptors) {
-		origDefineProperty(object, name, {
-			configurable: true,
-			enumerable: false,
-			value: value,
-			writable: true
-		});
+		defineDataProperty(object, name, value, true);
 	} else {
-		object[name] = value; // eslint-disable-line no-param-reassign
+		defineDataProperty(object, name, value);
 	}
 };
 
@@ -4084,7 +4078,7 @@ module.exports = function setFunctionLength(fn, length) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   rL: () => (/* binding */ mergeObjects)
 /* harmony export */ });
-/* unused harmony exports notEmpty, mergeRanges, checkValueAgainstRegexpArray, convertToUri */
+/* unused harmony exports notEmpty, isEmptyRange, mergeRanges, checkValueAgainstRegexpArray, convertToUri */
 
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
@@ -4117,6 +4111,9 @@ function excludeUndefinedValues(obj) {
 function notEmpty(value) {
     return value !== null && value !== undefined;
 }
+function isEmptyRange(range) {
+    return range.start.row === range.end.row && range.start.column === range.end.column;
+}
 //taken with small changes from ace-code
 function mergeRanges(ranges) {
     var list = ranges;
@@ -4129,7 +4126,7 @@ function mergeRanges(ranges) {
         next = list[i];
         var cmp = comparePoints(range.end, next.start);
         if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (cmp == 0 && !isEmptyRange(range) && !isEmptyRange(next)) continue;
         if (comparePoints(range.end, next.end) < 0) {
             range.end.row = next.end.row;
             range.end.column = next.end.column;
@@ -13888,6 +13885,12 @@ class BaseService {
         });
         this.mode = mode;
         this.workspaceUri = workspaceUri;
+        this.serviceName = "BaseService";
+        this.serviceData = {
+            className: "BaseService",
+            modes: "",
+            module: ()=>{}
+        };
     }
 }
 

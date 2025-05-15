@@ -2292,15 +2292,13 @@ var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbo
 
 var toStr = Object.prototype.toString;
 var concat = Array.prototype.concat;
-var origDefineProperty = Object.defineProperty;
+var defineDataProperty = __webpack_require__(686);
 
 var isFunction = function (fn) {
 	return typeof fn === 'function' && toStr.call(fn) === '[object Function]';
 };
 
-var hasPropertyDescriptors = __webpack_require__(7239)();
-
-var supportsDescriptors = origDefineProperty && hasPropertyDescriptors;
+var supportsDescriptors = __webpack_require__(7239)();
 
 var defineProperty = function (object, name, value, predicate) {
 	if (name in object) {
@@ -2312,15 +2310,11 @@ var defineProperty = function (object, name, value, predicate) {
 			return;
 		}
 	}
+
 	if (supportsDescriptors) {
-		origDefineProperty(object, name, {
-			configurable: true,
-			enumerable: false,
-			value: value,
-			writable: true
-		});
+		defineDataProperty(object, name, value, true);
 	} else {
-		object[name] = value; // eslint-disable-line no-param-reassign
+		defineDataProperty(object, name, value);
 	}
 };
 
@@ -4305,6 +4299,12 @@ class BaseService {
         });
         this.mode = mode;
         this.workspaceUri = workspaceUri;
+        this.serviceName = "BaseService";
+        this.serviceData = {
+            className: "BaseService",
+            modes: "",
+            module: ()=>{}
+        };
     }
 }
 
@@ -4319,7 +4319,7 @@ class BaseService {
 /* harmony export */   Tk: () => (/* binding */ checkValueAgainstRegexpArray),
 /* harmony export */   rL: () => (/* binding */ mergeObjects)
 /* harmony export */ });
-/* unused harmony exports notEmpty, mergeRanges, convertToUri */
+/* unused harmony exports notEmpty, isEmptyRange, mergeRanges, convertToUri */
 
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
@@ -4352,6 +4352,9 @@ function excludeUndefinedValues(obj) {
 function notEmpty(value) {
     return value !== null && value !== undefined;
 }
+function isEmptyRange(range) {
+    return range.start.row === range.end.row && range.start.column === range.end.column;
+}
 //taken with small changes from ace-code
 function mergeRanges(ranges) {
     var list = ranges;
@@ -4364,7 +4367,7 @@ function mergeRanges(ranges) {
         next = list[i];
         var cmp = comparePoints(range.end, next.start);
         if (cmp < 0) continue;
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (cmp == 0 && !isEmptyRange(range) && !isEmptyRange(next)) continue;
         if (comparePoints(range.end, next.end) < 0) {
             range.end.row = next.end.row;
             range.end.column = next.end.column;
@@ -14687,45 +14690,46 @@ var NodeType;
     NodeType[NodeType["MixinContentReference"] = 49] = "MixinContentReference";
     NodeType[NodeType["MixinContentDeclaration"] = 50] = "MixinContentDeclaration";
     NodeType[NodeType["Media"] = 51] = "Media";
-    NodeType[NodeType["Keyframe"] = 52] = "Keyframe";
-    NodeType[NodeType["FontFace"] = 53] = "FontFace";
-    NodeType[NodeType["Import"] = 54] = "Import";
-    NodeType[NodeType["Namespace"] = 55] = "Namespace";
-    NodeType[NodeType["Invocation"] = 56] = "Invocation";
-    NodeType[NodeType["FunctionDeclaration"] = 57] = "FunctionDeclaration";
-    NodeType[NodeType["ReturnStatement"] = 58] = "ReturnStatement";
-    NodeType[NodeType["MediaQuery"] = 59] = "MediaQuery";
-    NodeType[NodeType["MediaCondition"] = 60] = "MediaCondition";
-    NodeType[NodeType["MediaFeature"] = 61] = "MediaFeature";
-    NodeType[NodeType["FunctionParameter"] = 62] = "FunctionParameter";
-    NodeType[NodeType["FunctionArgument"] = 63] = "FunctionArgument";
-    NodeType[NodeType["KeyframeSelector"] = 64] = "KeyframeSelector";
-    NodeType[NodeType["ViewPort"] = 65] = "ViewPort";
-    NodeType[NodeType["Document"] = 66] = "Document";
-    NodeType[NodeType["AtApplyRule"] = 67] = "AtApplyRule";
-    NodeType[NodeType["CustomPropertyDeclaration"] = 68] = "CustomPropertyDeclaration";
-    NodeType[NodeType["CustomPropertySet"] = 69] = "CustomPropertySet";
-    NodeType[NodeType["ListEntry"] = 70] = "ListEntry";
-    NodeType[NodeType["Supports"] = 71] = "Supports";
-    NodeType[NodeType["SupportsCondition"] = 72] = "SupportsCondition";
-    NodeType[NodeType["NamespacePrefix"] = 73] = "NamespacePrefix";
-    NodeType[NodeType["GridLine"] = 74] = "GridLine";
-    NodeType[NodeType["Plugin"] = 75] = "Plugin";
-    NodeType[NodeType["UnknownAtRule"] = 76] = "UnknownAtRule";
-    NodeType[NodeType["Use"] = 77] = "Use";
-    NodeType[NodeType["ModuleConfiguration"] = 78] = "ModuleConfiguration";
-    NodeType[NodeType["Forward"] = 79] = "Forward";
-    NodeType[NodeType["ForwardVisibility"] = 80] = "ForwardVisibility";
-    NodeType[NodeType["Module"] = 81] = "Module";
-    NodeType[NodeType["UnicodeRange"] = 82] = "UnicodeRange";
-    NodeType[NodeType["Layer"] = 83] = "Layer";
-    NodeType[NodeType["LayerNameList"] = 84] = "LayerNameList";
-    NodeType[NodeType["LayerName"] = 85] = "LayerName";
-    NodeType[NodeType["PropertyAtRule"] = 86] = "PropertyAtRule";
-    NodeType[NodeType["Container"] = 87] = "Container";
-    NodeType[NodeType["ModuleConfig"] = 88] = "ModuleConfig";
-    NodeType[NodeType["SelectorList"] = 89] = "SelectorList";
-    NodeType[NodeType["StartingStyleAtRule"] = 90] = "StartingStyleAtRule";
+    NodeType[NodeType["Scope"] = 52] = "Scope";
+    NodeType[NodeType["Keyframe"] = 53] = "Keyframe";
+    NodeType[NodeType["FontFace"] = 54] = "FontFace";
+    NodeType[NodeType["Import"] = 55] = "Import";
+    NodeType[NodeType["Namespace"] = 56] = "Namespace";
+    NodeType[NodeType["Invocation"] = 57] = "Invocation";
+    NodeType[NodeType["FunctionDeclaration"] = 58] = "FunctionDeclaration";
+    NodeType[NodeType["ReturnStatement"] = 59] = "ReturnStatement";
+    NodeType[NodeType["MediaQuery"] = 60] = "MediaQuery";
+    NodeType[NodeType["MediaCondition"] = 61] = "MediaCondition";
+    NodeType[NodeType["MediaFeature"] = 62] = "MediaFeature";
+    NodeType[NodeType["FunctionParameter"] = 63] = "FunctionParameter";
+    NodeType[NodeType["FunctionArgument"] = 64] = "FunctionArgument";
+    NodeType[NodeType["KeyframeSelector"] = 65] = "KeyframeSelector";
+    NodeType[NodeType["ViewPort"] = 66] = "ViewPort";
+    NodeType[NodeType["Document"] = 67] = "Document";
+    NodeType[NodeType["AtApplyRule"] = 68] = "AtApplyRule";
+    NodeType[NodeType["CustomPropertyDeclaration"] = 69] = "CustomPropertyDeclaration";
+    NodeType[NodeType["CustomPropertySet"] = 70] = "CustomPropertySet";
+    NodeType[NodeType["ListEntry"] = 71] = "ListEntry";
+    NodeType[NodeType["Supports"] = 72] = "Supports";
+    NodeType[NodeType["SupportsCondition"] = 73] = "SupportsCondition";
+    NodeType[NodeType["NamespacePrefix"] = 74] = "NamespacePrefix";
+    NodeType[NodeType["GridLine"] = 75] = "GridLine";
+    NodeType[NodeType["Plugin"] = 76] = "Plugin";
+    NodeType[NodeType["UnknownAtRule"] = 77] = "UnknownAtRule";
+    NodeType[NodeType["Use"] = 78] = "Use";
+    NodeType[NodeType["ModuleConfiguration"] = 79] = "ModuleConfiguration";
+    NodeType[NodeType["Forward"] = 80] = "Forward";
+    NodeType[NodeType["ForwardVisibility"] = 81] = "ForwardVisibility";
+    NodeType[NodeType["Module"] = 82] = "Module";
+    NodeType[NodeType["UnicodeRange"] = 83] = "UnicodeRange";
+    NodeType[NodeType["Layer"] = 84] = "Layer";
+    NodeType[NodeType["LayerNameList"] = 85] = "LayerNameList";
+    NodeType[NodeType["LayerName"] = 86] = "LayerName";
+    NodeType[NodeType["PropertyAtRule"] = 87] = "PropertyAtRule";
+    NodeType[NodeType["Container"] = 88] = "Container";
+    NodeType[NodeType["ModuleConfig"] = 89] = "ModuleConfig";
+    NodeType[NodeType["SelectorList"] = 90] = "SelectorList";
+    NodeType[NodeType["StartingStyleAtRule"] = 91] = "StartingStyleAtRule";
 })(NodeType || (NodeType = {}));
 var ReferenceType;
 (function (ReferenceType) {
@@ -15494,6 +15498,44 @@ class Media extends BodyDeclaration {
     }
     get type() {
         return NodeType.Media;
+    }
+}
+class Scope extends BodyDeclaration {
+    constructor(offset, length) {
+        super(offset, length);
+    }
+    get type() {
+        return NodeType.Scope;
+    }
+}
+class ScopeLimits extends Node {
+    constructor(offset, length) {
+        super(offset, length);
+    }
+    get type() {
+        return NodeType.Scope;
+    }
+    getScopeStart() {
+        return this.scopeStart;
+    }
+    setScopeStart(right) {
+        return this.setNode('scopeStart', right);
+    }
+    getScopeEnd() {
+        return this.scopeEnd;
+    }
+    setScopeEnd(right) {
+        return this.setNode('scopeEnd', right);
+    }
+    getName() {
+        let name = '';
+        if (this.scopeStart) {
+            name += this.scopeStart.getText();
+        }
+        if (this.scopeEnd) {
+            name += `${this.scopeStart ? ' ' : ''}→ ${this.scopeEnd.getText()}`;
+        }
+        return name;
     }
 }
 class Supports extends BodyDeclaration {
@@ -16377,17 +16419,43 @@ var FileType;
 
 
 const browserNames = {
-    E: 'Edge',
-    FF: 'Firefox',
-    S: 'Safari',
-    C: 'Chrome',
-    IE: 'IE',
-    O: 'Opera'
+    'C': {
+        name: 'Chrome',
+        platform: 'desktop'
+    },
+    'CA': {
+        name: 'Chrome',
+        platform: 'Android'
+    },
+    'E': {
+        name: 'Edge',
+        platform: 'desktop'
+    },
+    'FF': {
+        name: 'Firefox',
+        platform: 'desktop'
+    },
+    'FFA': {
+        name: 'Firefox',
+        platform: 'Android'
+    },
+    'S': {
+        name: 'Safari',
+        platform: 'macOS'
+    },
+    'SM': {
+        name: 'Safari',
+        platform: 'iOS'
+    }
+};
+const shortCompatPattern = /(E|FFA|FF|SM|S|CA|C|IE|O)([\d|\.]+)?/;
+const BaselineImages = {
+    BASELINE_LIMITED: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCA1NDAgMzAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxzdHlsZT4KICAgIC5ncmF5LXNoYXBlIHsKICAgICAgZmlsbDogI0M2QzZDNjsgLyogTGlnaHQgbW9kZSAqLwogICAgfQoKICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgLmdyYXktc2hhcGUgewogICAgICAgIGZpbGw6ICM1NjU2NTY7IC8qIERhcmsgbW9kZSAqLwogICAgICB9CiAgICB9CiAgPC9zdHlsZT4KICA8cGF0aCBkPSJNMTUwIDBMMjQwIDkwTDIxMCAxMjBMMTIwIDMwTDE1MCAwWiIgZmlsbD0iI0YwOTQwOSIvPgogIDxwYXRoIGQ9Ik00MjAgMzBMNTQwIDE1MEw0MjAgMjcwTDM5MCAyNDBMNDgwIDE1MEwzOTAgNjBMNDIwIDMwWiIgY2xhc3M9ImdyYXktc2hhcGUiLz4KICA8cGF0aCBkPSJNMzMwIDE4MEwzMDAgMjEwTDM5MCAzMDBMNDIwIDI3MEwzMzAgMTgwWiIgZmlsbD0iI0YwOTQwOSIvPgogIDxwYXRoIGQ9Ik0xMjAgMzBMMTUwIDYwTDYwIDE1MEwxNTAgMjQwTDEyMCAyNzBMMCAxNTBMMTIwIDMwWiIgY2xhc3M9ImdyYXktc2hhcGUiLz4KICA8cGF0aCBkPSJNMzkwIDBMNDIwIDMwTDE1MCAzMDBMMTIwIDI3MEwzOTAgMFoiIGZpbGw9IiNGMDk0MDkiLz4KPC9zdmc+',
+    BASELINE_LOW: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCA1NDAgMzAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxzdHlsZT4KICAgIC5ibHVlLXNoYXBlIHsKICAgICAgZmlsbDogI0E4QzdGQTsgLyogTGlnaHQgbW9kZSAqLwogICAgfQoKICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgLmJsdWUtc2hhcGUgewogICAgICAgIGZpbGw6ICMyRDUwOUU7IC8qIERhcmsgbW9kZSAqLwogICAgICB9CiAgICB9CgogICAgLmRhcmtlci1ibHVlLXNoYXBlIHsKICAgICAgICBmaWxsOiAjMUI2RUYzOwogICAgfQoKICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgICAuZGFya2VyLWJsdWUtc2hhcGUgewogICAgICAgICAgICBmaWxsOiAjNDE4NUZGOwogICAgICAgIH0KICAgIH0KCiAgPC9zdHlsZT4KICA8cGF0aCBkPSJNMTUwIDBMMTgwIDMwTDE1MCA2MEwxMjAgMzBMMTUwIDBaIiBjbGFzcz0iYmx1ZS1zaGFwZSIvPgogIDxwYXRoIGQ9Ik0yMTAgNjBMMjQwIDkwTDIxMCAxMjBMMTgwIDkwTDIxMCA2MFoiIGNsYXNzPSJibHVlLXNoYXBlIi8+CiAgPHBhdGggZD0iTTQ1MCA2MEw0ODAgOTBMNDUwIDEyMEw0MjAgOTBMNDUwIDYwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNNTEwIDEyMEw1NDAgMTUwTDUxMCAxODBMNDgwIDE1MEw1MTAgMTIwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNNDUwIDE4MEw0ODAgMjEwTDQ1MCAyNDBMNDIwIDIxMEw0NTAgMTgwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNMzkwIDI0MEw0MjAgMjcwTDM5MCAzMDBMMzYwIDI3MEwzOTAgMjQwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNMzMwIDE4MEwzNjAgMjEwTDMzMCAyNDBMMzAwIDIxMEwzMzAgMTgwWiIgY2xhc3M9ImJsdWUtc2hhcGUiLz4KICA8cGF0aCBkPSJNOTAgNjBMMTIwIDkwTDkwIDEyMEw2MCA5MEw5MCA2MFoiIGNsYXNzPSJibHVlLXNoYXBlIi8+CiAgPHBhdGggZD0iTTM5MCAwTDQyMCAzMEwxNTAgMzAwTDAgMTUwTDMwIDEyMEwxNTAgMjQwTDM5MCAwWiIgY2xhc3M9ImRhcmtlci1ibHVlLXNoYXBlIi8+Cjwvc3ZnPg==',
+    BASELINE_HIGH: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCA1NDAgMzAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogIDxzdHlsZT4KICAgIC5ncmVlbi1zaGFwZSB7CiAgICAgIGZpbGw6ICNDNEVFRDA7IC8qIExpZ2h0IG1vZGUgKi8KICAgIH0KCiAgICBAbWVkaWEgKHByZWZlcnMtY29sb3Itc2NoZW1lOiBkYXJrKSB7CiAgICAgIC5ncmVlbi1zaGFwZSB7CiAgICAgICAgZmlsbDogIzEyNTIyNTsgLyogRGFyayBtb2RlICovCiAgICAgIH0KICAgIH0KICA8L3N0eWxlPgogIDxwYXRoIGQ9Ik00MjAgMzBMMzkwIDYwTDQ4MCAxNTBMMzkwIDI0MEwzMzAgMTgwTDMwMCAyMTBMMzkwIDMwMEw1NDAgMTUwTDQyMCAzMFoiIGNsYXNzPSJncmVlbi1zaGFwZSIvPgogIDxwYXRoIGQ9Ik0xNTAgMEwzMCAxMjBMNjAgMTUwTDE1MCA2MEwyMTAgMTIwTDI0MCA5MEwxNTAgMFoiIGNsYXNzPSJncmVlbi1zaGFwZSIvPgogIDxwYXRoIGQ9Ik0zOTAgMEw0MjAgMzBMMTUwIDMwMEwwIDE1MEwzMCAxMjBMMTUwIDI0MEwzOTAgMFoiIGZpbGw9IiMxRUE0NDYiLz4KPC9zdmc+'
 };
 function getEntryStatus(status) {
     switch (status) {
-        case 'experimental':
-            return '⚠️ Property is experimental. Be cautious when using it.️\n\n';
         case 'nonstandard':
             return '🚨️ Property is nonstandard. Avoid using it.\n\n';
         case 'obsolete':
@@ -16395,6 +16463,35 @@ function getEntryStatus(status) {
         default:
             return '';
     }
+}
+function getEntryBaselineStatus(baseline, browsers) {
+    if (baseline.status === "false") {
+        const missingBrowsers = getMissingBaselineBrowsers(browsers);
+        let status = `Limited availability across major browsers`;
+        if (missingBrowsers) {
+            status += ` (Not fully implemented in ${missingBrowsers})`;
+        }
+        return status;
+    }
+    const baselineYear = baseline.baseline_low_date?.split('-')[0];
+    return `${baseline.status === 'low' ? 'Newly' : 'Widely'} available across major browsers (Baseline since ${baselineYear})`;
+}
+function getEntryBaselineImage(baseline) {
+    if (!baseline) {
+        return '';
+    }
+    let baselineImg;
+    switch (baseline?.status) {
+        case 'low':
+            baselineImg = BaselineImages.BASELINE_LOW;
+            break;
+        case 'high':
+            baselineImg = BaselineImages.BASELINE_HIGH;
+            break;
+        default:
+            baselineImg = BaselineImages.BASELINE_LIMITED;
+    }
+    return `![Baseline icon](${baselineImg})`;
 }
 function getEntryDescription(entry, doesSupportMarkdown, settings) {
     let result;
@@ -16428,13 +16525,14 @@ function getEntryStringDescription(entry, settings) {
     }
     let result = '';
     if (settings?.documentation !== false) {
+        let status = '';
         if (entry.status) {
-            result += getEntryStatus(entry.status);
+            status = getEntryStatus(entry.status);
+            result += status;
         }
         result += entry.description;
-        const browserLabel = getBrowserLabel(entry.browsers);
-        if (browserLabel) {
-            result += '\n(' + browserLabel + ')';
+        if (entry.baseline && !status) {
+            result += `\n\n${getEntryBaselineStatus(entry.baseline, entry.browsers)}`;
         }
         if ('syntax' in entry) {
             result += `\n\nSyntax: ${entry.syntax}`;
@@ -16456,8 +16554,10 @@ function getEntryMarkdownDescription(entry, settings) {
     }
     let result = '';
     if (settings?.documentation !== false) {
+        let status = '';
         if (entry.status) {
-            result += getEntryStatus(entry.status);
+            status = getEntryStatus(entry.status);
+            result += status;
         }
         if (typeof entry.description === 'string') {
             result += textToMarkedString(entry.description);
@@ -16465,9 +16565,8 @@ function getEntryMarkdownDescription(entry, settings) {
         else {
             result += entry.description.kind === main.MarkupKind.Markdown ? entry.description.value : textToMarkedString(entry.description.value);
         }
-        const browserLabel = getBrowserLabel(entry.browsers);
-        if (browserLabel) {
-            result += '\n\n(' + textToMarkedString(browserLabel) + ')';
+        if (entry.baseline && !status) {
+            result += `\n\n${getEntryBaselineImage(entry.baseline)} _${getEntryBaselineStatus(entry.baseline, entry.browsers)}_`;
         }
         if ('syntax' in entry && entry.syntax) {
             result += `\n\nSyntax: ${textToMarkedString(entry.syntax)}`;
@@ -16483,28 +16582,37 @@ function getEntryMarkdownDescription(entry, settings) {
     }
     return result;
 }
+// TODO: Remove "as any" when tsconfig supports es2021+
+const missingBaselineBrowserFormatter = new Intl.ListFormat("en", {
+    style: "long",
+    type: "disjunction",
+});
 /**
- * Input is like `["E12","FF49","C47","IE","O"]`
- * Output is like `Edge 12, Firefox 49, Chrome 47, IE, Opera`
+ * Input is like [E12, FF28, FM28, C29, CM29, IE11, O16]
+ * Output is like `Safari`
  */
-function getBrowserLabel(browsers = []) {
-    if (browsers.length === 0) {
-        return null;
+function getMissingBaselineBrowsers(browsers) {
+    if (!browsers) {
+        return '';
     }
-    const entries = [];
-    for (const b of browsers) {
-        const matches = b.match(/([A-Z]+)(\d+)?/);
-        const name = matches[1];
-        const version = matches[2];
-        if (name in browserNames) {
-            let result = browserNames[name];
-            if (version) {
-                result += ' ' + version;
-            }
-            entries.push(result);
+    const missingBrowsers = new Map(Object.entries(browserNames));
+    for (const shortCompatString of browsers) {
+        const match = shortCompatPattern.exec(shortCompatString);
+        if (!match) {
+            continue;
         }
+        const browser = match[1];
+        missingBrowsers.delete(browser);
     }
-    return entries.join(', ');
+    return missingBaselineBrowserFormatter.format(Object.values(Array.from(missingBrowsers.entries()).reduce((browsers, [browserId, browser]) => {
+        if (browser.name in browsers || browserId === 'E') {
+            browsers[browser.name] = browser.name;
+            return browsers;
+        }
+        // distinguish between platforms when applicable 
+        browsers[browser.name] = `${browser.name} on ${browser.platform}`;
+        return browsers;
+    }, {})));
 }
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-css-languageservice/lib/esm/languageFacts/colors.js
@@ -17731,6 +17839,7 @@ class Parser {
     _parseStylesheetAtStatement(isNested = false) {
         return this._parseImport()
             || this._parseMedia(isNested)
+            || this._parseScope()
             || this._parsePage()
             || this._parseFontFace()
             || this._parseKeyframe()
@@ -17773,6 +17882,7 @@ class Parser {
     }
     _parseRuleSetDeclarationAtStatement() {
         return this._parseMedia(true)
+            || this._parseScope()
             || this._parseSupports(true)
             || this._parseLayer(true)
             || this._parseContainer(true)
@@ -17803,6 +17913,7 @@ class Parser {
             case NodeType.MixinDeclaration:
             case NodeType.FunctionDeclaration:
             case NodeType.MixinContentDeclaration:
+            case NodeType.Scope:
                 return false;
             case NodeType.ExtendsReference:
             case NodeType.MixinContentReference:
@@ -18557,6 +18668,57 @@ class Parser {
     }
     _parseMediaFeatureValue() {
         return this._parseRatio() || this._parseTermExpression();
+    }
+    _parseScope() {
+        // @scope [<scope-limits>]? { <block-contents> }
+        if (!this.peekKeyword('@scope')) {
+            return null;
+        }
+        const node = this.create(Scope);
+        // @scope
+        this.consumeToken();
+        node.addChild(this._parseScopeLimits());
+        return this._parseBody(node, this._parseScopeDeclaration.bind(this));
+    }
+    _parseScopeDeclaration() {
+        // Treat as nested as regular declarations are implicity wrapped with :where(:scope)
+        // https://github.com/w3c/csswg-drafts/issues/10389
+        // pseudo-selectors implicitly target :scope
+        // https://drafts.csswg.org/css-cascade-6/#scoped-rules
+        const isNested = true;
+        return this._tryParseRuleset(isNested)
+            || this._tryToParseDeclaration()
+            || this._parseStylesheetStatement(isNested);
+    }
+    _parseScopeLimits() {
+        // [(<scope-start>)]? [to (<scope-end>)]?
+        const node = this.create(ScopeLimits);
+        // [(<scope-start>)]?
+        if (this.accept(TokenType.ParenthesisL)) {
+            // scope-start selector can start with a combinator as it defaults to :scope
+            // Treat as nested
+            if (!node.setScopeStart(this._parseSelector(true))) {
+                return this.finish(node, ParseError.SelectorExpected, [], [TokenType.ParenthesisR]);
+            }
+            if (!this.accept(TokenType.ParenthesisR)) {
+                return this.finish(node, ParseError.RightParenthesisExpected, [], [TokenType.CurlyL]);
+            }
+        }
+        // [to (<scope-end>)]?
+        if (this.acceptIdent('to')) {
+            if (!this.accept(TokenType.ParenthesisL)) {
+                return this.finish(node, ParseError.LeftParenthesisExpected, [], [TokenType.CurlyL]);
+            }
+            // 'to' selector can start with a combinator as it defaults to :scope
+            // Treat as nested
+            if (!node.setScopeEnd(this._parseSelector(true))) {
+                return this.finish(node, ParseError.SelectorExpected, [], [TokenType.ParenthesisR]);
+            }
+            if (!this.accept(TokenType.ParenthesisR)) {
+                return this.finish(node, ParseError.RightParenthesisExpected, [], [TokenType.CurlyL]);
+            }
+        }
+        return this.finish(node);
     }
     _parseMedium() {
         const node = this.create(Node);
@@ -19334,7 +19496,7 @@ function union(...arrays) {
 
 
 
-class Scope {
+class cssSymbolScope_Scope {
     constructor(offset, length) {
         this.offset = offset;
         this.length = length;
@@ -19385,7 +19547,7 @@ class Scope {
         return this.symbols;
     }
 }
-class GlobalScope extends Scope {
+class GlobalScope extends cssSymbolScope_Scope {
     constructor() {
         super(0, Number.MAX_VALUE);
     }
@@ -19414,7 +19576,7 @@ class ScopeBuilder {
         if (node.offset !== -1) {
             const current = this.scope.findScope(node.offset, node.length);
             if (current && (current.offset !== node.offset || current.length !== node.length)) { // scope already known?
-                const newScope = new Scope(node.offset, node.length);
+                const newScope = new cssSymbolScope_Scope(node.offset, node.length);
                 current.addChild(newScope);
                 return newScope;
             }
@@ -20988,7 +21150,7 @@ class MarkedStringPrinter {
         this.result = [];
         // empty
     }
-    print(element, flagOpts) {
+    print(element, selectorContexts) {
         this.result = [];
         if (element instanceof RootElement) {
             if (element.children) {
@@ -20999,8 +21161,8 @@ class MarkedStringPrinter {
             this.doPrint([element], 0);
         }
         let value;
-        if (flagOpts) {
-            value = `${flagOpts.text}\n … ` + this.result.join('\n');
+        if (selectorContexts) {
+            value = [...selectorContexts, ...this.result].join('\n');
         }
         else {
             value = this.result.join('\n');
@@ -21180,10 +21342,10 @@ class SelectorPrinting {
     constructor(cssDataManager) {
         this.cssDataManager = cssDataManager;
     }
-    selectorToMarkedString(node, flagOpts) {
+    selectorToMarkedString(node, selectorContexts) {
         const root = selectorToElement(node);
         if (root) {
-            const markedStrings = new MarkedStringPrinter('"').print(root, flagOpts);
+            const markedStrings = new MarkedStringPrinter('"').print(root, selectorContexts);
             markedStrings.push(this.selectorToSpecificityMarkedString(node));
             return markedStrings;
         }
@@ -21464,20 +21626,26 @@ class CSSHover {
          * Build up the hover by appending inner node's information
          */
         let hover = null;
-        let flagOpts;
+        let selectorContexts = [];
         for (let i = 0; i < nodepath.length; i++) {
             const node = nodepath[i];
+            if (node instanceof Scope) {
+                const scopeLimits = node.getChild(0);
+                if (scopeLimits instanceof ScopeLimits) {
+                    const scopeName = `${scopeLimits.getName()}`;
+                    selectorContexts.push(`@scope${scopeName ? ` ${scopeName}` : ''}`);
+                }
+            }
             if (node instanceof Media) {
-                const regex = /@media[^\{]+/g;
-                const matches = node.getText().match(regex);
-                flagOpts = {
-                    isMedia: true,
-                    text: matches?.[0],
-                };
+                const mediaList = node.getChild(0);
+                if (mediaList instanceof Medialist) {
+                    const name = '@media ' + mediaList.getText();
+                    selectorContexts.push(name);
+                }
             }
             if (node instanceof Selector) {
                 hover = {
-                    contents: this.selectorPrinting.selectorToMarkedString(node, flagOpts),
+                    contents: this.selectorPrinting.selectorToMarkedString(node, selectorContexts),
                     range: getRange(node),
                 };
                 break;
@@ -21847,6 +22015,14 @@ class CSSNavigation {
                     const name = '@media ' + mediaList.getText();
                     collect(name, main.SymbolKind.Module, node, mediaList, node.getDeclarations());
                 }
+            }
+            else if (node instanceof Scope) {
+                let scopeName = '';
+                const scopeLimits = node.getChild(0);
+                if (scopeLimits instanceof ScopeLimits) {
+                    scopeName = `${scopeLimits.getName()}`;
+                }
+                collect(`@scope${scopeName ? ` ${scopeName}` : ''}`, main.SymbolKind.Module, node, scopeLimits ?? undefined, node.getDeclarations());
             }
             return true;
         });
@@ -27518,7 +27694,7 @@ const webCustomData_cssData = {
                 "FF33"
             ],
             "atRule": "@counter-style",
-            "syntax": "[ <integer> && <symbol> ]#",
+            "syntax": "[ <integer [0,∞]> && <symbol> ]#",
             "relevance": 50,
             "description": "@counter-style descriptor. Specifies the symbols used by the marker-construction algorithm specified by the system descriptor. Needs to be specified if the counter system is 'additive'.",
             "restrictions": [
@@ -27604,7 +27780,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position>",
-            "relevance": 68,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -27687,7 +27863,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
-            "relevance": 89,
+            "relevance": 88,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -27951,7 +28127,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position>",
-            "relevance": 74,
+            "relevance": 75,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -27982,7 +28158,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "initial | inherit | unset | revert | revert-layer",
-            "relevance": 55,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28064,7 +28240,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<single-animation>#",
-            "relevance": 84,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28179,7 +28355,7 @@ const webCustomData_cssData = {
                 "O30"
             ],
             "syntax": "<time>#",
-            "relevance": 71,
+            "relevance": 72,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28228,7 +28404,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<single-animation-fill-mode>#",
-            "relevance": 64,
+            "relevance": 65,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28376,7 +28552,7 @@ const webCustomData_cssData = {
                 "O30"
             ],
             "syntax": "<easing-function>#",
-            "relevance": 72,
+            "relevance": 73,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28417,7 +28593,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "visible | hidden",
-            "relevance": 60,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28665,7 +28841,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<blend-mode>#",
-            "relevance": 54,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28696,7 +28872,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<bg-clip>#",
-            "relevance": 69,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28727,7 +28903,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<color>",
-            "relevance": 95,
+            "relevance": 94,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28827,7 +29003,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<bg-position>#",
-            "relevance": 88,
+            "relevance": 87,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28920,7 +29096,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "[ center | [ [ top | bottom | y-start | y-end ]? <length-percentage>? ]! ]#",
-            "relevance": 54,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -28998,7 +29174,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<bg-size>#",
-            "relevance": 87,
+            "relevance": 86,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29111,7 +29287,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29297,7 +29473,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'border-top-width'>",
-            "relevance": 50,
+            "relevance": 51,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29394,7 +29570,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<'border-top-color'>",
-            "relevance": 69,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29425,7 +29601,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<length-percentage>{1,2}",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29457,7 +29633,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<length-percentage>{1,2}",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29489,7 +29665,7 @@ const webCustomData_cssData = {
                 "O9.2"
             ],
             "syntax": "<line-style>",
-            "relevance": 58,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29520,7 +29696,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 63,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29544,8 +29720,8 @@ const webCustomData_cssData = {
                 "E12",
                 "FF1",
                 "FFA4",
-                "S1.2",
-                "SM3",
+                "S1.1",
+                "SM1",
                 "C1",
                 "CA18",
                 "IE5",
@@ -29562,7 +29738,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "collapse | separate",
-            "relevance": 73,
+            "relevance": 74,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29887,7 +30063,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -29920,7 +30096,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30104,7 +30280,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'border-top-width'>",
-            "relevance": 50,
+            "relevance": 51,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30136,7 +30312,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width> || <line-style> || <color>",
-            "relevance": 81,
+            "relevance": 82,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30170,7 +30346,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<color>",
-            "relevance": 66,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30232,7 +30408,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 64,
+            "relevance": 65,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30264,7 +30440,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<length-percentage>{1,4} [ / <length-percentage>{1,4} ]?",
-            "relevance": 93,
+            "relevance": 92,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30296,7 +30472,7 @@ const webCustomData_cssData = {
                 "O9.2"
             ],
             "syntax": "<line-width> || <line-style> || <color>",
-            "relevance": 80,
+            "relevance": 81,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30330,7 +30506,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<color>",
-            "relevance": 65,
+            "relevance": 66,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30361,7 +30537,7 @@ const webCustomData_cssData = {
                 "O9.2"
             ],
             "syntax": "<line-style>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30392,7 +30568,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 63,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30521,7 +30697,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<color>",
-            "relevance": 70,
+            "relevance": 71,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30552,7 +30728,7 @@ const webCustomData_cssData = {
                 "O10.5"
             ],
             "syntax": "<length-percentage>{1,2}",
-            "relevance": 75,
+            "relevance": 76,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30647,7 +30823,7 @@ const webCustomData_cssData = {
                 "O3.5"
             ],
             "syntax": "<line-width>",
-            "relevance": 62,
+            "relevance": 63,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -30680,7 +30856,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "<line-width>{1,4}",
-            "relevance": 82,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -31067,7 +31243,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "top | bottom",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -31831,7 +32007,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | none | [ <content-replacement> | <content-list> ] [/ [ <string> | <counter> ]+ ]?",
-            "relevance": 91,
+            "relevance": 90,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -32912,14 +33088,14 @@ const webCustomData_cssData = {
         {
             "name": "fill",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -32941,8 +33117,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Paints the interior of the given graphical element.",
             "restrictions": [
@@ -32954,14 +33130,14 @@ const webCustomData_cssData = {
         {
             "name": "fill-opacity",
             "browsers": [
-                "E80",
+                "E15",
                 "FF1",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<'opacity'>",
             "relevance": 55,
@@ -32973,8 +33149,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the opacity of the painting operation used to paint the interior the current object.",
             "restrictions": [
@@ -32984,14 +33160,14 @@ const webCustomData_cssData = {
         {
             "name": "fill-rule",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -33013,8 +33189,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Indicates the algorithm (or winding rule) which is to be used to determine what parts of the canvas are included inside the shape.",
             "restrictions": [
@@ -33151,7 +33327,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]",
-            "relevance": 83,
+            "relevance": 82,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -33317,7 +33493,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'flex-direction'> || <'flex-wrap'>",
-            "relevance": 65,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -33348,7 +33524,7 @@ const webCustomData_cssData = {
                 "O12.1"
             ],
             "syntax": "<number>",
-            "relevance": 78,
+            "relevance": 79,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -33424,7 +33600,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "nowrap | wrap | wrap-reverse",
-            "relevance": 84,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -34312,7 +34488,7 @@ const webCustomData_cssData = {
             ],
             "atRule": "@font-face",
             "syntax": "normal | <feature-tag-value>#",
-            "relevance": 59,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -34444,7 +34620,7 @@ const webCustomData_cssData = {
                     "name": "xx-small"
                 }
             ],
-            "syntax": "<absolute-size> | <relative-size> | <length-percentage>",
+            "syntax": "<absolute-size> | <relative-size> | <length-percentage [0,∞]> | math",
             "relevance": 94,
             "references": [
                 {
@@ -34571,8 +34747,9 @@ const webCustomData_cssData = {
                 }
             ],
             "atRule": "@font-face",
+            "status": "obsolete",
             "syntax": "<font-stretch-absolute>{1,2}",
-            "relevance": 59,
+            "relevance": 10,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35006,7 +35183,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ]",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35198,7 +35375,7 @@ const webCustomData_cssData = {
             ],
             "atRule": "@font-face",
             "syntax": "<font-weight-absolute>{1,2}",
-            "relevance": 94,
+            "relevance": 93,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35227,8 +35404,8 @@ const webCustomData_cssData = {
         {
             "name": "glyph-orientation-vertical",
             "browsers": [
-                "S13.1",
-                "SM13.4"
+                "S4",
+                "SM3.2"
             ],
             "values": [
                 {
@@ -35489,7 +35666,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<grid-line> [ / <grid-line> ]?",
-            "relevance": 61,
+            "relevance": 62,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35589,7 +35766,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<grid-line>",
-            "relevance": 52,
+            "relevance": 53,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35647,7 +35824,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<grid-line> [ / <grid-line> ]?",
-            "relevance": 57,
+            "relevance": 58,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -35809,7 +35986,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | [ <'grid-template-rows'> / <'grid-template-columns'> ] | [ <line-names>? <string> <track-size>? <line-names>? ]+ [ / <explicit-track-list> ]?",
-            "relevance": 50,
+            "relevance": 51,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36327,7 +36504,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | isolate",
-            "relevance": 55,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36424,7 +36601,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ]",
-            "relevance": 89,
+            "relevance": 88,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -36744,7 +36921,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'list-style-type'> || <'list-style-position'> || <'list-style-image'>",
-            "relevance": 84,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37005,7 +37182,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'margin-top'>",
-            "relevance": 55,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37041,7 +37218,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'margin-top'>",
-            "relevance": 56,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37078,7 +37255,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<length-percentage> | auto",
-            "relevance": 92,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37114,7 +37291,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'margin-top'>",
-            "relevance": 58,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37150,7 +37327,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'margin-top'>",
-            "relevance": 59,
+            "relevance": 60,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37187,7 +37364,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<length-percentage> | auto",
-            "relevance": 92,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37282,14 +37459,14 @@ const webCustomData_cssData = {
         {
             "name": "marker",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -37311,8 +37488,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given 'path' element or basic shape.",
             "restrictions": [
@@ -37322,14 +37499,14 @@ const webCustomData_cssData = {
         {
             "name": "marker-end",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -37351,8 +37528,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the marker that will be drawn at the last vertices of the given markable element.",
             "restrictions": [
@@ -37362,14 +37539,14 @@ const webCustomData_cssData = {
         {
             "name": "marker-mid",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -37391,8 +37568,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the marker that will be drawn at all vertices except the first and last.",
             "restrictions": [
@@ -37402,14 +37579,14 @@ const webCustomData_cssData = {
         {
             "name": "marker-start",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -37431,8 +37608,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the marker that will be drawn at the first vertices of the given markable element.",
             "restrictions": [
@@ -37719,7 +37896,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'max-width'>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -37839,7 +38016,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'max-width'>",
-            "relevance": 53,
+            "relevance": 54,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42339,7 +42516,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "fill | contain | cover | none | scale-down",
-            "relevance": 75,
+            "relevance": 74,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42369,7 +42546,7 @@ const webCustomData_cssData = {
                 "O19"
             ],
             "syntax": "<position>",
-            "relevance": 59,
+            "relevance": 58,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42523,7 +42700,7 @@ const webCustomData_cssData = {
                 "O12.1"
             ],
             "syntax": "<integer>",
-            "relevance": 69,
+            "relevance": 68,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42956,7 +43133,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | <color>",
-            "relevance": 62,
+            "relevance": 63,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -42987,7 +43164,7 @@ const webCustomData_cssData = {
                 "O9.5"
             ],
             "syntax": "<length>",
-            "relevance": 70,
+            "relevance": 71,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43024,7 +43201,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | <outline-line-style>",
-            "relevance": 60,
+            "relevance": 61,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43166,7 +43343,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | break-word | anywhere",
-            "relevance": 66,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43437,7 +43614,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'padding-top'>",
-            "relevance": 56,
+            "relevance": 57,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43468,7 +43645,7 @@ const webCustomData_cssData = {
                 "O56"
             ],
             "syntax": "<'padding-top'>",
-            "relevance": 58,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -43893,7 +44070,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | none | visiblePainted | visibleFill | visibleStroke | visible | painted | fill | stroke | all | inherit",
-            "relevance": 84,
+            "relevance": 83,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44110,7 +44287,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | both | horizontal | vertical | block | inline",
-            "relevance": 66,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44653,7 +44830,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | [ x | y | block | inline | both ] [ mandatory | proximity ]?",
-            "relevance": 57,
+            "relevance": 56,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44778,14 +44955,14 @@ const webCustomData_cssData = {
         {
             "name": "shape-rendering",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E79",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -44815,8 +44992,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2020-01-15",
+                "baseline_high_date": "2022-07-15"
             },
             "description": "Provides hints about what tradeoffs to make as it renders vector graphics elements such as <path> elements and basic shapes such as circles and rectangles.",
             "restrictions": [
@@ -44830,7 +45007,7 @@ const webCustomData_cssData = {
                 "O8"
             ],
             "atRule": "@page",
-            "syntax": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
+            "syntax": "<length [0,∞]>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
             "relevance": 53,
             "description": "The size CSS at-rule descriptor, used with the @page at-rule, defines the size and orientation of the box which is used to represent a page. Most of the time, this size corresponds to the target size of the printed page if applicable.",
             "restrictions": [
@@ -44866,17 +45043,17 @@ const webCustomData_cssData = {
         {
             "name": "stop-color",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<'color'>",
-            "relevance": 50,
+            "relevance": 51,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44885,8 +45062,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Indicates what color to use at that gradient stop.",
             "restrictions": [
@@ -44896,14 +45073,14 @@ const webCustomData_cssData = {
         {
             "name": "stop-opacity",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<'opacity'>",
             "relevance": 52,
@@ -44915,8 +45092,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Defines the opacity of a given gradient stop.",
             "restrictions": [
@@ -44926,14 +45103,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E15",
+                "FF1.5",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -44946,7 +45123,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<paint>",
-            "relevance": 69,
+            "relevance": 70,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44955,8 +45132,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Paints along the outline of the given graphical element.",
             "restrictions": [
@@ -44968,14 +45145,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke-dasharray",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -44984,7 +45161,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | <dasharray>",
-            "relevance": 62,
+            "relevance": 63,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -44993,8 +45170,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Controls the pattern of dashes and gaps used to stroke paths.",
             "restrictions": [
@@ -45007,17 +45184,17 @@ const webCustomData_cssData = {
         {
             "name": "stroke-dashoffset",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<length-percentage> | <number>",
-            "relevance": 63,
+            "relevance": 64,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45026,8 +45203,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the distance into the dash pattern to start the dash.",
             "restrictions": [
@@ -45038,14 +45215,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke-linecap",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -45071,8 +45248,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the shape to be used at the end of open subpaths when they are stroked.",
             "restrictions": [
@@ -45082,14 +45259,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke-linejoin",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -45106,7 +45283,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "miter | miter-clip | round | bevel | arcs",
-            "relevance": 51,
+            "relevance": 52,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45115,8 +45292,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the shape to be used at the corners of paths or basic shapes when they are stroked.",
             "restrictions": [
@@ -45126,14 +45303,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke-miterlimit",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<number>",
             "relevance": 53,
@@ -45145,8 +45322,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "When two line segments meet at a sharp angle and miter joins have been specified for 'stroke-linejoin', it is possible for the miter to extend far beyond the thickness of the line stroking the path.",
             "restrictions": [
@@ -45156,14 +45333,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke-opacity",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<'opacity'>",
             "relevance": 53,
@@ -45175,8 +45352,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the opacity of the painting operation used to stroke the current object.",
             "restrictions": [
@@ -45186,14 +45363,14 @@ const webCustomData_cssData = {
         {
             "name": "stroke-width",
             "browsers": [
-                "E80",
-                "FF1",
+                "E15",
+                "FF1.5",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "syntax": "<length-percentage> | <number>",
             "relevance": 70,
@@ -45205,8 +45382,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2017-04-05",
+                "baseline_high_date": "2019-10-05"
             },
             "description": "Specifies the width of the stroke on the current object.",
             "restrictions": [
@@ -45312,7 +45489,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | fixed",
-            "relevance": 58,
+            "relevance": 59,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45342,7 +45519,7 @@ const webCustomData_cssData = {
                 "O15"
             ],
             "syntax": "<integer> | <length>",
-            "relevance": 54,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45422,7 +45599,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "start | end | left | right | center | justify | match-parent",
-            "relevance": 94,
+            "relevance": 93,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45495,14 +45672,14 @@ const webCustomData_cssData = {
         {
             "name": "text-anchor",
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E14",
+                "FF3",
+                "FFA4",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "values": [
                 {
@@ -45528,8 +45705,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2016-08-02",
+                "baseline_high_date": "2019-02-02"
             },
             "description": "Used to align (start-, middle- or end-alignment) a string of text relative to a given point.",
             "restrictions": [
@@ -45588,7 +45765,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<'text-decoration-line'> || <'text-decoration-style'> || <'text-decoration-color'> || <'text-decoration-thickness'>",
-            "relevance": 92,
+            "relevance": 91,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45755,7 +45932,7 @@ const webCustomData_cssData = {
             ],
             "values": [],
             "syntax": "<length-percentage> && hanging? && each-line?",
-            "relevance": 68,
+            "relevance": 69,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -45965,7 +46142,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "auto | optimizeSpeed | optimizeLegibility | geometricPrecision",
-            "relevance": 66,
+            "relevance": 67,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -46002,7 +46179,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "none | <shadow-t>#",
-            "relevance": 73,
+            "relevance": 72,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -46446,7 +46623,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "flat | preserve-3d",
-            "relevance": 56,
+            "relevance": 55,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -46487,7 +46664,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "<single-transition>#",
-            "relevance": 90,
+            "relevance": 89,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -46521,7 +46698,7 @@ const webCustomData_cssData = {
                 "O12.1"
             ],
             "syntax": "<time>#",
-            "relevance": 64,
+            "relevance": 65,
             "references": [
                 {
                     "name": "MDN Reference",
@@ -47045,7 +47222,7 @@ const webCustomData_cssData = {
             ],
             "atRule": "@font-face",
             "syntax": "<unicode-range-token>#",
-            "relevance": 71,
+            "relevance": 72,
             "description": "@font-face descriptor. Defines the set of Unicode codepoints that may be supported by the font face for which it is declared.",
             "restrictions": [
                 "unicode-range"
@@ -49719,7 +49896,7 @@ const webCustomData_cssData = {
                 }
             ],
             "syntax": "normal | break-word",
-            "relevance": 77,
+            "relevance": 78,
             "description": "Specifies whether the UA may break within a word to prevent overflow when an otherwise-unbreakable string is too long to fit.",
             "restrictions": [
                 "enum"
@@ -50394,6 +50571,8 @@ const webCustomData_cssData = {
                 "E93",
                 "FF92",
                 "FFA92",
+                "S15.4",
+                "SM15.4",
                 "C93",
                 "CA93",
                 "O79"
@@ -50405,7 +50584,9 @@ const webCustomData_cssData = {
                 }
             ],
             "baseline": {
-                "status": "false"
+                "status": "high",
+                "baseline_low_date": "2022-03-14",
+                "baseline_high_date": "2024-09-14"
             },
             "description": "Sets the color of the elements accent"
         },
@@ -50415,6 +50596,55 @@ const webCustomData_cssData = {
             "syntax": "[ normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position> ]#",
             "relevance": 0,
             "description": "The align-tracks CSS property sets the alignment in the masonry axis for grid containers that have masonry in their block axis."
+        },
+        {
+            "name": "alignment-baseline",
+            "syntax": "baseline | alphabetic | ideographic | middle | central | mathematical | text-before-edge | text-after-edge",
+            "values": [
+                {
+                    "name": "baseline"
+                },
+                {
+                    "name": "alphabetic"
+                },
+                {
+                    "name": "ideographic"
+                },
+                {
+                    "name": "middle"
+                },
+                {
+                    "name": "central"
+                },
+                {
+                    "name": "mathematical"
+                },
+                {
+                    "name": "text-before-edge"
+                },
+                {
+                    "name": "text-after-edge"
+                }
+            ],
+            "relevance": 50,
+            "browsers": [
+                "E79",
+                "S5.1",
+                "SM5",
+                "C1",
+                "CA18",
+                "O15"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/alignment-baseline"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The alignment-baseline CSS property specifies the specific baseline used to align the box's text and inline-level contents. Baseline alignment is the relationship among the baselines of multiple alignment subjects within an alignment context. When performing baseline alignment, the alignment-baseline property value specifies which baseline of the box is aligned to the corresponding baseline of its alignment context."
         },
         {
             "name": "anchor-name",
@@ -50571,7 +50801,7 @@ const webCustomData_cssData = {
         {
             "name": "appearance",
             "syntax": "none | auto | textfield | menulist-button | <compat-auto>",
-            "relevance": 72,
+            "relevance": 73,
             "browsers": [
                 "E84",
                 "FF80",
@@ -50598,7 +50828,7 @@ const webCustomData_cssData = {
         {
             "name": "aspect-ratio",
             "syntax": "auto || <ratio>",
-            "relevance": 64,
+            "relevance": 63,
             "browsers": [
                 "E88",
                 "FF89",
@@ -50625,7 +50855,7 @@ const webCustomData_cssData = {
         {
             "name": "backdrop-filter",
             "syntax": "none | <filter-value-list>",
-            "relevance": 63,
+            "relevance": 62,
             "browsers": [
                 "E79",
                 "FF103",
@@ -50647,6 +50877,23 @@ const webCustomData_cssData = {
                 "baseline_low_date": "2024-09-16"
             },
             "description": "The backdrop-filter CSS property lets you apply graphical effects such as blurring or color shifting to the area behind an element. Because it applies to everything behind the element, to see the effect you must make the element or its background at least partially transparent."
+        },
+        {
+            "name": "baseline-shift",
+            "syntax": "<length-percentage> | sub | super | baseline",
+            "relevance": 50,
+            "browsers": [
+                "E79",
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": ""
         },
         {
             "name": "border-block",
@@ -50759,7 +51006,7 @@ const webCustomData_cssData = {
         {
             "name": "border-end-end-radius",
             "syntax": "<'border-top-left-radius'>",
-            "relevance": 54,
+            "relevance": 55,
             "browsers": [
                 "E89",
                 "FF66",
@@ -50786,7 +51033,7 @@ const webCustomData_cssData = {
         {
             "name": "border-end-start-radius",
             "syntax": "<'border-top-left-radius'>",
-            "relevance": 54,
+            "relevance": 55,
             "browsers": [
                 "E89",
                 "FF66",
@@ -50921,7 +51168,7 @@ const webCustomData_cssData = {
         {
             "name": "border-start-end-radius",
             "syntax": "<'border-top-left-radius'>",
-            "relevance": 54,
+            "relevance": 55,
             "browsers": [
                 "E89",
                 "FF66",
@@ -50948,7 +51195,7 @@ const webCustomData_cssData = {
         {
             "name": "border-start-start-radius",
             "syntax": "<'border-top-left-radius'>",
-            "relevance": 54,
+            "relevance": 55,
             "browsers": [
                 "E89",
                 "FF66",
@@ -51428,18 +51675,7 @@ const webCustomData_cssData = {
         },
         {
             "name": "container-type",
-            "syntax": "normal | size | inline-size",
-            "values": [
-                {
-                    "name": "normal"
-                },
-                {
-                    "name": "size"
-                },
-                {
-                    "name": "inline-size"
-                }
-            ],
+            "syntax": "normal | [ [ size | inline-size ] || scroll-state ]",
             "relevance": 52,
             "browsers": [
                 "E105",
@@ -51529,16 +51765,16 @@ const webCustomData_cssData = {
         {
             "name": "cx",
             "syntax": "<length> | <percentage>",
-            "relevance": 52,
+            "relevance": 51,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S9",
+                "SM9",
+                "C43",
+                "CA43",
+                "O30"
             ],
             "references": [
                 {
@@ -51556,16 +51792,16 @@ const webCustomData_cssData = {
         {
             "name": "cy",
             "syntax": "<length> | <percentage>",
-            "relevance": 52,
+            "relevance": 51,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S9",
+                "SM9",
+                "C43",
+                "CA43",
+                "O30"
             ],
             "references": [
                 {
@@ -51585,12 +51821,12 @@ const webCustomData_cssData = {
             "syntax": "none | path(<string>)",
             "relevance": 50,
             "browsers": [
-                "E80",
+                "E79",
                 "FF97",
                 "FFA97",
-                "C80",
-                "CA80",
-                "O67"
+                "C52",
+                "CA52",
+                "O39"
             ],
             "references": [
                 {
@@ -51637,14 +51873,14 @@ const webCustomData_cssData = {
             ],
             "relevance": 50,
             "browsers": [
-                "E80",
+                "E79",
                 "FF1",
                 "FFA4",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S4",
+                "SM3.2",
+                "C1",
+                "CA18",
+                "O15"
             ],
             "references": [
                 {
@@ -51654,8 +51890,8 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-03-24",
-                "baseline_high_date": "2022-09-24"
+                "baseline_low_date": "2020-01-15",
+                "baseline_high_date": "2022-07-15"
             },
             "description": "The dominant-baseline CSS property specifies the specific baseline used to align the box's text and inline-level contents. It also indicates the default alignment baseline of any boxes participating in baseline alignment in the box's alignment context. If present, it overrides the shape's dominant-baseline attribute."
         },
@@ -51938,7 +52174,7 @@ const webCustomData_cssData = {
             "name": "font-variation-settings",
             "atRule": "@font-face",
             "syntax": "normal | [ <string> <number> ]#",
-            "relevance": 56,
+            "relevance": 57,
             "browsers": [
                 "E17",
                 "FF62",
@@ -51976,7 +52212,7 @@ const webCustomData_cssData = {
                     "name": "preserve-parent-color"
                 }
             ],
-            "relevance": 58,
+            "relevance": 59,
             "browsers": [
                 "E79",
                 "FF113",
@@ -52071,6 +52307,8 @@ const webCustomData_cssData = {
             "relevance": 50,
             "browsers": [
                 "E109",
+                "FF137",
+                "FFA137",
                 "C109",
                 "CA109",
                 "O95"
@@ -52124,7 +52362,7 @@ const webCustomData_cssData = {
         {
             "name": "inset",
             "syntax": "<'top'>{1,4}",
-            "relevance": 63,
+            "relevance": 64,
             "browsers": [
                 "E87",
                 "FF66",
@@ -52232,7 +52470,7 @@ const webCustomData_cssData = {
         {
             "name": "inset-inline",
             "syntax": "<'top'>{1,2}",
-            "relevance": 53,
+            "relevance": 54,
             "browsers": [
                 "E87",
                 "FF63",
@@ -52259,7 +52497,7 @@ const webCustomData_cssData = {
         {
             "name": "inset-inline-end",
             "syntax": "<'top'>",
-            "relevance": 54,
+            "relevance": 55,
             "browsers": [
                 "E87",
                 "FF63",
@@ -52286,7 +52524,7 @@ const webCustomData_cssData = {
         {
             "name": "inset-inline-start",
             "syntax": "<'top'>",
-            "relevance": 55,
+            "relevance": 56,
             "browsers": [
                 "E87",
                 "FF63",
@@ -52416,7 +52654,7 @@ const webCustomData_cssData = {
         {
             "name": "margin-inline",
             "syntax": "<'margin-top'>{1,2}",
-            "relevance": 55,
+            "relevance": 56,
             "browsers": [
                 "E87",
                 "FF66",
@@ -52660,7 +52898,7 @@ const webCustomData_cssData = {
         {
             "name": "mask-composite",
             "syntax": "<compositing-operator>#",
-            "relevance": 54,
+            "relevance": 53,
             "browsers": [
                 "E120",
                 "FF53",
@@ -52783,6 +53021,22 @@ const webCustomData_cssData = {
             "syntax": "none | <integer>",
             "relevance": 50,
             "description": "The max-lines property forces a break after a set number of lines"
+        },
+        {
+            "name": "object-view-box",
+            "status": "experimental",
+            "syntax": "none | <basic-shape-rect>",
+            "relevance": 50,
+            "browsers": [
+                "E104",
+                "C104",
+                "CA104",
+                "O90"
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": ""
         },
         {
             "name": "offset",
@@ -52955,7 +53209,7 @@ const webCustomData_cssData = {
                     "name": "none"
                 }
             ],
-            "relevance": 52,
+            "relevance": 53,
             "browsers": [
                 "E79",
                 "FF66",
@@ -52998,8 +53252,11 @@ const webCustomData_cssData = {
             ],
             "relevance": 50,
             "browsers": [
+                "E135",
                 "FF69",
-                "FFA79"
+                "FFA79",
+                "C135",
+                "CA135"
             ],
             "references": [
                 {
@@ -53067,8 +53324,11 @@ const webCustomData_cssData = {
             ],
             "relevance": 50,
             "browsers": [
+                "E135",
                 "FF69",
-                "FFA79"
+                "FFA79",
+                "C135",
+                "CA135"
             ],
             "references": [
                 {
@@ -53152,7 +53412,7 @@ const webCustomData_cssData = {
                     "name": "auto"
                 }
             ],
-            "relevance": 50,
+            "relevance": 51,
             "browsers": [
                 "E79",
                 "FF73",
@@ -53293,7 +53553,7 @@ const webCustomData_cssData = {
         {
             "name": "padding-block",
             "syntax": "<'padding-top'>{1,2}",
-            "relevance": 56,
+            "relevance": 57,
             "browsers": [
                 "E87",
                 "FF66",
@@ -53320,7 +53580,7 @@ const webCustomData_cssData = {
         {
             "name": "padding-inline",
             "syntax": "<'padding-top'>{1,2}",
-            "relevance": 57,
+            "relevance": 58,
             "browsers": [
                 "E87",
                 "FF66",
@@ -53352,8 +53612,8 @@ const webCustomData_cssData = {
                 "E85",
                 "FF110",
                 "FFA110",
-                "S13.1",
-                "SM13.4",
+                "S1",
+                "SM1",
                 "C85",
                 "CA85",
                 "O71"
@@ -53618,14 +53878,14 @@ const webCustomData_cssData = {
             "syntax": "<length> | <percentage>",
             "relevance": 52,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S9",
+                "SM9",
+                "C43",
+                "CA43",
+                "O30"
             ],
             "references": [
                 {
@@ -53670,7 +53930,7 @@ const webCustomData_cssData = {
         {
             "name": "row-gap",
             "syntax": "normal | <length-percentage>",
-            "relevance": 60,
+            "relevance": 61,
             "browsers": [
                 "E16",
                 "FF52",
@@ -53717,12 +53977,12 @@ const webCustomData_cssData = {
             "syntax": "<length> | <percentage>",
             "relevance": 50,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "C80",
-                "CA80",
-                "O67"
+                "C43",
+                "CA43",
+                "O30"
             ],
             "references": [
                 {
@@ -53740,12 +54000,12 @@ const webCustomData_cssData = {
             "syntax": "<length> | <percentage>",
             "relevance": 50,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "C80",
-                "CA80",
-                "O67"
+                "C43",
+                "CA43",
+                "O30"
             ],
             "references": [
                 {
@@ -53784,6 +54044,30 @@ const webCustomData_cssData = {
                 "baseline_high_date": "2025-02-05"
             },
             "description": "The scale CSS property allows you to specify scale transforms individually and independently of the transform property. This maps better to typical user interface usage, and saves having to remember the exact order of transform functions to specify in the transform value."
+        },
+        {
+            "name": "scroll-initial-target",
+            "status": "experimental",
+            "syntax": "none | nearest",
+            "values": [
+                {
+                    "name": "none"
+                },
+                {
+                    "name": "nearest"
+                }
+            ],
+            "relevance": 50,
+            "browsers": [
+                "E133",
+                "C133",
+                "CA133",
+                "O118"
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": ""
         },
         {
             "name": "scroll-margin",
@@ -54417,7 +54701,7 @@ const webCustomData_cssData = {
                     "name": "always"
                 }
             ],
-            "relevance": 52,
+            "relevance": 51,
             "browsers": [
                 "E79",
                 "FF103",
@@ -54546,7 +54830,7 @@ const webCustomData_cssData = {
         {
             "name": "scrollbar-color",
             "syntax": "auto | <color>{2}",
-            "relevance": 54,
+            "relevance": 55,
             "browsers": [
                 "E121",
                 "FF64",
@@ -54606,7 +54890,7 @@ const webCustomData_cssData = {
                     "name": "none"
                 }
             ],
-            "relevance": 68,
+            "relevance": 67,
             "browsers": [
                 "E121",
                 "FF64",
@@ -54822,7 +55106,7 @@ const webCustomData_cssData = {
         {
             "name": "text-decoration-thickness",
             "syntax": "auto | from-font | <length> | <percentage> ",
-            "relevance": 52,
+            "relevance": 53,
             "browsers": [
                 "E89",
                 "FF70",
@@ -54958,7 +55242,7 @@ const webCustomData_cssData = {
             "name": "text-size-adjust",
             "status": "experimental",
             "syntax": "none | auto | <percentage>",
-            "relevance": 61,
+            "relevance": 60,
             "browsers": [
                 "E79",
                 "C54",
@@ -55015,7 +55299,7 @@ const webCustomData_cssData = {
         {
             "name": "text-underline-offset",
             "syntax": "auto | <length> | <percentage> ",
-            "relevance": 52,
+            "relevance": 53,
             "browsers": [
                 "E87",
                 "FF70",
@@ -55076,7 +55360,7 @@ const webCustomData_cssData = {
                     "name": "nowrap"
                 }
             ],
-            "relevance": 50,
+            "relevance": 51,
             "browsers": [
                 "E130",
                 "FF124",
@@ -55181,7 +55465,7 @@ const webCustomData_cssData = {
                     "name": "view-box"
                 }
             ],
-            "relevance": 50,
+            "relevance": 51,
             "browsers": [
                 "E79",
                 "FF55",
@@ -55234,7 +55518,7 @@ const webCustomData_cssData = {
         {
             "name": "translate",
             "syntax": "none | <length-percentage> [ <length-percentage> <length>? ]?",
-            "relevance": 51,
+            "relevance": 52,
             "browsers": [
                 "E104",
                 "FF72",
@@ -55280,14 +55564,14 @@ const webCustomData_cssData = {
             ],
             "relevance": 50,
             "browsers": [
-                "E80",
-                "FF72",
-                "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "E79",
+                "FF15",
+                "FFA15",
+                "S5.1",
+                "SM5",
+                "C6",
+                "CA18",
+                "O15"
             ],
             "references": [
                 {
@@ -55297,15 +55581,15 @@ const webCustomData_cssData = {
             ],
             "baseline": {
                 "status": "high",
-                "baseline_low_date": "2020-07-28",
-                "baseline_high_date": "2023-01-28"
+                "baseline_low_date": "2020-01-15",
+                "baseline_high_date": "2022-07-15"
             },
             "description": "The vector-effect CSS property suppresses specific transformation effects in SVG, thus permitting effects like a road on a map staying the same width no matter how the map is zoomed, or allowing a diagram key to retain its position and size regardless of other transforms. It can only be used with SVG elements that accept the vector-effect attribute. When used, the CSS value overrides any values of the element's vector-effect attribute."
         },
         {
             "name": "view-timeline",
             "status": "experimental",
-            "syntax": "[ <'view-timeline-name'> <'view-timeline-axis'>? ]#",
+            "syntax": "[ <'view-timeline-name'> [ <'view-timeline-axis'> || <'view-timeline-inset'> ]? ]#",
             "relevance": 50,
             "browsers": [
                 "E115",
@@ -55371,7 +55655,7 @@ const webCustomData_cssData = {
         {
             "name": "view-timeline-name",
             "status": "experimental",
-            "syntax": "none | <dashed-ident>#",
+            "syntax": "[ none | <dashed-ident> ]#",
             "relevance": 50,
             "browsers": [
                 "E115",
@@ -55506,14 +55790,14 @@ const webCustomData_cssData = {
             "syntax": "<length> | <percentage>",
             "relevance": 51,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S9",
+                "SM9",
+                "C42",
+                "CA42",
+                "O29"
             ],
             "references": [
                 {
@@ -55533,14 +55817,14 @@ const webCustomData_cssData = {
             "syntax": "<length> | <percentage>",
             "relevance": 51,
             "browsers": [
-                "E80",
-                "FF72",
+                "E79",
+                "FF69",
                 "FFA79",
-                "S13.1",
-                "SM13.4",
-                "C80",
-                "CA80",
-                "O67"
+                "S9",
+                "SM9",
+                "C42",
+                "CA42",
+                "O29"
             ],
             "references": [
                 {
@@ -55590,7 +55874,7 @@ const webCustomData_cssData = {
                     "name": "optional"
                 }
             ],
-            "relevance": 75,
+            "relevance": 74,
             "description": "The font-display descriptor determines how a font face is displayed based on whether and when it is downloaded and ready to use."
         },
         {
@@ -56041,6 +56325,152 @@ const webCustomData_cssData = {
                 "S4"
             ],
             "description": "Defines set of animation key frames."
+        },
+        {
+            "name": "@container",
+            "browsers": [
+                "E105",
+                "FF110",
+                "FFA110",
+                "S16",
+                "SM16",
+                "C105",
+                "CA105",
+                "O91"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@container"
+                }
+            ],
+            "baseline": {
+                "status": "low",
+                "baseline_low_date": "2023-02-14"
+            },
+            "description": "The @container CSS at-rule is a conditional group rule that applies styles to a containment context."
+        },
+        {
+            "name": "@document",
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@document"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The @document CSS at-rule restricts the style rules contained within it based on the URL of the document. It is designed primarily for user-defined style sheets (see userchrome.org for more information), though it can be used on author-defined style sheets, too."
+        },
+        {
+            "name": "@font-palette-values",
+            "browsers": [
+                "E101",
+                "FF107",
+                "FFA107",
+                "S15.4",
+                "SM15.4",
+                "C101",
+                "CA101",
+                "O87"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@font-palette-values"
+                }
+            ],
+            "baseline": {
+                "status": "low",
+                "baseline_low_date": "2022-11-15"
+            },
+            "description": "The @font-palette-values CSS at-rule allows you to customize the default values of font-palette created by the font-maker."
+        },
+        {
+            "name": "@position-try",
+            "browsers": [
+                "E125",
+                "C125",
+                "CA125",
+                "O111"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@position-try"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The @position-try CSS at-rule is used to define a custom position try fallback option, which can be used to define positioning and alignment for anchor-positioned elements. One or more sets of position try fallback options can be applied to the anchored element via the position-try-fallbacks property or position-try shorthand. When the positioned element is moved to a position where it starts to overflow its containing block or the viewport, the browser will select the first position try fallback option it finds that places the positioned element fully back on-screen."
+        },
+        {
+            "name": "@scope",
+            "browsers": [
+                "E118",
+                "S17.4",
+                "SM17.4",
+                "C118",
+                "CA118",
+                "O104"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@scope"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The @scope CSS at-rule enables you to select elements in specific DOM subtrees, targeting elements precisely without writing overly-specific selectors that are hard to override, and without coupling your selectors too tightly to the DOM structure."
+        },
+        {
+            "name": "@starting-style",
+            "browsers": [
+                "E117",
+                "FF129",
+                "FFA129",
+                "S17.5",
+                "SM17.5",
+                "C117",
+                "CA117",
+                "O103"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@starting-style"
+                }
+            ],
+            "baseline": {
+                "status": "low",
+                "baseline_low_date": "2024-08-06"
+            },
+            "description": "The @starting-style CSS at-rule is used to define starting values for properties set on an element that you want to transition from when the element receives its first style update, i.e., when an element is first displayed on a previously loaded page."
+        },
+        {
+            "name": "@view-transition",
+            "browsers": [
+                "E126",
+                "S18.2",
+                "SM18.2",
+                "C126",
+                "CA126",
+                "O112"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/@view-transition"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The @view-transition CSS at-rule is used to opt in the current and destination documents to undergo a view transition, in the case of a cross-document navigation."
         }
     ],
     "pseudoClasses": [
@@ -57479,7 +57909,8 @@ const webCustomData_cssData = {
             "name": ":active-view-transition-type",
             "browsers": [
                 "E125",
-                "Spreview",
+                "S18.2",
+                "SM18.2",
                 "C125",
                 "CA125",
                 "O111"
@@ -57756,6 +58187,27 @@ const webCustomData_cssData = {
             "description": "The :muted CSS pseudo-class selector represents an element that is capable of making sound, such as audio or video, but is muted (forced silent)."
         },
         {
+            "name": ":open",
+            "browsers": [
+                "E133",
+                "FF136",
+                "FFA136",
+                "C133",
+                "CA133",
+                "O118"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/:open"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The :open CSS pseudo-class represents an element that has open and closed states, only when it is currently in the open state."
+        },
+        {
             "name": ":paused",
             "browsers": [
                 "S15.4",
@@ -57921,10 +58373,20 @@ const webCustomData_cssData = {
         {
             "name": ":target-current",
             "status": "experimental",
+            "browsers": [
+                "E135",
+                "C135"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/:target-current"
+                }
+            ],
             "baseline": {
                 "status": "false"
             },
-            "description": ""
+            "description": "The :target-current CSS pseudo-class selects the active scroll marker — the ::scroll-marker pseudo-element of a scroll-marker-group that is currently scrolled to. This selector can be used to style the active navigation position within a scroll marker group."
         },
         {
             "name": ":target-within",
@@ -59012,10 +59474,29 @@ const webCustomData_cssData = {
             "description": "The ::-webkit-progress-value CSS pseudo-element represents the filled-in portion of the bar of a <progress> element. It is a child of the ::-webkit-progress-bar pseudo-element.\n\nIn order to let ::-webkit-progress-value take effect, -webkit-appearance needs to be set to none on the <progress> element."
         },
         {
+            "name": "::checkmark",
+            "browsers": [
+                "E134",
+                "C134",
+                "CA134"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/::checkmark"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The ::checkmark CSS pseudo-element targets the checkmark placed inside the currently-selected option element of a customizable select element. It can be used to provide a visual indication of which option is selected."
+        },
+        {
             "name": "::details-content",
-            "status": "experimental",
             "browsers": [
                 "E131",
+                "S18.4",
+                "SM18.4",
                 "C131",
                 "CA131",
                 "O116"
@@ -59147,6 +59628,42 @@ const webCustomData_cssData = {
             "description": "The ::part CSS pseudo-element represents any element within a shadow tree that has a matching part attribute."
         },
         {
+            "name": "::picker-icon",
+            "browsers": [
+                "E134",
+                "C134",
+                "CA134"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/::picker-icon"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": "The ::picker-icon CSS pseudo-element targets the picker icon inside form controls that have an icon associated with them. In the case of a customizable select element, it selects the arrow icon shown on the <select> element that points down when it is closed."
+        },
+        {
+            "name": "::picker",
+            "browsers": [
+                "E134",
+                "C134",
+                "CA134"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/::picker"
+                }
+            ],
+            "baseline": {
+                "status": "false"
+            },
+            "description": ""
+        },
+        {
             "name": "::placeholder",
             "browsers": [
                 "E79",
@@ -59174,18 +59691,38 @@ const webCustomData_cssData = {
         {
             "name": "::scroll-marker",
             "status": "experimental",
+            "browsers": [
+                "E135",
+                "C135"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/::scroll-marker"
+                }
+            ],
             "baseline": {
                 "status": "false"
             },
-            "description": ""
+            "description": "The ::scroll-marker CSS pseudo-element can be generated inside any element and represents its scroll marker. All elements can have a ::scroll-marker pseudo-element, which is placed into the ::scroll-marker-group of the nearest scroll container ancestor. A scroll marker behaves like an anchor (a element) whose scroll target is the marker's originating element — and scrolls the scroll container to that element when activated."
         },
         {
             "name": "::scroll-marker-group",
             "status": "experimental",
+            "browsers": [
+                "E135",
+                "C135"
+            ],
+            "references": [
+                {
+                    "name": "MDN Reference",
+                    "url": "https://developer.mozilla.org/docs/Web/CSS/::scroll-marker-group"
+                }
+            ],
             "baseline": {
                 "status": "false"
             },
-            "description": ""
+            "description": "The ::scroll-marker-group CSS pseudo-element is generated inside a scroll container and contains any ::scroll-marker pseudo-elements generated on descendants of the scroll container."
         },
         {
             "name": "::slotted",
