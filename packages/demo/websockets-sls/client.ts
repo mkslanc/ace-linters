@@ -1,9 +1,7 @@
 import "ace-code/esm-resolver";
-import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+import {AceLanguageClient, LanguageClientConfig} from "ace-linters/build/ace-language-client";
 import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {svelteContent} from "../docs-example/svelte-example";
-import {LanguageClientConfig} from "ace-linters/types/types/language-service";
-
 
 let modes = [
   {name: "svelte", mode: "ace/mode/html", content: svelteContent},
@@ -19,8 +17,9 @@ let languageProvider = AceLanguageClient.for(serverData);
 
 let i = 0;
 for (let mode of modes) {
+  // @ts-expect-error
   createEditorWithLSP(mode, i, languageProvider);
   i++;
 }
-
+// @ts-expect-error
 addFormatCommand(languageProvider);

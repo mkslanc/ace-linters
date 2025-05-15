@@ -1,9 +1,8 @@
 import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
-import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+import {AceLanguageClient, LanguageClientConfig} from "ace-linters/build/ace-language-client";
 import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {jsonContent, jsonSchema, jsonSchema2} from "../docs-example/json-example";
-import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
@@ -30,6 +29,7 @@ languageProvider.setGlobalOptions("json", {
 
 let i = 0;
 for (let mode of modes) {
+    // @ts-expect-error
     createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
@@ -39,5 +39,5 @@ languageProvider.setGlobalOptions("json", {
         schema: jsonSchema
     },]
 }, true);
-
+// @ts-expect-error
 addFormatCommand(languageProvider);

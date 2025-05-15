@@ -28,16 +28,20 @@ let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 let languageProvider = LanguageProvider.create(worker);
 
 let el = document.getElementById("ace_modes");
-el.onchange = function () {
-    let mode = modes.find(x => x.name == el["value"]);
-    editor.session.setMode(mode.mode);
+if (el && "value" in el) {
+    el.onchange = function () {
+        let mode = modes.find(x => x.name == el["value"]);
+        if (mode)
+            editor.session.setMode(mode.mode);
+    }
+    for (var i = 0; i < modes.length; i++) {
+        let option = document.createElement("option");
+        option.value = modes[i].name;
+        option.innerText = modes[i].name;
+        el.appendChild(option);
+    }
 }
-for (var i = 0; i < modes.length; i++) {
-    let option = document.createElement("option");
-    option.value = modes[i].name;
-    option.innerText = modes[i].name;
-    el.appendChild(option);
-}
+
 
 let editorEl = document.createElement("div");
 let editorContainer = document.createElement("div");
@@ -46,7 +50,9 @@ editorContainer.style.height = "300px";
 editorEl.appendChild(editorContainer);
 editorEl.style.width = "49%";
 editorEl.style.float = "left";
-document.getElementById("wrapper").appendChild(editorEl);
+
+const wrapper = document.getElementById("wrapper");
+wrapper?.appendChild(editorEl);
 
 let currentMode = modes[0];
 

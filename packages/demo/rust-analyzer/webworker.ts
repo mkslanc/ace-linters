@@ -17,7 +17,7 @@ import {
     CompletionParams,
     PublishDiagnosticsNotification,
     Diagnostic,
-    TextDocument
+    TextDocument, TextDocumentIdentifier
 } from "vscode-languageserver-protocol";
 import {RustService} from "./rust-service/rust_service";
 
@@ -70,12 +70,12 @@ conn.onRequest(CompletionResolveRequest.type, async (item: CompletionItem) => {
     return rustService.doResolve(item);
 });
 
-async function doValidation(document) {
+async function doValidation(document: TextDocumentIdentifier) {
     let diagnostics = await rustService.doValidation(document);
     sendDiagnostics(document, diagnostics);
 }
 
-function sendDiagnostics(document: TextDocument, diagnostics: Diagnostic[]): void {
+function sendDiagnostics(document: TextDocumentIdentifier, diagnostics: Diagnostic[]): void {
     conn.sendNotification(PublishDiagnosticsNotification.type, {
         uri: document.uri, diagnostics
     })

@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && webpack",
@@ -8,10 +8,10 @@
     "start-dev": "webpack-dev-server"
   },
   "dependencies": {
-    "ace-code": "^1.37.0",
-    "ace-layout": "latest",
+    "ace-code": "^1.41.0",
+    "ace-layout": "^1.5.0",
     "jsonc-parser": "latest",
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/node": "^20.4.2",

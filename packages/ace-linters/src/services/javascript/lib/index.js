@@ -3354,12 +3354,11 @@ var require_define_properties = __commonJS({
     var hasSymbols = typeof Symbol === "function" && typeof Symbol("foo") === "symbol";
     var toStr = Object.prototype.toString;
     var concat = Array.prototype.concat;
-    var origDefineProperty = Object.defineProperty;
+    var defineDataProperty = require_define_data_property();
     var isFunction = function(fn) {
       return typeof fn === "function" && toStr.call(fn) === "[object Function]";
     };
-    var hasPropertyDescriptors = require_has_property_descriptors()();
-    var supportsDescriptors = origDefineProperty && hasPropertyDescriptors;
+    var supportsDescriptors = require_has_property_descriptors()();
     var defineProperty = function(object, name, value, predicate) {
       if (name in object) {
         if (predicate === true) {
@@ -3371,14 +3370,9 @@ var require_define_properties = __commonJS({
         }
       }
       if (supportsDescriptors) {
-        origDefineProperty(object, name, {
-          configurable: true,
-          enumerable: false,
-          value,
-          writable: true
-        });
+        defineDataProperty(object, name, value, true);
       } else {
-        object[name] = value;
+        defineDataProperty(object, name, value);
       }
     };
     var defineProperties = function(object, map) {

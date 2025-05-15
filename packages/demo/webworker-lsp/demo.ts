@@ -51,7 +51,19 @@ let modes = [
 ];
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
+let languageProvider = LanguageProvider.create(worker, {
+    functionality: {
+        completion: {
+            overwriteCompleters: true,
+            lspCompleterOptions: {
+                triggerCharacters: {
+                    add: ["\n", "\r\n"],
+                    remove: [],
+                }
+            }
+        }
+    }
+});
 
 languageProvider.setGlobalOptions("json", {
     schemas: [
