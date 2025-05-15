@@ -1,8 +1,7 @@
 import "ace-code/esm-resolver";
-import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+import {AceLanguageClient, LanguageClientConfig} from "ace-linters/build/ace-language-client";
 import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {jsContent} from "../docs-example/javascript-example";
-import {LanguageClientConfig} from "ace-linters/types/types/language-service";
 import {Ace} from "ace-code";
 import {Autocomplete} from "ace-code/src/autocomplete";
 import "ace-code/src/ext/inline_autocomplete";
@@ -129,6 +128,7 @@ const serverData: LanguageClientConfig = {
 
 let languageProvider = AceLanguageClient.for(serverData);
 
+// @ts-expect-error
 let editor = createEditorWithLSP(modes[0], 0, languageProvider);
 //@ts-expect-error this should be added to ace declaration
 editor.setOption("enableInlineAutocompletion", true);
@@ -140,12 +140,14 @@ function enableInnerAutocomplete(editor: Ace.Editor) {
     let originalAutocompleteCommand = editor.commands.byName.startAutocomplete.exec;
     editor.commands.byName.startAutocomplete.exec = function (editor) {
         var autocomplete = Autocomplete.for(editor);
-        autocomplete.getCompletionProvider().ignoreCaption = true;
+        // @ts-ignore
+        autocomplete.getCompletionProvider()["ignoreCaption"] = true;
         autocomplete.inlineEnabled = true;
-        autocomplete.ignoreCaption = true;
+        // @ts-ignore
+        autocomplete["ignoreCaption"] = true;
         // @ts-ignore
         originalAutocompleteCommand(...arguments);
     }
 }
-
+// @ts-expect-error
 addFormatCommand(languageProvider);

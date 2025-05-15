@@ -21,7 +21,7 @@ import {
     DocumentRangeFormattingParams,
     PublishDiagnosticsNotification,
     Diagnostic,
-    TextDocument
+    TextDocumentIdentifier
 } from "vscode-languageserver-protocol";
 import {JsonService} from "ace-linters/build/json-service";
 
@@ -74,12 +74,12 @@ conn.onRequest(DocumentRangeFormattingRequest.type, async (params: DocumentRange
 
 conn.listen();
 
-async function doValidation(document) {
+async function doValidation(document: TextDocumentIdentifier) {
     let diagnostics = await jsonService.doValidation(document);
     sendDiagnostics(document, diagnostics);
 }
 
-function sendDiagnostics(document: TextDocument, diagnostics: Diagnostic[]): void {
+function sendDiagnostics(document: TextDocumentIdentifier, diagnostics: Diagnostic[]): void {
     conn.sendNotification(PublishDiagnosticsNotification.type, {
         uri: document.uri, diagnostics
     })

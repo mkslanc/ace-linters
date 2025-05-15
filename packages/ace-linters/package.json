@@ -1,15 +1,15 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "scripts": {
     "clean": "rimraf build",
-    "prebuild": "node prebuild.js",
+    "postbuild": "node postbuild.js",
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
     "build:eslint-linter-bundle": "cd ../eslint-linter-bundle && npm run build",
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
-    "build": "npm run clean && npm run build:dependencies && webpack --mode=production",
-    "build-dev": "npm run clean && npm run build:dependencies && webpack --mode=development",
+    "build": "npm run clean && npm run build:dependencies && webpack --mode=production && npm run postbuild",
+    "build-dev": "npm run clean && npm run build:dependencies &&  webpack --mode=development && npm run postbuild",
     "copy-build": "node tools/copy-build-for-tests.js",
     "start-test-server": "npm run copy-build && http-server --cors='*' tests/ui/dist",
     "test:unit": "mocha --config mocha.unit.config.js --exit",
@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "vscode-languageserver-protocol": "^3.17.5",
-    "vscode-languageserver-textdocument": "^1.0.8",
-    "vscode-languageserver-types": "^3.17.3"
+    "vscode-languageserver-textdocument": "^1.0.12",
+    "vscode-languageserver-types": "^3.17.5"
   },
   "devDependencies": {
-    "vscode-html-languageservice": "^5.3.3",
-    "vscode-css-languageservice": "^6.3.3",
-    "vscode-json-languageservice": "^5.4.4",
+    "vscode-html-languageservice": "^5.4.0",
+    "vscode-css-languageservice": "^6.3.5",
+    "vscode-json-languageservice": "^5.5.0",
     "luaparse": "^0.3.1",
     "showdown": "^2.1.0",
     "vscode-ws-jsonrpc": "^3.4.0",
@@ -36,7 +36,7 @@
     "@xml-tools/parser": "^1.0.11",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/simple-schema": "^3.0.5",
-    "vscode-uri": "^3.0.8",
+    "vscode-uri": "^3.1.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/mocha": "^5.2.7",
     "@types/chai": "^4.3.4",
@@ -50,51 +50,9 @@
     "dts-bundle-generator": "^9.5.1"
   },
   "main": "build/ace-linters.js",
-  "types": "types/ace-linters.d.ts",
-  "files": ["build", "types"],
-  "typesVersions": {
-    "*": {
-      "build/ace-language-client": [
-        "./types/ace-language-client.d.ts"
-      ],
-      "build/service-manager": [
-        "./types/service-manager.d.ts"
-      ],
-      "build/html-service": [
-        "./types/html-service.d.ts"
-      ],
-      "build/css-service": [
-        "./types/css-service.d.ts"
-      ],
-      "build/json-service": [
-        "./types/json-service.d.ts"
-      ],
-      "build/lua-service": [
-        "./types/lua-service.d.ts"
-      ],
-      "build/typescript-service": [
-        "./types/typescript-service.d.ts"
-      ],
-      "build/xml-service": [
-        "./types/xml-service.d.ts"
-      ],
-      "build/php-service": [
-        "./types/php-service.d.ts"
-      ],
-      "build/javascript-service": [
-        "./types/javascript-service.d.ts"
-      ],
-      "build/yaml-service": [
-        "./types/yaml-service.d.ts"
-      ],
-      "build/base-service": [
-        "./types/base-service.d.ts"
-      ],
-      "build/language-client": [
-        "./types/language-client.d.ts"
-      ]
-    }
-  },
+  "files": [
+    "build"
+  ],
   "repository": {
     "url": "https://github.com/mkslanc/ace-linters"
   },

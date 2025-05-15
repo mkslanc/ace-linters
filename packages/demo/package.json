@@ -1,6 +1,7 @@
 {
   "name": "@ace-linters/demo",
   "scripts": {
-    "build": ""
+    "build": "",
+    "check": "tsc"
   }
 }
