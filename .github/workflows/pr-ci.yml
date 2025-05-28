@@ -1,0 +1,56 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+      
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Fetch the main branch
+      run: git fetch origin HEAD:refs/remotes/origin/HEAD --depth 1
+    - name: Fetch the main branch
+      run: git diff --name-only origin/HEAD --no-renames --diff-filter=ACMR
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run build
+    - run: npm run test:unit -w packages/ace-linters
+    - run: |
+        # Copy Build Files for UI Tests
+        mkdir -p packages/ace-linters/tests/ui/dist/build
+        cp -r packages/ace-linters/build/* packages/ace-linters/tests/ui/dist/build/
+
+        npx http-server --cors='*' packages/ace-linters/tests/ui/dist &
+        sleep 5
+
+        npm run test:ui -w packages/ace-linters
+
+    # TODO upload to codecov
+    # - uses: codecov/codecov-action@v3
+    #   with:
+    #     token: d8edca4b-8e97-41e5-b54e-34c7cf3b2d47
+    #     file: ./coverage/coverage.json
+    #     flags: unittests
+    #     name: codecov-umbrella
+    #     fail_ci_if_error: true

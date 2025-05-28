@@ -12,7 +12,7 @@ export interface LanguageService {
     documents: { [documentUri: string]: TextDocument };
     serviceName: string;
     mode: string;
-    globalOptions;
+    globalOptions: ServiceOptions;
     serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
     workspaceUri?: string;
@@ -29,21 +29,21 @@ export interface LanguageService {
 
     doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 
-    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
+    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
 
-    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]);
+    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
 
-    addDocument(document: TextDocumentItem);
+    addDocument(document: TextDocumentItem): void;
 
-    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean); //TODO:
+    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean): void;
 
-    setGlobalOptions(options: ServiceOptions); //TODO:
+    setGlobalOptions(options: ServiceOptions): void;
 
     getDocument(uri: string): TextDocument;
 
-    removeDocument(document: TextDocumentIdentifier);
+    removeDocument(document: TextDocumentIdentifier): void;
 
-    renameDocument(document: TextDocumentIdentifier, newDocumentUri: string);
+    renameDocument(document: TextDocumentIdentifier, newDocumentUri: string): void;
 
     getDocumentValue(uri: string): string | undefined;
 
@@ -226,11 +226,23 @@ export type SupportedServices =
     | "scss"
     | "python";
 
+/** Options for the completer coming from the LSP server */
+export interface LspCompleterOptions {
+    triggerCharacters: TriggerCharacterOptions
+}
+
+/** Options regarding the trigger characters */
+export interface TriggerCharacterOptions {
+    add?: string[], // The trigger characters to add
+    remove?: string[] // The trigger characters to remove
+}
+
 export interface ProviderOptions {
     functionality?: {
         hover?: boolean,
         completion?: {
-            overwriteCompleters: boolean
+            overwriteCompleters: boolean,
+            lspCompleterOptions?: LspCompleterOptions
         } | false,
         inlineCompletion?: {
             overwriteCompleters: boolean

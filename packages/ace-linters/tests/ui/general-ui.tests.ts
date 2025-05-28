@@ -3,7 +3,7 @@ import puppeteer, {Browser, Page} from "puppeteer";
 import {MessageType} from "../../src/message-types";
 import {Ace} from "ace-code";
 import {LanguageProvider} from "../../src";
-import {yamlContent, yamlSchema} from "@ace-linters/demo/build/docs-example/yaml-example";
+import {yamlContent, yamlSchema} from "./yaml-example";
 
 interface TestFlags {
     isInit: boolean;
@@ -36,7 +36,7 @@ describe("Editor Console Error Tests", function () {
     };
 
     before(async function () {
-        browser = await puppeteer.launch({headless: true});
+        browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
         page = await browser.newPage();
 
         consoleErrors = [];
@@ -83,7 +83,9 @@ describe("Editor Console Error Tests", function () {
     });
 
     after(async function () {
-        await browser.close();
+        if (browser) {
+            await browser.close();
+        }
     });
 
     it("should not produce errors when switching modes (without extra settings)", async function () {
@@ -145,4 +147,47 @@ describe("Editor Console Error Tests", function () {
 
         expect(consoleErrors, "Critical errors in YAML mode").to.be.empty;
     });
+
+    it("should handle typescript autocompletion correctly for different cases", async function () {
+        await page.evaluate(() => {
+            window.testFlags.modeChanged = false;
+            window.editor.session.setMode("ace/mode/typescript");
+            window.editor.setValue("");
+        });
+        await waitForFlag("modeChanged");
+
+        await page.click(".ace_content");
+        await page.keyboard.type("win");
+
+        await page.waitForSelector(".ace_selected");
+
+        await page.keyboard.press("Enter");
+
+        const completed = await page.evaluate(() => window.editor.getValue().trim());
+        expect(completed, "Autocompletion result").to.equal("window");
+
+        await page.evaluate(() => {
+            window.testFlags.modeChanged = false;
+            window.editor.setValue(`class A {
+    "with-dashes" = 2;
+};
+
+let a = new A();`);
+            window.editor.clearSelection();
+        });
+        await page.keyboard.press("Enter");
+        await page.keyboard.type("a.");
+        await new Promise(r => setTimeout(r, 100));
+        await page.keyboard.press("Enter");
+
+        const result = await page.evaluate(() => window.editor.getValue().trim());
+        expect(result, "Autocompletion result").to.equal(`class A {
+    "with-dashes" = 2;
+};
+
+let a = new A();
+a.["with-dashes"]`);
+
+    });
+
 });

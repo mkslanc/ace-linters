@@ -105,6 +105,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     protected constructor(mode: string, workspaceUri?: string) {
         this.mode = mode;
         this.workspaceUri = workspaceUri;
+        this.serviceName = "BaseService";
+
+        this.serviceData = {
+            className: "BaseService",
+            modes: "",
+            module: () => {}
+        }
     }
 
     addDocument(document: lsp.TextDocumentItem) {
@@ -168,7 +175,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             TextDocument.update(document, deltas, identifier.version);
     }
 
-    async doComplete(document, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+    async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
         return null;
     }
 
@@ -176,7 +183,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return null;
     }
 
-    async doHover(document, position: lsp.Position): Promise<lsp.Hover | null> {
+    async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         return null;
     }
 

@@ -5,13 +5,12 @@ import fake_std from './fake_std.rs';
 import fake_core from './fake_core.rs';
 // @ts-ignore
 import fake_alloc from './fake_alloc.rs';
-import {BaseService} from 'ace-linters/build/base-service';
+import {BaseService, LanguageService} from 'ace-linters/build/base-service';
 import * as lsp from "vscode-languageserver-protocol";
 import {toCompletions, toDiagnostics, toHover} from "./type_converters/converters";
-import {LanguageService} from "ace-linters/types/types/language-service";
 
 export class RustService extends BaseService implements LanguageService {
-    $service: WorldState;
+    $service?: WorldState;
 
     constructor(mode: string) {
         super(mode);
@@ -28,12 +27,12 @@ export class RustService extends BaseService implements LanguageService {
     async doHover(identifier: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         let document = this.getDocumentValue(identifier.uri);
         if (!document) {
-            return;
+            return null;
         }
-        await this.$service.update(document);
+        await this.$service!.update(document);
         let hover;
         try {
-            hover = this.$service.hover(position.line, position.character);
+            hover = this.$service!.hover(position.line, position.character);
         } catch (e) {
         }
         return toHover(hover);
@@ -44,7 +43,7 @@ export class RustService extends BaseService implements LanguageService {
         if (!document) {
             return [];
         }
-        let res = await this.$service.update(document);
+        let res = await this.$service!.update(document);
 
         return toDiagnostics(res.diagnostics);
     }
@@ -54,8 +53,8 @@ export class RustService extends BaseService implements LanguageService {
         if (!document) {
             return null;
         }
-        await this.$service.update(document);
-        let completions = await this.$service.completions(position.line, position.character);
+        await this.$service!.update(document);
+        let completions = await this.$service!.completions(position.line, position.character);
         return toCompletions(completions);
     }
 

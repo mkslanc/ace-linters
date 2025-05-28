@@ -1,6 +1,7 @@
 import {URI} from "vscode-uri";
+import type {AceRangeData} from "./types/language-service";
 
-export function mergeObjects(obj1, obj2, excludeUndefined = false) {
+export function mergeObjects(obj1: any, obj2: any, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
     if (excludeUndefined) {
@@ -34,8 +35,12 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
     return value !== null && value !== undefined;
 }
 
+export function isEmptyRange(range: AceRangeData): boolean {
+    return (range.start.row === range.end.row && range.start.column === range.end.column);
+}
+
 //taken with small changes from ace-code
-export function mergeRanges(ranges) {
+export function mergeRanges(ranges: AceRangeData[]): AceRangeData[] {
     var list = ranges;
 
     list = list.sort(function (a, b) {
@@ -49,7 +54,7 @@ export function mergeRanges(ranges) {
         var cmp = comparePoints(range.end, next.start);
         if (cmp < 0) continue;
 
-        if (cmp == 0 && !range.isEmpty() && !next.isEmpty()) continue;
+        if (cmp == 0 && !isEmptyRange(range) && !isEmptyRange(next)) continue;
 
         if (comparePoints(range.end, next.end) < 0) {
             range.end.row = next.end.row;
@@ -64,7 +69,13 @@ export function mergeRanges(ranges) {
     return list;
 }
 
-function comparePoints(p1, p2) {
+function comparePoints(p1: {
+    row: number,
+    column: number
+}, p2: {
+    row: number,
+    column: number
+}) {
     return p1.row - p2.row || p1.column - p2.column;
 }
 
