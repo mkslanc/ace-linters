@@ -16,6 +16,7 @@ export interface LanguageService {
 	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 	doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
 	doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
+	doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>;
 	doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 	setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
 	applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
@@ -35,6 +36,8 @@ export interface LanguageService {
 	dispose(): Promise<void>;
 	closeConnection(): Promise<void>;
 	setWorkspace(workspaceUri: string): void;
+	sendRequest(name: string, args?: lsp.LSPAny): Promise<any>;
+	sendResponse(callbackId: number, args?: lsp.LSPAny): void;
 }
 export interface ServiceOptions {
 	[name: string]: any;
@@ -42,12 +45,13 @@ export interface ServiceOptions {
 export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand" | "inlineCompletion";
 export interface ServiceConfig extends BaseConfig {
 	className: string;
 	options?: ServiceOptions;
 }
 export interface BaseConfig {
+	serviceName?: string;
 	initializationOptions?: ServiceOptions;
 	options?: ServiceOptions;
 	serviceInstance?: LanguageService;

@@ -4150,6 +4150,9 @@ class BaseService {
     async doComplete(document, position) {
         return null;
     }
+    async doInlineComplete(document, position) {
+        return null;
+    }
     async doHover(document, position) {
         return null;
     }
@@ -4195,6 +4198,12 @@ class BaseService {
         return Promise.resolve(null);
     }
     sendAppliedResult(result, callbackId) {}
+    sendRequest(name, args) {
+        return Promise.resolve(null);
+    }
+    sendResponse(callbackId, args) {
+        return;
+    }
     constructor(mode, workspaceUri){
         _define_property(this, "serviceName", void 0);
         _define_property(this, "mode", void 0);
@@ -4280,6 +4289,14 @@ class BaseService {
                 },
                 codeAction: {
                     dynamicRegistration: true
+                },
+                inlineCompletion: {
+                    dynamicRegistration: true
+                }
+            },
+            window: {
+                showDocument: {
+                    support: true
                 }
             },
             workspace: {
@@ -21129,22 +21146,70 @@ function toCompletion(item) {
 }
 function toCompletions(completions) {
     if (completions.length > 0) {
-        let combinedCompletions = completions.map((el)=>{
-            if (!el.completions) {
-                return [];
-            }
-            let allCompletions;
-            if (Array.isArray(el.completions)) {
-                allCompletions = el.completions;
-            } else {
-                allCompletions = el.completions.items;
-            }
-            return allCompletions.map((item)=>{
-                item["service"] = el.service;
-                return item;
-            });
-        }).flat();
+        let combinedCompletions = getCompletionItems(completions);
         return combinedCompletions.map((item)=>toCompletion(item));
+    }
+    return [];
+}
+function getCompletionItems(completions) {
+    return completions.map((el)=>{
+        if (!el.completions) {
+            return [];
+        }
+        let allCompletions;
+        if (Array.isArray(el.completions)) {
+            allCompletions = el.completions;
+        } else {
+            allCompletions = el.completions.items;
+        }
+        return allCompletions.map((item)=>{
+            item["service"] = el.service;
+            return item;
+        });
+    }).flat();
+}
+function toInlineCompletion(item) {
+    var _item_command;
+    let text = typeof item.insertText === "string" ? item.insertText : item.insertText.value;
+    let filterText;
+    // filtering would happen on ace editor side
+    //TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
+    if (item.filterText) {
+        const firstWordMatch = item.filterText.match(/\w+/);
+        const firstWord = firstWordMatch ? firstWordMatch[0] : null;
+        if (firstWord) {
+            const wordRegex = new RegExp(`\\b${firstWord}\\b`, 'i');
+            if (!wordRegex.test(text)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        } else {
+            if (!text.includes(item.filterText)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        }
+    }
+    let command = ((_item_command = item.command) === null || _item_command === void 0 ? void 0 : _item_command.command) == "editor.action.triggerSuggest" ? "startAutocomplete" : undefined;
+    let range = item.range ? getInlineCompletionRange(item.range, filterText) : undefined;
+    let completion = {};
+    completion["command"] = command;
+    completion["range"] = range;
+    completion["item"] = item;
+    if (typeof item.insertText !== "string") {
+        completion["snippet"] = text;
+    } else {
+        completion["value"] = text !== null && text !== void 0 ? text : "";
+    }
+    completion["position"] = item["position"];
+    completion["service"] = item["service"]; //TODO: since we have multiple servers, we need to determine which
+    // server to use for resolving
+    return completion;
+}
+function toInlineCompletions(completions) {
+    if (completions.length > 0) {
+        let combinedCompletions = getCompletionItems(completions);
+        return combinedCompletions.map((item)=>toInlineCompletion(item));
     }
     return [];
 }
@@ -21196,6 +21261,11 @@ function getTextEditRange(textEdit, filterText) {
         textEdit.range.start.character -= filterLength;
         return toRange(textEdit.range);
     }
+}
+function getInlineCompletionRange(range, filterText) {
+    const filterLength = filterText ? filterText.length : 0;
+    range.start.character -= filterLength;
+    return toRange(range);
 }
 function toTooltip(hover) {
     var _hover_find;

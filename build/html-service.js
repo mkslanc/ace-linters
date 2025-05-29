@@ -5978,6 +5978,9 @@ class BaseService {
     async doComplete(document, position) {
         return null;
     }
+    async doInlineComplete(document, position) {
+        return null;
+    }
     async doHover(document, position) {
         return null;
     }
@@ -6023,6 +6026,12 @@ class BaseService {
         return Promise.resolve(null);
     }
     sendAppliedResult(result, callbackId) {}
+    sendRequest(name, args) {
+        return Promise.resolve(null);
+    }
+    sendResponse(callbackId, args) {
+        return;
+    }
     constructor(mode, workspaceUri){
         _define_property(this, "serviceName", void 0);
         _define_property(this, "mode", void 0);
@@ -6108,6 +6117,14 @@ class BaseService {
                 },
                 codeAction: {
                     dynamicRegistration: true
+                },
+                inlineCompletion: {
+                    dynamicRegistration: true
+                }
+            },
+            window: {
+                showDocument: {
+                    support: true
                 }
             },
             workspace: {

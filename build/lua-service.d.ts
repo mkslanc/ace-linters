@@ -1,5 +1,5 @@
 import * as lsp from 'vscode-languageserver-protocol';
-import { TextDocumentIdentifier, TextDocumentItem } from 'vscode-languageserver-protocol';
+import { LSPAny, TextDocumentIdentifier, TextDocumentItem } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export interface LanguageService {
@@ -16,6 +16,7 @@ export interface LanguageService {
 	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 	doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
 	doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
+	doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>;
 	doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 	setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
 	applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
@@ -35,6 +36,8 @@ export interface LanguageService {
 	dispose(): Promise<void>;
 	closeConnection(): Promise<void>;
 	setWorkspace(workspaceUri: string): void;
+	sendRequest(name: string, args?: lsp.LSPAny): Promise<any>;
+	sendResponse(callbackId: number, args?: lsp.LSPAny): void;
 }
 export interface ServiceOptions {
 	[name: string]: any;
@@ -42,12 +45,13 @@ export interface ServiceOptions {
 export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
 };
-export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand";
+export type SupportedFeatures = "hover" | "completion" | "completionResolve" | "format" | "diagnostics" | "signatureHelp" | "documentHighlight" | "semanticTokens" | "codeAction" | "executeCommand" | "inlineCompletion";
 export interface ServiceConfig extends BaseConfig {
 	className: string;
 	options?: ServiceOptions;
 }
 export interface BaseConfig {
+	serviceName?: string;
 	initializationOptions?: ServiceOptions;
 	options?: ServiceOptions;
 	serviceInstance?: LanguageService;
@@ -110,6 +114,7 @@ declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceO
 	getOption<T extends keyof OptionsType>(documentUri: string, optionName: T): OptionsType[T];
 	applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
 	doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
+	doInlineComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null>;
 	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
 	doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 	doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
@@ -123,6 +128,8 @@ declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceO
 	getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>;
 	executeCommand(command: string, args?: any[]): Promise<any | null>;
 	sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
+	sendRequest(name: string, args?: LSPAny): Promise<any>;
+	sendResponse(callbackId: number, args?: LSPAny): void;
 }
 export declare class LuaService extends BaseService implements LanguageService {
 	private $service;

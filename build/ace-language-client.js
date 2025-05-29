@@ -9742,6 +9742,7 @@ if (true) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Bb: () => (/* binding */ SendResponseMessage),
 /* harmony export */   C0: () => (/* binding */ HoverMessage),
 /* harmony export */   Go: () => (/* binding */ MessageType),
 /* harmony export */   HV: () => (/* binding */ FormatMessage),
@@ -9756,12 +9757,14 @@ if (true) {
 /* harmony export */   X9: () => (/* binding */ AppliedEditMessage),
 /* harmony export */   dd: () => (/* binding */ GlobalOptionsMessage),
 /* harmony export */   eN: () => (/* binding */ InitMessage),
+/* harmony export */   fy: () => (/* binding */ SendRequestMessage),
 /* harmony export */   gf: () => (/* binding */ ChangeOptionsMessage),
 /* harmony export */   i9: () => (/* binding */ ValidateMessage),
 /* harmony export */   kN: () => (/* binding */ GetCodeActionsMessage),
 /* harmony export */   lR: () => (/* binding */ SetWorkspaceMessage),
 /* harmony export */   m6: () => (/* binding */ ExecuteCommandMessage),
 /* harmony export */   qf: () => (/* binding */ CloseConnectionMessage),
+/* harmony export */   sw: () => (/* binding */ InlineCompleteMessage),
 /* harmony export */   uO: () => (/* binding */ ChangeMessage),
 /* harmony export */   v3: () => (/* binding */ RenameDocumentMessage),
 /* harmony export */   zZ: () => (/* binding */ CompleteMessage)
@@ -9819,6 +9822,14 @@ class CompleteMessage extends BaseMessage {
     constructor(documentIdentifier, callbackId, value){
         super(documentIdentifier, callbackId);
         _define_property(this, "type", MessageType.complete);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class InlineCompleteMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
+        _define_property(this, "type", MessageType.inlineComplete);
         _define_property(this, "value", void 0);
         this.value = value;
     }
@@ -9995,6 +10006,30 @@ class RenameDocumentMessage extends BaseMessage {
         this.version = version;
     }
 }
+class SendRequestMessage {
+    constructor(serviceName, callbackId, requestName, args){
+        _define_property(this, "callbackId", void 0);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "type", MessageType.sendRequest);
+        _define_property(this, "value", void 0);
+        _define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = requestName;
+        this.args = args;
+    }
+}
+class SendResponseMessage {
+    constructor(serviceName, callbackId, args){
+        _define_property(this, "callbackId", void 0);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "type", MessageType.sendResponse);
+        _define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.args = args;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -10021,6 +10056,10 @@ var MessageType;
     MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
     MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
     MessageType[MessageType["renameDocument"] = 23] = "renameDocument";
+    MessageType[MessageType["sendRequest"] = 24] = "sendRequest";
+    MessageType[MessageType["showDocument"] = 25] = "showDocument";
+    MessageType[MessageType["sendResponse"] = 26] = "sendResponse";
+    MessageType[MessageType["inlineComplete"] = 27] = "inlineComplete";
 })(MessageType || (MessageType = {}));
 
 
@@ -10202,6 +10241,8 @@ class ServiceManager {
                 case "completionResolve":
                     var _capabilities_completionProvider;
                     return ((_capabilities_completionProvider = capabilities.completionProvider) === null || _capabilities_completionProvider === void 0 ? void 0 : _capabilities_completionProvider.resolveProvider) === true;
+                case "inlineCompletion":
+                    return capabilities.inlineCompletionProvider != undefined;
                 case "format":
                     return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
                 case "diagnostics":
@@ -10244,7 +10285,7 @@ class ServiceManager {
         this.$services[name].features = features;
     }
     setDefaultFeaturesState(serviceFeatures) {
-        var _features, _features1, _features2, _features3, _features4, _features5, _features6, _features7, _features8, _features9;
+        var _features, _features1, _features2, _features3, _features4, _features5, _features6, _features7, _features8, _features9, _features10;
         let features = serviceFeatures !== null && serviceFeatures !== void 0 ? serviceFeatures : {};
         var _hover;
         (_hover = (_features = features).hover) !== null && _hover !== void 0 ? _hover : _features.hover = true;
@@ -10266,6 +10307,8 @@ class ServiceManager {
         (_codeAction = (_features8 = features).codeAction) !== null && _codeAction !== void 0 ? _codeAction : _features8.codeAction = true;
         var _executeCommand;
         (_executeCommand = (_features9 = features).executeCommand) !== null && _executeCommand !== void 0 ? _executeCommand : _features9.executeCommand = true;
+        var _inlineCompletion;
+        (_inlineCompletion = (_features10 = features).inlineCompletion) !== null && _inlineCompletion !== void 0 ? _inlineCompletion : _features10.inlineCompletion = true;
         return features;
     }
     constructor(ctx){
@@ -10341,6 +10384,14 @@ class ServiceManager {
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service)=>{
                         return {
                             completions: await service.doComplete(documentIdentifier, message["value"]),
+                            service: service.serviceData.className
+                        };
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .z2);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.inlineComplete:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "inlineCompletion").map(async (service)=>{
+                        return {
+                            completions: await service.doInlineComplete(documentIdentifier, message["value"]),
                             service: service.serviceData.className
                         };
                     }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .z2);
@@ -10436,6 +10487,14 @@ class ServiceManager {
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.renameDocument:
                     this.renameDocument(documentIdentifier, message.value);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.sendRequest:
+                    var _this_$services_message_serviceName_serviceInstance2, _this_$services_message_serviceName2;
+                    postMessage["value"] = (_this_$services_message_serviceName2 = this.$services[message.serviceName]) === null || _this_$services_message_serviceName2 === void 0 ? void 0 : (_this_$services_message_serviceName_serviceInstance2 = _this_$services_message_serviceName2.serviceInstance) === null || _this_$services_message_serviceName_serviceInstance2 === void 0 ? void 0 : _this_$services_message_serviceName_serviceInstance2.sendRequest(message.value, message.args);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.sendResponse:
+                    var _this_$services_message_serviceName_serviceInstance3, _this_$services_message_serviceName3;
+                    postMessage["value"] = (_this_$services_message_serviceName3 = this.$services[message.serviceName]) === null || _this_$services_message_serviceName3 === void 0 ? void 0 : (_this_$services_message_serviceName_serviceInstance3 = _this_$services_message_serviceName3.serviceInstance) === null || _this_$services_message_serviceName_serviceInstance3 === void 0 ? void 0 : _this_$services_message_serviceName_serviceInstance3.sendResponse(message.callbackId, message.args);
                     break;
             }
             ctx.postMessage(postMessage);
@@ -19918,6 +19977,10 @@ class MessageController {
     doComplete(documentIdentifier, position, callback) {
         this.postMessage(new message_types/* CompleteMessage */.zZ(documentIdentifier, this.callbackId++, position), callback);
     }
+    doInlineComplete(documentIdentifier, position, callback) {
+        //TODO: add inline completion context
+        this.postMessage(new message_types/* InlineCompleteMessage */.sw(documentIdentifier, this.callbackId++, position), callback);
+    }
     doResolve(documentIdentifier, completion, callback) {
         this.postMessage(new message_types/* ResolveCompletionMessage */.PT(documentIdentifier, this.callbackId++, completion), callback);
     }
@@ -19976,6 +20039,9 @@ class MessageController {
     renameDocument(documentIdentifier, newDocumentUri, version) {
         this.$worker.postMessage(new message_types/* RenameDocumentMessage */.v3(documentIdentifier, this.callbackId++, newDocumentUri, version));
     }
+    sendRequest(serviceName, requestName, args, callback) {
+        this.postMessage(new message_types/* SendRequestMessage */.fy(serviceName, this.callbackId++, requestName, args), callback);
+    }
     postMessage(message, callback) {
         if (callback) {
             this.callbacks[message.callbackId] = callback;
@@ -19992,28 +20058,39 @@ class MessageController {
         this.$worker.addEventListener("message", (e)=>{
             const message = e.data;
             const callbackId = message.callbackId;
-            if (message.type === message_types/* MessageType */.Go.validate || message.type === message_types/* MessageType */.Go.capabilitiesChange) {
-                const sessionId = this.getSessionIdByUri(message.documentUri);
-                if (!sessionId) {
-                    return;
-                }
-                if (message.type === message_types/* MessageType */.Go.validate) {
-                    var _this_provider_$sessionLanguageProviders_sessionId;
-                    (_this_provider_$sessionLanguageProviders_sessionId = this.provider.$sessionLanguageProviders[sessionId]) === null || _this_provider_$sessionLanguageProviders_sessionId === void 0 ? void 0 : _this_provider_$sessionLanguageProviders_sessionId.$showAnnotations(message.value);
-                } else {
-                    var _this_provider_$sessionLanguageProviders_sessionId1;
-                    (_this_provider_$sessionLanguageProviders_sessionId1 = this.provider.$sessionLanguageProviders[sessionId]) === null || _this_provider_$sessionLanguageProviders_sessionId1 === void 0 ? void 0 : _this_provider_$sessionLanguageProviders_sessionId1.setServerCapabilities(message.value);
-                }
-            } else if (message.type === message_types/* MessageType */.Go.applyEdit) {
-                const applied = (result, serviceName)=>{
-                    this.$worker.postMessage(new message_types/* AppliedEditMessage */.X9(result, serviceName, message.callbackId));
-                };
-                this.provider.applyEdit(message.value, message.serviceName, applied);
-            } else {
-                if (this.callbacks[callbackId]) {
-                    this.callbacks[callbackId](message.value);
-                    delete this.callbacks[callbackId];
-                }
+            switch(message.type){
+                case message_types/* MessageType */.Go.validate:
+                case message_types/* MessageType */.Go.capabilitiesChange:
+                    const sessionId = this.getSessionIdByUri(message.documentUri);
+                    if (!sessionId) {
+                        return;
+                    }
+                    if (message.type === message_types/* MessageType */.Go.validate) {
+                        var _this_provider_$sessionLanguageProviders_sessionId;
+                        (_this_provider_$sessionLanguageProviders_sessionId = this.provider.$sessionLanguageProviders[sessionId]) === null || _this_provider_$sessionLanguageProviders_sessionId === void 0 ? void 0 : _this_provider_$sessionLanguageProviders_sessionId.$showAnnotations(message.value);
+                    } else {
+                        var _this_provider_$sessionLanguageProviders_sessionId1;
+                        (_this_provider_$sessionLanguageProviders_sessionId1 = this.provider.$sessionLanguageProviders[sessionId]) === null || _this_provider_$sessionLanguageProviders_sessionId1 === void 0 ? void 0 : _this_provider_$sessionLanguageProviders_sessionId1.setServerCapabilities(message.value);
+                    }
+                    break;
+                case message_types/* MessageType */.Go.applyEdit:
+                    const applied = (result, serviceName)=>{
+                        this.$worker.postMessage(new message_types/* AppliedEditMessage */.X9(result, serviceName, message.callbackId));
+                    };
+                    this.provider.applyEdit(message.value, message.serviceName, applied);
+                    break;
+                case message_types/* MessageType */.Go.showDocument:
+                    const sendResponse = (result, serviceName)=>{
+                        this.$worker.postMessage(new message_types/* SendResponseMessage */.Bb(serviceName, message.callbackId, result));
+                    };
+                    this.provider.showDocument(message, message.serviceName, sendResponse);
+                    break;
+                default:
+                    if (this.callbacks[callbackId]) {
+                        this.callbacks[callbackId](message.value);
+                        delete this.callbacks[callbackId];
+                    }
+                    break;
             }
         });
     }
@@ -20146,22 +20223,70 @@ function toCompletion(item) {
 }
 function toCompletions(completions) {
     if (completions.length > 0) {
-        let combinedCompletions = completions.map((el)=>{
-            if (!el.completions) {
-                return [];
-            }
-            let allCompletions;
-            if (Array.isArray(el.completions)) {
-                allCompletions = el.completions;
-            } else {
-                allCompletions = el.completions.items;
-            }
-            return allCompletions.map((item)=>{
-                item["service"] = el.service;
-                return item;
-            });
-        }).flat();
+        let combinedCompletions = getCompletionItems(completions);
         return combinedCompletions.map((item)=>toCompletion(item));
+    }
+    return [];
+}
+function getCompletionItems(completions) {
+    return completions.map((el)=>{
+        if (!el.completions) {
+            return [];
+        }
+        let allCompletions;
+        if (Array.isArray(el.completions)) {
+            allCompletions = el.completions;
+        } else {
+            allCompletions = el.completions.items;
+        }
+        return allCompletions.map((item)=>{
+            item["service"] = el.service;
+            return item;
+        });
+    }).flat();
+}
+function toInlineCompletion(item) {
+    var _item_command;
+    let text = typeof item.insertText === "string" ? item.insertText : item.insertText.value;
+    let filterText;
+    // filtering would happen on ace editor side
+    //TODO: if filtering and sorting are on server side, we should disable FilteredList in ace completer
+    if (item.filterText) {
+        const firstWordMatch = item.filterText.match(/\w+/);
+        const firstWord = firstWordMatch ? firstWordMatch[0] : null;
+        if (firstWord) {
+            const wordRegex = new RegExp(`\\b${firstWord}\\b`, 'i');
+            if (!wordRegex.test(text)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        } else {
+            if (!text.includes(item.filterText)) {
+                text = `${item.filterText} ${text}`;
+                filterText = item.filterText;
+            }
+        }
+    }
+    let command = ((_item_command = item.command) === null || _item_command === void 0 ? void 0 : _item_command.command) == "editor.action.triggerSuggest" ? "startAutocomplete" : undefined;
+    let range = item.range ? getInlineCompletionRange(item.range, filterText) : undefined;
+    let completion = {};
+    completion["command"] = command;
+    completion["range"] = range;
+    completion["item"] = item;
+    if (typeof item.insertText !== "string") {
+        completion["snippet"] = text;
+    } else {
+        completion["value"] = text !== null && text !== void 0 ? text : "";
+    }
+    completion["position"] = item["position"];
+    completion["service"] = item["service"]; //TODO: since we have multiple servers, we need to determine which
+    // server to use for resolving
+    return completion;
+}
+function toInlineCompletions(completions) {
+    if (completions.length > 0) {
+        let combinedCompletions = getCompletionItems(completions);
+        return combinedCompletions.map((item)=>toInlineCompletion(item));
     }
     return [];
 }
@@ -20213,6 +20338,11 @@ function getTextEditRange(textEdit, filterText) {
         textEdit.range.start.character -= filterLength;
         return toRange(textEdit.range);
     }
+}
+function getInlineCompletionRange(range, filterText) {
+    const filterLength = filterText ? filterText.length : 0;
+    range.start.character -= filterLength;
+    return toRange(range);
 }
 function toTooltip(hover) {
     var _hover_find;
@@ -22058,7 +22188,448 @@ function setStyles(editor) {
 `, "autocompletion.css", false);
 }
 
+;// CONCATENATED MODULE: ./src/ace/inline-completer-adapter/prototype-validation.ts
+function validateAcePrototypes(InlineAutocomplete, CommandBarTooltip, CompletionProvider) {
+    const proto = InlineAutocomplete.prototype;
+    const required = [
+        "detach",
+        "destroy",
+        "show",
+        "getCompletionProvider",
+        "getInlineTooltip"
+    ];
+    for (const method of required){
+        if (typeof proto[method] !== "function") {
+            throw new Error(`InlineAutocomplete.prototype missing method: ${method}`);
+        }
+    }
+    const cbProto = CommandBarTooltip.prototype;
+    [
+        "registerCommand",
+        "setAlwaysShow",
+        "getAlwaysShow"
+    ].forEach((method)=>{
+        if (typeof cbProto[method] !== "function") {
+            throw new Error(`CommandBarTooltip.prototype missing method: ${method}`);
+        }
+    });
+    if (typeof CompletionProvider.prototype.gatherCompletions !== "function") {
+        throw new Error("CompletionProvider.prototype missing method: gatherCompletions");
+    }
+}
+
+;// CONCATENATED MODULE: ./src/ace/inline_autocomplete.ts
+function inline_autocomplete_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+function createInlineCompleterAdapter(OriginalInlineAutocomplete, OriginalCommandBarTooltip, OriginalCompletionProvider) {
+    validateAcePrototypes(OriginalInlineAutocomplete, OriginalCommandBarTooltip, OriginalCompletionProvider);
+    var destroyCompleter = function(e, editor) {
+        editor.inlineCompleter && editor.inlineCompleter.destroy();
+    };
+    class InlineCompletionProvider extends OriginalCompletionProvider {
+        gatherCompletions(editor, callback) {
+            var session = editor.getSession();
+            var pos = editor.getCursorPosition();
+            var prefix = getCompletionPrefix(editor);
+            var matches = [];
+            this.completers = editor.inlineCompleters;
+            var total = editor.inlineCompleters.length;
+            editor.inlineCompleters.forEach(function(completer, i) {
+                completer.getCompletions(editor, session, pos, prefix, function(err, results) {
+                    if (completer.hideInlinePreview) results = results.map((result)=>{
+                        return Object.assign(result, {
+                            hideInlinePreview: completer.hideInlinePreview
+                        });
+                    });
+                    if (!err && results) matches = matches.concat(results);
+                    // Fetch prefix again, because they may have changed by now
+                    callback(null, {
+                        prefix: getCompletionPrefix(editor),
+                        matches: matches,
+                        finished: --total === 0
+                    });
+                });
+            });
+            return true;
+        }
+    }
+    class InlineCompleter extends OriginalInlineAutocomplete {
+        getCompletionProvider(initialPosition) {
+            if (!this.completionProvider) this.completionProvider = new InlineCompletionProvider(initialPosition);
+            return this.completionProvider;
+        }
+        show(options) {
+            this.activated = true;
+            if (this.editor.inlineCompleter !== this) {
+                if (this.editor.inlineCompleter) {
+                    this.editor.inlineCompleter.detach();
+                }
+                this.editor.inlineCompleter = this;
+            }
+            // @ts-ignore
+            this.editor.on("changeSelection", this.changeListener);
+            this.editor.on("blur", this.blurListener);
+            this.updateCompletions(options);
+        }
+        destroy() {
+            this.detach();
+            if (this.inlineRenderer) this.inlineRenderer.destroy();
+            if (this.inlineTooltip) this.inlineTooltip.destroy();
+            if (this.editor && this.editor.inlineCompleter == this) {
+                // @ts-ignore
+                this.editor.off("destroy", destroyCompleter);
+                this.editor.inlineCompleter = null;
+            }
+            // @ts-ignore
+            this.inlineTooltip = this.editor = this.inlineRenderer = null;
+        }
+        static for(editor) {
+            if (editor.inlineCompleter instanceof InlineCompleter) {
+                return editor.inlineCompleter;
+            }
+            if (editor.inlineCompleter) {
+                editor.inlineCompleter.destroy();
+                editor.inlineCompleter = null;
+            }
+            editor.inlineCompleter = new InlineCompleter(editor);
+            editor.once("destroy", destroyCompleter);
+            return editor.inlineCompleter;
+        }
+        getInlineTooltip() {
+            if (!this.inlineTooltip) {
+                this.inlineTooltip = InlineCompleter.createInlineTooltip(document.body || document.documentElement);
+            }
+            return this.inlineTooltip;
+        }
+        static createInlineTooltip(parentEl) {
+            var inlineTooltip = new OriginalCommandBarTooltip(parentEl);
+            inlineTooltip.registerCommand("Previous", // @ts-expect-error
+            Object.assign({}, OriginalInlineAutocomplete.prototype.commands["Previous"], {
+                enabled: true,
+                type: "button",
+                iconCssClass: "ace_arrow_rotated"
+            }));
+            inlineTooltip.registerCommand("Position", {
+                enabled: false,
+                getValue: function(editor) {
+                    return editor ? [
+                        editor.inlineCompleter.getIndex() + 1,
+                        editor.inlineCompleter.getLength()
+                    ].join("/") : "";
+                },
+                type: "text",
+                cssClass: "completion_position"
+            });
+            inlineTooltip.registerCommand("Next", // @ts-expect-error
+            Object.assign({}, OriginalInlineAutocomplete.prototype.commands["Next"], {
+                enabled: true,
+                type: "button",
+                iconCssClass: "ace_arrow"
+            }));
+            inlineTooltip.registerCommand("Accept", // @ts-expect-error
+            Object.assign({}, OriginalInlineAutocomplete.prototype.commands["Accept"], {
+                enabled: function(editor) {
+                    return !!editor && editor.inlineCompleter.getIndex() >= 0;
+                },
+                type: "button"
+            }));
+            inlineTooltip.registerCommand("ShowTooltip", {
+                name: "Always Show Tooltip",
+                exec: function() {
+                    inlineTooltip.setAlwaysShow(!inlineTooltip.getAlwaysShow());
+                },
+                enabled: true,
+                getValue: function() {
+                    return inlineTooltip.getAlwaysShow();
+                },
+                type: "checkbox"
+            });
+            return inlineTooltip;
+        }
+        updateCompletions(options) {
+            if (options && options.matches) {
+                var pos = this.editor.getSelectionRange().start;
+                this.base = this.editor.session.doc.createAnchor(pos.row, pos.column);
+                this.base["$insertRight"] = true;
+                this.completions = new FilteredList(options.matches);
+                //@ts-expect-error TODO: potential wrong arguments
+                return this.$open(this.editor, "");
+            }
+            if (this.base && this.completions) {
+                //@ts-expect-error
+                this.$updatePrefix();
+            }
+            var session = this.editor.getSession();
+            var pos = this.editor.getCursorPosition();
+            var prefix = getCompletionPrefix(this.editor);
+            this.base = session.doc.createAnchor(pos.row, pos.column - prefix.length);
+            //@ts-expect-error
+            this.base.$insertRight = true;
+            // @ts-ignore
+            var options = {
+                exactMatch: true,
+                ignoreCaption: true
+            };
+            this.getCompletionProvider({
+                prefix,
+                base: this.base,
+                pos
+            }).provideCompletions(this.editor, options, /**
+                 * @this {InlineAutocomplete}
+                 */ (function(err, completions, finished) {
+                var filtered = completions.filtered;
+                var prefix = getCompletionPrefix(this.editor);
+                if (finished) {
+                    // No results
+                    if (!filtered.length) return this.detach();
+                    // One result equals to the prefix
+                    if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet) return this.detach();
+                }
+                this.completions = completions;
+                this.$open(this.editor, prefix);
+            }).bind(this));
+        }
+    }
+    OriginalInlineAutocomplete.prototype.commands["Previous"].exec = (editor)=>{
+        editor.inlineCompleter.goTo("prev");
+    };
+    OriginalInlineAutocomplete.prototype.commands["Next"].exec = (editor)=>{
+        editor.inlineCompleter.goTo("next");
+    };
+    OriginalInlineAutocomplete.prototype.commands["Accept"].exec = (editor)=>{
+        return editor.inlineCompleter.insertMatch();
+    };
+    OriginalInlineAutocomplete.prototype.commands["Close"].exec = (editor)=>{
+        editor.inlineCompleter.detach();
+    };
+    var doLiveAutocomplete = function(e) {
+        var editor = e.editor;
+        var hasCompleter = editor.inlineCompleter && editor.inlineCompleter.activated;
+        // We don't want to autocomplete with no prefix
+        if (e.command.name === "backspace") {
+            if (hasCompleter && !getCompletionPrefix(editor)) editor.inlineCompleter.detach();
+        } else if (e.command.name === "insertstring" && !hasCompleter) {
+            lastExecEvent = e;
+            var delay = e.editor.$liveAutocompletionDelay;
+            if (delay) {
+                liveAutocompleteTimer.delay(delay);
+            } else {
+                showLiveAutocomplete(e);
+            }
+        }
+    };
+    var lastExecEvent;
+    var liveAutocompleteTimer = new DelayedCall(function() {
+        showLiveAutocomplete(lastExecEvent);
+    }, 0);
+    var showLiveAutocomplete = (e)=>{
+        var editor = e.editor;
+        var prefix = getCompletionPrefix(editor);
+        // Only autocomplete if there's a prefix that can be matched or previous char is trigger character
+        var previousChar = e.args;
+        var triggerAutocomplete = triggerAutocompleteFunc(editor, previousChar);
+        if (prefix && prefix.length >= editor.$liveAutocompletionThreshold || triggerAutocomplete) {
+            var completer = InlineCompleter.for(editor);
+            // Set a flag for auto shown
+            // completer.autoShown = true;
+            completer.show({
+                exactMatch: false,
+                ignoreCaption: false
+            });
+        }
+    };
+    const validateAceInlineCompleterWithEditor = (editor)=>{
+        // InlineAutocomplete instance: show(), activated state, destroy, etc.
+        let completer;
+        try {
+            completer = InlineCompleter.for(editor);
+            completer.show({});
+            if (typeof completer.activated !== "boolean") throw new Error("activated property missing or not boolean");
+            completer.destroy();
+        } catch (e) {
+            throw new Error(`InlineAutocomplete runtime validation failed: ${e.message}`);
+        }
+        // CompletionProvider: instantiate & basic usage
+        try {
+            const provider = new InlineCompletionProvider();
+            if (typeof provider.gatherCompletions !== "function") throw new Error("gatherCompletions missing");
+        } catch (e) {
+            throw new Error(`CompletionProvider runtime validation failed: ${e.message}`);
+        }
+    };
+    return {
+        InlineCompleter,
+        doLiveAutocomplete,
+        validateAceInlineCompleterWithEditor
+    };
+}
+function getCompletionPrefix(editor) {
+    var pos = editor.getCursorPosition();
+    var line = editor.session.getLine(pos.row);
+    var prefix;
+    if (!editor.inlineCompleters) {
+        return "";
+    }
+    editor.inlineCompleters.forEach((function(completer) {
+        if (completer.identifierRegexps) {
+            completer.identifierRegexps.forEach((function(identifierRegex) {
+                if (!prefix && identifierRegex) prefix = retrievePrecedingIdentifier(line, pos.column, identifierRegex);
+            }).bind(this));
+        }
+    }).bind(this));
+    return prefix || retrievePrecedingIdentifier(line, pos.column);
+}
+var ID_REGEX = /[a-zA-Z_0-9\$\-\u00A2-\u2000\u2070-\uFFFF]/;
+function retrievePrecedingIdentifier(text, pos, regex) {
+    regex = regex || ID_REGEX;
+    var buf = [];
+    for(var i = pos - 1; i >= 0; i--){
+        if (regex.test(text[i])) buf.push(text[i]);
+        else break;
+    }
+    return buf.reverse().join("");
+}
+function triggerAutocompleteFunc(editor, previousChar) {
+    var previousChar = previousChar == null ? editor.session.getPrecedingCharacter() : previousChar;
+    return editor.inlineCompleters.some((completer)=>{
+        if (completer.triggerCharacters && Array.isArray(completer.triggerCharacters)) {
+            return completer.triggerCharacters.includes(previousChar);
+        }
+    });
+}
+class DelayedCall {
+    schedule(timeout) {
+        if (this.timer == null) {
+            this.timer = setTimeout(this.callback, timeout || this.defaultTimeout);
+        }
+    }
+    delay(timeout) {
+        this.timer && clearTimeout(this.timer);
+        this.timer = setTimeout(this.callback, timeout || this.defaultTimeout);
+    }
+    call() {
+        this.cancel();
+        this.fcn();
+    }
+    cancel() {
+        this.timer && clearTimeout(this.timer);
+        this.timer = null;
+    }
+    isPending() {
+        return this.timer;
+    }
+    constructor(fcn, defaultTimeout){
+        inline_autocomplete_define_property(this, "timer", void 0);
+        inline_autocomplete_define_property(this, "defaultTimeout", void 0);
+        inline_autocomplete_define_property(this, "fcn", void 0);
+        inline_autocomplete_define_property(this, "callback", void 0);
+        this.timer = null;
+        this.fcn = fcn;
+        this.defaultTimeout = defaultTimeout;
+        this.callback = ()=>{
+            this.timer = null;
+            this.fcn();
+        };
+    }
+}
+class FilteredList {
+    setFilter(str) {
+        if (str.length > this.filterText && str.lastIndexOf(this.filterText, 0) === 0) var matches = this.filtered;
+        else var matches = this.all;
+        this.filterText = str;
+        matches = this.filterCompletions(matches, this.filterText);
+        matches = matches.sort(function(a, b) {
+            return b.exactMatch - a.exactMatch || b.$score - a.$score || (a.caption || a.value).localeCompare(b.caption || b.value);
+        });
+        // make unique
+        var prev = null;
+        matches = matches.filter(function(item) {
+            var caption = item.snippet || item.caption || item.value;
+            if (caption === prev) return false;
+            prev = caption;
+            return true;
+        });
+        this.filtered = matches;
+    }
+    filterCompletions(items, needle) {
+        var results = [];
+        var upper = needle.toUpperCase();
+        var lower = needle.toLowerCase();
+        loop: for(var i = 0, item; item = items[i]; i++){
+            if (item.skipFilter) {
+                item.$score = item.score;
+                results.push(item);
+                continue;
+            }
+            var caption = !this.ignoreCaption && item.caption || item.value || item.snippet;
+            if (!caption) continue;
+            var lastIndex = -1;
+            var matchMask = 0;
+            var penalty = 0;
+            var index, distance;
+            if (this.exactMatch) {
+                if (needle !== caption.substr(0, needle.length)) continue loop;
+            } else {
+                /**
+                 * It is for situation then, for example, we find some like 'tab' in item.value="Check the table"
+                 * and want to see "Check the TABle" but see "Check The tABle".
+                 */ var fullMatchIndex = caption.toLowerCase().indexOf(lower);
+                if (fullMatchIndex > -1) {
+                    penalty = fullMatchIndex;
+                } else {
+                    // caption char iteration is faster in Chrome but slower in Firefox, so lets use indexOf
+                    for(var j = 0; j < needle.length; j++){
+                        // TODO add penalty on case mismatch
+                        var i1 = caption.indexOf(lower[j], lastIndex + 1);
+                        var i2 = caption.indexOf(upper[j], lastIndex + 1);
+                        index = i1 >= 0 ? i2 < 0 || i1 < i2 ? i1 : i2 : i2;
+                        if (index < 0) continue loop;
+                        distance = index - lastIndex - 1;
+                        if (distance > 0) {
+                            // first char mismatch should be more sensitive
+                            if (lastIndex === -1) penalty += 10;
+                            penalty += distance;
+                            matchMask = matchMask | 1 << j;
+                        }
+                        lastIndex = index;
+                    }
+                }
+            }
+            item.matchMask = matchMask;
+            item.exactMatch = penalty ? 0 : 1;
+            item.$score = (item.score || 0) - penalty;
+            results.push(item);
+        }
+        return results;
+    }
+    constructor(array, filterText){
+        inline_autocomplete_define_property(this, "all", void 0);
+        inline_autocomplete_define_property(this, "filtered", void 0);
+        inline_autocomplete_define_property(this, "filterText", void 0);
+        inline_autocomplete_define_property(this, "exactMatch", void 0);
+        inline_autocomplete_define_property(this, "ignoreCaption", void 0);
+        this.all = array;
+        this.filtered = array;
+        this.filterText = filterText || "";
+        this.exactMatch = false;
+        this.ignoreCaption = false;
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/language-provider.ts
+/* provided dependency */ var console = __webpack_require__(4364);
 function language_provider_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -22072,6 +22643,7 @@ function language_provider_define_property(obj, key, value) {
     }
     return obj;
 }
+
 
 
 
@@ -22132,7 +22704,8 @@ class LanguageProvider {
             documentHighlights: true,
             signatureHelp: true,
             semanticTokens: false,
-            codeActions: true
+            codeActions: true,
+            inlineCompletion: false
         };
         this.options = options !== null && options !== void 0 ? options : {};
         this.options.functionality = typeof this.options.functionality === 'object' ? this.options.functionality : {};
@@ -22148,6 +22721,26 @@ class LanguageProvider {
         this.requireFilePath = (_this_options_requireFilePath = this.options.requireFilePath) !== null && _this_options_requireFilePath !== void 0 ? _this_options_requireFilePath : false;
         if ((_options = options) === null || _options === void 0 ? void 0 : _options.workspacePath) {
             this.workspaceUri = (0,utils/* convertToUri */.de)(options.workspacePath);
+        }
+        if (this.options.functionality.inlineCompletion) {
+            this.checkInlineCompletionAdapter(()=>{
+                var _this_options_aceComponents, _this_options_aceComponents1, _this_options_aceComponents2;
+                if (!((_this_options_aceComponents = this.options.aceComponents) === null || _this_options_aceComponents === void 0 ? void 0 : _this_options_aceComponents.InlineAutocomplete) || !((_this_options_aceComponents1 = this.options.aceComponents) === null || _this_options_aceComponents1 === void 0 ? void 0 : _this_options_aceComponents1.CommandBarTooltip) || !((_this_options_aceComponents2 = this.options.aceComponents) === null || _this_options_aceComponents2 === void 0 ? void 0 : _this_options_aceComponents2.CompletionProvider)) {
+                    throw new Error("Inline completion requires the InlineAutocomplete, CompletionProvider and CommandBarTooltip to be" + " defined");
+                }
+                this.completerAdapter = createInlineCompleterAdapter(this.options.aceComponents.InlineAutocomplete, this.options.aceComponents.CommandBarTooltip, this.options.aceComponents.CompletionProvider);
+            });
+        }
+    }
+    checkInlineCompletionAdapter(method) {
+        try {
+            method();
+        } catch (e) {
+            var _this_options;
+            console.error(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
+            if ((_this_options = this.options) === null || _this_options === void 0 ? void 0 : _this_options.functionality) {
+                this.options.functionality.inlineCompletion = false;
+            }
         }
     }
     /**
@@ -22235,7 +22828,7 @@ class LanguageProvider {
         AceEditor.getConstructor(editor);
         editor.setOption("useWorker", false);
         editor.on("changeSession", ({ session })=>this.$registerSession(session, editor));
-        if (this.options.functionality.completion) {
+        if (this.options.functionality.completion || this.options.functionality.inlineCompletion) {
             this.$registerCompleters(editor);
         }
         var _this_activeEditor;
@@ -22384,54 +22977,108 @@ class LanguageProvider {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor), (completions)=>completions && callback(toCompletions(completions)));
     }
+    doInlineComplete(editor, session, callback) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doInlineComplete(this.$getFileName(session), fromPoint(cursor), (completions)=>completions && callback(toInlineCompletions(completions)));
+    }
     doResolve(item, callback) {
         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
     }
     $registerCompleters(editor) {
-        let completer = {
-            getCompletions: async (editor, session, pos, prefix, callback)=>{
-                this.$getSessionLanguageProvider(session).$sendDeltaQueue(()=>{
-                    this.doComplete(editor, session, (completions)=>{
-                        let fileName = this.$getFileName(session);
-                        if (!completions) return;
-                        completions.forEach((item)=>{
-                            item.completerId = completer.id;
-                            item["fileName"] = fileName;
+        var _this_options_functionality, _this_options_functionality1, _this_options_functionality2, _this_options_functionality3, _this_options_functionality4, _this_options_functionality5, _this_options_functionality6, _this_options, _this_options_functionality7;
+        let completer, inlineCompleter;
+        if (!((_this_options_functionality = this.options.functionality) === null || _this_options_functionality === void 0 ? void 0 : _this_options_functionality.completion) && !((_this_options_functionality1 = this.options.functionality) === null || _this_options_functionality1 === void 0 ? void 0 : _this_options_functionality1.inlineCompletion)) {
+            return;
+        }
+        if (((_this_options_functionality2 = this.options.functionality) === null || _this_options_functionality2 === void 0 ? void 0 : _this_options_functionality2.completion) && ((_this_options_functionality3 = this.options.functionality) === null || _this_options_functionality3 === void 0 ? void 0 : _this_options_functionality3.completion.overwriteCompleters)) {
+            editor.completers = [];
+        }
+        if (((_this_options_functionality4 = this.options.functionality) === null || _this_options_functionality4 === void 0 ? void 0 : _this_options_functionality4.inlineCompletion) && ((_this_options_functionality5 = this.options.functionality) === null || _this_options_functionality5 === void 0 ? void 0 : _this_options_functionality5.inlineCompletion.overwriteCompleters)) {
+            editor.inlineCompleters = [];
+        }
+        if (this.options.functionality.completion) {
+            completer = {
+                getCompletions: async (editor, session, pos, prefix, callback)=>{
+                    this.$getSessionLanguageProvider(session).$sendDeltaQueue(()=>{
+                        const completionCallback = (completions)=>{
+                            let fileName = this.$getFileName(session);
+                            if (!completions) return;
+                            completions.forEach((item)=>{
+                                item.completerId = completer.id;
+                                item["fileName"] = fileName;
+                            });
+                            callback(null, common_converters_CommonConverter.normalizeRanges(completions));
+                        };
+                        this.doComplete(editor, session, completionCallback);
+                    });
+                },
+                getDocTooltip: (item)=>{
+                    if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                        this.doResolve(item, (completionItem)=>{
+                            item["isResolved"] = true;
+                            if (!completionItem) return;
+                            let completion = toResolvedCompletion(item, completionItem);
+                            item.docText = completion.docText;
+                            if (completion.docHTML) {
+                                item.docHTML = completion.docHTML;
+                            } else if (completion["docMarkdown"]) {
+                                item.docHTML = common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(completion["docMarkdown"]));
+                            }
+                            if (editor["completer"]) {
+                                editor["completer"].updateDocTooltip();
+                            }
                         });
-                        callback(null, common_converters_CommonConverter.normalizeRanges(completions));
-                    });
-                });
-            },
-            getDocTooltip: (item)=>{
-                if (this.options.functionality.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
-                    this.doResolve(item, (completionItem)=>{
-                        item["isResolved"] = true;
-                        if (!completionItem) return;
-                        let completion = toResolvedCompletion(item, completionItem);
-                        item.docText = completion.docText;
-                        if (completion.docHTML) {
-                            item.docHTML = completion.docHTML;
-                        } else if (completion["docMarkdown"]) {
-                            item.docHTML = common_converters_CommonConverter.cleanHtml(this.options.markdownConverter.makeHtml(completion["docMarkdown"]));
-                        }
-                        if (editor["completer"]) {
-                            editor["completer"].updateDocTooltip();
-                        }
-                    });
-                }
-                return item;
-            },
-            id: "lspCompleters"
-        };
-        if (this.options.functionality.completion && this.options.functionality.completion.overwriteCompleters) {
-            editor.completers = [
-                completer
-            ];
-        } else {
-            if (!editor.completers) {
-                editor.completers = [];
-            }
+                    }
+                    return item;
+                },
+                id: "lspCompleters"
+            };
             editor.completers.push(completer);
+        }
+        if ((_this_options = this.options) === null || _this_options === void 0 ? void 0 : (_this_options_functionality6 = _this_options.functionality) === null || _this_options_functionality6 === void 0 ? void 0 : _this_options_functionality6.inlineCompletion) {
+            this.checkInlineCompletionAdapter(()=>{
+                if (this.completerAdapter) {
+                    var _editor;
+                    var _inlineCompleters;
+                    (_inlineCompleters = (_editor = editor).inlineCompleters) !== null && _inlineCompleters !== void 0 ? _inlineCompleters : _editor.inlineCompleters = [];
+                    this.completerAdapter.validateAceInlineCompleterWithEditor(editor);
+                    this.inlineCompleter = this.completerAdapter.InlineCompleter;
+                    this.doLiveAutocomplete = this.completerAdapter.doLiveAutocomplete;
+                }
+            });
+        }
+        if ((_this_options_functionality7 = this.options.functionality) === null || _this_options_functionality7 === void 0 ? void 0 : _this_options_functionality7.inlineCompletion) {
+            editor.commands.addCommand({
+                name: "startInlineAutocomplete",
+                exec: (editor, options)=>{
+                    var _this_inlineCompleter;
+                    var completer = (_this_inlineCompleter = this.inlineCompleter) === null || _this_inlineCompleter === void 0 ? void 0 : _this_inlineCompleter.for(editor);
+                    completer.show(options);
+                },
+                bindKey: {
+                    win: "Alt-C",
+                    mac: "Option-C"
+                }
+            });
+            editor.commands.on('afterExec', this.doLiveAutocomplete);
+            inlineCompleter = {
+                getCompletions: async (editor, session, pos, prefix, callback)=>{
+                    this.$getSessionLanguageProvider(session).$sendDeltaQueue(()=>{
+                        const completionCallback = (completions)=>{
+                            let fileName = this.$getFileName(session);
+                            if (!completions) return;
+                            completions.forEach((item)=>{
+                                item.completerId = completer.id;
+                                item["fileName"] = fileName;
+                            });
+                            callback(null, common_converters_CommonConverter.normalizeRanges(completions));
+                        };
+                        this.doInlineComplete(editor, session, completionCallback);
+                    });
+                },
+                id: "lspInlineCompleters"
+            };
+            editor.inlineCompleters.push(inlineCompleter);
         }
     }
     closeConnection() {
@@ -22450,6 +23097,29 @@ class LanguageProvider {
             delete this.$sessionLanguageProviders[session["id"]];
         }
     }
+    /**
+     * Sends a request to the message controller.
+     * @param serviceName - The name of the service/server to send the request to.
+     * @param method - The method name for the request.
+     * @param params - The parameters for the request.
+     * @param callback - An optional callback function that will be called with the result of the request.
+     */ sendRequest(serviceName, method, params, callback) {
+        this.$messageController.sendRequest(serviceName, method, params, callback);
+    }
+    showDocument(params, serviceName, callback) {
+        //TODO: implement other params for showDocument (external, takeFocus, selection)
+        try {
+            window.open(params.uri, "_blank");
+            callback && callback({
+                success: true
+            }, serviceName);
+        } catch (e) {
+            callback && callback({
+                success: false,
+                error: e
+            }, serviceName);
+        }
+    }
     constructor(worker, options){
         language_provider_define_property(this, "activeEditor", void 0);
         language_provider_define_property(this, "$messageController", void 0);
@@ -22463,6 +23133,9 @@ class LanguageProvider {
         language_provider_define_property(this, "requireFilePath", false);
         language_provider_define_property(this, "$lightBulbWidgets", {});
         language_provider_define_property(this, "stylesEmbedded", void 0);
+        language_provider_define_property(this, "inlineCompleter", void 0);
+        language_provider_define_property(this, "doLiveAutocomplete", void 0);
+        language_provider_define_property(this, "completerAdapter", void 0);
         language_provider_define_property(this, "$registerSession", (session, editor)=>{
             var _this_$sessionLanguageProviders, _session_id;
             var _;
@@ -22872,10 +23545,12 @@ class AceLanguageClient {
         }
         if (servers instanceof Array) {
             servers.forEach((serverData, index)=>{
-                serviceManager.registerServer("server" + index, serverData);
+                var _serverData_serviceName;
+                serviceManager.registerServer((_serverData_serviceName = serverData.serviceName) !== null && _serverData_serviceName !== void 0 ? _serverData_serviceName : "server" + index, serverData);
             });
         } else {
-            serviceManager.registerServer("server", servers);
+            var _servers_serviceName;
+            serviceManager.registerServer((_servers_serviceName = servers.serviceName) !== null && _servers_serviceName !== void 0 ? _servers_serviceName : "server", servers);
         }
         return LanguageProvider.create(client, options);
     }

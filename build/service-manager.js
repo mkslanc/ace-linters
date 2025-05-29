@@ -18,7 +18,7 @@ return /******/ (() => { // webpackBootstrap
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Go: () => (/* binding */ MessageType)
 /* harmony export */ });
-/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, CloseConnectionMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage, GetSemanticTokensMessage, GetCodeActionsMessage, SetWorkspaceMessage, ExecuteCommandMessage, AppliedEditMessage, RenameDocumentMessage */
+/* unused harmony exports BaseMessage, InitMessage, FormatMessage, CompleteMessage, InlineCompleteMessage, ResolveCompletionMessage, HoverMessage, ValidateMessage, ChangeMessage, DeltasMessage, ChangeModeMessage, ChangeOptionsMessage, CloseDocumentMessage, CloseConnectionMessage, GlobalOptionsMessage, ConfigureFeaturesMessage, SignatureHelpMessage, DocumentHighlightMessage, GetSemanticTokensMessage, GetCodeActionsMessage, SetWorkspaceMessage, ExecuteCommandMessage, AppliedEditMessage, RenameDocumentMessage, SendRequestMessage, SendResponseMessage */
 function _define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -71,6 +71,14 @@ class CompleteMessage extends BaseMessage {
     constructor(documentIdentifier, callbackId, value){
         super(documentIdentifier, callbackId);
         _define_property(this, "type", MessageType.complete);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
+class InlineCompleteMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
+        _define_property(this, "type", MessageType.inlineComplete);
         _define_property(this, "value", void 0);
         this.value = value;
     }
@@ -247,6 +255,30 @@ class RenameDocumentMessage extends BaseMessage {
         this.version = version;
     }
 }
+class SendRequestMessage {
+    constructor(serviceName, callbackId, requestName, args){
+        _define_property(this, "callbackId", void 0);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "type", MessageType.sendRequest);
+        _define_property(this, "value", void 0);
+        _define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = requestName;
+        this.args = args;
+    }
+}
+class SendResponseMessage {
+    constructor(serviceName, callbackId, args){
+        _define_property(this, "callbackId", void 0);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "type", MessageType.sendResponse);
+        _define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.args = args;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -273,6 +305,10 @@ var MessageType;
     MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
     MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
     MessageType[MessageType["renameDocument"] = 23] = "renameDocument";
+    MessageType[MessageType["sendRequest"] = 24] = "sendRequest";
+    MessageType[MessageType["showDocument"] = 25] = "showDocument";
+    MessageType[MessageType["sendResponse"] = 26] = "sendResponse";
+    MessageType[MessageType["inlineComplete"] = 27] = "inlineComplete";
 })(MessageType || (MessageType = {}));
 
 
@@ -599,6 +635,8 @@ class ServiceManager {
                 case "completionResolve":
                     var _capabilities_completionProvider;
                     return ((_capabilities_completionProvider = capabilities.completionProvider) === null || _capabilities_completionProvider === void 0 ? void 0 : _capabilities_completionProvider.resolveProvider) === true;
+                case "inlineCompletion":
+                    return capabilities.inlineCompletionProvider != undefined;
                 case "format":
                     return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
                 case "diagnostics":
@@ -641,7 +679,7 @@ class ServiceManager {
         this.$services[name].features = features;
     }
     setDefaultFeaturesState(serviceFeatures) {
-        var _features, _features1, _features2, _features3, _features4, _features5, _features6, _features7, _features8, _features9;
+        var _features, _features1, _features2, _features3, _features4, _features5, _features6, _features7, _features8, _features9, _features10;
         let features = serviceFeatures !== null && serviceFeatures !== void 0 ? serviceFeatures : {};
         var _hover;
         (_hover = (_features = features).hover) !== null && _hover !== void 0 ? _hover : _features.hover = true;
@@ -663,6 +701,8 @@ class ServiceManager {
         (_codeAction = (_features8 = features).codeAction) !== null && _codeAction !== void 0 ? _codeAction : _features8.codeAction = true;
         var _executeCommand;
         (_executeCommand = (_features9 = features).executeCommand) !== null && _executeCommand !== void 0 ? _executeCommand : _features9.executeCommand = true;
+        var _inlineCompletion;
+        (_inlineCompletion = (_features10 = features).inlineCompletion) !== null && _inlineCompletion !== void 0 ? _inlineCompletion : _features10.inlineCompletion = true;
         return features;
     }
     constructor(ctx){
@@ -738,6 +778,14 @@ class ServiceManager {
                     postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "completion").map(async (service)=>{
                         return {
                             completions: await service.doComplete(documentIdentifier, message["value"]),
+                            service: service.serviceData.className
+                        };
+                    }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .z2);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.inlineComplete:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "inlineCompletion").map(async (service)=>{
+                        return {
+                            completions: await service.doInlineComplete(documentIdentifier, message["value"]),
                             service: service.serviceData.className
                         };
                     }))).filter(_utils__WEBPACK_IMPORTED_MODULE_1__/* .notEmpty */ .z2);
@@ -833,6 +881,14 @@ class ServiceManager {
                     break;
                 case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.renameDocument:
                     this.renameDocument(documentIdentifier, message.value);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.sendRequest:
+                    var _this_$services_message_serviceName_serviceInstance2, _this_$services_message_serviceName2;
+                    postMessage["value"] = (_this_$services_message_serviceName2 = this.$services[message.serviceName]) === null || _this_$services_message_serviceName2 === void 0 ? void 0 : (_this_$services_message_serviceName_serviceInstance2 = _this_$services_message_serviceName2.serviceInstance) === null || _this_$services_message_serviceName_serviceInstance2 === void 0 ? void 0 : _this_$services_message_serviceName_serviceInstance2.sendRequest(message.value, message.args);
+                    break;
+                case _message_types__WEBPACK_IMPORTED_MODULE_0__/* .MessageType */ .Go.sendResponse:
+                    var _this_$services_message_serviceName_serviceInstance3, _this_$services_message_serviceName3;
+                    postMessage["value"] = (_this_$services_message_serviceName3 = this.$services[message.serviceName]) === null || _this_$services_message_serviceName3 === void 0 ? void 0 : (_this_$services_message_serviceName_serviceInstance3 = _this_$services_message_serviceName3.serviceInstance) === null || _this_$services_message_serviceName_serviceInstance3 === void 0 ? void 0 : _this_$services_message_serviceName_serviceInstance3.sendResponse(message.callbackId, message.args);
                     break;
             }
             ctx.postMessage(postMessage);

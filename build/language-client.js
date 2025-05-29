@@ -4150,6 +4150,9 @@ class BaseService {
     async doComplete(document, position) {
         return null;
     }
+    async doInlineComplete(document, position) {
+        return null;
+    }
     async doHover(document, position) {
         return null;
     }
@@ -4195,6 +4198,12 @@ class BaseService {
         return Promise.resolve(null);
     }
     sendAppliedResult(result, callbackId) {}
+    sendRequest(name, args) {
+        return Promise.resolve(null);
+    }
+    sendResponse(callbackId, args) {
+        return;
+    }
     constructor(mode, workspaceUri){
         _define_property(this, "serviceName", void 0);
         _define_property(this, "mode", void 0);
@@ -4280,6 +4289,14 @@ class BaseService {
                 },
                 codeAction: {
                     dynamicRegistration: true
+                },
+                inlineCompletion: {
+                    dynamicRegistration: true
+                }
+            },
+            window: {
+                showDocument: {
+                    support: true
                 }
             },
             workspace: {
@@ -17477,6 +17494,14 @@ class CompleteMessage extends BaseMessage {
         this.value = value;
     }
 }
+class InlineCompleteMessage extends BaseMessage {
+    constructor(documentIdentifier, callbackId, value){
+        super(documentIdentifier, callbackId);
+        _define_property(this, "type", MessageType.inlineComplete);
+        _define_property(this, "value", void 0);
+        this.value = value;
+    }
+}
 class ResolveCompletionMessage extends BaseMessage {
     constructor(documentIdentifier, callbackId, value){
         super(documentIdentifier, callbackId);
@@ -17649,6 +17674,30 @@ class RenameDocumentMessage extends BaseMessage {
         this.version = version;
     }
 }
+class SendRequestMessage {
+    constructor(serviceName, callbackId, requestName, args){
+        _define_property(this, "callbackId", void 0);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "type", MessageType.sendRequest);
+        _define_property(this, "value", void 0);
+        _define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.value = requestName;
+        this.args = args;
+    }
+}
+class SendResponseMessage {
+    constructor(serviceName, callbackId, args){
+        _define_property(this, "callbackId", void 0);
+        _define_property(this, "serviceName", void 0);
+        _define_property(this, "type", MessageType.sendResponse);
+        _define_property(this, "args", void 0);
+        this.serviceName = serviceName;
+        this.callbackId = callbackId;
+        this.args = args;
+    }
+}
 var MessageType;
 (function(MessageType) {
     MessageType[MessageType["init"] = 0] = "init";
@@ -17675,6 +17724,10 @@ var MessageType;
     MessageType[MessageType["appliedEdit"] = 21] = "appliedEdit";
     MessageType[MessageType["setWorkspace"] = 22] = "setWorkspace";
     MessageType[MessageType["renameDocument"] = 23] = "renameDocument";
+    MessageType[MessageType["sendRequest"] = 24] = "sendRequest";
+    MessageType[MessageType["showDocument"] = 25] = "showDocument";
+    MessageType[MessageType["sendResponse"] = 26] = "sendResponse";
+    MessageType[MessageType["inlineComplete"] = 27] = "inlineComplete";
 })(MessageType || (MessageType = {}));
 
 ;// CONCATENATED MODULE: ../../node_modules/vscode-uri/lib/esm/index.mjs
@@ -17787,6 +17840,20 @@ class LanguageClient extends base_service.BaseService {
                 this.ctx.postMessage(postMessage);
             });
         });
+        this.connection.onRequest('window/showDocument', (params)=>{
+            return new Promise((resolve, reject)=>{
+                const callbackId = this.callbackId++;
+                this.callbacks[callbackId] = (result)=>{
+                    resolve(result);
+                };
+                let postMessage = {
+                    "type": MessageType.showDocument,
+                    "serviceName": this.serviceName,
+                    ...params
+                };
+                this.ctx.postMessage(postMessage);
+            });
+        });
         this.connection.onError((e)=>{
             throw e;
         });
@@ -17804,6 +17871,12 @@ class LanguageClient extends base_service.BaseService {
             return;
         }
         this.callbacks[callbackId](result);
+    }
+    sendResponse(callbackId, args) {
+        if (!this.isConnected || !this.callbacks[callbackId]) {
+            return;
+        }
+        this.callbacks[callbackId](args);
     }
     showLog(params) {
         switch(params.type){
@@ -17889,7 +17962,7 @@ class LanguageClient extends base_service.BaseService {
                 };
                 this.ctx.postMessage(postMessage);
             });
-            this.connection.sendNotification('initialized', {}).then(()=>{
+            this.connection.sendNotification('initialized').then(()=>{
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
                     settings: {}
                 });
@@ -17972,6 +18045,27 @@ class LanguageClient extends base_service.BaseService {
             position: position
         };
         return this.connection.sendRequest('textDocument/completion', options);
+    }
+    async doInlineComplete(document, position) {
+        var _this_serviceCapabilities;
+        if (!this.isInitialized) {
+            return null;
+        }
+        if (!((_this_serviceCapabilities = this.serviceCapabilities) === null || _this_serviceCapabilities === void 0 ? void 0 : _this_serviceCapabilities.inlineCompletionProvider)) {
+            return null;
+        }
+        let options = {
+            textDocument: {
+                uri: document.uri,
+                // @ts-ignore
+                version: document.version
+            },
+            position: position,
+            context: {
+                triggerKind: 1
+            }
+        };
+        return this.connection.sendRequest('textDocument/inlineCompletion', options);
     }
     async doResolve(item) {
         var _this_serviceCapabilities_completionProvider, _this_serviceCapabilities;
@@ -18104,6 +18198,16 @@ class LanguageClient extends base_service.BaseService {
             arguments: args
         };
         return this.connection.sendRequest('workspace/executeCommand', options);
+    }
+    /**
+     * Send a custom request to the server.
+     * @param name
+     * @param args
+     */ sendRequest(name, args) {
+        if (args === undefined || args === null) {
+            return this.connection.sendRequest(name);
+        }
+        return this.connection.sendRequest(name, args);
     }
     constructor(serverData, ctx, workspaceUri){
         super(serverData.modes, workspaceUri);
