@@ -5,27 +5,9 @@ const HashHandler = ace.require("ace/keyboard/hash_handler").HashHandler;
 const keyUtil = ace.require("ace/lib/keys");
 const theme = ace.require("ace/theme/textmate");
 import type {LanguageProvider} from "ace-linters";
+import {createCloseButton, createModeNameText} from "./utils-common";
 
-export function createCloseButton(el) {
-    let closeButton = document.createElement("span");
-    closeButton.innerText = "\u00D7";
-    closeButton.style.cursor = "pointer";
-    el.appendChild(closeButton);
-    return closeButton;
-}
-
-export function createModeNameText(el, name) {
-    let modeName = document.createElement("p");
-    modeName.innerText = name;
-    modeName.style.margin = "0";
-    modeName.style.paddingRight = "10px";
-    modeName.style.float = "left";
-    modeName.id = "titleId";
-    el.appendChild(modeName);
-    return modeName;
-}
-
-export function createEditorWithLSP(mode, i: number, languageProvider: LanguageProvider, width = "49%") {
+export function createEditorWithLSP(mode: {mode: string, content: string, name: string, options?: Object, filePath?: string}, i: number, languageProvider: LanguageProvider, width = "49%") {
     let el = document.createElement("div");
     let modeName = createModeNameText(el, mode.name);
     let closeButton = createCloseButton(el);
@@ -82,7 +64,7 @@ export function addFormatCommand(languageProvider: LanguageProvider) {
             }
         }
     ]);
-    event.addCommandKeyListener(window, function (e, hashId, keyCode) {
+    event.addCommandKeyListener(window, function (e: any, hashId: any, keyCode: any) {
         let keyString = keyUtil.keyCodeToString(keyCode);
         let command = menuKb.findKeyCommand(hashId, keyString);
         if (command) {

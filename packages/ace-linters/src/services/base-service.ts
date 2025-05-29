@@ -179,7 +179,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return null;
     }
 
-    async doInlineComplete(document, position: lsp.Position): Promise<lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null> {
+    async doInlineComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null> {
         return null;
     }
 

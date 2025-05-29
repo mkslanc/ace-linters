@@ -5,25 +5,7 @@ import {HashHandler} from "ace-code/src/keyboard/hash_handler";
 import keyUtil from "ace-code/src/lib/keys";
 import * as theme from "ace-code/src/theme/textmate";
 import type {LanguageProvider} from "ace-linters";
-
-export function createCloseButton(el: HTMLElement) {
-    let closeButton = document.createElement("span");
-    closeButton.innerText = "\u00D7";
-    closeButton.style.cursor = "pointer";
-    el.appendChild(closeButton);
-    return closeButton;
-}
-
-export function createModeNameText(el: HTMLElement, name: string) {
-    let modeName = document.createElement("p");
-    modeName.innerText = name;
-    modeName.style.margin = "0";
-    modeName.style.paddingRight = "10px";
-    modeName.style.float = "left";
-    modeName.id = "titleId";
-    el.appendChild(modeName);
-    return modeName;
-}
+import {createCloseButton, createModeNameText} from "./utils-common";
 
 export function createEditorWithLSP(mode: {mode: string, content: string, name: string, options?: Object, filePath?: string}, i: number, languageProvider: LanguageProvider, width = "49%") {
     let el = document.createElement("div");

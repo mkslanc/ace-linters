@@ -53,10 +53,10 @@ let languageProvider = AceLanguageClient.for(serverData, {
         CompletionProvider
     }
 });
-
+// @ts-expect-error
 let editor = createEditorWithLSP(modes[0], 0, languageProvider, "100%",);
 editor.setOption("liveAutocompletionDelay", 500);
-
+// @ts-expect-error
 addFormatCommand(languageProvider);
 
 setTimeout(() => {
