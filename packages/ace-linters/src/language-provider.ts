@@ -160,8 +160,7 @@ export class LanguageProvider {
         try {
             method();
         } catch (e) {
-            console.warn(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
-            // Fall back to basic completion
+            console.error(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
             if (this.options?.functionality) {
                 this.options.functionality.inlineCompletion = false;
             }
@@ -197,16 +196,6 @@ export class LanguageProvider {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
         this.$registerSession(editor.session, editor);
-
-        if (this.options?.functionality?.inlineCompletion) {
-            this.checkInlineCompletionAdapter(() => {
-                if (this.completerAdapter) {
-                    this.completerAdapter.validateAceInlineCompleterWithEditor(editor);
-                    this.inlineCompleter = this.completerAdapter.InlineCompleter;
-                    this.doLiveAutocomplete = this.completerAdapter.doLiveAutocomplete;
-                }
-            });
-        }
     }
 
     codeActionCallback: (codeActions: CodeActionsByService[]) => void;
@@ -534,6 +523,17 @@ export class LanguageProvider {
             editor.completers.push(completer);
         }
 
+        if (this.options?.functionality?.inlineCompletion) {
+            this.checkInlineCompletionAdapter(() => {
+                if (this.completerAdapter) {
+                    editor.inlineCompleters ??= [];
+                    this.completerAdapter.validateAceInlineCompleterWithEditor(editor);
+                    this.inlineCompleter = this.completerAdapter.InlineCompleter;
+                    this.doLiveAutocomplete = this.completerAdapter.doLiveAutocomplete;
+                }
+            });
+        }
+
         if (this.options.functionality?.inlineCompletion) {
             editor.commands.addCommand({
                 name: "startInlineAutocomplete",
@@ -563,7 +563,6 @@ export class LanguageProvider {
                 },
                 id: "lspInlineCompleters"
             }
-            editor.inlineCompleters ??= [];
             editor.inlineCompleters.push(inlineCompleter);
         }
     }
