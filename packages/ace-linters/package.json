@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "scripts": {
     "clean": "rimraf build",
     "postbuild": "node postbuild.js",
@@ -47,7 +47,9 @@
     "ts-node": "^10.9.1",
     "puppeteer": "^23.4.0",
     "http-server": "^14.1.1",
-    "dts-bundle-generator": "^9.5.1"
+    "dts-bundle-generator": "^9.5.1",
+    "ace-code": "^1.39.0",
+    "ace-builds": "^1.39.0"
   },
   "main": "build/ace-linters.js",
   "files": [

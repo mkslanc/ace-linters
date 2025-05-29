@@ -1,9 +1,9 @@
-import * as ace from "ace-code";
-import "ace-code/src/ext/language_tools";
-import event from "ace-code/src/lib/event";
-import {HashHandler} from "ace-code/src/keyboard/hash_handler";
-import keyUtil from "ace-code/src/lib/keys";
-import * as theme from "ace-code/src/theme/textmate";
+import * as ace from "ace-builds";
+ace.require("ace/ext/language_tools");
+const event = ace.require("ace/lib/event");
+const HashHandler = ace.require("ace/keyboard/hash_handler").HashHandler;
+const keyUtil = ace.require("ace/lib/keys");
+const theme = ace.require("ace/theme/textmate");
 import type {LanguageProvider} from "ace-linters";
 import {createCloseButton, createModeNameText} from "./utils-common";
 
@@ -28,13 +28,13 @@ export function createEditorWithLSP(mode: {mode: string, content: string, name: 
         theme: theme,
         customScrollbar: true
     });
-    
+
     languageProvider.registerEditor(editor);
 
     let options = mode.options ?? {};
     languageProvider.setSessionOptions(editor.session, options);
-    
-    
+
+
     /**
      * Sets the file path for the current editor session.
      * This allows the language provider to associate the editor session with a specific file path,
@@ -64,11 +64,11 @@ export function addFormatCommand(languageProvider: LanguageProvider) {
             }
         }
     ]);
-    event.addCommandKeyListener(window, function (e, hashId, keyCode) {
+    event.addCommandKeyListener(window, function (e: any, hashId: any, keyCode: any) {
         let keyString = keyUtil.keyCodeToString(keyCode);
         let command = menuKb.findKeyCommand(hashId, keyString);
         if (command) {
-            command.exec!();
+            command.exec();
             e.preventDefault();
         }
     });

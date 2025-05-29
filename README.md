@@ -166,13 +166,35 @@ languageProvider.registerEditor(editor);
 **[!]** You need to describe server similar to that example:
 [Example server](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/webworker.ts)
 
-## Supported LSP capabilities:
-- Text Document Synchronization (with incremental changes)
-- Hover
-- Diagnostics
-- Formatting
-- Completions
-- Signature Help
+## Supported LSP Capabilities
+
+- **Text Document Synchronization** (incremental changes)
+- **Diagnostics**
+  - Related document support
+  - Diagnostic tags (Unnecessary, Deprecated)
+  - Related diagnostic information support
+- **Hover**
+  - Markdown and plaintext content formats
+- **Formatting**
+- **Completions**
+  - Snippet support
+  - Documentation formats (Markdown, plaintext)
+- **Signature Help**
+  - Documentation formats (Markdown, plaintext)
+  - Active parameter highlighting support
+- **Document Highlight**
+- **Semantic Tokens**
+  - Relative format tokens
+  - Range requests supported
+  - Augments syntax tokens
+- **Code Actions**
+- **Inline Completions**
+- **Workspace Capabilities**
+  - Configuration change notifications
+  - Command execution
+  - Workspace edits (`applyEdit` supported)
+- **Window Capabilities**
+  - `showDocument` request support
 
 [Full list of capabilities](https://github.com/mkslanc/ace-linters/wiki/Client-LSP-capabilities)
 
@@ -187,10 +209,15 @@ Ace linters supports the following languages by default with webworkers approach
 - YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
 - XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
 - Javascript, JSX *powered by* [Eslint](https://github.com/eslint/eslint)
-- Python *powered by* [Ruff](https://github.com/charliermarsh/ruff)
 
 ## Supported languages via extensions
 - MySQL, FlinkSQL, SparkSQL, HiveSQL, TrinoSQL, PostgreSQL, Impala SQL, PL/SQL *with* [ace-sql-linter](https://www.npmjs.com/package/ace-sql-linter)
+- Clang *with* [ace-clang-linter](https://www.npmjs.com/package/ace-clang-linter)
+- Dart *with* [ace-dart-linter](https://www.npmjs.com/package/ace-dart-linter)
+- Go *with* [ace-go-linter](https://www.npmjs.com/package/ace-go-linter)
+- Lua *with* [ace-lua-linter](https://www.npmjs.com/package/ace-lua-linter)
+- Python *with* [ace-python-linter](https://www.npmjs.com/package/ace-python-linter)
+- Zig *with* [ace-zig-linter](https://www.npmjs.com/package/ace-zig-linter)
 
 ## Installation
 

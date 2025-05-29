@@ -1,38 +1,77 @@
-# Ace Lua Linter
+# Ace Linters (Ace Language Client)
 
-Ace Lua Linter is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for lua. 
-It integrates seamlessly with Ace Linters, enhancing your Ace editor with linting and analysis capabilities based on the LSP standard.
+Ace linters is lsp client for Ace editor. It comes with large number of preconfigured easy to use in browser servers.
 
-## Key Features
+If you're uncertain about integrating ace-linters, consult [our diagram on the GitHub Wiki](https://github.com/mkslanc/ace-linters/wiki/Usage-Scenarios-Overview) for a quick setup guide
+tailored to your needs.
 
-- **LSP Compatibility**: Implements LSP features supported by the lua language server.
-- **Seamless Integration**: Works effortlessly with Ace Linters and the Ace editor.
-- **Easy Setup**: Quick and straightforward integration into your existing environment.
+### Example client with pre-defined services:
+```javascript
+import * as ace from "ace-code";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {LanguageProvider} from "ace-linters/build/ace-linters";
 
-## Installation
+// Create a web worker
+let worker = new Worker(new URL('./webworker.js', import.meta.url));
 
-To install Ace Lua Linter, run the following commands:
+// Create an Ace editor
+let editor = ace.edit("container", {
+    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+});
 
-```bash
-npm install ace-linters
-npm install ace-lua-linter
+// Create a language provider for web worker (
+let languageProvider = LanguageProvider.create(worker);
+
+// Register the editor with the language provider
+languageProvider.registerEditor(editor);
+``` 
+
+[Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
+
+## New Features in 1.2.0
+- add `setProviderOptions` method to `LanguageProvider` to set options for client.
+- add experimental semantic tokens support (turned off by default). To turn on semantic tokens, set `semanticTokens` to
+  `true` in `setProviderOptions` method or use it in `create` or `fromCdn` methods like that
+```javascript
+LanguageProvider.create(worker, {functionality: {semanticTokens: true}})
 ```
 
-## Usage
+## New Features in 1.0.0
 
-1. Register the service on the web worker's side:
-
-   ```javascript
-   import { ServiceManager } from "ace-linters/build/service-manager";
-
-   manager.registerService("ace-lua-linter", {
-       module: () => import("ace-lua-linter/build/ace-lua-linter"),
-       className: "AceLuaLinter",
-       modes: "lua",
-   });
-   ```
-
-2. Use in conjunction with the `ace-linters` main package [similar to predefined services example](https://github.com/mkslanc/ace-linters?tab=readme-ov-file#example-client-with-pre-defined-services)
+- `registerServer` method in `ServiceManager` enables management of both services and servers on the web worker's side.
+  Just add new servers to your webworker like this:
+  ```javascript
+  manager.registerServer("astro", {
+      module: () => import("ace-linters/build/language-client"),
+      modes: "astro",
+      type: "socket", // "socket|worker"
+      socket: new WebSocket("ws://127.0.0.1:3030/astro"),
+      initializationOptions: {
+          typescript: {
+              tsdk: "node_modules/typescript/lib"
+          }
+      }
+  });
+  ```
+- Multiple servers management on main thread. Just register servers like this:
+  ```javascript
+  let servers = [
+      {
+          module: () => import("ace-linters/build/language-client"),
+          modes: "astro",
+          type: "socket",
+          socket: new WebSocket("ws://127.0.0.1:3030/astro"),
+      },
+      {
+          module: () => import("ace-linters/build/language-client"),
+          modes: "svelte",
+          type: "socket",
+          socket: new WebSocket("ws://127.0.0.1:3030/svelte"),
+      }
+  ]
+  let languageProvider = AceLanguageClient.for(servers);
+  ```
+- **Breaking change:** `AceLanguageClient.for` interface was changed
 
 ## Example using script tag from CDN
 ```html
@@ -44,44 +83,150 @@ npm install ace-lua-linter
 <script>
     ace.require("ace/ext/language_tools"); //To allow autocompletion
     var editor = ace.edit("editor", {
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true,
-        mode: "ace/mode/lua"
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true,
+      mode: "ace/mode/css"
     });
 
-    var services = [{
-        name: "ace-lua-linter",
-        className: "AceLuaLinter",
-        modes: "lua",
-        script: "build/ace-lua-linter.js",
-        // url to your cdn provider
-        cdnUrl: "https://www.unpkg.com/ace-lua-linter"
-    }]
-
-    let provider = LanguageProvider.fromCdn({
-        services: services,
-        serviceManagerCdn: "https://www.unpkg.com/ace-linters@latest/build/",
-        //optional, if you want to use default linters
-        includeDefaultLinters: true
-    });
-
+    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
     provider.registerEditor(editor);
 </script>
 ```
 
-## Supported Features
 
-This linter supports the following features:
+Ace linters client currently supports two modes: **WebSockets** and **WebWorkers**.
 
-- **format**: Provides code formatting.
-- **diagnostics**: Reports errors and warnings.
+## Usage with WebSocket (JSON-RPC)
 
-## Powered by
+In WebSockets mode, you need to start a language server on any port and connect to it.
 
-- [lua_fmt](https://github.com/wasm-fmt/lua_fmt) A WASM Based Lua Formatter\
-- [luaparse](https://github.com/fstirlitz/luaparse) A Lua parser written in JavaScript
+Here's an example client:
+
+```javascript
+import * as ace from "ace-code";
+import {Mode as JSONMode} from "ace-code/src/mode/json"; //any mode you want
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+
+// Create a web socket
+const serverData = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json|json5",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
+}
+// Create an Ace editor
+let editor = ace.edit("container", {
+    mode: new JSONMode() // Set the mode of the editor to JSON
+});
+
+// Create a language provider for web socket
+let languageProvider = AceLanguageClient.for(serverData);
+
+// Register the editor with the language provider
+languageProvider.registerEditor(editor);
+```
+
+[Full Example client](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/websockets-lsp/client.ts)
+
+[Full Example server](https://github.com/mkslanc/ace-linters/tree/main/packages/demo/websockets-lsp/server)
+
+## Usage with WebWorker (JSON-RPC)
+
+*client.js*:
+
+```javascript
+import * as ace from "ace-code";
+import {Mode as TypescriptMode} from "ace-code/src/mode/typescript";
+import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+
+// Create a web worker
+let worker = new Worker(new URL('./webworker.js', import.meta.url));
+const serverData = {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "json",
+    type: "webworker",
+    worker: worker,
+}
+
+// Create an Ace editor
+let editor = ace.edit("container", {
+    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+});
+
+// Create a language provider for web worker
+let languageProvider = AceLanguageClient.for(serverData);
+
+// Register the editor with the language provider
+languageProvider.registerEditor(editor);
+
+```
+
+[Example client](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/demo.ts)
+
+**[!]** You need to describe server similar to that example:
+[Example server](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/webworker.ts)
+
+## Supported LSP Capabilities
+
+- **Text Document Synchronization** (incremental changes)
+- **Diagnostics**
+   - Related document support
+   - Diagnostic tags (Unnecessary, Deprecated)
+   - Related diagnostic information support
+- **Hover**
+   - Markdown and plaintext content formats
+- **Formatting**
+- **Completions**
+   - Snippet support
+   - Documentation formats (Markdown, plaintext)
+- **Signature Help**
+   - Documentation formats (Markdown, plaintext)
+   - Active parameter highlighting support
+- **Document Highlight**
+- **Semantic Tokens**
+   - Relative format tokens
+   - Range requests supported
+   - Augments syntax tokens
+- **Code Actions**
+- **Inline Completions**
+- **Workspace Capabilities**
+   - Configuration change notifications
+   - Command execution
+   - Workspace edits (`applyEdit` supported)
+- **Window Capabilities**
+   - `showDocument` request support
+
+[Full list of capabilities](https://github.com/mkslanc/ace-linters/wiki/Client-LSP-capabilities)
+
+## Supported languages
+Ace linters supports the following languages by default with webworkers approach:
+
+- JSON, JSON5 *powered by* [vscode-json-languageservice](https://github.com/Microsoft/vscode-json-languageservice)
+- HTML *powered by* [vscode-html-languageservice](https://github.com/Microsoft/vscode-html-languageservice)
+- CSS, SCSS, LESS *powered by* [vscode-css-languageservice](https://github.com/Microsoft/vscode-css-languageservice)
+- Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
+- Lua *powered by* [luaparse](https://github.com/fstirlitz/luaparse)
+- YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
+- XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
+- Javascript, JSX *powered by* [Eslint](https://github.com/eslint/eslint)
+
+## Supported languages via extensions
+- MySQL, FlinkSQL, SparkSQL, HiveSQL, TrinoSQL, PostgreSQL, Impala SQL, PL/SQL *with* [ace-sql-linter](https://www.npmjs.com/package/ace-sql-linter)
+- Clang *with* [ace-clang-linter](https://www.npmjs.com/package/ace-clang-linter)
+- Dart *with* [ace-dart-linter](https://www.npmjs.com/package/ace-dart-linter)
+- Go *with* [ace-go-linter](https://www.npmjs.com/package/ace-go-linter)
+- Lua *with* [ace-lua-linter](https://www.npmjs.com/package/ace-lua-linter)
+- Python *with* [ace-python-linter](https://www.npmjs.com/package/ace-python-linter)
+- Zig *with* [ace-zig-linter](https://www.npmjs.com/package/ace-zig-linter)
+
+## Installation
+
+To install Ace linters, you can use the following command:
+
+```bash
+npm install ace-linters
+```
 
 ## License
 
 Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
-

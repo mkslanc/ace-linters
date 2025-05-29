@@ -22,13 +22,13 @@ import {
     GetCodeActionsMessage,
     ExecuteCommandMessage,
     AppliedEditMessage,
-    SetWorkspaceMessage, RenameDocumentMessage
+    SetWorkspaceMessage, RenameDocumentMessage, SendRequestMessage, SendResponseMessage, InlineCompleteMessage
 } from "./message-types";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
 import * as lsp from "vscode-languageserver-protocol";
 import {
     CodeActionsByService,
-    CompletionService,
+    CompletionService, InlineCompletionService,
     ServiceFeatures,
     ServiceOptions,
     ServiceOptionsMap,
@@ -51,26 +51,37 @@ export class MessageController implements IMessageController {
             const message = e.data;
             const callbackId = message.callbackId;
 
-            if (message.type === MessageType.validate || message.type === MessageType.capabilitiesChange) {
-                const sessionId = this.getSessionIdByUri(message.documentUri);
-                if (!sessionId) {
-                    return;
-                }
-                if (message.type === MessageType.validate) {
-                    this.provider.$sessionLanguageProviders[sessionId]?.$showAnnotations(message.value);
-                } else {
-                    this.provider.$sessionLanguageProviders[sessionId]?.setServerCapabilities(message.value);
-                }
-            } else if (message.type === MessageType.applyEdit) {
-                const applied = (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => {
-                    this.$worker.postMessage(new AppliedEditMessage(result, serviceName, message.callbackId));
-                }
-                this.provider.applyEdit(message.value, message.serviceName, applied);
-            } else {
-                if (this.callbacks[callbackId]) {
-                    this.callbacks[callbackId](message.value);
-                    delete this.callbacks[callbackId];
-                }
+            switch (message.type) {
+                case MessageType.validate:
+                case MessageType.capabilitiesChange:
+                    const sessionId = this.getSessionIdByUri(message.documentUri);
+                    if (!sessionId) {
+                        return;
+                    }
+                    if (message.type === MessageType.validate) {
+                        this.provider.$sessionLanguageProviders[sessionId]?.$showAnnotations(message.value);
+                    } else {
+                        this.provider.$sessionLanguageProviders[sessionId]?.setServerCapabilities(message.value);
+                    }
+                    break;
+                case MessageType.applyEdit:
+                    const applied = (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => {
+                        this.$worker.postMessage(new AppliedEditMessage(result, serviceName, message.callbackId));
+                    }
+                    this.provider.applyEdit(message.value, message.serviceName, applied);
+                    break;
+                case MessageType.showDocument:
+                    const sendResponse = (result: lsp.LSPAny, serviceName: string) => {
+                        this.$worker.postMessage(new SendResponseMessage(serviceName, message.callbackId, result));
+                    }
+                    this.provider.showDocument(message, message.serviceName, sendResponse);
+                    break;
+                default:
+                    if (this.callbacks[callbackId]) {
+                        this.callbacks[callbackId](message.value);
+                        delete this.callbacks[callbackId];
+                    }
+                    break;
             }
         });
 
@@ -95,6 +106,11 @@ export class MessageController implements IMessageController {
 
     doComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: CompletionService[]) => void) {
         this.postMessage(new CompleteMessage(documentIdentifier, this.callbackId++, position), callback);
+    }
+
+    doInlineComplete(documentIdentifier: ComboDocumentIdentifier, position: lsp.Position, callback?: (completions: InlineCompletionService[]) => void) {
+        //TODO: add inline completion context
+        this.postMessage(new InlineCompleteMessage(documentIdentifier, this.callbackId++, position), callback);
     }
 
     doResolve(documentIdentifier: ComboDocumentIdentifier, completion: lsp.CompletionItem, callback?: (completion: lsp.CompletionItem | null) => void) {
@@ -157,11 +173,11 @@ export class MessageController implements IMessageController {
         this.postMessage(new GetSemanticTokensMessage(documentIdentifier, this.callbackId++, range), callback);
     }
 
-    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext,  callback?: (codeActions: CodeActionsByService[]) => void) {
+    getCodeActions(documentIdentifier: ComboDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext, callback?: (codeActions: CodeActionsByService[]) => void) {
         this.postMessage(new GetCodeActionsMessage(documentIdentifier, this.callbackId++, range, context), callback);
     }
 
-    executeCommand(serviceName: string, command: string, args?: any[],  callback?: (result: any) => void) {
+    executeCommand(serviceName: string, command: string, args?: any[], callback?: (result: any) => void) {
         this.postMessage(new ExecuteCommandMessage(serviceName, this.callbackId++, command, args), callback);
     }
 
@@ -173,7 +189,11 @@ export class MessageController implements IMessageController {
         this.$worker.postMessage(new RenameDocumentMessage(documentIdentifier, this.callbackId++, newDocumentUri, version));
     }
 
-    postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage, callback?: (any) => void) {
+    sendRequest(serviceName: string, requestName: string, args?: any, callback?: (result: any) => void) {
+        this.postMessage(new SendRequestMessage(serviceName, this.callbackId++, requestName, args), callback);
+    }
+
+    postMessage(message: BaseMessage | CloseConnectionMessage | ExecuteCommandMessage | SendRequestMessage, callback?: (any) => void) {
         if (callback) {
             this.callbacks[message.callbackId] = callback;
         }
