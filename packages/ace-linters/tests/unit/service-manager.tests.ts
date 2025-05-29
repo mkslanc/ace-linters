@@ -97,6 +97,7 @@ describe('ServiceManager tests', () => {
             const expectedFeatures = {
                 codeAction: true,
                 hover: true,
+                inlineCompletion: true,
                 completion: true,
                 completionResolve: true,
                 format: true,

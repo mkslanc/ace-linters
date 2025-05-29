@@ -2,8 +2,11 @@ import type {InlineAutocomplete} from "ace-code/src/ext/inline_autocomplete";
 import type {Ace} from "ace-code";
 import type {CommandBarTooltip} from "ace-code/src/ext/command_bar";
 import type {CompletionProvider} from "ace-code/src/autocomplete";
+import {validateAcePrototypes} from "./inline-completer-adapter/prototype-validation";
 
 export function createInlineCompleterAdapter(OriginalInlineAutocomplete: typeof InlineAutocomplete, OriginalCommandBarTooltip: typeof CommandBarTooltip, OriginalCompletionProvider: typeof CompletionProvider) {
+    validateAcePrototypes(OriginalInlineAutocomplete, OriginalCommandBarTooltip, OriginalCompletionProvider);
+
     var destroyCompleter = function (e, editor: Ace.Editor) {
         editor.inlineCompleter && editor.inlineCompleter.destroy();
     };
@@ -147,6 +150,60 @@ export function createInlineCompleterAdapter(OriginalInlineAutocomplete: typeof 
             });
             return inlineTooltip;
         };
+
+        updateCompletions(options) {
+            if (options && options.matches) {
+                var pos = this.editor.getSelectionRange().start;
+                this.base = this.editor.session.doc.createAnchor(pos.row, pos.column);
+                this.base["$insertRight"] = true;
+                this.completions = new FilteredList(options.matches);
+                //@ts-expect-error TODO: potential wrong arguments
+                return this.$open(this.editor, "");
+            }
+
+            if (this.base && this.completions) {
+                //@ts-expect-error
+                this.$updatePrefix();
+            }
+
+            var session = this.editor.getSession();
+            var pos = this.editor.getCursorPosition();
+            var prefix = getCompletionPrefix(this.editor);
+            this.base = session.doc.createAnchor(pos.row, pos.column - prefix.length);
+            //@ts-expect-error
+            this.base.$insertRight = true;
+
+            // @ts-ignore
+            var options = {
+                exactMatch: true,
+                ignoreCaption: true
+            };
+            this.getCompletionProvider({
+                prefix,
+                base: this.base,
+                pos
+                // @ts-ignore
+            }).provideCompletions(this.editor, options,
+                /**
+                 * @this {InlineAutocomplete}
+                 */
+                function(err, completions, finished) {
+                    var filtered = completions.filtered;
+                    var prefix = getCompletionPrefix(this.editor);
+
+                    if (finished) {
+                        // No results
+                        if (!filtered.length)
+                            return this.detach();
+
+                        // One result equals to the prefix
+                        if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
+                            return this.detach();
+                    }
+                    this.completions = completions;
+                    this.$open(this.editor, prefix);
+                }.bind(this));
+        }
     }
 
     OriginalInlineAutocomplete.prototype.commands["Previous"].exec = (editor) => {
@@ -203,13 +260,39 @@ export function createInlineCompleterAdapter(OriginalInlineAutocomplete: typeof 
         }
     };
 
-    return {InlineCompleter, doLiveAutocomplete};
+    const validateAceInlineCompleterWithEditor = (
+        editor
+    ) => {
+        // InlineAutocomplete instance: show(), activated state, destroy, etc.
+        let completer: any;
+        try {
+            completer = InlineCompleter.for(editor);
+            completer.show({});
+            if (typeof completer.activated !== "boolean") throw new Error("activated property missing or not boolean");
+            completer.destroy();
+        } catch (e) {
+            throw new Error(`InlineAutocomplete runtime validation failed: ${e.message}`);
+        }
+
+        // CompletionProvider: instantiate & basic usage
+        try {
+            const provider = new InlineCompletionProvider();
+            if (typeof provider.gatherCompletions !== "function") throw new Error("gatherCompletions missing");
+        } catch (e) {
+            throw new Error(`CompletionProvider runtime validation failed: ${e.message}`);
+        }
+    }
+
+    return {InlineCompleter, doLiveAutocomplete, validateAceInlineCompleterWithEditor};
 }
 
-function getCompletionPrefix(editor: Ace.Editor) {
+function getCompletionPrefix(editor: Ace.Editor): string {
     var pos = editor.getCursorPosition();
     var line = editor.session.getLine(pos.row);
     var prefix;
+    if (!editor.inlineCompleters) {
+        return "";
+    }
     editor.inlineCompleters.forEach(function (completer) {
         if (completer.identifierRegexps) {
             completer.identifierRegexps.forEach(function (identifierRegex) {
@@ -285,5 +368,103 @@ class DelayedCall {
 
     isPending() {
         return this.timer;
+    }
+}
+
+class FilteredList {
+    all: any;
+    filtered: any;
+    filterText: string;
+    exactMatch: boolean;
+    ignoreCaption: boolean;
+
+    constructor(array, filterText?: string) {
+        this.all = array;
+        this.filtered = array;
+        this.filterText = filterText || "";
+        this.exactMatch = false;
+        this.ignoreCaption = false;
+    }
+
+    setFilter(str) {
+        if (str.length > this.filterText && str.lastIndexOf(this.filterText, 0) === 0)
+            var matches = this.filtered;
+        else
+            var matches = this.all;
+
+        this.filterText = str;
+        matches = this.filterCompletions(matches, this.filterText);
+        matches = matches.sort(function(a, b) {
+            return b.exactMatch - a.exactMatch || b.$score - a.$score
+                || (a.caption || a.value).localeCompare(b.caption || b.value);
+        });
+
+        // make unique
+        var prev = null;
+        matches = matches.filter(function(item){
+            var caption = item.snippet || item.caption || item.value;
+            if (caption === prev) return false;
+            prev = caption;
+            return true;
+        });
+
+        this.filtered = matches;
+    }
+
+    filterCompletions(items, needle) {
+        var results: any[] = [];
+        var upper = needle.toUpperCase();
+        var lower = needle.toLowerCase();
+        loop: for (var i = 0, item; item = items[i]; i++) {
+            if (item.skipFilter) {
+                item.$score = item.score;
+                results.push(item);
+                continue;
+            }
+            var caption = (!this.ignoreCaption && item.caption) || item.value || item.snippet;
+            if (!caption) continue;
+            var lastIndex = -1;
+            var matchMask = 0;
+            var penalty = 0;
+            var index, distance;
+
+            if (this.exactMatch) {
+                if (needle !== caption.substr(0, needle.length))
+                    continue loop;
+            } else {
+                /**
+                 * It is for situation then, for example, we find some like 'tab' in item.value="Check the table"
+                 * and want to see "Check the TABle" but see "Check The tABle".
+                 */
+                var fullMatchIndex = caption.toLowerCase().indexOf(lower);
+                if (fullMatchIndex > -1) {
+                    penalty = fullMatchIndex;
+                } else {
+                    // caption char iteration is faster in Chrome but slower in Firefox, so lets use indexOf
+                    for (var j = 0; j < needle.length; j++) {
+                        // TODO add penalty on case mismatch
+                        var i1 = caption.indexOf(lower[j], lastIndex + 1);
+                        var i2 = caption.indexOf(upper[j], lastIndex + 1);
+                        index = (i1 >= 0) ? ((i2 < 0 || i1 < i2) ? i1 : i2) : i2;
+                        if (index < 0)
+                            continue loop;
+                        distance = index - lastIndex - 1;
+                        if (distance > 0) {
+                            // first char mismatch should be more sensitive
+                            if (lastIndex === -1)
+                                penalty += 10;
+                            penalty += distance;
+                            matchMask = matchMask | (1 << j);
+                        }
+                        lastIndex = index;
+                    }
+                }
+            }
+            item.matchMask = matchMask;
+            item.exactMatch = penalty ? 0 : 1;
+            item.$score = (item.score || 0) - penalty;
+            results.push(item);
+        }
+        return results;
     }
 }

@@ -59,6 +59,7 @@ export class LanguageProvider {
     private stylesEmbedded: boolean;
     private inlineCompleter?: any;
     private doLiveAutocomplete: (e) => void;
+    private completerAdapter?: { InlineCompleter: any; doLiveAutocomplete: (e) => void; validateAceInlineCompleterWithEditor: (editor: Ace.Editor) => void; };
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
@@ -145,12 +146,25 @@ export class LanguageProvider {
             this.workspaceUri = convertToUri(options.workspacePath);
         }
         if (this.options.functionality.inlineCompletion) {
-            if (!this.options.aceComponents?.InlineAutocomplete || !this.options.aceComponents?.CommandBarTooltip || !this.options.aceComponents?.CompletionProvider) {
-                throw new Error("Inline completion requires the InlineAutocomplete and CommandBarTooltip to be defined");
+            this.checkInlineCompletionAdapter(() => {
+                if (!this.options.aceComponents?.InlineAutocomplete || !this.options.aceComponents?.CommandBarTooltip || !this.options.aceComponents?.CompletionProvider) {
+                    throw new Error("Inline completion requires the InlineAutocomplete, CompletionProvider and CommandBarTooltip to be" +
+                        " defined");
+                }
+                this.completerAdapter = createInlineCompleterAdapter(this.options.aceComponents.InlineAutocomplete, this.options.aceComponents.CommandBarTooltip, this.options.aceComponents.CompletionProvider);
+            });
+        }
+    }
+
+    private checkInlineCompletionAdapter(method: () => void) {
+        try {
+            method();
+        } catch (e) {
+            console.warn(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
+            // Fall back to basic completion
+            if (this.options?.functionality) {
+                this.options.functionality.inlineCompletion = false;
             }
-            const completerAdapter = createInlineCompleterAdapter(this.options.aceComponents.InlineAutocomplete, this.options.aceComponents.CommandBarTooltip, this.options.aceComponents.CompletionProvider);
-            this.inlineCompleter = completerAdapter.InlineCompleter;
-            this.doLiveAutocomplete = completerAdapter.doLiveAutocomplete;
         }
     }
 
@@ -183,6 +197,16 @@ export class LanguageProvider {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
         this.$registerSession(editor.session, editor);
+
+        if (this.options?.functionality?.inlineCompletion) {
+            this.checkInlineCompletionAdapter(() => {
+                if (this.completerAdapter) {
+                    this.completerAdapter.validateAceInlineCompleterWithEditor(editor);
+                    this.inlineCompleter = this.completerAdapter.InlineCompleter;
+                    this.doLiveAutocomplete = this.completerAdapter.doLiveAutocomplete;
+                }
+            });
+        }
     }
 
     codeActionCallback: (codeActions: CodeActionsByService[]) => void;
@@ -763,7 +787,7 @@ class SessionLanguageProvider {
 
                 const triggerCharacterOptions = (typeof this.$provider.options.functionality?.completion == "object") ? this.$provider.options.functionality.completion.lspCompleterOptions?.triggerCharacters : undefined;
                 if (triggerCharacterOptions) {
-                    const removeChars: string[] = Array.isArray(triggerCharacterOptions.remove) 
+                    const removeChars: string[] = Array.isArray(triggerCharacterOptions.remove)
                         ? triggerCharacterOptions.remove
                         : [];
                     const addChars: string[] = Array.isArray(triggerCharacterOptions.add)
@@ -777,8 +801,7 @@ class SessionLanguageProvider {
                             completer!.triggerCharacters!.push(char);
                         }
                     });
-                }
-                else {
+                } else {
                     completer.triggerCharacters = allTriggerCharacters;
                 }
             }
