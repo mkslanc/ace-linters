@@ -1,6 +1,7 @@
 import {LanguageProvider} from "../language-provider";
 import type {Ace} from "ace-code";
 import {Tooltip} from "../ace/tooltip";
+import {popupManager} from "../ace/popupManager";
 
 export class BaseTooltip extends Tooltip {
     provider: LanguageProvider;
@@ -62,6 +63,7 @@ export class BaseTooltip extends Tooltip {
         
         this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
         this.show(null, position.pageX, position.pageY);
+        popupManager.addPopup(this);
     }
     
     getElement() {
@@ -70,6 +72,7 @@ export class BaseTooltip extends Tooltip {
 
     hide() {
         super.hide();
+        popupManager.removePopup(this);
     }
 
     show(param, pageX: number, pageY: number) {
