@@ -6853,7 +6853,13 @@ class BaseService {
         }
     }
     renameDocument(document, newDocumentUri) {
-        this.documents[newDocumentUri] = this.documents[document.uri];
+        const previousDocument = this.getDocument(document.uri);
+        this.addDocument({
+            uri: newDocumentUri,
+            version: previousDocument.version,
+            languageId: previousDocument.languageId,
+            text: previousDocument.getText()
+        });
         this.options[newDocumentUri] = this.options[document.uri];
         this.removeDocument(document);
     }

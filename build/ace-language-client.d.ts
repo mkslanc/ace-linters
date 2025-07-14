@@ -590,7 +590,6 @@ export interface ProviderOptions {
 		codeActions?: boolean;
 	};
 	markdownConverter?: MarkDownConverter;
-	requireFilePath?: boolean;
 	workspacePath?: string;
 	aceComponents?: {
 		"InlineAutocomplete"?: typeof InlineAutocomplete;
@@ -735,7 +734,6 @@ declare class LanguageProvider {
 		[uri: string]: string;
 	};
 	workspaceUri: string;
-	requireFilePath: boolean;
 	private $lightBulbWidgets;
 	private stylesEmbedded;
 	private inlineCompleter?;
@@ -840,7 +838,6 @@ declare class SessionLanguageProvider {
 	private $isConnected;
 	private $options?;
 	private $filePath;
-	private $isFilePathRequired;
 	private $servicesCapabilities?;
 	private $requestsQueue;
 	state: {

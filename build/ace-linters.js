@@ -21706,8 +21706,6 @@ class LanguageProvider {
             }
         });
         (_this_options = this.options).markdownConverter || (_this_options.markdownConverter = new (showdown_default()).Converter());
-        var _this_options_requireFilePath;
-        this.requireFilePath = (_this_options_requireFilePath = this.options.requireFilePath) !== null && _this_options_requireFilePath !== void 0 ? _this_options_requireFilePath : false;
         if ((_options = options) === null || _options === void 0 ? void 0 : _options.workspacePath) {
             this.workspaceUri = convertToUri(options.workspacePath);
         }
@@ -22119,7 +22117,6 @@ class LanguageProvider {
         language_provider_define_property(this, "$hoverTooltip", void 0);
         language_provider_define_property(this, "$urisToSessionsIds", {});
         language_provider_define_property(this, "workspaceUri", void 0);
-        language_provider_define_property(this, "requireFilePath", false);
         language_provider_define_property(this, "$lightBulbWidgets", {});
         language_provider_define_property(this, "stylesEmbedded", void 0);
         language_provider_define_property(this, "inlineCompleter", void 0);
@@ -22160,7 +22157,6 @@ class SessionLanguageProvider {
      */ setFilePath(filePath) {
         this.enqueueIfNotConnected(()=>{
             this.session.doc.version++;
-            if (this.$filePath !== undefined) return;
             this.$filePath = filePath;
             const previousComboId = this.comboDocumentIdentifier;
             this.initDocumentUri(true);
@@ -22168,7 +22164,6 @@ class SessionLanguageProvider {
         });
     }
     $init() {
-        if (this.$isFilePathRequired && this.$filePath === undefined) return;
         this.initDocumentUri();
         this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
     }
@@ -22282,7 +22277,6 @@ class SessionLanguageProvider {
         language_provider_define_property(this, "$isConnected", false);
         language_provider_define_property(this, "$options", void 0);
         language_provider_define_property(this, "$filePath", void 0);
-        language_provider_define_property(this, "$isFilePathRequired", false);
         language_provider_define_property(this, "$servicesCapabilities", void 0);
         language_provider_define_property(this, "$requestsQueue", []);
         language_provider_define_property(this, "state", {
@@ -22444,7 +22438,6 @@ class SessionLanguageProvider {
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
-        this.$isFilePathRequired = provider.requireFilePath;
         session.doc.version = 1;
         session.doc.on("change", this.$changeListener, true);
         this.addSemanticTokenSupport(session); //TODO: ?
