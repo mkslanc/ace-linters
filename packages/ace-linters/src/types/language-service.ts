@@ -255,7 +255,6 @@ export interface ProviderOptions {
         codeActions?: boolean
     },
     markdownConverter?: MarkDownConverter,
-    requireFilePath?: boolean,
     workspacePath?: string, // this would be transformed to workspaceUri
     aceComponents?: {
         "InlineAutocomplete"?: typeof InlineAutocomplete,
