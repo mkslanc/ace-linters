@@ -48,6 +48,7 @@
     "puppeteer": "^23.4.0",
     "http-server": "^14.1.1",
     "dts-bundle-generator": "^9.5.1",
+    "fflate": "^0.8.2",
     "ace-code": "^1.39.0",
     "ace-builds": "^1.39.0"
   },
