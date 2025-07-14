@@ -106,7 +106,7 @@ manager.registerServer("astro", {
 
 manager.registerServer("go", {
     module: () => import("ace-linters/build/language-client"),
-    modes: "golang",
+    modes: "golang|go",
     type: "socket",
     socket: new WebSocket("ws://127.0.0.1:3030/go")
 });

@@ -54,12 +54,15 @@ export class LanguageProvider {
     private $hoverTooltip: HoverTooltip;
     $urisToSessionsIds: { [uri: string]: string } = {};
     workspaceUri: string;
-    requireFilePath: boolean = false;
     private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
     private stylesEmbedded: boolean;
     private inlineCompleter?: any;
     private doLiveAutocomplete: (e) => void;
-    private completerAdapter?: { InlineCompleter: any; doLiveAutocomplete: (e) => void; validateAceInlineCompleterWithEditor: (editor: Ace.Editor) => void; };
+    private completerAdapter?: {
+        InlineCompleter: any;
+        doLiveAutocomplete: (e) => void;
+        validateAceInlineCompleterWithEditor: (editor: Ace.Editor) => void;
+    };
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
@@ -141,7 +144,6 @@ export class LanguageProvider {
         });
 
         this.options.markdownConverter ||= new showdown.Converter();
-        this.requireFilePath = this.options.requireFilePath ?? false;
         if (options?.workspacePath) {
             this.workspaceUri = convertToUri(options.workspacePath);
         }
@@ -621,7 +623,6 @@ class SessionLanguageProvider {
     private $isConnected = false;
     private $options?: ServiceOptions;
     private $filePath: string;
-    private $isFilePathRequired = false;
     private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
     private $requestsQueue: Function[] = [];
 
@@ -655,7 +656,6 @@ class SessionLanguageProvider {
         this.$messageController = messageController;
         this.session = session;
         this.editor = editor;
-        this.$isFilePathRequired = provider.requireFilePath;
 
         session.doc.version = 1;
         session.doc.on("change", this.$changeListener, true);
@@ -689,8 +689,6 @@ class SessionLanguageProvider {
     setFilePath(filePath: string) {
         this.enqueueIfNotConnected(() => {
             this.session.doc.version++;
-            if (this.$filePath !== undefined)//TODO change file path
-                return;
             this.$filePath = filePath;
             const previousComboId = this.comboDocumentIdentifier;
             this.initDocumentUri(true);
@@ -699,8 +697,6 @@ class SessionLanguageProvider {
     };
 
     private $init() {
-        if (this.$isFilePathRequired && this.$filePath === undefined)
-            return;
         this.initDocumentUri();
         this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
     }
