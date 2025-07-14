@@ -30,6 +30,7 @@ new AceLayout(base);
 window["fileTreeWrapper"] = fileTree;
 let fileSystem = new FileSystemWeb();
 let aceTree = new AceTreeWrapper();
+aceTree.render();
 
 function renderFileTree() {
     let button = new Button({value: "Open Folder"});

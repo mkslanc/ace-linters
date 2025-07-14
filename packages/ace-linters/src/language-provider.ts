@@ -689,8 +689,6 @@ class SessionLanguageProvider {
     setFilePath(filePath: string) {
         this.enqueueIfNotConnected(() => {
             this.session.doc.version++;
-            if (this.$filePath !== undefined)//TODO change file path
-                return;
             this.$filePath = filePath;
             const previousComboId = this.comboDocumentIdentifier;
             this.initDocumentUri(true);
@@ -699,8 +697,6 @@ class SessionLanguageProvider {
     };
 
     private $init() {
-        if (this.$isFilePathRequired && this.$filePath === undefined)
-            return;
         this.initDocumentUri();
         this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
     }
