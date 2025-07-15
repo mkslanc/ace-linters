@@ -74,17 +74,10 @@ export class PopupManager {
         try {
             this.cleanupStalePopups();
 
-            const sortedPopups = Array.from(this.popups).sort((a, b) => (b.priority || 0) - (a.priority || 0));
-            const visiblePopups: any[] = [];
+            const pupups = Array.from(this.popups).sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
-            // Process ace popups first (they have higher precedence)
-            for (const popup of this.acePopups) {
-                if (!this.shouldDisplayPopup(popup, visiblePopups)) {
-                    this.safeHidePopup(popup);
-                } else {
-                    visiblePopups.push(popup);
-                }
-            }
+            const sortedPopups = [...this.acePopups, ...pupups];
+            const visiblePopups: any[] = [];
 
             for (const popup of sortedPopups) {
                 if (!this.shouldDisplayPopup(popup, visiblePopups)) {

@@ -2,14 +2,14 @@ import {Tooltip} from "./tooltip";
 import {Ace} from "ace-code";
 import {popupManager} from "./popupManager";
 
-const preventParentScroll = function preventParentScroll(event) {
+function preventParentScroll(event) {
     event.stopPropagation();
     var target = event.currentTarget;
     var contentOverflows = target.scrollHeight > target.clientHeight;
     if (!contentOverflows) {
         event.preventDefault();
     }
-};
+}
 
 //taken from ace-code with small changes
 export class HoverTooltip extends Tooltip {
