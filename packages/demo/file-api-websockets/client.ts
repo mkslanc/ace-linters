@@ -6,7 +6,6 @@ import {LanguageProvider} from "ace-linters";
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
 let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
-languageProvider.requireFilePath = true;
 addFormatCommand(languageProvider);
 
 let fileTree: Box;
@@ -62,7 +61,7 @@ tabManager.fileSystem?.on("openFile", (treeNode) => {
 
     languageProvider.registerEditor((tab.editor as AceEditor).editor);
     let path = treeNode.path.substring(treeNode.path.indexOf("/", 1));
-    languageProvider.setSessionFilePath(tab.session, `${languageProvider.workspaceUri || ""}${path}`);
+    languageProvider.setSessionFilePath(tab.session, path, true);
 });
 
 tabManager.restoreFrom(localStorage);

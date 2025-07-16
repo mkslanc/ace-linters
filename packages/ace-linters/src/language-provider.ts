@@ -170,11 +170,16 @@ export class LanguageProvider {
     }
 
     /**
-     * @param session
-     * @param filePath - The full file path associated with the editor.
+     * Sets the file path for the given Ace edit session. Optionally allows the file path to
+     * be joined with the workspace URI.
+     *
+     * @param session The Ace edit session to update with the file path.
+     * @param filePath The file path to set for the session.
+     * @param [joinWorkspaceURI] Optional parameter to determine if the file path should be joined with the workspace URI.
+     * Defaults to false if not provided.
      */
-    setSessionFilePath(session: Ace.EditSession, filePath: string) {
-        this.$getSessionLanguageProvider(session)?.setFilePath(filePath);
+    setSessionFilePath(session: Ace.EditSession, filePath: string, joinWorkspaceURI?: boolean) {
+        this.$getSessionLanguageProvider(session)?.setFilePath(filePath, joinWorkspaceURI);
     }
 
     private $registerSession = (session: Ace.EditSession, editor: Ace.Editor) => {
@@ -414,7 +419,7 @@ export class LanguageProvider {
         if (workspaceUri === this.workspaceUri)
             return;
         this.workspaceUri = convertToUri(workspaceUri);
-        this.$messageController.setWorkspace(workspaceUri);
+        this.$messageController.setWorkspace(this.workspaceUri);
     }
 
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
@@ -685,13 +690,14 @@ class SessionLanguageProvider {
 
     /**
      * @param filePath
+     * @param joinWorkspaceURI
      */
-    setFilePath(filePath: string) {
+    setFilePath(filePath: string, joinWorkspaceURI?: boolean) {
         this.enqueueIfNotConnected(() => {
             this.session.doc.version++;
             this.$filePath = filePath;
             const previousComboId = this.comboDocumentIdentifier;
-            this.initDocumentUri(true);
+            this.initDocumentUri(true, joinWorkspaceURI);
             this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
         })
     };
@@ -815,12 +821,12 @@ class SessionLanguageProvider {
         //or we shoudl use service with full format capability instead of range one's
     }
 
-    private initDocumentUri(isRename = false) {
+    private initDocumentUri(isRename = false, joinWorkspaceURI = false) {
         let filePath = this.$filePath ?? this.session["id"] + "." + this.$extension;
         if (isRename) {
             delete this.$provider.$urisToSessionsIds[this.documentUri];
         }
-        this.documentUri = convertToUri(filePath);
+        this.documentUri = convertToUri(filePath, joinWorkspaceURI, this.$provider.workspaceUri);
         this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
     }
 
