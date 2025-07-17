@@ -24,10 +24,11 @@ export class BaseTooltip extends Tooltip {
         } catch (e) {
             
         }
-            
-        this.getElement().style.pointerEvents = "auto";
-        this.getElement().style.whiteSpace = "pre-wrap";
-        this.getElement().addEventListener("mouseout", this.onMouseOut);
+
+        var el = this.getElement();
+        el.style.whiteSpace = "pre-wrap";
+        el.style.pointerEvents = "auto";
+        el.addEventListener("mouseout", this.onMouseOut);
     }
     
     $show() {
@@ -77,52 +78,11 @@ export class BaseTooltip extends Tooltip {
 
     show(param, pageX: number, pageY: number) {
         super.show(param, pageX, pageY);
-        this.$registerEditorEvents();
+        this.$registerCloseEvents();
     }
 
     setHtml(descriptionText: string) {
         super.setHtml(descriptionText);
-    }
-
-    $hide = () => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.$removeEditorEvents();
-            this.hide();
-        }
-        this.$inactivateEditor();
-    }
-
-    destroy() {
-        this.$hide();
-        this.getElement().removeEventListener("mouseout", this.onMouseOut);
-    };
-
-    onMouseOut = (e: MouseEvent) => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (!e.relatedTarget || e.relatedTarget == this.getElement())
-            return;
-
-        //@ts-ignore
-        if (e && e.currentTarget.contains(e.relatedTarget))
-            return;
-        //@ts-ignore
-        if (!e.relatedTarget.classList.contains("ace_content"))
-            this.$hide();
-    }
-
-    $registerEditorEvents() {
-        this.$activeEditor!.on("change", this.$hide);
-        this.$activeEditor!.on("mousewheel", this.$hide);
-        this.$activeEditor!.on("mousedown", this.$hide);
-    }
-
-    $removeEditorEvents() {
-        this.$activeEditor!.off("change", this.$hide);
-        this.$activeEditor!.off("mousewheel", this.$hide);
-        this.$activeEditor!.off("mousedown", this.$hide);
     }
 
     $inactivateEditor() {
@@ -137,5 +97,46 @@ export class BaseTooltip extends Tooltip {
         this.$inactivateEditor();
         this.$activeEditor = editor;
         this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
+    }
+
+    $hide = () => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (this.isOpen) {
+            this.$removeCloseEvents();
+            this.hide();
+        }
+        this.$inactivateEditor();
+    }
+
+    destroy() {
+        this.$hide();
+        this.getElement().removeEventListener("mouseout", this.onMouseOut);
+    };
+
+    $registerCloseEvents() {
+        this.$activeEditor!.on("change", this.$hide);
+        this.$activeEditor!.on("mousewheel", this.$hide);
+        this.$activeEditor!.on("mousedown", this.$hide);
+    }
+
+    $removeCloseEvents() {
+        this.$activeEditor!.off("change", this.$hide);
+        this.$activeEditor!.off("mousewheel", this.$hide);
+        this.$activeEditor!.off("mousedown", this.$hide);
+    }
+
+    onMouseOut = (e: MouseEvent) => {
+        clearTimeout(this.$mouseMoveTimer);
+        clearTimeout(this.$showTimer);
+        if (!e.relatedTarget || e.relatedTarget == this.getElement())
+            return;
+
+        //@ts-ignore
+        if (e && e.currentTarget.contains(e.relatedTarget))
+            return;
+        //@ts-ignore
+        if (!e.relatedTarget.classList.contains("ace_content"))
+            this.$hide();
     }
 }
