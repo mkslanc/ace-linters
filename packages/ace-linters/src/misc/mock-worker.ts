@@ -18,7 +18,7 @@ export class MockWorker extends EventEmitter implements Worker {
     onmessageerror(ev) {
     }
 
-    addEventListener(type, listener, options) {
+    addEventListener(type, listener, options?: any) {
         this.addListener(type, listener);
     }
 
@@ -36,7 +36,7 @@ export class MockWorker extends EventEmitter implements Worker {
         }
     }
 
-    removeEventListener(type, listener, options) {
+    removeEventListener(type, listener, options?: any) {
         this.removeListener(type, listener);
     }
 

@@ -12,6 +12,7 @@ import {MockWorker} from "../../src/misc/mock-worker";
 import {ServiceManager} from "../../src/services/service-manager";
 import {Done} from "mocha";
 import Completion = Ace.Completion;
+import {MessageType} from "../../src/message-types";
 
 describe('LanguageProvider tests', () => {
     let editorEl: HTMLElement;
@@ -162,7 +163,7 @@ describe('LanguageProvider tests', () => {
         let testClient: MockWorker, testCtx: MockWorker;
         let testManager: ServiceManager;
 
-        beforeEach(() => {
+        before(() => {
             testClient = new MockWorker();
             testCtx = new MockWorker();
             testClient.setEmitter(testCtx);
@@ -177,34 +178,46 @@ describe('LanguageProvider tests', () => {
             });
         });
 
-        it('should register editor with custom file path and verify worker service document URI', (done) => {
-            testProvider = LanguageProvider.create(testClient, { functionality: {
+        const waitForInitMessage = (): Promise<void> => {
+            return new Promise((resolve) => {
+                const messageHandler = (e) => {
+                    if (e.data.type === MessageType.init) {
+                        testClient.removeEventListener("message", messageHandler);
+                        resolve();
+                    }
+                };
+                testClient.addEventListener("message", messageHandler);
+            });
+        };
+
+        it('should register editor with custom file path and verify worker service document URI', async () => {
+            testProvider = LanguageProvider.create(testClient, {
+                functionality: {
                     codeActions: false
-                }});
+                }
+            });
 
             let testEditor = ace.edit(document.createElement('div'), {
                 value: '<div>test content</div>',
                 mode: new HtmlMode()
             });
 
-            // Wait for the service to be connected and document to be added
-            setTimeout(() => {
-                testProvider.registerEditor(testEditor, {
-                    filePath: 'custom/path/test.html'
-                });
+            const initPromise = waitForInitMessage();
 
-                setTimeout(() => {
-                    const expectedDocumentUri = 'file:///custom/path/test.html';
-                    const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+            testProvider.registerEditor(testEditor, {
+                filePath: 'custom/path/test.html'
+            });
 
-                    expect(htmlService).to.exist;
-                    expect(htmlService.documents[expectedDocumentUri]).to.exist;
-                    done();
-                }, 100);
-            }, 50);
+            await initPromise;
+
+            const expectedDocumentUri = 'file:///custom/path/test.html';
+            const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+
+            expect(htmlService).to.exist;
+            expect(htmlService.documents[expectedDocumentUri]).to.exist;
         });
 
-        it('should register editor with workspace URI and verify worker service document URI', (done) => {
+        it('should register editor with workspace URI and verify worker service document URI', async () => {
             testProvider = LanguageProvider.create(testClient, {
                 workspacePath: '/workspace/project',
                 functionality: {
@@ -217,24 +230,23 @@ describe('LanguageProvider tests', () => {
                 mode: new HtmlMode()
             });
 
-            setTimeout(() => {
-                testProvider.registerEditor(testEditor, {
-                    filePath: 'src/components/test.html',
-                    joinWorkspaceURI: true,
-                });
+            const initPromise = waitForInitMessage();
 
-                setTimeout(() => {
-                    const expectedDocumentUri = 'file:///workspace/project/src/components/test.html';
-                    const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+            testProvider.registerEditor(testEditor, {
+                filePath: 'src/components/test.html',
+                joinWorkspaceURI: true,
+            });
 
-                    expect(htmlService).to.exist;
-                    expect(htmlService.documents[expectedDocumentUri]).to.exist;
-                    done();
-                }, 100);
-            }, 50);
+            await initPromise;
+
+            const expectedDocumentUri = 'file:///workspace/project/src/components/test.html';
+            const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+
+            expect(htmlService).to.exist;
+            expect(htmlService.documents[expectedDocumentUri]).to.exist;
         });
 
-        it('should register editor without joinWorkspaceURI and verify worker service document URI', (done) => {
+        it('should register editor without joinWorkspaceURI and verify worker service document URI', async () => {
             testProvider = LanguageProvider.create(testClient, {
                 workspacePath: '/workspace/project',
                 functionality: {
@@ -247,24 +259,23 @@ describe('LanguageProvider tests', () => {
                 mode: new HtmlMode()
             });
 
-            setTimeout(() => {
-                testProvider.registerEditor(testEditor, {
-                    filePath: '/absolute/path/test.html',
-                    joinWorkspaceURI: false
-                });
+            const initPromise = waitForInitMessage();
 
-                setTimeout(() => {
-                    const expectedDocumentUri = 'file:///absolute/path/test.html';
-                    const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+            testProvider.registerEditor(testEditor, {
+                filePath: '/absolute/path/test.html',
+                joinWorkspaceURI: false
+            });
 
-                    expect(htmlService).to.exist;
-                    expect(htmlService.documents[expectedDocumentUri]).to.exist;
-                    done();
-                }, 100);
-            }, 50);
+            await initPromise;
+
+            const expectedDocumentUri = 'file:///absolute/path/test.html';
+            const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+
+            expect(htmlService).to.exist;
+            expect(htmlService.documents[expectedDocumentUri]).to.exist;
         });
 
-        it('should register editor without config and verify default document URI', (done) => {
+        it('should register editor without config and verify default document URI', async () => {
             testProvider = LanguageProvider.create(testClient, {
                 functionality: {
                     codeActions: false
@@ -276,22 +287,20 @@ describe('LanguageProvider tests', () => {
                 mode: new HtmlMode()
             });
 
-            setTimeout(() => {
-                testProvider.registerEditor(testEditor);
+            const initPromise = waitForInitMessage();
 
-                setTimeout(() => {
-                    // Should use session ID with .html extension
-                    const expectedPattern = `file:///${testEditor.session["id"]}.html`;
-                    const htmlService = testManager.getServicesInstances(expectedPattern)[0];
+            testProvider.registerEditor(testEditor);
 
-                    expect(htmlService).to.exist;
-                    expect(htmlService.documents[expectedPattern]).to.exist;
-                    done();
-                }, 100);
-            }, 50);
+            await initPromise;
+
+            const expectedPattern = `file:///${testEditor.session["id"]}.html`;
+            const htmlService = testManager.getServicesInstances(expectedPattern)[0];
+
+            expect(htmlService).to.exist;
+            expect(htmlService.documents[expectedPattern]).to.exist;
         });
 
-        it('should handle setSessionFilePath after registration', (done) => {
+        it('should handle setSessionFilePath after registration', async () => {
             testProvider = LanguageProvider.create(testClient, {
                 workspacePath: '/workspace/project',
             });
@@ -301,30 +310,36 @@ describe('LanguageProvider tests', () => {
                 mode: new HtmlMode()
             });
 
-            setTimeout(() => {
-                // First register with default
-                testProvider.registerEditor(testEditor);
+            const initPromise = waitForInitMessage();
 
-                setTimeout(() => {
-                    // Then change the file path
-                    testProvider.setSessionFilePath(testEditor.session, {
-                        filePath: 'dynamic/new-path.html',
-                        joinWorkspaceURI: true
-                    });
+            testProvider.registerEditor(testEditor);
+            await initPromise;
 
-                    setTimeout(() => {
-                        const expectedDocumentUri = 'file:///workspace/project/dynamic/new-path.html';
-                        const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+            const renameMsgPromise = new Promise<void>((resolve) => {
+                const messageHandler = (e) => {
+                    if (e.data.type === MessageType.renameDocument) {
+                        testClient.removeEventListener("message", messageHandler);
+                        resolve();
+                    }
+                };
+                testClient.addEventListener("message", messageHandler);
+            });
 
-                        expect(htmlService).to.exist;
-                        expect(htmlService.documents[expectedDocumentUri]).to.exist;
-                        done();
-                    }, 100);
-                }, 100);
-            }, 50);
+            testProvider.setSessionFilePath(testEditor.session, {
+                filePath: 'dynamic/new-path.html',
+                joinWorkspaceURI: true
+            });
+
+            await renameMsgPromise;
+
+            const expectedDocumentUri = 'file:///workspace/project/dynamic/new-path.html';
+            const htmlService = testManager.getServicesInstances(expectedDocumentUri)[0];
+
+            expect(htmlService).to.exist;
+            expect(htmlService.documents[expectedDocumentUri]).to.exist;
         });
 
-        afterEach(() => {
+        after(() => {
             testClient.removeAllListeners();
             testCtx.removeAllListeners();
         });
