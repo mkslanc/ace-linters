@@ -174,7 +174,12 @@ export class LanguageProvider {
     }
 
     private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, config?: SessionInitialConfig) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController, config);
+        if (!this.$sessionLanguageProviders[session["id"]]) {
+            this.$sessionLanguageProviders[session["id"]] = new SessionLanguageProvider(this, session, editor, this.$messageController, config);
+        }
+        if (config) {
+            this.$sessionLanguageProviders[session["id"]].setFilePath(config.filePath, config.joinWorkspaceURI);
+        }
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {

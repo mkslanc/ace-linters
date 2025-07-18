@@ -308,8 +308,6 @@ export interface BaseConfig {
     features?: ServiceFeatures,
     module: () => any,
     id?: string,
-    /** Whether to encode URIs when processing language service operations */
-    encodeUris?: boolean
 }
 
 interface WebWorkerConnection {

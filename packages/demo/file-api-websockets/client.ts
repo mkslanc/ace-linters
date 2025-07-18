@@ -58,10 +58,10 @@ let tabManager = TabManager.getInstance({
 
 tabManager.fileSystem?.on("openFile", (treeNode) => {
     let tab = tabManager.getTab(treeNode.path) as Tab<Ace.EditSession>;
-
-    languageProvider.registerEditor((tab.editor as AceEditor).editor);
     let path = treeNode.path.substring(treeNode.path.indexOf("/", 1));
-    languageProvider.setSessionFilePath(tab.session, path, true);
+    languageProvider.registerEditor((tab.editor as AceEditor).editor, {filePath: path, joinWorkspaceURI: true});
+    //languageProvider.setSessionFilePath(tab.session, {filePath: path, joinWorkspaceURI: true});  -> it's another
+    // way to set path
 });
 
 tabManager.restoreFrom(localStorage);
