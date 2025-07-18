@@ -322,7 +322,6 @@ var MessageType;
 /* harmony export */   z2: () => (/* binding */ notEmpty)
 /* harmony export */ });
 /* unused harmony exports isEmptyRange, mergeRanges, checkValueAgainstRegexpArray, convertToUri */
-
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
@@ -394,12 +393,32 @@ function checkValueAgainstRegexpArray(value, regexpArray) {
     }
     return false;
 }
-function convertToUri(filePath) {
-    //already URI
-    if (filePath.startsWith("file:///")) {
-        return filePath;
+
+/**
+ * Converts a given file path to a URI format. If the given file path is already a URI,
+ * it normalizes and optionally resolves the path against a workspace URI.
+ *
+ * @param filePath - The file path to convert to a URI. Can be an absolute path or an existing file URI.
+ * @param [joinWorkspaceURI] - Optional flag to determine if the converted URI should be joined with given URI
+ * @param [workspaceUri] - The base workspace URI to resolve against if `joinWorkspaceURI` is true. Required if resolution is needed.
+ * @return {string} - The resulting URI
+ */ function convertToUri(filePath, joinWorkspaceURI = false, workspaceUri) {
+    const isFullUri = filePath.startsWith('file://');
+    const normalizedPath = filePath.replace(/\\/g, "/");
+    let uri;
+    if (isFullUri) {
+        uri = URI.parse(normalizedPath);
+    } else {
+        uri = URI.file(normalizedPath);
     }
-    return URI.file(filePath).toString();
+    if (joinWorkspaceURI && workspaceUri) {
+        if (!workspaceUri.startsWith('file://')) {
+            throw new Error('workspaceUri must be a file:// URI');
+        }
+        const workspaceUriParsed = URI.parse(workspaceUri);
+        uri = Utils.joinPath(workspaceUriParsed, uri.path);
+    }
+    return uri.toString();
 }
 
 

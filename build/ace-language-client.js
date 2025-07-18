@@ -10518,7 +10518,6 @@ class ServiceManager {
 /* harmony export */ });
 /* unused harmony export isEmptyRange */
 /* harmony import */ var vscode_uri__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2917);
-
 function mergeObjects(obj1, obj2, excludeUndefined = false) {
     if (!obj1) return obj2;
     if (!obj2) return obj1;
@@ -10590,12 +10589,32 @@ function checkValueAgainstRegexpArray(value, regexpArray) {
     }
     return false;
 }
-function convertToUri(filePath) {
-    //already URI
-    if (filePath.startsWith("file:///")) {
-        return filePath;
+
+/**
+ * Converts a given file path to a URI format. If the given file path is already a URI,
+ * it normalizes and optionally resolves the path against a workspace URI.
+ *
+ * @param filePath - The file path to convert to a URI. Can be an absolute path or an existing file URI.
+ * @param [joinWorkspaceURI] - Optional flag to determine if the converted URI should be joined with given URI
+ * @param [workspaceUri] - The base workspace URI to resolve against if `joinWorkspaceURI` is true. Required if resolution is needed.
+ * @return {string} - The resulting URI
+ */ function convertToUri(filePath, joinWorkspaceURI = false, workspaceUri) {
+    const isFullUri = filePath.startsWith('file://');
+    const normalizedPath = filePath.replace(/\\/g, "/");
+    let uri;
+    if (isFullUri) {
+        uri = vscode_uri__WEBPACK_IMPORTED_MODULE_0__/* .URI */ .r.parse(normalizedPath);
+    } else {
+        uri = vscode_uri__WEBPACK_IMPORTED_MODULE_0__/* .URI */ .r.file(normalizedPath);
     }
-    return vscode_uri__WEBPACK_IMPORTED_MODULE_0__/* .URI */ .r.file(filePath).toString();
+    if (joinWorkspaceURI && workspaceUri) {
+        if (!workspaceUri.startsWith('file://')) {
+            throw new Error('workspaceUri must be a file:// URI');
+        }
+        const workspaceUriParsed = vscode_uri__WEBPACK_IMPORTED_MODULE_0__/* .URI */ .r.parse(workspaceUri);
+        uri = vscode_uri__WEBPACK_IMPORTED_MODULE_0__/* .Utils */ .A.joinPath(workspaceUriParsed, uri.path);
+    }
+    return uri.toString();
 }
 
 
@@ -19745,9 +19764,9 @@ var Is;
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   A: () => (/* binding */ Utils),
 /* harmony export */   r: () => (/* binding */ URI)
 /* harmony export */ });
-/* unused harmony export Utils */
 /* provided dependency */ var process = __webpack_require__(9907);
 var LIB;(()=>{"use strict";var t={975:t=>{function e(t){if("string"!=typeof t)throw new TypeError("Path must be a string. Received "+JSON.stringify(t))}function r(t,e){for(var r,n="",i=0,o=-1,s=0,h=0;h<=t.length;++h){if(h<t.length)r=t.charCodeAt(h);else{if(47===r)break;r=47}if(47===r){if(o===h-1||1===s);else if(o!==h-1&&2===s){if(n.length<2||2!==i||46!==n.charCodeAt(n.length-1)||46!==n.charCodeAt(n.length-2))if(n.length>2){var a=n.lastIndexOf("/");if(a!==n.length-1){-1===a?(n="",i=0):i=(n=n.slice(0,a)).length-1-n.lastIndexOf("/"),o=h,s=0;continue}}else if(2===n.length||1===n.length){n="",i=0,o=h,s=0;continue}e&&(n.length>0?n+="/..":n="..",i=2)}else n.length>0?n+="/"+t.slice(o+1,h):n=t.slice(o+1,h),i=h-o-1;o=h,s=0}else 46===r&&-1!==s?++s:s=-1}return n}var n={resolve:function(){for(var t,n="",i=!1,o=arguments.length-1;o>=-1&&!i;o--){var s;o>=0?s=arguments[o]:(void 0===t&&(t=process.cwd()),s=t),e(s),0!==s.length&&(n=s+"/"+n,i=47===s.charCodeAt(0))}return n=r(n,!i),i?n.length>0?"/"+n:"/":n.length>0?n:"."},normalize:function(t){if(e(t),0===t.length)return".";var n=47===t.charCodeAt(0),i=47===t.charCodeAt(t.length-1);return 0!==(t=r(t,!n)).length||n||(t="."),t.length>0&&i&&(t+="/"),n?"/"+t:t},isAbsolute:function(t){return e(t),t.length>0&&47===t.charCodeAt(0)},join:function(){if(0===arguments.length)return".";for(var t,r=0;r<arguments.length;++r){var i=arguments[r];e(i),i.length>0&&(void 0===t?t=i:t+="/"+i)}return void 0===t?".":n.normalize(t)},relative:function(t,r){if(e(t),e(r),t===r)return"";if((t=n.resolve(t))===(r=n.resolve(r)))return"";for(var i=1;i<t.length&&47===t.charCodeAt(i);++i);for(var o=t.length,s=o-i,h=1;h<r.length&&47===r.charCodeAt(h);++h);for(var a=r.length-h,c=s<a?s:a,f=-1,u=0;u<=c;++u){if(u===c){if(a>c){if(47===r.charCodeAt(h+u))return r.slice(h+u+1);if(0===u)return r.slice(h+u)}else s>c&&(47===t.charCodeAt(i+u)?f=u:0===u&&(f=0));break}var l=t.charCodeAt(i+u);if(l!==r.charCodeAt(h+u))break;47===l&&(f=u)}var g="";for(u=i+f+1;u<=o;++u)u!==o&&47!==t.charCodeAt(u)||(0===g.length?g+="..":g+="/..");return g.length>0?g+r.slice(h+f):(h+=f,47===r.charCodeAt(h)&&++h,r.slice(h))},_makeLong:function(t){return t},dirname:function(t){if(e(t),0===t.length)return".";for(var r=t.charCodeAt(0),n=47===r,i=-1,o=!0,s=t.length-1;s>=1;--s)if(47===(r=t.charCodeAt(s))){if(!o){i=s;break}}else o=!1;return-1===i?n?"/":".":n&&1===i?"//":t.slice(0,i)},basename:function(t,r){if(void 0!==r&&"string"!=typeof r)throw new TypeError('"ext" argument must be a string');e(t);var n,i=0,o=-1,s=!0;if(void 0!==r&&r.length>0&&r.length<=t.length){if(r.length===t.length&&r===t)return"";var h=r.length-1,a=-1;for(n=t.length-1;n>=0;--n){var c=t.charCodeAt(n);if(47===c){if(!s){i=n+1;break}}else-1===a&&(s=!1,a=n+1),h>=0&&(c===r.charCodeAt(h)?-1==--h&&(o=n):(h=-1,o=a))}return i===o?o=a:-1===o&&(o=t.length),t.slice(i,o)}for(n=t.length-1;n>=0;--n)if(47===t.charCodeAt(n)){if(!s){i=n+1;break}}else-1===o&&(s=!1,o=n+1);return-1===o?"":t.slice(i,o)},extname:function(t){e(t);for(var r=-1,n=0,i=-1,o=!0,s=0,h=t.length-1;h>=0;--h){var a=t.charCodeAt(h);if(47!==a)-1===i&&(o=!1,i=h+1),46===a?-1===r?r=h:1!==s&&(s=1):-1!==r&&(s=-1);else if(!o){n=h+1;break}}return-1===r||-1===i||0===s||1===s&&r===i-1&&r===n+1?"":t.slice(r,i)},format:function(t){if(null===t||"object"!=typeof t)throw new TypeError('The "pathObject" argument must be of type Object. Received type '+typeof t);return function(t,e){var r=e.dir||e.root,n=e.base||(e.name||"")+(e.ext||"");return r?r===e.root?r+n:r+"/"+n:n}(0,t)},parse:function(t){e(t);var r={root:"",dir:"",base:"",ext:"",name:""};if(0===t.length)return r;var n,i=t.charCodeAt(0),o=47===i;o?(r.root="/",n=1):n=0;for(var s=-1,h=0,a=-1,c=!0,f=t.length-1,u=0;f>=n;--f)if(47!==(i=t.charCodeAt(f)))-1===a&&(c=!1,a=f+1),46===i?-1===s?s=f:1!==u&&(u=1):-1!==s&&(u=-1);else if(!c){h=f+1;break}return-1===s||-1===a||0===u||1===u&&s===a-1&&s===h+1?-1!==a&&(r.base=r.name=0===h&&o?t.slice(1,a):t.slice(h,a)):(0===h&&o?(r.name=t.slice(1,s),r.base=t.slice(1,a)):(r.name=t.slice(h,s),r.base=t.slice(h,a)),r.ext=t.slice(s,a)),h>0?r.dir=t.slice(0,h-1):o&&(r.dir="/"),r},sep:"/",delimiter:":",win32:null,posix:null};n.posix=n,t.exports=n}},e={};function r(n){var i=e[n];if(void 0!==i)return i.exports;var o=e[n]={exports:{}};return t[n](o,o.exports,r),o.exports}r.d=(t,e)=>{for(var n in e)r.o(e,n)&&!r.o(t,n)&&Object.defineProperty(t,n,{enumerable:!0,get:e[n]})},r.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var n={};let i;if(r.r(n),r.d(n,{URI:()=>l,Utils:()=>I}),"object"==typeof process)i="win32"===process.platform;else if("object"==typeof navigator){let t=navigator.userAgent;i=t.indexOf("Windows")>=0}const o=/^\w[\w\d+.-]*$/,s=/^\//,h=/^\/\//;function a(t,e){if(!t.scheme&&e)throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);if(t.scheme&&!o.test(t.scheme))throw new Error("[UriError]: Scheme contains illegal characters.");if(t.path)if(t.authority){if(!s.test(t.path))throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character')}else if(h.test(t.path))throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")')}const c="",f="/",u=/^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;class l{static isUri(t){return t instanceof l||!!t&&"string"==typeof t.authority&&"string"==typeof t.fragment&&"string"==typeof t.path&&"string"==typeof t.query&&"string"==typeof t.scheme&&"string"==typeof t.fsPath&&"function"==typeof t.with&&"function"==typeof t.toString}scheme;authority;path;query;fragment;constructor(t,e,r,n,i,o=!1){"object"==typeof t?(this.scheme=t.scheme||c,this.authority=t.authority||c,this.path=t.path||c,this.query=t.query||c,this.fragment=t.fragment||c):(this.scheme=function(t,e){return t||e?t:"file"}(t,o),this.authority=e||c,this.path=function(t,e){switch(t){case"https":case"http":case"file":e?e[0]!==f&&(e=f+e):e=f}return e}(this.scheme,r||c),this.query=n||c,this.fragment=i||c,a(this,o))}get fsPath(){return v(this,!1)}with(t){if(!t)return this;let{scheme:e,authority:r,path:n,query:i,fragment:o}=t;return void 0===e?e=this.scheme:null===e&&(e=c),void 0===r?r=this.authority:null===r&&(r=c),void 0===n?n=this.path:null===n&&(n=c),void 0===i?i=this.query:null===i&&(i=c),void 0===o?o=this.fragment:null===o&&(o=c),e===this.scheme&&r===this.authority&&n===this.path&&i===this.query&&o===this.fragment?this:new d(e,r,n,i,o)}static parse(t,e=!1){const r=u.exec(t);return r?new d(r[2]||c,w(r[4]||c),w(r[5]||c),w(r[7]||c),w(r[9]||c),e):new d(c,c,c,c,c)}static file(t){let e=c;if(i&&(t=t.replace(/\\/g,f)),t[0]===f&&t[1]===f){const r=t.indexOf(f,2);-1===r?(e=t.substring(2),t=f):(e=t.substring(2,r),t=t.substring(r)||f)}return new d("file",e,t,c,c)}static from(t){const e=new d(t.scheme,t.authority,t.path,t.query,t.fragment);return a(e,!0),e}toString(t=!1){return b(this,t)}toJSON(){return this}static revive(t){if(t){if(t instanceof l)return t;{const e=new d(t);return e._formatted=t.external,e._fsPath=t._sep===g?t.fsPath:null,e}}return t}}const g=i?1:void 0;class d extends l{_formatted=null;_fsPath=null;get fsPath(){return this._fsPath||(this._fsPath=v(this,!1)),this._fsPath}toString(t=!1){return t?b(this,!0):(this._formatted||(this._formatted=b(this,!1)),this._formatted)}toJSON(){const t={$mid:1};return this._fsPath&&(t.fsPath=this._fsPath,t._sep=g),this._formatted&&(t.external=this._formatted),this.path&&(t.path=this.path),this.scheme&&(t.scheme=this.scheme),this.authority&&(t.authority=this.authority),this.query&&(t.query=this.query),this.fragment&&(t.fragment=this.fragment),t}}const p={58:"%3A",47:"%2F",63:"%3F",35:"%23",91:"%5B",93:"%5D",64:"%40",33:"%21",36:"%24",38:"%26",39:"%27",40:"%28",41:"%29",42:"%2A",43:"%2B",44:"%2C",59:"%3B",61:"%3D",32:"%20"};function m(t,e,r){let n,i=-1;for(let o=0;o<t.length;o++){const s=t.charCodeAt(o);if(s>=97&&s<=122||s>=65&&s<=90||s>=48&&s<=57||45===s||46===s||95===s||126===s||e&&47===s||r&&91===s||r&&93===s||r&&58===s)-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),void 0!==n&&(n+=t.charAt(o));else{void 0===n&&(n=t.substr(0,o));const e=p[s];void 0!==e?(-1!==i&&(n+=encodeURIComponent(t.substring(i,o)),i=-1),n+=e):-1===i&&(i=o)}}return-1!==i&&(n+=encodeURIComponent(t.substring(i))),void 0!==n?n:t}function y(t){let e;for(let r=0;r<t.length;r++){const n=t.charCodeAt(r);35===n||63===n?(void 0===e&&(e=t.substr(0,r)),e+=p[n]):void 0!==e&&(e+=t[r])}return void 0!==e?e:t}function v(t,e){let r;return r=t.authority&&t.path.length>1&&"file"===t.scheme?`//${t.authority}${t.path}`:47===t.path.charCodeAt(0)&&(t.path.charCodeAt(1)>=65&&t.path.charCodeAt(1)<=90||t.path.charCodeAt(1)>=97&&t.path.charCodeAt(1)<=122)&&58===t.path.charCodeAt(2)?e?t.path.substr(1):t.path[1].toLowerCase()+t.path.substr(2):t.path,i&&(r=r.replace(/\//g,"\\")),r}function b(t,e){const r=e?y:m;let n="",{scheme:i,authority:o,path:s,query:h,fragment:a}=t;if(i&&(n+=i,n+=":"),(o||"file"===i)&&(n+=f,n+=f),o){let t=o.indexOf("@");if(-1!==t){const e=o.substr(0,t);o=o.substr(t+1),t=e.lastIndexOf(":"),-1===t?n+=r(e,!1,!1):(n+=r(e.substr(0,t),!1,!1),n+=":",n+=r(e.substr(t+1),!1,!0)),n+="@"}o=o.toLowerCase(),t=o.lastIndexOf(":"),-1===t?n+=r(o,!1,!0):(n+=r(o.substr(0,t),!1,!0),n+=o.substr(t))}if(s){if(s.length>=3&&47===s.charCodeAt(0)&&58===s.charCodeAt(2)){const t=s.charCodeAt(1);t>=65&&t<=90&&(s=`/${String.fromCharCode(t+32)}:${s.substr(3)}`)}else if(s.length>=2&&58===s.charCodeAt(1)){const t=s.charCodeAt(0);t>=65&&t<=90&&(s=`${String.fromCharCode(t+32)}:${s.substr(2)}`)}n+=r(s,!0,!1)}return h&&(n+="?",n+=r(h,!1,!1)),a&&(n+="#",n+=e?a:m(a,!1,!1)),n}function C(t){try{return decodeURIComponent(t)}catch{return t.length>3?t.substr(0,3)+C(t.substr(3)):t}}const A=/(%[0-9A-Za-z][0-9A-Za-z])+/g;function w(t){return t.match(A)?t.replace(A,(t=>C(t))):t}var x=r(975);const P=x.posix||x,_="/";var I;!function(t){t.joinPath=function(t,...e){return t.with({path:P.join(t.path,...e)})},t.resolvePath=function(t,...e){let r=t.path,n=!1;r[0]!==_&&(r=_+r,n=!0);let i=P.resolve(r,...e);return n&&i[0]===_&&!t.authority&&(i=i.substring(1)),t.with({path:i})},t.dirname=function(t){if(0===t.path.length||t.path===_)return t;let e=P.dirname(t.path);return 1===e.length&&46===e.charCodeAt(0)&&(e=""),t.with({path:e})},t.basename=function(t){return P.basename(t.path)},t.extname=function(t){return P.extname(t.path)}}(I||(I={})),LIB=n})();const{URI,Utils}=LIB;
 //# sourceMappingURL=index.mjs.map
@@ -19943,8 +19962,6 @@ var common_converters_CommonConverter;
 
 // EXTERNAL MODULE: ./src/message-types.ts
 var message_types = __webpack_require__(2032);
-// EXTERNAL MODULE: ../../node_modules/vscode-uri/lib/esm/index.mjs
-var esm = __webpack_require__(2917);
 ;// CONCATENATED MODULE: ./src/message-controller.ts
 function message_controller_define_property(obj, key, value) {
     if (key in obj) {
@@ -19966,7 +19983,7 @@ class MessageController {
         if (!documentUri) {
             return;
         }
-        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[esm/* URI */.r.parse(documentUri).toString()];
+        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[(0,utils/* convertToUri */.de)(documentUri)];
     }
     init(documentIdentifier, document, mode, options, initCallback) {
         this.postMessage(new message_types/* InitMessage */.eN(documentIdentifier, this.callbackId++, document.getValue(), document["version"], mode, options), initCallback);
@@ -20894,112 +20911,6 @@ class SignatureTooltip extends BaseTooltip {
     }
 }
 
-;// CONCATENATED MODULE: ./src/ace/marker_group.ts
-
-function marker_group_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-/*
-Potential improvements:
-- use binary search when looking for hover match
-*/ //taken from ace-code with small changes
-class MarkerGroup {
-    /**
-     * Finds the first marker containing pos
-     * @param {Position} pos
-     * @returns Ace.MarkerGroupItem
-     */ getMarkerAtPosition(pos) {
-        return this.markers.find(function(marker) {
-            return marker.range.contains(pos.row, pos.column);
-        });
-    }
-    /**
-     * Finds all markers that contain the given position.
-     * @param {Position} pos - The position to search for.
-     * @returns {Ace.MarkerGroupItem[]} - An array of all markers that contain the given position.
-     */ getMarkersAtPosition(pos) {
-        return this.markers.filter(function(marker) {
-            return marker.range.contains(pos.row, pos.column);
-        });
-    }
-    /**
-     * Comparator for Array.sort function, which sorts marker definitions by their positions
-     *
-     * @param {Ace.MarkerGroupItem} a first marker.
-     * @param {Ace.MarkerGroupItem} b second marker.
-     * @returns {number} negative number if a should be before b, positive number if b should be before a, 0 otherwise.
-     */ markersComparator(a, b) {
-        return a.range.start.row - b.range.start.row;
-    }
-    /**
-     * Sets marker definitions to be rendered. Limits the number of markers at MAX_MARKERS.
-     * @param {Ace.MarkerGroupItem[]} markers an array of marker definitions.
-     */ setMarkers(markers) {
-        this.markers = markers.sort(this.markersComparator).slice(0, this.MAX_MARKERS);
-        this.session._signal("changeBackMarker");
-    }
-    update(html, markerLayer, session, config) {
-        if (!this.markers || !this.markers.length) return;
-        var visibleRangeStartRow = config.firstRow, visibleRangeEndRow = config.lastRow;
-        var foldLine;
-        var markersOnOneLine = 0;
-        var lastRow = 0;
-        for(var i = 0; i < this.markers.length; i++){
-            var marker = this.markers[i];
-            if (marker.range.end.row < visibleRangeStartRow) continue;
-            if (marker.range.start.row > visibleRangeEndRow) continue;
-            if (marker.range.start.row === lastRow) {
-                markersOnOneLine++;
-            } else {
-                lastRow = marker.range.start.row;
-                markersOnOneLine = 0;
-            }
-            // do not render too many markers on one line
-            // because we do not have virtual scroll for horizontal direction
-            if (markersOnOneLine > 200) {
-                continue;
-            }
-            var markerVisibleRange = marker.range.clipRows(visibleRangeStartRow, visibleRangeEndRow);
-            if (markerVisibleRange.start.row === markerVisibleRange.end.row && markerVisibleRange.start.column === markerVisibleRange.end.column) {
-                continue; // visible range is empty
-            }
-            var screenRange = markerVisibleRange.toScreenRange(session);
-            if (screenRange.isEmpty()) {
-                // we are inside a fold
-                foldLine = session.getNextFoldLine(markerVisibleRange.end.row, foldLine);
-                if (foldLine && foldLine.end.row > markerVisibleRange.end.row) {
-                    visibleRangeStartRow = foldLine.end.row;
-                }
-                continue;
-            }
-            if (screenRange.isMultiLine()) {
-                markerLayer.drawTextMarker(html, screenRange, marker.className, config);
-            } else {
-                markerLayer.drawSingleLineMarker(html, screenRange, marker.className, config);
-            }
-        }
-    }
-    constructor(session){
-        marker_group_define_property(this, "markers", void 0);
-        marker_group_define_property(this, "session", void 0);
-        // this caps total amount of markers at 10K
-        marker_group_define_property(this, "MAX_MARKERS", 10000);
-        this.markers = [];
-        this.session = session;
-        session.addDynamicMarker(this);
-    }
-}
-
 ;// CONCATENATED MODULE: ./src/ace/popupManager.ts
 //taken from ace-code with small changes
 function popupManager_define_property(obj, key, value) {
@@ -21243,238 +21154,6 @@ class HoverTooltip extends Tooltip {
         el.addEventListener("blur", (function() {
             if (!el.contains(document.activeElement)) this.hide();
         }).bind(this));
-    }
-}
-
-;// CONCATENATED MODULE: ./src/type-converters/lsp/semantic-tokens.ts
-function semantic_tokens_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-function decodeModifiers(modifierFlag, tokenModifiersLegend) {
-    const modifiers = [];
-    for(let i = 0; i < tokenModifiersLegend.length; i++){
-        if (modifierFlag & 1 << i) {
-            modifiers.push(tokenModifiersLegend[i]);
-        }
-    }
-    return modifiers;
-}
-function parseSemanticTokens(tokens, tokenTypes, tokenModifiersLegend) {
-    if (tokens.length % 5 !== 0) {
-        return;
-    }
-    const decodedTokens = [];
-    let line = 0;
-    let startColumn = 0;
-    for(let i = 0; i < tokens.length; i += 5){
-        line += tokens[i];
-        if (tokens[i] === 0) {
-            startColumn += tokens[i + 1];
-        } else {
-            startColumn = tokens[i + 1];
-        }
-        const length = tokens[i + 2];
-        const tokenTypeIndex = tokens[i + 3];
-        const tokenModifierFlag = tokens[i + 4];
-        const tokenType = tokenTypes[tokenTypeIndex];
-        const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
-        decodedTokens.push({
-            row: line,
-            startColumn: startColumn,
-            length,
-            type: toAceTokenType(tokenType, tokenModifiers)
-        });
-    }
-    return new DecodedSemanticTokens(decodedTokens);
-}
-function toAceTokenType(tokenType, tokenModifiers) {
-    let modifiers = "";
-    let type = tokenType;
-    if (tokenModifiers.length > 0) {
-        modifiers = "." + tokenModifiers.join(".");
-    }
-    switch(tokenType){
-        case "class":
-            type = "entity.name.type.class";
-            break;
-        case "struct":
-            type = "storage.type.struct";
-            break;
-        case "enum":
-            type = "entity.name.type.enum";
-            break;
-        case "interface":
-            type = "entity.name.type.interface";
-            break;
-        case "namespace":
-            type = "entity.name.namespace";
-            break;
-        case "typeParameter":
-            break;
-        case "type":
-            type = "entity.name.type";
-            break;
-        case "parameter":
-            type = "variable.parameter";
-            break;
-        case "variable":
-            type = "entity.name.variable";
-            break;
-        case "enumMember":
-            type = "variable.other.enummember";
-            break;
-        case "property":
-            type = "variable.other.property";
-            break;
-        case "function":
-            type = "entity.name.function";
-            break;
-        case "method":
-            type = "entity.name.function.member";
-            break;
-        case "event":
-            type = "variable.other.event";
-            break;
-    }
-    return type + modifiers;
-}
-function mergeTokens(aceTokens, decodedTokens) {
-    let mergedTokens = [];
-    let currentCharIndex = 0; // Keeps track of the character index across Ace tokens
-    let aceTokenIndex = 0; // Index within the aceTokens array
-    decodedTokens.forEach((semanticToken)=>{
-        let semanticStart = semanticToken.startColumn;
-        let semanticEnd = semanticStart + semanticToken.length;
-        // Process leading Ace tokens that don't overlap with the semantic token
-        while(aceTokenIndex < aceTokens.length && currentCharIndex + aceTokens[aceTokenIndex].value.length <= semanticStart){
-            mergedTokens.push(aceTokens[aceTokenIndex]);
-            currentCharIndex += aceTokens[aceTokenIndex].value.length;
-            aceTokenIndex++;
-        }
-        // Process overlapping Ace tokens
-        while(aceTokenIndex < aceTokens.length && currentCharIndex < semanticEnd){
-            let aceToken = aceTokens[aceTokenIndex];
-            let aceTokenEnd = currentCharIndex + aceToken.value.length;
-            let overlapStart = Math.max(currentCharIndex, semanticStart);
-            let overlapEnd = Math.min(aceTokenEnd, semanticEnd);
-            if (currentCharIndex < semanticStart) {
-                // Part of Ace token is before semantic token; add this part to mergedTokens
-                let beforeSemantic = {
-                    ...aceToken,
-                    value: aceToken.value.substring(0, semanticStart - currentCharIndex)
-                };
-                mergedTokens.push(beforeSemantic);
-            }
-            // Middle part (overlapped by semantic token)
-            let middle = {
-                type: semanticToken.type,
-                value: aceToken.value.substring(overlapStart - currentCharIndex, overlapEnd - currentCharIndex)
-            };
-            mergedTokens.push(middle);
-            if (aceTokenEnd > semanticEnd) {
-                // If Ace token extends beyond the semantic token, prepare the remaining part for future processing
-                let afterSemantic = {
-                    ...aceToken,
-                    value: aceToken.value.substring(semanticEnd - currentCharIndex)
-                };
-                // Add the afterSemantic as a new token to process in subsequent iterations
-                currentCharIndex = semanticEnd; // Update currentCharIndex to reflect the start of afterSemantic
-                aceTokens.splice(aceTokenIndex, 1, afterSemantic); // Replace the current token with afterSemantic for correct processing in the next iteration
-                break; // Move to the next semantic token without incrementing aceTokenIndex
-            }
-            // If the entire Ace token is covered by the semantic token, proceed to the next Ace token
-            currentCharIndex = aceTokenEnd;
-            aceTokenIndex++;
-        }
-    });
-    // Add remaining Ace tokens that were not overlapped by any semantic tokens
-    while(aceTokenIndex < aceTokens.length){
-        mergedTokens.push(aceTokens[aceTokenIndex]);
-        aceTokenIndex++;
-    }
-    return mergedTokens;
-}
-class DecodedSemanticTokens {
-    getByRow(row) {
-        return this.tokens.filter((token)=>token.row === row);
-    }
-    sortTokens(tokens) {
-        return tokens.sort((a, b)=>{
-            if (a.row === b.row) {
-                return a.startColumn - b.startColumn;
-            }
-            return a.row - b.row;
-        });
-    }
-    constructor(tokens){
-        semantic_tokens_define_property(this, "tokens", void 0);
-        this.tokens = this.sortTokens(tokens);
-    }
-}
-//vscode-languageserver
-class SemanticTokensBuilder {
-    initialize() {
-        this._id = Date.now();
-        this._prevLine = 0;
-        this._prevChar = 0;
-        this._data = [];
-        this._dataLen = 0;
-    }
-    push(line, char, length, tokenType, tokenModifiers) {
-        let pushLine = line;
-        let pushChar = char;
-        if (this._dataLen > 0) {
-            pushLine -= this._prevLine;
-            if (pushLine === 0) {
-                pushChar -= this._prevChar;
-            }
-        }
-        this._data[this._dataLen++] = pushLine;
-        this._data[this._dataLen++] = pushChar;
-        this._data[this._dataLen++] = length;
-        this._data[this._dataLen++] = tokenType;
-        this._data[this._dataLen++] = tokenModifiers;
-        this._prevLine = line;
-        this._prevChar = char;
-    }
-    get id() {
-        return this._id.toString();
-    }
-    previousResult(id) {
-        if (this.id === id) {
-            this._prevData = this._data;
-        }
-        this.initialize();
-    }
-    build() {
-        this._prevData = undefined;
-        return {
-            resultId: this.id,
-            data: this._data
-        };
-    }
-    canBuildEdits() {
-        return this._prevData !== undefined;
-    }
-    constructor(){
-        semantic_tokens_define_property(this, "_id", void 0);
-        semantic_tokens_define_property(this, "_prevLine", void 0);
-        semantic_tokens_define_property(this, "_prevChar", void 0);
-        semantic_tokens_define_property(this, "_data", void 0);
-        semantic_tokens_define_property(this, "_dataLen", void 0);
-        semantic_tokens_define_property(this, "_prevData", void 0);
-        this._prevData = undefined;
-        this.initialize();
     }
 }
 
@@ -22628,6 +22307,683 @@ class FilteredList {
     }
 }
 
+;// CONCATENATED MODULE: ./src/ace/marker_group.ts
+
+function marker_group_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+/*
+Potential improvements:
+- use binary search when looking for hover match
+*/ //taken from ace-code with small changes
+class MarkerGroup {
+    /**
+     * Finds the first marker containing pos
+     * @param {Position} pos
+     * @returns Ace.MarkerGroupItem
+     */ getMarkerAtPosition(pos) {
+        return this.markers.find(function(marker) {
+            return marker.range.contains(pos.row, pos.column);
+        });
+    }
+    /**
+     * Finds all markers that contain the given position.
+     * @param {Position} pos - The position to search for.
+     * @returns {Ace.MarkerGroupItem[]} - An array of all markers that contain the given position.
+     */ getMarkersAtPosition(pos) {
+        return this.markers.filter(function(marker) {
+            return marker.range.contains(pos.row, pos.column);
+        });
+    }
+    /**
+     * Comparator for Array.sort function, which sorts marker definitions by their positions
+     *
+     * @param {Ace.MarkerGroupItem} a first marker.
+     * @param {Ace.MarkerGroupItem} b second marker.
+     * @returns {number} negative number if a should be before b, positive number if b should be before a, 0 otherwise.
+     */ markersComparator(a, b) {
+        return a.range.start.row - b.range.start.row;
+    }
+    /**
+     * Sets marker definitions to be rendered. Limits the number of markers at MAX_MARKERS.
+     * @param {Ace.MarkerGroupItem[]} markers an array of marker definitions.
+     */ setMarkers(markers) {
+        this.markers = markers.sort(this.markersComparator).slice(0, this.MAX_MARKERS);
+        this.session._signal("changeBackMarker");
+    }
+    update(html, markerLayer, session, config) {
+        if (!this.markers || !this.markers.length) return;
+        var visibleRangeStartRow = config.firstRow, visibleRangeEndRow = config.lastRow;
+        var foldLine;
+        var markersOnOneLine = 0;
+        var lastRow = 0;
+        for(var i = 0; i < this.markers.length; i++){
+            var marker = this.markers[i];
+            if (marker.range.end.row < visibleRangeStartRow) continue;
+            if (marker.range.start.row > visibleRangeEndRow) continue;
+            if (marker.range.start.row === lastRow) {
+                markersOnOneLine++;
+            } else {
+                lastRow = marker.range.start.row;
+                markersOnOneLine = 0;
+            }
+            // do not render too many markers on one line
+            // because we do not have virtual scroll for horizontal direction
+            if (markersOnOneLine > 200) {
+                continue;
+            }
+            var markerVisibleRange = marker.range.clipRows(visibleRangeStartRow, visibleRangeEndRow);
+            if (markerVisibleRange.start.row === markerVisibleRange.end.row && markerVisibleRange.start.column === markerVisibleRange.end.column) {
+                continue; // visible range is empty
+            }
+            var screenRange = markerVisibleRange.toScreenRange(session);
+            if (screenRange.isEmpty()) {
+                // we are inside a fold
+                foldLine = session.getNextFoldLine(markerVisibleRange.end.row, foldLine);
+                if (foldLine && foldLine.end.row > markerVisibleRange.end.row) {
+                    visibleRangeStartRow = foldLine.end.row;
+                }
+                continue;
+            }
+            if (screenRange.isMultiLine()) {
+                markerLayer.drawTextMarker(html, screenRange, marker.className, config);
+            } else {
+                markerLayer.drawSingleLineMarker(html, screenRange, marker.className, config);
+            }
+        }
+    }
+    constructor(session){
+        marker_group_define_property(this, "markers", void 0);
+        marker_group_define_property(this, "session", void 0);
+        // this caps total amount of markers at 10K
+        marker_group_define_property(this, "MAX_MARKERS", 10000);
+        this.markers = [];
+        this.session = session;
+        session.addDynamicMarker(this);
+    }
+}
+
+;// CONCATENATED MODULE: ./src/type-converters/lsp/semantic-tokens.ts
+function semantic_tokens_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+function decodeModifiers(modifierFlag, tokenModifiersLegend) {
+    const modifiers = [];
+    for(let i = 0; i < tokenModifiersLegend.length; i++){
+        if (modifierFlag & 1 << i) {
+            modifiers.push(tokenModifiersLegend[i]);
+        }
+    }
+    return modifiers;
+}
+function parseSemanticTokens(tokens, tokenTypes, tokenModifiersLegend) {
+    if (tokens.length % 5 !== 0) {
+        return;
+    }
+    const decodedTokens = [];
+    let line = 0;
+    let startColumn = 0;
+    for(let i = 0; i < tokens.length; i += 5){
+        line += tokens[i];
+        if (tokens[i] === 0) {
+            startColumn += tokens[i + 1];
+        } else {
+            startColumn = tokens[i + 1];
+        }
+        const length = tokens[i + 2];
+        const tokenTypeIndex = tokens[i + 3];
+        const tokenModifierFlag = tokens[i + 4];
+        const tokenType = tokenTypes[tokenTypeIndex];
+        const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
+        decodedTokens.push({
+            row: line,
+            startColumn: startColumn,
+            length,
+            type: toAceTokenType(tokenType, tokenModifiers)
+        });
+    }
+    return new DecodedSemanticTokens(decodedTokens);
+}
+function toAceTokenType(tokenType, tokenModifiers) {
+    let modifiers = "";
+    let type = tokenType;
+    if (tokenModifiers.length > 0) {
+        modifiers = "." + tokenModifiers.join(".");
+    }
+    switch(tokenType){
+        case "class":
+            type = "entity.name.type.class";
+            break;
+        case "struct":
+            type = "storage.type.struct";
+            break;
+        case "enum":
+            type = "entity.name.type.enum";
+            break;
+        case "interface":
+            type = "entity.name.type.interface";
+            break;
+        case "namespace":
+            type = "entity.name.namespace";
+            break;
+        case "typeParameter":
+            break;
+        case "type":
+            type = "entity.name.type";
+            break;
+        case "parameter":
+            type = "variable.parameter";
+            break;
+        case "variable":
+            type = "entity.name.variable";
+            break;
+        case "enumMember":
+            type = "variable.other.enummember";
+            break;
+        case "property":
+            type = "variable.other.property";
+            break;
+        case "function":
+            type = "entity.name.function";
+            break;
+        case "method":
+            type = "entity.name.function.member";
+            break;
+        case "event":
+            type = "variable.other.event";
+            break;
+    }
+    return type + modifiers;
+}
+function mergeTokens(aceTokens, decodedTokens) {
+    let mergedTokens = [];
+    let currentCharIndex = 0; // Keeps track of the character index across Ace tokens
+    let aceTokenIndex = 0; // Index within the aceTokens array
+    decodedTokens.forEach((semanticToken)=>{
+        let semanticStart = semanticToken.startColumn;
+        let semanticEnd = semanticStart + semanticToken.length;
+        // Process leading Ace tokens that don't overlap with the semantic token
+        while(aceTokenIndex < aceTokens.length && currentCharIndex + aceTokens[aceTokenIndex].value.length <= semanticStart){
+            mergedTokens.push(aceTokens[aceTokenIndex]);
+            currentCharIndex += aceTokens[aceTokenIndex].value.length;
+            aceTokenIndex++;
+        }
+        // Process overlapping Ace tokens
+        while(aceTokenIndex < aceTokens.length && currentCharIndex < semanticEnd){
+            let aceToken = aceTokens[aceTokenIndex];
+            let aceTokenEnd = currentCharIndex + aceToken.value.length;
+            let overlapStart = Math.max(currentCharIndex, semanticStart);
+            let overlapEnd = Math.min(aceTokenEnd, semanticEnd);
+            if (currentCharIndex < semanticStart) {
+                // Part of Ace token is before semantic token; add this part to mergedTokens
+                let beforeSemantic = {
+                    ...aceToken,
+                    value: aceToken.value.substring(0, semanticStart - currentCharIndex)
+                };
+                mergedTokens.push(beforeSemantic);
+            }
+            // Middle part (overlapped by semantic token)
+            let middle = {
+                type: semanticToken.type,
+                value: aceToken.value.substring(overlapStart - currentCharIndex, overlapEnd - currentCharIndex)
+            };
+            mergedTokens.push(middle);
+            if (aceTokenEnd > semanticEnd) {
+                // If Ace token extends beyond the semantic token, prepare the remaining part for future processing
+                let afterSemantic = {
+                    ...aceToken,
+                    value: aceToken.value.substring(semanticEnd - currentCharIndex)
+                };
+                // Add the afterSemantic as a new token to process in subsequent iterations
+                currentCharIndex = semanticEnd; // Update currentCharIndex to reflect the start of afterSemantic
+                aceTokens.splice(aceTokenIndex, 1, afterSemantic); // Replace the current token with afterSemantic for correct processing in the next iteration
+                break; // Move to the next semantic token without incrementing aceTokenIndex
+            }
+            // If the entire Ace token is covered by the semantic token, proceed to the next Ace token
+            currentCharIndex = aceTokenEnd;
+            aceTokenIndex++;
+        }
+    });
+    // Add remaining Ace tokens that were not overlapped by any semantic tokens
+    while(aceTokenIndex < aceTokens.length){
+        mergedTokens.push(aceTokens[aceTokenIndex]);
+        aceTokenIndex++;
+    }
+    return mergedTokens;
+}
+class DecodedSemanticTokens {
+    getByRow(row) {
+        return this.tokens.filter((token)=>token.row === row);
+    }
+    sortTokens(tokens) {
+        return tokens.sort((a, b)=>{
+            if (a.row === b.row) {
+                return a.startColumn - b.startColumn;
+            }
+            return a.row - b.row;
+        });
+    }
+    constructor(tokens){
+        semantic_tokens_define_property(this, "tokens", void 0);
+        this.tokens = this.sortTokens(tokens);
+    }
+}
+//vscode-languageserver
+class SemanticTokensBuilder {
+    initialize() {
+        this._id = Date.now();
+        this._prevLine = 0;
+        this._prevChar = 0;
+        this._data = [];
+        this._dataLen = 0;
+    }
+    push(line, char, length, tokenType, tokenModifiers) {
+        let pushLine = line;
+        let pushChar = char;
+        if (this._dataLen > 0) {
+            pushLine -= this._prevLine;
+            if (pushLine === 0) {
+                pushChar -= this._prevChar;
+            }
+        }
+        this._data[this._dataLen++] = pushLine;
+        this._data[this._dataLen++] = pushChar;
+        this._data[this._dataLen++] = length;
+        this._data[this._dataLen++] = tokenType;
+        this._data[this._dataLen++] = tokenModifiers;
+        this._prevLine = line;
+        this._prevChar = char;
+    }
+    get id() {
+        return this._id.toString();
+    }
+    previousResult(id) {
+        if (this.id === id) {
+            this._prevData = this._data;
+        }
+        this.initialize();
+    }
+    build() {
+        this._prevData = undefined;
+        return {
+            resultId: this.id,
+            data: this._data
+        };
+    }
+    canBuildEdits() {
+        return this._prevData !== undefined;
+    }
+    constructor(){
+        semantic_tokens_define_property(this, "_id", void 0);
+        semantic_tokens_define_property(this, "_prevLine", void 0);
+        semantic_tokens_define_property(this, "_prevChar", void 0);
+        semantic_tokens_define_property(this, "_data", void 0);
+        semantic_tokens_define_property(this, "_dataLen", void 0);
+        semantic_tokens_define_property(this, "_prevData", void 0);
+        this._prevData = undefined;
+        this.initialize();
+    }
+}
+
+;// CONCATENATED MODULE: ./src/session-language-provider.ts
+function session_language_provider_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
+
+
+
+
+class SessionLanguageProvider {
+    enqueueIfNotConnected(callback) {
+        if (!this.$isConnected) {
+            this.$requestsQueue.push(callback);
+        } else {
+            callback();
+        }
+    }
+    get comboDocumentIdentifier() {
+        return {
+            documentUri: this.documentUri,
+            sessionId: this.session["id"]
+        };
+    }
+    /**
+     * Sets the file path for the current document and optionally joins it with the workspace URI.
+     * Increments the document version and updates the internal document URI and identifier.
+     *
+     * @param {string} filePath - The new file path for the document.
+     * @param {boolean} [joinWorkspaceURI] - Optional flag to indicate whether to join the file path with the workspace URI.
+     */ setFilePath(filePath, joinWorkspaceURI) {
+        this.enqueueIfNotConnected(()=>{
+            this.session.doc.version++;
+            this.$filePath = filePath;
+            const previousComboId = this.comboDocumentIdentifier;
+            this.initDocumentUri(true, joinWorkspaceURI);
+            this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
+        });
+    }
+    $init(config) {
+        var _config, _config1;
+        if ((_config = config) === null || _config === void 0 ? void 0 : _config.filePath) {
+            this.$filePath = config.filePath;
+        }
+        this.initDocumentUri(false, (_config1 = config) === null || _config1 === void 0 ? void 0 : _config1.joinWorkspaceURI);
+        this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
+    }
+    addSemanticTokenSupport(session) {
+        let bgTokenizer = session.bgTokenizer;
+        session.setSemanticTokens = (tokens)=>{
+            bgTokenizer.semanticTokens = tokens;
+        };
+        bgTokenizer.$tokenizeRow = (row)=>{
+            var line = bgTokenizer.doc.getLine(row);
+            var state = bgTokenizer.states[row - 1];
+            var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
+            if (bgTokenizer.states[row] + "" !== data.state + "") {
+                bgTokenizer.states[row] = data.state;
+                bgTokenizer.lines[row + 1] = null;
+                if (bgTokenizer.currentLine > row + 1) bgTokenizer.currentLine = row + 1;
+            } else if (bgTokenizer.currentLine == row) {
+                bgTokenizer.currentLine = row + 1;
+            }
+            if (bgTokenizer.semanticTokens) {
+                let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
+                if (decodedTokens) {
+                    data.tokens = mergeTokens(data.tokens, decodedTokens);
+                }
+            }
+            return bgTokenizer.lines[row] = data.tokens;
+        };
+    }
+    initDocumentUri(isRename = false, joinWorkspaceURI = false) {
+        var _this_$filePath;
+        let filePath = (_this_$filePath = this.$filePath) !== null && _this_$filePath !== void 0 ? _this_$filePath : this.session["id"] + "." + this.$extension;
+        if (isRename) {
+            delete this.$provider.$urisToSessionsIds[this.documentUri];
+        }
+        this.documentUri = (0,utils/* convertToUri */.de)(filePath, joinWorkspaceURI, this.$provider.workspaceUri);
+        this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
+    }
+    get $extension() {
+        let mode = this.$mode.replace("ace/mode/", "");
+        var _this_extensions_mode;
+        return (_this_extensions_mode = this.extensions[mode]) !== null && _this_extensions_mode !== void 0 ? _this_extensions_mode : mode;
+    }
+    get $mode() {
+        return this.session["$modeId"];
+    }
+    get $format() {
+        return {
+            tabSize: this.session.getTabSize(),
+            insertSpaces: this.session.getUseSoftTabs()
+        };
+    }
+    setOptions(options) {
+        if (!this.$isConnected) {
+            this.$options = options;
+            return;
+        }
+        this.$messageController.changeOptions(this.comboDocumentIdentifier, options);
+    }
+    getSemanticTokens() {
+        if (!this.$provider.options.functionality.semanticTokens) return;
+        //TODO: improve this
+        let lastRow = this.editor.renderer.getLastVisibleRow();
+        let visibleRange = {
+            start: {
+                row: this.editor.renderer.getFirstVisibleRow(),
+                column: 0
+            },
+            end: {
+                row: lastRow + 1,
+                column: this.session.getLine(lastRow).length
+            }
+        };
+        this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), (tokens)=>{
+            if (!tokens) {
+                return;
+            }
+            let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend.tokenTypes, this.semanticTokensLegend.tokenModifiers);
+            this.session.setSemanticTokens(decodedTokens);
+            let bgTokenizer = this.session.bgTokenizer;
+            //@ts-ignore
+            bgTokenizer.running = setTimeout(()=>{
+                var _bgTokenizer_semanticTokens, _bgTokenizer, _bgTokenizer_semanticTokens1, _bgTokenizer1;
+                if (((_bgTokenizer = bgTokenizer) === null || _bgTokenizer === void 0 ? void 0 : (_bgTokenizer_semanticTokens = _bgTokenizer.semanticTokens) === null || _bgTokenizer_semanticTokens === void 0 ? void 0 : _bgTokenizer_semanticTokens.tokens) && ((_bgTokenizer1 = bgTokenizer) === null || _bgTokenizer1 === void 0 ? void 0 : (_bgTokenizer_semanticTokens1 = _bgTokenizer1.semanticTokens) === null || _bgTokenizer_semanticTokens1 === void 0 ? void 0 : _bgTokenizer_semanticTokens1.tokens.length) > 0) {
+                    var _bgTokenizer_semanticTokens2, _bgTokenizer2;
+                    let startRow = (_bgTokenizer2 = bgTokenizer) === null || _bgTokenizer2 === void 0 ? void 0 : (_bgTokenizer_semanticTokens2 = _bgTokenizer2.semanticTokens) === null || _bgTokenizer_semanticTokens2 === void 0 ? void 0 : _bgTokenizer_semanticTokens2.tokens[0].row;
+                    bgTokenizer.currentLine = startRow;
+                    bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
+                } else {
+                    bgTokenizer.currentLine = 0;
+                    bgTokenizer.lines = [];
+                }
+                bgTokenizer.$worker();
+            }, 20);
+        });
+    }
+    closeDocument(callback) {
+        this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
+    }
+    /**
+     * Constructs a new instance of the `SessionLanguageProvider` class.
+     *
+     * @param provider - The `LanguageProvider` instance.
+     * @param session - The Ace editor session.
+     * @param editor - The Ace editor instance.
+     * @param messageController - The `IMessageController` instance for handling messages.
+     * @param config
+     */ constructor(provider, session, editor, messageController, config){
+        session_language_provider_define_property(this, "session", void 0);
+        session_language_provider_define_property(this, "documentUri", void 0);
+        session_language_provider_define_property(this, "$messageController", void 0);
+        session_language_provider_define_property(this, "$deltaQueue", void 0);
+        session_language_provider_define_property(this, "$isConnected", false);
+        session_language_provider_define_property(this, "$options", void 0);
+        session_language_provider_define_property(this, "$filePath", void 0);
+        session_language_provider_define_property(this, "$servicesCapabilities", void 0);
+        session_language_provider_define_property(this, "$requestsQueue", []);
+        session_language_provider_define_property(this, "state", {
+            occurrenceMarkers: null,
+            diagnosticMarkers: null
+        });
+        session_language_provider_define_property(this, "extensions", {
+            "typescript": "ts",
+            "javascript": "js"
+        });
+        session_language_provider_define_property(this, "editor", void 0);
+        session_language_provider_define_property(this, "semanticTokensLegend", void 0);
+        session_language_provider_define_property(this, "$provider", void 0);
+        session_language_provider_define_property(this, "$connected", (capabilities)=>{
+            this.$isConnected = true;
+            this.setServerCapabilities(capabilities);
+            this.$requestsQueue.forEach((requestCallback)=>requestCallback());
+            this.$requestsQueue = [];
+            if (this.$deltaQueue) this.$sendDeltaQueue();
+            if (this.$options) this.setOptions(this.$options);
+        });
+        session_language_provider_define_property(this, "$changeMode", ()=>{
+            this.enqueueIfNotConnected(()=>{
+                this.$deltaQueue = [];
+                this.session.clearAnnotations();
+                if (this.state.diagnosticMarkers) {
+                    this.state.diagnosticMarkers.setMarkers([]);
+                }
+                this.session.setSemanticTokens(undefined); //clear all semantic tokens
+                let newVersion = this.session.doc.version++;
+                this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
+            });
+        });
+        session_language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
+            var _this_$provider_options_functionality, _this_$provider_options_functionality_completion_lspCompleterOptions, _this_$provider_options_functionality1;
+            if (!capabilities) return;
+            this.$servicesCapabilities = {
+                ...capabilities
+            };
+            let hasTriggerChars = Object.values(capabilities).some((capability)=>{
+                var _capability_completionProvider, _capability;
+                return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
+            });
+            if (hasTriggerChars || ((_this_$provider_options_functionality = this.$provider.options.functionality) === null || _this_$provider_options_functionality === void 0 ? void 0 : _this_$provider_options_functionality.completion) && ((_this_$provider_options_functionality1 = this.$provider.options.functionality) === null || _this_$provider_options_functionality1 === void 0 ? void 0 : (_this_$provider_options_functionality_completion_lspCompleterOptions = _this_$provider_options_functionality1.completion.lspCompleterOptions) === null || _this_$provider_options_functionality_completion_lspCompleterOptions === void 0 ? void 0 : _this_$provider_options_functionality_completion_lspCompleterOptions.triggerCharacters)) {
+                let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
+                if (completer) {
+                    var _this_$provider_options_functionality2, _this_$provider_options_functionality_completion_lspCompleterOptions1;
+                    let allTriggerCharacters = [];
+                    Object.values(capabilities).forEach((capability)=>{
+                        var _capability_completionProvider, _capability;
+                        if ((_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
+                            allTriggerCharacters.push(...capability.completionProvider.triggerCharacters);
+                        }
+                    });
+                    allTriggerCharacters = [
+                        ...new Set(allTriggerCharacters)
+                    ];
+                    const triggerCharacterOptions = typeof ((_this_$provider_options_functionality2 = this.$provider.options.functionality) === null || _this_$provider_options_functionality2 === void 0 ? void 0 : _this_$provider_options_functionality2.completion) == "object" ? (_this_$provider_options_functionality_completion_lspCompleterOptions1 = this.$provider.options.functionality.completion.lspCompleterOptions) === null || _this_$provider_options_functionality_completion_lspCompleterOptions1 === void 0 ? void 0 : _this_$provider_options_functionality_completion_lspCompleterOptions1.triggerCharacters : undefined;
+                    if (triggerCharacterOptions) {
+                        const removeChars = Array.isArray(triggerCharacterOptions.remove) ? triggerCharacterOptions.remove : [];
+                        const addChars = Array.isArray(triggerCharacterOptions.add) ? triggerCharacterOptions.add : [];
+                        completer.triggerCharacters = allTriggerCharacters.filter((char)=>!removeChars.includes(char));
+                        addChars.forEach((char)=>{
+                            if (!completer.triggerCharacters.includes(char)) {
+                                completer.triggerCharacters.push(char);
+                            }
+                        });
+                    } else {
+                        completer.triggerCharacters = allTriggerCharacters;
+                    }
+                }
+            }
+            let hasSemanticTokensProvider = Object.values(capabilities).some((capability)=>{
+                var _capability;
+                if ((_capability = capability) === null || _capability === void 0 ? void 0 : _capability.semanticTokensProvider) {
+                    this.semanticTokensLegend = capability.semanticTokensProvider.legend;
+                    return true;
+                }
+            });
+            if (hasSemanticTokensProvider) {
+                this.getSemanticTokens();
+            }
+        //TODO: we should restrict range formatting if any of services is only has full format capabilities
+        //or we shoudl use service with full format capability instead of range one's
+        });
+        session_language_provider_define_property(this, "$changeListener", (delta)=>{
+            this.session.doc.version++;
+            if (!this.$deltaQueue) {
+                this.$deltaQueue = [];
+                setTimeout(()=>this.$sendDeltaQueue(()=>{
+                        this.getSemanticTokens();
+                    }), 0);
+            }
+            this.$deltaQueue.push(delta);
+        });
+        session_language_provider_define_property(this, "$sendDeltaQueue", (callback)=>{
+            let deltas = this.$deltaQueue;
+            if (!deltas) return callback && callback();
+            this.$deltaQueue = null;
+            if (deltas.length) this.$messageController.change(this.comboDocumentIdentifier, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
+        });
+        session_language_provider_define_property(this, "$showAnnotations", (diagnostics)=>{
+            var _diagnostics;
+            if (!diagnostics) {
+                return;
+            }
+            let annotations = toAnnotations(diagnostics);
+            this.session.clearAnnotations();
+            if (annotations && annotations.length > 0) {
+                this.session.setAnnotations(annotations);
+            }
+            if (!this.state.diagnosticMarkers) {
+                this.state.diagnosticMarkers = new MarkerGroup(this.session);
+            }
+            this.state.diagnosticMarkers.setMarkers((_diagnostics = diagnostics) === null || _diagnostics === void 0 ? void 0 : _diagnostics.map((el)=>toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+        });
+        session_language_provider_define_property(this, "validate", ()=>{
+            this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
+        });
+        session_language_provider_define_property(this, "format", ()=>{
+            let selectionRanges = this.session.getSelection().getAllRanges();
+            let $format = this.$format;
+            let aceRangeDatas = selectionRanges;
+            if (!selectionRanges || selectionRanges[0].isEmpty()) {
+                let row = this.session.getLength();
+                let column = this.session.getLine(row).length - 1;
+                aceRangeDatas = [
+                    {
+                        start: {
+                            row: 0,
+                            column: 0
+                        },
+                        end: {
+                            row: row,
+                            column: column
+                        }
+                    }
+                ];
+            }
+            for (let range of aceRangeDatas){
+                this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
+            }
+        });
+        session_language_provider_define_property(this, "applyEdits", (edits)=>{
+            edits !== null && edits !== void 0 ? edits : edits = [];
+            for (let edit of edits.reverse()){
+                this.session.replace(toRange(edit.range), edit.newText);
+            }
+        });
+        session_language_provider_define_property(this, "$applyDocumentHighlight", (documentHighlights)=>{
+            if (!this.state.occurrenceMarkers) {
+                this.state.occurrenceMarkers = new MarkerGroup(this.session);
+            }
+            if (documentHighlights) {
+                this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
+            }
+        });
+        this.$provider = provider;
+        this.$messageController = messageController;
+        this.session = session;
+        this.editor = editor;
+        session.doc.version = 1;
+        session.doc.on("change", this.$changeListener, true);
+        this.addSemanticTokenSupport(session); //TODO: ?
+        session.on("changeMode", this.$changeMode);
+        if (this.$provider.options.functionality.semanticTokens) {
+            session.on("changeScrollTop", ()=>this.getSemanticTokens());
+        }
+        this.$init(config);
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/language-provider.ts
 /* provided dependency */ var console = __webpack_require__(4364);
 function language_provider_define_property(obj, key, value) {
@@ -22659,10 +23015,9 @@ function language_provider_define_property(obj, key, value) {
 
 
 
-
 class LanguageProvider {
     /**
-     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  Creates LanguageProvider using our transport protocol with the ability to register different services on the same
      *  webworker
      * @param {Worker} worker
      * @param {ProviderOptions} options
@@ -22742,11 +23097,14 @@ class LanguageProvider {
         }
     }
     /**
-     * @param session
-     * @param filePath - The full file path associated with the editor.
-     */ setSessionFilePath(session, filePath) {
+     * Sets the file path for the given Ace edit session. Optionally allows the file path to
+     * be joined with the workspace URI.
+     *
+     * @param session The Ace edit session to update with the file path.
+     * @param config config to set
+     */ setSessionFilePath(session, config) {
         var _this_$getSessionLanguageProvider;
-        (_this_$getSessionLanguageProvider = this.$getSessionLanguageProvider(session)) === null || _this_$getSessionLanguageProvider === void 0 ? void 0 : _this_$getSessionLanguageProvider.setFilePath(filePath);
+        (_this_$getSessionLanguageProvider = this.$getSessionLanguageProvider(session)) === null || _this_$getSessionLanguageProvider === void 0 ? void 0 : _this_$getSessionLanguageProvider.setFilePath(config.filePath, config.joinWorkspaceURI);
     }
     $getSessionLanguageProvider(session) {
         return this.$sessionLanguageProviders[session["id"]];
@@ -22756,13 +23114,19 @@ class LanguageProvider {
         return sessionLanguageProvider.comboDocumentIdentifier;
     }
     /**
-     * Registers an Ace editor instance with the language provider.
-     * @param editor - The Ace editor instance to register.
-     */ registerEditor(editor) {
+     * Registers an Ace editor instance along with the session's configuration settings.
+     *
+     * @param editor - The Ace editor instance to be registered.
+     * @param [config] - Configuration options for the session.
+     */ registerEditor(editor, config) {
         if (!this.editors.includes(editor)) this.$registerEditor(editor);
-        this.$registerSession(editor.session, editor);
+        this.$registerSession(editor.session, editor, config);
     }
-    setCodeActionCallback(callback) {
+    /**
+     * Sets a callback function that will be triggered with an array of code actions grouped by service.
+     *
+     * @param {function} callback - A function that receives an array of code actions, categorized by service, as its argument.
+     */ setCodeActionCallback(callback) {
         this.codeActionCallback = callback;
     }
     executeCommand(command, serviceName, args, callback) {
@@ -22933,7 +23297,13 @@ class LanguageProvider {
             this.stylesEmbedded = true;
         }
     }
-    setGlobalOptions(serviceName, options, merge = false) {
+    /**
+     * Sets global options for the specified service.
+     *
+     * @param serviceName - The name of the service for which to set global options.
+     * @param options - The options to set for the specified service.
+     * @param {boolean} [merge=false] - Indicates whether to merge the provided options with the existing options. Defaults to false.
+     */ setGlobalOptions(serviceName, options, merge = false) {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
     /**
@@ -22948,13 +23318,24 @@ class LanguageProvider {
      */ changeWorkspaceFolder(workspaceUri) {
         if (workspaceUri === this.workspaceUri) return;
         this.workspaceUri = (0,utils/* convertToUri */.de)(workspaceUri);
-        this.$messageController.setWorkspace(workspaceUri);
+        this.$messageController.setWorkspace(this.workspaceUri);
     }
-    setSessionOptions(session, options) {
+    /**
+     * Sets the options for a specified editor session.
+     *
+     * @param session - The Ace editor session to configure.
+     * @param options - The configuration options to be applied to the session.
+     */ setSessionOptions(session, options) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
     }
-    configureServiceFeatures(serviceName, features) {
+    /**
+     * Configures the specified features for a given service.
+     *
+     * @param {SupportedServices} serviceName - The name of the service for which features are being configured.
+     * @param {ServiceFeatures} features - The features to be configured for the given service.
+     * @return {void} Does not return a value.
+     */ configureServiceFeatures(serviceName, features) {
         this.$messageController.configureFeatures(serviceName, features);
     }
     doHover(session, position, callback) {
@@ -23133,10 +23514,13 @@ class LanguageProvider {
         language_provider_define_property(this, "inlineCompleter", void 0);
         language_provider_define_property(this, "doLiveAutocomplete", void 0);
         language_provider_define_property(this, "completerAdapter", void 0);
-        language_provider_define_property(this, "$registerSession", (session, editor)=>{
-            var _this_$sessionLanguageProviders, _session_id;
-            var _;
-            (_ = (_this_$sessionLanguageProviders = this.$sessionLanguageProviders)[_session_id = session["id"]]) !== null && _ !== void 0 ? _ : _this_$sessionLanguageProviders[_session_id] = new SessionLanguageProvider(this, session, editor, this.$messageController);
+        language_provider_define_property(this, "$registerSession", (session, editor, config)=>{
+            if (!this.$sessionLanguageProviders[session["id"]]) {
+                this.$sessionLanguageProviders[session["id"]] = new SessionLanguageProvider(this, session, editor, this.$messageController, config);
+            }
+            if (config) {
+                this.$sessionLanguageProviders[session["id"]].setFilePath(config.filePath, config.joinWorkspaceURI);
+            }
         });
         language_provider_define_property(this, "codeActionCallback", void 0);
         language_provider_define_property(this, "format", ()=>{
@@ -23147,316 +23531,6 @@ class LanguageProvider {
         this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);
         this.$signatureTooltip = new SignatureTooltip(this);
-    }
-}
-class SessionLanguageProvider {
-    enqueueIfNotConnected(callback) {
-        if (!this.$isConnected) {
-            this.$requestsQueue.push(callback);
-        } else {
-            callback();
-        }
-    }
-    get comboDocumentIdentifier() {
-        return {
-            documentUri: this.documentUri,
-            sessionId: this.session["id"]
-        };
-    }
-    /**
-     * @param filePath
-     */ setFilePath(filePath) {
-        this.enqueueIfNotConnected(()=>{
-            this.session.doc.version++;
-            this.$filePath = filePath;
-            const previousComboId = this.comboDocumentIdentifier;
-            this.initDocumentUri(true);
-            this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
-        });
-    }
-    $init() {
-        this.initDocumentUri();
-        this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
-    }
-    addSemanticTokenSupport(session) {
-        let bgTokenizer = session.bgTokenizer;
-        session.setSemanticTokens = (tokens)=>{
-            bgTokenizer.semanticTokens = tokens;
-        };
-        bgTokenizer.$tokenizeRow = (row)=>{
-            var line = bgTokenizer.doc.getLine(row);
-            var state = bgTokenizer.states[row - 1];
-            var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
-            if (bgTokenizer.states[row] + "" !== data.state + "") {
-                bgTokenizer.states[row] = data.state;
-                bgTokenizer.lines[row + 1] = null;
-                if (bgTokenizer.currentLine > row + 1) bgTokenizer.currentLine = row + 1;
-            } else if (bgTokenizer.currentLine == row) {
-                bgTokenizer.currentLine = row + 1;
-            }
-            if (bgTokenizer.semanticTokens) {
-                let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
-                if (decodedTokens) {
-                    data.tokens = mergeTokens(data.tokens, decodedTokens);
-                }
-            }
-            return bgTokenizer.lines[row] = data.tokens;
-        };
-    }
-    initDocumentUri(isRename = false) {
-        var _this_$filePath;
-        let filePath = (_this_$filePath = this.$filePath) !== null && _this_$filePath !== void 0 ? _this_$filePath : this.session["id"] + "." + this.$extension;
-        if (isRename) {
-            delete this.$provider.$urisToSessionsIds[this.documentUri];
-        }
-        this.documentUri = (0,utils/* convertToUri */.de)(filePath);
-        this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
-    }
-    get $extension() {
-        let mode = this.$mode.replace("ace/mode/", "");
-        var _this_extensions_mode;
-        return (_this_extensions_mode = this.extensions[mode]) !== null && _this_extensions_mode !== void 0 ? _this_extensions_mode : mode;
-    }
-    get $mode() {
-        return this.session["$modeId"];
-    }
-    get $format() {
-        return {
-            tabSize: this.session.getTabSize(),
-            insertSpaces: this.session.getUseSoftTabs()
-        };
-    }
-    setOptions(options) {
-        if (!this.$isConnected) {
-            this.$options = options;
-            return;
-        }
-        this.$messageController.changeOptions(this.comboDocumentIdentifier, options);
-    }
-    getSemanticTokens() {
-        if (!this.$provider.options.functionality.semanticTokens) return;
-        //TODO: improve this 
-        let lastRow = this.editor.renderer.getLastVisibleRow();
-        let visibleRange = {
-            start: {
-                row: this.editor.renderer.getFirstVisibleRow(),
-                column: 0
-            },
-            end: {
-                row: lastRow + 1,
-                column: this.session.getLine(lastRow).length
-            }
-        };
-        this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), (tokens)=>{
-            if (!tokens) {
-                return;
-            }
-            let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend.tokenTypes, this.semanticTokensLegend.tokenModifiers);
-            this.session.setSemanticTokens(decodedTokens);
-            let bgTokenizer = this.session.bgTokenizer;
-            //@ts-ignore
-            bgTokenizer.running = setTimeout(()=>{
-                var _bgTokenizer_semanticTokens, _bgTokenizer, _bgTokenizer_semanticTokens1, _bgTokenizer1;
-                if (((_bgTokenizer = bgTokenizer) === null || _bgTokenizer === void 0 ? void 0 : (_bgTokenizer_semanticTokens = _bgTokenizer.semanticTokens) === null || _bgTokenizer_semanticTokens === void 0 ? void 0 : _bgTokenizer_semanticTokens.tokens) && ((_bgTokenizer1 = bgTokenizer) === null || _bgTokenizer1 === void 0 ? void 0 : (_bgTokenizer_semanticTokens1 = _bgTokenizer1.semanticTokens) === null || _bgTokenizer_semanticTokens1 === void 0 ? void 0 : _bgTokenizer_semanticTokens1.tokens.length) > 0) {
-                    var _bgTokenizer_semanticTokens2, _bgTokenizer2;
-                    let startRow = (_bgTokenizer2 = bgTokenizer) === null || _bgTokenizer2 === void 0 ? void 0 : (_bgTokenizer_semanticTokens2 = _bgTokenizer2.semanticTokens) === null || _bgTokenizer_semanticTokens2 === void 0 ? void 0 : _bgTokenizer_semanticTokens2.tokens[0].row;
-                    bgTokenizer.currentLine = startRow;
-                    bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
-                } else {
-                    bgTokenizer.currentLine = 0;
-                    bgTokenizer.lines = [];
-                }
-                bgTokenizer.$worker();
-            }, 20);
-        });
-    }
-    closeDocument(callback) {
-        this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
-    }
-    /**
-     * Constructs a new instance of the `SessionLanguageProvider` class.
-     *
-     * @param provider - The `LanguageProvider` instance.
-     * @param session - The Ace editor session.
-     * @param editor - The Ace editor instance.
-     * @param messageController - The `IMessageController` instance for handling messages.
-     */ constructor(provider, session, editor, messageController){
-        language_provider_define_property(this, "session", void 0);
-        language_provider_define_property(this, "documentUri", void 0);
-        language_provider_define_property(this, "$messageController", void 0);
-        language_provider_define_property(this, "$deltaQueue", void 0);
-        language_provider_define_property(this, "$isConnected", false);
-        language_provider_define_property(this, "$options", void 0);
-        language_provider_define_property(this, "$filePath", void 0);
-        language_provider_define_property(this, "$servicesCapabilities", void 0);
-        language_provider_define_property(this, "$requestsQueue", []);
-        language_provider_define_property(this, "state", {
-            occurrenceMarkers: null,
-            diagnosticMarkers: null
-        });
-        language_provider_define_property(this, "extensions", {
-            "typescript": "ts",
-            "javascript": "js"
-        });
-        language_provider_define_property(this, "editor", void 0);
-        language_provider_define_property(this, "semanticTokensLegend", void 0);
-        language_provider_define_property(this, "$provider", void 0);
-        language_provider_define_property(this, "$connected", (capabilities)=>{
-            this.$isConnected = true;
-            this.setServerCapabilities(capabilities);
-            this.$requestsQueue.forEach((requestCallback)=>requestCallback());
-            this.$requestsQueue = [];
-            if (this.$deltaQueue) this.$sendDeltaQueue();
-            if (this.$options) this.setOptions(this.$options);
-        });
-        language_provider_define_property(this, "$changeMode", ()=>{
-            this.enqueueIfNotConnected(()=>{
-                this.$deltaQueue = [];
-                this.session.clearAnnotations();
-                if (this.state.diagnosticMarkers) {
-                    this.state.diagnosticMarkers.setMarkers([]);
-                }
-                this.session.setSemanticTokens(undefined); //clear all semantic tokens
-                let newVersion = this.session.doc.version++;
-                this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
-            });
-        });
-        language_provider_define_property(this, "setServerCapabilities", (capabilities)=>{
-            var _this_$provider_options_functionality, _this_$provider_options_functionality_completion_lspCompleterOptions, _this_$provider_options_functionality1;
-            if (!capabilities) return;
-            this.$servicesCapabilities = {
-                ...capabilities
-            };
-            let hasTriggerChars = Object.values(capabilities).some((capability)=>{
-                var _capability_completionProvider, _capability;
-                return (_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters;
-            });
-            if (hasTriggerChars || ((_this_$provider_options_functionality = this.$provider.options.functionality) === null || _this_$provider_options_functionality === void 0 ? void 0 : _this_$provider_options_functionality.completion) && ((_this_$provider_options_functionality1 = this.$provider.options.functionality) === null || _this_$provider_options_functionality1 === void 0 ? void 0 : (_this_$provider_options_functionality_completion_lspCompleterOptions = _this_$provider_options_functionality1.completion.lspCompleterOptions) === null || _this_$provider_options_functionality_completion_lspCompleterOptions === void 0 ? void 0 : _this_$provider_options_functionality_completion_lspCompleterOptions.triggerCharacters)) {
-                let completer = this.editor.completers.find((completer)=>completer.id === "lspCompleters");
-                if (completer) {
-                    var _this_$provider_options_functionality2, _this_$provider_options_functionality_completion_lspCompleterOptions1;
-                    let allTriggerCharacters = [];
-                    Object.values(capabilities).forEach((capability)=>{
-                        var _capability_completionProvider, _capability;
-                        if ((_capability = capability) === null || _capability === void 0 ? void 0 : (_capability_completionProvider = _capability.completionProvider) === null || _capability_completionProvider === void 0 ? void 0 : _capability_completionProvider.triggerCharacters) {
-                            allTriggerCharacters.push(...capability.completionProvider.triggerCharacters);
-                        }
-                    });
-                    allTriggerCharacters = [
-                        ...new Set(allTriggerCharacters)
-                    ];
-                    const triggerCharacterOptions = typeof ((_this_$provider_options_functionality2 = this.$provider.options.functionality) === null || _this_$provider_options_functionality2 === void 0 ? void 0 : _this_$provider_options_functionality2.completion) == "object" ? (_this_$provider_options_functionality_completion_lspCompleterOptions1 = this.$provider.options.functionality.completion.lspCompleterOptions) === null || _this_$provider_options_functionality_completion_lspCompleterOptions1 === void 0 ? void 0 : _this_$provider_options_functionality_completion_lspCompleterOptions1.triggerCharacters : undefined;
-                    if (triggerCharacterOptions) {
-                        const removeChars = Array.isArray(triggerCharacterOptions.remove) ? triggerCharacterOptions.remove : [];
-                        const addChars = Array.isArray(triggerCharacterOptions.add) ? triggerCharacterOptions.add : [];
-                        completer.triggerCharacters = allTriggerCharacters.filter((char)=>!removeChars.includes(char));
-                        addChars.forEach((char)=>{
-                            if (!completer.triggerCharacters.includes(char)) {
-                                completer.triggerCharacters.push(char);
-                            }
-                        });
-                    } else {
-                        completer.triggerCharacters = allTriggerCharacters;
-                    }
-                }
-            }
-            let hasSemanticTokensProvider = Object.values(capabilities).some((capability)=>{
-                var _capability;
-                if ((_capability = capability) === null || _capability === void 0 ? void 0 : _capability.semanticTokensProvider) {
-                    this.semanticTokensLegend = capability.semanticTokensProvider.legend;
-                    return true;
-                }
-            });
-            if (hasSemanticTokensProvider) {
-                this.getSemanticTokens();
-            }
-        //TODO: we should restrict range formatting if any of services is only has full format capabilities
-        //or we shoudl use service with full format capability instead of range one's
-        });
-        language_provider_define_property(this, "$changeListener", (delta)=>{
-            this.session.doc.version++;
-            if (!this.$deltaQueue) {
-                this.$deltaQueue = [];
-                setTimeout(()=>this.$sendDeltaQueue(()=>{
-                        this.getSemanticTokens();
-                    }), 0);
-            }
-            this.$deltaQueue.push(delta);
-        });
-        language_provider_define_property(this, "$sendDeltaQueue", (callback)=>{
-            let deltas = this.$deltaQueue;
-            if (!deltas) return callback && callback();
-            this.$deltaQueue = null;
-            if (deltas.length) this.$messageController.change(this.comboDocumentIdentifier, deltas.map((delta)=>fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
-        });
-        language_provider_define_property(this, "$showAnnotations", (diagnostics)=>{
-            var _diagnostics;
-            if (!diagnostics) {
-                return;
-            }
-            let annotations = toAnnotations(diagnostics);
-            this.session.clearAnnotations();
-            if (annotations && annotations.length > 0) {
-                this.session.setAnnotations(annotations);
-            }
-            if (!this.state.diagnosticMarkers) {
-                this.state.diagnosticMarkers = new MarkerGroup(this.session);
-            }
-            this.state.diagnosticMarkers.setMarkers((_diagnostics = diagnostics) === null || _diagnostics === void 0 ? void 0 : _diagnostics.map((el)=>toMarkerGroupItem(common_converters_CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
-        });
-        language_provider_define_property(this, "validate", ()=>{
-            this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
-        });
-        language_provider_define_property(this, "format", ()=>{
-            let selectionRanges = this.session.getSelection().getAllRanges();
-            let $format = this.$format;
-            let aceRangeDatas = selectionRanges;
-            if (!selectionRanges || selectionRanges[0].isEmpty()) {
-                let row = this.session.getLength();
-                let column = this.session.getLine(row).length - 1;
-                aceRangeDatas = [
-                    {
-                        start: {
-                            row: 0,
-                            column: 0
-                        },
-                        end: {
-                            row: row,
-                            column: column
-                        }
-                    }
-                ];
-            }
-            for (let range of aceRangeDatas){
-                this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
-            }
-        });
-        language_provider_define_property(this, "applyEdits", (edits)=>{
-            edits !== null && edits !== void 0 ? edits : edits = [];
-            for (let edit of edits.reverse()){
-                this.session.replace(toRange(edit.range), edit.newText);
-            }
-        });
-        language_provider_define_property(this, "$applyDocumentHighlight", (documentHighlights)=>{
-            if (!this.state.occurrenceMarkers) {
-                this.state.occurrenceMarkers = new MarkerGroup(this.session);
-            }
-            if (documentHighlights) {
-                this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
-            }
-        });
-        this.$provider = provider;
-        this.$messageController = messageController;
-        this.session = session;
-        this.editor = editor;
-        session.doc.version = 1;
-        session.doc.on("change", this.$changeListener, true);
-        this.addSemanticTokenSupport(session); //TODO: ?
-        session.on("changeMode", this.$changeMode);
-        if (this.$provider.options.functionality.semanticTokens) {
-            session.on("changeScrollTop", ()=>this.getSemanticTokens());
-        }
-        this.$init();
     }
 }
 
@@ -23509,6 +23583,9 @@ class MockWorker extends (events_default()) {
     terminate() {}
     setEmitter(emitter) {
         this.$emitter = emitter;
+    }
+    removeAllListeners() {
+        return super.removeAllListeners();
     }
     constructor(isProduction){
         super();

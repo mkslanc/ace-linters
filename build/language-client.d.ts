@@ -167,7 +167,7 @@ export declare class LanguageClient extends BaseService implements LanguageServi
 	doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]>;
 	format(document: lsp.TextDocumentIdentifier, range: lsp.Range, format: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
 	setGlobalOptions(options: ServiceOptions): void;
-	setWorkspace(workspaceUri: string): Promise<unknown>;
+	setWorkspace(workspaceUri: string): void;
 	get workspaceFolder(): WorkspaceFolder;
 	findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
 	provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;

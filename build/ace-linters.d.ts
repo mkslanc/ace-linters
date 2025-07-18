@@ -559,6 +559,17 @@ export interface ProviderOptions {
 		"CompletionProvider"?: typeof CompletionProvider;
 	};
 }
+export interface SessionInitialConfig {
+	/**
+	 * The associated file path for the session
+	 */
+	filePath: string;
+	/**
+	 * Determines if the editor should join the workspace URI
+	 * @default `false`
+	 */
+	joinWorkspaceURI?: boolean;
+}
 export type ServiceFeatures = {
 	[feature in SupportedFeatures]?: boolean;
 };
@@ -649,6 +660,66 @@ declare class MarkerGroup {
 	setMarkers(markers: any): void;
 	update(html: any, markerLayer: any, session: any, config: any): void;
 }
+declare class SessionLanguageProvider {
+	session: Ace.EditSession;
+	documentUri: string;
+	private $messageController;
+	private $deltaQueue;
+	private $isConnected;
+	private $options?;
+	private $filePath;
+	private $servicesCapabilities?;
+	private $requestsQueue;
+	state: {
+		occurrenceMarkers: MarkerGroup | null;
+		diagnosticMarkers: MarkerGroup | null;
+	};
+	private extensions;
+	editor: Ace.Editor;
+	private semanticTokensLegend?;
+	private $provider;
+	/**
+	 * Constructs a new instance of the `SessionLanguageProvider` class.
+	 *
+	 * @param provider - The `LanguageProvider` instance.
+	 * @param session - The Ace editor session.
+	 * @param editor - The Ace editor instance.
+	 * @param messageController - The `IMessageController` instance for handling messages.
+	 * @param config
+	 */
+	constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, config?: SessionInitialConfig);
+	enqueueIfNotConnected(callback: () => void): void;
+	get comboDocumentIdentifier(): ComboDocumentIdentifier;
+	/**
+	 * Sets the file path for the current document and optionally joins it with the workspace URI.
+	 * Increments the document version and updates the internal document URI and identifier.
+	 *
+	 * @param {string} filePath - The new file path for the document.
+	 * @param {boolean} [joinWorkspaceURI] - Optional flag to indicate whether to join the file path with the workspace URI.
+	 */
+	setFilePath(filePath: string, joinWorkspaceURI?: boolean): void;
+	private $init;
+	addSemanticTokenSupport(session: Ace.EditSession): void;
+	private $connected;
+	private $changeMode;
+	setServerCapabilities: (capabilities: {
+		[serviceName: string]: lsp.ServerCapabilities;
+	}) => void;
+	private initDocumentUri;
+	private get $extension();
+	private get $mode();
+	private get $format();
+	private $changeListener;
+	$sendDeltaQueue: (callback?: any) => any;
+	$showAnnotations: (diagnostics: lsp.Diagnostic[]) => void;
+	setOptions<OptionsType extends ServiceOptions>(options: OptionsType): void;
+	validate: () => void;
+	format: () => void;
+	applyEdits: (edits: lsp.TextEdit[]) => void;
+	getSemanticTokens(): void;
+	$applyDocumentHighlight: (documentHighlights: lsp.DocumentHighlight[]) => void;
+	closeDocument(callback?: any): void;
+}
 export declare class LanguageProvider {
 	activeEditor: Ace.Editor;
 	private readonly $messageController;
@@ -670,7 +741,7 @@ export declare class LanguageProvider {
 	private completerAdapter?;
 	private constructor();
 	/**
-	 *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+	 *  Creates LanguageProvider using our transport protocol with the ability to register different services on the same
 	 *  webworker
 	 * @param {Worker} worker
 	 * @param {ProviderOptions} options
@@ -697,19 +768,29 @@ export declare class LanguageProvider {
 	setProviderOptions(options?: ProviderOptions): void;
 	private checkInlineCompletionAdapter;
 	/**
-	 * @param session
-	 * @param filePath - The full file path associated with the editor.
+	 * Sets the file path for the given Ace edit session. Optionally allows the file path to
+	 * be joined with the workspace URI.
+	 *
+	 * @param session The Ace edit session to update with the file path.
+	 * @param config config to set
 	 */
-	setSessionFilePath(session: Ace.EditSession, filePath: string): void;
+	setSessionFilePath(session: Ace.EditSession, config: SessionInitialConfig): void;
 	private $registerSession;
 	private $getSessionLanguageProvider;
 	private $getFileName;
 	/**
-	 * Registers an Ace editor instance with the language provider.
-	 * @param editor - The Ace editor instance to register.
+	 * Registers an Ace editor instance along with the session's configuration settings.
+	 *
+	 * @param editor - The Ace editor instance to be registered.
+	 * @param [config] - Configuration options for the session.
 	 */
-	registerEditor(editor: Ace.Editor): void;
+	registerEditor(editor: Ace.Editor, config?: SessionInitialConfig): void;
 	codeActionCallback: (codeActions: CodeActionsByService[]) => void;
+	/**
+	 * Sets a callback function that will be triggered with an array of code actions grouped by service.
+	 *
+	 * @param {function} callback - A function that receives an array of code actions, categorized by service, as its argument.
+	 */
 	setCodeActionCallback(callback: (codeActions: CodeActionsByService[]) => void): void;
 	executeCommand(command: string, serviceName: string, args?: any[], callback?: (something: any) => void): void;
 	applyEdit(workspaceEdit: lsp.WorkspaceEdit, serviceName: string, callback?: (result: lsp.ApplyWorkspaceEditResult, serviceName: string) => void): void;
@@ -719,6 +800,13 @@ export declare class LanguageProvider {
 	private createHoverNode;
 	private createErrorNode;
 	private setStyles;
+	/**
+	 * Sets global options for the specified service.
+	 *
+	 * @param serviceName - The name of the service for which to set global options.
+	 * @param options - The options to set for the specified service.
+	 * @param {boolean} [merge=false] - Indicates whether to merge the provided options with the existing options. Defaults to false.
+	 */
 	setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge?: boolean): void;
 	/**
 	 * Sets the workspace URI for the language provider.
@@ -731,7 +819,20 @@ export declare class LanguageProvider {
 	 * @param workspaceUri - The new workspace URI. Could be simple path, not URI itself.
 	 */
 	changeWorkspaceFolder(workspaceUri: string): void;
+	/**
+	 * Sets the options for a specified editor session.
+	 *
+	 * @param session - The Ace editor session to configure.
+	 * @param options - The configuration options to be applied to the session.
+	 */
 	setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType): void;
+	/**
+	 * Configures the specified features for a given service.
+	 *
+	 * @param {SupportedServices} serviceName - The name of the service for which features are being configured.
+	 * @param {ServiceFeatures} features - The features to be configured for the given service.
+	 * @return {void} Does not return a value.
+	 */
 	configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures): void;
 	doHover(session: Ace.EditSession, position: Ace.Point, callback?: (hover: Tooltip | undefined) => void): void;
 	provideSignatureHelp(session: Ace.EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void): void;
@@ -758,61 +859,6 @@ export declare class LanguageProvider {
 	 */
 	sendRequest(serviceName: string, method: string, params: any, callback?: (result: any) => void): void;
 	showDocument(params: lsp.ShowDocumentParams, serviceName: string, callback?: (result: lsp.LSPAny, serviceName: string) => void): void;
-}
-declare class SessionLanguageProvider {
-	session: Ace.EditSession;
-	documentUri: string;
-	private $messageController;
-	private $deltaQueue;
-	private $isConnected;
-	private $options?;
-	private $filePath;
-	private $servicesCapabilities?;
-	private $requestsQueue;
-	state: {
-		occurrenceMarkers: MarkerGroup | null;
-		diagnosticMarkers: MarkerGroup | null;
-	};
-	private extensions;
-	editor: Ace.Editor;
-	private semanticTokensLegend?;
-	private $provider;
-	/**
-	 * Constructs a new instance of the `SessionLanguageProvider` class.
-	 *
-	 * @param provider - The `LanguageProvider` instance.
-	 * @param session - The Ace editor session.
-	 * @param editor - The Ace editor instance.
-	 * @param messageController - The `IMessageController` instance for handling messages.
-	 */
-	constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController);
-	enqueueIfNotConnected(callback: () => void): void;
-	get comboDocumentIdentifier(): ComboDocumentIdentifier;
-	/**
-	 * @param filePath
-	 */
-	setFilePath(filePath: string): void;
-	private $init;
-	addSemanticTokenSupport(session: Ace.EditSession): void;
-	private $connected;
-	private $changeMode;
-	setServerCapabilities: (capabilities: {
-		[serviceName: string]: lsp.ServerCapabilities;
-	}) => void;
-	private initDocumentUri;
-	private get $extension();
-	private get $mode();
-	private get $format();
-	private $changeListener;
-	$sendDeltaQueue: (callback?: any) => any;
-	$showAnnotations: (diagnostics: lsp.Diagnostic[]) => void;
-	setOptions<OptionsType extends ServiceOptions>(options: OptionsType): void;
-	validate: () => void;
-	format: () => void;
-	applyEdits: (edits: lsp.TextEdit[]) => void;
-	getSemanticTokens(): void;
-	$applyDocumentHighlight: (documentHighlights: lsp.DocumentHighlight[]) => void;
-	closeDocument(callback?: any): void;
 }
 declare abstract class BaseMessage {
 	abstract type: MessageType;
