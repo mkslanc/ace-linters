@@ -90,13 +90,16 @@ export function checkValueAgainstRegexpArray(value: string, regexpArray?: RegExp
     return false;
 }
 
+
+import {URI, Utils} from 'vscode-uri';
+
 /**
  * Converts a given file path to a URI format. If the given file path is already a URI,
  * it normalizes and optionally resolves the path against a workspace URI.
  *
  * @param filePath - The file path to convert to a URI. Can be an absolute path or an existing file URI.
  * @param [joinWorkspaceURI] - Optional flag to determine if the converted URI should be joined with given URI
- * @param [workspaceUri] - The base workspace URI to resolve against if `resolveAgainstWorkspaceURI` is true. Required if resolution is needed.
+ * @param [workspaceUri] - The base workspace URI to resolve against if `joinWorkspaceURI` is true. Required if resolution is needed.
  * @return {string} - The resulting URI
  */
 export function convertToUri(
@@ -105,54 +108,23 @@ export function convertToUri(
     workspaceUri?: string
 ): string {
     const isFullUri = filePath.startsWith('file://');
+    const normalizedPath = filePath.replace(/\\/g, "/");
 
-    // Normalize slashes
-    const normalized = filePath.replace(/\\/g, '/');
+    let uri: URI;
 
     if (isFullUri) {
-        const decodedPath = decodeURIComponent(normalized.replace(/^file:\/\/\/?/, ''));
-        if (joinWorkspaceURI && workspaceUri) {
-            return joinUri(workspaceUri, decodedPath);
-        }
-        return normalized.startsWith('file:///') ? normalized : 'file:///' + normalized.slice(7);
+        uri = URI.parse(normalizedPath);
+    } else {
+        uri = URI.file(normalizedPath);
     }
 
     if (joinWorkspaceURI && workspaceUri) {
-        return joinUri(workspaceUri, normalized);
+        if (!workspaceUri.startsWith('file://')) {
+            throw new Error('workspaceUri must be a file:// URI');
+        }
+        const workspaceUriParsed = URI.parse(workspaceUri);
+        uri = Utils.joinPath(workspaceUriParsed, uri.path);
     }
 
-    // Absolute file path to URI
-    const fullPath = /^[a-zA-Z]:\//.test(normalized)
-        ? '/' + normalized // Windows path needs leading slash
-        : normalized;
-
-    return 'file://' + encodeLspPath(fullPath);
-}
-
-
-function joinUri(baseUri: string, relativePath: string): string {
-    if (!baseUri.startsWith('file://')) {
-        throw new Error('workspaceUri must be a file:// URI');
-    }
-
-    const basePath = decodeURIComponent(baseUri.replace(/^file:\/\/\/?/, ''));
-    const joinedPath = normalizePath(`${basePath}/${relativePath}`);
-    return 'file://' + encodeLspPath(joinedPath.startsWith('/') ? joinedPath : '/' + joinedPath);
-}
-
-function normalizePath(path: string): string {
-    return path
-        .replace(/\\/g, '/')
-        .replace(/\/{2,}/g, '/')
-        .replace(/\/\.\//g, '/')
-        .replace(/\/$/, '')
-        .replace(/\/[^/]+\/\.\.\//g, '/');
-}
-
-function encodeLspPath(path: string): string {
-    return path.split('/').map((segment, i) => {
-        // Preserve "C:" or other drive letter in second segment
-        if (i === 1 && /^[a-zA-Z]:$/.test(segment)) return segment;
-        return encodeURIComponent(segment);
-    }).join('/');
+    return uri.toString();
 }

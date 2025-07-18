@@ -47,5 +47,8 @@ export class MockWorker extends EventEmitter implements Worker {
         this.$emitter = emitter;
     }
 
+    removeAllListeners() {
+        return super.removeAllListeners();
+    }
 }
 

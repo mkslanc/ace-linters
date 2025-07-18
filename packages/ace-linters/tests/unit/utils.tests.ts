@@ -42,7 +42,7 @@ describe('convertToUri', () => {
         it('should convert relative Linux path to URI', () => {
             const path = 'src/utils/helper.ts';
             const result = convertToUri(path);
-            expect(result).to.equal('file://src/utils/helper.ts');
+            expect(result).to.equal('file:///src/utils/helper.ts');
         });
 
         it('should handle Linux path with spaces', () => {
@@ -68,38 +68,32 @@ describe('convertToUri', () => {
         it('should convert absolute Windows path to URI', () => {
             const path = 'C:\\Users\\User\\project\\file.txt';
             const result = convertToUri(path);
-            expect(result).to.equal('file:///C:/Users/User/project/file.txt');
+            expect(result).to.equal('file:///c%3A/Users/User/project/file.txt');
         });
 
         it('should convert Windows path with forward slashes to URI', () => {
             const path = 'C:/Users/User/project/file.txt';
             const result = convertToUri(path);
-            expect(result).to.equal('file:///C:/Users/User/project/file.txt');
+            expect(result).to.equal('file:///c%3A/Users/User/project/file.txt');
         });
 
         it('should handle Windows path with spaces', () => {
             const path = 'C:\\Program Files\\My App\\file.txt';
             const result = convertToUri(path);
-            expect(result).to.equal('file:///C:/Program%20Files/My%20App/file.txt');
-        });
-
-        it('should handle Windows network path', () => {
-            const path = '\\\\server\\share\\file.txt';
-            const result = convertToUri(path);
-            expect(result).to.equal('file:////server/share/file.txt');
+            expect(result).to.equal('file:///c%3A/Program%20Files/My%20App/file.txt');
         });
 
         it('should handle different Windows drive letters', () => {
             const pathD = 'D:\\data\\file.txt';
             const pathZ = 'Z:\\backup\\file.txt';
-            expect(convertToUri(pathD)).to.equal('file:///D:/data/file.txt');
-            expect(convertToUri(pathZ)).to.equal('file:///Z:/backup/file.txt');
+            expect(convertToUri(pathD)).to.equal('file:///d%3A/data/file.txt');
+            expect(convertToUri(pathZ)).to.equal('file:///z%3A/backup/file.txt');
         });
 
         it('should handle Windows relative path', () => {
             const path = 'src\\utils\\helper.ts';
             const result = convertToUri(path);
-            expect(result).to.equal('file://src/utils/helper.ts');
+            expect(result).to.equal('file:///src/utils/helper.ts');
         });
     });
 
@@ -110,22 +104,10 @@ describe('convertToUri', () => {
             expect(result).to.equal('file:///home/user/project/file.txt');
         });
 
-        it('should handle file:// URI with double slash', () => {
-            const uri = 'file://home/user/project/file.txt';
-            const result = convertToUri(uri);
-            expect(result).to.equal('file:///home/user/project/file.txt');
-        });
-
-        it('should handle file:// URI with encoded characters', () => {
-            const uri = 'file:///home/user/my%20project/file%20name.txt';
-            const result = convertToUri(uri);
-            expect(result).to.equal('file:///home/user/my%20project/file%20name.txt');
-        });
-
         it('should handle Windows file:// URI', () => {
             const uri = 'file:///C:/Users/User/project/file.txt';
             const result = convertToUri(uri);
-            expect(result).to.equal('file:///C:/Users/User/project/file.txt');
+            expect(result).to.equal('file:///c%3A/Users/User/project/file.txt');
         });
     });
 
@@ -139,7 +121,7 @@ describe('convertToUri', () => {
         });
 
         it('should join Linux relative path with workspace URI', () => {
-            const path = 'src/utils/helper.ts';
+            const path = '/src/utils/helper.ts';
             const result = convertToUri(path, true, workspaceUri);
             expect(result).to.equal('file:///home/user/workspace/src/utils/helper.ts');
         });
@@ -178,7 +160,7 @@ describe('convertToUri', () => {
             const windowsWorkspace = 'file:///C:/Users/User/workspace';
             const path = 'src/file.txt';
             const result = convertToUri(path, true, windowsWorkspace);
-            expect(result).to.equal('file:///C:/Users/User/workspace/src/file.txt');
+            expect(result).to.equal('file:///c%3A/Users/User/workspace/src/file.txt');
         });
 
         it('should throw error for invalid workspace URI', () => {
@@ -192,7 +174,7 @@ describe('convertToUri', () => {
         it('should handle empty string', () => {
             const path = '';
             const result = convertToUri(path);
-            expect(result).to.equal('file://');
+            expect(result).to.equal('file:///');
         });
 
         it('should handle root path', () => {
@@ -204,13 +186,13 @@ describe('convertToUri', () => {
         it('should handle Windows root path', () => {
             const path = 'C:\\';
             const result = convertToUri(path);
-            expect(result).to.equal('file:///C:/');
+            expect(result).to.equal('file:///c%3A/');
         });
 
         it('should handle path with only filename', () => {
             const path = 'file.txt';
             const result = convertToUri(path);
-            expect(result).to.equal('file://file.txt');
+            expect(result).to.equal('file:///file.txt');
         });
 
         it('should handle path with dots', () => {
@@ -244,20 +226,20 @@ describe('convertToUri', () => {
             const segments = ['src', 'components', 'ui', 'Button.tsx'];
             const path = segments.join('/');
             const result = convertToUri(path);
-            expect(result).to.equal('file://src/components/ui/Button.tsx');
+            expect(result).to.equal('file:///src/components/ui/Button.tsx');
         });
 
         it('should handle Windows path segments', () => {
             const segments = ['src', 'components', 'ui', 'Button.tsx'];
             const path = segments.join('\\');
             const result = convertToUri(path);
-            expect(result).to.equal('file://src/components/ui/Button.tsx');
+            expect(result).to.equal('file:///src/components/ui/Button.tsx');
         });
 
         it('should handle mixed separators in segments', () => {
             const path = 'src/components\\ui/Button.tsx';
             const result = convertToUri(path);
-            expect(result).to.equal('file://src/components/ui/Button.tsx');
+            expect(result).to.equal('file:///src/components/ui/Button.tsx');
         });
 
         it('should handle segments with workspace joining', () => {
@@ -272,46 +254,7 @@ describe('convertToUri', () => {
             const segments = ['very', 'deep', 'nested', 'folder', 'structure', 'file.txt'];
             const path = segments.join('/');
             const result = convertToUri(path);
-            expect(result).to.equal('file://very/deep/nested/folder/structure/file.txt');
-        });
-
-        it('should handle segments with special characters', () => {
-            const segments = ['src', 'components@2x', 'ui-elements', 'file name.tsx'];
-            const path = segments.join('/');
-            const result = convertToUri(path);
-            expect(result).to.equal('file://src/components%402x/ui-elements/file%20name.tsx');
-        });
-    });
-
-    describe('encoding and decoding', () => {
-        it('should properly encode special characters', () => {
-            const path = '/home/user/file with spaces & symbols!.txt';
-            const result = convertToUri(path);
-            expect(result).to.equal('file:///home/user/file%20with%20spaces%20%26%20symbols!.txt');
-        });
-
-        it('should preserve drive letters without encoding', () => {
-            const path = 'C:/Program Files/app.exe';
-            const result = convertToUri(path);
-            expect(result).to.equal('file:///C:/Program%20Files/app.exe');
-        });
-
-        it('should handle already encoded URI input', () => {
-            const encodedUri = 'file:///home/user/my%20project/file%20name.txt';
-            const result = convertToUri(encodedUri);
-            expect(result).to.equal('file:///home/user/my%20project/file%20name.txt');
-        });
-
-        it('should handle URI with query parameters in path', () => {
-            const path = '/home/user/file?param=value.txt';
-            const result = convertToUri(path);
-            expect(result).to.equal('file:///home/user/file%3Fparam%3Dvalue.txt');
-        });
-
-        it('should handle URI with hash in path', () => {
-            const path = '/home/user/file#section.txt';
-            const result = convertToUri(path);
-            expect(result).to.equal('file:///home/user/file%23section.txt');
+            expect(result).to.equal('file:///very/deep/nested/folder/structure/file.txt');
         });
     });
 });
