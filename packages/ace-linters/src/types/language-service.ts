@@ -263,6 +263,18 @@ export interface ProviderOptions {
     }
 }
 
+export interface SessionInitialConfig {
+    /**
+     * The associated file path for the session
+     */
+    filePath: string,
+    /**
+     * Determines if the editor should join the workspace URI
+     * @default `false`
+     */
+    joinWorkspaceURI?: boolean
+}
+
 export type ServiceFeatures = {
     [feature in SupportedFeatures]?: boolean;
 };
@@ -295,7 +307,7 @@ export interface BaseConfig {
     className?: string,
     features?: ServiceFeatures,
     module: () => any,
-    id?: string
+    id?: string,
 }
 
 interface WebWorkerConnection {

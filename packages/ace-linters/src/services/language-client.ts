@@ -13,7 +13,6 @@ import {
 } from "../types/language-service";
 import {BaseService} from "./base-service";
 import {MessageType} from "../message-types";
-import {URI} from "vscode-uri";
 import {WorkspaceFolder} from "vscode-languageserver-protocol";
 
 export class LanguageClient extends BaseService implements LanguageService {
@@ -275,7 +274,7 @@ export class LanguageClient extends BaseService implements LanguageService {
             });
 
 
-            this.connection.sendNotification('initialized').then(() => {
+            this.connection.sendNotification('initialized', {}).then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
                     settings: {},
                 });
@@ -432,20 +431,23 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     setWorkspace(workspaceUri: string) {
         super.setWorkspace(workspaceUri);
-        if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) {
-            return this.$reconnect();
-        }
-        const message: lsp.WorkspaceFoldersChangeEvent = {
-            added: [this.workspaceFolder],
-            removed: []
-        };
-        return this.connection.sendRequest('workspace/didChangeWorkspaceFolders', message);
+        this.enqueueIfNotConnected(() => {
+            if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) {
+                return this.$reconnect();
+            }
+            const message: lsp.WorkspaceFoldersChangeEvent = {
+                added: [this.workspaceFolder],
+                removed: []
+            };
+
+            return this.connection.sendRequest('workspace/didChangeWorkspaceFolders', message);
+        });
     }
 
     get workspaceFolder(): WorkspaceFolder {
         let workspaceUri = this.workspaceUri!;
         return {
-            uri: URI.file(workspaceUri).toString(),
+            uri: workspaceUri,
             name: workspaceUri.split("/").pop()!,
         }
     }

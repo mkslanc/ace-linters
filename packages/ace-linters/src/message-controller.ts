@@ -35,7 +35,7 @@ import {
     SupportedServices
 } from "./types/language-service";
 import type {LanguageProvider} from "./language-provider";
-import {URI} from "vscode-uri";
+import {convertToUri} from "./utils";
 
 export class MessageController implements IMessageController {
     $worker: Worker;
@@ -91,7 +91,7 @@ export class MessageController implements IMessageController {
         if (!documentUri) {
             return;
         }
-        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[URI.parse(documentUri).toString()];
+        return this.provider.$urisToSessionsIds[documentUri] || this.provider.$urisToSessionsIds[convertToUri(documentUri)];
     }
 
     init(documentIdentifier: ComboDocumentIdentifier, document: Ace.Document, mode: string, options: any, initCallback: (capabilities: {
