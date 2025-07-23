@@ -23,7 +23,7 @@ import {
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
-    ServiceOptionsMap, ServiceStruct, SessionInitialConfig,
+    ServiceOptionsMap, ServiceStruct, SessionLspConfig,
     SupportedServices,
     Tooltip
 } from "./types/language-service";
@@ -169,11 +169,20 @@ export class LanguageProvider {
      * @param session The Ace edit session to update with the file path.
      * @param config config to set
      */
-    setSessionFilePath(session: Ace.EditSession, config: SessionInitialConfig) {
+    setSessionFilePath(session: Ace.EditSession, config: SessionLspConfig) {
         this.$getSessionLanguageProvider(session)?.setFilePath(config.filePath, config.joinWorkspaceURI);
     }
 
-    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, config?: SessionInitialConfig) => {
+    /**
+     * Registers a new editing session with the editor and associates it with a language provider.
+     * If a language provider for the specified editing session does not already exist, it initializes
+     * and stores a new session-specific language provider.
+     *
+     * @param session - The Ace EditSession object to be registered, representing a specific editing session.
+     * @param editor - The Ace Editor instance associated with the editing session.
+     * @param [config] - An optional configuration object for initializing the session.
+     */
+    registerSession = (session: Ace.EditSession, editor: Ace.Editor, config?: SessionLspConfig) => {
         if (!this.$sessionLanguageProviders[session["id"]]) {
             this.$sessionLanguageProviders[session["id"]] = new SessionLanguageProvider(this, session, editor, this.$messageController, config);
         }
@@ -197,10 +206,11 @@ export class LanguageProvider {
      * @param editor - The Ace editor instance to be registered.
      * @param [config] - Configuration options for the session.
      */
-    registerEditor(editor: Ace.Editor, config?: SessionInitialConfig) {
+    registerEditor(editor: Ace.Editor, config?: SessionLspConfig) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
-        this.$registerSession(editor.session, editor, config);
+        config = config ?? editor.session.lspConfig;
+        this.registerSession(editor.session, editor, config);
     }
 
     codeActionCallback: (codeActions: CodeActionsByService[]) => void;
@@ -278,7 +288,11 @@ export class LanguageProvider {
         AceEditor.getConstructor(editor);
 
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
+
+
+        if (!this.options.manualSessionControl) {
+            editor.on("changeSession", ({session}) => this.registerSession(session, editor, session.lspConfig));
+        }
 
         if (this.options.functionality!.completion || this.options.functionality!.inlineCompletion) {
             this.$registerCompleters(editor);

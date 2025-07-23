@@ -1,6 +1,6 @@
 import {Ace} from "ace-code";
 import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
-import {AceRangeData, ServiceOptions, SessionInitialConfig} from "./types/language-service";
+import {AceRangeData, ServiceOptions, SessionLspConfig} from "./types/language-service";
 import {MarkerGroup} from "./ace/marker_group";
 import type {LanguageProvider} from "./language-provider";
 import * as lsp from "vscode-languageserver-protocol";
@@ -53,7 +53,7 @@ export class SessionLanguageProvider {
      * @param messageController - The `IMessageController` instance for handling messages.
      * @param config
      */
-    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, config?: SessionInitialConfig) {
+    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController, config?: SessionLspConfig) {
         this.$provider = provider;
         this.$messageController = messageController;
         this.session = session;
@@ -90,7 +90,9 @@ export class SessionLanguageProvider {
      * Increments the document version and updates the internal document URI and identifier.
      *
      * @param {string} filePath - The new file path for the document.
-     * @param {boolean} [joinWorkspaceURI] - Optional flag to indicate whether to join the file path with the workspace URI.
+     * @param {boolean} [joinWorkspaceURI] - when true the given path is treated as relative and will be joined with
+     * the workspace’s root URI to form the final canonical URI. When false (or omitted) filePath is just transformed to
+     * URI.
      */
     setFilePath(filePath: string, joinWorkspaceURI?: boolean) {
         this.enqueueIfNotConnected(() => {
@@ -98,11 +100,14 @@ export class SessionLanguageProvider {
             this.$filePath = filePath;
             const previousComboId = this.comboDocumentIdentifier;
             this.initDocumentUri(true, joinWorkspaceURI);
+            if (previousComboId.documentUri === this.comboDocumentIdentifier.documentUri) { //no need to rename
+                return;
+            }
             this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
         })
     };
 
-    private $init(config?: SessionInitialConfig) {
+    private $init(config?: SessionLspConfig) {
         if (config?.filePath) {
             this.$filePath = config.filePath;
         }
