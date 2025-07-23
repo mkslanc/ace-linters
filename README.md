@@ -28,6 +28,35 @@ languageProvider.registerEditor(editor);
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
 
+
+## New features in 1.8.1
+- add `manualSessionControl` provider option to disable automatic session registration. When enabled, you must manually handle session changes:
+```javascript
+// Create provider with manual session control
+let languageProvider = LanguageProvider.create(worker, {
+    manualSessionControl: true
+});
+
+// Register sessions manually
+languageProvider.registerSession(editor.session, editor, {
+    filePath: 'path/to/file.ts',
+    joinWorkspaceURI: true
+});
+
+// Handle session changes manually
+editor.on("changeSession", ({session}) => {
+    languageProvider.registerSession(session, editor, session.lspConfig);
+});
+```
+- add `lspConfig` property to Ace sessions for storing LSP configuration:
+```javascript
+// Set LSP configuration on session
+editor.session.lspConfig = {
+    filePath: 'src/components/MyComponent.tsx',
+    joinWorkspaceURI: true
+};
+```
+
 ## New Features in 1.2.0
 - add `setProviderOptions` method to `LanguageProvider` to set options for client.
 - add experimental semantic tokens support (turned off by default). To turn on semantic tokens, set `semanticTokens` to

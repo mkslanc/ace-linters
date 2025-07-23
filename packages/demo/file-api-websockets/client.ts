@@ -1,17 +1,26 @@
 import {AceLayout, Box, TabManager, Button, dom, AceTreeWrapper, FileSystemWeb, Pane, AceEditor, Tab} from "ace-layout";
 import {addFormatCommand} from "../utils";
 import {Ace} from "ace-code";
-import {LanguageProvider} from "ace-linters";
+import {LanguageProvider, SessionLspConfig} from "ace-linters";
+
+declare module "ace-code/src/edit_session" {
+
+    interface EditSession {
+        lspConfig?: SessionLspConfig
+    }
+}
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
+let languageProvider = LanguageProvider.create(worker, {
+    functionality: {semanticTokens: true},
+    manualSessionControl: true,
+});
 addFormatCommand(languageProvider);
 
 let fileTree: Box;
 let editorBox: Box;
 
-//document.body.innerHTML = "";
 let base = new Box({
     vertical: false,
     0: fileTree = new Box({
@@ -59,7 +68,9 @@ let tabManager = TabManager.getInstance({
 tabManager.fileSystem?.on("openFile", (treeNode) => {
     let tab = tabManager.getTab(treeNode.path) as Tab<Ace.EditSession>;
     let path = treeNode.path.substring(treeNode.path.indexOf("/", 1));
-    languageProvider.registerEditor((tab.editor as AceEditor).editor, {filePath: path, joinWorkspaceURI: true});
+    const editor = (tab.editor as AceEditor).editor;
+    editor.session.lspConfig = {filePath: path, joinWorkspaceURI: true}
+    languageProvider.registerEditor(editor); //, {filePath: path, joinWorkspaceURI: true}
     //languageProvider.setSessionFilePath(tab.session, {filePath: path, joinWorkspaceURI: true});  -> it's another
     // way to set path
 });
