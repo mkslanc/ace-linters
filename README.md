@@ -16,7 +16,7 @@ let worker = new Worker(new URL('./webworker.js', import.meta.url));
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+  mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
 // Create a language provider for web worker (
@@ -28,33 +28,39 @@ languageProvider.registerEditor(editor);
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
 
-
 ## New features in 1.8.1
 - add `manualSessionControl` provider option to disable automatic session registration. When enabled, you must manually handle session changes:
 ```javascript
 // Create provider with manual session control
 let languageProvider = LanguageProvider.create(worker, {
-    manualSessionControl: true
+  manualSessionControl: true
 });
 
 // Register sessions manually
 languageProvider.registerSession(editor.session, editor, {
-    filePath: 'path/to/file.ts',
-    joinWorkspaceURI: true
+  filePath: 'path/to/file.ts',
+  joinWorkspaceURI: true
 });
 
 // Handle session changes manually
 editor.on("changeSession", ({session}) => {
-    languageProvider.registerSession(session, editor, session.lspConfig);
+  languageProvider.registerSession(session, editor, session.lspConfig);
 });
 ```
-- add `lspConfig` property to Ace sessions for storing LSP configuration:
+- add `setSessionLspConfig` method to set LSP configuration on Ace sessions:
 ```javascript
 // Set LSP configuration on session
-editor.session.lspConfig = {
+languageProvider.setSessionLspConfig(editor.session, {
     filePath: 'src/components/MyComponent.tsx',
     joinWorkspaceURI: true
-};
+});
+```
+- add `setDocumentOptions` method to replace deprecated `setSessionOptions`:
+```javascript
+// Configure document-specific options (replaces setSessionOptions)
+languageProvider.setDocumentOptions(editor.session, {
+    // service-specific options here
+});
 ```
 
 ## New Features in 1.2.0
@@ -171,15 +177,15 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 // Create a web worker
 let worker = new Worker(new URL('./webworker.js', import.meta.url));
 const serverData = {
-    module: () => import("ace-linters/build/language-client"),
-    modes: "json",
-    type: "webworker",
-    worker: worker,
+  module: () => import("ace-linters/build/language-client"),
+  modes: "json",
+  type: "webworker",
+  worker: worker,
 }
 
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new TypescriptMode() // Set the mode of the editor to Typescript
+  mode: new TypescriptMode() // Set the mode of the editor to Typescript
 });
 
 // Create a language provider for web worker
@@ -195,35 +201,13 @@ languageProvider.registerEditor(editor);
 **[!]** You need to describe server similar to that example:
 [Example server](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-json-rpc/webworker.ts)
 
-## Supported LSP Capabilities
-
-- **Text Document Synchronization** (incremental changes)
-- **Diagnostics**
-  - Related document support
-  - Diagnostic tags (Unnecessary, Deprecated)
-  - Related diagnostic information support
-- **Hover**
-  - Markdown and plaintext content formats
-- **Formatting**
-- **Completions**
-  - Snippet support
-  - Documentation formats (Markdown, plaintext)
-- **Signature Help**
-  - Documentation formats (Markdown, plaintext)
-  - Active parameter highlighting support
-- **Document Highlight**
-- **Semantic Tokens**
-  - Relative format tokens
-  - Range requests supported
-  - Augments syntax tokens
-- **Code Actions**
-- **Inline Completions**
-- **Workspace Capabilities**
-  - Configuration change notifications
-  - Command execution
-  - Workspace edits (`applyEdit` supported)
-- **Window Capabilities**
-  - `showDocument` request support
+## Supported LSP capabilities:
+- Text Document Synchronization (with incremental changes)
+- Hover
+- Diagnostics
+- Formatting
+- Completions
+- Signature Help
 
 [Full list of capabilities](https://github.com/mkslanc/ace-linters/wiki/Client-LSP-capabilities)
 
@@ -238,15 +222,10 @@ Ace linters supports the following languages by default with webworkers approach
 - YAML *powered by* [Yaml Language Server](https://github.com/redhat-developer/yaml-language-server)
 - XML *powered by* [XML-Tools](https://github.com/SAP/xml-tools)
 - Javascript, JSX *powered by* [Eslint](https://github.com/eslint/eslint)
+- Python *powered by* [Ruff](https://github.com/charliermarsh/ruff)
 
 ## Supported languages via extensions
 - MySQL, FlinkSQL, SparkSQL, HiveSQL, TrinoSQL, PostgreSQL, Impala SQL, PL/SQL *with* [ace-sql-linter](https://www.npmjs.com/package/ace-sql-linter)
-- Clang *with* [ace-clang-linter](https://www.npmjs.com/package/ace-clang-linter)
-- Dart *with* [ace-dart-linter](https://www.npmjs.com/package/ace-dart-linter)
-- Go *with* [ace-go-linter](https://www.npmjs.com/package/ace-go-linter)
-- Lua *with* [ace-lua-linter](https://www.npmjs.com/package/ace-lua-linter)
-- Python *with* [ace-python-linter](https://www.npmjs.com/package/ace-python-linter)
-- Zig *with* [ace-zig-linter](https://www.npmjs.com/package/ace-zig-linter)
 
 ## Installation
 

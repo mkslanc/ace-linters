@@ -33,27 +33,34 @@ languageProvider.registerEditor(editor);
 ```javascript
 // Create provider with manual session control
 let languageProvider = LanguageProvider.create(worker, {
-    manualSessionControl: true
+  manualSessionControl: true
 });
 
 // Register sessions manually
 languageProvider.registerSession(editor.session, editor, {
-    filePath: 'path/to/file.ts',
-    joinWorkspaceURI: true
+  filePath: 'path/to/file.ts',
+  joinWorkspaceURI: true
 });
 
 // Handle session changes manually
 editor.on("changeSession", ({session}) => {
-    languageProvider.registerSession(session, editor, session.lspConfig);
+  languageProvider.registerSession(session, editor, session.lspConfig);
 });
 ```
-- add `lspConfig` property to Ace sessions for storing LSP configuration:
+- add `setSessionLspConfig` method to set LSP configuration on Ace sessions:
 ```javascript
 // Set LSP configuration on session
-editor.session.lspConfig = {
+languageProvider.setSessionLspConfig(editor.session, {
     filePath: 'src/components/MyComponent.tsx',
     joinWorkspaceURI: true
-};
+});
+```
+- add `setDocumentOptions` method to replace deprecated `setSessionOptions`:
+```javascript
+// Configure document-specific options (replaces setSessionOptions)
+languageProvider.setDocumentOptions(editor.session, {
+    // service-specific options here
+});
 ```
 
 ## New Features in 1.2.0
