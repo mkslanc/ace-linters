@@ -17922,6 +17922,10 @@ class LanguageClient extends base_service.BaseService {
         }
     }
     addDocument(document) {
+        if (this.getDocument(document.uri)) {
+            language_client_console.warn(document.uri + ' already exists');
+            return;
+        }
         super.addDocument(document);
         const textDocumentMessage = {
             textDocument: document
