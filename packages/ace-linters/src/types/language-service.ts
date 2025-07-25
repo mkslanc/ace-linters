@@ -260,16 +260,24 @@ export interface ProviderOptions {
         "InlineAutocomplete"?: typeof InlineAutocomplete,
         "CommandBarTooltip"?: typeof CommandBarTooltip,
         "CompletionProvider"?: typeof CompletionProvider,
-    }
+    },
+    /**
+     * When true, disables automatic session registration on editor session changes.
+     * Users must manually call registerSession() and handle session change events themselves.
+     * @default false
+     */
+    manualSessionControl?: boolean;
 }
 
-export interface SessionInitialConfig {
+export interface SessionLspConfig {
     /**
-     * The associated file path for the session
+     * Absolute or relative path of the file for the session
      */
     filePath: string,
     /**
-     * Determines if the editor should join the workspace URI
+     * When `true` the given path is treated as relative and will be joined with
+     * the workspace’s root URI to form the final canonical URI. When false (or omitted) filePath is just transformed to
+     * URI.
      * @default `false`
      */
     joinWorkspaceURI?: boolean

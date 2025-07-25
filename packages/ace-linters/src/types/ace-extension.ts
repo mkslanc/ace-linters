@@ -1,16 +1,20 @@
-import { DecodedSemanticTokens } from "../type-converters/lsp/semantic-tokens";
+import {DecodedSemanticTokens} from "../type-converters/lsp/semantic-tokens";
+import {SessionLspConfig} from "./language-service";
 
 declare module "ace-code/src/edit_session" {
 
     interface EditSession {
         setSemanticTokens: (tokens: DecodedSemanticTokens | undefined) => void;
+        lspConfig?: SessionLspConfig
     }
 }
 
 declare module "ace-code/src/background_tokenizer" {
     interface BackgroundTokenizer {
         semanticTokens: DecodedSemanticTokens | undefined;
+
         $tokenizeRow(row: number): import("ace-code").Ace.Token[];
+
         $worker: () => void;
         $updateOnChange: () => void;
     }

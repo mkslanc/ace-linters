@@ -23,7 +23,7 @@ import {
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
-    ServiceOptionsMap, ServiceStruct, SessionInitialConfig,
+    ServiceOptionsMap, ServiceStruct, SessionLspConfig,
     SupportedServices,
     Tooltip
 } from "./types/language-service";
@@ -169,17 +169,38 @@ export class LanguageProvider {
      * @param session The Ace edit session to update with the file path.
      * @param config config to set
      */
-    setSessionFilePath(session: Ace.EditSession, config: SessionInitialConfig) {
+    setSessionFilePath(session: Ace.EditSession, config: SessionLspConfig) {
         this.$getSessionLanguageProvider(session)?.setFilePath(config.filePath, config.joinWorkspaceURI);
     }
 
-    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor, config?: SessionInitialConfig) => {
+    /**
+     * Registers a new editing session with the editor and associates it with a language provider.
+     * If a language provider for the specified editing session does not already exist, it initializes
+     * and stores a new session-specific language provider.
+     *
+     * @param session - The Ace EditSession object to be registered, representing a specific editing session.
+     * @param editor - The Ace Editor instance associated with the editing session.
+     * @param [config] - An optional configuration object for initializing the session.
+     */
+    registerSession = (session: Ace.EditSession, editor: Ace.Editor, config?: SessionLspConfig) => {
         if (!this.$sessionLanguageProviders[session["id"]]) {
             this.$sessionLanguageProviders[session["id"]] = new SessionLanguageProvider(this, session, editor, this.$messageController, config);
         }
         if (config) {
             this.$sessionLanguageProviders[session["id"]].setFilePath(config.filePath, config.joinWorkspaceURI);
         }
+    }
+
+    /**
+     * Sets the Language Server Protocol (LSP) configuration for the given session.
+     *
+     * @param session - The editor session to which the LSP configuration will be applied.
+     * @param config - The LSP configuration to set for the session.
+     * @return The updated editor session with the applied LSP configuration.
+     */
+    setSessionLspConfig(session: Ace.EditSession, config: SessionLspConfig) {
+        session.lspConfig = config;
+        return session;
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
@@ -197,11 +218,13 @@ export class LanguageProvider {
      * @param editor - The Ace editor instance to be registered.
      * @param [config] - Configuration options for the session.
      */
-    registerEditor(editor: Ace.Editor, config?: SessionInitialConfig) {
+    registerEditor(editor: Ace.Editor, config?: SessionLspConfig) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
-        this.$registerSession(editor.session, editor, config);
+        config = config ?? editor.session.lspConfig;
+        this.registerSession(editor.session, editor, config);
     }
+
 
     codeActionCallback: (codeActions: CodeActionsByService[]) => void;
 
@@ -278,7 +301,11 @@ export class LanguageProvider {
         AceEditor.getConstructor(editor);
 
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
+
+
+        if (!this.options.manualSessionControl) {
+            editor.on("changeSession", ({session}) => this.registerSession(session, editor, session.lspConfig));
+        }
 
         if (this.options.functionality!.completion || this.options.functionality!.inlineCompletion) {
             this.$registerCompleters(editor);
@@ -405,11 +432,19 @@ export class LanguageProvider {
     }
 
     /**
-     * Sets global options for the specified service.
+     * Configures global options that apply to all documents handled by the specified language service.
      *
-     * @param serviceName - The name of the service for which to set global options.
-     * @param options - The options to set for the specified service.
-     * @param {boolean} [merge=false] - Indicates whether to merge the provided options with the existing options. Defaults to false.
+     * Global options serve as default settings for all documents processed by a service when no
+     * document-specific options are provided. These options affect language service behavior across
+     * the entire workspace, including validation rules, formatting preferences, completion settings,
+     * and service-specific configurations.
+     *
+     * @param serviceName - The identifier of the language service to configure. Must be a valid
+     *                      service name from the supported services (e.g., 'typescript', 'json', 'html').
+     * @param options - The global configuration options specific to the language service. The structure
+     *                  varies by service type.
+     * @param {boolean} [merge=false] - Indicates whether to merge the provided options with the existing options.
+     *                  Defaults to false.
      */
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
@@ -437,8 +472,21 @@ export class LanguageProvider {
      *
      * @param session - The Ace editor session to configure.
      * @param options - The configuration options to be applied to the session.
+     * @deprecated Use `setDocumentOptions` instead. This method will be removed in the future.
      */
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        sessionLanguageProvider.setOptions(options);
+    }
+
+    /**
+     * Sets configuration options for a document associated with the specified editor session.
+     *
+     * @param session - The Ace editor session representing the document to configure.
+     * @param options - The service options to apply. The exact shape depends on the language services
+     *                  active for this session (e.g. JSON schema settings).
+     */
+    setDocumentOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
     }

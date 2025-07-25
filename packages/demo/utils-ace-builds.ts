@@ -32,7 +32,7 @@ export function createEditorWithLSP(mode: {mode: string, content: string, name: 
     languageProvider.registerEditor(editor);
 
     let options = mode.options ?? {};
-    languageProvider.setSessionOptions(editor.session, options);
+    languageProvider.setDocumentOptions(editor.session, options);
 
 
     /**
@@ -41,7 +41,7 @@ export function createEditorWithLSP(mode: {mode: string, content: string, name: 
      * which can be useful for features like code formatting, diagnostics, and other language-specific functionality.
      */
     if (mode.filePath) {
-        languageProvider.setSessionFilePath(editor.session, mode.filePath);
+        languageProvider.setSessionFilePath(editor.session, {filePath: mode.filePath});
     }
 
     closeButton.onclick = () => {

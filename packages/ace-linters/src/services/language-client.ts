@@ -205,6 +205,10 @@ export class LanguageClient extends BaseService implements LanguageService {
     }
 
     addDocument(document: lsp.TextDocumentItem) {//TODO: this need to be async to avoid race condition
+        if (this.getDocument(document.uri)) {
+            console.warn(document.uri + ' already exists');
+            return;
+        }
         super.addDocument(document);
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: document
