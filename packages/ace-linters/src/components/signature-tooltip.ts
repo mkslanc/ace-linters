@@ -6,25 +6,35 @@ export class SignatureTooltip extends BaseTooltip {
     registerEditor(editor: Ace.Editor) {
         editor.on("changeSelection", () => this.onChangeSelection(editor));
     }
-    
-    update(editor: Ace.Editor) {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.provideSignatureHelp();
-        } else {
-            this.$mouseMoveTimer = setTimeout(() => {
-                this.$activateEditor(editor);
-                this.provideSignatureHelp();
-                this.$mouseMoveTimer = undefined;
-            }, 500);
 
+
+    onChangeSelection = (editor: Ace.Editor) => {
+        if (!this.provider.options.functionality!.signatureHelp)
+            return;
+
+        this.$activateEditor(editor);
+        if (this.isOpen) {
+            setTimeout(this.provideSignatureHelp, 0);
+        } else {
+            this.lastT = Date.now();
+            this.timeout = setTimeout(this.waitForSignature, this.idleTime);
         }
     };
 
-    provideSignatureHelp = () => {
-        if (!this.provider.options.functionality!.signatureHelp)
+    waitForSignature = () => {
+        if (this.timeout) clearTimeout(this.timeout);
+        var dt = Date.now() - this.lastT;
+        if (this.idleTime - dt > 10) {
+            this.timeout = setTimeout(this.waitForSignature, this.idleTime - dt);
             return;
+        }
+
+        this.timeout = undefined;
+        this.provideSignatureHelp();
+    }
+
+
+    provideSignatureHelp = () => {
         let cursor = this.$activeEditor!.getCursorPosition();
         let session = this.$activeEditor!.session;
         let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
@@ -51,20 +61,20 @@ export class SignatureTooltip extends BaseTooltip {
 
             this.row = row;
             this.column = column;
-
-            if (this.$mouseMoveTimer) {
-                this.$show();
-            } else {
-                this.$showTimer = setTimeout(() => {
-                    this.$show();
-                    this.$showTimer = undefined;
-                }, 500);
-            }
+            this.$show();
         });
     }
-    
 
-    onChangeSelection = (editor: Ace.Editor) => {
-        this.update(editor);
-    };
+    $onMouseWheel = (e) => {
+        console.log(e);
+        setTimeout(this.$show, 0);
+    }
+
+    $registerEditorEvents() {
+        this.$activeEditor!.on("mousewheel", this.$onMouseWheel);
+    }
+
+    $removeEditorEvents() {
+        this.$activeEditor!.off("mousewheel", this.$onMouseWheel);
+    }
 }
