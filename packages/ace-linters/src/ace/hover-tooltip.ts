@@ -193,11 +193,7 @@ export class HoverTooltip extends Tooltip {
         popupManager.addPopup(this);
     }
 
-    /**
-     * @param {Range} range
-     * @param {EditSession} [session]
-     */
-    addMarker(range, session) {
+    addMarker(range: Ace.Range, session?: Ace.EditSession) {
         if (this.marker) {
             this.$markerSession.removeMarker(this.marker);
         }
@@ -205,14 +201,15 @@ export class HoverTooltip extends Tooltip {
         this.marker = session && session.addMarker(range, "ace_highlight-marker", "text");
     }
 
-    hide(e) {
+    hide(e?: any) {
         if (!e && document.activeElement == this.getElement())
             return;
-        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && this.$element.contains(e.target))
+        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && this.$element?.contains(e.target))
             return;
         this.lastEvent = null;
         if (this.timeout) clearTimeout(this.timeout);
         this.timeout = null;
+        // @ts-expect-error
         this.addMarker(null);
         if (this.isOpen) {
             this.$removeCloseEvents();

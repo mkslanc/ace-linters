@@ -487,7 +487,7 @@ export class LanguageProvider {
 
                     this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
                         const completionCallback = (completions) => {
-                            let popup = editor?.completer?.getPopup(); //TDOO: better place to do this?
+                            let popup = (editor?.completer as Ace.Autocomplete)?.getPopup(); //TDOO: better place to do this?
                             if (popup) {
                                 popupManager.addAcePopup(popup);
                             }

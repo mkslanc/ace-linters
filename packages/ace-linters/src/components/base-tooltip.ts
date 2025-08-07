@@ -10,7 +10,7 @@ export class BaseTooltip extends Tooltip {
     x: number;
     y: number;
 
-    timeout?: NodeJS.Timeout;
+    timeout?: NodeJS.Timeout | null;
     idleTime: number;
     lastT: number;
     lastEvent: any;
