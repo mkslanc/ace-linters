@@ -36,6 +36,7 @@ import {setStyles} from "./misc/styles";
 import {convertToUri} from "./utils";
 import {createInlineCompleterAdapter} from "./ace/inline_autocomplete";
 import {SessionLanguageProvider} from "./session-language-provider";
+import {popupManager} from "./ace/popupManager";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor;
@@ -561,8 +562,14 @@ export class LanguageProvider {
         if (this.options.functionality.completion) {
             completer = {
                 getCompletions: async (editor, session, pos, prefix, callback) => {
+
                     this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
                         const completionCallback = (completions) => {
+                            let popup = (editor?.completer as Ace.Autocomplete)?.getPopup(); //TDOO: better place to do this?
+                            if (popup) {
+                                popupManager.addAcePopup(popup);
+                            }
+
                             let fileName = this.$getFileName(session);
                             if (!completions)
                                 return;
@@ -570,7 +577,9 @@ export class LanguageProvider {
                                 item.completerId = completer.id;
                                 item["fileName"] = fileName
                             });
+
                             callback(null, CommonConverter.normalizeRanges(completions));
+
                         };
                         this.doComplete(editor, session, completionCallback);
                     });
