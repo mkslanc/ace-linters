@@ -19711,6 +19711,146 @@ class Tooltip {
     }
 }
 
+;// CONCATENATED MODULE: ./src/ace/popupManager.ts
+/* provided dependency */ var console = __webpack_require__(4364);
+function popupManager_define_property(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+class PopupManager {
+    addPopup(popup) {
+        if (!popup || typeof popup.getElement !== 'function') {
+            console.warn('Invalid popup object provided to addPopup');
+            return;
+        }
+        this.popups.add(popup);
+        this.scheduleUpdate();
+    }
+    addAcePopup(popup) {
+        if (!popup) {
+            console.warn('Invalid popup object provided to addAcePopup');
+            return;
+        }
+        this.acePopups.add(popup);
+        this.scheduleUpdate();
+    }
+    removePopup(popup) {
+        if (this.popups.has(popup)) {
+            this.popups.delete(popup);
+            this.scheduleUpdate();
+        }
+    }
+    removeAcePopup(popup) {
+        if (this.acePopups.has(popup)) {
+            this.acePopups.delete(popup);
+            this.scheduleUpdate();
+        }
+    }
+    scheduleUpdate() {
+        if (this.updateScheduled) return;
+        this.updateScheduled = true;
+        requestAnimationFrame(()=>{
+            this.updateScheduled = false;
+            this.updatePopups();
+        });
+    }
+    cleanupStalePopups() {
+        for (const popup of this.popups){
+            if (!this.isPopupValid(popup)) {
+                this.popups.delete(popup);
+            }
+        }
+        for (const popup of this.acePopups){
+            if (!this.isPopupValid(popup)) {
+                this.acePopups.delete(popup);
+            }
+        }
+    }
+    isPopupValid(popup) {
+        try {
+            const element = typeof popup.getElement === "function" ? popup.getElement() : popup.container;
+            return element && element.isConnected;
+        } catch (e) {
+            return false;
+        }
+    }
+    updatePopups() {
+        try {
+            this.cleanupStalePopups();
+            const pupups = Array.from(this.popups).sort((a, b)=>(b.priority || 0) - (a.priority || 0));
+            const sortedPopups = [
+                ...this.acePopups,
+                ...pupups
+            ];
+            const visiblePopups = [];
+            for (const popup of sortedPopups){
+                if (!this.shouldDisplayPopup(popup, visiblePopups)) {
+                    this.safeHidePopup(popup);
+                } else {
+                    visiblePopups.push(popup);
+                }
+            }
+        } catch (error) {
+            console.error('Error updating popups:', error);
+        }
+    }
+    shouldDisplayPopup(popup, visiblePopups) {
+        try {
+            if (!this.isPopupValid(popup)) {
+                return false;
+            }
+            for (const visiblePopup of visiblePopups){
+                if (this.doPopupsOverlap(visiblePopup, popup)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (error) {
+            console.error('Error checking popup display:', error);
+            return false;
+        }
+    }
+    safeHidePopup(popup) {
+        try {
+            if (popup && typeof popup.hide === 'function') {
+                popup.hide();
+            }
+        } catch (error) {
+            console.error('Error hiding popup:', error);
+        }
+    }
+    doPopupsOverlap(popupA, popupB) {
+        try {
+            const elemA = typeof popupA.getElement === "function" ? popupA.getElement() : popupA.container;
+            const elemB = typeof popupB.getElement === "function" ? popupB.getElement() : popupB.container;
+            if (!elemA || !elemB || !elemA.isConnected || !elemB.isConnected) {
+                return false;
+            }
+            const rectA = elemA.getBoundingClientRect();
+            const rectB = elemB.getBoundingClientRect();
+            return rectA.left < rectB.right && rectA.right > rectB.left && rectA.top < rectB.bottom && rectA.bottom > rectB.top;
+        } catch (error) {
+            console.error('Error checking popup overlap:', error);
+            return false;
+        }
+    }
+    constructor(){
+        popupManager_define_property(this, "popups", new Set());
+        popupManager_define_property(this, "acePopups", new Set());
+        popupManager_define_property(this, "updateScheduled", false);
+    }
+}
+const popupManager = new PopupManager();
+
 ;// CONCATENATED MODULE: ./src/components/base-tooltip.ts
 function base_tooltip_define_property(obj, key, value) {
     if (key in obj) {
@@ -19726,33 +19866,11 @@ function base_tooltip_define_property(obj, key, value) {
     return obj;
 }
 
+
 class BaseTooltip extends Tooltip {
-    $show() {
-        if (!this.$activeEditor) return;
-        let renderer = this.$activeEditor.renderer;
-        let position = renderer.textToScreenCoordinates(this.row, this.column);
-        let cursorPos = this.$activeEditor.getCursorPosition();
-        this.show(null, position.pageX, position.pageY);
-        let labelHeight = this.getElement().getBoundingClientRect().height;
-        let rect = renderer.scroller.getBoundingClientRect();
-        let isTopdown = true;
-        if (this.row > cursorPos.row) // don't obscure cursor
-        isTopdown = true;
-        else if (this.row < cursorPos.row) // don't obscure cursor
-        isTopdown = false;
-        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) // not enough space above us
-        isTopdown = true;
-        else if (position.pageY + labelHeight > rect.bottom) isTopdown = false;
-        if (!isTopdown) position.pageY -= labelHeight;
-        else position.pageY += renderer.lineHeight;
-        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-        this.show(null, position.pageX, position.pageY);
-    }
-    getElement() {
-        return super.getElement();
-    }
     hide() {
         super.hide();
+        popupManager.removePopup(this);
     }
     show(param, pageX, pageY) {
         super.show(param, pageX, pageY);
@@ -19761,31 +19879,18 @@ class BaseTooltip extends Tooltip {
     setHtml(descriptionText) {
         super.setHtml(descriptionText);
     }
-    destroy() {
-        this.$hide();
-        this.getElement().removeEventListener("mouseout", this.onMouseOut);
-    }
-    $registerEditorEvents() {
-        this.$activeEditor.on("change", this.$hide);
-        this.$activeEditor.on("mousewheel", this.$hide);
-        this.$activeEditor.on("mousedown", this.$hide);
-    }
-    $removeEditorEvents() {
-        this.$activeEditor.off("change", this.$hide);
-        this.$activeEditor.off("mousewheel", this.$hide);
-        this.$activeEditor.off("mousedown", this.$hide);
-    }
     $inactivateEditor() {
-        var _this_$activeEditor;
-        (_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.container.removeEventListener("mouseout", this.onMouseOut);
         this.$activeEditor = undefined;
     }
     $activateEditor(editor) {
         if (this.$activeEditor == editor) return;
-        this.$inactivateEditor();
         this.$activeEditor = editor;
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
+    destroy() {
+        this.$hide();
+    }
+    $registerEditorEvents() {}
+    $removeEditorEvents() {}
     constructor(provider){
         super(document.body);
         base_tooltip_define_property(this, "provider", void 0);
@@ -19793,40 +19898,73 @@ class BaseTooltip extends Tooltip {
         base_tooltip_define_property(this, "descriptionText", void 0);
         base_tooltip_define_property(this, "x", void 0);
         base_tooltip_define_property(this, "y", void 0);
-        base_tooltip_define_property(this, "$mouseMoveTimer", void 0);
-        base_tooltip_define_property(this, "$showTimer", void 0);
+        base_tooltip_define_property(this, "timeout", void 0);
+        base_tooltip_define_property(this, "idleTime", void 0);
+        base_tooltip_define_property(this, "lastT", void 0);
+        base_tooltip_define_property(this, "lastEvent", void 0);
         base_tooltip_define_property(this, "row", void 0);
         base_tooltip_define_property(this, "column", void 0);
+        base_tooltip_define_property(this, "$show", ()=>{
+            if (!this.$activeEditor) return;
+            let editor = this.$activeEditor;
+            var MARGIN = 10;
+            var renderer = editor.renderer;
+            if (!this.isOpen) {
+                this.$registerEditorEvents();
+                this.setTheme(renderer.theme);
+                this.isOpen = true;
+            }
+            let position = renderer.textToScreenCoordinates(this.row, this.column);
+            var rect = renderer.scroller.getBoundingClientRect();
+            // clip position to visible area of the editor
+            if (position.pageX < rect.left) position.pageX = rect.left;
+            var element = this.getElement();
+            element.style.maxHeight = "";
+            element.style.display = "block";
+            // measure the size of tooltip, without constraints on its height
+            var labelHeight = element.clientHeight;
+            var labelWidth = element.clientWidth;
+            var spaceBelow = window.innerHeight - position.pageY - renderer.lineHeight;
+            // if tooltip fits above the line, or space below the line is smaller, show tooltip above
+            let isAbove = true;
+            if (position.pageY - labelHeight < 0 && position.pageY < spaceBelow) {
+                isAbove = false;
+            }
+            element.style.maxHeight = (isAbove ? position.pageY : spaceBelow) - MARGIN + "px";
+            element.style.top = isAbove ? "" : position.pageY + renderer.lineHeight + "px";
+            element.style.bottom = isAbove ? window.innerHeight - position.pageY + "px" : "";
+            // try to align tooltip left with the range, but keep it on screen
+            element.style.left = Math.min(position.pageX, window.innerWidth - labelWidth - MARGIN) + "px";
+            popupManager.addPopup(this);
+        });
         base_tooltip_define_property(this, "$hide", ()=>{
-            clearTimeout(this.$mouseMoveTimer);
-            clearTimeout(this.$showTimer);
+            if (this.timeout) {
+                clearTimeout(this.timeout);
+                this.timeout = null;
+            }
+            this.lastEvent = null;
             if (this.isOpen) {
                 this.$removeEditorEvents();
                 this.hide();
             }
             this.$inactivateEditor();
         });
-        base_tooltip_define_property(this, "onMouseOut", (e)=>{
-            clearTimeout(this.$mouseMoveTimer);
-            clearTimeout(this.$showTimer);
-            if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
-            //@ts-ignore
-            if (e && e.currentTarget.contains(e.relatedTarget)) return;
-            //@ts-ignore
-            if (!e.relatedTarget.classList.contains("ace_content")) this.$hide();
-        });
         this.provider = provider;
         //this is for ace-code version < 1.16.0
         try {
             Tooltip.call(this, document.body);
         } catch (e) {}
-        this.getElement().style.pointerEvents = "auto";
-        this.getElement().style.whiteSpace = "pre-wrap";
-        this.getElement().addEventListener("mouseout", this.onMouseOut);
+        this.timeout = undefined;
+        this.lastT = 0;
+        this.idleTime = 500;
+        var el = this.getElement();
+        el.style.whiteSpace = "pre-wrap";
+        el.style.pointerEvents = "auto";
     }
 }
 
 ;// CONCATENATED MODULE: ./src/components/signature-tooltip.ts
+/* provided dependency */ var signature_tooltip_console = __webpack_require__(4364);
 function signature_tooltip_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -19845,23 +19983,35 @@ class SignatureTooltip extends BaseTooltip {
     registerEditor(editor) {
         editor.on("changeSelection", ()=>this.onChangeSelection(editor));
     }
-    update(editor) {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.provideSignatureHelp();
-        } else {
-            this.$mouseMoveTimer = setTimeout(()=>{
-                this.$activateEditor(editor);
-                this.provideSignatureHelp();
-                this.$mouseMoveTimer = undefined;
-            }, 500);
-        }
+    $registerEditorEvents() {
+        this.$activeEditor.on("mousewheel", this.$onMouseWheel);
+    }
+    $removeEditorEvents() {
+        this.$activeEditor.off("mousewheel", this.$onMouseWheel);
     }
     constructor(...args){
         super(...args);
-        signature_tooltip_define_property(this, "provideSignatureHelp", ()=>{
+        signature_tooltip_define_property(this, "onChangeSelection", (editor)=>{
             if (!this.provider.options.functionality.signatureHelp) return;
+            this.$activateEditor(editor);
+            if (this.isOpen) {
+                setTimeout(this.provideSignatureHelp, 0);
+            } else {
+                this.lastT = Date.now();
+                this.timeout = setTimeout(this.waitForSignature, this.idleTime);
+            }
+        });
+        signature_tooltip_define_property(this, "waitForSignature", ()=>{
+            if (this.timeout) clearTimeout(this.timeout);
+            var dt = Date.now() - this.lastT;
+            if (this.idleTime - dt > 10) {
+                this.timeout = setTimeout(this.waitForSignature, this.idleTime - dt);
+                return;
+            }
+            this.timeout = undefined;
+            this.provideSignatureHelp();
+        });
+        signature_tooltip_define_property(this, "provideSignatureHelp", ()=>{
             let cursor = this.$activeEditor.getCursorPosition();
             let session = this.$activeEditor.session;
             let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
@@ -19886,75 +20036,13 @@ class SignatureTooltip extends BaseTooltip {
                 }
                 this.row = row;
                 this.column = column;
-                if (this.$mouseMoveTimer) {
-                    this.$show();
-                } else {
-                    this.$showTimer = setTimeout(()=>{
-                        this.$show();
-                        this.$showTimer = undefined;
-                    }, 500);
-                }
+                this.$show();
             });
         });
-        signature_tooltip_define_property(this, "onChangeSelection", (editor)=>{
-            this.update(editor);
+        signature_tooltip_define_property(this, "$onMouseWheel", (e)=>{
+            signature_tooltip_console.log(e);
+            setTimeout(this.$show, 0);
         });
-    }
-}
-
-;// CONCATENATED MODULE: ./src/ace/popupManager.ts
-//taken from ace-code with small changes
-function popupManager_define_property(obj, key, value) {
-    if (key in obj) {
-        Object.defineProperty(obj, key, {
-            value: value,
-            enumerable: true,
-            configurable: true,
-            writable: true
-        });
-    } else {
-        obj[key] = value;
-    }
-    return obj;
-}
-class PopupManager {
-    addPopup(popup) {
-        this.popups.push(popup);
-        this.updatePopups();
-    }
-    removePopup(popup) {
-        const index = this.popups.indexOf(popup);
-        if (index !== -1) {
-            this.popups.splice(index, 1);
-            this.updatePopups();
-        }
-    }
-    updatePopups() {
-        this.popups.sort((a, b)=>b.priority - a.priority);
-        let visiblepopups = [];
-        for (let popup of this.popups){
-            let shouldDisplay = true;
-            for (let visiblePopup of visiblepopups){
-                if (this.doPopupsOverlap(visiblePopup, popup)) {
-                    shouldDisplay = false;
-                    break;
-                }
-            }
-            if (shouldDisplay) {
-                visiblepopups.push(popup);
-            } else {
-                popup.hide();
-            }
-        }
-    }
-    doPopupsOverlap(popupA, popupB) {
-        const rectA = popupA.getElement().getBoundingClientRect();
-        const rectB = popupB.getElement().getBoundingClientRect();
-        return rectA.left < rectB.right && rectA.right > rectB.left && rectA.top < rectB.bottom && rectA.bottom > rectB.top;
-    }
-    constructor(){
-        popupManager_define_property(this, "popups", void 0);
-        this.popups = [];
     }
 }
 
@@ -19974,15 +20062,26 @@ function hover_tooltip_define_property(obj, key, value) {
 }
 
 
-let popupManager = new PopupManager();
+function preventParentScroll(event) {
+    event.stopPropagation();
+    var target = event.currentTarget;
+    var contentOverflows = target.scrollHeight > target.clientHeight;
+    if (!contentOverflows) {
+        event.preventDefault();
+    }
+}
 //taken from ace-code with small changes
 class HoverTooltip extends Tooltip {
-    addToEditor(editor) {
+    /**
+     * @param {Editor} editor
+     */ addToEditor(editor) {
         editor.on("mousemove", this.onMouseMove);
         editor.on("mousedown", this.hide);
         editor.renderer.getMouseEventTarget().addEventListener("mouseout", this.onMouseOut, true);
     }
-    removeFromEditor(editor) {
+    /**
+     * @param {Editor} editor
+     */ removeFromEditor(editor) {
         editor.off("mousemove", this.onMouseMove);
         editor.off("mousedown", this.hide);
         editor.renderer.getMouseEventTarget().removeEventListener("mouseout", this.onMouseOut, true);
@@ -19991,7 +20090,11 @@ class HoverTooltip extends Tooltip {
             this.timeout = null;
         }
     }
-    onMouseMove(e, editor) {
+    /**
+     * @param {MouseEvent} e
+     * @param {Editor} editor
+     * @internal
+     */ onMouseMove(e, editor) {
         this.lastEvent = e;
         this.lastT = Date.now();
         var isMousePressed = editor.$mouseHandler.isMousePressed;
@@ -20017,7 +20120,9 @@ class HoverTooltip extends Tooltip {
             this.$gatherData(this.lastEvent, this.lastEvent.editor);
         }
     }
-    isOutsideOfText(e) {
+    /**
+     * @param {MouseEvent} e
+     */ isOutsideOfText(e) {
         var editor = e.editor;
         var docPos = e.getDocumentPosition();
         var line = editor.session.getLine(docPos.row);
@@ -20030,51 +20135,53 @@ class HoverTooltip extends Tooltip {
         }
         return false;
     }
-    setDataProvider(value) {
+    /**
+     * @param {(event: MouseEvent, editor: Editor) => void} value
+     */ setDataProvider(value) {
         this.$gatherData = value;
     }
-    showForRange(editor, range, domNode, startingEvent) {
+    /**
+     * @param {Editor} editor
+     * @param {Range} range
+     * @param {HTMLElement} domNode
+     * @param {MouseEvent} [startingEvent]
+     */ showForRange(editor, range, domNode, startingEvent) {
+        var MARGIN = 10;
         if (startingEvent && startingEvent != this.lastEvent) return;
         if (this.isOpen && document.activeElement == this.getElement()) return;
         var renderer = editor.renderer;
         if (!this.isOpen) {
-            popupManager.addPopup(this);
             this.$registerCloseEvents();
             this.setTheme(renderer.theme);
         }
         this.isOpen = true;
         this.addMarker(range, editor.session);
-        const Range = editor.getSelectionRange().constructor;
+        const Range = editor.getSelectionRange().constructor; //TODO:
         this.range = Range.fromPoints(range.start, range.end);
+        var position = renderer.textToScreenCoordinates(range.start.row, range.start.column);
+        var rect = renderer.scroller.getBoundingClientRect();
+        // clip position to visible area of the editor
+        if (position.pageX < rect.left) position.pageX = rect.left;
         var element = this.getElement();
         element.innerHTML = "";
         element.appendChild(domNode);
+        element.style.maxHeight = "";
         element.style.display = "block";
-        var position = renderer.textToScreenCoordinates(range.start.row, range.start.column);
-        var cursorPos = editor.getCursorPosition();
+        // measure the size of tooltip, without constraints on its height
         var labelHeight = element.clientHeight;
-        var rect = renderer.scroller.getBoundingClientRect();
-        var isTopdown = true;
-        if (this.row > cursorPos.row) {
-            // don't obscure cursor
-            isTopdown = true;
-        } else if (this.row < cursorPos.row) {
-            // don't obscure cursor
-            isTopdown = false;
+        var labelWidth = element.clientWidth;
+        var spaceBelow = window.innerHeight - position.pageY - renderer.lineHeight;
+        // if tooltip fits above the line, or space below the line is smaller, show tooltip above
+        let isAbove = true;
+        if (position.pageY - labelHeight < 0 && position.pageY < spaceBelow) {
+            isAbove = false;
         }
-        if (position.pageY - labelHeight + renderer.lineHeight < rect.top) {
-            // not enough space above us
-            isTopdown = true;
-        } else if (position.pageY + labelHeight > rect.bottom) {
-            isTopdown = false;
-        }
-        if (!isTopdown) {
-            position.pageY -= labelHeight;
-        } else {
-            position.pageY += renderer.lineHeight;
-        }
-        element.style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-        this.setPosition(position.pageX, position.pageY);
+        element.style.maxHeight = (isAbove ? position.pageY : spaceBelow) - MARGIN + "px";
+        element.style.top = isAbove ? "" : position.pageY + renderer.lineHeight + "px";
+        element.style.bottom = isAbove ? window.innerHeight - position.pageY + "px" : "";
+        // try to align tooltip left with the range, but keep it on screen
+        element.style.left = Math.min(position.pageX, window.innerWidth - labelWidth - MARGIN) + "px";
+        popupManager.addPopup(this);
     }
     addMarker(range, session) {
         if (this.marker) {
@@ -20084,11 +20191,13 @@ class HoverTooltip extends Tooltip {
         this.marker = session && session.addMarker(range, "ace_highlight-marker", "text");
     }
     hide(e) {
+        var _this_$element;
         if (!e && document.activeElement == this.getElement()) return;
-        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && this.$element && this.$element.contains(e.target)) return;
+        if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && ((_this_$element = this.$element) === null || _this_$element === void 0 ? void 0 : _this_$element.contains(e.target))) return;
         this.lastEvent = null;
         if (this.timeout) clearTimeout(this.timeout);
         this.timeout = null;
+        // @ts-expect-error
         this.addMarker(null);
         if (this.isOpen) {
             this.$removeCloseEvents();
@@ -20099,22 +20208,24 @@ class HoverTooltip extends Tooltip {
     }
     $registerCloseEvents() {
         window.addEventListener("keydown", this.hide, true);
-        window.addEventListener("mousewheel", this.hide, true);
+        window.addEventListener("wheel", this.hide, true);
         window.addEventListener("mousedown", this.hide, true);
     }
     $removeCloseEvents() {
         window.removeEventListener("keydown", this.hide, true);
-        window.removeEventListener("mousewheel", this.hide, true);
+        window.removeEventListener("wheel", this.hide, true);
         window.removeEventListener("mousedown", this.hide, true);
     }
-    onMouseOut(e) {
+    /**
+     * @internal
+     */ onMouseOut(e) {
         if (this.timeout) {
             clearTimeout(this.timeout);
             this.timeout = null;
         }
         this.lastEvent = null;
         if (!this.isOpen) return;
-        if (!e.relatedTarget || e.relatedTarget == this.getElement()) return;
+        if (!e.relatedTarget || this.getElement().contains(e.relatedTarget)) return;
         if (e && e.currentTarget.contains(e.relatedTarget)) return;
         if (!e.relatedTarget.classList.contains("ace_content")) this.hide();
     }
@@ -20129,7 +20240,7 @@ class HoverTooltip extends Tooltip {
         hover_tooltip_define_property(this, "row", void 0);
         hover_tooltip_define_property(this, "marker", void 0);
         hover_tooltip_define_property(this, "$markerSession", void 0);
-        this.timeout = undefined;
+        /**@type{ReturnType<typeof setTimeout> | undefined}*/ this.timeout = undefined;
         this.lastT = 0;
         this.idleTime = 350;
         this.lastEvent = undefined;
@@ -20145,6 +20256,7 @@ class HoverTooltip extends Tooltip {
         el.addEventListener("blur", (function() {
             if (!el.contains(document.activeElement)) this.hide();
         }).bind(this));
+        el.addEventListener("wheel", preventParentScroll);
     }
 }
 
@@ -21981,7 +22093,7 @@ class SessionLanguageProvider {
 }
 
 ;// CONCATENATED MODULE: ./src/language-provider.ts
-/* provided dependency */ var console = __webpack_require__(4364);
+/* provided dependency */ var language_provider_console = __webpack_require__(4364);
 function language_provider_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -21995,6 +22107,7 @@ function language_provider_define_property(obj, key, value) {
     }
     return obj;
 }
+
 
 
 
@@ -22086,7 +22199,7 @@ class LanguageProvider {
             method();
         } catch (e) {
             var _this_options;
-            console.error(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
+            language_provider_console.error(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
             if ((_this_options = this.options) === null || _this_options === void 0 ? void 0 : _this_options.functionality) {
                 this.options.functionality.inlineCompletion = false;
             }
@@ -22408,6 +22521,11 @@ class LanguageProvider {
                 getCompletions: async (editor, session, pos, prefix, callback)=>{
                     this.$getSessionLanguageProvider(session).$sendDeltaQueue(()=>{
                         const completionCallback = (completions)=>{
+                            var _this, _editor;
+                            let popup = (_this = (_editor = editor) === null || _editor === void 0 ? void 0 : _editor.completer) === null || _this === void 0 ? void 0 : _this.getPopup(); //TDOO: better place to do this?
+                            if (popup) {
+                                popupManager.addAcePopup(popup);
+                            }
                             let fileName = this.$getFileName(session);
                             if (!completions) return;
                             completions.forEach((item)=>{
