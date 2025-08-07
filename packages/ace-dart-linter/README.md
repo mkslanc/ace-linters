@@ -74,7 +74,6 @@ npm install ace-dart-linter
 This linter supports the following features:
 
 - **format**: Provides code formatting.
-- **diagnostics**: Reports errors and warnings.
 
 ## Powered by
 

@@ -5,14 +5,15 @@ import {LanguageProvider} from "ace-linters";
 
 let worker = new Worker(new URL('./webworker.ts', import.meta.url));
 
-let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
-languageProvider.requireFilePath = true;
+let languageProvider = LanguageProvider.create(worker, {
+    functionality: {semanticTokens: true},
+    manualSessionControl: true,
+});
 addFormatCommand(languageProvider);
 
 let fileTree: Box;
 let editorBox: Box;
 
-//document.body.innerHTML = "";
 let base = new Box({
     vertical: false,
     0: fileTree = new Box({
@@ -30,6 +31,7 @@ new AceLayout(base);
 window["fileTreeWrapper"] = fileTree;
 let fileSystem = new FileSystemWeb();
 let aceTree = new AceTreeWrapper();
+aceTree.render();
 
 function renderFileTree() {
     let button = new Button({value: "Open Folder"});
@@ -58,10 +60,13 @@ let tabManager = TabManager.getInstance({
 
 tabManager.fileSystem?.on("openFile", (treeNode) => {
     let tab = tabManager.getTab(treeNode.path) as Tab<Ace.EditSession>;
-
-    languageProvider.registerEditor((tab.editor as AceEditor).editor);
     let path = treeNode.path.substring(treeNode.path.indexOf("/", 1));
-    languageProvider.setSessionFilePath(tab.session, `${languageProvider.workspaceUri || ""}${path}`);
+    const editor = (tab.editor as AceEditor).editor;
+    languageProvider.setSessionLspConfig(editor.session, {filePath: path, joinWorkspaceURI: true})
+
+    languageProvider.registerEditor(editor); //, {filePath: path, joinWorkspaceURI: true}
+    //languageProvider.setSessionFilePath(tab.session, {filePath: path, joinWorkspaceURI: true});  -> it's another
+    // way to set path
 });
 
 tabManager.restoreFrom(localStorage);

@@ -255,13 +255,32 @@ export interface ProviderOptions {
         codeActions?: boolean
     },
     markdownConverter?: MarkDownConverter,
-    requireFilePath?: boolean,
     workspacePath?: string, // this would be transformed to workspaceUri
     aceComponents?: {
         "InlineAutocomplete"?: typeof InlineAutocomplete,
         "CommandBarTooltip"?: typeof CommandBarTooltip,
         "CompletionProvider"?: typeof CompletionProvider,
-    }
+    },
+    /**
+     * When true, disables automatic session registration on editor session changes.
+     * Users must manually call registerSession() and handle session change events themselves.
+     * @default false
+     */
+    manualSessionControl?: boolean;
+}
+
+export interface SessionLspConfig {
+    /**
+     * Absolute or relative path of the file for the session
+     */
+    filePath: string,
+    /**
+     * When `true` the given path is treated as relative and will be joined with
+     * the workspace’s root URI to form the final canonical URI. When false (or omitted) filePath is just transformed to
+     * URI.
+     * @default `false`
+     */
+    joinWorkspaceURI?: boolean
 }
 
 export type ServiceFeatures = {
@@ -296,7 +315,7 @@ export interface BaseConfig {
     className?: string,
     features?: ServiceFeatures,
     module: () => any,
-    id?: string
+    id?: string,
 }
 
 interface WebWorkerConnection {

@@ -106,13 +106,13 @@ manager.registerServer("astro", {
 
 manager.registerServer("go", {
     module: () => import("ace-linters/build/language-client"),
-    modes: "golang",
+    modes: "golang|go",
     type: "socket",
     socket: new WebSocket("ws://127.0.0.1:3030/go")
 });
 manager.registerServer("typescript", {
     module: () => import("ace-linters/build/language-client"),
-    modes: "typescript",
+    modes: "typescript|javascript",
     type: "socket",
     socket: new WebSocket("ws://127.0.0.1:3030/typescript")
 });
@@ -121,4 +121,11 @@ manager.registerService("mysql", {
     module: () => import("ace-sql-linter/build/mysql-service"),
     className: "MySQLService",
     modes: "mysql",
+});
+
+manager.registerServer("dart", {
+    module: () => import("ace-linters/build/language-client"),
+    modes: "dart",
+    type: "socket",
+    socket: new WebSocket("ws://127.0.0.1:3030/dart")
 });
