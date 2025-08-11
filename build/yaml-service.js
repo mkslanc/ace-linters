@@ -6609,7 +6609,7 @@ class BaseService {
                     ]
                 },
                 synchronization: {
-                    dynamicRegistration: true,
+                    dynamicRegistration: false,
                     willSave: false,
                     didSave: false,
                     willSaveWaitUntil: false
@@ -6632,6 +6632,7 @@ class BaseService {
                     contextSupport: false
                 },
                 signatureHelp: {
+                    dynamicRegistration: true,
                     signatureInformation: {
                         documentationFormat: [
                             'markdown',
@@ -6644,6 +6645,7 @@ class BaseService {
                     dynamicRegistration: true
                 },
                 semanticTokens: {
+                    dynamicRegistration: true,
                     multilineTokenSupport: false,
                     overlappingTokenSupport: false,
                     tokenTypes: [],
@@ -6673,7 +6675,7 @@ class BaseService {
             },
             workspace: {
                 didChangeConfiguration: {
-                    dynamicRegistration: true
+                    dynamicRegistration: false
                 },
                 executeCommand: {
                     dynamicRegistration: true

@@ -4243,7 +4243,7 @@ class BaseService {
                     ]
                 },
                 synchronization: {
-                    dynamicRegistration: true,
+                    dynamicRegistration: false,
                     willSave: false,
                     didSave: false,
                     willSaveWaitUntil: false
@@ -4266,6 +4266,7 @@ class BaseService {
                     contextSupport: false
                 },
                 signatureHelp: {
+                    dynamicRegistration: true,
                     signatureInformation: {
                         documentationFormat: [
                             'markdown',
@@ -4278,6 +4279,7 @@ class BaseService {
                     dynamicRegistration: true
                 },
                 semanticTokens: {
+                    dynamicRegistration: true,
                     multilineTokenSupport: false,
                     overlappingTokenSupport: false,
                     tokenTypes: [],
@@ -4307,7 +4309,7 @@ class BaseService {
             },
             workspace: {
                 didChangeConfiguration: {
-                    dynamicRegistration: true
+                    dynamicRegistration: false
                 },
                 executeCommand: {
                     dynamicRegistration: true
@@ -17839,7 +17841,16 @@ class LanguageClient extends base_service.BaseService {
             language_client_console.log(params);
         });
         this.connection.onRequest('client/registerCapability', (params)=>{
-            language_client_console.log(params);
+            params.registrations.forEach((registration)=>{
+                this.registerCapability(registration);
+            });
+            return null;
+        });
+        this.connection.onRequest('client/unregisterCapability', (params)=>{
+            params.unregisterations.forEach((unregistration)=>{
+                this.unregisterCapability(unregistration);
+            });
+            return null;
         });
         this.connection.onRequest('workspace/applyEdit', async (params)=>{
             return new Promise((resolve, reject)=>{
@@ -18234,6 +18245,172 @@ class LanguageClient extends base_service.BaseService {
             return this.connection.sendRequest(name);
         }
         return this.connection.sendRequest(name, args);
+    }
+    registerCapability(registration) {
+        if (!this.serviceCapabilities) {
+            this.serviceCapabilities = {};
+        }
+        switch(registration.method){
+            case 'textDocument/diagnostic':
+                var _this_clientCapabilities_textDocument_diagnostic, _this_clientCapabilities_textDocument;
+                if ((_this_clientCapabilities_textDocument = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument === void 0 ? void 0 : (_this_clientCapabilities_textDocument_diagnostic = _this_clientCapabilities_textDocument.diagnostic) === null || _this_clientCapabilities_textDocument_diagnostic === void 0 ? void 0 : _this_clientCapabilities_textDocument_diagnostic.dynamicRegistration) {
+                    this.serviceCapabilities.diagnosticProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/hover':
+                var _this_clientCapabilities_textDocument_hover, _this_clientCapabilities_textDocument1;
+                if ((_this_clientCapabilities_textDocument1 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument1 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_hover = _this_clientCapabilities_textDocument1.hover) === null || _this_clientCapabilities_textDocument_hover === void 0 ? void 0 : _this_clientCapabilities_textDocument_hover.dynamicRegistration) {
+                    this.serviceCapabilities.hoverProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/formatting':
+            case 'textDocument/rangeFormatting':
+                var _this_clientCapabilities_textDocument_formatting, _this_clientCapabilities_textDocument2;
+                if ((_this_clientCapabilities_textDocument2 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument2 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_formatting = _this_clientCapabilities_textDocument2.formatting) === null || _this_clientCapabilities_textDocument_formatting === void 0 ? void 0 : _this_clientCapabilities_textDocument_formatting.dynamicRegistration) {
+                    if (registration.method === 'textDocument/formatting') {
+                        this.serviceCapabilities.documentFormattingProvider = registration.registerOptions || true;
+                    } else {
+                        this.serviceCapabilities.documentRangeFormattingProvider = registration.registerOptions || true;
+                    }
+                }
+                break;
+            case 'textDocument/completion':
+                var _this_clientCapabilities_textDocument_completion, _this_clientCapabilities_textDocument3;
+                if ((_this_clientCapabilities_textDocument3 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument3 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion = _this_clientCapabilities_textDocument3.completion) === null || _this_clientCapabilities_textDocument_completion === void 0 ? void 0 : _this_clientCapabilities_textDocument_completion.dynamicRegistration) {
+                    this.serviceCapabilities.completionProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/signatureHelp':
+                var _this_clientCapabilities_textDocument_signatureHelp, _this_clientCapabilities_textDocument4;
+                if ((_this_clientCapabilities_textDocument4 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument4 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_signatureHelp = _this_clientCapabilities_textDocument4.signatureHelp) === null || _this_clientCapabilities_textDocument_signatureHelp === void 0 ? void 0 : _this_clientCapabilities_textDocument_signatureHelp.dynamicRegistration) {
+                    this.serviceCapabilities.signatureHelpProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/documentHighlight':
+                var _this_clientCapabilities_textDocument_documentHighlight, _this_clientCapabilities_textDocument5;
+                if ((_this_clientCapabilities_textDocument5 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument5 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_documentHighlight = _this_clientCapabilities_textDocument5.documentHighlight) === null || _this_clientCapabilities_textDocument_documentHighlight === void 0 ? void 0 : _this_clientCapabilities_textDocument_documentHighlight.dynamicRegistration) {
+                    this.serviceCapabilities.documentHighlightProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/semanticTokens/full':
+            case 'textDocument/semanticTokens/range':
+                var _this_clientCapabilities_textDocument_semanticTokens, _this_clientCapabilities_textDocument6;
+                if ((_this_clientCapabilities_textDocument6 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument6 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_semanticTokens = _this_clientCapabilities_textDocument6.semanticTokens) === null || _this_clientCapabilities_textDocument_semanticTokens === void 0 ? void 0 : _this_clientCapabilities_textDocument_semanticTokens.dynamicRegistration) {
+                    this.serviceCapabilities.semanticTokensProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/codeAction':
+                var _this_clientCapabilities_textDocument_codeAction, _this_clientCapabilities_textDocument7;
+                if ((_this_clientCapabilities_textDocument7 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument7 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_codeAction = _this_clientCapabilities_textDocument7.codeAction) === null || _this_clientCapabilities_textDocument_codeAction === void 0 ? void 0 : _this_clientCapabilities_textDocument_codeAction.dynamicRegistration) {
+                    this.serviceCapabilities.codeActionProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/inlineCompletion':
+                var _this_clientCapabilities_textDocument_inlineCompletion, _this_clientCapabilities_textDocument8;
+                if ((_this_clientCapabilities_textDocument8 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument8 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_inlineCompletion = _this_clientCapabilities_textDocument8.inlineCompletion) === null || _this_clientCapabilities_textDocument_inlineCompletion === void 0 ? void 0 : _this_clientCapabilities_textDocument_inlineCompletion.dynamicRegistration) {
+                    this.serviceCapabilities.inlineCompletionProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'workspace/executeCommand':
+                var _this_clientCapabilities_workspace_executeCommand, _this_clientCapabilities_workspace;
+                if ((_this_clientCapabilities_workspace = this.clientCapabilities.workspace) === null || _this_clientCapabilities_workspace === void 0 ? void 0 : (_this_clientCapabilities_workspace_executeCommand = _this_clientCapabilities_workspace.executeCommand) === null || _this_clientCapabilities_workspace_executeCommand === void 0 ? void 0 : _this_clientCapabilities_workspace_executeCommand.dynamicRegistration) {
+                    this.serviceCapabilities.executeCommandProvider = registration.registerOptions;
+                }
+                break;
+            default:
+                language_client_console.warn(`Unhandled dynamic capability registration: ${registration.method}`);
+        }
+        this.notifyCapabilitiesChanged();
+    }
+    unregisterCapability(unregistration) {
+        if (!this.serviceCapabilities) {
+            return;
+        }
+        switch(unregistration.method){
+            case 'textDocument/diagnostic':
+                var _this_clientCapabilities_textDocument_diagnostic, _this_clientCapabilities_textDocument;
+                if ((_this_clientCapabilities_textDocument = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument === void 0 ? void 0 : (_this_clientCapabilities_textDocument_diagnostic = _this_clientCapabilities_textDocument.diagnostic) === null || _this_clientCapabilities_textDocument_diagnostic === void 0 ? void 0 : _this_clientCapabilities_textDocument_diagnostic.dynamicRegistration) {
+                    delete this.serviceCapabilities.diagnosticProvider;
+                }
+                break;
+            case 'textDocument/hover':
+                var _this_clientCapabilities_textDocument_hover, _this_clientCapabilities_textDocument1;
+                if ((_this_clientCapabilities_textDocument1 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument1 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_hover = _this_clientCapabilities_textDocument1.hover) === null || _this_clientCapabilities_textDocument_hover === void 0 ? void 0 : _this_clientCapabilities_textDocument_hover.dynamicRegistration) {
+                    delete this.serviceCapabilities.hoverProvider;
+                }
+                break;
+            case 'textDocument/formatting':
+                var _this_clientCapabilities_textDocument_formatting, _this_clientCapabilities_textDocument2;
+                if ((_this_clientCapabilities_textDocument2 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument2 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_formatting = _this_clientCapabilities_textDocument2.formatting) === null || _this_clientCapabilities_textDocument_formatting === void 0 ? void 0 : _this_clientCapabilities_textDocument_formatting.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentFormattingProvider;
+                }
+                break;
+            case 'textDocument/rangeFormatting':
+                var _this_clientCapabilities_textDocument_formatting1, _this_clientCapabilities_textDocument3;
+                if ((_this_clientCapabilities_textDocument3 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument3 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_formatting1 = _this_clientCapabilities_textDocument3.formatting) === null || _this_clientCapabilities_textDocument_formatting1 === void 0 ? void 0 : _this_clientCapabilities_textDocument_formatting1.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentRangeFormattingProvider;
+                }
+                break;
+            case 'textDocument/completion':
+                var _this_clientCapabilities_textDocument_completion, _this_clientCapabilities_textDocument4;
+                if ((_this_clientCapabilities_textDocument4 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument4 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_completion = _this_clientCapabilities_textDocument4.completion) === null || _this_clientCapabilities_textDocument_completion === void 0 ? void 0 : _this_clientCapabilities_textDocument_completion.dynamicRegistration) {
+                    delete this.serviceCapabilities.completionProvider;
+                }
+                break;
+            case 'textDocument/signatureHelp':
+                var _this_clientCapabilities_textDocument_signatureHelp, _this_clientCapabilities_textDocument5;
+                if ((_this_clientCapabilities_textDocument5 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument5 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_signatureHelp = _this_clientCapabilities_textDocument5.signatureHelp) === null || _this_clientCapabilities_textDocument_signatureHelp === void 0 ? void 0 : _this_clientCapabilities_textDocument_signatureHelp.dynamicRegistration) {
+                    delete this.serviceCapabilities.signatureHelpProvider;
+                }
+                break;
+            case 'textDocument/documentHighlight':
+                var _this_clientCapabilities_textDocument_documentHighlight, _this_clientCapabilities_textDocument6;
+                if ((_this_clientCapabilities_textDocument6 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument6 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_documentHighlight = _this_clientCapabilities_textDocument6.documentHighlight) === null || _this_clientCapabilities_textDocument_documentHighlight === void 0 ? void 0 : _this_clientCapabilities_textDocument_documentHighlight.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentHighlightProvider;
+                }
+                break;
+            case 'textDocument/semanticTokens/full':
+            case 'textDocument/semanticTokens/range':
+                var _this_clientCapabilities_textDocument_semanticTokens, _this_clientCapabilities_textDocument7;
+                if ((_this_clientCapabilities_textDocument7 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument7 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_semanticTokens = _this_clientCapabilities_textDocument7.semanticTokens) === null || _this_clientCapabilities_textDocument_semanticTokens === void 0 ? void 0 : _this_clientCapabilities_textDocument_semanticTokens.dynamicRegistration) {
+                    delete this.serviceCapabilities.semanticTokensProvider;
+                }
+                break;
+            case 'textDocument/codeAction':
+                var _this_clientCapabilities_textDocument_codeAction, _this_clientCapabilities_textDocument8;
+                if ((_this_clientCapabilities_textDocument8 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument8 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_codeAction = _this_clientCapabilities_textDocument8.codeAction) === null || _this_clientCapabilities_textDocument_codeAction === void 0 ? void 0 : _this_clientCapabilities_textDocument_codeAction.dynamicRegistration) {
+                    delete this.serviceCapabilities.codeActionProvider;
+                }
+                break;
+            case 'textDocument/inlineCompletion':
+                var _this_clientCapabilities_textDocument_inlineCompletion, _this_clientCapabilities_textDocument9;
+                if ((_this_clientCapabilities_textDocument9 = this.clientCapabilities.textDocument) === null || _this_clientCapabilities_textDocument9 === void 0 ? void 0 : (_this_clientCapabilities_textDocument_inlineCompletion = _this_clientCapabilities_textDocument9.inlineCompletion) === null || _this_clientCapabilities_textDocument_inlineCompletion === void 0 ? void 0 : _this_clientCapabilities_textDocument_inlineCompletion.dynamicRegistration) {
+                    delete this.serviceCapabilities.inlineCompletionProvider;
+                }
+                break;
+            case 'workspace/executeCommand':
+                var _this_clientCapabilities_workspace_executeCommand, _this_clientCapabilities_workspace;
+                if ((_this_clientCapabilities_workspace = this.clientCapabilities.workspace) === null || _this_clientCapabilities_workspace === void 0 ? void 0 : (_this_clientCapabilities_workspace_executeCommand = _this_clientCapabilities_workspace.executeCommand) === null || _this_clientCapabilities_workspace_executeCommand === void 0 ? void 0 : _this_clientCapabilities_workspace_executeCommand.dynamicRegistration) {
+                    delete this.serviceCapabilities.executeCommandProvider;
+                }
+                break;
+            default:
+                language_client_console.warn(`Unhandled dynamic capability unregistration: ${unregistration.method}`);
+        }
+        this.notifyCapabilitiesChanged();
+    }
+    notifyCapabilitiesChanged() {
+        const serviceName = this.serviceName;
+        Object.keys(this.documents).forEach((documentUri)=>{
+            const postMessage = {
+                "type": MessageType.capabilitiesChange,
+                "value": {
+                    [serviceName]: this.serviceCapabilities
+                },
+                documentUri: documentUri
+            };
+            this.ctx.postMessage(postMessage);
+        });
     }
     constructor(serverData, ctx, workspaceUri){
         super(serverData.modes, workspaceUri);

@@ -180,6 +180,9 @@ export declare class LanguageClient extends BaseService implements LanguageServi
 	 * @param args
 	 */
 	sendRequest(name: string, args?: lsp.LSPAny): Promise<unknown>;
+	private registerCapability;
+	private unregisterCapability;
+	private notifyCapabilitiesChanged;
 }
 
 export {};
