@@ -113,8 +113,18 @@ export class LanguageClient extends BaseService implements LanguageService {
             console.log(params);
         });
 
-        this.connection.onRequest('client/registerCapability', (params) => {
-            console.log(params);
+        this.connection.onRequest('client/registerCapability', (params: lsp.RegistrationParams) => {
+            params.registrations.forEach(registration => {
+                this.registerCapability(registration);
+            });
+            return null;
+        });
+
+        this.connection.onRequest('client/unregisterCapability', (params: lsp.UnregistrationParams) => {
+            params.unregisterations.forEach(unregistration => {
+                this.unregisterCapability(unregistration);
+            });
+            return null;
         });
 
         this.connection.onRequest('workspace/applyEdit', async (params: lsp.ApplyWorkspaceEditParams) => {
@@ -545,6 +555,158 @@ export class LanguageClient extends BaseService implements LanguageService {
             return this.connection.sendRequest(name);
         }
         return this.connection.sendRequest(name, args);
+    }
+
+    private registerCapability(registration: lsp.Registration) {
+        if (!this.serviceCapabilities) {
+            this.serviceCapabilities = {};
+        }
+
+        switch (registration.method) {
+            case 'textDocument/diagnostic':
+                if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) {
+                    this.serviceCapabilities.diagnosticProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/hover':
+                if (this.clientCapabilities.textDocument?.hover?.dynamicRegistration) {
+                    this.serviceCapabilities.hoverProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/formatting':
+            case 'textDocument/rangeFormatting':
+                if (this.clientCapabilities.textDocument?.formatting?.dynamicRegistration) {
+                    if (registration.method === 'textDocument/formatting') {
+                        this.serviceCapabilities.documentFormattingProvider = registration.registerOptions || true;
+                    } else {
+                        this.serviceCapabilities.documentRangeFormattingProvider = registration.registerOptions || true;
+                    }
+                }
+                break;
+            case 'textDocument/completion':
+                if (this.clientCapabilities.textDocument?.completion?.dynamicRegistration) {
+                    this.serviceCapabilities.completionProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/signatureHelp':
+                if (this.clientCapabilities.textDocument?.signatureHelp?.dynamicRegistration) {
+                    this.serviceCapabilities.signatureHelpProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/documentHighlight':
+                if (this.clientCapabilities.textDocument?.documentHighlight?.dynamicRegistration) {
+                    this.serviceCapabilities.documentHighlightProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/semanticTokens/full':
+            case 'textDocument/semanticTokens/range':
+                if (this.clientCapabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+                    this.serviceCapabilities.semanticTokensProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/codeAction':
+                if (this.clientCapabilities.textDocument?.codeAction?.dynamicRegistration) {
+                    this.serviceCapabilities.codeActionProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/inlineCompletion':
+                if (this.clientCapabilities.textDocument?.inlineCompletion?.dynamicRegistration) {
+                    this.serviceCapabilities.inlineCompletionProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'workspace/executeCommand':
+                if (this.clientCapabilities.workspace?.executeCommand?.dynamicRegistration) {
+                    this.serviceCapabilities.executeCommandProvider = registration.registerOptions;
+                }
+                break;
+            default:
+                console.warn(`Unhandled dynamic capability registration: ${registration.method}`);
+        }
+
+        this.notifyCapabilitiesChanged();
+    }
+
+    private unregisterCapability(unregistration: lsp.Unregistration) {
+        if (!this.serviceCapabilities) {
+            return;
+        }
+
+        switch (unregistration.method) {
+            case 'textDocument/diagnostic':
+                if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) {
+                    delete this.serviceCapabilities.diagnosticProvider;
+                }
+                break;
+            case 'textDocument/hover':
+                if (this.clientCapabilities.textDocument?.hover?.dynamicRegistration) {
+                    delete this.serviceCapabilities.hoverProvider;
+                }
+                break;
+            case 'textDocument/formatting':
+                if (this.clientCapabilities.textDocument?.formatting?.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentFormattingProvider;
+                }
+                break;
+            case 'textDocument/rangeFormatting':
+                if (this.clientCapabilities.textDocument?.formatting?.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentRangeFormattingProvider;
+                }
+                break;
+            case 'textDocument/completion':
+                if (this.clientCapabilities.textDocument?.completion?.dynamicRegistration) {
+                    delete this.serviceCapabilities.completionProvider;
+                }
+                break;
+            case 'textDocument/signatureHelp':
+                if (this.clientCapabilities.textDocument?.signatureHelp?.dynamicRegistration) {
+                    delete this.serviceCapabilities.signatureHelpProvider;
+                }
+                break;
+            case 'textDocument/documentHighlight':
+                if (this.clientCapabilities.textDocument?.documentHighlight?.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentHighlightProvider;
+                }
+                break;
+            case 'textDocument/semanticTokens/full':
+            case 'textDocument/semanticTokens/range':
+                if (this.clientCapabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+                    delete this.serviceCapabilities.semanticTokensProvider;
+                }
+                break;
+            case 'textDocument/codeAction':
+                if (this.clientCapabilities.textDocument?.codeAction?.dynamicRegistration) {
+                    delete this.serviceCapabilities.codeActionProvider;
+                }
+                break;
+            case 'textDocument/inlineCompletion':
+                if (this.clientCapabilities.textDocument?.inlineCompletion?.dynamicRegistration) {
+                    delete this.serviceCapabilities.inlineCompletionProvider;
+                }
+                break;
+            case 'workspace/executeCommand':
+                if (this.clientCapabilities.workspace?.executeCommand?.dynamicRegistration) {
+                    delete this.serviceCapabilities.executeCommandProvider;
+                }
+                break;
+            default:
+                console.warn(`Unhandled dynamic capability unregistration: ${unregistration.method}`);
+        }
+
+        this.notifyCapabilitiesChanged();
+    }
+
+    private notifyCapabilitiesChanged() {
+        const serviceName = this.serviceName;
+        Object.keys(this.documents).forEach((documentUri) => {
+            const postMessage = {
+                "type": MessageType.capabilitiesChange,
+                "value": {
+                    [serviceName]: this.serviceCapabilities
+                },
+                documentUri: documentUri
+            };
+            this.ctx.postMessage(postMessage);
+        });
     }
 
 }
