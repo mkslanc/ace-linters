@@ -32,7 +32,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 contentFormat: ['markdown', 'plaintext'],
             },
             synchronization: {
-                dynamicRegistration: true,
+                dynamicRegistration: false,
                 willSave: false,
                 didSave: false,
                 willSaveWaitUntil: false,
@@ -52,6 +52,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 contextSupport: false,
             },
             signatureHelp: {
+                dynamicRegistration: true,
                 signatureInformation: {
                     documentationFormat: ['markdown', 'plaintext'],
                     activeParameterSupport: true
@@ -61,6 +62,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 dynamicRegistration: true
             },
             semanticTokens: {
+                dynamicRegistration: true,
                 multilineTokenSupport: false,
                 overlappingTokenSupport: false,
                 tokenTypes: [],
@@ -88,7 +90,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         },
         workspace: {
             didChangeConfiguration: {
-                dynamicRegistration: true,
+                dynamicRegistration: false,
             },
             executeCommand: {
                 dynamicRegistration: true
