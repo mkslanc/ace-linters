@@ -13826,10 +13826,6 @@ class BaseService {
         _define_property(this, "workspaceUri", void 0);
         _define_property(this, "clientCapabilities", {
             textDocument: {
-                diagnostic: {
-                    dynamicRegistration: true,
-                    relatedDocumentSupport: true
-                },
                 publishDiagnostics: {
                     relatedInformation: true,
                     versionSupport: false,
