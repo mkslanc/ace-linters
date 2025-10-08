@@ -16,10 +16,6 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
 
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
-            diagnostic: {
-                dynamicRegistration: true,
-                relatedDocumentSupport: true
-            },
             publishDiagnostics: {
                 relatedInformation: true,
                 versionSupport: false,

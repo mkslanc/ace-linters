@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "scripts": {
     "clean": "rimraf build",
     "postbuild": "node postbuild.js",
