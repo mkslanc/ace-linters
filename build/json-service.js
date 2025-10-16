@@ -21524,7 +21524,8 @@ class JsonService extends base_service.BaseService {
                 triggerCharacters: [
                     '"',
                     ':'
-                ]
+                ],
+                resolveProvider: true
             },
             diagnosticProvider: {
                 interFileDependencies: true,

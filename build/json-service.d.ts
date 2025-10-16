@@ -268,6 +268,7 @@ export declare class JsonService extends BaseService<JsonServiceOptions> impleme
 	serviceCapabilities: {
 		completionProvider: {
 			triggerCharacters: string[];
+			resolveProvider: boolean;
 		};
 		diagnosticProvider: {
 			interFileDependencies: boolean;
