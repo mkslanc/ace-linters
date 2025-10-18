@@ -412,7 +412,7 @@ export class ServiceManager {
     findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
         let servicesWithName = {};
         Object.entries(this.$services).forEach(([key, value]) => {
-                let extensions = value.modes.split('|');
+                let extensions = value.modes.split('|').map(m => m.trim());
                 if (extensions.includes(mode))
                     servicesWithName[key] = this.$services[key];
             }
