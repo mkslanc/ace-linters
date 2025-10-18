@@ -676,7 +676,7 @@ class ServiceManager {
     findServicesByMode(mode) {
         let servicesWithName = {};
         Object.entries(this.$services).forEach(([key, value])=>{
-            let extensions = value.modes.split('|');
+            let extensions = value.modes.split('|').map((m)=>m.trim());
             if (extensions.includes(mode)) servicesWithName[key] = this.$services[key];
         });
         return servicesWithName;
