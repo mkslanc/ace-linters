@@ -23333,8 +23333,12 @@ class LanguageProvider {
             var $timer;
             editor.on("changeSelection", ()=>{
                 if (!$timer) $timer = setTimeout(()=>{
-                    let cursor = editor.getCursorPosition();
                     let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+                    if (!sessionLanguageProvider) {
+                        $timer = undefined;
+                        return;
+                    }
+                    let cursor = editor.getCursorPosition();
                     this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
                     $timer = undefined;
                 }, 50);
@@ -23374,6 +23378,10 @@ class LanguageProvider {
         var actionTimer;
         editor.on("changeSelection", ()=>{
             if (!actionTimer) actionTimer = setTimeout(()=>{
+                if (!this.$getSessionLanguageProvider(editor.session)) {
+                    actionTimer = undefined;
+                    return;
+                }
                 //TODO: no need to send request on empty
                 let selection = editor.getSelection().getRange();
                 let cursor = editor.getCursorPosition();
@@ -23492,6 +23500,7 @@ class LanguageProvider {
         this.$messageController.doHover(this.$getFileName(session), fromPoint(position), (hover)=>callback && callback(toTooltip(hover)));
     }
     provideSignatureHelp(session, position, callback) {
+        if (!this.$getSessionLanguageProvider(session)) return;
         this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp)=>callback && callback(fromSignatureHelp(signatureHelp)));
     }
     getTooltipText(hover) {
