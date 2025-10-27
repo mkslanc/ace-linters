@@ -322,9 +322,13 @@ export class LanguageProvider {
                 if (!$timer)
                     $timer =
                         setTimeout(() => {
-                            let cursor = editor.getCursorPosition();
                             let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+                            if (!sessionLanguageProvider) {
+                                $timer = undefined;
+                                return;
+                            }
 
+                            let cursor = editor.getCursorPosition();
                             this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
                             $timer = undefined;
                         }, 50);
@@ -372,6 +376,11 @@ export class LanguageProvider {
             if (!actionTimer)
                 actionTimer =
                     setTimeout(() => {
+                        if (!this.$getSessionLanguageProvider(editor.session)) {
+                            actionTimer = undefined;
+                            return;
+                        }
+
                         //TODO: no need to send request on empty
                         let selection = editor.getSelection().getRange();
                         let cursor = editor.getCursorPosition();
@@ -508,6 +517,8 @@ export class LanguageProvider {
     }
 
     provideSignatureHelp(session: Ace.EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void) {
+        if (!this.$getSessionLanguageProvider(session))
+            return;
         this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 

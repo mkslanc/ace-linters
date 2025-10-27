@@ -80,9 +80,9 @@ describe('LanguageProvider tests', () => {
                 },
                 completionResolve: true,
                 format: true,
-                documentHighlights: false,
+                documentHighlights: true,
                 signatureHelp: false,
-                codeActions: false
+                codeActions: true
             }
         });
         languageProvider.registerEditor(editor);
@@ -458,6 +458,15 @@ describe('LanguageProvider tests', () => {
             done()
         });
 
+    })
+
+    it('should not error from callbacks after closeDocument', (done) => {
+        languageProvider.closeDocument(editor.session);
+        expect(() => languageProvider.provideSignatureHelp(editor.session, null, null)).not.to.throw();
+
+        // Check for exceptions from changeSelection from documentHighlights and $provideCodeActions
+        editor.session.setValue("example");
+        setTimeout(done, 600);
     })
 
     after(() => {
