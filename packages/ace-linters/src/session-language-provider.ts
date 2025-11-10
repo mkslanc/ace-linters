@@ -43,6 +43,7 @@ export class SessionLanguageProvider {
 
     private semanticTokensLegend?: lsp.SemanticTokensLegend;
     private $provider: LanguageProvider;
+    private $changeScrollTopHandler?: () => void;
 
     /**
      * Constructs a new instance of the `SessionLanguageProvider` class.
@@ -64,7 +65,8 @@ export class SessionLanguageProvider {
         this.addSemanticTokenSupport(session); //TODO: ?
         session.on("changeMode", this.$changeMode);
         if (this.$provider.options.functionality!.semanticTokens) {
-            session.on("changeScrollTop", () => this.getSemanticTokens());
+            this.$changeScrollTopHandler = () => this.getSemanticTokens();
+            session.on("changeScrollTop", this.$changeScrollTopHandler);
         }
 
         this.$init(config);
@@ -379,6 +381,51 @@ export class SessionLanguageProvider {
             this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
         }
     };
+
+    /**
+     * Disposes of the SessionLanguageProvider, cleaning up all event listeners,
+     * marker groups, and notifying the server to close the document.
+     * This method should be called when the session is no longer needed.
+     *
+     * @param callback - Optional callback to execute after the document is closed
+     */
+    dispose(callback?) {
+        this.session.doc.off("change", this.$changeListener);
+        this.session.off("changeMode", this.$changeMode);
+
+        if (this.$changeScrollTopHandler) {
+            this.session.off("changeScrollTop", this.$changeScrollTopHandler);
+            this.$changeScrollTopHandler = undefined;
+        }
+
+        if (this.state.occurrenceMarkers) {
+            this.state.occurrenceMarkers.setMarkers([]);
+            this.state.occurrenceMarkers = null;
+        }
+
+        if (this.state.diagnosticMarkers) {
+            this.state.diagnosticMarkers.setMarkers([]);
+            this.state.diagnosticMarkers = null;
+        }
+
+        this.session.clearAnnotations();
+
+        if (this.session.setSemanticTokens) {
+            this.session.setSemanticTokens(undefined);
+        }
+
+        this.$deltaQueue = null;
+
+        this.$requestsQueue = [];
+
+        if (this.documentUri) {
+            delete this.$provider.$urisToSessionsIds[this.documentUri];
+        }
+
+        this.$isConnected = false;
+
+        this.closeDocument(callback);
+    }
 
     closeDocument(callback?) {
         this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);

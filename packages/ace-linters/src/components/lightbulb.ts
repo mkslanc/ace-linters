@@ -55,6 +55,7 @@ export class LightbulbWidget implements ILightbulbWidget {
     removeListeners() {
         this.editor.off("changeSelection", this.hideAll);
         this.editor.off("focus", this.hideAll);
+        this.editor.renderer.off("afterRender", this.setPosition);
         this.editor.session.off("changeScrollTop", this.setPosition);
         this.editor.session.off("changeScrollLeft", this.setPosition);
     }
@@ -164,6 +165,9 @@ export class LightbulbWidget implements ILightbulbWidget {
 
     dispose() {
         this.removeListeners();
-        document.body.removeChild(this.lightbulb);
+        if (this.lightbulb && this.lightbulb.parentNode) {
+            this.lightbulb.parentNode.removeChild(this.lightbulb);
+        }
+        this.popup.destroy();
     }
 }
