@@ -2,9 +2,24 @@ import {Ace} from "ace-code";
 import {BaseTooltip} from "./base-tooltip";
 
 export class SignatureTooltip extends BaseTooltip {
-    
+    editorHandlers: Map<Ace.Editor, () => void> = new Map();
+
     registerEditor(editor: Ace.Editor) {
-        editor.on("changeSelection", () => this.onChangeSelection(editor));
+        const handler = () => this.onChangeSelection(editor);
+        this.editorHandlers.set(editor, handler);
+        editor.on("changeSelection", handler);
+    }
+
+    unregisterEditor(editor: Ace.Editor) {
+        const handler = this.editorHandlers.get(editor);
+        if (handler) {
+            editor.off("changeSelection", handler);
+            this.editorHandlers.delete(editor);
+        }
+        // Clean up if this was the active editor
+        if (this.$activeEditor === editor) {
+            this.$inactivateEditor();
+        }
     }
 
 
