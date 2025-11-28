@@ -19981,7 +19981,20 @@ function signature_tooltip_define_property(obj, key, value) {
 
 class SignatureTooltip extends BaseTooltip {
     registerEditor(editor) {
-        editor.on("changeSelection", ()=>this.onChangeSelection(editor));
+        const handler = ()=>this.onChangeSelection(editor);
+        this.editorHandlers.set(editor, handler);
+        editor.on("changeSelection", handler);
+    }
+    unregisterEditor(editor) {
+        const handler = this.editorHandlers.get(editor);
+        if (handler) {
+            editor.off("changeSelection", handler);
+            this.editorHandlers.delete(editor);
+        }
+        // Clean up if this was the active editor
+        if (this.$activeEditor === editor) {
+            this.$inactivateEditor();
+        }
     }
     $registerEditorEvents() {
         this.$activeEditor.on("mousewheel", this.$onMouseWheel);
@@ -19991,6 +20004,7 @@ class SignatureTooltip extends BaseTooltip {
     }
     constructor(...args){
         super(...args);
+        signature_tooltip_define_property(this, "editorHandlers", new Map());
         signature_tooltip_define_property(this, "onChangeSelection", (editor)=>{
             if (!this.provider.options.functionality.signatureHelp) return;
             this.$activateEditor(editor);
@@ -20709,6 +20723,7 @@ class LightbulbWidget {
     removeListeners() {
         this.editor.off("changeSelection", this.hideAll);
         this.editor.off("focus", this.hideAll);
+        this.editor.renderer.off("afterRender", this.setPosition);
         this.editor.session.off("changeScrollTop", this.setPosition);
         this.editor.session.off("changeScrollLeft", this.setPosition);
     }
@@ -20797,7 +20812,10 @@ class LightbulbWidget {
     }
     dispose() {
         this.removeListeners();
-        document.body.removeChild(this.lightbulb);
+        if (this.lightbulb && this.lightbulb.parentNode) {
+            this.lightbulb.parentNode.removeChild(this.lightbulb);
+        }
+        this.popup.destroy();
     }
     constructor(editor, executeActionCallback){
         lightbulb_define_property(this, "codeActions", void 0);
@@ -21901,6 +21919,39 @@ class SessionLanguageProvider {
             }, 20);
         });
     }
+    /**
+     * Disposes of the SessionLanguageProvider, cleaning up all event listeners,
+     * marker groups, and notifying the server to close the document.
+     * This method should be called when the session is no longer needed.
+     *
+     * @param callback - Optional callback to execute after the document is closed
+     */ dispose(callback) {
+        this.session.doc.off("change", this.$changeListener);
+        this.session.off("changeMode", this.$changeMode);
+        if (this.$changeScrollTopHandler) {
+            this.session.off("changeScrollTop", this.$changeScrollTopHandler);
+            this.$changeScrollTopHandler = undefined;
+        }
+        if (this.state.occurrenceMarkers) {
+            this.state.occurrenceMarkers.setMarkers([]);
+            this.state.occurrenceMarkers = null;
+        }
+        if (this.state.diagnosticMarkers) {
+            this.state.diagnosticMarkers.setMarkers([]);
+            this.state.diagnosticMarkers = null;
+        }
+        this.session.clearAnnotations();
+        if (this.session.setSemanticTokens) {
+            this.session.setSemanticTokens(undefined);
+        }
+        this.$deltaQueue = null;
+        this.$requestsQueue = [];
+        if (this.documentUri) {
+            delete this.$provider.$urisToSessionsIds[this.documentUri];
+        }
+        this.$isConnected = false;
+        this.closeDocument(callback);
+    }
     closeDocument(callback) {
         this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
     }
@@ -21933,6 +21984,7 @@ class SessionLanguageProvider {
         session_language_provider_define_property(this, "editor", void 0);
         session_language_provider_define_property(this, "semanticTokensLegend", void 0);
         session_language_provider_define_property(this, "$provider", void 0);
+        session_language_provider_define_property(this, "$changeScrollTopHandler", void 0);
         session_language_provider_define_property(this, "$connected", (capabilities)=>{
             this.$isConnected = true;
             this.setServerCapabilities(capabilities);
@@ -22086,7 +22138,8 @@ class SessionLanguageProvider {
         this.addSemanticTokenSupport(session); //TODO: ?
         session.on("changeMode", this.$changeMode);
         if (this.$provider.options.functionality.semanticTokens) {
-            session.on("changeScrollTop", ()=>this.getSemanticTokens());
+            this.$changeScrollTopHandler = ()=>this.getSemanticTokens();
+            session.on("changeScrollTop", this.$changeScrollTopHandler);
         }
         this.$init(config);
     }
@@ -22243,6 +22296,17 @@ class LanguageProvider {
         this.registerSession(editor.session, editor, config);
     }
     /**
+     * Unregisters an Ace editor instance, removing all event listeners, completers, tooltips,
+     * and cleaning up associated resources. This is the counterpart to registerEditor.
+     *
+     * @param editor - The Ace editor instance to be unregistered.
+     * @param cleanupSession - Optional flag to also dispose the current session. When true,
+     *                         calls closeDocument on the editor's session, cleaning up all
+     *                         session-related resources. Default: false.
+     */ unregisterEditor(editor, cleanupSession = false) {
+        if (this.editors.includes(editor)) this.$unregisterEditor(editor, cleanupSession);
+    }
+    /**
      * Sets a callback function that will be triggered with an array of code actions grouped by service.
      *
      * @param {function} callback - A function that receives an array of code actions, categorized by service, as its argument.
@@ -22309,20 +22373,25 @@ class LanguageProvider {
         AceVirtualRenderer.getConstructor(editor);
         AceEditor.getConstructor(editor);
         editor.setOption("useWorker", false);
+        this.$editorEventHandlers[editor.id] = {};
         if (!this.options.manualSessionControl) {
-            editor.on("changeSession", ({ session })=>this.registerSession(session, editor, session.lspConfig));
+            const changeSessionHandler = ({ session })=>this.registerSession(session, editor, session.lspConfig);
+            this.$editorEventHandlers[editor.id].changeSession = changeSessionHandler;
+            editor.on("changeSession", changeSessionHandler);
         }
         if (this.options.functionality.completion || this.options.functionality.inlineCompletion) {
             this.$registerCompleters(editor);
         }
         var _this_activeEditor;
         (_this_activeEditor = this.activeEditor) !== null && _this_activeEditor !== void 0 ? _this_activeEditor : this.activeEditor = editor;
-        editor.on("focus", ()=>{
+        const focusHandler = ()=>{
             this.activeEditor = editor;
-        });
+        };
+        this.$editorEventHandlers[editor.id].focus = focusHandler;
+        editor.on("focus", focusHandler);
         if (this.options.functionality.documentHighlights) {
             var $timer;
-            editor.on("changeSelection", ()=>{
+            const changeSelectionForHighlights = ()=>{
                 if (!$timer) $timer = setTimeout(()=>{
                     let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
                     if (!sessionLanguageProvider) {
@@ -22333,7 +22402,9 @@ class LanguageProvider {
                     this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
                     $timer = undefined;
                 }, 50);
-            });
+            };
+            this.$editorEventHandlers[editor.id].changeSelectionForHighlights = changeSelectionForHighlights;
+            editor.on("changeSelection", changeSelectionForHighlights);
         }
         if (this.options.functionality.codeActions) {
             this.$provideCodeActions(editor);
@@ -22348,6 +22419,71 @@ class LanguageProvider {
             this.$signatureTooltip.registerEditor(editor);
         }
         this.setStyles(editor);
+    }
+    $unregisterEditor(editor, cleanupSession = false) {
+        var _this_options_functionality, _this_options_functionality1, _this_options_functionality2;
+        const editorIndex = this.editors.indexOf(editor);
+        if (editorIndex > -1) {
+            this.editors.splice(editorIndex, 1);
+        }
+        const handlers = this.$editorEventHandlers[editor.id];
+        if (handlers) {
+            if (handlers.changeSession) {
+                editor.off("changeSession", handlers.changeSession);
+            }
+            if (handlers.focus) {
+                editor.off("focus", handlers.focus);
+            }
+            if (handlers.changeSelectionForHighlights) {
+                editor.off("changeSelection", handlers.changeSelectionForHighlights);
+            }
+            if (handlers.changeSelectionForCodeActions) {
+                editor.off("changeSelection", handlers.changeSelectionForCodeActions);
+            }
+            if (handlers.afterExec) {
+                editor.commands.off('afterExec', handlers.afterExec);
+            }
+            delete this.$editorEventHandlers[editor.id];
+        }
+        const originalState = this.$editorOriginalState[editor.id];
+        if (originalState) {
+            var _this_options_functionality3, _this_options_functionality4, _this_options_functionality5;
+            if (((_this_options_functionality3 = this.options.functionality) === null || _this_options_functionality3 === void 0 ? void 0 : _this_options_functionality3.completion) && originalState.completers !== undefined) {
+                editor.completers = originalState.completers;
+            }
+            if (((_this_options_functionality4 = this.options.functionality) === null || _this_options_functionality4 === void 0 ? void 0 : _this_options_functionality4.inlineCompletion) && originalState.inlineCompleters !== undefined) {
+                editor.inlineCompleters = originalState.inlineCompleters;
+            }
+            if ((_this_options_functionality5 = this.options.functionality) === null || _this_options_functionality5 === void 0 ? void 0 : _this_options_functionality5.inlineCompletion) {
+                if (originalState.inlineAutocompleteCommand) {
+                    editor.commands.addCommand(originalState.inlineAutocompleteCommand);
+                } else {
+                    try {
+                        editor.commands.removeCommand("startInlineAutocomplete");
+                    } catch (e) {}
+                }
+            }
+            delete this.$editorOriginalState[editor.id];
+        }
+        if ((_this_options_functionality = this.options.functionality) === null || _this_options_functionality === void 0 ? void 0 : _this_options_functionality.signatureHelp) {
+            this.$signatureTooltip.unregisterEditor(editor);
+        }
+        if (((_this_options_functionality1 = this.options.functionality) === null || _this_options_functionality1 === void 0 ? void 0 : _this_options_functionality1.hover) && this.$hoverTooltip) {
+            this.$hoverTooltip.removeFromEditor(editor);
+        }
+        if ((_this_options_functionality2 = this.options.functionality) === null || _this_options_functionality2 === void 0 ? void 0 : _this_options_functionality2.codeActions) {
+            const lightBulb = this.$lightBulbWidgets[editor.id];
+            if (lightBulb) {
+                lightBulb.dispose();
+                delete this.$lightBulbWidgets[editor.id];
+            }
+        }
+        if (this.activeEditor === editor) {
+            this.activeEditor = this.editors.length > 0 ? this.editors[0] : null;
+        }
+        if (cleanupSession && editor.session) {
+            this.closeDocument(editor.session);
+        }
     }
     $provideCodeActions(editor) {
         const lightBulb = new LightbulbWidget(editor);
@@ -22367,7 +22503,7 @@ class LanguageProvider {
             }
         });
         var actionTimer;
-        editor.on("changeSelection", ()=>{
+        const changeSelectionForCodeActions = ()=>{
             if (!actionTimer) actionTimer = setTimeout(()=>{
                 if (!this.$getSessionLanguageProvider(editor.session)) {
                     actionTimer = undefined;
@@ -22385,7 +22521,9 @@ class LanguageProvider {
                 });
                 actionTimer = undefined;
             }, 500);
-        });
+        };
+        this.$editorEventHandlers[editor.id].changeSelectionForCodeActions = changeSelectionForCodeActions;
+        editor.on("changeSelection", changeSelectionForCodeActions);
     }
     $initHoverTooltip(editor) {
         const Range = editor.getSelectionRange().constructor;
@@ -22499,8 +22637,10 @@ class LanguageProvider {
     }
     getSemanticTokens() {
         if (!this.options.functionality.semanticTokens) return;
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
-        sessionLanguageProvider.getSemanticTokens();
+        if (this.activeEditor) {
+            let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+            sessionLanguageProvider.getSemanticTokens();
+        }
     }
     doComplete(editor, session, callback) {
         let cursor = editor.getCursorPosition();
@@ -22514,16 +22654,27 @@ class LanguageProvider {
         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
     }
     $registerCompleters(editor) {
-        var _this_options_functionality, _this_options_functionality1, _this_options_functionality2, _this_options_functionality3, _this_options_functionality4, _this_options_functionality5, _this_options_functionality6, _this_options, _this_options_functionality7;
+        var _this_options_functionality, _this_options_functionality1, _this_options_functionality2, _this_options_functionality3, _this_options_functionality4, _this_options, _this_options_functionality5;
         let completer, inlineCompleter;
         if (!((_this_options_functionality = this.options.functionality) === null || _this_options_functionality === void 0 ? void 0 : _this_options_functionality.completion) && !((_this_options_functionality1 = this.options.functionality) === null || _this_options_functionality1 === void 0 ? void 0 : _this_options_functionality1.inlineCompletion)) {
             return;
         }
-        if (((_this_options_functionality2 = this.options.functionality) === null || _this_options_functionality2 === void 0 ? void 0 : _this_options_functionality2.completion) && ((_this_options_functionality3 = this.options.functionality) === null || _this_options_functionality3 === void 0 ? void 0 : _this_options_functionality3.completion.overwriteCompleters)) {
-            editor.completers = [];
+        this.$editorOriginalState[editor.id] = {};
+        if ((_this_options_functionality2 = this.options.functionality) === null || _this_options_functionality2 === void 0 ? void 0 : _this_options_functionality2.completion) {
+            this.$editorOriginalState[editor.id].completers = editor.completers ? [
+                ...editor.completers
+            ] : [];
+            if (this.options.functionality.completion.overwriteCompleters) {
+                editor.completers = [];
+            }
         }
-        if (((_this_options_functionality4 = this.options.functionality) === null || _this_options_functionality4 === void 0 ? void 0 : _this_options_functionality4.inlineCompletion) && ((_this_options_functionality5 = this.options.functionality) === null || _this_options_functionality5 === void 0 ? void 0 : _this_options_functionality5.inlineCompletion.overwriteCompleters)) {
-            editor.inlineCompleters = [];
+        if ((_this_options_functionality3 = this.options.functionality) === null || _this_options_functionality3 === void 0 ? void 0 : _this_options_functionality3.inlineCompletion) {
+            this.$editorOriginalState[editor.id].inlineCompleters = editor.inlineCompleters ? [
+                ...editor.inlineCompleters
+            ] : [];
+            if (this.options.functionality.inlineCompletion.overwriteCompleters) {
+                editor.inlineCompleters = [];
+            }
         }
         if (this.options.functionality.completion) {
             completer = {
@@ -22569,7 +22720,7 @@ class LanguageProvider {
             };
             editor.completers.push(completer);
         }
-        if ((_this_options = this.options) === null || _this_options === void 0 ? void 0 : (_this_options_functionality6 = _this_options.functionality) === null || _this_options_functionality6 === void 0 ? void 0 : _this_options_functionality6.inlineCompletion) {
+        if ((_this_options = this.options) === null || _this_options === void 0 ? void 0 : (_this_options_functionality4 = _this_options.functionality) === null || _this_options_functionality4 === void 0 ? void 0 : _this_options_functionality4.inlineCompletion) {
             this.checkInlineCompletionAdapter(()=>{
                 if (this.completerAdapter) {
                     var _editor;
@@ -22581,7 +22732,9 @@ class LanguageProvider {
                 }
             });
         }
-        if ((_this_options_functionality7 = this.options.functionality) === null || _this_options_functionality7 === void 0 ? void 0 : _this_options_functionality7.inlineCompletion) {
+        if ((_this_options_functionality5 = this.options.functionality) === null || _this_options_functionality5 === void 0 ? void 0 : _this_options_functionality5.inlineCompletion) {
+            const existingCommand = editor.commands.commands["startInlineAutocomplete"];
+            this.$editorOriginalState[editor.id].inlineAutocompleteCommand = existingCommand || null;
             editor.commands.addCommand({
                 name: "startInlineAutocomplete",
                 exec: (editor, options)=>{
@@ -22594,6 +22747,7 @@ class LanguageProvider {
                     mac: "Option-C"
                 }
             });
+            this.$editorEventHandlers[editor.id].afterExec = this.doLiveAutocomplete;
             editor.commands.on('afterExec', this.doLiveAutocomplete);
             inlineCompleter = {
                 getCompletions: async (editor, session, pos, prefix, callback)=>{
@@ -22621,13 +22775,14 @@ class LanguageProvider {
         });
     }
     /**
-     * Removes document from all linked services by session id
-     * @param session
-     * @param [callback]
+     * Removes document from all linked services by session id and cleans up all associated resources.
+     * This includes removing event listeners, clearing marker groups, annotations, and notifying the server.
+     * @param session - The Ace EditSession to close
+     * @param [callback] - Optional callback to execute after the document is closed
      */ closeDocument(session, callback) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
         if (sessionProvider) {
-            sessionProvider.closeDocument(callback);
+            sessionProvider.dispose(callback);
             delete this.$sessionLanguageProviders[session["id"]];
         }
     }
@@ -22669,6 +22824,8 @@ class LanguageProvider {
         language_provider_define_property(this, "inlineCompleter", void 0);
         language_provider_define_property(this, "doLiveAutocomplete", void 0);
         language_provider_define_property(this, "completerAdapter", void 0);
+        language_provider_define_property(this, "$editorEventHandlers", {});
+        language_provider_define_property(this, "$editorOriginalState", {});
         /**
      * Registers a new editing session with the editor and associates it with a language provider.
      * If a language provider for the specified editing session does not already exist, it initializes
@@ -22688,8 +22845,10 @@ class LanguageProvider {
         language_provider_define_property(this, "codeActionCallback", void 0);
         language_provider_define_property(this, "format", ()=>{
             if (!this.options.functionality.format) return;
-            let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
-            sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
+            if (this.activeEditor) {
+                let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+                sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
+            }
         });
         this.$messageController = new MessageController(worker, this);
         this.setProviderOptions(options);

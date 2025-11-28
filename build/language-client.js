@@ -17960,11 +17960,31 @@ class LanguageClient extends base_service.BaseService {
     }
     async closeConnection() {
         if (!this.connection) return;
-        await this.dispose();
-        await this.connection.sendRequest("shutdown");
-        await this.connection.sendNotification('exit');
-        if (this.socket) this.socket.close();
-        this.isConnected = false;
+        try {
+            Object.values(this.callbacks).forEach((callback)=>{
+                if (typeof callback === 'function') {
+                    callback({
+                        error: 'Connection closed'
+                    });
+                }
+            });
+            this.callbacks = {};
+            if (this.isConnected) {
+                await this.connection.sendRequest("shutdown");
+                await this.connection.sendNotification('exit');
+            }
+            await this.dispose();
+            if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
+                this.socket.close();
+            }
+            this.isConnected = false;
+        } catch (error) {
+            language_client_console.error('Error closing connection:', error);
+            this.isConnected = false;
+            if (this.socket && this.socket.readyState !== WebSocket.CLOSED) {
+                this.socket.close();
+            }
+        }
     }
     sendInitialize(initializationOptions) {
         if (!this.isConnected) return;
