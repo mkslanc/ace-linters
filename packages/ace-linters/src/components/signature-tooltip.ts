@@ -50,6 +50,11 @@ export class SignatureTooltip extends BaseTooltip {
 
 
     provideSignatureHelp = () => {
+        if (!this.$activeEditor) {
+            // Editor was deactivated before this callback
+            return;
+        }
+        
         let cursor = this.$activeEditor!.getCursorPosition();
         let session = this.$activeEditor!.session;
         let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
