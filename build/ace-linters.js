@@ -20026,6 +20026,10 @@ class SignatureTooltip extends BaseTooltip {
             this.provideSignatureHelp();
         });
         signature_tooltip_define_property(this, "provideSignatureHelp", ()=>{
+            if (!this.$activeEditor) {
+                // Editor was deactivated before this callback
+                return;
+            }
             let cursor = this.$activeEditor.getCursorPosition();
             let session = this.$activeEditor.session;
             let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
