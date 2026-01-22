@@ -141,6 +141,7 @@ export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceO
     extraLibs?: {
         [path: string]: ExtraLib;
     },
+    extraLibsZip?: string, // Base64 encoded zip file containing .d.ts files
     formatOptions?: ts.FormatCodeSettings
 }
 

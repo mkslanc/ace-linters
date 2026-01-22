@@ -21,6 +21,7 @@ import {mergeObjects} from "../../utils";
 import {LanguageService, TsServiceOptions} from "../../types/language-service";
 import {TextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {SemanticTokensBuilder} from "../../type-converters/lsp/semantic-tokens";
+import { unzipSync, strFromU8 } from 'fflate';
 
 export class TypescriptService extends BaseService<TsServiceOptions> implements /*ts.LanguageServiceHost,*/ LanguageService {
     private $service: ts.LanguageService;
@@ -93,6 +94,60 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         this.$service = ts.createLanguageService(this);
     }
 
+    setGlobalOptions(options: TsServiceOptions) {
+        // Process extraLibsZip before calling super.setGlobalOptions
+        if (options?.extraLibsZip) {
+            const processedOptions = this.processExtraLibsZip(options);
+            super.setGlobalOptions(processedOptions);
+        } else {
+            super.setGlobalOptions(options);
+        }
+    }
+
+    private processExtraLibsZip(options: TsServiceOptions): TsServiceOptions {
+        try {
+            // Convert base64 to Uint8Array
+            const binaryString = atob(options.extraLibsZip!);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            
+            // Unzip the file
+            const unzipped = unzipSync(bytes);
+            
+            // Extract .d.ts files and merge with existing extraLibs
+            const zipLibs: { [path: string]: { content: string; version: number } } = {};
+            for (const [path, content] of Object.entries(unzipped)) {
+                // Only process .d.ts files
+                if (path.endsWith('.d.ts')) {
+                    // Convert Uint8Array to string
+                    const textContent = strFromU8(content);
+                    zipLibs[path] = {
+                        content: textContent,
+                        version: 1
+                    };
+                }
+            }
+            
+            // Merge zip libs with existing extraLibs
+            const mergedExtraLibs = {
+                ...(options.extraLibs || {}),
+                ...zipLibs
+            };
+            
+            // Return options with merged extraLibs and without extraLibsZip
+            const { extraLibsZip, ...optionsWithoutZip } = options;
+            return {
+                ...optionsWithoutZip,
+                extraLibs: mergedExtraLibs
+            };
+        } catch (error) {
+            console.error('Failed to process extraLibsZip:', error);
+            throw new Error(`Failed to process extraLibsZip: ${error.message}`);
+        }
+    }
+
     private getCompilationSettings(): ts.CompilerOptions {
         const parseConfigHost = {
             fileExists: () => {
@@ -117,7 +172,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
     }
 
     private get $extraLibs() {
-        return this.globalOptions["extraLibs"] ?? [];
+        return this.globalOptions["extraLibs"] ?? {};
     }
 
     private getScriptVersion(fileName: string): string {
