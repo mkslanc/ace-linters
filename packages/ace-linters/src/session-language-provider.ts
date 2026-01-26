@@ -68,6 +68,7 @@ export class SessionLanguageProvider {
             this.$changeScrollTopHandler = () => this.getSemanticTokens();
             session.on("changeScrollTop", this.$changeScrollTopHandler);
         }
+        session.setUseWorker(false);
 
         this.$init(config);
     }
@@ -423,6 +424,8 @@ export class SessionLanguageProvider {
         }
 
         this.$isConnected = false;
+        //initial worker state
+        this.session.setUseWorker(true);
 
         this.closeDocument(callback);
     }
