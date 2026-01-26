@@ -457,6 +457,8 @@ export class LanguageProvider {
             }
         }
 
+        editor.setOption("useWorker", true);
+
         if (this.activeEditor === editor) {
             this.activeEditor = this.editors.length > 0 ? this.editors[0] : null;
         }
