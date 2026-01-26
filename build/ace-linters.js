@@ -21954,6 +21954,8 @@ class SessionLanguageProvider {
             delete this.$provider.$urisToSessionsIds[this.documentUri];
         }
         this.$isConnected = false;
+        //initial worker state
+        this.session.setUseWorker(true);
         this.closeDocument(callback);
     }
     closeDocument(callback) {
@@ -22145,6 +22147,7 @@ class SessionLanguageProvider {
             this.$changeScrollTopHandler = ()=>this.getSemanticTokens();
             session.on("changeScrollTop", this.$changeScrollTopHandler);
         }
+        session.setUseWorker(false);
         this.$init(config);
     }
 }
@@ -22482,6 +22485,7 @@ class LanguageProvider {
                 delete this.$lightBulbWidgets[editor.id];
             }
         }
+        editor.setOption("useWorker", true);
         if (this.activeEditor === editor) {
             this.activeEditor = this.editors.length > 0 ? this.editors[0] : null;
         }
