@@ -3,11 +3,17 @@ import {BaseTooltip} from "./base-tooltip";
 
 export class SignatureTooltip extends BaseTooltip {
     editorHandlers: Map<Ace.Editor, () => void> = new Map();
+    escCommand = {
+        exec: this.$hide,
+        bindKey: "Esc"
+    };
 
     registerEditor(editor: Ace.Editor) {
         const handler = () => this.onChangeSelection(editor);
         this.editorHandlers.set(editor, handler);
         editor.on("changeSelection", handler);
+
+        editor.commands.addCommand(this.escCommand);
     }
 
     unregisterEditor(editor: Ace.Editor) {
@@ -20,8 +26,9 @@ export class SignatureTooltip extends BaseTooltip {
         if (this.$activeEditor === editor) {
             this.$inactivateEditor();
         }
-    }
 
+        editor.commands.removeCommand(this.escCommand);
+    }
 
     onChangeSelection = (editor: Ace.Editor) => {
         if (!this.provider.options.functionality!.signatureHelp)
@@ -54,7 +61,7 @@ export class SignatureTooltip extends BaseTooltip {
             // Editor was deactivated before this callback
             return;
         }
-        
+
         let cursor = this.$activeEditor!.getCursorPosition();
         let session = this.$activeEditor!.session;
         let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
@@ -85,16 +92,25 @@ export class SignatureTooltip extends BaseTooltip {
         });
     }
 
-    $onMouseWheel = (e) => {
-        console.log(e);
-        setTimeout(this.$show, 0);
+    $onAfterRender = (e) => {
+        if (!this.isOpen) return;
+        setTimeout(() => {
+            if (!this.$activeEditor?.isRowVisible(this.row)) {
+                this.$hide();
+            } else {
+                this.$show();
+            }
+        }, 0);
+
     }
 
     $registerEditorEvents() {
-        this.$activeEditor!.on("mousewheel", this.$onMouseWheel);
+        this.$activeEditor!.renderer.on("afterRender", this.$onAfterRender);
+        this.$activeEditor!.on("blur", this.$hide);
     }
 
     $removeEditorEvents() {
-        this.$activeEditor!.off("mousewheel", this.$onMouseWheel);
+        this.$activeEditor!.renderer.off("afterRender", this.$onAfterRender);
+        this.$activeEditor!.off("blur", this.$hide);
     }
 }
