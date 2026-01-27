@@ -19964,7 +19964,6 @@ class BaseTooltip extends Tooltip {
 }
 
 ;// CONCATENATED MODULE: ./src/components/signature-tooltip.ts
-/* provided dependency */ var signature_tooltip_console = __webpack_require__(4364);
 function signature_tooltip_define_property(obj, key, value) {
     if (key in obj) {
         Object.defineProperty(obj, key, {
@@ -19984,6 +19983,7 @@ class SignatureTooltip extends BaseTooltip {
         const handler = ()=>this.onChangeSelection(editor);
         this.editorHandlers.set(editor, handler);
         editor.on("changeSelection", handler);
+        editor.commands.addCommand(this.escCommand);
     }
     unregisterEditor(editor) {
         const handler = this.editorHandlers.get(editor);
@@ -19995,16 +19995,23 @@ class SignatureTooltip extends BaseTooltip {
         if (this.$activeEditor === editor) {
             this.$inactivateEditor();
         }
+        editor.commands.removeCommand(this.escCommand);
     }
     $registerEditorEvents() {
-        this.$activeEditor.on("mousewheel", this.$onMouseWheel);
+        this.$activeEditor.renderer.on("afterRender", this.$onAfterRender);
+        this.$activeEditor.on("blur", this.$hide);
     }
     $removeEditorEvents() {
-        this.$activeEditor.off("mousewheel", this.$onMouseWheel);
+        this.$activeEditor.renderer.off("afterRender", this.$onAfterRender);
+        this.$activeEditor.off("blur", this.$hide);
     }
     constructor(...args){
         super(...args);
         signature_tooltip_define_property(this, "editorHandlers", new Map());
+        signature_tooltip_define_property(this, "escCommand", {
+            exec: this.$hide,
+            bindKey: "Esc"
+        });
         signature_tooltip_define_property(this, "onChangeSelection", (editor)=>{
             if (!this.provider.options.functionality.signatureHelp) return;
             this.$activateEditor(editor);
@@ -20057,9 +20064,16 @@ class SignatureTooltip extends BaseTooltip {
                 this.$show();
             });
         });
-        signature_tooltip_define_property(this, "$onMouseWheel", (e)=>{
-            signature_tooltip_console.log(e);
-            setTimeout(this.$show, 0);
+        signature_tooltip_define_property(this, "$onAfterRender", (e)=>{
+            if (!this.isOpen) return;
+            setTimeout(()=>{
+                var _this_$activeEditor;
+                if (!((_this_$activeEditor = this.$activeEditor) === null || _this_$activeEditor === void 0 ? void 0 : _this_$activeEditor.isRowVisible(this.row))) {
+                    this.$hide();
+                } else {
+                    this.$show();
+                }
+            }, 0);
         });
     }
 }
