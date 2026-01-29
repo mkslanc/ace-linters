@@ -3,9 +3,12 @@
   "version": "1.8.8",
   "scripts": {
     "build:parts": "npm run build -ws",
-    "build": "npm run build:parts && webpack",
-    "start": "npm run build:parts && webpack-dev-server",
-    "start-dev": "webpack-dev-server"
+    "build": "npm run build:parts && vite build",
+    "start": "npm run build:parts && vite",
+    "start-dev": "vite",
+    "preview": "vite preview",
+    "build:webpack": "npm run build:parts && webpack",
+    "start:webpack": "npm run build:parts && webpack-dev-server"
   },
   "dependencies": {
     "ace-layout": "^1.5.0",
@@ -20,6 +23,8 @@
     "raw-loader": "^4.0.2",
     "swc-loader": "^0.2.3",
     "text-loader": "latest",
+    "vite": "^6.0.0",
+    "vite-plugin-static-copy": "^2.2.0",
     "webpack": "latest",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.15.1"

@@ -49,7 +49,7 @@ let modes = [
     {name: "dart", mode: "ace/mode/dart", content: dartContent},
     {name: "golang", mode: "ace/mode/golang", content: goContent}
 ];
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 
 let languageProvider = LanguageProvider.create(worker, {
     functionality: {
