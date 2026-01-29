@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.8.8",
+  "version": "2.0.0",
   "scripts": {
     "clean": "rimraf build",
     "postbuild": "node postbuild.js",
@@ -9,7 +9,6 @@
     "build:eslint-linter-bundle": "cd ../eslint-linter-bundle && npm run build",
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
     "build": "npm run build:dependencies && node build.mjs",
-    "build:webpack": "npm run clean && npm run build:dependencies && webpack --mode=production",
     "build-dev": "npm run build:dependencies && node build.mjs --dev",
     "copy-build": "node tools/copy-build-for-tests.js",
     "start-test-server": "npm run copy-build && http-server --cors='*' tests/ui/dist",

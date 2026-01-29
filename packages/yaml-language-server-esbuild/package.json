@@ -13,7 +13,7 @@
     "prettier": "^3.5.1",
     "vscode-languageserver-textdocument": "^1.0.0",
     "yaml-language-server": "^1.19.2",
-    "esbuild": "^0.20.2"
+    "esbuild": "^0.27.2"
   },
   "main": "./dist/index.js"
 }

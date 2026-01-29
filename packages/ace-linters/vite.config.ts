@@ -11,8 +11,8 @@ function umd2Plugin(): Plugin {
         if (chunk.type === 'chunk' && chunk.code) {
           // Replace the UMD wrapper to export directly to global instead of namespace
           chunk.code = chunk.code.replace(
-            /factory\(global\.[\w]+ = \{\}\)/g,
-            'factory(global)'
+            /factory\((global\d*)\.[\w]+ = \{\}\)/g,
+            'factory($1)'
           );
         }
       }

@@ -13,7 +13,8 @@
     "esModuleInterop": true,
     "declaration": true,
     "declarationDir": "./types",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["mocha"]
   },
   "ts-node": {
     "transpileOnly": true

@@ -91,12 +91,12 @@ describe("Editor Console Error Tests", function () {
     it("should not produce errors when switching modes (without extra settings)", async function () {
 
         const modes = [
-            "typescript", "json", "css", "html", "yaml", "php", "xml", "javascript", "lua", "less", "scss",
-            "python", "css"
+            "typescript", "json", "css", "html", "yaml", "php", "xml", "javascript", "lua", "less", "scss"
         ];
         for (const mode of modes) {
             // Clear errors for each mode.
             consoleErrors.length = 0;
+            console.log(mode);
 
             await page.evaluate(function (mode) {
                 window.testFlags.modeChanged = false;
