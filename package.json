@@ -1,14 +1,11 @@
 {
   "name": "ace-linters-root",
-  "version": "1.8.8",
+  "version": "2.0.0",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && vite build",
     "start": "npm run build:parts && vite",
-    "start-dev": "vite",
-    "preview": "vite preview",
-    "build:webpack": "npm run build:parts && webpack",
-    "start:webpack": "npm run build:parts && webpack-dev-server"
+    "start-dev": "vite"
   },
   "dependencies": {
     "ace-layout": "^1.5.0",
@@ -18,16 +15,12 @@
   },
   "devDependencies": {
     "@types/node": "^20.4.2",
-    "copy-webpack-plugin": "9.1.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "raw-loader": "^4.0.2",
     "swc-loader": "^0.2.3",
     "text-loader": "latest",
     "vite": "^6.0.0",
-    "vite-plugin-static-copy": "^2.2.0",
-    "webpack": "latest",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.15.1"
+    "vite-plugin-static-copy": "^2.2.0"
   },
   "main": "build/bundle.simple.js",
   "workspaces": [

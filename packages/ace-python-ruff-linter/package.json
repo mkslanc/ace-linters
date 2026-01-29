@@ -1,18 +1,20 @@
 {
   "name": "ace-python-ruff-linter",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
-    "build": "npm run clean && webpack --mode=production"
+    "build": "npm run clean && vite build"
   },
   "devDependencies": {
-    "@astral-sh/ruff-wasm-web": "^0.9.9"
+    "@astral-sh/ruff-wasm-web": "^0.14.14",
+    "vite": "^6.0.0",
+    "vite-plugin-node-polyfills": "^0.25.0"
   },
   "peerDependencies": {
-    "ace-linters": "^1.5.0"
+    "ace-linters": "^2.0.0"
   },
   "files": ["build", "types"],
   "typesVersions": {

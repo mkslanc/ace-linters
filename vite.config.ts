@@ -81,14 +81,6 @@ export default defineConfig({
     },
   },
 
-  preview: {
-    port: 9000,
-    headers: {
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-      'Cross-Origin-Opener-Policy': 'same-origin',
-    },
-  },
-
   worker: {
     format: 'es',
   },
@@ -139,7 +131,7 @@ export default defineConfig({
       { find: /^ace-linters\/build\/ace-linters(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/index.ts') },
       // Map ace-linters main entry
       { find: 'ace-linters', replacement: resolve(__dirname, 'packages/ace-linters/src/index.ts') },
-      // Map other workspace linter packages to source for dev
+      // Map workspace linter packages to source for dev
       { find: /^ace-zig-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-zig-linter/src/$1.ts') },
       { find: /^ace-lua-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-lua-linter/src/$1.ts') },
       { find: /^ace-clang-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-clang-linter/src/$1.ts') },

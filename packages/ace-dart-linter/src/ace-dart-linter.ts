@@ -1,5 +1,5 @@
 import {BaseService} from "ace-linters/src/services/base-service";
-import init, {format} from "@wasm-fmt/dart_fmt";
+import init, {format} from "@wasm-fmt/dart_fmt/dart_fmt_web";
 
 import {LanguageService} from "ace-linters/src/types/language-service";
 import type {AceDartLinterOptions} from "./service";
@@ -20,7 +20,6 @@ export class AceDartLinter extends BaseService<AceDartLinterOptions> implements 
     $defaultFormatOptions = {
         line_width: 80,
         line_ending: "lf",
-        language_version: "2.17",
     }
 
     constructor(mode: string) {
