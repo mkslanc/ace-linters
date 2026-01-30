@@ -1,6 +1,6 @@
 # Ace Linters (Ace Language Client)
 
-Ace linters is lsp client for Ace editor. It comes with large number of preconfigured easy to use in browser servers.
+Ace linters is lsp client for Ace editor. It comes with a large number of preconfigured easy to use in browser servers.
 
 If you're uncertain about integrating ace-linters, consult [our diagram on the GitHub Wiki](https://github.com/mkslanc/ace-linters/wiki/Usage-Scenarios-Overview) for a quick setup guide
 tailored to your needs.
@@ -28,6 +28,21 @@ languageProvider.registerEditor(editor);
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
 
+## What's New in 2.0.0
+
+### Build System Migration
+- Migrated from webpack to Vite for faster builds and better development experience
+- UMD output format preserved - no changes required for existing integrations
+- Improved development workflow with Vite dev server and HMR support
+
+### For Library Users
+No breaking changes - all existing code using ace-linters via CDN or npm **will continue to work without modifications**.
+
+### For Contributors
+- Development server: `npm run start-dev` (no pre-build required)
+- Individual package builds use Vite instead of webpack
+- Workspace packages are aliased to source files during development for instant HMR
+
 ## New features in 1.8.1
 - add `manualSessionControl` provider option to disable automatic session registration. When enabled, you must manually handle session changes:
 ```javascript
@@ -51,15 +66,15 @@ editor.on("changeSession", ({session}) => {
 ```javascript
 // Set LSP configuration on session
 languageProvider.setSessionLspConfig(editor.session, {
-    filePath: 'src/components/MyComponent.tsx',
-    joinWorkspaceURI: true
+  filePath: 'src/components/MyComponent.tsx',
+  joinWorkspaceURI: true
 });
 ```
 - add `setDocumentOptions` method to replace deprecated `setSessionOptions`:
 ```javascript
 // Configure document-specific options (replaces setSessionOptions)
 languageProvider.setDocumentOptions(editor.session, {
-    // service-specific options here
+  // service-specific options here
 });
 ```
 
@@ -116,15 +131,15 @@ LanguageProvider.create(worker, {functionality: {semanticTokens: true}})
 <div id="editor" style="height: 100px">some text</div>
 
 <script>
-    ace.require("ace/ext/language_tools"); //To allow autocompletion
-    var editor = ace.edit("editor", {
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
-      mode: "ace/mode/css"
-    });
+  ace.require("ace/ext/language_tools"); //To allow autocompletion
+  var editor = ace.edit("editor", {
+    enableBasicAutocompletion: true,
+    enableLiveAutocompletion: true,
+    mode: "ace/mode/css"
+  });
 
-    var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
-    provider.registerEditor(editor);
+  var provider = LanguageProvider.fromCdn("https://www.unpkg.com/ace-linters@latest/build/");
+  provider.registerEditor(editor);
 </script>
 ```
 
@@ -144,14 +159,14 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 
 // Create a web socket
 const serverData = {
-    module: () => import("ace-linters/build/language-client"),
-    modes: "json|json5",
-    type: "socket",
-    socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
+  module: () => import("ace-linters/build/language-client"),
+  modes: "json|json5",
+  type: "socket",
+  socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
 }
 // Create an Ace editor
 let editor = ace.edit("container", {
-    mode: new JSONMode() // Set the mode of the editor to JSON
+  mode: new JSONMode() // Set the mode of the editor to JSON
 });
 
 // Create a language provider for web socket

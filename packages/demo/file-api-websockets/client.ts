@@ -3,7 +3,7 @@ import {addFormatCommand} from "../utils";
 import {Ace} from "ace-code";
 import {LanguageProvider} from "ace-linters";
 
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 
 let languageProvider = LanguageProvider.create(worker, {
     functionality: {semanticTokens: true},

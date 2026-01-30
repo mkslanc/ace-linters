@@ -7,8 +7,7 @@ var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
   get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
 }) : x)(function(x) {
-  if (typeof require !== "undefined")
-    return require.apply(this, arguments);
+  if (typeof require !== "undefined") return require.apply(this, arguments);
   throw Error('Dynamic require of "' + x + '" is not supported');
 });
 var __commonJS = (cb, mod) => function __require2() {
@@ -150,17 +149,13 @@ var require_path_browserify = __commonJS({
       },
       normalize: function normalize(path) {
         assertPath(path);
-        if (path.length === 0)
-          return ".";
+        if (path.length === 0) return ".";
         var isAbsolute = path.charCodeAt(0) === 47;
         var trailingSeparator = path.charCodeAt(path.length - 1) === 47;
         path = normalizeStringPosix(path, !isAbsolute);
-        if (path.length === 0 && !isAbsolute)
-          path = ".";
-        if (path.length > 0 && trailingSeparator)
-          path += "/";
-        if (isAbsolute)
-          return "/" + path;
+        if (path.length === 0 && !isAbsolute) path = ".";
+        if (path.length > 0 && trailingSeparator) path += "/";
+        if (isAbsolute) return "/" + path;
         return path;
       },
       isAbsolute: function isAbsolute(path) {
@@ -188,12 +183,10 @@ var require_path_browserify = __commonJS({
       relative: function relative(from, to) {
         assertPath(from);
         assertPath(to);
-        if (from === to)
-          return "";
+        if (from === to) return "";
         from = posix.resolve(from);
         to = posix.resolve(to);
-        if (from === to)
-          return "";
+        if (from === to) return "";
         var fromStart = 1;
         for (; fromStart < from.length; ++fromStart) {
           if (from.charCodeAt(fromStart) !== 47)
@@ -258,8 +251,7 @@ var require_path_browserify = __commonJS({
       },
       dirname: function dirname(path) {
         assertPath(path);
-        if (path.length === 0)
-          return ".";
+        if (path.length === 0) return ".";
         var code = path.charCodeAt(0);
         var hasRoot = code === 47;
         var end = -1;
@@ -275,23 +267,19 @@ var require_path_browserify = __commonJS({
             matchedSlash = false;
           }
         }
-        if (end === -1)
-          return hasRoot ? "/" : ".";
-        if (hasRoot && end === 1)
-          return "//";
+        if (end === -1) return hasRoot ? "/" : ".";
+        if (hasRoot && end === 1) return "//";
         return path.slice(0, end);
       },
       basename: function basename(path, ext) {
-        if (ext !== void 0 && typeof ext !== "string")
-          throw new TypeError('"ext" argument must be a string');
+        if (ext !== void 0 && typeof ext !== "string") throw new TypeError('"ext" argument must be a string');
         assertPath(path);
         var start = 0;
         var end = -1;
         var matchedSlash = true;
         var i;
         if (ext !== void 0 && ext.length > 0 && ext.length <= path.length) {
-          if (ext.length === path.length && ext === path)
-            return "";
+          if (ext.length === path.length && ext === path) return "";
           var extIdx = ext.length - 1;
           var firstNonSlashEnd = -1;
           for (i = path.length - 1; i >= 0; --i) {
@@ -318,10 +306,8 @@ var require_path_browserify = __commonJS({
               }
             }
           }
-          if (start === end)
-            end = firstNonSlashEnd;
-          else if (end === -1)
-            end = path.length;
+          if (start === end) end = firstNonSlashEnd;
+          else if (end === -1) end = path.length;
           return path.slice(start, end);
         } else {
           for (i = path.length - 1; i >= 0; --i) {
@@ -335,8 +321,7 @@ var require_path_browserify = __commonJS({
               end = i + 1;
             }
           }
-          if (end === -1)
-            return "";
+          if (end === -1) return "";
           return path.slice(start, end);
         }
       },
@@ -385,8 +370,7 @@ var require_path_browserify = __commonJS({
       parse: function parse(path) {
         assertPath(path);
         var ret = { root: "", dir: "", base: "", ext: "", name: "" };
-        if (path.length === 0)
-          return ret;
+        if (path.length === 0) return ret;
         var code = path.charCodeAt(0);
         var isAbsolute = code === 47;
         var start;
@@ -416,10 +400,8 @@ var require_path_browserify = __commonJS({
             end = i + 1;
           }
           if (code === 46) {
-            if (startDot === -1)
-              startDot = i;
-            else if (preDotState !== 1)
-              preDotState = 1;
+            if (startDot === -1) startDot = i;
+            else if (preDotState !== 1) preDotState = 1;
           } else if (startDot !== -1) {
             preDotState = -1;
           }
@@ -428,10 +410,8 @@ var require_path_browserify = __commonJS({
         preDotState === 0 || // The (right-most) trimmed path component is exactly '..'
         preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
           if (end !== -1) {
-            if (startPart === 0 && isAbsolute)
-              ret.base = ret.name = path.slice(1, end);
-            else
-              ret.base = ret.name = path.slice(startPart, end);
+            if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);
+            else ret.base = ret.name = path.slice(startPart, end);
           }
         } else {
           if (startPart === 0 && isAbsolute) {
@@ -443,10 +423,8 @@ var require_path_browserify = __commonJS({
           }
           ret.ext = path.slice(startDot, end);
         }
-        if (startPart > 0)
-          ret.dir = path.slice(0, startPart - 1);
-        else if (isAbsolute)
-          ret.dir = "/";
+        if (startPart > 0) ret.dir = path.slice(0, startPart - 1);
+        else if (isAbsolute) ret.dir = "/";
         return ret;
       },
       sep: "/",
@@ -471,7 +449,7 @@ var require_shams = __commonJS({
         return true;
       }
       var obj = {};
-      var sym = Symbol("test");
+      var sym = /* @__PURE__ */ Symbol("test");
       var symObj = Object(sym);
       if (typeof sym === "string") {
         return false;
@@ -484,7 +462,7 @@ var require_shams = __commonJS({
       }
       var symVal = 42;
       obj[sym] = symVal;
-      for (sym in obj) {
+      for (var _ in obj) {
         return false;
       }
       if (typeof Object.keys === "function" && Object.keys(obj).length !== 0) {
@@ -501,7 +479,10 @@ var require_shams = __commonJS({
         return false;
       }
       if (typeof Object.getOwnPropertyDescriptor === "function") {
-        var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
+        var descriptor = (
+          /** @type {PropertyDescriptor} */
+          Object.getOwnPropertyDescriptor(obj, sym)
+        );
         if (descriptor.value !== symVal || descriptor.enumerable !== true) {
           return false;
         }
@@ -519,6 +500,14 @@ var require_shams2 = __commonJS({
     module.exports = function hasToStringTagShams() {
       return hasSymbols() && !!Symbol.toStringTag;
     };
+  }
+});
+
+// ../../node_modules/es-object-atoms/index.js
+var require_es_object_atoms = __commonJS({
+  "../../node_modules/es-object-atoms/index.js"(exports, module) {
+    "use strict";
+    module.exports = Object;
   }
 });
 
@@ -578,6 +567,118 @@ var require_uri = __commonJS({
   }
 });
 
+// ../../node_modules/math-intrinsics/abs.js
+var require_abs = __commonJS({
+  "../../node_modules/math-intrinsics/abs.js"(exports, module) {
+    "use strict";
+    module.exports = Math.abs;
+  }
+});
+
+// ../../node_modules/math-intrinsics/floor.js
+var require_floor = __commonJS({
+  "../../node_modules/math-intrinsics/floor.js"(exports, module) {
+    "use strict";
+    module.exports = Math.floor;
+  }
+});
+
+// ../../node_modules/math-intrinsics/max.js
+var require_max = __commonJS({
+  "../../node_modules/math-intrinsics/max.js"(exports, module) {
+    "use strict";
+    module.exports = Math.max;
+  }
+});
+
+// ../../node_modules/math-intrinsics/min.js
+var require_min = __commonJS({
+  "../../node_modules/math-intrinsics/min.js"(exports, module) {
+    "use strict";
+    module.exports = Math.min;
+  }
+});
+
+// ../../node_modules/math-intrinsics/pow.js
+var require_pow = __commonJS({
+  "../../node_modules/math-intrinsics/pow.js"(exports, module) {
+    "use strict";
+    module.exports = Math.pow;
+  }
+});
+
+// ../../node_modules/math-intrinsics/round.js
+var require_round = __commonJS({
+  "../../node_modules/math-intrinsics/round.js"(exports, module) {
+    "use strict";
+    module.exports = Math.round;
+  }
+});
+
+// ../../node_modules/math-intrinsics/isNaN.js
+var require_isNaN = __commonJS({
+  "../../node_modules/math-intrinsics/isNaN.js"(exports, module) {
+    "use strict";
+    module.exports = Number.isNaN || function isNaN2(a) {
+      return a !== a;
+    };
+  }
+});
+
+// ../../node_modules/math-intrinsics/sign.js
+var require_sign = __commonJS({
+  "../../node_modules/math-intrinsics/sign.js"(exports, module) {
+    "use strict";
+    var $isNaN = require_isNaN();
+    module.exports = function sign(number) {
+      if ($isNaN(number) || number === 0) {
+        return number;
+      }
+      return number < 0 ? -1 : 1;
+    };
+  }
+});
+
+// ../../node_modules/gopd/gOPD.js
+var require_gOPD = __commonJS({
+  "../../node_modules/gopd/gOPD.js"(exports, module) {
+    "use strict";
+    module.exports = Object.getOwnPropertyDescriptor;
+  }
+});
+
+// ../../node_modules/gopd/index.js
+var require_gopd = __commonJS({
+  "../../node_modules/gopd/index.js"(exports, module) {
+    "use strict";
+    var $gOPD = require_gOPD();
+    if ($gOPD) {
+      try {
+        $gOPD([], "length");
+      } catch (e) {
+        $gOPD = null;
+      }
+    }
+    module.exports = $gOPD;
+  }
+});
+
+// ../../node_modules/es-define-property/index.js
+var require_es_define_property = __commonJS({
+  "../../node_modules/es-define-property/index.js"(exports, module) {
+    "use strict";
+    var $defineProperty = Object.defineProperty || false;
+    if ($defineProperty) {
+      try {
+        $defineProperty({}, "a", { value: 1 });
+      } catch (e) {
+        $defineProperty = false;
+      }
+    }
+    module.exports = $defineProperty;
+  }
+});
+
 // ../../node_modules/has-symbols/index.js
 var require_has_symbols = __commonJS({
   "../../node_modules/has-symbols/index.js"(exports, module) {
@@ -594,7 +695,7 @@ var require_has_symbols = __commonJS({
       if (typeof origSymbol("foo") !== "symbol") {
         return false;
       }
-      if (typeof Symbol("bar") !== "symbol") {
+      if (typeof /* @__PURE__ */ Symbol("bar") !== "symbol") {
         return false;
       }
       return hasSymbolSham();
@@ -602,17 +703,20 @@ var require_has_symbols = __commonJS({
   }
 });
 
-// ../../node_modules/has-proto/index.js
-var require_has_proto = __commonJS({
-  "../../node_modules/has-proto/index.js"(exports, module) {
+// ../../node_modules/get-proto/Reflect.getPrototypeOf.js
+var require_Reflect_getPrototypeOf = __commonJS({
+  "../../node_modules/get-proto/Reflect.getPrototypeOf.js"(exports, module) {
     "use strict";
-    var test = {
-      foo: {}
-    };
-    var $Object = Object;
-    module.exports = function hasProto() {
-      return { __proto__: test }.foo === test.foo && !({ __proto__: null } instanceof $Object);
-    };
+    module.exports = typeof Reflect !== "undefined" && Reflect.getPrototypeOf || null;
+  }
+});
+
+// ../../node_modules/get-proto/Object.getPrototypeOf.js
+var require_Object_getPrototypeOf = __commonJS({
+  "../../node_modules/get-proto/Object.getPrototypeOf.js"(exports, module) {
+    "use strict";
+    var $Object = require_es_object_atoms();
+    module.exports = $Object.getPrototypeOf || null;
   }
 });
 
@@ -701,6 +805,110 @@ var require_function_bind = __commonJS({
   }
 });
 
+// ../../node_modules/call-bind-apply-helpers/functionCall.js
+var require_functionCall = __commonJS({
+  "../../node_modules/call-bind-apply-helpers/functionCall.js"(exports, module) {
+    "use strict";
+    module.exports = Function.prototype.call;
+  }
+});
+
+// ../../node_modules/call-bind-apply-helpers/functionApply.js
+var require_functionApply = __commonJS({
+  "../../node_modules/call-bind-apply-helpers/functionApply.js"(exports, module) {
+    "use strict";
+    module.exports = Function.prototype.apply;
+  }
+});
+
+// ../../node_modules/call-bind-apply-helpers/reflectApply.js
+var require_reflectApply = __commonJS({
+  "../../node_modules/call-bind-apply-helpers/reflectApply.js"(exports, module) {
+    "use strict";
+    module.exports = typeof Reflect !== "undefined" && Reflect && Reflect.apply;
+  }
+});
+
+// ../../node_modules/call-bind-apply-helpers/actualApply.js
+var require_actualApply = __commonJS({
+  "../../node_modules/call-bind-apply-helpers/actualApply.js"(exports, module) {
+    "use strict";
+    var bind = require_function_bind();
+    var $apply = require_functionApply();
+    var $call = require_functionCall();
+    var $reflectApply = require_reflectApply();
+    module.exports = $reflectApply || bind.call($call, $apply);
+  }
+});
+
+// ../../node_modules/call-bind-apply-helpers/index.js
+var require_call_bind_apply_helpers = __commonJS({
+  "../../node_modules/call-bind-apply-helpers/index.js"(exports, module) {
+    "use strict";
+    var bind = require_function_bind();
+    var $TypeError = require_type();
+    var $call = require_functionCall();
+    var $actualApply = require_actualApply();
+    module.exports = function callBindBasic(args) {
+      if (args.length < 1 || typeof args[0] !== "function") {
+        throw new $TypeError("a function is required");
+      }
+      return $actualApply(bind, $call, args);
+    };
+  }
+});
+
+// ../../node_modules/dunder-proto/get.js
+var require_get = __commonJS({
+  "../../node_modules/dunder-proto/get.js"(exports, module) {
+    "use strict";
+    var callBind = require_call_bind_apply_helpers();
+    var gOPD = require_gopd();
+    var hasProtoAccessor;
+    try {
+      hasProtoAccessor = /** @type {{ __proto__?: typeof Array.prototype }} */
+      [].__proto__ === Array.prototype;
+    } catch (e) {
+      if (!e || typeof e !== "object" || !("code" in e) || e.code !== "ERR_PROTO_ACCESS") {
+        throw e;
+      }
+    }
+    var desc = !!hasProtoAccessor && gOPD && gOPD(
+      Object.prototype,
+      /** @type {keyof typeof Object.prototype} */
+      "__proto__"
+    );
+    var $Object = Object;
+    var $getPrototypeOf = $Object.getPrototypeOf;
+    module.exports = desc && typeof desc.get === "function" ? callBind([desc.get]) : typeof $getPrototypeOf === "function" ? (
+      /** @type {import('./get')} */
+      function getDunder(value) {
+        return $getPrototypeOf(value == null ? value : $Object(value));
+      }
+    ) : false;
+  }
+});
+
+// ../../node_modules/get-proto/index.js
+var require_get_proto = __commonJS({
+  "../../node_modules/get-proto/index.js"(exports, module) {
+    "use strict";
+    var reflectGetProto = require_Reflect_getPrototypeOf();
+    var originalGetProto = require_Object_getPrototypeOf();
+    var getDunderProto = require_get();
+    module.exports = reflectGetProto ? function getProto(O) {
+      return reflectGetProto(O);
+    } : originalGetProto ? function getProto(O) {
+      if (!O || typeof O !== "object" && typeof O !== "function") {
+        throw new TypeError("getProto: not an object");
+      }
+      return originalGetProto(O);
+    } : getDunderProto ? function getProto(O) {
+      return getDunderProto(O);
+    } : null;
+  }
+});
+
 // ../../node_modules/hasown/index.js
 var require_hasown = __commonJS({
   "../../node_modules/hasown/index.js"(exports, module) {
@@ -717,6 +925,7 @@ var require_get_intrinsic = __commonJS({
   "../../node_modules/get-intrinsic/index.js"(exports, module) {
     "use strict";
     var undefined2;
+    var $Object = require_es_object_atoms();
     var $Error = require_es_errors();
     var $EvalError = require_eval();
     var $RangeError = require_range();
@@ -724,6 +933,13 @@ var require_get_intrinsic = __commonJS({
     var $SyntaxError = require_syntax();
     var $TypeError = require_type();
     var $URIError = require_uri();
+    var abs = require_abs();
+    var floor = require_floor();
+    var max = require_max();
+    var min = require_min();
+    var pow = require_pow();
+    var round = require_round();
+    var sign = require_sign();
     var $Function = Function;
     var getEvalledConstructor = function(expressionSyntax) {
       try {
@@ -731,18 +947,12 @@ var require_get_intrinsic = __commonJS({
       } catch (e) {
       }
     };
-    var $gOPD = Object.getOwnPropertyDescriptor;
-    if ($gOPD) {
-      try {
-        $gOPD({}, "");
-      } catch (e) {
-        $gOPD = null;
-      }
-    }
+    var $gOPD = require_gopd();
+    var $defineProperty = require_es_define_property();
     var throwTypeError = function() {
       throw new $TypeError();
     };
-    var ThrowTypeError = $gOPD ? function() {
+    var ThrowTypeError = $gOPD ? (function() {
       try {
         arguments.callee;
         return throwTypeError;
@@ -753,12 +963,13 @@ var require_get_intrinsic = __commonJS({
           return throwTypeError;
         }
       }
-    }() : throwTypeError;
+    })() : throwTypeError;
     var hasSymbols = require_has_symbols()();
-    var hasProto = require_has_proto()();
-    var getProto = Object.getPrototypeOf || (hasProto ? function(x) {
-      return x.__proto__;
-    } : null);
+    var getProto = require_get_proto();
+    var $ObjectGPO = require_Object_getPrototypeOf();
+    var $ReflectGPO = require_Reflect_getPrototypeOf();
+    var $apply = require_functionApply();
+    var $call = require_functionCall();
     var needsEval = {};
     var TypedArray = typeof Uint8Array === "undefined" || !getProto ? undefined2 : getProto(Uint8Array);
     var INTRINSICS = {
@@ -787,6 +998,7 @@ var require_get_intrinsic = __commonJS({
       "%eval%": eval,
       // eslint-disable-line no-eval
       "%EvalError%": $EvalError,
+      "%Float16Array%": typeof Float16Array === "undefined" ? undefined2 : Float16Array,
       "%Float32Array%": typeof Float32Array === "undefined" ? undefined2 : Float32Array,
       "%Float64Array%": typeof Float64Array === "undefined" ? undefined2 : Float64Array,
       "%FinalizationRegistry%": typeof FinalizationRegistry === "undefined" ? undefined2 : FinalizationRegistry,
@@ -803,7 +1015,8 @@ var require_get_intrinsic = __commonJS({
       "%MapIteratorPrototype%": typeof Map === "undefined" || !hasSymbols || !getProto ? undefined2 : getProto((/* @__PURE__ */ new Map())[Symbol.iterator]()),
       "%Math%": Math,
       "%Number%": Number,
-      "%Object%": Object,
+      "%Object%": $Object,
+      "%Object.getOwnPropertyDescriptor%": $gOPD,
       "%parseFloat%": parseFloat,
       "%parseInt%": parseInt,
       "%Promise%": typeof Promise === "undefined" ? undefined2 : Promise,
@@ -829,7 +1042,19 @@ var require_get_intrinsic = __commonJS({
       "%URIError%": $URIError,
       "%WeakMap%": typeof WeakMap === "undefined" ? undefined2 : WeakMap,
       "%WeakRef%": typeof WeakRef === "undefined" ? undefined2 : WeakRef,
-      "%WeakSet%": typeof WeakSet === "undefined" ? undefined2 : WeakSet
+      "%WeakSet%": typeof WeakSet === "undefined" ? undefined2 : WeakSet,
+      "%Function.prototype.call%": $call,
+      "%Function.prototype.apply%": $apply,
+      "%Object.defineProperty%": $defineProperty,
+      "%Object.getPrototypeOf%": $ObjectGPO,
+      "%Math.abs%": abs,
+      "%Math.floor%": floor,
+      "%Math.max%": max,
+      "%Math.min%": min,
+      "%Math.pow%": pow,
+      "%Math.round%": round,
+      "%Math.sign%": sign,
+      "%Reflect.getPrototypeOf%": $ReflectGPO
     };
     if (getProto) {
       try {
@@ -918,11 +1143,11 @@ var require_get_intrinsic = __commonJS({
     };
     var bind = require_function_bind();
     var hasOwn = require_hasown();
-    var $concat = bind.call(Function.call, Array.prototype.concat);
-    var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
-    var $replace = bind.call(Function.call, String.prototype.replace);
-    var $strSlice = bind.call(Function.call, String.prototype.slice);
-    var $exec = bind.call(Function.call, RegExp.prototype.exec);
+    var $concat = bind.call($call, Array.prototype.concat);
+    var $spliceApply = bind.call($apply, Array.prototype.splice);
+    var $replace = bind.call($call, String.prototype.replace);
+    var $strSlice = bind.call($call, String.prototype.slice);
+    var $exec = bind.call($call, RegExp.prototype.exec);
     var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
     var reEscapeChar = /\\(\\)?/g;
     var stringToPath = function stringToPath2(string) {
@@ -1002,7 +1227,7 @@ var require_get_intrinsic = __commonJS({
             if (!allowMissing) {
               throw new $TypeError("base intrinsic for " + name + " exists, but the property is not available.");
             }
-            return void 0;
+            return void undefined2;
           }
           if ($gOPD && i + 1 >= parts.length) {
             var desc = $gOPD(value, part);
@@ -1023,40 +1248,6 @@ var require_get_intrinsic = __commonJS({
       }
       return value;
     };
-  }
-});
-
-// ../../node_modules/es-define-property/index.js
-var require_es_define_property = __commonJS({
-  "../../node_modules/es-define-property/index.js"(exports, module) {
-    "use strict";
-    var GetIntrinsic = require_get_intrinsic();
-    var $defineProperty = GetIntrinsic("%Object.defineProperty%", true) || false;
-    if ($defineProperty) {
-      try {
-        $defineProperty({}, "a", { value: 1 });
-      } catch (e) {
-        $defineProperty = false;
-      }
-    }
-    module.exports = $defineProperty;
-  }
-});
-
-// ../../node_modules/gopd/index.js
-var require_gopd = __commonJS({
-  "../../node_modules/gopd/index.js"(exports, module) {
-    "use strict";
-    var GetIntrinsic = require_get_intrinsic();
-    var $gOPD = GetIntrinsic("%Object.getOwnPropertyDescriptor%", true);
-    if ($gOPD) {
-      try {
-        $gOPD([], "length");
-      } catch (e) {
-        $gOPD = null;
-      }
-    }
-    module.exports = $gOPD;
   }
 });
 
@@ -1183,32 +1374,35 @@ var require_set_function_length = __commonJS({
   }
 });
 
+// ../../node_modules/call-bind-apply-helpers/applyBind.js
+var require_applyBind = __commonJS({
+  "../../node_modules/call-bind-apply-helpers/applyBind.js"(exports, module) {
+    "use strict";
+    var bind = require_function_bind();
+    var $apply = require_functionApply();
+    var actualApply = require_actualApply();
+    module.exports = function applyBind() {
+      return actualApply(bind, $apply, arguments);
+    };
+  }
+});
+
 // ../../node_modules/call-bind/index.js
 var require_call_bind = __commonJS({
   "../../node_modules/call-bind/index.js"(exports, module) {
     "use strict";
-    var bind = require_function_bind();
-    var GetIntrinsic = require_get_intrinsic();
     var setFunctionLength = require_set_function_length();
-    var $TypeError = require_type();
-    var $apply = GetIntrinsic("%Function.prototype.apply%");
-    var $call = GetIntrinsic("%Function.prototype.call%");
-    var $reflectApply = GetIntrinsic("%Reflect.apply%", true) || bind.call($call, $apply);
     var $defineProperty = require_es_define_property();
-    var $max = GetIntrinsic("%Math.max%");
+    var callBindBasic = require_call_bind_apply_helpers();
+    var applyBind = require_applyBind();
     module.exports = function callBind(originalFunction) {
-      if (typeof originalFunction !== "function") {
-        throw new $TypeError("a function is required");
-      }
-      var func = $reflectApply(bind, $call, arguments);
+      var func = callBindBasic(arguments);
+      var adjustedLength = originalFunction.length - (arguments.length - 1);
       return setFunctionLength(
         func,
-        1 + $max(0, originalFunction.length - (arguments.length - 1)),
+        1 + (adjustedLength > 0 ? adjustedLength : 0),
         true
       );
-    };
-    var applyBind = function applyBind2() {
-      return $reflectApply(bind, $apply, arguments);
     };
     if ($defineProperty) {
       $defineProperty(module.exports, "apply", { value: applyBind });
@@ -1254,9 +1448,9 @@ var require_is_arguments = __commonJS({
       }
       return value !== null && typeof value === "object" && typeof value.length === "number" && value.length >= 0 && $toString(value) !== "[object Array]" && $toString(value.callee) === "[object Function]";
     };
-    var supportsStandardArguments = function() {
+    var supportsStandardArguments = (function() {
       return isStandardArguments(arguments);
-    }();
+    })();
     isStandardArguments.isLegacyArguments = isLegacyArguments;
     module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArguments;
   }
@@ -1460,7 +1654,10 @@ var require_for_each = __commonJS({
         }
       }
     };
-    var forEach = function forEach2(list, iterator, thisArg) {
+    function isArray(x) {
+      return toStr.call(x) === "[object Array]";
+    }
+    module.exports = function forEach(list, iterator, thisArg) {
       if (!isCallable(iterator)) {
         throw new TypeError("iterator must be a function");
       }
@@ -1468,7 +1665,7 @@ var require_for_each = __commonJS({
       if (arguments.length >= 3) {
         receiver = thisArg;
       }
-      if (toStr.call(list) === "[object Array]") {
+      if (isArray(list)) {
         forEachArray(list, iterator, receiver);
       } else if (typeof list === "string") {
         forEachString(list, iterator, receiver);
@@ -1476,7 +1673,27 @@ var require_for_each = __commonJS({
         forEachObject(list, iterator, receiver);
       }
     };
-    module.exports = forEach;
+  }
+});
+
+// ../../node_modules/possible-typed-array-names/index.js
+var require_possible_typed_array_names = __commonJS({
+  "../../node_modules/possible-typed-array-names/index.js"(exports, module) {
+    "use strict";
+    module.exports = [
+      "Float16Array",
+      "Float32Array",
+      "Float64Array",
+      "Int8Array",
+      "Int16Array",
+      "Int32Array",
+      "Uint8Array",
+      "Uint8ClampedArray",
+      "Uint16Array",
+      "Uint32Array",
+      "BigInt64Array",
+      "BigUint64Array"
+    ];
   }
 });
 
@@ -1484,19 +1701,7 @@ var require_for_each = __commonJS({
 var require_available_typed_arrays = __commonJS({
   "../../node_modules/available-typed-arrays/index.js"(exports, module) {
     "use strict";
-    var possibleNames = [
-      "BigInt64Array",
-      "BigUint64Array",
-      "Float32Array",
-      "Float64Array",
-      "Int16Array",
-      "Int32Array",
-      "Int8Array",
-      "Uint16Array",
-      "Uint32Array",
-      "Uint8Array",
-      "Uint8ClampedArray"
-    ];
+    var possibleNames = require_possible_typed_array_names();
     var g = typeof globalThis === "undefined" ? global : globalThis;
     module.exports = function availableTypedArrays() {
       var out = [];
@@ -1510,6 +1715,29 @@ var require_available_typed_arrays = __commonJS({
   }
 });
 
+// ../../node_modules/call-bound/index.js
+var require_call_bound = __commonJS({
+  "../../node_modules/call-bound/index.js"(exports, module) {
+    "use strict";
+    var GetIntrinsic = require_get_intrinsic();
+    var callBindBasic = require_call_bind_apply_helpers();
+    var $indexOf = callBindBasic([GetIntrinsic("%String.prototype.indexOf%")]);
+    module.exports = function callBoundIntrinsic(name, allowMissing) {
+      var intrinsic = (
+        /** @type {(this: unknown, ...args: unknown[]) => unknown} */
+        GetIntrinsic(name, !!allowMissing)
+      );
+      if (typeof intrinsic === "function" && $indexOf(name, ".prototype.") > -1) {
+        return callBindBasic(
+          /** @type {const} */
+          [intrinsic]
+        );
+      }
+      return intrinsic;
+    };
+  }
+});
+
 // ../../node_modules/which-typed-array/index.js
 var require_which_typed_array = __commonJS({
   "../../node_modules/which-typed-array/index.js"(exports, module) {
@@ -1517,14 +1745,14 @@ var require_which_typed_array = __commonJS({
     var forEach = require_for_each();
     var availableTypedArrays = require_available_typed_arrays();
     var callBind = require_call_bind();
-    var callBound = require_callBound();
+    var callBound = require_call_bound();
     var gOPD = require_gopd();
+    var getProto = require_get_proto();
     var $toString = callBound("Object.prototype.toString");
     var hasToStringTag = require_shams2()();
     var g = typeof globalThis === "undefined" ? global : globalThis;
     var typedArrays = availableTypedArrays();
     var $slice = callBound("String.prototype.slice");
-    var getPrototypeOf = Object.getPrototypeOf;
     var $indexOf = callBound("Array.prototype.indexOf", true) || function indexOf(array, value) {
       for (var i = 0; i < array.length; i += 1) {
         if (array[i] === value) {
@@ -1534,50 +1762,79 @@ var require_which_typed_array = __commonJS({
       return -1;
     };
     var cache = { __proto__: null };
-    if (hasToStringTag && gOPD && getPrototypeOf) {
+    if (hasToStringTag && gOPD && getProto) {
       forEach(typedArrays, function(typedArray) {
         var arr = new g[typedArray]();
-        if (Symbol.toStringTag in arr) {
-          var proto = getPrototypeOf(arr);
+        if (Symbol.toStringTag in arr && getProto) {
+          var proto = getProto(arr);
           var descriptor = gOPD(proto, Symbol.toStringTag);
-          if (!descriptor) {
-            var superProto = getPrototypeOf(proto);
+          if (!descriptor && proto) {
+            var superProto = getProto(proto);
             descriptor = gOPD(superProto, Symbol.toStringTag);
           }
-          cache["$" + typedArray] = callBind(descriptor.get);
+          if (descriptor && descriptor.get) {
+            var bound = callBind(descriptor.get);
+            cache[
+              /** @type {`$${import('.').TypedArrayName}`} */
+              "$" + typedArray
+            ] = bound;
+          }
         }
       });
     } else {
       forEach(typedArrays, function(typedArray) {
         var arr = new g[typedArray]();
-        cache["$" + typedArray] = callBind(arr.slice);
+        var fn = arr.slice || arr.set;
+        if (fn) {
+          var bound = (
+            /** @type {import('./types').BoundSlice | import('./types').BoundSet} */
+            // @ts-expect-error TODO FIXME
+            callBind(fn)
+          );
+          cache[
+            /** @type {`$${import('.').TypedArrayName}`} */
+            "$" + typedArray
+          ] = bound;
+        }
       });
     }
     var tryTypedArrays = function tryAllTypedArrays(value) {
       var found = false;
-      forEach(cache, function(getter, typedArray) {
-        if (!found) {
-          try {
-            if ("$" + getter(value) === typedArray) {
-              found = $slice(typedArray, 1);
+      forEach(
+        /** @type {Record<`\$${import('.').TypedArrayName}`, Getter>} */
+        cache,
+        /** @type {(getter: Getter, name: `\$${import('.').TypedArrayName}`) => void} */
+        function(getter, typedArray) {
+          if (!found) {
+            try {
+              if ("$" + getter(value) === typedArray) {
+                found = /** @type {import('.').TypedArrayName} */
+                $slice(typedArray, 1);
+              }
+            } catch (e) {
             }
-          } catch (e) {
           }
         }
-      });
+      );
       return found;
     };
     var trySlices = function tryAllSlices(value) {
       var found = false;
-      forEach(cache, function(getter, name) {
-        if (!found) {
-          try {
-            getter(value);
-            found = $slice(name, 1);
-          } catch (e) {
+      forEach(
+        /** @type {Record<`\$${import('.').TypedArrayName}`, Getter>} */
+        cache,
+        /** @type {(getter: Getter, name: `\$${import('.').TypedArrayName}`) => void} */
+        function(getter, name) {
+          if (!found) {
+            try {
+              getter(value);
+              found = /** @type {import('.').TypedArrayName} */
+              $slice(name, 1);
+            } catch (e) {
+            }
           }
         }
-      });
+      );
       return found;
     };
     module.exports = function whichTypedArray(value) {
@@ -1908,10 +2165,8 @@ var require_util = __commonJS({
       var args = arguments;
       var len = args.length;
       var str = String(f).replace(formatRegExp, function(x2) {
-        if (x2 === "%%")
-          return "%";
-        if (i >= len)
-          return x2;
+        if (x2 === "%%") return "%";
+        if (i >= len) return x2;
         switch (x2) {
           case "%s":
             return String(args[i++]);
@@ -1990,25 +2245,18 @@ var require_util = __commonJS({
         seen: [],
         stylize: stylizeNoColor
       };
-      if (arguments.length >= 3)
-        ctx.depth = arguments[2];
-      if (arguments.length >= 4)
-        ctx.colors = arguments[3];
+      if (arguments.length >= 3) ctx.depth = arguments[2];
+      if (arguments.length >= 4) ctx.colors = arguments[3];
       if (isBoolean(opts)) {
         ctx.showHidden = opts;
       } else if (opts) {
         exports._extend(ctx, opts);
       }
-      if (isUndefined(ctx.showHidden))
-        ctx.showHidden = false;
-      if (isUndefined(ctx.depth))
-        ctx.depth = 2;
-      if (isUndefined(ctx.colors))
-        ctx.colors = false;
-      if (isUndefined(ctx.customInspect))
-        ctx.customInspect = true;
-      if (ctx.colors)
-        ctx.stylize = stylizeWithColor;
+      if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+      if (isUndefined(ctx.depth)) ctx.depth = 2;
+      if (isUndefined(ctx.colors)) ctx.colors = false;
+      if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+      if (ctx.colors) ctx.stylize = stylizeWithColor;
       return formatValue(ctx, obj, ctx.depth);
     }
     exports.inspect = inspect;
@@ -2238,8 +2486,7 @@ var require_util = __commonJS({
       var numLinesEst = 0;
       var length = output.reduce(function(prev, cur) {
         numLinesEst++;
-        if (cur.indexOf("\n") >= 0)
-          numLinesEst++;
+        if (cur.indexOf("\n") >= 0) numLinesEst++;
         return prev + cur.replace(/\u001b\[\d\d?m/g, "").length + 1;
       }, 0);
       if (length > 60) {
@@ -2343,8 +2590,7 @@ var require_util = __commonJS({
     };
     exports.inherits = require_inherits_browser();
     exports._extend = function(origin, add) {
-      if (!add || !isObject(add))
-        return origin;
+      if (!add || !isObject(add)) return origin;
       var keys = Object.keys(add);
       var i = keys.length;
       while (i--) {
@@ -2355,7 +2601,7 @@ var require_util = __commonJS({
     function hasOwnProperty(obj, prop) {
       return Object.prototype.hasOwnProperty.call(obj, prop);
     }
-    var kCustomPromisifiedSymbol = typeof Symbol !== "undefined" ? Symbol("util.promisify.custom") : void 0;
+    var kCustomPromisifiedSymbol = typeof Symbol !== "undefined" ? /* @__PURE__ */ Symbol("util.promisify.custom") : void 0;
     exports.promisify = function promisify(original) {
       if (typeof original !== "function")
         throw new TypeError('The "original" argument must be of type Function');
@@ -2397,13 +2643,12 @@ var require_util = __commonJS({
         return promise;
       }
       Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
-      if (kCustomPromisifiedSymbol)
-        Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-          value: fn,
-          enumerable: false,
-          writable: false,
-          configurable: true
-        });
+      if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+        value: fn,
+        enumerable: false,
+        writable: false,
+        configurable: true
+      });
       return Object.defineProperties(
         fn,
         getOwnPropertyDescriptors(original)
@@ -2499,8 +2744,7 @@ var require_errors = __commonJS({
         throw new TypeError("Super expression must either be null or a function");
       }
       subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
-      if (superClass)
-        _setPrototypeOf(subClass, superClass);
+      if (superClass) _setPrototypeOf(subClass, superClass);
     }
     function _setPrototypeOf(o, p) {
       _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf2(o2, p2) {
@@ -2523,7 +2767,7 @@ var require_errors = __commonJS({
           return message(arg1, arg2, arg3);
         }
       }
-      var NodeError = /* @__PURE__ */ function(_Base) {
+      var NodeError = /* @__PURE__ */ (function(_Base) {
         _inherits(NodeError2, _Base);
         function NodeError2(arg1, arg2, arg3) {
           var _this;
@@ -2533,7 +2777,7 @@ var require_errors = __commonJS({
           return _this;
         }
         return NodeError2;
-      }(Base);
+      })(Base);
       codes[code] = NodeError;
     }
     function oneOf(expected, thing) {
@@ -2574,8 +2818,7 @@ var require_errors = __commonJS({
     }
     createErrorType("ERR_AMBIGUOUS_ARGUMENT", 'The "%s" argument is ambiguous. %s', TypeError);
     createErrorType("ERR_INVALID_ARG_TYPE", function(name, expected, actual) {
-      if (assert === void 0)
-        assert = require_assert();
+      if (assert === void 0) assert = require_assert();
       assert(typeof name === "string", "'name' must be a string");
       var determiner;
       if (typeof expected === "string" && startsWith(expected, "not ")) {
@@ -2596,8 +2839,7 @@ var require_errors = __commonJS({
     }, TypeError);
     createErrorType("ERR_INVALID_ARG_VALUE", function(name, value) {
       var reason = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "is invalid";
-      if (util === void 0)
-        util = require_util();
+      if (util === void 0) util = require_util();
       var inspected = util.inspect(value);
       if (inspected.length > 128) {
         inspected = "".concat(inspected.slice(0, 128), "...");
@@ -2617,8 +2859,7 @@ var require_errors = __commonJS({
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
       }
-      if (assert === void 0)
-        assert = require_assert();
+      if (assert === void 0) assert = require_assert();
       assert(args.length > 0, "At least one arg needs to be specified");
       var msg = "The ";
       var len = args.length;
@@ -2680,16 +2921,13 @@ var require_assertion_error = __commonJS({
         var descriptor = props[i];
         descriptor.enumerable = descriptor.enumerable || false;
         descriptor.configurable = true;
-        if ("value" in descriptor)
-          descriptor.writable = true;
+        if ("value" in descriptor) descriptor.writable = true;
         Object.defineProperty(target, descriptor.key, descriptor);
       }
     }
     function _createClass(Constructor, protoProps, staticProps) {
-      if (protoProps)
-        _defineProperties(Constructor.prototype, protoProps);
-      if (staticProps)
-        _defineProperties(Constructor, staticProps);
+      if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) _defineProperties(Constructor, staticProps);
       return Constructor;
     }
     function _possibleConstructorReturn(self2, call) {
@@ -2709,20 +2947,17 @@ var require_assertion_error = __commonJS({
         throw new TypeError("Super expression must either be null or a function");
       }
       subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } });
-      if (superClass)
-        _setPrototypeOf(subClass, superClass);
+      if (superClass) _setPrototypeOf(subClass, superClass);
     }
     function _wrapNativeSuper(Class) {
       var _cache = typeof Map === "function" ? /* @__PURE__ */ new Map() : void 0;
       _wrapNativeSuper = function _wrapNativeSuper2(Class2) {
-        if (Class2 === null || !_isNativeFunction(Class2))
-          return Class2;
+        if (Class2 === null || !_isNativeFunction(Class2)) return Class2;
         if (typeof Class2 !== "function") {
           throw new TypeError("Super expression must either be null or a function");
         }
         if (typeof _cache !== "undefined") {
-          if (_cache.has(Class2))
-            return _cache.get(Class2);
+          if (_cache.has(Class2)) return _cache.get(Class2);
           _cache.set(Class2, Wrapper);
         }
         function Wrapper() {
@@ -2734,12 +2969,9 @@ var require_assertion_error = __commonJS({
       return _wrapNativeSuper(Class);
     }
     function isNativeReflectConstruct() {
-      if (typeof Reflect === "undefined" || !Reflect.construct)
-        return false;
-      if (Reflect.construct.sham)
-        return false;
-      if (typeof Proxy === "function")
-        return true;
+      if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+      if (Reflect.construct.sham) return false;
+      if (typeof Proxy === "function") return true;
       try {
         Date.prototype.toString.call(Reflect.construct(Date, [], function() {
         }));
@@ -2757,8 +2989,7 @@ var require_assertion_error = __commonJS({
           a.push.apply(a, args2);
           var Constructor = Function.bind.apply(Parent2, a);
           var instance = new Constructor();
-          if (Class2)
-            _setPrototypeOf(instance, Class2.prototype);
+          if (Class2) _setPrototypeOf(instance, Class2.prototype);
           return instance;
         };
       }
@@ -2804,8 +3035,7 @@ var require_assertion_error = __commonJS({
     }
     function repeat(str, count) {
       count = Math.floor(count);
-      if (str.length == 0 || count == 0)
-        return "";
+      if (str.length == 0 || count == 0) return "";
       var maxCount = str.length * count;
       count = Math.floor(Math.log(count) / Math.log(2));
       while (count) {
@@ -2908,8 +3138,7 @@ var require_assertion_error = __commonJS({
         }
         actualLines.pop();
         expectedLines.pop();
-        if (actualLines.length === 0 || expectedLines.length === 0)
-          break;
+        if (actualLines.length === 0 || expectedLines.length === 0) break;
         a = actualLines[actualLines.length - 1];
         b = expectedLines[expectedLines.length - 1];
       }
@@ -3006,7 +3235,7 @@ var require_assertion_error = __commonJS({
       }
       return "".concat(msg).concat(skipped ? skippedMsg : "", "\n").concat(res).concat(other).concat(end).concat(indicator);
     }
-    var AssertionError = /* @__PURE__ */ function(_Error) {
+    var AssertionError = /* @__PURE__ */ (function(_Error) {
       _inherits(AssertionError2, _Error);
       function AssertionError2(options) {
         var _this;
@@ -3117,7 +3346,7 @@ var require_assertion_error = __commonJS({
         }
       }]);
       return AssertionError2;
-    }(_wrapNativeSuper(Error));
+    })(_wrapNativeSuper(Error));
     module.exports = AssertionError;
   }
 });
@@ -3231,7 +3460,7 @@ var require_implementation2 = __commonJS({
         $webkitStorageInfo: true,
         $window: true
       };
-      hasAutomationEqualityBug = function() {
+      hasAutomationEqualityBug = (function() {
         if (typeof window === "undefined") {
           return false;
         }
@@ -3249,7 +3478,7 @@ var require_implementation2 = __commonJS({
           }
         }
         return false;
-      }();
+      })();
       equalsConstructorPrototypeIfNotBuggy = function(o) {
         if (typeof window === "undefined" || !hasAutomationEqualityBug) {
           return equalsConstructorPrototype(o);
@@ -3325,10 +3554,10 @@ var require_object_keys = __commonJS({
     var originalKeys = Object.keys;
     keysShim.shim = function shimObjectKeys() {
       if (Object.keys) {
-        var keysWorksWithArguments = function() {
+        var keysWorksWithArguments = (function() {
           var args = Object.keys(arguments);
           return args && args.length === arguments.length;
-        }(1, 2);
+        })(1, 2);
         if (!keysWorksWithArguments) {
           Object.keys = function keys(object) {
             if (isArgs(object)) {
@@ -3351,7 +3580,7 @@ var require_define_properties = __commonJS({
   "../../node_modules/define-properties/index.js"(exports, module) {
     "use strict";
     var keys = require_object_keys();
-    var hasSymbols = typeof Symbol === "function" && typeof Symbol("foo") === "symbol";
+    var hasSymbols = typeof Symbol === "function" && typeof /* @__PURE__ */ Symbol("foo") === "symbol";
     var toStr = Object.prototype.toString;
     var concat = Array.prototype.concat;
     var defineDataProperty = require_define_data_property();
@@ -3539,26 +3768,22 @@ var require_comparisons = __commonJS({
       try {
         for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
           _arr.push(_s.value);
-          if (i && _arr.length === i)
-            break;
+          if (i && _arr.length === i) break;
         }
       } catch (err) {
         _d = true;
         _e = err;
       } finally {
         try {
-          if (!_n && _i["return"] != null)
-            _i["return"]();
+          if (!_n && _i["return"] != null) _i["return"]();
         } finally {
-          if (_d)
-            throw _e;
+          if (_d) throw _e;
         }
       }
       return _arr;
     }
     function _arrayWithHoles(arr) {
-      if (Array.isArray(arr))
-        return arr;
+      if (Array.isArray(arr)) return arr;
     }
     function _typeof(obj) {
       if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -3615,12 +3840,10 @@ var require_comparisons = __commonJS({
     var isFloat32Array = _require$types.isFloat32Array;
     var isFloat64Array = _require$types.isFloat64Array;
     function isNonIndex(key) {
-      if (key.length === 0 || key.length > 10)
-        return true;
+      if (key.length === 0 || key.length > 10) return true;
       for (var i = 0; i < key.length; i++) {
         var code = key.charCodeAt(i);
-        if (code < 48 || code > 57)
-          return true;
+        if (code < 48 || code > 57) return true;
       }
       return key.length === 10 && key >= Math.pow(2, 32);
     }
@@ -3695,8 +3918,7 @@ var require_comparisons = __commonJS({
     }
     function innerDeepEqual(val1, val2, strict, memos) {
       if (val1 === val2) {
-        if (val1 !== 0)
-          return true;
+        if (val1 !== 0) return true;
         return strict ? objectIs(val1, val2) : true;
       }
       if (strict) {
@@ -3879,6 +4101,9 @@ var require_comparisons = __commonJS({
           return false;
         case "string":
           prim = +prim;
+        // Loose equal entries exist only if the string is possible to convert to
+        // a regular number and not NaN.
+        // Fall through
         case "number":
           if (numberIsNaN(prim)) {
             return false;
@@ -3888,8 +4113,7 @@ var require_comparisons = __commonJS({
     }
     function setMightHaveLoosePrim(a, b, prim) {
       var altValue = findLooseMatchingPrimitives(prim);
-      if (altValue != null)
-        return altValue;
+      if (altValue != null) return altValue;
       return b.has(altValue) && !a.has(altValue);
     }
     function mapMightHaveLoosePrim(a, b, prim, item, memo) {
@@ -3914,8 +4138,7 @@ var require_comparisons = __commonJS({
           }
           set.add(val);
         } else if (!b.has(val)) {
-          if (strict)
-            return false;
+          if (strict) return false;
           if (!setMightHaveLoosePrim(a, b, val)) {
             return false;
           }
@@ -3930,8 +4153,7 @@ var require_comparisons = __commonJS({
         for (var _i = 0; _i < bValues.length; _i++) {
           var _val = bValues[_i];
           if (_typeof(_val) === "object" && _val !== null) {
-            if (!setHasEqualElement(set, _val, strict, memo))
-              return false;
+            if (!setHasEqualElement(set, _val, strict, memo)) return false;
           } else if (!strict && !a.has(_val) && !setHasEqualElement(set, _val, strict, memo)) {
             return false;
           }
@@ -3964,10 +4186,8 @@ var require_comparisons = __commonJS({
         } else {
           var item2 = b.get(key);
           if (item2 === void 0 && !b.has(key) || !innerDeepEqual(item1, item2, strict, memo)) {
-            if (strict)
-              return false;
-            if (!mapMightHaveLoosePrim(a, b, key, item1, memo))
-              return false;
+            if (strict) return false;
+            if (!mapMightHaveLoosePrim(a, b, key, item1, memo)) return false;
             if (set === null) {
               set = /* @__PURE__ */ new Set();
             }
@@ -3980,8 +4200,7 @@ var require_comparisons = __commonJS({
         for (var _i2 = 0; _i2 < bEntries.length; _i2++) {
           var _bEntries$_i = _slicedToArray(bEntries[_i2], 2), key = _bEntries$_i[0], item = _bEntries$_i[1];
           if (_typeof(key) === "object" && key !== null) {
-            if (!mapHasEqualEntry(set, a, key, item, strict, memo))
-              return false;
+            if (!mapHasEqualEntry(set, a, key, item, strict, memo)) return false;
           } else if (!strict && (!a.has(key) || !innerDeepEqual(a.get(key), item, false, memo)) && !mapHasEqualEntry(set, a, key, item, false, memo)) {
             return false;
           }
@@ -4091,8 +4310,7 @@ var require_assert = __commonJS({
     var assert = module.exports = ok;
     var NO_EXCEPTION_SENTINEL = {};
     function innerFail(obj) {
-      if (obj.message instanceof Error)
-        throw obj.message;
+      if (obj.message instanceof Error) throw obj.message;
       throw new AssertionError(obj);
     }
     function fail(actual, expected, message, operator, stackStartFn) {
@@ -4109,11 +4327,9 @@ var require_assert = __commonJS({
           var warn = process.emitWarning ? process.emitWarning : console.warn.bind(console);
           warn("assert.fail() with more than one argument is deprecated. Please use assert.strictEqual() instead or only pass a message.", "DeprecationWarning", "DEP0094");
         }
-        if (argsLen === 2)
-          operator = "!=";
+        if (argsLen === 2) operator = "!=";
       }
-      if (message instanceof Error)
-        throw message;
+      if (message instanceof Error) throw message;
       var errArgs = {
         actual,
         expected,
@@ -4191,8 +4407,7 @@ var require_assert = __commonJS({
       if (arguments.length < 2) {
         throw new ERR_MISSING_ARGS("actual", "expected");
       }
-      if (isDeepEqual === void 0)
-        lazyLoadComparison();
+      if (isDeepEqual === void 0) lazyLoadComparison();
       if (!isDeepEqual(actual, expected)) {
         innerFail({
           actual,
@@ -4207,8 +4422,7 @@ var require_assert = __commonJS({
       if (arguments.length < 2) {
         throw new ERR_MISSING_ARGS("actual", "expected");
       }
-      if (isDeepEqual === void 0)
-        lazyLoadComparison();
+      if (isDeepEqual === void 0) lazyLoadComparison();
       if (isDeepEqual(actual, expected)) {
         innerFail({
           actual,
@@ -4223,8 +4437,7 @@ var require_assert = __commonJS({
       if (arguments.length < 2) {
         throw new ERR_MISSING_ARGS("actual", "expected");
       }
-      if (isDeepEqual === void 0)
-        lazyLoadComparison();
+      if (isDeepEqual === void 0) lazyLoadComparison();
       if (!isDeepStrictEqual(actual, expected)) {
         innerFail({
           actual,
@@ -4240,8 +4453,7 @@ var require_assert = __commonJS({
       if (arguments.length < 2) {
         throw new ERR_MISSING_ARGS("actual", "expected");
       }
-      if (isDeepEqual === void 0)
-        lazyLoadComparison();
+      if (isDeepEqual === void 0) lazyLoadComparison();
       if (isDeepStrictEqual(actual, expected)) {
         innerFail({
           actual,
@@ -4320,8 +4532,7 @@ var require_assert = __commonJS({
     }
     function expectedException(actual, expected, msg, fn) {
       if (typeof expected !== "function") {
-        if (isRegExp(expected))
-          return expected.test(actual);
+        if (isRegExp(expected)) return expected.test(actual);
         if (arguments.length === 2) {
           throw new ERR_INVALID_ARG_TYPE("expected", ["Function", "RegExp"], expected);
         }
@@ -4342,8 +4553,7 @@ var require_assert = __commonJS({
         } else if (keys.length === 0) {
           throw new ERR_INVALID_ARG_VALUE("error", expected, "may not be an empty object");
         }
-        if (isDeepEqual === void 0)
-          lazyLoadComparison();
+        if (isDeepEqual === void 0) lazyLoadComparison();
         keys.forEach(function(key) {
           if (typeof actual[key] === "string" && isRegExp(expected[key]) && expected[key].test(actual[key])) {
             return;
@@ -4433,8 +4643,7 @@ var require_assert = __commonJS({
       }
     }
     function expectsNoError(stackStartFn, actual, error, message) {
-      if (actual === NO_EXCEPTION_SENTINEL)
-        return;
+      if (actual === NO_EXCEPTION_SENTINEL) return;
       if (typeof error === "string") {
         message = error;
         error = void 0;
@@ -7596,7 +7805,7 @@ var require_acorn = __commonJS({
   "../../node_modules/acorn/dist/acorn.js"(exports, module) {
     (function(global2, factory) {
       typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.acorn = {}));
-    })(exports, function(exports2) {
+    })(exports, (function(exports2) {
       "use strict";
       var astralIdentifierCodes = [509, 0, 227, 0, 150, 4, 294, 9, 1368, 2, 2, 1, 6, 3, 41, 2, 5, 0, 166, 1, 574, 3, 9, 9, 370, 1, 81, 2, 71, 10, 50, 3, 123, 2, 54, 14, 32, 10, 3, 1, 11, 3, 46, 10, 8, 0, 46, 9, 7, 2, 37, 13, 2, 9, 6, 1, 45, 0, 13, 2, 49, 13, 9, 3, 2, 11, 83, 11, 7, 0, 3, 0, 158, 11, 6, 9, 7, 3, 56, 1, 2, 6, 3, 1, 3, 2, 10, 0, 11, 1, 3, 6, 4, 4, 193, 17, 10, 9, 5, 0, 82, 19, 13, 9, 214, 6, 3, 8, 28, 1, 83, 16, 16, 9, 82, 12, 9, 9, 84, 14, 5, 9, 243, 14, 166, 9, 71, 5, 2, 1, 3, 3, 2, 0, 2, 1, 13, 9, 120, 6, 3, 6, 4, 0, 29, 9, 41, 6, 2, 3, 9, 0, 10, 10, 47, 15, 406, 7, 2, 7, 17, 9, 57, 21, 2, 13, 123, 5, 4, 0, 2, 1, 2, 6, 2, 0, 9, 9, 49, 4, 2, 1, 2, 4, 9, 9, 330, 3, 10, 1, 2, 0, 49, 6, 4, 4, 14, 9, 5351, 0, 7, 14, 13835, 9, 87, 9, 39, 4, 60, 6, 26, 9, 1014, 0, 2, 54, 8, 3, 82, 0, 12, 1, 19628, 1, 4706, 45, 3, 22, 543, 4, 4, 5, 9, 7, 3, 6, 31, 3, 149, 2, 1418, 49, 513, 54, 5, 49, 9, 0, 15, 0, 23, 4, 2, 14, 1361, 6, 2, 16, 3, 6, 2, 1, 2, 4, 101, 0, 161, 6, 10, 9, 357, 0, 62, 13, 499, 13, 983, 6, 110, 6, 6, 9, 4759, 9, 787719, 239];
       var astralIdentifierStartCodes = [0, 11, 2, 25, 2, 18, 2, 1, 2, 14, 3, 13, 35, 122, 70, 52, 268, 28, 4, 48, 48, 31, 14, 29, 6, 37, 11, 29, 3, 35, 5, 7, 2, 4, 43, 157, 19, 35, 5, 35, 5, 39, 9, 51, 13, 10, 2, 14, 2, 6, 2, 1, 2, 10, 2, 14, 2, 6, 2, 1, 68, 310, 10, 21, 11, 7, 25, 5, 2, 41, 2, 8, 70, 5, 3, 0, 2, 43, 2, 1, 4, 0, 3, 22, 11, 22, 10, 30, 66, 18, 2, 1, 11, 21, 11, 25, 71, 55, 7, 1, 65, 0, 16, 3, 2, 2, 2, 28, 43, 28, 4, 28, 36, 7, 2, 27, 28, 53, 11, 21, 11, 18, 14, 17, 111, 72, 56, 50, 14, 50, 14, 35, 349, 41, 7, 1, 79, 28, 11, 0, 9, 21, 43, 17, 47, 20, 28, 22, 13, 52, 58, 1, 3, 0, 14, 44, 33, 24, 27, 35, 30, 0, 3, 0, 9, 34, 4, 0, 13, 47, 15, 3, 22, 0, 2, 0, 36, 17, 2, 24, 20, 1, 64, 6, 2, 0, 2, 3, 2, 14, 2, 9, 8, 46, 39, 7, 3, 1, 3, 21, 2, 6, 2, 1, 2, 4, 4, 0, 19, 0, 13, 4, 159, 52, 19, 3, 21, 2, 31, 47, 21, 1, 2, 0, 185, 46, 42, 3, 37, 47, 21, 0, 60, 42, 14, 0, 72, 26, 38, 6, 186, 43, 117, 63, 32, 7, 3, 0, 3, 7, 2, 1, 2, 23, 16, 0, 2, 0, 95, 7, 3, 38, 17, 0, 2, 0, 29, 0, 11, 39, 8, 0, 22, 0, 12, 45, 20, 0, 19, 72, 264, 8, 2, 36, 18, 0, 50, 29, 113, 6, 2, 1, 2, 37, 22, 0, 26, 5, 2, 1, 2, 31, 15, 0, 328, 18, 16, 0, 2, 12, 2, 33, 125, 0, 80, 921, 103, 110, 18, 195, 2637, 96, 16, 1071, 18, 5, 4026, 582, 8634, 568, 8, 30, 18, 78, 18, 29, 19, 47, 17, 3, 32, 20, 6, 18, 689, 63, 129, 74, 6, 0, 67, 12, 65, 1, 2, 0, 29, 6135, 9, 1237, 43, 8, 8936, 3, 2, 6, 2, 1, 2, 290, 16, 0, 30, 2, 3, 0, 15, 3, 9, 395, 2309, 106, 6, 12, 4, 8, 8, 9, 5991, 84, 2, 70, 2, 1, 3, 0, 3, 1, 3, 3, 2, 11, 2, 0, 2, 6, 2, 64, 2, 3, 3, 7, 2, 6, 2, 27, 2, 3, 2, 4, 2, 0, 4, 6, 2, 339, 3, 24, 2, 24, 2, 30, 2, 24, 2, 30, 2, 24, 2, 30, 2, 24, 2, 30, 2, 24, 2, 7, 1845, 30, 7, 5, 262, 61, 147, 44, 11, 6, 17, 0, 322, 29, 19, 43, 485, 27, 757, 6, 2, 3, 2, 1, 2, 14, 2, 196, 60, 67, 8, 0, 1205, 3, 2, 26, 2, 1, 2, 0, 3, 0, 2, 9, 2, 3, 2, 0, 2, 0, 7, 0, 5, 0, 2, 0, 2, 0, 2, 2, 2, 1, 2, 0, 3, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 1, 2, 0, 3, 3, 2, 6, 2, 3, 2, 3, 2, 0, 2, 9, 2, 16, 6, 2, 2, 4, 2, 16, 4421, 42719, 33, 4153, 7, 221, 3, 5761, 15, 7472, 3104, 541, 1507, 4938, 6, 4191];
@@ -7681,8 +7890,7 @@ var require_acorn = __commonJS({
         return isInAstralSet(code, astralIdentifierStartCodes) || isInAstralSet(code, astralIdentifierCodes);
       }
       var TokenType = function TokenType2(label, conf) {
-        if (conf === void 0)
-          conf = {};
+        if (conf === void 0) conf = {};
         this.label = label;
         this.keyword = conf.keyword;
         this.beforeExpr = !!conf.beforeExpr;
@@ -7700,8 +7908,7 @@ var require_acorn = __commonJS({
       var beforeExpr = { beforeExpr: true }, startsExpr = { startsExpr: true };
       var keywords = {};
       function kw(name, options) {
-        if (options === void 0)
-          options = {};
+        if (options === void 0) options = {};
         options.keyword = name;
         return keywords[name] = new TokenType(name, options);
       }
@@ -7805,8 +8012,7 @@ var require_acorn = __commonJS({
         return code === 10 || code === 13 || code === 8232 || code === 8233;
       }
       function nextLineBreak(code, from, end) {
-        if (end === void 0)
-          end = code.length;
+        if (end === void 0) end = code.length;
         for (var i2 = from; i2 < end; i2++) {
           var next = code.charCodeAt(i2);
           if (isNewLine(next)) {
@@ -7820,12 +8026,12 @@ var require_acorn = __commonJS({
       var ref = Object.prototype;
       var hasOwnProperty = ref.hasOwnProperty;
       var toString = ref.toString;
-      var hasOwn = Object.hasOwn || function(obj, propName) {
+      var hasOwn = Object.hasOwn || (function(obj, propName) {
         return hasOwnProperty.call(obj, propName);
-      };
-      var isArray = Array.isArray || function(obj) {
+      });
+      var isArray = Array.isArray || (function(obj) {
         return toString.call(obj) === "[object Array]";
-      };
+      });
       function wordsRegexp(words) {
         return new RegExp("^(?:" + words.replace(/ /g, "|") + ")$");
       }
@@ -8110,8 +8316,7 @@ var require_acorn = __commonJS({
       };
       Parser.extend = function extend() {
         var plugins = [], len = arguments.length;
-        while (len--)
-          plugins[len] = arguments[len];
+        while (len--) plugins[len] = arguments[len];
         var cls = this;
         for (var i2 = 0; i2 < plugins.length; i2++) {
           cls = plugins[i2](cls);
@@ -8390,6 +8595,11 @@ var require_acorn = __commonJS({
               }
             }
             return starttype === types$1._import ? this.parseImport(node) : this.parseExport(node, exports3);
+          // If the statement does not start with a statement keyword or a
+          // brace, it's an ExpressionStatement or LabeledStatement. We
+          // simply start parsing an expression, and afterwards, if the
+          // next token is a colon and the expression was a simple
+          // Identifier node, we switch to interpreting it as a label.
           default:
             if (this.isAsyncFunction()) {
               if (context) {
@@ -8681,10 +8891,8 @@ var require_acorn = __commonJS({
         return this.finishNode(node, "ExpressionStatement");
       };
       pp$8.parseBlock = function(createNewLexicalScope, node, exitStrict) {
-        if (createNewLexicalScope === void 0)
-          createNewLexicalScope = true;
-        if (node === void 0)
-          node = this.startNode();
+        if (createNewLexicalScope === void 0) createNewLexicalScope = true;
+        if (node === void 0) node = this.startNode();
         node.body = [];
         this.expect(types$1.braceL);
         if (createNewLexicalScope) {
@@ -9429,8 +9637,7 @@ var require_acorn = __commonJS({
         return this.finishNode(node, "AssignmentPattern");
       };
       pp$7.checkLValSimple = function(expr, bindingType, checkClashes) {
-        if (bindingType === void 0)
-          bindingType = BIND_NONE;
+        if (bindingType === void 0) bindingType = BIND_NONE;
         var isBind = bindingType !== BIND_NONE;
         switch (expr.type) {
           case "Identifier":
@@ -9470,8 +9677,7 @@ var require_acorn = __commonJS({
         }
       };
       pp$7.checkLValPattern = function(expr, bindingType, checkClashes) {
-        if (bindingType === void 0)
-          bindingType = BIND_NONE;
+        if (bindingType === void 0) bindingType = BIND_NONE;
         switch (expr.type) {
           case "ObjectPattern":
             for (var i2 = 0, list2 = expr.properties; i2 < list2.length; i2 += 1) {
@@ -9492,8 +9698,7 @@ var require_acorn = __commonJS({
         }
       };
       pp$7.checkLValInnerPattern = function(expr, bindingType, checkClashes) {
-        if (bindingType === void 0)
-          bindingType = BIND_NONE;
+        if (bindingType === void 0) bindingType = BIND_NONE;
         switch (expr.type) {
           case "Property":
             this.checkLValInnerPattern(expr.value, bindingType, checkClashes);
@@ -10285,11 +10490,9 @@ var require_acorn = __commonJS({
         return this.finishNode(elem, "TemplateElement");
       };
       pp$5.parseTemplate = function(ref2) {
-        if (ref2 === void 0)
-          ref2 = {};
+        if (ref2 === void 0) ref2 = {};
         var isTagged = ref2.isTagged;
-        if (isTagged === void 0)
-          isTagged = false;
+        if (isTagged === void 0) isTagged = false;
         var node = this.startNode();
         this.next();
         node.expressions = [];
@@ -10902,8 +11105,7 @@ var require_acorn = __commonJS({
         this.parser.raiseRecoverable(this.start, "Invalid regular expression: /" + this.source + "/: " + message);
       };
       RegExpValidationState.prototype.at = function at(i2, forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         var s = this.source;
         var l = s.length;
         if (i2 >= l) {
@@ -10917,8 +11119,7 @@ var require_acorn = __commonJS({
         return next >= 56320 && next <= 57343 ? (c << 10) + next - 56613888 : c;
       };
       RegExpValidationState.prototype.nextIndex = function nextIndex(i2, forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         var s = this.source;
         var l = s.length;
         if (i2 >= l) {
@@ -10931,23 +11132,19 @@ var require_acorn = __commonJS({
         return i2 + 2;
       };
       RegExpValidationState.prototype.current = function current(forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         return this.at(this.pos, forceU);
       };
       RegExpValidationState.prototype.lookahead = function lookahead(forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         return this.at(this.nextIndex(this.pos, forceU), forceU);
       };
       RegExpValidationState.prototype.advance = function advance(forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         this.pos = this.nextIndex(this.pos, forceU);
       };
       RegExpValidationState.prototype.eat = function eat(ch, forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         if (this.current(forceU) === ch) {
           this.advance(forceU);
           return true;
@@ -10955,8 +11152,7 @@ var require_acorn = __commonJS({
         return false;
       };
       RegExpValidationState.prototype.eatChars = function eatChars(chs, forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         var pos = this.pos;
         for (var i2 = 0, list2 = chs; i2 < list2.length; i2 += 1) {
           var ch = list2[i2];
@@ -11137,8 +11333,7 @@ var require_acorn = __commonJS({
         return false;
       };
       pp$1.regexp_eatQuantifier = function(state, noError) {
-        if (noError === void 0)
-          noError = false;
+        if (noError === void 0) noError = false;
         if (this.regexp_eatQuantifierPrefix(state, noError)) {
           state.eat(
             63
@@ -11485,8 +11680,7 @@ var require_acorn = __commonJS({
         return ch >= 65 && ch <= 90 || ch >= 97 && ch <= 122;
       }
       pp$1.regexp_eatRegExpUnicodeEscapeSequence = function(state, forceU) {
-        if (forceU === void 0)
-          forceU = false;
+        if (forceU === void 0) forceU = false;
         var start = state.pos;
         var switchU = forceU || state.switchU;
         if (state.eat(
@@ -11771,8 +11965,7 @@ var require_acorn = __commonJS({
       };
       pp$1.regexp_classSetExpression = function(state) {
         var result = CharSetOk, subResult;
-        if (this.regexp_eatClassSetRange(state))
-          ;
+        if (this.regexp_eatClassSetRange(state)) ;
         else if (subResult = this.regexp_eatClassSetOperand(state)) {
           if (subResult === CharSetString) {
             result = CharSetString;
@@ -12193,47 +12386,46 @@ var require_acorn = __commonJS({
         }
       };
       pp.skipSpace = function() {
-        loop:
-          while (this.pos < this.input.length) {
-            var ch = this.input.charCodeAt(this.pos);
-            switch (ch) {
-              case 32:
-              case 160:
+        loop: while (this.pos < this.input.length) {
+          var ch = this.input.charCodeAt(this.pos);
+          switch (ch) {
+            case 32:
+            case 160:
+              ++this.pos;
+              break;
+            case 13:
+              if (this.input.charCodeAt(this.pos + 1) === 10) {
                 ++this.pos;
-                break;
-              case 13:
-                if (this.input.charCodeAt(this.pos + 1) === 10) {
-                  ++this.pos;
-                }
-              case 10:
-              case 8232:
-              case 8233:
-                ++this.pos;
-                if (this.options.locations) {
-                  ++this.curLine;
-                  this.lineStart = this.pos;
-                }
-                break;
-              case 47:
-                switch (this.input.charCodeAt(this.pos + 1)) {
-                  case 42:
-                    this.skipBlockComment();
-                    break;
-                  case 47:
-                    this.skipLineComment(2);
-                    break;
-                  default:
-                    break loop;
-                }
-                break;
-              default:
-                if (ch > 8 && ch < 14 || ch >= 5760 && nonASCIIwhitespace.test(String.fromCharCode(ch))) {
-                  ++this.pos;
-                } else {
+              }
+            case 10:
+            case 8232:
+            case 8233:
+              ++this.pos;
+              if (this.options.locations) {
+                ++this.curLine;
+                this.lineStart = this.pos;
+              }
+              break;
+            case 47:
+              switch (this.input.charCodeAt(this.pos + 1)) {
+                case 42:
+                  this.skipBlockComment();
+                  break;
+                case 47:
+                  this.skipLineComment(2);
+                  break;
+                default:
                   break loop;
-                }
-            }
+              }
+              break;
+            default:
+              if (ch > 8 && ch < 14 || ch >= 5760 && nonASCIIwhitespace.test(String.fromCharCode(ch))) {
+                ++this.pos;
+              } else {
+                break loop;
+              }
           }
+        }
       };
       pp.finishToken = function(type, val) {
         this.end = this.pos;
@@ -12389,8 +12581,11 @@ var require_acorn = __commonJS({
       };
       pp.getTokenFromCode = function(code) {
         switch (code) {
+          // The interpretation of a dot depends on whether it is followed
+          // by a digit or another two dots.
           case 46:
             return this.readToken_dot();
+          // Punctuation tokens.
           case 40:
             ++this.pos;
             return this.finishToken(types$1.parenL);
@@ -12437,6 +12632,8 @@ var require_acorn = __commonJS({
                 return this.readRadixNumber(2);
               }
             }
+          // Anything else beginning with a digit is an integer, octal
+          // number, or float.
           case 49:
           case 50:
           case 51:
@@ -12447,9 +12644,14 @@ var require_acorn = __commonJS({
           case 56:
           case 57:
             return this.readNumber(false);
+          // Quotes produce strings.
           case 34:
           case 39:
             return this.readString(code);
+          // Operators are parsed inline in tiny state machines. '=' (61) is
+          // often referred to. `finishOp` simply skips the amount of
+          // characters it is given as second argument, and returns a token
+          // of the type given by its first argument.
           case 47:
             return this.readToken_slash();
           case 37:
@@ -12765,6 +12967,7 @@ var require_acorn = __commonJS({
               if (this.input[this.pos + 1] !== "{") {
                 break;
               }
+            // falls through
             case "`":
               return this.finishToken(types$1.invalidTemplate, this.input.slice(this.start, this.pos));
           }
@@ -12777,24 +12980,33 @@ var require_acorn = __commonJS({
         switch (ch) {
           case 110:
             return "\n";
+          // 'n' -> '\n'
           case 114:
             return "\r";
+          // 'r' -> '\r'
           case 120:
             return String.fromCharCode(this.readHexChar(2));
+          // 'x'
           case 117:
             return codePointToString(this.readCodePoint());
+          // 'u'
           case 116:
             return "	";
+          // 't' -> '\t'
           case 98:
             return "\b";
+          // 'b' -> '\b'
           case 118:
             return "\v";
+          // 'v' -> '\u000b'
           case 102:
             return "\f";
+          // 'f' -> '\f'
           case 13:
             if (this.input.charCodeAt(this.pos) === 10) {
               ++this.pos;
             }
+          // '\r\n'
           case 10:
             if (this.options.locations) {
               this.lineStart = this.pos;
@@ -12938,7 +13150,7 @@ var require_acorn = __commonJS({
       exports2.tokTypes = types$1;
       exports2.tokenizer = tokenizer;
       exports2.version = version;
-    });
+    }));
   }
 });
 
@@ -13303,6 +13515,7 @@ var require_acorn_jsx = __commonJS({
             let ch = this.input.charCodeAt(this.pos);
             switch (ch) {
               case 60:
+              // '<'
               case 123:
                 if (this.pos === this.start) {
                   if (ch === 60 && this.exprAllowed) {
@@ -13319,6 +13532,7 @@ var require_acorn_jsx = __commonJS({
                 chunkStart = this.pos;
                 break;
               case 62:
+              // '>'
               case 125:
                 this.raise(
                   this.pos,
@@ -13357,8 +13571,7 @@ var require_acorn_jsx = __commonJS({
             if (this.pos >= this.input.length)
               this.raise(this.start, "Unterminated string constant");
             let ch = this.input.charCodeAt(this.pos);
-            if (ch === quote)
-              break;
+            if (ch === quote) break;
             if (ch === 38) {
               out += this.input.slice(chunkStart, this.pos);
               out += this.jsx_readEntity();
@@ -13435,8 +13648,7 @@ var require_acorn_jsx = __commonJS({
         jsx_parseNamespacedName() {
           let startPos = this.start, startLoc = this.startLoc;
           let name = this.jsx_parseIdentifier();
-          if (!options.allowNamespaces || !this.eat(tt.colon))
-            return name;
+          if (!options.allowNamespaces || !this.eat(tt.colon)) return name;
           var node = this.startNodeAt(startPos, startLoc);
           node.namespace = name;
           node.name = this.jsx_parseIdentifier();
@@ -13445,8 +13657,7 @@ var require_acorn_jsx = __commonJS({
         // Parses element name in any form - namespaced, member
         // or single identifier.
         jsx_parseElementName() {
-          if (this.type === tok.jsxTagEnd)
-            return "";
+          if (this.type === tok.jsxTagEnd) return "";
           let startPos = this.start, startLoc = this.startLoc;
           let node = this.jsx_parseNamespacedName();
           if (this.type === tt.dot && node.type === "JSXNamespacedName" && !options.allowNamespacedObjects) {
@@ -13508,8 +13719,7 @@ var require_acorn_jsx = __commonJS({
           let node = this.startNodeAt(startPos, startLoc);
           node.attributes = [];
           let nodeName = this.jsx_parseElementName();
-          if (nodeName)
-            node.name = nodeName;
+          if (nodeName) node.name = nodeName;
           while (this.type !== tt.slash && this.type !== tok.jsxTagEnd)
             node.attributes.push(this.jsx_parseAttribute());
           node.selfClosing = this.eat(tt.slash);
@@ -13520,8 +13730,7 @@ var require_acorn_jsx = __commonJS({
         jsx_parseClosingElementAt(startPos, startLoc) {
           let node = this.startNodeAt(startPos, startLoc);
           let nodeName = this.jsx_parseElementName();
-          if (nodeName)
-            node.name = nodeName;
+          if (nodeName) node.name = nodeName;
           this.expect(tok.jsxTagEnd);
           return this.finishNode(node, nodeName ? "JSXClosingElement" : "JSXClosingFragment");
         }
@@ -13533,29 +13742,28 @@ var require_acorn_jsx = __commonJS({
           let openingElement = this.jsx_parseOpeningElementAt(startPos, startLoc);
           let closingElement = null;
           if (!openingElement.selfClosing) {
-            contents:
-              for (; ; ) {
-                switch (this.type) {
-                  case tok.jsxTagStart:
-                    startPos = this.start;
-                    startLoc = this.startLoc;
-                    this.next();
-                    if (this.eat(tt.slash)) {
-                      closingElement = this.jsx_parseClosingElementAt(startPos, startLoc);
-                      break contents;
-                    }
-                    children.push(this.jsx_parseElementAt(startPos, startLoc));
-                    break;
-                  case tok.jsxText:
-                    children.push(this.parseExprAtom());
-                    break;
-                  case tt.braceL:
-                    children.push(this.jsx_parseExpressionContainer());
-                    break;
-                  default:
-                    this.unexpected();
-                }
+            contents: for (; ; ) {
+              switch (this.type) {
+                case tok.jsxTagStart:
+                  startPos = this.start;
+                  startLoc = this.startLoc;
+                  this.next();
+                  if (this.eat(tt.slash)) {
+                    closingElement = this.jsx_parseClosingElementAt(startPos, startLoc);
+                    break contents;
+                  }
+                  children.push(this.jsx_parseElementAt(startPos, startLoc));
+                  break;
+                case tok.jsxText:
+                  children.push(this.parseExprAtom());
+                  break;
+                case tt.braceL:
+                  children.push(this.jsx_parseExpressionContainer());
+                  break;
+                default:
+                  this.unexpected();
               }
+            }
             if (getQualifiedJSXName(closingElement.name) !== getQualifiedJSXName(openingElement.name)) {
               this.raise(
                 closingElement.start,
@@ -13594,11 +13802,9 @@ var require_acorn_jsx = __commonJS({
         }
         readToken(code) {
           let context = this.curContext();
-          if (context === tc_expr)
-            return this.jsx_readToken();
+          if (context === tc_expr) return this.jsx_readToken();
           if (context === tc_oTag || context === tc_cTag) {
-            if (isIdentifierStart(code))
-              return this.jsx_readWord();
+            if (isIdentifierStart(code)) return this.jsx_readWord();
             if (code == 62) {
               ++this.pos;
               return this.finishToken(tok.jsxTagEnd);
@@ -13615,12 +13821,9 @@ var require_acorn_jsx = __commonJS({
         updateContext(prevType) {
           if (this.type == tt.braceL) {
             var curContext = this.curContext();
-            if (curContext == tc_oTag)
-              this.context.push(tokContexts.b_expr);
-            else if (curContext == tc_expr)
-              this.context.push(tokContexts.b_tmpl);
-            else
-              super.updateContext(prevType);
+            if (curContext == tc_oTag) this.context.push(tokContexts.b_expr);
+            else if (curContext == tc_expr) this.context.push(tokContexts.b_tmpl);
+            else super.updateContext(prevType);
             this.exprAllowed = true;
           } else if (this.type === tt.slash && prevType === tok.jsxTagStart) {
             this.context.length -= 2;
@@ -13647,8 +13850,7 @@ var require_espree = __commonJS({
       return e && typeof e === "object" && "default" in e ? e : { "default": e };
     }
     function _interopNamespace(e) {
-      if (e && e.__esModule)
-        return e;
+      if (e && e.__esModule) return e;
       var n = /* @__PURE__ */ Object.create(null);
       if (e) {
         Object.keys(e).forEach(function(k) {
@@ -13902,8 +14104,8 @@ var require_espree = __commonJS({
         allowReturnOutsideFunction
       });
     }
-    var STATE = Symbol("espree's internal state");
-    var ESPRIMA_FINISH_NODE = Symbol("espree's esprimaFinishNode");
+    var STATE = /* @__PURE__ */ Symbol("espree's internal state");
+    var ESPRIMA_FINISH_NODE = /* @__PURE__ */ Symbol("espree's esprimaFinishNode");
     function convertAcornCommentToEsprimaComment(block, text, start, end, startLoc, endLoc, code) {
       let type;
       if (block) {
@@ -14170,10 +14372,10 @@ var require_espree = __commonJS({
     }
     var version = version$1;
     var name = "espree";
-    var VisitorKeys = function() {
+    var VisitorKeys = (function() {
       return visitorKeys__namespace.KEYS;
-    }();
-    var Syntax = function() {
+    })();
+    var Syntax = (function() {
       let key, types = {};
       if (typeof Object.create === "function") {
         types = /* @__PURE__ */ Object.create(null);
@@ -14187,7 +14389,7 @@ var require_espree = __commonJS({
         Object.freeze(types);
       }
       return types;
-    }();
+    })();
     var latestEcmaVersion = getLatestEcmaVersion();
     var supportedEcmaVersions = getSupportedEcmaVersions();
     exports.Syntax = Syntax;
@@ -14251,7 +14453,7 @@ var require_lodash = __commonJS({
     var freeModule = freeExports && typeof module == "object" && module && !module.nodeType && module;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var freeProcess = moduleExports && freeGlobal.process;
-    var nodeUtil = function() {
+    var nodeUtil = (function() {
       try {
         var types = freeModule && freeModule.require && freeModule.require("util").types;
         if (types) {
@@ -14260,7 +14462,7 @@ var require_lodash = __commonJS({
         return freeProcess && freeProcess.binding && freeProcess.binding("util");
       } catch (e) {
       }
-    }();
+    })();
     var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
     function apply(func, thisArg, args) {
       switch (args.length) {
@@ -14301,10 +14503,10 @@ var require_lodash = __commonJS({
     var coreJsData = root["__core-js_shared__"];
     var funcToString = funcProto.toString;
     var hasOwnProperty = objectProto.hasOwnProperty;
-    var maskSrcKey = function() {
+    var maskSrcKey = (function() {
       var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
       return uid ? "Symbol(src)_1." + uid : "";
-    }();
+    })();
     var nativeObjectToString = objectProto.toString;
     var objectCtorString = funcToString.call(Object);
     var reIsNative = RegExp(
@@ -14319,20 +14521,20 @@ var require_lodash = __commonJS({
     var propertyIsEnumerable = objectProto.propertyIsEnumerable;
     var splice = arrayProto.splice;
     var symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
-    var defineProperty = function() {
+    var defineProperty = (function() {
       try {
         var func = getNative(Object, "defineProperty");
         func({}, "", {});
         return func;
       } catch (e) {
       }
-    }();
+    })();
     var nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : void 0;
     var nativeMax = Math.max;
     var nativeNow = Date.now;
     var Map2 = getNative(root, "Map");
     var nativeCreate = getNative(Object, "create");
-    var baseCreate = /* @__PURE__ */ function() {
+    var baseCreate = /* @__PURE__ */ (function() {
       function object() {
       }
       return function(proto) {
@@ -14347,7 +14549,7 @@ var require_lodash = __commonJS({
         object.prototype = void 0;
         return result;
       };
-    }();
+    })();
     function Hash(entries) {
       var index = -1, length = entries == null ? 0 : entries.length;
       this.clear();
@@ -14857,9 +15059,9 @@ var require_lodash = __commonJS({
     function eq(value, other) {
       return value === other || value !== value && other !== other;
     }
-    var isArguments = baseIsArguments(/* @__PURE__ */ function() {
+    var isArguments = baseIsArguments(/* @__PURE__ */ (function() {
       return arguments;
-    }()) ? baseIsArguments : function(value) {
+    })()) ? baseIsArguments : function(value) {
       return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
     };
     var isArray = Array.isArray;
@@ -15136,7 +15338,7 @@ var require_uri_all = __commonJS({
   "../../node_modules/uri-js/dist/es5/uri.all.js"(exports, module) {
     (function(global2, factory) {
       typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : factory(global2.URI = global2.URI || {});
-    })(exports, function(exports2) {
+    })(exports, (function(exports2) {
       "use strict";
       function merge() {
         for (var _len = arguments.length, sets = Array(_len), _key = 0; _key < _len; _key++) {
@@ -15196,7 +15398,7 @@ var require_uri_all = __commonJS({
       }
       var URI_PROTOCOL = buildExps(false);
       var IRI_PROTOCOL = buildExps(true);
-      var slicedToArray = /* @__PURE__ */ function() {
+      var slicedToArray = /* @__PURE__ */ (function() {
         function sliceIterator(arr, i) {
           var _arr = [];
           var _n = true;
@@ -15205,19 +15407,16 @@ var require_uri_all = __commonJS({
           try {
             for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
               _arr.push(_s.value);
-              if (i && _arr.length === i)
-                break;
+              if (i && _arr.length === i) break;
             }
           } catch (err) {
             _d = true;
             _e = err;
           } finally {
             try {
-              if (!_n && _i["return"])
-                _i["return"]();
+              if (!_n && _i["return"]) _i["return"]();
             } finally {
-              if (_d)
-                throw _e;
+              if (_d) throw _e;
             }
           }
           return _arr;
@@ -15231,11 +15430,10 @@ var require_uri_all = __commonJS({
             throw new TypeError("Invalid attempt to destructure non-iterable instance");
           }
         };
-      }();
+      })();
       var toConsumableArray = function(arr) {
         if (Array.isArray(arr)) {
-          for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++)
-            arr2[i] = arr[i];
+          for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
           return arr2;
         } else {
           return Array.from(arr);
@@ -15545,14 +15743,10 @@ var require_uri_all = __commonJS({
       function pctEncChar(chr) {
         var c = chr.charCodeAt(0);
         var e = void 0;
-        if (c < 16)
-          e = "%0" + c.toString(16).toUpperCase();
-        else if (c < 128)
-          e = "%" + c.toString(16).toUpperCase();
-        else if (c < 2048)
-          e = "%" + (c >> 6 | 192).toString(16).toUpperCase() + "%" + (c & 63 | 128).toString(16).toUpperCase();
-        else
-          e = "%" + (c >> 12 | 224).toString(16).toUpperCase() + "%" + (c >> 6 & 63 | 128).toString(16).toUpperCase() + "%" + (c & 63 | 128).toString(16).toUpperCase();
+        if (c < 16) e = "%0" + c.toString(16).toUpperCase();
+        else if (c < 128) e = "%" + c.toString(16).toUpperCase();
+        else if (c < 2048) e = "%" + (c >> 6 | 192).toString(16).toUpperCase() + "%" + (c & 63 | 128).toString(16).toUpperCase();
+        else e = "%" + (c >> 12 | 224).toString(16).toUpperCase() + "%" + (c >> 6 & 63 | 128).toString(16).toUpperCase() + "%" + (c & 63 | 128).toString(16).toUpperCase();
         return e;
       }
       function pctDecChars(str) {
@@ -15593,18 +15787,12 @@ var require_uri_all = __commonJS({
           var decStr = pctDecChars(str);
           return !decStr.match(protocol.UNRESERVED) ? str : decStr;
         }
-        if (components.scheme)
-          components.scheme = String(components.scheme).replace(protocol.PCT_ENCODED, decodeUnreserved2).toLowerCase().replace(protocol.NOT_SCHEME, "");
-        if (components.userinfo !== void 0)
-          components.userinfo = String(components.userinfo).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_USERINFO, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-        if (components.host !== void 0)
-          components.host = String(components.host).replace(protocol.PCT_ENCODED, decodeUnreserved2).toLowerCase().replace(protocol.NOT_HOST, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-        if (components.path !== void 0)
-          components.path = String(components.path).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(components.scheme ? protocol.NOT_PATH : protocol.NOT_PATH_NOSCHEME, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-        if (components.query !== void 0)
-          components.query = String(components.query).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_QUERY, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-        if (components.fragment !== void 0)
-          components.fragment = String(components.fragment).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_FRAGMENT, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
+        if (components.scheme) components.scheme = String(components.scheme).replace(protocol.PCT_ENCODED, decodeUnreserved2).toLowerCase().replace(protocol.NOT_SCHEME, "");
+        if (components.userinfo !== void 0) components.userinfo = String(components.userinfo).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_USERINFO, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
+        if (components.host !== void 0) components.host = String(components.host).replace(protocol.PCT_ENCODED, decodeUnreserved2).toLowerCase().replace(protocol.NOT_HOST, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
+        if (components.path !== void 0) components.path = String(components.path).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(components.scheme ? protocol.NOT_PATH : protocol.NOT_PATH_NOSCHEME, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
+        if (components.query !== void 0) components.query = String(components.query).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_QUERY, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
+        if (components.fragment !== void 0) components.fragment = String(components.fragment).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_FRAGMENT, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
         return components;
       }
       function _stripLeadingZeros(str) {
@@ -15672,8 +15860,7 @@ var require_uri_all = __commonJS({
         var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         var components = {};
         var protocol = options.iri !== false ? IRI_PROTOCOL : URI_PROTOCOL;
-        if (options.reference === "suffix")
-          uriString = (options.scheme ? options.scheme + ":" : "") + "//" + uriString;
+        if (options.reference === "suffix") uriString = (options.scheme ? options.scheme + ":" : "") + "//" + uriString;
         var matches = uriString.match(URI_PARSE);
         if (matches) {
           if (NO_MATCH_IS_UNDEFINED) {
@@ -15787,8 +15974,7 @@ var require_uri_all = __commonJS({
         var protocol = options.iri ? IRI_PROTOCOL : URI_PROTOCOL;
         var uriTokens = [];
         var schemeHandler = SCHEMES[(options.scheme || components.scheme || "").toLowerCase()];
-        if (schemeHandler && schemeHandler.serialize)
-          schemeHandler.serialize(components, options);
+        if (schemeHandler && schemeHandler.serialize) schemeHandler.serialize(components, options);
         if (components.host) {
           if (protocol.IPV6ADDRESS.test(components.host)) {
           } else if (options.domainHost || schemeHandler && schemeHandler.domainHost) {
@@ -16033,8 +16219,7 @@ var require_uri_all = __commonJS({
                   break;
               }
             }
-            if (unknownHeaders)
-              mailtoComponents.headers = headers;
+            if (unknownHeaders) mailtoComponents.headers = headers;
           }
           mailtoComponents.query = void 0;
           for (var _x2 = 0, _xl2 = to.length; _x2 < _xl2; ++_x2) {
@@ -16072,10 +16257,8 @@ var require_uri_all = __commonJS({
             components.path = to.join(",");
           }
           var headers = mailtoComponents.headers = mailtoComponents.headers || {};
-          if (mailtoComponents.subject)
-            headers["subject"] = mailtoComponents.subject;
-          if (mailtoComponents.body)
-            headers["body"] = mailtoComponents.body;
+          if (mailtoComponents.subject) headers["subject"] = mailtoComponents.subject;
+          if (mailtoComponents.body) headers["body"] = mailtoComponents.body;
           var fields = [];
           for (var name in headers) {
             if (headers[name] !== O[name]) {
@@ -16163,7 +16346,7 @@ var require_uri_all = __commonJS({
       exports2.escapeComponent = escapeComponent;
       exports2.unescapeComponent = unescapeComponent;
       Object.defineProperty(exports2, "__esModule", { value: true });
-    });
+    }));
   }
 });
 
@@ -16172,38 +16355,28 @@ var require_fast_deep_equal = __commonJS({
   "../../node_modules/fast-deep-equal/index.js"(exports, module) {
     "use strict";
     module.exports = function equal(a, b) {
-      if (a === b)
-        return true;
+      if (a === b) return true;
       if (a && b && typeof a == "object" && typeof b == "object") {
-        if (a.constructor !== b.constructor)
-          return false;
+        if (a.constructor !== b.constructor) return false;
         var length, i, keys;
         if (Array.isArray(a)) {
           length = a.length;
-          if (length != b.length)
-            return false;
+          if (length != b.length) return false;
           for (i = length; i-- !== 0; )
-            if (!equal(a[i], b[i]))
-              return false;
+            if (!equal(a[i], b[i])) return false;
           return true;
         }
-        if (a.constructor === RegExp)
-          return a.source === b.source && a.flags === b.flags;
-        if (a.valueOf !== Object.prototype.valueOf)
-          return a.valueOf() === b.valueOf();
-        if (a.toString !== Object.prototype.toString)
-          return a.toString() === b.toString();
+        if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;
+        if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();
+        if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();
         keys = Object.keys(a);
         length = keys.length;
-        if (length !== Object.keys(b).length)
-          return false;
+        if (length !== Object.keys(b).length) return false;
         for (i = length; i-- !== 0; )
-          if (!Object.prototype.hasOwnProperty.call(b, keys[i]))
-            return false;
+          if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;
         for (i = length; i-- !== 0; ) {
           var key = keys[i];
-          if (!equal(a[key], b[key]))
-            return false;
+          if (!equal(a[key], b[key])) return false;
         }
         return true;
       }
@@ -16223,8 +16396,7 @@ var require_ucs2length = __commonJS({
         value = str.charCodeAt(pos++);
         if (value >= 55296 && value <= 56319 && pos < len) {
           value = str.charCodeAt(pos);
-          if ((value & 64512) == 56320)
-            pos++;
+          if ((value & 64512) == 56320) pos++;
         }
       }
       return length;
@@ -16262,8 +16434,7 @@ var require_util2 = __commonJS({
     };
     function copy(o, to) {
       to = to || {};
-      for (var key in o)
-        to[key] = o[key];
+      for (var key in o) to[key] = o[key];
       return to;
     }
     function checkDataType(dataType, data, strictNumbers, negate) {
@@ -16297,8 +16468,7 @@ var require_util2 = __commonJS({
             delete types.array;
             delete types.object;
           }
-          if (types.number)
-            delete types.integer;
+          if (types.number) delete types.integer;
           for (var t in types)
             code += (code ? " && " : "") + checkDataType(t, data, strictNumbers, true);
           return code;
@@ -16310,13 +16480,10 @@ var require_util2 = __commonJS({
         var types = [];
         for (var i = 0; i < dataTypes.length; i++) {
           var t = dataTypes[i];
-          if (COERCE_TO_TYPES[t])
-            types[types.length] = t;
-          else if (optionCoerceTypes === "array" && t === "array")
-            types[types.length] = t;
+          if (COERCE_TO_TYPES[t]) types[types.length] = t;
+          else if (optionCoerceTypes === "array" && t === "array") types[types.length] = t;
         }
-        if (types.length)
-          return types;
+        if (types.length) return types;
       } else if (COERCE_TO_TYPES[dataTypes]) {
         return [dataTypes];
       } else if (optionCoerceTypes === "array" && dataTypes === "array") {
@@ -16325,8 +16492,7 @@ var require_util2 = __commonJS({
     }
     function toHash(arr) {
       var hash = {};
-      for (var i = 0; i < arr.length; i++)
-        hash[arr[i]] = true;
+      for (var i = 0; i < arr.length; i++) hash[arr[i]] = true;
       return hash;
     }
     var IDENTIFIER = /^[a-z$_][a-z$_0-9]*$/i;
@@ -16348,25 +16514,16 @@ var require_util2 = __commonJS({
       return str.replace(new RegExp(dataVar, "g"), expr + "$1");
     }
     function schemaHasRules(schema, rules) {
-      if (typeof schema == "boolean")
-        return !schema;
-      for (var key in schema)
-        if (rules[key])
-          return true;
+      if (typeof schema == "boolean") return !schema;
+      for (var key in schema) if (rules[key]) return true;
     }
     function schemaHasRulesExcept(schema, rules, exceptKeyword) {
-      if (typeof schema == "boolean")
-        return !schema && exceptKeyword != "not";
-      for (var key in schema)
-        if (key != exceptKeyword && rules[key])
-          return true;
+      if (typeof schema == "boolean") return !schema && exceptKeyword != "not";
+      for (var key in schema) if (key != exceptKeyword && rules[key]) return true;
     }
     function schemaUnknownRules(schema, rules) {
-      if (typeof schema == "boolean")
-        return;
-      for (var key in schema)
-        if (!rules[key])
-          return key;
+      if (typeof schema == "boolean") return;
+      for (var key in schema) if (!rules[key]) return key;
     }
     function toQuotedString(str) {
       return "'" + escapeQuotes(str) + "'";
@@ -16383,29 +16540,23 @@ var require_util2 = __commonJS({
     var RELATIVE_JSON_POINTER = /^([0-9]+)(#|\/(?:[^~]|~0|~1)*)?$/;
     function getData($data, lvl, paths) {
       var up, jsonPointer, data, matches;
-      if ($data === "")
-        return "rootData";
+      if ($data === "") return "rootData";
       if ($data[0] == "/") {
-        if (!JSON_POINTER.test($data))
-          throw new Error("Invalid JSON-pointer: " + $data);
+        if (!JSON_POINTER.test($data)) throw new Error("Invalid JSON-pointer: " + $data);
         jsonPointer = $data;
         data = "rootData";
       } else {
         matches = $data.match(RELATIVE_JSON_POINTER);
-        if (!matches)
-          throw new Error("Invalid JSON-pointer: " + $data);
+        if (!matches) throw new Error("Invalid JSON-pointer: " + $data);
         up = +matches[1];
         jsonPointer = matches[2];
         if (jsonPointer == "#") {
-          if (up >= lvl)
-            throw new Error("Cannot access property/index " + up + " levels up, current level is " + lvl);
+          if (up >= lvl) throw new Error("Cannot access property/index " + up + " levels up, current level is " + lvl);
           return paths[lvl - up];
         }
-        if (up > lvl)
-          throw new Error("Cannot access data " + up + " levels up, current level is " + lvl);
+        if (up > lvl) throw new Error("Cannot access data " + up + " levels up, current level is " + lvl);
         data = "data" + (lvl - up || "");
-        if (!jsonPointer)
-          return data;
+        if (!jsonPointer) return data;
       }
       var expr = data;
       var segments = jsonPointer.split("/");
@@ -16419,8 +16570,7 @@ var require_util2 = __commonJS({
       return expr;
     }
     function joinPaths(a, b) {
-      if (a == '""')
-        return b;
+      if (a == '""') return b;
       return (a + " + " + b).replace(/([^\\])' \+ '/g, "$1");
     }
     function unescapeFragment(str) {
@@ -16553,10 +16703,8 @@ var require_resolve = __commonJS({
     function resolve(compile, root, ref) {
       var refVal = this._refs[ref];
       if (typeof refVal == "string") {
-        if (this._refs[refVal])
-          refVal = this._refs[refVal];
-        else
-          return resolve.call(this, compile, root, refVal);
+        if (this._refs[refVal]) refVal = this._refs[refVal];
+        else return resolve.call(this, compile, root, refVal);
       }
       refVal = refVal || this._schemas[ref];
       if (refVal instanceof SchemaObject) {
@@ -16584,14 +16732,12 @@ var require_resolve = __commonJS({
         if (typeof refVal == "string") {
           return resolveRecursive.call(this, root, refVal, p);
         } else if (refVal instanceof SchemaObject) {
-          if (!refVal.validate)
-            this._compile(refVal);
+          if (!refVal.validate) this._compile(refVal);
           root = refVal;
         } else {
           refVal = this._schemas[id];
           if (refVal instanceof SchemaObject) {
-            if (!refVal.validate)
-              this._compile(refVal);
+            if (!refVal.validate) this._compile(refVal);
             if (id == normalizeId(ref))
               return { schema: refVal, root, baseId };
             root = refVal;
@@ -16599,8 +16745,7 @@ var require_resolve = __commonJS({
             return;
           }
         }
-        if (!root.schema)
-          return;
+        if (!root.schema) return;
         baseId = getFullPath(this._getId(root.schema));
       }
       return getJsonPointer.call(this, p, baseId, root.schema, root);
@@ -16612,29 +16757,25 @@ var require_resolve = __commonJS({
         var baseId = res.baseId;
         root = res.root;
         var id = this._getId(schema);
-        if (id)
-          baseId = resolveUrl(baseId, id);
+        if (id) baseId = resolveUrl(baseId, id);
         return getJsonPointer.call(this, parsedRef, baseId, schema, root);
       }
     }
     var PREVENT_SCOPE_CHANGE = util.toHash(["properties", "patternProperties", "enum", "dependencies", "definitions"]);
     function getJsonPointer(parsedRef, baseId, schema, root) {
       parsedRef.fragment = parsedRef.fragment || "";
-      if (parsedRef.fragment.slice(0, 1) != "/")
-        return;
+      if (parsedRef.fragment.slice(0, 1) != "/") return;
       var parts = parsedRef.fragment.split("/");
       for (var i = 1; i < parts.length; i++) {
         var part = parts[i];
         if (part) {
           part = util.unescapeFragment(part);
           schema = schema[part];
-          if (schema === void 0)
-            break;
+          if (schema === void 0) break;
           var id;
           if (!PREVENT_SCOPE_CHANGE[part]) {
             id = this._getId(schema);
-            if (id)
-              baseId = resolveUrl(baseId, id);
+            if (id) baseId = resolveUrl(baseId, id);
             if (schema.$ref) {
               var $ref = resolveUrl(baseId, schema.$ref);
               var res = resolveSchema.call(this, root, $ref);
@@ -16668,28 +16809,22 @@ var require_resolve = __commonJS({
       "enum"
     ]);
     function inlineRef(schema, limit) {
-      if (limit === false)
-        return false;
-      if (limit === void 0 || limit === true)
-        return checkNoRef(schema);
-      else if (limit)
-        return countKeys(schema) <= limit;
+      if (limit === false) return false;
+      if (limit === void 0 || limit === true) return checkNoRef(schema);
+      else if (limit) return countKeys(schema) <= limit;
     }
     function checkNoRef(schema) {
       var item;
       if (Array.isArray(schema)) {
         for (var i = 0; i < schema.length; i++) {
           item = schema[i];
-          if (typeof item == "object" && !checkNoRef(item))
-            return false;
+          if (typeof item == "object" && !checkNoRef(item)) return false;
         }
       } else {
         for (var key in schema) {
-          if (key == "$ref")
-            return false;
+          if (key == "$ref") return false;
           item = schema[key];
-          if (typeof item == "object" && !checkNoRef(item))
-            return false;
+          if (typeof item == "object" && !checkNoRef(item)) return false;
         }
       }
       return true;
@@ -16699,31 +16834,25 @@ var require_resolve = __commonJS({
       if (Array.isArray(schema)) {
         for (var i = 0; i < schema.length; i++) {
           item = schema[i];
-          if (typeof item == "object")
-            count += countKeys(item);
-          if (count == Infinity)
-            return Infinity;
+          if (typeof item == "object") count += countKeys(item);
+          if (count == Infinity) return Infinity;
         }
       } else {
         for (var key in schema) {
-          if (key == "$ref")
-            return Infinity;
+          if (key == "$ref") return Infinity;
           if (SIMPLE_INLINED[key]) {
             count++;
           } else {
             item = schema[key];
-            if (typeof item == "object")
-              count += countKeys(item) + 1;
-            if (count == Infinity)
-              return Infinity;
+            if (typeof item == "object") count += countKeys(item) + 1;
+            if (count == Infinity) return Infinity;
           }
         }
       }
       return count;
     }
     function getFullPath(id, normalize) {
-      if (normalize !== false)
-        id = normalizeId(id);
+      if (normalize !== false) id = normalizeId(id);
       var p = URI.parse(id);
       return _getFullPath(p);
     }
@@ -16745,8 +16874,7 @@ var require_resolve = __commonJS({
       var localRefs = {};
       var self2 = this;
       traverse(schema, { allKeys: true }, function(sch, jsonPtr, rootSchema, parentJsonPtr, parentKeyword, parentSchema, keyIndex) {
-        if (jsonPtr === "")
-          return;
+        if (jsonPtr === "") return;
         var id = self2._getId(sch);
         var baseId = baseIds[parentJsonPtr];
         var fullPath = fullPaths[parentJsonPtr] + "/" + parentKeyword;
@@ -16755,8 +16883,7 @@ var require_resolve = __commonJS({
         if (typeof id == "string") {
           id = baseId = normalizeId(baseId ? URI.resolve(baseId, id) : id);
           var refVal = self2._refs[id];
-          if (typeof refVal == "string")
-            refVal = self2._refs[refVal];
+          if (typeof refVal == "string") refVal = self2._refs[refVal];
           if (refVal && refVal.schema) {
             if (!equal(sch, refVal.schema))
               throw new Error('id "' + id + '" resolves to more than one schema');
@@ -16813,12 +16940,10 @@ var require_fast_json_stable_stringify = __commonJS({
   "../../node_modules/fast-json-stable-stringify/index.js"(exports, module) {
     "use strict";
     module.exports = function(data, opts) {
-      if (!opts)
-        opts = {};
-      if (typeof opts === "function")
-        opts = { cmp: opts };
+      if (!opts) opts = {};
+      if (typeof opts === "function") opts = { cmp: opts };
       var cycles = typeof opts.cycles === "boolean" ? opts.cycles : false;
-      var cmp = opts.cmp && /* @__PURE__ */ function(f) {
+      var cmp = opts.cmp && /* @__PURE__ */ (function(f) {
         return function(node) {
           return function(a, b) {
             var aobj = { key: a, value: node[a] };
@@ -16826,33 +16951,27 @@ var require_fast_json_stable_stringify = __commonJS({
             return f(aobj, bobj);
           };
         };
-      }(opts.cmp);
+      })(opts.cmp);
       var seen = [];
-      return function stringify(node) {
+      return (function stringify(node) {
         if (node && node.toJSON && typeof node.toJSON === "function") {
           node = node.toJSON();
         }
-        if (node === void 0)
-          return;
-        if (typeof node == "number")
-          return isFinite(node) ? "" + node : "null";
-        if (typeof node !== "object")
-          return JSON.stringify(node);
+        if (node === void 0) return;
+        if (typeof node == "number") return isFinite(node) ? "" + node : "null";
+        if (typeof node !== "object") return JSON.stringify(node);
         var i, out;
         if (Array.isArray(node)) {
           out = "[";
           for (i = 0; i < node.length; i++) {
-            if (i)
-              out += ",";
+            if (i) out += ",";
             out += stringify(node[i]) || "null";
           }
           return out + "]";
         }
-        if (node === null)
-          return "null";
+        if (node === null) return "null";
         if (seen.indexOf(node) !== -1) {
-          if (cycles)
-            return JSON.stringify("__cycle__");
+          if (cycles) return JSON.stringify("__cycle__");
           throw new TypeError("Converting circular structure to JSON");
         }
         var seenIndex = seen.push(node) - 1;
@@ -16861,15 +16980,13 @@ var require_fast_json_stable_stringify = __commonJS({
         for (i = 0; i < keys.length; i++) {
           var key = keys[i];
           var value = stringify(node[key]);
-          if (!value)
-            continue;
-          if (out)
-            out += ",";
+          if (!value) continue;
+          if (out) out += ",";
           out += JSON.stringify(key) + ":" + value;
         }
         seen.splice(seenIndex, 1);
         return "{" + out + "}";
-      }(data);
+      })(data);
     };
   }
 });
@@ -16885,10 +17002,8 @@ var require_validate = __commonJS({
         var $unknownKwd = it.util.schemaUnknownRules(it.schema, it.RULES.keywords);
         if ($unknownKwd) {
           var $keywordsMsg = "unknown keyword: " + $unknownKwd;
-          if (it.opts.strictKeywords === "log")
-            it.logger.warn($keywordsMsg);
-          else
-            throw new Error($keywordsMsg);
+          if (it.opts.strictKeywords === "log") it.logger.warn($keywordsMsg);
+          else throw new Error($keywordsMsg);
         }
       }
       if (it.isTop) {
@@ -16969,20 +17084,16 @@ var require_validate = __commonJS({
         it.dataPathArr = [""];
         if (it.schema.default !== void 0 && it.opts.useDefaults && it.opts.strictDefaults) {
           var $defaultMsg = "default is ignored in the schema root";
-          if (it.opts.strictDefaults === "log")
-            it.logger.warn($defaultMsg);
-          else
-            throw new Error($defaultMsg);
+          if (it.opts.strictDefaults === "log") it.logger.warn($defaultMsg);
+          else throw new Error($defaultMsg);
         }
         out += " var vErrors = null; ";
         out += " var errors = 0;     ";
         out += " if (rootData === undefined) rootData = data; ";
       } else {
         var $lvl = it.level, $dataLvl = it.dataLevel, $data = "data" + ($dataLvl || "");
-        if ($id)
-          it.baseId = it.resolve.url(it.baseId, $id);
-        if ($async && !it.async)
-          throw new Error("async schema in sync schema");
+        if ($id) it.baseId = it.resolve.url(it.baseId, $id);
+        if ($async && !it.async) throw new Error("async schema in sync schema");
         out += " var errs_" + $lvl + " = errors;";
       }
       var $valid = "valid" + $lvl, $breakOnError = !it.opts.allErrors, $closingBraces1 = "", $closingBraces2 = "";
@@ -16990,8 +17101,7 @@ var require_validate = __commonJS({
       var $typeSchema = it.schema.type, $typeIsArray = Array.isArray($typeSchema);
       if ($typeSchema && it.opts.nullable && it.schema.nullable === true) {
         if ($typeIsArray) {
-          if ($typeSchema.indexOf("null") == -1)
-            $typeSchema = $typeSchema.concat("null");
+          if ($typeSchema.indexOf("null") == -1) $typeSchema = $typeSchema.concat("null");
         } else if ($typeSchema != "null") {
           $typeSchema = [$typeSchema, "null"];
           $typeIsArray = true;
@@ -17175,10 +17285,8 @@ var require_validate = __commonJS({
                         if (it.compositeRule) {
                           if (it.opts.strictDefaults) {
                             var $defaultMsg = "default is ignored for: " + $passData;
-                            if (it.opts.strictDefaults === "log")
-                              it.logger.warn($defaultMsg);
-                            else
-                              throw new Error($defaultMsg);
+                            if (it.opts.strictDefaults === "log") it.logger.warn($defaultMsg);
+                            else throw new Error($defaultMsg);
                           }
                         } else {
                           out += " if (" + $passData + " === undefined ";
@@ -17207,10 +17315,8 @@ var require_validate = __commonJS({
                         if (it.compositeRule) {
                           if (it.opts.strictDefaults) {
                             var $defaultMsg = "default is ignored for: " + $passData;
-                            if (it.opts.strictDefaults === "log")
-                              it.logger.warn($defaultMsg);
-                            else
-                              throw new Error($defaultMsg);
+                            if (it.opts.strictDefaults === "log") it.logger.warn($defaultMsg);
+                            else throw new Error($defaultMsg);
                           }
                         } else {
                           out += " if (" + $passData + " === undefined ";
@@ -17328,8 +17434,7 @@ var require_validate = __commonJS({
       function $shouldUseGroup($rulesGroup2) {
         var rules = $rulesGroup2.rules;
         for (var i = 0; i < rules.length; i++)
-          if ($shouldUseRule(rules[i]))
-            return true;
+          if ($shouldUseRule(rules[i])) return true;
       }
       function $shouldUseRule($rule2) {
         return it.schema[$rule2.keyword] !== void 0 || $rule2.implements && $ruleImplementsSomeKeyword($rule2);
@@ -17337,8 +17442,7 @@ var require_validate = __commonJS({
       function $ruleImplementsSomeKeyword($rule2) {
         var impl = $rule2.implements;
         for (var i = 0; i < impl.length; i++)
-          if (it.schema[impl[i]] !== void 0)
-            return true;
+          if (it.schema[impl[i]] !== void 0) return true;
       }
       return out;
     };
@@ -17363,8 +17467,7 @@ var require_compile = __commonJS({
       root = root || { schema, refVal, refs };
       var c = checkCompiling.call(this, schema, root, baseId);
       var compilation = this._compilations[c.index];
-      if (c.compiling)
-        return compilation.callValidate = callValidate;
+      if (c.compiling) return compilation.callValidate = callValidate;
       var formats = this._formats;
       var RULES = this.RULES;
       try {
@@ -17378,8 +17481,7 @@ var require_compile = __commonJS({
           cv.refVal = v.refVal;
           cv.root = v.root;
           cv.$async = v.$async;
-          if (opts.sourceCode)
-            cv.source = v.source;
+          if (opts.sourceCode) cv.source = v.source;
         }
         return v;
       } finally {
@@ -17420,8 +17522,7 @@ var require_compile = __commonJS({
           self: self2
         });
         sourceCode = vars(refVal, refValCode) + vars(patterns, patternCode) + vars(defaults, defaultCode) + vars(customRules, customRuleCode) + sourceCode;
-        if (opts.processCode)
-          sourceCode = opts.processCode(sourceCode, _schema);
+        if (opts.processCode) sourceCode = opts.processCode(sourceCode, _schema);
         var validate;
         try {
           var makeValidate = new Function(
@@ -17459,8 +17560,7 @@ var require_compile = __commonJS({
         validate.refs = refs;
         validate.refVal = refVal;
         validate.root = isRoot ? validate : _root;
-        if ($async)
-          validate.$async = true;
+        if ($async) validate.$async = true;
         if (opts.sourceCode === true) {
           validate.source = {
             code: sourceCode,
@@ -17534,8 +17634,7 @@ var require_compile = __commonJS({
           case "string":
             return util.toQuotedString(value);
           case "object":
-            if (value === null)
-              return "null";
+            if (value === null) return "null";
             var valueStr = stableStringify(value);
             var index = defaultsHash[valueStr];
             if (index === void 0) {
@@ -17557,10 +17656,8 @@ var require_compile = __commonJS({
             var valid = validateSchema(schema2);
             if (!valid) {
               var message = "keyword schema is invalid: " + self2.errorsText(validateSchema.errors);
-              if (self2._opts.validateSchema == "log")
-                self2.logger.error(message);
-              else
-                throw new Error(message);
+              if (self2._opts.validateSchema == "log") self2.logger.error(message);
+              else throw new Error(message);
             }
           }
         }
@@ -17570,14 +17667,12 @@ var require_compile = __commonJS({
           validate = compile2.call(self2, schema2, parentSchema, it);
         } else if (macro) {
           validate = macro.call(self2, schema2, parentSchema, it);
-          if (opts.validateSchema !== false)
-            self2.validateSchema(validate, true);
+          if (opts.validateSchema !== false) self2.validateSchema(validate, true);
         } else if (inline) {
           validate = inline.call(self2, it, rule.keyword, schema2, parentSchema);
         } else {
           validate = rule.definition.validate;
-          if (!validate)
-            return;
+          if (!validate) return;
         }
         if (validate === void 0)
           throw new Error('custom keyword "' + rule.keyword + '"failed to compile');
@@ -17591,8 +17686,7 @@ var require_compile = __commonJS({
     }
     function checkCompiling(schema, root, baseId) {
       var index = compIndex.call(this, schema, root, baseId);
-      if (index >= 0)
-        return { index, compiling: true };
+      if (index >= 0) return { index, compiling: true };
       index = this._compilations.length;
       this._compilations[index] = {
         schema,
@@ -17603,14 +17697,12 @@ var require_compile = __commonJS({
     }
     function endCompiling(schema, root, baseId) {
       var i = compIndex.call(this, schema, root, baseId);
-      if (i >= 0)
-        this._compilations.splice(i, 1);
+      if (i >= 0) this._compilations.splice(i, 1);
     }
     function compIndex(schema, root, baseId) {
       for (var i = 0; i < this._compilations.length; i++) {
         var c = this._compilations[i];
-        if (c.schema == schema && c.root == root && c.baseId == baseId)
-          return i;
+        if (c.schema == schema && c.root == root && c.baseId == baseId) return i;
       }
       return -1;
     }
@@ -17627,8 +17719,7 @@ var require_compile = __commonJS({
       return "var customRule" + i + " = customRules[" + i + "];";
     }
     function vars(arr, statement) {
-      if (!arr.length)
-        return "";
+      if (!arr.length) return "";
       var code = "";
       for (var i = 0; i < arr.length; i++)
         code += statement(i, arr);
@@ -17734,8 +17825,7 @@ var require_formats = __commonJS({
     }
     function date(str) {
       var matches = str.match(DATE);
-      if (!matches)
-        return false;
+      if (!matches) return false;
       var year = +matches[1];
       var month = +matches[2];
       var day = +matches[3];
@@ -17743,8 +17833,7 @@ var require_formats = __commonJS({
     }
     function time(str, full) {
       var matches = str.match(TIME);
-      if (!matches)
-        return false;
+      if (!matches) return false;
       var hour = matches[1];
       var minute = matches[2];
       var second = matches[3];
@@ -17762,8 +17851,7 @@ var require_formats = __commonJS({
     }
     var Z_ANCHOR = /[^\\]\\Z/;
     function regex(str) {
-      if (Z_ANCHOR.test(str))
-        return false;
+      if (Z_ANCHOR.test(str)) return false;
       try {
         new RegExp(str);
         return true;
@@ -17874,8 +17962,7 @@ var require_ref2 = __commonJS({
         var __callValidate = out;
         out = $$outStack.pop();
         if ($async) {
-          if (!it.async)
-            throw new Error("async schema referenced by sync schema");
+          if (!it.async) throw new Error("async schema referenced by sync schema");
           if ($breakOnError) {
             out += " var " + $valid + "; ";
           }
@@ -18208,8 +18295,7 @@ var require_dependencies = __commonJS({
       var $nextValid = "valid" + $it.level;
       var $schemaDeps = {}, $propertyDeps = {}, $ownProperties = it.opts.ownProperties;
       for ($property in $schema) {
-        if ($property == "__proto__")
-          continue;
+        if ($property == "__proto__") continue;
         var $sch = $schema[$property];
         var $deps = Array.isArray($sch) ? $propertyDeps : $schemaDeps;
         $deps[$property] = $sch;
@@ -18506,15 +18592,13 @@ var require_format = __commonJS({
           return out;
         }
         if ($async) {
-          if (!it.async)
-            throw new Error("async format in sync schema");
+          if (!it.async) throw new Error("async format in sync schema");
           var $formatRef = "formats" + it.util.getProperty($schema) + ".validate";
           out += " if (!(await " + $formatRef + "(" + $data + "))) { ";
         } else {
           out += " if (! ";
           var $formatRef = "formats" + it.util.getProperty($schema);
-          if ($isObject)
-            $formatRef += ".validate";
+          if ($isObject) $formatRef += ".validate";
           if (typeof $format == "function") {
             out += " " + $formatRef + "(" + $data + ") ";
           } else {
@@ -18909,8 +18993,7 @@ var require_limit = __commonJS({
             $schemaValue = $schemaExcl;
             $notOp += "=";
           } else {
-            if ($exclIsNumber)
-              $schemaValue = Math[$isMax ? "min" : "max"]($schemaExcl, $schema);
+            if ($exclIsNumber) $schemaValue = Math[$isMax ? "min" : "max"]($schemaExcl, $schema);
             if ($schemaExcl === ($exclIsNumber ? $schemaValue : true)) {
               $exclusive = true;
               $errorKeyword = $exclusiveKeyword;
@@ -19349,8 +19432,7 @@ var require_not = __commonJS({
         }
         out += " " + it.validate($it) + " ";
         $it.createErrors = true;
-        if ($allErrorsOption)
-          $it.opts.allErrors = $allErrorsOption;
+        if ($allErrorsOption) $it.opts.allErrors = $allErrorsOption;
         it.compositeRule = $it.compositeRule = $wasComposite;
         out += " if (" + $nextValid + ") {   ";
         var $$outStack = $$outStack || [];
@@ -20426,8 +20508,7 @@ var require_rules = __commonJS({
           keyword: "$comment",
           code: ruleModules.$comment
         };
-        if (group.type)
-          RULES.types[group.type] = group;
+        if (group.type) RULES.types[group.type] = group;
       });
       RULES.keywords = toHash(ALL.concat(KEYWORDS));
       RULES.custom = {};
@@ -20522,14 +20603,12 @@ var require_async = __commonJS({
         try {
           return self2._compile(schemaObj);
         } catch (e) {
-          if (e instanceof MissingRefError)
-            return loadMissingSchema(e);
+          if (e instanceof MissingRefError) return loadMissingSchema(e);
           throw e;
         }
         function loadMissingSchema(e) {
           var ref = e.missingSchema;
-          if (added(ref))
-            throw new Error("Schema " + ref + " is loaded but " + e.missingRef + " cannot be resolved");
+          if (added(ref)) throw new Error("Schema " + ref + " is loaded but " + e.missingRef + " cannot be resolved");
           var schemaPromise = self2._loadingSchemas[ref];
           if (!schemaPromise) {
             schemaPromise = self2._loadingSchemas[ref] = self2._opts.loadSchema(ref);
@@ -20538,8 +20617,7 @@ var require_async = __commonJS({
           return schemaPromise.then(function(sch) {
             if (!added(ref)) {
               return loadMetaSchemaOf(sch).then(function() {
-                if (!added(ref))
-                  self2.addSchema(sch, ref, void 0, meta);
+                if (!added(ref)) self2.addSchema(sch, ref, void 0, meta);
               });
             }
           }).then(function() {
@@ -20588,8 +20666,7 @@ var require_custom = __commonJS({
         out += " var " + $definition + " = RULES.custom['" + $keyword + "'].definition; var " + $validateCode + " = " + $definition + ".validate;";
       } else {
         $ruleValidate = it.useCustomRule($rule, $schema, it.schema, it);
-        if (!$ruleValidate)
-          return;
+        if (!$ruleValidate) return;
         $schemaValue = "validate.schema" + $schemaPath;
         $validateCode = $ruleValidate.code;
         $compile = $rDef.compile;
@@ -20597,8 +20674,7 @@ var require_custom = __commonJS({
         $macro = $rDef.macro;
       }
       var $ruleErrs = $validateCode + ".errors", $i = "i" + $lvl, $ruleErr = "ruleErr" + $lvl, $asyncKeyword = $rDef.async;
-      if ($asyncKeyword && !it.async)
-        throw new Error("async keyword in sync schema");
+      if ($asyncKeyword && !it.async) throw new Error("async keyword in sync schema");
       if (!($inline || $macro)) {
         out += "" + $ruleErrs + " = null;";
       }
@@ -21088,8 +21164,7 @@ var require_keyword = __commonJS({
     function validateKeyword(definition, throwError) {
       validateKeyword.errors = null;
       var v = this._validateKeyword = this._validateKeyword || this.compile(definitionSchema, true);
-      if (v(definition))
-        return true;
+      if (v(definition)) return true;
       validateKeyword.errors = v.errors;
       if (throwError)
         throw new Error("custom keyword definition is invalid: " + this.errorsText(v.errors));
@@ -21161,8 +21236,7 @@ var require_ajv = __commonJS({
     var META_IGNORE_OPTIONS = ["removeAdditional", "useDefaults", "coerceTypes", "strictDefaults"];
     var META_SUPPORT_DATA = ["/properties"];
     function Ajv(opts) {
-      if (!(this instanceof Ajv))
-        return new Ajv(opts);
+      if (!(this instanceof Ajv)) return new Ajv(opts);
       opts = this._opts = util.copy(opts) || {};
       setLogger(this);
       this._schemas = {};
@@ -21175,35 +21249,27 @@ var require_ajv = __commonJS({
       this.RULES = rules();
       this._getId = chooseGetId(opts);
       opts.loopRequired = opts.loopRequired || Infinity;
-      if (opts.errorDataPath == "property")
-        opts._errorDataPathProperty = true;
-      if (opts.serialize === void 0)
-        opts.serialize = stableStringify;
+      if (opts.errorDataPath == "property") opts._errorDataPathProperty = true;
+      if (opts.serialize === void 0) opts.serialize = stableStringify;
       this._metaOpts = getMetaSchemaOptions(this);
-      if (opts.formats)
-        addInitialFormats(this);
-      if (opts.keywords)
-        addInitialKeywords(this);
+      if (opts.formats) addInitialFormats(this);
+      if (opts.keywords) addInitialKeywords(this);
       addDefaultMetaSchema(this);
-      if (typeof opts.meta == "object")
-        this.addMetaSchema(opts.meta);
-      if (opts.nullable)
-        this.addKeyword("nullable", { metaSchema: { type: "boolean" } });
+      if (typeof opts.meta == "object") this.addMetaSchema(opts.meta);
+      if (opts.nullable) this.addKeyword("nullable", { metaSchema: { type: "boolean" } });
       addInitialSchemas(this);
     }
     function validate(schemaKeyRef, data) {
       var v;
       if (typeof schemaKeyRef == "string") {
         v = this.getSchema(schemaKeyRef);
-        if (!v)
-          throw new Error('no schema with key or ref "' + schemaKeyRef + '"');
+        if (!v) throw new Error('no schema with key or ref "' + schemaKeyRef + '"');
       } else {
         var schemaObj = this._addSchema(schemaKeyRef);
         v = schemaObj.validate || this._compile(schemaObj);
       }
       var valid = v(data);
-      if (v.$async !== true)
-        this.errors = v.errors;
+      if (v.$async !== true) this.errors = v.errors;
       return valid;
     }
     function compile(schema, _meta) {
@@ -21212,8 +21278,7 @@ var require_ajv = __commonJS({
     }
     function addSchema(schema, key, _skipValidation, _meta) {
       if (Array.isArray(schema)) {
-        for (var i = 0; i < schema.length; i++)
-          this.addSchema(schema[i], void 0, _skipValidation, _meta);
+        for (var i = 0; i < schema.length; i++) this.addSchema(schema[i], void 0, _skipValidation, _meta);
         return this;
       }
       var id = this._getId(schema);
@@ -21241,10 +21306,8 @@ var require_ajv = __commonJS({
       var valid = this.validate($schema, schema);
       if (!valid && throwOrLogError) {
         var message = "schema is invalid: " + this.errorsText();
-        if (this._opts.validateSchema == "log")
-          this.logger.error(message);
-        else
-          throw new Error(message);
+        if (this._opts.validateSchema == "log") this.logger.error(message);
+        else throw new Error(message);
       }
       return valid;
     }
@@ -21298,8 +21361,7 @@ var require_ajv = __commonJS({
           return this;
         case "string":
           var schemaObj = _getSchemaObj(this, schemaKeyRef);
-          if (schemaObj)
-            this._cache.del(schemaObj.cacheKey);
+          if (schemaObj) this._cache.del(schemaObj.cacheKey);
           delete this._schemas[schemaKeyRef];
           delete this._refs[schemaKeyRef];
           return this;
@@ -21331,12 +21393,10 @@ var require_ajv = __commonJS({
       var serialize = this._opts.serialize;
       var cacheKey = serialize ? serialize(schema) : schema;
       var cached = this._cache.get(cacheKey);
-      if (cached)
-        return cached;
+      if (cached) return cached;
       shouldAddSchema = shouldAddSchema || this._opts.addUsedSchema !== false;
       var id = resolve.normalizeId(this._getId(schema));
-      if (id && shouldAddSchema)
-        checkUnique(this, id);
+      if (id && shouldAddSchema) checkUnique(this, id);
       var willValidate = this._opts.validateSchema !== false && !skipValidation;
       var recursiveMeta;
       if (willValidate && !(recursiveMeta = id && id == resolve.normalizeId(schema.$schema)))
@@ -21349,11 +21409,9 @@ var require_ajv = __commonJS({
         cacheKey,
         meta
       });
-      if (id[0] != "#" && shouldAddSchema)
-        this._refs[id] = schemaObj;
+      if (id[0] != "#" && shouldAddSchema) this._refs[id] = schemaObj;
       this._cache.put(cacheKey, schemaObj);
-      if (willValidate && recursiveMeta)
-        this.validateSchema(schema, true);
+      if (willValidate && recursiveMeta) this.validateSchema(schema, true);
       return schemaObj;
     }
     function _compile(schemaObj, root) {
@@ -21380,8 +21438,7 @@ var require_ajv = __commonJS({
         throw e;
       } finally {
         schemaObj.compiling = false;
-        if (schemaObj.meta)
-          this._opts = currentOpts;
+        if (schemaObj.meta) this._opts = currentOpts;
       }
       schemaObj.validate = v;
       schemaObj.refs = v.refs;
@@ -21406,13 +21463,11 @@ var require_ajv = __commonJS({
       }
     }
     function _getId(schema) {
-      if (schema.$id)
-        this.logger.warn("schema $id ignored", schema.$id);
+      if (schema.$id) this.logger.warn("schema $id ignored", schema.$id);
       return schema.id;
     }
     function _get$Id(schema) {
-      if (schema.id)
-        this.logger.warn("schema id ignored", schema.id);
+      if (schema.id) this.logger.warn("schema id ignored", schema.id);
       return schema.$id;
     }
     function _get$IdOrId(schema) {
@@ -21422,22 +21477,19 @@ var require_ajv = __commonJS({
     }
     function errorsText(errors, options) {
       errors = errors || this.errors;
-      if (!errors)
-        return "No errors";
+      if (!errors) return "No errors";
       options = options || {};
       var separator = options.separator === void 0 ? ", " : options.separator;
       var dataVar = options.dataVar === void 0 ? "data" : options.dataVar;
       var text = "";
       for (var i = 0; i < errors.length; i++) {
         var e = errors[i];
-        if (e)
-          text += dataVar + e.dataPath + " " + e.message + separator;
+        if (e) text += dataVar + e.dataPath + " " + e.message + separator;
       }
       return text.slice(0, -separator.length);
     }
     function addFormat(name, format) {
-      if (typeof format == "string")
-        format = new RegExp(format);
+      if (typeof format == "string") format = new RegExp(format);
       this._formats[name] = format;
       return this;
     }
@@ -21447,23 +21499,17 @@ var require_ajv = __commonJS({
         $dataSchema = require_data2();
         self2.addMetaSchema($dataSchema, $dataSchema.$id, true);
       }
-      if (self2._opts.meta === false)
-        return;
+      if (self2._opts.meta === false) return;
       var metaSchema = require_json_schema_draft_07();
-      if (self2._opts.$data)
-        metaSchema = $dataMetaSchema(metaSchema, META_SUPPORT_DATA);
+      if (self2._opts.$data) metaSchema = $dataMetaSchema(metaSchema, META_SUPPORT_DATA);
       self2.addMetaSchema(metaSchema, META_SCHEMA_ID, true);
       self2._refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
     }
     function addInitialSchemas(self2) {
       var optsSchemas = self2._opts.schemas;
-      if (!optsSchemas)
-        return;
-      if (Array.isArray(optsSchemas))
-        self2.addSchema(optsSchemas);
-      else
-        for (var key in optsSchemas)
-          self2.addSchema(optsSchemas[key], key);
+      if (!optsSchemas) return;
+      if (Array.isArray(optsSchemas)) self2.addSchema(optsSchemas);
+      else for (var key in optsSchemas) self2.addSchema(optsSchemas[key], key);
     }
     function addInitialFormats(self2) {
       for (var name in self2._opts.formats) {
@@ -21492,8 +21538,7 @@ var require_ajv = __commonJS({
       if (logger === false) {
         self2.logger = { log: noop, warn: noop, error: noop };
       } else {
-        if (logger === void 0)
-          logger = console;
+        if (logger === void 0) logger = console;
         if (!(typeof logger == "object" && logger.log && logger.warn && logger.error))
           throw new Error("logger must implement log, warn and error methods");
         self2.logger = logger;
@@ -25104,8 +25149,10 @@ var require_eslint_utils = __commonJS({
           switch (node.operator) {
             case "==":
               return { value: left.value == right.value };
+            //eslint-disable-line eqeqeq
             case "!=":
               return { value: left.value != right.value };
+            //eslint-disable-line eqeqeq
             case "===":
               return { value: left.value === right.value };
             case "!==":
@@ -25355,6 +25402,7 @@ var require_eslint_utils = __commonJS({
               return { value: -arg.value };
             case "+":
               return { value: +arg.value };
+            //eslint-disable-line no-implicit-coercion
             case "!":
               return { value: !arg.value };
             case "~":
@@ -25807,10 +25855,10 @@ var require_eslint_utils = __commonJS({
     };
     var IMPORT_TYPE = /^(?:Import|Export(?:All|Default|Named))Declaration$/u;
     var has = Function.call.bind(Object.hasOwnProperty);
-    var READ = Symbol("read");
-    var CALL = Symbol("call");
-    var CONSTRUCT = Symbol("construct");
-    var ESM = Symbol("esm");
+    var READ = /* @__PURE__ */ Symbol("read");
+    var CALL = /* @__PURE__ */ Symbol("call");
+    var CONSTRUCT = /* @__PURE__ */ Symbol("construct");
+    var ESM = /* @__PURE__ */ Symbol("esm");
     var requireCall = { require: { [CALL]: true } };
     function isModifiedGlobal(variable) {
       return variable == null || variable.defs.length !== 0 || variable.references.some((r) => r.isWrite());
@@ -26741,9 +26789,9 @@ var require_token_store = __commonJS({
     var ForwardTokenCursor = require_forward_token_cursor();
     var PaddedTokenCursor = require_padded_token_cursor();
     var utils = require_utils();
-    var TOKENS = Symbol("tokens");
-    var COMMENTS = Symbol("comments");
-    var INDEX_MAP = Symbol("indexMap");
+    var TOKENS = /* @__PURE__ */ Symbol("tokens");
+    var COMMENTS = /* @__PURE__ */ Symbol("comments");
+    var INDEX_MAP = /* @__PURE__ */ Symbol("indexMap");
     function createIndexMap(tokens, comments) {
       const map = /* @__PURE__ */ Object.create(null);
       let tokenIndex = 0;
@@ -27277,7 +27325,7 @@ var require_source_code = __commonJS({
       }
       return false;
     }
-    var caches = Symbol("caches");
+    var caches = /* @__PURE__ */ Symbol("caches");
     var SourceCode = class extends TokenStore {
       /**
        * @param {string|Object} textOrConfig The source code text or config object.
@@ -27457,6 +27505,7 @@ var require_source_code = __commonJS({
               }
             }
             return findJSDocComment(node);
+          // falls through
           default:
             return null;
         }
@@ -28403,6 +28452,7 @@ var require_code_path_state = __commonJS({
             break;
           case "loop":
             return context;
+          /* c8 ignore next */
           default:
             throw new Error("unreachable");
         }
@@ -28824,6 +28874,7 @@ var require_code_path_state = __commonJS({
               brokenForkContext: breakContext.brokenForkContext
             };
             break;
+          /* c8 ignore next */
           default:
             throw new Error(`unknown type: "${type}"`);
         }
@@ -28876,6 +28927,7 @@ var require_code_path_state = __commonJS({
               context.leftSegments
             );
             break;
+          /* c8 ignore next */
           default:
             throw new Error("unreachable");
         }
@@ -29523,6 +29575,7 @@ var require_code_path_analyzer = __commonJS({
       const state = CodePath.getState(codePath);
       const parent = node.parent;
       switch (parent.type) {
+        // The `arguments.length == 0` case is in `postprocess` function.
         case "CallExpression":
           if (parent.optional === true && parent.arguments.length >= 1 && parent.arguments[0] === node) {
             state.makeOptionalRight();
@@ -29824,6 +29877,7 @@ var require_code_path_analyzer = __commonJS({
           endCodePath();
           break;
         }
+        // The `arguments.length >= 1` case is in `preprocess` function.
         case "CallExpression":
           if (node.optional === true && node.arguments.length === 0) {
             CodePath.getState(analyzer.codePath).makeOptionalRight();
@@ -30098,11 +30152,11 @@ var require_Func = __commonJS({
       return f(y, x);
     });
     fix = function(f) {
-      return /* @__PURE__ */ function(g) {
+      return /* @__PURE__ */ (function(g) {
         return function() {
           return f(g(g)).apply(null, arguments);
         };
-      }(function(g) {
+      })(function(g) {
         return function() {
           return f(g(g)).apply(null, arguments);
         };
@@ -30121,14 +30175,14 @@ var require_Func = __commonJS({
           res$.push(arguments[i$]);
         }
         args = res$;
-        key = function() {
+        key = (function() {
           var i$2, ref$, len$, results$ = [];
           for (i$2 = 0, len$ = (ref$ = args).length; i$2 < len$; ++i$2) {
             arg = ref$[i$2];
             results$.push(arg + toString$.call(arg).slice(8, -1));
           }
           return results$;
-        }().join("");
+        })().join("");
         return memo[key] = key in memo ? memo[key] : f.apply(null, args);
       };
     };
@@ -30387,18 +30441,18 @@ var require_List = __commonJS({
     };
     concatMap = curry$(function(f, xs) {
       var x;
-      return [].concat.apply([], function() {
+      return [].concat.apply([], (function() {
         var i$, ref$, len$, results$ = [];
         for (i$ = 0, len$ = (ref$ = xs).length; i$ < len$; ++i$) {
           x = ref$[i$];
           results$.push(f(x));
         }
         return results$;
-      }());
+      })());
     });
     flatten = function(xs) {
       var x;
-      return [].concat.apply([], function() {
+      return [].concat.apply([], (function() {
         var i$, ref$, len$, results$ = [];
         for (i$ = 0, len$ = (ref$ = xs).length; i$ < len$; ++i$) {
           x = ref$[i$];
@@ -30409,7 +30463,7 @@ var require_List = __commonJS({
           }
         }
         return results$;
-      }());
+      })());
     };
     difference = function(xs) {
       var yss, res$, i$, to$, results, len$, x, j$, len1$, ys;
@@ -30419,17 +30473,16 @@ var require_List = __commonJS({
       }
       yss = res$;
       results = [];
-      outer:
-        for (i$ = 0, len$ = xs.length; i$ < len$; ++i$) {
-          x = xs[i$];
-          for (j$ = 0, len1$ = yss.length; j$ < len1$; ++j$) {
-            ys = yss[j$];
-            if (in$(x, ys)) {
-              continue outer;
-            }
+      outer: for (i$ = 0, len$ = xs.length; i$ < len$; ++i$) {
+        x = xs[i$];
+        for (j$ = 0, len1$ = yss.length; j$ < len1$; ++j$) {
+          ys = yss[j$];
+          if (in$(x, ys)) {
+            continue outer;
           }
-          results.push(x);
         }
+        results.push(x);
+      }
       return results;
     };
     intersection = function(xs) {
@@ -30440,17 +30493,16 @@ var require_List = __commonJS({
       }
       yss = res$;
       results = [];
-      outer:
-        for (i$ = 0, len$ = xs.length; i$ < len$; ++i$) {
-          x = xs[i$];
-          for (j$ = 0, len1$ = yss.length; j$ < len1$; ++j$) {
-            ys = yss[j$];
-            if (!in$(x, ys)) {
-              continue outer;
-            }
+      outer: for (i$ = 0, len$ = xs.length; i$ < len$; ++i$) {
+        x = xs[i$];
+        for (j$ = 0, len1$ = yss.length; j$ < len1$; ++j$) {
+          ys = yss[j$];
+          if (!in$(x, ys)) {
+            continue outer;
           }
-          results.push(x);
         }
+        results.push(x);
+      }
       return results;
     };
     union = function() {
@@ -30639,14 +30691,14 @@ var require_List = __commonJS({
     scan = scanl = curry$(function(f, memo, xs) {
       var last2, x;
       last2 = memo;
-      return [memo].concat(function() {
+      return [memo].concat((function() {
         var i$, ref$, len$, results$ = [];
         for (i$ = 0, len$ = (ref$ = xs).length; i$ < len$; ++i$) {
           x = ref$[i$];
           results$.push(last2 = f(last2, x));
         }
         return results$;
-      }());
+      })());
     });
     scan1 = scanl1 = curry$(function(f, xs) {
       if (!xs.length) {
@@ -30925,9 +30977,7 @@ var require_List = __commonJS({
     }
     function in$(x, xs) {
       var i = -1, l = xs.length >>> 0;
-      while (++i < l)
-        if (x === xs[i])
-          return true;
+      while (++i < l) if (x === xs[i]) return true;
       return false;
     }
     function compose$() {
@@ -31287,9 +31337,9 @@ var require_Num = __commonJS({
       var ref$;
       return (x$ % (ref$ = y$) + ref$) % ref$;
     });
-    recip = function(it) {
+    recip = (function(it) {
       return 1 / it;
-    };
+    });
     pi = Math.PI;
     tau = pi * 2;
     exp = Math.exp;
@@ -31881,9 +31931,7 @@ var require_parse_type = __commonJS({
       };
       function in$(x, xs) {
         var i = -1, l = xs.length >>> 0;
-        while (++i < l)
-          if (x === xs[i])
-            return true;
+        while (++i < l) if (x === xs[i]) return true;
         return false;
       }
     }).call(exports);
@@ -32277,14 +32325,14 @@ var require_cast = __commonJS({
         typeOf = type.of;
         return {
           type: "Just",
-          value: function() {
+          value: (function() {
             var i$, ref$, len$, results$ = [];
             for (i$ = 0, len$ = (ref$ = node).length; i$ < len$; ++i$) {
               element = ref$[i$];
               results$.push(typesCast(element, typeOf, options));
             }
             return results$;
-          }()
+          })()
         };
       }
       function castTuple(node, type, options) {
@@ -32325,7 +32373,7 @@ var require_cast = __commonJS({
         typeOf = type.of;
         return {
           type: "Just",
-          value: function() {
+          value: (function() {
             var ref$, resultObj$ = {};
             for (key in ref$ = node) {
               value = ref$[key];
@@ -32336,7 +32384,7 @@ var require_cast = __commonJS({
               }], options);
             }
             return resultObj$;
-          }()
+          })()
         };
       }
       function typeCast(node, typeObj, options) {
@@ -32511,9 +32559,9 @@ var require_config_comment_parser = __commonJS({
 // ../../node_modules/esquery/dist/esquery.min.js
 var require_esquery_min = __commonJS({
   "../../node_modules/esquery/dist/esquery.min.js"(exports, module) {
-    !function(e, t) {
+    !(function(e, t) {
       "object" == typeof exports && "undefined" != typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define(t) : (e = e || self).esquery = t();
-    }(exports, function() {
+    })(exports, (function() {
       "use strict";
       function e(t2) {
         return (e = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e2) {
@@ -32523,74 +32571,63 @@ var require_esquery_min = __commonJS({
         })(t2);
       }
       function t(e2, t2) {
-        return function(e3) {
-          if (Array.isArray(e3))
-            return e3;
-        }(e2) || function(e3, t3) {
+        return (function(e3) {
+          if (Array.isArray(e3)) return e3;
+        })(e2) || (function(e3, t3) {
           var r2 = null == e3 ? null : "undefined" != typeof Symbol && e3[Symbol.iterator] || e3["@@iterator"];
           if (null != r2) {
             var n2, o2, a2, i2, s2 = [], u2 = true, l2 = false;
             try {
               if (a2 = (r2 = r2.call(e3)).next, 0 === t3) {
-                if (Object(r2) !== r2)
-                  return;
+                if (Object(r2) !== r2) return;
                 u2 = false;
-              } else
-                for (; !(u2 = (n2 = a2.call(r2)).done) && (s2.push(n2.value), s2.length !== t3); u2 = true)
-                  ;
+              } else for (; !(u2 = (n2 = a2.call(r2)).done) && (s2.push(n2.value), s2.length !== t3); u2 = true) ;
             } catch (e4) {
               l2 = true, o2 = e4;
             } finally {
               try {
-                if (!u2 && null != r2.return && (i2 = r2.return(), Object(i2) !== i2))
-                  return;
+                if (!u2 && null != r2.return && (i2 = r2.return(), Object(i2) !== i2)) return;
               } finally {
-                if (l2)
-                  throw o2;
+                if (l2) throw o2;
               }
             }
             return s2;
           }
-        }(e2, t2) || n(e2, t2) || function() {
+        })(e2, t2) || n(e2, t2) || (function() {
           throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-        }();
+        })();
       }
       function r(e2) {
-        return function(e3) {
-          if (Array.isArray(e3))
-            return o(e3);
-        }(e2) || function(e3) {
-          if ("undefined" != typeof Symbol && null != e3[Symbol.iterator] || null != e3["@@iterator"])
-            return Array.from(e3);
-        }(e2) || n(e2) || function() {
+        return (function(e3) {
+          if (Array.isArray(e3)) return o(e3);
+        })(e2) || (function(e3) {
+          if ("undefined" != typeof Symbol && null != e3[Symbol.iterator] || null != e3["@@iterator"]) return Array.from(e3);
+        })(e2) || n(e2) || (function() {
           throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-        }();
+        })();
       }
       function n(e2, t2) {
         if (e2) {
-          if ("string" == typeof e2)
-            return o(e2, t2);
+          if ("string" == typeof e2) return o(e2, t2);
           var r2 = Object.prototype.toString.call(e2).slice(8, -1);
           return "Object" === r2 && e2.constructor && (r2 = e2.constructor.name), "Map" === r2 || "Set" === r2 ? Array.from(e2) : "Arguments" === r2 || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r2) ? o(e2, t2) : void 0;
         }
       }
       function o(e2, t2) {
         (null == t2 || t2 > e2.length) && (t2 = e2.length);
-        for (var r2 = 0, n2 = new Array(t2); r2 < t2; r2++)
-          n2[r2] = e2[r2];
+        for (var r2 = 0, n2 = new Array(t2); r2 < t2; r2++) n2[r2] = e2[r2];
         return n2;
       }
       "undefined" != typeof globalThis ? globalThis : "undefined" != typeof window ? window : "undefined" != typeof global ? global : "undefined" != typeof self && self;
       function a(e2, t2) {
         return e2(t2 = { exports: {} }, t2.exports), t2.exports;
       }
-      var i = a(function(e2, t2) {
-        !function e3(t3) {
+      var i = a((function(e2, t2) {
+        !(function e3(t3) {
           var r2, n2, o2, a2, i2, s2;
           function u2(e4) {
             var t4, r3, n3 = {};
-            for (t4 in e4)
-              e4.hasOwnProperty(t4) && (r3 = e4[t4], n3[t4] = "object" == typeof r3 && null !== r3 ? u2(r3) : r3);
+            for (t4 in e4) e4.hasOwnProperty(t4) && (r3 = e4[t4], n3[t4] = "object" == typeof r3 && null !== r3 ? u2(r3) : r3);
             return n3;
           }
           function l2(e4, t4) {
@@ -32608,9 +32645,7 @@ var require_esquery_min = __commonJS({
             return (e4 === r2.ObjectExpression || e4 === r2.ObjectPattern) && "properties" === t4;
           }
           function y2(e4, t4) {
-            for (var r3 = e4.length - 1; r3 >= 0; --r3)
-              if (e4[r3].node === t4)
-                return true;
+            for (var r3 = e4.length - 1; r3 >= 0; --r3) if (e4[r3].node === t4) return true;
             return false;
           }
           function d2(e4, t4) {
@@ -32618,14 +32653,13 @@ var require_esquery_min = __commonJS({
           }
           function m2(e4, t4) {
             var r3;
-            return r3 = function(e5, t5) {
+            return r3 = (function(e5, t5) {
               var r4, n3, o3, a3;
-              for (n3 = e5.length, o3 = 0; n3; )
-                t5(e5[a3 = o3 + (r4 = n3 >>> 1)]) ? n3 = r4 : (o3 = a3 + 1, n3 -= r4 + 1);
+              for (n3 = e5.length, o3 = 0; n3; ) t5(e5[a3 = o3 + (r4 = n3 >>> 1)]) ? n3 = r4 : (o3 = a3 + 1, n3 -= r4 + 1);
               return o3;
-            }(t4, function(t5) {
+            })(t4, (function(t5) {
               return t5.range[0] > e4.range[0];
-            }), e4.extendedRange = [e4.range[0], e4.range[1]], r3 !== t4.length && (e4.extendedRange[1] = t4[r3].range[0]), (r3 -= 1) >= 0 && (e4.extendedRange[0] = t4[r3].range[1]), e4;
+            })), e4.extendedRange = [e4.range[0], e4.range[1]], r3 !== t4.length && (e4.extendedRange[1] = t4[r3].range[0]), (r3 -= 1) >= 0 && (e4.extendedRange[0] = t4[r3].range[1]), e4;
           }
           return r2 = { AssignmentExpression: "AssignmentExpression", AssignmentPattern: "AssignmentPattern", ArrayExpression: "ArrayExpression", ArrayPattern: "ArrayPattern", ArrowFunctionExpression: "ArrowFunctionExpression", AwaitExpression: "AwaitExpression", BlockStatement: "BlockStatement", BinaryExpression: "BinaryExpression", BreakStatement: "BreakStatement", CallExpression: "CallExpression", CatchClause: "CatchClause", ChainExpression: "ChainExpression", ClassBody: "ClassBody", ClassDeclaration: "ClassDeclaration", ClassExpression: "ClassExpression", ComprehensionBlock: "ComprehensionBlock", ComprehensionExpression: "ComprehensionExpression", ConditionalExpression: "ConditionalExpression", ContinueStatement: "ContinueStatement", DebuggerStatement: "DebuggerStatement", DirectiveStatement: "DirectiveStatement", DoWhileStatement: "DoWhileStatement", EmptyStatement: "EmptyStatement", ExportAllDeclaration: "ExportAllDeclaration", ExportDefaultDeclaration: "ExportDefaultDeclaration", ExportNamedDeclaration: "ExportNamedDeclaration", ExportSpecifier: "ExportSpecifier", ExpressionStatement: "ExpressionStatement", ForStatement: "ForStatement", ForInStatement: "ForInStatement", ForOfStatement: "ForOfStatement", FunctionDeclaration: "FunctionDeclaration", FunctionExpression: "FunctionExpression", GeneratorExpression: "GeneratorExpression", Identifier: "Identifier", IfStatement: "IfStatement", ImportExpression: "ImportExpression", ImportDeclaration: "ImportDeclaration", ImportDefaultSpecifier: "ImportDefaultSpecifier", ImportNamespaceSpecifier: "ImportNamespaceSpecifier", ImportSpecifier: "ImportSpecifier", Literal: "Literal", LabeledStatement: "LabeledStatement", LogicalExpression: "LogicalExpression", MemberExpression: "MemberExpression", MetaProperty: "MetaProperty", MethodDefinition: "MethodDefinition", ModuleSpecifier: "ModuleSpecifier", NewExpression: "NewExpression", ObjectExpression: "ObjectExpression", ObjectPattern: "ObjectPattern", PrivateIdentifier: "PrivateIdentifier", Program: "Program", Property: "Property", PropertyDefinition: "PropertyDefinition", RestElement: "RestElement", ReturnStatement: "ReturnStatement", SequenceExpression: "SequenceExpression", SpreadElement: "SpreadElement", Super: "Super", SwitchStatement: "SwitchStatement", SwitchCase: "SwitchCase", TaggedTemplateExpression: "TaggedTemplateExpression", TemplateElement: "TemplateElement", TemplateLiteral: "TemplateLiteral", ThisExpression: "ThisExpression", ThrowStatement: "ThrowStatement", TryStatement: "TryStatement", UnaryExpression: "UnaryExpression", UpdateExpression: "UpdateExpression", VariableDeclaration: "VariableDeclaration", VariableDeclarator: "VariableDeclarator", WhileStatement: "WhileStatement", WithStatement: "WithStatement", YieldExpression: "YieldExpression" }, o2 = { AssignmentExpression: ["left", "right"], AssignmentPattern: ["left", "right"], ArrayExpression: ["elements"], ArrayPattern: ["elements"], ArrowFunctionExpression: ["params", "body"], AwaitExpression: ["argument"], BlockStatement: ["body"], BinaryExpression: ["left", "right"], BreakStatement: ["label"], CallExpression: ["callee", "arguments"], CatchClause: ["param", "body"], ChainExpression: ["expression"], ClassBody: ["body"], ClassDeclaration: ["id", "superClass", "body"], ClassExpression: ["id", "superClass", "body"], ComprehensionBlock: ["left", "right"], ComprehensionExpression: ["blocks", "filter", "body"], ConditionalExpression: ["test", "consequent", "alternate"], ContinueStatement: ["label"], DebuggerStatement: [], DirectiveStatement: [], DoWhileStatement: ["body", "test"], EmptyStatement: [], ExportAllDeclaration: ["source"], ExportDefaultDeclaration: ["declaration"], ExportNamedDeclaration: ["declaration", "specifiers", "source"], ExportSpecifier: ["exported", "local"], ExpressionStatement: ["expression"], ForStatement: ["init", "test", "update", "body"], ForInStatement: ["left", "right", "body"], ForOfStatement: ["left", "right", "body"], FunctionDeclaration: ["id", "params", "body"], FunctionExpression: ["id", "params", "body"], GeneratorExpression: ["blocks", "filter", "body"], Identifier: [], IfStatement: ["test", "consequent", "alternate"], ImportExpression: ["source"], ImportDeclaration: ["specifiers", "source"], ImportDefaultSpecifier: ["local"], ImportNamespaceSpecifier: ["local"], ImportSpecifier: ["imported", "local"], Literal: [], LabeledStatement: ["label", "body"], LogicalExpression: ["left", "right"], MemberExpression: ["object", "property"], MetaProperty: ["meta", "property"], MethodDefinition: ["key", "value"], ModuleSpecifier: [], NewExpression: ["callee", "arguments"], ObjectExpression: ["properties"], ObjectPattern: ["properties"], PrivateIdentifier: [], Program: ["body"], Property: ["key", "value"], PropertyDefinition: ["key", "value"], RestElement: ["argument"], ReturnStatement: ["argument"], SequenceExpression: ["expressions"], SpreadElement: ["argument"], Super: [], SwitchStatement: ["discriminant", "cases"], SwitchCase: ["test", "consequent"], TaggedTemplateExpression: ["tag", "quasi"], TemplateElement: [], TemplateLiteral: ["quasis", "expressions"], ThisExpression: [], ThrowStatement: ["argument"], TryStatement: ["block", "handler", "finalizer"], UnaryExpression: ["argument"], UpdateExpression: ["argument"], VariableDeclaration: ["declarations"], VariableDeclarator: ["id", "init"], WhileStatement: ["test", "body"], WithStatement: ["object", "body"], YieldExpression: ["argument"] }, n2 = { Break: a2 = {}, Skip: i2 = {}, Remove: s2 = {} }, l2.prototype.replace = function(e4) {
             this.parent[this.key] = e4;
@@ -32634,23 +32668,17 @@ var require_esquery_min = __commonJS({
           }, f2.prototype.path = function() {
             var e4, t4, r3, n3, o3;
             function a3(e5, t5) {
-              if (Array.isArray(t5))
-                for (r3 = 0, n3 = t5.length; r3 < n3; ++r3)
-                  e5.push(t5[r3]);
-              else
-                e5.push(t5);
+              if (Array.isArray(t5)) for (r3 = 0, n3 = t5.length; r3 < n3; ++r3) e5.push(t5[r3]);
+              else e5.push(t5);
             }
-            if (!this.__current.path)
-              return null;
-            for (o3 = [], e4 = 2, t4 = this.__leavelist.length; e4 < t4; ++e4)
-              a3(o3, this.__leavelist[e4].path);
+            if (!this.__current.path) return null;
+            for (o3 = [], e4 = 2, t4 = this.__leavelist.length; e4 < t4; ++e4) a3(o3, this.__leavelist[e4].path);
             return a3(o3, this.__current.path), o3;
           }, f2.prototype.type = function() {
             return this.current().type || this.__current.wrap;
           }, f2.prototype.parents = function() {
             var e4, t4, r3;
-            for (r3 = [], e4 = 1, t4 = this.__leavelist.length; e4 < t4; ++e4)
-              r3.push(this.__leavelist[e4].node);
+            for (r3 = [], e4 = 1, t4 = this.__leavelist.length; e4 < t4; ++e4) r3.push(this.__leavelist[e4].node);
             return r3;
           }, f2.prototype.current = function() {
             return this.__current.node;
@@ -32669,130 +32697,102 @@ var require_esquery_min = __commonJS({
             this.visitor = t4, this.root = e4, this.__worklist = [], this.__leavelist = [], this.__current = null, this.__state = null, this.__fallback = null, "iteration" === t4.fallback ? this.__fallback = Object.keys : "function" == typeof t4.fallback && (this.__fallback = t4.fallback), this.__keys = o2, t4.keys && (this.__keys = Object.assign(Object.create(this.__keys), t4.keys));
           }, f2.prototype.traverse = function(e4, t4) {
             var r3, n3, o3, s3, u3, l3, f3, d3, m3, x2, v2, g2;
-            for (this.__initialize(e4, t4), g2 = {}, r3 = this.__worklist, n3 = this.__leavelist, r3.push(new c2(e4, null, null, null)), n3.push(new c2(null, null, null, null)); r3.length; )
-              if ((o3 = r3.pop()) !== g2) {
-                if (o3.node) {
-                  if (l3 = this.__execute(t4.enter, o3), this.__state === a2 || l3 === a2)
-                    return;
-                  if (r3.push(g2), n3.push(o3), this.__state === i2 || l3 === i2)
-                    continue;
-                  if (u3 = (s3 = o3.node).type || o3.wrap, !(x2 = this.__keys[u3])) {
-                    if (!this.__fallback)
-                      throw new Error("Unknown node type " + u3 + ".");
-                    x2 = this.__fallback(s3);
-                  }
-                  for (d3 = x2.length; (d3 -= 1) >= 0; )
-                    if (v2 = s3[f3 = x2[d3]]) {
-                      if (Array.isArray(v2)) {
-                        for (m3 = v2.length; (m3 -= 1) >= 0; )
-                          if (v2[m3] && !y2(n3, v2[m3])) {
-                            if (h2(u3, x2[d3]))
-                              o3 = new c2(v2[m3], [f3, m3], "Property", null);
-                            else {
-                              if (!p2(v2[m3]))
-                                continue;
-                              o3 = new c2(v2[m3], [f3, m3], null, null);
-                            }
-                            r3.push(o3);
-                          }
-                      } else if (p2(v2)) {
-                        if (y2(n3, v2))
-                          continue;
-                        r3.push(new c2(v2, f3, null, null));
-                      }
-                    }
+            for (this.__initialize(e4, t4), g2 = {}, r3 = this.__worklist, n3 = this.__leavelist, r3.push(new c2(e4, null, null, null)), n3.push(new c2(null, null, null, null)); r3.length; ) if ((o3 = r3.pop()) !== g2) {
+              if (o3.node) {
+                if (l3 = this.__execute(t4.enter, o3), this.__state === a2 || l3 === a2) return;
+                if (r3.push(g2), n3.push(o3), this.__state === i2 || l3 === i2) continue;
+                if (u3 = (s3 = o3.node).type || o3.wrap, !(x2 = this.__keys[u3])) {
+                  if (!this.__fallback) throw new Error("Unknown node type " + u3 + ".");
+                  x2 = this.__fallback(s3);
                 }
-              } else if (o3 = n3.pop(), l3 = this.__execute(t4.leave, o3), this.__state === a2 || l3 === a2)
-                return;
+                for (d3 = x2.length; (d3 -= 1) >= 0; ) if (v2 = s3[f3 = x2[d3]]) {
+                  if (Array.isArray(v2)) {
+                    for (m3 = v2.length; (m3 -= 1) >= 0; ) if (v2[m3] && !y2(n3, v2[m3])) {
+                      if (h2(u3, x2[d3])) o3 = new c2(v2[m3], [f3, m3], "Property", null);
+                      else {
+                        if (!p2(v2[m3])) continue;
+                        o3 = new c2(v2[m3], [f3, m3], null, null);
+                      }
+                      r3.push(o3);
+                    }
+                  } else if (p2(v2)) {
+                    if (y2(n3, v2)) continue;
+                    r3.push(new c2(v2, f3, null, null));
+                  }
+                }
+              }
+            } else if (o3 = n3.pop(), l3 = this.__execute(t4.leave, o3), this.__state === a2 || l3 === a2) return;
           }, f2.prototype.replace = function(e4, t4) {
             var r3, n3, o3, u3, f3, y3, d3, m3, x2, v2, g2, A2, E;
             function b(e5) {
               var t5, n4, o4, a3;
               if (e5.ref.remove()) {
-                for (n4 = e5.ref.key, a3 = e5.ref.parent, t5 = r3.length; t5--; )
-                  if ((o4 = r3[t5]).ref && o4.ref.parent === a3) {
-                    if (o4.ref.key < n4)
-                      break;
-                    --o4.ref.key;
-                  }
+                for (n4 = e5.ref.key, a3 = e5.ref.parent, t5 = r3.length; t5--; ) if ((o4 = r3[t5]).ref && o4.ref.parent === a3) {
+                  if (o4.ref.key < n4) break;
+                  --o4.ref.key;
+                }
               }
             }
-            for (this.__initialize(e4, t4), g2 = {}, r3 = this.__worklist, n3 = this.__leavelist, y3 = new c2(e4, null, null, new l2(A2 = { root: e4 }, "root")), r3.push(y3), n3.push(y3); r3.length; )
-              if ((y3 = r3.pop()) !== g2) {
-                if (void 0 !== (f3 = this.__execute(t4.enter, y3)) && f3 !== a2 && f3 !== i2 && f3 !== s2 && (y3.ref.replace(f3), y3.node = f3), this.__state !== s2 && f3 !== s2 || (b(y3), y3.node = null), this.__state === a2 || f3 === a2)
-                  return A2.root;
-                if ((o3 = y3.node) && (r3.push(g2), n3.push(y3), this.__state !== i2 && f3 !== i2)) {
-                  if (u3 = o3.type || y3.wrap, !(x2 = this.__keys[u3])) {
-                    if (!this.__fallback)
-                      throw new Error("Unknown node type " + u3 + ".");
-                    x2 = this.__fallback(o3);
-                  }
-                  for (d3 = x2.length; (d3 -= 1) >= 0; )
-                    if (v2 = o3[E = x2[d3]])
-                      if (Array.isArray(v2)) {
-                        for (m3 = v2.length; (m3 -= 1) >= 0; )
-                          if (v2[m3]) {
-                            if (h2(u3, x2[d3]))
-                              y3 = new c2(v2[m3], [E, m3], "Property", new l2(v2, m3));
-                            else {
-                              if (!p2(v2[m3]))
-                                continue;
-                              y3 = new c2(v2[m3], [E, m3], null, new l2(v2, m3));
-                            }
-                            r3.push(y3);
-                          }
-                      } else
-                        p2(v2) && r3.push(new c2(v2, E, null, new l2(o3, E)));
+            for (this.__initialize(e4, t4), g2 = {}, r3 = this.__worklist, n3 = this.__leavelist, y3 = new c2(e4, null, null, new l2(A2 = { root: e4 }, "root")), r3.push(y3), n3.push(y3); r3.length; ) if ((y3 = r3.pop()) !== g2) {
+              if (void 0 !== (f3 = this.__execute(t4.enter, y3)) && f3 !== a2 && f3 !== i2 && f3 !== s2 && (y3.ref.replace(f3), y3.node = f3), this.__state !== s2 && f3 !== s2 || (b(y3), y3.node = null), this.__state === a2 || f3 === a2) return A2.root;
+              if ((o3 = y3.node) && (r3.push(g2), n3.push(y3), this.__state !== i2 && f3 !== i2)) {
+                if (u3 = o3.type || y3.wrap, !(x2 = this.__keys[u3])) {
+                  if (!this.__fallback) throw new Error("Unknown node type " + u3 + ".");
+                  x2 = this.__fallback(o3);
                 }
-              } else if (y3 = n3.pop(), void 0 !== (f3 = this.__execute(t4.leave, y3)) && f3 !== a2 && f3 !== i2 && f3 !== s2 && y3.ref.replace(f3), this.__state !== s2 && f3 !== s2 || b(y3), this.__state === a2 || f3 === a2)
-                return A2.root;
+                for (d3 = x2.length; (d3 -= 1) >= 0; ) if (v2 = o3[E = x2[d3]]) if (Array.isArray(v2)) {
+                  for (m3 = v2.length; (m3 -= 1) >= 0; ) if (v2[m3]) {
+                    if (h2(u3, x2[d3])) y3 = new c2(v2[m3], [E, m3], "Property", new l2(v2, m3));
+                    else {
+                      if (!p2(v2[m3])) continue;
+                      y3 = new c2(v2[m3], [E, m3], null, new l2(v2, m3));
+                    }
+                    r3.push(y3);
+                  }
+                } else p2(v2) && r3.push(new c2(v2, E, null, new l2(o3, E)));
+              }
+            } else if (y3 = n3.pop(), void 0 !== (f3 = this.__execute(t4.leave, y3)) && f3 !== a2 && f3 !== i2 && f3 !== s2 && y3.ref.replace(f3), this.__state !== s2 && f3 !== s2 || b(y3), this.__state === a2 || f3 === a2) return A2.root;
             return A2.root;
           }, t3.Syntax = r2, t3.traverse = d2, t3.replace = function(e4, t4) {
             return new f2().replace(e4, t4);
           }, t3.attachComments = function(e4, t4, r3) {
             var o3, a3, i3, s3, l3 = [];
-            if (!e4.range)
-              throw new Error("attachComments needs range information");
+            if (!e4.range) throw new Error("attachComments needs range information");
             if (!r3.length) {
               if (t4.length) {
-                for (i3 = 0, a3 = t4.length; i3 < a3; i3 += 1)
-                  (o3 = u2(t4[i3])).extendedRange = [0, e4.range[0]], l3.push(o3);
+                for (i3 = 0, a3 = t4.length; i3 < a3; i3 += 1) (o3 = u2(t4[i3])).extendedRange = [0, e4.range[0]], l3.push(o3);
                 e4.leadingComments = l3;
               }
               return e4;
             }
-            for (i3 = 0, a3 = t4.length; i3 < a3; i3 += 1)
-              l3.push(m2(u2(t4[i3]), r3));
+            for (i3 = 0, a3 = t4.length; i3 < a3; i3 += 1) l3.push(m2(u2(t4[i3]), r3));
             return s3 = 0, d2(e4, { enter: function(e5) {
-              for (var t5; s3 < l3.length && !((t5 = l3[s3]).extendedRange[1] > e5.range[0]); )
-                t5.extendedRange[1] === e5.range[0] ? (e5.leadingComments || (e5.leadingComments = []), e5.leadingComments.push(t5), l3.splice(s3, 1)) : s3 += 1;
+              for (var t5; s3 < l3.length && !((t5 = l3[s3]).extendedRange[1] > e5.range[0]); ) t5.extendedRange[1] === e5.range[0] ? (e5.leadingComments || (e5.leadingComments = []), e5.leadingComments.push(t5), l3.splice(s3, 1)) : s3 += 1;
               return s3 === l3.length ? n2.Break : l3[s3].extendedRange[0] > e5.range[1] ? n2.Skip : void 0;
             } }), s3 = 0, d2(e4, { leave: function(e5) {
-              for (var t5; s3 < l3.length && (t5 = l3[s3], !(e5.range[1] < t5.extendedRange[0])); )
-                e5.range[1] === t5.extendedRange[0] ? (e5.trailingComments || (e5.trailingComments = []), e5.trailingComments.push(t5), l3.splice(s3, 1)) : s3 += 1;
+              for (var t5; s3 < l3.length && (t5 = l3[s3], !(e5.range[1] < t5.extendedRange[0])); ) e5.range[1] === t5.extendedRange[0] ? (e5.trailingComments || (e5.trailingComments = []), e5.trailingComments.push(t5), l3.splice(s3, 1)) : s3 += 1;
               return s3 === l3.length ? n2.Break : l3[s3].extendedRange[0] > e5.range[1] ? n2.Skip : void 0;
             } }), e4;
           }, t3.VisitorKeys = o2, t3.VisitorOption = n2, t3.Controller = f2, t3.cloneEnvironment = function() {
             return e3({});
           }, t3;
-        }(t2);
-      }), s = a(function(e2) {
-        e2.exports && (e2.exports = function() {
+        })(t2);
+      })), s = a((function(e2) {
+        e2.exports && (e2.exports = (function() {
           function e3(t2, r2, n2, o2) {
             this.message = t2, this.expected = r2, this.found = n2, this.location = o2, this.name = "SyntaxError", "function" == typeof Error.captureStackTrace && Error.captureStackTrace(this, e3);
           }
-          return function(e4, t2) {
+          return (function(e4, t2) {
             function r2() {
               this.constructor = e4;
             }
             r2.prototype = t2.prototype, e4.prototype = new r2();
-          }(e3, Error), e3.buildMessage = function(e4, t2) {
+          })(e3, Error), e3.buildMessage = function(e4, t2) {
             var r2 = { literal: function(e5) {
               return '"' + o2(e5.text) + '"';
             }, class: function(e5) {
               var t3, r3 = "";
-              for (t3 = 0; t3 < e5.parts.length; t3++)
-                r3 += e5.parts[t3] instanceof Array ? a2(e5.parts[t3][0]) + "-" + a2(e5.parts[t3][1]) : a2(e5.parts[t3]);
+              for (t3 = 0; t3 < e5.parts.length; t3++) r3 += e5.parts[t3] instanceof Array ? a2(e5.parts[t3][0]) + "-" + a2(e5.parts[t3][1]) : a2(e5.parts[t3]);
               return "[" + (e5.inverted ? "^" : "") + r3 + "]";
             }, any: function(e5) {
               return "any character";
@@ -32805,26 +32805,24 @@ var require_esquery_min = __commonJS({
               return e5.charCodeAt(0).toString(16).toUpperCase();
             }
             function o2(e5) {
-              return e5.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\0/g, "\\0").replace(/\t/g, "\\t").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[\x00-\x0F]/g, function(e6) {
+              return e5.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\0/g, "\\0").replace(/\t/g, "\\t").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[\x00-\x0F]/g, (function(e6) {
                 return "\\x0" + n2(e6);
-              }).replace(/[\x10-\x1F\x7F-\x9F]/g, function(e6) {
+              })).replace(/[\x10-\x1F\x7F-\x9F]/g, (function(e6) {
                 return "\\x" + n2(e6);
-              });
+              }));
             }
             function a2(e5) {
-              return e5.replace(/\\/g, "\\\\").replace(/\]/g, "\\]").replace(/\^/g, "\\^").replace(/-/g, "\\-").replace(/\0/g, "\\0").replace(/\t/g, "\\t").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[\x00-\x0F]/g, function(e6) {
+              return e5.replace(/\\/g, "\\\\").replace(/\]/g, "\\]").replace(/\^/g, "\\^").replace(/-/g, "\\-").replace(/\0/g, "\\0").replace(/\t/g, "\\t").replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/[\x00-\x0F]/g, (function(e6) {
                 return "\\x0" + n2(e6);
-              }).replace(/[\x10-\x1F\x7F-\x9F]/g, function(e6) {
+              })).replace(/[\x10-\x1F\x7F-\x9F]/g, (function(e6) {
                 return "\\x" + n2(e6);
-              });
+              }));
             }
-            return "Expected " + function(e5) {
+            return "Expected " + (function(e5) {
               var t3, n3, o3, a3 = new Array(e5.length);
-              for (t3 = 0; t3 < e5.length; t3++)
-                a3[t3] = (o3 = e5[t3], r2[o3.type](o3));
+              for (t3 = 0; t3 < e5.length; t3++) a3[t3] = (o3 = e5[t3], r2[o3.type](o3));
               if (a3.sort(), a3.length > 0) {
-                for (t3 = 1, n3 = 1; t3 < a3.length; t3++)
-                  a3[t3 - 1] !== a3[t3] && (a3[n3] = a3[t3], n3++);
+                for (t3 = 1, n3 = 1; t3 < a3.length; t3++) a3[t3 - 1] !== a3[t3] && (a3[n3] = a3[t3], n3++);
                 a3.length = n3;
               }
               switch (a3.length) {
@@ -32835,9 +32833,9 @@ var require_esquery_min = __commonJS({
                 default:
                   return a3.slice(0, -1).join(", ") + ", or " + a3[a3.length - 1];
               }
-            }(e4) + " but " + function(e5) {
+            })(e4) + " but " + (function(e5) {
               return e5 ? '"' + o2(e5) + '"' : "end of input";
-            }(t2) + " found.";
+            })(t2) + " found.";
           }, { SyntaxError: e3, parse: function(t2, r2) {
             r2 = void 0 !== r2 ? r2 : {};
             var n2, o2, a2, i2, s2 = {}, u2 = { start: de }, l2 = de, c2 = ce(" ", false), f2 = /^[^ [\],():#!=><~+.]/, p2 = fe([" ", "[", "]", ",", "(", ")", ":", "#", "!", "=", ">", "<", "~", "+", "."], true, false), h2 = ce(">", false), y2 = ce("~", false), d2 = ce("+", false), m2 = ce(",", false), x2 = ce("!", false), v2 = ce("*", false), g2 = ce("#", false), A2 = ce("[", false), E = ce("]", false), b = /^[><!]/, S = fe([">", "<", "!"], false, false), _ = ce("=", false), C = function(e4) {
@@ -32847,7 +32845,7 @@ var require_esquery_min = __commonJS({
             }, I = ce('"', false), j = /^[^\\"]/, T = fe(["\\", '"'], true, false), F = ce("\\", false), R = { type: "any" }, O = function(e4, t3) {
               return e4 + t3;
             }, L = function(e4) {
-              return { type: "literal", value: (t3 = e4.join(""), t3.replace(/\\(.)/g, function(e5, t4) {
+              return { type: "literal", value: (t3 = e4.join(""), t3.replace(/\\(.)/g, (function(e5, t4) {
                 switch (t4) {
                   case "b":
                     return "\b";
@@ -32864,12 +32862,11 @@ var require_esquery_min = __commonJS({
                   default:
                     return t4;
                 }
-              })) };
+              }))) };
               var t3;
             }, M = ce("'", false), B = /^[^\\']/, U = fe(["\\", "'"], true, false), K = /^[0-9]/, W = fe([["0", "9"]], false, false), q = ce("type(", false), V = /^[^ )]/, N = fe([" ", ")"], true, false), G = ce(")", false), z = /^[imsu]/, H = fe(["i", "m", "s", "u"], false, false), Y = ce("/", false), $ = /^[^\/]/, J = fe(["/"], true, false), Q = ce(":not(", false), X = ce(":matches(", false), Z = ce(":has(", false), ee = ce(":first-child", false), te = ce(":last-child", false), re = ce(":nth-child(", false), ne = ce(":nth-last-child(", false), oe = ce(":", false), ae = 0, ie = [{ line: 1, column: 1 }], se = 0, ue = [], le = {};
             if ("startRule" in r2) {
-              if (!(r2.startRule in u2))
-                throw new Error(`Can't start parsing from rule "` + r2.startRule + '".');
+              if (!(r2.startRule in u2)) throw new Error(`Can't start parsing from rule "` + r2.startRule + '".');
               l2 = u2[r2.startRule];
             }
             function ce(e4, t3) {
@@ -32880,12 +32877,9 @@ var require_esquery_min = __commonJS({
             }
             function pe(e4) {
               var r3, n3 = ie[e4];
-              if (n3)
-                return n3;
-              for (r3 = e4 - 1; !ie[r3]; )
-                r3--;
-              for (n3 = { line: (n3 = ie[r3]).line, column: n3.column }; r3 < e4; )
-                10 === t2.charCodeAt(r3) ? (n3.line++, n3.column = 1) : n3.column++, r3++;
+              if (n3) return n3;
+              for (r3 = e4 - 1; !ie[r3]; ) r3--;
+              for (n3 = { line: (n3 = ie[r3]).line, column: n3.column }; r3 < e4; ) 10 === t2.charCodeAt(r3) ? (n3.line++, n3.column = 1) : n3.column++, r3++;
               return ie[e4] = n3, n3;
             }
             function he(e4, t3) {
@@ -32901,21 +32895,15 @@ var require_esquery_min = __commonJS({
             }
             function me() {
               var e4, r3, n3 = 30 * ae + 1, o3 = le[n3];
-              if (o3)
-                return ae = o3.nextPos, o3.result;
-              for (e4 = [], 32 === t2.charCodeAt(ae) ? (r3 = " ", ae++) : (r3 = s2, ye(c2)); r3 !== s2; )
-                e4.push(r3), 32 === t2.charCodeAt(ae) ? (r3 = " ", ae++) : (r3 = s2, ye(c2));
+              if (o3) return ae = o3.nextPos, o3.result;
+              for (e4 = [], 32 === t2.charCodeAt(ae) ? (r3 = " ", ae++) : (r3 = s2, ye(c2)); r3 !== s2; ) e4.push(r3), 32 === t2.charCodeAt(ae) ? (r3 = " ", ae++) : (r3 = s2, ye(c2));
               return le[n3] = { nextPos: ae, result: e4 }, e4;
             }
             function xe() {
               var e4, r3, n3, o3 = 30 * ae + 2, a3 = le[o3];
-              if (a3)
-                return ae = a3.nextPos, a3.result;
-              if (r3 = [], f2.test(t2.charAt(ae)) ? (n3 = t2.charAt(ae), ae++) : (n3 = s2, ye(p2)), n3 !== s2)
-                for (; n3 !== s2; )
-                  r3.push(n3), f2.test(t2.charAt(ae)) ? (n3 = t2.charAt(ae), ae++) : (n3 = s2, ye(p2));
-              else
-                r3 = s2;
+              if (a3) return ae = a3.nextPos, a3.result;
+              if (r3 = [], f2.test(t2.charAt(ae)) ? (n3 = t2.charAt(ae), ae++) : (n3 = s2, ye(p2)), n3 !== s2) for (; n3 !== s2; ) r3.push(n3), f2.test(t2.charAt(ae)) ? (n3 = t2.charAt(ae), ae++) : (n3 = s2, ye(p2));
+              else r3 = s2;
               return r3 !== s2 && (r3 = r3.join("")), e4 = r3, le[o3] = { nextPos: ae, result: e4 }, e4;
             }
             function ve() {
@@ -32924,225 +32912,164 @@ var require_esquery_min = __commonJS({
             }
             function ge() {
               var e4, r3, n3, o3, a3, i3, u3, l3, c3 = 30 * ae + 4, f3 = le[c3];
-              if (f3)
-                return ae = f3.nextPos, f3.result;
+              if (f3) return ae = f3.nextPos, f3.result;
               if (e4 = ae, (r3 = Ae()) !== s2) {
-                for (n3 = [], o3 = ae, (a3 = me()) !== s2 ? (44 === t2.charCodeAt(ae) ? (i3 = ",", ae++) : (i3 = s2, ye(m2)), i3 !== s2 && (u3 = me()) !== s2 && (l3 = Ae()) !== s2 ? o3 = a3 = [a3, i3, u3, l3] : (ae = o3, o3 = s2)) : (ae = o3, o3 = s2); o3 !== s2; )
-                  n3.push(o3), o3 = ae, (a3 = me()) !== s2 ? (44 === t2.charCodeAt(ae) ? (i3 = ",", ae++) : (i3 = s2, ye(m2)), i3 !== s2 && (u3 = me()) !== s2 && (l3 = Ae()) !== s2 ? o3 = a3 = [a3, i3, u3, l3] : (ae = o3, o3 = s2)) : (ae = o3, o3 = s2);
-                n3 !== s2 ? e4 = r3 = [r3].concat(n3.map(function(e5) {
+                for (n3 = [], o3 = ae, (a3 = me()) !== s2 ? (44 === t2.charCodeAt(ae) ? (i3 = ",", ae++) : (i3 = s2, ye(m2)), i3 !== s2 && (u3 = me()) !== s2 && (l3 = Ae()) !== s2 ? o3 = a3 = [a3, i3, u3, l3] : (ae = o3, o3 = s2)) : (ae = o3, o3 = s2); o3 !== s2; ) n3.push(o3), o3 = ae, (a3 = me()) !== s2 ? (44 === t2.charCodeAt(ae) ? (i3 = ",", ae++) : (i3 = s2, ye(m2)), i3 !== s2 && (u3 = me()) !== s2 && (l3 = Ae()) !== s2 ? o3 = a3 = [a3, i3, u3, l3] : (ae = o3, o3 = s2)) : (ae = o3, o3 = s2);
+                n3 !== s2 ? e4 = r3 = [r3].concat(n3.map((function(e5) {
                   return e5[3];
-                })) : (ae = e4, e4 = s2);
-              } else
-                ae = e4, e4 = s2;
+                }))) : (ae = e4, e4 = s2);
+              } else ae = e4, e4 = s2;
               return le[c3] = { nextPos: ae, result: e4 }, e4;
             }
             function Ae() {
               var e4, t3, r3, n3, o3, a3, i3, u3 = 30 * ae + 5, l3 = le[u3];
-              if (l3)
-                return ae = l3.nextPos, l3.result;
+              if (l3) return ae = l3.nextPos, l3.result;
               if (e4 = ae, (t3 = Ee()) !== s2) {
-                for (r3 = [], n3 = ae, (o3 = ve()) !== s2 && (a3 = Ee()) !== s2 ? n3 = o3 = [o3, a3] : (ae = n3, n3 = s2); n3 !== s2; )
-                  r3.push(n3), n3 = ae, (o3 = ve()) !== s2 && (a3 = Ee()) !== s2 ? n3 = o3 = [o3, a3] : (ae = n3, n3 = s2);
-                r3 !== s2 ? (i3 = t3, e4 = t3 = r3.reduce(function(e5, t4) {
+                for (r3 = [], n3 = ae, (o3 = ve()) !== s2 && (a3 = Ee()) !== s2 ? n3 = o3 = [o3, a3] : (ae = n3, n3 = s2); n3 !== s2; ) r3.push(n3), n3 = ae, (o3 = ve()) !== s2 && (a3 = Ee()) !== s2 ? n3 = o3 = [o3, a3] : (ae = n3, n3 = s2);
+                r3 !== s2 ? (i3 = t3, e4 = t3 = r3.reduce((function(e5, t4) {
                   return { type: t4[0], left: e5, right: t4[1] };
-                }, i3)) : (ae = e4, e4 = s2);
-              } else
-                ae = e4, e4 = s2;
+                }), i3)) : (ae = e4, e4 = s2);
+              } else ae = e4, e4 = s2;
               return le[u3] = { nextPos: ae, result: e4 }, e4;
             }
             function Ee() {
               var e4, r3, n3, o3, a3, i3, u3, l3 = 30 * ae + 6, c3 = le[l3];
-              if (c3)
-                return ae = c3.nextPos, c3.result;
+              if (c3) return ae = c3.nextPos, c3.result;
               if (e4 = ae, 33 === t2.charCodeAt(ae) ? (r3 = "!", ae++) : (r3 = s2, ye(x2)), r3 === s2 && (r3 = null), r3 !== s2) {
-                if (n3 = [], (o3 = be()) !== s2)
-                  for (; o3 !== s2; )
-                    n3.push(o3), o3 = be();
-                else
-                  n3 = s2;
+                if (n3 = [], (o3 = be()) !== s2) for (; o3 !== s2; ) n3.push(o3), o3 = be();
+                else n3 = s2;
                 n3 !== s2 ? (a3 = r3, u3 = 1 === (i3 = n3).length ? i3[0] : { type: "compound", selectors: i3 }, a3 && (u3.subject = true), e4 = r3 = u3) : (ae = e4, e4 = s2);
-              } else
-                ae = e4, e4 = s2;
+              } else ae = e4, e4 = s2;
               return le[l3] = { nextPos: ae, result: e4 }, e4;
             }
             function be() {
               var e4, r3 = 30 * ae + 7, n3 = le[r3];
-              return n3 ? (ae = n3.nextPos, n3.result) : ((e4 = function() {
+              return n3 ? (ae = n3.nextPos, n3.result) : ((e4 = (function() {
                 var e5, r4, n4 = 30 * ae + 8, o3 = le[n4];
                 return o3 ? (ae = o3.nextPos, o3.result) : (42 === t2.charCodeAt(ae) ? (r4 = "*", ae++) : (r4 = s2, ye(v2)), r4 !== s2 && (r4 = { type: "wildcard", value: r4 }), e5 = r4, le[n4] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3 = 30 * ae + 9, a3 = le[o3];
                 return a3 ? (ae = a3.nextPos, a3.result) : (e5 = ae, 35 === t2.charCodeAt(ae) ? (r4 = "#", ae++) : (r4 = s2, ye(g2)), r4 === s2 && (r4 = null), r4 !== s2 && (n4 = xe()) !== s2 ? e5 = r4 = { type: "identifier", value: n4 } : (ae = e5, e5 = s2), le[o3] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3 = 30 * ae + 10, i3 = le[a3];
-                return i3 ? (ae = i3.nextPos, i3.result) : (e5 = ae, 91 === t2.charCodeAt(ae) ? (r4 = "[", ae++) : (r4 = s2, ye(A2)), r4 !== s2 && me() !== s2 && (n4 = function() {
+                return i3 ? (ae = i3.nextPos, i3.result) : (e5 = ae, 91 === t2.charCodeAt(ae) ? (r4 = "[", ae++) : (r4 = s2, ye(A2)), r4 !== s2 && me() !== s2 && (n4 = (function() {
                   var e6, r5, n5, o4, a4 = 30 * ae + 14, i4 = le[a4];
-                  return i4 ? (ae = i4.nextPos, i4.result) : (e6 = ae, (r5 = Se()) !== s2 && me() !== s2 && (n5 = function() {
+                  return i4 ? (ae = i4.nextPos, i4.result) : (e6 = ae, (r5 = Se()) !== s2 && me() !== s2 && (n5 = (function() {
                     var e7, r6, n6, o5 = 30 * ae + 12, a5 = le[o5];
                     return a5 ? (ae = a5.nextPos, a5.result) : (e7 = ae, 33 === t2.charCodeAt(ae) ? (r6 = "!", ae++) : (r6 = s2, ye(x2)), r6 === s2 && (r6 = null), r6 !== s2 ? (61 === t2.charCodeAt(ae) ? (n6 = "=", ae++) : (n6 = s2, ye(_)), n6 !== s2 ? (r6 = C(r6), e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2), le[o5] = { nextPos: ae, result: e7 }, e7);
-                  }()) !== s2 && me() !== s2 ? ((o4 = function() {
+                  })()) !== s2 && me() !== s2 ? ((o4 = (function() {
                     var e7, r6, n6, o5, a5, i5 = 30 * ae + 18, u3 = le[i5];
-                    if (u3)
-                      return ae = u3.nextPos, u3.result;
-                    if (e7 = ae, "type(" === t2.substr(ae, 5) ? (r6 = "type(", ae += 5) : (r6 = s2, ye(q)), r6 !== s2)
-                      if (me() !== s2) {
-                        if (n6 = [], V.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(N)), o5 !== s2)
-                          for (; o5 !== s2; )
-                            n6.push(o5), V.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(N));
-                        else
-                          n6 = s2;
-                        n6 !== s2 && (o5 = me()) !== s2 ? (41 === t2.charCodeAt(ae) ? (a5 = ")", ae++) : (a5 = s2, ye(G)), a5 !== s2 ? (r6 = { type: "type", value: n6.join("") }, e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
-                      } else
-                        ae = e7, e7 = s2;
-                    else
-                      ae = e7, e7 = s2;
+                    if (u3) return ae = u3.nextPos, u3.result;
+                    if (e7 = ae, "type(" === t2.substr(ae, 5) ? (r6 = "type(", ae += 5) : (r6 = s2, ye(q)), r6 !== s2) if (me() !== s2) {
+                      if (n6 = [], V.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(N)), o5 !== s2) for (; o5 !== s2; ) n6.push(o5), V.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(N));
+                      else n6 = s2;
+                      n6 !== s2 && (o5 = me()) !== s2 ? (41 === t2.charCodeAt(ae) ? (a5 = ")", ae++) : (a5 = s2, ye(G)), a5 !== s2 ? (r6 = { type: "type", value: n6.join("") }, e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
+                    } else ae = e7, e7 = s2;
+                    else ae = e7, e7 = s2;
                     return le[i5] = { nextPos: ae, result: e7 }, e7;
-                  }()) === s2 && (o4 = function() {
+                  })()) === s2 && (o4 = (function() {
                     var e7, r6, n6, o5, a5, i5, u3 = 30 * ae + 20, l3 = le[u3];
-                    if (l3)
-                      return ae = l3.nextPos, l3.result;
+                    if (l3) return ae = l3.nextPos, l3.result;
                     if (e7 = ae, 47 === t2.charCodeAt(ae) ? (r6 = "/", ae++) : (r6 = s2, ye(Y)), r6 !== s2) {
-                      if (n6 = [], $.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(J)), o5 !== s2)
-                        for (; o5 !== s2; )
-                          n6.push(o5), $.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(J));
-                      else
-                        n6 = s2;
-                      n6 !== s2 ? (47 === t2.charCodeAt(ae) ? (o5 = "/", ae++) : (o5 = s2, ye(Y)), o5 !== s2 ? ((a5 = function() {
+                      if (n6 = [], $.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(J)), o5 !== s2) for (; o5 !== s2; ) n6.push(o5), $.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(J));
+                      else n6 = s2;
+                      n6 !== s2 ? (47 === t2.charCodeAt(ae) ? (o5 = "/", ae++) : (o5 = s2, ye(Y)), o5 !== s2 ? ((a5 = (function() {
                         var e8, r7, n7 = 30 * ae + 19, o6 = le[n7];
-                        if (o6)
-                          return ae = o6.nextPos, o6.result;
-                        if (e8 = [], z.test(t2.charAt(ae)) ? (r7 = t2.charAt(ae), ae++) : (r7 = s2, ye(H)), r7 !== s2)
-                          for (; r7 !== s2; )
-                            e8.push(r7), z.test(t2.charAt(ae)) ? (r7 = t2.charAt(ae), ae++) : (r7 = s2, ye(H));
-                        else
-                          e8 = s2;
+                        if (o6) return ae = o6.nextPos, o6.result;
+                        if (e8 = [], z.test(t2.charAt(ae)) ? (r7 = t2.charAt(ae), ae++) : (r7 = s2, ye(H)), r7 !== s2) for (; r7 !== s2; ) e8.push(r7), z.test(t2.charAt(ae)) ? (r7 = t2.charAt(ae), ae++) : (r7 = s2, ye(H));
+                        else e8 = s2;
                         return le[n7] = { nextPos: ae, result: e8 }, e8;
-                      }()) === s2 && (a5 = null), a5 !== s2 ? (i5 = a5, r6 = { type: "regexp", value: new RegExp(n6.join(""), i5 ? i5.join("") : "") }, e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
-                    } else
-                      ae = e7, e7 = s2;
+                      })()) === s2 && (a5 = null), a5 !== s2 ? (i5 = a5, r6 = { type: "regexp", value: new RegExp(n6.join(""), i5 ? i5.join("") : "") }, e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
+                    } else ae = e7, e7 = s2;
                     return le[u3] = { nextPos: ae, result: e7 }, e7;
-                  }()), o4 !== s2 ? (r5 = D(r5, n5, o4), e6 = r5) : (ae = e6, e6 = s2)) : (ae = e6, e6 = s2), e6 === s2 && (e6 = ae, (r5 = Se()) !== s2 && me() !== s2 && (n5 = function() {
+                  })()), o4 !== s2 ? (r5 = D(r5, n5, o4), e6 = r5) : (ae = e6, e6 = s2)) : (ae = e6, e6 = s2), e6 === s2 && (e6 = ae, (r5 = Se()) !== s2 && me() !== s2 && (n5 = (function() {
                     var e7, r6, n6, o5 = 30 * ae + 11, a5 = le[o5];
                     return a5 ? (ae = a5.nextPos, a5.result) : (e7 = ae, b.test(t2.charAt(ae)) ? (r6 = t2.charAt(ae), ae++) : (r6 = s2, ye(S)), r6 === s2 && (r6 = null), r6 !== s2 ? (61 === t2.charCodeAt(ae) ? (n6 = "=", ae++) : (n6 = s2, ye(_)), n6 !== s2 ? (r6 = C(r6), e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2), e7 === s2 && (w.test(t2.charAt(ae)) ? (e7 = t2.charAt(ae), ae++) : (e7 = s2, ye(P))), le[o5] = { nextPos: ae, result: e7 }, e7);
-                  }()) !== s2 && me() !== s2 ? ((o4 = function() {
+                  })()) !== s2 && me() !== s2 ? ((o4 = (function() {
                     var e7, r6, n6, o5, a5, i5, u3 = 30 * ae + 15, l3 = le[u3];
-                    if (l3)
-                      return ae = l3.nextPos, l3.result;
+                    if (l3) return ae = l3.nextPos, l3.result;
                     if (e7 = ae, 34 === t2.charCodeAt(ae) ? (r6 = '"', ae++) : (r6 = s2, ye(I)), r6 !== s2) {
-                      for (n6 = [], j.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(T)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2)); o5 !== s2; )
-                        n6.push(o5), j.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(T)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2));
+                      for (n6 = [], j.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(T)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2)); o5 !== s2; ) n6.push(o5), j.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(T)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2));
                       n6 !== s2 ? (34 === t2.charCodeAt(ae) ? (o5 = '"', ae++) : (o5 = s2, ye(I)), o5 !== s2 ? (r6 = L(n6), e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
-                    } else
-                      ae = e7, e7 = s2;
-                    if (e7 === s2)
-                      if (e7 = ae, 39 === t2.charCodeAt(ae) ? (r6 = "'", ae++) : (r6 = s2, ye(M)), r6 !== s2) {
-                        for (n6 = [], B.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(U)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2)); o5 !== s2; )
-                          n6.push(o5), B.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(U)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2));
-                        n6 !== s2 ? (39 === t2.charCodeAt(ae) ? (o5 = "'", ae++) : (o5 = s2, ye(M)), o5 !== s2 ? (r6 = L(n6), e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
-                      } else
-                        ae = e7, e7 = s2;
+                    } else ae = e7, e7 = s2;
+                    if (e7 === s2) if (e7 = ae, 39 === t2.charCodeAt(ae) ? (r6 = "'", ae++) : (r6 = s2, ye(M)), r6 !== s2) {
+                      for (n6 = [], B.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(U)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2)); o5 !== s2; ) n6.push(o5), B.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(U)), o5 === s2 && (o5 = ae, 92 === t2.charCodeAt(ae) ? (a5 = "\\", ae++) : (a5 = s2, ye(F)), a5 !== s2 ? (t2.length > ae ? (i5 = t2.charAt(ae), ae++) : (i5 = s2, ye(R)), i5 !== s2 ? (a5 = O(a5, i5), o5 = a5) : (ae = o5, o5 = s2)) : (ae = o5, o5 = s2));
+                      n6 !== s2 ? (39 === t2.charCodeAt(ae) ? (o5 = "'", ae++) : (o5 = s2, ye(M)), o5 !== s2 ? (r6 = L(n6), e7 = r6) : (ae = e7, e7 = s2)) : (ae = e7, e7 = s2);
+                    } else ae = e7, e7 = s2;
                     return le[u3] = { nextPos: ae, result: e7 }, e7;
-                  }()) === s2 && (o4 = function() {
+                  })()) === s2 && (o4 = (function() {
                     var e7, r6, n6, o5, a5, i5, u3, l3 = 30 * ae + 16, c3 = le[l3];
-                    if (c3)
-                      return ae = c3.nextPos, c3.result;
-                    for (e7 = ae, r6 = ae, n6 = [], K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W)); o5 !== s2; )
-                      n6.push(o5), K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W));
+                    if (c3) return ae = c3.nextPos, c3.result;
+                    for (e7 = ae, r6 = ae, n6 = [], K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W)); o5 !== s2; ) n6.push(o5), K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W));
                     if (n6 !== s2 ? (46 === t2.charCodeAt(ae) ? (o5 = ".", ae++) : (o5 = s2, ye(k)), o5 !== s2 ? r6 = n6 = [n6, o5] : (ae = r6, r6 = s2)) : (ae = r6, r6 = s2), r6 === s2 && (r6 = null), r6 !== s2) {
-                      if (n6 = [], K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W)), o5 !== s2)
-                        for (; o5 !== s2; )
-                          n6.push(o5), K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W));
-                      else
-                        n6 = s2;
+                      if (n6 = [], K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W)), o5 !== s2) for (; o5 !== s2; ) n6.push(o5), K.test(t2.charAt(ae)) ? (o5 = t2.charAt(ae), ae++) : (o5 = s2, ye(W));
+                      else n6 = s2;
                       n6 !== s2 ? (i5 = n6, u3 = (a5 = r6) ? [].concat.apply([], a5).join("") : "", r6 = { type: "literal", value: parseFloat(u3 + i5.join("")) }, e7 = r6) : (ae = e7, e7 = s2);
-                    } else
-                      ae = e7, e7 = s2;
+                    } else ae = e7, e7 = s2;
                     return le[l3] = { nextPos: ae, result: e7 }, e7;
-                  }()) === s2 && (o4 = function() {
+                  })()) === s2 && (o4 = (function() {
                     var e7, t3, r6 = 30 * ae + 17, n6 = le[r6];
                     return n6 ? (ae = n6.nextPos, n6.result) : ((t3 = xe()) !== s2 && (t3 = { type: "literal", value: t3 }), e7 = t3, le[r6] = { nextPos: ae, result: e7 }, e7);
-                  }()), o4 !== s2 ? (r5 = D(r5, n5, o4), e6 = r5) : (ae = e6, e6 = s2)) : (ae = e6, e6 = s2), e6 === s2 && (e6 = ae, (r5 = Se()) !== s2 && (r5 = { type: "attribute", name: r5 }), e6 = r5)), le[a4] = { nextPos: ae, result: e6 }, e6);
-                }()) !== s2 && me() !== s2 ? (93 === t2.charCodeAt(ae) ? (o3 = "]", ae++) : (o3 = s2, ye(E)), o3 !== s2 ? e5 = r4 = n4 : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2), le[a3] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+                  })()), o4 !== s2 ? (r5 = D(r5, n5, o4), e6 = r5) : (ae = e6, e6 = s2)) : (ae = e6, e6 = s2), e6 === s2 && (e6 = ae, (r5 = Se()) !== s2 && (r5 = { type: "attribute", name: r5 }), e6 = r5)), le[a4] = { nextPos: ae, result: e6 }, e6);
+                })()) !== s2 && me() !== s2 ? (93 === t2.charCodeAt(ae) ? (o3 = "]", ae++) : (o3 = s2, ye(E)), o3 !== s2 ? e5 = r4 = n4 : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2), le[a3] = { nextPos: ae, result: e5 }, e5);
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3, i3, u3, l3, c3 = 30 * ae + 21, f3 = le[c3];
-                if (f3)
-                  return ae = f3.nextPos, f3.result;
-                if (e5 = ae, 46 === t2.charCodeAt(ae) ? (r4 = ".", ae++) : (r4 = s2, ye(k)), r4 !== s2)
-                  if ((n4 = xe()) !== s2) {
-                    for (o3 = [], a3 = ae, 46 === t2.charCodeAt(ae) ? (i3 = ".", ae++) : (i3 = s2, ye(k)), i3 !== s2 && (u3 = xe()) !== s2 ? a3 = i3 = [i3, u3] : (ae = a3, a3 = s2); a3 !== s2; )
-                      o3.push(a3), a3 = ae, 46 === t2.charCodeAt(ae) ? (i3 = ".", ae++) : (i3 = s2, ye(k)), i3 !== s2 && (u3 = xe()) !== s2 ? a3 = i3 = [i3, u3] : (ae = a3, a3 = s2);
-                    o3 !== s2 ? (l3 = n4, r4 = { type: "field", name: o3.reduce(function(e6, t3) {
-                      return e6 + t3[0] + t3[1];
-                    }, l3) }, e5 = r4) : (ae = e5, e5 = s2);
-                  } else
-                    ae = e5, e5 = s2;
-                else
-                  ae = e5, e5 = s2;
+                if (f3) return ae = f3.nextPos, f3.result;
+                if (e5 = ae, 46 === t2.charCodeAt(ae) ? (r4 = ".", ae++) : (r4 = s2, ye(k)), r4 !== s2) if ((n4 = xe()) !== s2) {
+                  for (o3 = [], a3 = ae, 46 === t2.charCodeAt(ae) ? (i3 = ".", ae++) : (i3 = s2, ye(k)), i3 !== s2 && (u3 = xe()) !== s2 ? a3 = i3 = [i3, u3] : (ae = a3, a3 = s2); a3 !== s2; ) o3.push(a3), a3 = ae, 46 === t2.charCodeAt(ae) ? (i3 = ".", ae++) : (i3 = s2, ye(k)), i3 !== s2 && (u3 = xe()) !== s2 ? a3 = i3 = [i3, u3] : (ae = a3, a3 = s2);
+                  o3 !== s2 ? (l3 = n4, r4 = { type: "field", name: o3.reduce((function(e6, t3) {
+                    return e6 + t3[0] + t3[1];
+                  }), l3) }, e5 = r4) : (ae = e5, e5 = s2);
+                } else ae = e5, e5 = s2;
+                else ae = e5, e5 = s2;
                 return le[c3] = { nextPos: ae, result: e5 }, e5;
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3 = 30 * ae + 22, i3 = le[a3];
                 return i3 ? (ae = i3.nextPos, i3.result) : (e5 = ae, ":not(" === t2.substr(ae, 5) ? (r4 = ":not(", ae += 5) : (r4 = s2, ye(Q)), r4 !== s2 && me() !== s2 && (n4 = ge()) !== s2 && me() !== s2 ? (41 === t2.charCodeAt(ae) ? (o3 = ")", ae++) : (o3 = s2, ye(G)), o3 !== s2 ? e5 = r4 = { type: "not", selectors: n4 } : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2), le[a3] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3 = 30 * ae + 23, i3 = le[a3];
                 return i3 ? (ae = i3.nextPos, i3.result) : (e5 = ae, ":matches(" === t2.substr(ae, 9) ? (r4 = ":matches(", ae += 9) : (r4 = s2, ye(X)), r4 !== s2 && me() !== s2 && (n4 = ge()) !== s2 && me() !== s2 ? (41 === t2.charCodeAt(ae) ? (o3 = ")", ae++) : (o3 = s2, ye(G)), o3 !== s2 ? e5 = r4 = { type: "matches", selectors: n4 } : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2), le[a3] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3 = 30 * ae + 24, i3 = le[a3];
                 return i3 ? (ae = i3.nextPos, i3.result) : (e5 = ae, ":has(" === t2.substr(ae, 5) ? (r4 = ":has(", ae += 5) : (r4 = s2, ye(Z)), r4 !== s2 && me() !== s2 && (n4 = ge()) !== s2 && me() !== s2 ? (41 === t2.charCodeAt(ae) ? (o3 = ")", ae++) : (o3 = s2, ye(G)), o3 !== s2 ? e5 = r4 = { type: "has", selectors: n4 } : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2), le[a3] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4 = 30 * ae + 25, o3 = le[n4];
                 return o3 ? (ae = o3.nextPos, o3.result) : (":first-child" === t2.substr(ae, 12) ? (r4 = ":first-child", ae += 12) : (r4 = s2, ye(ee)), r4 !== s2 && (r4 = _e(1)), e5 = r4, le[n4] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4 = 30 * ae + 26, o3 = le[n4];
                 return o3 ? (ae = o3.nextPos, o3.result) : (":last-child" === t2.substr(ae, 11) ? (r4 = ":last-child", ae += 11) : (r4 = s2, ye(te)), r4 !== s2 && (r4 = Ce(1)), e5 = r4, le[n4] = { nextPos: ae, result: e5 }, e5);
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3, i3 = 30 * ae + 27, u3 = le[i3];
-                if (u3)
-                  return ae = u3.nextPos, u3.result;
-                if (e5 = ae, ":nth-child(" === t2.substr(ae, 11) ? (r4 = ":nth-child(", ae += 11) : (r4 = s2, ye(re)), r4 !== s2)
-                  if (me() !== s2) {
-                    if (n4 = [], K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W)), o3 !== s2)
-                      for (; o3 !== s2; )
-                        n4.push(o3), K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W));
-                    else
-                      n4 = s2;
-                    n4 !== s2 && (o3 = me()) !== s2 ? (41 === t2.charCodeAt(ae) ? (a3 = ")", ae++) : (a3 = s2, ye(G)), a3 !== s2 ? (r4 = _e(parseInt(n4.join(""), 10)), e5 = r4) : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2);
-                  } else
-                    ae = e5, e5 = s2;
-                else
-                  ae = e5, e5 = s2;
+                if (u3) return ae = u3.nextPos, u3.result;
+                if (e5 = ae, ":nth-child(" === t2.substr(ae, 11) ? (r4 = ":nth-child(", ae += 11) : (r4 = s2, ye(re)), r4 !== s2) if (me() !== s2) {
+                  if (n4 = [], K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W)), o3 !== s2) for (; o3 !== s2; ) n4.push(o3), K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W));
+                  else n4 = s2;
+                  n4 !== s2 && (o3 = me()) !== s2 ? (41 === t2.charCodeAt(ae) ? (a3 = ")", ae++) : (a3 = s2, ye(G)), a3 !== s2 ? (r4 = _e(parseInt(n4.join(""), 10)), e5 = r4) : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2);
+                } else ae = e5, e5 = s2;
+                else ae = e5, e5 = s2;
                 return le[i3] = { nextPos: ae, result: e5 }, e5;
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3, a3, i3 = 30 * ae + 28, u3 = le[i3];
-                if (u3)
-                  return ae = u3.nextPos, u3.result;
-                if (e5 = ae, ":nth-last-child(" === t2.substr(ae, 16) ? (r4 = ":nth-last-child(", ae += 16) : (r4 = s2, ye(ne)), r4 !== s2)
-                  if (me() !== s2) {
-                    if (n4 = [], K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W)), o3 !== s2)
-                      for (; o3 !== s2; )
-                        n4.push(o3), K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W));
-                    else
-                      n4 = s2;
-                    n4 !== s2 && (o3 = me()) !== s2 ? (41 === t2.charCodeAt(ae) ? (a3 = ")", ae++) : (a3 = s2, ye(G)), a3 !== s2 ? (r4 = Ce(parseInt(n4.join(""), 10)), e5 = r4) : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2);
-                  } else
-                    ae = e5, e5 = s2;
-                else
-                  ae = e5, e5 = s2;
+                if (u3) return ae = u3.nextPos, u3.result;
+                if (e5 = ae, ":nth-last-child(" === t2.substr(ae, 16) ? (r4 = ":nth-last-child(", ae += 16) : (r4 = s2, ye(ne)), r4 !== s2) if (me() !== s2) {
+                  if (n4 = [], K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W)), o3 !== s2) for (; o3 !== s2; ) n4.push(o3), K.test(t2.charAt(ae)) ? (o3 = t2.charAt(ae), ae++) : (o3 = s2, ye(W));
+                  else n4 = s2;
+                  n4 !== s2 && (o3 = me()) !== s2 ? (41 === t2.charCodeAt(ae) ? (a3 = ")", ae++) : (a3 = s2, ye(G)), a3 !== s2 ? (r4 = Ce(parseInt(n4.join(""), 10)), e5 = r4) : (ae = e5, e5 = s2)) : (ae = e5, e5 = s2);
+                } else ae = e5, e5 = s2;
+                else ae = e5, e5 = s2;
                 return le[i3] = { nextPos: ae, result: e5 }, e5;
-              }()) === s2 && (e4 = function() {
+              })()) === s2 && (e4 = (function() {
                 var e5, r4, n4, o3 = 30 * ae + 29, a3 = le[o3];
                 return a3 ? (ae = a3.nextPos, a3.result) : (e5 = ae, 58 === t2.charCodeAt(ae) ? (r4 = ":", ae++) : (r4 = s2, ye(oe)), r4 !== s2 && (n4 = xe()) !== s2 ? e5 = r4 = { type: "class", name: n4 } : (ae = e5, e5 = s2), le[o3] = { nextPos: ae, result: e5 }, e5);
-              }()), le[r3] = { nextPos: ae, result: e4 }, e4);
+              })()), le[r3] = { nextPos: ae, result: e4 }, e4);
             }
             function Se() {
               var e4, r3, n3, o3, a3, i3, u3, l3, c3 = 30 * ae + 13, f3 = le[c3];
-              if (f3)
-                return ae = f3.nextPos, f3.result;
+              if (f3) return ae = f3.nextPos, f3.result;
               if (e4 = ae, (r3 = xe()) !== s2) {
-                for (n3 = [], o3 = ae, 46 === t2.charCodeAt(ae) ? (a3 = ".", ae++) : (a3 = s2, ye(k)), a3 !== s2 && (i3 = xe()) !== s2 ? o3 = a3 = [a3, i3] : (ae = o3, o3 = s2); o3 !== s2; )
-                  n3.push(o3), o3 = ae, 46 === t2.charCodeAt(ae) ? (a3 = ".", ae++) : (a3 = s2, ye(k)), a3 !== s2 && (i3 = xe()) !== s2 ? o3 = a3 = [a3, i3] : (ae = o3, o3 = s2);
+                for (n3 = [], o3 = ae, 46 === t2.charCodeAt(ae) ? (a3 = ".", ae++) : (a3 = s2, ye(k)), a3 !== s2 && (i3 = xe()) !== s2 ? o3 = a3 = [a3, i3] : (ae = o3, o3 = s2); o3 !== s2; ) n3.push(o3), o3 = ae, 46 === t2.charCodeAt(ae) ? (a3 = ".", ae++) : (a3 = s2, ye(k)), a3 !== s2 && (i3 = xe()) !== s2 ? o3 = a3 = [a3, i3] : (ae = o3, o3 = s2);
                 n3 !== s2 ? (u3 = r3, l3 = n3, e4 = r3 = [].concat.apply([u3], l3).join("")) : (ae = e4, e4 = s2);
-              } else
-                ae = e4, e4 = s2;
+              } else ae = e4, e4 = s2;
               return le[c3] = { nextPos: ae, result: e4 }, e4;
             }
             function _e(e4) {
@@ -33151,26 +33078,23 @@ var require_esquery_min = __commonJS({
             function Ce(e4) {
               return { type: "nth-last-child", index: { type: "literal", value: e4 } };
             }
-            if ((n2 = l2()) !== s2 && ae === t2.length)
-              return n2;
+            if ((n2 = l2()) !== s2 && ae === t2.length) return n2;
             throw n2 !== s2 && ae < t2.length && ye({ type: "end" }), o2 = ue, a2 = se < t2.length ? t2.charAt(se) : null, i2 = se < t2.length ? he(se, se + 1) : he(se, se), new e3(e3.buildMessage(o2, a2), o2, a2, i2);
           } };
-        }());
-      });
+        })());
+      }));
       function u(e2, t2) {
         for (var r2 = 0; r2 < t2.length; ++r2) {
-          if (null == e2)
-            return e2;
+          if (null == e2) return e2;
           e2 = e2[t2[r2]];
         }
         return e2;
       }
       var l = "function" == typeof WeakMap ? /* @__PURE__ */ new WeakMap() : null;
       function c(e2) {
-        if (null == e2)
-          return function() {
-            return true;
-          };
+        if (null == e2) return function() {
+          return true;
+        };
         if (null != l) {
           var t2 = l.get(e2);
           return null != t2 || (t2 = f(e2), l.set(e2, t2)), t2;
@@ -33192,44 +33116,35 @@ var require_esquery_min = __commonJS({
           case "field":
             var n2 = t2.name.split(".");
             return function(e2, t3) {
-              return function e3(t4, r3, n3, o3) {
+              return (function e3(t4, r3, n3, o3) {
                 for (var a3 = r3, i2 = o3; i2 < n3.length; ++i2) {
-                  if (null == a3)
-                    return false;
+                  if (null == a3) return false;
                   var s3 = a3[n3[i2]];
                   if (Array.isArray(s3)) {
-                    for (var u2 = 0; u2 < s3.length; ++u2)
-                      if (e3(t4, s3[u2], n3, i2 + 1))
-                        return true;
+                    for (var u2 = 0; u2 < s3.length; ++u2) if (e3(t4, s3[u2], n3, i2 + 1)) return true;
                     return false;
                   }
                   a3 = s3;
                 }
                 return t4 === a3;
-              }(e2, t3[n2.length - 1], n2, 0);
+              })(e2, t3[n2.length - 1], n2, 0);
             };
           case "matches":
             var o2 = t2.selectors.map(c);
             return function(e2, t3, r3) {
-              for (var n3 = 0; n3 < o2.length; ++n3)
-                if (o2[n3](e2, t3, r3))
-                  return true;
+              for (var n3 = 0; n3 < o2.length; ++n3) if (o2[n3](e2, t3, r3)) return true;
               return false;
             };
           case "compound":
             var a2 = t2.selectors.map(c);
             return function(e2, t3, r3) {
-              for (var n3 = 0; n3 < a2.length; ++n3)
-                if (!a2[n3](e2, t3, r3))
-                  return false;
+              for (var n3 = 0; n3 < a2.length; ++n3) if (!a2[n3](e2, t3, r3)) return false;
               return true;
             };
           case "not":
             var s2 = t2.selectors.map(c);
             return function(e2, t3, r3) {
-              for (var n3 = 0; n3 < s2.length; ++n3)
-                if (s2[n3](e2, t3, r3))
-                  return false;
+              for (var n3 = 0; n3 < s2.length; ++n3) if (s2[n3](e2, t3, r3)) return false;
               return true;
             };
           case "has":
@@ -33238,9 +33153,7 @@ var require_esquery_min = __commonJS({
               var n3 = false, o3 = [];
               return i.traverse(e2, { enter: function(e3, t4) {
                 null != t4 && o3.unshift(t4);
-                for (var a3 = 0; a3 < l2.length; ++a3)
-                  if (l2[a3](e3, o3, r3))
-                    return n3 = true, void this.break();
+                for (var a3 = 0; a3 < l2.length; ++a3) if (l2[a3](e3, o3, r3)) return n3 = true, void this.break();
               }, leave: function() {
                 o3.shift();
               }, keys: r3 && r3.visitorKeys, fallback: r3 && r3.fallback || "iteration" }), n3;
@@ -33254,9 +33167,7 @@ var require_esquery_min = __commonJS({
             var h2 = c(t2.left), x2 = c(t2.right);
             return function(e2, t3, r3) {
               if (x2(e2, t3, r3)) {
-                for (var n3 = 0, o3 = t3.length; n3 < o3; ++n3)
-                  if (h2(t3[n3], t3.slice(n3 + 1), r3))
-                    return true;
+                for (var n3 = 0, o3 = t3.length; n3 < o3; ++n3) if (h2(t3[n3], t3.slice(n3 + 1), r3)) return true;
               }
               return false;
             };
@@ -33342,19 +33253,15 @@ var require_esquery_min = __commonJS({
             };
           case "class":
             return function(e2, r3, n3) {
-              if (n3 && n3.matchClass)
-                return n3.matchClass(t2.name, e2, r3);
-              if (n3 && n3.nodeTypeKey)
-                return false;
+              if (n3 && n3.matchClass) return n3.matchClass(t2.name, e2, r3);
+              if (n3 && n3.nodeTypeKey) return false;
               switch (t2.name.toLowerCase()) {
                 case "statement":
-                  if ("Statement" === e2.type.slice(-9))
-                    return true;
+                  if ("Statement" === e2.type.slice(-9)) return true;
                 case "declaration":
                   return "Declaration" === e2.type.slice(-11);
                 case "pattern":
-                  if ("Pattern" === e2.type.slice(-7))
-                    return true;
+                  if ("Pattern" === e2.type.slice(-7)) return true;
                 case "expression":
                   return "Expression" === e2.type.slice(-10) || "Literal" === e2.type.slice(-7) || "Identifier" === e2.type && (0 === r3.length || "MetaProperty" !== r3[0].type) || "MetaProperty" === e2.type;
                 case "function":
@@ -33367,9 +33274,9 @@ var require_esquery_min = __commonJS({
       }
       function p(e2, t2) {
         var r2 = t2 && t2.nodeTypeKey || "type", n2 = e2[r2];
-        return t2 && t2.visitorKeys && t2.visitorKeys[n2] ? t2.visitorKeys[n2] : i.VisitorKeys[n2] ? i.VisitorKeys[n2] : t2 && "function" == typeof t2.fallback ? t2.fallback(e2) : Object.keys(e2).filter(function(e3) {
+        return t2 && t2.visitorKeys && t2.visitorKeys[n2] ? t2.visitorKeys[n2] : i.VisitorKeys[n2] ? i.VisitorKeys[n2] : t2 && "function" == typeof t2.fallback ? t2.fallback(e2) : Object.keys(e2).filter((function(e3) {
           return e3 !== r2;
-        });
+        }));
       }
       function h(t2, r2) {
         var n2 = r2 && r2.nodeTypeKey || "type";
@@ -33377,81 +33284,66 @@ var require_esquery_min = __commonJS({
       }
       function y(e2, r2, n2, o2, a2) {
         var i2 = t(n2, 1)[0];
-        if (!i2)
-          return false;
+        if (!i2) return false;
         for (var s2 = p(i2, a2), u2 = 0; u2 < s2.length; ++u2) {
           var l2 = i2[s2[u2]];
           if (Array.isArray(l2)) {
             var c2 = l2.indexOf(e2);
-            if (c2 < 0)
-              continue;
+            if (c2 < 0) continue;
             var f2 = void 0, y2 = void 0;
             "LEFT_SIDE" === o2 ? (f2 = 0, y2 = c2) : (f2 = c2 + 1, y2 = l2.length);
-            for (var d2 = f2; d2 < y2; ++d2)
-              if (h(l2[d2], a2) && r2(l2[d2], n2, a2))
-                return true;
+            for (var d2 = f2; d2 < y2; ++d2) if (h(l2[d2], a2) && r2(l2[d2], n2, a2)) return true;
           }
         }
         return false;
       }
       function d(e2, r2, n2, o2, a2) {
         var i2 = t(n2, 1)[0];
-        if (!i2)
-          return false;
+        if (!i2) return false;
         for (var s2 = p(i2, a2), u2 = 0; u2 < s2.length; ++u2) {
           var l2 = i2[s2[u2]];
           if (Array.isArray(l2)) {
             var c2 = l2.indexOf(e2);
-            if (c2 < 0)
-              continue;
-            if ("LEFT_SIDE" === o2 && c2 > 0 && h(l2[c2 - 1], a2) && r2(l2[c2 - 1], n2, a2))
-              return true;
-            if ("RIGHT_SIDE" === o2 && c2 < l2.length - 1 && h(l2[c2 + 1], a2) && r2(l2[c2 + 1], n2, a2))
-              return true;
+            if (c2 < 0) continue;
+            if ("LEFT_SIDE" === o2 && c2 > 0 && h(l2[c2 - 1], a2) && r2(l2[c2 - 1], n2, a2)) return true;
+            if ("RIGHT_SIDE" === o2 && c2 < l2.length - 1 && h(l2[c2 + 1], a2) && r2(l2[c2 + 1], n2, a2)) return true;
           }
         }
         return false;
       }
       function m(e2, r2, n2, o2) {
-        if (0 === n2)
-          return false;
+        if (0 === n2) return false;
         var a2 = t(r2, 1)[0];
-        if (!a2)
-          return false;
+        if (!a2) return false;
         for (var i2 = p(a2, o2), s2 = 0; s2 < i2.length; ++s2) {
           var u2 = a2[i2[s2]];
           if (Array.isArray(u2)) {
             var l2 = n2 < 0 ? u2.length + n2 : n2 - 1;
-            if (l2 >= 0 && l2 < u2.length && u2[l2] === e2)
-              return true;
+            if (l2 >= 0 && l2 < u2.length && u2[l2] === e2) return true;
           }
         }
         return false;
       }
       function x(t2, n2, o2, a2) {
         if (n2) {
-          var s2 = [], u2 = c(n2), l2 = function t3(n3, o3) {
-            if (null == n3 || "object" != e(n3))
-              return [];
+          var s2 = [], u2 = c(n2), l2 = (function t3(n3, o3) {
+            if (null == n3 || "object" != e(n3)) return [];
             null == o3 && (o3 = n3);
             for (var a3 = n3.subject ? [o3] : [], i2 = Object.keys(n3), s3 = 0; s3 < i2.length; ++s3) {
               var u3 = i2[s3], l3 = n3[u3];
               a3.push.apply(a3, r(t3(l3, "left" === u3 ? l3 : o3)));
             }
             return a3;
-          }(n2).map(c);
+          })(n2).map(c);
           i.traverse(t2, { enter: function(e2, t3) {
-            if (null != t3 && s2.unshift(t3), u2(e2, s2, a2))
-              if (l2.length)
-                for (var r2 = 0, n3 = l2.length; r2 < n3; ++r2) {
-                  l2[r2](e2, s2, a2) && o2(e2, t3, s2);
-                  for (var i2 = 0, c2 = s2.length; i2 < c2; ++i2) {
-                    var f2 = s2.slice(i2 + 1);
-                    l2[r2](s2[i2], f2, a2) && o2(s2[i2], t3, f2);
-                  }
-                }
-              else
-                o2(e2, t3, s2);
+            if (null != t3 && s2.unshift(t3), u2(e2, s2, a2)) if (l2.length) for (var r2 = 0, n3 = l2.length; r2 < n3; ++r2) {
+              l2[r2](e2, s2, a2) && o2(e2, t3, s2);
+              for (var i2 = 0, c2 = s2.length; i2 < c2; ++i2) {
+                var f2 = s2.slice(i2 + 1);
+                l2[r2](s2[i2], f2, a2) && o2(s2[i2], t3, f2);
+              }
+            }
+            else o2(e2, t3, s2);
           }, leave: function() {
             s2.shift();
           }, keys: a2 && a2.visitorKeys, fallback: a2 && a2.fallback || "iteration" });
@@ -33459,9 +33351,9 @@ var require_esquery_min = __commonJS({
       }
       function v(e2, t2, r2) {
         var n2 = [];
-        return x(e2, t2, function(e3) {
+        return x(e2, t2, (function(e3) {
           n2.push(e3);
-        }, r2), n2;
+        }), r2), n2;
       }
       function g(e2) {
         return s.parse(e2);
@@ -33472,7 +33364,7 @@ var require_esquery_min = __commonJS({
       return A.parse = g, A.match = v, A.traverse = x, A.matches = function(e2, t2, r2, n2) {
         return !t2 || !!e2 && (r2 || (r2 = []), c(t2)(e2, r2, n2));
       }, A.query = A, A;
-    });
+    }));
   }
 });
 
@@ -35030,11 +34922,26 @@ var require_ast_utils2 = __commonJS({
         while (currentNode) {
           const parent = currentNode.parent;
           switch (parent.type) {
+            /*
+             * Looks up the destination.
+             * e.g., obj.foo = nativeFoo || function foo() { ... };
+             */
             case "LogicalExpression":
             case "ConditionalExpression":
             case "ChainExpression":
               currentNode = parent;
               break;
+            /*
+             * If the upper function is IIFE, checks the destination of the return value.
+             * e.g.
+             *   obj.foo = (function() {
+             *     // setup...
+             *     return function foo() { ... };
+             *   })();
+             *   obj.foo = (() =>
+             *     function foo() { ... }
+             *   )();
+             */
             case "ReturnStatement": {
               const func = getUpperFunction(parent);
               if (func === null || !isCallee(func)) {
@@ -35049,10 +34956,28 @@ var require_ast_utils2 = __commonJS({
               }
               currentNode = parent.parent;
               break;
+            /*
+             * e.g.
+             *   var obj = { foo() { ... } };
+             *   var obj = { foo: function() { ... } };
+             *   class A { constructor() { ... } }
+             *   class A { foo() { ... } }
+             *   class A { get foo() { ... } }
+             *   class A { set foo() { ... } }
+             *   class A { static foo() { ... } }
+             *   class A { foo = function() { ... } }
+             */
             case "Property":
             case "PropertyDefinition":
             case "MethodDefinition":
               return parent.value !== currentNode;
+            /*
+             * e.g.
+             *   obj.foo = function foo() { ... };
+             *   Foo = function() { ... };
+             *   [obj.foo = function foo() { ... }] = a;
+             *   [Foo = function() { ... }] = a;
+             */
             case "AssignmentExpression":
             case "AssignmentPattern":
               if (parent.left.type === "MemberExpression") {
@@ -35062,14 +34987,30 @@ var require_ast_utils2 = __commonJS({
                 return false;
               }
               return true;
+            /*
+             * e.g.
+             *   var Foo = function() { ... };
+             */
             case "VariableDeclarator":
               return !(capIsConstructor && isAnonymous && parent.init === currentNode && parent.id.type === "Identifier" && startsWithUpperCase(parent.id.name));
+            /*
+             * e.g.
+             *   var foo = function foo() { ... }.bind(obj);
+             *   (function foo() { ... }).call(obj);
+             *   (function foo() { ... }).apply(obj, []);
+             */
             case "MemberExpression":
               if (parent.object === currentNode && isSpecificMemberAccess(parent, null, bindOrCallOrApplyPattern)) {
                 const maybeCalleeNode = parent.parent.type === "ChainExpression" ? parent.parent : parent;
                 return !(isCallee(maybeCalleeNode) && maybeCalleeNode.parent.arguments.length >= 1 && !isNullOrUndefined(maybeCalleeNode.parent.arguments[0]));
               }
               return true;
+            /*
+             * e.g.
+             *   Reflect.apply(function() {}, obj, []);
+             *   Array.from([], function() {}, obj);
+             *   list.forEach(function() {}, obj);
+             */
             case "CallExpression":
               if (isReflectApply(parent.callee)) {
                 return parent.arguments.length !== 3 || parent.arguments[0] !== currentNode || isNullOrUndefined(parent.arguments[1]);
@@ -35081,6 +35022,7 @@ var require_ast_utils2 = __commonJS({
                 return parent.arguments.length !== 2 || parent.arguments[0] !== currentNode || isNullOrUndefined(parent.arguments[1]);
               }
               return true;
+            // Otherwise `this` is default.
             default:
               return true;
           }
@@ -35111,6 +35053,7 @@ var require_ast_utils2 = __commonJS({
               case "&&":
                 return 5;
             }
+          /* falls through */
           case "BinaryExpression":
             switch (node.operator) {
               case "|":
@@ -35145,6 +35088,7 @@ var require_ast_utils2 = __commonJS({
               case "**":
                 return 15;
             }
+          /* falls through */
           case "UnaryExpression":
           case "AwaitExpression":
             return 16;
@@ -35562,6 +35506,7 @@ var require_ast_utils2 = __commonJS({
           case "AwaitExpression":
           case "ChainExpression":
             return true;
+          // possibly an error object.
           case "AssignmentExpression":
             if (["=", "&&="].includes(node.operator)) {
               return module.exports.couldBeError(node.right);
@@ -36244,11 +36189,23 @@ var require_array_callback_return = __commonJS({
       while (currentNode) {
         const parent = currentNode.parent;
         switch (parent.type) {
+          /*
+           * Looks up the destination. e.g.,
+           * foo.every(nativeFoo || function foo() { ... });
+           */
           case "LogicalExpression":
           case "ConditionalExpression":
           case "ChainExpression":
             currentNode = parent;
             break;
+          /*
+           * If the upper function is IIFE, checks the destination of the return value.
+           * e.g.
+           *   foo.every((function() {
+           *     // setup...
+           *     return function callback() { ... };
+           *   })());
+           */
           case "ReturnStatement": {
             const func = astUtils.getUpperFunction(parent);
             if (func === null || !astUtils.isCallee(func)) {
@@ -36257,6 +36214,11 @@ var require_array_callback_return = __commonJS({
             currentNode = func.parent;
             break;
           }
+          /*
+           * e.g.
+           *   Array.from([], function() {});
+           *   list.every(function() {});
+           */
           case "CallExpression":
             if (astUtils.isArrayFromMethod(parent.callee)) {
               if (parent.arguments.length >= 2 && parent.arguments[1] === currentNode) {
@@ -36269,6 +36231,7 @@ var require_array_callback_return = __commonJS({
               }
             }
             return null;
+          // Otherwise this node is not target.
           default:
             return null;
         }
@@ -49708,6 +49671,7 @@ var require_function_paren_newline = __commonJS({
               if (!node.arguments.length && !(astUtils.isOpeningParenToken(sourceCode.getLastToken(node, { skip: 1 })) && astUtils.isClosingParenToken(sourceCode.getLastToken(node)) && node.callee.range[1] < node.range[1])) {
                 return null;
               }
+            // falls through
             case "CallExpression":
               return {
                 leftParen: sourceCode.getTokenAfter(node.callee, astUtils.isOpeningParenToken),
@@ -49838,14 +49802,14 @@ var require_generator_star_spacing = __commonJS({
           }
           return typeof option === "string" ? optionDefinitions[option] : Object.assign({}, defaults, option);
         }
-        const modes = function(option) {
+        const modes = (function(option) {
           const defaults = optionToDefinition(option, optionDefinitions.before);
           return {
             named: optionToDefinition(option.named, defaults),
             anonymous: optionToDefinition(option.anonymous, defaults),
             method: optionToDefinition(option.method, defaults)
           };
-        }(context.options[0] || {});
+        })(context.options[0] || {});
         const sourceCode = context.sourceCode;
         function isStarToken(token) {
           return token.value === "*" && token.type === "Punctuator";
@@ -56079,13 +56043,13 @@ var require_multiline_ternary = __commonJS({
                     end: lastTokenOfConsequent.loc.end
                   },
                   messageId: "expectedConsAlt",
-                  fix: (fixer) => hasComments ? null : fixer.replaceTextRange(
+                  fix: ((fixer) => hasComments ? null : fixer.replaceTextRange(
                     [
                       lastTokenOfConsequent.range[1],
                       colonToken.range[0]
                     ],
                     "\n"
-                  )
+                  ))
                 });
               }
             }
@@ -57425,14 +57389,23 @@ var require_no_constant_binary_expression = __commonJS({
       }
       switch (node.type) {
         case "ObjectExpression":
+        // Objects are never nullish
         case "ArrayExpression":
+        // Arrays are never nullish
         case "ArrowFunctionExpression":
+        // Functions never nullish
         case "FunctionExpression":
+        // Functions are never nullish
         case "ClassExpression":
+        // Classes are never nullish
         case "NewExpression":
+        // Objects are never nullish
         case "Literal":
+        // Nullish, or non-nullish, literals never change
         case "TemplateLiteral":
+        // A string is never nullish
         case "UpdateExpression":
+        // Numbers are never nullish
         case "BinaryExpression":
           return true;
         case "CallExpression": {
@@ -57462,6 +57435,7 @@ var require_no_constant_binary_expression = __commonJS({
         case "Identifier":
           return node.name === "undefined" && isReferenceToGlobalVariable(scope, node);
         case "JSXElement":
+        // ESLint has a policy of not assuming any specific JSX behavior.
         case "JSXFragment":
           return false;
         default:
@@ -57528,6 +57502,7 @@ var require_no_constant_binary_expression = __commonJS({
           return hasConstantLooseBooleanComparison(scope, last);
         }
         case "JSXElement":
+        // ESLint has a policy of not assuming any specific JSX behavior.
         case "JSXFragment":
           return false;
         default:
@@ -57537,13 +57512,20 @@ var require_no_constant_binary_expression = __commonJS({
     function hasConstantStrictBooleanComparison(scope, node) {
       switch (node.type) {
         case "ObjectExpression":
+        // Objects are not booleans
         case "ArrayExpression":
+        // Arrays are not booleans
         case "ArrowFunctionExpression":
+        // Functions are not booleans
         case "FunctionExpression":
         case "ClassExpression":
+        // Classes are not booleans
         case "NewExpression":
+        // Objects are not booleans
         case "TemplateLiteral":
+        // Strings are not booleans
         case "Literal":
+        // True, false, or not boolean, literals never change.
         case "UpdateExpression":
           return true;
         case "BinaryExpression":
@@ -57585,6 +57567,7 @@ var require_no_constant_binary_expression = __commonJS({
           return false;
         }
         case "JSXElement":
+        // ESLint has a policy of not assuming any specific JSX behavior.
         case "JSXFragment":
           return false;
         default:
@@ -57619,6 +57602,7 @@ var require_no_constant_binary_expression = __commonJS({
         case "ConditionalExpression":
           return isAlwaysNew(scope, node.consequent) && isAlwaysNew(scope, node.alternate);
         case "JSXElement":
+        // ESLint has a policy of not assuming any specific JSX behavior.
         case "JSXFragment":
           return false;
         default:
@@ -61575,6 +61559,7 @@ var require_no_extra_boolean_cast = __commonJS({
                 return precedence(node) < precedence(parent);
               }
               return precedence(node) <= precedence(parent);
+            /* c8 ignore next */
             default:
               throw new Error(`Unexpected parent type: ${parent.type}`);
           }
@@ -61839,12 +61824,16 @@ var require_no_extra_parens = __commonJS({
           if (node.type === "JSXElement" || node.type === "JSXFragment") {
             const isSingleLine = node.loc.start.line === node.loc.end.line;
             switch (IGNORE_JSX) {
+              // Exclude this JSX element from linting
               case "all":
                 return false;
+              // Exclude this JSX element if it is multi-line element
               case "multi-line":
                 return isSingleLine;
+              // Exclude this JSX element if it is single-line element
               case "single-line":
                 return !isSingleLine;
+              // Nothing special to be done for JSX elements
               case "none":
                 break;
             }
@@ -65006,6 +64995,7 @@ var require_no_mixed_spaces_and_tabs = __commonJS({
         let smartTabs;
         switch (context.options[0]) {
           case true:
+          // Support old syntax, maybe add deprecation warning here
           case "smart-tabs":
             smartTabs = true;
             break;
@@ -66117,36 +66107,44 @@ var require_no_param_reassign = __commonJS({
           let parent = node.parent;
           while (parent && (!stopNodePattern.test(parent.type) || parent.type === "ForInStatement" || parent.type === "ForOfStatement")) {
             switch (parent.type) {
+              // e.g. foo.a = 0;
               case "AssignmentExpression":
                 return parent.left === node;
+              // e.g. ++foo.a;
               case "UpdateExpression":
                 return true;
+              // e.g. delete foo.a;
               case "UnaryExpression":
                 if (parent.operator === "delete") {
                   return true;
                 }
                 break;
+              // e.g. for (foo.a in b) {}
               case "ForInStatement":
               case "ForOfStatement":
                 if (parent.left === node) {
                   return true;
                 }
                 return false;
+              // EXCLUDES: e.g. cache.get(foo.a).b = 0;
               case "CallExpression":
                 if (parent.callee !== node) {
                   return false;
                 }
                 break;
+              // EXCLUDES: e.g. cache[foo.a] = 0;
               case "MemberExpression":
                 if (parent.property === node) {
                   return false;
                 }
                 break;
+              // EXCLUDES: e.g. ({ [foo]: a }) = bar;
               case "Property":
                 if (parent.key === node) {
                   return false;
                 }
                 break;
+              // EXCLUDES: e.g. (foo ? a : b).c = bar;
               case "ConditionalExpression":
                 if (parent.test === node) {
                   return false;
@@ -66976,7 +66974,7 @@ var require_ignore = __commonJS({
     var SLASH = "/";
     var TMP_KEY_IGNORE = "node-ignore";
     if (typeof Symbol !== "undefined") {
-      TMP_KEY_IGNORE = Symbol.for("node-ignore");
+      TMP_KEY_IGNORE = /* @__PURE__ */ Symbol.for("node-ignore");
     }
     var KEY_IGNORE = TMP_KEY_IGNORE;
     var define2 = (object, key, value) => Object.defineProperty(object, key, { value });
@@ -71684,6 +71682,7 @@ var require_no_useless_computed_key = __commonJS({
             return value !== "prototype";
           }
           return value !== "constructor";
+        /* c8 ignore next */
         default:
           throw new Error(`Unexpected node type: ${node.type}`);
       }
@@ -71890,10 +71889,10 @@ var require_no_useless_escape = __commonJS({
     "use strict";
     var astUtils = require_ast_utils2();
     function union(setA, setB) {
-      return new Set(function* () {
+      return new Set((function* () {
         yield* setA;
         yield* setB;
-      }());
+      })());
     }
     var VALID_STRING_ESCAPES = union(new Set("\\nrvtbfux"), astUtils.LINEBREAKS);
     var REGEX_GENERAL_ESCAPES = new Set("\\bcdDfnpPrsStvwWxu0123456789]");
@@ -74384,6 +74383,7 @@ var require_padded_blocks = __commonJS({
               return options.switches;
             case "ClassBody":
               return options.classes;
+            /* c8 ignore next */
             default:
               throw new Error("unreachable");
           }
@@ -74835,10 +74835,12 @@ var require_prefer_arrow_callback = __commonJS({
       let bound = false;
       while (currentNode) {
         switch (parent.type) {
+          // Checks parents recursively.
           case "LogicalExpression":
           case "ChainExpression":
           case "ConditionalExpression":
             break;
+          // Checks whether the parent node is `.bind(this)` call.
           case "MemberExpression":
             if (parent.object === currentNode && !parent.property.computed && parent.property.type === "Identifier" && parent.property.name === "bind") {
               const maybeCallee = parent.parent.type === "ChainExpression" ? parent.parent : parent;
@@ -74855,6 +74857,7 @@ var require_prefer_arrow_callback = __commonJS({
               return retv;
             }
             break;
+          // Checks whether the node is a callback.
           case "CallExpression":
           case "NewExpression":
             if (parent.callee !== currentNode) {
@@ -77018,21 +77021,28 @@ var require_quotes = __commonJS({
         function isAllowedAsNonBacktick(node) {
           const parent = node.parent;
           switch (parent.type) {
+            // Directive Prologues.
             case "ExpressionStatement":
               return !astUtils.isParenthesised(sourceCode, node) && isExpressionInOrJustAfterDirectivePrologue(node);
+            // LiteralPropertyName.
             case "Property":
             case "PropertyDefinition":
             case "MethodDefinition":
               return parent.key === node && !parent.computed;
+            // ModuleSpecifier.
             case "ImportDeclaration":
             case "ExportNamedDeclaration":
               return parent.source === node;
+            // ModuleExportName or ModuleSpecifier.
             case "ExportAllDeclaration":
               return parent.exported === node || parent.source === node;
+            // ModuleExportName.
             case "ImportSpecifier":
               return parent.imported === node;
+            // ModuleExportName.
             case "ExportSpecifier":
               return parent.local === node || parent.exported === node;
+            // Others don't allow.
             default:
               return false;
           }
@@ -78522,25 +78532,22 @@ var require_natural_compare = __commonJS({
       var i, codeA, codeB = 1, posA = 0, posB = 0, alphabet = String.alphabet;
       function getCode(str, pos, code) {
         if (code) {
-          for (i = pos; code = getCode(str, i), code < 76 && code > 65; )
-            ++i;
+          for (i = pos; code = getCode(str, i), code < 76 && code > 65; ) ++i;
           return +str.slice(pos - 1, i);
         }
         code = alphabet && alphabet.indexOf(str.charAt(pos));
         return code > -1 ? code + 76 : (code = str.charCodeAt(pos) || 0, code < 45 || code > 127) ? code : code < 46 ? 65 : code < 48 ? code - 1 : code < 58 ? code + 18 : code < 65 ? code - 11 : code < 91 ? code + 11 : code < 97 ? code - 37 : code < 123 ? code + 5 : code - 63;
       }
-      if ((a += "") != (b += ""))
-        for (; codeB; ) {
-          codeA = getCode(a, posA++);
-          codeB = getCode(b, posB++);
-          if (codeA < 76 && codeB < 76 && codeA > 66 && codeB > 66) {
-            codeA = getCode(a, posA, posA);
-            codeB = getCode(b, posB, posA = i);
-            posB = i;
-          }
-          if (codeA != codeB)
-            return codeA < codeB ? -1 : 1;
+      if ((a += "") != (b += "")) for (; codeB; ) {
+        codeA = getCode(a, posA++);
+        codeB = getCode(b, posB++);
+        if (codeA < 76 && codeB < 76 && codeA > 66 && codeB > 66) {
+          codeA = getCode(a, posA, posA);
+          codeB = getCode(b, posB, posA = i);
+          posB = i;
         }
+        if (codeA != codeB) return codeA < codeB ? -1 : 1;
+      }
       return 0;
     };
     try {
@@ -80433,12 +80440,12 @@ var require_utility = __commonJS({
         this.name = "DoctrineError";
         this.message = message;
       }
-      DoctrineError.prototype = function() {
+      DoctrineError.prototype = (function() {
         var Middle = function() {
         };
         Middle.prototype = Error.prototype;
         return new Middle();
-      }();
+      })();
       DoctrineError.prototype.constructor = DoctrineError;
       exports.DoctrineError = DoctrineError;
       function throwError(message) {
@@ -80770,6 +80777,7 @@ var require_typed = __commonJS({
         ch = source.charCodeAt(index);
         switch (ch) {
           case 39:
+          /* ''' */
           case 34:
             token = scanString();
             return token;
@@ -81466,12 +81474,12 @@ var require_doctrine = __commonJS({
       function sliceSource(source, index, last) {
         return source.slice(index, last);
       }
-      hasOwnProperty = /* @__PURE__ */ function() {
+      hasOwnProperty = /* @__PURE__ */ (function() {
         var func = Object.prototype.hasOwnProperty;
         return function hasOwnProperty2(obj, name) {
           return func.call(obj, name);
         };
-      }();
+      })();
       function shallowCopy(obj) {
         var ret = {}, key;
         for (key in obj) {
@@ -82277,6 +82285,7 @@ var require_valid_jsdoc = __commonJS({
               elements = type.fields;
               break;
             case "UnionType":
+            // {String|number|Test}
             case "ArrayType":
               elements = type.elements;
               break;
@@ -82851,7 +82860,7 @@ var require_yield_star_spacing = __commonJS({
       },
       create(context) {
         const sourceCode = context.sourceCode;
-        const mode = function(option) {
+        const mode = (function(option) {
           if (!option || typeof option === "string") {
             return {
               before: { before: true, after: false },
@@ -82861,7 +82870,7 @@ var require_yield_star_spacing = __commonJS({
             }[option || "after"];
           }
           return option;
-        }(context.options[0]);
+        })(context.options[0]);
         function checkSpacing(side, leftToken, rightToken) {
           if (sourceCode.isSpaceBetweenTokens(leftToken, rightToken) !== mode[side]) {
             const after = leftToken.value === "*";
@@ -83601,7 +83610,7 @@ var require_timing = __commonJS({
       }).join("|"));
       console.log(table.join("\n"));
     }
-    module.exports = function() {
+    module.exports = (function() {
       const data = /* @__PURE__ */ Object.create(null);
       function time(key, fn) {
         if (typeof data[key] === "undefined") {
@@ -83625,7 +83634,7 @@ var require_timing = __commonJS({
         enabled,
         getListSize
       };
-    }();
+    })();
   }
 });
 
@@ -83727,10 +83736,8 @@ var require_concat_map = __commonJS({
       var res = [];
       for (var i = 0; i < xs.length; i++) {
         var x = fn(xs[i], i);
-        if (isArray(x))
-          res.push.apply(res, x);
-        else
-          res.push(x);
+        if (isArray(x)) res.push.apply(res, x);
+        else res.push(x);
       }
       return res;
     };
@@ -83746,10 +83753,8 @@ var require_balanced_match = __commonJS({
     "use strict";
     module.exports = balanced;
     function balanced(a, b, str) {
-      if (a instanceof RegExp)
-        a = maybeMatch(a, str);
-      if (b instanceof RegExp)
-        b = maybeMatch(b, str);
+      if (a instanceof RegExp) a = maybeMatch(a, str);
+      if (b instanceof RegExp) b = maybeMatch(b, str);
       var r = range(a, b, str);
       return r && {
         start: r[0],
@@ -83863,8 +83868,7 @@ var require_brace_expansion = __commonJS({
     function expand(str, isTop) {
       var expansions = [];
       var m = balanced("{", "}", str);
-      if (!m || /\$$/.test(m.pre))
-        return [str];
+      if (!m || /\$$/.test(m.pre)) return [str];
       var isNumericSequence = /^-?\d+\.\.-?\d+(?:\.\.-?\d+)?$/.test(m.body);
       var isAlphaSequence = /^[a-zA-Z]\.\.[a-zA-Z](?:\.\.-?\d+)?$/.test(m.body);
       var isSequence = isNumericSequence || isAlphaSequence;
@@ -83950,12 +83954,12 @@ var require_minimatch = __commonJS({
   "../../node_modules/minimatch/minimatch.js"(exports, module) {
     module.exports = minimatch;
     minimatch.Minimatch = Minimatch;
-    var path = function() {
+    var path = (function() {
       try {
         return require_path_browserify();
       } catch (e) {
       }
-    }() || {
+    })() || {
       sep: "/"
     };
     minimatch.sep = path.sep;
@@ -84034,8 +84038,7 @@ var require_minimatch = __commonJS({
     };
     function minimatch(p, pattern, options) {
       assertValidPattern(pattern);
-      if (!options)
-        options = {};
+      if (!options) options = {};
       if (!options.nocomment && pattern.charAt(0) === "#") {
         return false;
       }
@@ -84046,8 +84049,7 @@ var require_minimatch = __commonJS({
         return new Minimatch(pattern, options);
       }
       assertValidPattern(pattern);
-      if (!options)
-        options = {};
+      if (!options) options = {};
       pattern = pattern.trim();
       if (!options.allowWindowsEscape && path.sep !== "/") {
         pattern = pattern.split(path.sep).join("/");
@@ -84078,10 +84080,9 @@ var require_minimatch = __commonJS({
       }
       this.parseNegate();
       var set = this.globSet = this.braceExpand();
-      if (options.debug)
-        this.debug = function debug() {
-          console.error.apply(console, arguments);
-        };
+      if (options.debug) this.debug = function debug() {
+        console.error.apply(console, arguments);
+      };
       this.debug(this.pattern, set);
       set = this.globParts = set.map(function(s) {
         return s.split(slashSplit);
@@ -84103,14 +84104,12 @@ var require_minimatch = __commonJS({
       var negate = false;
       var options = this.options;
       var negateOffset = 0;
-      if (options.nonegate)
-        return;
+      if (options.nonegate) return;
       for (var i = 0, l = pattern.length; i < l && pattern.charAt(i) === "!"; i++) {
         negate = !negate;
         negateOffset++;
       }
-      if (negateOffset)
-        this.pattern = pattern.substr(negateOffset);
+      if (negateOffset) this.pattern = pattern.substr(negateOffset);
       this.negate = negate;
     }
     minimatch.braceExpand = function(pattern, options) {
@@ -84152,8 +84151,7 @@ var require_minimatch = __commonJS({
         else
           pattern = "*";
       }
-      if (pattern === "")
-        return "";
+      if (pattern === "") return "";
       var re = "";
       var hasMagic = !!options.nocase;
       var escaping = false;
@@ -84192,6 +84190,7 @@ var require_minimatch = __commonJS({
           continue;
         }
         switch (c) {
+          /* istanbul ignore next */
           case "/": {
             return false;
           }
@@ -84199,6 +84198,8 @@ var require_minimatch = __commonJS({
             clearStateChar();
             escaping = true;
             continue;
+          // the various stateChar values
+          // for the "extglob" stuff.
           case "?":
           case "*":
           case "+":
@@ -84207,16 +84208,14 @@ var require_minimatch = __commonJS({
             this.debug("%s	%s %s %j <-- stateChar", pattern, i, re, c);
             if (inClass) {
               this.debug("  in class");
-              if (c === "!" && i === classStart + 1)
-                c = "^";
+              if (c === "!" && i === classStart + 1) c = "^";
               re += c;
               continue;
             }
             self2.debug("call clearStateChar %j", stateChar);
             clearStateChar();
             stateChar = c;
-            if (options.noext)
-              clearStateChar();
+            if (options.noext) clearStateChar();
             continue;
           case "(":
             if (inClass) {
@@ -84261,6 +84260,7 @@ var require_minimatch = __commonJS({
             clearStateChar();
             re += "|";
             continue;
+          // these are mostly the same in regexp and glob
           case "[":
             clearStateChar();
             if (inClass) {
@@ -84380,8 +84380,7 @@ var require_minimatch = __commonJS({
     };
     Minimatch.prototype.makeRe = makeRe;
     function makeRe() {
-      if (this.regexp || this.regexp === false)
-        return this.regexp;
+      if (this.regexp || this.regexp === false) return this.regexp;
       var set = this.set;
       if (!set.length) {
         this.regexp = false;
@@ -84396,8 +84395,7 @@ var require_minimatch = __commonJS({
         }).join("\\/");
       }).join("|");
       re = "^(?:" + re + ")$";
-      if (this.negate)
-        re = "^(?!" + re + ").*$";
+      if (this.negate) re = "^(?!" + re + ").*$";
       try {
         this.regexp = new RegExp(re, flags);
       } catch (ex) {
@@ -84417,15 +84415,11 @@ var require_minimatch = __commonJS({
       return list;
     };
     Minimatch.prototype.match = function match(f, partial) {
-      if (typeof partial === "undefined")
-        partial = this.partial;
+      if (typeof partial === "undefined") partial = this.partial;
       this.debug("match", f, this.pattern);
-      if (this.comment)
-        return false;
-      if (this.empty)
-        return f === "";
-      if (f === "/" && partial)
-        return true;
+      if (this.comment) return false;
+      if (this.empty) return f === "";
+      if (f === "/" && partial) return true;
       var options = this.options;
       if (path.sep !== "/") {
         f = f.split(path.sep).join("/");
@@ -84438,8 +84432,7 @@ var require_minimatch = __commonJS({
       var i;
       for (i = f.length - 1; i >= 0; i--) {
         filename = f[i];
-        if (filename)
-          break;
+        if (filename) break;
       }
       for (i = 0; i < set.length; i++) {
         var pattern = set[i];
@@ -84449,13 +84442,11 @@ var require_minimatch = __commonJS({
         }
         var hit = this.matchOne(file, pattern, partial);
         if (hit) {
-          if (options.flipNegate)
-            return true;
+          if (options.flipNegate) return true;
           return !this.negate;
         }
       }
-      if (options.flipNegate)
-        return false;
+      if (options.flipNegate) return false;
       return this.negate;
     };
     Minimatch.prototype.matchOne = function(file, pattern, partial) {
@@ -84470,8 +84461,7 @@ var require_minimatch = __commonJS({
         var p = pattern[pi];
         var f = file[fi];
         this.debug(pattern, p, f);
-        if (p === false)
-          return false;
+        if (p === false) return false;
         if (p === GLOBSTAR) {
           this.debug("GLOBSTAR", [pattern, p, f]);
           var fr = fi;
@@ -84479,8 +84469,7 @@ var require_minimatch = __commonJS({
           if (pr === pl) {
             this.debug("** at the end");
             for (; fi < fl; fi++) {
-              if (file[fi] === "." || file[fi] === ".." || !options.dot && file[fi].charAt(0) === ".")
-                return false;
+              if (file[fi] === "." || file[fi] === ".." || !options.dot && file[fi].charAt(0) === ".") return false;
             }
             return true;
           }
@@ -84501,8 +84490,7 @@ var require_minimatch = __commonJS({
           }
           if (partial) {
             this.debug("\n>>> no match, partial?", file, fr, pattern, pr);
-            if (fr === fl)
-              return true;
+            if (fr === fl) return true;
           }
           return false;
         }
@@ -84514,8 +84502,7 @@ var require_minimatch = __commonJS({
           hit = f.match(p);
           this.debug("pattern match", p, f, hit);
         }
-        if (!hit)
-          return false;
+        if (!hit) return false;
       }
       if (fi === fl && pi === pl) {
         return true;
@@ -84670,8 +84657,8 @@ var require_object_schema = __commonJS({
     "use strict";
     var { MergeStrategy } = require_merge_strategy();
     var { ValidationStrategy } = require_validation_strategy();
-    var strategies = Symbol("strategies");
-    var requiredKeys = Symbol("requiredKeys");
+    var strategies = /* @__PURE__ */ Symbol("strategies");
+    var requiredKeys = /* @__PURE__ */ Symbol("requiredKeys");
     function validateDefinition(name, strategy) {
       let hasSchema = false;
       if (strategy.schema) {
@@ -85036,11 +85023,11 @@ var require_api = __commonJS({
       }
     }
     var ConfigArraySymbol = {
-      isNormalized: Symbol("isNormalized"),
-      configCache: Symbol("configCache"),
-      schema: Symbol("schema"),
-      finalizeConfig: Symbol("finalizeConfig"),
-      preprocessConfig: Symbol("preprocessConfig")
+      isNormalized: /* @__PURE__ */ Symbol("isNormalized"),
+      configCache: /* @__PURE__ */ Symbol("configCache"),
+      schema: /* @__PURE__ */ Symbol("schema"),
+      finalizeConfig: /* @__PURE__ */ Symbol("finalizeConfig"),
+      preprocessConfig: /* @__PURE__ */ Symbol("preprocessConfig")
     };
     var dataCache = /* @__PURE__ */ new WeakMap();
     var ConfigArray = class extends Array {
@@ -86387,7 +86374,7 @@ var require_flat_config_array = __commonJS({
       }
       return name;
     }
-    var originalBaseConfig = Symbol("originalBaseConfig");
+    var originalBaseConfig = /* @__PURE__ */ Symbol("originalBaseConfig");
     var FlatConfigArray = class extends ConfigArray {
       /**
        * Creates a new instance.
@@ -86684,7 +86671,7 @@ var require_linter = __commonJS({
     var DEFAULT_ECMA_VERSION = 5;
     var commentParser = new ConfigCommentParser();
     var DEFAULT_ERROR_LOC = { start: { line: 1, column: 0 }, end: { line: 1, column: 1 } };
-    var parserSymbol = Symbol.for("eslint.RuleTester.parser");
+    var parserSymbol = /* @__PURE__ */ Symbol.for("eslint.RuleTester.parser");
     var globals = require_globals3();
     function isEspree(parser) {
       return !!(parser === espree || parser[parserSymbol] === espree);
@@ -86937,6 +86924,7 @@ var require_linter = __commonJS({
       switch (ecmaVersion) {
         case 3:
           return 3;
+        // void 0 = no ecmaVersion specified so use the default
         case 5:
         case void 0:
           return 5;
@@ -87841,12 +87829,12 @@ Rule: "${err.ruleId}"`;
       getRules() {
         assertEslintrcConfig(this);
         const { lastConfigArray, ruleMap } = internalSlotsMap.get(this);
-        return new Map(function* () {
+        return new Map((function* () {
           yield* ruleMap;
           if (lastConfigArray) {
             yield* lastConfigArray.pluginRules;
           }
-        }());
+        })());
       }
       /**
        * Define a new parser module

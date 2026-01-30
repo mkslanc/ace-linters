@@ -4,7 +4,7 @@ import {AceLanguageClient, LanguageClientConfig} from "ace-linters/build/ace-lan
 import {addFormatCommand, createEditorWithLSP} from "../utils";
 import {rustContent} from "../docs-example/rust-example";
 
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 let mode = {name: "rust", mode: "ace/mode/rust", content: rustContent};
 
 const serverData: LanguageClientConfig = {

@@ -45,7 +45,7 @@ export class PythonService extends BaseService<PythonServiceOptions> implements 
         this.initOutput = await init();
         this.currentOptions = this.getOption("", "configuration");
         this.currentOptions = this.currentOptions ? mergeObjects(this.currentOptions, this.defaultOptions) : this.defaultOptions;
-        this.$service = new Workspace(this.currentOptions);
+        this.$service = new Workspace(this.currentOptions, 1);
     }
 
     setFormattingOptions(options: lsp.FormattingOptions) {
@@ -54,7 +54,7 @@ export class PythonService extends BaseService<PythonServiceOptions> implements 
             this.currentOptions['indent-width'] = options.tabSize;
             this.currentOptions.format['indent-style'] = indentStyle;
         }
-        this.$service = new Workspace(this.currentOptions);
+        this.$service = new Workspace(this.currentOptions, 1);
     }
 
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {

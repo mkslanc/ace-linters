@@ -1,4 +1,4 @@
-import init, { format } from "@wasm-fmt/gofmt";
+import init, { format } from "@wasm-fmt/gofmt/gofmt_web";
 
 import {BaseService} from "ace-linters/src/services/base-service";
 

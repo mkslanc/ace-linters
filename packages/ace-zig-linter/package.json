@@ -1,18 +1,20 @@
 {
   "name": "ace-zig-linter",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
-    "build": "npm run clean && webpack --mode=production"
+    "build": "npm run clean && vite build"
   },
   "devDependencies": {
-    "@wasm-fmt/zig_fmt": "^0.0.5"
+    "@wasm-fmt/zig_fmt": "^0.15.2",
+    "vite": "^6.0.0",
+    "vite-plugin-node-polyfills": "^0.25.0"
   },
   "peerDependencies": {
-    "ace-linters": "^1.5.0"
+    "ace-linters": "^2.0.0"
   },
   "files": ["build", "types"],
   "typesVersions": {

@@ -24,7 +24,7 @@ let modes = [
     {name: "mysql", mode: "ace/mode/mysql"},
     {name: "swift", mode: "ace/mode/swift"},
 ];
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 let languageProvider = LanguageProvider.create(worker);
 
 let el = document.getElementById("ace_modes");

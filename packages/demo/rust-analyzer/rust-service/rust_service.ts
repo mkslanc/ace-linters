@@ -1,10 +1,10 @@
 import init, {initThreadPool, WorldState} from './pkg';
 // @ts-ignore
-import fake_std from './fake_std.rs';
+import fake_std from './fake_std.rs?raw';
 // @ts-ignore
-import fake_core from './fake_core.rs';
+import fake_core from './fake_core.rs?raw';
 // @ts-ignore
-import fake_alloc from './fake_alloc.rs';
+import fake_alloc from './fake_alloc.rs?raw';
 import {BaseService, LanguageService} from 'ace-linters/build/base-service';
 import * as lsp from "vscode-languageserver-protocol";
 import {toCompletions, toDiagnostics, toHover} from "./type_converters/converters";

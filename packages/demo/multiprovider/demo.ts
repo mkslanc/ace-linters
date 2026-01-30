@@ -8,7 +8,7 @@ let modes = [
     {name: "javascript validated by EsLint, with hover, autocompletion and format of Typescript", mode: "ace/mode/javascript", content: jsContent},
 ];
 
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 
 let languageProvider = LanguageProvider.create(worker);
 let i = 0;

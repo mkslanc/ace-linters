@@ -8,7 +8,7 @@ let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {jsonSchemaUri: "common-form.schema.json"}},
 
 ];
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 const serverData: LanguageClientConfig = {
     module: () => import("ace-linters/build/language-client"),
     modes: "json",

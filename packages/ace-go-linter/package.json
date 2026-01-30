@@ -1,19 +1,21 @@
 {
   "name": "ace-go-linter",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "repository": "https://github.com/mkslanc/ace-linters/tree/main/packages/ace-go-linter",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
-    "build": "npm run clean && webpack --mode=production"
+    "build": "npm run clean && vite build"
   },
   "devDependencies": {
-    "@wasm-fmt/gofmt": "^0.4.9"
+    "@wasm-fmt/gofmt": "^0.7.2",
+    "vite": "^6.0.0",
+    "vite-plugin-node-polyfills": "^0.25.0"
   },
   "peerDependencies": {
-    "ace-linters": "^1.5.0"
+    "ace-linters": "^2.0.0"
   },
   "files": ["build", "types"],
   "typesVersions": {

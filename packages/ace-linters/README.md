@@ -1,6 +1,6 @@
 # Ace Linters (Ace Language Client)
 
-Ace linters is lsp client for Ace editor. It comes with large number of preconfigured easy to use in browser servers.
+Ace linters is lsp client for Ace editor. It comes with a large number of preconfigured easy to use in browser servers.
 
 If you're uncertain about integrating ace-linters, consult [our diagram on the GitHub Wiki](https://github.com/mkslanc/ace-linters/wiki/Usage-Scenarios-Overview) for a quick setup guide
 tailored to your needs.
@@ -27,6 +27,21 @@ languageProvider.registerEditor(editor);
 ``` 
 
 [Example webworker.js with all services](https://github.com/mkslanc/ace-linters/blob/main/packages/demo/webworker-lsp/webworker.ts)
+
+## What's New in 2.0.0
+
+### Build System Migration
+- Migrated from webpack to Vite for faster builds and better development experience
+- UMD output format preserved - no changes required for existing integrations
+- Improved development workflow with Vite dev server and HMR support
+
+### For Library Users
+No breaking changes - all existing code using ace-linters via CDN or npm **will continue to work without modifications**.
+
+### For Contributors
+- Development server: `npm run start-dev` (no pre-build required)
+- Individual package builds use Vite instead of webpack
+- Workspace packages are aliased to source files during development for instant HMR
 
 ## New features in 1.8.1
 - add `manualSessionControl` provider option to disable automatic session registration. When enabled, you must manually handle session changes:
