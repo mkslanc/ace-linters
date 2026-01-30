@@ -1,7 +1,7 @@
-import { defineConfig, Plugin } from 'vite';
-import { resolve } from 'path';
-import { readFileSync } from 'fs';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
+import {defineConfig, Plugin} from 'vite';
+import {resolve} from 'path';
+import {readFileSync, readdirSync, writeFileSync, rmSync, existsSync} from 'fs';
+import {viteStaticCopy} from 'vite-plugin-static-copy';
 import {nodePolyfills} from "vite-plugin-node-polyfills";
 
 // Plugin to handle .rs files as raw text (replaces webpack raw-loader)
@@ -28,7 +28,7 @@ function devServerRedirect(): Plugin {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         if (req.url === '/' || req.url === '/index.html') {
-          res.writeHead(302, { Location: '/packages/demo/index.html' });
+          res.writeHead(302, {Location: '/packages/demo/index.html'});
           res.end();
           return;
         }
@@ -38,12 +38,39 @@ function devServerRedirect(): Plugin {
   };
 }
 
+// Plugin to flatten HTML output to build root (moves from packages/demo/ to root)
+function flattenHtmlOutput(): Plugin {
+  return {
+    name: 'vite-plugin-flatten-html',
+    closeBundle() {
+      const buildDir = resolve(__dirname, 'build');
+      const demoDir = resolve(buildDir, 'packages/demo');
+
+      if (!existsSync(demoDir)) return;
+
+      const files = readdirSync(demoDir);
+      for (const file of files) {
+        if (file.endsWith('.html')) {
+          const src = resolve(demoDir, file);
+          const dest = resolve(buildDir, file);
+          let content = readFileSync(src, 'utf-8');
+          content = content.replace(/\.\.\/\.\.\/assets\//g, './assets/');
+          writeFileSync(dest, content);
+        }
+      }
+
+      rmSync(resolve(buildDir, 'packages'), {recursive: true, force: true});
+    },
+  };
+}
+
 export default defineConfig({
   root: '.',
   publicDir: false,
+  base: './',
 
   build: {
-    sourcemap: 'inline',
+    sourcemap: false,
     minify: false,
     outDir: 'build',
     rollupOptions: {
@@ -88,6 +115,7 @@ export default defineConfig({
   plugins: [
     devServerRedirect(),
     rawLoader(['.rs']),
+    flattenHtmlOutput(),
     nodePolyfills({
       include: ['buffer', 'process', 'util', 'stream', 'path', 'events'],
       globals: {
@@ -113,37 +141,81 @@ export default defineConfig({
     extensions: ['.tsx', '.ts', '.js'],
     alias: [
       // Map ace-linters/src/* to actual source files
-      { find: /^ace-linters\/src\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-linters/src/$1.ts') },
+      {find: /^ace-linters\/src\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-linters/src/$1.ts')},
       // Map ace-linters/build/* to source for dev mode - explicit mappings due to non-uniform paths
-      { find: /^ace-linters\/build\/service-manager(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/service-manager.ts') },
-      { find: /^ace-linters\/build\/html-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/html/html-service.ts') },
-      { find: /^ace-linters\/build\/css-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/css/css-service.ts') },
-      { find: /^ace-linters\/build\/json-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/json/json-service.ts') },
-      { find: /^ace-linters\/build\/lua-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/lua/lua-service.ts') },
-      { find: /^ace-linters\/build\/typescript-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/typescript/typescript-service.ts') },
-      { find: /^ace-linters\/build\/yaml-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/yaml/yaml-service.ts') },
-      { find: /^ace-linters\/build\/xml-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/xml/xml-service.ts') },
-      { find: /^ace-linters\/build\/php-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/php/php-service.ts') },
-      { find: /^ace-linters\/build\/javascript-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/javascript/javascript-service.ts') },
-      { find: /^ace-linters\/build\/base-service(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/base-service.ts') },
-      { find: /^ace-linters\/build\/language-client(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/services/language-client.ts') },
-      { find: /^ace-linters\/build\/ace-language-client(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/ace-language-client.ts') },
-      { find: /^ace-linters\/build\/ace-linters(\.js)?$/, replacement: resolve(__dirname, 'packages/ace-linters/src/index.ts') },
+      {
+        find: /^ace-linters\/build\/service-manager(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/service-manager.ts')
+      },
+      {
+        find: /^ace-linters\/build\/html-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/html/html-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/css-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/css/css-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/json-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/json/json-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/lua-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/lua/lua-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/typescript-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/typescript/typescript-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/yaml-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/yaml/yaml-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/xml-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/xml/xml-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/php-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/php/php-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/javascript-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/javascript/javascript-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/base-service(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/base-service.ts')
+      },
+      {
+        find: /^ace-linters\/build\/language-client(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/services/language-client.ts')
+      },
+      {
+        find: /^ace-linters\/build\/ace-language-client(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/ace-language-client.ts')
+      },
+      {
+        find: /^ace-linters\/build\/ace-linters(\.js)?$/,
+        replacement: resolve(__dirname, 'packages/ace-linters/src/index.ts')
+      },
       // Map ace-linters main entry
-      { find: 'ace-linters', replacement: resolve(__dirname, 'packages/ace-linters/src/index.ts') },
+      {find: 'ace-linters', replacement: resolve(__dirname, 'packages/ace-linters/src/index.ts')},
       // Map workspace linter packages to source for dev
-      { find: /^ace-zig-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-zig-linter/src/$1.ts') },
-      { find: /^ace-lua-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-lua-linter/src/$1.ts') },
-      { find: /^ace-clang-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-clang-linter/src/$1.ts') },
-      { find: /^ace-dart-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-dart-linter/src/$1.ts') },
-      { find: /^ace-go-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-go-linter/src/$1.ts') },
-      { find: /^ace-sql-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-sql-linter/src/$1.ts') },
-      { find: /^ace-python-ruff-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-python-ruff-linter/src/$1.ts') },
+      {find: /^ace-zig-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-zig-linter/src/$1.ts')},
+      {find: /^ace-lua-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-lua-linter/src/$1.ts')},
+      {find: /^ace-clang-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-clang-linter/src/$1.ts')},
+      {find: /^ace-dart-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-dart-linter/src/$1.ts')},
+      {find: /^ace-go-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-go-linter/src/$1.ts')},
+      {find: /^ace-sql-linter\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-sql-linter/src/$1.ts')},
+      {
+        find: /^ace-python-ruff-linter\/build\/(.*)$/,
+        replacement: resolve(__dirname, 'packages/ace-python-ruff-linter/src/$1.ts')
+      },
     ],
   },
 
   optimizeDeps: {
-    include: ['ace-code', 'ace-layout'],
     exclude: [
       '@wasm-fmt/zig_fmt',
       '@wasm-fmt/clang-format',
