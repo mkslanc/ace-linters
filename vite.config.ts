@@ -129,6 +129,10 @@ export default defineConfig({
           src: 'packages/demo/enable-threads.js',
           dest: '.',
         },
+        {
+          src: 'packages/ace-linters/build/*',
+          dest: 'build',
+        }
       ],
     }),
   ],
