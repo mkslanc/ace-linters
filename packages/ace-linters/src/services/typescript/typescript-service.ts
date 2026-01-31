@@ -29,7 +29,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         checkJs: true,
         jsx: JsxEmit.Preserve,
         allowNonTsExtensions: true,
-        target: ScriptTarget.ES2020,
+        target: ScriptTarget.ES2022,
         noSemanticValidation: true,
         noSyntaxValidation: false,
         onlyVisible: false,

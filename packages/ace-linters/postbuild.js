@@ -64,7 +64,10 @@ const entries = [
     }, {
         filePath: './src/services/javascript/javascript-service.ts',
         outFile: './build/javascript-service.d.ts',
-        output: commonOutputParams
+        output: commonOutputParams,
+        libraries: {
+            inlinedLibraries: ["eslint"]
+        }
     }, {
         filePath: './src/services/base-service.ts',
         outFile: './build/base-service.d.ts',
