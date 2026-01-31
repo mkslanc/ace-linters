@@ -95,7 +95,6 @@ export class JavascriptService extends BaseService<JavascriptServiceOptions> imp
       return [];
 
     try {
-      console.log(this.config)
       var messages = this.$service.verify(value, this.config);
     } catch (e) {
       console.error(e.stack);

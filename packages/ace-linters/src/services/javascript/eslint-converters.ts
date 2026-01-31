@@ -37,6 +37,5 @@ export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDia
     if (!diagnostics) {
         return [];
     }
-    console.log(diagnostics)
     return CommonConverter.excludeByErrorMessage(diagnostics, filterErrors.errorMessagesToIgnore).map((error) => toDiagnostic(error, filterErrors));
 }
