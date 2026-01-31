@@ -7,6 +7,7 @@ import {MarkDownConverter} from "./converters";
 import type {InlineAutocomplete} from "ace-code/src/ext/inline_autocomplete";
 import type {CommandBarTooltip} from "ace-code/src/ext/command_bar";
 import type {CompletionProvider} from "ace-code/src/autocomplete";
+import {Linter} from "eslint";
 
 export interface LanguageService {
     documents: { [documentUri: string]: TextDocument };
@@ -165,19 +166,7 @@ export interface PhpServiceOptions extends ServiceOptionsWithErrorMessages {
 export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 
-export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages {
-    env?: { [name: string]: boolean } | undefined;
-    extends?: string | string[] | undefined;
-    globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
-    noInlineConfig?: boolean | undefined;
-    overrides?: Array<any> | undefined;
-    parser?: string | undefined;
-    parserOptions?: { [option: string]: any } | undefined;
-    plugins?: string[] | undefined;
-    processor?: string | undefined;
-    reportUnusedDisableDirectives?: boolean | undefined;
-    settings?: { [name: string]: any } | undefined;
-    rules?: { [rule: string]: any }
+export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages, Linter.FlatConfig {
 }
 
 export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
