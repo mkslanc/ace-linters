@@ -2,6 +2,7 @@ import { Ace } from 'ace-code';
 import { CompletionProvider } from 'ace-code/src/autocomplete';
 import { CommandBarTooltip } from 'ace-code/src/ext/command_bar';
 import { InlineAutocomplete } from 'ace-code/src/ext/inline_autocomplete';
+import { Linter } from 'eslint';
 import * as lsp from 'vscode-languageserver-protocol';
 import { CompletionItemKind } from 'vscode-languageserver-protocol';
 
@@ -473,29 +474,7 @@ export interface PhpServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages {
 }
-export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages {
-	env?: {
-		[name: string]: boolean;
-	} | undefined;
-	extends?: string | string[] | undefined;
-	globals?: {
-		[name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable";
-	} | undefined;
-	noInlineConfig?: boolean | undefined;
-	overrides?: Array<any> | undefined;
-	parser?: string | undefined;
-	parserOptions?: {
-		[option: string]: any;
-	} | undefined;
-	plugins?: string[] | undefined;
-	processor?: string | undefined;
-	reportUnusedDisableDirectives?: boolean | undefined;
-	settings?: {
-		[name: string]: any;
-	} | undefined;
-	rules?: {
-		[rule: string]: any;
-	};
+export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages, Linter.FlatConfig {
 }
 export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
 	configuration: {
