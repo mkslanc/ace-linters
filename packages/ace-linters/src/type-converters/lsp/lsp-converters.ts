@@ -407,7 +407,21 @@ export function fromDocumentHighlights(documentHighlights: DocumentHighlight[]):
     });
 }
 
-export function toMarkerGroupItem(range, className, tooltipText?): Ace.MarkerGroupItem {
+export function mapSeverityToClassName(severity: DiagnosticSeverity | undefined) {
+    if (!severity)
+        return 'language_highlight_info'; //TODO:
+    switch (severity) {
+        case 1:
+            return 'language_highlight_error';
+        case 2:
+            return 'language_highlight_warning';
+        case 3:
+        case 4:
+            return 'language_highlight_info';
+    }
+}
+
+export function toMarkerGroupItem(range, className:  string, tooltipText?): Ace.MarkerGroupItem {
     let markerGroupItem = {
         range: range,
         className: className
