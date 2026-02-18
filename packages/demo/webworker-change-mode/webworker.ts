@@ -80,8 +80,13 @@ manager.registerService("python", {
 });
 
 manager.registerService("mysql", {
-    module: () => import("ace-sql-linter/build/mysql-service"),
-    className: "MySQLService",
-    modes: "mysql",
+  module: () => import("ace-sql-linter/build/mysql-service"),
+  className: "MySQLService",
+  modes: "mysql",
 });
 
+manager.registerService("ace-spell-check", {
+    module: () => import("ace-spell-check/build/ace-spell-check"),
+    className: "AceSpellCheck",
+    modes: "*",
+});
