@@ -11,7 +11,7 @@ seamlessly with Ace Linters, enhancing your Ace editor with linting capabilities
 
 ## Installation
 
-To install AceSpellCheck, run the following commands:
+To install Ace SpellCheck, run the following commands:
 
 ```bash
 npm install ace-linters

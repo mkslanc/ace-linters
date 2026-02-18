@@ -106,9 +106,8 @@ function bundleDeclarations() {
             outFile: path.resolve(buildDir, "ace-spell-check.d.ts"),
             output: commonOutputParams,
             libraries: {
-                inlinedLibraries: ["@cspell/cspell-types"],
+                inlinedLibraries: ["@cspell/cspell-types", "ace-linters"],
                 importedLibraries: [
-                    "ace-linters",
                     "vscode-languageserver-protocol",
                     "vscode-languageserver-textdocument"
                 ]
