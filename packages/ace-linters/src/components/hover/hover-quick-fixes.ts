@@ -1,6 +1,7 @@
 import {Ace} from "ace-code";
 import * as lsp from "vscode-languageserver-protocol";
 import {DiagnosticFixData, isDiagnosticCodeActionData} from "../../types/diagnostic-data";
+import {ActionMenuPopup} from "../action-menu-popup";
 
 export type HoverQuickFixEntry = {
     provider: string;
@@ -59,24 +60,18 @@ export function createHoverQuickFixNode(
     }
 
     const wrapper = document.createElement("div");
-    wrapper.style.marginTop = "8px";
-    wrapper.style.paddingTop = "8px";
-    wrapper.style.borderTop = "1px solid rgba(127,127,127,0.35)";
+    wrapper.className = "ace_lsp_hover_quickfixes";
 
     const title = document.createElement("div");
-    title.textContent = "Quick fixes";
-    title.style.fontWeight = "600";
-    title.style.marginBottom = "6px";
+    title.className = "ace_lsp_hover_quickfixes_title";
     wrapper.appendChild(title);
 
     const controls = document.createElement("div");
-    controls.style.display = "flex";
-    controls.style.alignItems = "center";
-    controls.style.gap = "8px";
+    controls.className = "ace_lsp_hover_quickfixes_controls";
     wrapper.appendChild(controls);
 
     const primaryLink = createActionLink(fixes[0].fix.title);
-    primaryLink.style.flex = "1";
+    primaryLink.classList.add("ace_lsp_hover_quickfixes_primary");
     primaryLink.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -84,48 +79,39 @@ export function createHoverQuickFixNode(
     });
     controls.appendChild(primaryLink);
 
+    let menuPopup: ActionMenuPopup<HoverQuickFixEntry> | null = null;
+
     if (fixes.length > 1) {
-        const menuWrapper = document.createElement("div");
-        menuWrapper.style.position = "relative";
-        controls.appendChild(menuWrapper);
-
-        const moreLink = createActionLink("More v");
-        moreLink.style.whiteSpace = "nowrap";
-        menuWrapper.appendChild(moreLink);
-
-        const menu = document.createElement("div");
-        menu.style.display = "none";
-        menu.style.position = "absolute";
-        menu.style.right = "0";
-        menu.style.top = "100%";
-        menu.style.zIndex = "1000";
-        menu.style.background = "var(--ace-bg, #fff)";
-        menu.style.border = "1px solid rgba(127,127,127,0.45)";
-        menu.style.minWidth = "220px";
-        menu.style.marginTop = "4px";
-        menu.style.padding = "4px 0";
-        menu.style.boxShadow = "0 2px 8px rgba(0,0,0,0.2)";
-        menuWrapper.appendChild(menu);
-
-        fixes.slice(1).forEach((entry) => {
-            const item = createActionLink(entry.fix.title);
-            item.style.display = "block";
-            item.style.padding = "6px 10px";
-            item.style.textDecoration = "none";
-            item.style.color = "inherit";
-            item.addEventListener("click", (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                menu.style.display = "none";
-                onApplyFix(entry);
-            });
-            menu.appendChild(item);
-        });
+        const moreLink = createActionLink("More actions...");
+        moreLink.classList.add("ace_lsp_hover_quickfixes_more");
+        controls.appendChild(moreLink);
 
         moreLink.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
-            menu.style.display = menu.style.display === "none" ? "block" : "none";
+            if (menuPopup) {
+                menuPopup.destroy();
+                menuPopup = null;
+                return;
+            }
+
+            menuPopup = new ActionMenuPopup(
+                document.body || document.documentElement,
+                (entry) => {
+                    onApplyFix(entry);
+                    menuPopup?.destroy();
+                    menuPopup = null;
+                },
+                {lineHeight: 12}
+            );
+            menuPopup.setItems(
+                fixes.slice(1).map((entry) => ({
+                    label: entry.fix.title,
+                    value: entry
+                }))
+            );
+            const menuPosition = getHoverMenuPosition(moreLink);
+            menuPopup.showAt(menuPosition.x, menuPosition.y, false, moreLink);
         });
     }
 
@@ -136,11 +122,49 @@ function createActionLink(text: string): HTMLAnchorElement {
     const link = document.createElement("a");
     link.href = "#";
     link.textContent = text;
-    link.style.cursor = "pointer";
-    link.style.textDecoration = "underline";
-    link.style.color = "var(--ace-link-color, #2563eb)";
-    link.style.fontWeight = "500";
+    link.className = "ace_lsp_hover_quickfixes_link";
     return link;
+}
+
+function getHoverMenuPosition(anchor: HTMLElement): { x: number; y: number } {
+    const gap = 2;
+    const estimatedMenuWidth = 260;
+    const estimatedMenuHeight = 220;
+    const anchorRect = anchor.getBoundingClientRect();
+    const tooltip = anchor.closest(".ace_tooltip") as HTMLElement | null;
+    if (!tooltip) {
+        return {
+            x: anchorRect.right,
+            y: anchorRect.bottom + 4
+        };
+    }
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const rightX = tooltipRect.right + gap;
+    const rightFits = rightX + estimatedMenuWidth <= viewportWidth - gap;
+
+    if (rightFits) {
+        return {
+            x: rightX,
+            y: Math.max(gap, anchorRect.top - 12)
+        };
+    }
+
+    const bottomY = tooltipRect.bottom + gap;
+    const bottomFits = bottomY + estimatedMenuHeight <= viewportHeight - gap;
+    if (bottomFits) {
+        return {
+            x: Math.max(gap, Math.min(anchorRect.right, viewportWidth - estimatedMenuWidth - gap)),
+            y: bottomY
+        };
+    }
+
+    const leftX = Math.max(gap, tooltipRect.left - estimatedMenuWidth - gap);
+    return {
+        x: leftX,
+        y: Math.max(gap, anchorRect.top - 12)
+    };
 }
 
 function isPositionInLspRange(position: Ace.Point, range: lsp.Range): boolean {

@@ -1,7 +1,7 @@
 import * as lsp from "vscode-languageserver-protocol";
 import {CodeActionsByService} from "../types/language-service";
-import {AcePopup} from "../ace/acePopup";
 import {Ace} from "ace-code";
+import {ActionMenuPopup} from "./action-menu-popup";
 
 interface ILightbulbWidget {
     codeActions: CodeActionsByService[];
@@ -21,7 +21,7 @@ interface ILightbulbWidget {
 export class LightbulbWidget implements ILightbulbWidget {
     codeActions: CodeActionsByService[];
     lightbulb: HTMLDivElement;
-    popup: Ace.AcePopup;
+    menuPopup: ActionMenuPopup<{ action: (lsp.CodeAction | lsp.Command), serviceName: string }>;
     executeActionCallback?: (action: (lsp.CodeAction | lsp.Command), serviceName: string) => void;
     private editor: Ace.Editor;
     lightBulbWidth = 10;
@@ -31,14 +31,13 @@ export class LightbulbWidget implements ILightbulbWidget {
         this.editor = editor;
         this.codeActions = [];
         this.executeActionCallback = executeActionCallback;
-        //@ts-ignore
-        this.popup = new AcePopup(editor.container || document.body || document.documentElement);
-        this.popup.on("click", (e) => {
-            const selectedRow = this.popup.getData(this.popup.getRow());
-            this.executeAction(selectedRow["action"], selectedRow["serviceName"]);
-            this.popup.hide();
-            e.stop();
-        });
+        this.menuPopup = new ActionMenuPopup(
+            editor.container || document.body || document.documentElement,
+            ({action, serviceName}) => {
+                this.executeAction(action, serviceName);
+            },
+            {lineHeight: 12}
+        );
 
         this.setEditorListeners(editor);
 
@@ -66,7 +65,7 @@ export class LightbulbWidget implements ILightbulbWidget {
 
     hideAll = () => {
         this.hideLightbulb();
-        this.popup.hide();
+        this.menuPopup.hide();
     }
 
     createLightbulb() {
@@ -96,8 +95,8 @@ export class LightbulbWidget implements ILightbulbWidget {
         if (this.codeActions.length === 0) {
             return;
         }
-        this.setDataToPopup();
-        this.popup.show({top: y, left: x}, 12, false)
+        this.menuPopup.setItems(this.getPopupItems());
+        this.menuPopup.showAt(x, y, false);
     }
 
     isEmpty() {
@@ -112,20 +111,21 @@ export class LightbulbWidget implements ILightbulbWidget {
         return true;
     }
 
-    setDataToPopup() {
-        let codeActions: Ace.Completion[] = [];
+    private getPopupItems() {
+        let codeActions: { label: string; value: { action: (lsp.CodeAction | lsp.Command), serviceName: string } }[] = [];
         this.codeActions.forEach(codeActionsByService => {
             codeActionsByService.codeActions?.forEach((action) => {
                     codeActions.push({
-                        value: action.title,
-                        //@ts-expect-error
-                        serviceName: codeActionsByService.service,
-                        action: action
+                        label: action.title,
+                        value: {
+                            action,
+                            serviceName: codeActionsByService.service
+                        }
                     })
                 }
             )
         });
-        this.popup.setData(codeActions, "");
+        return codeActions;
     }
 
     executeAction(action: (lsp.CodeAction | lsp.Command), serviceName: string) {
@@ -168,6 +168,6 @@ export class LightbulbWidget implements ILightbulbWidget {
         if (this.lightbulb && this.lightbulb.parentNode) {
             this.lightbulb.parentNode.removeChild(this.lightbulb);
         }
-        this.popup.destroy();
+        this.menuPopup.destroy();
     }
 }
