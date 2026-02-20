@@ -284,7 +284,7 @@ export function getInlineCompletionRange(range: Range, filterText?: string): Ace
     return toRange(range);
 }
 
-export function toTooltip(hover: Hover[] | undefined): Tooltip | undefined {
+export function toTooltip(hover: (Hover | undefined)[] | undefined): Tooltip | undefined {
     if (!hover)
         return;
     let content = hover.map((el) => {

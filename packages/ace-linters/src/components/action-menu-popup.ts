@@ -8,17 +8,45 @@ export type ActionMenuItem<T> = {
     meta?: string;
 };
 
+type PopupManagerLike = {
+    addAcePopup: (popup: any) => void;
+    removeAcePopup: (popup: any) => void;
+};
+
+type PopupLike<T> = {
+    container: HTMLElement;
+    on: (eventName: string, callback: (event: { stop: () => void }) => void) => void;
+    getData: (row: number) => { menuValue?: T } | undefined;
+    getRow: () => number;
+    setData: (items: Ace.Completion[], filterText: string) => void;
+    show: (pos: { top: number; left: number }, lineHeight: number, topdownOnly: boolean) => void;
+    hide: () => void;
+    destroy: () => void;
+};
+
 export class ActionMenuPopup<T> {
-    private readonly popup: Ace.AcePopup;
+    private readonly popup: PopupLike<T>;
     private items: ActionMenuItem<T>[] = [];
     private isOpenState = false;
     private anchorEl: HTMLElement | null = null;
     private readonly lineHeight: number;
+    private readonly popupManagerRef: PopupManagerLike;
 
-    constructor(parentNode: Element, private readonly onSelect: (value: T) => void, options?: { lineHeight?: number }) {
-        // @ts-ignore AcePopup constructor typing is ambient from ace internals.
-        this.popup = new AcePopup(parentNode);
+    constructor(
+        parentNode: Element,
+        private readonly onSelect: (value: T) => void,
+        options?: {
+            lineHeight?: number;
+            popupFactory?: (parent: Element) => PopupLike<T>;
+            popupManager?: PopupManagerLike;
+        }
+    ) {
+        this.popup = options?.popupFactory
+            ? options.popupFactory(parentNode)
+            : // @ts-ignore AcePopup constructor typing is ambient from ace internals.
+            (new AcePopup(parentNode) as unknown as PopupLike<T>);
         this.lineHeight = options?.lineHeight ?? 12;
+        this.popupManagerRef = options?.popupManager ?? popupManager;
         this.popup.on("click", (e) => {
             const selected = this.popup.getData(this.popup.getRow()) as { menuValue?: T } | undefined;
             if (selected?.menuValue !== undefined) {
@@ -49,7 +77,7 @@ export class ActionMenuPopup<T> {
         }
         this.anchorEl = anchor ?? null;
         this.popup.show({top: y, left: x}, this.lineHeight, topdownOnly);
-        popupManager.addAcePopup(this.popup);
+        this.popupManagerRef.addAcePopup(this.popup);
         this.isOpenState = true;
         window.addEventListener("mousedown", this.onWindowMouseDown, true);
         window.addEventListener("keydown", this.onWindowKeyDown, true);
@@ -67,7 +95,7 @@ export class ActionMenuPopup<T> {
             return;
         }
         this.popup.hide();
-        popupManager.removeAcePopup(this.popup);
+        this.popupManagerRef.removeAcePopup(this.popup);
         this.isOpenState = false;
         this.anchorEl = null;
         window.removeEventListener("mousedown", this.onWindowMouseDown, true);

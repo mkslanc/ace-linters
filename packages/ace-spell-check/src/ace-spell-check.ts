@@ -2,6 +2,7 @@ import {BaseService} from "ace-linters/src/services/base-service";
 
 import type {LanguageService} from "ace-linters/src/types/language-service";
 import type {AceSpellCheckOptions} from "./service";
+// @ts-ignore
 import {spellCheckDocument} from "./lib/cspell-lib-browser.js";
 import cspellDefaultSettings from "./lib/cspell-settings.generated.js";
 import * as lsp from "vscode-languageserver-protocol";

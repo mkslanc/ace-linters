@@ -2,6 +2,8 @@ import * as lsp from "vscode-languageserver-protocol";
 
 import {TextDocument} from "vscode-languageserver-textdocument";
 import type {FilterDiagnosticsOptions} from "ace-linters/src/types/language-service";
+import {isDiagnosticCodeActionData} from "ace-linters/src/types/diagnostic-data";
+import type {DiagnosticCodeActionData} from "ace-linters/src/types/diagnostic-data";
 
 export type SpellCodeActionIssue = {
     offset?: number;
@@ -24,11 +26,25 @@ export function fromSpellCheckResult(
     return result.issues.map((el) => {
         let start = el.offset ?? 0;
         let length = el.length ?? 1; //TODO:
-        return lsp.Diagnostic.create(
-            lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length)),
+        const issueRange = lsp.Range.create(doc.positionAt(start), doc.positionAt(start + length));
+        const diagnostic = lsp.Diagnostic.create(
+            issueRange,
             "Typo in word: `" + el.text + "`",
             4,
         );
+        const suggestions = (el.suggestions || []).filter((suggestion) => !!suggestion).slice(0, 5);
+        diagnostic.data = {
+            v: 1,
+            provider: "ace-spell-check",
+            issueId: `${start}:${length}:${el.text || ""}`,
+            fixes: suggestions.map((replacementText) => ({
+                title: `Change to "${replacementText}"`,
+                range: issueRange,
+                newText: replacementText,
+                kind: lsp.CodeActionKind.QuickFix,
+            })),
+        } satisfies DiagnosticCodeActionData;
+        return diagnostic;
     });
 }
 
@@ -38,6 +54,16 @@ export function toCodeActions(
     range: lsp.Range,
     context: lsp.CodeActionContext,
 ): lsp.CodeAction[] {
+    const actionsFromDiagnosticData = toCodeActionsFromDiagnosticData(
+        context.diagnostics || [],
+        doc,
+        range,
+        "ace-spell-check"
+    );
+    if (actionsFromDiagnosticData.length) {
+        return actionsFromDiagnosticData;
+    }
+
     const requestStart = doc.offsetAt(range.start);
     const requestEnd = doc.offsetAt(range.end);
     const actions: lsp.CodeAction[] = [];
@@ -70,6 +96,62 @@ export function toCodeActions(
                                 newText: replacementText,
                             },
                         ],
+                    },
+                },
+            });
+        }
+    }
+
+    return actions;
+}
+
+function toCodeActionsFromDiagnosticData(
+    diagnostics: readonly lsp.Diagnostic[],
+    doc: TextDocument,
+    range: lsp.Range,
+    provider: string
+): lsp.CodeAction[] {
+    const requestStart = doc.offsetAt(range.start);
+    const requestEnd = doc.offsetAt(range.end);
+    const actions: lsp.CodeAction[] = [];
+    const seen = new Set<string>();
+
+    for (const diagnostic of diagnostics) {
+        if (!isDiagnosticCodeActionData(diagnostic.data) || diagnostic.data.provider !== provider) {
+            continue;
+        }
+        for (const fix of diagnostic.data.fixes || []) {
+            const fixStart = doc.offsetAt(fix.range.start);
+            const fixEnd = doc.offsetAt(fix.range.end);
+            const overlapsRange = fixStart <= requestEnd && fixEnd >= requestStart;
+            if (!overlapsRange) {
+                continue;
+            }
+
+            const key = [
+                diagnostic.data.issueId,
+                fix.title,
+                fix.newText,
+                fix.range.start.line,
+                fix.range.start.character,
+                fix.range.end.line,
+                fix.range.end.character
+            ].join("|");
+            if (seen.has(key)) {
+                continue;
+            }
+            seen.add(key);
+
+            actions.push({
+                title: fix.title,
+                kind: (fix.kind as lsp.CodeActionKind) || lsp.CodeActionKind.QuickFix,
+                diagnostics: [diagnostic],
+                edit: {
+                    changes: {
+                        [doc.uri]: [{
+                            range: fix.range,
+                            newText: fix.newText,
+                        }],
                     },
                 },
             });

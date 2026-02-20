@@ -3,9 +3,9 @@ import {Range} from "ace-code/src/range";
 import {
     CompletionItemKind,
 } from "vscode-languageserver-protocol";
-import {CommonConverter} from "../../src/type-converters/common-converters";
+import {CommonConverter} from "./common-converters";
 import {Editor, VirtualRenderer} from "ace-code";
-import {AceRange} from "../../src/ace/range-singleton";
+import {AceRange} from "../ace/range-singleton";
 
 
 describe('General Converters', () => {

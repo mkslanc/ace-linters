@@ -1,6 +1,6 @@
 import {expect} from "chai";
 
-import * as Converter from "../../src/type-converters/lsp/lsp-converters";
+import * as Converter from "./lsp-converters";
 
 import {Range as AceRange} from "ace-code/src/range";
 import {
@@ -18,8 +18,8 @@ import {
     toCompletionItem,
     toCompletions,
     toResolvedCompletion, toTooltip
-} from "../../src/type-converters/lsp/lsp-converters";
-import {CompletionService, Tooltip} from "../../src/types/language-service";
+} from "./lsp-converters";
+import {CompletionService, Tooltip} from "../../types/language-service";
 
 
 describe('Converters from/to Language Server Protocol', () => {
@@ -149,13 +149,15 @@ describe('Converters from/to Language Server Protocol', () => {
                     column: 0,
                     text: "Error message 1",
                     type: "error",
-                    code: undefined
+                    code: undefined,
+                    data: undefined
                 }, {
                     row: 5,
                     column: 0,
                     text: "Warning message 2",
                     type: "warning",
-                    code: undefined
+                    code: undefined,
+                    data: undefined
                 },
             ];
 

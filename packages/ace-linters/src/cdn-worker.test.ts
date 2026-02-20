@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { getServices } from '../../src/cdn-worker';
-import {SupportedServices} from "../../src/types/language-service";
+import { getServices } from './cdn-worker';
+import {SupportedServices} from "./types/language-service";
 
 describe('getServices', () => {
     it('should return all services when includeLinters is true', () => {

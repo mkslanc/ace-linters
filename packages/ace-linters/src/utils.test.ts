@@ -1,5 +1,5 @@
 
-import {mergeObjects, convertToUri} from "../../src/utils";
+import {mergeObjects, convertToUri} from "./utils";
 import {expect} from "chai";
 
 describe('mergeObjects', () => {

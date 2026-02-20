@@ -126,7 +126,7 @@ function createActionLink(text: string): HTMLAnchorElement {
     return link;
 }
 
-function getHoverMenuPosition(anchor: HTMLElement): { x: number; y: number } {
+export function getHoverMenuPosition(anchor: HTMLElement): { x: number; y: number } {
     const gap = 2;
     const estimatedMenuWidth = 260;
     const estimatedMenuHeight = 220;

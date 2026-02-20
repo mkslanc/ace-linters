@@ -4,15 +4,15 @@ import "ace-code/src/test/mockdom";
 //@ts-ignore
 window["self"] = {};
 
-import {LanguageProvider} from "../../src/language-provider";
+import {LanguageProvider} from "./language-provider";
 import {Mode as JSONMode} from "ace-code/src/mode/json";
 import {Mode as HtmlMode} from "ace-code/src/mode/html";
 import {assert, expect} from "chai";
-import {MockWorker} from "../../src/misc/mock-worker";
-import {ServiceManager} from "../../src/services/service-manager";
+import {MockWorker} from "./misc/mock-worker";
+import {ServiceManager} from "./services/service-manager";
 import {Done} from "mocha";
 import Completion = Ace.Completion;
-import {MessageType} from "../../src/message-types";
+import {MessageType} from "./message-types";
 
 describe('LanguageProvider tests', () => {
     let editorEl: HTMLElement;
@@ -65,7 +65,7 @@ describe('LanguageProvider tests', () => {
         manager = new ServiceManager(ctx);
         manager.registerService("html", {
             features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-            module: () => import("../../src/services/html/html-service"),
+            module: () => import("./services/html/html-service"),
             className: "HtmlService",
             modes: "html"
         });
@@ -103,13 +103,13 @@ describe('LanguageProvider tests', () => {
     })
 
     it('completer should have html trigger characters', () => {
-        let completer = languageProvider.activeEditor.completers.find((item) => item.id === "lspCompleters");
-        expect(completer.triggerCharacters).to.eql(['.', ':', '<', '"', '=', '/']);
+        let completer = languageProvider.activeEditor!.completers.find((item) => item.id === "lspCompleters");
+        expect(completer!.triggerCharacters).to.eql(['.', ':', '<', '"', '=', '/']);
     });
 
     it('do hover or not, depending on service feature state', (done) => {
         languageProvider.doHover(editor.session, {row: 2, column: 2}, hover => {
-            let hoverText = languageProvider.getTooltipText(hover);
+            let hoverText = languageProvider.getTooltipText(hover!);
             expect(hoverText).not.to.be.empty;
 
             languageProvider.configureServiceFeatures("html", {
@@ -172,7 +172,7 @@ describe('LanguageProvider tests', () => {
             testManager = new ServiceManager(testCtx);
             testManager.registerService("html", {
                 features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-                module: () => import("../../src/services/html/html-service"),
+                module: () => import("./services/html/html-service"),
                 className: "HtmlService",
                 modes: "html"
             });
@@ -363,7 +363,7 @@ describe('LanguageProvider tests', () => {
 
             manager.registerService("json", {
                 features: {completion: true, completionResolve: true, diagnostics: true, format: true, hover: true},
-                module: () => import("../../src/services/json/json-service"),
+                module: () => import("./services/json/json-service"),
                 className: "JsonService",
                 modes: "json"
             });
@@ -375,7 +375,7 @@ describe('LanguageProvider tests', () => {
         it('focus editor', (done) => {
             jsonEditor.focus();
             setTimeout(() => {
-                expect(languageProvider.activeEditor.id).equals(jsonEditor.id);
+                expect(languageProvider.activeEditor!.id).equals(jsonEditor.id);
                 done();
             }, 0);
         })
@@ -419,7 +419,7 @@ describe('LanguageProvider tests', () => {
                     jsonEditor.session.setValue("{}");
                     jsonEditor.moveCursorTo(0, 1);
                     languageProvider.doComplete(jsonEditor, jsonEditor.session, (resultCompletions) => {
-                        completions = resultCompletions;
+                        completions = resultCompletions!;
                         completions.forEach((item) => {
                             item["fileName"] = languageProvider["$getFileName"](jsonEditor.session);
                         });
