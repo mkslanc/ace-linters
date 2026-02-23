@@ -1,9 +1,9 @@
-export var yamlContent = `
+export const yamlContent = `
 ---
 product_name: Super Mobile Phone
 manufacturer: Somewhere
 price: 1
-color: 
+color:
 camera:
   resolution: 12MP
   zoom: 3x optical
@@ -18,7 +18,7 @@ battery:
 operating_system: Perpertum 14
 `;
 
-export var yamlSchema = `{
+export const yamlSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
@@ -37,24 +37,12 @@ export var yamlSchema = `{
     "color": {
       "type": "string",
       "description": "The color of the product",
-      "enum": [
-        "Gold",
-        "Silver",
-        "Space Gray",
-        "Pacific Blue",
-        "Graphite"
-      ]
+      "enum": ["Gold", "Silver", "Space Gray", "Pacific Blue", "Graphite"]
     },
     "storage": {
       "type": "string",
       "description": "The storage capacity of the product",
-      "enum": [
-        "64GB",
-        "128GB",
-        "256GB",
-        "512GB",
-        "1TB"
-      ]
+      "enum": ["64GB", "128GB", "256GB", "512GB", "1TB"]
     },
     "camera": {
       "type": "object",
@@ -69,17 +57,11 @@ export var yamlSchema = `{
         },
         "features": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": { "type": "string" },
           "description": "Additional camera features"
         }
       },
-      "required": [
-        "resolution",
-        "zoom",
-        "features"
-      ],
+      "required": ["resolution", "zoom", "features"],
       "description": "Details about the camera"
     },
     "display": {
@@ -96,18 +78,10 @@ export var yamlSchema = `{
         "technology": {
           "type": "string",
           "description": "The display technology used",
-          "enum": [
-            "OLED",
-            "LCD",
-            "AMOLED"
-          ]
+          "enum": ["OLED", "LCD", "AMOLED"]
         }
       },
-      "required": [
-        "size",
-        "resolution",
-        "technology"
-      ],
+      "required": ["size", "resolution", "technology"],
       "description": "Details about the display"
     },
     "battery": {
@@ -120,26 +94,16 @@ export var yamlSchema = `{
         "fast_charge": {
           "type": "string",
           "description": "Whether the device supports fast charging or not",
-          "enum": [
-            "Yes",
-            "No"
-          ]
+          "enum": ["Yes", "No"]
         }
       },
-      "required": [
-        "capacity",
-        "fast_charge"
-      ],
+      "required": ["capacity", "fast_charge"],
       "description": "Details about the battery"
     },
     "operating_system": {
       "type": "string",
       "description": "The operating system of the device",
-      "enum": [
-        "iOS",
-        "Android",
-        "Windows"
-      ]
+      "enum": ["iOS", "Android", "Windows"]
     }
   },
   "required": [
@@ -154,5 +118,4 @@ export var yamlSchema = `{
     "operating_system"
   ],
   "description": "A product listing object"
-}
-`
+}`;

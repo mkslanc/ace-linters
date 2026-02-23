@@ -10,11 +10,8 @@
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
     "build": "npm run build:dependencies && node build.mjs",
     "build-dev": "npm run build:dependencies && node build.mjs --dev",
-    "copy-build": "node tools/copy-build-for-tests.js",
-    "start-test-server": "npm run copy-build && http-server --cors='*' tests/ui/dist",
     "test:unit": "mocha --config mocha.unit.config.js --exit",
-    "test:ui": "mocha --config mocha.ui.config.js --exit",
-    "test": "npm run test:unit && npm run test:ui",
+    "test": "npm run test:unit",
     "test:coverage": "nyc npm run test",
     "start-server": "http-server build --cors=\"*\"",
     "generate-typescript-service": "node tools/generate-typescript-service.js"

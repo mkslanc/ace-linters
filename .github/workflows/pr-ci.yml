@@ -37,14 +37,12 @@ jobs:
     - run: npm run build
     - run: npm run test:unit -w packages/ace-linters
     - run: |
-        # Copy Build Files for UI Tests
-        mkdir -p packages/ace-linters/tests/ui/dist/build
-        cp -r packages/ace-linters/build/* packages/ace-linters/tests/ui/dist/build/
+        npm run prepare:ui-smoke
 
-        npx http-server --cors='*' packages/ace-linters/tests/ui/dist &
+        npx http-server --cors='*' tests/ui-smoke/dist &
         sleep 5
 
-        npm run test:ui -w packages/ace-linters
+        npm run test:ui:smoke
 
     # TODO upload to codecov
     # - uses: codecov/codecov-action@v3
