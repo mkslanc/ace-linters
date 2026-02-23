@@ -28,6 +28,48 @@ const packagesToCopy = [
         targetBuildDir: path.join(distDir, "build", "ace-clang-linter"),
         requiredFiles: ["ace-clang-linter.js"],
     },
+    {
+        name: "ace-dart-linter",
+        workspacePath: "packages/ace-dart-linter",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-dart-linter", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-dart-linter"),
+        requiredFiles: ["ace-dart-linter.js"],
+    },
+    {
+        name: "ace-go-linter",
+        workspacePath: "packages/ace-go-linter",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-go-linter", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-go-linter"),
+        requiredFiles: ["ace-go-linter.js"],
+    },
+    {
+        name: "ace-lua-linter",
+        workspacePath: "packages/ace-lua-linter",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-lua-linter", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-lua-linter"),
+        requiredFiles: ["ace-lua-linter.js"],
+    },
+    {
+        name: "ace-python-ruff-linter",
+        workspacePath: "packages/ace-python-ruff-linter",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-python-ruff-linter", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-python-ruff-linter"),
+        requiredFiles: ["python-service.js"],
+    },
+    {
+        name: "ace-sql-linter",
+        workspacePath: "packages/ace-sql-linter",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-sql-linter", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-sql-linter"),
+        requiredFiles: ["mysql-service.js"],
+    },
+    {
+        name: "ace-zig-linter",
+        workspacePath: "packages/ace-zig-linter",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-zig-linter", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-zig-linter"),
+        requiredFiles: ["ace-zig-linter.js"],
+    },
 ];
 const aceAssetsToCopy = [
     {
@@ -52,6 +94,13 @@ const aceModeFilesToCopy = [
     "mode-less.js",
     "mode-scss.js",
     "mode-c_cpp.js",
+    "mode-dart.js",
+    "mode-golang.js",
+    "mode-python.js",
+    "mode-sql.js",
+    "mode-mysql.js",
+    "mode-pgsql.js",
+    "mode-zig.js",
 ];
 
 function assertPathExists(targetPath, message) {
@@ -133,6 +182,7 @@ function copyAceAssets() {
     assertPathExists(snippetsSourceDir, `Missing Ace snippets directory: ${snippetsSourceDir}`);
     fs.mkdirSync(snippetsTargetDir, {recursive: true});
     fs.cpSync(snippetsSourceDir, snippetsTargetDir, {recursive: true, force: true});
+
 }
 
 function prepareDist() {

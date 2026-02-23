@@ -40,7 +40,7 @@ export function createUiHarness() {
         return [...consoleErrors];
     }
 
-    async function openScenario(scenarioName: string) {
+    async function openScenario(scenarioName: string, query = "") {
         clearConsoleErrors();
         page.removeAllListeners("console");
         page.removeAllListeners("pageerror");
@@ -54,7 +54,8 @@ export function createUiHarness() {
             consoleErrors.push(error.message);
         });
 
-        await page.goto(`http://127.0.0.1:8080/${scenarioName}.html`, {
+        const querySuffix = query ? `?${query}` : "";
+        await page.goto(`http://127.0.0.1:8080/${scenarioName}.html${querySuffix}`, {
             waitUntil: "domcontentloaded",
         });
         await page.waitForFunction(() => (window as any).testFlags && (window as any).testFlags.ready === true, {timeout: 15000});
