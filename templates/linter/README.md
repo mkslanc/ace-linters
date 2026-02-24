@@ -23,6 +23,8 @@ npm install [linter-name]
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("[linter-name]", {
        module: () => import("[linter-name]/build/[linter-name]"),
@@ -81,5 +83,5 @@ This linter supports the following features:
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+[Linter Name] is released under the [MIT License](https://opensource.org/licenses/MIT).
 
