@@ -1,26 +1,25 @@
-type AnyArgs = readonly unknown[];
 import { readVfsFile, statVfsFile } from '../lib/cspell-vfs.js';
 
-function unavailable(apiName: string): never {
+function unavailable(apiName) {
   throw new Error(`[ace-spell-check] ${apiName} is not available in browser builds.`);
 }
 
-export async function readFile(pathLike: unknown, options?: { encoding?: string } | string): Promise<unknown> {
+export async function readFile(pathLike, options) {
   const encoding = typeof options === 'string' ? options : options?.encoding;
   const content = await readVfsFile(pathLike, encoding);
   if (content !== undefined) return content;
   return unavailable('fs.promises.readFile');
 }
 
-export async function writeFile(..._args: AnyArgs): Promise<void> {
+export async function writeFile(..._args) {
   return unavailable('fs.promises.writeFile');
 }
 
-export async function mkdir(..._args: AnyArgs): Promise<void> {
+export async function mkdir(..._args) {
   return unavailable('fs.promises.mkdir');
 }
 
-export async function stat(pathLike: unknown): Promise<{ isFile: () => boolean; isDirectory: () => boolean }> {
+export async function stat(pathLike) {
   const stat = statVfsFile(pathLike);
   if (stat) return stat;
   return unavailable('fs.promises.stat');

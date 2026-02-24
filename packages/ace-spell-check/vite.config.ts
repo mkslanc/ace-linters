@@ -11,18 +11,6 @@ function umd2Plugin(): Plugin {
             /factory\((global\d*)\.[\w]+ = \{\}\)/g,
             'factory($1)'
           );
-          chunk.code = chunk.code.replace(
-            /process\.umask = function\(\) \{\s*return 0;\s*\};/g,
-            `process.umask = function() {
-		return 0;
-	};
-	if (!process.execPath) process.execPath = "/browser";
-	if (!process.execArgv) process.execArgv = [];
-	if (!process.arch) process.arch = "browser";
-	if (!process.platform) process.platform = "browser";
-	if (!process.pid) process.pid = 1;
-	if (typeof process.emitWarning !== "function") process.emitWarning = function() {};`
-          );
         }
       }
     },

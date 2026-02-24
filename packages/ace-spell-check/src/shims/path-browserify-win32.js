@@ -1,4 +1,4 @@
-import pathBrowserify from '../../../../node_modules/path-browserify/index.js';
+import pathBrowserify from "path-browserify";
 
 const patchedPath = pathBrowserify;
 

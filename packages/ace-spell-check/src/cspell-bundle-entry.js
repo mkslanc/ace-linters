@@ -1,1 +1,1 @@
-export { spellCheckDocument } from "cspell-lib";
+export { spellCheckDocument } from "cspell-lib/dist/lib/spellCheckFile.js";

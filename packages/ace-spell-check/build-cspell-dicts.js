@@ -4,11 +4,33 @@ const { pathToFileURL } = require("url");
 const { parse: parseJsonc } = require("jsonc-parser");
 
 const pkgRoot = __dirname;
-const cspellScopeDir = path.resolve(pkgRoot, "../../node_modules/@cspell");
-const bundledDictConfigFile = path.resolve(
-  pkgRoot,
-  "../../node_modules/@cspell/cspell-bundled-dicts/cspell-default.config.js"
-);
+function resolvePackageRoot(packageName) {
+  const resolvedEntry = require.resolve(packageName);
+  const parts = packageName.split("/");
+  const scoped = packageName.startsWith("@") && parts.length >= 2;
+  const expectedScope = scoped ? parts[0] : null;
+  const expectedName = scoped ? parts[1] : parts[0];
+
+  let current = path.dirname(resolvedEntry);
+  while (current && current !== path.dirname(current)) {
+    const base = path.basename(current);
+    if (scoped) {
+      const parent = path.dirname(current);
+      if (base === expectedName && path.basename(parent) === expectedScope) {
+        return current;
+      }
+    } else if (base === expectedName) {
+      return current;
+    }
+    current = path.dirname(current);
+  }
+
+  throw new Error(`Unable to resolve package root for ${packageName} from ${resolvedEntry}`);
+}
+
+const bundledDictsPkgDir = resolvePackageRoot("@cspell/cspell-bundled-dicts");
+const cspellScopeDir = path.resolve(bundledDictsPkgDir, "..");
+const bundledDictConfigFile = require.resolve("@cspell/cspell-bundled-dicts/cspell-default.config.js");
 const outDir = path.resolve(pkgRoot, "src/lib");
 const settingsOutFile = path.resolve(outDir, "cspell-settings.generated.js");
 const vfsOutFile = path.resolve(outDir, "cspell-vfs.generated.js");
@@ -50,7 +72,11 @@ function toJsLiteral(value, indent = 0) {
 
 function resolveImportPath(importRef) {
   if (importRef.startsWith("@cspell/")) {
-    return path.resolve(pkgRoot, "../../node_modules", importRef);
+    const parts = importRef.split("/");
+    const packageName = parts.length >= 2 ? `${parts[0]}/${parts[1]}` : importRef;
+    const packageDir = resolvePackageRoot(packageName);
+    const subPath = parts.slice(2).join("/");
+    return subPath ? path.resolve(packageDir, subPath) : packageDir;
   }
   return path.resolve(path.dirname(bundledDictConfigFile), importRef);
 }
