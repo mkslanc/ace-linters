@@ -55,6 +55,11 @@ const cspellBrowserLitePlugin = {
       }
       return { path: cspellSettingsIndexShim };
     });
+    // Keep cspell-vfs as a shared external module to avoid duplicated VFS maps.
+    buildApi.onResolve({ filter: /^\.\.\/lib\/cspell-vfs\.js$/ }, () => ({
+      path: "./cspell-vfs.js",
+      external: true,
+    }));
   },
 };
 

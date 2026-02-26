@@ -26,6 +26,9 @@
     "*": {
       "build/ace-spell-check": [
         "./build/ace-spell-check.d.ts"
+      ],
+      "build/esm-dicts-resolver": [
+        "./build/esm-dicts-resolver.d.ts"
       ]
     }
   }

@@ -1,12 +1,22 @@
 import { Buffer } from "buffer";
 import Stream from "stream-browserify";
-import { cspellVfsMap } from "./cspell-vfs.generated.js";
+import { cspellVfsEntries } from "./cspell-vfs.generated.js";
+
+const cspellVfsMap = new Map(cspellVfsEntries);
+const loadedVfsPackages = new Set();
 
 const vfsStats = {
   isFile: () => true,
   isDirectory: () => false,
   isSymbolicLink: () => false,
 };
+
+for (const [entryPath] of cspellVfsEntries) {
+  const packageName = packageNameFromVfsPath(entryPath);
+  if (packageName) {
+    loadedVfsPackages.add(packageName);
+  }
+}
 
 function normalizePath(pathLike) {
   if (pathLike === undefined || pathLike === null) return "";
@@ -22,13 +32,70 @@ function normalizePath(pathLike) {
       // ignore and keep original value
     }
   }
-  return value.replace(/\\/g, "/");
+  value = value.replace(/\\/g, "/");
+  const drivePrefixedVfs = value.match(/^[A-Za-z]:\/(__cspell_vfs\/.*)$/);
+  if (drivePrefixedVfs) {
+    value = `/${drivePrefixedVfs[1]}`;
+  }
+  if (value.startsWith("/__cspell_vfs/")) {
+    try {
+      value = decodeURIComponent(value);
+    } catch {
+      // ignore and keep original value
+    }
+  }
+  return value;
+}
+
+function cspellVfsUrlToLocalPath(pathLike) {
+  if (pathLike === undefined || pathLike === null) return undefined;
+  const value = `${pathLike}`;
+  if (!value.startsWith("cspell-vfs://")) return undefined;
+  try {
+    const url = new URL(value);
+    const host = decodeURIComponent(url.host || "");
+    const pathname = decodeURIComponent(url.pathname || "");
+    const slashPath = pathname.startsWith("/") ? pathname : `/${pathname}`;
+    const suffix = host ? `/${host}${slashPath}` : slashPath;
+    return normalizePath(`/__cspell_vfs${suffix}`);
+  } catch {
+    return undefined;
+  }
 }
 
 function candidateKeys(pathLike) {
   const key = normalizePath(pathLike);
   if (!key) return [];
-  return key === key.toLowerCase() ? [key] : [key, key.toLowerCase()];
+  const fromCspellVfs = cspellVfsUrlToLocalPath(pathLike);
+  const keys = new Set();
+  keys.add(key);
+  if (fromCspellVfs) {
+    keys.add(fromCspellVfs);
+  }
+  for (const candidate of Array.from(keys)) {
+    const lower = candidate.toLowerCase();
+    if (lower !== candidate) {
+      keys.add(lower);
+    }
+  }
+  return Array.from(keys);
+}
+
+export function packageNameFromVfsPath(pathLike) {
+  const localFromCspellVfs = cspellVfsUrlToLocalPath(pathLike);
+  if (localFromCspellVfs) {
+    const localMatch = localFromCspellVfs.match(/^\/__cspell_vfs\/((?:@[^/]+\/)?[^/]+)\//);
+    if (localMatch) {
+      return localMatch[1];
+    }
+  }
+  const key = normalizePath(pathLike);
+  const cspellVfsMatch = key.match(/^cspell-vfs:\/\/\/((?:@[^/]+\/)?[^/]+)\//);
+  if (cspellVfsMatch) {
+    return cspellVfsMatch[1];
+  }
+  const localVfsMatch = key.match(/^\/__cspell_vfs\/((?:@[^/]+\/)?[^/]+)\//);
+  return localVfsMatch ? localVfsMatch[1] : undefined;
 }
 
 function findEntry(pathLike) {
@@ -77,4 +144,34 @@ export function createVfsReadStream(pathLike) {
 export function realpathVfs(pathLike) {
   const entry = findEntry(pathLike);
   return entry ? entry.key : `${pathLike ?? ""}`;
+}
+
+export function isVfsPackageLoaded(packageName) {
+  return loadedVfsPackages.has(packageName);
+}
+
+export function markVfsPackageLoaded(packageName) {
+  if (!packageName) return;
+  loadedVfsPackages.add(packageName);
+}
+
+export function registerVfsEntries(entries) {
+  if (!Array.isArray(entries)) return 0;
+
+  let added = 0;
+  for (const entry of entries) {
+    if (!Array.isArray(entry) || entry.length < 2) continue;
+    const key = normalizePath(entry[0]);
+    const value = entry[1];
+    if (!key || typeof value !== "string") continue;
+    if (!cspellVfsMap.has(key)) {
+      added += 1;
+    }
+    cspellVfsMap.set(key, value);
+    const packageName = packageNameFromVfsPath(key);
+    if (packageName) {
+      loadedVfsPackages.add(packageName);
+    }
+  }
+  return added;
 }

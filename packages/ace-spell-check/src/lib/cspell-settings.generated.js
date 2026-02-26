@@ -439,78 +439,7 @@ export const cspellGeneratedSettings = {
     }
   ],
   dictionaries: [
-    "ada",
-    "al",
-    "aws",
-    "bash",
-    "coding-compound-terms",
-    "companies",
-    "computing-acronyms",
-    "cpp",
-    "cpp-compound-words",
-    "cpp-legacy",
-    "cpp-refined",
-    "cryptocurrencies",
-    "cryptocurrencies-legacy",
-    "csharp",
-    "css",
-    "dart",
-    "data-science",
-    "data-science-models",
-    "data-science-tools",
-    "django",
-    "docker",
-    "dotnet",
-    "elixir",
-    "en_us",
-    "en-gb",
-    "filetypes",
-    "flutter",
-    "fonts",
-    "fsharp",
-    "fullstack",
-    "game-development",
-    "gaming-terms",
-    "git",
-    "golang",
-    "google",
-    "haskell",
-    "html",
-    "html-symbol-entities",
-    "java",
-    "julia",
-    "k8s",
-    "kotlin",
-    "latex",
-    "lorem-ipsum",
-    "lua",
-    "makefile",
-    "monkeyc",
-    "networking-terms",
-    "node",
-    "npm",
-    "php",
-    "powershell",
-    "public-licenses",
-    "python",
-    "python-common",
-    "r",
-    "ruby",
-    "ruby-gems",
-    "rust",
-    "rust-crates",
-    "scala",
-    "shellscript",
-    "software-term-suggestions",
-    "software-tools",
-    "softwareTerms",
-    "sql",
-    "svelte",
-    "swift",
-    "terraform",
-    "typescript",
-    "web-services",
-    "zig"
+    "en_us"
   ],
   patterns: [
     {
@@ -1394,6 +1323,109 @@ export const cspellGeneratedSettings = {
   import: [],
   noConfigSearch: true,
   loadDefaultConfiguration: false,
+  overrides: [
+    {
+      filename: "*.{adb,ads}",
+      languageId: "ada"
+    },
+    {
+      filename: "**/*.al",
+      languageId: "al"
+    },
+    {
+      filename: "**/Dockerfile",
+      languageId: "dockerfile"
+    },
+    {
+      filename: "**/.git/COMMIT_EDITMSG",
+      languageId: "commit-msg",
+      minWordLength: 3
+    },
+    {
+      filename: [
+        "**/.git/**",
+        "**/.github/**"
+      ],
+      dictionaries: [
+        "git"
+      ]
+    },
+    {
+      filename: "**/*.jl",
+      languageId: "julia"
+    },
+    {
+      filename: "**/makefile",
+      languageId: "makefile"
+    },
+    {
+      filename: "**/package.json",
+      dictionaries: [
+        "node"
+      ]
+    },
+    {
+      filename: "**/package.json",
+      dictionaries: [
+        "npm"
+      ],
+      ignoreRegExpList: [
+        "npm-scripts"
+      ],
+      patterns: [
+        {
+          name: "npm-scripts",
+          pattern: [
+            "pre-npm-scripts",
+            "post-npm-scripts"
+          ],
+          description: "Matches any NPM pre and post scripts from NPM lifecycle."
+        },
+        {
+          name: "pre-npm-scripts",
+          pattern: "/^\\s*\"pre[^\"]+\":/gm",
+          description: "Matches any NPM pre scripts from NPM lifecycle."
+        },
+        {
+          name: "post-npm-scripts",
+          pattern: "/^\\s*\"post[^\"]+\":/gm",
+          description: "Matches any NPM post scripts from NPM lifecycle."
+        }
+      ]
+    },
+    {
+      filename: "**/constraints.txt",
+      dictionaries: [
+        "python",
+        "python-common"
+      ]
+    },
+    {
+      filename: "**/*.svelte",
+      languageId: [
+        "svelte",
+        "css",
+        "html",
+        "typescript"
+      ]
+    },
+    {
+      filename: "**/*.tf",
+      languageId: "terraform"
+    },
+    {
+      filename: "**/*.astro",
+      languageId: "astro"
+    },
+    {
+      filename: "**/*.zig",
+      languageId: "zig"
+    },
+    {
+      filename: "**/*.zon",
+      languageId: "zon"
+    }
+  ],
   words: [],
   suggestWords: [],
   ignoreWords: []

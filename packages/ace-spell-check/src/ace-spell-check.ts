@@ -9,6 +9,12 @@ import * as lsp from "vscode-languageserver-protocol";
 import type {SpellCheckFileResult} from "cspell-lib";
 import {fromSpellCheckResult, SpellCodeActionIssue, toCodeActions} from "./ace-spell-check-converters";
 import {mergeObjects} from "ace-linters/src/utils";
+import {
+    createSpellCheckConfigForDocument,
+    ensureDictionariesForDocument,
+    setDictionaryAssetUrls,
+    withAllDefaultDictionaries,
+} from "./lib/cspell-dicts-loader";
 
 export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements LanguageService {
     $service;
@@ -41,10 +47,30 @@ export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements 
     }
 
     getSpellCheckConfig() {
-        if (this.globalOptions.spellCheckOptions) {
-            return mergeObjects(this.globalOptions.spellCheckOptions, cspellDefaultSettings);
+        const userSpellOptions = this.globalOptions.spellCheckOptions;
+        const spellCheckConfig = userSpellOptions
+            ? mergeObjects(userSpellOptions, cspellDefaultSettings)
+            : cspellDefaultSettings;
+
+        const shouldEnableAllDefaultDictionaries = !!this.globalOptions.enableAllDefaultDictionaries;
+        const hasUserDictionaryOverride = Array.isArray(userSpellOptions?.dictionaries);
+        if (shouldEnableAllDefaultDictionaries && !hasUserDictionaryOverride) {
+            return withAllDefaultDictionaries(spellCheckConfig);
         }
-        return cspellDefaultSettings;
+
+        return spellCheckConfig;
+    }
+
+    getDictionaryBaseUrl() {
+        const configured = this.globalOptions.dictBaseUrl;
+        if (typeof configured === "string" && configured.trim()) {
+            return configured.trim();
+        }
+        const serviceConfig = this.serviceData as { cdnUrl?: string };
+        if (typeof serviceConfig?.cdnUrl === "string" && serviceConfig.cdnUrl.trim()) {
+            return `${serviceConfig.cdnUrl.replace(/\/+$/, "")}/dicts`;
+        }
+        return undefined;
     }
 
     async doValidation(document: lsp.TextDocumentIdentifier): Promise<lsp.Diagnostic[]> {
@@ -58,9 +84,29 @@ export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements 
             languageId: fullDocument.languageId,
             text: fullDocument.getText()
         }
-
+        const hasUserDictionaryOverride = Array.isArray(this.globalOptions.spellCheckOptions?.dictionaries);
+        if (this.globalOptions.dictAssetUrls) {
+            setDictionaryAssetUrls(this.globalOptions.dictAssetUrls);
+        }
+        const globalSpellCheckConfig = this.getSpellCheckConfig();
+        const documentSpellCheckConfig = createSpellCheckConfigForDocument(
+            globalSpellCheckConfig,
+            doc.languageId,
+            doc.uri,
+            {preserveGlobalDictionaries: hasUserDictionaryOverride},
+        );
+        try {
+            await ensureDictionariesForDocument(
+                documentSpellCheckConfig,
+                doc.languageId,
+                this.getDictionaryBaseUrl(),
+                doc.uri,
+            );
+        } catch (error) {
+            console.warn("[ace-spell-check] Failed to lazy-load dictionary assets.", error);
+        }
         const errors = (await spellCheckDocument(doc, {noConfigSearch: true, generateSuggestions: true},
-            this.getSpellCheckConfig(),
+            documentSpellCheckConfig,
         )) as SpellCheckFileResult;
         const cacheKey = errors.document?.uri || fullDocument.uri;
         this.issuesByDocument.set(cacheKey, errors.issues || []);
