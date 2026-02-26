@@ -4,6 +4,7 @@ export interface UiTestFlags {
     globalOptionsChanged: boolean;
     optionsChanged: boolean;
     validateReceived: boolean;
+    validateCount: number;
     diagnosticsCount: number;
     hasDiagnostics: boolean;
     formatResponseReceived: boolean;

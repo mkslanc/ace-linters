@@ -25,11 +25,7 @@ describe("ace-linters UI contract tests", function () {
 
         for (const mode of modes) {
             harness.clearConsoleErrors();
-            await page.evaluate((targetMode) => {
-                window.testFlags.modeChanged = false;
-                window.editor.session.setMode(`ace/mode/${targetMode}`);
-            }, mode);
-            await harness.waitForFlag("modeChanged");
+            await harness.switchMode(mode);
 
             const errors = harness.getConsoleErrors();
             expect(errors, `Console errors for mode "${mode}": ${errors.join("\n")}`).to.be.empty;
@@ -51,10 +47,9 @@ describe("ace-linters UI contract tests", function () {
         };
 
         harness.clearConsoleErrors();
+        await harness.switchMode("yaml");
         await page.evaluate((options) => {
             window.testFlags.globalOptionsChanged = false;
-            window.testFlags.modeChanged = false;
-            window.editor.session.setMode("ace/mode/yaml");
             window.languageProvider.setGlobalOptions("yaml", options);
         }, yamlOptions);
         await harness.waitForFlag("globalOptionsChanged");
@@ -83,12 +78,10 @@ describe("ace-linters UI contract tests", function () {
         await harness.initAceLinterFlags();
         const page = harness.getPage();
 
+        await harness.switchMode("typescript");
         await page.evaluate(() => {
-            window.testFlags.modeChanged = false;
-            window.editor.session.setMode("ace/mode/typescript");
             window.editor.setValue("");
         });
-        await harness.waitForFlag("modeChanged");
 
         await page.click(".ace_content");
         await page.keyboard.type("win");
@@ -99,7 +92,6 @@ describe("ace-linters UI contract tests", function () {
         expect(completed, "Autocompletion result").to.equal("window");
 
         await page.evaluate(() => {
-            window.testFlags.modeChanged = false;
             window.editor.setValue(`class A {
     "with-dashes" = 2;
 };

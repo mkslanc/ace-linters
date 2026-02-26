@@ -58,7 +58,6 @@ export function createUiHarness() {
         await page.goto(`http://127.0.0.1:8080/${scenarioName}.html${querySuffix}`, {
             waitUntil: "domcontentloaded",
         });
-        await page.waitForFunction(() => (window as any).testFlags && (window as any).testFlags.ready === true, {timeout: 15000});
     }
 
     async function waitForFlag(flag: keyof UiTestFlags, timeout = 15000) {
@@ -67,6 +66,20 @@ export function createUiHarness() {
             {timeout},
             flag
         );
+    }
+
+    async function switchMode(mode: string, timeout = 15000) {
+        const currentModeId = await page.evaluate(() => {
+            return (window as any).editor?.session?.getMode?.()?.$id || "";
+        });
+        if (currentModeId === `ace/mode/${mode}`) {
+            return;
+        }
+        await page.evaluate((targetMode) => {
+            window.testFlags.modeChanged = false;
+            window.editor.session.setMode(`ace/mode/${targetMode}`);
+        }, mode);
+        await waitForFlag("modeChanged", timeout);
     }
 
     async function initAceLinterFlags() {
@@ -78,6 +91,7 @@ export function createUiHarness() {
                 globalOptionsChanged: false,
                 optionsChanged: false,
                 validateReceived: false,
+                validateCount: 0,
                 diagnosticsCount: 0,
                 hasDiagnostics: false,
                 formatResponseReceived: false,
@@ -101,6 +115,7 @@ export function createUiHarness() {
                         break;
                     case msgTypes.validate:
                         window.testFlags.validateReceived = true;
+                        window.testFlags.validateCount = (window.testFlags.validateCount || 0) + 1;
                         window.testFlags.diagnosticsCount = Array.isArray(message.value) ? message.value.length : 0;
                         if (window.testFlags.diagnosticsCount > 0) {
                             window.testFlags.hasDiagnostics = true;
@@ -115,6 +130,8 @@ export function createUiHarness() {
                 }
             });
         }, MessageType);
+
+        await waitForFlag("isInit");
     }
 
     return {
@@ -124,6 +141,7 @@ export function createUiHarness() {
         getPage,
         openScenario,
         waitForFlag,
+        switchMode,
         initAceLinterFlags,
         clearConsoleErrors,
         getConsoleErrors,

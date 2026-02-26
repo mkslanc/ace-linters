@@ -19,7 +19,7 @@ const packagesToCopy = [
         workspacePath: "packages/ace-spell-check",
         sourceBuildDir: path.join(rootDir, "packages", "ace-spell-check", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-spell-check"),
-        requiredFiles: ["ace-spell-check.js"],
+        requiredFiles: ["ace-spell-check.js", "esm-dicts-resolver.js", path.join("dicts", "cspell-dict-typescript.json")],
     },
     {
         name: "ace-clang-linter",
