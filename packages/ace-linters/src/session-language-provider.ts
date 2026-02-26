@@ -165,7 +165,8 @@ export class SessionLanguageProvider {
 
     private $changeMode = () => {
         this.enqueueIfNotConnected(() => {
-            this.$deltaQueue = [];
+            // Reset queued changes on mode switch and allow next edit to schedule a new flush.
+            this.$deltaQueue = null;
 
             this.session.clearAnnotations();
             if (this.state.diagnosticMarkers) {
