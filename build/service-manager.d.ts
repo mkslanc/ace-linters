@@ -55,6 +55,9 @@ export interface BaseConfig {
 	initializationOptions?: ServiceOptions;
 	options?: ServiceOptions;
 	serviceInstance?: LanguageService;
+	/**
+	 * language modes separated with |; * means all available languages
+	 */
 	modes: string;
 	className?: string;
 	features?: ServiceFeatures;
@@ -114,10 +117,16 @@ export declare class ServiceManager {
 	} | undefined>;
 	removeDocument(document: TextDocumentIdentifier): void;
 	getServicesInstances(documentUri: string): LanguageService[];
-	filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[];
+	/**
+	 * Finds and returns services that are compatible with the specified mode.
+	 *
+	 * @param {string} mode - The mode for which services should be found.
+	 * @return {Object} An object where the keys are service names and the values are either `ServiceConfig` or `LanguageClientConfig` for the services that match the specified mode.
+	 */
 	findServicesByMode(mode: string): {
 		[serviceName: string]: (ServiceConfig | LanguageClientConfig);
 	};
+	filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[];
 	registerService(name: string, service: ServiceConfig): void;
 	registerServer(name: string, clientConfig: LanguageClientConfig): void;
 	configureFeatures(name: string, features?: ServiceFeatures): void;

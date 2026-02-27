@@ -7340,13 +7340,15 @@ ${JSON.stringify(message, null, 4)}`);
   }
   function toAnnotations(diagnostics) {
     return diagnostics == null ? void 0 : diagnostics.map((el) => {
-      return {
+      const annotation = {
         row: el.range.start.line,
         column: el.range.start.character,
         text: el.message,
         type: el.severity === 1 ? "error" : el.severity === 2 ? "warning" : "info",
-        code: el.code
+        code: el.code,
+        data: el.data
       };
+      return annotation;
     });
   }
   function fromAnnotations(annotations) {
@@ -7364,7 +7366,8 @@ ${JSON.stringify(message, null, 4)}`);
         },
         message: el.text,
         severity: el.type === "error" ? 1 : el.type === "warning" ? 2 : 3,
-        code: el["code"]
+        code: el["code"],
+        data: el["data"]
       };
     });
   }
@@ -7622,6 +7625,19 @@ ${JSON.stringify(message, null, 4)}`);
       let className = el.kind == 2 ? "language_highlight_read" : el.kind == 3 ? "language_highlight_write" : "language_highlight_text";
       return toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), className);
     });
+  }
+  function mapSeverityToClassName(severity) {
+    if (!severity)
+      return "language_highlight_info";
+    switch (severity) {
+      case 1:
+        return "language_highlight_error";
+      case 2:
+        return "language_highlight_warning";
+      case 3:
+      case 4:
+        return "language_highlight_info";
+    }
   }
   function toMarkerGroupItem(range, className, tooltipText) {
     let markerGroupItem = {
@@ -11179,7 +11195,7 @@ ${JSON.stringify(message, null, 4)}`);
         const manager = new ServiceManager(self);
 
         ${services.map((service) => {
-      var _a;
+      var _a, _b;
       return `
             manager.registerService("${service.name}", {
                 module: () => {
@@ -11187,7 +11203,8 @@ ${JSON.stringify(message, null, 4)}`);
                     return {${service.className}};
                 },
                 className: "${service.className}",
-                modes: "${service.modes}"
+                modes: "${service.modes}",
+                cdnUrl: "${(_b = service.cdnUrl) != null ? _b : cdnUrl}"
             });
         `;
     }).join("\n")}
@@ -11712,6 +11729,9 @@ ${JSON.stringify(message, null, 4)}`);
     constructor(parentNode = document.body) {
       super(parentNode);
       this.timeout = void 0;
+      this.mouseOutHideTimer = null;
+      this.mouseMoveHideTimer = null;
+      this.$fromKeyboard = false;
       this.lastT = 0;
       this.idleTime = 350;
       this.lastEvent = void 0;
@@ -11724,9 +11744,12 @@ ${JSON.stringify(message, null, 4)}`);
       el.style.pointerEvents = "auto";
       el.addEventListener("mouseout", this.onMouseOut);
       el.tabIndex = -1;
-      el.addEventListener("blur", (function() {
-        if (!el.contains(document.activeElement)) this.hide();
-      }).bind(this));
+      el.addEventListener(
+        "blur",
+        (function() {
+          if (!el.contains(document.activeElement)) this.hide();
+        }).bind(this)
+      );
       el.addEventListener("wheel", preventParentScroll);
     }
     /**
@@ -11735,7 +11758,10 @@ ${JSON.stringify(message, null, 4)}`);
     addToEditor(editor) {
       editor.on("mousemove", this.onMouseMove);
       editor.on("mousedown", this.hide);
-      editor.renderer.getMouseEventTarget().addEventListener("mouseout", this.onMouseOut, true);
+      var target = editor.renderer.getMouseEventTarget();
+      if (target && typeof target.removeEventListener === "function") {
+        target.addEventListener("mouseout", this.onMouseOut, true);
+      }
     }
     /**
      * @param {Editor} editor
@@ -11743,10 +11769,21 @@ ${JSON.stringify(message, null, 4)}`);
     removeFromEditor(editor) {
       editor.off("mousemove", this.onMouseMove);
       editor.off("mousedown", this.hide);
-      editor.renderer.getMouseEventTarget().removeEventListener("mouseout", this.onMouseOut, true);
+      var target = editor.renderer.getMouseEventTarget();
+      if (target && typeof target.removeEventListener === "function") {
+        target.removeEventListener("mouseout", this.onMouseOut, true);
+      }
       if (this.timeout) {
         clearTimeout(this.timeout);
         this.timeout = null;
+      }
+      if (this.mouseOutHideTimer !== null) {
+        clearTimeout(this.mouseOutHideTimer);
+        this.mouseOutHideTimer = null;
+      }
+      if (this.mouseMoveHideTimer !== null) {
+        clearTimeout(this.mouseMoveHideTimer);
+        this.mouseMoveHideTimer = null;
       }
     }
     /**
@@ -11757,11 +11794,14 @@ ${JSON.stringify(message, null, 4)}`);
     onMouseMove(e, editor) {
       this.lastEvent = e;
       this.lastT = Date.now();
-      var isMousePressed = editor.$mouseHandler.isMousePressed;
+      var isMousePressed = editor["$mouseHandler"].isMousePressed;
       if (this.isOpen) {
         var pos = this.lastEvent && this.lastEvent.getDocumentPosition();
         if (!this.range || !this.range.contains(pos.row, pos.column) || isMousePressed || this.isOutsideOfText(this.lastEvent)) {
-          this.hide();
+          this.deferHideFromMouseMove();
+        } else if (this.mouseMoveHideTimer !== null) {
+          clearTimeout(this.mouseMoveHideTimer);
+          this.mouseMoveHideTimer = null;
         }
       }
       if (this.timeout || isMousePressed) return;
@@ -11788,8 +11828,14 @@ ${JSON.stringify(message, null, 4)}`);
       var docPos = e.getDocumentPosition();
       var line = editor.session.getLine(docPos.row);
       if (docPos.column == line.length) {
-        var screenPos = editor.renderer.pixelToScreenCoordinates(e.clientX, e.clientY);
-        var clippedPos = editor.session.documentToScreenPosition(docPos.row, docPos.column);
+        var screenPos = editor.renderer.pixelToScreenCoordinates(
+          e.clientX,
+          e.clientY
+        );
+        var clippedPos = editor.session.documentToScreenPosition(
+          docPos.row,
+          docPos.column
+        );
         if (clippedPos.column != screenPos.column || clippedPos.row != screenPos.row) {
           return true;
         }
@@ -11802,14 +11848,7 @@ ${JSON.stringify(message, null, 4)}`);
     setDataProvider(value) {
       this.$gatherData = value;
     }
-    /**
-     * @param {Editor} editor
-     * @param {Range} range
-     * @param {HTMLElement} domNode
-     * @param {MouseEvent} [startingEvent]
-     */
     showForRange(editor, range, domNode, startingEvent) {
-      var MARGIN = 10;
       if (startingEvent && startingEvent != this.lastEvent) return;
       if (this.isOpen && document.activeElement == this.getElement()) return;
       var renderer = editor.renderer;
@@ -11818,49 +11857,88 @@ ${JSON.stringify(message, null, 4)}`);
         this.setTheme(renderer.theme);
       }
       this.isOpen = true;
-      this.addMarker(range, editor.session);
       const Range2 = editor.getSelectionRange().constructor;
       this.range = Range2.fromPoints(range.start, range.end);
-      var position = renderer.textToScreenCoordinates(range.start.row, range.start.column);
+      var position = renderer.textToScreenCoordinates(
+        range.start.row,
+        range.start.column
+      );
       var rect = renderer.scroller.getBoundingClientRect();
-      if (position.pageX < rect.left)
-        position.pageX = rect.left;
+      if (position.pageX < rect.left) position.pageX = rect.left;
       var element = this.getElement();
       element.innerHTML = "";
       element.appendChild(domNode);
       element.style.maxHeight = "";
       element.style.display = "block";
-      var labelHeight = element.clientHeight;
-      var labelWidth = element.clientWidth;
-      var spaceBelow = window.innerHeight - position.pageY - renderer.lineHeight;
-      let isAbove = true;
-      if (position.pageY - labelHeight < 0 && position.pageY < spaceBelow) {
-        isAbove = false;
-      }
-      element.style.maxHeight = (isAbove ? position.pageY : spaceBelow) - MARGIN + "px";
-      element.style.top = isAbove ? "" : position.pageY + renderer.lineHeight + "px";
-      element.style.bottom = isAbove ? window.innerHeight - position.pageY + "px" : "";
-      element.style.left = Math.min(position.pageX, window.innerWidth - labelWidth - MARGIN) + "px";
+      this.$setPosition(editor, position, true, range);
+      editor.renderer["$textLayer"].dom.$fixPositionBug(element);
       popupManager.addPopup(this);
+    }
+    /**
+     * @param {Editor} editor
+     * @param {{pageX: number;pageY: number;}} position
+     * @param {boolean} withMarker
+     * @param {Range} [range]
+     */
+    $setPosition(editor, position, withMarker, range) {
+      var MARGIN = 10;
+      withMarker && this.addMarker(range, editor.session);
+      var renderer = editor.renderer;
+      var element = this.getElement();
+      var labelHeight = element.offsetHeight;
+      var labelWidth = element.offsetWidth;
+      var anchorTop = position.pageY;
+      var anchorLeft = position.pageX;
+      var spaceBelow = window.innerHeight - anchorTop - renderer.lineHeight;
+      var isAbove = this.$shouldPlaceAbove(
+        labelHeight,
+        anchorTop,
+        spaceBelow - MARGIN
+      );
+      element.style.maxHeight = (isAbove ? anchorTop : spaceBelow) - MARGIN + "px";
+      element.style.top = isAbove ? "" : anchorTop + renderer.lineHeight + "px";
+      element.style.bottom = isAbove ? window.innerHeight - anchorTop + "px" : "";
+      element.style.left = Math.min(anchorLeft, window.innerWidth - labelWidth - MARGIN) + "px";
+    }
+    /**
+     * @param {number} labelHeight
+     * @param {number} anchorTop
+     * @param {number} spaceBelow
+     */
+    $shouldPlaceAbove(labelHeight, anchorTop, spaceBelow) {
+      return !(anchorTop - labelHeight < 0 && anchorTop < spaceBelow);
     }
     addMarker(range, session) {
       if (this.marker) {
         this.$markerSession.removeMarker(this.marker);
       }
       this.$markerSession = session;
-      this.marker = session && session.addMarker(range, "ace_highlight-marker", "text");
+      this.marker = session && range ? session.addMarker(range, "ace_highlight-marker", "text") : null;
     }
     hide(e) {
       var _a;
-      if (!e && document.activeElement == this.getElement())
-        return;
+      if (e && this.$fromKeyboard && e.type == "keydown") {
+        if (e.code == "Escape") {
+          return;
+        }
+      }
+      if (!e && document.activeElement == this.getElement()) return;
       if (e && e.target && (e.type != "keydown" || e.ctrlKey || e.metaKey) && ((_a = this.$element) == null ? void 0 : _a.contains(e.target)))
         return;
       this.lastEvent = null;
       if (this.timeout) clearTimeout(this.timeout);
       this.timeout = null;
+      if (this.mouseOutHideTimer !== null) {
+        clearTimeout(this.mouseOutHideTimer);
+        this.mouseOutHideTimer = null;
+      }
+      if (this.mouseMoveHideTimer !== null) {
+        clearTimeout(this.mouseMoveHideTimer);
+        this.mouseMoveHideTimer = null;
+      }
       this.addMarker(null);
       if (this.isOpen) {
+        this.$fromKeyboard = false;
         this.$removeCloseEvents();
         this.getElement().style.display = "none";
         this.isOpen = false;
@@ -11885,11 +11963,54 @@ ${JSON.stringify(message, null, 4)}`);
         clearTimeout(this.timeout);
         this.timeout = null;
       }
+      if (this.mouseOutHideTimer !== null) {
+        clearTimeout(this.mouseOutHideTimer);
+        this.mouseOutHideTimer = null;
+      }
+      if (this.mouseMoveHideTimer !== null) {
+        clearTimeout(this.mouseMoveHideTimer);
+        this.mouseMoveHideTimer = null;
+      }
       this.lastEvent = null;
       if (!this.isOpen) return;
-      if (!e.relatedTarget || this.getElement().contains(e.relatedTarget)) return;
+      const tooltipEl = this.getElement();
+      if (!e.relatedTarget || tooltipEl.contains(e.relatedTarget)) return;
       if (e && e.currentTarget.contains(e.relatedTarget)) return;
-      if (!e.relatedTarget.classList.contains("ace_content")) this.hide();
+      if (this.isPointerInsideTooltipBounds(e, tooltipEl)) return;
+      if (e.relatedTarget.classList.contains("ace_content")) return;
+      this.mouseOutHideTimer = window.setTimeout(() => {
+        this.mouseOutHideTimer = null;
+        if (!this.isOpen) return;
+        if (tooltipEl.matches(":hover")) return;
+        if (document.activeElement && tooltipEl.contains(document.activeElement))
+          return;
+        this.hide();
+      }, 0);
+    }
+    deferHideFromMouseMove() {
+      if (this.mouseMoveHideTimer !== null) {
+        clearTimeout(this.mouseMoveHideTimer);
+        this.mouseMoveHideTimer = null;
+      }
+      const tooltipEl = this.getElement();
+      if (tooltipEl.matches(":hover")) {
+        return;
+      }
+      this.mouseMoveHideTimer = window.setTimeout(() => {
+        this.mouseMoveHideTimer = null;
+        if (!this.isOpen) return;
+        if (tooltipEl.matches(":hover")) return;
+        if (document.activeElement && tooltipEl.contains(document.activeElement))
+          return;
+        this.hide();
+      }, 50);
+    }
+    isPointerInsideTooltipBounds(e, tooltipEl) {
+      if (typeof e.clientX !== "number" || typeof e.clientY !== "number") {
+        return false;
+      }
+      const rect = tooltipEl.getBoundingClientRect();
+      return e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
     }
   }
   class AceVirtualRenderer {
@@ -12247,13 +12368,100 @@ ${JSON.stringify(message, null, 4)}`);
       return popup;
     }
   }
+  class ActionMenuPopup {
+    constructor(parentNode, onSelect, options) {
+      this.onSelect = onSelect;
+      this.items = [];
+      this.isOpenState = false;
+      this.anchorEl = null;
+      this.hide = () => {
+        if (!this.isOpenState) {
+          return;
+        }
+        this.popup.hide();
+        this.popupManagerRef.removeAcePopup(this.popup);
+        this.isOpenState = false;
+        this.anchorEl = null;
+        window.removeEventListener("mousedown", this.onWindowMouseDown, true);
+        window.removeEventListener("keydown", this.onWindowKeyDown, true);
+        window.removeEventListener("wheel", this.onWindowScrollOrResize, true);
+        window.removeEventListener("resize", this.onWindowScrollOrResize, true);
+      };
+      this.onWindowMouseDown = (event) => {
+        const target = event.target;
+        if (target && this.popup.container.contains(target)) {
+          return;
+        }
+        if (target && this.anchorEl && this.anchorEl.contains(target)) {
+          return;
+        }
+        this.hide();
+      };
+      this.onWindowKeyDown = (event) => {
+        if (event.key === "Escape") {
+          this.hide();
+        }
+      };
+      this.onWindowScrollOrResize = () => {
+        this.hide();
+      };
+      var _a, _b;
+      this.popup = (options == null ? void 0 : options.popupFactory) ? options.popupFactory(parentNode) : (
+        // @ts-ignore AcePopup constructor typing is ambient from ace internals.
+        new AcePopup(parentNode)
+      );
+      this.lineHeight = (_a = options == null ? void 0 : options.lineHeight) != null ? _a : 12;
+      this.popupManagerRef = (_b = options == null ? void 0 : options.popupManager) != null ? _b : popupManager;
+      this.popup.on("click", (e) => {
+        const selected = this.popup.getData(this.popup.getRow());
+        if ((selected == null ? void 0 : selected.menuValue) !== void 0) {
+          this.onSelect(selected.menuValue);
+        }
+        this.hide();
+        e.stop();
+      });
+    }
+    get isOpen() {
+      return this.isOpenState;
+    }
+    setItems(items) {
+      this.items = items;
+      const popupItems = items.map((item) => ({
+        value: item.label,
+        meta: item.meta,
+        menuValue: item.value
+      }));
+      this.popup.setData(popupItems, "");
+    }
+    showAt(x, y, topdownOnly = false, anchor) {
+      if (!this.items.length) {
+        return;
+      }
+      this.anchorEl = anchor != null ? anchor : null;
+      this.popup.show({ top: y, left: x }, this.lineHeight, topdownOnly);
+      this.popupManagerRef.addAcePopup(this.popup);
+      this.isOpenState = true;
+      window.addEventListener("mousedown", this.onWindowMouseDown, true);
+      window.addEventListener("keydown", this.onWindowKeyDown, true);
+      window.addEventListener("wheel", this.onWindowScrollOrResize, true);
+      window.addEventListener("resize", this.onWindowScrollOrResize, true);
+    }
+    showBelowAnchor(anchor, offsetY = 4) {
+      const rect = anchor.getBoundingClientRect();
+      this.showAt(rect.right, rect.bottom + offsetY, false, anchor);
+    }
+    destroy() {
+      this.hide();
+      this.popup.destroy();
+    }
+  }
   class LightbulbWidget {
     constructor(editor, executeActionCallback) {
       this.lightBulbWidth = 10;
       this.lightBulbHeight = 16;
       this.hideAll = () => {
         this.hideLightbulb();
-        this.popup.hide();
+        this.menuPopup.hide();
       };
       this.setPosition = () => {
         const position = this.calculatePosition();
@@ -12263,13 +12471,13 @@ ${JSON.stringify(message, null, 4)}`);
       this.editor = editor;
       this.codeActions = [];
       this.executeActionCallback = executeActionCallback;
-      this.popup = new AcePopup(editor.container || document.body || document.documentElement);
-      this.popup.on("click", (e) => {
-        const selectedRow = this.popup.getData(this.popup.getRow());
-        this.executeAction(selectedRow["action"], selectedRow["serviceName"]);
-        this.popup.hide();
-        e.stop();
-      });
+      this.menuPopup = new ActionMenuPopup(
+        editor.container || document.body || document.documentElement,
+        ({ action, serviceName }) => {
+          this.executeAction(action, serviceName);
+        },
+        { lineHeight: 12 }
+      );
       this.setEditorListeners(editor);
       this.createLightbulb();
     }
@@ -12312,8 +12520,8 @@ ${JSON.stringify(message, null, 4)}`);
       if (this.codeActions.length === 0) {
         return;
       }
-      this.setDataToPopup();
-      this.popup.show({ top: y, left: x }, 12, false);
+      this.menuPopup.setItems(this.getPopupItems());
+      this.menuPopup.showAt(x, y, false);
     }
     isEmpty() {
       if (this.codeActions.length === 0) {
@@ -12326,22 +12534,23 @@ ${JSON.stringify(message, null, 4)}`);
       }
       return true;
     }
-    setDataToPopup() {
+    getPopupItems() {
       let codeActions = [];
       this.codeActions.forEach((codeActionsByService) => {
         var _a;
         (_a = codeActionsByService.codeActions) == null ? void 0 : _a.forEach(
           (action) => {
             codeActions.push({
-              value: action.title,
-              //@ts-expect-error
-              serviceName: codeActionsByService.service,
-              action
+              label: action.title,
+              value: {
+                action,
+                serviceName: codeActionsByService.service
+              }
             });
           }
         );
       });
-      this.popup.setData(codeActions, "");
+      return codeActions;
     }
     executeAction(action, serviceName) {
       this.executeActionCallback && this.executeActionCallback(action, serviceName);
@@ -12372,7 +12581,7 @@ ${JSON.stringify(message, null, 4)}`);
       if (this.lightbulb && this.lightbulb.parentNode) {
         this.lightbulb.parentNode.removeChild(this.lightbulb);
       }
-      this.popup.destroy();
+      this.menuPopup.destroy();
     }
   }
   function setStyles(editor) {
@@ -12416,6 +12625,37 @@ ${JSON.stringify(message, null, 4)}`);
 
 .language_highlight_write {
     border: solid 1px #F88;
+}
+
+.ace_lsp_hover_quickfixes {
+    margin-top: 8px;
+    border-top: 1px solid rgba(127,127,127,0.35);
+}
+
+.ace_lsp_hover_quickfixes_title {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.ace_lsp_hover_quickfixes_controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ace_lsp_hover_quickfixes_link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--ace-link-color, #2563eb);
+    font-weight: 500;
+}
+
+.ace_lsp_hover_quickfixes_primary {
+    flex: 1;
+}
+
+.ace_lsp_hover_quickfixes_more {
+    white-space: nowrap;
 }`, "linters.css");
     editor.renderer["$textLayer"].dom.importCssString(`
 .ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
@@ -13193,7 +13433,7 @@ ${JSON.stringify(message, null, 4)}`);
       };
       this.$changeMode = () => {
         this.enqueueIfNotConnected(() => {
-          this.$deltaQueue = [];
+          this.$deltaQueue = null;
           this.session.clearAnnotations();
           if (this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers.setMarkers([]);
@@ -13279,7 +13519,7 @@ ${JSON.stringify(message, null, 4)}`);
         if (!this.state.diagnosticMarkers) {
           this.state.diagnosticMarkers = new MarkerGroup(this.session);
         }
-        this.state.diagnosticMarkers.setMarkers(diagnostics == null ? void 0 : diagnostics.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+        this.state.diagnosticMarkers.setMarkers(diagnostics == null ? void 0 : diagnostics.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
       };
       this.validate = () => {
         this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
@@ -13509,6 +13749,217 @@ ${JSON.stringify(message, null, 4)}`);
     closeDocument(callback) {
       this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
     }
+  }
+  function isDiagnosticCodeActionData(value) {
+    if (!value || typeof value !== "object") {
+      return false;
+    }
+    const candidate = value;
+    return candidate.v === 1 && typeof candidate.provider === "string" && typeof candidate.issueId === "string";
+  }
+  function extractDiagnosticQuickFixesAtPosition(annotations, position) {
+    const fixes = [];
+    const seen = /* @__PURE__ */ new Set();
+    for (const annotation of annotations) {
+      const data = annotation.data;
+      if (!isDiagnosticCodeActionData(data)) {
+        continue;
+      }
+      for (const fix of data.fixes || []) {
+        if (!isPositionInLspRange(position, fix.range)) {
+          continue;
+        }
+        const key = [
+          data.provider,
+          data.issueId,
+          fix.title,
+          fix.newText,
+          fix.range.start.line,
+          fix.range.start.character,
+          fix.range.end.line,
+          fix.range.end.character
+        ].join("|");
+        if (seen.has(key)) {
+          continue;
+        }
+        seen.add(key);
+        fixes.push({
+          provider: data.provider,
+          issueId: data.issueId,
+          fix
+        });
+      }
+    }
+    return fixes;
+  }
+  function createHoverQuickFixNode(fixes, onApplyFix) {
+    if (!fixes.length) {
+      return null;
+    }
+    const wrapper = document.createElement("div");
+    wrapper.className = "ace_lsp_hover_quickfixes";
+    const title = document.createElement("div");
+    title.className = "ace_lsp_hover_quickfixes_title";
+    wrapper.appendChild(title);
+    const controls = document.createElement("div");
+    controls.className = "ace_lsp_hover_quickfixes_controls";
+    wrapper.appendChild(controls);
+    const primaryLink = createActionLink(fixes[0].fix.title);
+    primaryLink.classList.add("ace_lsp_hover_quickfixes_primary");
+    primaryLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onApplyFix(fixes[0]);
+    });
+    controls.appendChild(primaryLink);
+    let menuPopup = null;
+    if (fixes.length > 1) {
+      const moreLink = createActionLink("More actions...");
+      moreLink.classList.add("ace_lsp_hover_quickfixes_more");
+      controls.appendChild(moreLink);
+      moreLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (menuPopup) {
+          menuPopup.destroy();
+          menuPopup = null;
+          return;
+        }
+        menuPopup = new ActionMenuPopup(
+          document.body || document.documentElement,
+          (entry) => {
+            onApplyFix(entry);
+            menuPopup == null ? void 0 : menuPopup.destroy();
+            menuPopup = null;
+          },
+          { lineHeight: 12 }
+        );
+        menuPopup.setItems(
+          fixes.slice(1).map((entry) => ({
+            label: entry.fix.title,
+            value: entry
+          }))
+        );
+        const menuPosition = getHoverMenuPosition(moreLink);
+        menuPopup.showAt(menuPosition.x, menuPosition.y, false, moreLink);
+      });
+    }
+    return wrapper;
+  }
+  function createActionLink(text) {
+    const link = document.createElement("a");
+    link.href = "#";
+    link.textContent = text;
+    link.className = "ace_lsp_hover_quickfixes_link";
+    return link;
+  }
+  function getHoverMenuPosition(anchor) {
+    const gap = 2;
+    const estimatedMenuWidth = 260;
+    const estimatedMenuHeight = 220;
+    const anchorRect = anchor.getBoundingClientRect();
+    const tooltip = anchor.closest(".ace_tooltip");
+    if (!tooltip) {
+      return {
+        x: anchorRect.right,
+        y: anchorRect.bottom + 4
+      };
+    }
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const rightX = tooltipRect.right + gap;
+    const rightFits = rightX + estimatedMenuWidth <= viewportWidth - gap;
+    if (rightFits) {
+      return {
+        x: rightX,
+        y: Math.max(gap, anchorRect.top - 12)
+      };
+    }
+    const bottomY = tooltipRect.bottom + gap;
+    const bottomFits = bottomY + estimatedMenuHeight <= viewportHeight - gap;
+    if (bottomFits) {
+      return {
+        x: Math.max(gap, Math.min(anchorRect.right, viewportWidth - estimatedMenuWidth - gap)),
+        y: bottomY
+      };
+    }
+    const leftX = Math.max(gap, tooltipRect.left - estimatedMenuWidth - gap);
+    return {
+      x: leftX,
+      y: Math.max(gap, anchorRect.top - 12)
+    };
+  }
+  function isPositionInLspRange(position, range) {
+    const line = position.row;
+    const character = position.column;
+    if (line < range.start.line || line > range.end.line) {
+      return false;
+    }
+    if (line === range.start.line && character < range.start.character) {
+      return false;
+    }
+    if (line === range.end.line && character > range.end.character) {
+      return false;
+    }
+    return true;
+  }
+  function resolveHoverModel(context) {
+    var _a, _b, _c, _d;
+    const { hover, errorMarkers, quickFixes } = context;
+    const hoverHtml = (hover == null ? void 0 : hover.content) ? context.getHoverHtml(hover) : void 0;
+    const errorText = buildErrorText(errorMarkers);
+    if (!hoverHtml && !errorText && quickFixes.length === 0) {
+      return null;
+    }
+    const actionRange = ((_a = quickFixes[0]) == null ? void 0 : _a.fix.range) ? context.lspRangeToAceRange(quickFixes[0].fix.range) : void 0;
+    const baseRange = (_d = (_c = hover == null ? void 0 : hover.range) != null ? _c : (_b = errorMarkers[0]) == null ? void 0 : _b.range) != null ? _d : actionRange;
+    const range = baseRange ? context.rangeFromPoints(baseRange.start, baseRange.end) : context.getWordRange(context.docPos.row, context.docPos.column);
+    return {
+      range,
+      errorText,
+      hoverHtml,
+      quickFixes
+    };
+  }
+  function buildErrorText(errorMarkers) {
+    const text = errorMarkers.map((marker) => {
+      var _a;
+      return (_a = marker.tooltipText) == null ? void 0 : _a.trim();
+    }).filter((value) => Boolean(value)).join("\n");
+    return text || void 0;
+  }
+  function createHoverViewNode(model, onApplyFix) {
+    const domNode = document.createElement("div");
+    const errorNode = createErrorNode(model.errorText);
+    if (errorNode) {
+      domNode.appendChild(errorNode);
+    }
+    const hoverNode = createHoverNode(model.hoverHtml);
+    if (hoverNode) {
+      domNode.appendChild(hoverNode);
+    }
+    const quickFixNode = createHoverQuickFixNode(model.quickFixes, onApplyFix);
+    if (quickFixNode) {
+      domNode.appendChild(quickFixNode);
+    }
+    return domNode;
+  }
+  function createHoverNode(hoverHtml) {
+    if (!hoverHtml) {
+      return null;
+    }
+    const hoverNode = document.createElement("div");
+    hoverNode.innerHTML = hoverHtml;
+    return hoverNode;
+  }
+  function createErrorNode(errorText) {
+    if (!errorText) {
+      return null;
+    }
+    const errorNode = document.createElement("div");
+    errorNode.textContent = errorText;
+    return errorNode;
   }
   class LanguageProvider {
     constructor(worker, options) {
@@ -13891,32 +14342,41 @@ ${JSON.stringify(message, null, 4)}`);
       this.$hoverTooltip.setDataProvider((e, editor2) => {
         const session = editor2.session;
         const docPos = e.getDocumentPosition();
+        const annotations = session.getAnnotations() || [];
+        const quickFixes = extractDiagnosticQuickFixesAtPosition(annotations, docPos);
         this.doHover(session, docPos, (hover) => {
-          var _a, _b, _c, _d, _e;
+          var _a, _b, _c;
           const errorMarkers = (_c = (_b = (_a = this.$getSessionLanguageProvider(session).state) == null ? void 0 : _a.diagnosticMarkers) == null ? void 0 : _b.getMarkersAtPosition(docPos)) != null ? _c : [];
-          const hasHoverContent = hover == null ? void 0 : hover.content;
-          if (errorMarkers.length === 0 && !hasHoverContent) return;
-          var range = (_e = hover == null ? void 0 : hover.range) != null ? _e : (_d = errorMarkers[0]) == null ? void 0 : _d.range;
-          range = range ? Range2.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
-          const hoverNode = hasHoverContent ? this.createHoverNode(hover) : null;
-          const errorNode = errorMarkers.length > 0 ? this.createErrorNode(errorMarkers) : null;
-          const domNode = document.createElement("div");
-          if (errorNode) domNode.appendChild(errorNode);
-          if (hoverNode) domNode.appendChild(hoverNode);
-          this.$hoverTooltip.showForRange(editor2, range, domNode, e);
+          const hoverModel = resolveHoverModel({
+            hover,
+            errorMarkers,
+            quickFixes,
+            docPos,
+            rangeFromPoints: (start, end) => Range2.fromPoints(start, end),
+            getWordRange: (row, column) => session.getWordRange(row, column),
+            lspRangeToAceRange: (range) => ({
+              start: { row: range.start.line, column: range.start.character },
+              end: { row: range.end.line, column: range.end.character }
+            }),
+            getHoverHtml: (hover2) => this.getTooltipText(hover2)
+          });
+          if (!hoverModel) return;
+          const domNode = createHoverViewNode(hoverModel, (entry) => {
+            const documentUri = this.$getFileName(session).documentUri;
+            this.applyEdit({
+              changes: {
+                [documentUri]: [{
+                  range: entry.fix.range,
+                  newText: entry.fix.newText
+                }]
+              }
+            }, entry.provider);
+            this.$hoverTooltip.hide();
+          });
+          this.$hoverTooltip.showForRange(editor2, hoverModel.range, domNode, e);
         });
       });
       this.$hoverTooltip.addToEditor(editor);
-    }
-    createHoverNode(hover) {
-      const hoverNode = document.createElement("div");
-      hoverNode.innerHTML = this.getTooltipText(hover);
-      return hoverNode;
-    }
-    createErrorNode(errorMarkers) {
-      const errorDiv = document.createElement("div");
-      errorDiv.textContent = errorMarkers.map((el) => el.tooltipText.trim()).join("\n");
-      return errorDiv;
     }
     setStyles(editor) {
       if (!this.stylesEmbedded) {

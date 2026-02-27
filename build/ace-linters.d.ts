@@ -825,8 +825,6 @@ export declare class LanguageProvider {
 	$unregisterEditor(editor: Ace.Editor, cleanupSession?: boolean): void;
 	private $provideCodeActions;
 	private $initHoverTooltip;
-	private createHoverNode;
-	private createErrorNode;
 	private setStyles;
 	/**
 	 * Configures global options that apply to all documents handled by the specified language service.

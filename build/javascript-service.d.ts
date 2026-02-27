@@ -890,6 +890,9 @@ export interface BaseConfig {
 	initializationOptions?: ServiceOptions;
 	options?: ServiceOptions;
 	serviceInstance?: LanguageService;
+	/**
+	 * language modes separated with |; * means all available languages
+	 */
 	modes: string;
 	className?: string;
 	features?: ServiceFeatures;

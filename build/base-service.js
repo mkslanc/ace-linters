@@ -6577,6 +6577,7 @@ ${JSON.stringify(message, null, 4)}`);
           publishDiagnostics: {
             relatedInformation: true,
             versionSupport: false,
+            dataSupport: true,
             tagSupport: {
               valueSet: [mainExports.DiagnosticTag.Unnecessary, mainExports.DiagnosticTag.Deprecated]
             }

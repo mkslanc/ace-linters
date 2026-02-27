@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Ace linters Web Worker change mode demo</title>
-
-  <script type="module" crossorigin src="./assets/change_mode-C08RV0a6.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .instructions {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        .instructions h2 {
+            margin-top: 0;
+        }
+    </style>
+  <script type="module" crossorigin src="./assets/change_mode-D85y8Tuc.js"></script>
   <link rel="modulepreload" crossorigin href="./assets/chunk-iA-Slpst.js">
   <link rel="modulepreload" crossorigin href="./assets/lang-DcNOSqFo.js">
   <link rel="modulepreload" crossorigin href="./assets/useragent-BODERP_7.js">
@@ -36,11 +52,20 @@
   <link rel="modulepreload" crossorigin href="./assets/autocomplete-CHTKiwQ7.js">
   <link rel="modulepreload" crossorigin href="./assets/language_tools-BNL-ks-K.js">
   <link rel="modulepreload" crossorigin href="./assets/message-types-M_uv5dSK.js">
-  <link rel="modulepreload" crossorigin href="./assets/utils-DupifF8s.js">
+  <link rel="modulepreload" crossorigin href="./assets/utils-cKgy90LS.js">
   <link rel="modulepreload" crossorigin href="./assets/src-D7AYzDf6.js">
-  <link rel="modulepreload" crossorigin href="./assets/typescript-example-Dj0c1wPM.js">
+  <link rel="modulepreload" crossorigin href="./assets/mysql-example-Ofom_MuX.js">
+  <link rel="modulepreload" crossorigin href="./assets/javascript-example-DSBlUtkm.js">
+  <link rel="modulepreload" crossorigin href="./assets/json-example-DEkq114O.js">
+  <link rel="modulepreload" crossorigin href="./assets/json5-example-C88wPCQx.js">
+  <link rel="modulepreload" crossorigin href="./assets/typescript-example-BPHpOvDB.js">
 </head>
 <body>
+<div class="instructions">
+    <h2>Language Modes</h2>
+    <p>All language modes are demonstrated in conjunction with <code>ace-spell-check</code> (syntax-aware spell checking).</p>
+</div>
+
 <div id="wrapper">
     <div>
         <select id="ace_modes">

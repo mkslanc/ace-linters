@@ -377,6 +377,23 @@
       let services = this.findServicesByMode(mode);
       return Object.values(services).map((el) => el.serviceInstance).filter(notEmpty);
     }
+    /**
+     * Finds and returns services that are compatible with the specified mode.
+     *
+     * @param {string} mode - The mode for which services should be found.
+     * @return {Object} An object where the keys are service names and the values are either `ServiceConfig` or `LanguageClientConfig` for the services that match the specified mode.
+     */
+    findServicesByMode(mode) {
+      let servicesWithName = {};
+      Object.entries(this.$services).forEach(
+        ([key, value]) => {
+          let extensions = value.modes.split("|").map((m) => m.trim());
+          if (extensions.includes(mode) || extensions.includes("*"))
+            servicesWithName[key] = this.$services[key];
+        }
+      );
+      return servicesWithName;
+    }
     filterByFeature(serviceInstances, feature) {
       return serviceInstances.filter((el) => {
         var _a;
@@ -409,17 +426,6 @@
             return capabilities.executeCommandProvider != void 0;
         }
       });
-    }
-    findServicesByMode(mode) {
-      let servicesWithName = {};
-      Object.entries(this.$services).forEach(
-        ([key, value]) => {
-          let extensions = value.modes.split("|").map((m) => m.trim());
-          if (extensions.includes(mode))
-            servicesWithName[key] = this.$services[key];
-        }
-      );
-      return servicesWithName;
     }
     registerService(name, service) {
       service.id = name;
