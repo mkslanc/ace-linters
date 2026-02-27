@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && vite build",
