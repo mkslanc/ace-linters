@@ -19,6 +19,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             publishDiagnostics: {
                 relatedInformation: true,
                 versionSupport: false,
+                dataSupport: true,
                 tagSupport: {
                     valueSet: [lsp.DiagnosticTag.Unnecessary, lsp.DiagnosticTag.Deprecated]
                 }

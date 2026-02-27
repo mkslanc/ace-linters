@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "outDir": "./out",
+    "allowJs": true,
+    "strictNullChecks": true,
+    "target": "es2019",
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  },
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "exclude": [
+    "node_modules",
+  ],
+  "include": [
+    "./src/**/*.ts"
+  ]
+}

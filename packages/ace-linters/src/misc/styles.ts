@@ -39,6 +39,37 @@ export function setStyles(editor) {
 
 .language_highlight_write {
     border: solid 1px #F88;
+}
+
+.ace_lsp_hover_quickfixes {
+    margin-top: 8px;
+    border-top: 1px solid rgba(127,127,127,0.35);
+}
+
+.ace_lsp_hover_quickfixes_title {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.ace_lsp_hover_quickfixes_controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ace_lsp_hover_quickfixes_link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--ace-link-color, #2563eb);
+    font-weight: 500;
+}
+
+.ace_lsp_hover_quickfixes_primary {
+    flex: 1;
+}
+
+.ace_lsp_hover_quickfixes_more {
+    white-space: nowrap;
 }`, "linters.css");
 
     editor.renderer["$textLayer"].dom.importCssString(`

@@ -376,6 +376,23 @@ export class ServiceManager {
         return Object.values(services).map((el) => el.serviceInstance).filter(notEmpty);
     }
 
+    /**
+     * Finds and returns services that are compatible with the specified mode.
+     *
+     * @param {string} mode - The mode for which services should be found.
+     * @return {Object} An object where the keys are service names and the values are either `ServiceConfig` or `LanguageClientConfig` for the services that match the specified mode.
+     */
+    findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
+        let servicesWithName = {};
+        Object.entries(this.$services).forEach(([key, value]) => {
+              let extensions = value.modes.split('|').map(m => m.trim());
+              if (extensions.includes(mode) || extensions.includes('*'))
+                  servicesWithName[key] = this.$services[key];
+          }
+        )
+        return servicesWithName;
+    }
+
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
         return serviceInstances.filter((el) => {
             if (!el.serviceData.features![feature]) {
@@ -407,17 +424,6 @@ export class ServiceManager {
                     return capabilities.executeCommandProvider != undefined;
             }
         });
-    }
-
-    findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
-        let servicesWithName = {};
-        Object.entries(this.$services).forEach(([key, value]) => {
-                let extensions = value.modes.split('|').map(m => m.trim());
-                if (extensions.includes(mode))
-                    servicesWithName[key] = this.$services[key];
-            }
-        )
-        return servicesWithName;
     }
 
     registerService(name: string, service: ServiceConfig) {

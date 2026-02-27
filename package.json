@@ -1,14 +1,18 @@
 {
   "name": "ace-linters-root",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && vite build",
-    "start-dev": "vite"
+    "start-dev": "vite",
+    "prepare:ui-smoke": "node tools/prepare-ui-smoke-dist.js",
+    "start-test-server:ui-smoke": "npm run prepare:ui-smoke && http-server --cors='*' tests/ui-smoke/dist",
+    "test:ui:smoke": "mocha --exit"
   },
   "dependencies": {
     "ace-layout": "^1.5.0",
     "ace-code": "^1.43.6",
+    "ace-builds": "^1.43.6",
     "jsonc-parser": "latest",
     "typescript": "^5.8.3"
   },

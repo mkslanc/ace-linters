@@ -212,6 +212,7 @@ export default defineConfig({
         find: /^ace-python-ruff-linter\/build\/(.*)$/,
         replacement: resolve(__dirname, 'packages/ace-python-ruff-linter/src/$1.ts')
       },
+      {find: /^ace-spell-check\/build\/(.*)$/, replacement: resolve(__dirname, 'packages/ace-spell-check/src/$1.ts')},
     ],
   },
 

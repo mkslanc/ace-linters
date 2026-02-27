@@ -10,7 +10,7 @@ import {
     fromRange, fromSignatureHelp,
     toCompletionItem,
     toCompletions, toInlineCompletions,
-    toRange, toResolvedCompletion,
+    toResolvedCompletion,
     toTooltip
 } from "./type-converters/lsp/lsp-converters";
 import * as lsp from "vscode-languageserver-protocol";
@@ -37,6 +37,9 @@ import {convertToUri} from "./utils";
 import {createInlineCompleterAdapter} from "./ace/inline_autocomplete";
 import {SessionLanguageProvider} from "./session-language-provider";
 import {popupManager} from "./ace/popupManager";
+import {extractDiagnosticQuickFixesAtPosition} from "./components/hover/hover-quick-fixes";
+import {resolveHoverModel} from "./components/hover/hover-data-resolver";
+import {createHoverViewNode} from "./components/hover/hover-view";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor | null;
@@ -517,38 +520,43 @@ export class LanguageProvider {
         this.$hoverTooltip.setDataProvider((e, editor) => {
             const session = editor.session;
             const docPos = e.getDocumentPosition();
+            const annotations = (session.getAnnotations() || []) as (Ace.Annotation & { data?: unknown })[];
+            const quickFixes = extractDiagnosticQuickFixesAtPosition(annotations, docPos);
 
             this.doHover(session, docPos, (hover) => {
                 const errorMarkers = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkersAtPosition(docPos) ?? [];
-                const hasHoverContent = hover?.content;
-                if (errorMarkers.length === 0 && !hasHoverContent) return;
+                const hoverModel = resolveHoverModel({
+                    hover,
+                    errorMarkers,
+                    quickFixes,
+                    docPos,
+                    rangeFromPoints: (start, end) => Range.fromPoints(start, end),
+                    getWordRange: (row, column) => session.getWordRange(row, column),
+                    lspRangeToAceRange: (range) => ({
+                        start: {row: range.start.line, column: range.start.character},
+                        end: {row: range.end.line, column: range.end.character}
+                    }),
+                    getHoverHtml: (hover) => this.getTooltipText(hover)
+                });
+                if (!hoverModel) return;
 
-                var range = hover?.range ?? errorMarkers[0]?.range;
-                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
-                const hoverNode = hasHoverContent ? this.createHoverNode(hover) : null;
-                const errorNode = errorMarkers.length > 0 ? this.createErrorNode(errorMarkers) : null;
+                const domNode = createHoverViewNode(hoverModel, (entry) => {
+                    const documentUri = this.$getFileName(session).documentUri;
+                    this.applyEdit({
+                        changes: {
+                            [documentUri]: [{
+                                range: entry.fix.range,
+                                newText: entry.fix.newText
+                            }]
+                        }
+                    }, entry.provider);
+                    this.$hoverTooltip.hide();
+                });
 
-                const domNode = document.createElement('div');
-                if (errorNode) domNode.appendChild(errorNode);
-                if (hoverNode) domNode.appendChild(hoverNode);
-
-                this.$hoverTooltip.showForRange(editor, range, domNode, e);
+                this.$hoverTooltip.showForRange(editor, hoverModel.range, domNode, e);
             });
         });
         this.$hoverTooltip.addToEditor(editor);
-    }
-
-
-    private createHoverNode(hover) {
-        const hoverNode = document.createElement("div");
-        hoverNode.innerHTML = this.getTooltipText(hover);
-        return hoverNode;
-    }
-
-    private createErrorNode(errorMarkers) {
-        const errorDiv = document.createElement('div');
-        errorDiv.textContent = errorMarkers.map(el => el.tooltipText.trim()).join("\n");
-        return errorDiv;
     }
 
     private setStyles(editor) {

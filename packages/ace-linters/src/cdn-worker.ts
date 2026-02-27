@@ -14,7 +14,8 @@ function createWorkerBlob(cdnUrl: string, services: ServiceStruct[]) {
                     return {${service.className}};
                 },
                 className: "${service.className}",
-                modes: "${service.modes}"
+                modes: "${service.modes}",
+                cdnUrl: "${service.cdnUrl ?? cdnUrl}"
             });
         `).join('\n')}
     `], {type: "application/javascript"});

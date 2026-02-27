@@ -1,0 +1,35 @@
+{
+  "name": "ace-spell-check",
+  "author": "Azat Alimov <mkslanc@gmail.com>",
+  "version": "1.0.0",
+  "license": "MIT",
+  "repository": "https://github.com/mkslanc/ace-linters/tree/main/packages/ace-spell-check",
+  "scripts": {
+    "clean": "rimraf build",
+    "prebuild": "node build-cspell-dicts.js && node build-cspell.js",
+    "build": "vite build",
+    "postbuild": "node postbuild.js"
+  },
+  "devDependencies": {
+    "@cspell/cspell-types": "^9.6.4",
+    "esbuild": "^0.27.2",
+    "node-stdlib-browser": "^1.3.1",
+    "vite": "^7.3.1",
+    "cspell-lib": "^9.6.4",
+    "dts-bundle-generator": "^9.5.1"
+  },
+  "peerDependencies": {
+    "ace-linters": "^2.0.0"
+  },
+  "files": ["build"],
+  "typesVersions": {
+    "*": {
+      "build/ace-spell-check": [
+        "./build/ace-spell-check.d.ts"
+      ],
+      "build/esm-dicts-resolver": [
+        "./build/esm-dicts-resolver.d.ts"
+      ]
+    }
+  }
+}

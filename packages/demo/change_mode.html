@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Ace linters Web Worker change mode demo</title>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .instructions {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        .instructions h2 {
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
+<div class="instructions">
+    <h2>Language Modes</h2>
+    <p>All language modes are demonstrated in conjunction with <code>ace-spell-check</code> (syntax-aware spell checking).</p>
+</div>
+
 <div id="wrapper">
     <div>
         <select id="ace_modes">

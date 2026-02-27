@@ -9,7 +9,7 @@ import {convertToUri} from "./utils";
 import {FormattingOptions} from "vscode-languageserver-protocol";
 import {
     fromAceDelta, fromDocumentHighlights,
-    fromRange,
+    fromRange, mapSeverityToClassName,
     toAnnotations,
     toMarkerGroupItem,
     toRange,
@@ -165,7 +165,8 @@ export class SessionLanguageProvider {
 
     private $changeMode = () => {
         this.enqueueIfNotConnected(() => {
-            this.$deltaQueue = [];
+            // Reset queued changes on mode switch and allow next edit to schedule a new flush.
+            this.$deltaQueue = null;
 
             this.session.clearAnnotations();
             if (this.state.diagnosticMarkers) {
@@ -290,7 +291,7 @@ export class SessionLanguageProvider {
         if (!this.state.diagnosticMarkers) {
             this.state.diagnosticMarkers = new MarkerGroup(this.session);
         }
-        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), "language_highlight_error", el.message)));
+        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
