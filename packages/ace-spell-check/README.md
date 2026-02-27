@@ -57,21 +57,24 @@ provider.setGlobalOptions("ace-spell-check", {
 Runtime behavior:
 - `spellCheckOptions` are merged with bundled default CSpell settings.
 - Validation runs with `noConfigSearch: true` (no project config discovery at runtime).
-- By default, only baseline global dictionaries are kept, and language/override dictionaries are added per current document.
+- `documentScopedDictionaries` is `true` by default:
+  - global dictionaries are reduced to baseline defaults (for example `en_us`) unless explicitly overridden,
+  - language/override dictionaries are added for the current document.
+- If `documentScopedDictionaries` is `false`, languageId-based dictionary expansion is disabled and only global dictionaries (plus matching filename overrides) are used.
 - If you set `spellCheckOptions.dictionaries`, those are preserved globally and merged with per-document dictionaries.
 
 Available options:
 - `spellCheckOptions`: CSpell user settings.
-- `enableAllDefaultDictionaries`: if `spellCheckOptions.dictionaries` is not set, include all bundled default dictionaries globally.
+- `documentScopedDictionaries` (default `true`): enable/disable document-scoped dictionary filtering/loading.
 - `dictBaseUrl`: optional override for dictionary package JSON base URL.
 - `dictAssetUrls`: optional map of package name -> asset URL (useful for custom dictionaries or explicit control).
 
 Examples:
 
 ```javascript
-// Force full bundled dictionary behavior (larger lazy-load footprint).
+// Optional: disable document-scoped dictionary expansion.
 provider.setGlobalOptions("ace-spell-check", {
-    enableAllDefaultDictionaries: true
+    documentScopedDictionaries: false
 });
 ```
 

@@ -1,5 +1,5 @@
 import type {CSpellUserSettings} from "@cspell/cspell-types";
-import {cspellAllDefaultDictionaries, cspellDictAssetFileByPackage} from "./cspell-dict-assets.generated.js";
+import {cspellDictAssetFileByPackage} from "./cspell-dict-assets.generated.js";
 
 import {
     isVfsPackageLoaded,
@@ -203,8 +203,7 @@ function filterDictionaryList(
     dictionaryNames: Set<string>,
 ): string[] | undefined {
     if (!Array.isArray(dictionaries)) return undefined;
-    const filtered = dictionaries.filter((name) => !!name && dictionaryNames.has(name));
-    return filtered;
+    return dictionaries.filter((name) => !!name && dictionaryNames.has(name));
 }
 
 export function createSpellCheckConfigForDocument(
@@ -314,23 +313,6 @@ function resolveDictionaryAssetUrls(packageName: string, dictBaseUrl: string | u
     }
 
     return [...new Set(urls.filter((url) => !!url))];
-}
-
-function sortedUniqueStrings(items: string[]): string[] {
-    return [...new Set(items.filter((item) => !!item))].sort((a, b) => a.localeCompare(b));
-}
-
-export function getAllDefaultDictionaryNames(): string[] {
-    return [...cspellAllDefaultDictionaries];
-}
-
-export function withAllDefaultDictionaries(settings: CSpellUserSettings): CSpellUserSettings {
-    const currentDictionaries = settings.dictionaries || [];
-    const dictionaries = sortedUniqueStrings([...currentDictionaries, ...cspellAllDefaultDictionaries]);
-    return {
-        ...settings,
-        dictionaries,
-    };
 }
 
 export function setDictionaryAssetUrls(urls: DictAssetUrlMap): void {

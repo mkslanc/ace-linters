@@ -72,7 +72,7 @@ let editorContainer = document.createElement("div");
 editorContainer.setAttribute("id", "container");
 editorContainer.style.height = "300px";
 editorEl.appendChild(editorContainer);
-editorEl.style.width = "49%";
+editorEl.style.width = "100%";
 editorEl.style.float = "left";
 
 const wrapper = document.getElementById("wrapper");
@@ -91,14 +91,5 @@ let editor = ace.edit("container", {
 });
 
 languageProvider.registerEditor(editor);
-
-languageProvider.setGlobalOptions(
-  "ace-spell-check",
-  {
-    spellCheckOptions: {
-
-    }
-  } as AceSpellCheckOptions,
-);
 
 addFormatCommand(languageProvider);

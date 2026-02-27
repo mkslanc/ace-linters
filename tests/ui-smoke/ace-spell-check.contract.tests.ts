@@ -51,9 +51,7 @@ describe("ace-spell-check UI contract tests", function () {
         await harness.initAceLinterFlags();
         await harness.switchMode("text");
         await setSpellCheckGlobalOptions({
-            spellCheckOptions: {
-                dictionaries: ["en_us"],
-            },
+          documentScopedDictionaries: false,
         });
 
         const cleanDiagnostics = await setDocumentAndReadDiagnostics("hello world");
@@ -70,10 +68,6 @@ describe("ace-spell-check UI contract tests", function () {
         await harness.openScenario("ace-spell-check");
         await harness.initAceLinterFlags();
         await harness.switchMode("typescript");
-
-        await setSpellCheckGlobalOptions({
-            enableAllDefaultDictionaries: true
-        });
 
         const typoDiagnostics = await setDocumentAndReadDiagnostics(
             "consta g = new Greeter();",
@@ -138,24 +132,6 @@ describe("ace-spell-check UI contract tests", function () {
           `// ${customWord}x\nThiss sentencea hass a typo.\nconst g = new Greeter();`,
         );
         expect(rejectedDiagnostics).to.be.greaterThan(0);
-
-        const errors = harness.getConsoleErrors();
-        expect(errors, `Console errors: ${errors.join("\n")}`).to.be.empty;
-    });
-
-    it("does not leak javascript/typescript dictionaries into text mode", async function () {
-        await harness.openScenario("ace-spell-check");
-        await harness.initAceLinterFlags();
-        await harness.switchMode("text");
-
-        await setSpellCheckGlobalOptions({
-            enableAllDefaultDictionaries: true
-        });
-
-        const annotations = await setDocumentAndReadAnnotations(javascriptSmokeText);
-        expect(annotations.length).to.be.greaterThan(0);
-        const messages = annotations.map((annotation) => `${annotation?.text || ""}`.toLowerCase());
-        expect(messages.some((text) => text.includes("npm") || text.includes("tsconfig"))).to.equal(true);
 
         const errors = harness.getConsoleErrors();
         expect(errors, `Console errors: ${errors.join("\n")}`).to.be.empty;

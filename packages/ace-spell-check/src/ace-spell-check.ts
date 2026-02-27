@@ -13,7 +13,6 @@ import {
     createSpellCheckConfigForDocument,
     ensureDictionariesForDocument,
     setDictionaryAssetUrls,
-    withAllDefaultDictionaries,
 } from "./lib/cspell-dicts-loader";
 
 export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements LanguageService {
@@ -48,17 +47,9 @@ export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements 
 
     getSpellCheckConfig() {
         const userSpellOptions = this.globalOptions.spellCheckOptions;
-        const spellCheckConfig = userSpellOptions
-            ? mergeObjects(userSpellOptions, cspellDefaultSettings)
-            : cspellDefaultSettings;
-
-        const shouldEnableAllDefaultDictionaries = !!this.globalOptions.enableAllDefaultDictionaries;
-        const hasUserDictionaryOverride = Array.isArray(userSpellOptions?.dictionaries);
-        if (shouldEnableAllDefaultDictionaries && !hasUserDictionaryOverride) {
-            return withAllDefaultDictionaries(spellCheckConfig);
-        }
-
-        return spellCheckConfig;
+        return userSpellOptions
+          ? mergeObjects(userSpellOptions, cspellDefaultSettings)
+          : cspellDefaultSettings;
     }
 
     getDictionaryBaseUrl() {
@@ -85,20 +76,28 @@ export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements 
             text: fullDocument.getText()
         }
         const hasUserDictionaryOverride = Array.isArray(this.globalOptions.spellCheckOptions?.dictionaries);
+        const documentScopedDictionaries = this.globalOptions.documentScopedDictionaries !== false;
         if (this.globalOptions.dictAssetUrls) {
             setDictionaryAssetUrls(this.globalOptions.dictAssetUrls);
         }
         const globalSpellCheckConfig = this.getSpellCheckConfig();
-        const documentSpellCheckConfig = createSpellCheckConfigForDocument(
-            globalSpellCheckConfig,
-            doc.languageId,
-            doc.uri,
-            {preserveGlobalDictionaries: hasUserDictionaryOverride},
-        );
+        const documentSpellCheckConfig = documentScopedDictionaries
+            ? createSpellCheckConfigForDocument(
+                globalSpellCheckConfig,
+                doc.languageId,
+                doc.uri,
+                {preserveGlobalDictionaries: hasUserDictionaryOverride},
+            )
+            : createSpellCheckConfigForDocument(
+                globalSpellCheckConfig,
+                undefined,
+                doc.uri,
+                {preserveGlobalDictionaries: true},
+            );
         try {
             await ensureDictionariesForDocument(
                 documentSpellCheckConfig,
-                doc.languageId,
+                documentScopedDictionaries ? doc.languageId : undefined,
                 this.getDictionaryBaseUrl(),
                 doc.uri,
             );
@@ -135,3 +134,4 @@ export class AceSpellCheck extends BaseService<AceSpellCheckOptions> implements 
         return actions.length ? actions : null;
     }
 }
+
