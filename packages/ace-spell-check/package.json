@@ -1,7 +1,8 @@
 {
   "name": "ace-spell-check",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "main": "build/ace-spell-check.js",
   "license": "MIT",
   "repository": "https://github.com/mkslanc/ace-linters/tree/main/packages/ace-spell-check",
   "scripts": {
@@ -21,7 +22,9 @@
   "peerDependencies": {
     "ace-linters": "^2.0.0"
   },
-  "files": ["build"],
+  "files": [
+    "build"
+  ],
   "typesVersions": {
     "*": {
       "build/ace-spell-check": [

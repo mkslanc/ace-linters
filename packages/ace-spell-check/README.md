@@ -139,7 +139,7 @@ This pre-registers URLs for bundled dictionary assets. In this setup, `dictBaseU
     var services = [{
         name: "ace-spell-check",
         className: "AceSpellCheck",
-        modes: "text",
+        modes: "*", // * is used to work for all modes, if you want to restrict use specific mode -> like 'javascript' 
         script: "build/ace-spell-check.js",
         // url to your cdn provider
         cdnUrl: "https://www.unpkg.com/ace-spell-check"
