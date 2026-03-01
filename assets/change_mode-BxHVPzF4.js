@@ -130,7 +130,7 @@ var modes = [
 ];
 var worker = new Worker(new URL(
 	/* @vite-ignore */
-	"" + new URL("webworker-CbjDA12w.js", import.meta.url).href,
+	"" + new URL("webworker-s73G42bo.js", import.meta.url).href,
 	"" + import.meta.url
 ), { type: "module" });
 var languageProvider = LanguageProvider.create(worker);

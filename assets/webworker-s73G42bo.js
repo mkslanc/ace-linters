@@ -832,25 +832,25 @@ if (globalScope) globalScope.__aceSpellCheckDictAssetUrls = {
 let manager = new ServiceManager(self);
 manager.registerService("html", {
 	features: { signatureHelp: false },
-	module: () => import("./html-service-CP3WCvqv.js"),
+	module: () => import("./html-service-D6bg6lU5.js"),
 	className: "HtmlService",
 	modes: "html"
 });
 manager.registerService("css", {
 	features: { signatureHelp: false },
-	module: () => import("./css-service-lHNhGWNL.js"),
+	module: () => import("./css-service-CYv5KFWT.js"),
 	className: "CssService",
 	modes: "css"
 });
 manager.registerService("less", {
 	features: { signatureHelp: false },
-	module: () => import("./css-service-lHNhGWNL.js"),
+	module: () => import("./css-service-CYv5KFWT.js"),
 	className: "CssService",
 	modes: "less"
 });
 manager.registerService("scss", {
 	features: { signatureHelp: false },
-	module: () => import("./css-service-lHNhGWNL.js"),
+	module: () => import("./css-service-CYv5KFWT.js"),
 	className: "CssService",
 	modes: "scss"
 });
@@ -859,7 +859,7 @@ manager.registerService("json", {
 		signatureHelp: false,
 		documentHighlight: false
 	},
-	module: () => import("./json-service-D26fQLay.js"),
+	module: () => import("./json-service-CuHSlsxb.js"),
 	className: "JsonService",
 	modes: "json"
 });
@@ -868,12 +868,12 @@ manager.registerService("json5", {
 		signatureHelp: false,
 		documentHighlight: false
 	},
-	module: () => import("./json-service-D26fQLay.js"),
+	module: () => import("./json-service-CuHSlsxb.js"),
 	className: "JsonService",
 	modes: "json5"
 });
 manager.registerService("typescript", {
-	module: () => import("./typescript-service-DPMQ33bd.js"),
+	module: () => import("./typescript-service--K5v8-Vh.js"),
 	className: "TypescriptService",
 	modes: "typescript|tsx|javascript|jsx"
 });
@@ -887,7 +887,7 @@ manager.registerService("lua", {
 		documentHighlight: false,
 		signatureHelp: false
 	},
-	module: () => import("./lua-service-BgMi2AAV.js"),
+	module: () => import("./lua-service-BB6OmZaD.js"),
 	className: "LuaService",
 	modes: "lua"
 });
@@ -896,7 +896,7 @@ manager.registerService("yaml", {
 		signatureHelp: false,
 		documentHighlight: false
 	},
-	module: () => import("./yaml-service-DLupk5fP.js"),
+	module: () => import("./yaml-service-CeSqnuVO.js"),
 	className: "YamlService",
 	modes: "yaml"
 });
@@ -910,7 +910,7 @@ manager.registerService("xml", {
 		documentHighlight: false,
 		signatureHelp: false
 	},
-	module: () => import("./xml-service-DVnVlWRp.js"),
+	module: () => import("./xml-service-D15uGF21.js"),
 	className: "XmlService",
 	modes: "xml"
 });
@@ -924,7 +924,7 @@ manager.registerService("php", {
 		documentHighlight: false,
 		signatureHelp: false
 	},
-	module: () => import("./php-service-CJzBJc1a.js"),
+	module: () => import("./php-service-Cw6C3ILH.js"),
 	className: "PhpService",
 	modes: "php"
 });
@@ -938,7 +938,7 @@ manager.registerService("javascript", {
 		documentHighlight: false,
 		signatureHelp: false
 	},
-	module: () => import("./javascript-service-DJQUYDwk.js"),
+	module: () => import("./javascript-service-DkbK__II.js"),
 	className: "JavascriptService",
 	modes: "javascript"
 });
@@ -952,17 +952,17 @@ manager.registerService("python", {
 		documentHighlight: false,
 		signatureHelp: false
 	},
-	module: () => import("./python-service-ByhzdOqU.js"),
+	module: () => import("./python-service-BNofj1-t.js"),
 	className: "PythonService",
 	modes: "python"
 });
 manager.registerService("mysql", {
-	module: () => import("./mysql-service-C4p_crxn.js"),
+	module: () => import("./mysql-service-BkK0gho1.js"),
 	className: "MySQLService",
 	modes: "mysql"
 });
 manager.registerService("ace-spell-check", {
-	module: () => import("./ace-spell-check-CM-zaSu_.js"),
+	module: () => import("./ace-spell-check-NcYWdJ2q.js"),
 	className: "AceSpellCheck",
 	modes: "*"
 });

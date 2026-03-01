@@ -1,5 +1,5 @@
-import { D as __commonJSMin, M as __toESM$1, r as require_main, t as BaseService } from "./base-service-EKUWsJ3q.js";
-import { r as mergeObjects, t as cspellDictAssetFileByPackage } from "./webworker-CbjDA12w.js";
+import { D as __commonJSMin, M as __toESM$1, r as require_main, t as BaseService } from "./base-service-xpXH-mnR.js";
+import { r as mergeObjects, t as cspellDictAssetFileByPackage } from "./webworker-s73G42bo.js";
 var buffer$2 = {};
 var base64Js$1 = {};
 base64Js$1.byteLength = byteLength$1;
@@ -26333,7 +26333,7 @@ function checkFilenameMatchesExcludeGlob(filename, globs) {
 	return getGlobMatcherForExcluding(globs).match(filename);
 }
 init_shim();
-var import_node_assert5 = __toESM(require_assert(), 1);
+var import_node_assert5 = __toESM(require_assert());
 init_shim();
 function autoResolve2(map2, key, resolve2) {
 	const found = map2.get(key);

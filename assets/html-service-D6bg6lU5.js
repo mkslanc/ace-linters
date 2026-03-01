@@ -1,7 +1,7 @@
-import { D as __commonJSMin, E as init_main, S as SymbolKind, _ as MarkupKind, b as SelectionRange, c as CompletionItemKind, f as DocumentHighlightKind, h as InsertTextFormat, m as FoldingRangeKind, p as DocumentSymbol, t as BaseService, v as Position, w as TextEdit, x as SymbolInformation, y as Range } from "./base-service-EKUWsJ3q.js";
-import { i as URI, n as checkValueAgainstRegexpArray, r as mergeObjects } from "./webworker-CbjDA12w.js";
+import { D as __commonJSMin, E as init_main, S as SymbolKind, _ as MarkupKind, b as SelectionRange, c as CompletionItemKind, f as DocumentHighlightKind, h as InsertTextFormat, m as FoldingRangeKind, p as DocumentSymbol, t as BaseService, v as Position, w as TextEdit, x as SymbolInformation, y as Range } from "./base-service-xpXH-mnR.js";
+import { i as URI, n as checkValueAgainstRegexpArray, r as mergeObjects } from "./webworker-s73G42bo.js";
 import { t } from "./browser-CKkpjkk4.js";
-import { t as CommonConverter } from "./common-converters-ChMj7xWb.js";
+import { t as CommonConverter } from "./common-converters-D_GGbc_h.js";
 var require_htmlparser = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	var HTMLParser$1 = class {

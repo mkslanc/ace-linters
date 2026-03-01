@@ -1,8 +1,8 @@
-import { E as init_main, S as SymbolKind, _ as MarkupKind, b as SelectionRange, c as CompletionItemKind, d as DiagnosticSeverity, g as Location, h as InsertTextFormat, m as FoldingRangeKind, n as TextDocument, s as CompletionItem, t as BaseService, u as Diagnostic, v as Position, w as TextEdit, y as Range } from "./base-service-EKUWsJ3q.js";
-import { a as Utils, i as URI } from "./webworker-CbjDA12w.js";
+import { E as init_main, S as SymbolKind, _ as MarkupKind, b as SelectionRange, c as CompletionItemKind, d as DiagnosticSeverity, g as Location, h as InsertTextFormat, m as FoldingRangeKind, n as TextDocument, s as CompletionItem, t as BaseService, u as Diagnostic, v as Position, w as TextEdit, y as Range } from "./base-service-xpXH-mnR.js";
+import { a as Utils, i as URI } from "./webworker-s73G42bo.js";
 import { t } from "./browser-CKkpjkk4.js";
-import "./common-converters-ChMj7xWb.js";
-import { t as filterDiagnostics } from "./lsp-converters-fPcwyMVb.js";
+import "./common-converters-D_GGbc_h.js";
+import { t as filterDiagnostics } from "./lsp-converters-BGqzrHvM.js";
 function createScanner$1(text, ignoreTrivia = false) {
 	const len = text.length;
 	let pos = 0, value = "", tokenOffset = 0, token = 16, lineNumber = 0, lineStartOffset = 0, tokenLineStartOffset = 0, prevTokenLineStartOffset = 0, scanError = 0;
