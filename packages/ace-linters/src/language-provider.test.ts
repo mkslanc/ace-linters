@@ -124,6 +124,69 @@ describe('LanguageProvider tests', () => {
         })
     })
 
+    it('hover tooltip respects codeActions on/off', () => {
+        const hoverTooltip = (languageProvider as any).$hoverTooltip;
+        const gatherData = hoverTooltip.$gatherData;
+        const originalDoHover = languageProvider.doHover.bind(languageProvider);
+        const originalCodeActionsState = languageProvider.options.functionality?.codeActions;
+        const originalShowForRange = hoverTooltip.showForRange;
+
+        let capturedNode: HTMLElement | null = null;
+        try {
+            hoverTooltip.showForRange = (_editor, _range, domNode) => {
+                capturedNode = domNode;
+            };
+
+            languageProvider.doHover = (_session, _position, callback) => {
+                callback?.({
+                    content: {type: "plaintext", text: "hover"},
+                    range: {
+                        start: {row: 2, column: 2},
+                        end: {row: 2, column: 6}
+                    }
+                } as any);
+            };
+
+            editor.session.setAnnotations([{
+                row: 2,
+                column: 2,
+                text: "Typo",
+                type: "warning",
+                data: {
+                    v: 1,
+                    provider: "html",
+                    issueId: "typo",
+                    fixes: [{
+                        title: "Fix typo",
+                        newText: "type",
+                        range: {
+                            start: {line: 2, character: 2},
+                            end: {line: 2, character: 6}
+                        }
+                    }]
+                }
+            }] as any);
+
+            const event = {
+                getDocumentPosition: () => ({row: 2, column: 3})
+            };
+
+            languageProvider.options.functionality!.codeActions = true;
+            capturedNode = null;
+            gatherData(event as any, editor);
+            expect(capturedNode?.querySelector(".ace_lsp_hover_quickfixes")).to.exist;
+
+            languageProvider.options.functionality!.codeActions = false;
+            capturedNode = null;
+            gatherData(event as any, editor);
+            expect(capturedNode?.querySelector(".ace_lsp_hover_quickfixes")).to.not.exist;
+        } finally {
+            languageProvider.doHover = originalDoHover;
+            languageProvider.options.functionality!.codeActions = originalCodeActionsState;
+            hoverTooltip.showForRange = originalShowForRange;
+        }
+    })
+
     it('should format', (done) => {
         let timeout;
         let changeListener = () => {
