@@ -143,7 +143,7 @@ declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceO
 	sendResponse(callbackId: number, args?: LSPAny): void;
 }
 export declare class PhpService extends BaseService<PhpServiceOptions> implements LanguageService {
-	private $service;
+	private parser;
 	serviceCapabilities: {
 		diagnosticProvider: {
 			interFileDependencies: boolean;

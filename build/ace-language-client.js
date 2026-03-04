@@ -14365,13 +14365,14 @@ ${JSON.stringify(message, null, 4)}`);
     $initHoverTooltip(editor) {
       const Range2 = editor.getSelectionRange().constructor;
       this.$hoverTooltip.setDataProvider((e, editor2) => {
+        var _a;
         const session = editor2.session;
         const docPos = e.getDocumentPosition();
         const annotations = session.getAnnotations() || [];
-        const quickFixes = extractDiagnosticQuickFixesAtPosition(annotations, docPos);
+        const quickFixes = ((_a = this.options.functionality) == null ? void 0 : _a.codeActions) ? extractDiagnosticQuickFixesAtPosition(annotations, docPos) : [];
         this.doHover(session, docPos, (hover) => {
-          var _a, _b, _c;
-          const errorMarkers = (_c = (_b = (_a = this.$getSessionLanguageProvider(session).state) == null ? void 0 : _a.diagnosticMarkers) == null ? void 0 : _b.getMarkersAtPosition(docPos)) != null ? _c : [];
+          var _a2, _b, _c;
+          const errorMarkers = (_c = (_b = (_a2 = this.$getSessionLanguageProvider(session).state) == null ? void 0 : _a2.diagnosticMarkers) == null ? void 0 : _b.getMarkersAtPosition(docPos)) != null ? _c : [];
           const hoverModel = resolveHoverModel({
             hover,
             errorMarkers,
