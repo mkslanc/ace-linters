@@ -521,7 +521,7 @@ export class LanguageProvider {
             const session = editor.session;
             const docPos = e.getDocumentPosition();
             const annotations = (session.getAnnotations() || []) as (Ace.Annotation & { data?: unknown })[];
-            const quickFixes = extractDiagnosticQuickFixesAtPosition(annotations, docPos);
+            const quickFixes = this.options.functionality?.codeActions ? extractDiagnosticQuickFixesAtPosition(annotations, docPos) : [];
 
             this.doHover(session, docPos, (hover) => {
                 const errorMarkers = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkersAtPosition(docPos) ?? [];
