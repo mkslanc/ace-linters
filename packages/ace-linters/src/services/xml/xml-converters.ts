@@ -3,6 +3,7 @@ import {TextDocument} from "vscode-languageserver-textdocument";
 import {FilterDiagnosticsOptions} from "../../types/language-service";
 import {checkValueAgainstRegexpArray} from "../../utils";
 import {CommonConverter} from "../../type-converters/common-converters";
+import {ValidationIssue} from "@xml-tools/validation";
 
 export function lexingErrorsToDiagnostic(errors: any[], document: TextDocument, filterErrors: FilterDiagnosticsOptions): Diagnostic[] {
     return CommonConverter.excludeByErrorMessage(errors, filterErrors.errorMessagesToIgnore).map((el) => {
@@ -68,4 +69,30 @@ function determineDiagnosticSeverity(message: string, filterErrors: FilterDiagno
         severity = toDiagnosticSeverity(issueSeverity);
     }
     return severity;
+}
+
+export function namespaceValidator(element): ValidationIssue[] {
+    const issues: ValidationIssue[] = [];
+
+    const declared = element.namespaces ?? {};
+
+    function checkPrefix(prefix: string, node) {
+        if (!prefix) return;
+        if (prefix === "xml") return;
+
+        if (!declared[prefix]) {
+            issues.push({
+                msg: `Namespace prefix '${prefix}' is not declared`,
+                node,
+                position: node.position,
+                severity: "error",
+            });
+        }
+    }
+
+    if (element.ns) {
+        checkPrefix(element.ns, element);
+    }
+
+    return issues;
 }

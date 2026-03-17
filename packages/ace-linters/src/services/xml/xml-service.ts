@@ -4,15 +4,18 @@ import {DocumentCstNode, parse} from "@xml-tools/parser";
 import {buildAst} from "@xml-tools/ast";
 import {checkConstraints} from "@xml-tools/constraints";
 import {getSchemaValidators} from "@xml-tools/simple-schema";
-import {validate, ValidationIssue} from "@xml-tools/validation";
+import {AttributeValidator, ElementValidator, validate} from "@xml-tools/validation";
 
 import {
     issuesToDiagnostic,
-    lexingErrorsToDiagnostic,
+    lexingErrorsToDiagnostic, namespaceValidator,
     parsingErrorsToDiagnostic
 } from "./xml-converters";
 import {TextDocumentItem} from "vscode-languageserver-protocol";
-import {LanguageService, XmlServiceOptions} from "../../types/language-service";
+import {
+    LanguageService,
+    XmlServiceOptions,
+} from "../../types/language-service";
 
 export class XmlService extends BaseService<XmlServiceOptions> implements LanguageService {
     private $service;
@@ -71,23 +74,44 @@ export class XmlService extends BaseService<XmlServiceOptions> implements Langua
         const constraintsIssues = checkConstraints(xmlDoc as any);
 
         let schema = this.$getSchema(document.uri);
-        let schemaIssues: ValidationIssue[] = [];
+        const elementValidators: ElementValidator[] = [namespaceValidator];
+        const attributeValidators: AttributeValidator[] = [];
+
         if (schema) {
             const schemaValidators = getSchemaValidators(schema);
-            schemaIssues = validate({
-                doc: xmlDoc,
-                validators: {
-                    attribute: [schemaValidators.attribute],
-                    element: [schemaValidators.element],
-                },
-            });
+            elementValidators.push(schemaValidators.element);
+            attributeValidators.push(schemaValidators.attribute);
         }
 
+        const customIssues = validate({
+            doc: xmlDoc,
+            validators: {
+                element: elementValidators,
+                attribute: attributeValidators,
+            },
+        });
+
         return [
-            ...lexingErrorsToDiagnostic(lexErrors, fullDocument, this.optionsToFilterDiagnostics),
-            ...parsingErrorsToDiagnostic(parseErrors, fullDocument, this.optionsToFilterDiagnostics),
-            ...issuesToDiagnostic(constraintsIssues, fullDocument, this.optionsToFilterDiagnostics),
-            ...issuesToDiagnostic(schemaIssues, fullDocument, this.optionsToFilterDiagnostics)
+            ...lexingErrorsToDiagnostic(
+                lexErrors,
+                fullDocument,
+                this.optionsToFilterDiagnostics,
+            ),
+            ...parsingErrorsToDiagnostic(
+                parseErrors,
+                fullDocument,
+                this.optionsToFilterDiagnostics,
+            ),
+            ...issuesToDiagnostic(
+                constraintsIssues,
+                fullDocument,
+                this.optionsToFilterDiagnostics,
+            ),
+            ...issuesToDiagnostic(
+                customIssues,
+                fullDocument,
+                this.optionsToFilterDiagnostics,
+            ),
         ];
     }
 }
