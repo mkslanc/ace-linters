@@ -1,6 +1,7 @@
-# AceGoLinter
+# Ace Go Linter
 
-AceGoLinter is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for go. It integrates seamlessly with Ace Linters, enhancing your Ace editor with linting and analysis capabilities based on the LSP standard.
+Ace Go Linter is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for go. It 
+integrates seamlessly with Ace Linters, enhancing your Ace editor with linting and analysis capabilities based on the LSP standard.
 
 ## Key Features
 
@@ -23,6 +24,8 @@ npm install ace-go-linter
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("ace-go-linter", {
        module: () => import("ace-go-linter/build/ace-go-linter"),
@@ -80,5 +83,5 @@ This linter supports the following features:
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace Go Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 
