@@ -21573,6 +21573,27 @@ ${JSON.stringify(message, null, 4)}`);
     }
     return severity;
   }
+  function namespaceValidator(element) {
+    var _a;
+    const issues = [];
+    const declared = (_a = element.namespaces) != null ? _a : {};
+    function checkPrefix(prefix, node) {
+      if (!prefix) return;
+      if (prefix === "xml") return;
+      if (!declared[prefix]) {
+        issues.push({
+          msg: `Namespace prefix '${prefix}' is not declared`,
+          node,
+          position: node.position,
+          severity: "error"
+        });
+      }
+    }
+    if (element.ns) {
+      checkPrefix(element.ns, element);
+    }
+    return issues;
+  }
   class XmlService extends BaseService {
     constructor(mode) {
       super(mode);
@@ -21621,22 +21642,41 @@ ${JSON.stringify(message, null, 4)}`);
       const xmlDoc = apiExports$3.buildAst(cst, tokenVector);
       const constraintsIssues = apiExports$2.checkConstraints(xmlDoc);
       let schema = this.$getSchema(document.uri);
-      let schemaIssues = [];
+      const elementValidators = [namespaceValidator];
+      const attributeValidators = [];
       if (schema) {
         const schemaValidators = apiExports$1.getSchemaValidators(schema);
-        schemaIssues = apiExports.validate({
-          doc: xmlDoc,
-          validators: {
-            attribute: [schemaValidators.attribute],
-            element: [schemaValidators.element]
-          }
-        });
+        elementValidators.push(schemaValidators.element);
+        attributeValidators.push(schemaValidators.attribute);
       }
+      const customIssues = apiExports.validate({
+        doc: xmlDoc,
+        validators: {
+          element: elementValidators,
+          attribute: attributeValidators
+        }
+      });
       return [
-        ...lexingErrorsToDiagnostic(lexErrors, fullDocument, this.optionsToFilterDiagnostics),
-        ...parsingErrorsToDiagnostic(parseErrors, fullDocument, this.optionsToFilterDiagnostics),
-        ...issuesToDiagnostic(constraintsIssues, fullDocument, this.optionsToFilterDiagnostics),
-        ...issuesToDiagnostic(schemaIssues, fullDocument, this.optionsToFilterDiagnostics)
+        ...lexingErrorsToDiagnostic(
+          lexErrors,
+          fullDocument,
+          this.optionsToFilterDiagnostics
+        ),
+        ...parsingErrorsToDiagnostic(
+          parseErrors,
+          fullDocument,
+          this.optionsToFilterDiagnostics
+        ),
+        ...issuesToDiagnostic(
+          constraintsIssues,
+          fullDocument,
+          this.optionsToFilterDiagnostics
+        ),
+        ...issuesToDiagnostic(
+          customIssues,
+          fullDocument,
+          this.optionsToFilterDiagnostics
+        )
       ];
     }
   }
