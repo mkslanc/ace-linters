@@ -19,16 +19,19 @@ npm install ace-sql-linter
 ```
 
 ## Usage 
-1. Register neccessary service(s) on webworker's side: 
-    ```javascript
-    import {ServiceManager} from "ace-linters/build/service-manager";
-    
-    manager.registerService("mysql", {
-        module: () => import("ace-sql-linter/build/mysql-service"),
-        className: "MySQLService",
-        modes: "mysql",
-    });
-    ```
+1. Register the necessary service(s) on the webworker's side: 
+
+```javascript
+import {ServiceManager} from "ace-linters/build/service-manager";
+
+const manager = new ServiceManager(self);
+
+manager.registerService("mysql", {
+   module: () => import("ace-sql-linter/build/mysql-service"),
+   className: "MySQLService",
+   modes: "mysql",
+});
+```
 
 2. Use in conjuction with `ace-linters` main package [similar to predefined services example](https://github.com/mkslanc/ace-linters?tab=readme-ov-file#example-client-with-pre-defined-services) 
 
@@ -43,5 +46,5 @@ npm install ace-sql-linter
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace SQL Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 

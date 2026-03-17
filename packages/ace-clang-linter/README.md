@@ -24,6 +24,8 @@ npm install ace-clang-linter
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("clang", {
        module: () => import("ace-clang-linter/build/ace-clang-linter"),
@@ -82,5 +84,5 @@ This linter supports the following features:
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace Clang Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 

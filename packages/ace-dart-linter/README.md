@@ -24,6 +24,8 @@ npm install ace-dart-linter
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("ace-dart-linter", {
        module: () => import("ace-dart-linter/build/ace-dart-linter"),
@@ -81,5 +83,5 @@ This linter supports the following features:
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace Dart Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 
