@@ -22,9 +22,8 @@
     "vscode-languageserver-types": "^3.17.5"
   },
   "devDependencies": {
-    "vite": "^6.4.1",
+    "vite": "^8.0.0",
     "vite-plugin-node-polyfills": "^0.25.0",
-    "@rollup/plugin-commonjs": "^28.0.0",
     "rimraf": "^5.0.0",
     "vscode-html-languageservice": "^5.4.0",
     "vscode-css-languageservice": "^6.3.5",
@@ -46,7 +45,6 @@
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
-    "puppeteer": "^23.4.0",
     "http-server": "^14.1.1",
     "dts-bundle-generator": "^9.5.1",
     "ace-code": "^1.39.0",
