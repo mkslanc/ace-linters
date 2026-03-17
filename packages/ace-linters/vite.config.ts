@@ -1,7 +1,6 @@
 import { defineConfig, Plugin } from 'vite';
 import { resolve } from 'path';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import commonjs from '@rollup/plugin-commonjs';
 
 function umd2Plugin(): Plugin {
   return {
@@ -81,9 +80,6 @@ export default defineConfig({
   },
 
   plugins: [
-    commonjs({
-      include: [/src\/services\/.*\/lib\/.*/],
-    }),
     nodePolyfills({
       include: ['buffer', 'process', 'util', 'stream', 'path', 'events'],
       globals: {
