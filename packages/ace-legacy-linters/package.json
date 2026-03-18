@@ -1,0 +1,16 @@
+{
+    "name": "ace-legacy-linters",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "build": "node build-worker.mjs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mkslanc/ace-linters.git"
+    },
+    "devDependencies": {
+        "php-parser": "^3.4.0",
+        "ace-code": "^1.43.6"
+    }
+}
