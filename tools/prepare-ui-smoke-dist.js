@@ -70,6 +70,13 @@ const packagesToCopy = [
         targetBuildDir: path.join(distDir, "build", "ace-zig-linter"),
         requiredFiles: ["ace-zig-linter.js"],
     },
+    {
+        name: "ace-legacy-linters",
+        workspacePath: "packages/ace-legacy-linters",
+        sourceBuildDir: path.join(rootDir, "packages", "ace-legacy-linters", "build"),
+        targetBuildDir: path.join(distDir, "build", "ace-legacy-linters"),
+        requiredFiles: [path.join("src-noconflict", "worker-php.js")],
+    },
 ];
 const aceAssetsToCopy = [
     {

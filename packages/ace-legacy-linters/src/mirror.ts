@@ -1,19 +1,16 @@
-import {Ace} from "ace-code";
-
-import {Document} from "ace-code/src/document";
-
 import * as lang from "ace-code/src/lib/lang";
+import {MinDocument} from "./min-document";
 
 export abstract class Mirror {
     $timeout = 500;
     sender: any;
-    doc: Ace.Document;
+    doc: MinDocument;
     $path: string;
     deferredUpdate: any;
 
     protected constructor(sender) {
         this.sender = sender;
-        var doc = (this.doc = new Document(""));
+        var doc = (this.doc = new MinDocument(""));
 
         var deferredUpdate = (this.deferredUpdate = lang.delayedCall(
             this.onUpdate.bind(this),

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>ace-legacy-linters smoke</title>
+    <link rel="icon" href="data:,"/>
+    <style type="text/css" media="screen">
+        body {
+            overflow: hidden;
+        }
+
+        #editor {
+            margin: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="editor"></div>
+
+<script src="http://127.0.0.1:8080/vendor/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    window.testFlags = {
+        workerReady: false,
+        hasAnnotations: false,
+    };
+
+    ace.config.setModuleUrl(
+        "ace/mode/php_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-php.js"
+    );
+
+    window.editor = ace.edit("editor");
+    window.editor.setValue("");
+    window.editor.clearSelection();
+
+    const session = window.editor.session;
+    session.on("changeAnnotation", function () {
+        const annotations = session.getAnnotations() || [];
+        window.testFlags.workerReady = true;
+        if (annotations.length > 0) {
+            window.testFlags.hasAnnotations = true;
+        }
+    });
+
+    session.setMode("ace/mode/php");
+</script>
+
+</body>
+</html>
