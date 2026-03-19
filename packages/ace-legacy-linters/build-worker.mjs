@@ -34,8 +34,21 @@ const workerConfigs = [
     {
         entry: "src/php-worker.ts",
         exportName: "PhpWorker",
+        className: "PhpWorker",
         moduleId: "ace/mode/php_worker",
-        fileName: "worker-php.js"
+        fileName: "worker-php.js",
+        modulePrelude: `
+var globalObj = typeof globalThis !== "undefined" ? globalThis : self;
+var processShim = globalObj.process = globalObj.process || {};
+processShim.arch = processShim.arch || "x64";
+`.trim()
+    },
+    {
+        entry: "src/lua-worker.ts",
+        exportName: "LuaWorker",
+        className: "Worker",
+        moduleId: "ace/mode/lua_worker",
+        fileName: "worker-lua.js"
     }
 ];
 
@@ -43,20 +56,14 @@ const bootstrapFile = path.join(packageDir, "src", "worker.js");
 const oopSourceFile = path.join(packageDir, "..", "..", "node_modules", "ace-code", "src", "lib", "oop.js");
 const eventEmitterSourceFile = path.join(
     packageDir, "..", "..", "node_modules", "ace-code", "src", "lib", "event_emitter.js");
-
-const PROCESS_SHIM = `
-var globalObj = typeof globalThis !== "undefined" ? globalThis : self;
-var processShim = globalObj.process = globalObj.process || {};
-processShim.arch = processShim.arch || "x64";
-`.trim();
-
-function createAceModule(moduleFactory, moduleId, bundleCode, exportName) {
+function createAceModule(moduleFactory, workerConfig, bundleCode) {
+    const prelude = workerConfig.modulePrelude ? `${workerConfig.modulePrelude}\n` : "";
+    const className = workerConfig.className || workerConfig.exportName;
     return `
-${moduleFactory}(${JSON.stringify(moduleId)}, [], function(require, exports, module) {
+${moduleFactory}(${JSON.stringify(workerConfig.moduleId)}, [], function(require, exports, module) {
 "use strict";
-${PROCESS_SHIM}
-${bundleCode}
-exports.${exportName} = aceLegacyWorkerModule.${exportName};
+${prelude}${bundleCode}
+exports.${className} = aceLegacyWorkerModule.${workerConfig.exportName};
 });
 `.trim();
 }
@@ -135,7 +142,7 @@ async function writeWorkerFile(workerConfig, target, bootstrap, bundleCode, oopM
     const fileContents = [
         bootstrap.trimEnd(), "", wrapAceCodeModule(target.moduleFactory, "ace/lib/oop", oopModule), "",
         wrapAceCodeModule(target.moduleFactory, "ace/lib/event_emitter", eventEmitterModule), "",
-        createAceModule(target.moduleFactory, workerConfig.moduleId, bundleCode, workerConfig.exportName), ""
+        createAceModule(target.moduleFactory, workerConfig, bundleCode), ""
     ].join("\n");
     const finalContents = target.minify ? await compress(fileContents) : fileContents;
     const outfile = path.join(packageDir, target.outDir, workerConfig.fileName);

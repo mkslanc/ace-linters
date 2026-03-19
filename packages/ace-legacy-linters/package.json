@@ -11,6 +11,7 @@
     },
     "devDependencies": {
         "php-parser": "^3.4.0",
-        "ace-code": "^1.43.6"
+        "ace-code": "^1.43.6",
+        "luaparse": "^0.3.1"
     }
 }

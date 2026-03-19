@@ -26,6 +26,7 @@
 <script src="http://127.0.0.1:8080/vendor/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
     window.testFlags = {
+        modeChanged: false,
         workerReady: false,
         hasAnnotations: false,
     };
@@ -34,12 +35,19 @@
         "ace/mode/php_worker",
         "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-php.js"
     );
+    ace.config.setModuleUrl(
+        "ace/mode/lua_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-lua.js"
+    );
 
     window.editor = ace.edit("editor");
     window.editor.setValue("");
     window.editor.clearSelection();
 
     const session = window.editor.session;
+    session.on("changeMode", function () {
+        window.testFlags.modeChanged = true;
+    });
     session.on("changeAnnotation", function () {
         const annotations = session.getAnnotations() || [];
         window.testFlags.workerReady = true;
@@ -47,8 +55,6 @@
             window.testFlags.hasAnnotations = true;
         }
     });
-
-    session.setMode("ace/mode/php");
 </script>
 
 </body>
