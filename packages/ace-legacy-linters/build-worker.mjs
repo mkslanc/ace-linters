@@ -49,6 +49,13 @@ processShim.arch = processShim.arch || "x64";
         className: "Worker",
         moduleId: "ace/mode/lua_worker",
         fileName: "worker-lua.js"
+    },
+    {
+        entry: "src/html-worker.ts",
+        exportName: "HtmlWorker",
+        className: "Worker",
+        moduleId: "ace/mode/html_worker",
+        fileName: "worker-html.js"
     }
 ];
 

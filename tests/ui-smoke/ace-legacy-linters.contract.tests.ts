@@ -2,6 +2,7 @@ import {expect} from "chai";
 import {createUiHarness} from "./shared/harness";
 import {phpContent} from "./fixtures/php";
 import {luaContent} from "./fixtures/lua";
+import {htmlContent} from "./fixtures/html";
 
 describe("ace-legacy-linters UI contract tests", function () {
     this.timeout(40000);
@@ -29,6 +30,11 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "lua",
                 content: luaContent,
                 label: "Lua",
+            },
+            {
+                mode: "html",
+                content: htmlContent,
+                label: "HTML",
             },
         ];
 

@@ -39,6 +39,10 @@
         "ace/mode/lua_worker",
         "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-lua.js"
     );
+    ace.config.setModuleUrl(
+        "ace/mode/html_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-html.js"
+    );
 
     window.editor = ace.edit("editor");
     window.editor.setValue("");

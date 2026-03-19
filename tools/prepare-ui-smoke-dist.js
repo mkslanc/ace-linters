@@ -75,7 +75,7 @@ const packagesToCopy = [
         workspacePath: "packages/ace-legacy-linters",
         sourceBuildDir: path.join(rootDir, "packages", "ace-legacy-linters", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-legacy-linters"),
-        requiredFiles: [path.join("src-noconflict", "worker-php.js")],
+        requiredFiles: [path.join("src-noconflict", "worker-php.js"), path.join("src-noconflict", "worker-lua.js"),path.join("src-noconflict", "worker-html.js")],
     },
 ];
 const aceAssetsToCopy = [
@@ -192,8 +192,14 @@ function copyAceAssets() {
 
 }
 
+function resetDist() {
+    fs.rmSync(distDir, {recursive: true, force: true});
+    fs.mkdirSync(distDir, {recursive: true});
+}
+
 function prepareDist() {
     ensurePackageBuilds();
+    resetDist();
     copyPackageBuilds();
     copyScenarios();
     copyAceAssets();
