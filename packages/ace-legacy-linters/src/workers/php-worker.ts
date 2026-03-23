@@ -1,4 +1,4 @@
-import {Mirror} from "./mirror";
+import {Mirror} from "../mirror";
 
 import {Engine} from "php-parser";
 

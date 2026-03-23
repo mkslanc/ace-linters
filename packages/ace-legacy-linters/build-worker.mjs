@@ -32,7 +32,7 @@ const outputTargets = [
 ];
 const workerConfigs = [
     {
-        entry: "src/php-worker.ts",
+        entry: "src/workers/php-worker.ts",
         exportName: "PhpWorker",
         className: "PhpWorker",
         moduleId: "ace/mode/php_worker",
@@ -44,18 +44,32 @@ processShim.arch = processShim.arch || "x64";
 `.trim()
     },
     {
-        entry: "src/lua-worker.ts",
+        entry: "src/workers/lua-worker.ts",
         exportName: "LuaWorker",
         className: "Worker",
         moduleId: "ace/mode/lua_worker",
         fileName: "worker-lua.js"
     },
     {
-        entry: "src/html-worker.ts",
+        entry: "src/workers/html-worker.ts",
         exportName: "HtmlWorker",
         className: "Worker",
         moduleId: "ace/mode/html_worker",
         fileName: "worker-html.js"
+    },
+    {
+        entry: "src/workers/json-worker.ts",
+        exportName: "JsonWorker",
+        className: "JsonWorker",
+        moduleId: "ace/mode/json_worker",
+        fileName: "worker-json.js"
+    },
+    {
+        entry: "src/workers/css-worker.ts",
+        exportName: "CssWorker",
+        className: "Worker",
+        moduleId: "ace/mode/css_worker",
+        fileName: "worker-css.js"
     }
 ];
 

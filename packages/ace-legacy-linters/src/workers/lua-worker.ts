@@ -1,5 +1,5 @@
 import * as lua from "luaparse";
-import {Mirror} from "./mirror";
+import {Mirror} from "../mirror";
 import {Ace} from "ace-code";
 
 export class LuaWorker extends Mirror {

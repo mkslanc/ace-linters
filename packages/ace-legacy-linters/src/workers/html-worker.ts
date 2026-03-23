@@ -1,4 +1,4 @@
-import {Mirror} from "./mirror";
+import {Mirror} from "../mirror";
 import {Ace} from "ace-code";
 import {HTMLHint} from 'htmlhint';
 import {Ruleset} from "htmlhint/dist/core/types";

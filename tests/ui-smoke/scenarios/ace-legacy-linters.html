@@ -43,6 +43,31 @@
         "ace/mode/html_worker",
         "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-html.js"
     );
+    ace.config.setModuleUrl(
+        "ace/mode/json_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-json.js"
+    );
+
+    ace.config.loadModule("ace/mode/json5", function (json5ModeModule) { //TODO: remove when new version published
+        const Json5Mode = json5ModeModule && json5ModeModule.Mode;
+        if (!Json5Mode) {
+            return;
+        }
+
+        const WorkerClient = ace.require("ace/worker/worker_client").WorkerClient;
+        Json5Mode.prototype.createWorker = function (session) {
+            const worker = new WorkerClient(["ace"], "ace/mode/json_worker", "JsonWorker");
+            worker.attachToDocument(session.getDocument());
+            worker.call("setOptions", [{isJson5: true}]);
+            worker.on("annotate", function (e) {
+                session.setAnnotations(e.data);
+            });
+            worker.on("terminate", function () {
+                session.clearAnnotations();
+            });
+            return worker;
+        };
+    });
 
     window.editor = ace.edit("editor");
     window.editor.setValue("");

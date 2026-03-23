@@ -3,6 +3,8 @@ import {createUiHarness} from "./shared/harness";
 import {phpContent} from "./fixtures/php";
 import {luaContent} from "./fixtures/lua";
 import {htmlContent} from "./fixtures/html";
+import {jsonContent} from "./fixtures/json";
+import {json5Content} from "./fixtures/json5";
 
 describe("ace-legacy-linters UI contract tests", function () {
     this.timeout(40000);
@@ -35,6 +37,16 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "html",
                 content: htmlContent,
                 label: "HTML",
+            },
+            {
+                mode: "json",
+                content: jsonContent,
+                label: "JSON",
+            },
+            {
+                mode: "json5",
+                content: json5Content,
+                label: "JSON5",
             },
         ];
 

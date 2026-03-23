@@ -12,102 +12,81 @@ const packagesToCopy = [
         workspacePath: "packages/ace-linters",
         sourceBuildDir: path.join(rootDir, "packages", "ace-linters", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-linters"),
-        requiredFiles: ["ace-linters.js", "service-manager.js"],
-    },
-    {
+        requiredFiles: ["ace-linters.js", "service-manager.js"]
+    }, {
         name: "ace-spell-check",
         workspacePath: "packages/ace-spell-check",
         sourceBuildDir: path.join(rootDir, "packages", "ace-spell-check", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-spell-check"),
-        requiredFiles: ["ace-spell-check.js", "esm-dicts-resolver.js", path.join("dicts", "cspell-dict-typescript.json")],
-    },
-    {
+        requiredFiles: [
+            "ace-spell-check.js", "esm-dicts-resolver.js", path.join("dicts", "cspell-dict-typescript.json")
+        ]
+    }, {
         name: "ace-clang-linter",
         workspacePath: "packages/ace-clang-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-clang-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-clang-linter"),
-        requiredFiles: ["ace-clang-linter.js"],
-    },
-    {
+        requiredFiles: ["ace-clang-linter.js"]
+    }, {
         name: "ace-dart-linter",
         workspacePath: "packages/ace-dart-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-dart-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-dart-linter"),
-        requiredFiles: ["ace-dart-linter.js"],
-    },
-    {
+        requiredFiles: ["ace-dart-linter.js"]
+    }, {
         name: "ace-go-linter",
         workspacePath: "packages/ace-go-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-go-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-go-linter"),
-        requiredFiles: ["ace-go-linter.js"],
-    },
-    {
+        requiredFiles: ["ace-go-linter.js"]
+    }, {
         name: "ace-lua-linter",
         workspacePath: "packages/ace-lua-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-lua-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-lua-linter"),
-        requiredFiles: ["ace-lua-linter.js"],
-    },
-    {
+        requiredFiles: ["ace-lua-linter.js"]
+    }, {
         name: "ace-python-ruff-linter",
         workspacePath: "packages/ace-python-ruff-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-python-ruff-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-python-ruff-linter"),
-        requiredFiles: ["python-service.js"],
-    },
-    {
+        requiredFiles: ["python-service.js"]
+    }, {
         name: "ace-sql-linter",
         workspacePath: "packages/ace-sql-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-sql-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-sql-linter"),
-        requiredFiles: ["mysql-service.js"],
-    },
-    {
+        requiredFiles: ["mysql-service.js"]
+    }, {
         name: "ace-zig-linter",
         workspacePath: "packages/ace-zig-linter",
         sourceBuildDir: path.join(rootDir, "packages", "ace-zig-linter", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-zig-linter"),
-        requiredFiles: ["ace-zig-linter.js"],
-    },
-    {
+        requiredFiles: ["ace-zig-linter.js"]
+    }, {
         name: "ace-legacy-linters",
         workspacePath: "packages/ace-legacy-linters",
         sourceBuildDir: path.join(rootDir, "packages", "ace-legacy-linters", "build"),
         targetBuildDir: path.join(distDir, "build", "ace-legacy-linters"),
-        requiredFiles: [path.join("src-noconflict", "worker-php.js"), path.join("src-noconflict", "worker-lua.js"),path.join("src-noconflict", "worker-html.js")],
-    },
+        requiredFiles: [
+            path.join("src-noconflict", "worker-php.js"), path.join("src-noconflict", "worker-lua.js"),
+            path.join("src-noconflict", "worker-html.js"), path.join("src-noconflict", "worker-json.js")
+        ]
+    }
 ];
 const aceAssetsToCopy = [
     {
         sourceFile: path.join(rootDir, "node_modules", "ace-builds", "src-noconflict", "ace.js"),
-        targetFile: path.join(distDir, "vendor", "ace", "ace.js"),
-    },
-    {
+        targetFile: path.join(distDir, "vendor", "ace", "ace.js")
+    }, {
         sourceFile: path.join(rootDir, "node_modules", "ace-builds", "src-noconflict", "ext-language_tools.js"),
-        targetFile: path.join(distDir, "vendor", "ace", "ext-language_tools.js"),
-    },
+        targetFile: path.join(distDir, "vendor", "ace", "ext-language_tools.js")
+    }
 ];
 const aceModeFilesToCopy = [
-    "mode-typescript.js",
-    "mode-json.js",
-    "mode-css.js",
-    "mode-html.js",
-    "mode-yaml.js",
-    "mode-php.js",
-    "mode-xml.js",
-    "mode-javascript.js",
-    "mode-lua.js",
-    "mode-less.js",
-    "mode-scss.js",
-    "mode-c_cpp.js",
-    "mode-dart.js",
-    "mode-golang.js",
-    "mode-python.js",
-    "mode-sql.js",
-    "mode-mysql.js",
-    "mode-pgsql.js",
-    "mode-zig.js",
+    "mode-typescript.js", "mode-json.js", "mode-json5.js", "mode-css.js", "mode-html.js", "mode-yaml.js", "mode-php.js",
+    "mode-xml.js", "mode-javascript.js", "mode-lua.js", "mode-less.js", "mode-scss.js", "mode-c_cpp.js", "mode-dart.js",
+    "mode-golang.js", "mode-python.js", "mode-sql.js", "mode-mysql.js", "mode-pgsql.js", "mode-zig.js"
 ];
 
 function assertPathExists(targetPath, message) {
@@ -132,7 +111,7 @@ function hasRequiredBuildArtifacts(pkg) {
 function buildWorkspacePackage(pkg) {
     childProcess.execSync(`${npmCommand()} run build -w ${pkg.workspacePath}`, {
         cwd: rootDir,
-        stdio: "inherit",
+        stdio: "inherit"
     });
 }
 
@@ -144,10 +123,8 @@ function ensurePackageBuilds() {
         }
 
         if (!hasRequiredBuildArtifacts(pkg)) {
-            throw new Error(
-                `Build output for ${pkg.name} is incomplete after build step. ` +
-                `Expected files: ${pkg.requiredFiles.join(", ")}`
-            );
+            throw new Error(`Build output for ${pkg.name} is incomplete after build step. `
+                + `Expected files: ${pkg.requiredFiles.join(", ")}`);
         }
     }
 }
@@ -159,14 +136,20 @@ function copyPackageBuilds() {
             `Missing build output for ${pkg.name}. Run workspace build before preparing ui-smoke dist.`
         );
         fs.mkdirSync(pkg.targetBuildDir, {recursive: true});
-        fs.cpSync(pkg.sourceBuildDir, pkg.targetBuildDir, {recursive: true, force: true});
+        fs.cpSync(pkg.sourceBuildDir, pkg.targetBuildDir, {
+            recursive: true,
+            force: true
+        });
     }
 }
 
 function copyScenarios() {
     assertPathExists(scenariosDir, "Missing tests/ui-smoke/scenarios directory.");
     fs.mkdirSync(distDir, {recursive: true});
-    fs.cpSync(scenariosDir, distDir, {recursive: true, force: true});
+    fs.cpSync(scenariosDir, distDir, {
+        recursive: true,
+        force: true
+    });
 }
 
 function copyAceAssets() {
@@ -188,12 +171,18 @@ function copyAceAssets() {
     const snippetsTargetDir = path.join(distDir, "vendor", "ace", "snippets");
     assertPathExists(snippetsSourceDir, `Missing Ace snippets directory: ${snippetsSourceDir}`);
     fs.mkdirSync(snippetsTargetDir, {recursive: true});
-    fs.cpSync(snippetsSourceDir, snippetsTargetDir, {recursive: true, force: true});
+    fs.cpSync(snippetsSourceDir, snippetsTargetDir, {
+        recursive: true,
+        force: true
+    });
 
 }
 
 function resetDist() {
-    fs.rmSync(distDir, {recursive: true, force: true});
+    fs.rmSync(distDir, {
+        recursive: true,
+        force: true
+    });
     fs.mkdirSync(distDir, {recursive: true});
 }
 
