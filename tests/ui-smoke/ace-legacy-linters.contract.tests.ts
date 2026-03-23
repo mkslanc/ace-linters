@@ -5,6 +5,9 @@ import {luaContent} from "./fixtures/lua";
 import {htmlContent} from "./fixtures/html";
 import {jsonContent} from "./fixtures/json";
 import {json5Content} from "./fixtures/json5";
+import {cssContent} from "./fixtures/css";
+import {lessContent} from "./fixtures/less";
+import {scssContent} from "./fixtures/scss";
 
 describe("ace-legacy-linters UI contract tests", function () {
     this.timeout(40000);
@@ -47,6 +50,21 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "json5",
                 content: json5Content,
                 label: "JSON5",
+            },
+            {
+                mode: "css",
+                content: cssContent,
+                label: "CSS",
+            },
+            {
+                mode: "less",
+                content: lessContent,
+                label: "LESS",
+            },
+            {
+                mode: "scss",
+                content: scssContent,
+                label: "SCSS",
             },
         ];
 

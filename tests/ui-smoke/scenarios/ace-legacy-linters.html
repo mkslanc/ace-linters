@@ -47,6 +47,10 @@
         "ace/mode/json_worker",
         "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-json.js"
     );
+    ace.config.setModuleUrl(
+        "ace/mode/css_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-css.js"
+    );
 
     ace.config.loadModule("ace/mode/json5", function (json5ModeModule) { //TODO: remove when new version published
         const Json5Mode = json5ModeModule && json5ModeModule.Mode;
@@ -67,6 +71,28 @@
             });
             return worker;
         };
+    });
+    ["less", "scss"].forEach(function (modeName) { //TODO: remove when new version published
+        ace.config.loadModule("ace/mode/" + modeName, function (modeModule) {
+            const ModeCtor = modeModule && modeModule.Mode;
+            if (!ModeCtor) {
+                return;
+            }
+
+            const WorkerClient = ace.require("ace/worker/worker_client").WorkerClient;
+            ModeCtor.prototype.createWorker = function (session) {
+                const worker = new WorkerClient(["ace"], "ace/mode/css_worker", "Worker");
+                worker.attachToDocument(session.getDocument());
+                worker.call("setOptions", [{mode: modeName}]);
+                worker.on("annotate", function (e) {
+                    session.setAnnotations(e.data);
+                });
+                worker.on("terminate", function () {
+                    session.clearAnnotations();
+                });
+                return worker;
+            };
+        });
     });
 
     window.editor = ace.edit("editor");
