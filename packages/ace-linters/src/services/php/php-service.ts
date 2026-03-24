@@ -26,21 +26,21 @@ export class PhpService
 
         //@ts-ignore
         this.parser = new PhpParser({
-          parser: {
-            extractDoc: false,
-            suppressErrors: true,
-          },
-          ast: {
-            withPositions: false, //TODO: turn it on, when https://github.com/glayzzle/php-parser/issues/1185 would be fixed
-            withSource: false,
-          },
-          lexer: {
-            all_tokens: false,
-            comment_tokens: false,
-            mode_eval: false,
-            asp_tags: false,
-            short_tags: true, // allow `<?` if needed
-          },
+            parser: {
+                extractDoc: false,
+                suppressErrors: true,
+            },
+            ast: {
+                withPositions: false, //TODO: turn it on, when https://github.com/glayzzle/php-parser/issues/1185 would be fixed
+                withSource: false,
+            },
+            lexer: {
+                all_tokens: false,
+                comment_tokens: false,
+                mode_eval: false,
+                asp_tags: false,
+                short_tags: true, // allow `<?` if needed
+            },
         });
     }
 

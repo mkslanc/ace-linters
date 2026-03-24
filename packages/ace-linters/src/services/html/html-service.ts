@@ -8,11 +8,12 @@ import * as htmlService from 'vscode-html-languageservice';
 import {mergeObjects} from "../../utils";
 import {HtmlServiceOptions, LanguageService} from "../../types/language-service";
 import {toDiagnostics} from "./html-converters";
+import {Ruleset} from "htmlhint/dist/core/types";
 
 export class HtmlService extends BaseService<HtmlServiceOptions> implements LanguageService {
     private $service: VSLanguageService;
 
-    defaultValidationOptions = {
+    defaultValidationOptions: Ruleset = {
         "attr-no-duplication": true,
         "body-no-duplicates": true,
         "head-body-descendents-html": true,
