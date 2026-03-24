@@ -23,7 +23,7 @@ const entries = [
     outFile: "./build/html-service.d.ts",
     output: commonOutputParams,
     libraries: {
-      inlinedLibraries: ["vscode-html-languageservice"],
+      inlinedLibraries: ["vscode-html-languageservice", "htmlhint"],
     },
   },
   {
