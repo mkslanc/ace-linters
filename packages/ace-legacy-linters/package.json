@@ -16,6 +16,10 @@
         "luaparse": "^0.3.1",
         "htmlhint": "^1.9.2",
         "vscode-json-languageservice": "^5.7.2",
-        "vscode-css-languageservice": "^6.3.10"
+        "vscode-css-languageservice": "^6.3.10",
+        "@xml-tools/constraints": "^1.1.1",
+        "@xml-tools/parser": "^1.0.11",
+        "@xml-tools/ast": "^5.0.5",
+        "@xml-tools/simple-schema": "^3.0.5"
     }
 }

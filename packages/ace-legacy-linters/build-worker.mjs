@@ -70,6 +70,13 @@ processShim.arch = processShim.arch || "x64";
         className: "Worker",
         moduleId: "ace/mode/css_worker",
         fileName: "worker-css.js"
+    },
+    {
+        entry: "src/workers/xml-worker.ts",
+        exportName: "XmlWorker",
+        className: "Worker",
+        moduleId: "ace/mode/xml_worker",
+        fileName: "worker-xml.js"
     }
 ];
 
@@ -83,7 +90,8 @@ function createAceModule(moduleFactory, workerConfig, bundleCode) {
     return `
 ${moduleFactory}(${JSON.stringify(workerConfig.moduleId)}, [], function(require, exports, module) {
 "use strict";
-${prelude}${bundleCode}
+${prelude}var define = undefined;
+${bundleCode}
 exports.${className} = aceLegacyWorkerModule.${workerConfig.exportName};
 });
 `.trim();

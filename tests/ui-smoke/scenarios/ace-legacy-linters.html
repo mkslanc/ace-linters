@@ -51,6 +51,10 @@
         "ace/mode/css_worker",
         "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-css.js"
     );
+    ace.config.setModuleUrl(
+        "ace/mode/xml_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-xml.js"
+    );
 
     ace.config.loadModule("ace/mode/json5", function (json5ModeModule) { //TODO: remove when new version published
         const Json5Mode = json5ModeModule && json5ModeModule.Mode;

@@ -70,7 +70,8 @@ const packagesToCopy = [
         targetBuildDir: path.join(distDir, "build", "ace-legacy-linters"),
         requiredFiles: [
             path.join("src-noconflict", "worker-php.js"), path.join("src-noconflict", "worker-lua.js"),
-            path.join("src-noconflict", "worker-html.js"), path.join("src-noconflict", "worker-json.js")
+            path.join("src-noconflict", "worker-html.js"), path.join("src-noconflict", "worker-json.js"),
+            path.join("src-noconflict", "worker-xml.js")
         ]
     }
 ];

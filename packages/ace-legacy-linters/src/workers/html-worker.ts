@@ -5,7 +5,6 @@ import {Ruleset} from "htmlhint/dist/core/types";
 
 export class HtmlWorker extends Mirror {
     parser;
-    inlinePhp: boolean = false;
 
     defaultValidationOptions: Ruleset = {
         "attr-no-duplication": true,

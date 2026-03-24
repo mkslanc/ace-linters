@@ -8,6 +8,7 @@ import {json5Content} from "./fixtures/json5";
 import {cssContent} from "./fixtures/css";
 import {lessContent} from "./fixtures/less";
 import {scssContent} from "./fixtures/scss";
+import {xmlContent} from "./fixtures/xml";
 
 describe("ace-legacy-linters UI contract tests", function () {
     this.timeout(40000);
@@ -65,6 +66,11 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "scss",
                 content: scssContent,
                 label: "SCSS",
+            },
+            {
+                mode: "xml",
+                content: xmlContent,
+                label: "XML",
             },
         ];
 

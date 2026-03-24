@@ -380,7 +380,7 @@ export class MinDocument {
         });
     }
 
-    indexToPosition(index, startRow) {
+    indexToPosition(index: number, startRow?: number | undefined) {
         var lines = this.$lines || this.getAllLines();
         var newlineLength = this.getNewLineCharacter().length;
         for (var i = startRow || 0, l = lines.length; i < l; i++) {

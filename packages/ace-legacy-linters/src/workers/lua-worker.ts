@@ -4,7 +4,6 @@ import {Ace} from "ace-code";
 
 export class LuaWorker extends Mirror {
     parser;
-    inlinePhp: boolean = false;
 
     constructor(sender) {
         super(sender);
