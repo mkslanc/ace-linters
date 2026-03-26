@@ -22251,7 +22251,7 @@ function checkFilenameMatchesExcludeGlob(filename, globs) {
 
 // ../../node_modules/cspell-lib/dist/lib/Settings/CSpellSettingsServer.js
 init_shim();
-var import_node_assert5 = __toESM(require_assert(), 1);
+var import_node_assert5 = __toESM(require_assert());
 
 // ../../node_modules/cspell-lib/dist/lib/util/AutoResolve.js
 init_shim();
