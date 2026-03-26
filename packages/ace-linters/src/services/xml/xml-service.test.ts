@@ -97,4 +97,14 @@ describe("XmlService", () => {
 
         expect(nsDiagnostics).to.have.lengthOf(0);
     });
+
+    it("shouldn't break with empty or consistent only from whitespaces document", async () => {
+        const service = new XmlService("xml");
+        const uri = "file:///whitespaces.xml";
+        const document = addXmlDocument(service, uri, "                         \n\n         ");
+        const diagnostics = await service.doValidation(document);
+        const nsDiagnostics = namespaceDiagnostics(diagnostics);
+
+        expect(nsDiagnostics).to.have.lengthOf(0);
+    });
 });

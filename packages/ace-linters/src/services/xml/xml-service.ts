@@ -68,7 +68,7 @@ export class XmlService extends BaseService<XmlServiceOptions> implements Langua
         if (!fullDocument)
             return [];
         const value = fullDocument.getText();
-        if (!/^\s*$/s.test(value)) {
+        if (/^\s*$/s.test(value)) {
             return [];
         }
 
