@@ -7,24 +7,24 @@ import {fileURLToPath} from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const packageDir = __dirname;
+const yamlSchemaValidationDir = path.join(
+    packageDir, "..", "..", "node_modules", "yaml-language-server", "out", "server", "src", "languageservice", "parser",
+    "schemaValidation");
 
 const outputTargets = [
     {
         moduleFactory: "define",
         outDir: "build/src",
         minify: false
-    },
-    {
+    }, {
         moduleFactory: "define",
         outDir: "build/src-min",
         minify: true
-    },
-    {
+    }, {
         moduleFactory: "ace.define",
         outDir: "build/src-noconflict",
         minify: false
-    },
-    {
+    }, {
         moduleFactory: "ace.define",
         outDir: "build/src-min-noconflict",
         minify: true
@@ -42,41 +42,59 @@ var globalObj = typeof globalThis !== "undefined" ? globalThis : self;
 var processShim = globalObj.process = globalObj.process || {};
 processShim.arch = processShim.arch || "x64";
 `.trim()
-    },
-    {
+    }, {
         entry: "src/workers/lua-worker.ts",
         exportName: "LuaWorker",
         className: "Worker",
         moduleId: "ace/mode/lua_worker",
         fileName: "worker-lua.js"
-    },
-    {
+    }, {
         entry: "src/workers/html-worker.ts",
         exportName: "HtmlWorker",
         className: "Worker",
         moduleId: "ace/mode/html_worker",
         fileName: "worker-html.js"
-    },
-    {
+    }, {
         entry: "src/workers/json-worker.ts",
         exportName: "JsonWorker",
         className: "JsonWorker",
         moduleId: "ace/mode/json_worker",
         fileName: "worker-json.js"
-    },
-    {
+    }, {
         entry: "src/workers/css-worker.ts",
         exportName: "CssWorker",
         className: "Worker",
         moduleId: "ace/mode/css_worker",
         fileName: "worker-css.js"
-    },
-    {
+    }, {
         entry: "src/workers/xml-worker.ts",
         exportName: "XmlWorker",
         className: "Worker",
         moduleId: "ace/mode/xml_worker",
         fileName: "worker-xml.js"
+    }, {
+        entry: "src/workers/yaml-worker.ts",
+        exportName: "YamlWorker",
+        className: "YamlWorker",
+        moduleId: "ace/mode/yaml_worker",
+        fileName: "worker-yaml.js",
+        aliases: [
+            {
+                from: /^path$/,
+                to: fileURLToPath(new URL("../../node_modules/path-browserify/index.js", import.meta.url))
+            }, {
+                from: /baseValidator$/,
+                importer: /yaml-language-server[\\/]out[\\/]server[\\/]src[\\/]languageservice[\\/]/,
+                to: fileURLToPath(new URL("./src/workers/yaml-shims/baseValidator.js", import.meta.url)),
+                resolveDir: yamlSchemaValidationDir
+            }, {
+                from: /^vscode-json-languageservice$/,
+                rewrite: () => "vscode-json-languageservice/lib/esm/jsonLanguageService"
+            }, {
+                from: /\/umd\//,
+                rewrite: (importPath) => importPath.replace(/\/umd\//, "/esm/")
+            }
+        ]
     }
 ];
 
@@ -110,10 +128,65 @@ ${normalizedSource.trim()}
 `.trim();
 }
 
-async function bundleWorkerModule(entryFile) {
+function createAliasPlugin(workerConfig) {
+    const aliasEntries = workerConfig.aliases || [];
+
+    return {
+        name: "alias",
+        setup({
+                  onResolve,
+                  resolve,
+                  onLoad
+              }) {
+            for (const aliasEntry of aliasEntries) {
+                onResolve({filter: aliasEntry.from}, ({
+                                                       path: importPath,
+                                                       importer,
+                                                       ...resolveOptions
+                                                   }) => {
+                    if (aliasEntry.importer && !aliasEntry.importer.test(importer || "")) {
+                        return null;
+                    }
+
+                    if (aliasEntry.to) {
+                        if (aliasEntry.resolveDir) {
+                            return {
+                                path: aliasEntry.to,
+                                namespace: "alias-file",
+                                pluginData: {
+                                    resolveDir: aliasEntry.resolveDir
+                                }
+                            };
+                        }
+
+                        return {
+                            path: aliasEntry.to,
+                            external: false,
+                            sideEffects: false
+                        };
+                    }
+
+                    if (aliasEntry.rewrite) {
+                        return resolve(aliasEntry.rewrite(importPath), resolveOptions);
+                    }
+
+                    return null;
+                });
+            }
+
+            onLoad({filter: /.*/, namespace: "alias-file"}, async ({path: loadPath, pluginData}) => ({
+                contents: await fs.readFile(loadPath, "utf8"),
+                loader: "js",
+                resolveDir: pluginData.resolveDir
+            }));
+        }
+    };
+}
+
+async function bundleWorkerModule(workerConfig) {
     const result = await build({
         absWorkingDir: packageDir,
-        entryPoints: [entryFile],
+        entryPoints: [path.join(packageDir, workerConfig.entry)],
         bundle: true,
         write: false,
         format: "iife",
@@ -128,21 +201,23 @@ async function bundleWorkerModule(entryFile) {
         footer: {
             js: `aceLegacyWorkerModule = aceLegacyWorkerModule.default || aceLegacyWorkerModule;`
         },
-        logLevel: "info"
+        logLevel: "info",
+        plugins: aliasEntriesFor(workerConfig).length ? [createAliasPlugin(workerConfig)] : []
     });
 
     return result.outputFiles[0].text;
 }
 
+function aliasEntriesFor(workerConfig) {
+    return workerConfig.aliases || [];
+}
+
 function asciify(text) {
     return text.replace(/[\x00-\x08\x0b\x0c\x0e\x19\x80-\uffff]/g, (char) => {
         const hex = char.charCodeAt(0).toString(16);
-        if (hex.length === 1)
-            return `\\x0${hex}`;
-        if (hex.length === 2)
-            return `\\x${hex}`;
-        if (hex.length === 3)
-            return `\\u0${hex}`;
+        if (hex.length === 1) return `\\x0${hex}`;
+        if (hex.length === 2) return `\\x${hex}`;
+        if (hex.length === 3) return `\\u0${hex}`;
         return `\\u${hex}`;
     });
 }
@@ -187,13 +262,11 @@ const [bootstrap, oopModule, eventEmitterModule] = await Promise.all([
 ]);
 
 for (const workerConfig of workerConfigs) {
-    const entryFile = path.join(packageDir, workerConfig.entry);
-    const bundleCode = await bundleWorkerModule(entryFile);
+    const bundleCode = await bundleWorkerModule(workerConfig);
 
     for (const target of outputTargets) {
         const outfile = await writeWorkerFile(
-            workerConfig, target, bootstrap, bundleCode, oopModule, eventEmitterModule
-        );
+            workerConfig, target, bootstrap, bundleCode, oopModule, eventEmitterModule);
         console.log(`built ${path.relative(packageDir, outfile).replace(/\\/g, "/")}`);
     }
 }

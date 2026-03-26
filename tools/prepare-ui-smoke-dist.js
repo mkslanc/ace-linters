@@ -71,7 +71,7 @@ const packagesToCopy = [
         requiredFiles: [
             path.join("src-noconflict", "worker-php.js"), path.join("src-noconflict", "worker-lua.js"),
             path.join("src-noconflict", "worker-html.js"), path.join("src-noconflict", "worker-json.js"),
-            path.join("src-noconflict", "worker-xml.js")
+            path.join("src-noconflict", "worker-xml.js"), path.join("src-noconflict", "worker-yaml.js")
         ]
     }
 ];

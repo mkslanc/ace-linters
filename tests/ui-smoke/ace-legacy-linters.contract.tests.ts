@@ -9,6 +9,7 @@ import {cssContent} from "./fixtures/css";
 import {lessContent} from "./fixtures/less";
 import {scssContent} from "./fixtures/scss";
 import {xmlContent} from "./fixtures/xml";
+import {yamlLegacyContent} from "./fixtures/yaml-legacy";
 
 describe("ace-legacy-linters UI contract tests", function () {
     this.timeout(40000);
@@ -71,6 +72,11 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "xml",
                 content: xmlContent,
                 label: "XML",
+            },
+            {
+                mode: "yaml",
+                content: yamlLegacyContent,
+                label: "YAML",
             },
         ];
 
