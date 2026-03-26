@@ -1,44 +1,46 @@
 import {Mirror} from "../mirror";
 import {Ace} from "ace-code";
-import {YAMLValidation} from "yaml-language-server/out/server/src/languageservice/services/yamlValidation";
-import {MinTextDocument} from "../vscode-text-document-min";
-import {toAnnotations} from "../utils";
-import {JSONSchemaService} from "vscode-json-languageservice/lib/esm/services/jsonSchemaService";
+import {parseAllDocuments, YAMLError} from "yaml";
 
 export class YamlWorker extends Mirror {
-    service: YAMLValidation;
-    isJson5?: boolean;
-    currentVersion = 0;
 
     constructor(sender) {
         super(sender);
 
         this.setTimeout(500);
-
-        var params = {
-            schemaRequestService: (uri) => {
-                return;
-            },
-            workspaceContext: {
-                resolveRelativePath: (relativePath: string, resource: string) => {
-                    return;
-                }
-            },
-        }
-
-        var schemaService = new JSONSchemaService(params);
-        this.service = new YAMLValidation(schemaService);
     }
 
     async onUpdate() {
         var value = this.doc.getValue();
         var errors: Ace.Annotation[] = [];
-        this.currentVersion++;
-
-        var fullDocument = new MinTextDocument("file:///foo.yaml", "yaml", this.currentVersion, value);
 
         try {
-            errors = toAnnotations(await this.service.doValidation(fullDocument, false));
+            var diagnostics: YAMLError[] = []
+            var yamlAllDocuments = parseAllDocuments(value, {
+                prettyErrors: false
+            });
+            yamlAllDocuments.forEach(doc => {
+                diagnostics.push(...doc.errors, ...doc.warnings);
+            })
+            errors = diagnostics.map((diagnostic) => {
+                var start = diagnostic.linePos?.[0];
+                var row, column;
+                if (start) {
+                    row = start && start.line > 0 ? start.line : 0;
+                    column = start && start.col > 0 ? start.line : 0;
+                } else {
+                    var pos = this.doc.indexToPosition(diagnostic.pos[0]);
+                    row = pos.row;
+                    column = pos.column;
+                }
+
+                return {
+                    row,
+                    column,
+                    text: diagnostic.message,
+                    type: diagnostic.name === "YAMLWarning" ? "warning" : "error"
+                };
+            });
         } catch (e) {
             console.error(e);
         }

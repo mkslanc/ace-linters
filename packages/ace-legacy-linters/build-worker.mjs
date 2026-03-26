@@ -7,9 +7,6 @@ import {fileURLToPath} from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const packageDir = __dirname;
-const yamlSchemaValidationDir = path.join(
-    packageDir, "..", "..", "node_modules", "yaml-language-server", "out", "server", "src", "languageservice", "parser",
-    "schemaValidation");
 
 const outputTargets = [
     {
@@ -82,17 +79,6 @@ processShim.arch = processShim.arch || "x64";
             {
                 from: /^path$/,
                 to: fileURLToPath(new URL("../../node_modules/path-browserify/index.js", import.meta.url))
-            }, {
-                from: /baseValidator$/,
-                importer: /yaml-language-server[\\/]out[\\/]server[\\/]src[\\/]languageservice[\\/]/,
-                to: fileURLToPath(new URL("./src/workers/yaml-shims/baseValidator.js", import.meta.url)),
-                resolveDir: yamlSchemaValidationDir
-            }, {
-                from: /^vscode-json-languageservice$/,
-                rewrite: () => "vscode-json-languageservice/lib/esm/jsonLanguageService"
-            }, {
-                from: /\/umd\//,
-                rewrite: (importPath) => importPath.replace(/\/umd\//, "/esm/")
             }
         ]
     }
@@ -135,30 +121,13 @@ function createAliasPlugin(workerConfig) {
         name: "alias",
         setup({
                   onResolve,
-                  resolve,
-                  onLoad
               }) {
             for (const aliasEntry of aliasEntries) {
                 onResolve({filter: aliasEntry.from}, ({
                                                        path: importPath,
-                                                       importer,
-                                                       ...resolveOptions
+                                                       ..._resolveOptions
                                                    }) => {
-                    if (aliasEntry.importer && !aliasEntry.importer.test(importer || "")) {
-                        return null;
-                    }
-
                     if (aliasEntry.to) {
-                        if (aliasEntry.resolveDir) {
-                            return {
-                                path: aliasEntry.to,
-                                namespace: "alias-file",
-                                pluginData: {
-                                    resolveDir: aliasEntry.resolveDir
-                                }
-                            };
-                        }
-
                         return {
                             path: aliasEntry.to,
                             external: false,
@@ -166,19 +135,9 @@ function createAliasPlugin(workerConfig) {
                         };
                     }
 
-                    if (aliasEntry.rewrite) {
-                        return resolve(aliasEntry.rewrite(importPath), resolveOptions);
-                    }
-
                     return null;
                 });
             }
-
-            onLoad({filter: /.*/, namespace: "alias-file"}, async ({path: loadPath, pluginData}) => ({
-                contents: await fs.readFile(loadPath, "utf8"),
-                loader: "js",
-                resolveDir: pluginData.resolveDir
-            }));
         }
     };
 }
