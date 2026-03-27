@@ -1,22 +1,6 @@
-import {defineConfig, Plugin} from 'vite';
+import {defineConfig} from 'vite';
 import {resolve} from 'path';
-import {nodePolyfills} from 'vite-plugin-node-polyfills';
-
-function umd2Plugin(): Plugin {
-  return {
-    name: 'umd2-global-exports',
-    generateBundle(_options, bundle) {
-      for (const chunk of Object.values(bundle)) {
-        if (chunk.type === 'chunk' && chunk.code) {
-          chunk.code = chunk.code.replace(
-            /factory\((global\d*)\.[\w]+ = \{\}\)/g,
-            'factory($1)'
-          );
-        }
-      }
-    },
-  };
-}
+import {suppressMetaWarningPlugin, umd2Plugin} from "../../tools/vite-helpers";
 
 export default defineConfig({
   build: {
@@ -61,7 +45,6 @@ export default defineConfig({
   },
 
   plugins: [
-    nodePolyfills(),
-    umd2Plugin(),
+    umd2Plugin(), suppressMetaWarningPlugin(),
   ],
 });

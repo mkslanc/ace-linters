@@ -8,6 +8,7 @@ import type {InlineAutocomplete} from "ace-code/src/ext/inline_autocomplete";
 import type {CommandBarTooltip} from "ace-code/src/ext/command_bar";
 import type {CompletionProvider} from "ace-code/src/autocomplete";
 import {Linter} from "eslint";
+import {Ruleset} from "htmlhint/dist/core/types";
 
 export interface LanguageService {
     documents: { [documentUri: string]: TextDocument };
@@ -146,7 +147,7 @@ export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceO
 }
 
 export interface HtmlServiceOptions extends ServiceOptionsWithErrorMessages {
-    validationOptions?: { [option: string]: boolean },
+    validationOptions?: Ruleset,
     formatOptions?: {}
 }
 

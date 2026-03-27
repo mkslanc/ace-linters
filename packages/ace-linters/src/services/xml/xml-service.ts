@@ -8,7 +8,7 @@ import {AttributeValidator, ElementValidator, validate} from "@xml-tools/validat
 
 import {
     issuesToDiagnostic,
-    lexingErrorsToDiagnostic, namespaceValidator,
+    lexingErrorsToDiagnostic,
     parsingErrorsToDiagnostic
 } from "./xml-converters";
 import {TextDocumentItem} from "vscode-languageserver-protocol";
@@ -16,6 +16,7 @@ import {
     LanguageService,
     XmlServiceOptions,
 } from "../../types/language-service";
+import {namespaceValidator} from "./validators";
 
 export class XmlService extends BaseService<XmlServiceOptions> implements LanguageService {
     private $service;
@@ -66,9 +67,13 @@ export class XmlService extends BaseService<XmlServiceOptions> implements Langua
         let fullDocument = this.getDocument(document.uri);
         if (!fullDocument)
             return [];
+        const value = fullDocument.getText();
+        if (/^\s*$/s.test(value)) {
+            return [];
+        }
 
         const {cst, tokenVector, lexErrors, parseErrors} = parse(
-            fullDocument.getText()
+            value
         );
         const xmlDoc = buildAst(cst as DocumentCstNode, tokenVector);
         const constraintsIssues = checkConstraints(xmlDoc as any);

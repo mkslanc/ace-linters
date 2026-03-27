@@ -1,7 +1,8 @@
 {
   "name": "ace-clang-linter",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.2.0",
+  "version": "1.2.2",
+  "license": "MIT",
   "scripts": {
     "clean": "rimraf build",
     "prebuild": "node prebuild.js",
@@ -9,13 +10,15 @@
   },
   "devDependencies": {
     "@wasm-fmt/clang-format": "^21.1.8",
-    "vite": "^6.0.0",
-    "vite-plugin-node-polyfills": "^0.25.0"
+    "vite": "^8.0.0"
   },
   "peerDependencies": {
     "ace-linters": "^2.0.0"
   },
-  "files": ["build", "types"],
+  "files": [
+    "build",
+    "types"
+  ],
   "typesVersions": {
     "*": {
       "build/ace-clang-linter": [

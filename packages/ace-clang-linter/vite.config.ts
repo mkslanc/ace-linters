@@ -1,67 +1,45 @@
-import {defineConfig, Plugin} from 'vite';
+import {defineConfig} from 'vite';
 import {resolve} from 'path';
-import {nodePolyfills} from 'vite-plugin-node-polyfills';
-
-function umd2Plugin(): Plugin {
-  return {
-    name: 'umd2-global-exports',
-    generateBundle(_options, bundle) {
-      for (const chunk of Object.values(bundle)) {
-        if (chunk.type === 'chunk' && chunk.code) {
-          chunk.code = chunk.code.replace(
-            /factory\((global\d*)\.[\w]+ = \{\}\)/g,
-            'factory($1)'
-          );
-        }
-      }
-    },
-  };
-}
+import {suppressMetaWarningPlugin, umd2Plugin} from "../../tools/vite-helpers";
 
 export default defineConfig({
   build: {
-    outDir: 'build',
+    outDir: "build",
     sourcemap: false,
     minify: false,
     lib: {
-      entry: resolve(__dirname, 'src/ace-clang-linter.ts'),
-      name: 'AceClangLinter',
-      formats: ['umd'],
-      fileName: () => 'ace-clang-linter.js',
+      entry: resolve(__dirname, "src/ace-clang-linter.ts"),
+      name: "AceClangLinter",
+      formats: ["umd"],
+      fileName: () => "ace-clang-linter.js",
     },
     rollupOptions: {
-      external: [
-        /^ace-code/,
-        /^ace-builds/,
-      ],
+      external: [/^ace-code/, /^ace-builds/],
       output: {
-        exports: 'named',
+        exports: "named",
         globals: {
-          'ace-code': 'ace',
-          'ace-builds': 'ace',
+          "ace-code": "ace",
+          "ace-builds": "ace",
         },
       },
     },
   },
 
   esbuild: {
-    target: 'es2019',
+    target: "es2019",
   },
 
   optimizeDeps: {
-    exclude: ['@wasm-fmt/clang-format'],
+    exclude: ["@wasm-fmt/clang-format"],
   },
 
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: [".tsx", ".ts", ".js"],
   },
 
   worker: {
-    format: 'es',
+    format: "es",
   },
 
-  plugins: [
-    nodePolyfills(),
-    umd2Plugin(),
-  ],
+  plugins: [umd2Plugin(), suppressMetaWarningPlugin()],
 });
