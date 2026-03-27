@@ -1,6 +1,5 @@
 import {defineConfig, Plugin} from 'vite';
 import {resolve} from 'path';
-import {nodePolyfills} from 'vite-plugin-node-polyfills';
 
 function umd2Plugin(): Plugin {
   return {
@@ -61,7 +60,6 @@ export default defineConfig({
   },
 
   plugins: [
-    nodePolyfills(),
     umd2Plugin(),
   ],
 });
