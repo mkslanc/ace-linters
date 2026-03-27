@@ -1,0 +1,145 @@
+import { t as __commonJSMin } from "./chunk-BLiWRsM1.js";
+import "./useragent-Cm8O_vvb.js";
+import "./dom-BmR1mTSl.js";
+import { t as require_range } from "./range-D2fBS63W.js";
+import { t as require_oop } from "./oop-D6rqnWBm.js";
+import "./lang-B3gWVpaj.js";
+import "./config-D-BhsSyn.js";
+import "./event_emitter-DQJDHkGW.js";
+import "./textmate-7M3qxGeS.js";
+import "./tokenizer-BFeMc3TI.js";
+import { r as require_cstyle, t as require_text } from "./text-x9TxHOMd.js";
+import "./token_iterator-B0gzmLw-.js";
+import { t as require_fold_mode } from "./fold_mode-DLWDk-fx.js";
+import "./cstyle-DX2ORGlO.js";
+import "./javascript_highlight_rules-Bq39j4o6.js";
+import "./matching_brace_outdent-BNxYFHLW.js";
+import "./xml-aNrtpxN-.js";
+import { t as require_javascript } from "./javascript-CNVEwPsW.js";
+import "./css_highlight_rules-BrA4daTy.js";
+import "./css_completions-j9TDmcq8.js";
+import "./css-DLrW6Pji.js";
+import { t as require_css } from "./css-BCtfNldA.js";
+import "./xml_highlight_rules-Ch7nsDP3.js";
+import "./html_highlight_rules-C5s9oMLE.js";
+import "./mixed-sNoniz_T.js";
+import { t as require_html } from "./html-B8wEf2Cx.js";
+import "./sh_highlight_rules-Ch1u_TpC.js";
+import { t as require_sh } from "./sh-BN-OngWc.js";
+import { t as require_markdown_highlight_rules } from "./markdown_highlight_rules-_xQ3EKon.js";
+import { t as require_xml } from "./xml-yrgHcdIT.js";
+//#region node_modules/ace-code/src/mode/folding/markdown.js
+var require_markdown$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
+	var oop = require_oop();
+	var BaseFoldMode = require_fold_mode().FoldMode;
+	var Range = require_range().Range;
+	var FoldMode = exports.FoldMode = function() {};
+	oop.inherits(FoldMode, BaseFoldMode);
+	(function() {
+		this.foldingStartMarker = /^(?:[=-]+\s*$|#{1,6} |`{3})/;
+		this.getFoldWidget = function(session, foldStyle, row) {
+			var line = session.getLine(row);
+			if (!this.foldingStartMarker.test(line)) return "";
+			if (line[0] == "`") {
+				if (session.bgTokenizer.getState(row) == "start") return "end";
+				return "start";
+			}
+			return "start";
+		};
+		this.getFoldWidgetRange = function(session, foldStyle, row) {
+			var line = session.getLine(row);
+			var startColumn = line.length;
+			var maxRow = session.getLength();
+			var startRow = row;
+			var endRow = row;
+			if (!line.match(this.foldingStartMarker)) return;
+			if (line[0] == "`") if (session.bgTokenizer.getState(row) !== "start") {
+				while (++row < maxRow) {
+					line = session.getLine(row);
+					if (line[0] == "`" & line.substring(0, 3) == "```") break;
+				}
+				return new Range(startRow, startColumn, row, 0);
+			} else {
+				while (row-- > 0) {
+					line = session.getLine(row);
+					if (line[0] == "`" & line.substring(0, 3) == "```") break;
+				}
+				return new Range(row, line.length, startRow, 0);
+			}
+			var token;
+			function isHeading(row) {
+				token = session.getTokens(row)[0];
+				return token && token.type.lastIndexOf(heading, 0) === 0;
+			}
+			var heading = "markup.heading";
+			function getLevel() {
+				var ch = token.value[0];
+				if (ch == "=") return 6;
+				if (ch == "-") return 5;
+				return 7 - token.value.search(/[^#]|$/);
+			}
+			if (isHeading(row)) {
+				var startHeadingLevel = getLevel();
+				while (++row < maxRow) {
+					if (!isHeading(row)) continue;
+					if (getLevel() >= startHeadingLevel) break;
+				}
+				endRow = row - (!token || ["=", "-"].indexOf(token.value[0]) == -1 ? 1 : 2);
+				if (endRow > startRow) while (endRow > startRow && /^\s*$/.test(session.getLine(endRow))) endRow--;
+				if (endRow > startRow) {
+					var endColumn = session.getLine(endRow).length;
+					return new Range(startRow, startColumn, endRow, endColumn);
+				}
+			}
+		};
+	}).call(FoldMode.prototype);
+}));
+//#endregion
+//#region node_modules/ace-code/src/mode/markdown.js
+var require_markdown = /* @__PURE__ */ __commonJSMin(((exports) => {
+	var oop = require_oop();
+	var CstyleBehaviour = require_cstyle().CstyleBehaviour;
+	var TextMode = require_text().Mode;
+	var MarkdownHighlightRules = require_markdown_highlight_rules().MarkdownHighlightRules;
+	var MarkdownFoldMode = require_markdown$1().FoldMode;
+	var Mode = function() {
+		this.HighlightRules = MarkdownHighlightRules;
+		this.createModeDelegates({
+			javascript: require_javascript().Mode,
+			html: require_html().Mode,
+			bash: require_sh().Mode,
+			sh: require_sh().Mode,
+			xml: require_xml().Mode,
+			css: require_css().Mode
+		});
+		this.foldingRules = new MarkdownFoldMode();
+		this.$behaviour = new CstyleBehaviour({ braces: true });
+	};
+	oop.inherits(Mode, TextMode);
+	(function() {
+		this.type = "text";
+		this.blockComment = {
+			start: "<!--",
+			end: "-->"
+		};
+		this.$quotes = {
+			"\"": "\"",
+			"`": "`"
+		};
+		this.getNextLineIndent = function(state, line, tab) {
+			if (state == "listblock") {
+				var match = /^(\s*)(?:([-+*])|(\d+)\.)(\s+)/.exec(line);
+				if (!match) return "";
+				var marker = match[2];
+				if (!marker) marker = parseInt(match[3], 10) + 1 + ".";
+				return match[1] + marker + match[4];
+			} else return this.$getIndent(line);
+		};
+		this.$id = "ace/mode/markdown";
+		this.snippetFileId = "ace/snippets/markdown";
+	}).call(Mode.prototype);
+	exports.Mode = Mode;
+}));
+//#endregion
+export default require_markdown();
+export { require_markdown as t };

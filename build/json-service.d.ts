@@ -229,6 +229,8 @@ export interface JSONSchema {
 	patternErrorMessage?: string;
 	deprecationMessage?: string;
 	enumDescriptions?: string[];
+	enumSortTexts?: string[];
+	enumDetails?: string[];
 	markdownEnumDescriptions?: string[];
 	markdownDescription?: string;
 	doNotSuggest?: boolean;

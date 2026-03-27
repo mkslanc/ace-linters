@@ -3,6 +3,7 @@ import { CompletionProvider } from 'ace-code/src/autocomplete';
 import { CommandBarTooltip } from 'ace-code/src/ext/command_bar';
 import { InlineAutocomplete } from 'ace-code/src/ext/inline_autocomplete';
 import { Linter } from 'eslint';
+import { Ruleset } from 'htmlhint/dist/core/types';
 import * as lsp from 'vscode-languageserver-protocol';
 import { CompletionItemKind, TextDocumentIdentifier, TextDocumentItem } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -494,9 +495,7 @@ export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceO
 	formatOptions?: ts.FormatCodeSettings;
 }
 export interface HtmlServiceOptions extends ServiceOptionsWithErrorMessages {
-	validationOptions?: {
-		[option: string]: boolean;
-	};
+	validationOptions?: Ruleset;
 	formatOptions?: {};
 }
 export interface XmlServiceOptions extends ServiceOptionsWithErrorMessages {

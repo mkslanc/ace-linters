@@ -3,6 +3,51 @@ import { LSPAny, TextDocumentIdentifier, TextDocumentItem } from 'vscode-languag
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { Command, CompletionItem, CompletionItemKind, CompletionItemTag, CompletionList, Diagnostic, DocumentHighlight, DocumentHighlightKind, DocumentUri, FoldingRangeKind, FormattingOptions, Hover, InsertReplaceEdit, InsertTextFormat, InsertTextMode, Location as Location$1, MarkedString, MarkupContent, MarkupKind, Position, Range as Range$1, SignatureHelp, SymbolKind, TextEdit, WorkspaceEdit } from 'vscode-languageserver-types';
 
+export interface Ruleset {
+	"alt-require"?: boolean;
+	"attr-lowercase"?: boolean | Array<string | RegExp>;
+	"attr-no-duplication"?: boolean;
+	"attr-no-unnecessary-whitespace"?: boolean;
+	"attr-sorted"?: boolean;
+	"attr-unsafe-chars"?: boolean;
+	"attr-value-double-quotes"?: boolean;
+	"attr-value-not-empty"?: boolean;
+	"attr-value-single-quotes"?: boolean;
+	"attr-value-no-duplication"?: boolean;
+	"attr-whitespace"?: boolean;
+	"doctype-first"?: boolean;
+	"doctype-html5"?: boolean;
+	"empty-tag-not-self-closed"?: boolean;
+	"form-method-require"?: boolean;
+	"head-script-disabled"?: boolean | "allow-non-blocking";
+	"href-abs-or-rel"?: "abs" | "rel";
+	"id-class-ad-disabled"?: boolean;
+	"id-class-value"?: "underline" | "dash" | "hump" | {
+		regId: RegExp;
+		message: string;
+	};
+	"id-unique"?: boolean;
+	"inline-script-disabled"?: boolean;
+	"inline-style-disabled"?: boolean;
+	"input-requires-label"?: boolean;
+	"link-rel-canonical-require"?: boolean;
+	"main-require"?: boolean;
+	"script-disabled"?: boolean;
+	"space-tab-mixed-disabled"?: boolean | "space" | "space1" | "space2" | "space3" | "space4" | "space5" | "space6" | "space7" | "space8" | "tab";
+	"spec-char-escape"?: boolean;
+	"src-not-empty"?: boolean;
+	"style-disabled"?: boolean;
+	"tag-no-obsolete"?: boolean;
+	"tag-pair"?: boolean;
+	"tag-self-close"?: boolean;
+	"tagname-lowercase"?: boolean | Array<string | RegExp>;
+	"tagname-specialchars"?: boolean;
+	"tags-check"?: {
+		[tagName: string]: Record<string, unknown>;
+	};
+	"title-require"?: boolean;
+	[ruleId: string]: unknown;
+}
 export interface LanguageService {
 	documents: {
 		[documentUri: string]: TextDocument;
@@ -49,9 +94,7 @@ export interface ServiceOptionsWithErrorMessages {
 	errorMessagesToTreatAsInfo?: RegExp[];
 }
 export interface HtmlServiceOptions extends ServiceOptionsWithErrorMessages {
-	validationOptions?: {
-		[option: string]: boolean;
-	};
+	validationOptions?: Ruleset;
 	formatOptions?: {};
 }
 export type ServiceFeatures = {
@@ -167,23 +210,7 @@ declare abstract class BaseService<OptionsType extends ServiceOptions = ServiceO
 }
 export declare class HtmlService extends BaseService<HtmlServiceOptions> implements LanguageService {
 	private $service;
-	defaultValidationOptions: {
-		"attr-no-duplication": boolean;
-		"body-no-duplicates": boolean;
-		"head-body-descendents-html": boolean;
-		"head-no-duplicates": boolean;
-		"head-valid-children": boolean;
-		"html-no-duplicates": boolean;
-		"html-root-node": boolean;
-		"html-valid-children": boolean;
-		"html-valid-children-order": boolean;
-		"img-src-required": boolean;
-		"invalid-attribute-char": boolean;
-		"nested-paragraphs": boolean;
-		"spec-char-escape": boolean;
-		"src-not-empty": boolean;
-		"tag-pair": boolean;
-	};
+	defaultValidationOptions: Ruleset;
 	$defaultFormatOptions: HTMLFormatConfiguration;
 	serviceCapabilities: {
 		completionProvider: {

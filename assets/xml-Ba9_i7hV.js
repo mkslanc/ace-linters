@@ -1,0 +1,15 @@
+import "./useragent-Cm8O_vvb.js";
+import "./dom-BmR1mTSl.js";
+import "./range-D2fBS63W.js";
+import "./lang-B3gWVpaj.js";
+import "./config-D-BhsSyn.js";
+import "./event_emitter-DQJDHkGW.js";
+import "./textmate-7M3qxGeS.js";
+import "./tokenizer-BFeMc3TI.js";
+import "./text-x9TxHOMd.js";
+import "./token_iterator-B0gzmLw-.js";
+import "./fold_mode-DLWDk-fx.js";
+import "./xml-aNrtpxN-.js";
+import "./xml_highlight_rules-Ch7nsDP3.js";
+import { t as require_xml } from "./xml-yrgHcdIT.js";
+export default require_xml();
