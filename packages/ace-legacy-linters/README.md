@@ -1,6 +1,6 @@
 # ace-legacy-linters
 
-This package contains drop-in replacements for outdated Ace Editor worker files.
+This package contains drop-in replacements for legacy Ace Editor worker files.
 
 Its purpose is simple:
 - build standalone worker scripts that can replace legacy Ace workers

@@ -1,7 +1,8 @@
 {
     "name": "ace-legacy-linters",
+    "license": "MIT",
     "version": "1.0.0",
-    "description": "",
+    "description": "drop-in replacements for legacy Ace Editor worker files",
     "scripts": {
         "build:css-diagnostics-data": "node generate-css-diagnostics-data.js",
         "build": "npm run build:css-diagnostics-data && node build-worker.mjs"
