@@ -1,12 +1,28 @@
 import {analyze, ScopeManager} from "eslint-scope";
-import {getAnnotations} from "./no-unused-vars";
+import * as unusedVars from "./no-unused-vars";
+import * as undef from "./no-undef";
 import {Ace} from "ace-code";
 
 export interface JsOptions {
     /**
+     * Rule to disallow unused variables.
      * @default true
      */
     "no-unused-vars"?: boolean
+    /**
+     * Rule to disallow the use of undeclared variables
+     * @default true
+     */
+    "no-undef"?: boolean
+    /**
+     * Indicate the mode the code should be parsed in. Can be one of "script", "commonjs", "module", or "unambiguous".
+     * "unambiguous" will make @babel/parser attempt to guess, based on the presence of ES6 import or export statements.
+     * Files with ES6 imports and exports are considered "module" and are otherwise "script".
+     *
+     * Use "commonjs" to parse code that is intended to be run in a CommonJS environment such as Node.js.
+     * @default "unambiguous"
+     */
+    sourceType?: "script" | "commonjs" | "module" | "unambiguous"
 }
 
 export class ScopesAnalyzer {
@@ -27,12 +43,17 @@ export class ScopesAnalyzer {
 
         this.scopeManager = analyze(program, {
             ecmaVersion: 2024,
-            sourceType: "module"
+            sourceType: program.sourceType,
         });
+        var scope = this.getScope(this.scopeManager.scopes[0]);
         if (this.options["no-unused-vars"]) {
             if (this.scopeManager.scopes && this.scopeManager.scopes.length > 0) {
-                var scope = this.getScope(this.scopeManager.scopes[0]);
-                annotations = [...getAnnotations(scope, this.scopeManager)];
+                annotations = [...annotations, ...unusedVars.getAnnotations(scope, this.scopeManager)];
+            }
+        }
+        if (this.options["no-undef"]) {
+            if (this.scopeManager.scopes && this.scopeManager.scopes.length > 0) {
+                annotations = [...annotations, ...undef.getAnnotations(scope, this.scopeManager)];
             }
         }
 

@@ -18,6 +18,7 @@ Currently this package replaces these Ace workers:
 - `worker-css.js`
 - `worker-xml.js`
 - `worker-yaml.js`
+- `worker-javascript.js`
 
 This package is not a general-purpose language service layer. It is only for compatibility replacements of legacy Ace
 workers.

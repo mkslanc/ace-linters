@@ -80,3 +80,13 @@ export function getUpperFunction(node) {
 export function isLogicalAssignmentOperator(operator) {
     return LOGICAL_ASSIGNMENT_OPERATORS.has(operator);
 }
+
+export function interpolate(text, data) {
+    if (!data) {
+        return text;
+    }
+    return text.replace(/\{\{([^{}]+)\}\}/g, (_, name) => {
+        name = name.trim();
+        return name in data ? String(data[name]) : `{{${name}}}`;
+    });
+}

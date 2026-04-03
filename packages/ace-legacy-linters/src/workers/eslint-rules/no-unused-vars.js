@@ -525,19 +525,14 @@ function toUnusedVarAnnotation(unusedVar) {
     return {
         row: node.loc.start.line - 1,
         column: node.loc.start.column,
-        text: interpolate(UNUSED_VAR_MESSAGE, data),
-        type: "warning"
+        text: astUtils.interpolate(UNUSED_VAR_MESSAGE, data),
+        type: "info"
     };
 }
 
 const UNUSED_VAR_MESSAGE = "'{{varName}}' is {{action}} but never used{{additional}}.";
 
-function interpolate(text, data) {
-    return text.replace(/\{\{([^{}]+)\}\}/g, (_, name) => {
-        name = name.trim();
-        return name in data ? String(data[name]) : `{{${name}}}`;
-    });
-}
+
 
 /**
  * Convert found unused variables into ace annotations

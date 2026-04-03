@@ -16,7 +16,9 @@ export class JavaScriptWorker extends Mirror {
 
     setOptions(options?: JsOptions) {
         this.options = options || {
-            "no-unused-vars": true
+            "no-unused-vars": true,
+            "no-undef": true,
+            sourceType: "unambiguous"
         };
         if (this.analyzer) {
             this.analyzer.setOptions(this.options);
@@ -29,7 +31,7 @@ export class JavaScriptWorker extends Mirror {
         let ast;
         try {
             ast = parse(value, {
-                sourceType: "module",
+                sourceType: this.options.sourceType,
                 errorRecovery: true,
                 plugins: ["estree"],
                 ranges: true,

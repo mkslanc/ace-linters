@@ -5,7 +5,9 @@
     "description": "drop-in replacements for legacy Ace Editor worker files",
     "scripts": {
         "build:css-diagnostics-data": "node generate-css-diagnostics-data.js",
-        "build": "npm run build:css-diagnostics-data && node build-worker.mjs"
+        "build": "npm run build:css-diagnostics-data && node build-worker.mjs",
+        "test:unit": "mocha --config .mocharc.js --exit",
+        "test": "npm run test:unit"
     },
     "repository": {
         "type": "git",
@@ -24,6 +26,8 @@
         "@xml-tools/simple-schema": "^3.0.5",
         "yaml": "^2.8.3",
         "@babel/parser": "^7.29.2",
-        "eslint-scope": "^9.1.2"
+        "eslint-scope": "^9.1.2",
+        "chai": "^4.3.7",
+        "mocha": "^10.2.0"
     }
 }
