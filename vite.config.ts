@@ -3,6 +3,78 @@ import {resolve} from 'path';
 import {readFileSync, readdirSync, writeFileSync, rmSync, existsSync} from 'fs';
 import {viteStaticCopy} from 'vite-plugin-static-copy';
 import {nodePolyfills} from "vite-plugin-node-polyfills";
+import {build as esbuild} from "esbuild";
+
+const aceLegacyWorkerDevUrl = "/@ace-legacy-linters/worker-javascript.js";
+const aceLegacyWorkerBootstrapPath = resolve(__dirname, "packages/ace-legacy-linters/src/worker.js");
+const aceLegacyWorkerEntryPath = resolve(__dirname, "packages/ace-legacy-linters/src/workers/javascript-worker.ts");
+const aceLegacyWorkerSourceDir = resolve(__dirname, "packages/ace-legacy-linters/src");
+const aceOopSourcePath = resolve(__dirname, "node_modules/ace-code/src/lib/oop.js");
+const aceEventEmitterSourcePath = resolve(__dirname, "node_modules/ace-code/src/lib/event_emitter.js");
+
+function wrapAceCodeModule(moduleFactory: string, moduleId: string, source: string) {
+    const normalizedSource = source
+        .replace(/^\uFEFF?/, "")
+        .replace(/^"use strict";\s*/, "");
+
+    return `
+${moduleFactory}(${JSON.stringify(moduleId)}, [], function(require, exports, module) {
+"use strict";
+${normalizedSource.trim()}
+});
+`.trim();
+}
+
+function createAceLegacyWorkerModule(bundleCode: string) {
+    return `
+ace.define("ace/mode/javascript_worker", [], function(require, exports, module) {
+"use strict";
+var define = undefined;
+${bundleCode}
+exports.JavaScriptWorker = aceLegacyWorkerModule.JavaScriptWorker;
+});
+`.trim();
+}
+
+async function buildAceLegacyJavascriptWorker() {
+    const [bootstrap, oopModule, eventEmitterModule, bundledWorker] = await Promise.all([
+        Promise.resolve(readFileSync(aceLegacyWorkerBootstrapPath, "utf-8")),
+        Promise.resolve(readFileSync(aceOopSourcePath, "utf-8")),
+        Promise.resolve(readFileSync(aceEventEmitterSourcePath, "utf-8")),
+        esbuild({
+            entryPoints: [aceLegacyWorkerEntryPath],
+            bundle: true,
+            write: false,
+            format: "iife",
+            globalName: "aceLegacyWorkerModule",
+            platform: "browser",
+            target: "es2019",
+            sourcemap: false,
+            minify: false,
+            metafile: true,
+            banner: {
+                js: "var aceLegacyWorkerModule;"
+            },
+            footer: {
+                js: "aceLegacyWorkerModule = aceLegacyWorkerModule.default || aceLegacyWorkerModule;"
+            },
+        }),
+    ]);
+
+    return {
+        code: [
+            bootstrap.trimEnd(),
+            "",
+            wrapAceCodeModule("ace.define", "ace/lib/oop", oopModule),
+            "",
+            wrapAceCodeModule("ace.define", "ace/lib/event_emitter", eventEmitterModule),
+            "",
+            createAceLegacyWorkerModule(bundledWorker.outputFiles[0].text),
+            "",
+        ].join("\n"),
+        inputs: Object.keys(bundledWorker.metafile?.inputs ?? {}),
+    };
+}
 
 // Plugin to handle .rs files as raw text (replaces webpack raw-loader)
 function rawLoader(extensions: string[]): Plugin {
@@ -64,6 +136,48 @@ function flattenHtmlOutput(): Plugin {
     };
 }
 
+function aceLegacyWorkerDevPlugin(): Plugin {
+    const watchedPaths = [
+        aceLegacyWorkerBootstrapPath,
+        aceOopSourcePath,
+        aceEventEmitterSourcePath,
+        aceLegacyWorkerSourceDir,
+    ];
+
+    return {
+        name: "vite-plugin-ace-legacy-worker-dev",
+        configureServer(server) {
+            server.watcher.add(watchedPaths);
+            server.watcher.on("change", (file) => {
+                if (
+                    file.startsWith(aceLegacyWorkerSourceDir) ||
+                    file === aceLegacyWorkerBootstrapPath ||
+                    file === aceOopSourcePath ||
+                    file === aceEventEmitterSourcePath
+                ) {
+                    server.ws.send({type: "full-reload"});
+                }
+            });
+
+            server.middlewares.use(async (req, res, next) => {
+                if (req.url !== aceLegacyWorkerDevUrl) {
+                    next();
+                    return;
+                }
+
+                try {
+                    const {code, inputs} = await buildAceLegacyJavascriptWorker();
+                    server.watcher.add(inputs);
+                    res.setHeader("Content-Type", "application/javascript");
+                    res.end(code);
+                } catch (error) {
+                    next(error as Error);
+                }
+            });
+        },
+    };
+}
+
 export default defineConfig(({command}) => {
     const useSourceAliases = command === 'serve';
 
@@ -86,6 +200,7 @@ export default defineConfig(({command}) => {
                     multiprovider: resolve(__dirname, 'packages/demo/multiprovider.html'),
                     svelte: resolve(__dirname, 'packages/demo/svelte.html'),
                     change_mode: resolve(__dirname, 'packages/demo/change_mode.html'),
+                    ace_legacy_linters: resolve(__dirname, 'packages/demo/ace-legacy-linters.html'),
                     'lsp-ai': resolve(__dirname, 'packages/demo/lsp-ai.html'),
                     'file-api-websockets': resolve(__dirname, 'packages/demo/file-api-websockets.html'),
                     'pylsp-websocket': resolve(__dirname, 'packages/demo/pylsp-websocket.html'),
@@ -119,6 +234,7 @@ export default defineConfig(({command}) => {
             devServerRedirect(),
             rawLoader(['.rs']),
             flattenHtmlOutput(),
+            aceLegacyWorkerDevPlugin(),
             nodePolyfills({
                 include: ['buffer', 'process', 'util', 'stream', 'path', 'events'],
                 globals: {
@@ -135,6 +251,10 @@ export default defineConfig(({command}) => {
                     {
                         src: 'packages/ace-linters/build/*',
                         dest: 'build',
+                    },
+                    {
+                        src: 'packages/ace-legacy-linters/build/src-noconflict/*',
+                        dest: 'ace-legacy-linters/src-noconflict',
                     }
                 ],
             }),
@@ -236,6 +356,10 @@ export default defineConfig(({command}) => {
                 {
                     find: /^ace-spell-check\/build\/(.*)$/,
                     replacement: resolve(__dirname, 'packages/ace-spell-check/src/$1.ts')
+                },
+                {
+                    find: /^ace-legacy-linters\/src\/(.*)$/,
+                    replacement: resolve(__dirname, 'packages/ace-legacy-linters/src/$1')
                 },
             ] : [],
         },
