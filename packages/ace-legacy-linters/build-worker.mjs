@@ -81,6 +81,12 @@ processShim.arch = processShim.arch || "x64";
                 to: fileURLToPath(new URL("../../node_modules/path-browserify/index.js", import.meta.url))
             }
         ]
+    }, {
+        entry: "src/workers/javascript-worker.ts",
+        exportName: "JavaScriptWorker",
+        className: "JavaScriptWorker",
+        moduleId: "ace/mode/javascript_worker",
+        fileName: "worker-javascript.js"
     }
 ];
 
