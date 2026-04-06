@@ -43,6 +43,7 @@ export function createUiHarness() {
     async function openScenario(scenarioName: string, query = "") {
         clearConsoleErrors();
         page.removeAllListeners("console");
+        page.removeAllListeners("error");
         page.removeAllListeners("pageerror");
 
         page.on("console", (msg) => {
@@ -50,6 +51,10 @@ export function createUiHarness() {
                 consoleErrors.push(msg.text());
             }
         });
+        page.on("error", (error) => {
+            consoleErrors.push(error.message);
+        });
+
         page.on("pageerror", (error) => {
             consoleErrors.push(error.message);
         });

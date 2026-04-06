@@ -10,4 +10,6 @@ export interface UiTestFlags {
     formatResponseReceived: boolean;
     formatHasEdits: boolean;
     ready?: boolean;
+    workerReady?: boolean;
+    hasAnnotations?: boolean;
 }

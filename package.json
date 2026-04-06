@@ -1,12 +1,12 @@
 {
   "name": "ace-linters-root",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && vite build",
     "start-dev": "vite",
     "prepare:ui-smoke": "node tools/prepare-ui-smoke-dist.js",
-    "start-test-server:ui-smoke": "npm run prepare:ui-smoke && http-server --cors='*' tests/ui-smoke/dist",
+    "start-test-server:ui-smoke": "npm run prepare:ui-smoke && http-server --cors='*' tests/ui-smoke/dist -c-1",
     "test:ui:smoke": "mocha --exit"
   },
   "dependencies": {
