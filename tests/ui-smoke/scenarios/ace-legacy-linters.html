@@ -84,6 +84,25 @@
             return worker;
         };
     });
+    ace.config.loadModule("ace/mode/jsx", function (jsxModeModule) { //TODO: remove when new version published
+        const JsxMode = jsxModeModule && jsxModeModule.Mode;
+        if (!JsxMode) {
+            return;
+        }
+
+        const WorkerClient = ace.require("ace/worker/worker_client").WorkerClient;
+        JsxMode.prototype.createWorker = function (session) {
+            const worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
+            worker.attachToDocument(session.getDocument());
+            worker.on("annotate", function (e) {
+                session.setAnnotations(e.data);
+            });
+            worker.on("terminate", function () {
+                session.clearAnnotations();
+            });
+            return worker;
+        };
+    });
     ["less", "scss"].forEach(function (modeName) { //TODO: remove when new version published
         ace.config.loadModule("ace/mode/" + modeName, function (modeModule) {
             const ModeCtor = modeModule && modeModule.Mode;

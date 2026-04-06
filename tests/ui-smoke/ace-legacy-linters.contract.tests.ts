@@ -11,6 +11,7 @@ import {scssContent} from "./fixtures/scss";
 import {xmlContent} from "./fixtures/xml";
 import {yamlContent} from "./fixtures/yaml";
 import {javascriptContent} from "./fixtures/javascript";
+import {jsxContent} from "./fixtures/jsx";
 
 describe("ace-legacy-linters UI contract tests", function () {
     this.timeout(40000);
@@ -83,6 +84,11 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "javascript",
                 content: javascriptContent,
                 label: "JavaScript",
+            },
+            {
+                mode: "jsx",
+                content: jsxContent,
+                label: "JSX",
             },
         ];
 

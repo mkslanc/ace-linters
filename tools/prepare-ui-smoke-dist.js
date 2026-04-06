@@ -86,8 +86,8 @@ const aceAssetsToCopy = [
 ];
 const aceModeFilesToCopy = [
     "mode-typescript.js", "mode-json.js", "mode-json5.js", "mode-css.js", "mode-html.js", "mode-yaml.js", "mode-php.js",
-    "mode-xml.js", "mode-javascript.js", "mode-lua.js", "mode-less.js", "mode-scss.js", "mode-c_cpp.js", "mode-dart.js",
-    "mode-golang.js", "mode-python.js", "mode-sql.js", "mode-mysql.js", "mode-pgsql.js", "mode-zig.js"
+    "mode-xml.js", "mode-javascript.js", "mode-jsx.js", "mode-lua.js", "mode-less.js", "mode-scss.js", "mode-c_cpp.js",
+    "mode-dart.js", "mode-golang.js", "mode-python.js", "mode-sql.js", "mode-mysql.js", "mode-pgsql.js", "mode-zig.js"
 ];
 
 function assertPathExists(targetPath, message) {
