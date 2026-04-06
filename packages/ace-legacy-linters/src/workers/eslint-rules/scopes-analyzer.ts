@@ -22,7 +22,12 @@ export interface JsOptions {
      * Use "commonjs" to parse code that is intended to be run in a CommonJS environment such as Node.js.
      * @default "unambiguous"
      */
-    sourceType?: "script" | "commonjs" | "module" | "unambiguous"
+    sourceType?: "script" | "commonjs" | "module" | "unambiguous",
+    /**
+     * to parse jsx or not
+     * @default true
+     */
+    jsx?: boolean
 }
 
 export class ScopesAnalyzer {
@@ -44,6 +49,7 @@ export class ScopesAnalyzer {
         this.scopeManager = analyze(program, {
             ecmaVersion: 2024,
             sourceType: program.sourceType,
+            jsx: this.options.jsx,
         });
         var scope = this.getScope(this.scopeManager.scopes[0]);
         if (this.options["no-unused-vars"]) {
@@ -88,7 +94,12 @@ function attachParents(node: any, parent: any = null): void {
         return;
     }
 
-    node.parent = parent;
+    Object.defineProperty(node, "parent", {
+        value: parent,
+        writable: true,
+        configurable: true,
+        enumerable: false,
+    });
 
     for (const key of Object.keys(node)) {
         if (key === "parent") {
@@ -108,4 +119,3 @@ function attachParents(node: any, parent: any = null): void {
         }
     }
 }
-

@@ -18,7 +18,8 @@ export class JavaScriptWorker extends Mirror {
         this.options = options || {
             "no-unused-vars": true,
             "no-undef": true,
-            sourceType: "unambiguous"
+            sourceType: "unambiguous",
+            jsx: true
         };
         if (this.analyzer) {
             this.analyzer.setOptions(this.options);
@@ -30,10 +31,14 @@ export class JavaScriptWorker extends Mirror {
         var errors: Ace.Annotation[] = [];
         let ast;
         try {
+            var plugins = ["estree"]
+            if (this.options.jsx) {
+                plugins.push("jsx");
+            }
             ast = parse(value, {
                 sourceType: this.options.sourceType,
                 errorRecovery: true,
-                plugins: ["estree"],
+                plugins: plugins as any,
                 ranges: true,
                 strictMode: true,
                 allowReturnOutsideFunction: true,

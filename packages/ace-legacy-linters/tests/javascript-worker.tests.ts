@@ -116,6 +116,15 @@ describe("JavaScriptWorker", () => {
             expect(hasAnnotationForVariable(second, "info", "foo", /never used/i)).to.equal(false);
             expect(hasAnnotationForVariable(second, "warning", "bar", /not defined/i)).to.equal(true);
         });
+
+        it("handles jsx fragments without overflowing analyze", () => {
+            const annotations = annotate("const View = <></>; const foo = bar;");
+
+            expect(errorTexts(annotations)).to.deep.equal([]);
+            expect(hasAnnotationForVariable(annotations, "info", "View", /never used/i)).to.equal(true);
+            expect(hasAnnotationForVariable(annotations, "info", "foo", /never used/i)).to.equal(true);
+            expect(hasAnnotationForVariable(annotations, "warning", "bar", /not defined/i)).to.equal(true);
+        });
     });
 
     describe("parser errors", () => {
