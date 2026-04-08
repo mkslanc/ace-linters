@@ -27,7 +27,7 @@ import { i as init_esm_resolver, r as esm_resolver_exports, t as addFormatComman
 import "./snippets-BNjR0AXO.js";
 import { i as require_popup } from "./autocomplete-Yq6Wywy-.js";
 import { t as require_language_tools } from "./language_tools-B8HNeNpe.js";
-import { t as require_ace_linters } from "./ace-linters-NEkPc2yi.js";
+import { t as require_ace_linters } from "./ace-linters-Di0e9VKI.js";
 import { t as require_modelist } from "./modelist-rRWjg926.js";
 //#endregion
 //#region packages/demo/file-api-websockets/client.ts

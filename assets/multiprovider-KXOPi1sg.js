@@ -25,7 +25,7 @@ import { i as init_esm_resolver, n as createEditorWithLSP, t as addFormatCommand
 import "./snippets-BNjR0AXO.js";
 import "./autocomplete-Yq6Wywy-.js";
 import { t as require_language_tools } from "./language_tools-B8HNeNpe.js";
-import { t as require_ace_linters } from "./ace-linters-NEkPc2yi.js";
+import { t as require_ace_linters } from "./ace-linters-Di0e9VKI.js";
 import { t as jsContent } from "./javascript-example-B39awIjT.js";
 //#region packages/demo/multiprovider/demo.ts
 init_esm_resolver();

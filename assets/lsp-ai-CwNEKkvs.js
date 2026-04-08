@@ -28,7 +28,7 @@ import "./snippets-BNjR0AXO.js";
 import { t as require_autocomplete } from "./autocomplete-Yq6Wywy-.js";
 import "./language_tools-B8HNeNpe.js";
 import { t as jsContent } from "./javascript-example-B39awIjT.js";
-import { t as require_ace_language_client } from "./ace-language-client-BXdpRlYb.js";
+import { t as require_ace_language_client } from "./ace-language-client-DtZhfteA.js";
 import "./command_bar-D9DESsE0.js";
 import { t as require_inline_autocomplete } from "./inline_autocomplete-BD6zzG2z.js";
 //#region packages/demo/websockets-lsp-ai/client.ts

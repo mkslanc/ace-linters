@@ -27,7 +27,7 @@ import { a as __vitePreload, i as init_esm_resolver, n as createEditorWithLSP, o
 import "./snippets-BNjR0AXO.js";
 import "./autocomplete-Yq6Wywy-.js";
 import "./language_tools-B8HNeNpe.js";
-import { t as require_ace_language_client } from "./ace-language-client-BXdpRlYb.js";
+import { t as require_ace_language_client } from "./ace-language-client-DtZhfteA.js";
 //#region packages/demo/docs-example/svelte-example.js
 var import_ace_language_client = require_ace_language_client();
 init_esm_resolver();

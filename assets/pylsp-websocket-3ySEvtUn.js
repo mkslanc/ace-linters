@@ -27,59 +27,29 @@ import { a as __vitePreload, i as init_esm_resolver, n as createEditorWithLSP, o
 import "./snippets-BNjR0AXO.js";
 import "./autocomplete-Yq6Wywy-.js";
 import "./language_tools-B8HNeNpe.js";
-import { t as require_ace_language_client } from "./ace-language-client-BXdpRlYb.js";
-//#region packages/demo/docs-example/rust-example.js
-var import_ace_language_client = require_ace_language_client();
+import { t as typescriptContent } from "./typescript-example-BPagcZxQ.js";
+import { t as require_ace_language_client } from "./ace-language-client-DtZhfteA.js";
+//#region packages/demo/websockets-pylsp/client.ts
 init_esm_resolver();
+var import_ace_language_client = require_ace_language_client();
 init_preload_helper();
-var rustContent = `
-use std::ops::Range;
-
-fn gav(x: i32, y: i32) -> i64 {
-    (x - y) * (x + y)
-}
-
-fn main() {
-    let num = 5;
-    let a = vec![1, 2, 3];
-    let b = Some(2);
-    let c = None;
-    let d = Range { start: 1, end: num };
-    let e = 1..num;
-    let f = "sssss".to_string();
-    for a in d {
-        for b in e {
-            let c = gav(gav(a, b), a);
-            assert_eq!(gav(a, b), a * a - b * b);
-        }
-    }
-    let f = d
-        .reduce(|a, b| {
-            println!("{}", a);
-            a * b
-        })
-        .unwrap();
-}
-`;
-//#endregion
-//#region packages/demo/rust-analyzer/demo.ts
-var worker = new Worker(new URL(
-	/* @vite-ignore */
-	"" + new URL("webworker-CKYpLZX6.js", import.meta.url).href,
-	"" + import.meta.url
-), { type: "module" });
-var mode = {
-	name: "rust",
-	mode: "ace/mode/rust",
-	content: rustContent
-};
+var modes = [{
+	name: "typescript",
+	mode: "ace/mode/typescript",
+	content: typescriptContent
+}];
 var serverData = {
 	module: () => __vitePreload(() => import("./language-client-2qyFA8Lw.js").then((m) => /* @__PURE__ */ __toESM(m.default)), __vite__mapDeps([0,1]), import.meta.url),
-	modes: "rust",
-	type: "webworker",
-	worker
+	modes: "typescript",
+	type: "socket",
+	socket: new WebSocket("ws://localhost:3000/typescript")
 };
 var languageProvider = import_ace_language_client.AceLanguageClient.for(serverData);
-createEditorWithLSP(mode, 0, languageProvider);
+languageProvider.setGlobalOptions("", { initializationOptions: { configuration: { svelte: { plugin: { typescript: { enable: false } } } } } });
+var i = 0;
+for (let mode of modes) {
+	createEditorWithLSP(mode, i, languageProvider);
+	i++;
+}
 addFormatCommand(languageProvider);
 //#endregion

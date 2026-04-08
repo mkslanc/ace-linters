@@ -26,12 +26,12 @@ import "./error_marker-DpPZ5m3m.js";
 import { a as __vitePreload, i as init_esm_resolver, n as createEditorWithLSP, o as init_preload_helper, t as addFormatCommand } from "./utils-BloruIle.js";
 import "./snippets-BNjR0AXO.js";
 import "./autocomplete-Yq6Wywy-.js";
-import "./language_tools-B8HNeNpe.js";
-import { t as jsonContent } from "./json-example-CezQNYSs.js";
-import { n as json5Schema, t as json5Content } from "./json5-example--pTUMHTg.js";
-import { t as require_ace_language_client } from "./ace-language-client-BXdpRlYb.js";
-//#region packages/demo/websockets-lsp/client.ts
+import { t as require_language_tools } from "./language_tools-B8HNeNpe.js";
+import { n as jsonSchema, r as jsonSchema2, t as jsonContent } from "./json-example-CezQNYSs.js";
+import { t as require_ace_language_client } from "./ace-language-client-DtZhfteA.js";
+//#region packages/demo/webworker-json-rpc/demo.ts
 init_esm_resolver();
+require_language_tools();
 var import_ace_language_client = require_ace_language_client();
 init_preload_helper();
 var modes = [{
@@ -39,23 +39,30 @@ var modes = [{
 	mode: "ace/mode/json",
 	content: jsonContent,
 	options: { jsonSchemaUri: "common-form.schema.json" }
-}, {
-	name: "json5",
-	mode: "ace/mode/json5",
-	content: json5Content,
-	options: { jsonSchemaUri: json5Schema }
 }];
 var serverData = {
 	module: () => __vitePreload(() => import("./language-client-2qyFA8Lw.js").then((m) => /* @__PURE__ */ __toESM(m.default)), __vite__mapDeps([0,1]), import.meta.url),
-	modes: "json|json5",
-	type: "socket",
-	socket: new WebSocket("ws://127.0.0.1:3000/exampleServer")
+	modes: "json",
+	type: "webworker",
+	worker: new Worker(new URL(
+		/* @vite-ignore */
+		"" + new URL("webworker-Clg-4shS.js", import.meta.url).href,
+		"" + import.meta.url
+	), { type: "module" })
 };
 var languageProvider = import_ace_language_client.AceLanguageClient.for(serverData);
+languageProvider.setGlobalOptions("json", { schemas: [{
+	uri: "common-form.schema.json",
+	schema: jsonSchema2
+}] });
 var i = 0;
 for (let mode of modes) {
 	createEditorWithLSP(mode, i, languageProvider);
 	i++;
 }
+languageProvider.setGlobalOptions("json", { schemas: [{
+	uri: "colors.schema.json",
+	schema: jsonSchema
+}] }, true);
 addFormatCommand(languageProvider);
 //#endregion

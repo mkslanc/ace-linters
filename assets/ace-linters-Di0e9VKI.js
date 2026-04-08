@@ -5,11 +5,9 @@ var require_ace_linters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global));
 	})(exports, function(exports$1) {
 		Object.defineProperty(exports$1, Symbol.toStringTag, { value: "Module" });
-		var __create = Object.create;
 		var __defProp = Object.defineProperty;
 		var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 		var __getOwnPropNames = Object.getOwnPropertyNames;
-		var __getProtoOf = Object.getPrototypeOf;
 		var __hasOwnProp = Object.prototype.hasOwnProperty;
 		var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
 		var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
@@ -32,10 +30,6 @@ var require_ace_linters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			}
 			return to;
 		};
-		var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
-			value: mod,
-			enumerable: true
-		}) : target, mod));
 		var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 		var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports$2) => {
 			Object.defineProperty(exports$2, "__esModule", { value: true });
@@ -8303,3670 +8297,6 @@ var require_ace_linters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			if (tooltipText) markerGroupItem["tooltipText"] = tooltipText;
 			return markerGroupItem;
 		}
-		var import_showdown = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports$46, module$2) => {
-			(function() {
-				/**
-				* Created by Tivie on 13-07-2015.
-				*/
-				function getDefaultOpts(simple) {
-					"use strict";
-					var defaultOptions = {
-						omitExtraWLInCodeBlocks: {
-							defaultValue: false,
-							describe: "Omit the default extra whiteline added to code blocks",
-							type: "boolean"
-						},
-						noHeaderId: {
-							defaultValue: false,
-							describe: "Turn on/off generated header id",
-							type: "boolean"
-						},
-						prefixHeaderId: {
-							defaultValue: false,
-							describe: "Add a prefix to the generated header ids. Passing a string will prefix that string to the header id. Setting to true will add a generic 'section-' prefix",
-							type: "string"
-						},
-						rawPrefixHeaderId: {
-							defaultValue: false,
-							describe: "Setting this option to true will prevent showdown from modifying the prefix. This might result in malformed IDs (if, for instance, the \" char is used in the prefix)",
-							type: "boolean"
-						},
-						ghCompatibleHeaderId: {
-							defaultValue: false,
-							describe: "Generate header ids compatible with github style (spaces are replaced with dashes, a bunch of non alphanumeric chars are removed)",
-							type: "boolean"
-						},
-						rawHeaderId: {
-							defaultValue: false,
-							describe: "Remove only spaces, ' and \" from generated header ids (including prefixes), replacing them with dashes (-). WARNING: This might result in malformed ids",
-							type: "boolean"
-						},
-						headerLevelStart: {
-							defaultValue: false,
-							describe: "The header blocks level start",
-							type: "integer"
-						},
-						parseImgDimensions: {
-							defaultValue: false,
-							describe: "Turn on/off image dimension parsing",
-							type: "boolean"
-						},
-						simplifiedAutoLink: {
-							defaultValue: false,
-							describe: "Turn on/off GFM autolink style",
-							type: "boolean"
-						},
-						excludeTrailingPunctuationFromURLs: {
-							defaultValue: false,
-							describe: "Excludes trailing punctuation from links generated with autoLinking",
-							type: "boolean"
-						},
-						literalMidWordUnderscores: {
-							defaultValue: false,
-							describe: "Parse midword underscores as literal underscores",
-							type: "boolean"
-						},
-						literalMidWordAsterisks: {
-							defaultValue: false,
-							describe: "Parse midword asterisks as literal asterisks",
-							type: "boolean"
-						},
-						strikethrough: {
-							defaultValue: false,
-							describe: "Turn on/off strikethrough support",
-							type: "boolean"
-						},
-						tables: {
-							defaultValue: false,
-							describe: "Turn on/off tables support",
-							type: "boolean"
-						},
-						tablesHeaderId: {
-							defaultValue: false,
-							describe: "Add an id to table headers",
-							type: "boolean"
-						},
-						ghCodeBlocks: {
-							defaultValue: true,
-							describe: "Turn on/off GFM fenced code blocks support",
-							type: "boolean"
-						},
-						tasklists: {
-							defaultValue: false,
-							describe: "Turn on/off GFM tasklist support",
-							type: "boolean"
-						},
-						smoothLivePreview: {
-							defaultValue: false,
-							describe: "Prevents weird effects in live previews due to incomplete input",
-							type: "boolean"
-						},
-						smartIndentationFix: {
-							defaultValue: false,
-							describe: "Tries to smartly fix indentation in es6 strings",
-							type: "boolean"
-						},
-						disableForced4SpacesIndentedSublists: {
-							defaultValue: false,
-							describe: "Disables the requirement of indenting nested sublists by 4 spaces",
-							type: "boolean"
-						},
-						simpleLineBreaks: {
-							defaultValue: false,
-							describe: "Parses simple line breaks as <br> (GFM Style)",
-							type: "boolean"
-						},
-						requireSpaceBeforeHeadingText: {
-							defaultValue: false,
-							describe: "Makes adding a space between `#` and the header text mandatory (GFM Style)",
-							type: "boolean"
-						},
-						ghMentions: {
-							defaultValue: false,
-							describe: "Enables github @mentions",
-							type: "boolean"
-						},
-						ghMentionsLink: {
-							defaultValue: "https://github.com/{u}",
-							describe: "Changes the link generated by @mentions. Only applies if ghMentions option is enabled.",
-							type: "string"
-						},
-						encodeEmails: {
-							defaultValue: true,
-							describe: "Encode e-mail addresses through the use of Character Entities, transforming ASCII e-mail addresses into its equivalent decimal entities",
-							type: "boolean"
-						},
-						openLinksInNewWindow: {
-							defaultValue: false,
-							describe: "Open all links in new windows",
-							type: "boolean"
-						},
-						backslashEscapesHTMLTags: {
-							defaultValue: false,
-							describe: "Support for HTML Tag escaping. ex: <div>foo</div>",
-							type: "boolean"
-						},
-						emoji: {
-							defaultValue: false,
-							describe: "Enable emoji support. Ex: `this is a :smile: emoji`",
-							type: "boolean"
-						},
-						underline: {
-							defaultValue: false,
-							describe: "Enable support for underline. Syntax is double or triple underscores: `__underline word__`. With this option enabled, underscores no longer parses into `<em>` and `<strong>`",
-							type: "boolean"
-						},
-						ellipsis: {
-							defaultValue: true,
-							describe: "Replaces three dots with the ellipsis unicode character",
-							type: "boolean"
-						},
-						completeHTMLDocument: {
-							defaultValue: false,
-							describe: "Outputs a complete html document, including `<html>`, `<head>` and `<body>` tags",
-							type: "boolean"
-						},
-						metadata: {
-							defaultValue: false,
-							describe: "Enable support for document metadata (defined at the top of the document between `«««` and `»»»` or between `---` and `---`).",
-							type: "boolean"
-						},
-						splitAdjacentBlockquotes: {
-							defaultValue: false,
-							describe: "Split adjacent blockquote blocks",
-							type: "boolean"
-						}
-					};
-					if (simple === false) return JSON.parse(JSON.stringify(defaultOptions));
-					var ret = {};
-					for (var opt in defaultOptions) if (defaultOptions.hasOwnProperty(opt)) ret[opt] = defaultOptions[opt].defaultValue;
-					return ret;
-				}
-				function allOptionsOn() {
-					"use strict";
-					var options = getDefaultOpts(true), ret = {};
-					for (var opt in options) if (options.hasOwnProperty(opt)) ret[opt] = true;
-					return ret;
-				}
-				/**
-				* Created by Tivie on 06-01-2015.
-				*/
-				var showdown = {}, parsers = {}, extensions = {}, globalOptions = getDefaultOpts(true), setFlavor = "vanilla", flavor = {
-					github: {
-						omitExtraWLInCodeBlocks: true,
-						simplifiedAutoLink: true,
-						excludeTrailingPunctuationFromURLs: true,
-						literalMidWordUnderscores: true,
-						strikethrough: true,
-						tables: true,
-						tablesHeaderId: true,
-						ghCodeBlocks: true,
-						tasklists: true,
-						disableForced4SpacesIndentedSublists: true,
-						simpleLineBreaks: true,
-						requireSpaceBeforeHeadingText: true,
-						ghCompatibleHeaderId: true,
-						ghMentions: true,
-						backslashEscapesHTMLTags: true,
-						emoji: true,
-						splitAdjacentBlockquotes: true
-					},
-					original: {
-						noHeaderId: true,
-						ghCodeBlocks: false
-					},
-					ghost: {
-						omitExtraWLInCodeBlocks: true,
-						parseImgDimensions: true,
-						simplifiedAutoLink: true,
-						excludeTrailingPunctuationFromURLs: true,
-						literalMidWordUnderscores: true,
-						strikethrough: true,
-						tables: true,
-						tablesHeaderId: true,
-						ghCodeBlocks: true,
-						tasklists: true,
-						smoothLivePreview: true,
-						simpleLineBreaks: true,
-						requireSpaceBeforeHeadingText: true,
-						ghMentions: false,
-						encodeEmails: true
-					},
-					vanilla: getDefaultOpts(true),
-					allOn: allOptionsOn()
-				};
-				/**
-				* helper namespace
-				* @type {{}}
-				*/
-				showdown.helper = {};
-				/**
-				* TODO LEGACY SUPPORT CODE
-				* @type {{}}
-				*/
-				showdown.extensions = {};
-				/**
-				* Set a global option
-				* @static
-				* @param {string} key
-				* @param {*} value
-				* @returns {showdown}
-				*/
-				showdown.setOption = function(key, value) {
-					"use strict";
-					globalOptions[key] = value;
-					return this;
-				};
-				/**
-				* Get a global option
-				* @static
-				* @param {string} key
-				* @returns {*}
-				*/
-				showdown.getOption = function(key) {
-					"use strict";
-					return globalOptions[key];
-				};
-				/**
-				* Get the global options
-				* @static
-				* @returns {{}}
-				*/
-				showdown.getOptions = function() {
-					"use strict";
-					return globalOptions;
-				};
-				/**
-				* Reset global options to the default values
-				* @static
-				*/
-				showdown.resetOptions = function() {
-					"use strict";
-					globalOptions = getDefaultOpts(true);
-				};
-				/**
-				* Set the flavor showdown should use as default
-				* @param {string} name
-				*/
-				showdown.setFlavor = function(name) {
-					"use strict";
-					if (!flavor.hasOwnProperty(name)) throw Error(name + " flavor was not found");
-					showdown.resetOptions();
-					var preset = flavor[name];
-					setFlavor = name;
-					for (var option in preset) if (preset.hasOwnProperty(option)) globalOptions[option] = preset[option];
-				};
-				/**
-				* Get the currently set flavor
-				* @returns {string}
-				*/
-				showdown.getFlavor = function() {
-					"use strict";
-					return setFlavor;
-				};
-				/**
-				* Get the options of a specified flavor. Returns undefined if the flavor was not found
-				* @param {string} name Name of the flavor
-				* @returns {{}|undefined}
-				*/
-				showdown.getFlavorOptions = function(name) {
-					"use strict";
-					if (flavor.hasOwnProperty(name)) return flavor[name];
-				};
-				/**
-				* Get the default options
-				* @static
-				* @param {boolean} [simple=true]
-				* @returns {{}}
-				*/
-				showdown.getDefaultOptions = function(simple) {
-					"use strict";
-					return getDefaultOpts(simple);
-				};
-				/**
-				* Get or set a subParser
-				*
-				* subParser(name)       - Get a registered subParser
-				* subParser(name, func) - Register a subParser
-				* @static
-				* @param {string} name
-				* @param {function} [func]
-				* @returns {*}
-				*/
-				showdown.subParser = function(name, func) {
-					"use strict";
-					if (showdown.helper.isString(name)) if (typeof func !== "undefined") parsers[name] = func;
-					else if (parsers.hasOwnProperty(name)) return parsers[name];
-					else throw Error("SubParser named " + name + " not registered!");
-				};
-				/**
-				* Gets or registers an extension
-				* @static
-				* @param {string} name
-				* @param {object|object[]|function=} ext
-				* @returns {*}
-				*/
-				showdown.extension = function(name, ext) {
-					"use strict";
-					if (!showdown.helper.isString(name)) throw Error("Extension 'name' must be a string");
-					name = showdown.helper.stdExtName(name);
-					if (showdown.helper.isUndefined(ext)) {
-						if (!extensions.hasOwnProperty(name)) throw Error("Extension named " + name + " is not registered!");
-						return extensions[name];
-					} else {
-						if (typeof ext === "function") ext = ext();
-						if (!showdown.helper.isArray(ext)) ext = [ext];
-						var validExtension = validate(ext, name);
-						if (validExtension.valid) extensions[name] = ext;
-						else throw Error(validExtension.error);
-					}
-				};
-				/**
-				* Gets all extensions registered
-				* @returns {{}}
-				*/
-				showdown.getAllExtensions = function() {
-					"use strict";
-					return extensions;
-				};
-				/**
-				* Remove an extension
-				* @param {string} name
-				*/
-				showdown.removeExtension = function(name) {
-					"use strict";
-					delete extensions[name];
-				};
-				/**
-				* Removes all extensions
-				*/
-				showdown.resetExtensions = function() {
-					"use strict";
-					extensions = {};
-				};
-				/**
-				* Validate extension
-				* @param {array} extension
-				* @param {string} name
-				* @returns {{valid: boolean, error: string}}
-				*/
-				function validate(extension, name) {
-					"use strict";
-					var errMsg = name ? "Error in " + name + " extension->" : "Error in unnamed extension", ret = {
-						valid: true,
-						error: ""
-					};
-					if (!showdown.helper.isArray(extension)) extension = [extension];
-					for (var i = 0; i < extension.length; ++i) {
-						var baseMsg = errMsg + " sub-extension " + i + ": ", ext = extension[i];
-						if (typeof ext !== "object") {
-							ret.valid = false;
-							ret.error = baseMsg + "must be an object, but " + typeof ext + " given";
-							return ret;
-						}
-						if (!showdown.helper.isString(ext.type)) {
-							ret.valid = false;
-							ret.error = baseMsg + "property \"type\" must be a string, but " + typeof ext.type + " given";
-							return ret;
-						}
-						var type = ext.type = ext.type.toLowerCase();
-						if (type === "language") type = ext.type = "lang";
-						if (type === "html") type = ext.type = "output";
-						if (type !== "lang" && type !== "output" && type !== "listener") {
-							ret.valid = false;
-							ret.error = baseMsg + "type " + type + " is not recognized. Valid values: \"lang/language\", \"output/html\" or \"listener\"";
-							return ret;
-						}
-						if (type === "listener") {
-							if (showdown.helper.isUndefined(ext.listeners)) {
-								ret.valid = false;
-								ret.error = baseMsg + ". Extensions of type \"listener\" must have a property called \"listeners\"";
-								return ret;
-							}
-						} else if (showdown.helper.isUndefined(ext.filter) && showdown.helper.isUndefined(ext.regex)) {
-							ret.valid = false;
-							ret.error = baseMsg + type + " extensions must define either a \"regex\" property or a \"filter\" method";
-							return ret;
-						}
-						if (ext.listeners) {
-							if (typeof ext.listeners !== "object") {
-								ret.valid = false;
-								ret.error = baseMsg + "\"listeners\" property must be an object but " + typeof ext.listeners + " given";
-								return ret;
-							}
-							for (var ln in ext.listeners) if (ext.listeners.hasOwnProperty(ln)) {
-								if (typeof ext.listeners[ln] !== "function") {
-									ret.valid = false;
-									ret.error = baseMsg + "\"listeners\" property must be an hash of [event name]: [callback]. listeners." + ln + " must be a function but " + typeof ext.listeners[ln] + " given";
-									return ret;
-								}
-							}
-						}
-						if (ext.filter) {
-							if (typeof ext.filter !== "function") {
-								ret.valid = false;
-								ret.error = baseMsg + "\"filter\" must be a function, but " + typeof ext.filter + " given";
-								return ret;
-							}
-						} else if (ext.regex) {
-							if (showdown.helper.isString(ext.regex)) ext.regex = new RegExp(ext.regex, "g");
-							if (!(ext.regex instanceof RegExp)) {
-								ret.valid = false;
-								ret.error = baseMsg + "\"regex\" property must either be a string or a RegExp object, but " + typeof ext.regex + " given";
-								return ret;
-							}
-							if (showdown.helper.isUndefined(ext.replace)) {
-								ret.valid = false;
-								ret.error = baseMsg + "\"regex\" extensions must implement a replace string or function";
-								return ret;
-							}
-						}
-					}
-					return ret;
-				}
-				/**
-				* Validate extension
-				* @param {object} ext
-				* @returns {boolean}
-				*/
-				showdown.validateExtension = function(ext) {
-					"use strict";
-					var validateExtension = validate(ext, null);
-					if (!validateExtension.valid) {
-						console.warn(validateExtension.error);
-						return false;
-					}
-					return true;
-				};
-				/**
-				* showdownjs helper functions
-				*/
-				if (!showdown.hasOwnProperty("helper")) showdown.helper = {};
-				/**
-				* Check if var is string
-				* @static
-				* @param {string} a
-				* @returns {boolean}
-				*/
-				showdown.helper.isString = function(a) {
-					"use strict";
-					return typeof a === "string" || a instanceof String;
-				};
-				/**
-				* Check if var is a function
-				* @static
-				* @param {*} a
-				* @returns {boolean}
-				*/
-				showdown.helper.isFunction = function(a) {
-					"use strict";
-					return a && {}.toString.call(a) === "[object Function]";
-				};
-				/**
-				* isArray helper function
-				* @static
-				* @param {*} a
-				* @returns {boolean}
-				*/
-				showdown.helper.isArray = function(a) {
-					"use strict";
-					return Array.isArray(a);
-				};
-				/**
-				* Check if value is undefined
-				* @static
-				* @param {*} value The value to check.
-				* @returns {boolean} Returns `true` if `value` is `undefined`, else `false`.
-				*/
-				showdown.helper.isUndefined = function(value) {
-					"use strict";
-					return typeof value === "undefined";
-				};
-				/**
-				* ForEach helper function
-				* Iterates over Arrays and Objects (own properties only)
-				* @static
-				* @param {*} obj
-				* @param {function} callback Accepts 3 params: 1. value, 2. key, 3. the original array/object
-				*/
-				showdown.helper.forEach = function(obj, callback) {
-					"use strict";
-					if (showdown.helper.isUndefined(obj)) throw new Error("obj param is required");
-					if (showdown.helper.isUndefined(callback)) throw new Error("callback param is required");
-					if (!showdown.helper.isFunction(callback)) throw new Error("callback param must be a function/closure");
-					if (typeof obj.forEach === "function") obj.forEach(callback);
-					else if (showdown.helper.isArray(obj)) for (var i = 0; i < obj.length; i++) callback(obj[i], i, obj);
-					else if (typeof obj === "object") {
-						for (var prop in obj) if (obj.hasOwnProperty(prop)) callback(obj[prop], prop, obj);
-					} else throw new Error("obj does not seem to be an array or an iterable object");
-				};
-				/**
-				* Standardidize extension name
-				* @static
-				* @param {string} s extension name
-				* @returns {string}
-				*/
-				showdown.helper.stdExtName = function(s) {
-					"use strict";
-					return s.replace(/[_?*+\/\\.^-]/g, "").replace(/\s/g, "").toLowerCase();
-				};
-				function escapeCharactersCallback(wholeMatch, m1) {
-					"use strict";
-					return "¨E" + m1.charCodeAt(0) + "E";
-				}
-				/**
-				* Callback used to escape characters when passing through String.replace
-				* @static
-				* @param {string} wholeMatch
-				* @param {string} m1
-				* @returns {string}
-				*/
-				showdown.helper.escapeCharactersCallback = escapeCharactersCallback;
-				/**
-				* Escape characters in a string
-				* @static
-				* @param {string} text
-				* @param {string} charsToEscape
-				* @param {boolean} afterBackslash
-				* @returns {XML|string|void|*}
-				*/
-				showdown.helper.escapeCharacters = function(text, charsToEscape, afterBackslash) {
-					"use strict";
-					var regexString = "([" + charsToEscape.replace(/([\[\]\\])/g, "\\$1") + "])";
-					if (afterBackslash) regexString = "\\\\" + regexString;
-					var regex = new RegExp(regexString, "g");
-					text = text.replace(regex, escapeCharactersCallback);
-					return text;
-				};
-				/**
-				* Unescape HTML entities
-				* @param txt
-				* @returns {string}
-				*/
-				showdown.helper.unescapeHTMLEntities = function(txt) {
-					"use strict";
-					return txt.replace(/&quot;/g, "\"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-				};
-				var rgxFindMatchPos = function(str, left, right, flags) {
-					"use strict";
-					var f = flags || "", g = f.indexOf("g") > -1, x = new RegExp(left + "|" + right, "g" + f.replace(/g/g, "")), l = new RegExp(left, f.replace(/g/g, "")), pos = [], t, s, m, start, end;
-					do {
-						t = 0;
-						while (m = x.exec(str)) if (l.test(m[0])) {
-							if (!t++) {
-								s = x.lastIndex;
-								start = s - m[0].length;
-							}
-						} else if (t) {
-							if (!--t) {
-								end = m.index + m[0].length;
-								var obj = {
-									left: {
-										start,
-										end: s
-									},
-									match: {
-										start: s,
-										end: m.index
-									},
-									right: {
-										start: m.index,
-										end
-									},
-									wholeMatch: {
-										start,
-										end
-									}
-								};
-								pos.push(obj);
-								if (!g) return pos;
-							}
-						}
-					} while (t && (x.lastIndex = s));
-					return pos;
-				};
-				/**
-				* matchRecursiveRegExp
-				*
-				* (c) 2007 Steven Levithan <stevenlevithan.com>
-				* MIT License
-				*
-				* Accepts a string to search, a left and right format delimiter
-				* as regex patterns, and optional regex flags. Returns an array
-				* of matches, allowing nested instances of left/right delimiters.
-				* Use the "g" flag to return all matches, otherwise only the
-				* first is returned. Be careful to ensure that the left and
-				* right format delimiters produce mutually exclusive matches.
-				* Backreferences are not supported within the right delimiter
-				* due to how it is internally combined with the left delimiter.
-				* When matching strings whose format delimiters are unbalanced
-				* to the left or right, the output is intentionally as a
-				* conventional regex library with recursion support would
-				* produce, e.g. "<<x>" and "<x>>" both produce ["x"] when using
-				* "<" and ">" as the delimiters (both strings contain a single,
-				* balanced instance of "<x>").
-				*
-				* examples:
-				* matchRecursiveRegExp("test", "\\(", "\\)")
-				* returns: []
-				* matchRecursiveRegExp("<t<<e>><s>>t<>", "<", ">", "g")
-				* returns: ["t<<e>><s>", ""]
-				* matchRecursiveRegExp("<div id=\"x\">test</div>", "<div\\b[^>]*>", "</div>", "gi")
-				* returns: ["test"]
-				*/
-				showdown.helper.matchRecursiveRegExp = function(str, left, right, flags) {
-					"use strict";
-					var matchPos = rgxFindMatchPos(str, left, right, flags), results = [];
-					for (var i = 0; i < matchPos.length; ++i) results.push([
-						str.slice(matchPos[i].wholeMatch.start, matchPos[i].wholeMatch.end),
-						str.slice(matchPos[i].match.start, matchPos[i].match.end),
-						str.slice(matchPos[i].left.start, matchPos[i].left.end),
-						str.slice(matchPos[i].right.start, matchPos[i].right.end)
-					]);
-					return results;
-				};
-				/**
-				*
-				* @param {string} str
-				* @param {string|function} replacement
-				* @param {string} left
-				* @param {string} right
-				* @param {string} flags
-				* @returns {string}
-				*/
-				showdown.helper.replaceRecursiveRegExp = function(str, replacement, left, right, flags) {
-					"use strict";
-					if (!showdown.helper.isFunction(replacement)) {
-						var repStr = replacement;
-						replacement = function() {
-							return repStr;
-						};
-					}
-					var matchPos = rgxFindMatchPos(str, left, right, flags), finalStr = str, lng = matchPos.length;
-					if (lng > 0) {
-						var bits = [];
-						if (matchPos[0].wholeMatch.start !== 0) bits.push(str.slice(0, matchPos[0].wholeMatch.start));
-						for (var i = 0; i < lng; ++i) {
-							bits.push(replacement(str.slice(matchPos[i].wholeMatch.start, matchPos[i].wholeMatch.end), str.slice(matchPos[i].match.start, matchPos[i].match.end), str.slice(matchPos[i].left.start, matchPos[i].left.end), str.slice(matchPos[i].right.start, matchPos[i].right.end)));
-							if (i < lng - 1) bits.push(str.slice(matchPos[i].wholeMatch.end, matchPos[i + 1].wholeMatch.start));
-						}
-						if (matchPos[lng - 1].wholeMatch.end < str.length) bits.push(str.slice(matchPos[lng - 1].wholeMatch.end));
-						finalStr = bits.join("");
-					}
-					return finalStr;
-				};
-				/**
-				* Returns the index within the passed String object of the first occurrence of the specified regex,
-				* starting the search at fromIndex. Returns -1 if the value is not found.
-				*
-				* @param {string} str string to search
-				* @param {RegExp} regex Regular expression to search
-				* @param {int} [fromIndex = 0] Index to start the search
-				* @returns {Number}
-				* @throws InvalidArgumentError
-				*/
-				showdown.helper.regexIndexOf = function(str, regex, fromIndex) {
-					"use strict";
-					if (!showdown.helper.isString(str)) throw "InvalidArgumentError: first parameter of showdown.helper.regexIndexOf function must be a string";
-					if (regex instanceof RegExp === false) throw "InvalidArgumentError: second parameter of showdown.helper.regexIndexOf function must be an instance of RegExp";
-					var indexOf = str.substring(fromIndex || 0).search(regex);
-					return indexOf >= 0 ? indexOf + (fromIndex || 0) : indexOf;
-				};
-				/**
-				* Splits the passed string object at the defined index, and returns an array composed of the two substrings
-				* @param {string} str string to split
-				* @param {int} index index to split string at
-				* @returns {[string,string]}
-				* @throws InvalidArgumentError
-				*/
-				showdown.helper.splitAtIndex = function(str, index) {
-					"use strict";
-					if (!showdown.helper.isString(str)) throw "InvalidArgumentError: first parameter of showdown.helper.regexIndexOf function must be a string";
-					return [str.substring(0, index), str.substring(index)];
-				};
-				/**
-				* Obfuscate an e-mail address through the use of Character Entities,
-				* transforming ASCII characters into their equivalent decimal or hex entities.
-				*
-				* Since it has a random component, subsequent calls to this function produce different results
-				*
-				* @param {string} mail
-				* @returns {string}
-				*/
-				showdown.helper.encodeEmailAddress = function(mail) {
-					"use strict";
-					var encode = [
-						function(ch) {
-							return "&#" + ch.charCodeAt(0) + ";";
-						},
-						function(ch) {
-							return "&#x" + ch.charCodeAt(0).toString(16) + ";";
-						},
-						function(ch) {
-							return ch;
-						}
-					];
-					mail = mail.replace(/./g, function(ch) {
-						if (ch === "@") ch = encode[Math.floor(Math.random() * 2)](ch);
-						else {
-							var r = Math.random();
-							ch = r > .9 ? encode[2](ch) : r > .45 ? encode[1](ch) : encode[0](ch);
-						}
-						return ch;
-					});
-					return mail;
-				};
-				/**
-				*
-				* @param str
-				* @param targetLength
-				* @param padString
-				* @returns {string}
-				*/
-				showdown.helper.padEnd = function padEnd(str, targetLength, padString) {
-					"use strict";
-					targetLength = targetLength >> 0;
-					padString = String(padString || " ");
-					if (str.length > targetLength) return String(str);
-					else {
-						targetLength = targetLength - str.length;
-						if (targetLength > padString.length) padString += padString.repeat(targetLength / padString.length);
-						return String(str) + padString.slice(0, targetLength);
-					}
-				};
-				/**
-				* POLYFILLS
-				*/
-				if (typeof console === "undefined") console = {
-					warn: function(msg) {
-						"use strict";
-						alert(msg);
-					},
-					log: function(msg) {
-						"use strict";
-						alert(msg);
-					},
-					error: function(msg) {
-						"use strict";
-						throw msg;
-					}
-				};
-				/**
-				* Common regexes.
-				* We declare some common regexes to improve performance
-				*/
-				showdown.helper.regexes = { asteriskDashAndColon: /([*_:~])/g };
-				/**
-				* EMOJIS LIST
-				*/
-				showdown.helper.emojis = {
-					"+1": "👍",
-					"-1": "👎",
-					"100": "💯",
-					"1234": "🔢",
-					"1st_place_medal": "🥇",
-					"2nd_place_medal": "🥈",
-					"3rd_place_medal": "🥉",
-					"8ball": "🎱",
-					"a": "🅰️",
-					"ab": "🆎",
-					"abc": "🔤",
-					"abcd": "🔡",
-					"accept": "🉑",
-					"aerial_tramway": "🚡",
-					"airplane": "✈️",
-					"alarm_clock": "⏰",
-					"alembic": "⚗️",
-					"alien": "👽",
-					"ambulance": "🚑",
-					"amphora": "🏺",
-					"anchor": "⚓️",
-					"angel": "👼",
-					"anger": "💢",
-					"angry": "😠",
-					"anguished": "😧",
-					"ant": "🐜",
-					"apple": "🍎",
-					"aquarius": "♒️",
-					"aries": "♈️",
-					"arrow_backward": "◀️",
-					"arrow_double_down": "⏬",
-					"arrow_double_up": "⏫",
-					"arrow_down": "⬇️",
-					"arrow_down_small": "🔽",
-					"arrow_forward": "▶️",
-					"arrow_heading_down": "⤵️",
-					"arrow_heading_up": "⤴️",
-					"arrow_left": "⬅️",
-					"arrow_lower_left": "↙️",
-					"arrow_lower_right": "↘️",
-					"arrow_right": "➡️",
-					"arrow_right_hook": "↪️",
-					"arrow_up": "⬆️",
-					"arrow_up_down": "↕️",
-					"arrow_up_small": "🔼",
-					"arrow_upper_left": "↖️",
-					"arrow_upper_right": "↗️",
-					"arrows_clockwise": "🔃",
-					"arrows_counterclockwise": "🔄",
-					"art": "🎨",
-					"articulated_lorry": "🚛",
-					"artificial_satellite": "🛰",
-					"astonished": "😲",
-					"athletic_shoe": "👟",
-					"atm": "🏧",
-					"atom_symbol": "⚛️",
-					"avocado": "🥑",
-					"b": "🅱️",
-					"baby": "👶",
-					"baby_bottle": "🍼",
-					"baby_chick": "🐤",
-					"baby_symbol": "🚼",
-					"back": "🔙",
-					"bacon": "🥓",
-					"badminton": "🏸",
-					"baggage_claim": "🛄",
-					"baguette_bread": "🥖",
-					"balance_scale": "⚖️",
-					"balloon": "🎈",
-					"ballot_box": "🗳",
-					"ballot_box_with_check": "☑️",
-					"bamboo": "🎍",
-					"banana": "🍌",
-					"bangbang": "‼️",
-					"bank": "🏦",
-					"bar_chart": "📊",
-					"barber": "💈",
-					"baseball": "⚾️",
-					"basketball": "🏀",
-					"basketball_man": "⛹️",
-					"basketball_woman": "⛹️&zwj;♀️",
-					"bat": "🦇",
-					"bath": "🛀",
-					"bathtub": "🛁",
-					"battery": "🔋",
-					"beach_umbrella": "🏖",
-					"bear": "🐻",
-					"bed": "🛏",
-					"bee": "🐝",
-					"beer": "🍺",
-					"beers": "🍻",
-					"beetle": "🐞",
-					"beginner": "🔰",
-					"bell": "🔔",
-					"bellhop_bell": "🛎",
-					"bento": "🍱",
-					"biking_man": "🚴",
-					"bike": "🚲",
-					"biking_woman": "🚴&zwj;♀️",
-					"bikini": "👙",
-					"biohazard": "☣️",
-					"bird": "🐦",
-					"birthday": "🎂",
-					"black_circle": "⚫️",
-					"black_flag": "🏴",
-					"black_heart": "🖤",
-					"black_joker": "🃏",
-					"black_large_square": "⬛️",
-					"black_medium_small_square": "◾️",
-					"black_medium_square": "◼️",
-					"black_nib": "✒️",
-					"black_small_square": "▪️",
-					"black_square_button": "🔲",
-					"blonde_man": "👱",
-					"blonde_woman": "👱&zwj;♀️",
-					"blossom": "🌼",
-					"blowfish": "🐡",
-					"blue_book": "📘",
-					"blue_car": "🚙",
-					"blue_heart": "💙",
-					"blush": "😊",
-					"boar": "🐗",
-					"boat": "⛵️",
-					"bomb": "💣",
-					"book": "📖",
-					"bookmark": "🔖",
-					"bookmark_tabs": "📑",
-					"books": "📚",
-					"boom": "💥",
-					"boot": "👢",
-					"bouquet": "💐",
-					"bowing_man": "🙇",
-					"bow_and_arrow": "🏹",
-					"bowing_woman": "🙇&zwj;♀️",
-					"bowling": "🎳",
-					"boxing_glove": "🥊",
-					"boy": "👦",
-					"bread": "🍞",
-					"bride_with_veil": "👰",
-					"bridge_at_night": "🌉",
-					"briefcase": "💼",
-					"broken_heart": "💔",
-					"bug": "🐛",
-					"building_construction": "🏗",
-					"bulb": "💡",
-					"bullettrain_front": "🚅",
-					"bullettrain_side": "🚄",
-					"burrito": "🌯",
-					"bus": "🚌",
-					"business_suit_levitating": "🕴",
-					"busstop": "🚏",
-					"bust_in_silhouette": "👤",
-					"busts_in_silhouette": "👥",
-					"butterfly": "🦋",
-					"cactus": "🌵",
-					"cake": "🍰",
-					"calendar": "📆",
-					"call_me_hand": "🤙",
-					"calling": "📲",
-					"camel": "🐫",
-					"camera": "📷",
-					"camera_flash": "📸",
-					"camping": "🏕",
-					"cancer": "♋️",
-					"candle": "🕯",
-					"candy": "🍬",
-					"canoe": "🛶",
-					"capital_abcd": "🔠",
-					"capricorn": "♑️",
-					"car": "🚗",
-					"card_file_box": "🗃",
-					"card_index": "📇",
-					"card_index_dividers": "🗂",
-					"carousel_horse": "🎠",
-					"carrot": "🥕",
-					"cat": "🐱",
-					"cat2": "🐈",
-					"cd": "💿",
-					"chains": "⛓",
-					"champagne": "🍾",
-					"chart": "💹",
-					"chart_with_downwards_trend": "📉",
-					"chart_with_upwards_trend": "📈",
-					"checkered_flag": "🏁",
-					"cheese": "🧀",
-					"cherries": "🍒",
-					"cherry_blossom": "🌸",
-					"chestnut": "🌰",
-					"chicken": "🐔",
-					"children_crossing": "🚸",
-					"chipmunk": "🐿",
-					"chocolate_bar": "🍫",
-					"christmas_tree": "🎄",
-					"church": "⛪️",
-					"cinema": "🎦",
-					"circus_tent": "🎪",
-					"city_sunrise": "🌇",
-					"city_sunset": "🌆",
-					"cityscape": "🏙",
-					"cl": "🆑",
-					"clamp": "🗜",
-					"clap": "👏",
-					"clapper": "🎬",
-					"classical_building": "🏛",
-					"clinking_glasses": "🥂",
-					"clipboard": "📋",
-					"clock1": "🕐",
-					"clock10": "🕙",
-					"clock1030": "🕥",
-					"clock11": "🕚",
-					"clock1130": "🕦",
-					"clock12": "🕛",
-					"clock1230": "🕧",
-					"clock130": "🕜",
-					"clock2": "🕑",
-					"clock230": "🕝",
-					"clock3": "🕒",
-					"clock330": "🕞",
-					"clock4": "🕓",
-					"clock430": "🕟",
-					"clock5": "🕔",
-					"clock530": "🕠",
-					"clock6": "🕕",
-					"clock630": "🕡",
-					"clock7": "🕖",
-					"clock730": "🕢",
-					"clock8": "🕗",
-					"clock830": "🕣",
-					"clock9": "🕘",
-					"clock930": "🕤",
-					"closed_book": "📕",
-					"closed_lock_with_key": "🔐",
-					"closed_umbrella": "🌂",
-					"cloud": "☁️",
-					"cloud_with_lightning": "🌩",
-					"cloud_with_lightning_and_rain": "⛈",
-					"cloud_with_rain": "🌧",
-					"cloud_with_snow": "🌨",
-					"clown_face": "🤡",
-					"clubs": "♣️",
-					"cocktail": "🍸",
-					"coffee": "☕️",
-					"coffin": "⚰️",
-					"cold_sweat": "😰",
-					"comet": "☄️",
-					"computer": "💻",
-					"computer_mouse": "🖱",
-					"confetti_ball": "🎊",
-					"confounded": "😖",
-					"confused": "😕",
-					"congratulations": "㊗️",
-					"construction": "🚧",
-					"construction_worker_man": "👷",
-					"construction_worker_woman": "👷&zwj;♀️",
-					"control_knobs": "🎛",
-					"convenience_store": "🏪",
-					"cookie": "🍪",
-					"cool": "🆒",
-					"policeman": "👮",
-					"copyright": "©️",
-					"corn": "🌽",
-					"couch_and_lamp": "🛋",
-					"couple": "👫",
-					"couple_with_heart_woman_man": "💑",
-					"couple_with_heart_man_man": "👨&zwj;❤️&zwj;👨",
-					"couple_with_heart_woman_woman": "👩&zwj;❤️&zwj;👩",
-					"couplekiss_man_man": "👨&zwj;❤️&zwj;💋&zwj;👨",
-					"couplekiss_man_woman": "💏",
-					"couplekiss_woman_woman": "👩&zwj;❤️&zwj;💋&zwj;👩",
-					"cow": "🐮",
-					"cow2": "🐄",
-					"cowboy_hat_face": "🤠",
-					"crab": "🦀",
-					"crayon": "🖍",
-					"credit_card": "💳",
-					"crescent_moon": "🌙",
-					"cricket": "🏏",
-					"crocodile": "🐊",
-					"croissant": "🥐",
-					"crossed_fingers": "🤞",
-					"crossed_flags": "🎌",
-					"crossed_swords": "⚔️",
-					"crown": "👑",
-					"cry": "😢",
-					"crying_cat_face": "😿",
-					"crystal_ball": "🔮",
-					"cucumber": "🥒",
-					"cupid": "💘",
-					"curly_loop": "➰",
-					"currency_exchange": "💱",
-					"curry": "🍛",
-					"custard": "🍮",
-					"customs": "🛃",
-					"cyclone": "🌀",
-					"dagger": "🗡",
-					"dancer": "💃",
-					"dancing_women": "👯",
-					"dancing_men": "👯&zwj;♂️",
-					"dango": "🍡",
-					"dark_sunglasses": "🕶",
-					"dart": "🎯",
-					"dash": "💨",
-					"date": "📅",
-					"deciduous_tree": "🌳",
-					"deer": "🦌",
-					"department_store": "🏬",
-					"derelict_house": "🏚",
-					"desert": "🏜",
-					"desert_island": "🏝",
-					"desktop_computer": "🖥",
-					"male_detective": "🕵️",
-					"diamond_shape_with_a_dot_inside": "💠",
-					"diamonds": "♦️",
-					"disappointed": "😞",
-					"disappointed_relieved": "😥",
-					"dizzy": "💫",
-					"dizzy_face": "😵",
-					"do_not_litter": "🚯",
-					"dog": "🐶",
-					"dog2": "🐕",
-					"dollar": "💵",
-					"dolls": "🎎",
-					"dolphin": "🐬",
-					"door": "🚪",
-					"doughnut": "🍩",
-					"dove": "🕊",
-					"dragon": "🐉",
-					"dragon_face": "🐲",
-					"dress": "👗",
-					"dromedary_camel": "🐪",
-					"drooling_face": "🤤",
-					"droplet": "💧",
-					"drum": "🥁",
-					"duck": "🦆",
-					"dvd": "📀",
-					"e-mail": "📧",
-					"eagle": "🦅",
-					"ear": "👂",
-					"ear_of_rice": "🌾",
-					"earth_africa": "🌍",
-					"earth_americas": "🌎",
-					"earth_asia": "🌏",
-					"egg": "🥚",
-					"eggplant": "🍆",
-					"eight_pointed_black_star": "✴️",
-					"eight_spoked_asterisk": "✳️",
-					"electric_plug": "🔌",
-					"elephant": "🐘",
-					"email": "✉️",
-					"end": "🔚",
-					"envelope_with_arrow": "📩",
-					"euro": "💶",
-					"european_castle": "🏰",
-					"european_post_office": "🏤",
-					"evergreen_tree": "🌲",
-					"exclamation": "❗️",
-					"expressionless": "😑",
-					"eye": "👁",
-					"eye_speech_bubble": "👁&zwj;🗨",
-					"eyeglasses": "👓",
-					"eyes": "👀",
-					"face_with_head_bandage": "🤕",
-					"face_with_thermometer": "🤒",
-					"fist_oncoming": "👊",
-					"factory": "🏭",
-					"fallen_leaf": "🍂",
-					"family_man_woman_boy": "👪",
-					"family_man_boy": "👨&zwj;👦",
-					"family_man_boy_boy": "👨&zwj;👦&zwj;👦",
-					"family_man_girl": "👨&zwj;👧",
-					"family_man_girl_boy": "👨&zwj;👧&zwj;👦",
-					"family_man_girl_girl": "👨&zwj;👧&zwj;👧",
-					"family_man_man_boy": "👨&zwj;👨&zwj;👦",
-					"family_man_man_boy_boy": "👨&zwj;👨&zwj;👦&zwj;👦",
-					"family_man_man_girl": "👨&zwj;👨&zwj;👧",
-					"family_man_man_girl_boy": "👨&zwj;👨&zwj;👧&zwj;👦",
-					"family_man_man_girl_girl": "👨&zwj;👨&zwj;👧&zwj;👧",
-					"family_man_woman_boy_boy": "👨&zwj;👩&zwj;👦&zwj;👦",
-					"family_man_woman_girl": "👨&zwj;👩&zwj;👧",
-					"family_man_woman_girl_boy": "👨&zwj;👩&zwj;👧&zwj;👦",
-					"family_man_woman_girl_girl": "👨&zwj;👩&zwj;👧&zwj;👧",
-					"family_woman_boy": "👩&zwj;👦",
-					"family_woman_boy_boy": "👩&zwj;👦&zwj;👦",
-					"family_woman_girl": "👩&zwj;👧",
-					"family_woman_girl_boy": "👩&zwj;👧&zwj;👦",
-					"family_woman_girl_girl": "👩&zwj;👧&zwj;👧",
-					"family_woman_woman_boy": "👩&zwj;👩&zwj;👦",
-					"family_woman_woman_boy_boy": "👩&zwj;👩&zwj;👦&zwj;👦",
-					"family_woman_woman_girl": "👩&zwj;👩&zwj;👧",
-					"family_woman_woman_girl_boy": "👩&zwj;👩&zwj;👧&zwj;👦",
-					"family_woman_woman_girl_girl": "👩&zwj;👩&zwj;👧&zwj;👧",
-					"fast_forward": "⏩",
-					"fax": "📠",
-					"fearful": "😨",
-					"feet": "🐾",
-					"female_detective": "🕵️&zwj;♀️",
-					"ferris_wheel": "🎡",
-					"ferry": "⛴",
-					"field_hockey": "🏑",
-					"file_cabinet": "🗄",
-					"file_folder": "📁",
-					"film_projector": "📽",
-					"film_strip": "🎞",
-					"fire": "🔥",
-					"fire_engine": "🚒",
-					"fireworks": "🎆",
-					"first_quarter_moon": "🌓",
-					"first_quarter_moon_with_face": "🌛",
-					"fish": "🐟",
-					"fish_cake": "🍥",
-					"fishing_pole_and_fish": "🎣",
-					"fist_raised": "✊",
-					"fist_left": "🤛",
-					"fist_right": "🤜",
-					"flags": "🎏",
-					"flashlight": "🔦",
-					"fleur_de_lis": "⚜️",
-					"flight_arrival": "🛬",
-					"flight_departure": "🛫",
-					"floppy_disk": "💾",
-					"flower_playing_cards": "🎴",
-					"flushed": "😳",
-					"fog": "🌫",
-					"foggy": "🌁",
-					"football": "🏈",
-					"footprints": "👣",
-					"fork_and_knife": "🍴",
-					"fountain": "⛲️",
-					"fountain_pen": "🖋",
-					"four_leaf_clover": "🍀",
-					"fox_face": "🦊",
-					"framed_picture": "🖼",
-					"free": "🆓",
-					"fried_egg": "🍳",
-					"fried_shrimp": "🍤",
-					"fries": "🍟",
-					"frog": "🐸",
-					"frowning": "😦",
-					"frowning_face": "☹️",
-					"frowning_man": "🙍&zwj;♂️",
-					"frowning_woman": "🙍",
-					"middle_finger": "🖕",
-					"fuelpump": "⛽️",
-					"full_moon": "🌕",
-					"full_moon_with_face": "🌝",
-					"funeral_urn": "⚱️",
-					"game_die": "🎲",
-					"gear": "⚙️",
-					"gem": "💎",
-					"gemini": "♊️",
-					"ghost": "👻",
-					"gift": "🎁",
-					"gift_heart": "💝",
-					"girl": "👧",
-					"globe_with_meridians": "🌐",
-					"goal_net": "🥅",
-					"goat": "🐐",
-					"golf": "⛳️",
-					"golfing_man": "🏌️",
-					"golfing_woman": "🏌️&zwj;♀️",
-					"gorilla": "🦍",
-					"grapes": "🍇",
-					"green_apple": "🍏",
-					"green_book": "📗",
-					"green_heart": "💚",
-					"green_salad": "🥗",
-					"grey_exclamation": "❕",
-					"grey_question": "❔",
-					"grimacing": "😬",
-					"grin": "😁",
-					"grinning": "😀",
-					"guardsman": "💂",
-					"guardswoman": "💂&zwj;♀️",
-					"guitar": "🎸",
-					"gun": "🔫",
-					"haircut_woman": "💇",
-					"haircut_man": "💇&zwj;♂️",
-					"hamburger": "🍔",
-					"hammer": "🔨",
-					"hammer_and_pick": "⚒",
-					"hammer_and_wrench": "🛠",
-					"hamster": "🐹",
-					"hand": "✋",
-					"handbag": "👜",
-					"handshake": "🤝",
-					"hankey": "💩",
-					"hatched_chick": "🐥",
-					"hatching_chick": "🐣",
-					"headphones": "🎧",
-					"hear_no_evil": "🙉",
-					"heart": "❤️",
-					"heart_decoration": "💟",
-					"heart_eyes": "😍",
-					"heart_eyes_cat": "😻",
-					"heartbeat": "💓",
-					"heartpulse": "💗",
-					"hearts": "♥️",
-					"heavy_check_mark": "✔️",
-					"heavy_division_sign": "➗",
-					"heavy_dollar_sign": "💲",
-					"heavy_heart_exclamation": "❣️",
-					"heavy_minus_sign": "➖",
-					"heavy_multiplication_x": "✖️",
-					"heavy_plus_sign": "➕",
-					"helicopter": "🚁",
-					"herb": "🌿",
-					"hibiscus": "🌺",
-					"high_brightness": "🔆",
-					"high_heel": "👠",
-					"hocho": "🔪",
-					"hole": "🕳",
-					"honey_pot": "🍯",
-					"horse": "🐴",
-					"horse_racing": "🏇",
-					"hospital": "🏥",
-					"hot_pepper": "🌶",
-					"hotdog": "🌭",
-					"hotel": "🏨",
-					"hotsprings": "♨️",
-					"hourglass": "⌛️",
-					"hourglass_flowing_sand": "⏳",
-					"house": "🏠",
-					"house_with_garden": "🏡",
-					"houses": "🏘",
-					"hugs": "🤗",
-					"hushed": "😯",
-					"ice_cream": "🍨",
-					"ice_hockey": "🏒",
-					"ice_skate": "⛸",
-					"icecream": "🍦",
-					"id": "🆔",
-					"ideograph_advantage": "🉐",
-					"imp": "👿",
-					"inbox_tray": "📥",
-					"incoming_envelope": "📨",
-					"tipping_hand_woman": "💁",
-					"information_source": "ℹ️",
-					"innocent": "😇",
-					"interrobang": "⁉️",
-					"iphone": "📱",
-					"izakaya_lantern": "🏮",
-					"jack_o_lantern": "🎃",
-					"japan": "🗾",
-					"japanese_castle": "🏯",
-					"japanese_goblin": "👺",
-					"japanese_ogre": "👹",
-					"jeans": "👖",
-					"joy": "😂",
-					"joy_cat": "😹",
-					"joystick": "🕹",
-					"kaaba": "🕋",
-					"key": "🔑",
-					"keyboard": "⌨️",
-					"keycap_ten": "🔟",
-					"kick_scooter": "🛴",
-					"kimono": "👘",
-					"kiss": "💋",
-					"kissing": "😗",
-					"kissing_cat": "😽",
-					"kissing_closed_eyes": "😚",
-					"kissing_heart": "😘",
-					"kissing_smiling_eyes": "😙",
-					"kiwi_fruit": "🥝",
-					"koala": "🐨",
-					"koko": "🈁",
-					"label": "🏷",
-					"large_blue_circle": "🔵",
-					"large_blue_diamond": "🔷",
-					"large_orange_diamond": "🔶",
-					"last_quarter_moon": "🌗",
-					"last_quarter_moon_with_face": "🌜",
-					"latin_cross": "✝️",
-					"laughing": "😆",
-					"leaves": "🍃",
-					"ledger": "📒",
-					"left_luggage": "🛅",
-					"left_right_arrow": "↔️",
-					"leftwards_arrow_with_hook": "↩️",
-					"lemon": "🍋",
-					"leo": "♌️",
-					"leopard": "🐆",
-					"level_slider": "🎚",
-					"libra": "♎️",
-					"light_rail": "🚈",
-					"link": "🔗",
-					"lion": "🦁",
-					"lips": "👄",
-					"lipstick": "💄",
-					"lizard": "🦎",
-					"lock": "🔒",
-					"lock_with_ink_pen": "🔏",
-					"lollipop": "🍭",
-					"loop": "➿",
-					"loud_sound": "🔊",
-					"loudspeaker": "📢",
-					"love_hotel": "🏩",
-					"love_letter": "💌",
-					"low_brightness": "🔅",
-					"lying_face": "🤥",
-					"m": "Ⓜ️",
-					"mag": "🔍",
-					"mag_right": "🔎",
-					"mahjong": "🀄️",
-					"mailbox": "📫",
-					"mailbox_closed": "📪",
-					"mailbox_with_mail": "📬",
-					"mailbox_with_no_mail": "📭",
-					"man": "👨",
-					"man_artist": "👨&zwj;🎨",
-					"man_astronaut": "👨&zwj;🚀",
-					"man_cartwheeling": "🤸&zwj;♂️",
-					"man_cook": "👨&zwj;🍳",
-					"man_dancing": "🕺",
-					"man_facepalming": "🤦&zwj;♂️",
-					"man_factory_worker": "👨&zwj;🏭",
-					"man_farmer": "👨&zwj;🌾",
-					"man_firefighter": "👨&zwj;🚒",
-					"man_health_worker": "👨&zwj;⚕️",
-					"man_in_tuxedo": "🤵",
-					"man_judge": "👨&zwj;⚖️",
-					"man_juggling": "🤹&zwj;♂️",
-					"man_mechanic": "👨&zwj;🔧",
-					"man_office_worker": "👨&zwj;💼",
-					"man_pilot": "👨&zwj;✈️",
-					"man_playing_handball": "🤾&zwj;♂️",
-					"man_playing_water_polo": "🤽&zwj;♂️",
-					"man_scientist": "👨&zwj;🔬",
-					"man_shrugging": "🤷&zwj;♂️",
-					"man_singer": "👨&zwj;🎤",
-					"man_student": "👨&zwj;🎓",
-					"man_teacher": "👨&zwj;🏫",
-					"man_technologist": "👨&zwj;💻",
-					"man_with_gua_pi_mao": "👲",
-					"man_with_turban": "👳",
-					"tangerine": "🍊",
-					"mans_shoe": "👞",
-					"mantelpiece_clock": "🕰",
-					"maple_leaf": "🍁",
-					"martial_arts_uniform": "🥋",
-					"mask": "😷",
-					"massage_woman": "💆",
-					"massage_man": "💆&zwj;♂️",
-					"meat_on_bone": "🍖",
-					"medal_military": "🎖",
-					"medal_sports": "🏅",
-					"mega": "📣",
-					"melon": "🍈",
-					"memo": "📝",
-					"men_wrestling": "🤼&zwj;♂️",
-					"menorah": "🕎",
-					"mens": "🚹",
-					"metal": "🤘",
-					"metro": "🚇",
-					"microphone": "🎤",
-					"microscope": "🔬",
-					"milk_glass": "🥛",
-					"milky_way": "🌌",
-					"minibus": "🚐",
-					"minidisc": "💽",
-					"mobile_phone_off": "📴",
-					"money_mouth_face": "🤑",
-					"money_with_wings": "💸",
-					"moneybag": "💰",
-					"monkey": "🐒",
-					"monkey_face": "🐵",
-					"monorail": "🚝",
-					"moon": "🌔",
-					"mortar_board": "🎓",
-					"mosque": "🕌",
-					"motor_boat": "🛥",
-					"motor_scooter": "🛵",
-					"motorcycle": "🏍",
-					"motorway": "🛣",
-					"mount_fuji": "🗻",
-					"mountain": "⛰",
-					"mountain_biking_man": "🚵",
-					"mountain_biking_woman": "🚵&zwj;♀️",
-					"mountain_cableway": "🚠",
-					"mountain_railway": "🚞",
-					"mountain_snow": "🏔",
-					"mouse": "🐭",
-					"mouse2": "🐁",
-					"movie_camera": "🎥",
-					"moyai": "🗿",
-					"mrs_claus": "🤶",
-					"muscle": "💪",
-					"mushroom": "🍄",
-					"musical_keyboard": "🎹",
-					"musical_note": "🎵",
-					"musical_score": "🎼",
-					"mute": "🔇",
-					"nail_care": "💅",
-					"name_badge": "📛",
-					"national_park": "🏞",
-					"nauseated_face": "🤢",
-					"necktie": "👔",
-					"negative_squared_cross_mark": "❎",
-					"nerd_face": "🤓",
-					"neutral_face": "😐",
-					"new": "🆕",
-					"new_moon": "🌑",
-					"new_moon_with_face": "🌚",
-					"newspaper": "📰",
-					"newspaper_roll": "🗞",
-					"next_track_button": "⏭",
-					"ng": "🆖",
-					"no_good_man": "🙅&zwj;♂️",
-					"no_good_woman": "🙅",
-					"night_with_stars": "🌃",
-					"no_bell": "🔕",
-					"no_bicycles": "🚳",
-					"no_entry": "⛔️",
-					"no_entry_sign": "🚫",
-					"no_mobile_phones": "📵",
-					"no_mouth": "😶",
-					"no_pedestrians": "🚷",
-					"no_smoking": "🚭",
-					"non-potable_water": "🚱",
-					"nose": "👃",
-					"notebook": "📓",
-					"notebook_with_decorative_cover": "📔",
-					"notes": "🎶",
-					"nut_and_bolt": "🔩",
-					"o": "⭕️",
-					"o2": "🅾️",
-					"ocean": "🌊",
-					"octopus": "🐙",
-					"oden": "🍢",
-					"office": "🏢",
-					"oil_drum": "🛢",
-					"ok": "🆗",
-					"ok_hand": "👌",
-					"ok_man": "🙆&zwj;♂️",
-					"ok_woman": "🙆",
-					"old_key": "🗝",
-					"older_man": "👴",
-					"older_woman": "👵",
-					"om": "🕉",
-					"on": "🔛",
-					"oncoming_automobile": "🚘",
-					"oncoming_bus": "🚍",
-					"oncoming_police_car": "🚔",
-					"oncoming_taxi": "🚖",
-					"open_file_folder": "📂",
-					"open_hands": "👐",
-					"open_mouth": "😮",
-					"open_umbrella": "☂️",
-					"ophiuchus": "⛎",
-					"orange_book": "📙",
-					"orthodox_cross": "☦️",
-					"outbox_tray": "📤",
-					"owl": "🦉",
-					"ox": "🐂",
-					"package": "📦",
-					"page_facing_up": "📄",
-					"page_with_curl": "📃",
-					"pager": "📟",
-					"paintbrush": "🖌",
-					"palm_tree": "🌴",
-					"pancakes": "🥞",
-					"panda_face": "🐼",
-					"paperclip": "📎",
-					"paperclips": "🖇",
-					"parasol_on_ground": "⛱",
-					"parking": "🅿️",
-					"part_alternation_mark": "〽️",
-					"partly_sunny": "⛅️",
-					"passenger_ship": "🛳",
-					"passport_control": "🛂",
-					"pause_button": "⏸",
-					"peace_symbol": "☮️",
-					"peach": "🍑",
-					"peanuts": "🥜",
-					"pear": "🍐",
-					"pen": "🖊",
-					"pencil2": "✏️",
-					"penguin": "🐧",
-					"pensive": "😔",
-					"performing_arts": "🎭",
-					"persevere": "😣",
-					"person_fencing": "🤺",
-					"pouting_woman": "🙎",
-					"phone": "☎️",
-					"pick": "⛏",
-					"pig": "🐷",
-					"pig2": "🐖",
-					"pig_nose": "🐽",
-					"pill": "💊",
-					"pineapple": "🍍",
-					"ping_pong": "🏓",
-					"pisces": "♓️",
-					"pizza": "🍕",
-					"place_of_worship": "🛐",
-					"plate_with_cutlery": "🍽",
-					"play_or_pause_button": "⏯",
-					"point_down": "👇",
-					"point_left": "👈",
-					"point_right": "👉",
-					"point_up": "☝️",
-					"point_up_2": "👆",
-					"police_car": "🚓",
-					"policewoman": "👮&zwj;♀️",
-					"poodle": "🐩",
-					"popcorn": "🍿",
-					"post_office": "🏣",
-					"postal_horn": "📯",
-					"postbox": "📮",
-					"potable_water": "🚰",
-					"potato": "🥔",
-					"pouch": "👝",
-					"poultry_leg": "🍗",
-					"pound": "💷",
-					"rage": "😡",
-					"pouting_cat": "😾",
-					"pouting_man": "🙎&zwj;♂️",
-					"pray": "🙏",
-					"prayer_beads": "📿",
-					"pregnant_woman": "🤰",
-					"previous_track_button": "⏮",
-					"prince": "🤴",
-					"princess": "👸",
-					"printer": "🖨",
-					"purple_heart": "💜",
-					"purse": "👛",
-					"pushpin": "📌",
-					"put_litter_in_its_place": "🚮",
-					"question": "❓",
-					"rabbit": "🐰",
-					"rabbit2": "🐇",
-					"racehorse": "🐎",
-					"racing_car": "🏎",
-					"radio": "📻",
-					"radio_button": "🔘",
-					"radioactive": "☢️",
-					"railway_car": "🚃",
-					"railway_track": "🛤",
-					"rainbow": "🌈",
-					"rainbow_flag": "🏳️&zwj;🌈",
-					"raised_back_of_hand": "🤚",
-					"raised_hand_with_fingers_splayed": "🖐",
-					"raised_hands": "🙌",
-					"raising_hand_woman": "🙋",
-					"raising_hand_man": "🙋&zwj;♂️",
-					"ram": "🐏",
-					"ramen": "🍜",
-					"rat": "🐀",
-					"record_button": "⏺",
-					"recycle": "♻️",
-					"red_circle": "🔴",
-					"registered": "®️",
-					"relaxed": "☺️",
-					"relieved": "😌",
-					"reminder_ribbon": "🎗",
-					"repeat": "🔁",
-					"repeat_one": "🔂",
-					"rescue_worker_helmet": "⛑",
-					"restroom": "🚻",
-					"revolving_hearts": "💞",
-					"rewind": "⏪",
-					"rhinoceros": "🦏",
-					"ribbon": "🎀",
-					"rice": "🍚",
-					"rice_ball": "🍙",
-					"rice_cracker": "🍘",
-					"rice_scene": "🎑",
-					"right_anger_bubble": "🗯",
-					"ring": "💍",
-					"robot": "🤖",
-					"rocket": "🚀",
-					"rofl": "🤣",
-					"roll_eyes": "🙄",
-					"roller_coaster": "🎢",
-					"rooster": "🐓",
-					"rose": "🌹",
-					"rosette": "🏵",
-					"rotating_light": "🚨",
-					"round_pushpin": "📍",
-					"rowing_man": "🚣",
-					"rowing_woman": "🚣&zwj;♀️",
-					"rugby_football": "🏉",
-					"running_man": "🏃",
-					"running_shirt_with_sash": "🎽",
-					"running_woman": "🏃&zwj;♀️",
-					"sa": "🈂️",
-					"sagittarius": "♐️",
-					"sake": "🍶",
-					"sandal": "👡",
-					"santa": "🎅",
-					"satellite": "📡",
-					"saxophone": "🎷",
-					"school": "🏫",
-					"school_satchel": "🎒",
-					"scissors": "✂️",
-					"scorpion": "🦂",
-					"scorpius": "♏️",
-					"scream": "😱",
-					"scream_cat": "🙀",
-					"scroll": "📜",
-					"seat": "💺",
-					"secret": "㊙️",
-					"see_no_evil": "🙈",
-					"seedling": "🌱",
-					"selfie": "🤳",
-					"shallow_pan_of_food": "🥘",
-					"shamrock": "☘️",
-					"shark": "🦈",
-					"shaved_ice": "🍧",
-					"sheep": "🐑",
-					"shell": "🐚",
-					"shield": "🛡",
-					"shinto_shrine": "⛩",
-					"ship": "🚢",
-					"shirt": "👕",
-					"shopping": "🛍",
-					"shopping_cart": "🛒",
-					"shower": "🚿",
-					"shrimp": "🦐",
-					"signal_strength": "📶",
-					"six_pointed_star": "🔯",
-					"ski": "🎿",
-					"skier": "⛷",
-					"skull": "💀",
-					"skull_and_crossbones": "☠️",
-					"sleeping": "😴",
-					"sleeping_bed": "🛌",
-					"sleepy": "😪",
-					"slightly_frowning_face": "🙁",
-					"slightly_smiling_face": "🙂",
-					"slot_machine": "🎰",
-					"small_airplane": "🛩",
-					"small_blue_diamond": "🔹",
-					"small_orange_diamond": "🔸",
-					"small_red_triangle": "🔺",
-					"small_red_triangle_down": "🔻",
-					"smile": "😄",
-					"smile_cat": "😸",
-					"smiley": "😃",
-					"smiley_cat": "😺",
-					"smiling_imp": "😈",
-					"smirk": "😏",
-					"smirk_cat": "😼",
-					"smoking": "🚬",
-					"snail": "🐌",
-					"snake": "🐍",
-					"sneezing_face": "🤧",
-					"snowboarder": "🏂",
-					"snowflake": "❄️",
-					"snowman": "⛄️",
-					"snowman_with_snow": "☃️",
-					"sob": "😭",
-					"soccer": "⚽️",
-					"soon": "🔜",
-					"sos": "🆘",
-					"sound": "🔉",
-					"space_invader": "👾",
-					"spades": "♠️",
-					"spaghetti": "🍝",
-					"sparkle": "❇️",
-					"sparkler": "🎇",
-					"sparkles": "✨",
-					"sparkling_heart": "💖",
-					"speak_no_evil": "🙊",
-					"speaker": "🔈",
-					"speaking_head": "🗣",
-					"speech_balloon": "💬",
-					"speedboat": "🚤",
-					"spider": "🕷",
-					"spider_web": "🕸",
-					"spiral_calendar": "🗓",
-					"spiral_notepad": "🗒",
-					"spoon": "🥄",
-					"squid": "🦑",
-					"stadium": "🏟",
-					"star": "⭐️",
-					"star2": "🌟",
-					"star_and_crescent": "☪️",
-					"star_of_david": "✡️",
-					"stars": "🌠",
-					"station": "🚉",
-					"statue_of_liberty": "🗽",
-					"steam_locomotive": "🚂",
-					"stew": "🍲",
-					"stop_button": "⏹",
-					"stop_sign": "🛑",
-					"stopwatch": "⏱",
-					"straight_ruler": "📏",
-					"strawberry": "🍓",
-					"stuck_out_tongue": "😛",
-					"stuck_out_tongue_closed_eyes": "😝",
-					"stuck_out_tongue_winking_eye": "😜",
-					"studio_microphone": "🎙",
-					"stuffed_flatbread": "🥙",
-					"sun_behind_large_cloud": "🌥",
-					"sun_behind_rain_cloud": "🌦",
-					"sun_behind_small_cloud": "🌤",
-					"sun_with_face": "🌞",
-					"sunflower": "🌻",
-					"sunglasses": "😎",
-					"sunny": "☀️",
-					"sunrise": "🌅",
-					"sunrise_over_mountains": "🌄",
-					"surfing_man": "🏄",
-					"surfing_woman": "🏄&zwj;♀️",
-					"sushi": "🍣",
-					"suspension_railway": "🚟",
-					"sweat": "😓",
-					"sweat_drops": "💦",
-					"sweat_smile": "😅",
-					"sweet_potato": "🍠",
-					"swimming_man": "🏊",
-					"swimming_woman": "🏊&zwj;♀️",
-					"symbols": "🔣",
-					"synagogue": "🕍",
-					"syringe": "💉",
-					"taco": "🌮",
-					"tada": "🎉",
-					"tanabata_tree": "🎋",
-					"taurus": "♉️",
-					"taxi": "🚕",
-					"tea": "🍵",
-					"telephone_receiver": "📞",
-					"telescope": "🔭",
-					"tennis": "🎾",
-					"tent": "⛺️",
-					"thermometer": "🌡",
-					"thinking": "🤔",
-					"thought_balloon": "💭",
-					"ticket": "🎫",
-					"tickets": "🎟",
-					"tiger": "🐯",
-					"tiger2": "🐅",
-					"timer_clock": "⏲",
-					"tipping_hand_man": "💁&zwj;♂️",
-					"tired_face": "😫",
-					"tm": "™️",
-					"toilet": "🚽",
-					"tokyo_tower": "🗼",
-					"tomato": "🍅",
-					"tongue": "👅",
-					"top": "🔝",
-					"tophat": "🎩",
-					"tornado": "🌪",
-					"trackball": "🖲",
-					"tractor": "🚜",
-					"traffic_light": "🚥",
-					"train": "🚋",
-					"train2": "🚆",
-					"tram": "🚊",
-					"triangular_flag_on_post": "🚩",
-					"triangular_ruler": "📐",
-					"trident": "🔱",
-					"triumph": "😤",
-					"trolleybus": "🚎",
-					"trophy": "🏆",
-					"tropical_drink": "🍹",
-					"tropical_fish": "🐠",
-					"truck": "🚚",
-					"trumpet": "🎺",
-					"tulip": "🌷",
-					"tumbler_glass": "🥃",
-					"turkey": "🦃",
-					"turtle": "🐢",
-					"tv": "📺",
-					"twisted_rightwards_arrows": "🔀",
-					"two_hearts": "💕",
-					"two_men_holding_hands": "👬",
-					"two_women_holding_hands": "👭",
-					"u5272": "🈹",
-					"u5408": "🈴",
-					"u55b6": "🈺",
-					"u6307": "🈯️",
-					"u6708": "🈷️",
-					"u6709": "🈶",
-					"u6e80": "🈵",
-					"u7121": "🈚️",
-					"u7533": "🈸",
-					"u7981": "🈲",
-					"u7a7a": "🈳",
-					"umbrella": "☔️",
-					"unamused": "😒",
-					"underage": "🔞",
-					"unicorn": "🦄",
-					"unlock": "🔓",
-					"up": "🆙",
-					"upside_down_face": "🙃",
-					"v": "✌️",
-					"vertical_traffic_light": "🚦",
-					"vhs": "📼",
-					"vibration_mode": "📳",
-					"video_camera": "📹",
-					"video_game": "🎮",
-					"violin": "🎻",
-					"virgo": "♍️",
-					"volcano": "🌋",
-					"volleyball": "🏐",
-					"vs": "🆚",
-					"vulcan_salute": "🖖",
-					"walking_man": "🚶",
-					"walking_woman": "🚶&zwj;♀️",
-					"waning_crescent_moon": "🌘",
-					"waning_gibbous_moon": "🌖",
-					"warning": "⚠️",
-					"wastebasket": "🗑",
-					"watch": "⌚️",
-					"water_buffalo": "🐃",
-					"watermelon": "🍉",
-					"wave": "👋",
-					"wavy_dash": "〰️",
-					"waxing_crescent_moon": "🌒",
-					"wc": "🚾",
-					"weary": "😩",
-					"wedding": "💒",
-					"weight_lifting_man": "🏋️",
-					"weight_lifting_woman": "🏋️&zwj;♀️",
-					"whale": "🐳",
-					"whale2": "🐋",
-					"wheel_of_dharma": "☸️",
-					"wheelchair": "♿️",
-					"white_check_mark": "✅",
-					"white_circle": "⚪️",
-					"white_flag": "🏳️",
-					"white_flower": "💮",
-					"white_large_square": "⬜️",
-					"white_medium_small_square": "◽️",
-					"white_medium_square": "◻️",
-					"white_small_square": "▫️",
-					"white_square_button": "🔳",
-					"wilted_flower": "🥀",
-					"wind_chime": "🎐",
-					"wind_face": "🌬",
-					"wine_glass": "🍷",
-					"wink": "😉",
-					"wolf": "🐺",
-					"woman": "👩",
-					"woman_artist": "👩&zwj;🎨",
-					"woman_astronaut": "👩&zwj;🚀",
-					"woman_cartwheeling": "🤸&zwj;♀️",
-					"woman_cook": "👩&zwj;🍳",
-					"woman_facepalming": "🤦&zwj;♀️",
-					"woman_factory_worker": "👩&zwj;🏭",
-					"woman_farmer": "👩&zwj;🌾",
-					"woman_firefighter": "👩&zwj;🚒",
-					"woman_health_worker": "👩&zwj;⚕️",
-					"woman_judge": "👩&zwj;⚖️",
-					"woman_juggling": "🤹&zwj;♀️",
-					"woman_mechanic": "👩&zwj;🔧",
-					"woman_office_worker": "👩&zwj;💼",
-					"woman_pilot": "👩&zwj;✈️",
-					"woman_playing_handball": "🤾&zwj;♀️",
-					"woman_playing_water_polo": "🤽&zwj;♀️",
-					"woman_scientist": "👩&zwj;🔬",
-					"woman_shrugging": "🤷&zwj;♀️",
-					"woman_singer": "👩&zwj;🎤",
-					"woman_student": "👩&zwj;🎓",
-					"woman_teacher": "👩&zwj;🏫",
-					"woman_technologist": "👩&zwj;💻",
-					"woman_with_turban": "👳&zwj;♀️",
-					"womans_clothes": "👚",
-					"womans_hat": "👒",
-					"women_wrestling": "🤼&zwj;♀️",
-					"womens": "🚺",
-					"world_map": "🗺",
-					"worried": "😟",
-					"wrench": "🔧",
-					"writing_hand": "✍️",
-					"x": "❌",
-					"yellow_heart": "💛",
-					"yen": "💴",
-					"yin_yang": "☯️",
-					"yum": "😋",
-					"zap": "⚡️",
-					"zipper_mouth_face": "🤐",
-					"zzz": "💤",
-					"octocat": "<img alt=\":octocat:\" height=\"20\" width=\"20\" align=\"absmiddle\" src=\"https://assets-cdn.github.com/images/icons/emoji/octocat.png\">",
-					"showdown": "<span style=\"font-family: 'Anonymous Pro', monospace; text-decoration: underline; text-decoration-style: dashed; text-decoration-color: #3e8b8a;text-underline-position: under;\">S</span>"
-				};
-				/**
-				* Created by Estevao on 31-05-2015.
-				*/
-				/**
-				* Showdown Converter class
-				* @class
-				* @param {object} [converterOptions]
-				* @returns {Converter}
-				*/
-				showdown.Converter = function(converterOptions) {
-					"use strict";
-					var options = {}, langExtensions = [], outputModifiers = [], listeners = {}, setConvFlavor = setFlavor, metadata = {
-						parsed: {},
-						raw: "",
-						format: ""
-					};
-					_constructor();
-					/**
-					* Converter constructor
-					* @private
-					*/
-					function _constructor() {
-						converterOptions = converterOptions || {};
-						for (var gOpt in globalOptions) if (globalOptions.hasOwnProperty(gOpt)) options[gOpt] = globalOptions[gOpt];
-						if (typeof converterOptions === "object") {
-							for (var opt in converterOptions) if (converterOptions.hasOwnProperty(opt)) options[opt] = converterOptions[opt];
-						} else throw Error("Converter expects the passed parameter to be an object, but " + typeof converterOptions + " was passed instead.");
-						if (options.extensions) showdown.helper.forEach(options.extensions, _parseExtension);
-					}
-					/**
-					* Parse extension
-					* @param {*} ext
-					* @param {string} [name='']
-					* @private
-					*/
-					function _parseExtension(ext, name) {
-						name = name || null;
-						if (showdown.helper.isString(ext)) {
-							ext = showdown.helper.stdExtName(ext);
-							name = ext;
-							if (showdown.extensions[ext]) {
-								console.warn("DEPRECATION WARNING: " + ext + " is an old extension that uses a deprecated loading method.Please inform the developer that the extension should be updated!");
-								legacyExtensionLoading(showdown.extensions[ext], ext);
-								return;
-							} else if (!showdown.helper.isUndefined(extensions[ext])) ext = extensions[ext];
-							else throw Error("Extension \"" + ext + "\" could not be loaded. It was either not found or is not a valid extension.");
-						}
-						if (typeof ext === "function") ext = ext();
-						if (!showdown.helper.isArray(ext)) ext = [ext];
-						var validExt = validate(ext, name);
-						if (!validExt.valid) throw Error(validExt.error);
-						for (var i = 0; i < ext.length; ++i) {
-							switch (ext[i].type) {
-								case "lang":
-									langExtensions.push(ext[i]);
-									break;
-								case "output":
-									outputModifiers.push(ext[i]);
-									break;
-							}
-							if (ext[i].hasOwnProperty("listeners")) {
-								for (var ln in ext[i].listeners) if (ext[i].listeners.hasOwnProperty(ln)) listen(ln, ext[i].listeners[ln]);
-							}
-						}
-					}
-					/**
-					* LEGACY_SUPPORT
-					* @param {*} ext
-					* @param {string} name
-					*/
-					function legacyExtensionLoading(ext, name) {
-						if (typeof ext === "function") ext = ext(new showdown.Converter());
-						if (!showdown.helper.isArray(ext)) ext = [ext];
-						var valid = validate(ext, name);
-						if (!valid.valid) throw Error(valid.error);
-						for (var i = 0; i < ext.length; ++i) switch (ext[i].type) {
-							case "lang":
-								langExtensions.push(ext[i]);
-								break;
-							case "output":
-								outputModifiers.push(ext[i]);
-								break;
-							default: throw Error("Extension loader error: Type unrecognized!!!");
-						}
-					}
-					/**
-					* Listen to an event
-					* @param {string} name
-					* @param {function} callback
-					*/
-					function listen(name, callback) {
-						if (!showdown.helper.isString(name)) throw Error("Invalid argument in converter.listen() method: name must be a string, but " + typeof name + " given");
-						if (typeof callback !== "function") throw Error("Invalid argument in converter.listen() method: callback must be a function, but " + typeof callback + " given");
-						if (!listeners.hasOwnProperty(name)) listeners[name] = [];
-						listeners[name].push(callback);
-					}
-					function rTrimInputText(text) {
-						var rsp = text.match(/^\s*/)[0].length, rgx = new RegExp("^\\s{0," + rsp + "}", "gm");
-						return text.replace(rgx, "");
-					}
-					/**
-					* Dispatch an event
-					* @private
-					* @param {string} evtName Event name
-					* @param {string} text Text
-					* @param {{}} options Converter Options
-					* @param {{}} globals
-					* @returns {string}
-					*/
-					this._dispatch = function dispatch(evtName, text, options, globals) {
-						if (listeners.hasOwnProperty(evtName)) for (var ei = 0; ei < listeners[evtName].length; ++ei) {
-							var nText = listeners[evtName][ei](evtName, text, this, options, globals);
-							if (nText && typeof nText !== "undefined") text = nText;
-						}
-						return text;
-					};
-					/**
-					* Listen to an event
-					* @param {string} name
-					* @param {function} callback
-					* @returns {showdown.Converter}
-					*/
-					this.listen = function(name, callback) {
-						listen(name, callback);
-						return this;
-					};
-					/**
-					* Converts a markdown string into HTML
-					* @param {string} text
-					* @returns {*}
-					*/
-					this.makeHtml = function(text) {
-						if (!text) return text;
-						var globals = {
-							gHtmlBlocks: [],
-							gHtmlMdBlocks: [],
-							gHtmlSpans: [],
-							gUrls: {},
-							gTitles: {},
-							gDimensions: {},
-							gListLevel: 0,
-							hashLinkCounts: {},
-							langExtensions,
-							outputModifiers,
-							converter: this,
-							ghCodeBlocks: [],
-							metadata: {
-								parsed: {},
-								raw: "",
-								format: ""
-							}
-						};
-						text = text.replace(/¨/g, "¨T");
-						text = text.replace(/\$/g, "¨D");
-						text = text.replace(/\r\n/g, "\n");
-						text = text.replace(/\r/g, "\n");
-						text = text.replace(/\u00A0/g, "&nbsp;");
-						if (options.smartIndentationFix) text = rTrimInputText(text);
-						text = "\n\n" + text + "\n\n";
-						text = showdown.subParser("detab")(text, options, globals);
-						/**
-						* Strip any lines consisting only of spaces and tabs.
-						* This makes subsequent regexs easier to write, because we can
-						* match consecutive blank lines with /\n+/ instead of something
-						* contorted like /[ \t]*\n+/
-						*/
-						text = text.replace(/^[ \t]+$/gm, "");
-						showdown.helper.forEach(langExtensions, function(ext) {
-							text = showdown.subParser("runExtension")(ext, text, options, globals);
-						});
-						text = showdown.subParser("metadata")(text, options, globals);
-						text = showdown.subParser("hashPreCodeTags")(text, options, globals);
-						text = showdown.subParser("githubCodeBlocks")(text, options, globals);
-						text = showdown.subParser("hashHTMLBlocks")(text, options, globals);
-						text = showdown.subParser("hashCodeTags")(text, options, globals);
-						text = showdown.subParser("stripLinkDefinitions")(text, options, globals);
-						text = showdown.subParser("blockGamut")(text, options, globals);
-						text = showdown.subParser("unhashHTMLSpans")(text, options, globals);
-						text = showdown.subParser("unescapeSpecialChars")(text, options, globals);
-						text = text.replace(/¨D/g, "$$");
-						text = text.replace(/¨T/g, "¨");
-						text = showdown.subParser("completeHTMLDocument")(text, options, globals);
-						showdown.helper.forEach(outputModifiers, function(ext) {
-							text = showdown.subParser("runExtension")(ext, text, options, globals);
-						});
-						metadata = globals.metadata;
-						return text;
-					};
-					/**
-					* Converts an HTML string into a markdown string
-					* @param src
-					* @param [HTMLParser] A WHATWG DOM and HTML parser, such as JSDOM. If none is supplied, window.document will be used.
-					* @returns {string}
-					*/
-					this.makeMarkdown = this.makeMd = function(src, HTMLParser) {
-						src = src.replace(/\r\n/g, "\n");
-						src = src.replace(/\r/g, "\n");
-						src = src.replace(/>[ \t]+</, ">¨NBSP;<");
-						if (!HTMLParser) if (window && window.document) HTMLParser = window.document;
-						else throw new Error("HTMLParser is undefined. If in a webworker or nodejs environment, you need to provide a WHATWG DOM and HTML such as JSDOM");
-						var doc = HTMLParser.createElement("div");
-						doc.innerHTML = src;
-						var globals = { preList: substitutePreCodeTags(doc) };
-						clean(doc);
-						var nodes = doc.childNodes, mdDoc = "";
-						for (var i = 0; i < nodes.length; i++) mdDoc += showdown.subParser("makeMarkdown.node")(nodes[i], globals);
-						function clean(node) {
-							for (var n = 0; n < node.childNodes.length; ++n) {
-								var child = node.childNodes[n];
-								if (child.nodeType === 3) if (!/\S/.test(child.nodeValue) && !/^[ ]+$/.test(child.nodeValue)) {
-									node.removeChild(child);
-									--n;
-								} else {
-									child.nodeValue = child.nodeValue.split("\n").join(" ");
-									child.nodeValue = child.nodeValue.replace(/(\s)+/g, "$1");
-								}
-								else if (child.nodeType === 1) clean(child);
-							}
-						}
-						function substitutePreCodeTags(doc) {
-							var pres = doc.querySelectorAll("pre"), presPH = [];
-							for (var i = 0; i < pres.length; ++i) if (pres[i].childElementCount === 1 && pres[i].firstChild.tagName.toLowerCase() === "code") {
-								var content = pres[i].firstChild.innerHTML.trim(), language = pres[i].firstChild.getAttribute("data-language") || "";
-								if (language === "") {
-									var classes = pres[i].firstChild.className.split(" ");
-									for (var c = 0; c < classes.length; ++c) {
-										var matches = classes[c].match(/^language-(.+)$/);
-										if (matches !== null) {
-											language = matches[1];
-											break;
-										}
-									}
-								}
-								content = showdown.helper.unescapeHTMLEntities(content);
-								presPH.push(content);
-								pres[i].outerHTML = "<precode language=\"" + language + "\" precodenum=\"" + i.toString() + "\"></precode>";
-							} else {
-								presPH.push(pres[i].innerHTML);
-								pres[i].innerHTML = "";
-								pres[i].setAttribute("prenum", i.toString());
-							}
-							return presPH;
-						}
-						return mdDoc;
-					};
-					/**
-					* Set an option of this Converter instance
-					* @param {string} key
-					* @param {*} value
-					*/
-					this.setOption = function(key, value) {
-						options[key] = value;
-					};
-					/**
-					* Get the option of this Converter instance
-					* @param {string} key
-					* @returns {*}
-					*/
-					this.getOption = function(key) {
-						return options[key];
-					};
-					/**
-					* Get the options of this Converter instance
-					* @returns {{}}
-					*/
-					this.getOptions = function() {
-						return options;
-					};
-					/**
-					* Add extension to THIS converter
-					* @param {{}} extension
-					* @param {string} [name=null]
-					*/
-					this.addExtension = function(extension, name) {
-						name = name || null;
-						_parseExtension(extension, name);
-					};
-					/**
-					* Use a global registered extension with THIS converter
-					* @param {string} extensionName Name of the previously registered extension
-					*/
-					this.useExtension = function(extensionName) {
-						_parseExtension(extensionName);
-					};
-					/**
-					* Set the flavor THIS converter should use
-					* @param {string} name
-					*/
-					this.setFlavor = function(name) {
-						if (!flavor.hasOwnProperty(name)) throw Error(name + " flavor was not found");
-						var preset = flavor[name];
-						setConvFlavor = name;
-						for (var option in preset) if (preset.hasOwnProperty(option)) options[option] = preset[option];
-					};
-					/**
-					* Get the currently set flavor of this converter
-					* @returns {string}
-					*/
-					this.getFlavor = function() {
-						return setConvFlavor;
-					};
-					/**
-					* Remove an extension from THIS converter.
-					* Note: This is a costly operation. It's better to initialize a new converter
-					* and specify the extensions you wish to use
-					* @param {Array} extension
-					*/
-					this.removeExtension = function(extension) {
-						if (!showdown.helper.isArray(extension)) extension = [extension];
-						for (var a = 0; a < extension.length; ++a) {
-							var ext = extension[a];
-							for (var i = 0; i < langExtensions.length; ++i) if (langExtensions[i] === ext) langExtensions.splice(i, 1);
-							for (var ii = 0; ii < outputModifiers.length; ++ii) if (outputModifiers[ii] === ext) outputModifiers.splice(ii, 1);
-						}
-					};
-					/**
-					* Get all extension of THIS converter
-					* @returns {{language: Array, output: Array}}
-					*/
-					this.getAllExtensions = function() {
-						return {
-							language: langExtensions,
-							output: outputModifiers
-						};
-					};
-					/**
-					* Get the metadata of the previously parsed document
-					* @param raw
-					* @returns {string|{}}
-					*/
-					this.getMetadata = function(raw) {
-						if (raw) return metadata.raw;
-						else return metadata.parsed;
-					};
-					/**
-					* Get the metadata format of the previously parsed document
-					* @returns {string}
-					*/
-					this.getMetadataFormat = function() {
-						return metadata.format;
-					};
-					/**
-					* Private: set a single key, value metadata pair
-					* @param {string} key
-					* @param {string} value
-					*/
-					this._setMetadataPair = function(key, value) {
-						metadata.parsed[key] = value;
-					};
-					/**
-					* Private: set metadata format
-					* @param {string} format
-					*/
-					this._setMetadataFormat = function(format) {
-						metadata.format = format;
-					};
-					/**
-					* Private: set metadata raw text
-					* @param {string} raw
-					*/
-					this._setMetadataRaw = function(raw) {
-						metadata.raw = raw;
-					};
-				};
-				/**
-				* Turn Markdown link shortcuts into XHTML <a> tags.
-				*/
-				showdown.subParser("anchors", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("anchors.before", text, options, globals);
-					var writeAnchorTag = function(wholeMatch, linkText, linkId, url, m5, m6, title) {
-						if (showdown.helper.isUndefined(title)) title = "";
-						linkId = linkId.toLowerCase();
-						if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) url = "";
-						else if (!url) {
-							if (!linkId) linkId = linkText.toLowerCase().replace(/ ?\n/g, " ");
-							url = "#" + linkId;
-							if (!showdown.helper.isUndefined(globals.gUrls[linkId])) {
-								url = globals.gUrls[linkId];
-								if (!showdown.helper.isUndefined(globals.gTitles[linkId])) title = globals.gTitles[linkId];
-							} else return wholeMatch;
-						}
-						url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-						var result = "<a href=\"" + url + "\"";
-						if (title !== "" && title !== null) {
-							title = title.replace(/"/g, "&quot;");
-							title = title.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-							result += " title=\"" + title + "\"";
-						}
-						if (options.openLinksInNewWindow && !/^#/.test(url)) result += " rel=\"noopener noreferrer\" target=\"¨E95Eblank\"";
-						result += ">" + linkText + "</a>";
-						return result;
-					};
-					text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)] ?(?:\n *)?\[(.*?)]()()()()/g, writeAnchorTag);
-					text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)]()[ \t]*\([ \t]?<([^>]*)>(?:[ \t]*((["'])([^"]*?)\5))?[ \t]?\)/g, writeAnchorTag);
-					text = text.replace(/\[((?:\[[^\]]*]|[^\[\]])*)]()[ \t]*\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?:[ \t]*((["'])([^"]*?)\5))?[ \t]?\)/g, writeAnchorTag);
-					text = text.replace(/\[([^\[\]]+)]()()()()()/g, writeAnchorTag);
-					if (options.ghMentions) text = text.replace(/(^|\s)(\\)?(@([a-z\d]+(?:[a-z\d.-]+?[a-z\d]+)*))/gim, function(wm, st, escape, mentions, username) {
-						if (escape === "\\") return st + mentions;
-						if (!showdown.helper.isString(options.ghMentionsLink)) throw new Error("ghMentionsLink option must be a string");
-						var lnk = options.ghMentionsLink.replace(/\{u}/g, username), target = "";
-						if (options.openLinksInNewWindow) target = " rel=\"noopener noreferrer\" target=\"¨E95Eblank\"";
-						return st + "<a href=\"" + lnk + "\"" + target + ">" + mentions + "</a>";
-					});
-					text = globals.converter._dispatch("anchors.after", text, options, globals);
-					return text;
-				});
-				var simpleURLRegex = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+?\.[^'">\s]+?)()(\1)?(?=\s|$)(?!["<>])/gi, simpleURLRegex2 = /([*~_]+|\b)(((https?|ftp|dict):\/\/|www\.)[^'">\s]+\.[^'">\s]+?)([.!?,()\[\]])?(\1)?(?=\s|$)(?!["<>])/gi, delimUrlRegex = /()<(((https?|ftp|dict):\/\/|www\.)[^'">\s]+)()>()/gi, simpleMailRegex = /(^|\s)(?:mailto:)?([A-Za-z0-9!#$%&'*+-/=?^_`{|}~.]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)(?=$|\s)/gim, delimMailRegex = /<()(?:mailto:)?([-.\w]+@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)>/gi, replaceLink = function(options) {
-					"use strict";
-					return function(wm, leadingMagicChars, link, m2, m3, trailingPunctuation, trailingMagicChars) {
-						link = link.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-						var lnkTxt = link, append = "", target = "", lmc = leadingMagicChars || "", tmc = trailingMagicChars || "";
-						if (/^www\./i.test(link)) link = link.replace(/^www\./i, "http://www.");
-						if (options.excludeTrailingPunctuationFromURLs && trailingPunctuation) append = trailingPunctuation;
-						if (options.openLinksInNewWindow) target = " rel=\"noopener noreferrer\" target=\"¨E95Eblank\"";
-						return lmc + "<a href=\"" + link + "\"" + target + ">" + lnkTxt + "</a>" + append + tmc;
-					};
-				}, replaceMail = function(options, globals) {
-					"use strict";
-					return function(wholeMatch, b, mail) {
-						var href = "mailto:";
-						b = b || "";
-						mail = showdown.subParser("unescapeSpecialChars")(mail, options, globals);
-						if (options.encodeEmails) {
-							href = showdown.helper.encodeEmailAddress(href + mail);
-							mail = showdown.helper.encodeEmailAddress(mail);
-						} else href = href + mail;
-						return b + "<a href=\"" + href + "\">" + mail + "</a>";
-					};
-				};
-				showdown.subParser("autoLinks", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("autoLinks.before", text, options, globals);
-					text = text.replace(delimUrlRegex, replaceLink(options));
-					text = text.replace(delimMailRegex, replaceMail(options, globals));
-					text = globals.converter._dispatch("autoLinks.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("simplifiedAutoLinks", function(text, options, globals) {
-					"use strict";
-					if (!options.simplifiedAutoLink) return text;
-					text = globals.converter._dispatch("simplifiedAutoLinks.before", text, options, globals);
-					if (options.excludeTrailingPunctuationFromURLs) text = text.replace(simpleURLRegex2, replaceLink(options));
-					else text = text.replace(simpleURLRegex, replaceLink(options));
-					text = text.replace(simpleMailRegex, replaceMail(options, globals));
-					text = globals.converter._dispatch("simplifiedAutoLinks.after", text, options, globals);
-					return text;
-				});
-				/**
-				* These are all the transformations that form block-level
-				* tags like paragraphs, headers, and list items.
-				*/
-				showdown.subParser("blockGamut", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("blockGamut.before", text, options, globals);
-					text = showdown.subParser("blockQuotes")(text, options, globals);
-					text = showdown.subParser("headers")(text, options, globals);
-					text = showdown.subParser("horizontalRule")(text, options, globals);
-					text = showdown.subParser("lists")(text, options, globals);
-					text = showdown.subParser("codeBlocks")(text, options, globals);
-					text = showdown.subParser("tables")(text, options, globals);
-					text = showdown.subParser("hashHTMLBlocks")(text, options, globals);
-					text = showdown.subParser("paragraphs")(text, options, globals);
-					text = globals.converter._dispatch("blockGamut.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("blockQuotes", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("blockQuotes.before", text, options, globals);
-					text = text + "\n\n";
-					var rgx = /(^ {0,3}>[ \t]?.+\n(.+\n)*\n*)+/gm;
-					if (options.splitAdjacentBlockquotes) rgx = /^ {0,3}>[\s\S]*?(?:\n\n)/gm;
-					text = text.replace(rgx, function(bq) {
-						bq = bq.replace(/^[ \t]*>[ \t]?/gm, "");
-						bq = bq.replace(/¨0/g, "");
-						bq = bq.replace(/^[ \t]+$/gm, "");
-						bq = showdown.subParser("githubCodeBlocks")(bq, options, globals);
-						bq = showdown.subParser("blockGamut")(bq, options, globals);
-						bq = bq.replace(/(^|\n)/g, "$1  ");
-						bq = bq.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm, function(wholeMatch, m1) {
-							var pre = m1;
-							pre = pre.replace(/^  /gm, "¨0");
-							pre = pre.replace(/¨0/g, "");
-							return pre;
-						});
-						return showdown.subParser("hashBlock")("<blockquote>\n" + bq + "\n</blockquote>", options, globals);
-					});
-					text = globals.converter._dispatch("blockQuotes.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Process Markdown `<pre><code>` blocks.
-				*/
-				showdown.subParser("codeBlocks", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("codeBlocks.before", text, options, globals);
-					text += "¨0";
-					text = text.replace(/(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=¨0))/g, function(wholeMatch, m1, m2) {
-						var codeblock = m1, nextChar = m2, end = "\n";
-						codeblock = showdown.subParser("outdent")(codeblock, options, globals);
-						codeblock = showdown.subParser("encodeCode")(codeblock, options, globals);
-						codeblock = showdown.subParser("detab")(codeblock, options, globals);
-						codeblock = codeblock.replace(/^\n+/g, "");
-						codeblock = codeblock.replace(/\n+$/g, "");
-						if (options.omitExtraWLInCodeBlocks) end = "";
-						codeblock = "<pre><code>" + codeblock + end + "</code></pre>";
-						return showdown.subParser("hashBlock")(codeblock, options, globals) + nextChar;
-					});
-					text = text.replace(/¨0/, "");
-					text = globals.converter._dispatch("codeBlocks.after", text, options, globals);
-					return text;
-				});
-				/**
-				*
-				*   *  Backtick quotes are used for <code></code> spans.
-				*
-				*   *  You can use multiple backticks as the delimiters if you want to
-				*     include literal backticks in the code span. So, this input:
-				*
-				*         Just type ``foo `bar` baz`` at the prompt.
-				*
-				*       Will translate to:
-				*
-				*         <p>Just type <code>foo `bar` baz</code> at the prompt.</p>
-				*
-				*    There's no arbitrary limit to the number of backticks you
-				*    can use as delimters. If you need three consecutive backticks
-				*    in your code, use four for delimiters, etc.
-				*
-				*  *  You can use spaces to get literal backticks at the edges:
-				*
-				*         ... type `` `bar` `` ...
-				*
-				*       Turns to:
-				*
-				*         ... type <code>`bar`</code> ...
-				*/
-				showdown.subParser("codeSpans", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("codeSpans.before", text, options, globals);
-					if (typeof text === "undefined") text = "";
-					text = text.replace(/(^|[^\\])(`+)([^\r]*?[^`])\2(?!`)/gm, function(wholeMatch, m1, m2, m3) {
-						var c = m3;
-						c = c.replace(/^([ \t]*)/g, "");
-						c = c.replace(/[ \t]*$/g, "");
-						c = showdown.subParser("encodeCode")(c, options, globals);
-						c = m1 + "<code>" + c + "</code>";
-						c = showdown.subParser("hashHTMLSpans")(c, options, globals);
-						return c;
-					});
-					text = globals.converter._dispatch("codeSpans.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Create a full HTML document from the processed markdown
-				*/
-				showdown.subParser("completeHTMLDocument", function(text, options, globals) {
-					"use strict";
-					if (!options.completeHTMLDocument) return text;
-					text = globals.converter._dispatch("completeHTMLDocument.before", text, options, globals);
-					var doctype = "html", doctypeParsed = "<!DOCTYPE HTML>\n", title = "", charset = "<meta charset=\"utf-8\">\n", lang = "", metadata = "";
-					if (typeof globals.metadata.parsed.doctype !== "undefined") {
-						doctypeParsed = "<!DOCTYPE " + globals.metadata.parsed.doctype + ">\n";
-						doctype = globals.metadata.parsed.doctype.toString().toLowerCase();
-						if (doctype === "html" || doctype === "html5") charset = "<meta charset=\"utf-8\">";
-					}
-					for (var meta in globals.metadata.parsed) if (globals.metadata.parsed.hasOwnProperty(meta)) switch (meta.toLowerCase()) {
-						case "doctype": break;
-						case "title":
-							title = "<title>" + globals.metadata.parsed.title + "</title>\n";
-							break;
-						case "charset":
-							if (doctype === "html" || doctype === "html5") charset = "<meta charset=\"" + globals.metadata.parsed.charset + "\">\n";
-							else charset = "<meta name=\"charset\" content=\"" + globals.metadata.parsed.charset + "\">\n";
-							break;
-						case "language":
-						case "lang":
-							lang = " lang=\"" + globals.metadata.parsed[meta] + "\"";
-							metadata += "<meta name=\"" + meta + "\" content=\"" + globals.metadata.parsed[meta] + "\">\n";
-							break;
-						default: metadata += "<meta name=\"" + meta + "\" content=\"" + globals.metadata.parsed[meta] + "\">\n";
-					}
-					text = doctypeParsed + "<html" + lang + ">\n<head>\n" + title + charset + metadata + "</head>\n<body>\n" + text.trim() + "\n</body>\n</html>";
-					text = globals.converter._dispatch("completeHTMLDocument.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Convert all tabs to spaces
-				*/
-				showdown.subParser("detab", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("detab.before", text, options, globals);
-					text = text.replace(/\t(?=\t)/g, "    ");
-					text = text.replace(/\t/g, "¨A¨B");
-					text = text.replace(/¨B(.+?)¨A/g, function(wholeMatch, m1) {
-						var leadingText = m1, numSpaces = 4 - leadingText.length % 4;
-						for (var i = 0; i < numSpaces; i++) leadingText += " ";
-						return leadingText;
-					});
-					text = text.replace(/¨A/g, "    ");
-					text = text.replace(/¨B/g, "");
-					text = globals.converter._dispatch("detab.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("ellipsis", function(text, options, globals) {
-					"use strict";
-					if (!options.ellipsis) return text;
-					text = globals.converter._dispatch("ellipsis.before", text, options, globals);
-					text = text.replace(/\.\.\./g, "…");
-					text = globals.converter._dispatch("ellipsis.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Turn emoji codes into emojis
-				*
-				* List of supported emojis: https://github.com/showdownjs/showdown/wiki/Emojis
-				*/
-				showdown.subParser("emoji", function(text, options, globals) {
-					"use strict";
-					if (!options.emoji) return text;
-					text = globals.converter._dispatch("emoji.before", text, options, globals);
-					text = text.replace(/:([\S]+?):/g, function(wm, emojiCode) {
-						if (showdown.helper.emojis.hasOwnProperty(emojiCode)) return showdown.helper.emojis[emojiCode];
-						return wm;
-					});
-					text = globals.converter._dispatch("emoji.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Smart processing for ampersands and angle brackets that need to be encoded.
-				*/
-				showdown.subParser("encodeAmpsAndAngles", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("encodeAmpsAndAngles.before", text, options, globals);
-					text = text.replace(/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/g, "&amp;");
-					text = text.replace(/<(?![a-z\/?$!])/gi, "&lt;");
-					text = text.replace(/</g, "&lt;");
-					text = text.replace(/>/g, "&gt;");
-					text = globals.converter._dispatch("encodeAmpsAndAngles.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Returns the string, with after processing the following backslash escape sequences.
-				*
-				* attacklab: The polite way to do this is with the new escapeCharacters() function:
-				*
-				*    text = escapeCharacters(text,"\\",true);
-				*    text = escapeCharacters(text,"`*_{}[]()>#+-.!",true);
-				*
-				* ...but we're sidestepping its use of the (slow) RegExp constructor
-				* as an optimization for Firefox.  This function gets called a LOT.
-				*/
-				showdown.subParser("encodeBackslashEscapes", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("encodeBackslashEscapes.before", text, options, globals);
-					text = text.replace(/\\(\\)/g, showdown.helper.escapeCharactersCallback);
-					text = text.replace(/\\([`*_{}\[\]()>#+.!~=|:-])/g, showdown.helper.escapeCharactersCallback);
-					text = globals.converter._dispatch("encodeBackslashEscapes.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Encode/escape certain characters inside Markdown code runs.
-				* The point is that in code, these characters are literals,
-				* and lose their special Markdown meanings.
-				*/
-				showdown.subParser("encodeCode", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("encodeCode.before", text, options, globals);
-					text = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/([*_{}\[\]\\=~-])/g, showdown.helper.escapeCharactersCallback);
-					text = globals.converter._dispatch("encodeCode.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Within tags -- meaning between < and > -- encode [\ ` * _ ~ =] so they
-				* don't conflict with their use in Markdown for code, italics and strong.
-				*/
-				showdown.subParser("escapeSpecialCharsWithinTagAttributes", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("escapeSpecialCharsWithinTagAttributes.before", text, options, globals);
-					var tags = /<\/?[a-z\d_:-]+(?:[\s]+[\s\S]+?)?>/gi, comments = /<!(--(?:(?:[^>-]|-[^>])(?:[^-]|-[^-])*)--)>/gi;
-					text = text.replace(tags, function(wholeMatch) {
-						return wholeMatch.replace(/(.)<\/?code>(?=.)/g, "$1`").replace(/([\\`*_~=|])/g, showdown.helper.escapeCharactersCallback);
-					});
-					text = text.replace(comments, function(wholeMatch) {
-						return wholeMatch.replace(/([\\`*_~=|])/g, showdown.helper.escapeCharactersCallback);
-					});
-					text = globals.converter._dispatch("escapeSpecialCharsWithinTagAttributes.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Handle github codeblocks prior to running HashHTML so that
-				* HTML contained within the codeblock gets escaped properly
-				* Example:
-				* ```ruby
-				*     def hello_world(x)
-				*       puts "Hello, #{x}"
-				*     end
-				* ```
-				*/
-				showdown.subParser("githubCodeBlocks", function(text, options, globals) {
-					"use strict";
-					if (!options.ghCodeBlocks) return text;
-					text = globals.converter._dispatch("githubCodeBlocks.before", text, options, globals);
-					text += "¨0";
-					text = text.replace(/(?:^|\n)(?: {0,3})(```+|~~~+)(?: *)([^\s`~]*)\n([\s\S]*?)\n(?: {0,3})\1/g, function(wholeMatch, delim, language, codeblock) {
-						var end = options.omitExtraWLInCodeBlocks ? "" : "\n";
-						codeblock = showdown.subParser("encodeCode")(codeblock, options, globals);
-						codeblock = showdown.subParser("detab")(codeblock, options, globals);
-						codeblock = codeblock.replace(/^\n+/g, "");
-						codeblock = codeblock.replace(/\n+$/g, "");
-						codeblock = "<pre><code" + (language ? " class=\"" + language + " language-" + language + "\"" : "") + ">" + codeblock + end + "</code></pre>";
-						codeblock = showdown.subParser("hashBlock")(codeblock, options, globals);
-						return "\n\n¨G" + (globals.ghCodeBlocks.push({
-							text: wholeMatch,
-							codeblock
-						}) - 1) + "G\n\n";
-					});
-					text = text.replace(/¨0/, "");
-					return globals.converter._dispatch("githubCodeBlocks.after", text, options, globals);
-				});
-				showdown.subParser("hashBlock", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("hashBlock.before", text, options, globals);
-					text = text.replace(/(^\n+|\n+$)/g, "");
-					text = "\n\n¨K" + (globals.gHtmlBlocks.push(text) - 1) + "K\n\n";
-					text = globals.converter._dispatch("hashBlock.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Hash and escape <code> elements that should not be parsed as markdown
-				*/
-				showdown.subParser("hashCodeTags", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("hashCodeTags.before", text, options, globals);
-					var repFunc = function(wholeMatch, match, left, right) {
-						var codeblock = left + showdown.subParser("encodeCode")(match, options, globals) + right;
-						return "¨C" + (globals.gHtmlSpans.push(codeblock) - 1) + "C";
-					};
-					text = showdown.helper.replaceRecursiveRegExp(text, repFunc, "<code\\b[^>]*>", "</code>", "gim");
-					text = globals.converter._dispatch("hashCodeTags.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("hashElement", function(text, options, globals) {
-					"use strict";
-					return function(wholeMatch, m1) {
-						var blockText = m1;
-						blockText = blockText.replace(/\n\n/g, "\n");
-						blockText = blockText.replace(/^\n/, "");
-						blockText = blockText.replace(/\n+$/g, "");
-						blockText = "\n\n¨K" + (globals.gHtmlBlocks.push(blockText) - 1) + "K\n\n";
-						return blockText;
-					};
-				});
-				showdown.subParser("hashHTMLBlocks", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("hashHTMLBlocks.before", text, options, globals);
-					var blockTags = [
-						"pre",
-						"div",
-						"h1",
-						"h2",
-						"h3",
-						"h4",
-						"h5",
-						"h6",
-						"blockquote",
-						"table",
-						"dl",
-						"ol",
-						"ul",
-						"script",
-						"noscript",
-						"form",
-						"fieldset",
-						"iframe",
-						"math",
-						"style",
-						"section",
-						"header",
-						"footer",
-						"nav",
-						"article",
-						"aside",
-						"address",
-						"audio",
-						"canvas",
-						"figure",
-						"hgroup",
-						"output",
-						"video",
-						"p"
-					], repFunc = function(wholeMatch, match, left, right) {
-						var txt = wholeMatch;
-						if (left.search(/\bmarkdown\b/) !== -1) txt = left + globals.converter.makeHtml(match) + right;
-						return "\n\n¨K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
-					};
-					if (options.backslashEscapesHTMLTags) text = text.replace(/\\<(\/?[^>]+?)>/g, function(wm, inside) {
-						return "&lt;" + inside + "&gt;";
-					});
-					for (var i = 0; i < blockTags.length; ++i) {
-						var opTagPos, rgx1 = new RegExp("^ {0,3}(<" + blockTags[i] + "\\b[^>]*>)", "im"), patLeft = "<" + blockTags[i] + "\\b[^>]*>", patRight = "</" + blockTags[i] + ">";
-						while ((opTagPos = showdown.helper.regexIndexOf(text, rgx1)) !== -1) {
-							var subTexts = showdown.helper.splitAtIndex(text, opTagPos), newSubText1 = showdown.helper.replaceRecursiveRegExp(subTexts[1], repFunc, patLeft, patRight, "im");
-							if (newSubText1 === subTexts[1]) break;
-							text = subTexts[0].concat(newSubText1);
-						}
-					}
-					text = text.replace(/(\n {0,3}(<(hr)\b([^<>])*?\/?>)[ \t]*(?=\n{2,}))/g, showdown.subParser("hashElement")(text, options, globals));
-					text = showdown.helper.replaceRecursiveRegExp(text, function(txt) {
-						return "\n\n¨K" + (globals.gHtmlBlocks.push(txt) - 1) + "K\n\n";
-					}, "^ {0,3}<!--", "-->", "gm");
-					text = text.replace(/(?:\n\n)( {0,3}(?:<([?%])[^\r]*?\2>)[ \t]*(?=\n{2,}))/g, showdown.subParser("hashElement")(text, options, globals));
-					text = globals.converter._dispatch("hashHTMLBlocks.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Hash span elements that should not be parsed as markdown
-				*/
-				showdown.subParser("hashHTMLSpans", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("hashHTMLSpans.before", text, options, globals);
-					function hashHTMLSpan(html) {
-						return "¨C" + (globals.gHtmlSpans.push(html) - 1) + "C";
-					}
-					text = text.replace(/<[^>]+?\/>/gi, function(wm) {
-						return hashHTMLSpan(wm);
-					});
-					text = text.replace(/<([^>]+?)>[\s\S]*?<\/\1>/g, function(wm) {
-						return hashHTMLSpan(wm);
-					});
-					text = text.replace(/<([^>]+?)\s[^>]+?>[\s\S]*?<\/\1>/g, function(wm) {
-						return hashHTMLSpan(wm);
-					});
-					text = text.replace(/<[^>]+?>/gi, function(wm) {
-						return hashHTMLSpan(wm);
-					});
-					text = globals.converter._dispatch("hashHTMLSpans.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Unhash HTML spans
-				*/
-				showdown.subParser("unhashHTMLSpans", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("unhashHTMLSpans.before", text, options, globals);
-					for (var i = 0; i < globals.gHtmlSpans.length; ++i) {
-						var repText = globals.gHtmlSpans[i], limit = 0;
-						while (/¨C(\d+)C/.test(repText)) {
-							var num = RegExp.$1;
-							repText = repText.replace("¨C" + num + "C", globals.gHtmlSpans[num]);
-							if (limit === 10) {
-								console.error("maximum nesting of 10 spans reached!!!");
-								break;
-							}
-							++limit;
-						}
-						text = text.replace("¨C" + i + "C", repText);
-					}
-					text = globals.converter._dispatch("unhashHTMLSpans.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Hash and escape <pre><code> elements that should not be parsed as markdown
-				*/
-				showdown.subParser("hashPreCodeTags", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("hashPreCodeTags.before", text, options, globals);
-					var repFunc = function(wholeMatch, match, left, right) {
-						var codeblock = left + showdown.subParser("encodeCode")(match, options, globals) + right;
-						return "\n\n¨G" + (globals.ghCodeBlocks.push({
-							text: wholeMatch,
-							codeblock
-						}) - 1) + "G\n\n";
-					};
-					text = showdown.helper.replaceRecursiveRegExp(text, repFunc, "^ {0,3}<pre\\b[^>]*>\\s*<code\\b[^>]*>", "^ {0,3}</code>\\s*</pre>", "gim");
-					text = globals.converter._dispatch("hashPreCodeTags.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("headers", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("headers.before", text, options, globals);
-					var headerLevelStart = isNaN(parseInt(options.headerLevelStart)) ? 1 : parseInt(options.headerLevelStart), setextRegexH1 = options.smoothLivePreview ? /^(.+)[ \t]*\n={2,}[ \t]*\n+/gm : /^(.+)[ \t]*\n=+[ \t]*\n+/gm, setextRegexH2 = options.smoothLivePreview ? /^(.+)[ \t]*\n-{2,}[ \t]*\n+/gm : /^(.+)[ \t]*\n-+[ \t]*\n+/gm;
-					text = text.replace(setextRegexH1, function(wholeMatch, m1) {
-						var spanGamut = showdown.subParser("spanGamut")(m1, options, globals), hID = options.noHeaderId ? "" : " id=\"" + headerId(m1) + "\"", hLevel = headerLevelStart, hashBlock = "<h" + hLevel + hID + ">" + spanGamut + "</h" + hLevel + ">";
-						return showdown.subParser("hashBlock")(hashBlock, options, globals);
-					});
-					text = text.replace(setextRegexH2, function(matchFound, m1) {
-						var spanGamut = showdown.subParser("spanGamut")(m1, options, globals), hID = options.noHeaderId ? "" : " id=\"" + headerId(m1) + "\"", hLevel = headerLevelStart + 1, hashBlock = "<h" + hLevel + hID + ">" + spanGamut + "</h" + hLevel + ">";
-						return showdown.subParser("hashBlock")(hashBlock, options, globals);
-					});
-					var atxStyle = options.requireSpaceBeforeHeadingText ? /^(#{1,6})[ \t]+(.+?)[ \t]*#*\n+/gm : /^(#{1,6})[ \t]*(.+?)[ \t]*#*\n+/gm;
-					text = text.replace(atxStyle, function(wholeMatch, m1, m2) {
-						var hText = m2;
-						if (options.customizedHeaderId) hText = m2.replace(/\s?\{([^{]+?)}\s*$/, "");
-						var span = showdown.subParser("spanGamut")(hText, options, globals), hID = options.noHeaderId ? "" : " id=\"" + headerId(m2) + "\"", hLevel = headerLevelStart - 1 + m1.length, header = "<h" + hLevel + hID + ">" + span + "</h" + hLevel + ">";
-						return showdown.subParser("hashBlock")(header, options, globals);
-					});
-					function headerId(m) {
-						var title, prefix;
-						if (options.customizedHeaderId) {
-							var match = m.match(/\{([^{]+?)}\s*$/);
-							if (match && match[1]) m = match[1];
-						}
-						title = m;
-						if (showdown.helper.isString(options.prefixHeaderId)) prefix = options.prefixHeaderId;
-						else if (options.prefixHeaderId === true) prefix = "section-";
-						else prefix = "";
-						if (!options.rawPrefixHeaderId) title = prefix + title;
-						if (options.ghCompatibleHeaderId) title = title.replace(/ /g, "-").replace(/&amp;/g, "").replace(/¨T/g, "").replace(/¨D/g, "").replace(/[&+$,\/:;=?@"#{}|^¨~\[\]`\\*)(%.!'<>]/g, "").toLowerCase();
-						else if (options.rawHeaderId) title = title.replace(/ /g, "-").replace(/&amp;/g, "&").replace(/¨T/g, "¨").replace(/¨D/g, "$").replace(/["']/g, "-").toLowerCase();
-						else title = title.replace(/[^\w]/g, "").toLowerCase();
-						if (options.rawPrefixHeaderId) title = prefix + title;
-						if (globals.hashLinkCounts[title]) title = title + "-" + globals.hashLinkCounts[title]++;
-						else globals.hashLinkCounts[title] = 1;
-						return title;
-					}
-					text = globals.converter._dispatch("headers.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Turn Markdown link shortcuts into XHTML <a> tags.
-				*/
-				showdown.subParser("horizontalRule", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("horizontalRule.before", text, options, globals);
-					var key = showdown.subParser("hashBlock")("<hr />", options, globals);
-					text = text.replace(/^ {0,2}( ?-){3,}[ \t]*$/gm, key);
-					text = text.replace(/^ {0,2}( ?\*){3,}[ \t]*$/gm, key);
-					text = text.replace(/^ {0,2}( ?_){3,}[ \t]*$/gm, key);
-					text = globals.converter._dispatch("horizontalRule.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Turn Markdown image shortcuts into <img> tags.
-				*/
-				showdown.subParser("images", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("images.before", text, options, globals);
-					var inlineRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?([\S]+?(?:\([\S]*?\)[\S]*?)?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, crazyRegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<([^>]*)>(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(?:(["'])([^"]*?)\6))?[ \t]?\)/g, base64RegExp = /!\[([^\]]*?)][ \t]*()\([ \t]?<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*(?:(["'])([^"]*?)\6)?[ \t]?\)/g, referenceRegExp = /!\[([^\]]*?)] ?(?:\n *)?\[([\s\S]*?)]()()()()()/g, refShortcutRegExp = /!\[([^\[\]]+)]()()()()()/g;
-					function writeImageTagBase64(wholeMatch, altText, linkId, url, width, height, m5, title) {
-						url = url.replace(/\s/g, "");
-						return writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title);
-					}
-					function writeImageTag(wholeMatch, altText, linkId, url, width, height, m5, title) {
-						var gUrls = globals.gUrls, gTitles = globals.gTitles, gDims = globals.gDimensions;
-						linkId = linkId.toLowerCase();
-						if (!title) title = "";
-						if (wholeMatch.search(/\(<?\s*>? ?(['"].*['"])?\)$/m) > -1) url = "";
-						else if (url === "" || url === null) {
-							if (linkId === "" || linkId === null) linkId = altText.toLowerCase().replace(/ ?\n/g, " ");
-							url = "#" + linkId;
-							if (!showdown.helper.isUndefined(gUrls[linkId])) {
-								url = gUrls[linkId];
-								if (!showdown.helper.isUndefined(gTitles[linkId])) title = gTitles[linkId];
-								if (!showdown.helper.isUndefined(gDims[linkId])) {
-									width = gDims[linkId].width;
-									height = gDims[linkId].height;
-								}
-							} else return wholeMatch;
-						}
-						altText = altText.replace(/"/g, "&quot;").replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-						url = url.replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-						var result = "<img src=\"" + url + "\" alt=\"" + altText + "\"";
-						if (title && showdown.helper.isString(title)) {
-							title = title.replace(/"/g, "&quot;").replace(showdown.helper.regexes.asteriskDashAndColon, showdown.helper.escapeCharactersCallback);
-							result += " title=\"" + title + "\"";
-						}
-						if (width && height) {
-							width = width === "*" ? "auto" : width;
-							height = height === "*" ? "auto" : height;
-							result += " width=\"" + width + "\"";
-							result += " height=\"" + height + "\"";
-						}
-						result += " />";
-						return result;
-					}
-					text = text.replace(referenceRegExp, writeImageTag);
-					text = text.replace(base64RegExp, writeImageTagBase64);
-					text = text.replace(crazyRegExp, writeImageTag);
-					text = text.replace(inlineRegExp, writeImageTag);
-					text = text.replace(refShortcutRegExp, writeImageTag);
-					text = globals.converter._dispatch("images.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("italicsAndBold", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("italicsAndBold.before", text, options, globals);
-					function parseInside(txt, left, right) {
-						return left + txt + right;
-					}
-					if (options.literalMidWordUnderscores) {
-						text = text.replace(/\b___(\S[\s\S]*?)___\b/g, function(wm, txt) {
-							return parseInside(txt, "<strong><em>", "</em></strong>");
-						});
-						text = text.replace(/\b__(\S[\s\S]*?)__\b/g, function(wm, txt) {
-							return parseInside(txt, "<strong>", "</strong>");
-						});
-						text = text.replace(/\b_(\S[\s\S]*?)_\b/g, function(wm, txt) {
-							return parseInside(txt, "<em>", "</em>");
-						});
-					} else {
-						text = text.replace(/___(\S[\s\S]*?)___/g, function(wm, m) {
-							return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
-						});
-						text = text.replace(/__(\S[\s\S]*?)__/g, function(wm, m) {
-							return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
-						});
-						text = text.replace(/_([^\s_][\s\S]*?)_/g, function(wm, m) {
-							return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
-						});
-					}
-					if (options.literalMidWordAsterisks) {
-						text = text.replace(/([^*]|^)\B\*\*\*(\S[\s\S]*?)\*\*\*\B(?!\*)/g, function(wm, lead, txt) {
-							return parseInside(txt, lead + "<strong><em>", "</em></strong>");
-						});
-						text = text.replace(/([^*]|^)\B\*\*(\S[\s\S]*?)\*\*\B(?!\*)/g, function(wm, lead, txt) {
-							return parseInside(txt, lead + "<strong>", "</strong>");
-						});
-						text = text.replace(/([^*]|^)\B\*(\S[\s\S]*?)\*\B(?!\*)/g, function(wm, lead, txt) {
-							return parseInside(txt, lead + "<em>", "</em>");
-						});
-					} else {
-						text = text.replace(/\*\*\*(\S[\s\S]*?)\*\*\*/g, function(wm, m) {
-							return /\S$/.test(m) ? parseInside(m, "<strong><em>", "</em></strong>") : wm;
-						});
-						text = text.replace(/\*\*(\S[\s\S]*?)\*\*/g, function(wm, m) {
-							return /\S$/.test(m) ? parseInside(m, "<strong>", "</strong>") : wm;
-						});
-						text = text.replace(/\*([^\s*][\s\S]*?)\*/g, function(wm, m) {
-							return /\S$/.test(m) ? parseInside(m, "<em>", "</em>") : wm;
-						});
-					}
-					text = globals.converter._dispatch("italicsAndBold.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Form HTML ordered (numbered) and unordered (bulleted) lists.
-				*/
-				showdown.subParser("lists", function(text, options, globals) {
-					"use strict";
-					/**
-					* Process the contents of a single ordered or unordered list, splitting it
-					* into individual list items.
-					* @param {string} listStr
-					* @param {boolean} trimTrailing
-					* @returns {string}
-					*/
-					function processListItems(listStr, trimTrailing) {
-						globals.gListLevel++;
-						listStr = listStr.replace(/\n{2,}$/, "\n");
-						listStr += "¨0";
-						var rgx = /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[(x|X| )?])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0| {0,3}([*+-]|\d+[.])[ \t]+))/gm, isParagraphed = /\n[ \t]*\n(?!¨0)/.test(listStr);
-						if (options.disableForced4SpacesIndentedSublists) rgx = /(\n)?(^ {0,3})([*+-]|\d+[.])[ \t]+((\[(x|X| )?])?[ \t]*[^\r]+?(\n{1,2}))(?=\n*(¨0|\2([*+-]|\d+[.])[ \t]+))/gm;
-						listStr = listStr.replace(rgx, function(wholeMatch, m1, m2, m3, m4, taskbtn, checked) {
-							checked = checked && checked.trim() !== "";
-							var item = showdown.subParser("outdent")(m4, options, globals), bulletStyle = "";
-							if (taskbtn && options.tasklists) {
-								bulletStyle = " class=\"task-list-item\" style=\"list-style-type: none;\"";
-								item = item.replace(/^[ \t]*\[(x|X| )?]/m, function() {
-									var otp = "<input type=\"checkbox\" disabled style=\"margin: 0px 0.35em 0.25em -1.6em; vertical-align: middle;\"";
-									if (checked) otp += " checked";
-									otp += ">";
-									return otp;
-								});
-							}
-							item = item.replace(/^([-*+]|\d\.)[ \t]+[\S\n ]*/g, function(wm2) {
-								return "¨A" + wm2;
-							});
-							if (m1 || item.search(/\n{2,}/) > -1) {
-								item = showdown.subParser("githubCodeBlocks")(item, options, globals);
-								item = showdown.subParser("blockGamut")(item, options, globals);
-							} else {
-								item = showdown.subParser("lists")(item, options, globals);
-								item = item.replace(/\n$/, "");
-								item = showdown.subParser("hashHTMLBlocks")(item, options, globals);
-								item = item.replace(/\n\n+/g, "\n\n");
-								if (isParagraphed) item = showdown.subParser("paragraphs")(item, options, globals);
-								else item = showdown.subParser("spanGamut")(item, options, globals);
-							}
-							item = item.replace("¨A", "");
-							item = "<li" + bulletStyle + ">" + item + "</li>\n";
-							return item;
-						});
-						listStr = listStr.replace(/¨0/g, "");
-						globals.gListLevel--;
-						if (trimTrailing) listStr = listStr.replace(/\s+$/, "");
-						return listStr;
-					}
-					function styleStartNumber(list, listType) {
-						if (listType === "ol") {
-							var res = list.match(/^ *(\d+)\./);
-							if (res && res[1] !== "1") return " start=\"" + res[1] + "\"";
-						}
-						return "";
-					}
-					/**
-					* Check and parse consecutive lists (better fix for issue #142)
-					* @param {string} list
-					* @param {string} listType
-					* @param {boolean} trimTrailing
-					* @returns {string}
-					*/
-					function parseConsecutiveLists(list, listType, trimTrailing) {
-						var olRgx = options.disableForced4SpacesIndentedSublists ? /^ ?\d+\.[ \t]/gm : /^ {0,3}\d+\.[ \t]/gm, ulRgx = options.disableForced4SpacesIndentedSublists ? /^ ?[*+-][ \t]/gm : /^ {0,3}[*+-][ \t]/gm, counterRxg = listType === "ul" ? olRgx : ulRgx, result = "";
-						if (list.search(counterRxg) !== -1) (function parseCL(txt) {
-							var pos = txt.search(counterRxg), style = styleStartNumber(list, listType);
-							if (pos !== -1) {
-								result += "\n\n<" + listType + style + ">\n" + processListItems(txt.slice(0, pos), !!trimTrailing) + "</" + listType + ">\n";
-								listType = listType === "ul" ? "ol" : "ul";
-								counterRxg = listType === "ul" ? olRgx : ulRgx;
-								parseCL(txt.slice(pos));
-							} else result += "\n\n<" + listType + style + ">\n" + processListItems(txt, !!trimTrailing) + "</" + listType + ">\n";
-						})(list);
-						else {
-							var style = styleStartNumber(list, listType);
-							result = "\n\n<" + listType + style + ">\n" + processListItems(list, !!trimTrailing) + "</" + listType + ">\n";
-						}
-						return result;
-					}
-					/** Start of list parsing **/
-					text = globals.converter._dispatch("lists.before", text, options, globals);
-					text += "¨0";
-					if (globals.gListLevel) text = text.replace(/^(( {0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(¨0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm, function(wholeMatch, list, m2) {
-						return parseConsecutiveLists(list, m2.search(/[*+-]/g) > -1 ? "ul" : "ol", true);
-					});
-					else text = text.replace(/(\n\n|^\n?)(( {0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(¨0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm, function(wholeMatch, m1, list, m3) {
-						return parseConsecutiveLists(list, m3.search(/[*+-]/g) > -1 ? "ul" : "ol", false);
-					});
-					text = text.replace(/¨0/, "");
-					text = globals.converter._dispatch("lists.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Parse metadata at the top of the document
-				*/
-				showdown.subParser("metadata", function(text, options, globals) {
-					"use strict";
-					if (!options.metadata) return text;
-					text = globals.converter._dispatch("metadata.before", text, options, globals);
-					function parseMetadataContents(content) {
-						globals.metadata.raw = content;
-						content = content.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
-						content = content.replace(/\n {4}/g, " ");
-						content.replace(/^([\S ]+): +([\s\S]+?)$/gm, function(wm, key, value) {
-							globals.metadata.parsed[key] = value;
-							return "";
-						});
-					}
-					text = text.replace(/^\s*«««+(\S*?)\n([\s\S]+?)\n»»»+\n/, function(wholematch, format, content) {
-						parseMetadataContents(content);
-						return "¨M";
-					});
-					text = text.replace(/^\s*---+(\S*?)\n([\s\S]+?)\n---+\n/, function(wholematch, format, content) {
-						if (format) globals.metadata.format = format;
-						parseMetadataContents(content);
-						return "¨M";
-					});
-					text = text.replace(/¨M/g, "");
-					text = globals.converter._dispatch("metadata.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Remove one level of line-leading tabs or spaces
-				*/
-				showdown.subParser("outdent", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("outdent.before", text, options, globals);
-					text = text.replace(/^(\t|[ ]{1,4})/gm, "¨0");
-					text = text.replace(/¨0/g, "");
-					text = globals.converter._dispatch("outdent.after", text, options, globals);
-					return text;
-				});
-				/**
-				*
-				*/
-				showdown.subParser("paragraphs", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("paragraphs.before", text, options, globals);
-					text = text.replace(/^\n+/g, "");
-					text = text.replace(/\n+$/g, "");
-					var grafs = text.split(/\n{2,}/g), grafsOut = [], end = grafs.length;
-					for (var i = 0; i < end; i++) {
-						var str = grafs[i];
-						if (str.search(/¨(K|G)(\d+)\1/g) >= 0) grafsOut.push(str);
-						else if (str.search(/\S/) >= 0) {
-							str = showdown.subParser("spanGamut")(str, options, globals);
-							str = str.replace(/^([ \t]*)/g, "<p>");
-							str += "</p>";
-							grafsOut.push(str);
-						}
-					}
-					/** Unhashify HTML blocks */
-					end = grafsOut.length;
-					for (i = 0; i < end; i++) {
-						var blockText = "", grafsOutIt = grafsOut[i], codeFlag = false;
-						while (/¨(K|G)(\d+)\1/.test(grafsOutIt)) {
-							var delim = RegExp.$1, num = RegExp.$2;
-							if (delim === "K") blockText = globals.gHtmlBlocks[num];
-							else if (codeFlag) blockText = showdown.subParser("encodeCode")(globals.ghCodeBlocks[num].text, options, globals);
-							else blockText = globals.ghCodeBlocks[num].codeblock;
-							blockText = blockText.replace(/\$/g, "$$$$");
-							grafsOutIt = grafsOutIt.replace(/(\n\n)?¨(K|G)\d+\2(\n\n)?/, blockText);
-							if (/^<pre\b[^>]*>\s*<code\b[^>]*>/.test(grafsOutIt)) codeFlag = true;
-						}
-						grafsOut[i] = grafsOutIt;
-					}
-					text = grafsOut.join("\n");
-					text = text.replace(/^\n+/g, "");
-					text = text.replace(/\n+$/g, "");
-					return globals.converter._dispatch("paragraphs.after", text, options, globals);
-				});
-				/**
-				* Run extension
-				*/
-				showdown.subParser("runExtension", function(ext, text, options, globals) {
-					"use strict";
-					if (ext.filter) text = ext.filter(text, globals.converter, options);
-					else if (ext.regex) {
-						var re = ext.regex;
-						if (!(re instanceof RegExp)) re = new RegExp(re, "g");
-						text = text.replace(re, ext.replace);
-					}
-					return text;
-				});
-				/**
-				* These are all the transformations that occur *within* block-level
-				* tags like paragraphs, headers, and list items.
-				*/
-				showdown.subParser("spanGamut", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("spanGamut.before", text, options, globals);
-					text = showdown.subParser("codeSpans")(text, options, globals);
-					text = showdown.subParser("escapeSpecialCharsWithinTagAttributes")(text, options, globals);
-					text = showdown.subParser("encodeBackslashEscapes")(text, options, globals);
-					text = showdown.subParser("images")(text, options, globals);
-					text = showdown.subParser("anchors")(text, options, globals);
-					text = showdown.subParser("autoLinks")(text, options, globals);
-					text = showdown.subParser("simplifiedAutoLinks")(text, options, globals);
-					text = showdown.subParser("emoji")(text, options, globals);
-					text = showdown.subParser("underline")(text, options, globals);
-					text = showdown.subParser("italicsAndBold")(text, options, globals);
-					text = showdown.subParser("strikethrough")(text, options, globals);
-					text = showdown.subParser("ellipsis")(text, options, globals);
-					text = showdown.subParser("hashHTMLSpans")(text, options, globals);
-					text = showdown.subParser("encodeAmpsAndAngles")(text, options, globals);
-					if (options.simpleLineBreaks) {
-						if (!/\n\n¨K/.test(text)) text = text.replace(/\n+/g, "<br />\n");
-					} else text = text.replace(/  +\n/g, "<br />\n");
-					text = globals.converter._dispatch("spanGamut.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("strikethrough", function(text, options, globals) {
-					"use strict";
-					function parseInside(txt) {
-						if (options.simplifiedAutoLink) txt = showdown.subParser("simplifiedAutoLinks")(txt, options, globals);
-						return "<del>" + txt + "</del>";
-					}
-					if (options.strikethrough) {
-						text = globals.converter._dispatch("strikethrough.before", text, options, globals);
-						text = text.replace(/(?:~){2}([\s\S]+?)(?:~){2}/g, function(wm, txt) {
-							return parseInside(txt);
-						});
-						text = globals.converter._dispatch("strikethrough.after", text, options, globals);
-					}
-					return text;
-				});
-				/**
-				* Strips link definitions from text, stores the URLs and titles in
-				* hash references.
-				* Link defs are in the form: ^[id]: url "optional title"
-				*/
-				showdown.subParser("stripLinkDefinitions", function(text, options, globals) {
-					"use strict";
-					var regex = /^ {0,3}\[([^\]]+)]:[ \t]*\n?[ \t]*<?([^>\s]+)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n+|(?=¨0))/gm, base64Regex = /^ {0,3}\[([^\]]+)]:[ \t]*\n?[ \t]*<?(data:.+?\/.+?;base64,[A-Za-z0-9+/=\n]+?)>?(?: =([*\d]+[A-Za-z%]{0,4})x([*\d]+[A-Za-z%]{0,4}))?[ \t]*\n?[ \t]*(?:(\n*)["|'(](.+?)["|')][ \t]*)?(?:\n\n|(?=¨0)|(?=\n\[))/gm;
-					text += "¨0";
-					var replaceFunc = function(wholeMatch, linkId, url, width, height, blankLines, title) {
-						linkId = linkId.toLowerCase();
-						if (text.toLowerCase().split(linkId).length - 1 < 2) return wholeMatch;
-						if (url.match(/^data:.+?\/.+?;base64,/)) globals.gUrls[linkId] = url.replace(/\s/g, "");
-						else globals.gUrls[linkId] = showdown.subParser("encodeAmpsAndAngles")(url, options, globals);
-						if (blankLines) return blankLines + title;
-						else {
-							if (title) globals.gTitles[linkId] = title.replace(/"|'/g, "&quot;");
-							if (options.parseImgDimensions && width && height) globals.gDimensions[linkId] = {
-								width,
-								height
-							};
-						}
-						return "";
-					};
-					text = text.replace(base64Regex, replaceFunc);
-					text = text.replace(regex, replaceFunc);
-					text = text.replace(/¨0/, "");
-					return text;
-				});
-				showdown.subParser("tables", function(text, options, globals) {
-					"use strict";
-					if (!options.tables) return text;
-					var tableRgx = /^ {0,3}\|?.+\|.+\n {0,3}\|?[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*:?[ \t]*(?:[-=]){2,}[\s\S]+?(?:\n\n|¨0)/gm, singeColTblRgx = /^ {0,3}\|.+\|[ \t]*\n {0,3}\|[ \t]*:?[ \t]*(?:[-=]){2,}[ \t]*:?[ \t]*\|[ \t]*\n( {0,3}\|.+\|[ \t]*\n)*(?:\n|¨0)/gm;
-					function parseStyles(sLine) {
-						if (/^:[ \t]*--*$/.test(sLine)) return " style=\"text-align:left;\"";
-						else if (/^--*[ \t]*:[ \t]*$/.test(sLine)) return " style=\"text-align:right;\"";
-						else if (/^:[ \t]*--*[ \t]*:$/.test(sLine)) return " style=\"text-align:center;\"";
-						else return "";
-					}
-					function parseHeaders(header, style) {
-						var id = "";
-						header = header.trim();
-						if (options.tablesHeaderId || options.tableHeaderId) id = " id=\"" + header.replace(/ /g, "_").toLowerCase() + "\"";
-						header = showdown.subParser("spanGamut")(header, options, globals);
-						return "<th" + id + style + ">" + header + "</th>\n";
-					}
-					function parseCells(cell, style) {
-						var subText = showdown.subParser("spanGamut")(cell, options, globals);
-						return "<td" + style + ">" + subText + "</td>\n";
-					}
-					function buildTable(headers, cells) {
-						var tb = "<table>\n<thead>\n<tr>\n", tblLgn = headers.length;
-						for (var i = 0; i < tblLgn; ++i) tb += headers[i];
-						tb += "</tr>\n</thead>\n<tbody>\n";
-						for (i = 0; i < cells.length; ++i) {
-							tb += "<tr>\n";
-							for (var ii = 0; ii < tblLgn; ++ii) tb += cells[i][ii];
-							tb += "</tr>\n";
-						}
-						tb += "</tbody>\n</table>\n";
-						return tb;
-					}
-					function parseTable(rawTable) {
-						var i, tableLines = rawTable.split("\n");
-						for (i = 0; i < tableLines.length; ++i) {
-							if (/^ {0,3}\|/.test(tableLines[i])) tableLines[i] = tableLines[i].replace(/^ {0,3}\|/, "");
-							if (/\|[ \t]*$/.test(tableLines[i])) tableLines[i] = tableLines[i].replace(/\|[ \t]*$/, "");
-							tableLines[i] = showdown.subParser("codeSpans")(tableLines[i], options, globals);
-						}
-						var rawHeaders = tableLines[0].split("|").map(function(s) {
-							return s.trim();
-						}), rawStyles = tableLines[1].split("|").map(function(s) {
-							return s.trim();
-						}), rawCells = [], headers = [], styles = [], cells = [];
-						tableLines.shift();
-						tableLines.shift();
-						for (i = 0; i < tableLines.length; ++i) {
-							if (tableLines[i].trim() === "") continue;
-							rawCells.push(tableLines[i].split("|").map(function(s) {
-								return s.trim();
-							}));
-						}
-						if (rawHeaders.length < rawStyles.length) return rawTable;
-						for (i = 0; i < rawStyles.length; ++i) styles.push(parseStyles(rawStyles[i]));
-						for (i = 0; i < rawHeaders.length; ++i) {
-							if (showdown.helper.isUndefined(styles[i])) styles[i] = "";
-							headers.push(parseHeaders(rawHeaders[i], styles[i]));
-						}
-						for (i = 0; i < rawCells.length; ++i) {
-							var row = [];
-							for (var ii = 0; ii < headers.length; ++ii) {
-								if (showdown.helper.isUndefined(rawCells[i][ii])) {}
-								row.push(parseCells(rawCells[i][ii], styles[ii]));
-							}
-							cells.push(row);
-						}
-						return buildTable(headers, cells);
-					}
-					text = globals.converter._dispatch("tables.before", text, options, globals);
-					text = text.replace(/\\(\|)/g, showdown.helper.escapeCharactersCallback);
-					text = text.replace(tableRgx, parseTable);
-					text = text.replace(singeColTblRgx, parseTable);
-					text = globals.converter._dispatch("tables.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("underline", function(text, options, globals) {
-					"use strict";
-					if (!options.underline) return text;
-					text = globals.converter._dispatch("underline.before", text, options, globals);
-					if (options.literalMidWordUnderscores) {
-						text = text.replace(/\b___(\S[\s\S]*?)___\b/g, function(wm, txt) {
-							return "<u>" + txt + "</u>";
-						});
-						text = text.replace(/\b__(\S[\s\S]*?)__\b/g, function(wm, txt) {
-							return "<u>" + txt + "</u>";
-						});
-					} else {
-						text = text.replace(/___(\S[\s\S]*?)___/g, function(wm, m) {
-							return /\S$/.test(m) ? "<u>" + m + "</u>" : wm;
-						});
-						text = text.replace(/__(\S[\s\S]*?)__/g, function(wm, m) {
-							return /\S$/.test(m) ? "<u>" + m + "</u>" : wm;
-						});
-					}
-					text = text.replace(/(_)/g, showdown.helper.escapeCharactersCallback);
-					text = globals.converter._dispatch("underline.after", text, options, globals);
-					return text;
-				});
-				/**
-				* Swap back in all the special characters we've hidden.
-				*/
-				showdown.subParser("unescapeSpecialChars", function(text, options, globals) {
-					"use strict";
-					text = globals.converter._dispatch("unescapeSpecialChars.before", text, options, globals);
-					text = text.replace(/¨E(\d+)E/g, function(wholeMatch, m1) {
-						var charCodeToReplace = parseInt(m1);
-						return String.fromCharCode(charCodeToReplace);
-					});
-					text = globals.converter._dispatch("unescapeSpecialChars.after", text, options, globals);
-					return text;
-				});
-				showdown.subParser("makeMarkdown.blockquote", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (node.hasChildNodes()) {
-						var children = node.childNodes, childrenLength = children.length;
-						for (var i = 0; i < childrenLength; ++i) {
-							var innerTxt = showdown.subParser("makeMarkdown.node")(children[i], globals);
-							if (innerTxt === "") continue;
-							txt += innerTxt;
-						}
-					}
-					txt = txt.trim();
-					txt = "> " + txt.split("\n").join("\n> ");
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.codeBlock", function(node, globals) {
-					"use strict";
-					var lang = node.getAttribute("language"), num = node.getAttribute("precodenum");
-					return "```" + lang + "\n" + globals.preList[num] + "\n```";
-				});
-				showdown.subParser("makeMarkdown.codeSpan", function(node) {
-					"use strict";
-					return "`" + node.innerHTML + "`";
-				});
-				showdown.subParser("makeMarkdown.emphasis", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (node.hasChildNodes()) {
-						txt += "*";
-						var children = node.childNodes, childrenLength = children.length;
-						for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-						txt += "*";
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.header", function(node, globals, headerLevel) {
-					"use strict";
-					var headerMark = new Array(headerLevel + 1).join("#"), txt = "";
-					if (node.hasChildNodes()) {
-						txt = headerMark + " ";
-						var children = node.childNodes, childrenLength = children.length;
-						for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.hr", function() {
-					"use strict";
-					return "---";
-				});
-				showdown.subParser("makeMarkdown.image", function(node) {
-					"use strict";
-					var txt = "";
-					if (node.hasAttribute("src")) {
-						txt += "![" + node.getAttribute("alt") + "](";
-						txt += "<" + node.getAttribute("src") + ">";
-						if (node.hasAttribute("width") && node.hasAttribute("height")) txt += " =" + node.getAttribute("width") + "x" + node.getAttribute("height");
-						if (node.hasAttribute("title")) txt += " \"" + node.getAttribute("title") + "\"";
-						txt += ")";
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.links", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (node.hasChildNodes() && node.hasAttribute("href")) {
-						var children = node.childNodes, childrenLength = children.length;
-						txt = "[";
-						for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-						txt += "](";
-						txt += "<" + node.getAttribute("href") + ">";
-						if (node.hasAttribute("title")) txt += " \"" + node.getAttribute("title") + "\"";
-						txt += ")";
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.list", function(node, globals, type) {
-					"use strict";
-					var txt = "";
-					if (!node.hasChildNodes()) return "";
-					var listItems = node.childNodes, listItemsLenght = listItems.length, listNum = node.getAttribute("start") || 1;
-					for (var i = 0; i < listItemsLenght; ++i) {
-						if (typeof listItems[i].tagName === "undefined" || listItems[i].tagName.toLowerCase() !== "li") continue;
-						var bullet = "";
-						if (type === "ol") bullet = listNum.toString() + ". ";
-						else bullet = "- ";
-						txt += bullet + showdown.subParser("makeMarkdown.listItem")(listItems[i], globals);
-						++listNum;
-					}
-					txt += "\n<!-- -->\n";
-					return txt.trim();
-				});
-				showdown.subParser("makeMarkdown.listItem", function(node, globals) {
-					"use strict";
-					var listItemTxt = "";
-					var children = node.childNodes, childrenLenght = children.length;
-					for (var i = 0; i < childrenLenght; ++i) listItemTxt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-					if (!/\n$/.test(listItemTxt)) listItemTxt += "\n";
-					else listItemTxt = listItemTxt.split("\n").join("\n    ").replace(/^ {4}$/gm, "").replace(/\n\n+/g, "\n\n");
-					return listItemTxt;
-				});
-				showdown.subParser("makeMarkdown.node", function(node, globals, spansOnly) {
-					"use strict";
-					spansOnly = spansOnly || false;
-					var txt = "";
-					if (node.nodeType === 3) return showdown.subParser("makeMarkdown.txt")(node, globals);
-					if (node.nodeType === 8) return "<!--" + node.data + "-->\n\n";
-					if (node.nodeType !== 1) return "";
-					switch (node.tagName.toLowerCase()) {
-						case "h1":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.header")(node, globals, 1) + "\n\n";
-							break;
-						case "h2":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.header")(node, globals, 2) + "\n\n";
-							break;
-						case "h3":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.header")(node, globals, 3) + "\n\n";
-							break;
-						case "h4":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.header")(node, globals, 4) + "\n\n";
-							break;
-						case "h5":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.header")(node, globals, 5) + "\n\n";
-							break;
-						case "h6":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.header")(node, globals, 6) + "\n\n";
-							break;
-						case "p":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.paragraph")(node, globals) + "\n\n";
-							break;
-						case "blockquote":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.blockquote")(node, globals) + "\n\n";
-							break;
-						case "hr":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.hr")(node, globals) + "\n\n";
-							break;
-						case "ol":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.list")(node, globals, "ol") + "\n\n";
-							break;
-						case "ul":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.list")(node, globals, "ul") + "\n\n";
-							break;
-						case "precode":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.codeBlock")(node, globals) + "\n\n";
-							break;
-						case "pre":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.pre")(node, globals) + "\n\n";
-							break;
-						case "table":
-							if (!spansOnly) txt = showdown.subParser("makeMarkdown.table")(node, globals) + "\n\n";
-							break;
-						case "code":
-							txt = showdown.subParser("makeMarkdown.codeSpan")(node, globals);
-							break;
-						case "em":
-						case "i":
-							txt = showdown.subParser("makeMarkdown.emphasis")(node, globals);
-							break;
-						case "strong":
-						case "b":
-							txt = showdown.subParser("makeMarkdown.strong")(node, globals);
-							break;
-						case "del":
-							txt = showdown.subParser("makeMarkdown.strikethrough")(node, globals);
-							break;
-						case "a":
-							txt = showdown.subParser("makeMarkdown.links")(node, globals);
-							break;
-						case "img":
-							txt = showdown.subParser("makeMarkdown.image")(node, globals);
-							break;
-						default: txt = node.outerHTML + "\n\n";
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.paragraph", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (node.hasChildNodes()) {
-						var children = node.childNodes, childrenLength = children.length;
-						for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-					}
-					txt = txt.trim();
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.pre", function(node, globals) {
-					"use strict";
-					var num = node.getAttribute("prenum");
-					return "<pre>" + globals.preList[num] + "</pre>";
-				});
-				showdown.subParser("makeMarkdown.strikethrough", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (node.hasChildNodes()) {
-						txt += "~~";
-						var children = node.childNodes, childrenLength = children.length;
-						for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-						txt += "~~";
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.strong", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (node.hasChildNodes()) {
-						txt += "**";
-						var children = node.childNodes, childrenLength = children.length;
-						for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals);
-						txt += "**";
-					}
-					return txt;
-				});
-				showdown.subParser("makeMarkdown.table", function(node, globals) {
-					"use strict";
-					var txt = "", tableArray = [[], []], headings = node.querySelectorAll("thead>tr>th"), rows = node.querySelectorAll("tbody>tr"), i, ii;
-					for (i = 0; i < headings.length; ++i) {
-						var headContent = showdown.subParser("makeMarkdown.tableCell")(headings[i], globals), allign = "---";
-						if (headings[i].hasAttribute("style")) switch (headings[i].getAttribute("style").toLowerCase().replace(/\s/g, "")) {
-							case "text-align:left;":
-								allign = ":---";
-								break;
-							case "text-align:right;":
-								allign = "---:";
-								break;
-							case "text-align:center;":
-								allign = ":---:";
-								break;
-						}
-						tableArray[0][i] = headContent.trim();
-						tableArray[1][i] = allign;
-					}
-					for (i = 0; i < rows.length; ++i) {
-						var r = tableArray.push([]) - 1, cols = rows[i].getElementsByTagName("td");
-						for (ii = 0; ii < headings.length; ++ii) {
-							var cellContent = " ";
-							if (typeof cols[ii] !== "undefined") cellContent = showdown.subParser("makeMarkdown.tableCell")(cols[ii], globals);
-							tableArray[r].push(cellContent);
-						}
-					}
-					var cellSpacesCount = 3;
-					for (i = 0; i < tableArray.length; ++i) for (ii = 0; ii < tableArray[i].length; ++ii) {
-						var strLen = tableArray[i][ii].length;
-						if (strLen > cellSpacesCount) cellSpacesCount = strLen;
-					}
-					for (i = 0; i < tableArray.length; ++i) {
-						for (ii = 0; ii < tableArray[i].length; ++ii) if (i === 1) if (tableArray[i][ii].slice(-1) === ":") tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii].slice(-1), cellSpacesCount - 1, "-") + ":";
-						else tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii], cellSpacesCount, "-");
-						else tableArray[i][ii] = showdown.helper.padEnd(tableArray[i][ii], cellSpacesCount);
-						txt += "| " + tableArray[i].join(" | ") + " |\n";
-					}
-					return txt.trim();
-				});
-				showdown.subParser("makeMarkdown.tableCell", function(node, globals) {
-					"use strict";
-					var txt = "";
-					if (!node.hasChildNodes()) return "";
-					var children = node.childNodes, childrenLength = children.length;
-					for (var i = 0; i < childrenLength; ++i) txt += showdown.subParser("makeMarkdown.node")(children[i], globals, true);
-					return txt.trim();
-				});
-				showdown.subParser("makeMarkdown.txt", function(node) {
-					"use strict";
-					var txt = node.nodeValue;
-					txt = txt.replace(/ +/g, " ");
-					txt = txt.replace(/¨NBSP;/g, " ");
-					txt = showdown.helper.unescapeHTMLEntities(txt);
-					txt = txt.replace(/([*_~|`])/g, "\\$1");
-					txt = txt.replace(/^(\s*)>/g, "\\$1>");
-					txt = txt.replace(/^#/gm, "\\#");
-					txt = txt.replace(/^(\s*)([-=]{3,})(\s*)$/, "$1\\$2$3");
-					txt = txt.replace(/^( {0,3}\d+)\./gm, "$1\\.");
-					txt = txt.replace(/^( {0,3})([+-])/gm, "$1\\$2");
-					txt = txt.replace(/]([\s]*)\(/g, "\\]$1\\(");
-					txt = txt.replace(/^ {0,3}\[([\S \t]*?)]:/gm, "\\[$1]:");
-					return txt;
-				});
-				var root = this;
-				if (typeof define === "function" && define.amd) define(function() {
-					"use strict";
-					return showdown;
-				});
-				else if (typeof module$2 !== "undefined" && module$2.exports) module$2.exports = showdown;
-				else root.showdown = showdown;
-			}).call(exports$46);
-		})))());
 		function createWorkerBlob(cdnUrl, services) {
 			return new Blob([`
         importScripts("${cdnUrl}/service-manager.js");
@@ -12564,7 +8894,7 @@ var require_ace_linters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				element.style.maxHeight = "";
 				element.style.display = "block";
 				this.$setPosition(editor, position, true, range);
-				editor.renderer["$textLayer"].dom.$fixPositionBug(element);
+				if (editor.renderer["$textLayer"].dom.$fixPositionBug) editor.renderer["$textLayer"].dom.$fixPositionBug(element);
 				popupManager.addPopup(this);
 			}
 			/**
@@ -14397,6 +10727,3139 @@ var require_ace_linters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			errorNode.textContent = errorText;
 			return errorNode;
 		}
+		/**
+		* marked v18.0.0 - a markdown parser
+		* Copyright (c) 2018-2026, MarkedJS. (MIT License)
+		* Copyright (c) 2011-2018, Christopher Jeffrey. (MIT License)
+		* https://github.com/markedjs/marked
+		*/
+		/**
+		* DO NOT EDIT THIS FILE
+		* The code in this file is generated from files in ./src/
+		*/
+		function z() {
+			return {
+				async: !1,
+				breaks: !1,
+				extensions: null,
+				gfm: !0,
+				hooks: null,
+				pedantic: !1,
+				renderer: null,
+				silent: !1,
+				tokenizer: null,
+				walkTokens: null
+			};
+		}
+		var T = z();
+		function G(u) {
+			T = u;
+		}
+		var _ = { exec: () => null };
+		function k(u, e = "") {
+			let t = typeof u == "string" ? u : u.source, n = {
+				replace: (r, i) => {
+					let s = typeof i == "string" ? i : i.source;
+					return s = s.replace(m.caret, "$1"), t = t.replace(r, s), n;
+				},
+				getRegex: () => new RegExp(t, e)
+			};
+			return n;
+		}
+		var Re = (() => {
+			try {
+				return true;
+			} catch {
+				return !1;
+			}
+		})(), m = {
+			codeRemoveIndent: /^(?: {1,4}| {0,3}\t)/gm,
+			outputLinkReplace: /\\([\[\]])/g,
+			indentCodeCompensation: /^(\s+)(?:```)/,
+			beginningSpace: /^\s+/,
+			endingHash: /#$/,
+			startingSpaceChar: /^ /,
+			endingSpaceChar: / $/,
+			nonSpaceChar: /[^ ]/,
+			newLineCharGlobal: /\n/g,
+			tabCharGlobal: /\t/g,
+			multipleSpaceGlobal: /\s+/g,
+			blankLine: /^[ \t]*$/,
+			doubleBlankLine: /\n[ \t]*\n[ \t]*$/,
+			blockquoteStart: /^ {0,3}>/,
+			blockquoteSetextReplace: /\n {0,3}((?:=+|-+) *)(?=\n|$)/g,
+			blockquoteSetextReplace2: /^ {0,3}>[ \t]?/gm,
+			listReplaceNesting: /^ {1,4}(?=( {4})*[^ ])/g,
+			listIsTask: /^\[[ xX]\] +\S/,
+			listReplaceTask: /^\[[ xX]\] +/,
+			listTaskCheckbox: /\[[ xX]\]/,
+			anyLine: /\n.*\n/,
+			hrefBrackets: /^<(.*)>$/,
+			tableDelimiter: /[:|]/,
+			tableAlignChars: /^\||\| *$/g,
+			tableRowBlankLine: /\n[ \t]*$/,
+			tableAlignRight: /^ *-+: *$/,
+			tableAlignCenter: /^ *:-+: *$/,
+			tableAlignLeft: /^ *:-+ *$/,
+			startATag: /^<a /i,
+			endATag: /^<\/a>/i,
+			startPreScriptTag: /^<(pre|code|kbd|script)(\s|>)/i,
+			endPreScriptTag: /^<\/(pre|code|kbd|script)(\s|>)/i,
+			startAngleBracket: /^</,
+			endAngleBracket: />$/,
+			pedanticHrefTitle: /^([^'"]*[^\s])\s+(['"])(.*)\2/,
+			unicodeAlphaNumeric: /[\p{L}\p{N}]/u,
+			escapeTest: /[&<>"']/,
+			escapeReplace: /[&<>"']/g,
+			escapeTestNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/,
+			escapeReplaceNoEncode: /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g,
+			caret: /(^|[^\[])\^/g,
+			percentDecode: /%25/g,
+			findPipe: /\|/g,
+			splitPipe: / \|/,
+			slashPipe: /\\\|/g,
+			carriageReturn: /\r\n|\r/g,
+			spaceLine: /^ +$/gm,
+			notSpaceStart: /^\S*/,
+			endingNewline: /\n$/,
+			listItemRegex: (u) => new RegExp(`^( {0,3}${u})((?:[	 ][^\\n]*)?(?:\\n|$))`),
+			nextBulletRegex: (u) => new RegExp(`^ {0,${Math.min(3, u - 1)}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`),
+			hrRegex: (u) => new RegExp(`^ {0,${Math.min(3, u - 1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`),
+			fencesBeginRegex: (u) => new RegExp(`^ {0,${Math.min(3, u - 1)}}(?:\`\`\`|~~~)`),
+			headingBeginRegex: (u) => new RegExp(`^ {0,${Math.min(3, u - 1)}}#`),
+			htmlBeginRegex: (u) => new RegExp(`^ {0,${Math.min(3, u - 1)}}<(?:[a-z].*>|!--)`, "i"),
+			blockquoteBeginRegex: (u) => new RegExp(`^ {0,${Math.min(3, u - 1)}}>`)
+		}, Te = /^(?:[ \t]*(?:\n|$))+/, Oe = /^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/, we = /^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/, C = /^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/, ye = /^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/, Q = / {0,3}(?:[*+-]|\d{1,9}[.)])/, ie = /^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/, oe = k(ie).replace(/bull/g, Q).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/\|table/g, "").getRegex(), Pe = k(ie).replace(/bull/g, Q).replace(/blockCode/g, /(?: {4}| {0,3}\t)/).replace(/fences/g, / {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g, / {0,3}>/).replace(/heading/g, / {0,3}#{1,6}/).replace(/html/g, / {0,3}<[^\n>]+>\n/).replace(/table/g, / {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(), j = /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/, Se = /^[^\n]+/, F = /(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/, $e = k(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label", F).replace("title", /(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(), Le = k(/^(bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g, Q).getRegex(), v = "address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul", U = /<!--(?:-?>|[\s\S]*?(?:-->|$))/, _e = k("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))", "i").replace("comment", U).replace("tag", v).replace("attribute", / +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(), ae = k(j).replace("hr", C).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("|table", "").replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", v).getRegex(), K = {
+			blockquote: k(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph", ae).getRegex(),
+			code: Oe,
+			def: $e,
+			fences: we,
+			heading: ye,
+			hr: C,
+			html: _e,
+			lheading: oe,
+			list: Le,
+			newline: Te,
+			paragraph: ae,
+			table: _,
+			text: Se
+		}, re = k("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr", C).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("blockquote", " {0,3}>").replace("code", "(?: {4}| {0,3}	)[^\\n]").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", v).getRegex(), ze = {
+			...K,
+			lheading: Pe,
+			table: re,
+			paragraph: k(j).replace("hr", C).replace("heading", " {0,3}#{1,6}(?:\\s|$)").replace("|lheading", "").replace("table", re).replace("blockquote", " {0,3}>").replace("fences", " {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list", " {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html", "</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag", v).getRegex()
+		}, Ee = {
+			...K,
+			html: k(`^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))`).replace("comment", U).replace(/tag/g, "(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),
+			def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
+			heading: /^(#{1,6})(.*)(?:\n+|$)/,
+			fences: _,
+			lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
+			paragraph: k(j).replace("hr", C).replace("heading", ` *#{1,6} *[^
+]`).replace("lheading", oe).replace("|table", "").replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").replace("|tag", "").getRegex()
+		}, Ie = /^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/, Ae = /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/, le = /^( {2,}|\\)\n(?!\s*$)/, Ce = /^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/, E = /[\p{P}\p{S}]/u, H = /[\s\p{P}\p{S}]/u, W = /[^\s\p{P}\p{S}]/u, Be = k(/^((?![*_])punctSpace)/, "u").replace(/punctSpace/g, H).getRegex(), ue = /(?!~)[\p{P}\p{S}]/u, De = /(?!~)[\s\p{P}\p{S}]/u, qe = /(?:[^\s\p{P}\p{S}]|~)/u, ve = k(/link|precode-code|html/, "g").replace("link", /\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-", Re ? "(?<!`)()" : "(^^|[^`])").replace("code", /(?<b>`+)[^`]+\k<b>(?!`)/).replace("html", /<(?! )[^<>]*?>/).getRegex(), pe = /^(?:\*+(?:((?!\*)punct)|([^\s*]))?)|^_+(?:((?!_)punct)|([^\s_]))?/, He = k(pe, "u").replace(/punct/g, E).getRegex(), Ze = k(pe, "u").replace(/punct/g, ue).getRegex(), ce = "^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)", Ge = k(ce, "gu").replace(/notPunctSpace/g, W).replace(/punctSpace/g, H).replace(/punct/g, E).getRegex(), Ne = k(ce, "gu").replace(/notPunctSpace/g, qe).replace(/punctSpace/g, De).replace(/punct/g, ue).getRegex(), Qe = k("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)", "gu").replace(/notPunctSpace/g, W).replace(/punctSpace/g, H).replace(/punct/g, E).getRegex(), je = k(/^~~?(?:((?!~)punct)|[^\s~])/, "u").replace(/punct/g, E).getRegex(), Ue = k("^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)", "gu").replace(/notPunctSpace/g, W).replace(/punctSpace/g, H).replace(/punct/g, E).getRegex(), Ke = k(/\\(punct)/, "gu").replace(/punct/g, E).getRegex(), We = k(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme", /[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email", /[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(), Xe = k(U).replace("(?:-->|$)", "-->").getRegex(), Je = k("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment", Xe).replace("attribute", /\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(), q = /(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+(?!`)[^`]*?`+(?!`)|``+(?=\])|[^\[\]\\`])*?/, Ve = k(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label", q).replace("href", /<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]*/).replace("title", /"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(), he = k(/^!?\[(label)\]\[(ref)\]/).replace("label", q).replace("ref", F).getRegex(), ke = k(/^!?\[(ref)\](?:\[\])?/).replace("ref", F).getRegex(), Ye = k("reflink|nolink(?!\\()", "g").replace("reflink", he).replace("nolink", ke).getRegex(), se = /[hH][tT][tT][pP][sS]?|[fF][tT][pP]/, X = {
+			_backpedal: _,
+			anyPunctuation: Ke,
+			autolink: We,
+			blockSkip: ve,
+			br: le,
+			code: Ae,
+			del: _,
+			delLDelim: _,
+			delRDelim: _,
+			emStrongLDelim: He,
+			emStrongRDelimAst: Ge,
+			emStrongRDelimUnd: Qe,
+			escape: Ie,
+			link: Ve,
+			nolink: ke,
+			punctuation: Be,
+			reflink: he,
+			reflinkSearch: Ye,
+			tag: Je,
+			text: Ce,
+			url: _
+		}, et = {
+			...X,
+			link: k(/^!?\[(label)\]\((.*?)\)/).replace("label", q).getRegex(),
+			reflink: k(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label", q).getRegex()
+		}, N = {
+			...X,
+			emStrongRDelimAst: Ne,
+			emStrongLDelim: Ze,
+			delLDelim: je,
+			delRDelim: Ue,
+			url: k(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol", se).replace("email", /[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),
+			_backpedal: /(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,
+			del: /^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/,
+			text: k(/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol", se).getRegex()
+		}, tt = {
+			...N,
+			br: k(le).replace("{2,}", "*").getRegex(),
+			text: k(N.text).replace("\\b_", "\\b_| {2,}\\n").replace(/\{2,\}/g, "*").getRegex()
+		}, B = {
+			normal: K,
+			gfm: ze,
+			pedantic: Ee
+		}, I = {
+			normal: X,
+			gfm: N,
+			breaks: tt,
+			pedantic: et
+		};
+		var nt = {
+			"&": "&amp;",
+			"<": "&lt;",
+			">": "&gt;",
+			"\"": "&quot;",
+			"'": "&#39;"
+		}, de = (u) => nt[u];
+		function O(u, e) {
+			if (e) {
+				if (m.escapeTest.test(u)) return u.replace(m.escapeReplace, de);
+			} else if (m.escapeTestNoEncode.test(u)) return u.replace(m.escapeReplaceNoEncode, de);
+			return u;
+		}
+		function J(u) {
+			try {
+				u = encodeURI(u).replace(m.percentDecode, "%");
+			} catch {
+				return null;
+			}
+			return u;
+		}
+		function V(u, e) {
+			let n = u.replace(m.findPipe, (i, s, a) => {
+				let o = !1, l = s;
+				for (; --l >= 0 && a[l] === "\\";) o = !o;
+				return o ? "|" : " |";
+			}).split(m.splitPipe), r = 0;
+			if (n[0].trim() || n.shift(), n.length > 0 && !n.at(-1)?.trim() && n.pop(), e) if (n.length > e) n.splice(e);
+			else for (; n.length < e;) n.push("");
+			for (; r < n.length; r++) n[r] = n[r].trim().replace(m.slashPipe, "|");
+			return n;
+		}
+		function $(u, e, t) {
+			let n = u.length;
+			if (n === 0) return "";
+			let r = 0;
+			for (; r < n;) {
+				let i = u.charAt(n - r - 1);
+				if (i === e && !t) r++;
+				else if (i !== e && t) r++;
+				else break;
+			}
+			return u.slice(0, n - r);
+		}
+		function Y(u) {
+			let e = u.split(`
+`), t = e.length - 1;
+			for (; t >= 0 && !e[t].trim();) t--;
+			return e.length - t <= 2 ? u : e.slice(0, t + 1).join(`
+`);
+		}
+		function ge(u, e) {
+			if (u.indexOf(e[1]) === -1) return -1;
+			let t = 0;
+			for (let n = 0; n < u.length; n++) if (u[n] === "\\") n++;
+			else if (u[n] === e[0]) t++;
+			else if (u[n] === e[1] && (t--, t < 0)) return n;
+			return t > 0 ? -2 : -1;
+		}
+		function fe(u, e = 0) {
+			let t = e, n = "";
+			for (let r of u) if (r === "	") {
+				let i = 4 - t % 4;
+				n += " ".repeat(i), t += i;
+			} else n += r, t++;
+			return n;
+		}
+		function me(u, e, t, n, r) {
+			let i = e.href, s = e.title || null, a = u[1].replace(r.other.outputLinkReplace, "$1");
+			n.state.inLink = !0;
+			let o = {
+				type: u[0].charAt(0) === "!" ? "image" : "link",
+				raw: t,
+				href: i,
+				title: s,
+				text: a,
+				tokens: n.inlineTokens(a)
+			};
+			return n.state.inLink = !1, o;
+		}
+		function rt(u, e, t) {
+			let n = u.match(t.other.indentCodeCompensation);
+			if (n === null) return e;
+			let r = n[1];
+			return e.split(`
+`).map((i) => {
+				let s = i.match(t.other.beginningSpace);
+				if (s === null) return i;
+				let [a] = s;
+				return a.length >= r.length ? i.slice(r.length) : i;
+			}).join(`
+`);
+		}
+		var w = class {
+			options;
+			rules;
+			lexer;
+			constructor(e) {
+				this.options = e || T;
+			}
+			space(e) {
+				let t = this.rules.block.newline.exec(e);
+				if (t && t[0].length > 0) return {
+					type: "space",
+					raw: t[0]
+				};
+			}
+			code(e) {
+				let t = this.rules.block.code.exec(e);
+				if (t) {
+					let n = this.options.pedantic ? t[0] : Y(t[0]);
+					return {
+						type: "code",
+						raw: n,
+						codeBlockStyle: "indented",
+						text: n.replace(this.rules.other.codeRemoveIndent, "")
+					};
+				}
+			}
+			fences(e) {
+				let t = this.rules.block.fences.exec(e);
+				if (t) {
+					let n = t[0], r = rt(n, t[3] || "", this.rules);
+					return {
+						type: "code",
+						raw: n,
+						lang: t[2] ? t[2].trim().replace(this.rules.inline.anyPunctuation, "$1") : t[2],
+						text: r
+					};
+				}
+			}
+			heading(e) {
+				let t = this.rules.block.heading.exec(e);
+				if (t) {
+					let n = t[2].trim();
+					if (this.rules.other.endingHash.test(n)) {
+						let r = $(n, "#");
+						(this.options.pedantic || !r || this.rules.other.endingSpaceChar.test(r)) && (n = r.trim());
+					}
+					return {
+						type: "heading",
+						raw: $(t[0], `
+`),
+						depth: t[1].length,
+						text: n,
+						tokens: this.lexer.inline(n)
+					};
+				}
+			}
+			hr(e) {
+				let t = this.rules.block.hr.exec(e);
+				if (t) return {
+					type: "hr",
+					raw: $(t[0], `
+`)
+				};
+			}
+			blockquote(e) {
+				let t = this.rules.block.blockquote.exec(e);
+				if (t) {
+					let n = $(t[0], `
+`).split(`
+`), r = "", i = "", s = [];
+					for (; n.length > 0;) {
+						let a = !1, o = [], l;
+						for (l = 0; l < n.length; l++) if (this.rules.other.blockquoteStart.test(n[l])) o.push(n[l]), a = !0;
+						else if (!a) o.push(n[l]);
+						else break;
+						n = n.slice(l);
+						let p = o.join(`
+`), c = p.replace(this.rules.other.blockquoteSetextReplace, `
+    $1`).replace(this.rules.other.blockquoteSetextReplace2, "");
+						r = r ? `${r}
+${p}` : p, i = i ? `${i}
+${c}` : c;
+						let d = this.lexer.state.top;
+						if (this.lexer.state.top = !0, this.lexer.blockTokens(c, s, !0), this.lexer.state.top = d, n.length === 0) break;
+						let h = s.at(-1);
+						if (h?.type === "code") break;
+						if (h?.type === "blockquote") {
+							let R = h, f = R.raw + `
+` + n.join(`
+`), S = this.blockquote(f);
+							s[s.length - 1] = S, r = r.substring(0, r.length - R.raw.length) + S.raw, i = i.substring(0, i.length - R.text.length) + S.text;
+							break;
+						} else if (h?.type === "list") {
+							let R = h, f = R.raw + `
+` + n.join(`
+`), S = this.list(f);
+							s[s.length - 1] = S, r = r.substring(0, r.length - h.raw.length) + S.raw, i = i.substring(0, i.length - R.raw.length) + S.raw, n = f.substring(s.at(-1).raw.length).split(`
+`);
+							continue;
+						}
+					}
+					return {
+						type: "blockquote",
+						raw: r,
+						tokens: s,
+						text: i
+					};
+				}
+			}
+			list(e) {
+				let t = this.rules.block.list.exec(e);
+				if (t) {
+					let n = t[1].trim(), r = n.length > 1, i = {
+						type: "list",
+						raw: "",
+						ordered: r,
+						start: r ? +n.slice(0, -1) : "",
+						loose: !1,
+						items: []
+					};
+					n = r ? `\\d{1,9}\\${n.slice(-1)}` : `\\${n}`, this.options.pedantic && (n = r ? n : "[*+-]");
+					let s = this.rules.other.listItemRegex(n), a = !1;
+					for (; e;) {
+						let l = !1, p = "", c = "";
+						if (!(t = s.exec(e)) || this.rules.block.hr.test(e)) break;
+						p = t[0], e = e.substring(p.length);
+						let d = fe(t[2].split(`
+`, 1)[0], t[1].length), h = e.split(`
+`, 1)[0], R = !d.trim(), f = 0;
+						if (this.options.pedantic ? (f = 2, c = d.trimStart()) : R ? f = t[1].length + 1 : (f = d.search(this.rules.other.nonSpaceChar), f = f > 4 ? 1 : f, c = d.slice(f), f += t[1].length), R && this.rules.other.blankLine.test(h) && (p += h + `
+`, e = e.substring(h.length + 1), l = !0), !l) {
+							let S = this.rules.other.nextBulletRegex(f), ee = this.rules.other.hrRegex(f), te = this.rules.other.fencesBeginRegex(f), ne = this.rules.other.headingBeginRegex(f), xe = this.rules.other.htmlBeginRegex(f), be = this.rules.other.blockquoteBeginRegex(f);
+							for (; e;) {
+								let Z = e.split(`
+`, 1)[0], A;
+								if (h = Z, this.options.pedantic ? (h = h.replace(this.rules.other.listReplaceNesting, "  "), A = h) : A = h.replace(this.rules.other.tabCharGlobal, "    "), te.test(h) || ne.test(h) || xe.test(h) || be.test(h) || S.test(h) || ee.test(h)) break;
+								if (A.search(this.rules.other.nonSpaceChar) >= f || !h.trim()) c += `
+` + A.slice(f);
+								else {
+									if (R || d.replace(this.rules.other.tabCharGlobal, "    ").search(this.rules.other.nonSpaceChar) >= 4 || te.test(d) || ne.test(d) || ee.test(d)) break;
+									c += `
+` + h;
+								}
+								R = !h.trim(), p += Z + `
+`, e = e.substring(Z.length + 1), d = A.slice(f);
+							}
+						}
+						i.loose || (a ? i.loose = !0 : this.rules.other.doubleBlankLine.test(p) && (a = !0)), i.items.push({
+							type: "list_item",
+							raw: p,
+							task: !!this.options.gfm && this.rules.other.listIsTask.test(c),
+							loose: !1,
+							text: c,
+							tokens: []
+						}), i.raw += p;
+					}
+					let o = i.items.at(-1);
+					if (o) o.raw = o.raw.trimEnd(), o.text = o.text.trimEnd();
+					else return;
+					i.raw = i.raw.trimEnd();
+					for (let l of i.items) {
+						if (this.lexer.state.top = !1, l.tokens = this.lexer.blockTokens(l.text, []), l.task) {
+							if (l.text = l.text.replace(this.rules.other.listReplaceTask, ""), l.tokens[0]?.type === "text" || l.tokens[0]?.type === "paragraph") {
+								l.tokens[0].raw = l.tokens[0].raw.replace(this.rules.other.listReplaceTask, ""), l.tokens[0].text = l.tokens[0].text.replace(this.rules.other.listReplaceTask, "");
+								for (let c = this.lexer.inlineQueue.length - 1; c >= 0; c--) if (this.rules.other.listIsTask.test(this.lexer.inlineQueue[c].src)) {
+									this.lexer.inlineQueue[c].src = this.lexer.inlineQueue[c].src.replace(this.rules.other.listReplaceTask, "");
+									break;
+								}
+							}
+							let p = this.rules.other.listTaskCheckbox.exec(l.raw);
+							if (p) {
+								let c = {
+									type: "checkbox",
+									raw: p[0] + " ",
+									checked: p[0] !== "[ ]"
+								};
+								l.checked = c.checked, i.loose ? l.tokens[0] && ["paragraph", "text"].includes(l.tokens[0].type) && "tokens" in l.tokens[0] && l.tokens[0].tokens ? (l.tokens[0].raw = c.raw + l.tokens[0].raw, l.tokens[0].text = c.raw + l.tokens[0].text, l.tokens[0].tokens.unshift(c)) : l.tokens.unshift({
+									type: "paragraph",
+									raw: c.raw,
+									text: c.raw,
+									tokens: [c]
+								}) : l.tokens.unshift(c);
+							}
+						}
+						if (!i.loose) {
+							let p = l.tokens.filter((d) => d.type === "space");
+							i.loose = p.length > 0 && p.some((d) => this.rules.other.anyLine.test(d.raw));
+						}
+					}
+					if (i.loose) for (let l of i.items) {
+						l.loose = !0;
+						for (let p of l.tokens) p.type === "text" && (p.type = "paragraph");
+					}
+					return i;
+				}
+			}
+			html(e) {
+				let t = this.rules.block.html.exec(e);
+				if (t) {
+					let n = Y(t[0]);
+					return {
+						type: "html",
+						block: !0,
+						raw: n,
+						pre: t[1] === "pre" || t[1] === "script" || t[1] === "style",
+						text: n
+					};
+				}
+			}
+			def(e) {
+				let t = this.rules.block.def.exec(e);
+				if (t) {
+					let n = t[1].toLowerCase().replace(this.rules.other.multipleSpaceGlobal, " "), r = t[2] ? t[2].replace(this.rules.other.hrefBrackets, "$1").replace(this.rules.inline.anyPunctuation, "$1") : "", i = t[3] ? t[3].substring(1, t[3].length - 1).replace(this.rules.inline.anyPunctuation, "$1") : t[3];
+					return {
+						type: "def",
+						tag: n,
+						raw: $(t[0], `
+`),
+						href: r,
+						title: i
+					};
+				}
+			}
+			table(e) {
+				let t = this.rules.block.table.exec(e);
+				if (!t || !this.rules.other.tableDelimiter.test(t[2])) return;
+				let n = V(t[1]), r = t[2].replace(this.rules.other.tableAlignChars, "").split("|"), i = t[3]?.trim() ? t[3].replace(this.rules.other.tableRowBlankLine, "").split(`
+`) : [], s = {
+					type: "table",
+					raw: $(t[0], `
+`),
+					header: [],
+					align: [],
+					rows: []
+				};
+				if (n.length === r.length) {
+					for (let a of r) this.rules.other.tableAlignRight.test(a) ? s.align.push("right") : this.rules.other.tableAlignCenter.test(a) ? s.align.push("center") : this.rules.other.tableAlignLeft.test(a) ? s.align.push("left") : s.align.push(null);
+					for (let a = 0; a < n.length; a++) s.header.push({
+						text: n[a],
+						tokens: this.lexer.inline(n[a]),
+						header: !0,
+						align: s.align[a]
+					});
+					for (let a of i) s.rows.push(V(a, s.header.length).map((o, l) => ({
+						text: o,
+						tokens: this.lexer.inline(o),
+						header: !1,
+						align: s.align[l]
+					})));
+					return s;
+				}
+			}
+			lheading(e) {
+				let t = this.rules.block.lheading.exec(e);
+				if (t) {
+					let n = t[1].trim();
+					return {
+						type: "heading",
+						raw: $(t[0], `
+`),
+						depth: t[2].charAt(0) === "=" ? 1 : 2,
+						text: n,
+						tokens: this.lexer.inline(n)
+					};
+				}
+			}
+			paragraph(e) {
+				let t = this.rules.block.paragraph.exec(e);
+				if (t) {
+					let n = t[1].charAt(t[1].length - 1) === `
+` ? t[1].slice(0, -1) : t[1];
+					return {
+						type: "paragraph",
+						raw: t[0],
+						text: n,
+						tokens: this.lexer.inline(n)
+					};
+				}
+			}
+			text(e) {
+				let t = this.rules.block.text.exec(e);
+				if (t) return {
+					type: "text",
+					raw: t[0],
+					text: t[0],
+					tokens: this.lexer.inline(t[0])
+				};
+			}
+			escape(e) {
+				let t = this.rules.inline.escape.exec(e);
+				if (t) return {
+					type: "escape",
+					raw: t[0],
+					text: t[1]
+				};
+			}
+			tag(e) {
+				let t = this.rules.inline.tag.exec(e);
+				if (t) return !this.lexer.state.inLink && this.rules.other.startATag.test(t[0]) ? this.lexer.state.inLink = !0 : this.lexer.state.inLink && this.rules.other.endATag.test(t[0]) && (this.lexer.state.inLink = !1), !this.lexer.state.inRawBlock && this.rules.other.startPreScriptTag.test(t[0]) ? this.lexer.state.inRawBlock = !0 : this.lexer.state.inRawBlock && this.rules.other.endPreScriptTag.test(t[0]) && (this.lexer.state.inRawBlock = !1), {
+					type: "html",
+					raw: t[0],
+					inLink: this.lexer.state.inLink,
+					inRawBlock: this.lexer.state.inRawBlock,
+					block: !1,
+					text: t[0]
+				};
+			}
+			link(e) {
+				let t = this.rules.inline.link.exec(e);
+				if (t) {
+					let n = t[2].trim();
+					if (!this.options.pedantic && this.rules.other.startAngleBracket.test(n)) {
+						if (!this.rules.other.endAngleBracket.test(n)) return;
+						let s = $(n.slice(0, -1), "\\");
+						if ((n.length - s.length) % 2 === 0) return;
+					} else {
+						let s = ge(t[2], "()");
+						if (s === -2) return;
+						if (s > -1) {
+							let o = (t[0].indexOf("!") === 0 ? 5 : 4) + t[1].length + s;
+							t[2] = t[2].substring(0, s), t[0] = t[0].substring(0, o).trim(), t[3] = "";
+						}
+					}
+					let r = t[2], i = "";
+					if (this.options.pedantic) {
+						let s = this.rules.other.pedanticHrefTitle.exec(r);
+						s && (r = s[1], i = s[3]);
+					} else i = t[3] ? t[3].slice(1, -1) : "";
+					return r = r.trim(), this.rules.other.startAngleBracket.test(r) && (this.options.pedantic && !this.rules.other.endAngleBracket.test(n) ? r = r.slice(1) : r = r.slice(1, -1)), me(t, {
+						href: r && r.replace(this.rules.inline.anyPunctuation, "$1"),
+						title: i && i.replace(this.rules.inline.anyPunctuation, "$1")
+					}, t[0], this.lexer, this.rules);
+				}
+			}
+			reflink(e, t) {
+				let n;
+				if ((n = this.rules.inline.reflink.exec(e)) || (n = this.rules.inline.nolink.exec(e))) {
+					let i = t[(n[2] || n[1]).replace(this.rules.other.multipleSpaceGlobal, " ").toLowerCase()];
+					if (!i) {
+						let s = n[0].charAt(0);
+						return {
+							type: "text",
+							raw: s,
+							text: s
+						};
+					}
+					return me(n, i, n[0], this.lexer, this.rules);
+				}
+			}
+			emStrong(e, t, n = "") {
+				let r = this.rules.inline.emStrongLDelim.exec(e);
+				if (!r || !r[1] && !r[2] && !r[3] && !r[4] || r[4] && n.match(this.rules.other.unicodeAlphaNumeric)) return;
+				if (!(r[1] || r[3] || "") || !n || this.rules.inline.punctuation.exec(n)) {
+					let s = [...r[0]].length - 1, a, o, l = s, p = 0, c = r[0][0] === "*" ? this.rules.inline.emStrongRDelimAst : this.rules.inline.emStrongRDelimUnd;
+					for (c.lastIndex = 0, t = t.slice(-1 * e.length + s); (r = c.exec(t)) !== null;) {
+						if (a = r[1] || r[2] || r[3] || r[4] || r[5] || r[6], !a) continue;
+						if (o = [...a].length, r[3] || r[4]) {
+							l += o;
+							continue;
+						} else if ((r[5] || r[6]) && s % 3 && !((s + o) % 3)) {
+							p += o;
+							continue;
+						}
+						if (l -= o, l > 0) continue;
+						o = Math.min(o, o + l + p);
+						let d = [...r[0]][0].length, h = e.slice(0, s + r.index + d + o);
+						if (Math.min(s, o) % 2) {
+							let f = h.slice(1, -1);
+							return {
+								type: "em",
+								raw: h,
+								text: f,
+								tokens: this.lexer.inlineTokens(f)
+							};
+						}
+						let R = h.slice(2, -2);
+						return {
+							type: "strong",
+							raw: h,
+							text: R,
+							tokens: this.lexer.inlineTokens(R)
+						};
+					}
+				}
+			}
+			codespan(e) {
+				let t = this.rules.inline.code.exec(e);
+				if (t) {
+					let n = t[2].replace(this.rules.other.newLineCharGlobal, " "), r = this.rules.other.nonSpaceChar.test(n), i = this.rules.other.startingSpaceChar.test(n) && this.rules.other.endingSpaceChar.test(n);
+					return r && i && (n = n.substring(1, n.length - 1)), {
+						type: "codespan",
+						raw: t[0],
+						text: n
+					};
+				}
+			}
+			br(e) {
+				let t = this.rules.inline.br.exec(e);
+				if (t) return {
+					type: "br",
+					raw: t[0]
+				};
+			}
+			del(e, t, n = "") {
+				let r = this.rules.inline.delLDelim.exec(e);
+				if (!r) return;
+				if (!(r[1] || "") || !n || this.rules.inline.punctuation.exec(n)) {
+					let s = [...r[0]].length - 1, a, o, l = s, p = this.rules.inline.delRDelim;
+					for (p.lastIndex = 0, t = t.slice(-1 * e.length + s); (r = p.exec(t)) !== null;) {
+						if (a = r[1] || r[2] || r[3] || r[4] || r[5] || r[6], !a || (o = [...a].length, o !== s)) continue;
+						if (r[3] || r[4]) {
+							l += o;
+							continue;
+						}
+						if (l -= o, l > 0) continue;
+						o = Math.min(o, o + l);
+						let c = [...r[0]][0].length, d = e.slice(0, s + r.index + c + o), h = d.slice(s, -s);
+						return {
+							type: "del",
+							raw: d,
+							text: h,
+							tokens: this.lexer.inlineTokens(h)
+						};
+					}
+				}
+			}
+			autolink(e) {
+				let t = this.rules.inline.autolink.exec(e);
+				if (t) {
+					let n, r;
+					return t[2] === "@" ? (n = t[1], r = "mailto:" + n) : (n = t[1], r = n), {
+						type: "link",
+						raw: t[0],
+						text: n,
+						href: r,
+						tokens: [{
+							type: "text",
+							raw: n,
+							text: n
+						}]
+					};
+				}
+			}
+			url(e) {
+				let t;
+				if (t = this.rules.inline.url.exec(e)) {
+					let n, r;
+					if (t[2] === "@") n = t[0], r = "mailto:" + n;
+					else {
+						let i;
+						do
+							i = t[0], t[0] = this.rules.inline._backpedal.exec(t[0])?.[0] ?? "";
+						while (i !== t[0]);
+						n = t[0], t[1] === "www." ? r = "http://" + t[0] : r = t[0];
+					}
+					return {
+						type: "link",
+						raw: t[0],
+						text: n,
+						href: r,
+						tokens: [{
+							type: "text",
+							raw: n,
+							text: n
+						}]
+					};
+				}
+			}
+			inlineText(e) {
+				let t = this.rules.inline.text.exec(e);
+				if (t) {
+					let n = this.lexer.state.inRawBlock;
+					return {
+						type: "text",
+						raw: t[0],
+						text: t[0],
+						escaped: n
+					};
+				}
+			}
+		};
+		var x = class u {
+			tokens;
+			options;
+			state;
+			inlineQueue;
+			tokenizer;
+			constructor(e) {
+				this.tokens = [], this.tokens.links = Object.create(null), this.options = e || T, this.options.tokenizer = this.options.tokenizer || new w(), this.tokenizer = this.options.tokenizer, this.tokenizer.options = this.options, this.tokenizer.lexer = this, this.inlineQueue = [], this.state = {
+					inLink: !1,
+					inRawBlock: !1,
+					top: !0
+				};
+				let t = {
+					other: m,
+					block: B.normal,
+					inline: I.normal
+				};
+				this.options.pedantic ? (t.block = B.pedantic, t.inline = I.pedantic) : this.options.gfm && (t.block = B.gfm, this.options.breaks ? t.inline = I.breaks : t.inline = I.gfm), this.tokenizer.rules = t;
+			}
+			static get rules() {
+				return {
+					block: B,
+					inline: I
+				};
+			}
+			static lex(e, t) {
+				return new u(t).lex(e);
+			}
+			static lexInline(e, t) {
+				return new u(t).inlineTokens(e);
+			}
+			lex(e) {
+				e = e.replace(m.carriageReturn, `
+`), this.blockTokens(e, this.tokens);
+				for (let t = 0; t < this.inlineQueue.length; t++) {
+					let n = this.inlineQueue[t];
+					this.inlineTokens(n.src, n.tokens);
+				}
+				return this.inlineQueue = [], this.tokens;
+			}
+			blockTokens(e, t = [], n = !1) {
+				for (this.tokenizer.lexer = this, this.options.pedantic && (e = e.replace(m.tabCharGlobal, "    ").replace(m.spaceLine, "")); e;) {
+					let r;
+					if (this.options.extensions?.block?.some((s) => (r = s.call({ lexer: this }, e, t)) ? (e = e.substring(r.raw.length), t.push(r), !0) : !1)) continue;
+					if (r = this.tokenizer.space(e)) {
+						e = e.substring(r.raw.length);
+						let s = t.at(-1);
+						r.raw.length === 1 && s !== void 0 ? s.raw += `
+` : t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.code(e)) {
+						e = e.substring(r.raw.length);
+						let s = t.at(-1);
+						s?.type === "paragraph" || s?.type === "text" ? (s.raw += (s.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, s.text += `
+` + r.text, this.inlineQueue.at(-1).src = s.text) : t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.fences(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.heading(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.hr(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.blockquote(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.list(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.html(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.def(e)) {
+						e = e.substring(r.raw.length);
+						let s = t.at(-1);
+						s?.type === "paragraph" || s?.type === "text" ? (s.raw += (s.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, s.text += `
+` + r.raw, this.inlineQueue.at(-1).src = s.text) : this.tokens.links[r.tag] || (this.tokens.links[r.tag] = {
+							href: r.href,
+							title: r.title
+						}, t.push(r));
+						continue;
+					}
+					if (r = this.tokenizer.table(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					if (r = this.tokenizer.lheading(e)) {
+						e = e.substring(r.raw.length), t.push(r);
+						continue;
+					}
+					let i = e;
+					if (this.options.extensions?.startBlock) {
+						let s = Infinity, a = e.slice(1), o;
+						this.options.extensions.startBlock.forEach((l) => {
+							o = l.call({ lexer: this }, a), typeof o == "number" && o >= 0 && (s = Math.min(s, o));
+						}), s < Infinity && s >= 0 && (i = e.substring(0, s + 1));
+					}
+					if (this.state.top && (r = this.tokenizer.paragraph(i))) {
+						let s = t.at(-1);
+						n && s?.type === "paragraph" ? (s.raw += (s.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, s.text += `
+` + r.text, this.inlineQueue.pop(), this.inlineQueue.at(-1).src = s.text) : t.push(r), n = i.length !== e.length, e = e.substring(r.raw.length);
+						continue;
+					}
+					if (r = this.tokenizer.text(e)) {
+						e = e.substring(r.raw.length);
+						let s = t.at(-1);
+						s?.type === "text" ? (s.raw += (s.raw.endsWith(`
+`) ? "" : `
+`) + r.raw, s.text += `
+` + r.text, this.inlineQueue.pop(), this.inlineQueue.at(-1).src = s.text) : t.push(r);
+						continue;
+					}
+					if (e) {
+						let s = "Infinite loop on byte: " + e.charCodeAt(0);
+						if (this.options.silent) {
+							console.error(s);
+							break;
+						} else throw new Error(s);
+					}
+				}
+				return this.state.top = !0, t;
+			}
+			inline(e, t = []) {
+				return this.inlineQueue.push({
+					src: e,
+					tokens: t
+				}), t;
+			}
+			inlineTokens(e, t = []) {
+				this.tokenizer.lexer = this;
+				let n = e, r = null;
+				if (this.tokens.links) {
+					let o = Object.keys(this.tokens.links);
+					if (o.length > 0) for (; (r = this.tokenizer.rules.inline.reflinkSearch.exec(n)) !== null;) o.includes(r[0].slice(r[0].lastIndexOf("[") + 1, -1)) && (n = n.slice(0, r.index) + "[" + "a".repeat(r[0].length - 2) + "]" + n.slice(this.tokenizer.rules.inline.reflinkSearch.lastIndex));
+				}
+				for (; (r = this.tokenizer.rules.inline.anyPunctuation.exec(n)) !== null;) n = n.slice(0, r.index) + "++" + n.slice(this.tokenizer.rules.inline.anyPunctuation.lastIndex);
+				let i;
+				for (; (r = this.tokenizer.rules.inline.blockSkip.exec(n)) !== null;) i = r[2] ? r[2].length : 0, n = n.slice(0, r.index + i) + "[" + "a".repeat(r[0].length - i - 2) + "]" + n.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
+				n = this.options.hooks?.emStrongMask?.call({ lexer: this }, n) ?? n;
+				let s = !1, a = "";
+				for (; e;) {
+					s || (a = ""), s = !1;
+					let o;
+					if (this.options.extensions?.inline?.some((p) => (o = p.call({ lexer: this }, e, t)) ? (e = e.substring(o.raw.length), t.push(o), !0) : !1)) continue;
+					if (o = this.tokenizer.escape(e)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.tag(e)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.link(e)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.reflink(e, this.tokens.links)) {
+						e = e.substring(o.raw.length);
+						let p = t.at(-1);
+						o.type === "text" && p?.type === "text" ? (p.raw += o.raw, p.text += o.text) : t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.emStrong(e, n, a)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.codespan(e)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.br(e)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.del(e, n, a)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (o = this.tokenizer.autolink(e)) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					if (!this.state.inLink && (o = this.tokenizer.url(e))) {
+						e = e.substring(o.raw.length), t.push(o);
+						continue;
+					}
+					let l = e;
+					if (this.options.extensions?.startInline) {
+						let p = Infinity, c = e.slice(1), d;
+						this.options.extensions.startInline.forEach((h) => {
+							d = h.call({ lexer: this }, c), typeof d == "number" && d >= 0 && (p = Math.min(p, d));
+						}), p < Infinity && p >= 0 && (l = e.substring(0, p + 1));
+					}
+					if (o = this.tokenizer.inlineText(l)) {
+						e = e.substring(o.raw.length), o.raw.slice(-1) !== "_" && (a = o.raw.slice(-1)), s = !0;
+						let p = t.at(-1);
+						p?.type === "text" ? (p.raw += o.raw, p.text += o.text) : t.push(o);
+						continue;
+					}
+					if (e) {
+						let p = "Infinite loop on byte: " + e.charCodeAt(0);
+						if (this.options.silent) {
+							console.error(p);
+							break;
+						} else throw new Error(p);
+					}
+				}
+				return t;
+			}
+		};
+		var y = class {
+			options;
+			parser;
+			constructor(e) {
+				this.options = e || T;
+			}
+			space(e) {
+				return "";
+			}
+			code({ text: e, lang: t, escaped: n }) {
+				let r = (t || "").match(m.notSpaceStart)?.[0], i = e.replace(m.endingNewline, "") + `
+`;
+				return r ? "<pre><code class=\"language-" + O(r) + "\">" + (n ? i : O(i, !0)) + `</code></pre>
+` : "<pre><code>" + (n ? i : O(i, !0)) + `</code></pre>
+`;
+			}
+			blockquote({ tokens: e }) {
+				return `<blockquote>
+${this.parser.parse(e)}</blockquote>
+`;
+			}
+			html({ text: e }) {
+				return e;
+			}
+			def(e) {
+				return "";
+			}
+			heading({ tokens: e, depth: t }) {
+				return `<h${t}>${this.parser.parseInline(e)}</h${t}>
+`;
+			}
+			hr(e) {
+				return `<hr>
+`;
+			}
+			list(e) {
+				let t = e.ordered, n = e.start, r = "";
+				for (let a = 0; a < e.items.length; a++) {
+					let o = e.items[a];
+					r += this.listitem(o);
+				}
+				let i = t ? "ol" : "ul", s = t && n !== 1 ? " start=\"" + n + "\"" : "";
+				return "<" + i + s + `>
+` + r + "</" + i + `>
+`;
+			}
+			listitem(e) {
+				return `<li>${this.parser.parse(e.tokens)}</li>
+`;
+			}
+			checkbox({ checked: e }) {
+				return "<input " + (e ? "checked=\"\" " : "") + "disabled=\"\" type=\"checkbox\"> ";
+			}
+			paragraph({ tokens: e }) {
+				return `<p>${this.parser.parseInline(e)}</p>
+`;
+			}
+			table(e) {
+				let t = "", n = "";
+				for (let i = 0; i < e.header.length; i++) n += this.tablecell(e.header[i]);
+				t += this.tablerow({ text: n });
+				let r = "";
+				for (let i = 0; i < e.rows.length; i++) {
+					let s = e.rows[i];
+					n = "";
+					for (let a = 0; a < s.length; a++) n += this.tablecell(s[a]);
+					r += this.tablerow({ text: n });
+				}
+				return r && (r = `<tbody>${r}</tbody>`), `<table>
+<thead>
+` + t + `</thead>
+` + r + `</table>
+`;
+			}
+			tablerow({ text: e }) {
+				return `<tr>
+${e}</tr>
+`;
+			}
+			tablecell(e) {
+				let t = this.parser.parseInline(e.tokens), n = e.header ? "th" : "td";
+				return (e.align ? `<${n} align="${e.align}">` : `<${n}>`) + t + `</${n}>
+`;
+			}
+			strong({ tokens: e }) {
+				return `<strong>${this.parser.parseInline(e)}</strong>`;
+			}
+			em({ tokens: e }) {
+				return `<em>${this.parser.parseInline(e)}</em>`;
+			}
+			codespan({ text: e }) {
+				return `<code>${O(e, !0)}</code>`;
+			}
+			br(e) {
+				return "<br>";
+			}
+			del({ tokens: e }) {
+				return `<del>${this.parser.parseInline(e)}</del>`;
+			}
+			link({ href: e, title: t, tokens: n }) {
+				let r = this.parser.parseInline(n), i = J(e);
+				if (i === null) return r;
+				e = i;
+				let s = "<a href=\"" + e + "\"";
+				return t && (s += " title=\"" + O(t) + "\""), s += ">" + r + "</a>", s;
+			}
+			image({ href: e, title: t, text: n, tokens: r }) {
+				r && (n = this.parser.parseInline(r, this.parser.textRenderer));
+				let i = J(e);
+				if (i === null) return O(n);
+				e = i;
+				let s = `<img src="${e}" alt="${O(n)}"`;
+				return t && (s += ` title="${O(t)}"`), s += ">", s;
+			}
+			text(e) {
+				return "tokens" in e && e.tokens ? this.parser.parseInline(e.tokens) : "escaped" in e && e.escaped ? e.text : O(e.text);
+			}
+		};
+		var L = class {
+			strong({ text: e }) {
+				return e;
+			}
+			em({ text: e }) {
+				return e;
+			}
+			codespan({ text: e }) {
+				return e;
+			}
+			del({ text: e }) {
+				return e;
+			}
+			html({ text: e }) {
+				return e;
+			}
+			text({ text: e }) {
+				return e;
+			}
+			link({ text: e }) {
+				return "" + e;
+			}
+			image({ text: e }) {
+				return "" + e;
+			}
+			br() {
+				return "";
+			}
+			checkbox({ raw: e }) {
+				return e;
+			}
+		};
+		var b = class u {
+			options;
+			renderer;
+			textRenderer;
+			constructor(e) {
+				this.options = e || T, this.options.renderer = this.options.renderer || new y(), this.renderer = this.options.renderer, this.renderer.options = this.options, this.renderer.parser = this, this.textRenderer = new L();
+			}
+			static parse(e, t) {
+				return new u(t).parse(e);
+			}
+			static parseInline(e, t) {
+				return new u(t).parseInline(e);
+			}
+			parse(e) {
+				this.renderer.parser = this;
+				let t = "";
+				for (let n = 0; n < e.length; n++) {
+					let r = e[n];
+					if (this.options.extensions?.renderers?.[r.type]) {
+						let s = r, a = this.options.extensions.renderers[s.type].call({ parser: this }, s);
+						if (a !== !1 || ![
+							"space",
+							"hr",
+							"heading",
+							"code",
+							"table",
+							"blockquote",
+							"list",
+							"html",
+							"def",
+							"paragraph",
+							"text"
+						].includes(s.type)) {
+							t += a || "";
+							continue;
+						}
+					}
+					let i = r;
+					switch (i.type) {
+						case "space":
+							t += this.renderer.space(i);
+							break;
+						case "hr":
+							t += this.renderer.hr(i);
+							break;
+						case "heading":
+							t += this.renderer.heading(i);
+							break;
+						case "code":
+							t += this.renderer.code(i);
+							break;
+						case "table":
+							t += this.renderer.table(i);
+							break;
+						case "blockquote":
+							t += this.renderer.blockquote(i);
+							break;
+						case "list":
+							t += this.renderer.list(i);
+							break;
+						case "checkbox":
+							t += this.renderer.checkbox(i);
+							break;
+						case "html":
+							t += this.renderer.html(i);
+							break;
+						case "def":
+							t += this.renderer.def(i);
+							break;
+						case "paragraph":
+							t += this.renderer.paragraph(i);
+							break;
+						case "text":
+							t += this.renderer.text(i);
+							break;
+						default: {
+							let s = "Token with \"" + i.type + "\" type was not found.";
+							if (this.options.silent) return console.error(s), "";
+							throw new Error(s);
+						}
+					}
+				}
+				return t;
+			}
+			parseInline(e, t = this.renderer) {
+				this.renderer.parser = this;
+				let n = "";
+				for (let r = 0; r < e.length; r++) {
+					let i = e[r];
+					if (this.options.extensions?.renderers?.[i.type]) {
+						let a = this.options.extensions.renderers[i.type].call({ parser: this }, i);
+						if (a !== !1 || ![
+							"escape",
+							"html",
+							"link",
+							"image",
+							"strong",
+							"em",
+							"codespan",
+							"br",
+							"del",
+							"text"
+						].includes(i.type)) {
+							n += a || "";
+							continue;
+						}
+					}
+					let s = i;
+					switch (s.type) {
+						case "escape":
+							n += t.text(s);
+							break;
+						case "html":
+							n += t.html(s);
+							break;
+						case "link":
+							n += t.link(s);
+							break;
+						case "image":
+							n += t.image(s);
+							break;
+						case "checkbox":
+							n += t.checkbox(s);
+							break;
+						case "strong":
+							n += t.strong(s);
+							break;
+						case "em":
+							n += t.em(s);
+							break;
+						case "codespan":
+							n += t.codespan(s);
+							break;
+						case "br":
+							n += t.br(s);
+							break;
+						case "del":
+							n += t.del(s);
+							break;
+						case "text":
+							n += t.text(s);
+							break;
+						default: {
+							let a = "Token with \"" + s.type + "\" type was not found.";
+							if (this.options.silent) return console.error(a), "";
+							throw new Error(a);
+						}
+					}
+				}
+				return n;
+			}
+		};
+		var P = class {
+			options;
+			block;
+			constructor(e) {
+				this.options = e || T;
+			}
+			static passThroughHooks = new Set([
+				"preprocess",
+				"postprocess",
+				"processAllTokens",
+				"emStrongMask"
+			]);
+			static passThroughHooksRespectAsync = new Set([
+				"preprocess",
+				"postprocess",
+				"processAllTokens"
+			]);
+			preprocess(e) {
+				return e;
+			}
+			postprocess(e) {
+				return e;
+			}
+			processAllTokens(e) {
+				return e;
+			}
+			emStrongMask(e) {
+				return e;
+			}
+			provideLexer(e = this.block) {
+				return e ? x.lex : x.lexInline;
+			}
+			provideParser(e = this.block) {
+				return e ? b.parse : b.parseInline;
+			}
+		};
+		var D = class {
+			defaults = z();
+			options = this.setOptions;
+			parse = this.parseMarkdown(!0);
+			parseInline = this.parseMarkdown(!1);
+			Parser = b;
+			Renderer = y;
+			TextRenderer = L;
+			Lexer = x;
+			Tokenizer = w;
+			Hooks = P;
+			constructor(...e) {
+				this.use(...e);
+			}
+			walkTokens(e, t) {
+				let n = [];
+				for (let r of e) switch (n = n.concat(t.call(this, r)), r.type) {
+					case "table": {
+						let i = r;
+						for (let s of i.header) n = n.concat(this.walkTokens(s.tokens, t));
+						for (let s of i.rows) for (let a of s) n = n.concat(this.walkTokens(a.tokens, t));
+						break;
+					}
+					case "list": {
+						let i = r;
+						n = n.concat(this.walkTokens(i.items, t));
+						break;
+					}
+					default: {
+						let i = r;
+						this.defaults.extensions?.childTokens?.[i.type] ? this.defaults.extensions.childTokens[i.type].forEach((s) => {
+							let a = i[s].flat(Infinity);
+							n = n.concat(this.walkTokens(a, t));
+						}) : i.tokens && (n = n.concat(this.walkTokens(i.tokens, t)));
+					}
+				}
+				return n;
+			}
+			use(...e) {
+				let t = this.defaults.extensions || {
+					renderers: {},
+					childTokens: {}
+				};
+				return e.forEach((n) => {
+					let r = { ...n };
+					if (r.async = this.defaults.async || r.async || !1, n.extensions && (n.extensions.forEach((i) => {
+						if (!i.name) throw new Error("extension name required");
+						if ("renderer" in i) {
+							let s = t.renderers[i.name];
+							s ? t.renderers[i.name] = function(...a) {
+								let o = i.renderer.apply(this, a);
+								return o === !1 && (o = s.apply(this, a)), o;
+							} : t.renderers[i.name] = i.renderer;
+						}
+						if ("tokenizer" in i) {
+							if (!i.level || i.level !== "block" && i.level !== "inline") throw new Error("extension level must be 'block' or 'inline'");
+							let s = t[i.level];
+							s ? s.unshift(i.tokenizer) : t[i.level] = [i.tokenizer], i.start && (i.level === "block" ? t.startBlock ? t.startBlock.push(i.start) : t.startBlock = [i.start] : i.level === "inline" && (t.startInline ? t.startInline.push(i.start) : t.startInline = [i.start]));
+						}
+						"childTokens" in i && i.childTokens && (t.childTokens[i.name] = i.childTokens);
+					}), r.extensions = t), n.renderer) {
+						let i = this.defaults.renderer || new y(this.defaults);
+						for (let s in n.renderer) {
+							if (!(s in i)) throw new Error(`renderer '${s}' does not exist`);
+							if (["options", "parser"].includes(s)) continue;
+							let a = s, o = n.renderer[a], l = i[a];
+							i[a] = (...p) => {
+								let c = o.apply(i, p);
+								return c === !1 && (c = l.apply(i, p)), c || "";
+							};
+						}
+						r.renderer = i;
+					}
+					if (n.tokenizer) {
+						let i = this.defaults.tokenizer || new w(this.defaults);
+						for (let s in n.tokenizer) {
+							if (!(s in i)) throw new Error(`tokenizer '${s}' does not exist`);
+							if ([
+								"options",
+								"rules",
+								"lexer"
+							].includes(s)) continue;
+							let a = s, o = n.tokenizer[a], l = i[a];
+							i[a] = (...p) => {
+								let c = o.apply(i, p);
+								return c === !1 && (c = l.apply(i, p)), c;
+							};
+						}
+						r.tokenizer = i;
+					}
+					if (n.hooks) {
+						let i = this.defaults.hooks || new P();
+						for (let s in n.hooks) {
+							if (!(s in i)) throw new Error(`hook '${s}' does not exist`);
+							if (["options", "block"].includes(s)) continue;
+							let a = s, o = n.hooks[a], l = i[a];
+							P.passThroughHooks.has(s) ? i[a] = (p) => {
+								if (this.defaults.async && P.passThroughHooksRespectAsync.has(s)) return (async () => {
+									let d = await o.call(i, p);
+									return l.call(i, d);
+								})();
+								let c = o.call(i, p);
+								return l.call(i, c);
+							} : i[a] = (...p) => {
+								if (this.defaults.async) return (async () => {
+									let d = await o.apply(i, p);
+									return d === !1 && (d = await l.apply(i, p)), d;
+								})();
+								let c = o.apply(i, p);
+								return c === !1 && (c = l.apply(i, p)), c;
+							};
+						}
+						r.hooks = i;
+					}
+					if (n.walkTokens) {
+						let i = this.defaults.walkTokens, s = n.walkTokens;
+						r.walkTokens = function(a) {
+							let o = [];
+							return o.push(s.call(this, a)), i && (o = o.concat(i.call(this, a))), o;
+						};
+					}
+					this.defaults = {
+						...this.defaults,
+						...r
+					};
+				}), this;
+			}
+			setOptions(e) {
+				return this.defaults = {
+					...this.defaults,
+					...e
+				}, this;
+			}
+			lexer(e, t) {
+				return x.lex(e, t ?? this.defaults);
+			}
+			parser(e, t) {
+				return b.parse(e, t ?? this.defaults);
+			}
+			parseMarkdown(e) {
+				return (n, r) => {
+					let i = { ...r }, s = {
+						...this.defaults,
+						...i
+					}, a = this.onError(!!s.silent, !!s.async);
+					if (this.defaults.async === !0 && i.async === !1) return a(/* @__PURE__ */ new Error("marked(): The async option was set to true by an extension. Remove async: false from the parse options object to return a Promise."));
+					if (typeof n > "u" || n === null) return a(/* @__PURE__ */ new Error("marked(): input parameter is undefined or null"));
+					if (typeof n != "string") return a(/* @__PURE__ */ new Error("marked(): input parameter is of type " + Object.prototype.toString.call(n) + ", string expected"));
+					if (s.hooks && (s.hooks.options = s, s.hooks.block = e), s.async) return (async () => {
+						let o = s.hooks ? await s.hooks.preprocess(n) : n, p = await (s.hooks ? await s.hooks.provideLexer(e) : e ? x.lex : x.lexInline)(o, s), c = s.hooks ? await s.hooks.processAllTokens(p) : p;
+						s.walkTokens && await Promise.all(this.walkTokens(c, s.walkTokens));
+						let h = await (s.hooks ? await s.hooks.provideParser(e) : e ? b.parse : b.parseInline)(c, s);
+						return s.hooks ? await s.hooks.postprocess(h) : h;
+					})().catch(a);
+					try {
+						s.hooks && (n = s.hooks.preprocess(n));
+						let l = (s.hooks ? s.hooks.provideLexer(e) : e ? x.lex : x.lexInline)(n, s);
+						s.hooks && (l = s.hooks.processAllTokens(l)), s.walkTokens && this.walkTokens(l, s.walkTokens);
+						let c = (s.hooks ? s.hooks.provideParser(e) : e ? b.parse : b.parseInline)(l, s);
+						return s.hooks && (c = s.hooks.postprocess(c)), c;
+					} catch (o) {
+						return a(o);
+					}
+				};
+			}
+			onError(e, t) {
+				return (n) => {
+					if (n.message += `
+Please report this to https://github.com/markedjs/marked.`, e) {
+						let r = "<p>An error occurred:</p><pre>" + O(n.message + "", !0) + "</pre>";
+						return t ? Promise.resolve(r) : r;
+					}
+					if (t) return Promise.reject(n);
+					throw n;
+				};
+			}
+		};
+		var M = new D();
+		function g(u, e) {
+			return M.parse(u, e);
+		}
+		g.options = g.setOptions = function(u) {
+			return M.setOptions(u), g.defaults = M.defaults, G(g.defaults), g;
+		};
+		g.getDefaults = z;
+		g.defaults = T;
+		g.use = function(...u) {
+			return M.use(...u), g.defaults = M.defaults, G(g.defaults), g;
+		};
+		g.walkTokens = function(u, e) {
+			return M.walkTokens(u, e);
+		};
+		g.parseInline = M.parseInline;
+		g.Parser = b;
+		g.parser = b.parse;
+		g.Renderer = y;
+		g.TextRenderer = L;
+		g.Lexer = x;
+		g.lexer = x.lex;
+		g.Tokenizer = w;
+		g.Hooks = P;
+		g.parse = g;
+		g.options;
+		g.setOptions;
+		g.use;
+		g.walkTokens;
+		g.parseInline;
+		b.parse;
+		x.lex;
+		/*! @license DOMPurify 3.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.3/LICENSE */
+		var { entries, setPrototypeOf, isFrozen, getPrototypeOf, getOwnPropertyDescriptor } = Object;
+		var { freeze, seal, create } = Object;
+		var { apply, construct } = typeof Reflect !== "undefined" && Reflect;
+		if (!freeze) freeze = function freeze(x) {
+			return x;
+		};
+		if (!seal) seal = function seal(x) {
+			return x;
+		};
+		if (!apply) apply = function apply(func, thisArg) {
+			for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) args[_key - 2] = arguments[_key];
+			return func.apply(thisArg, args);
+		};
+		if (!construct) construct = function construct(Func) {
+			for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) args[_key2 - 1] = arguments[_key2];
+			return new Func(...args);
+		};
+		var arrayForEach = unapply(Array.prototype.forEach);
+		var arrayLastIndexOf = unapply(Array.prototype.lastIndexOf);
+		var arrayPop = unapply(Array.prototype.pop);
+		var arrayPush = unapply(Array.prototype.push);
+		var arraySplice = unapply(Array.prototype.splice);
+		var stringToLowerCase = unapply(String.prototype.toLowerCase);
+		var stringToString = unapply(String.prototype.toString);
+		var stringMatch = unapply(String.prototype.match);
+		var stringReplace = unapply(String.prototype.replace);
+		var stringIndexOf = unapply(String.prototype.indexOf);
+		var stringTrim = unapply(String.prototype.trim);
+		var objectHasOwnProperty = unapply(Object.prototype.hasOwnProperty);
+		var regExpTest = unapply(RegExp.prototype.test);
+		var typeErrorCreate = unconstruct(TypeError);
+		/**
+		* Creates a new function that calls the given function with a specified thisArg and arguments.
+		*
+		* @param func - The function to be wrapped and called.
+		* @returns A new function that calls the given function with a specified thisArg and arguments.
+		*/
+		function unapply(func) {
+			return function(thisArg) {
+				if (thisArg instanceof RegExp) thisArg.lastIndex = 0;
+				for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) args[_key3 - 1] = arguments[_key3];
+				return apply(func, thisArg, args);
+			};
+		}
+		/**
+		* Creates a new function that constructs an instance of the given constructor function with the provided arguments.
+		*
+		* @param func - The constructor function to be wrapped and called.
+		* @returns A new function that constructs an instance of the given constructor function with the provided arguments.
+		*/
+		function unconstruct(Func) {
+			return function() {
+				for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) args[_key4] = arguments[_key4];
+				return construct(Func, args);
+			};
+		}
+		/**
+		* Add properties to a lookup table
+		*
+		* @param set - The set to which elements will be added.
+		* @param array - The array containing elements to be added to the set.
+		* @param transformCaseFunc - An optional function to transform the case of each element before adding to the set.
+		* @returns The modified set with added elements.
+		*/
+		function addToSet(set, array) {
+			let transformCaseFunc = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : stringToLowerCase;
+			if (setPrototypeOf) setPrototypeOf(set, null);
+			let l = array.length;
+			while (l--) {
+				let element = array[l];
+				if (typeof element === "string") {
+					const lcElement = transformCaseFunc(element);
+					if (lcElement !== element) {
+						if (!isFrozen(array)) array[l] = lcElement;
+						element = lcElement;
+					}
+				}
+				set[element] = true;
+			}
+			return set;
+		}
+		/**
+		* Clean up an array to harden against CSPP
+		*
+		* @param array - The array to be cleaned.
+		* @returns The cleaned version of the array
+		*/
+		function cleanArray(array) {
+			for (let index = 0; index < array.length; index++) if (!objectHasOwnProperty(array, index)) array[index] = null;
+			return array;
+		}
+		/**
+		* Shallow clone an object
+		*
+		* @param object - The object to be cloned.
+		* @returns A new object that copies the original.
+		*/
+		function clone(object) {
+			const newObject = create(null);
+			for (const [property, value] of entries(object)) if (objectHasOwnProperty(object, property)) if (Array.isArray(value)) newObject[property] = cleanArray(value);
+			else if (value && typeof value === "object" && value.constructor === Object) newObject[property] = clone(value);
+			else newObject[property] = value;
+			return newObject;
+		}
+		/**
+		* This method automatically checks if the prop is function or getter and behaves accordingly.
+		*
+		* @param object - The object to look up the getter function in its prototype chain.
+		* @param prop - The property name for which to find the getter function.
+		* @returns The getter function found in the prototype chain or a fallback function.
+		*/
+		function lookupGetter(object, prop) {
+			while (object !== null) {
+				const desc = getOwnPropertyDescriptor(object, prop);
+				if (desc) {
+					if (desc.get) return unapply(desc.get);
+					if (typeof desc.value === "function") return unapply(desc.value);
+				}
+				object = getPrototypeOf(object);
+			}
+			function fallbackValue() {
+				return null;
+			}
+			return fallbackValue;
+		}
+		var html$1 = freeze([
+			"a",
+			"abbr",
+			"acronym",
+			"address",
+			"area",
+			"article",
+			"aside",
+			"audio",
+			"b",
+			"bdi",
+			"bdo",
+			"big",
+			"blink",
+			"blockquote",
+			"body",
+			"br",
+			"button",
+			"canvas",
+			"caption",
+			"center",
+			"cite",
+			"code",
+			"col",
+			"colgroup",
+			"content",
+			"data",
+			"datalist",
+			"dd",
+			"decorator",
+			"del",
+			"details",
+			"dfn",
+			"dialog",
+			"dir",
+			"div",
+			"dl",
+			"dt",
+			"element",
+			"em",
+			"fieldset",
+			"figcaption",
+			"figure",
+			"font",
+			"footer",
+			"form",
+			"h1",
+			"h2",
+			"h3",
+			"h4",
+			"h5",
+			"h6",
+			"head",
+			"header",
+			"hgroup",
+			"hr",
+			"html",
+			"i",
+			"img",
+			"input",
+			"ins",
+			"kbd",
+			"label",
+			"legend",
+			"li",
+			"main",
+			"map",
+			"mark",
+			"marquee",
+			"menu",
+			"menuitem",
+			"meter",
+			"nav",
+			"nobr",
+			"ol",
+			"optgroup",
+			"option",
+			"output",
+			"p",
+			"picture",
+			"pre",
+			"progress",
+			"q",
+			"rp",
+			"rt",
+			"ruby",
+			"s",
+			"samp",
+			"search",
+			"section",
+			"select",
+			"shadow",
+			"slot",
+			"small",
+			"source",
+			"spacer",
+			"span",
+			"strike",
+			"strong",
+			"style",
+			"sub",
+			"summary",
+			"sup",
+			"table",
+			"tbody",
+			"td",
+			"template",
+			"textarea",
+			"tfoot",
+			"th",
+			"thead",
+			"time",
+			"tr",
+			"track",
+			"tt",
+			"u",
+			"ul",
+			"var",
+			"video",
+			"wbr"
+		]);
+		var svg$1 = freeze([
+			"svg",
+			"a",
+			"altglyph",
+			"altglyphdef",
+			"altglyphitem",
+			"animatecolor",
+			"animatemotion",
+			"animatetransform",
+			"circle",
+			"clippath",
+			"defs",
+			"desc",
+			"ellipse",
+			"enterkeyhint",
+			"exportparts",
+			"filter",
+			"font",
+			"g",
+			"glyph",
+			"glyphref",
+			"hkern",
+			"image",
+			"inputmode",
+			"line",
+			"lineargradient",
+			"marker",
+			"mask",
+			"metadata",
+			"mpath",
+			"part",
+			"path",
+			"pattern",
+			"polygon",
+			"polyline",
+			"radialgradient",
+			"rect",
+			"stop",
+			"style",
+			"switch",
+			"symbol",
+			"text",
+			"textpath",
+			"title",
+			"tref",
+			"tspan",
+			"view",
+			"vkern"
+		]);
+		var svgFilters = freeze([
+			"feBlend",
+			"feColorMatrix",
+			"feComponentTransfer",
+			"feComposite",
+			"feConvolveMatrix",
+			"feDiffuseLighting",
+			"feDisplacementMap",
+			"feDistantLight",
+			"feDropShadow",
+			"feFlood",
+			"feFuncA",
+			"feFuncB",
+			"feFuncG",
+			"feFuncR",
+			"feGaussianBlur",
+			"feImage",
+			"feMerge",
+			"feMergeNode",
+			"feMorphology",
+			"feOffset",
+			"fePointLight",
+			"feSpecularLighting",
+			"feSpotLight",
+			"feTile",
+			"feTurbulence"
+		]);
+		var svgDisallowed = freeze([
+			"animate",
+			"color-profile",
+			"cursor",
+			"discard",
+			"font-face",
+			"font-face-format",
+			"font-face-name",
+			"font-face-src",
+			"font-face-uri",
+			"foreignobject",
+			"hatch",
+			"hatchpath",
+			"mesh",
+			"meshgradient",
+			"meshpatch",
+			"meshrow",
+			"missing-glyph",
+			"script",
+			"set",
+			"solidcolor",
+			"unknown",
+			"use"
+		]);
+		var mathMl$1 = freeze([
+			"math",
+			"menclose",
+			"merror",
+			"mfenced",
+			"mfrac",
+			"mglyph",
+			"mi",
+			"mlabeledtr",
+			"mmultiscripts",
+			"mn",
+			"mo",
+			"mover",
+			"mpadded",
+			"mphantom",
+			"mroot",
+			"mrow",
+			"ms",
+			"mspace",
+			"msqrt",
+			"mstyle",
+			"msub",
+			"msup",
+			"msubsup",
+			"mtable",
+			"mtd",
+			"mtext",
+			"mtr",
+			"munder",
+			"munderover",
+			"mprescripts"
+		]);
+		var mathMlDisallowed = freeze([
+			"maction",
+			"maligngroup",
+			"malignmark",
+			"mlongdiv",
+			"mscarries",
+			"mscarry",
+			"msgroup",
+			"mstack",
+			"msline",
+			"msrow",
+			"semantics",
+			"annotation",
+			"annotation-xml",
+			"mprescripts",
+			"none"
+		]);
+		var text = freeze(["#text"]);
+		var html = freeze([
+			"accept",
+			"action",
+			"align",
+			"alt",
+			"autocapitalize",
+			"autocomplete",
+			"autopictureinpicture",
+			"autoplay",
+			"background",
+			"bgcolor",
+			"border",
+			"capture",
+			"cellpadding",
+			"cellspacing",
+			"checked",
+			"cite",
+			"class",
+			"clear",
+			"color",
+			"cols",
+			"colspan",
+			"controls",
+			"controlslist",
+			"coords",
+			"crossorigin",
+			"datetime",
+			"decoding",
+			"default",
+			"dir",
+			"disabled",
+			"disablepictureinpicture",
+			"disableremoteplayback",
+			"download",
+			"draggable",
+			"enctype",
+			"enterkeyhint",
+			"exportparts",
+			"face",
+			"for",
+			"headers",
+			"height",
+			"hidden",
+			"high",
+			"href",
+			"hreflang",
+			"id",
+			"inert",
+			"inputmode",
+			"integrity",
+			"ismap",
+			"kind",
+			"label",
+			"lang",
+			"list",
+			"loading",
+			"loop",
+			"low",
+			"max",
+			"maxlength",
+			"media",
+			"method",
+			"min",
+			"minlength",
+			"multiple",
+			"muted",
+			"name",
+			"nonce",
+			"noshade",
+			"novalidate",
+			"nowrap",
+			"open",
+			"optimum",
+			"part",
+			"pattern",
+			"placeholder",
+			"playsinline",
+			"popover",
+			"popovertarget",
+			"popovertargetaction",
+			"poster",
+			"preload",
+			"pubdate",
+			"radiogroup",
+			"readonly",
+			"rel",
+			"required",
+			"rev",
+			"reversed",
+			"role",
+			"rows",
+			"rowspan",
+			"spellcheck",
+			"scope",
+			"selected",
+			"shape",
+			"size",
+			"sizes",
+			"slot",
+			"span",
+			"srclang",
+			"start",
+			"src",
+			"srcset",
+			"step",
+			"style",
+			"summary",
+			"tabindex",
+			"title",
+			"translate",
+			"type",
+			"usemap",
+			"valign",
+			"value",
+			"width",
+			"wrap",
+			"xmlns",
+			"slot"
+		]);
+		var svg = freeze([
+			"accent-height",
+			"accumulate",
+			"additive",
+			"alignment-baseline",
+			"amplitude",
+			"ascent",
+			"attributename",
+			"attributetype",
+			"azimuth",
+			"basefrequency",
+			"baseline-shift",
+			"begin",
+			"bias",
+			"by",
+			"class",
+			"clip",
+			"clippathunits",
+			"clip-path",
+			"clip-rule",
+			"color",
+			"color-interpolation",
+			"color-interpolation-filters",
+			"color-profile",
+			"color-rendering",
+			"cx",
+			"cy",
+			"d",
+			"dx",
+			"dy",
+			"diffuseconstant",
+			"direction",
+			"display",
+			"divisor",
+			"dur",
+			"edgemode",
+			"elevation",
+			"end",
+			"exponent",
+			"fill",
+			"fill-opacity",
+			"fill-rule",
+			"filter",
+			"filterunits",
+			"flood-color",
+			"flood-opacity",
+			"font-family",
+			"font-size",
+			"font-size-adjust",
+			"font-stretch",
+			"font-style",
+			"font-variant",
+			"font-weight",
+			"fx",
+			"fy",
+			"g1",
+			"g2",
+			"glyph-name",
+			"glyphref",
+			"gradientunits",
+			"gradienttransform",
+			"height",
+			"href",
+			"id",
+			"image-rendering",
+			"in",
+			"in2",
+			"intercept",
+			"k",
+			"k1",
+			"k2",
+			"k3",
+			"k4",
+			"kerning",
+			"keypoints",
+			"keysplines",
+			"keytimes",
+			"lang",
+			"lengthadjust",
+			"letter-spacing",
+			"kernelmatrix",
+			"kernelunitlength",
+			"lighting-color",
+			"local",
+			"marker-end",
+			"marker-mid",
+			"marker-start",
+			"markerheight",
+			"markerunits",
+			"markerwidth",
+			"maskcontentunits",
+			"maskunits",
+			"max",
+			"mask",
+			"mask-type",
+			"media",
+			"method",
+			"mode",
+			"min",
+			"name",
+			"numoctaves",
+			"offset",
+			"operator",
+			"opacity",
+			"order",
+			"orient",
+			"orientation",
+			"origin",
+			"overflow",
+			"paint-order",
+			"path",
+			"pathlength",
+			"patterncontentunits",
+			"patterntransform",
+			"patternunits",
+			"points",
+			"preservealpha",
+			"preserveaspectratio",
+			"primitiveunits",
+			"r",
+			"rx",
+			"ry",
+			"radius",
+			"refx",
+			"refy",
+			"repeatcount",
+			"repeatdur",
+			"restart",
+			"result",
+			"rotate",
+			"scale",
+			"seed",
+			"shape-rendering",
+			"slope",
+			"specularconstant",
+			"specularexponent",
+			"spreadmethod",
+			"startoffset",
+			"stddeviation",
+			"stitchtiles",
+			"stop-color",
+			"stop-opacity",
+			"stroke-dasharray",
+			"stroke-dashoffset",
+			"stroke-linecap",
+			"stroke-linejoin",
+			"stroke-miterlimit",
+			"stroke-opacity",
+			"stroke",
+			"stroke-width",
+			"style",
+			"surfacescale",
+			"systemlanguage",
+			"tabindex",
+			"tablevalues",
+			"targetx",
+			"targety",
+			"transform",
+			"transform-origin",
+			"text-anchor",
+			"text-decoration",
+			"text-rendering",
+			"textlength",
+			"type",
+			"u1",
+			"u2",
+			"unicode",
+			"values",
+			"viewbox",
+			"visibility",
+			"version",
+			"vert-adv-y",
+			"vert-origin-x",
+			"vert-origin-y",
+			"width",
+			"word-spacing",
+			"wrap",
+			"writing-mode",
+			"xchannelselector",
+			"ychannelselector",
+			"x",
+			"x1",
+			"x2",
+			"xmlns",
+			"y",
+			"y1",
+			"y2",
+			"z",
+			"zoomandpan"
+		]);
+		var mathMl = freeze([
+			"accent",
+			"accentunder",
+			"align",
+			"bevelled",
+			"close",
+			"columnsalign",
+			"columnlines",
+			"columnspan",
+			"denomalign",
+			"depth",
+			"dir",
+			"display",
+			"displaystyle",
+			"encoding",
+			"fence",
+			"frame",
+			"height",
+			"href",
+			"id",
+			"largeop",
+			"length",
+			"linethickness",
+			"lspace",
+			"lquote",
+			"mathbackground",
+			"mathcolor",
+			"mathsize",
+			"mathvariant",
+			"maxsize",
+			"minsize",
+			"movablelimits",
+			"notation",
+			"numalign",
+			"open",
+			"rowalign",
+			"rowlines",
+			"rowspacing",
+			"rowspan",
+			"rspace",
+			"rquote",
+			"scriptlevel",
+			"scriptminsize",
+			"scriptsizemultiplier",
+			"selection",
+			"separator",
+			"separators",
+			"stretchy",
+			"subscriptshift",
+			"supscriptshift",
+			"symmetric",
+			"voffset",
+			"width",
+			"xmlns"
+		]);
+		var xml = freeze([
+			"xlink:href",
+			"xml:id",
+			"xlink:title",
+			"xml:space",
+			"xmlns:xlink"
+		]);
+		var MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm);
+		var ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
+		var TMPLIT_EXPR = seal(/\$\{[\w\W]*/gm);
+		var DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]+$/);
+		var ARIA_ATTR = seal(/^aria-[\-\w]+$/);
+		var IS_ALLOWED_URI = seal(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i);
+		var IS_SCRIPT_OR_DATA = seal(/^(?:\w+script|data):/i);
+		var ATTR_WHITESPACE = seal(/[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g);
+		var DOCTYPE_NAME = seal(/^html$/i);
+		var CUSTOM_ELEMENT = seal(/^[a-z][.\w]*(-[.\w]+)+$/i);
+		var EXPRESSIONS = /* @__PURE__ */ Object.freeze({
+			__proto__: null,
+			ARIA_ATTR,
+			ATTR_WHITESPACE,
+			CUSTOM_ELEMENT,
+			DATA_ATTR,
+			DOCTYPE_NAME,
+			ERB_EXPR,
+			IS_ALLOWED_URI,
+			IS_SCRIPT_OR_DATA,
+			MUSTACHE_EXPR,
+			TMPLIT_EXPR
+		});
+		var NODE_TYPE = {
+			element: 1,
+			attribute: 2,
+			text: 3,
+			cdataSection: 4,
+			entityReference: 5,
+			entityNode: 6,
+			progressingInstruction: 7,
+			comment: 8,
+			document: 9,
+			documentType: 10,
+			documentFragment: 11,
+			notation: 12
+		};
+		var getGlobal = function getGlobal() {
+			return typeof window === "undefined" ? null : window;
+		};
+		/**
+		* Creates a no-op policy for internal use only.
+		* Don't export this function outside this module!
+		* @param trustedTypes The policy factory.
+		* @param purifyHostElement The Script element used to load DOMPurify (to determine policy name suffix).
+		* @return The policy created (or null, if Trusted Types
+		* are not supported or creating the policy failed).
+		*/
+		var _createTrustedTypesPolicy = function _createTrustedTypesPolicy(trustedTypes, purifyHostElement) {
+			if (typeof trustedTypes !== "object" || typeof trustedTypes.createPolicy !== "function") return null;
+			let suffix = null;
+			const ATTR_NAME = "data-tt-policy-suffix";
+			if (purifyHostElement && purifyHostElement.hasAttribute(ATTR_NAME)) suffix = purifyHostElement.getAttribute(ATTR_NAME);
+			const policyName = "dompurify" + (suffix ? "#" + suffix : "");
+			try {
+				return trustedTypes.createPolicy(policyName, {
+					createHTML(html) {
+						return html;
+					},
+					createScriptURL(scriptUrl) {
+						return scriptUrl;
+					}
+				});
+			} catch (_) {
+				console.warn("TrustedTypes policy " + policyName + " could not be created.");
+				return null;
+			}
+		};
+		var _createHooksMap = function _createHooksMap() {
+			return {
+				afterSanitizeAttributes: [],
+				afterSanitizeElements: [],
+				afterSanitizeShadowDOM: [],
+				beforeSanitizeAttributes: [],
+				beforeSanitizeElements: [],
+				beforeSanitizeShadowDOM: [],
+				uponSanitizeAttribute: [],
+				uponSanitizeElement: [],
+				uponSanitizeShadowNode: []
+			};
+		};
+		function createDOMPurify() {
+			let window = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
+			const DOMPurify = (root) => createDOMPurify(root);
+			DOMPurify.version = "3.3.3";
+			DOMPurify.removed = [];
+			if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
+				DOMPurify.isSupported = false;
+				return DOMPurify;
+			}
+			let { document } = window;
+			const originalDocument = document;
+			const currentScript = originalDocument.currentScript;
+			const { DocumentFragment, HTMLTemplateElement, Node, Element, NodeFilter, NamedNodeMap = window.NamedNodeMap || window.MozNamedAttrMap, HTMLFormElement, DOMParser, trustedTypes } = window;
+			const ElementPrototype = Element.prototype;
+			const cloneNode = lookupGetter(ElementPrototype, "cloneNode");
+			const remove = lookupGetter(ElementPrototype, "remove");
+			const getNextSibling = lookupGetter(ElementPrototype, "nextSibling");
+			const getChildNodes = lookupGetter(ElementPrototype, "childNodes");
+			const getParentNode = lookupGetter(ElementPrototype, "parentNode");
+			if (typeof HTMLTemplateElement === "function") {
+				const template = document.createElement("template");
+				if (template.content && template.content.ownerDocument) document = template.content.ownerDocument;
+			}
+			let trustedTypesPolicy;
+			let emptyHTML = "";
+			const { implementation, createNodeIterator, createDocumentFragment, getElementsByTagName } = document;
+			const { importNode } = originalDocument;
+			let hooks = _createHooksMap();
+			/**
+			* Expose whether this browser supports running the full DOMPurify.
+			*/
+			DOMPurify.isSupported = typeof entries === "function" && typeof getParentNode === "function" && implementation && implementation.createHTMLDocument !== void 0;
+			const { MUSTACHE_EXPR, ERB_EXPR, TMPLIT_EXPR, DATA_ATTR, ARIA_ATTR, IS_SCRIPT_OR_DATA, ATTR_WHITESPACE, CUSTOM_ELEMENT } = EXPRESSIONS;
+			let { IS_ALLOWED_URI: IS_ALLOWED_URI$1 } = EXPRESSIONS;
+			/**
+			* We consider the elements and attributes below to be safe. Ideally
+			* don't add any new ones but feel free to remove unwanted ones.
+			*/
+			let ALLOWED_TAGS = null;
+			const DEFAULT_ALLOWED_TAGS = addToSet({}, [
+				...html$1,
+				...svg$1,
+				...svgFilters,
+				...mathMl$1,
+				...text
+			]);
+			let ALLOWED_ATTR = null;
+			const DEFAULT_ALLOWED_ATTR = addToSet({}, [
+				...html,
+				...svg,
+				...mathMl,
+				...xml
+			]);
+			let CUSTOM_ELEMENT_HANDLING = Object.seal(create(null, {
+				tagNameCheck: {
+					writable: true,
+					configurable: false,
+					enumerable: true,
+					value: null
+				},
+				attributeNameCheck: {
+					writable: true,
+					configurable: false,
+					enumerable: true,
+					value: null
+				},
+				allowCustomizedBuiltInElements: {
+					writable: true,
+					configurable: false,
+					enumerable: true,
+					value: false
+				}
+			}));
+			let FORBID_TAGS = null;
+			let FORBID_ATTR = null;
+			const EXTRA_ELEMENT_HANDLING = Object.seal(create(null, {
+				tagCheck: {
+					writable: true,
+					configurable: false,
+					enumerable: true,
+					value: null
+				},
+				attributeCheck: {
+					writable: true,
+					configurable: false,
+					enumerable: true,
+					value: null
+				}
+			}));
+			let ALLOW_ARIA_ATTR = true;
+			let ALLOW_DATA_ATTR = true;
+			let ALLOW_UNKNOWN_PROTOCOLS = false;
+			let ALLOW_SELF_CLOSE_IN_ATTR = true;
+			let SAFE_FOR_TEMPLATES = false;
+			let SAFE_FOR_XML = true;
+			let WHOLE_DOCUMENT = false;
+			let SET_CONFIG = false;
+			let FORCE_BODY = false;
+			let RETURN_DOM = false;
+			let RETURN_DOM_FRAGMENT = false;
+			let RETURN_TRUSTED_TYPE = false;
+			let SANITIZE_DOM = true;
+			let SANITIZE_NAMED_PROPS = false;
+			const SANITIZE_NAMED_PROPS_PREFIX = "user-content-";
+			let KEEP_CONTENT = true;
+			let IN_PLACE = false;
+			let USE_PROFILES = {};
+			let FORBID_CONTENTS = null;
+			const DEFAULT_FORBID_CONTENTS = addToSet({}, [
+				"annotation-xml",
+				"audio",
+				"colgroup",
+				"desc",
+				"foreignobject",
+				"head",
+				"iframe",
+				"math",
+				"mi",
+				"mn",
+				"mo",
+				"ms",
+				"mtext",
+				"noembed",
+				"noframes",
+				"noscript",
+				"plaintext",
+				"script",
+				"style",
+				"svg",
+				"template",
+				"thead",
+				"title",
+				"video",
+				"xmp"
+			]);
+			let DATA_URI_TAGS = null;
+			const DEFAULT_DATA_URI_TAGS = addToSet({}, [
+				"audio",
+				"video",
+				"img",
+				"source",
+				"image",
+				"track"
+			]);
+			let URI_SAFE_ATTRIBUTES = null;
+			const DEFAULT_URI_SAFE_ATTRIBUTES = addToSet({}, [
+				"alt",
+				"class",
+				"for",
+				"id",
+				"label",
+				"name",
+				"pattern",
+				"placeholder",
+				"role",
+				"summary",
+				"title",
+				"value",
+				"style",
+				"xmlns"
+			]);
+			const MATHML_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
+			const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+			const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+			let NAMESPACE = HTML_NAMESPACE;
+			let IS_EMPTY_INPUT = false;
+			let ALLOWED_NAMESPACES = null;
+			const DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [
+				MATHML_NAMESPACE,
+				SVG_NAMESPACE,
+				HTML_NAMESPACE
+			], stringToString);
+			let MATHML_TEXT_INTEGRATION_POINTS = addToSet({}, [
+				"mi",
+				"mo",
+				"mn",
+				"ms",
+				"mtext"
+			]);
+			let HTML_INTEGRATION_POINTS = addToSet({}, ["annotation-xml"]);
+			const COMMON_SVG_AND_HTML_ELEMENTS = addToSet({}, [
+				"title",
+				"style",
+				"font",
+				"a",
+				"script"
+			]);
+			let PARSER_MEDIA_TYPE = null;
+			const SUPPORTED_PARSER_MEDIA_TYPES = ["application/xhtml+xml", "text/html"];
+			const DEFAULT_PARSER_MEDIA_TYPE = "text/html";
+			let transformCaseFunc = null;
+			let CONFIG = null;
+			const formElement = document.createElement("form");
+			const isRegexOrFunction = function isRegexOrFunction(testValue) {
+				return testValue instanceof RegExp || testValue instanceof Function;
+			};
+			/**
+			* _parseConfig
+			*
+			* @param cfg optional config literal
+			*/
+			const _parseConfig = function _parseConfig() {
+				let cfg = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+				if (CONFIG && CONFIG === cfg) return;
+				if (!cfg || typeof cfg !== "object") cfg = {};
+				cfg = clone(cfg);
+				PARSER_MEDIA_TYPE = SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? DEFAULT_PARSER_MEDIA_TYPE : cfg.PARSER_MEDIA_TYPE;
+				transformCaseFunc = PARSER_MEDIA_TYPE === "application/xhtml+xml" ? stringToString : stringToLowerCase;
+				ALLOWED_TAGS = objectHasOwnProperty(cfg, "ALLOWED_TAGS") ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
+				ALLOWED_ATTR = objectHasOwnProperty(cfg, "ALLOWED_ATTR") ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
+				ALLOWED_NAMESPACES = objectHasOwnProperty(cfg, "ALLOWED_NAMESPACES") ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
+				URI_SAFE_ATTRIBUTES = objectHasOwnProperty(cfg, "ADD_URI_SAFE_ATTR") ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), cfg.ADD_URI_SAFE_ATTR, transformCaseFunc) : DEFAULT_URI_SAFE_ATTRIBUTES;
+				DATA_URI_TAGS = objectHasOwnProperty(cfg, "ADD_DATA_URI_TAGS") ? addToSet(clone(DEFAULT_DATA_URI_TAGS), cfg.ADD_DATA_URI_TAGS, transformCaseFunc) : DEFAULT_DATA_URI_TAGS;
+				FORBID_CONTENTS = objectHasOwnProperty(cfg, "FORBID_CONTENTS") ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
+				FORBID_TAGS = objectHasOwnProperty(cfg, "FORBID_TAGS") ? addToSet({}, cfg.FORBID_TAGS, transformCaseFunc) : clone({});
+				FORBID_ATTR = objectHasOwnProperty(cfg, "FORBID_ATTR") ? addToSet({}, cfg.FORBID_ATTR, transformCaseFunc) : clone({});
+				USE_PROFILES = objectHasOwnProperty(cfg, "USE_PROFILES") ? cfg.USE_PROFILES : false;
+				ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false;
+				ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false;
+				ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false;
+				ALLOW_SELF_CLOSE_IN_ATTR = cfg.ALLOW_SELF_CLOSE_IN_ATTR !== false;
+				SAFE_FOR_TEMPLATES = cfg.SAFE_FOR_TEMPLATES || false;
+				SAFE_FOR_XML = cfg.SAFE_FOR_XML !== false;
+				WHOLE_DOCUMENT = cfg.WHOLE_DOCUMENT || false;
+				RETURN_DOM = cfg.RETURN_DOM || false;
+				RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false;
+				RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false;
+				FORCE_BODY = cfg.FORCE_BODY || false;
+				SANITIZE_DOM = cfg.SANITIZE_DOM !== false;
+				SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false;
+				KEEP_CONTENT = cfg.KEEP_CONTENT !== false;
+				IN_PLACE = cfg.IN_PLACE || false;
+				IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI;
+				NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
+				MATHML_TEXT_INTEGRATION_POINTS = cfg.MATHML_TEXT_INTEGRATION_POINTS || MATHML_TEXT_INTEGRATION_POINTS;
+				HTML_INTEGRATION_POINTS = cfg.HTML_INTEGRATION_POINTS || HTML_INTEGRATION_POINTS;
+				CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
+				if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
+				if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
+				if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === "boolean") CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
+				if (SAFE_FOR_TEMPLATES) ALLOW_DATA_ATTR = false;
+				if (RETURN_DOM_FRAGMENT) RETURN_DOM = true;
+				if (USE_PROFILES) {
+					ALLOWED_TAGS = addToSet({}, text);
+					ALLOWED_ATTR = create(null);
+					if (USE_PROFILES.html === true) {
+						addToSet(ALLOWED_TAGS, html$1);
+						addToSet(ALLOWED_ATTR, html);
+					}
+					if (USE_PROFILES.svg === true) {
+						addToSet(ALLOWED_TAGS, svg$1);
+						addToSet(ALLOWED_ATTR, svg);
+						addToSet(ALLOWED_ATTR, xml);
+					}
+					if (USE_PROFILES.svgFilters === true) {
+						addToSet(ALLOWED_TAGS, svgFilters);
+						addToSet(ALLOWED_ATTR, svg);
+						addToSet(ALLOWED_ATTR, xml);
+					}
+					if (USE_PROFILES.mathMl === true) {
+						addToSet(ALLOWED_TAGS, mathMl$1);
+						addToSet(ALLOWED_ATTR, mathMl);
+						addToSet(ALLOWED_ATTR, xml);
+					}
+				}
+				if (!objectHasOwnProperty(cfg, "ADD_TAGS")) EXTRA_ELEMENT_HANDLING.tagCheck = null;
+				if (!objectHasOwnProperty(cfg, "ADD_ATTR")) EXTRA_ELEMENT_HANDLING.attributeCheck = null;
+				if (cfg.ADD_TAGS) if (typeof cfg.ADD_TAGS === "function") EXTRA_ELEMENT_HANDLING.tagCheck = cfg.ADD_TAGS;
+				else {
+					if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) ALLOWED_TAGS = clone(ALLOWED_TAGS);
+					addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
+				}
+				if (cfg.ADD_ATTR) if (typeof cfg.ADD_ATTR === "function") EXTRA_ELEMENT_HANDLING.attributeCheck = cfg.ADD_ATTR;
+				else {
+					if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) ALLOWED_ATTR = clone(ALLOWED_ATTR);
+					addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
+				}
+				if (cfg.ADD_URI_SAFE_ATTR) addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
+				if (cfg.FORBID_CONTENTS) {
+					if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) FORBID_CONTENTS = clone(FORBID_CONTENTS);
+					addToSet(FORBID_CONTENTS, cfg.FORBID_CONTENTS, transformCaseFunc);
+				}
+				if (cfg.ADD_FORBID_CONTENTS) {
+					if (FORBID_CONTENTS === DEFAULT_FORBID_CONTENTS) FORBID_CONTENTS = clone(FORBID_CONTENTS);
+					addToSet(FORBID_CONTENTS, cfg.ADD_FORBID_CONTENTS, transformCaseFunc);
+				}
+				if (KEEP_CONTENT) ALLOWED_TAGS["#text"] = true;
+				if (WHOLE_DOCUMENT) addToSet(ALLOWED_TAGS, [
+					"html",
+					"head",
+					"body"
+				]);
+				if (ALLOWED_TAGS.table) {
+					addToSet(ALLOWED_TAGS, ["tbody"]);
+					delete FORBID_TAGS.tbody;
+				}
+				if (cfg.TRUSTED_TYPES_POLICY) {
+					if (typeof cfg.TRUSTED_TYPES_POLICY.createHTML !== "function") throw typeErrorCreate("TRUSTED_TYPES_POLICY configuration option must provide a \"createHTML\" hook.");
+					if (typeof cfg.TRUSTED_TYPES_POLICY.createScriptURL !== "function") throw typeErrorCreate("TRUSTED_TYPES_POLICY configuration option must provide a \"createScriptURL\" hook.");
+					trustedTypesPolicy = cfg.TRUSTED_TYPES_POLICY;
+					emptyHTML = trustedTypesPolicy.createHTML("");
+				} else {
+					if (trustedTypesPolicy === void 0) trustedTypesPolicy = _createTrustedTypesPolicy(trustedTypes, currentScript);
+					if (trustedTypesPolicy !== null && typeof emptyHTML === "string") emptyHTML = trustedTypesPolicy.createHTML("");
+				}
+				if (freeze) freeze(cfg);
+				CONFIG = cfg;
+			};
+			const ALL_SVG_TAGS = addToSet({}, [
+				...svg$1,
+				...svgFilters,
+				...svgDisallowed
+			]);
+			const ALL_MATHML_TAGS = addToSet({}, [...mathMl$1, ...mathMlDisallowed]);
+			/**
+			* @param element a DOM element whose namespace is being checked
+			* @returns Return false if the element has a
+			*  namespace that a spec-compliant parser would never
+			*  return. Return true otherwise.
+			*/
+			const _checkValidNamespace = function _checkValidNamespace(element) {
+				let parent = getParentNode(element);
+				if (!parent || !parent.tagName) parent = {
+					namespaceURI: NAMESPACE,
+					tagName: "template"
+				};
+				const tagName = stringToLowerCase(element.tagName);
+				const parentTagName = stringToLowerCase(parent.tagName);
+				if (!ALLOWED_NAMESPACES[element.namespaceURI]) return false;
+				if (element.namespaceURI === SVG_NAMESPACE) {
+					if (parent.namespaceURI === HTML_NAMESPACE) return tagName === "svg";
+					if (parent.namespaceURI === MATHML_NAMESPACE) return tagName === "svg" && (parentTagName === "annotation-xml" || MATHML_TEXT_INTEGRATION_POINTS[parentTagName]);
+					return Boolean(ALL_SVG_TAGS[tagName]);
+				}
+				if (element.namespaceURI === MATHML_NAMESPACE) {
+					if (parent.namespaceURI === HTML_NAMESPACE) return tagName === "math";
+					if (parent.namespaceURI === SVG_NAMESPACE) return tagName === "math" && HTML_INTEGRATION_POINTS[parentTagName];
+					return Boolean(ALL_MATHML_TAGS[tagName]);
+				}
+				if (element.namespaceURI === HTML_NAMESPACE) {
+					if (parent.namespaceURI === SVG_NAMESPACE && !HTML_INTEGRATION_POINTS[parentTagName]) return false;
+					if (parent.namespaceURI === MATHML_NAMESPACE && !MATHML_TEXT_INTEGRATION_POINTS[parentTagName]) return false;
+					return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+				}
+				if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && ALLOWED_NAMESPACES[element.namespaceURI]) return true;
+				return false;
+			};
+			/**
+			* _forceRemove
+			*
+			* @param node a DOM node
+			*/
+			const _forceRemove = function _forceRemove(node) {
+				arrayPush(DOMPurify.removed, { element: node });
+				try {
+					getParentNode(node).removeChild(node);
+				} catch (_) {
+					remove(node);
+				}
+			};
+			/**
+			* _removeAttribute
+			*
+			* @param name an Attribute name
+			* @param element a DOM node
+			*/
+			const _removeAttribute = function _removeAttribute(name, element) {
+				try {
+					arrayPush(DOMPurify.removed, {
+						attribute: element.getAttributeNode(name),
+						from: element
+					});
+				} catch (_) {
+					arrayPush(DOMPurify.removed, {
+						attribute: null,
+						from: element
+					});
+				}
+				element.removeAttribute(name);
+				if (name === "is") if (RETURN_DOM || RETURN_DOM_FRAGMENT) try {
+					_forceRemove(element);
+				} catch (_) {}
+				else try {
+					element.setAttribute(name, "");
+				} catch (_) {}
+			};
+			/**
+			* _initDocument
+			*
+			* @param dirty - a string of dirty markup
+			* @return a DOM, filled with the dirty markup
+			*/
+			const _initDocument = function _initDocument(dirty) {
+				let doc = null;
+				let leadingWhitespace = null;
+				if (FORCE_BODY) dirty = "<remove></remove>" + dirty;
+				else {
+					const matches = stringMatch(dirty, /^[\r\n\t ]+/);
+					leadingWhitespace = matches && matches[0];
+				}
+				if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && NAMESPACE === HTML_NAMESPACE) dirty = "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head></head><body>" + dirty + "</body></html>";
+				const dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
+				if (NAMESPACE === HTML_NAMESPACE) try {
+					doc = new DOMParser().parseFromString(dirtyPayload, PARSER_MEDIA_TYPE);
+				} catch (_) {}
+				if (!doc || !doc.documentElement) {
+					doc = implementation.createDocument(NAMESPACE, "template", null);
+					try {
+						doc.documentElement.innerHTML = IS_EMPTY_INPUT ? emptyHTML : dirtyPayload;
+					} catch (_) {}
+				}
+				const body = doc.body || doc.documentElement;
+				if (dirty && leadingWhitespace) body.insertBefore(document.createTextNode(leadingWhitespace), body.childNodes[0] || null);
+				if (NAMESPACE === HTML_NAMESPACE) return getElementsByTagName.call(doc, WHOLE_DOCUMENT ? "html" : "body")[0];
+				return WHOLE_DOCUMENT ? doc.documentElement : body;
+			};
+			/**
+			* Creates a NodeIterator object that you can use to traverse filtered lists of nodes or elements in a document.
+			*
+			* @param root The root element or node to start traversing on.
+			* @return The created NodeIterator
+			*/
+			const _createNodeIterator = function _createNodeIterator(root) {
+				return createNodeIterator.call(root.ownerDocument || root, root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_PROCESSING_INSTRUCTION | NodeFilter.SHOW_CDATA_SECTION, null);
+			};
+			/**
+			* _isClobbered
+			*
+			* @param element element to check for clobbering attacks
+			* @return true if clobbered, false if safe
+			*/
+			const _isClobbered = function _isClobbered(element) {
+				return element instanceof HTMLFormElement && (typeof element.nodeName !== "string" || typeof element.textContent !== "string" || typeof element.removeChild !== "function" || !(element.attributes instanceof NamedNodeMap) || typeof element.removeAttribute !== "function" || typeof element.setAttribute !== "function" || typeof element.namespaceURI !== "string" || typeof element.insertBefore !== "function" || typeof element.hasChildNodes !== "function");
+			};
+			/**
+			* Checks whether the given object is a DOM node.
+			*
+			* @param value object to check whether it's a DOM node
+			* @return true is object is a DOM node
+			*/
+			const _isNode = function _isNode(value) {
+				return typeof Node === "function" && value instanceof Node;
+			};
+			function _executeHooks(hooks, currentNode, data) {
+				arrayForEach(hooks, (hook) => {
+					hook.call(DOMPurify, currentNode, data, CONFIG);
+				});
+			}
+			/**
+			* _sanitizeElements
+			*
+			* @protect nodeName
+			* @protect textContent
+			* @protect removeChild
+			* @param currentNode to check for permission to exist
+			* @return true if node was killed, false if left alive
+			*/
+			const _sanitizeElements = function _sanitizeElements(currentNode) {
+				let content = null;
+				_executeHooks(hooks.beforeSanitizeElements, currentNode, null);
+				if (_isClobbered(currentNode)) {
+					_forceRemove(currentNode);
+					return true;
+				}
+				const tagName = transformCaseFunc(currentNode.nodeName);
+				_executeHooks(hooks.uponSanitizeElement, currentNode, {
+					tagName,
+					allowedTags: ALLOWED_TAGS
+				});
+				if (SAFE_FOR_XML && currentNode.hasChildNodes() && !_isNode(currentNode.firstElementChild) && regExpTest(/<[/\w!]/g, currentNode.innerHTML) && regExpTest(/<[/\w!]/g, currentNode.textContent)) {
+					_forceRemove(currentNode);
+					return true;
+				}
+				if (currentNode.nodeType === NODE_TYPE.progressingInstruction) {
+					_forceRemove(currentNode);
+					return true;
+				}
+				if (SAFE_FOR_XML && currentNode.nodeType === NODE_TYPE.comment && regExpTest(/<[/\w]/g, currentNode.data)) {
+					_forceRemove(currentNode);
+					return true;
+				}
+				if (!(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName])) {
+					if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
+						if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) return false;
+						if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) return false;
+					}
+					if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
+						const parentNode = getParentNode(currentNode) || currentNode.parentNode;
+						const childNodes = getChildNodes(currentNode) || currentNode.childNodes;
+						if (childNodes && parentNode) {
+							const childCount = childNodes.length;
+							for (let i = childCount - 1; i >= 0; --i) {
+								const childClone = cloneNode(childNodes[i], true);
+								childClone.__removalCount = (currentNode.__removalCount || 0) + 1;
+								parentNode.insertBefore(childClone, getNextSibling(currentNode));
+							}
+						}
+					}
+					_forceRemove(currentNode);
+					return true;
+				}
+				if (currentNode instanceof Element && !_checkValidNamespace(currentNode)) {
+					_forceRemove(currentNode);
+					return true;
+				}
+				if ((tagName === "noscript" || tagName === "noembed" || tagName === "noframes") && regExpTest(/<\/no(script|embed|frames)/i, currentNode.innerHTML)) {
+					_forceRemove(currentNode);
+					return true;
+				}
+				if (SAFE_FOR_TEMPLATES && currentNode.nodeType === NODE_TYPE.text) {
+					content = currentNode.textContent;
+					arrayForEach([
+						MUSTACHE_EXPR,
+						ERB_EXPR,
+						TMPLIT_EXPR
+					], (expr) => {
+						content = stringReplace(content, expr, " ");
+					});
+					if (currentNode.textContent !== content) {
+						arrayPush(DOMPurify.removed, { element: currentNode.cloneNode() });
+						currentNode.textContent = content;
+					}
+				}
+				_executeHooks(hooks.afterSanitizeElements, currentNode, null);
+				return false;
+			};
+			/**
+			* _isValidAttribute
+			*
+			* @param lcTag Lowercase tag name of containing element.
+			* @param lcName Lowercase attribute name.
+			* @param value Attribute value.
+			* @return Returns true if `value` is valid, otherwise false.
+			*/
+			const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
+				if (FORBID_ATTR[lcName]) return false;
+				if (SANITIZE_DOM && (lcName === "id" || lcName === "name") && (value in document || value in formElement)) return false;
+				if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR, lcName));
+				else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR, lcName));
+				else if (EXTRA_ELEMENT_HANDLING.attributeCheck instanceof Function && EXTRA_ELEMENT_HANDLING.attributeCheck(lcName, lcTag));
+				else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) if (_isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName, lcTag)) || lcName === "is" && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value)));
+				else return false;
+				else if (URI_SAFE_ATTRIBUTES[lcName]);
+				else if (regExpTest(IS_ALLOWED_URI$1, stringReplace(value, ATTR_WHITESPACE, "")));
+				else if ((lcName === "src" || lcName === "xlink:href" || lcName === "href") && lcTag !== "script" && stringIndexOf(value, "data:") === 0 && DATA_URI_TAGS[lcTag]);
+				else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA, stringReplace(value, ATTR_WHITESPACE, "")));
+				else if (value) return false;
+				return true;
+			};
+			/**
+			* _isBasicCustomElement
+			* checks if at least one dash is included in tagName, and it's not the first char
+			* for more sophisticated checking see https://github.com/sindresorhus/validate-element-name
+			*
+			* @param tagName name of the tag of the node to sanitize
+			* @returns Returns true if the tag name meets the basic criteria for a custom element, otherwise false.
+			*/
+			const _isBasicCustomElement = function _isBasicCustomElement(tagName) {
+				return tagName !== "annotation-xml" && stringMatch(tagName, CUSTOM_ELEMENT);
+			};
+			/**
+			* _sanitizeAttributes
+			*
+			* @protect attributes
+			* @protect nodeName
+			* @protect removeAttribute
+			* @protect setAttribute
+			*
+			* @param currentNode to sanitize
+			*/
+			const _sanitizeAttributes = function _sanitizeAttributes(currentNode) {
+				_executeHooks(hooks.beforeSanitizeAttributes, currentNode, null);
+				const { attributes } = currentNode;
+				if (!attributes || _isClobbered(currentNode)) return;
+				const hookEvent = {
+					attrName: "",
+					attrValue: "",
+					keepAttr: true,
+					allowedAttributes: ALLOWED_ATTR,
+					forceKeepAttr: void 0
+				};
+				let l = attributes.length;
+				while (l--) {
+					const { name, namespaceURI, value: attrValue } = attributes[l];
+					const lcName = transformCaseFunc(name);
+					const initValue = attrValue;
+					let value = name === "value" ? initValue : stringTrim(initValue);
+					hookEvent.attrName = lcName;
+					hookEvent.attrValue = value;
+					hookEvent.keepAttr = true;
+					hookEvent.forceKeepAttr = void 0;
+					_executeHooks(hooks.uponSanitizeAttribute, currentNode, hookEvent);
+					value = hookEvent.attrValue;
+					if (SANITIZE_NAMED_PROPS && (lcName === "id" || lcName === "name")) {
+						_removeAttribute(name, currentNode);
+						value = SANITIZE_NAMED_PROPS_PREFIX + value;
+					}
+					if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|script|title|xmp|textarea|noscript|iframe|noembed|noframes)/i, value)) {
+						_removeAttribute(name, currentNode);
+						continue;
+					}
+					if (lcName === "attributename" && stringMatch(value, "href")) {
+						_removeAttribute(name, currentNode);
+						continue;
+					}
+					if (hookEvent.forceKeepAttr) continue;
+					if (!hookEvent.keepAttr) {
+						_removeAttribute(name, currentNode);
+						continue;
+					}
+					if (!ALLOW_SELF_CLOSE_IN_ATTR && regExpTest(/\/>/i, value)) {
+						_removeAttribute(name, currentNode);
+						continue;
+					}
+					if (SAFE_FOR_TEMPLATES) arrayForEach([
+						MUSTACHE_EXPR,
+						ERB_EXPR,
+						TMPLIT_EXPR
+					], (expr) => {
+						value = stringReplace(value, expr, " ");
+					});
+					const lcTag = transformCaseFunc(currentNode.nodeName);
+					if (!_isValidAttribute(lcTag, lcName, value)) {
+						_removeAttribute(name, currentNode);
+						continue;
+					}
+					if (trustedTypesPolicy && typeof trustedTypes === "object" && typeof trustedTypes.getAttributeType === "function") if (namespaceURI);
+					else switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+						case "TrustedHTML":
+							value = trustedTypesPolicy.createHTML(value);
+							break;
+						case "TrustedScriptURL":
+							value = trustedTypesPolicy.createScriptURL(value);
+							break;
+					}
+					if (value !== initValue) try {
+						if (namespaceURI) currentNode.setAttributeNS(namespaceURI, name, value);
+						else currentNode.setAttribute(name, value);
+						if (_isClobbered(currentNode)) _forceRemove(currentNode);
+						else arrayPop(DOMPurify.removed);
+					} catch (_) {
+						_removeAttribute(name, currentNode);
+					}
+				}
+				_executeHooks(hooks.afterSanitizeAttributes, currentNode, null);
+			};
+			/**
+			* _sanitizeShadowDOM
+			*
+			* @param fragment to iterate over recursively
+			*/
+			const _sanitizeShadowDOM = function _sanitizeShadowDOM(fragment) {
+				let shadowNode = null;
+				const shadowIterator = _createNodeIterator(fragment);
+				_executeHooks(hooks.beforeSanitizeShadowDOM, fragment, null);
+				while (shadowNode = shadowIterator.nextNode()) {
+					_executeHooks(hooks.uponSanitizeShadowNode, shadowNode, null);
+					_sanitizeElements(shadowNode);
+					_sanitizeAttributes(shadowNode);
+					if (shadowNode.content instanceof DocumentFragment) _sanitizeShadowDOM(shadowNode.content);
+				}
+				_executeHooks(hooks.afterSanitizeShadowDOM, fragment, null);
+			};
+			DOMPurify.sanitize = function(dirty) {
+				let cfg = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+				let body = null;
+				let importedNode = null;
+				let currentNode = null;
+				let returnNode = null;
+				IS_EMPTY_INPUT = !dirty;
+				if (IS_EMPTY_INPUT) dirty = "<!-->";
+				if (typeof dirty !== "string" && !_isNode(dirty)) if (typeof dirty.toString === "function") {
+					dirty = dirty.toString();
+					if (typeof dirty !== "string") throw typeErrorCreate("dirty is not a string, aborting");
+				} else throw typeErrorCreate("toString is not a function");
+				if (!DOMPurify.isSupported) return dirty;
+				if (!SET_CONFIG) _parseConfig(cfg);
+				DOMPurify.removed = [];
+				if (typeof dirty === "string") IN_PLACE = false;
+				if (IN_PLACE) {
+					if (dirty.nodeName) {
+						const tagName = transformCaseFunc(dirty.nodeName);
+						if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) throw typeErrorCreate("root node is forbidden and cannot be sanitized in-place");
+					}
+				} else if (dirty instanceof Node) {
+					body = _initDocument("<!---->");
+					importedNode = body.ownerDocument.importNode(dirty, true);
+					if (importedNode.nodeType === NODE_TYPE.element && importedNode.nodeName === "BODY") body = importedNode;
+					else if (importedNode.nodeName === "HTML") body = importedNode;
+					else body.appendChild(importedNode);
+				} else {
+					if (!RETURN_DOM && !SAFE_FOR_TEMPLATES && !WHOLE_DOCUMENT && dirty.indexOf("<") === -1) return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(dirty) : dirty;
+					body = _initDocument(dirty);
+					if (!body) return RETURN_DOM ? null : RETURN_TRUSTED_TYPE ? emptyHTML : "";
+				}
+				if (body && FORCE_BODY) _forceRemove(body.firstChild);
+				const nodeIterator = _createNodeIterator(IN_PLACE ? dirty : body);
+				while (currentNode = nodeIterator.nextNode()) {
+					_sanitizeElements(currentNode);
+					_sanitizeAttributes(currentNode);
+					if (currentNode.content instanceof DocumentFragment) _sanitizeShadowDOM(currentNode.content);
+				}
+				if (IN_PLACE) return dirty;
+				if (RETURN_DOM) {
+					if (RETURN_DOM_FRAGMENT) {
+						returnNode = createDocumentFragment.call(body.ownerDocument);
+						while (body.firstChild) returnNode.appendChild(body.firstChild);
+					} else returnNode = body;
+					if (ALLOWED_ATTR.shadowroot || ALLOWED_ATTR.shadowrootmode) returnNode = importNode.call(originalDocument, returnNode, true);
+					return returnNode;
+				}
+				let serializedHTML = WHOLE_DOCUMENT ? body.outerHTML : body.innerHTML;
+				if (WHOLE_DOCUMENT && ALLOWED_TAGS["!doctype"] && body.ownerDocument && body.ownerDocument.doctype && body.ownerDocument.doctype.name && regExpTest(DOCTYPE_NAME, body.ownerDocument.doctype.name)) serializedHTML = "<!DOCTYPE " + body.ownerDocument.doctype.name + ">\n" + serializedHTML;
+				if (SAFE_FOR_TEMPLATES) arrayForEach([
+					MUSTACHE_EXPR,
+					ERB_EXPR,
+					TMPLIT_EXPR
+				], (expr) => {
+					serializedHTML = stringReplace(serializedHTML, expr, " ");
+				});
+				return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
+			};
+			DOMPurify.setConfig = function() {
+				_parseConfig(arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {});
+				SET_CONFIG = true;
+			};
+			DOMPurify.clearConfig = function() {
+				CONFIG = null;
+				SET_CONFIG = false;
+			};
+			DOMPurify.isValidAttribute = function(tag, attr, value) {
+				if (!CONFIG) _parseConfig({});
+				return _isValidAttribute(transformCaseFunc(tag), transformCaseFunc(attr), value);
+			};
+			DOMPurify.addHook = function(entryPoint, hookFunction) {
+				if (typeof hookFunction !== "function") return;
+				arrayPush(hooks[entryPoint], hookFunction);
+			};
+			DOMPurify.removeHook = function(entryPoint, hookFunction) {
+				if (hookFunction !== void 0) {
+					const index = arrayLastIndexOf(hooks[entryPoint], hookFunction);
+					return index === -1 ? void 0 : arraySplice(hooks[entryPoint], index, 1)[0];
+				}
+				return arrayPop(hooks[entryPoint]);
+			};
+			DOMPurify.removeHooks = function(entryPoint) {
+				hooks[entryPoint] = [];
+			};
+			DOMPurify.removeAllHooks = function() {
+				hooks = _createHooksMap();
+			};
+			return DOMPurify;
+		}
+		var purify = createDOMPurify();
+		var defaultMarkdownConverter = { makeHtml(markdownText) {
+			return purify.sanitize(g.parse(markdownText, { async: false }));
+		} };
 		exports$1.LanguageProvider = class LanguageProvider {
 			constructor(worker, options) {
 				this.$sessionLanguageProviders = {};
@@ -14461,7 +13924,7 @@ var require_ace_linters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				Object.entries(defaultFunctionalities).forEach(([key, value]) => {
 					if (this.options.functionality[key] === void 0) this.options.functionality[key] = value;
 				});
-				this.options.markdownConverter ||= new import_showdown.default.Converter();
+				this.options.markdownConverter ||= defaultMarkdownConverter;
 				if (options?.workspacePath) this.workspaceUri = convertToUri(options.workspacePath);
 				if (this.options.functionality.inlineCompletion) this.checkInlineCompletionAdapter(() => {
 					if (!this.options.aceComponents?.InlineAutocomplete || !this.options.aceComponents?.CommandBarTooltip || !this.options.aceComponents?.CompletionProvider) throw new Error("Inline completion requires the InlineAutocomplete, CompletionProvider and CommandBarTooltip to be defined");

@@ -25,7 +25,7 @@ import { i as init_esm_resolver, n as createEditorWithLSP, t as addFormatCommand
 import "./snippets-BNjR0AXO.js";
 import "./autocomplete-Yq6Wywy-.js";
 import { t as require_language_tools } from "./language_tools-B8HNeNpe.js";
-import { t as require_ace_linters } from "./ace-linters-NEkPc2yi.js";
+import { t as require_ace_linters } from "./ace-linters-Di0e9VKI.js";
 import { a as phpContent, c as luaContent, d as lessContent, f as cssContent, i as xmlSchema, l as tsxContent, n as pythonContent, o as yamlContent, p as htmlContent, r as xmlContent, s as yamlSchema, t as mysqlContent, u as scssContent } from "./mysql-example-OTpWl9wy.js";
 import { n as typescriptContent1, t as typescriptContent } from "./typescript-example-BPagcZxQ.js";
 import { n as jsonSchema, r as jsonSchema2, t as jsonContent } from "./json-example-CezQNYSs.js";
