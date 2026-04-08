@@ -204,8 +204,9 @@ export class HoverTooltip extends Tooltip {
         element.style.display = "block";
 
         this.$setPosition(editor, position, true, range);
-
-        editor.renderer["$textLayer"].dom.$fixPositionBug(element);
+        if (editor.renderer["$textLayer"].dom.$fixPositionBug) {
+            editor.renderer["$textLayer"].dom.$fixPositionBug(element);
+        }
         popupManager.addPopup(this);
     }
 
