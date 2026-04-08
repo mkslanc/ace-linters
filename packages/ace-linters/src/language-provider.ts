@@ -15,7 +15,6 @@ import {
 } from "./type-converters/lsp/lsp-converters";
 import * as lsp from "vscode-languageserver-protocol";
 
-import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
 import {
@@ -40,6 +39,7 @@ import {popupManager} from "./ace/popupManager";
 import {extractDiagnosticQuickFixesAtPosition} from "./components/hover/hover-quick-fixes";
 import {resolveHoverModel} from "./components/hover/hover-data-resolver";
 import {createHoverViewNode} from "./components/hover/hover-view";
+import {defaultMarkdownConverter} from "./components/markdownConverter";
 
 export class LanguageProvider {
     activeEditor: Ace.Editor | null;
@@ -152,7 +152,7 @@ export class LanguageProvider {
             }
         });
 
-        this.options.markdownConverter ||= new showdown.Converter();
+        this.options.markdownConverter ||= defaultMarkdownConverter;
         if (options?.workspacePath) {
             this.workspaceUri = convertToUri(options.workspacePath);
         }

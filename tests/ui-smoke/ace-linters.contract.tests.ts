@@ -32,6 +32,18 @@ describe("ace-linters UI contract tests", function () {
         }
     });
 
+    it("loads the UMD bundle in an AMD environment without runtime errors", async function () {
+        await harness.openScenario("ace-linters-amd");
+        await harness.sleep(1500);
+        const page = harness.getPage();
+
+        const ready = await page.evaluate(() => window.testFlags.ready === true);
+        const errors = harness.getConsoleErrors();
+
+        expect(ready, "AMD scenario should finish booting").to.equal(true);
+        expect(errors, `Console errors: ${errors.join("\n")}`).to.be.empty;
+    });
+
     it("handles YAML schema options without critical runtime errors", async function () {
         await harness.openScenario("ace-linters");
         await harness.initAceLinterFlags();
