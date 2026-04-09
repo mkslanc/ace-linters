@@ -400,8 +400,22 @@ var aceLegacyWorkerModule = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
   var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b || (b = {}))
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
@@ -15432,7 +15446,7 @@ var aceLegacyWorkerModule = (() => {
   // ../../node_modules/@xml-tools/common/lib/xml-ns-key.js
   var require_xml_ns_key = __commonJS({
     "../../node_modules/@xml-tools/common/lib/xml-ns-key.js"(exports2, module2) {
-      var namespaceRegex = /^xmlns(?<prefixWithColon>:(?<prefix>[^:]*))?$/;
+      var namespaceRegex = new RegExp("^xmlns(?<prefixWithColon>:(?<prefix>[^:]*))?$");
       function isXMLNamespaceKey({ key, includeEmptyPrefix }) {
         if (typeof key !== "string") {
           return false;
@@ -15551,7 +15565,7 @@ var aceLegacyWorkerModule = (() => {
           this.tokenVector = tokenVector;
         }
         visit(cstNode, params = {}) {
-          return super.visit(cstNode, { location: cstNode.location, ...params });
+          return super.visit(cstNode, __spreadValues({ location: cstNode.location }, params));
         }
         /**
          * @param ctx {DocumentCtx}
@@ -15816,16 +15830,10 @@ var aceLegacyWorkerModule = (() => {
             astNode.syntax.isSelfClosing = true;
           }
           if (openBodyCloseTok !== void 0) {
-            astNode.syntax.openBody = {
-              ...startOfXMLToken(ctx.OPEN[0]),
-              ...endOfXMLToken(openBodyCloseTok)
-            };
+            astNode.syntax.openBody = __spreadValues(__spreadValues({}, startOfXMLToken(ctx.OPEN[0])), endOfXMLToken(openBodyCloseTok));
           }
           if (exists(ctx.SLASH_OPEN) && exists(ctx.END)) {
-            astNode.syntax.closeBody = {
-              ...startOfXMLToken(ctx.SLASH_OPEN[0]),
-              ...endOfXMLToken(ctx.END[0])
-            };
+            astNode.syntax.closeBody = __spreadValues(__spreadValues({}, startOfXMLToken(ctx.SLASH_OPEN[0])), endOfXMLToken(ctx.END[0]));
           }
         }
       }
@@ -16493,7 +16501,7 @@ var aceLegacyWorkerModule = (() => {
     onUpdate() {
       var value = this.doc.getValue();
       var errors = [];
-      if (!/^\s*$/s.test(value)) {
+      if (!new RegExp("^\\s*$", "s").test(value)) {
         try {
           const { cst, tokenVector, lexErrors, parseErrors } = (0, import_parser.parse)(
             value

@@ -402,6 +402,7 @@ var aceLegacyWorkerModule = (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __pow = Math.pow;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -428,6 +429,26 @@ var aceLegacyWorkerModule = (() => {
   ));
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // ../../node_modules/ace-code/src/lib/deep_copy.js
   var require_deep_copy = __commonJS({
@@ -4540,7 +4561,7 @@ var aceLegacyWorkerModule = (() => {
     function C(t3) {
       try {
         return decodeURIComponent(t3);
-      } catch {
+      } catch (e2) {
         return t3.length > 3 ? t3.substr(0, 3) + C(t3.substr(3)) : t3;
       }
     }
@@ -5135,7 +5156,7 @@ var aceLegacyWorkerModule = (() => {
           let normMultipleOf = normalizeFloats(schema.multipleOf);
           let normValue = normalizeFloats(val);
           if (normMultipleOf && normValue) {
-            const multiplier = 10 ** Math.abs(normValue.multiplier - normMultipleOf.multiplier);
+            const multiplier = __pow(10, Math.abs(normValue.multiplier - normMultipleOf.multiplier));
             if (normValue.multiplier < normMultipleOf.multiplier) {
               normValue.value *= multiplier;
             } else {
@@ -7814,17 +7835,19 @@ var aceLegacyWorkerModule = (() => {
       this.isJson5 = opts && opts.isJson5;
       this.$configureService();
     }
-    async onUpdate() {
-      var value = this.doc.getValue();
-      var errors = [];
-      var fullDocument = new MinTextDocument("file:///foo.json", "json", 1, value);
-      try {
-        let jsonDocument = this.service.parseJSONDocument(fullDocument);
-        errors = toAnnotations(await this.service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.isJson5 ? "ignore" : "error" }));
-      } catch (e) {
-        console.error(e);
-      }
-      this.sender.emit("annotate", errors);
+    onUpdate() {
+      return __async(this, null, function* () {
+        var value = this.doc.getValue();
+        var errors = [];
+        var fullDocument = new MinTextDocument("file:///foo.json", "json", 1, value);
+        try {
+          let jsonDocument = this.service.parseJSONDocument(fullDocument);
+          errors = toAnnotations(yield this.service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.isJson5 ? "ignore" : "error" }));
+        } catch (e) {
+          console.error(e);
+        }
+        this.sender.emit("annotate", errors);
+      });
     }
   };
   return __toCommonJS(json_worker_exports);

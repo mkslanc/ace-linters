@@ -426,6 +426,26 @@ var aceLegacyWorkerModule = (() => {
     mod
   ));
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // ../../node_modules/ace-code/src/lib/deep_copy.js
   var require_deep_copy = __commonJS({
@@ -12721,17 +12741,19 @@ var aceLegacyWorkerModule = (() => {
           break;
       }
     }
-    async onUpdate() {
-      var value = this.doc.getValue();
-      var errors = [];
-      var fullDocument = new MinTextDocument("file:///foo." + this.$languageId, this.$languageId, 1, value);
-      try {
-        let cssDocument = this.service.parseStylesheet(fullDocument);
-        errors = toAnnotations(this.service.doValidation(fullDocument, cssDocument));
-      } catch (e) {
-        console.error(e);
-      }
-      this.sender.emit("annotate", errors);
+    onUpdate() {
+      return __async(this, null, function* () {
+        var value = this.doc.getValue();
+        var errors = [];
+        var fullDocument = new MinTextDocument("file:///foo." + this.$languageId, this.$languageId, 1, value);
+        try {
+          let cssDocument = this.service.parseStylesheet(fullDocument);
+          errors = toAnnotations(this.service.doValidation(fullDocument, cssDocument));
+        } catch (e) {
+          console.error(e);
+        }
+        this.sender.emit("annotate", errors);
+      });
     }
   };
   return __toCommonJS(css_worker_exports);
