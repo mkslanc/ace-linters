@@ -1,7 +1,8 @@
 import {expect} from "chai";
 import {Ace} from "ace-code";
+import {parse} from "@babel/parser";
 import {JavaScriptWorker} from "../src/workers/javascript-worker";
-import {JsOptions} from "../src/workers/eslint-rules/scopes-analyzer";
+import {JsOptions, ScopesAnalyzer} from "../src/workers/eslint-rules/scopes-analyzer";
 import {MockWorker} from "ace-linters/src/misc/mock-worker";
 
 function createWorker(options?: JsOptions) {
@@ -29,6 +30,39 @@ function annotate(code: string, options?: JsOptions) {
 
     expect(annotationEvent, "worker should emit annotate").to.exist;
     return annotationEvent!.data;
+}
+
+function analyzeScopes(code: string, options: JsOptions) {
+    const plugins = ["estree"];
+
+    if (options.jsx ?? options.parserOptions?.ecmaFeatures?.jsx) {
+        plugins.push("jsx");
+    }
+
+    const parserOptions: any = {
+        sourceType: options.sourceType,
+        errorRecovery: true,
+        plugins,
+        ranges: true,
+        strictMode: true,
+    };
+
+    if (options.parserOptions?.allowImportExportEverywhere !== undefined) {
+        parserOptions.allowImportExportEverywhere = options.parserOptions.allowImportExportEverywhere;
+    }
+
+    if (options.sourceType !== "commonjs" && options.parserOptions?.allowAwaitOutsideFunction !== undefined) {
+        parserOptions.allowAwaitOutsideFunction = options.parserOptions.allowAwaitOutsideFunction;
+    }
+
+    if (options.sourceType !== "commonjs" && options.parserOptions?.ecmaFeatures?.globalReturn) {
+        parserOptions.allowReturnOutsideFunction = true;
+    }
+
+    const ast = parse(code, parserOptions);
+    const analyzer = new ScopesAnalyzer(options);
+    analyzer.analyze(ast.program);
+    return analyzer.scopeManager;
 }
 
 function texts(annotations: Ace.Annotation[]) {
@@ -239,6 +273,64 @@ describe("JavaScriptWorker", () => {
             expect(errorTexts(annotations).some((text) => /__proto__/i.test(text))).to.equal(true);
             expect(hasAnnotationForVariable(annotations, "info", "foo", /never used/i)).to.equal(true);
             expect(hasAnnotationForVariable(annotations, "warning", "bar", /not defined/i)).to.equal(true);
+        });
+    });
+
+    describe("scope analysis options", () => {
+        it("uses globalReturn to enable nodejsScope semantics", () => {
+            const enabled = annotate("arguments;", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "script",
+                globals: {},
+                parserOptions: {
+                    ecmaFeatures: {
+                        globalReturn: true,
+                    },
+                },
+            });
+            const disabled = annotate("arguments;", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "script",
+                globals: {},
+                parserOptions: {
+                    ecmaFeatures: {
+                        globalReturn: false,
+                    },
+                },
+            });
+
+            expect(hasAnnotationForVariable(enabled, "warning", "arguments", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(disabled, "warning", "arguments", /not defined/i)).to.equal(true);
+        });
+
+        it("uses impliedStrict in scope analysis", () => {
+            const strictScopes = analyzeScopes("foo = 1;", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "script",
+                globals: {},
+                parserOptions: {
+                    ecmaFeatures: {
+                        impliedStrict: true,
+                    },
+                },
+            });
+            const sloppyScopes = analyzeScopes("foo = 1;", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "script",
+                globals: {},
+                parserOptions: {
+                    ecmaFeatures: {
+                        impliedStrict: false,
+                    },
+                },
+            });
+
+            expect(strictScopes.scopes[0].isStrict).to.equal(true);
+            expect(sloppyScopes.scopes[0].isStrict).to.equal(false);
         });
     });
 });
