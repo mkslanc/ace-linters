@@ -1,7 +1,7 @@
 {
     "name": "ace-legacy-linters",
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "drop-in replacements for legacy Ace Editor worker files",
     "scripts": {
         "build:css-diagnostics-data": "node generate-css-diagnostics-data.js",
@@ -28,6 +28,7 @@
         "@babel/parser": "^7.29.2",
         "eslint-scope": "^9.1.2",
         "chai": "^4.3.7",
-        "mocha": "^10.2.0"
+        "mocha": "^10.2.0",
+        "globals": "^14.0.0"
     }
 }
