@@ -125,6 +125,66 @@ describe("JavaScriptWorker", () => {
             expect(hasAnnotationForVariable(annotations, "info", "foo", /never used/i)).to.equal(true);
             expect(hasAnnotationForVariable(annotations, "warning", "bar", /not defined/i)).to.equal(true);
         });
+
+        it("does not report standard browser globals", () => {
+            const annotations = annotate("console.log(window.location.href); document.title;");
+
+            expect(hasAnnotationForVariable(annotations, "warning", "console", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "window", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "document", /not defined/i)).to.equal(false);
+        });
+
+        it("supports default node, amd and mocha globals", () => {
+            const annotations = annotate("define(['x'], function () { describe('suite', function () { console.log(process.version); }); });");
+
+            expect(hasAnnotationForVariable(annotations, "warning", "define", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "describe", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "process", /not defined/i)).to.equal(false);
+        });
+
+        it("can enable node globals", () => {
+            const annotations = annotate("console.log(process.version, __dirname);", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "script",
+                env: {
+                    browser: false,
+                    node: true,
+                }
+            });
+
+            expect(hasAnnotationForVariable(annotations, "warning", "process", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "__dirname", /not defined/i)).to.equal(false);
+        });
+
+        it("adds commonjs globals for commonjs source type", () => {
+            const annotations = annotate("module.exports = require('./x');", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "commonjs",
+                env: {
+                    browser: false,
+                }
+            });
+
+            expect(errorTexts(annotations)).to.deep.equal([]);
+            expect(hasAnnotationForVariable(annotations, "warning", "module", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "exports", /not defined/i)).to.equal(false);
+            expect(hasAnnotationForVariable(annotations, "warning", "require", /not defined/i)).to.equal(false);
+        });
+
+        it("can declare custom globals through options", () => {
+            const annotations = annotate("customApi.doThing();", {
+                "no-unused-vars": true,
+                "no-undef": true,
+                sourceType: "module",
+                globals: {
+                    customApi: "readonly",
+                }
+            });
+
+            expect(hasAnnotationForVariable(annotations, "warning", "customApi", /not defined/i)).to.equal(false);
+        });
     });
 
     describe("parser errors", () => {
@@ -159,6 +219,12 @@ describe("JavaScriptWorker", () => {
 
         it("allows return outside function without parser errors", () => {
             const annotations = annotate("return 1;");
+
+            expect(errorTexts(annotations)).to.deep.equal([]);
+        });
+
+        it("allows await outside function by default", () => {
+            const annotations = annotate("await foo();");
 
             expect(errorTexts(annotations)).to.deep.equal([]);
         });

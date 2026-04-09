@@ -157,7 +157,7 @@ async function bundleWorkerModule(workerConfig) {
         format: "iife",
         globalName: "aceLegacyWorkerModule",
         platform: "browser",
-        target: "es2019",
+        target: "es2015",
         sourcemap: false,
         minify: false,
         banner: {
