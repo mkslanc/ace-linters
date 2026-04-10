@@ -41,6 +41,7 @@ type EnvName =
 interface JsParserOptions {
     ecmaFeatures?: {
         globalReturn?: boolean
+        impliedStrict?: boolean
         jsx?: boolean
         experimentalObjectRestSpread?: boolean
     }
@@ -118,8 +119,11 @@ export class ScopesAnalyzer {
         var annotations: Ace.Annotation[] = [];
 
         this.scopeManager = analyze(program, {
+            ignoreEval: true,
+            nodejsScope: !!this.options.parserOptions?.ecmaFeatures?.globalReturn,
+            impliedStrict: !!this.options.parserOptions?.ecmaFeatures?.impliedStrict,
             ecmaVersion: this.options.ecmaVersion || 2022,
-            sourceType: program.sourceType,
+            sourceType: this.options.sourceType === "commonjs" ? "commonjs" : program.sourceType,
             jsx: isJsxEnabled(this.options),
         });
 
