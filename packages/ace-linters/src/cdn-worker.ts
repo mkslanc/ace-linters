@@ -63,7 +63,7 @@ export function getServices(includeLinters?: IncludeLinters): ServiceStruct[] {
             name: "json",
             script: "json-service.js",
             className: "JsonService",
-            modes: "json|json5",
+            modes: "json",
         },
         {
             name: "html",

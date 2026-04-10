@@ -11,7 +11,6 @@ import {jsonSchema, jsonContent, jsonSchema2} from "../docs-example/json-example
 import {jsContent} from "../docs-example/javascript-example";
 import {tsxContent} from "../docs-example/tsx-example";
 import {jsxContent} from "../docs-example/jsx-example";
-import {json5Content, json5Schema} from "../docs-example/json5-example";
 import {luaContent} from "../docs-example/lua-example";
 import {yamlContent, yamlSchema} from "../docs-example/yaml-example";
 import {phpContent} from "../docs-example/php-example";
@@ -25,7 +24,6 @@ import {goContent} from "../docs-example/go-example";
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
-    {name: "json5", mode: "ace/mode/json5", content: json5Content, options: {schemaUri: "json5Schema"}},
     {name: "html", mode: "ace/mode/html", content: htmlContent},
     {name: "css", mode: "ace/mode/css", content: cssContent},
     {name: "less", mode: "ace/mode/less", content: lessContent},
@@ -122,18 +120,6 @@ languageProvider.setGlobalOptions("javascript", {
 languageProvider.setGlobalOptions("html", {
     errorMessagesToTreatAsInfo: [
         /Special\scharacters\smust\sbe\sescaped/
-    ]
-});
-
-languageProvider.setGlobalOptions("json5", {
-    schemas: [
-        {
-            uri: "json5Schema",
-            schema: json5Schema
-        }
-    ],
-    errorMessagesToTreatAsInfo: [
-        /Incorrect\stype/
     ]
 });
 

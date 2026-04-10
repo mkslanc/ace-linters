@@ -33,12 +33,6 @@ manager.registerService("json", {
     className: "JsonService",
     modes: "json",
 });
-manager.registerService("json5", {
-    features: {signatureHelp: false, documentHighlight: false},
-    module: () => import("ace-linters/build/json-service"),
-    className: "JsonService",
-    modes: "json5",
-});
 manager.registerService("typescript", {
     module: () => import("ace-linters/build/typescript-service"),
     className: "TypescriptService",
