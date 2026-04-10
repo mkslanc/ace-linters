@@ -21386,11 +21386,15 @@ var aceLegacyWorkerModule = (() => {
       this.options = options;
     }
     analyze(program) {
+      var _a, _b, _c, _d;
       attachParents(program);
       var annotations = [];
       this.scopeManager = analyze(program, {
+        ignoreEval: true,
+        nodejsScope: !!((_b = (_a = this.options.parserOptions) == null ? void 0 : _a.ecmaFeatures) == null ? void 0 : _b.globalReturn),
+        impliedStrict: !!((_d = (_c = this.options.parserOptions) == null ? void 0 : _c.ecmaFeatures) == null ? void 0 : _d.impliedStrict),
         ecmaVersion: this.options.ecmaVersion || 2022,
-        sourceType: program.sourceType,
+        sourceType: this.options.sourceType === "commonjs" ? "commonjs" : program.sourceType,
         jsx: isJsxEnabled(this.options)
       });
       this.finalize();
