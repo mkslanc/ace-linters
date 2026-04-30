@@ -7827,12 +7827,13 @@ var aceLegacyWorkerModule = (() => {
     }
     $configureService() {
       this.service.configure({
-        allowComments: this.isJson5,
+        allowComments: this.allowComments,
         validate: true
       });
     }
     setOptions(opts) {
-      this.isJson5 = opts && opts.isJson5;
+      this.allowComments = opts && opts.allowComments;
+      this.trailingCommas = opts && opts.trailingCommas;
       this.$configureService();
     }
     onUpdate() {
@@ -7842,7 +7843,7 @@ var aceLegacyWorkerModule = (() => {
         var fullDocument = new MinTextDocument("file:///foo.json", "json", 1, value);
         try {
           let jsonDocument = this.service.parseJSONDocument(fullDocument);
-          errors = toAnnotations(yield this.service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.isJson5 ? "ignore" : "error" }));
+          errors = toAnnotations(yield this.service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.trailingCommas ? "ignore" : "error" }));
         } catch (e) {
           console.error(e);
         }

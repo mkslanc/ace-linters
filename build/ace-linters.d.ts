@@ -484,7 +484,6 @@ export interface CssServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 export interface ServiceOptionsMap {
 	json: JsonServiceOptions;
-	json5: JsonServiceOptions;
 	typescript: TsServiceOptions;
 	html: HtmlServiceOptions;
 	yaml: YamlServiceOptions;
@@ -502,7 +501,7 @@ export interface ServiceOptionsMap {
 	lua: LuaServiceOptions;
 	[serviceName: string]: any;
 }
-export type SupportedServices = "json" | "json5" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | /** @deprecated would be removed in next iterations */ "javascript" | "eslint" | "lua" | "less" | "scss" | "python";
+export type SupportedServices = "json" | "typescript" | "css" | "html" | "yaml" | "php" | "xml" | /** @deprecated would be removed in next iterations */ "javascript" | "eslint" | "lua" | "less" | "scss" | "python";
 /** Options for the completer coming from the LSP server */
 export interface LspCompleterOptions {
 	triggerCharacters: TriggerCharacterOptions;

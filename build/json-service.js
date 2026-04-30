@@ -13478,7 +13478,7 @@
 		$configureJsonService(schemas) {
 			this.$service.configure({
 				schemas,
-				allowComments: this.mode === "json5",
+				allowComments: this.globalOptions.allowComments,
 				validate: true
 			});
 		}
@@ -13513,7 +13513,7 @@
 			let fullDocument = this.getDocument(document.uri);
 			if (!fullDocument) return [];
 			let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-			return filterDiagnostics(await this.$service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.mode === "json5" ? "ignore" : "error" }), this.optionsToFilterDiagnostics);
+			return filterDiagnostics(await this.$service.doValidation(fullDocument, jsonDocument, { trailingCommas: this.globalOptions.trailingCommas ? "ignore" : "error" }), this.optionsToFilterDiagnostics);
 		}
 		async doComplete(document, position) {
 			let fullDocument = this.getDocument(document.uri);
