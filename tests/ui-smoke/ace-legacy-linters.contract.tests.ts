@@ -4,7 +4,6 @@ import {phpContent} from "./fixtures/php";
 import {luaContent} from "./fixtures/lua";
 import {htmlContent} from "./fixtures/html";
 import {jsonContent} from "./fixtures/json";
-import {json5Content} from "./fixtures/json5";
 import {cssContent} from "./fixtures/css";
 import {lessContent} from "./fixtures/less";
 import {scssContent} from "./fixtures/scss";
@@ -49,11 +48,6 @@ describe("ace-legacy-linters UI contract tests", function () {
                 mode: "json",
                 content: jsonContent,
                 label: "JSON",
-            },
-            {
-                mode: "json5",
-                content: json5Content,
-                label: "JSON5",
             },
             {
                 mode: "css",

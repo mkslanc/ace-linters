@@ -179,7 +179,6 @@ export interface CssServiceOptions extends ServiceOptionsWithErrorMessages {
 
 export interface ServiceOptionsMap {
     json: JsonServiceOptions,
-    json5: JsonServiceOptions,
     typescript: TsServiceOptions,
     html: HtmlServiceOptions,
     yaml: YamlServiceOptions,
@@ -201,7 +200,6 @@ export interface ServiceOptionsMap {
 
 export type SupportedServices =
     "json"
-    | "json5"
     | "typescript"
     | "css"
     | "html"

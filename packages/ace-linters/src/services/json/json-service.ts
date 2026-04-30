@@ -91,7 +91,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
     $configureJsonService(schemas: SchemaConfiguration[]) {
         this.$service.configure({
             schemas: schemas as SchemaConfiguration[],
-            allowComments: this.mode === "json5",
+            allowComments: this.globalOptions.allowComments,
             validate: true
         });
     }
@@ -140,7 +140,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
             return [];
 
         let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        let diagnostics = await this.$service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
+        let diagnostics = await this.$service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.globalOptions.trailingCommas ? "ignore" : "error"});
         return filterDiagnostics(diagnostics, this.optionsToFilterDiagnostics);
     }
 

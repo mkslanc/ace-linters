@@ -2,7 +2,6 @@ import "ace-code/esm-resolver";
 import "ace-code/src/ext/language_tools";
 import {typescriptContent} from "../docs-example/typescript-example";
 import {jsonContent} from "../docs-example/json-example";
-import {json5Content} from "../docs-example/json5-example";
 import {htmlContent} from "../docs-example/html-example";
 import {cssContent} from "../docs-example/css-example";
 import {lessContent} from "../docs-example/less-example";
@@ -20,7 +19,6 @@ import * as theme from "ace-code/src/theme/textmate";
 import {LanguageProvider} from "ace-linters";
 import * as ace from "ace-code";
 import {addFormatCommand} from "../utils";
-import {AceSpellCheckOptions} from "ace-spell-check/build/ace-spell-check";
 
 let modes = [
   { name: "text", mode: "ace/mode/text", content: textContent },
@@ -30,7 +28,6 @@ let modes = [
     content: typescriptContent,
   },
   { name: "json", mode: "ace/mode/json", content: jsonContent },
-  { name: "json5", mode: "ace/mode/json5", content: json5Content },
   { name: "html", mode: "ace/mode/html", content: htmlContent },
   { name: "css", mode: "ace/mode/css", content: cssContent },
   { name: "less", mode: "ace/mode/less", content: lessContent },

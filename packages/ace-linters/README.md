@@ -160,7 +160,7 @@ import {AceLanguageClient} from "ace-linters/build/ace-language-client";
 // Create a web socket
 const serverData = {
   module: () => import("ace-linters/build/language-client"),
-  modes: "json|json5",
+  modes: "json",
   type: "socket",
   socket: new WebSocket("ws://127.0.0.1:3000/exampleServer"), // address of your websocket server
 }
@@ -229,7 +229,7 @@ languageProvider.registerEditor(editor);
 ## Supported languages
 Ace linters support the following languages by default with webworkers approach:
 
-- JSON, JSON5 *powered by* [vscode-json-languageservice](https://github.com/Microsoft/vscode-json-languageservice)
+- JSON *powered by* [vscode-json-languageservice](https://github.com/Microsoft/vscode-json-languageservice)
 - HTML *powered by* [vscode-html-languageservice](https://github.com/Microsoft/vscode-html-languageservice)
 - CSS, SCSS, LESS *powered by* [vscode-css-languageservice](https://github.com/Microsoft/vscode-css-languageservice)
 - Typescript, Javascript, JSX, TSX *powered by* [Typescript](https://github.com/Microsoft/TypeScript)
