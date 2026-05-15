@@ -28,11 +28,6 @@ import {
 } from "./types/language-service";
 import {AceRange} from "./ace/range-singleton";
 import {HoverTooltip} from "./ace/hover-tooltip";
-import {
-    DecodedSemanticTokens, DecodedToken,
-    mergeTokens, OriginalSemanticTokens,
-    parseSemanticTokens
-} from "./type-converters/lsp/semantic-tokens";
 import {LightbulbWidget} from "./components/lightbulb";
 import {AceVirtualRenderer} from "./ace/renderer-singleton";
 import {AceEditor} from "./ace/editor-singleton";
