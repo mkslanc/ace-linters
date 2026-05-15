@@ -34,6 +34,7 @@ import {AceEditor} from "./ace/editor-singleton";
 import {setStyles} from "./misc/styles";
 import {convertToUri} from "./utils";
 import {createInlineCompleterAdapter} from "./ace/inline_autocomplete";
+import {createTextMarkerAdapter} from "./ace/text_markers";
 import {SessionLanguageProvider} from "./session-language-provider";
 import {popupManager} from "./ace/popupManager";
 import {extractDiagnosticQuickFixesAtPosition} from "./components/hover/hover-quick-fixes";
@@ -60,6 +61,7 @@ export class LanguageProvider {
         doLiveAutocomplete: (e) => void;
         validateAceInlineCompleterWithEditor: (editor: Ace.Editor) => void;
     };
+    private textMarkerAdapter = createTextMarkerAdapter();
     private $editorEventHandlers: { [editorId: string]: {
         changeSession?: (e: any) => void;
         focus?: () => void;
@@ -344,6 +346,11 @@ export class LanguageProvider {
         if (this.options.functionality!.completion || this.options.functionality!.inlineCompletion) {
             this.$registerCompleters(editor);
         }
+
+        if (this.options.functionality!.semanticTokens || this.options.functionality!.showUnusedDeclarations) {
+            this.textMarkerAdapter.enableTextMarkers(editor);
+        }
+
         this.activeEditor ??= editor;
         const focusHandler = () => {
             this.activeEditor = editor;
@@ -459,6 +466,9 @@ export class LanguageProvider {
                 lightBulb.dispose();
                 delete this.$lightBulbWidgets[editor.id];
             }
+        }
+        if (this.options.functionality?.semanticTokens || this.options.functionality?.showUnusedDeclarations) {
+            this.textMarkerAdapter.disableTextMarkers(editor);
         }
 
         editor.setOption("useWorker", true);

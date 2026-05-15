@@ -5,8 +5,7 @@ import {MarkerGroup} from "./ace/marker_group";
 import type {LanguageProvider} from "./language-provider";
 import * as lsp from "vscode-languageserver-protocol";
 import {
-    DecodedSemanticTokens, DecodedToken,
-    mergeTokens,
+    DecodedSemanticTokens,
     OriginalSemanticTokens,
     parseSemanticTokens
 } from "./type-converters/lsp/semantic-tokens";
@@ -49,9 +48,8 @@ export class SessionLanguageProvider {
     private semanticTokensLegend?: lsp.SemanticTokensLegend;
     private $provider: LanguageProvider;
     private $changeScrollTopHandler?: () => void;
-
-    private $predefinedTokens: DecodedToken[] = [];
-    private $firstStaleLine: undefined | number;
+    private $semanticTextMarkerIds: number[] = [];
+    private $diagnosticTextMarkerIds: number[] = [];
 
     /**
      * Constructs a new instance of the `SessionLanguageProvider` class.
@@ -70,7 +68,9 @@ export class SessionLanguageProvider {
 
         session.doc.version = 1;
         session.doc.on("change", this.$changeListener, true);
-        this.addSemanticTokenSupport(session); //TODO: ?
+        session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
+            this.setSemanticTokenMarkers(tokens);
+        };
         session.on("changeMode", this.$changeMode);
         if (this.$provider.options.functionality!.semanticTokens) {
             this.$changeScrollTopHandler = () => this.getSemanticTokens();
@@ -126,39 +126,6 @@ export class SessionLanguageProvider {
         this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
     }
 
-    addSemanticTokenSupport(session: Ace.EditSession) {
-        let bgTokenizer = session.bgTokenizer;
-        session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
-            bgTokenizer.currentLine = 0;
-            bgTokenizer.lines = [];
-            bgTokenizer.semanticTokens = tokens;
-        }
-
-        bgTokenizer.$tokenizeRow = (row: number) => {
-            var line = bgTokenizer.doc.getLine(row);
-            var state = bgTokenizer.states[row - 1];
-            var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
-
-            if (bgTokenizer.states[row] + "" !== data.state + "") {
-                bgTokenizer.states[row] = data.state;
-                bgTokenizer.lines[row + 1] = null;
-                if (bgTokenizer.currentLine > row + 1)
-                    bgTokenizer.currentLine = row + 1;
-            } else if (bgTokenizer.currentLine == row) {
-                bgTokenizer.currentLine = row + 1;
-            }
-
-            if (bgTokenizer.semanticTokens) {
-                let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
-                if (decodedTokens && decodedTokens.length > 0) {
-                    data.tokens = mergeTokens(data.tokens, decodedTokens);
-                }
-            }
-
-            return bgTokenizer.lines[row] = data.tokens;
-        }
-    }
-
     private $connected = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
         this.$isConnected = true;
 
@@ -183,7 +150,8 @@ export class SessionLanguageProvider {
                 this.state.diagnosticMarkers.setMarkers([]);
             }
 
-            this.session.setSemanticTokens(undefined); //clear all semantic tokens
+            this.clearSemanticTokenMarkers();
+            this.clearDiagnosticTextMarkers();
             let newVersion = this.session.doc.version++;
             this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
         });
@@ -305,32 +273,12 @@ export class SessionLanguageProvider {
         }
 
         if (this.$provider.options.functionality!.showUnusedDeclarations) {
-            this.setPredefinedTokens(diagnostics);
+            this.setDiagnosticTextMarkers(diagnostics);
+        } else if (this.$diagnosticTextMarkerIds.length > 0) {
+            this.clearDiagnosticTextMarkers();
         }
 
         this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
-    }
-
-    setPredefinedTokens(diagnostics: lsp.Diagnostic[]) {
-        this.$predefinedTokens = [];
-
-        diagnostics.forEach((el) => {
-            if (el.tags && el.tags.length > 0) {
-                if (!this.$firstStaleLine || el.range.start.line < this.$firstStaleLine) {
-                    this.$firstStaleLine = el.range.start.line;
-                }
-                this.$predefinedTokens.push({
-                    row: el.range.start.line,
-                    startColumn: el.range.start.character,
-                    length: el.range.end.character - el.range.start.character,
-                    type: el.tags[0] === lsp.DiagnosticTag.Deprecated ? "highlight_deprecated" : "highlight_unnecessary"
-                });
-            }
-        });
-
-        if (!this.$provider.options.functionality!.semanticTokens) {
-            this.$applySemanticTokens(undefined);
-        }
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
@@ -376,8 +324,7 @@ export class SessionLanguageProvider {
 
     getSemanticTokens() {
         const showSemanticTokens = this.$provider.options.functionality!.semanticTokens;
-        const showUnusedDeclarations = this.$provider.options.functionality!.showUnusedDeclarations;
-        if (!showSemanticTokens && !showUnusedDeclarations)
+        if (!showSemanticTokens)
             return;
         //TODO: improve this
         let lastRow = this.editor.renderer.getLastVisibleRow();
@@ -391,17 +338,12 @@ export class SessionLanguageProvider {
                 column: this.session.getLine(lastRow).length
             }
         }
-        if (showSemanticTokens) {
-            this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), this.$applySemanticTokens);
-        } else {
-            this.$applySemanticTokens(undefined);
-        }
+        this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), this.$applySemanticTokens);
     }
 
     $applySemanticTokens = (tokens: lsp.SemanticTokens | null | undefined) => {
-        if (!tokens && this.$predefinedTokens.length == 0) {
+        if (!tokens) {
             this.session.setSemanticTokens(undefined);
-            this.$runTokenizer();
             return;
         }
         let originalTokens: OriginalSemanticTokens | undefined;
@@ -412,18 +354,94 @@ export class SessionLanguageProvider {
                 tokenModifiersLegend: this.semanticTokensLegend!.tokenModifiers
             }
         }
-        let decodedTokens = parseSemanticTokens(originalTokens, this.$predefinedTokens);
+        let decodedTokens = parseSemanticTokens(originalTokens);
 
         this.session.setSemanticTokens(decodedTokens);
-        this.$runTokenizer();
     }
 
-    $runTokenizer() {
-        let bgTokenizer = this.session.bgTokenizer;
-        //@ts-ignore
-        bgTokenizer.running = setTimeout(() => {
-            bgTokenizer.$worker();
-        }, 20);
+    private setSemanticTokenMarkers(tokens: DecodedSemanticTokens | undefined) {
+        this.clearSemanticTokenMarkers(false);
+        if (!tokens) {
+            this.applyTextMarkersToRenderedRows();
+            return;
+        }
+
+        tokens.tokens.forEach((token) => {
+            const markerId = this.session.addTextMarker!({
+                start: {
+                    row: token.row,
+                    column: token.startColumn
+                },
+                end: {
+                    row: token.row,
+                    column: token.startColumn + token.length
+                }
+            }, this.toAceTokenClassName(token.type));
+            this.$semanticTextMarkerIds.push(markerId);
+        });
+        this.applyTextMarkersToRenderedRows();
+    }
+
+    private setDiagnosticTextMarkers(diagnostics: lsp.Diagnostic[]) {
+        this.clearDiagnosticTextMarkers(false);
+        if (!this.session.addTextMarker) {
+            this.applyTextMarkersToRenderedRows();
+            return;
+        }
+
+        diagnostics.forEach((diagnostic) => {
+            if (!diagnostic.tags?.length) {
+                return;
+            }
+            // LSP services mark unused/deprecated ranges through Diagnostic.tags.
+            // Those tags are rendered as text markers so they can layer over normal syntax/semantic highlighting.
+            const tokenType = diagnostic.tags[0] === lsp.DiagnosticTag.Deprecated
+                ? "highlight_deprecated"
+                : "highlight_unnecessary";
+            const markerId = this.session.addTextMarker!({
+                start: {
+                    row: diagnostic.range.start.line,
+                    column: diagnostic.range.start.character
+                },
+                end: {
+                    row: diagnostic.range.end.line,
+                    column: diagnostic.range.end.character
+                }
+            }, this.toAceTokenClassName(tokenType));
+            this.$diagnosticTextMarkerIds.push(markerId);
+        });
+        this.applyTextMarkersToRenderedRows();
+    }
+
+    private clearSemanticTokenMarkers(render = true) {
+        this.clearTextMarkers(this.$semanticTextMarkerIds);
+        this.$semanticTextMarkerIds = [];
+        if (render) {
+            this.applyTextMarkersToRenderedRows();
+        }
+    }
+
+    private clearDiagnosticTextMarkers(render = true) {
+        this.clearTextMarkers(this.$diagnosticTextMarkerIds);
+        this.$diagnosticTextMarkerIds = [];
+        if (render) {
+            this.applyTextMarkersToRenderedRows();
+        }
+    }
+
+    private clearTextMarkers(markerIds: number[]) {
+        if (!this.session.removeTextMarker) {
+            return;
+        }
+        markerIds.forEach((markerId) => this.session.removeTextMarker!(markerId));
+    }
+
+    private toAceTokenClassName(tokenType: string): string {
+        return "ace_" + tokenType.replace(/\./g, " ace_");
+    }
+
+    private applyTextMarkersToRenderedRows() {
+        this.editor.renderer["$textLayer"]?.$applyTextMarkers?.();
     }
 
     $applyDocumentHighlight = (documentHighlights: lsp.DocumentHighlight[]) => {
@@ -463,9 +481,9 @@ export class SessionLanguageProvider {
 
         this.session.clearAnnotations();
 
-        if (this.session.setSemanticTokens) {
-            this.session.setSemanticTokens(undefined);
-        }
+        this.clearSemanticTokenMarkers(false);
+        this.clearDiagnosticTextMarkers(false);
+        this.applyTextMarkersToRenderedRows();
 
         this.$deltaQueue = null;
 
