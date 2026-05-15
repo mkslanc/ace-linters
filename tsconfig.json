@@ -1,18 +1,26 @@
 {
   "compilerOptions": {
-    "outDir": "./build",
-    "allowJs": true,
-    "target": "esnext",
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
-    "module": "commonjs",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "types": ["vite/client", "node"]
   },
   "include": [
-    "./packages/**/*"
+    "vite.config.ts",
+    "packages/demo/**/*.ts",
+    "packages/demo/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
-    "./packages/demo/**/*-dev.ts"
+    "**/node_modules",
+    "build",
+    "**/build"
   ]
 }

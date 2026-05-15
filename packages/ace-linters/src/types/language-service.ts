@@ -1,16 +1,20 @@
 import {CommonConverter} from "../type-converters/common-converters";
-import * as ts from "../services/typescript/lib/typescriptServices";
+import ts from "../services/typescript/lib/typescriptOptions";
 import * as lsp from "vscode-languageserver-protocol";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {MarkDownConverter} from "./converters";
+import type {InlineAutocomplete} from "ace-code/src/ext/inline_autocomplete";
+import type {CommandBarTooltip} from "ace-code/src/ext/command_bar";
+import type {CompletionProvider} from "ace-code/src/autocomplete";
+import {Linter} from "eslint";
+import {Ruleset} from "htmlhint/dist/core/types";
 
 export interface LanguageService {
     documents: { [documentUri: string]: TextDocument };
-    $service;
     serviceName: string;
     mode: string;
-    globalOptions;
+    globalOptions: ServiceOptions;
     serviceData: LanguageClientConfig | ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities;
     workspaceUri?: string;
@@ -23,43 +27,49 @@ export interface LanguageService {
 
     doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null>;
 
+    doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>
+
     doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null>;
 
-    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string);
+    setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
 
-    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]);
+    applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
 
-    addDocument(document: TextDocumentItem);
+    addDocument(document: TextDocumentItem): void;
 
-    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean); //TODO:
+    setOptions(documentUri: string, options: ServiceOptions, merge?: boolean): void;
 
-    setGlobalOptions(options: ServiceOptions); //TODO:
+    setGlobalOptions(options: ServiceOptions): void;
 
     getDocument(uri: string): TextDocument;
 
-    removeDocument(document: TextDocumentIdentifier);
+    removeDocument(document: TextDocumentIdentifier): void;
 
-    renameDocument(document: TextDocumentIdentifier, newDocumentUri: string);
+    renameDocument(document: TextDocumentIdentifier, newDocumentUri: string): void;
 
     getDocumentValue(uri: string): string | undefined;
 
     provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>
 
     findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>
-    
+
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>
-    
+
     getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext): Promise<(lsp.Command | lsp.CodeAction)[] | null>
 
     executeCommand(command: string, args?: lsp.LSPAny[]): Promise<any | null>;
 
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number): void;
-    
+
     dispose(): Promise<void>;
 
     closeConnection(): Promise<void>;
 
     setWorkspace(workspaceUri: string): void;
+
+    sendRequest(name: string, args?: lsp.LSPAny): Promise<any>;
+
+    sendResponse(callbackId: number, args?: lsp.LSPAny): void;
 }
 
 interface TooltipContent {
@@ -82,6 +92,11 @@ export interface CompletionService {
     service: string
 }
 
+export interface InlineCompletionService {
+    completions: lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null,
+    service: string
+}
+
 export interface ServiceOptions {
     [name: string]: any
 }
@@ -98,7 +113,7 @@ export interface ServiceOptionsWithErrorMessages {
     errorMessagesToTreatAsInfo?: RegExp[]
 }
 
-export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages {
     schemas?: {
         uri: string,
         fileMatch?: string[],
@@ -109,7 +124,7 @@ export interface JsonServiceOptions extends ServiceOptionsWithErrorMessages{
     trailingCommas?: boolean
 }
 
-export interface YamlServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface YamlServiceOptions extends ServiceOptionsWithErrorMessages {
     schemas?: {
         uri: string,
         fileMatch?: string[],
@@ -123,7 +138,7 @@ interface ExtraLib {
     version: number;
 }
 
-export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages{
+export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
     compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums,
     extraLibs?: {
         [path: string]: ExtraLib;
@@ -132,7 +147,7 @@ export interface TsServiceOptions extends ServiceOptionsWithErrorCodes, ServiceO
 }
 
 export interface HtmlServiceOptions extends ServiceOptionsWithErrorMessages {
-    validationOptions?: { [option: string]: boolean },
+    validationOptions?: Ruleset,
     formatOptions?: {}
 }
 
@@ -149,34 +164,21 @@ export interface PhpServiceOptions extends ServiceOptionsWithErrorMessages {
     inline?: boolean
 }
 
-export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages  {
+export interface LuaServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 
-export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages{
-    env?: { [name: string]: boolean } | undefined;
-    extends?: string | string[] | undefined;
-    globals?: { [name: string]: boolean | "off" | "readonly" | "readable" | "writable" | "writeable" } | undefined;
-    noInlineConfig?: boolean | undefined;
-    overrides?: Array<any> | undefined;
-    parser?: string | undefined;
-    parserOptions?: { [option: string]: any } | undefined;
-    plugins?: string[] | undefined;
-    processor?: string | undefined;
-    reportUnusedDisableDirectives?: boolean | undefined;
-    settings?: { [name: string]: any } | undefined;
-    rules?: { [rule: string]: any }
+export interface JavascriptServiceOptions extends ServiceOptionsWithErrorMessages, Linter.FlatConfig {
 }
 
-export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages{
+export interface PythonServiceOptions extends ServiceOptionsWithErrorCodes, ServiceOptionsWithErrorMessages {
     configuration: { [name: string]: any }
 }
 
-export interface CssServiceOptions extends ServiceOptionsWithErrorMessages{
+export interface CssServiceOptions extends ServiceOptionsWithErrorMessages {
 }
 
 export interface ServiceOptionsMap {
     json: JsonServiceOptions,
-    json5: JsonServiceOptions,
     typescript: TsServiceOptions,
     html: HtmlServiceOptions,
     yaml: YamlServiceOptions,
@@ -192,19 +194,19 @@ export interface ServiceOptionsMap {
     less: CssServiceOptions,
     scss: CssServiceOptions,
     lua: LuaServiceOptions,
+
     [serviceName: string]: any
 }
 
 export type SupportedServices =
     "json"
-    | "json5"
     | "typescript"
     | "css"
     | "html"
     | "yaml"
     | "php"
     | "xml"
-    
+
     | /** @deprecated would be removed in next iterations */"javascript"
     | "eslint"
     | "lua"
@@ -212,10 +214,25 @@ export type SupportedServices =
     | "scss"
     | "python";
 
+/** Options for the completer coming from the LSP server */
+export interface LspCompleterOptions {
+    triggerCharacters: TriggerCharacterOptions
+}
+
+/** Options regarding the trigger characters */
+export interface TriggerCharacterOptions {
+    add?: string[], // The trigger characters to add
+    remove?: string[] // The trigger characters to remove
+}
+
 export interface ProviderOptions {
     functionality?: {
         hover?: boolean,
         completion?: {
+            overwriteCompleters: boolean,
+            lspCompleterOptions?: LspCompleterOptions
+        } | false,
+        inlineCompletion?: {
             overwriteCompleters: boolean
         } | false,
         completionResolve?: boolean,
@@ -227,8 +244,32 @@ export interface ProviderOptions {
         showUnusedDeclarations?: boolean
     },
     markdownConverter?: MarkDownConverter,
-    requireFilePath?: boolean,
     workspacePath?: string, // this would be transformed to workspaceUri
+    aceComponents?: {
+        "InlineAutocomplete"?: typeof InlineAutocomplete,
+        "CommandBarTooltip"?: typeof CommandBarTooltip,
+        "CompletionProvider"?: typeof CompletionProvider,
+    },
+    /**
+     * When true, disables automatic session registration on editor session changes.
+     * Users must manually call registerSession() and handle session change events themselves.
+     * @default false
+     */
+    manualSessionControl?: boolean;
+}
+
+export interface SessionLspConfig {
+    /**
+     * Absolute or relative path of the file for the session
+     */
+    filePath: string,
+    /**
+     * When `true` the given path is treated as relative and will be joined with
+     * the workspace’s root URI to form the final canonical URI. When false (or omitted) filePath is just transformed to
+     * URI.
+     * @default `false`
+     */
+    joinWorkspaceURI?: boolean
 }
 
 export type ServiceFeatures = {
@@ -246,6 +287,7 @@ export type SupportedFeatures =
     | "semanticTokens"
     | "codeAction"
     | "executeCommand"
+    | "inlineCompletion"
 
 
 export interface ServiceConfig extends BaseConfig {
@@ -254,14 +296,18 @@ export interface ServiceConfig extends BaseConfig {
 }
 
 export interface BaseConfig {
+    serviceName?: string,
     initializationOptions?: ServiceOptions,
     options?: ServiceOptions,
     serviceInstance?: LanguageService,
+    /**
+     * language modes separated with |; * means all available languages
+     */
     modes: string,
     className?: string,
     features?: ServiceFeatures,
     module: () => any,
-    id?: string
+    id?: string,
 }
 
 interface WebWorkerConnection {
@@ -317,5 +363,5 @@ export type ServiceStruct = {
 
 export interface CodeActionsByService {
     codeActions: (lsp.Command | lsp.CodeAction)[] | null
-    service: string    
+    service: string
 }

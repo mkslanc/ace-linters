@@ -9,14 +9,16 @@ import * as jsonService from 'vscode-json-languageservice';
 import {TextDocumentIdentifier, TextDocumentItem} from "vscode-languageserver-protocol";
 import {JsonServiceOptions, LanguageService} from "../../types/language-service";
 import {filterDiagnostics} from "../../type-converters/lsp/lsp-converters";
+import {URI, Utils} from "vscode-uri";
 
 export class JsonService extends BaseService<JsonServiceOptions> implements LanguageService {
-    $service: JsonLanguageService;
+    private $service: JsonLanguageService;
     schemas: { [schemaUri: string]: string } = {};
 
     serviceCapabilities = {
         completionProvider: {
-            triggerCharacters: ['"', ':']
+            triggerCharacters: ['"', ':'],
+            resolveProvider: true
         },
         diagnosticProvider: {
             interFileDependencies: true,
@@ -40,7 +42,13 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
                 }
                 
                 return Promise.reject(`Unable to load schema at ${uri}`);
-            }
+            },
+            workspaceContext: {
+                resolveRelativePath: (relativePath: string, resource: string) => {
+                    const base = resource.substr(0, resource.lastIndexOf('/') + 1);
+                    return Utils.resolvePath(URI.parse(base), relativePath).toString();
+                }
+            },
         });
     }
 
@@ -83,7 +91,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
     $configureJsonService(schemas: SchemaConfiguration[]) {
         this.$service.configure({
             schemas: schemas as SchemaConfiguration[],
-            allowComments: this.mode === "json5",
+            allowComments: this.globalOptions.allowComments,
             validate: true
         });
     }
@@ -132,7 +140,7 @@ export class JsonService extends BaseService<JsonServiceOptions> implements Lang
             return [];
 
         let jsonDocument = this.$service.parseJSONDocument(fullDocument);
-        let diagnostics = await this.$service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.mode === "json5" ? "ignore" : "error"});
+        let diagnostics = await this.$service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.globalOptions.trailingCommas ? "ignore" : "error"});
         return filterDiagnostics(diagnostics, this.optionsToFilterDiagnostics);
     }
 

@@ -17,8 +17,13 @@ await build({
                       onResolve,
                       resolve
                   }) {
-                onResolve({filter: /^path$/}, () => ({
+                onResolve({filter: /^(?:node:)?path$/}, () => ({
                     path: fileURLToPath(new URL('../../node_modules/path-browserify/index.js', import.meta.url)),
+                    external: false,
+                    sideEffects: false
+                }));
+                onResolve({filter: /^(?:node:)?util$/}, () => ({
+                    path: fileURLToPath(new URL('../../node_modules/util/util.js', import.meta.url)),
                     external: false,
                     sideEffects: false
                 }));

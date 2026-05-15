@@ -1,5 +1,6 @@
 import {BaseService} from "../base-service";
 import * as ts from './lib/typescriptServices';
+import {CompilerOptions} from './lib/typescriptOptions';
 import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
@@ -21,14 +22,14 @@ import {LanguageService, TsServiceOptions} from "../../types/language-service";
 import {TextDocumentIdentifier} from "vscode-languageserver-protocol";
 import {SemanticTokensBuilder} from "../../type-converters/lsp/semantic-tokens";
 
-export class TypescriptService extends BaseService<TsServiceOptions> implements ts.LanguageServiceHost, LanguageService {
-    $service: ts.LanguageService;
-    $defaultCompilerOptions: ts.CompilerOptions = {
+export class TypescriptService extends BaseService<TsServiceOptions> implements /*ts.LanguageServiceHost,*/ LanguageService {
+    private $service: ts.LanguageService;
+    $defaultCompilerOptions: CompilerOptions = {
         allowJs: true,
         checkJs: true,
         jsx: JsxEmit.Preserve,
         allowNonTsExtensions: true,
-        target: ScriptTarget.ES2020,
+        target: ScriptTarget.ES2022,
         noSemanticValidation: true,
         noSyntaxValidation: false,
         onlyVisible: false,
@@ -65,7 +66,8 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     serviceCapabilities = {
         completionProvider: {
-            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#']
+            triggerCharacters: ['.', '"', '\'', '`', '/', '@', '<', '#'],
+            resolveProvider: true
         },
         diagnosticProvider: {
             interFileDependencies: true,
@@ -89,10 +91,11 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     constructor(mode: string) {
         super(mode);
+        // @ts-ignore
         this.$service = ts.createLanguageService(this);
     }
 
-    getCompilationSettings(): ts.CompilerOptions {
+    private getCompilationSettings(): ts.CompilerOptions {
         const parseConfigHost = {
             fileExists: () => {
                 return true
@@ -110,7 +113,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return mergeObjects(options, this.$defaultCompilerOptions);
     }
 
-    getScriptFileNames(): string[] {
+    private getScriptFileNames(): string[] {
         let fileNames = Object.keys(this.documents);
         return fileNames.concat(Object.keys(this.$extraLibs));
     }
@@ -119,7 +122,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return this.globalOptions["extraLibs"] ?? [];
     }
 
-    getScriptVersion(fileName: string): string {
+    private getScriptVersion(fileName: string): string {
         let document = this.getDocument(fileName);
         if (document) {
             if (document.version)
@@ -131,7 +134,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return '';
     }
 
-    getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
+    private getScriptSnapshot(fileName: string): ts.IScriptSnapshot | undefined {
         const text = this.$getDocument(fileName);
         if (text === undefined) {
             return;
@@ -144,7 +147,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         };
     }
 
-    $getDocument(fileName: string): string | undefined {
+    private $getDocument(fileName: string): string | undefined {
         const fileNameWithoutUri = fileName.replace("file:///", "");
         let document = this.getDocument(fileName) ?? this.getDocument(fileNameWithoutUri);
         if (document) {
@@ -162,7 +165,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return;
     }
 
-    getScriptKind?(fileName: string): ts.ScriptKind {
+    private getScriptKind?(fileName: string): ts.ScriptKind {
         const ext = fileName.substring(fileName.lastIndexOf('.') + 1);
         switch (ext) {
             case 'ts':
@@ -180,11 +183,11 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         }
     }
 
-    getCurrentDirectory(): string {
+    private getCurrentDirectory(): string {
         return '';
     }
 
-    getDefaultLibFileName(options: ts.CompilerOptions): string {
+    private getDefaultLibFileName(options: ts.CompilerOptions): string {
         switch (options.target as ScriptTarget) {
             case ScriptTarget.ESNext:
                 return 'lib.esnext.full.d.ts';
@@ -205,23 +208,23 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         }
     }
 
-    readFile(path: string): string | undefined {
+    private readFile(path: string): string | undefined {
         return this.$getDocument(path);
     }
 
-    fileExists(path: string): boolean {
+    private fileExists(path: string): boolean {
         return this.$getDocument(path) !== undefined;
     }
 
-    getSyntacticDiagnostics(fileName: string): Diagnostic[] {
+    private getSyntacticDiagnostics(fileName: string): Diagnostic[] {
         return this.$service.getSyntacticDiagnostics(fileName);
     }
 
-    getSemanticDiagnostics(fileName: string): Diagnostic[] {
+    private getSemanticDiagnostics(fileName: string): Diagnostic[] {
         return this.$service.getSemanticDiagnostics(fileName);
     }
 
-    getFormattingOptions(options: lsp.FormattingOptions): ts.FormatCodeSettings {
+    private getFormattingOptions(options: lsp.FormattingOptions): ts.FormatCodeSettings {
         this.$defaultFormatOptions.convertTabsToSpaces = options.insertSpaces;
         this.$defaultFormatOptions.tabSize = options.tabSize;
         this.$defaultFormatOptions.indentSize = options.tabSize
@@ -266,7 +269,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         if (!fullDocument)
             return null;
         let offset = fullDocument.offsetAt(position);
-        let completions = this.$service.getCompletionsAtPosition(document.uri, offset, undefined);
+        let completions = this.$service.getCompletionsAtPosition(document.uri, offset, {"includeCompletionsWithInsertText": true});
         if (!completions)
             return null;
 
@@ -275,7 +278,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
     async doResolve(item: lsp.CompletionItem): Promise<lsp.CompletionItem | null> {
         let resolvedCompletion = this.$service.getCompletionEntryDetails(
-            item["fileName"],
+            item["fileName"].documentUri,
             item["position"],
             item.label,
             undefined,

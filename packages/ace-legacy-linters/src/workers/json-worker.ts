@@ -1,0 +1,59 @@
+import {Mirror} from "../mirror";
+import {Ace} from "ace-code";
+import {JsonDiagnosticsService, getJsonDiagnosticsService} from "./json-diagnostics-service";
+import {MinTextDocument} from "../vscode-text-document-min";
+import {toAnnotations} from "../utils";
+
+export class JsonWorker extends Mirror {
+    service: JsonDiagnosticsService;
+    allowComments?: boolean
+    trailingCommas?: boolean
+
+    constructor(sender) {
+        super(sender);
+
+        this.setTimeout(500);
+
+        var params = {
+            schemaRequestService: (uri) => {
+                return;
+            },
+            workspaceContext: {
+                resolveRelativePath: (relativePath: string, resource: string) => {
+                    return;
+                }
+            },
+        }
+
+        this.service = getJsonDiagnosticsService(params);
+        this.$configureService();
+    }
+
+    $configureService() {
+        this.service.configure({
+            allowComments: this.allowComments,
+            validate: true
+        });
+    }
+
+    setOptions(opts) {
+        this.allowComments = opts && opts.allowComments;
+        this.trailingCommas = opts && opts.trailingCommas;
+        this.$configureService();
+    }
+
+    async onUpdate() {
+        var value = this.doc.getValue();
+        var errors: Ace.Annotation[] = [];
+
+        var fullDocument = new MinTextDocument("file:///foo.json", "json", 1, value);
+
+        try {
+            let jsonDocument = this.service.parseJSONDocument(fullDocument);
+            errors = toAnnotations(await this.service.doValidation(fullDocument, jsonDocument, {trailingCommas: this.trailingCommas ? "ignore" : "error"}));
+        } catch (e) {
+            console.error(e);
+        }
+        this.sender.emit("annotate", errors);
+    }
+}

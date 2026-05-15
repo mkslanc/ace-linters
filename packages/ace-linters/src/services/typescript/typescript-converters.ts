@@ -178,17 +178,22 @@ export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument,
     return completionInfo.entries.map((entry) => {
         let completion = {
             label: entry.name,
-            insertText: entry.name,
             sortText: entry.sortText,
             kind: convertKind(entry.kind),
             position: position,
             entry: entry.name
         }
 
+        let completionText = entry.insertText ?? entry.name;
         if (entry.replacementSpan) {
-            const p1 = toPosition(entry.replacementSpan.start, doc);
-            const p2 = toPosition(entry.replacementSpan.start + entry.replacementSpan.length, doc);
-            completion["range"] = createRangeFromPoints(p1, p2);
+            const rangeStart = toPosition(entry.replacementSpan.start, doc);
+            const rangeEnd = toPosition(entry.replacementSpan.start + entry.replacementSpan.length, doc);
+            completion["textEdit"] = {
+                range: createRangeFromPoints(rangeStart, rangeEnd),
+                newText: completionText
+            }
+        } else {
+            completion["insertText"] = completionText;
         }
 
         return completion;
@@ -196,10 +201,14 @@ export function toCompletions(completionInfo: CompletionInfo, doc: TextDocument,
 }
 
 export function toResolvedCompletion(entry: CompletionEntryDetails): lsp.CompletionItem {
+    let documentation = entry.displayParts.map((displayPart) => displayPart.text).join('');
+    if (entry.documentation) {
+        documentation += "\n\n" + entry.documentation.map((displayPart) => displayPart.text).join('');
+    }
     return {
         label: entry.name,
         kind: convertKind(entry.kind),
-        documentation: entry.displayParts.map((displayPart) => displayPart.text).join('')
+        documentation: documentation
     };
 }
 

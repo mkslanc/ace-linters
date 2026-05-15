@@ -103,6 +103,14 @@ export class ServiceManager {
                         };
                     }))).filter(notEmpty);
                     break;
+                case MessageType.inlineComplete:
+                    postMessage["value"] = (await Promise.all(this.filterByFeature(serviceInstances, "inlineCompletion").map(async (service) => {
+                        return {
+                            completions: await service.doInlineComplete(documentIdentifier, message["value"]),
+                            service: service.serviceData.className
+                        };
+                    }))).filter(notEmpty);
+                    break;
                 case MessageType.resolveCompletion:
                     let serviceName = message.value["service"];
                     postMessage["value"] = await this.filterByFeature(serviceInstances, "completionResolve").find((service) => {
@@ -191,6 +199,12 @@ export class ServiceManager {
                     break;
                 case MessageType.renameDocument:
                     this.renameDocument(documentIdentifier, message.value);
+                    break;
+                case MessageType.sendRequest:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendRequest(message.value, message.args);
+                    break;
+                case MessageType.sendResponse:
+                    postMessage["value"] = this.$services[message.serviceName]?.serviceInstance?.sendResponse(message.callbackId, message.args);
                     break;
             }
 
@@ -362,6 +376,23 @@ export class ServiceManager {
         return Object.values(services).map((el) => el.serviceInstance).filter(notEmpty);
     }
 
+    /**
+     * Finds and returns services that are compatible with the specified mode.
+     *
+     * @param {string} mode - The mode for which services should be found.
+     * @return {Object} An object where the keys are service names and the values are either `ServiceConfig` or `LanguageClientConfig` for the services that match the specified mode.
+     */
+    findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
+        let servicesWithName = {};
+        Object.entries(this.$services).forEach(([key, value]) => {
+              let extensions = value.modes.split('|').map(m => m.trim());
+              if (extensions.includes(mode) || extensions.includes('*'))
+                  servicesWithName[key] = this.$services[key];
+          }
+        )
+        return servicesWithName;
+    }
+
     filterByFeature(serviceInstances: LanguageService[], feature: SupportedFeatures): LanguageService[] {
         return serviceInstances.filter((el) => {
             if (!el.serviceData.features![feature]) {
@@ -375,6 +406,8 @@ export class ServiceManager {
                     return capabilities.completionProvider != undefined;
                 case "completionResolve":
                     return capabilities.completionProvider?.resolveProvider === true;
+                case "inlineCompletion":
+                    return capabilities.inlineCompletionProvider != undefined;
                 case "format":
                     return capabilities.documentRangeFormattingProvider == true || capabilities.documentFormattingProvider == true;
                 case "diagnostics":
@@ -391,17 +424,6 @@ export class ServiceManager {
                     return capabilities.executeCommandProvider != undefined;
             }
         });
-    }
-
-    findServicesByMode(mode: string): { [serviceName: string]: (ServiceConfig | LanguageClientConfig) } {
-        let servicesWithName = {};
-        Object.entries(this.$services).forEach(([key, value]) => {
-                let extensions = value.modes.split('|');
-                if (extensions.includes(mode))
-                    servicesWithName[key] = this.$services[key];
-            }
-        )
-        return servicesWithName;
     }
 
     registerService(name: string, service: ServiceConfig) {
@@ -436,6 +458,7 @@ export class ServiceManager {
         features.semanticTokens ??= true;
         features.codeAction ??= true;
         features.executeCommand ??= true;
+        features.inlineCompletion ??= true;
         return features;
     }
 }

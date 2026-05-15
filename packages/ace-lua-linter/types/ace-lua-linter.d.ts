@@ -1,4 +1,4 @@
-import { Config } from "@wasm-fmt/lua_fmt";
+import { Config } from "@wasm-fmt/lua_fmt/lua_fmt_web";
 import { BaseService } from "ace-linters/src/services/base-service";
 import { LanguageService } from "ace-linters/src/types/language-service";
 import type { AceLuaLinterOptions } from "./service";

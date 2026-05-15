@@ -1,4 +1,6 @@
 import {ServiceManager} from "ace-linters/build/service-manager";
+//this is for all dictionaries to work
+import "ace-spell-check/build/esm-dicts-resolver";
 
 let manager = new ServiceManager(self);
 manager.registerService("html", {
@@ -30,12 +32,6 @@ manager.registerService("json", {
     module: () => import("ace-linters/build/json-service"),
     className: "JsonService",
     modes: "json",
-});
-manager.registerService("json5", {
-    features: {signatureHelp: false, documentHighlight: false},
-    module: () => import("ace-linters/build/json-service"),
-    className: "JsonService",
-    modes: "json5",
 });
 manager.registerService("typescript", {
     module: () => import("ace-linters/build/typescript-service"),
@@ -80,8 +76,13 @@ manager.registerService("python", {
 });
 
 manager.registerService("mysql", {
-    module: () => import("ace-sql-linter/build/mysql-service"),
-    className: "MySQLService",
-    modes: "mysql",
+  module: () => import("ace-sql-linter/build/mysql-service"),
+  className: "MySQLService",
+  modes: "mysql",
 });
 
+manager.registerService("ace-spell-check", {
+  module: () => import("ace-spell-check/build/ace-spell-check"),
+  className: "AceSpellCheck",
+  modes: "*",
+});

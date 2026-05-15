@@ -24,6 +24,8 @@ npm install ace-python-ruff-linter
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("python", {
        module: () => import("ace-python-ruff-linter/build/python-service"),
@@ -81,5 +83,5 @@ npm install ace-python-ruff-linter
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace Python Ruff Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 

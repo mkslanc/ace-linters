@@ -24,6 +24,8 @@ npm install ace-zig-linter
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("ace-zig-linter", {
        module: () => import("ace-zig-linter/build/ace-zig-linter"),
@@ -81,5 +83,5 @@ This linter supports the following features:
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace Zig Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 

@@ -12,7 +12,6 @@ export declare class AceDartLinter extends BaseService<AceDartLinterOptions> imp
     $defaultFormatOptions: {
         line_width: number;
         line_ending: string;
-        language_version: string;
     };
     constructor(mode: string);
     getFormattingOptions(options: lsp.FormattingOptions): any;

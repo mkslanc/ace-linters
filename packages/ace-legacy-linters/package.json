@@ -1,0 +1,34 @@
+{
+    "name": "ace-legacy-linters",
+    "license": "MIT",
+    "version": "1.0.2",
+    "description": "drop-in replacements for legacy Ace Editor worker files",
+    "scripts": {
+        "build:css-diagnostics-data": "node generate-css-diagnostics-data.js",
+        "build": "npm run build:css-diagnostics-data && node build-worker.mjs",
+        "test:unit": "mocha --config .mocharc.js --exit",
+        "test": "npm run test:unit"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mkslanc/ace-linters.git"
+    },
+    "devDependencies": {
+        "php-parser": "^3.4.0",
+        "ace-code": "^1.43.6",
+        "luaparse": "^0.3.1",
+        "htmlhint": "^1.9.2",
+        "vscode-json-languageservice": "^5.7.2",
+        "vscode-css-languageservice": "^6.3.10",
+        "@xml-tools/constraints": "^1.1.1",
+        "@xml-tools/parser": "^1.0.11",
+        "@xml-tools/ast": "^5.0.5",
+        "@xml-tools/simple-schema": "^3.0.5",
+        "yaml": "^2.8.3",
+        "@babel/parser": "^7.29.2",
+        "eslint-scope": "^9.1.2",
+        "chai": "^4.3.7",
+        "mocha": "^10.2.0",
+        "globals": "^14.0.0"
+    }
+}

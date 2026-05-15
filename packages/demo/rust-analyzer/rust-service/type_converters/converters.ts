@@ -2,7 +2,7 @@ import {monaco} from "./old.monaco";
 import {Ace} from "ace-code";
 import * as lsp from "vscode-languageserver-protocol";
 
-export function toRange(range: monaco.IRange): lsp.Range {
+export function toRange(range?: monaco.IRange): lsp.Range | undefined {
     if (!range) {
         return;
     }
@@ -19,7 +19,7 @@ export function toRange(range: monaco.IRange): lsp.Range {
     };
 }
 
-export function fromPoint(point: Ace.Point): monaco.IPosition {
+export function fromPoint(point: Ace.Point): monaco.IPosition | undefined {
     if (!point) return;
     return {lineNumber: point.row, column: point.column}
 }
@@ -50,7 +50,7 @@ export function toCompletions(completionList: monaco.languages.CompletionItem[])
 
 export function toCompletion(item: monaco.languages.CompletionItem): lsp.CompletionItem {
     let textEdit: lsp.TextEdit = {
-        range: getTextEditRange(item.range),
+        range: getTextEditRange(item.range)!,
         newText: item.insertText
     }
     let documentation = (item.documentation) ? ((item.documentation as any).value != undefined) ?
@@ -65,21 +65,25 @@ export function toCompletion(item: monaco.languages.CompletionItem): lsp.Complet
     return completionItem;
 }
 
-export function getTextEditRange(textEdit?): lsp.Range | undefined {
+export function getTextEditRange(textEdit?: any): lsp.Range | undefined {
     if (!textEdit) {
         return;
     }
     if (textEdit.insert != undefined && textEdit.replace != undefined) {
-        let ranges = [toRange(textEdit.insert), toRange(textEdit.replace)];
-        return mergeRanges(ranges);
+        const insertRange = toRange(textEdit.insert);
+        const replaceRange = toRange(textEdit.replace);
+        if (!insertRange || !replaceRange) {
+            return;
+        }
+        return mergeRanges([insertRange, replaceRange]);
     } else {
         return toRange(textEdit);
     }
 }
 
-export function toHover(hover: monaco.languages.Hover): lsp.Hover {
+export function toHover(hover: monaco.languages.Hover): lsp.Hover | null {
     if (!hover) {
-        return;
+        return null;
     }
     let contents = hover.contents.map((el) => {
         if (typeof el !== "string") {

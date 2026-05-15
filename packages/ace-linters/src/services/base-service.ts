@@ -2,9 +2,9 @@ import * as lsp from "vscode-languageserver-protocol";
 import {mergeObjects} from "../utils";
 import {TextDocument} from "vscode-languageserver-textdocument";
 import {FilterDiagnosticsOptions, LanguageService, ServiceConfig, ServiceOptions} from "../types/language-service";
+import {LSPAny} from "vscode-languageserver-protocol";
 
 export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOptions> implements LanguageService {
-    abstract $service;
     serviceName: string;
     mode: string;
     documents: { [documentUri: lsp.DocumentUri]: TextDocument } = {};
@@ -13,16 +13,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     serviceData: ServiceConfig;
     serviceCapabilities: lsp.ServerCapabilities = {};
     workspaceUri?: string;
-    
+
     clientCapabilities: lsp.ClientCapabilities = {
         textDocument: {
-            diagnostic: {
-                dynamicRegistration: true,
-                relatedDocumentSupport: true
-            },
             publishDiagnostics: {
                 relatedInformation: true,
                 versionSupport: false,
+                dataSupport: true,
                 tagSupport: {
                     valueSet: [lsp.DiagnosticTag.Unnecessary, lsp.DiagnosticTag.Deprecated]
                 }
@@ -32,7 +29,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 contentFormat: ['markdown', 'plaintext'],
             },
             synchronization: {
-                dynamicRegistration: true,
+                dynamicRegistration: false,
                 willSave: false,
                 didSave: false,
                 willSaveWaitUntil: false,
@@ -52,6 +49,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 contextSupport: false,
             },
             signatureHelp: {
+                dynamicRegistration: true,
                 signatureInformation: {
                     documentationFormat: ['markdown', 'plaintext'],
                     activeParameterSupport: true
@@ -61,6 +59,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 dynamicRegistration: true
             },
             semanticTokens: {
+                dynamicRegistration: true,
                 multilineTokenSupport: false,
                 overlappingTokenSupport: false,
                 tokenTypes: [],
@@ -76,11 +75,19 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             },
             codeAction: {
                 dynamicRegistration: true
+            },
+            inlineCompletion: {
+                dynamicRegistration: true
+            }
+        },
+        window: {
+            showDocument: {
+                support: true
             }
         },
         workspace: {
             didChangeConfiguration: {
-                dynamicRegistration: true,
+                dynamicRegistration: false,
             },
             executeCommand: {
                 dynamicRegistration: true
@@ -91,12 +98,19 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
                 normalizesLineEndings: false,
                 documentChanges: false
             },
-        } as lsp.WorkspaceClientCapabilities,
+        },
     };
 
     protected constructor(mode: string, workspaceUri?: string) {
         this.mode = mode;
         this.workspaceUri = workspaceUri;
+        this.serviceName = "BaseService";
+
+        this.serviceData = {
+            className: "BaseService",
+            modes: "",
+            module: () => {}
+        }
     }
 
     addDocument(document: lsp.TextDocumentItem) {
@@ -116,7 +130,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     }
 
     renameDocument(document: lsp.TextDocumentIdentifier, newDocumentUri: string) {
-        this.documents[newDocumentUri] = this.documents[document.uri];
+        const previousDocument = this.getDocument(document.uri);
+        this.addDocument({
+            uri: newDocumentUri,
+            version: previousDocument.version,
+            languageId: previousDocument.languageId,
+            text: previousDocument.getText()
+        })
         this.options[newDocumentUri] = this.options[document.uri];
         this.removeDocument(document);
     }
@@ -160,11 +180,15 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             TextDocument.update(document, deltas, identifier.version);
     }
 
-    async doComplete(document, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
+    async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
         return null;
     }
 
-    async doHover(document, position: lsp.Position): Promise<lsp.Hover | null> {
+    async doInlineComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.InlineCompletionItem[] | lsp.InlineCompletionList | null> {
+        return null;
+    }
+
+    async doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null> {
         return null;
     }
 
@@ -176,7 +200,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
         return [];
     }
 
-    format(document, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
+    format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]> {
         return Promise.resolve([]);
     }
 
@@ -198,7 +222,7 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
             errorMessagesToTreatAsInfo: this.globalOptions.errorMessagesToTreatAsInfo ?? [],
         }
     }
-    
+
     getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null> {
         return Promise.resolve(null);
     }
@@ -220,5 +244,13 @@ export abstract class BaseService<OptionsType extends ServiceOptions = ServiceOp
     }
 
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
+    }
+
+    sendRequest(name: string, args?: LSPAny): Promise<any> {
+        return Promise.resolve(null);
+    }
+
+    sendResponse(callbackId: number, args?: LSPAny) {
+        return;
     }
 }

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "noEmit": true,
     "outDir": "./build",
     "allowJs": true,
     "target": "esnext",
@@ -7,7 +8,9 @@
     "sourceMap": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true
   },
   "exclude": [
     "node_modules"

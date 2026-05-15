@@ -1,5 +1,5 @@
 import * as lua from "luaparse";
-import init, {Config, format} from "@wasm-fmt/lua_fmt";
+import init, {Config, format} from "@wasm-fmt/lua_fmt/lua_fmt_web";
 
 import {BaseService} from "ace-linters/src/services/base-service";
 
@@ -88,7 +88,7 @@ export class AceLuaLinter extends BaseService<AceLuaLinterOptions> implements La
         const text = fullDocument.getText(range);
 
         try {
-            const output = format(text, document.uri, this.getFormattingOptions(options));
+            const output = format(text, this.getFormattingOptions(options));
             return Promise.resolve(toTextEdits(output, range));
         } catch (e) {
             console.log(e);

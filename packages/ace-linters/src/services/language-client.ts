@@ -13,7 +13,6 @@ import {
 } from "../types/language-service";
 import {BaseService} from "./base-service";
 import {MessageType} from "../message-types";
-import {URI} from "vscode-uri";
 import {WorkspaceFolder} from "vscode-languageserver-protocol";
 
 export class LanguageClient extends BaseService implements LanguageService {
@@ -61,7 +60,7 @@ export class LanguageClient extends BaseService implements LanguageService {
     private $connectSocket(initializationOptions) {
         rpc.listen({
             webSocket: this.socket,
-            onConnection: (connection: rpc.MessageConnection) => {
+            onConnection: (connection) => {
                 this.$initConnection(connection, initializationOptions);
             },
         });
@@ -114,8 +113,18 @@ export class LanguageClient extends BaseService implements LanguageService {
             console.log(params);
         });
 
-        this.connection.onRequest('client/registerCapability', (params) => {
-            console.log(params);
+        this.connection.onRequest('client/registerCapability', (params: lsp.RegistrationParams) => {
+            params.registrations.forEach(registration => {
+                this.registerCapability(registration);
+            });
+            return null;
+        });
+
+        this.connection.onRequest('client/unregisterCapability', (params: lsp.UnregistrationParams) => {
+            params.unregisterations.forEach(unregistration => {
+                this.unregisterCapability(unregistration);
+            });
+            return null;
         });
 
         this.connection.onRequest('workspace/applyEdit', async (params: lsp.ApplyWorkspaceEditParams) => {
@@ -138,6 +147,19 @@ export class LanguageClient extends BaseService implements LanguageService {
             });
         });
 
+        this.connection.onRequest('window/showDocument', (params: lsp.ShowDocumentParams) => {
+            return new Promise((resolve, reject) => {
+                const callbackId = this.callbackId++;
+                this.callbacks[callbackId] = (result) => {
+                    resolve(result);
+                };
+                let postMessage = {
+                    "type": MessageType.showDocument, "serviceName": this.serviceName, ...params
+                };
+                this.ctx.postMessage(postMessage);
+            });
+        });
+
         this.connection.onError((e) => {
             throw e;
         });
@@ -152,12 +174,19 @@ export class LanguageClient extends BaseService implements LanguageService {
         await this.dispose();
         this.$connect();
     }
-    
+
     sendAppliedResult(result: lsp.ApplyWorkspaceEditResult, callbackId: number) {
-       if (!this.isConnected || !this.callbacks[callbackId]) {
-           return;
-       }
-       this.callbacks[callbackId](result);
+        if (!this.isConnected || !this.callbacks[callbackId]) {
+            return;
+        }
+        this.callbacks[callbackId](result);
+    }
+
+    sendResponse(callbackId: number, args?: lsp.LSPAny) {
+        if (!this.isConnected || !this.callbacks[callbackId]) {
+            return;
+        }
+        this.callbacks[callbackId](args);
     }
 
     showLog(params: lsp.ShowMessageParams) {
@@ -186,6 +215,10 @@ export class LanguageClient extends BaseService implements LanguageService {
     }
 
     addDocument(document: lsp.TextDocumentItem) {//TODO: this need to be async to avoid race condition
+        if (this.getDocument(document.uri)) {
+            console.warn(document.uri + ' already exists');
+            return;
+        }
         super.addDocument(document);
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
             textDocument: document
@@ -218,12 +251,36 @@ export class LanguageClient extends BaseService implements LanguageService {
     async closeConnection() {
         if (!this.connection)
             return;
-        await this.dispose();
-        await this.connection.sendRequest("shutdown");
-        await this.connection.sendNotification('exit');
-        if (this.socket)
-            this.socket.close();
-        this.isConnected = false;
+
+        try {
+            Object.values(this.callbacks).forEach(callback => {
+                if (typeof callback === 'function') {
+                    callback({ error: 'Connection closed' });
+                }
+            });
+            this.callbacks = {};
+
+            if (this.isConnected) {
+                await this.connection.sendRequest("shutdown");
+                await this.connection.sendNotification('exit');
+            }
+
+            await this.dispose();
+
+            if (this.socket &&
+                (this.socket.readyState === WebSocket.OPEN ||
+                 this.socket.readyState === WebSocket.CONNECTING)) {
+                this.socket.close();
+            }
+
+            this.isConnected = false;
+        } catch (error) {
+            console.error('Error closing connection:', error);
+            this.isConnected = false;
+            if (this.socket && this.socket.readyState !== WebSocket.CLOSED) {
+                this.socket.close();
+            }
+        }
     }
 
     sendInitialize(initializationOptions) {
@@ -253,7 +310,7 @@ export class LanguageClient extends BaseService implements LanguageService {
                 };
                 this.ctx.postMessage(postMessage);
             });
-            
+
 
             this.connection.sendNotification('initialized', {}).then(() => {
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
@@ -338,6 +395,28 @@ export class LanguageClient extends BaseService implements LanguageService {
         return this.connection.sendRequest('textDocument/completion', options) as Promise<lsp.CompletionList | lsp.CompletionItem[] | null>;
     }
 
+    async doInlineComplete(document: lsp.VersionedTextDocumentIdentifier, position: lsp.Position) {
+        if (!this.isInitialized) {
+            return null;
+        }
+        if (!this.serviceCapabilities?.inlineCompletionProvider) {
+            return null;
+        }
+
+        let options: lsp.InlineCompletionParams = {
+            textDocument: {
+                uri: document.uri,
+                // @ts-ignore
+                version: document.version,
+            },
+            position: position,
+            context: {
+                triggerKind: 1,
+            }
+        };
+        return this.connection.sendRequest('textDocument/inlineCompletion', options) as Promise<lsp.InlineCompletionList | lsp.InlineCompletionItem[] | null>;
+    }
+
     async doResolve(item: lsp.CompletionItem) {
         if (!this.isInitialized)
             return null;
@@ -390,20 +469,23 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     setWorkspace(workspaceUri: string) {
         super.setWorkspace(workspaceUri);
-        if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) {
-            return this.$reconnect();
-        }
-        const message: lsp.WorkspaceFoldersChangeEvent = {
-            added: [this.workspaceFolder],
-            removed: []
-        };
-        return this.connection.sendRequest('workspace/didChangeWorkspaceFolders', message);
+        this.enqueueIfNotConnected(() => {
+            if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) {
+                return this.$reconnect();
+            }
+            const message: lsp.WorkspaceFoldersChangeEvent = {
+                added: [this.workspaceFolder],
+                removed: []
+            };
+
+            return this.connection.sendRequest('workspace/didChangeWorkspaceFolders', message);
+        });
     }
 
     get workspaceFolder(): WorkspaceFolder {
         let workspaceUri = this.workspaceUri!;
         return {
-            uri: URI.file(workspaceUri).toString(),
+            uri: workspaceUri,
             name: workspaceUri.split("/").pop()!,
         }
     }
@@ -457,7 +539,7 @@ export class LanguageClient extends BaseService implements LanguageService {
             };
             return this.connection.sendRequest('textDocument/semanticTokens/range', options) as Promise<lsp.SemanticTokens | null>
         }
-        
+
     }
 
     async getCodeActions(document: lsp.TextDocumentIdentifier, range: lsp.Range, context: lsp.CodeActionContext) {
@@ -474,7 +556,7 @@ export class LanguageClient extends BaseService implements LanguageService {
         };
         return this.connection.sendRequest('textDocument/codeAction', options) as Promise<(lsp.Command | lsp.CodeAction)[] | null>
     }
-    
+
     executeCommand(command: string, args?: lsp.LSPAny[]) {
         if (!this.isInitialized)
             return Promise.resolve(null);
@@ -486,5 +568,169 @@ export class LanguageClient extends BaseService implements LanguageService {
         };
         return this.connection.sendRequest('workspace/executeCommand', options) as Promise<any>
     }
-    
+
+    /**
+     * Send a custom request to the server.
+     * @param name
+     * @param args
+     */
+    sendRequest(name: string, args?: lsp.LSPAny) {
+        if (args === undefined || args === null) {
+            return this.connection.sendRequest(name);
+        }
+        return this.connection.sendRequest(name, args);
+    }
+
+    private registerCapability(registration: lsp.Registration) {
+        if (!this.serviceCapabilities) {
+            this.serviceCapabilities = {};
+        }
+
+        switch (registration.method) {
+            case 'textDocument/diagnostic':
+                if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) {
+                    this.serviceCapabilities.diagnosticProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/hover':
+                if (this.clientCapabilities.textDocument?.hover?.dynamicRegistration) {
+                    this.serviceCapabilities.hoverProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/formatting':
+            case 'textDocument/rangeFormatting':
+                if (this.clientCapabilities.textDocument?.formatting?.dynamicRegistration) {
+                    if (registration.method === 'textDocument/formatting') {
+                        this.serviceCapabilities.documentFormattingProvider = registration.registerOptions || true;
+                    } else {
+                        this.serviceCapabilities.documentRangeFormattingProvider = registration.registerOptions || true;
+                    }
+                }
+                break;
+            case 'textDocument/completion':
+                if (this.clientCapabilities.textDocument?.completion?.dynamicRegistration) {
+                    this.serviceCapabilities.completionProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/signatureHelp':
+                if (this.clientCapabilities.textDocument?.signatureHelp?.dynamicRegistration) {
+                    this.serviceCapabilities.signatureHelpProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/documentHighlight':
+                if (this.clientCapabilities.textDocument?.documentHighlight?.dynamicRegistration) {
+                    this.serviceCapabilities.documentHighlightProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/semanticTokens/full':
+            case 'textDocument/semanticTokens/range':
+                if (this.clientCapabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+                    this.serviceCapabilities.semanticTokensProvider = registration.registerOptions;
+                }
+                break;
+            case 'textDocument/codeAction':
+                if (this.clientCapabilities.textDocument?.codeAction?.dynamicRegistration) {
+                    this.serviceCapabilities.codeActionProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'textDocument/inlineCompletion':
+                if (this.clientCapabilities.textDocument?.inlineCompletion?.dynamicRegistration) {
+                    this.serviceCapabilities.inlineCompletionProvider = registration.registerOptions || true;
+                }
+                break;
+            case 'workspace/executeCommand':
+                if (this.clientCapabilities.workspace?.executeCommand?.dynamicRegistration) {
+                    this.serviceCapabilities.executeCommandProvider = registration.registerOptions;
+                }
+                break;
+            default:
+                console.warn(`Unhandled dynamic capability registration: ${registration.method}`);
+        }
+
+        this.notifyCapabilitiesChanged();
+    }
+
+    private unregisterCapability(unregistration: lsp.Unregistration) {
+        if (!this.serviceCapabilities) {
+            return;
+        }
+
+        switch (unregistration.method) {
+            case 'textDocument/diagnostic':
+                if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) {
+                    delete this.serviceCapabilities.diagnosticProvider;
+                }
+                break;
+            case 'textDocument/hover':
+                if (this.clientCapabilities.textDocument?.hover?.dynamicRegistration) {
+                    delete this.serviceCapabilities.hoverProvider;
+                }
+                break;
+            case 'textDocument/formatting':
+                if (this.clientCapabilities.textDocument?.formatting?.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentFormattingProvider;
+                }
+                break;
+            case 'textDocument/rangeFormatting':
+                if (this.clientCapabilities.textDocument?.formatting?.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentRangeFormattingProvider;
+                }
+                break;
+            case 'textDocument/completion':
+                if (this.clientCapabilities.textDocument?.completion?.dynamicRegistration) {
+                    delete this.serviceCapabilities.completionProvider;
+                }
+                break;
+            case 'textDocument/signatureHelp':
+                if (this.clientCapabilities.textDocument?.signatureHelp?.dynamicRegistration) {
+                    delete this.serviceCapabilities.signatureHelpProvider;
+                }
+                break;
+            case 'textDocument/documentHighlight':
+                if (this.clientCapabilities.textDocument?.documentHighlight?.dynamicRegistration) {
+                    delete this.serviceCapabilities.documentHighlightProvider;
+                }
+                break;
+            case 'textDocument/semanticTokens/full':
+            case 'textDocument/semanticTokens/range':
+                if (this.clientCapabilities.textDocument?.semanticTokens?.dynamicRegistration) {
+                    delete this.serviceCapabilities.semanticTokensProvider;
+                }
+                break;
+            case 'textDocument/codeAction':
+                if (this.clientCapabilities.textDocument?.codeAction?.dynamicRegistration) {
+                    delete this.serviceCapabilities.codeActionProvider;
+                }
+                break;
+            case 'textDocument/inlineCompletion':
+                if (this.clientCapabilities.textDocument?.inlineCompletion?.dynamicRegistration) {
+                    delete this.serviceCapabilities.inlineCompletionProvider;
+                }
+                break;
+            case 'workspace/executeCommand':
+                if (this.clientCapabilities.workspace?.executeCommand?.dynamicRegistration) {
+                    delete this.serviceCapabilities.executeCommandProvider;
+                }
+                break;
+            default:
+                console.warn(`Unhandled dynamic capability unregistration: ${unregistration.method}`);
+        }
+
+        this.notifyCapabilitiesChanged();
+    }
+
+    private notifyCapabilitiesChanged() {
+        const serviceName = this.serviceName;
+        Object.keys(this.documents).forEach((documentUri) => {
+            const postMessage = {
+                "type": MessageType.capabilitiesChange,
+                "value": {
+                    [serviceName]: this.serviceCapabilities
+                },
+                documentUri: documentUri
+            };
+            this.ctx.postMessage(postMessage);
+        });
+    }
+
 }

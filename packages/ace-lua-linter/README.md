@@ -1,6 +1,6 @@
 # Ace Lua Linter
 
-Ace Lua Linter is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for lua. 
+Ace Lua Linter is an extension for the Ace Linters suite, providing Language Server Protocol (LSP) support for lua.
 It integrates seamlessly with Ace Linters, enhancing your Ace editor with linting and analysis capabilities based on the LSP standard.
 
 ## Key Features
@@ -24,6 +24,8 @@ npm install ace-lua-linter
 
    ```javascript
    import { ServiceManager } from "ace-linters/build/service-manager";
+   
+   const manager = new ServiceManager(self);
 
    manager.registerService("ace-lua-linter", {
        module: () => import("ace-lua-linter/build/ace-lua-linter"),
@@ -83,5 +85,5 @@ This linter supports the following features:
 
 ## License
 
-Ace linters is released under the [MIT License](https://opensource.org/licenses/MIT).
+Ace Lua Linter is released under the [MIT License](https://opensource.org/licenses/MIT).
 

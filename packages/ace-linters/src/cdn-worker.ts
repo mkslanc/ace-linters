@@ -14,7 +14,8 @@ function createWorkerBlob(cdnUrl: string, services: ServiceStruct[]) {
                     return {${service.className}};
                 },
                 className: "${service.className}",
-                modes: "${service.modes}"
+                modes: "${service.modes}",
+                cdnUrl: "${service.cdnUrl ?? cdnUrl}"
             });
         `).join('\n')}
     `], {type: "application/javascript"});
@@ -62,7 +63,7 @@ export function getServices(includeLinters?: IncludeLinters): ServiceStruct[] {
             name: "json",
             script: "json-service.js",
             className: "JsonService",
-            modes: "json|json5",
+            modes: "json",
         },
         {
             name: "html",

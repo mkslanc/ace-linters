@@ -31,7 +31,7 @@ export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDia
         }
         return {
             message: code + " " + el.message,
-            range: toRange(el.location, el.end_location),
+            range: toRange(el.start_location, el.end_location),
             severity: severity,
         }
     });

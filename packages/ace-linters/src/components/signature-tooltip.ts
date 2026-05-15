@@ -2,29 +2,66 @@ import {Ace} from "ace-code";
 import {BaseTooltip} from "./base-tooltip";
 
 export class SignatureTooltip extends BaseTooltip {
-    
-    registerEditor(editor: Ace.Editor) {
-        editor.on("changeSelection", () => this.onChangeSelection(editor));
-    }
-    
-    update(editor: Ace.Editor) {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (this.isOpen) {
-            this.provideSignatureHelp();
-        } else {
-            this.$mouseMoveTimer = setTimeout(() => {
-                this.$activateEditor(editor);
-                this.provideSignatureHelp();
-                this.$mouseMoveTimer = undefined;
-            }, 500);
+    editorHandlers: Map<Ace.Editor, () => void> = new Map();
+    escCommand = {
+        exec: this.$hide,
+        bindKey: "Esc"
+    };
 
+    registerEditor(editor: Ace.Editor) {
+        const handler = () => this.onChangeSelection(editor);
+        this.editorHandlers.set(editor, handler);
+        editor.on("changeSelection", handler);
+
+        editor.commands.addCommand(this.escCommand);
+    }
+
+    unregisterEditor(editor: Ace.Editor) {
+        const handler = this.editorHandlers.get(editor);
+        if (handler) {
+            editor.off("changeSelection", handler);
+            this.editorHandlers.delete(editor);
+        }
+        // Clean up if this was the active editor
+        if (this.$activeEditor === editor) {
+            this.$inactivateEditor();
+        }
+
+        editor.commands.removeCommand(this.escCommand);
+    }
+
+    onChangeSelection = (editor: Ace.Editor) => {
+        if (!this.provider.options.functionality!.signatureHelp)
+            return;
+
+        this.$activateEditor(editor);
+        if (this.isOpen) {
+            setTimeout(this.provideSignatureHelp, 0);
+        } else {
+            this.lastT = Date.now();
+            this.timeout = setTimeout(this.waitForSignature, this.idleTime);
         }
     };
 
-    provideSignatureHelp = () => {
-        if (!this.provider.options.functionality!.signatureHelp)
+    waitForSignature = () => {
+        if (this.timeout) clearTimeout(this.timeout);
+        var dt = Date.now() - this.lastT;
+        if (this.idleTime - dt > 10) {
+            this.timeout = setTimeout(this.waitForSignature, this.idleTime - dt);
             return;
+        }
+
+        this.timeout = undefined;
+        this.provideSignatureHelp();
+    }
+
+
+    provideSignatureHelp = () => {
+        if (!this.$activeEditor) {
+            // Editor was deactivated before this callback
+            return;
+        }
+
         let cursor = this.$activeEditor!.getCursorPosition();
         let session = this.$activeEditor!.session;
         let docPos = session.screenToDocumentPosition(cursor.row, cursor.column);
@@ -51,20 +88,29 @@ export class SignatureTooltip extends BaseTooltip {
 
             this.row = row;
             this.column = column;
-
-            if (this.$mouseMoveTimer) {
-                this.$show();
-            } else {
-                this.$showTimer = setTimeout(() => {
-                    this.$show();
-                    this.$showTimer = undefined;
-                }, 500);
-            }
+            this.$show();
         });
     }
-    
 
-    onChangeSelection = (editor: Ace.Editor) => {
-        this.update(editor);
-    };
+    $onAfterRender = (e) => {
+        if (!this.isOpen) return;
+        setTimeout(() => {
+            if (!this.$activeEditor?.isRowVisible(this.row)) {
+                this.$hide();
+            } else {
+                this.$show();
+            }
+        }, 0);
+
+    }
+
+    $registerEditorEvents() {
+        this.$activeEditor!.renderer.on("afterRender", this.$onAfterRender);
+        this.$activeEditor!.on("blur", this.$hide);
+    }
+
+    $removeEditorEvents() {
+        this.$activeEditor!.renderer.off("afterRender", this.$onAfterRender);
+        this.$activeEditor!.off("blur", this.$hide);
+    }
 }

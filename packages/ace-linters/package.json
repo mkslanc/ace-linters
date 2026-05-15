@@ -1,43 +1,43 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "1.4.0",
+  "version": "2.1.4",
   "scripts": {
     "clean": "rimraf build",
-    "prebuild": "node prebuild.js",
+    "postbuild": "node postbuild.js",
     "build:yaml-language-server": "cd ../yaml-language-server-esbuild && npm run build",
     "build:eslint-linter-bundle": "cd ../eslint-linter-bundle && npm run build",
     "build:dependencies": "npm run build:yaml-language-server && npm run build:eslint-linter-bundle",
-    "build": "npm run clean && npm run build:dependencies && webpack --mode=production",
-    "build-dev": "npm run clean && npm run build:dependencies && webpack --mode=development",
-
-    "build-test": "npm run build && webpack --name=test",
-    "start-test-server": "npm run build-test && http-server --cors='*' tests/ui/dist",
-    "test:unit": "mocha --config mocha.unit.config.js --exit",
-    "test:ui": "mocha --config mocha.ui.config.js --exit",
-    "test": "npm run test:unit && npm run test:ui",
+    "build": "npm run build:dependencies && node build.mjs",
+    "build-dev": "npm run build:dependencies && node build.mjs --dev",
+    "test:unit": "mocha --exit",
+    "test": "npm run test:unit",
     "test:coverage": "nyc npm run test",
     "start-server": "http-server build --cors=\"*\"",
     "generate-typescript-service": "node tools/generate-typescript-service.js"
   },
   "dependencies": {
-    "vscode-html-languageservice": "^5.0.6",
-    "vscode-css-languageservice": "^6.2.6",
-    "vscode-json-languageservice": "^5.4.1",
     "vscode-languageserver-protocol": "^3.17.5",
     "vscode-languageserver-textdocument": "^1.0.12",
-    "vscode-languageserver-types": "^3.17.5",
-    "showdown": "latest",
-    "luaparse": "latest",
-    "vscode-ws-jsonrpc": "^2.0.1",
-    "htmlhint": "^1.1.4",
+    "vscode-languageserver-types": "^3.17.5"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0",
+    "vite-plugin-node-polyfills": "^0.25.0",
+    "rimraf": "^5.0.0",
+    "vscode-html-languageservice": "^5.4.0",
+    "vscode-css-languageservice": "^6.3.10",
+    "vscode-json-languageservice": "^5.7.2",
+    "luaparse": "^0.3.1",
+    "marked": "^18.0.0",
+    "dompurify": "^3.3.3",
+    "vscode-ws-jsonrpc": "^3.4.0",
+    "htmlhint": "^1.9.2",
     "@xml-tools/constraints": "^1.1.1",
     "@xml-tools/parser": "^1.0.11",
     "@xml-tools/ast": "^5.0.5",
     "@xml-tools/simple-schema": "^3.0.5",
-    "vscode-uri": "^3.0.8"
-  },
-  "devDependencies": {
+    "vscode-uri": "^3.1.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/mocha": "^5.2.7",
     "@types/chai": "^4.3.4",
@@ -46,55 +46,16 @@
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ts-node": "^10.9.1",
-    "puppeteer": "^23.4.0",
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "dts-bundle-generator": "^9.5.1",
+    "ace-code": "^1.39.0",
+    "ace-builds": "^1.39.0",
+    "php-parser": "^3.4.0"
   },
   "main": "build/ace-linters.js",
-  "types": "types/index.d.ts",
-  "files": ["build", "types"],
-  "typesVersions": {
-    "*": {
-      "build/ace-language-client": [
-        "./types/ace-language-client.d.ts"
-      ],
-      "build/service-manager": [
-        "./types/services/service-manager.d.ts"
-      ],
-      "build/html-service": [
-        "./types/services/html/html-service.d.ts"
-      ],
-      "build/css-service": [
-        "./types/services/css/css-service.d.ts"
-      ],
-      "build/json-service": [
-        "./types/services/json/json-service.d.ts"
-      ],
-      "build/lua-service": [
-        "./types/services/lua/lua-service.d.ts"
-      ],
-      "build/typescript-service": [
-        "./types/services/typescript/typescript-service.d.ts"
-      ],
-      "build/xml-service": [
-        "./types/services/xml/xml-service.d.ts"
-      ],
-      "build/php-service": [
-        "./types/services/php/php-service.d.ts"
-      ],
-      "build/javascript-service": [
-        "./types/services/javascript/javascript-service.d.ts"
-      ],
-      "build/yaml-service": [
-        "./types/services/yaml/yaml-service.d.ts"
-      ],
-      "build/base-service": [
-        "./types/services/base-service.d.ts"
-      ],
-      "build/language-client": [
-        "./types/services/language-client.d.ts"
-      ]
-    }
-  },
+  "files": [
+    "build"
+  ],
   "repository": {
     "url": "https://github.com/mkslanc/ace-linters"
   },

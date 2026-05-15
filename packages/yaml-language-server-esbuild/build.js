@@ -21,9 +21,6 @@ await build({
                 onResolve({filter: /\/schemaSelectionHandlers$/}, () => ({
                     path: fileURLToPath(new URL('src/fillers/schemaSelectionHandlers.js', import.meta.url))
                 }));
-                onResolve({filter: /^ajv$/}, () => ({
-                    path: fileURLToPath(new URL('src/fillers/ajv.js', import.meta.url))
-                }));
                 onResolve({filter: /^path$/}, () => ({
                     path: fileURLToPath(new URL('../../node_modules/path-browserify/index.js', import.meta.url)),
                     external: false,

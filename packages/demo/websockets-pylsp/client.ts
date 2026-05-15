@@ -1,38 +1,20 @@
 import "ace-code/esm-resolver";
-import {AceLanguageClient} from "ace-linters/build/ace-language-client";
+import {AceLanguageClient, LanguageClientConfig} from "ace-linters/build/ace-language-client";
 import {addFormatCommand, createEditorWithLSP} from "../utils";
-import {pythonContent} from "../docs-example/python-example";
-import {LanguageClientConfig} from "ace-linters/types/types/language-service";
-
+import {typescriptContent} from "../docs-example/typescript-example";
 
 let modes = [
-    {name: "python", mode: "ace/mode/python", content: pythonContent},
+    {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent},
 ]
 const serverData: LanguageClientConfig = {
     module: () => import("ace-linters/build/language-client"),
-    modes: "python",
+    modes: "typescript",
     type: "socket",
-    socket: new WebSocket("ws://localhost:3000"),
+    socket: new WebSocket("ws://localhost:3000/typescript"),
 }
 
 let languageProvider = AceLanguageClient.for(serverData);
 languageProvider.setGlobalOptions("", {
-    "pylsp": {
-        "configurationSources": [
-            "pycodestyle"
-        ],
-        "plugins": {
-            "pycodestyle": {
-                enabled: true,
-                ignore: ["E501"],
-                maxLineLength: 10
-            },
-            "pyflakes": {
-                enabled: false
-            }
-        },
-
-    },
     initializationOptions: {
         configuration: {
             svelte: {
@@ -45,8 +27,9 @@ languageProvider.setGlobalOptions("", {
 });
 let i = 0;
 for (let mode of modes) {
+  // @ts-expect-error
     createEditorWithLSP(mode, i, languageProvider);
     i++;
 }
-
+// @ts-expect-error
 addFormatCommand(languageProvider);

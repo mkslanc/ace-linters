@@ -1,6 +1,7 @@
 import {LanguageProvider} from "../language-provider";
 import type {Ace} from "ace-code";
 import {Tooltip} from "../ace/tooltip";
+import {popupManager} from "../ace/popupManager";
 
 export class BaseTooltip extends Tooltip {
     provider: LanguageProvider;
@@ -9,8 +10,11 @@ export class BaseTooltip extends Tooltip {
     x: number;
     y: number;
 
-    $mouseMoveTimer?: NodeJS.Timeout;
-    $showTimer?: NodeJS.Timeout;
+    timeout?: NodeJS.Timeout | null;
+    idleTime: number;
+    lastT: number;
+    lastEvent: any;
+
     row: number;
     column: number;
 
@@ -21,55 +25,64 @@ export class BaseTooltip extends Tooltip {
         try {
             Tooltip.call(this, document.body);
         } catch (e) {
-            
         }
-            
-        this.getElement().style.pointerEvents = "auto";
-        this.getElement().style.whiteSpace = "pre-wrap";
-        this.getElement().addEventListener("mouseout", this.onMouseOut);
+
+        this.timeout = undefined;
+        this.lastT = 0;
+        this.idleTime = 500;
+
+        var el = this.getElement();
+        el.style.whiteSpace = "pre-wrap";
+        el.style.pointerEvents = "auto";
     }
     
-    $show() {
+    $show = () => {
         if (!this.$activeEditor)
             return;
-        let renderer = this.$activeEditor.renderer;
+        let editor = this.$activeEditor;
+        var MARGIN = 10;
+        var renderer = editor.renderer;
+        if (!this.isOpen) {
+            this.$registerEditorEvents();
+            this.setTheme(renderer.theme);
+            this.isOpen = true;
+        }
+
         let position = renderer.textToScreenCoordinates(this.row, this.column);
 
-        let cursorPos = this.$activeEditor.getCursorPosition();
+        var rect = renderer.scroller.getBoundingClientRect();
+        // clip position to visible area of the editor
+        if (position.pageX < rect.left)
+            position.pageX = rect.left;
 
-        this.show(null, position.pageX, position.pageY);
+        var element = this.getElement();
 
-        let labelHeight = this.getElement().getBoundingClientRect().height;
-        let rect = renderer.scroller.getBoundingClientRect();
+        element.style.maxHeight = "";
+        element.style.display = "block";
 
-        let isTopdown = true;
-        if (this.row > cursorPos.row)
-            // don't obscure cursor
-            isTopdown = true;
-        else if (this.row < cursorPos.row)
-            // don't obscure cursor
-            isTopdown = false;
-        if (position.pageY - labelHeight + renderer.lineHeight < rect.top)
-            // not enough space above us
-            isTopdown = true;
-        else if (position.pageY + labelHeight > rect.bottom)
-            isTopdown = false;
+        // measure the size of tooltip, without constraints on its height
+        var labelHeight = element.clientHeight;
+        var labelWidth = element.clientWidth;
+        var spaceBelow = window.innerHeight - position.pageY - renderer.lineHeight;
 
-        if (!isTopdown)
-            position.pageY -= labelHeight;
-        else
-            position.pageY += renderer.lineHeight;
-        
-        this.getElement().style.maxWidth = rect.width - (position.pageX - rect.left) + "px";
-        this.show(null, position.pageX, position.pageY);
-    }
-    
-    getElement() {
-        return super.getElement();
+        // if tooltip fits above the line, or space below the line is smaller, show tooltip above
+        let isAbove = true;
+        if (position.pageY - labelHeight < 0 && position.pageY < spaceBelow) {
+            isAbove = false;
+        }
+
+        element.style.maxHeight = (isAbove ? position.pageY : spaceBelow) - MARGIN + "px";
+        element.style.top = isAbove ? "" : position.pageY + renderer.lineHeight + "px";
+        element.style.bottom = isAbove ?  window.innerHeight - position.pageY  + "px" : "";
+
+        // try to align tooltip left with the range, but keep it on screen
+        element.style.left = Math.min(position.pageX, window.innerWidth - labelWidth - MARGIN) + "px";
+        popupManager.addPopup(this);
     }
 
     hide() {
         super.hide();
+        popupManager.removePopup(this);
     }
 
     show(param, pageX: number, pageY: number) {
@@ -81,9 +94,24 @@ export class BaseTooltip extends Tooltip {
         super.setHtml(descriptionText);
     }
 
+    $inactivateEditor() {
+        this.$activeEditor = undefined;
+    }
+
+    $activateEditor(editor: Ace.Editor) {
+        if (this.$activeEditor == editor)
+            return;
+
+        this.$activeEditor = editor;
+    }
+
     $hide = () => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+        this.lastEvent = null;
+
         if (this.isOpen) {
             this.$removeEditorEvents();
             this.hide();
@@ -93,46 +121,11 @@ export class BaseTooltip extends Tooltip {
 
     destroy() {
         this.$hide();
-        this.getElement().removeEventListener("mouseout", this.onMouseOut);
     };
 
-    onMouseOut = (e: MouseEvent) => {
-        clearTimeout(this.$mouseMoveTimer);
-        clearTimeout(this.$showTimer);
-        if (!e.relatedTarget || e.relatedTarget == this.getElement())
-            return;
-
-        //@ts-ignore
-        if (e && e.currentTarget.contains(e.relatedTarget))
-            return;
-        //@ts-ignore
-        if (!e.relatedTarget.classList.contains("ace_content"))
-            this.$hide();
-    }
-
     $registerEditorEvents() {
-        this.$activeEditor!.on("change", this.$hide);
-        this.$activeEditor!.on("mousewheel", this.$hide);
-        this.$activeEditor!.on("mousedown", this.$hide);
     }
 
     $removeEditorEvents() {
-        this.$activeEditor!.off("change", this.$hide);
-        this.$activeEditor!.off("mousewheel", this.$hide);
-        this.$activeEditor!.off("mousedown", this.$hide);
-    }
-
-    $inactivateEditor() {
-        this.$activeEditor?.container.removeEventListener("mouseout", this.onMouseOut);
-        this.$activeEditor = undefined;
-    }
-
-    $activateEditor(editor: Ace.Editor) {
-        if (this.$activeEditor == editor)
-            return;
-
-        this.$inactivateEditor();
-        this.$activeEditor = editor;
-        this.$activeEditor.container.addEventListener("mouseout", this.onMouseOut);
     }
 }

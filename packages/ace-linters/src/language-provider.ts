@@ -1,35 +1,31 @@
 import {Ace} from "ace-code";
 import "./types/ace-extension";
 
-import {FormattingOptions} from "vscode-languageserver-protocol";
 import {CommonConverter} from "./type-converters/common-converters";
-import {ComboDocumentIdentifier, IMessageController} from "./types/message-controller-interface";
+import {IMessageController} from "./types/message-controller-interface";
 import {MessageController} from "./message-controller";
 import {
-    fromAceDelta, fromAnnotations, fromDocumentHighlights,
+    fromAnnotations,
     fromPoint,
     fromRange, fromSignatureHelp,
-    toAnnotations,
     toCompletionItem,
-    toCompletions, toMarkerGroupItem,
-    toRange, toResolvedCompletion,
+    toCompletions, toInlineCompletions,
+    toResolvedCompletion,
     toTooltip
 } from "./type-converters/lsp/lsp-converters";
 import * as lsp from "vscode-languageserver-protocol";
 
-import showdown from "showdown";
 import {createWorker} from "./cdn-worker";
 import {SignatureTooltip} from "./components/signature-tooltip";
 import {
-    AceRangeData, CodeActionsByService,
+    CodeActionsByService,
     ProviderOptions,
     ServiceFeatures,
     ServiceOptions,
-    ServiceOptionsMap, ServiceStruct,
+    ServiceOptionsMap, ServiceStruct, SessionLspConfig,
     SupportedServices,
     Tooltip
 } from "./types/language-service";
-import {MarkerGroup} from "./ace/marker_group";
 import {AceRange} from "./ace/range-singleton";
 import {HoverTooltip} from "./ace/hover-tooltip";
 import {
@@ -42,9 +38,16 @@ import {AceVirtualRenderer} from "./ace/renderer-singleton";
 import {AceEditor} from "./ace/editor-singleton";
 import {setStyles} from "./misc/styles";
 import {convertToUri} from "./utils";
+import {createInlineCompleterAdapter} from "./ace/inline_autocomplete";
+import {SessionLanguageProvider} from "./session-language-provider";
+import {popupManager} from "./ace/popupManager";
+import {extractDiagnosticQuickFixesAtPosition} from "./components/hover/hover-quick-fixes";
+import {resolveHoverModel} from "./components/hover/hover-data-resolver";
+import {createHoverViewNode} from "./components/hover/hover-view";
+import {defaultMarkdownConverter} from "./components/markdownConverter";
 
 export class LanguageProvider {
-    activeEditor: Ace.Editor;
+    activeEditor: Ace.Editor | null;
     private readonly $messageController: IMessageController;
     private $signatureTooltip: SignatureTooltip;
     $sessionLanguageProviders: { [sessionID: string]: SessionLanguageProvider } = {};
@@ -53,9 +56,27 @@ export class LanguageProvider {
     private $hoverTooltip: HoverTooltip;
     $urisToSessionsIds: { [uri: string]: string } = {};
     workspaceUri: string;
-    requireFilePath: boolean = false;
     private $lightBulbWidgets: { [editorId: string]: LightbulbWidget } = {};
     private stylesEmbedded: boolean;
+    private inlineCompleter?: any;
+    private doLiveAutocomplete: (e) => void;
+    private completerAdapter?: {
+        InlineCompleter: any;
+        doLiveAutocomplete: (e) => void;
+        validateAceInlineCompleterWithEditor: (editor: Ace.Editor) => void;
+    };
+    private $editorEventHandlers: { [editorId: string]: {
+        changeSession?: (e: any) => void;
+        focus?: () => void;
+        changeSelectionForHighlights?: () => void;
+        changeSelectionForCodeActions?: () => void;
+        afterExec?: (e: any) => void;
+    } } = {};
+    private $editorOriginalState: { [editorId: string]: {
+        completers?: Ace.Completer[];
+        inlineCompleters?: Ace.Completer[];
+        inlineAutocompleteCommand?: any;
+    } } = {};
 
     private constructor(worker: Worker, options?: ProviderOptions) {
         this.$messageController = new MessageController(worker, this);
@@ -64,7 +85,7 @@ export class LanguageProvider {
     }
 
     /**
-     *  Creates LanguageProvider using our transport protocol with ability to register different services on same
+     *  Creates LanguageProvider using our transport protocol with the ability to register different services on the same
      *  webworker
      * @param {Worker} worker
      * @param {ProviderOptions} options
@@ -121,6 +142,7 @@ export class LanguageProvider {
             signatureHelp: true,
             semanticTokens: false, //experimental functionality
             codeActions: true,
+            inlineCompletion: false,
             showUnusedDeclarations: true
         };
 
@@ -136,23 +158,71 @@ export class LanguageProvider {
             }
         });
 
-        this.options.markdownConverter ||= new showdown.Converter();
-        this.requireFilePath = this.options.requireFilePath ?? false;
+        this.options.markdownConverter ||= defaultMarkdownConverter;
         if (options?.workspacePath) {
             this.workspaceUri = convertToUri(options.workspacePath);
+        }
+        if (this.options.functionality.inlineCompletion) {
+            this.checkInlineCompletionAdapter(() => {
+                if (!this.options.aceComponents?.InlineAutocomplete || !this.options.aceComponents?.CommandBarTooltip || !this.options.aceComponents?.CompletionProvider) {
+                    throw new Error("Inline completion requires the InlineAutocomplete, CompletionProvider and CommandBarTooltip to be" +
+                        " defined");
+                }
+                this.completerAdapter = createInlineCompleterAdapter(this.options.aceComponents.InlineAutocomplete, this.options.aceComponents.CommandBarTooltip, this.options.aceComponents.CompletionProvider);
+            });
+        }
+    }
+
+    private checkInlineCompletionAdapter(method: () => void) {
+        try {
+            method();
+        } catch (e) {
+            console.error(`Inline completion disabled: Incompatible Ace implementation: ${e.message}`);
+            if (this.options?.functionality) {
+                this.options.functionality.inlineCompletion = false;
+            }
         }
     }
 
     /**
-     * @param session
-     * @param filePath - The full file path associated with the editor.
+     * Sets the file path for the given Ace edit session. Optionally allows the file path to
+     * be joined with the workspace URI.
+     *
+     * @param session The Ace edit session to update with the file path.
+     * @param config config to set
      */
-    setSessionFilePath(session: Ace.EditSession, filePath: string) {
-        this.$getSessionLanguageProvider(session)?.setFilePath(filePath);
+    setSessionFilePath(session: Ace.EditSession, config: SessionLspConfig) {
+        this.$getSessionLanguageProvider(session)?.setFilePath(config.filePath, config.joinWorkspaceURI);
     }
 
-    private $registerSession = (session: Ace.EditSession, editor: Ace.Editor) => {
-        this.$sessionLanguageProviders[session["id"]] ??= new SessionLanguageProvider(this, session, editor, this.$messageController);
+    /**
+     * Registers a new editing session with the editor and associates it with a language provider.
+     * If a language provider for the specified editing session does not already exist, it initializes
+     * and stores a new session-specific language provider.
+     *
+     * @param session - The Ace EditSession object to be registered, representing a specific editing session.
+     * @param editor - The Ace Editor instance associated with the editing session.
+     * @param [config] - An optional configuration object for initializing the session.
+     */
+    registerSession = (session: Ace.EditSession, editor: Ace.Editor, config?: SessionLspConfig) => {
+        if (!this.$sessionLanguageProviders[session["id"]]) {
+            this.$sessionLanguageProviders[session["id"]] = new SessionLanguageProvider(this, session, editor, this.$messageController, config);
+        }
+        if (config) {
+            this.$sessionLanguageProviders[session["id"]].setFilePath(config.filePath, config.joinWorkspaceURI);
+        }
+    }
+
+    /**
+     * Sets the Language Server Protocol (LSP) configuration for the given session.
+     *
+     * @param session - The editor session to which the LSP configuration will be applied.
+     * @param config - The LSP configuration to set for the session.
+     * @return The updated editor session with the applied LSP configuration.
+     */
+    setSessionLspConfig(session: Ace.EditSession, config: SessionLspConfig) {
+        session.lspConfig = config;
+        return session;
     }
 
     private $getSessionLanguageProvider(session: Ace.EditSession): SessionLanguageProvider {
@@ -165,17 +235,40 @@ export class LanguageProvider {
     }
 
     /**
-     * Registers an Ace editor instance with the language provider.
-     * @param editor - The Ace editor instance to register.
+     * Registers an Ace editor instance along with the session's configuration settings.
+     *
+     * @param editor - The Ace editor instance to be registered.
+     * @param [config] - Configuration options for the session.
      */
-    registerEditor(editor: Ace.Editor) {
+    registerEditor(editor: Ace.Editor, config?: SessionLspConfig) {
         if (!this.editors.includes(editor))
             this.$registerEditor(editor);
-        this.$registerSession(editor.session, editor);
+        config = config ?? editor.session.lspConfig;
+        this.registerSession(editor.session, editor, config);
     }
+
+    /**
+     * Unregisters an Ace editor instance, removing all event listeners, completers, tooltips,
+     * and cleaning up associated resources. This is the counterpart to registerEditor.
+     *
+     * @param editor - The Ace editor instance to be unregistered.
+     * @param cleanupSession - Optional flag to also dispose the current session. When true,
+     *                         calls closeDocument on the editor's session, cleaning up all
+     *                         session-related resources. Default: false.
+     */
+    unregisterEditor(editor: Ace.Editor, cleanupSession: boolean = false) {
+        if (this.editors.includes(editor))
+            this.$unregisterEditor(editor, cleanupSession);
+    }
+
 
     codeActionCallback: (codeActions: CodeActionsByService[]) => void;
 
+    /**
+     * Sets a callback function that will be triggered with an array of code actions grouped by service.
+     *
+     * @param {function} callback - A function that receives an array of code actions, categorized by service, as its argument.
+     */
     setCodeActionCallback(callback: (codeActions: CodeActionsByService[]) => void) {
         this.codeActionCallback = callback;
     }
@@ -244,29 +337,44 @@ export class LanguageProvider {
         AceEditor.getConstructor(editor);
 
         editor.setOption("useWorker", false);
-        editor.on("changeSession", ({session}) => this.$registerSession(session, editor));
 
-        if (this.options.functionality!.completion) {
+        this.$editorEventHandlers[editor.id] = {};
+
+        if (!this.options.manualSessionControl) {
+            const changeSessionHandler = ({session}) => this.registerSession(session, editor, session.lspConfig);
+            this.$editorEventHandlers[editor.id].changeSession = changeSessionHandler;
+            editor.on("changeSession", changeSessionHandler);
+        }
+
+        if (this.options.functionality!.completion || this.options.functionality!.inlineCompletion) {
             this.$registerCompleters(editor);
         }
         this.activeEditor ??= editor;
-        editor.on("focus", () => {
+        const focusHandler = () => {
             this.activeEditor = editor;
-        });
+        };
+        this.$editorEventHandlers[editor.id].focus = focusHandler;
+        editor.on("focus", focusHandler);
 
         if (this.options.functionality!.documentHighlights) {
             var $timer
-            editor.on("changeSelection", () => {
+            const changeSelectionForHighlights = () => {
                 if (!$timer)
                     $timer =
                         setTimeout(() => {
-                            let cursor = editor.getCursorPosition();
                             let sessionLanguageProvider = this.$getSessionLanguageProvider(editor.session);
+                            if (!sessionLanguageProvider) {
+                                $timer = undefined;
+                                return;
+                            }
 
+                            let cursor = editor.getCursorPosition();
                             this.$messageController.findDocumentHighlights(this.$getFileName(editor.session), fromPoint(cursor), sessionLanguageProvider.$applyDocumentHighlight);
                             $timer = undefined;
                         }, 50);
-            });
+            };
+            this.$editorEventHandlers[editor.id].changeSelectionForHighlights = changeSelectionForHighlights;
+            editor.on("changeSelection", changeSelectionForHighlights);
         }
 
         if (this.options.functionality!.codeActions) {
@@ -285,6 +393,88 @@ export class LanguageProvider {
         }
 
         this.setStyles(editor);
+    }
+
+    $unregisterEditor(editor: Ace.Editor, cleanupSession: boolean = false) {
+        const editorIndex = this.editors.indexOf(editor);
+        if (editorIndex > -1) {
+            this.editors.splice(editorIndex, 1);
+        }
+
+        const handlers = this.$editorEventHandlers[editor.id];
+
+        if (handlers) {
+            if (handlers.changeSession) {
+                editor.off("changeSession", handlers.changeSession);
+            }
+
+            if (handlers.focus) {
+                editor.off("focus", handlers.focus);
+            }
+
+            if (handlers.changeSelectionForHighlights) {
+                editor.off("changeSelection", handlers.changeSelectionForHighlights);
+            }
+
+            if (handlers.changeSelectionForCodeActions) {
+                editor.off("changeSelection", handlers.changeSelectionForCodeActions);
+            }
+
+            if (handlers.afterExec) {
+                editor.commands.off('afterExec', handlers.afterExec);
+            }
+
+            delete this.$editorEventHandlers[editor.id];
+        }
+
+        const originalState = this.$editorOriginalState[editor.id];
+
+        if (originalState) {
+            if (this.options.functionality?.completion && originalState.completers !== undefined) {
+                editor.completers = originalState.completers;
+            }
+
+            if (this.options.functionality?.inlineCompletion && originalState.inlineCompleters !== undefined) {
+                editor.inlineCompleters = originalState.inlineCompleters;
+            }
+
+            if (this.options.functionality?.inlineCompletion) {
+                if (originalState.inlineAutocompleteCommand) {
+                    editor.commands.addCommand(originalState.inlineAutocompleteCommand);
+                } else {
+                    try {
+                        editor.commands.removeCommand("startInlineAutocomplete");
+                    } catch (e) {
+                    }
+                }
+            }
+
+            delete this.$editorOriginalState[editor.id];
+        }
+
+        if (this.options.functionality?.signatureHelp) {
+            this.$signatureTooltip.unregisterEditor(editor);
+        }
+        if (this.options.functionality?.hover && this.$hoverTooltip) {
+            this.$hoverTooltip.removeFromEditor(editor);
+        }
+        if (this.options.functionality?.codeActions) {
+            const lightBulb = this.$lightBulbWidgets[editor.id];
+            if (lightBulb) {
+                lightBulb.dispose();
+                delete this.$lightBulbWidgets[editor.id];
+            }
+        }
+
+        editor.setOption("useWorker", true);
+
+        if (this.activeEditor === editor) {
+            this.activeEditor = this.editors.length > 0 ? this.editors[0] : null;
+        }
+
+        if (cleanupSession && editor.session) {
+            this.closeDocument(editor.session);
+        }
     }
 
     private $provideCodeActions(editor: Ace.Editor) {
@@ -306,10 +496,15 @@ export class LanguageProvider {
         });
 
         var actionTimer
-        editor.on("changeSelection", () => {
+        const changeSelectionForCodeActions = () => {
             if (!actionTimer)
                 actionTimer =
                     setTimeout(() => {
+                        if (!this.$getSessionLanguageProvider(editor.session)) {
+                            actionTimer = undefined;
+                            return;
+                        }
+
                         //TODO: no need to send request on empty
                         let selection = editor.getSelection().getRange();
                         let cursor = editor.getCursorPosition();
@@ -320,7 +515,9 @@ export class LanguageProvider {
                         });
                         actionTimer = undefined;
                     }, 500);
-        });
+        };
+        this.$editorEventHandlers[editor.id].changeSelectionForCodeActions = changeSelectionForCodeActions;
+        editor.on("changeSelection", changeSelectionForCodeActions);
     }
 
     private $initHoverTooltip(editor) {
@@ -329,38 +526,43 @@ export class LanguageProvider {
         this.$hoverTooltip.setDataProvider((e, editor) => {
             const session = editor.session;
             const docPos = e.getDocumentPosition();
+            const annotations = (session.getAnnotations() || []) as (Ace.Annotation & { data?: unknown })[];
+            const quickFixes = this.options.functionality?.codeActions ? extractDiagnosticQuickFixesAtPosition(annotations, docPos) : [];
 
             this.doHover(session, docPos, (hover) => {
                 const errorMarkers = this.$getSessionLanguageProvider(session).state?.diagnosticMarkers?.getMarkersAtPosition(docPos) ?? [];
-                const hasHoverContent = hover?.content;
-                if (errorMarkers.length === 0 && !hasHoverContent) return;
+                const hoverModel = resolveHoverModel({
+                    hover,
+                    errorMarkers,
+                    quickFixes,
+                    docPos,
+                    rangeFromPoints: (start, end) => Range.fromPoints(start, end),
+                    getWordRange: (row, column) => session.getWordRange(row, column),
+                    lspRangeToAceRange: (range) => ({
+                        start: {row: range.start.line, column: range.start.character},
+                        end: {row: range.end.line, column: range.end.character}
+                    }),
+                    getHoverHtml: (hover) => this.getTooltipText(hover)
+                });
+                if (!hoverModel) return;
 
-                var range = hover?.range ?? errorMarkers[0]?.range;
-                range = range ? Range.fromPoints(range.start, range.end) : session.getWordRange(docPos.row, docPos.column);
-                const hoverNode = hasHoverContent ? this.createHoverNode(hover) : null;
-                const errorNode = errorMarkers.length > 0 ? this.createErrorNode(errorMarkers) : null;
+                const domNode = createHoverViewNode(hoverModel, (entry) => {
+                    const documentUri = this.$getFileName(session).documentUri;
+                    this.applyEdit({
+                        changes: {
+                            [documentUri]: [{
+                                range: entry.fix.range,
+                                newText: entry.fix.newText
+                            }]
+                        }
+                    }, entry.provider);
+                    this.$hoverTooltip.hide();
+                });
 
-                const domNode = document.createElement('div');
-                if (errorNode) domNode.appendChild(errorNode);
-                if (hoverNode) domNode.appendChild(hoverNode);
-
-                this.$hoverTooltip.showForRange(editor, range, domNode, e);
+                this.$hoverTooltip.showForRange(editor, hoverModel.range, domNode, e);
             });
         });
         this.$hoverTooltip.addToEditor(editor);
-    }
-
-
-    private createHoverNode(hover) {
-        const hoverNode = document.createElement("div");
-        hoverNode.innerHTML = this.getTooltipText(hover);
-        return hoverNode;
-    }
-
-    private createErrorNode(errorMarkers) {
-        const errorDiv = document.createElement('div');
-        errorDiv.textContent = errorMarkers.map(el => el.tooltipText.trim()).join("\n");
-        return errorDiv;
     }
 
     private setStyles(editor) {
@@ -370,6 +572,21 @@ export class LanguageProvider {
         }
     }
 
+    /**
+     * Configures global options that apply to all documents handled by the specified language service.
+     *
+     * Global options serve as default settings for all documents processed by a service when no
+     * document-specific options are provided. These options affect language service behavior across
+     * the entire workspace, including validation rules, formatting preferences, completion settings,
+     * and service-specific configurations.
+     *
+     * @param serviceName - The identifier of the language service to configure. Must be a valid
+     *                      service name from the supported services (e.g., 'typescript', 'json', 'html').
+     * @param options - The global configuration options specific to the language service. The structure
+     *                  varies by service type.
+     * @param {boolean} [merge=false] - Indicates whether to merge the provided options with the existing options.
+     *                  Defaults to false.
+     */
     setGlobalOptions<T extends keyof ServiceOptionsMap>(serviceName: T & string, options: ServiceOptionsMap[T], merge = false) {
         this.$messageController.setGlobalOptions(serviceName, options, merge);
     }
@@ -388,14 +605,40 @@ export class LanguageProvider {
         if (workspaceUri === this.workspaceUri)
             return;
         this.workspaceUri = convertToUri(workspaceUri);
-        this.$messageController.setWorkspace(workspaceUri);
+        this.$messageController.setWorkspace(this.workspaceUri);
     }
 
+    /**
+     * Sets the options for a specified editor session.
+     *
+     * @param session - The Ace editor session to configure.
+     * @param options - The configuration options to be applied to the session.
+     * @deprecated Use `setDocumentOptions` instead. This method will be removed in the future.
+     */
     setSessionOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
         let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
         sessionLanguageProvider.setOptions(options);
     }
 
+    /**
+     * Sets configuration options for a document associated with the specified editor session.
+     *
+     * @param session - The Ace editor session representing the document to configure.
+     * @param options - The service options to apply. The exact shape depends on the language services
+     *                  active for this session (e.g. JSON schema settings).
+     */
+    setDocumentOptions<OptionsType extends ServiceOptions>(session: Ace.EditSession, options: OptionsType) {
+        let sessionLanguageProvider = this.$getSessionLanguageProvider(session);
+        sessionLanguageProvider.setOptions(options);
+    }
+
+    /**
+     * Configures the specified features for a given service.
+     *
+     * @param {SupportedServices} serviceName - The name of the service for which features are being configured.
+     * @param {ServiceFeatures} features - The features to be configured for the given service.
+     * @return {void} Does not return a value.
+     */
     configureServiceFeatures(serviceName: SupportedServices, features: ServiceFeatures) {
         this.$messageController.configureFeatures(serviceName, features);
     }
@@ -405,6 +648,8 @@ export class LanguageProvider {
     }
 
     provideSignatureHelp(session: Ace.EditSession, position: Ace.Point, callback?: (signatureHelp: Tooltip | undefined) => void) {
+        if (!this.$getSessionLanguageProvider(session))
+            return;
         this.$messageController.provideSignatureHelp(this.$getFileName(session), fromPoint(position), (signatureHelp) => callback && callback(fromSignatureHelp(signatureHelp)));
     }
 
@@ -417,77 +662,155 @@ export class LanguageProvider {
         if (!this.options.functionality!.format)
             return;
 
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
-        sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
+        if (this.activeEditor) {
+            let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+            sessionLanguageProvider.$sendDeltaQueue(sessionLanguageProvider.format);
+        }
     }
 
     getSemanticTokens() {
         if (!this.options.functionality!.semanticTokens)
             return;
 
-        let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
-        sessionLanguageProvider.getSemanticTokens();
+        if (this.activeEditor) {
+            let sessionLanguageProvider = this.$getSessionLanguageProvider(this.activeEditor.session);
+            sessionLanguageProvider.getSemanticTokens();
+        }
     }
 
-    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (CompletionList: Ace.Completion[] | null) => void) {
+    doComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void) {
         let cursor = editor.getCursorPosition();
         this.$messageController.doComplete(this.$getFileName(session), fromPoint(cursor),
             (completions) => completions && callback(toCompletions(completions)));
+    }
+
+    doInlineComplete(editor: Ace.Editor, session: Ace.EditSession, callback: (completionList: Ace.Completion[] | null) => void) {
+        let cursor = editor.getCursorPosition();
+        this.$messageController.doInlineComplete(this.$getFileName(session), fromPoint(cursor),
+            (completions) => completions && callback(toInlineCompletions(completions)));
     }
 
     doResolve(item: Ace.Completion, callback: (completionItem: lsp.CompletionItem | null) => void) {
         this.$messageController.doResolve(item["fileName"], toCompletionItem(item), callback);
     }
 
-
     $registerCompleters(editor: Ace.Editor) {
-        let completer: Ace.Completer = {
-            getCompletions: async (editor, session, pos, prefix, callback) => {
-                this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
-                    this.doComplete(editor, session, (completions) => {
-                        let fileName = this.$getFileName(session);
-                        if (!completions)
-                            return;
-                        completions.forEach((item) => {
-                            item.completerId = completer.id;
-                            item["fileName"] = fileName
-                        });
-                        callback(null, CommonConverter.normalizeRanges(completions));
-                    });
-                });
-            },
-            getDocTooltip: (item: Ace.Completion) => {
-                if (this.options.functionality!.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
-                    this.doResolve(item, (completionItem?) => {
-                        item["isResolved"] = true;
-                        if (!completionItem)
-                            return;
-                        let completion = toResolvedCompletion(item, completionItem);
-                        item.docText = completion.docText;
-                        if (completion.docHTML) {
-                            item.docHTML = completion.docHTML;
-                        } else if (completion["docMarkdown"]) {
-                            item.docHTML = CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(completion["docMarkdown"]));
-                        }
-                        if (editor["completer"]) {
-                            editor["completer"].updateDocTooltip();
-                        }
-
-                    })
-                }
-                return item;
-            },
-            id: "lspCompleters"
+        let completer: Ace.Completer, inlineCompleter: Ace.Completer;
+        if (!this.options.functionality?.completion && !this.options.functionality?.inlineCompletion) {
+            return;
         }
-        if (this.options.functionality!.completion && this.options.functionality!.completion.overwriteCompleters) {
-            editor.completers = [
-                completer
-            ];
-        } else {
-            if (!editor.completers) {
+
+        this.$editorOriginalState[editor.id] = {};
+
+        if (this.options.functionality?.completion) {
+            this.$editorOriginalState[editor.id].completers = editor.completers ? [...editor.completers] : [];
+            if (this.options.functionality.completion.overwriteCompleters) {
                 editor.completers = [];
             }
+        }
+
+        if (this.options.functionality?.inlineCompletion) {
+            this.$editorOriginalState[editor.id].inlineCompleters = editor.inlineCompleters ? [...editor.inlineCompleters] : [];
+            if (this.options.functionality.inlineCompletion.overwriteCompleters) {
+                editor.inlineCompleters = [];
+            }
+        }
+        if (this.options.functionality.completion) {
+            completer = {
+                getCompletions: async (editor, session, pos, prefix, callback) => {
+
+                    this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
+                        const completionCallback = (completions) => {
+                            let popup = (editor?.completer as Ace.Autocomplete)?.getPopup(); //TDOO: better place to do this?
+                            if (popup) {
+                                popupManager.addAcePopup(popup);
+                            }
+
+                            let fileName = this.$getFileName(session);
+                            if (!completions)
+                                return;
+                            completions.forEach((item) => {
+                                item.completerId = completer.id;
+                                item["fileName"] = fileName
+                            });
+
+                            callback(null, CommonConverter.normalizeRanges(completions));
+
+                        };
+                        this.doComplete(editor, session, completionCallback);
+                    });
+                },
+                getDocTooltip: (item: Ace.Completion) => {
+                    if (this.options.functionality!.completionResolve && !item["isResolved"] && item.completerId === completer.id) {
+                        this.doResolve(item, (completionItem?) => {
+                            item["isResolved"] = true;
+                            if (!completionItem)
+                                return;
+                            let completion = toResolvedCompletion(item, completionItem);
+                            item.docText = completion.docText;
+                            if (completion.docHTML) {
+                                item.docHTML = completion.docHTML;
+                            } else if (completion["docMarkdown"]) {
+                                item.docHTML = CommonConverter.cleanHtml(this.options.markdownConverter!.makeHtml(completion["docMarkdown"]));
+                            }
+                            if (editor["completer"]) {
+                                editor["completer"].updateDocTooltip();
+                            }
+
+                        })
+                    }
+                    return item;
+                },
+                id: "lspCompleters"
+            }
             editor.completers.push(completer);
+        }
+
+        if (this.options?.functionality?.inlineCompletion) {
+            this.checkInlineCompletionAdapter(() => {
+                if (this.completerAdapter) {
+                    editor.inlineCompleters ??= [];
+                    this.completerAdapter.validateAceInlineCompleterWithEditor(editor);
+                    this.inlineCompleter = this.completerAdapter.InlineCompleter;
+                    this.doLiveAutocomplete = this.completerAdapter.doLiveAutocomplete;
+                }
+            });
+        }
+
+        if (this.options.functionality?.inlineCompletion) {
+            const existingCommand = editor.commands.commands["startInlineAutocomplete"];
+            this.$editorOriginalState[editor.id].inlineAutocompleteCommand = existingCommand || null;
+
+            editor.commands.addCommand({
+                name: "startInlineAutocomplete",
+                exec: (editor, options) => {
+                    var completer = this.inlineCompleter?.for(editor);
+                    completer.show(options);
+                },
+                bindKey: {win: "Alt-C", mac: "Option-C"}
+            });
+            this.$editorEventHandlers[editor.id].afterExec = this.doLiveAutocomplete;
+            editor.commands.on('afterExec', this.doLiveAutocomplete);
+
+            inlineCompleter = {
+                getCompletions: async (editor, session, pos, prefix, callback) => {
+                    this.$getSessionLanguageProvider(session).$sendDeltaQueue(() => {
+                        const completionCallback = (completions) => {
+                            let fileName = this.$getFileName(session);
+                            if (!completions)
+                                return;
+                            completions.forEach((item) => {
+                                item.completerId = completer.id;
+                                item["fileName"] = fileName
+                            });
+                            callback(null, CommonConverter.normalizeRanges(completions));
+                        };
+                        this.doInlineComplete(editor, session, completionCallback);
+                    });
+                },
+                id: "lspInlineCompleters"
+            }
+            editor.inlineCompleters.push(inlineCompleter);
         }
     }
 
@@ -498,405 +821,42 @@ export class LanguageProvider {
     }
 
     /**
-     * Removes document from all linked services by session id
-     * @param session
-     * @param [callback]
+     * Removes document from all linked services by session id and cleans up all associated resources.
+     * This includes removing event listeners, clearing marker groups, annotations, and notifying the server.
+     * @param session - The Ace EditSession to close
+     * @param [callback] - Optional callback to execute after the document is closed
      */
     closeDocument(session: Ace.EditSession, callback?) {
         let sessionProvider = this.$getSessionLanguageProvider(session);
         if (sessionProvider) {
-            sessionProvider.closeDocument(callback);
+            sessionProvider.dispose(callback);
             delete this.$sessionLanguageProviders[session["id"]];
         }
     }
-}
-
-class SessionLanguageProvider {
-    session: Ace.EditSession;
-    documentUri: string;
-    private $messageController: IMessageController;
-    private $deltaQueue: Ace.Delta[] | null;
-    private $isConnected = false;
-    private $options?: ServiceOptions;
-    private $filePath: string;
-    private $isFilePathRequired = false;
-    private $servicesCapabilities?: { [serviceName: string]: lsp.ServerCapabilities };
-    private $requestsQueue: Function[] = [];
-
-    state: {
-        occurrenceMarkers: MarkerGroup | null,
-        diagnosticMarkers: MarkerGroup | null
-    } = {
-        occurrenceMarkers: null,
-        diagnosticMarkers: null
-    }
-
-    private extensions = {
-        "typescript": "ts",
-        "javascript": "js"
-    }
-    editor: Ace.Editor;
-
-    private semanticTokensLegend?: lsp.SemanticTokensLegend;
-    private $provider: LanguageProvider;
-
-    private $predefinedTokens: DecodedToken[] = [];
-    private $firstStaleLine: undefined | number;
 
     /**
-     * Constructs a new instance of the `SessionLanguageProvider` class.
-     *
-     * @param provider - The `LanguageProvider` instance.
-     * @param session - The Ace editor session.
-     * @param editor - The Ace editor instance.
-     * @param messageController - The `IMessageController` instance for handling messages.
+     * Sends a request to the message controller.
+     * @param serviceName - The name of the service/server to send the request to.
+     * @param method - The method name for the request.
+     * @param params - The parameters for the request.
+     * @param callback - An optional callback function that will be called with the result of the request.
      */
-    constructor(provider: LanguageProvider, session: Ace.EditSession, editor: Ace.Editor, messageController: IMessageController) {
-        this.$provider = provider;
-        this.$messageController = messageController;
-        this.session = session;
-        this.editor = editor;
-        this.$isFilePathRequired = provider.requireFilePath;
-
-        session.doc.version = 1;
-        session.doc.on("change", this.$changeListener, true);
-        this.addSemanticTokenSupport(session); //TODO: ?
-        session.on("changeMode", this.$changeMode);
-        if (this.$provider.options.functionality!.semanticTokens) {
-            session.on("changeScrollTop", () => this.getSemanticTokens());
-        }
-
-        this.$init();
+    sendRequest(serviceName: string, method: string, params: any, callback?: (result: any) => void) {
+        this.$messageController.sendRequest(serviceName, method, params, callback);
     }
 
-    enqueueIfNotConnected(callback: () => void) {
-        if (!this.$isConnected) {
-            this.$requestsQueue.push(callback);
-        } else {
-            callback();
+    showDocument(params: lsp.ShowDocumentParams, serviceName: string, callback?: (result: lsp.LSPAny, serviceName: string) => void) {
+        //TODO: implement other params for showDocument (external, takeFocus, selection)
+        try {
+            window.open(params.uri, "_blank");
+            callback && callback({
+                success: true,
+            }, serviceName);
+        } catch (e) {
+            callback && callback({
+                success: false,
+                error: e
+            }, serviceName);
         }
-    }
-
-    get comboDocumentIdentifier(): ComboDocumentIdentifier {
-        return {
-            documentUri: this.documentUri,
-            sessionId: this.session["id"]
-        };
-    }
-
-    /**
-     * @param filePath
-     */
-    setFilePath(filePath: string) {
-        this.enqueueIfNotConnected(() => {
-            this.session.doc.version++;
-            if (this.$filePath !== undefined)//TODO change file path
-                return;
-            this.$filePath = filePath;
-            const previousComboId = this.comboDocumentIdentifier;
-            this.initDocumentUri(true);
-            this.$messageController.renameDocument(previousComboId, this.comboDocumentIdentifier.documentUri, this.session.doc.version);
-        })
-    };
-
-    private $init() {
-        if (this.$isFilePathRequired && this.$filePath === undefined)
-            return;
-        this.initDocumentUri();
-        this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
-    }
-
-    addSemanticTokenSupport(session: Ace.EditSession) {
-        let bgTokenizer = session.bgTokenizer;
-        session.setSemanticTokens = (tokens: DecodedSemanticTokens | undefined) => {
-            bgTokenizer.currentLine = 0;
-            bgTokenizer.lines = [];
-            bgTokenizer.semanticTokens = tokens;
-        }
-
-        bgTokenizer.$tokenizeRow = (row: number) => {
-            var line = bgTokenizer.doc.getLine(row);
-            var state = bgTokenizer.states[row - 1];
-            var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
-
-            if (bgTokenizer.states[row] + "" !== data.state + "") {
-                bgTokenizer.states[row] = data.state;
-                bgTokenizer.lines[row + 1] = null;
-                if (bgTokenizer.currentLine > row + 1)
-                    bgTokenizer.currentLine = row + 1;
-            } else if (bgTokenizer.currentLine == row) {
-                bgTokenizer.currentLine = row + 1;
-            }
-
-            if (bgTokenizer.semanticTokens) {
-                let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
-                if (decodedTokens && decodedTokens.length > 0) {
-                    data.tokens = mergeTokens(data.tokens, decodedTokens);
-                }
-            }
-
-            return bgTokenizer.lines[row] = data.tokens;
-        }
-    }
-
-    private $connected = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
-        this.$isConnected = true;
-
-        this.setServerCapabilities(capabilities);
-
-        this.$requestsQueue.forEach((requestCallback) => requestCallback());
-        this.$requestsQueue = [];
-
-        if (this.$deltaQueue)
-            this.$sendDeltaQueue();
-        if (this.$options)
-            this.setOptions(this.$options);
-    }
-
-    private $changeMode = () => {
-        this.enqueueIfNotConnected(() => {
-            this.$deltaQueue = [];
-
-            this.session.clearAnnotations();
-            if (this.state.diagnosticMarkers) {
-                this.state.diagnosticMarkers.setMarkers([]);
-            }
-
-            this.session.setSemanticTokens(undefined); //clear all semantic tokens
-            let newVersion = this.session.doc.version++;
-            this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
-        });
-    };
-
-    setServerCapabilities = (capabilities: { [serviceName: string]: lsp.ServerCapabilities }) => {
-        if (!capabilities)
-            return;
-        this.$servicesCapabilities = {...capabilities};
-
-        let hasTriggerChars = Object.values(capabilities).some((capability) => capability?.completionProvider?.triggerCharacters);
-
-        if (hasTriggerChars) {
-            let completer = this.editor.completers.find((completer) => completer.id === "lspCompleters");
-            if (completer) {
-                let allTriggerCharacters: string[] = [];
-                Object.values(capabilities).forEach((capability) => {
-                    if (capability?.completionProvider?.triggerCharacters) {
-                        allTriggerCharacters.push(...capability.completionProvider.triggerCharacters);
-                    }
-                });
-
-                allTriggerCharacters = [...new Set(allTriggerCharacters)];
-
-                completer.triggerCharacters = allTriggerCharacters;
-            }
-        }
-
-        let hasSemanticTokensProvider = Object.values(capabilities).some((capability) => {
-            if (capability?.semanticTokensProvider) {
-                this.semanticTokensLegend = capability.semanticTokensProvider.legend;
-                return true;
-            }
-        });
-        if (hasSemanticTokensProvider) {
-            this.getSemanticTokens();
-        }
-        //TODO: we should restrict range formatting if any of services is only has full format capabilities
-        //or we shoudl use service with full format capability instead of range one's
-    }
-
-    private initDocumentUri(isRename = false) {
-        let filePath = this.$filePath ?? this.session["id"] + "." + this.$extension;
-        if (isRename) {
-            delete this.$provider.$urisToSessionsIds[this.documentUri];
-        }
-        this.documentUri = convertToUri(filePath);
-        this.$provider.$urisToSessionsIds[this.documentUri] = this.session["id"];
-    }
-
-    private get $extension() {
-        let mode = this.$mode.replace("ace/mode/", "");
-        return this.extensions[mode] ?? mode;
-    }
-
-    private get $mode(): string {
-        return this.session["$modeId"];
-    }
-
-    private get $format(): FormattingOptions {
-        return {
-            tabSize: this.session.getTabSize(),
-            insertSpaces: this.session.getUseSoftTabs()
-        }
-    }
-
-    private $changeListener = (delta: Ace.Delta) => {
-        this.session.doc.version++;
-        if (!this.$deltaQueue) {
-            this.$deltaQueue = [];
-            setTimeout(() => this.$sendDeltaQueue(() => {
-                this.getSemanticTokens();
-            }), 0);
-        }
-        this.$deltaQueue.push(delta);
-    }
-
-    $sendDeltaQueue = (callback?) => {
-        let deltas = this.$deltaQueue;
-        if (!deltas) return callback && callback();
-        this.$deltaQueue = null;
-        if (deltas.length)
-            this.$messageController.change(this.comboDocumentIdentifier, deltas.map((delta) =>
-                fromAceDelta(delta, this.session.doc.getNewLineCharacter())), this.session.doc, callback);
-    };
-
-    $showAnnotations = (diagnostics: lsp.Diagnostic[]) => {
-        if (!diagnostics) {
-            return;
-        }
-
-        const filteredDiagnostics = diagnostics.filter((el) => !el?.data?.ignore);
-
-        let annotations = toAnnotations(filteredDiagnostics);
-        this.session.clearAnnotations();
-        if (annotations && annotations.length > 0) {
-            this.session.setAnnotations(annotations);
-        }
-        if (!this.state.diagnosticMarkers) {
-            this.state.diagnosticMarkers = new MarkerGroup(this.session);
-        }
-
-        if (this.$provider.options.functionality!.showUnusedDeclarations) {
-            this.setPredefinedTokens(diagnostics);
-        }
-
-        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), el?.data?.ignore ? "" : "language_highlight_error", el.message)));
-    }
-
-    setPredefinedTokens(diagnostics: lsp.Diagnostic[]) {
-        this.$predefinedTokens = [];
-
-        diagnostics.forEach((el) => {
-            if (el.tags && el.tags.length > 0) {
-                if (!this.$firstStaleLine || el.range.start.line < this.$firstStaleLine) {
-                    this.$firstStaleLine = el.range.start.line;
-                }
-                this.$predefinedTokens.push({
-                    row: el.range.start.line,
-                    startColumn: el.range.start.character,
-                    length: el.range.end.character - el.range.start.character,
-                    type: el.tags[0] === lsp.DiagnosticTag.Deprecated ? "highlight_deprecated" : "highlight_unnecessary"
-                });
-            }
-        });
-
-        if (!this.$provider.options.functionality!.semanticTokens) {
-            this.$applySemanticTokens(undefined);
-        }
-    }
-
-    setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
-        if (!this.$isConnected) {
-            this.$options = options;
-            return;
-        }
-        this.$messageController.changeOptions(this.comboDocumentIdentifier, options);
-    }
-
-    validate = () => {
-        this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
-    }
-
-    format = () => {
-        let selectionRanges = this.session.getSelection().getAllRanges();
-        let $format = this.$format;
-        let aceRangeDatas = selectionRanges as AceRangeData[];
-        if (!selectionRanges || selectionRanges[0].isEmpty()) {
-            let row = this.session.getLength();
-            let column = this.session.getLine(row).length - 1;
-            aceRangeDatas =
-                [{
-                    start: {
-                        row: 0, column: 0
-                    },
-                    end: {
-                        row: row, column: column
-                    }
-                }];
-        }
-        for (let range of aceRangeDatas) {
-            this.$messageController.format(this.comboDocumentIdentifier, fromRange(range), $format, this.applyEdits);
-        }
-    }
-
-    applyEdits = (edits: lsp.TextEdit[]) => {
-        edits ??= [];
-        for (let edit of edits.reverse()) {
-            this.session.replace(<Ace.Range>toRange(edit.range), edit.newText);
-        }
-    }
-
-    getSemanticTokens() {
-        const showSemanticTokens = this.$provider.options.functionality!.semanticTokens;
-        const showUnusedDeclarations = this.$provider.options.functionality!.showUnusedDeclarations;
-        if (!showSemanticTokens && !showUnusedDeclarations)
-            return;
-        //TODO: improve this
-        let lastRow = this.editor.renderer.getLastVisibleRow();
-        let visibleRange: AceRangeData = {
-            start: {
-                row: this.editor.renderer.getFirstVisibleRow(),
-                column: 0
-            },
-            end: {
-                row: lastRow + 1,
-                column: this.session.getLine(lastRow).length
-            }
-        }
-        if (showSemanticTokens) {
-            this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), this.$applySemanticTokens);
-        } else {
-            this.$applySemanticTokens(undefined);
-        }
-    }
-
-    $applySemanticTokens = (tokens: lsp.SemanticTokens | null | undefined) => {
-        if (!tokens && this.$predefinedTokens.length == 0) {
-            this.session.setSemanticTokens(undefined);
-            this.$runTokenizer();
-            return;
-        }
-        let originalTokens: OriginalSemanticTokens | undefined;
-        if (tokens) {
-            originalTokens = {
-                tokens: tokens.data,
-                tokenTypes: this.semanticTokensLegend!.tokenTypes,
-                tokenModifiersLegend: this.semanticTokensLegend!.tokenModifiers
-            }
-        }
-        let decodedTokens = parseSemanticTokens(originalTokens, this.$predefinedTokens);
-
-        this.session.setSemanticTokens(decodedTokens);
-        this.$runTokenizer();
-    }
-
-    $runTokenizer() {
-        let bgTokenizer = this.session.bgTokenizer;
-        //@ts-ignore
-        bgTokenizer.running = setTimeout(() => {
-            bgTokenizer.$worker();
-        }, 20);
-    }
-
-    $applyDocumentHighlight = (documentHighlights: lsp.DocumentHighlight[]) => {
-        if (!this.state.occurrenceMarkers) {
-            this.state.occurrenceMarkers = new MarkerGroup(this.session);
-        }
-        if (documentHighlights) { //some servers return null, which contradicts spec
-            this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
-        }
-    };
-
-    closeDocument(callback?) {
-        this.$messageController.closeDocument(this.comboDocumentIdentifier, callback);
     }
 }

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>ace-legacy-linters smoke</title>
+    <link rel="icon" href="data:,"/>
+    <style type="text/css" media="screen">
+        body {
+            overflow: hidden;
+        }
+
+        #editor {
+            margin: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="editor"></div>
+
+<script src="http://127.0.0.1:8080/vendor/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    window.testFlags = {
+        modeChanged: false,
+        workerReady: false,
+        hasAnnotations: false,
+    };
+
+    ace.config.setModuleUrl(
+        "ace/mode/php_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-php.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/lua_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-lua.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/html_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-html.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/json_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-json.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/css_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-css.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/xml_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-xml.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/yaml_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-yaml.js"
+    );
+    ace.config.setModuleUrl(
+        "ace/mode/javascript_worker",
+        "http://127.0.0.1:8080/build/ace-legacy-linters/src-noconflict/worker-javascript.js"
+    );
+
+    ace.config.loadModule("ace/mode/json5", function (json5ModeModule) { //TODO: remove when new version published
+        const Json5Mode = json5ModeModule && json5ModeModule.Mode;
+        if (!Json5Mode) {
+            return;
+        }
+
+        const WorkerClient = ace.require("ace/worker/worker_client").WorkerClient;
+        Json5Mode.prototype.createWorker = function (session) {
+            const worker = new WorkerClient(["ace"], "ace/mode/json_worker", "JsonWorker");
+            worker.attachToDocument(session.getDocument());
+            worker.call("setOptions", [{isJson5: true}]);
+            worker.on("annotate", function (e) {
+                session.setAnnotations(e.data);
+            });
+            worker.on("terminate", function () {
+                session.clearAnnotations();
+            });
+            return worker;
+        };
+    });
+    ace.config.loadModule("ace/mode/jsx", function (jsxModeModule) { //TODO: remove when new version published
+        const JsxMode = jsxModeModule && jsxModeModule.Mode;
+        if (!JsxMode) {
+            return;
+        }
+
+        const WorkerClient = ace.require("ace/worker/worker_client").WorkerClient;
+        JsxMode.prototype.createWorker = function (session) {
+            const worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
+            worker.attachToDocument(session.getDocument());
+            worker.on("annotate", function (e) {
+                session.setAnnotations(e.data);
+            });
+            worker.on("terminate", function () {
+                session.clearAnnotations();
+            });
+            return worker;
+        };
+    });
+    ["less", "scss"].forEach(function (modeName) { //TODO: remove when new version published
+        ace.config.loadModule("ace/mode/" + modeName, function (modeModule) {
+            const ModeCtor = modeModule && modeModule.Mode;
+            if (!ModeCtor) {
+                return;
+            }
+
+            const WorkerClient = ace.require("ace/worker/worker_client").WorkerClient;
+            ModeCtor.prototype.createWorker = function (session) {
+                const worker = new WorkerClient(["ace"], "ace/mode/css_worker", "Worker");
+                worker.attachToDocument(session.getDocument());
+                worker.call("setOptions", [{mode: modeName}]);
+                worker.on("annotate", function (e) {
+                    session.setAnnotations(e.data);
+                });
+                worker.on("terminate", function () {
+                    session.clearAnnotations();
+                });
+                return worker;
+            };
+        });
+    });
+
+    window.editor = ace.edit("editor");
+    window.editor.setValue("");
+    window.editor.clearSelection();
+
+    const session = window.editor.session;
+    session.on("changeMode", function () {
+        window.testFlags.modeChanged = true;
+    });
+    session.on("changeAnnotation", function () {
+        const annotations = session.getAnnotations() || [];
+        window.testFlags.workerReady = true;
+        if (annotations.length > 0) {
+            window.testFlags.hasAnnotations = true;
+        }
+    });
+</script>
+
+</body>
+</html>

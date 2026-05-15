@@ -17,7 +17,7 @@ export namespace CommonConverter {
         return html.replace(/<a\s/, "<a target='_blank' ");
     }
 
-    export function toRange(range: { start, end }) {
+    export function toRange(range: { start: Ace.Point, end: Ace.Point }) {
         if (!range || !range.start || !range.end) {
             return;
         }
@@ -61,7 +61,9 @@ export namespace CommonConverter {
         return CompletionItemKind.Property;
     }
 
-    export function excludeByErrorMessage<T>(diagnostics: T[], errorMessagesToIgnore?: RegExp[], fieldName = "message"): T[] {
+    export function excludeByErrorMessage<T extends {
+        [key: string]: any
+    }>(diagnostics: T[], errorMessagesToIgnore?: RegExp[], fieldName = "message"): T[] {
         if (!errorMessagesToIgnore)
             return diagnostics;
         return diagnostics.filter((el) => !checkValueAgainstRegexpArray(el[fieldName], errorMessagesToIgnore));

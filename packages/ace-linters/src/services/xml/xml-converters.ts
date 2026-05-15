@@ -69,3 +69,4 @@ function determineDiagnosticSeverity(message: string, filterErrors: FilterDiagno
     }
     return severity;
 }
+

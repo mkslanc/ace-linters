@@ -11,7 +11,6 @@ import {jsonSchema, jsonContent, jsonSchema2} from "../docs-example/json-example
 import {jsContent} from "../docs-example/javascript-example";
 import {tsxContent} from "../docs-example/tsx-example";
 import {jsxContent} from "../docs-example/jsx-example";
-import {json5Content, json5Schema} from "../docs-example/json5-example";
 import {luaContent} from "../docs-example/lua-example";
 import {yamlContent, yamlSchema} from "../docs-example/yaml-example";
 import {phpContent} from "../docs-example/php-example";
@@ -25,16 +24,15 @@ import {goContent} from "../docs-example/go-example";
 
 let modes = [
     {name: "json", mode: "ace/mode/json", content: jsonContent, options: {schemaUri: "common-form.schema.json"}},
-    {name: "json5", mode: "ace/mode/json5", content: json5Content, options: {schemaUri: "json5Schema"}},
     {name: "html", mode: "ace/mode/html", content: htmlContent},
     {name: "css", mode: "ace/mode/css", content: cssContent},
     {name: "less", mode: "ace/mode/less", content: lessContent},
     {name: "scss", mode: "ace/mode/scss", content: scssContent},
     {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent, filePath: "someLibDir/index.ts"},
     {name: "python", mode: "ace/mode/python", content: pythonContent},
-    /*{name: "svelte", mode: "ace/mode/html", content: svelteContent},
-    {name: "astro", mode: "ace/mode/astro", content: svelteContent},
-    {name: "golang", mode: "ace/mode/golang", content: svelteContent},*/
+    /*    {name: "svelte", mode: "ace/mode/html", content: svelteContent},
+        {name: "astro", mode: "ace/mode/astro", content: svelteContent},
+        {name: "golang", mode: "ace/mode/golang", content: svelteContent},*/
     {name: "typescript", mode: "ace/mode/typescript", content: typescriptContent1, filePath: "anotherFile.ts"},
     {name: "javascript", mode: "ace/mode/javascript", content: jsContent},
     {name: "tsx", mode: "ace/mode/tsx", content: tsxContent},
@@ -49,9 +47,21 @@ let modes = [
     {name: "dart", mode: "ace/mode/dart", content: dartContent},
     {name: "golang", mode: "ace/mode/golang", content: goContent}
 ];
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 
-let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
+let languageProvider = LanguageProvider.create(worker, {
+    functionality: {
+        completion: {
+            overwriteCompleters: true,
+            lspCompleterOptions: {
+                triggerCharacters: {
+                    add: ["\n", "\r\n"],
+                    remove: [],
+                }
+            }
+        }
+    }
+});
 
 languageProvider.setGlobalOptions("json", {
     schemas: [
@@ -110,18 +120,6 @@ languageProvider.setGlobalOptions("javascript", {
 languageProvider.setGlobalOptions("html", {
     errorMessagesToTreatAsInfo: [
         /Special\scharacters\smust\sbe\sescaped/
-    ]
-});
-
-languageProvider.setGlobalOptions("json5", {
-    schemas: [
-        {
-            uri: "json5Schema",
-            schema: json5Schema
-        }
-    ],
-    errorMessagesToTreatAsInfo: [
-        /Incorrect\stype/
     ]
 });
 

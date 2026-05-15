@@ -3,16 +3,17 @@ import {addFormatCommand} from "../utils";
 import {Ace} from "ace-code";
 import {LanguageProvider} from "ace-linters";
 
-let worker = new Worker(new URL('./webworker.ts', import.meta.url));
+let worker = new Worker(new URL('./webworker.ts', import.meta.url), { type: 'module' });
 
-let languageProvider = LanguageProvider.create(worker, {functionality: {semanticTokens: true}});
-languageProvider.requireFilePath = true;
+let languageProvider = LanguageProvider.create(worker, {
+    functionality: {semanticTokens: true},
+    manualSessionControl: true,
+});
 addFormatCommand(languageProvider);
 
 let fileTree: Box;
 let editorBox: Box;
 
-//document.body.innerHTML = "";
 let base = new Box({
     vertical: false,
     0: fileTree = new Box({
@@ -25,9 +26,12 @@ let base = new Box({
 });
 
 new AceLayout(base);
+
+// @ts-ignore
 window["fileTreeWrapper"] = fileTree;
 let fileSystem = new FileSystemWeb();
 let aceTree = new AceTreeWrapper();
+aceTree.render();
 
 function renderFileTree() {
     let button = new Button({value: "Open Folder"});
@@ -56,10 +60,13 @@ let tabManager = TabManager.getInstance({
 
 tabManager.fileSystem?.on("openFile", (treeNode) => {
     let tab = tabManager.getTab(treeNode.path) as Tab<Ace.EditSession>;
-
-    languageProvider.registerEditor((tab.editor as AceEditor).editor);
     let path = treeNode.path.substring(treeNode.path.indexOf("/", 1));
-    languageProvider.setSessionFilePath(tab.session, `${languageProvider.workspaceUri || ""}${path}`);
+    const editor = (tab.editor as AceEditor).editor;
+    languageProvider.setSessionLspConfig(editor.session, {filePath: path, joinWorkspaceURI: true})
+
+    languageProvider.registerEditor(editor); //, {filePath: path, joinWorkspaceURI: true}
+    //languageProvider.setSessionFilePath(tab.session, {filePath: path, joinWorkspaceURI: true});  -> it's another
+    // way to set path
 });
 
 tabManager.restoreFrom(localStorage);
@@ -68,31 +75,55 @@ async function openFolder() {
     let nodes = await fileSystem.open();
     setWorkspace();
     aceTree.updateTreeData(nodes);
-    aceTree.element.addEventListener("item-click", (evt: CustomEvent) => {
-        fileSystem.openFile(evt.detail);
+    aceTree.element.addEventListener("item-click", (evt) => {
+        if ("detail" in evt) {
+            fileSystem.openFile(evt.detail);
+        }
     });
 }
 
 function openInfo() {
     var popup = document.getElementById("info-popup");
-    popup.style.display = "block";
-    document.getElementById("okayBtn").onclick = function () {
-        openFolder();
-        popup.style.display = "none";
-    };
+    if (popup) {
+        popup.style.display = "block";
+        const okayBtn = document.getElementById("okayBtn");
+        if (okayBtn) {
+            okayBtn.onclick = function () {
+                openFolder();
+                if (popup) {
+                    popup.style.display = "none";
+                }
+            };
+        }
+
+    }
 }
 
 function setWorkspace() {
     var popup = document.getElementById("workspace-popup");
-    popup.style.display = "block";
-    var span = document.querySelector(".popup-content .close");
-    span.onclick = function() {
-        popup.style.display = "none";
+    if (popup) {
+        popup.style.display = "block";
     }
-    document.getElementById("confirmBtn").onclick = function() {
-        var dirPath = document.getElementById("filePath").value;
-        alert("File path confirmed: " + dirPath);
-        popup.style.display = "none";
-        languageProvider.changeWorkspaceFolder(dirPath);
+    var span = document.querySelector(".popup-content .close");
+    if (span) {
+        (span as HTMLElement).onclick = function () {
+            if (popup) {
+                popup.style.display = "none";
+            }
+        }
+    }
+    const confirmBtn = document.getElementById("confirmBtn");
+    if (confirmBtn) {
+        confirmBtn.onclick = function () {
+            const filePathInput = document.getElementById("filePath");
+            if (filePathInput) {
+                var dirPath = (filePathInput as HTMLInputElement).value;
+                alert("File path confirmed: " + dirPath);
+                if (popup) {
+                    popup.style.display = "none";
+                }
+                languageProvider.changeWorkspaceFolder(dirPath);
+            }
+        }
     }
 }

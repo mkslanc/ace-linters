@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>ace-sql-linter smoke</title>
+    <link rel="icon" href="data:,"/>
+</head>
+<body>
+<div id="editor" style="height: 300px;"></div>
+<script src="http://127.0.0.1:8080/vendor/ace/ace.js"></script>
+<script src="http://127.0.0.1:8080/vendor/ace/ext-language_tools.js"></script>
+<script src="http://127.0.0.1:8080/build/ace-linters/ace-linters.js"></script>
+<script>
+    var dialect = new URLSearchParams(window.location.search).get("dialect") || "mysql";
+    var dialectConfig = {
+        mysql: {
+            serviceName: "mysql",
+            className: "MySQLService",
+            mode: "mysql",
+            script: "mysql-service.js"
+        },
+        pgsql: {
+            serviceName: "pgsql",
+            className: "PgSQLService",
+            mode: "pgsql",
+            script: "pgsql-service.js"
+        },
+        flinksql: {
+            serviceName: "flinksql",
+            className: "FlinkSQLService",
+            mode: "sql",
+            script: "flinksql-service.js"
+        },
+        sparksql: {
+            serviceName: "sparksql",
+            className: "SparkSQLService",
+            mode: "sql",
+            script: "sparksql-service.js"
+        },
+        hivesql: {
+            serviceName: "hivesql",
+            className: "HiveSQLService",
+            mode: "sql",
+            script: "hivesql-service.js"
+        },
+        trinosql: {
+            serviceName: "trinosql",
+            className: "TrinoSQLService",
+            mode: "sql",
+            script: "trinosql-service.js"
+        },
+        impalasql: {
+            serviceName: "impalasql",
+            className: "ImpalaSQLService",
+            mode: "sql",
+            script: "impalasql-service.js"
+        }
+    };
+    var cfg = dialectConfig[dialect] || dialectConfig.mysql;
+
+    window.testFlags = {ready: false};
+    window.editor = ace.edit("editor", {
+        theme: "ace/theme/textmate",
+        mode: "ace/mode/" + cfg.mode,
+        value: "SELEC FROM"
+    });
+
+    window.languageProvider = LanguageProvider.fromCdn({
+        services: [{
+            name: cfg.serviceName,
+            className: cfg.className,
+            modes: cfg.mode,
+            script: cfg.script,
+            cdnUrl: "http://127.0.0.1:8080/build/ace-sql-linter"
+        }],
+        serviceManagerCdn: "http://127.0.0.1:8080/build/ace-linters",
+        includeDefaultLinters: false
+    });
+
+    window.languageProvider.registerEditor(window.editor);
+    setTimeout(() => {
+        window.testFlags.ready = true;
+    }, 1000);
+</script>
+</body>
+</html>

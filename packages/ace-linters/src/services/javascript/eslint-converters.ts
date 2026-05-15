@@ -12,20 +12,25 @@ export function toDiagnostic(error, filterErrors: FilterDiagnosticsOptions): Dia
     } else {
         severity = (error.fatal) ? DiagnosticSeverity.Error : error.severity;
     }
+
     return {
         message: error.message,
         range: {
             start: {
-                line: error.line - 1,
-                character: error.column - 1
+                line: normalizeNumber(error.line - 1),
+                character: normalizeNumber(error.column - 1)
             },
             end: {
-                line: error.endLine - 1,
-                character: error.endColumn - 1
+                line: normalizeNumber((error.endLine ?? error.line) - 1),
+                character: normalizeNumber((error.endColumn ?? error.column) - 1)
             }
         },
         severity: severity,
     }
+}
+
+function normalizeNumber(num) {
+    return !isFinite(num) || num < 0 ? 0 : num;
 }
 
 export function toDiagnostics(diagnostics: Diagnostic[], filterErrors: FilterDiagnosticsOptions): Diagnostic[] {

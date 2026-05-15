@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>ace-lua-linter smoke</title>
+    <link rel="icon" href="data:,"/>
+</head>
+<body>
+<div id="editor" style="height: 300px;"></div>
+<script src="http://127.0.0.1:8080/vendor/ace/ace.js"></script>
+<script src="http://127.0.0.1:8080/vendor/ace/ext-language_tools.js"></script>
+<script src="http://127.0.0.1:8080/build/ace-linters/ace-linters.js"></script>
+<script>
+    window.testFlags = {ready: false};
+    window.editor = ace.edit("editor", {
+        theme: "ace/theme/textmate",
+        mode: "ace/mode/lua",
+        value: "local   a=1\nprint(a)"
+    });
+
+    window.languageProvider = LanguageProvider.fromCdn({
+        services: [{
+            name: "ace-lua-linter",
+            className: "AceLuaLinter",
+            modes: "lua",
+            script: "ace-lua-linter.js",
+            cdnUrl: "http://127.0.0.1:8080/build/ace-lua-linter"
+        }],
+        serviceManagerCdn: "http://127.0.0.1:8080/build/ace-linters",
+        includeDefaultLinters: false
+    });
+
+    window.languageProvider.registerEditor(window.editor);
+    setTimeout(() => {
+        window.testFlags.ready = true;
+    }, 1000);
+</script>
+</body>
+</html>
