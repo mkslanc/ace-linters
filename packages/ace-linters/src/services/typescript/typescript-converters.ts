@@ -28,7 +28,7 @@ export const compilerOptionToErrorCodes: Record<string, Set<number>> = {
     ]),
 };
 
-export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions, compilerOptions?: ts.CompilerOptions | ts.CompilerOptionsWithoutEnums): lsp.Diagnostic[] {
+export function fromTsDiagnostics(diagnostics: Diagnostic[], doc: TextDocument, filterErrors: FilterDiagnosticsOptions, compilerOptions?: ts.CompilerOptions): lsp.Diagnostic[] {
     const lspDiagnostics = diagnostics.filter((el) => !filterErrors.errorCodesToIgnore!.includes(el.code.toString())).map((el) => {
         const tags: lsp.DiagnosticTag[] = [];
         let ignore = false;
