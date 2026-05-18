@@ -16,6 +16,7 @@ export interface DecodedToken {
 declare class DecodedSemanticTokens {
 	tokens: DecodedToken[];
 	constructor(tokens: DecodedToken[]);
+	private normalize;
 	getByRow(row: number): DecodedToken[];
 	private sortTokens;
 }
@@ -527,6 +528,7 @@ export interface ProviderOptions {
 		signatureHelp?: boolean;
 		semanticTokens?: boolean;
 		codeActions?: boolean;
+		showUnusedDeclarations?: boolean;
 	};
 	markdownConverter?: MarkDownConverter;
 	workspacePath?: string;
@@ -664,6 +666,8 @@ declare class SessionLanguageProvider {
 	private semanticTokensLegend?;
 	private $provider;
 	private $changeScrollTopHandler?;
+	private $semanticTextMarkerIds;
+	private $diagnosticTextMarkerIds;
 	/**
 	 * Constructs a new instance of the `SessionLanguageProvider` class.
 	 *
@@ -687,7 +691,6 @@ declare class SessionLanguageProvider {
 	 */
 	setFilePath(filePath: string, joinWorkspaceURI?: boolean): void;
 	private $init;
-	addSemanticTokenSupport(session: Ace.EditSession): void;
 	private $connected;
 	private $changeMode;
 	setServerCapabilities: (capabilities: {
@@ -705,6 +708,14 @@ declare class SessionLanguageProvider {
 	format: () => void;
 	applyEdits: (edits: lsp.TextEdit[]) => void;
 	getSemanticTokens(): void;
+	$applySemanticTokens: (tokens: lsp.SemanticTokens | null | undefined) => void;
+	private setSemanticTokenMarkers;
+	private setDiagnosticTextMarkers;
+	private clearSemanticTokenMarkers;
+	private clearDiagnosticTextMarkers;
+	private clearTextMarkers;
+	private toAceTokenClassName;
+	private applyTextMarkersToRenderedRows;
 	$applyDocumentHighlight: (documentHighlights: lsp.DocumentHighlight[]) => void;
 	/**
 	 * Disposes of the SessionLanguageProvider, cleaning up all event listeners,
@@ -735,6 +746,7 @@ export declare class LanguageProvider {
 	private inlineCompleter?;
 	private doLiveAutocomplete;
 	private completerAdapter?;
+	private textMarkerAdapter;
 	private $editorEventHandlers;
 	private $editorOriginalState;
 	private constructor();

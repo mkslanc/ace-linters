@@ -154183,12 +154183,25 @@ ${e.message}`;
 	//#region src/services/typescript/typescript-converters.ts
 	var convertKind = CommonConverter.convertKind;
 	function fromTsDiagnostics(diagnostics, doc, filterErrors) {
+		return convertTsDiagnostics(diagnostics, doc, filterErrors, false);
+	}
+	function fromTsSuggestionDiagnostics(diagnostics, doc, filterErrors) {
+		return convertTsDiagnostics(diagnostics, doc, filterErrors, true);
+	}
+	function convertTsDiagnostics(diagnostics, doc, filterErrors, ignoreTaggedDiagnostics) {
 		return filterDiagnostics(diagnostics.filter((el) => !filterErrors.errorCodesToIgnore.includes(el.code.toString())).map((el) => {
+			const tags = [];
+			if (el.reportsUnnecessary) tags.push(import_main.DiagnosticTag.Unnecessary);
+			if (el.reportsDeprecated) tags.push(import_main.DiagnosticTag.Deprecated);
+			let ignore = ignoreTaggedDiagnostics && tags.length > 0;
 			let start = el.start ?? 0;
 			let length = el.length ?? 1;
 			if (filterErrors.errorCodesToTreatAsWarning.includes(el.code.toString())) el.category = DiagnosticCategory.Warning;
 			else if (filterErrors.errorCodesToTreatAsInfo.includes(el.code.toString())) el.category = DiagnosticCategory.Message;
-			return import_main.Diagnostic.create(import_main.Range.create(doc.positionAt(start), doc.positionAt(start + length)), parseMessageText(el.messageText, el.code), fromTsCategory(el.category), el.code);
+			let diagnostic = import_main.Diagnostic.create(import_main.Range.create(doc.positionAt(start), doc.positionAt(start + length)), parseMessageText(el.messageText, el.code), fromTsCategory(el.category), el.code);
+			diagnostic.tags = tags;
+			if (ignore) diagnostic.data = { ignore: true };
+			return diagnostic;
 		}), filterErrors);
 	}
 	function toTsOffset(range, doc) {
@@ -154635,6 +154648,9 @@ ${e.message}`;
 		getSemanticDiagnostics(fileName) {
 			return this.$service.getSemanticDiagnostics(fileName);
 		}
+		getSuggestionDiagnostics(fileName) {
+			return this.$service.getSuggestionDiagnostics(fileName).filter((diagnostic) => diagnostic.reportsUnnecessary || diagnostic.reportsDeprecated);
+		}
 		getFormattingOptions(options) {
 			this.$defaultFormatOptions.convertTabsToSpaces = options.insertSpaces;
 			this.$defaultFormatOptions.tabSize = options.tabSize;
@@ -154658,7 +154674,9 @@ ${e.message}`;
 			let fullDocument = this.getDocument(document.uri);
 			if (!fullDocument) return [];
 			let semanticDiagnostics = this.getSemanticDiagnostics(document.uri);
-			return fromTsDiagnostics([...this.getSyntacticDiagnostics(document.uri), ...semanticDiagnostics], fullDocument, this.optionsToFilterDiagnostics);
+			let syntacticDiagnostics = this.getSyntacticDiagnostics(document.uri);
+			let suggestionDiagnostics = this.getSuggestionDiagnostics(document.uri);
+			return [...fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument, this.optionsToFilterDiagnostics), ...fromTsSuggestionDiagnostics(suggestionDiagnostics, fullDocument, this.optionsToFilterDiagnostics)];
 		}
 		async doComplete(document, position) {
 			let fullDocument = this.getDocument(document.uri);

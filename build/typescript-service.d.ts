@@ -581,6 +581,7 @@ export declare class TypescriptService extends BaseService<TsServiceOptions> imp
 	private fileExists;
 	private getSyntacticDiagnostics;
 	private getSemanticDiagnostics;
+	private getSuggestionDiagnostics;
 	private getFormattingOptions;
 	format(document: lsp.TextDocumentIdentifier, range: lsp.Range, options: lsp.FormattingOptions): Promise<lsp.TextEdit[]>;
 	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;

@@ -3,9 +3,11 @@
 })(this, function(exports) {
 	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 	//#region \0rolldown/runtime.js
+	var __create = Object.create;
 	var __defProp = Object.defineProperty;
 	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 	var __getOwnPropNames = Object.getOwnPropertyNames;
+	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
 	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
 	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
@@ -28,6 +30,10 @@
 		}
 		return to;
 	};
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+		value: mod,
+		enumerable: true
+	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
 	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
@@ -7116,7 +7122,7 @@
 	}));
 	//#endregion
 	//#region ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
-	var import_main = (/* @__PURE__ */ __commonJSMin(((exports) => {
+	var import_main = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
 			var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -7143,7 +7149,7 @@
 			return (0, browser_1.createMessageConnection)(reader, writer, logger, options);
 		}
 		exports.createProtocolConnection = createProtocolConnection;
-	})))();
+	})))());
 	function getDefaultExportFromCjs(x) {
 		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
 	}
@@ -9717,6 +9723,14 @@
     border: solid 1px #F88;
 }
 
+.ace_highlight_unnecessary {
+    opacity: 0.5;
+}
+
+.ace_highlight_deprecated {
+    text-decoration: line-through;
+}
+
 .ace_lsp_hover_quickfixes {
     margin-top: 8px;
     border-top: 1px solid rgba(127,127,127,0.35);
@@ -10200,6 +10214,266 @@
 		}
 	};
 	//#endregion
+	//#region src/ace/text_markers.ts
+	function stringRepeat(text, count) {
+		return new Array(count + 1).join(text);
+	}
+	function getClassNames(className) {
+		return className.split(/\s+/).filter(Boolean);
+	}
+	function addClassNames(element, className) {
+		const addedClasses = element["$aceLspTextMarkerAddedClasses"] || /* @__PURE__ */ new Set();
+		getClassNames(className).forEach((singleClassName) => {
+			if (!element.classList.contains(singleClassName)) {
+				element.classList.add(singleClassName);
+				addedClasses.add(singleClassName);
+			}
+		});
+		if (addedClasses.size > 0) {
+			element["$aceLspTextMarkerAddedClasses"] = addedClasses;
+			element.setAttribute("data-ace-lsp-text-marker", "true");
+		}
+	}
+	function removeClassNames(element, className) {
+		const addedClasses = element["$aceLspTextMarkerAddedClasses"];
+		if (!addedClasses) return;
+		getClassNames(className).forEach((singleClassName) => {
+			if (addedClasses.has(singleClassName)) {
+				element.classList.remove(singleClassName);
+				addedClasses.delete(singleClassName);
+			}
+		});
+		if (addedClasses.size === 0) {
+			delete element["$aceLspTextMarkerAddedClasses"];
+			element.removeAttribute("data-ace-lsp-text-marker");
+		}
+	}
+	var textMarkerMixin = {
+		$removeClass(className) {
+			if (!this.element || !className) return;
+			var selectedElements = this.element.querySelectorAll("[data-ace-lsp-text-marker]");
+			for (let i = 0; i < selectedElements.length; i++) {
+				var element = selectedElements[i];
+				removeClassNames(element, className);
+				if (element.hasAttribute("data-whitespace")) {
+					var originalWhitespace = element.getAttribute("data-whitespace") || "";
+					var textNode = this.dom.createTextNode(originalWhitespace, this.element);
+					textNode["charCount"] = element["charCount"];
+					element.parentNode?.replaceChild(textNode, element);
+				}
+			}
+		},
+		$applyTextMarkers() {
+			const textLayer = this;
+			const session = this.session;
+			if (session.$scheduleForRemove) {
+				session.$scheduleForRemove.forEach((className) => {
+					textLayer.$removeClass(className);
+				});
+				session.$scheduleForRemove = /* @__PURE__ */ new Set();
+			}
+			var textMarkers = session.getTextMarkers ? session.getTextMarkers() : [];
+			if (textMarkers.length === 0) return;
+			var classNameGroups = /* @__PURE__ */ new Set();
+			textMarkers.forEach((marker) => {
+				if (marker) classNameGroups.add(marker.className);
+			});
+			classNameGroups.forEach((className) => {
+				textLayer.$removeClass(className);
+			});
+			textMarkers.forEach((marker) => {
+				if (!marker) return;
+				for (let row = marker.range.start.row; row <= marker.range.end.row; row++) {
+					var cell = this.$lines.cells.find((el) => el.row === row);
+					if (cell) textLayer.$modifyDomForMarkers(cell.element, row, marker);
+				}
+			});
+		},
+		$modifyDomForMarkers(lineElement, row, marker) {
+			var lineLength = this.session.getLine(row).length;
+			let startCol = row > marker.range.start.row ? 0 : marker.range.start.column;
+			let endCol = row < marker.range.end.row ? lineLength : marker.range.end.column;
+			if (startCol === endCol) return;
+			var lineElements = [];
+			if (lineElement.classList.contains("ace_line_group")) lineElements = Array.from(lineElement.childNodes);
+			else lineElements = [lineElement];
+			var currentColumn = 0;
+			lineElements.forEach((lineElement) => {
+				var childNodes = Array.from(lineElement.childNodes);
+				for (let i = 0; i < childNodes.length; i++) {
+					let subChildNodes = [childNodes[i]];
+					let parentNode = lineElement;
+					if (childNodes[i].childNodes && childNodes[i].childNodes.length > 0) {
+						subChildNodes = Array.from(childNodes[i].childNodes);
+						parentNode = childNodes[i];
+					}
+					for (let j = 0; j < subChildNodes.length; j++) {
+						var node = subChildNodes[j];
+						var nodeText = node.textContent || "";
+						const nodeParent = node.parentNode;
+						if (nodeParent?.["charCount"]) node["charCount"] = nodeParent["charCount"];
+						var contentLength = node["charCount"] || nodeText.length;
+						var nodeStart = currentColumn;
+						var nodeEnd = currentColumn + contentLength;
+						if (node["charCount"] === 0 || contentLength === 0) continue;
+						if (nodeStart < endCol && nodeEnd > startCol) {
+							var beforeSelection = Math.max(0, startCol - nodeStart);
+							var afterSelection = Math.max(0, nodeEnd - endCol);
+							var selectionLength = contentLength - beforeSelection - afterSelection;
+							if (marker.type === "invisible") this.$processInvisibleMarker(node, parentNode, {
+								beforeSelection,
+								selectionLength,
+								afterSelection
+							}, marker);
+							else this.$processRegularMarker(node, parentNode, {
+								beforeSelection,
+								selectionLength,
+								afterSelection
+							}, marker, nodeStart, startCol, endCol);
+						}
+						currentColumn = nodeEnd;
+					}
+				}
+			});
+		},
+		$processInvisibleMarker(node, parentNode, selectionSegment, marker) {
+			var nodeText = node.textContent || "";
+			if (node.nodeType === 3) {
+				var fragment = this.dom.createFragment(this.element);
+				if (selectionSegment.beforeSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(0, selectionSegment.beforeSelection), this.element));
+				if (selectionSegment.selectionLength > 0) {
+					var segments = (selectionSegment.beforeSelection === 0 && selectionSegment.afterSelection === 0 ? nodeText : nodeText.substring(selectionSegment.beforeSelection, selectionSegment.beforeSelection + selectionSegment.selectionLength)).match(/\s+|[^\s]+/g) || [];
+					for (let k = 0; k < segments.length; k++) {
+						var segment = segments[k];
+						let span;
+						if (/^\s+$/.test(segment)) {
+							span = this.dom.createElement("span");
+							addClassNames(span, marker.className);
+							var symbol = node["charCount"] ? this.TAB_CHAR : this.SPACE_CHAR;
+							span.textContent = stringRepeat(symbol, segment.length);
+							span.setAttribute("data-whitespace", segment);
+						} else {
+							span = this.dom.createElement("span");
+							span.textContent = segment;
+						}
+						if (node["charCount"] && segments.length === 1) span["charCount"] = node["charCount"];
+						fragment.appendChild(span);
+					}
+				}
+				if (selectionSegment.afterSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(selectionSegment.beforeSelection + selectionSegment.selectionLength), this.element));
+				parentNode.replaceChild(fragment, node);
+			}
+		},
+		$processRegularMarker(node, parentNode, selectionSegment, marker, nodeStart, startCol, endCol) {
+			var nodeText = node.textContent || "";
+			if (node.nodeType === 3) if (selectionSegment.beforeSelection > 0 || selectionSegment.afterSelection > 0) {
+				var fragment = this.dom.createFragment(this.element);
+				if (selectionSegment.beforeSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(0, selectionSegment.beforeSelection), this.element));
+				if (selectionSegment.selectionLength > 0) {
+					var selectedSpan = this.dom.createElement("span");
+					addClassNames(selectedSpan, marker.className);
+					selectedSpan.textContent = nodeText.substring(selectionSegment.beforeSelection, selectionSegment.beforeSelection + selectionSegment.selectionLength);
+					fragment.appendChild(selectedSpan);
+				}
+				if (selectionSegment.afterSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(selectionSegment.beforeSelection + selectionSegment.selectionLength), this.element));
+				parentNode.replaceChild(fragment, node);
+			} else {
+				var selectedSpan = this.dom.createElement("span");
+				addClassNames(selectedSpan, marker.className);
+				selectedSpan.textContent = nodeText;
+				selectedSpan["charCount"] = node["charCount"];
+				parentNode.replaceChild(selectedSpan, node);
+			}
+			else if (node.nodeType === 1) {
+				const element = node;
+				if (nodeStart >= startCol && nodeStart + (nodeText.length || 0) <= endCol) addClassNames(element, marker.className);
+				else if (selectionSegment.beforeSelection > 0 || selectionSegment.afterSelection > 0) {
+					var nodeClasses = element.className;
+					var fragment = this.dom.createFragment(this.element);
+					if (selectionSegment.beforeSelection > 0) {
+						var beforeSpan = this.dom.createElement("span");
+						beforeSpan.className = nodeClasses;
+						beforeSpan.textContent = nodeText.substring(0, selectionSegment.beforeSelection);
+						fragment.appendChild(beforeSpan);
+					}
+					if (selectionSegment.selectionLength > 0) {
+						var selectedSpan = this.dom.createElement("span");
+						selectedSpan.className = nodeClasses;
+						addClassNames(selectedSpan, marker.className);
+						selectedSpan.textContent = nodeText.substring(selectionSegment.beforeSelection, selectionSegment.beforeSelection + selectionSegment.selectionLength);
+						fragment.appendChild(selectedSpan);
+					}
+					if (selectionSegment.afterSelection > 0) {
+						var afterSpan = this.dom.createElement("span");
+						afterSpan.className = nodeClasses;
+						afterSpan.textContent = nodeText.substring(selectionSegment.beforeSelection + selectionSegment.selectionLength);
+						fragment.appendChild(afterSpan);
+					}
+					parentNode.replaceChild(fragment, node);
+				}
+			}
+		}
+	};
+	var editSessionTextMarkerMixin = {
+		addTextMarker(range, className, type) {
+			this.$textMarkerId = this.$textMarkerId || 0;
+			this.$textMarkerId++;
+			var marker = {
+				range,
+				id: this.$textMarkerId,
+				className,
+				type
+			};
+			if (!this.$textMarkers) this.$textMarkers = [];
+			this.$textMarkers[marker.id] = marker;
+			return marker.id;
+		},
+		removeTextMarker(markerId) {
+			if (!this.$textMarkers) return;
+			var marker = this.$textMarkers[markerId];
+			if (!marker) return;
+			if (!this.$scheduleForRemove) this.$scheduleForRemove = /* @__PURE__ */ new Set();
+			this.$scheduleForRemove.add(marker.className);
+			delete this.$textMarkers[markerId];
+		},
+		getTextMarkers() {
+			return this.$textMarkers || [];
+		}
+	};
+	function patchPrototype(target, mixin, flagName) {
+		if (!target) return;
+		const prototype = Object.getPrototypeOf(target);
+		if (!prototype || prototype[flagName]) return;
+		Object.assign(prototype, mixin);
+		prototype[flagName] = true;
+	}
+	function createTextMarkerAdapter() {
+		const onAfterRender = (_e, renderer) => {
+			renderer["$textLayer"]?.$applyTextMarkers?.();
+		};
+		function installTextMarkerSupport(editor) {
+			patchPrototype(editor.renderer?.["$textLayer"], textMarkerMixin, "$aceLintersTextMarkerMixin");
+			patchPrototype(editor.session, editSessionTextMarkerMixin, "$aceLintersTextMarkerSessionMixin");
+		}
+		function enableTextMarkers(editor) {
+			installTextMarkerSupport(editor);
+			if (!editor.$textMarkersAfterRender) {
+				editor.$textMarkersAfterRender = onAfterRender;
+				editor.renderer.on("afterRender", editor.$textMarkersAfterRender);
+			}
+		}
+		function disableTextMarkers(editor) {
+			if (editor.$textMarkersAfterRender) {
+				editor.renderer.off("afterRender", editor.$textMarkersAfterRender);
+				delete editor.$textMarkersAfterRender;
+			}
+		}
+		return {
+			enableTextMarkers,
+			disableTextMarkers
+		};
+	}
+	//#endregion
 	//#region src/ace/marker_group.ts
 	var MarkerGroup = class {
 		constructor(session) {
@@ -10282,26 +10556,31 @@
 		for (let i = 0; i < tokenModifiersLegend.length; i++) if (modifierFlag & 1 << i) modifiers.push(tokenModifiersLegend[i]);
 		return modifiers;
 	}
-	function parseSemanticTokens(tokens, tokenTypes, tokenModifiersLegend) {
-		if (tokens.length % 5 !== 0) return;
-		const decodedTokens = [];
-		let line = 0;
-		let startColumn = 0;
-		for (let i = 0; i < tokens.length; i += 5) {
-			line += tokens[i];
-			if (tokens[i] === 0) startColumn += tokens[i + 1];
-			else startColumn = tokens[i + 1];
-			const length = tokens[i + 2];
-			const tokenTypeIndex = tokens[i + 3];
-			const tokenModifierFlag = tokens[i + 4];
-			const tokenType = tokenTypes[tokenTypeIndex];
-			const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
-			decodedTokens.push({
-				row: line,
-				startColumn,
-				length,
-				type: toAceTokenType(tokenType, tokenModifiers)
-			});
+	function parseSemanticTokens(originalTokens, additionalTokens) {
+		const hasValidTokens = originalTokens?.tokens && originalTokens.tokens.length % 5 === 0;
+		const hasAdditionalTokens = additionalTokens && additionalTokens.length > 0;
+		if (!hasValidTokens && !hasAdditionalTokens) return;
+		const decodedTokens = additionalTokens ?? [];
+		if (originalTokens) {
+			const { tokens, tokenTypes, tokenModifiersLegend } = originalTokens;
+			let line = 0;
+			let startColumn = 0;
+			for (let i = 0; i < tokens.length; i += 5) {
+				line += tokens[i];
+				if (tokens[i] === 0) startColumn += tokens[i + 1];
+				else startColumn = tokens[i + 1];
+				const length = tokens[i + 2];
+				const tokenTypeIndex = tokens[i + 3];
+				const tokenModifierFlag = tokens[i + 4];
+				const tokenType = tokenTypes[tokenTypeIndex];
+				const tokenModifiers = decodeModifiers(tokenModifierFlag, tokenModifiersLegend);
+				decodedTokens.push({
+					row: line,
+					startColumn,
+					length,
+					type: toAceTokenType(tokenType, tokenModifiers)
+				});
+			}
 		}
 		return new DecodedSemanticTokens(decodedTokens);
 	}
@@ -10350,60 +10629,24 @@
 			case "event":
 				type = "variable.other.event";
 				break;
+			case "highlight_unnecessary": type = "highlight_unnecessary";
 		}
 		return type + modifiers;
-	}
-	function mergeTokens(aceTokens, decodedTokens) {
-		let mergedTokens = [];
-		let currentCharIndex = 0;
-		let aceTokenIndex = 0;
-		decodedTokens.forEach((semanticToken) => {
-			let semanticStart = semanticToken.startColumn;
-			let semanticEnd = semanticStart + semanticToken.length;
-			while (aceTokenIndex < aceTokens.length && currentCharIndex + aceTokens[aceTokenIndex].value.length <= semanticStart) {
-				mergedTokens.push(aceTokens[aceTokenIndex]);
-				currentCharIndex += aceTokens[aceTokenIndex].value.length;
-				aceTokenIndex++;
-			}
-			while (aceTokenIndex < aceTokens.length && currentCharIndex < semanticEnd) {
-				let aceToken = aceTokens[aceTokenIndex];
-				let aceTokenEnd = currentCharIndex + aceToken.value.length;
-				let overlapStart = Math.max(currentCharIndex, semanticStart);
-				let overlapEnd = Math.min(aceTokenEnd, semanticEnd);
-				if (currentCharIndex < semanticStart) {
-					let beforeSemantic = {
-						...aceToken,
-						value: aceToken.value.substring(0, semanticStart - currentCharIndex)
-					};
-					mergedTokens.push(beforeSemantic);
-				}
-				let middle = {
-					type: semanticToken.type,
-					value: aceToken.value.substring(overlapStart - currentCharIndex, overlapEnd - currentCharIndex)
-				};
-				mergedTokens.push(middle);
-				if (aceTokenEnd > semanticEnd) {
-					let afterSemantic = {
-						...aceToken,
-						value: aceToken.value.substring(semanticEnd - currentCharIndex)
-					};
-					currentCharIndex = semanticEnd;
-					aceTokens.splice(aceTokenIndex, 1, afterSemantic);
-					break;
-				}
-				currentCharIndex = aceTokenEnd;
-				aceTokenIndex++;
-			}
-		});
-		while (aceTokenIndex < aceTokens.length) {
-			mergedTokens.push(aceTokens[aceTokenIndex]);
-			aceTokenIndex++;
-		}
-		return mergedTokens;
 	}
 	var DecodedSemanticTokens = class {
 		constructor(tokens) {
 			this.tokens = this.sortTokens(tokens);
+			this.normalize();
+		}
+		normalize() {
+			const tokenMap = /* @__PURE__ */ new Map();
+			this.tokens.forEach((token) => {
+				const key = `${token.row}:${token.startColumn}:${token.length}`;
+				const existing = tokenMap.get(key);
+				if (existing) existing.type = `${existing.type}.${token.type}`;
+				else tokenMap.set(key, { ...token });
+			});
+			this.tokens = Array.from(tokenMap.values());
 		}
 		getByRow(row) {
 			return this.tokens.filter((token) => token.row === row);
@@ -10438,6 +10681,8 @@
 				"typescript": "ts",
 				"javascript": "js"
 			};
+			this.$semanticTextMarkerIds = [];
+			this.$diagnosticTextMarkerIds = [];
 			this.$connected = (capabilities) => {
 				this.$isConnected = true;
 				this.setServerCapabilities(capabilities);
@@ -10451,7 +10696,8 @@
 					this.$deltaQueue = null;
 					this.session.clearAnnotations();
 					if (this.state.diagnosticMarkers) this.state.diagnosticMarkers.setMarkers([]);
-					this.session.setSemanticTokens(void 0);
+					this.clearSemanticTokenMarkers();
+					this.clearDiagnosticTextMarkers();
 					let newVersion = this.session.doc.version++;
 					this.$messageController.changeMode(this.comboDocumentIdentifier, this.session.getValue(), newVersion, this.$mode, this.setServerCapabilities);
 				});
@@ -10503,11 +10749,14 @@
 			};
 			this.$showAnnotations = (diagnostics) => {
 				if (!diagnostics) return;
-				let annotations = toAnnotations(diagnostics);
+				const filteredDiagnostics = diagnostics.filter((el) => !el?.data?.ignore);
+				let annotations = toAnnotations(filteredDiagnostics);
 				this.session.clearAnnotations();
 				if (annotations && annotations.length > 0) this.session.setAnnotations(annotations);
 				if (!this.state.diagnosticMarkers) this.state.diagnosticMarkers = new MarkerGroup(this.session);
-				this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
+				if (this.$provider.options.functionality.showUnusedDeclarations) this.setDiagnosticTextMarkers(diagnostics);
+				else if (this.$diagnosticTextMarkerIds.length > 0) this.clearDiagnosticTextMarkers();
+				this.state.diagnosticMarkers.setMarkers(filteredDiagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
 			};
 			this.validate = () => {
 				this.$messageController.doValidation(this.comboDocumentIdentifier, this.$showAnnotations);
@@ -10535,6 +10784,20 @@
 				edits ??= [];
 				for (let edit of edits.reverse()) this.session.replace(toRange(edit.range), edit.newText);
 			};
+			this.$applySemanticTokens = (tokens) => {
+				if (!tokens) {
+					this.session.setSemanticTokens(void 0);
+					return;
+				}
+				let originalTokens;
+				if (tokens) originalTokens = {
+					tokens: tokens.data,
+					tokenTypes: this.semanticTokensLegend.tokenTypes,
+					tokenModifiersLegend: this.semanticTokensLegend.tokenModifiers
+				};
+				let decodedTokens = parseSemanticTokens(originalTokens);
+				this.session.setSemanticTokens(decodedTokens);
+			};
 			this.$applyDocumentHighlight = (documentHighlights) => {
 				if (!this.state.occurrenceMarkers) this.state.occurrenceMarkers = new MarkerGroup(this.session);
 				if (documentHighlights) this.state.occurrenceMarkers.setMarkers(fromDocumentHighlights(documentHighlights));
@@ -10545,7 +10808,9 @@
 			this.editor = editor;
 			session.doc.version = 1;
 			session.doc.on("change", this.$changeListener, true);
-			this.addSemanticTokenSupport(session);
+			session.setSemanticTokens = (tokens) => {
+				this.setSemanticTokenMarkers(tokens);
+			};
 			session.on("changeMode", this.$changeMode);
 			if (this.$provider.options.functionality.semanticTokens) {
 				this.$changeScrollTopHandler = () => this.getSemanticTokens();
@@ -10588,27 +10853,6 @@
 			this.initDocumentUri(false, config?.joinWorkspaceURI);
 			this.$messageController.init(this.comboDocumentIdentifier, this.session.doc, this.$mode, this.$options, this.$connected);
 		}
-		addSemanticTokenSupport(session) {
-			let bgTokenizer = session.bgTokenizer;
-			session.setSemanticTokens = (tokens) => {
-				bgTokenizer.semanticTokens = tokens;
-			};
-			bgTokenizer.$tokenizeRow = (row) => {
-				var line = bgTokenizer.doc.getLine(row);
-				var state = bgTokenizer.states[row - 1];
-				var data = bgTokenizer.tokenizer.getLineTokens(line, state, row);
-				if (bgTokenizer.states[row] + "" !== data.state + "") {
-					bgTokenizer.states[row] = data.state;
-					bgTokenizer.lines[row + 1] = null;
-					if (bgTokenizer.currentLine > row + 1) bgTokenizer.currentLine = row + 1;
-				} else if (bgTokenizer.currentLine == row) bgTokenizer.currentLine = row + 1;
-				if (bgTokenizer.semanticTokens) {
-					let decodedTokens = bgTokenizer.semanticTokens.getByRow(row);
-					if (decodedTokens) data.tokens = mergeTokens(data.tokens, decodedTokens);
-				}
-				return bgTokenizer.lines[row] = data.tokens;
-			};
-		}
 		initDocumentUri(isRename = false, joinWorkspaceURI = false) {
 			let filePath = this.$filePath ?? this.session["id"] + "." + this.$extension;
 			if (isRename) delete this.$provider.$urisToSessionsIds[this.documentUri];
@@ -10648,23 +10892,71 @@
 					column: this.session.getLine(lastRow).length
 				}
 			};
-			this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), (tokens) => {
-				if (!tokens) return;
-				let decodedTokens = parseSemanticTokens(tokens.data, this.semanticTokensLegend.tokenTypes, this.semanticTokensLegend.tokenModifiers);
-				this.session.setSemanticTokens(decodedTokens);
-				let bgTokenizer = this.session.bgTokenizer;
-				bgTokenizer.running = setTimeout(() => {
-					if (bgTokenizer?.semanticTokens?.tokens && bgTokenizer?.semanticTokens?.tokens.length > 0) {
-						let startRow = bgTokenizer?.semanticTokens?.tokens[0].row;
-						bgTokenizer.currentLine = startRow;
-						bgTokenizer.lines = bgTokenizer.lines.slice(0, startRow - 1);
-					} else {
-						bgTokenizer.currentLine = 0;
-						bgTokenizer.lines = [];
+			this.$messageController.getSemanticTokens(this.comboDocumentIdentifier, fromRange(visibleRange), this.$applySemanticTokens);
+		}
+		setSemanticTokenMarkers(tokens) {
+			this.clearSemanticTokenMarkers(false);
+			if (!tokens) {
+				this.applyTextMarkersToRenderedRows();
+				return;
+			}
+			tokens.tokens.forEach((token) => {
+				const markerId = this.session.addTextMarker({
+					start: {
+						row: token.row,
+						column: token.startColumn
+					},
+					end: {
+						row: token.row,
+						column: token.startColumn + token.length
 					}
-					bgTokenizer.$worker();
-				}, 20);
+				}, this.toAceTokenClassName(token.type));
+				this.$semanticTextMarkerIds.push(markerId);
 			});
+			this.applyTextMarkersToRenderedRows();
+		}
+		setDiagnosticTextMarkers(diagnostics) {
+			this.clearDiagnosticTextMarkers(false);
+			if (!this.session.addTextMarker) {
+				this.applyTextMarkersToRenderedRows();
+				return;
+			}
+			diagnostics.forEach((diagnostic) => {
+				if (!diagnostic.tags?.length) return;
+				const tokenType = diagnostic.tags.includes(import_main.DiagnosticTag.Deprecated) ? "highlight_deprecated" : "highlight_unnecessary";
+				const markerId = this.session.addTextMarker({
+					start: {
+						row: diagnostic.range.start.line,
+						column: diagnostic.range.start.character
+					},
+					end: {
+						row: diagnostic.range.end.line,
+						column: diagnostic.range.end.character
+					}
+				}, this.toAceTokenClassName(tokenType));
+				this.$diagnosticTextMarkerIds.push(markerId);
+			});
+			this.applyTextMarkersToRenderedRows();
+		}
+		clearSemanticTokenMarkers(render = true) {
+			this.clearTextMarkers(this.$semanticTextMarkerIds);
+			this.$semanticTextMarkerIds = [];
+			if (render) this.applyTextMarkersToRenderedRows();
+		}
+		clearDiagnosticTextMarkers(render = true) {
+			this.clearTextMarkers(this.$diagnosticTextMarkerIds);
+			this.$diagnosticTextMarkerIds = [];
+			if (render) this.applyTextMarkersToRenderedRows();
+		}
+		clearTextMarkers(markerIds) {
+			if (!this.session.removeTextMarker) return;
+			markerIds.forEach((markerId) => this.session.removeTextMarker(markerId));
+		}
+		toAceTokenClassName(tokenType) {
+			return "ace_" + tokenType.replace(/\./g, " ace_");
+		}
+		applyTextMarkersToRenderedRows() {
+			this.editor.renderer["$textLayer"]?.$applyTextMarkers?.();
 		}
 		/**
 		* Disposes of the SessionLanguageProvider, cleaning up all event listeners,
@@ -10689,7 +10981,9 @@
 				this.state.diagnosticMarkers = null;
 			}
 			this.session.clearAnnotations();
-			if (this.session.setSemanticTokens) this.session.setSemanticTokens(void 0);
+			this.clearSemanticTokenMarkers(false);
+			this.clearDiagnosticTextMarkers(false);
+			this.applyTextMarkersToRenderedRows();
 			this.$deltaQueue = null;
 			this.$requestsQueue = [];
 			if (this.documentUri) delete this.$provider.$urisToSessionsIds[this.documentUri];
@@ -12402,7 +12696,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 	x.lex;
 	//#endregion
 	//#region ../../node_modules/dompurify/dist/purify.es.mjs
-	/*! @license DOMPurify 3.3.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.3/LICENSE */
+	/*! @license DOMPurify 3.4.0 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.0/LICENSE */
 	var { entries, setPrototypeOf, isFrozen, getPrototypeOf, getOwnPropertyDescriptor } = Object;
 	var { freeze, seal, create } = Object;
 	var { apply, construct } = typeof Reflect !== "undefined" && Reflect;
@@ -13114,8 +13408,9 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 		"align",
 		"bevelled",
 		"close",
-		"columnsalign",
+		"columnalign",
 		"columnlines",
+		"columnspacing",
 		"columnspan",
 		"denomalign",
 		"depth",
@@ -13131,8 +13426,8 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 		"largeop",
 		"length",
 		"linethickness",
-		"lspace",
 		"lquote",
+		"lspace",
 		"mathbackground",
 		"mathcolor",
 		"mathsize",
@@ -13195,17 +13490,10 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 	});
 	var NODE_TYPE = {
 		element: 1,
-		attribute: 2,
 		text: 3,
-		cdataSection: 4,
-		entityReference: 5,
-		entityNode: 6,
 		progressingInstruction: 7,
 		comment: 8,
-		document: 9,
-		documentType: 10,
-		documentFragment: 11,
-		notation: 12
+		document: 9
 	};
 	var getGlobal = function getGlobal() {
 		return typeof window === "undefined" ? null : window;
@@ -13254,7 +13542,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 	function createDOMPurify() {
 		let window = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : getGlobal();
 		const DOMPurify = (root) => createDOMPurify(root);
-		DOMPurify.version = "3.3.3";
+		DOMPurify.version = "3.4.0";
 		DOMPurify.removed = [];
 		if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
 			DOMPurify.isSupported = false;
@@ -13487,7 +13775,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 			NAMESPACE = cfg.NAMESPACE || HTML_NAMESPACE;
 			MATHML_TEXT_INTEGRATION_POINTS = cfg.MATHML_TEXT_INTEGRATION_POINTS || MATHML_TEXT_INTEGRATION_POINTS;
 			HTML_INTEGRATION_POINTS = cfg.HTML_INTEGRATION_POINTS || HTML_INTEGRATION_POINTS;
-			CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || {};
+			CUSTOM_ELEMENT_HANDLING = cfg.CUSTOM_ELEMENT_HANDLING || create(null);
 			if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck)) CUSTOM_ELEMENT_HANDLING.tagNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.tagNameCheck;
 			if (cfg.CUSTOM_ELEMENT_HANDLING && isRegexOrFunction(cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck)) CUSTOM_ELEMENT_HANDLING.attributeNameCheck = cfg.CUSTOM_ELEMENT_HANDLING.attributeNameCheck;
 			if (cfg.CUSTOM_ELEMENT_HANDLING && typeof cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements === "boolean") CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements = cfg.CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements;
@@ -13516,8 +13804,8 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 					addToSet(ALLOWED_ATTR, xml);
 				}
 			}
-			if (!objectHasOwnProperty(cfg, "ADD_TAGS")) EXTRA_ELEMENT_HANDLING.tagCheck = null;
-			if (!objectHasOwnProperty(cfg, "ADD_ATTR")) EXTRA_ELEMENT_HANDLING.attributeCheck = null;
+			EXTRA_ELEMENT_HANDLING.tagCheck = null;
+			EXTRA_ELEMENT_HANDLING.attributeCheck = null;
 			if (cfg.ADD_TAGS) if (typeof cfg.ADD_TAGS === "function") EXTRA_ELEMENT_HANDLING.tagCheck = cfg.ADD_TAGS;
 			else {
 				if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) ALLOWED_TAGS = clone(ALLOWED_TAGS);
@@ -13724,6 +14012,10 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 				_forceRemove(currentNode);
 				return true;
 			}
+			if (SAFE_FOR_XML && currentNode.namespaceURI === HTML_NAMESPACE && tagName === "style" && _isNode(currentNode.firstElementChild)) {
+				_forceRemove(currentNode);
+				return true;
+			}
 			if (currentNode.nodeType === NODE_TYPE.progressingInstruction) {
 				_forceRemove(currentNode);
 				return true;
@@ -13732,7 +14024,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 				_forceRemove(currentNode);
 				return true;
 			}
-			if (!(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName])) {
+			if (FORBID_TAGS[tagName] || !(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && !ALLOWED_TAGS[tagName]) {
 				if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
 					if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) return false;
 					if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(tagName)) return false;
@@ -13902,7 +14194,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 		*
 		* @param fragment to iterate over recursively
 		*/
-		const _sanitizeShadowDOM = function _sanitizeShadowDOM(fragment) {
+		const _sanitizeShadowDOM2 = function _sanitizeShadowDOM(fragment) {
 			let shadowNode = null;
 			const shadowIterator = _createNodeIterator(fragment);
 			_executeHooks(hooks.beforeSanitizeShadowDOM, fragment, null);
@@ -13910,7 +14202,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 				_executeHooks(hooks.uponSanitizeShadowNode, shadowNode, null);
 				_sanitizeElements(shadowNode);
 				_sanitizeAttributes(shadowNode);
-				if (shadowNode.content instanceof DocumentFragment) _sanitizeShadowDOM(shadowNode.content);
+				if (shadowNode.content instanceof DocumentFragment) _sanitizeShadowDOM2(shadowNode.content);
 			}
 			_executeHooks(hooks.afterSanitizeShadowDOM, fragment, null);
 		};
@@ -13951,10 +14243,22 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 			while (currentNode = nodeIterator.nextNode()) {
 				_sanitizeElements(currentNode);
 				_sanitizeAttributes(currentNode);
-				if (currentNode.content instanceof DocumentFragment) _sanitizeShadowDOM(currentNode.content);
+				if (currentNode.content instanceof DocumentFragment) _sanitizeShadowDOM2(currentNode.content);
 			}
 			if (IN_PLACE) return dirty;
 			if (RETURN_DOM) {
+				if (SAFE_FOR_TEMPLATES) {
+					body.normalize();
+					let html = body.innerHTML;
+					arrayForEach([
+						MUSTACHE_EXPR,
+						ERB_EXPR,
+						TMPLIT_EXPR
+					], (expr) => {
+						html = stringReplace(html, expr, " ");
+					});
+					body.innerHTML = html;
+				}
 				if (RETURN_DOM_FRAGMENT) {
 					returnNode = createDocumentFragment.call(body.ownerDocument);
 					while (body.firstChild) returnNode.appendChild(body.firstChild);
@@ -14017,6 +14321,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 			this.editors = [];
 			this.$urisToSessionsIds = {};
 			this.$lightBulbWidgets = {};
+			this.textMarkerAdapter = createTextMarkerAdapter();
 			this.$editorEventHandlers = {};
 			this.$editorOriginalState = {};
 			this.registerSession = (session, editor, config) => {
@@ -14068,7 +14373,8 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 				signatureHelp: true,
 				semanticTokens: false,
 				codeActions: true,
-				inlineCompletion: false
+				inlineCompletion: false,
+				showUnusedDeclarations: true
 			};
 			this.options = options ?? {};
 			this.options.functionality = typeof this.options.functionality === "object" ? this.options.functionality : {};
@@ -14200,6 +14506,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 				editor.on("changeSession", changeSessionHandler);
 			}
 			if (this.options.functionality.completion || this.options.functionality.inlineCompletion) this.$registerCompleters(editor);
+			if (this.options.functionality.semanticTokens || this.options.functionality.showUnusedDeclarations) this.textMarkerAdapter.enableTextMarkers(editor);
 			this.activeEditor ??= editor;
 			const focusHandler = () => {
 				this.activeEditor = editor;
@@ -14262,6 +14569,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 					delete this.$lightBulbWidgets[editor.id];
 				}
 			}
+			if (this.options.functionality?.semanticTokens || this.options.functionality?.showUnusedDeclarations) this.textMarkerAdapter.disableTextMarkers(editor);
 			editor.setOption("useWorker", true);
 			if (this.activeEditor === editor) this.activeEditor = this.editors.length > 0 ? this.editors[0] : null;
 			if (cleanupSession && editor.session) this.closeDocument(editor.session);
