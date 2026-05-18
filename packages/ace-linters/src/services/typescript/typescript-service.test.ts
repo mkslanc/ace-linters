@@ -14,6 +14,25 @@ describe("TypescriptService", () => {
         return {uri};
     }
 
+    function addUnusedDocument(service: TypescriptService): TextDocumentIdentifier {
+        return addDocument(
+            service,
+            "file:///unused.ts",
+            [
+                "export function greet(name: string, unusedParameter: string) {",
+                "    const unusedLocal = 1;",
+                "    return name;",
+                "}",
+            ].join("\n"),
+        );
+    }
+
+    function diagnosticFor(diagnostics: any[], name: string) {
+        const diagnostic = diagnostics.find((item) => item.message.includes(`'${name}'`));
+        expect(diagnostic, `diagnostic for ${name}`).to.not.equal(undefined);
+        return diagnostic;
+    }
+
     it("returns semantic tokens for TypeScript identifiers", async () => {
         const service = new TypescriptService("typescript");
         const uri = "file:///semantic-tokens.ts";
@@ -48,25 +67,81 @@ describe("TypescriptService", () => {
         expect(tokenTypeIndexes.has(legend.tokenTypes.indexOf("variable"))).to.equal(true);
     });
 
-    it("reports unused locals and parameters by default", async () => {
+    it("returns unused locals and parameters as hidden tagged suggestions by default", async () => {
+        const service = new TypescriptService("typescript");
+        const document = addUnusedDocument(service);
+
+        const diagnostics = await service.doValidation(document);
+        const unusedParameter = diagnosticFor(diagnostics, "unusedParameter");
+        const unusedLocal = diagnosticFor(diagnostics, "unusedLocal");
+
+        expect(unusedParameter.data?.ignore).to.equal(true);
+        expect(unusedLocal.data?.ignore).to.equal(true);
+        expect(unusedParameter.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+        expect(unusedLocal.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+    });
+
+    it("reports unused locals as visible diagnostics when noUnusedLocals is enabled", async () => {
+        const service = new TypescriptService("typescript");
+        service.setGlobalOptions({compilerOptions: {noUnusedLocals: true}});
+        const document = addUnusedDocument(service);
+
+        const diagnostics = await service.doValidation(document);
+        const unusedParameter = diagnosticFor(diagnostics, "unusedParameter");
+        const unusedLocal = diagnosticFor(diagnostics, "unusedLocal");
+
+        expect(unusedLocal.data?.ignore).to.equal(undefined);
+        expect(unusedParameter.data?.ignore).to.equal(true);
+        expect(unusedLocal.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+        expect(unusedParameter.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+    });
+
+    it("reports unused parameters as visible diagnostics when noUnusedParameters is enabled", async () => {
+        const service = new TypescriptService("typescript");
+        service.setGlobalOptions({compilerOptions: {noUnusedParameters: true}});
+        const document = addUnusedDocument(service);
+
+        const diagnostics = await service.doValidation(document);
+        const unusedParameter = diagnosticFor(diagnostics, "unusedParameter");
+        const unusedLocal = diagnosticFor(diagnostics, "unusedLocal");
+
+        expect(unusedParameter.data?.ignore).to.equal(undefined);
+        expect(unusedLocal.data?.ignore).to.equal(true);
+        expect(unusedParameter.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+        expect(unusedLocal.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+    });
+
+    it("reports both unused locals and parameters as visible diagnostics when both noUnused options are enabled", async () => {
+        const service = new TypescriptService("typescript");
+        service.setGlobalOptions({compilerOptions: {noUnusedLocals: true, noUnusedParameters: true}});
+        const document = addUnusedDocument(service);
+
+        const diagnostics = await service.doValidation(document);
+        const unusedParameter = diagnosticFor(diagnostics, "unusedParameter");
+        const unusedLocal = diagnosticFor(diagnostics, "unusedLocal");
+
+        expect(unusedParameter.data?.ignore).to.equal(undefined);
+        expect(unusedLocal.data?.ignore).to.equal(undefined);
+        expect(unusedParameter.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+        expect(unusedLocal.tags?.includes(DiagnosticTag.Unnecessary)).to.equal(true);
+    });
+
+    it("returns deprecated usages as hidden tagged suggestions", async () => {
         const service = new TypescriptService("typescript");
         const document = addDocument(
             service,
-            "file:///unused.ts",
+            "file:///deprecated.ts",
             [
-                "export function greet(name: string, unusedParameter: string) {",
-                "    const unusedLocal = 1;",
-                "    return name;",
-                "}",
+                "/** @deprecated use replacement instead */",
+                "export function legacy() {}",
+                "legacy();",
             ].join("\n"),
         );
 
         const diagnostics = await service.doValidation(document);
-        const messages = diagnostics.map((diagnostic) => diagnostic.message);
+        const deprecated = diagnostics.find((diagnostic) => diagnostic.tags?.includes(DiagnosticTag.Deprecated));
 
-        expect(messages.some((message) => message.includes("'unusedParameter' is declared but its value is never read"))).to.equal(true);
-        expect(messages.some((message) => message.includes("'unusedLocal' is declared but its value is never read"))).to.equal(true);
-        expect(diagnostics.every((diagnostic) => !diagnostic.data?.ignore)).to.equal(true);
-        expect(diagnostics.every((diagnostic) => diagnostic.tags?.includes(DiagnosticTag.Unnecessary))).to.equal(true);
+        expect(deprecated).to.not.equal(undefined);
+        expect(deprecated!.data?.ignore).to.equal(true);
     });
 });

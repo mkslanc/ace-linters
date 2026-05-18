@@ -278,7 +278,7 @@ export class SessionLanguageProvider {
             this.clearDiagnosticTextMarkers();
         }
 
-        this.state.diagnosticMarkers.setMarkers(diagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
+        this.state.diagnosticMarkers.setMarkers(filteredDiagnostics?.map((el) => toMarkerGroupItem(CommonConverter.toRange(toRange(el.range)), mapSeverityToClassName(el.severity), el.message)).filter(Boolean));
     }
 
     setOptions<OptionsType extends ServiceOptions>(options: OptionsType) {
@@ -395,7 +395,7 @@ export class SessionLanguageProvider {
             }
             // LSP services mark unused/deprecated ranges through Diagnostic.tags.
             // Those tags are rendered as text markers so they can layer over normal syntax/semantic highlighting.
-            const tokenType = diagnostic.tags[0] === lsp.DiagnosticTag.Deprecated
+            const tokenType = diagnostic.tags.includes(lsp.DiagnosticTag.Deprecated)
                 ? "highlight_deprecated"
                 : "highlight_unnecessary";
             const markerId = this.session.addTextMarker!({

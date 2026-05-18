@@ -169,6 +169,29 @@ describe("SessionLanguageProvider text marker rendering", () => {
         editor.destroy();
     });
 
+    it("uses deprecated text marker when a diagnostic has deprecated and unnecessary tags", () => {
+        const {editor, sessionProvider} = createRegisteredEditor({
+            semanticTokens: false,
+            showUnusedDeclarations: true
+        });
+
+        sessionProvider.$showAnnotations([
+            {
+                range: {
+                    start: {line: 2, character: 6},
+                    end: {line: 2, character: 12}
+                },
+                message: "deprecated unused",
+                severity: DiagnosticSeverity.Warning,
+                tags: [DiagnosticTag.Unnecessary, DiagnosticTag.Deprecated]
+            }
+        ]);
+
+        expect(markerClasses(editor.session)).to.deep.equal(["ace_highlight_deprecated"]);
+
+        editor.destroy();
+    });
+
     it("does not create diagnostic text markers when unused declaration rendering is disabled", () => {
         const {editor, sessionProvider} = createRegisteredEditor({
             semanticTokens: false,
