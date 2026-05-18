@@ -5,14 +5,26 @@ declare module "ace-code/src/edit_session" {
 
     interface EditSession {
         setSemanticTokens: (tokens: DecodedSemanticTokens | undefined) => void;
+        addTextMarker?: (range: {
+            start: { row: number; column: number };
+            end: { row: number; column: number };
+        }, className: string, type?: string) => number;
+        removeTextMarker?: (markerId: number) => void;
+        getTextMarkers?: () => {
+            range: {
+                start: { row: number; column: number };
+                end: { row: number; column: number };
+            };
+            id: number;
+            className: string;
+            type?: string;
+        }[];
         lspConfig?: SessionLspConfig
     }
 }
 
 declare module "ace-code/src/background_tokenizer" {
     interface BackgroundTokenizer {
-        semanticTokens: DecodedSemanticTokens | undefined;
-
         $tokenizeRow(row: number): import("ace-code").Ace.Token[];
 
         $worker: () => void;
@@ -40,5 +52,6 @@ declare module "ace-code/src/editor" {
     interface Editor {
         inlineCompleter: any;
         inlineCompleters: import("ace-code").Ace.Completer[];
+        $textMarkersAfterRender?: (e: unknown, renderer: import("ace-code").Ace.VirtualRenderer) => void;
     }
 }

@@ -59,7 +59,8 @@ let languageProvider = LanguageProvider.create(worker, {
                     remove: [],
                 }
             }
-        }
+        },
+        semanticTokens: true
     }
 });
 

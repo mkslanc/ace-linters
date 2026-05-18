@@ -41,6 +41,14 @@ export function setStyles(editor) {
     border: solid 1px #F88;
 }
 
+.ace_highlight_unnecessary {
+    opacity: 0.5;
+}
+
+.ace_highlight_deprecated {
+    text-decoration: line-through;
+}
+
 .ace_lsp_hover_quickfixes {
     margin-top: 8px;
     border-top: 1px solid rgba(127,127,127,0.35);

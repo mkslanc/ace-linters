@@ -5,7 +5,7 @@ import {Diagnostic} from './lib/typescriptServices';
 import {libFileMap} from "./lib/lib";
 import {
     diagnosticsToErrorCodes,
-    fromTsDiagnostics, getTokenModifierFromClassification, getTokenTypeFromClassification,
+    fromTsDiagnostics, fromTsSuggestionDiagnostics, getTokenModifierFromClassification, getTokenTypeFromClassification,
     JsxEmit,
     ScriptTarget, SemanticClassificationFormat, toCodeActions,
     toCompletions,
@@ -36,7 +36,7 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         module: 99,
         moduleResolution: 99,
         allowSyntheticDefaultImports: true,
-        moduleDetection: 3
+        moduleDetection: 3,
     };
 
     $defaultFormatOptions = {
@@ -222,6 +222,10 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
         return this.$service.getSemanticDiagnostics(fileName);
     }
 
+    private getSuggestionDiagnostics(fileName: string): Diagnostic[] {
+        return this.$service.getSuggestionDiagnostics(fileName).filter((diagnostic) => diagnostic.reportsUnnecessary || diagnostic.reportsDeprecated);
+    }
+
     private getFormattingOptions(options: lsp.FormattingOptions): ts.FormatCodeSettings {
         this.$defaultFormatOptions.convertTabsToSpaces = options.insertSpaces;
         this.$defaultFormatOptions.tabSize = options.tabSize;
@@ -259,7 +263,11 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
 
         let semanticDiagnostics = this.getSemanticDiagnostics(document.uri);
         let syntacticDiagnostics = this.getSyntacticDiagnostics(document.uri);
-        return fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument, this.optionsToFilterDiagnostics);
+        let suggestionDiagnostics = this.getSuggestionDiagnostics(document.uri);
+        return [
+            ...fromTsDiagnostics([...syntacticDiagnostics, ...semanticDiagnostics], fullDocument, this.optionsToFilterDiagnostics),
+            ...fromTsSuggestionDiagnostics(suggestionDiagnostics, fullDocument, this.optionsToFilterDiagnostics)
+        ];
     }
 
     async doComplete(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.CompletionItem[] | lsp.CompletionList | null> {
