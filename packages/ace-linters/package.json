@@ -17,9 +17,9 @@
     "generate-typescript-service": "node tools/generate-typescript-service.js"
   },
   "dependencies": {
-    "vscode-languageserver-protocol": "^3.17.5",
+    "vscode-languageserver-protocol": "3.17.5",
     "vscode-languageserver-textdocument": "^1.0.12",
-    "vscode-languageserver-types": "^3.17.5"
+    "vscode-languageserver-types": "3.17.5"
   },
   "devDependencies": {
     "vite": "^8.1.5",
