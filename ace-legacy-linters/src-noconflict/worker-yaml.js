@@ -645,6 +645,11 @@ var aceLegacyWorkerModule = (() => {
         };
         return _self;
       };
+      exports.sleep = function(ms) {
+        return new Promise(function(resolve) {
+          setTimeout(resolve, ms);
+        });
+      };
       exports.supportsLookbehind = function() {
         try {
           new RegExp("(?<=.)");
@@ -1615,7 +1620,7 @@ var aceLegacyWorkerModule = (() => {
     }
   };
 
-  // node_modules/yaml/browser/dist/nodes/identity.js
+  // ../../node_modules/yaml/browser/dist/nodes/identity.js
   var ALIAS = /* @__PURE__ */ Symbol.for("yaml.alias");
   var DOC = /* @__PURE__ */ Symbol.for("yaml.document");
   var MAP = /* @__PURE__ */ Symbol.for("yaml.map");
@@ -1651,7 +1656,7 @@ var aceLegacyWorkerModule = (() => {
   }
   var hasAnchor = (node) => (isScalar(node) || isCollection(node)) && !!node.anchor;
 
-  // node_modules/yaml/browser/dist/visit.js
+  // ../../node_modules/yaml/browser/dist/visit.js
   var BREAK = /* @__PURE__ */ Symbol("break visit");
   var SKIP = /* @__PURE__ */ Symbol("skip children");
   var REMOVE = /* @__PURE__ */ Symbol("remove node");
@@ -1806,7 +1811,7 @@ var aceLegacyWorkerModule = (() => {
     }
   }
 
-  // node_modules/yaml/browser/dist/doc/directives.js
+  // ../../node_modules/yaml/browser/dist/doc/directives.js
   var escapeChars = {
     "!": "%21",
     ",": "%2C",
@@ -1969,7 +1974,7 @@ var aceLegacyWorkerModule = (() => {
   Directives.defaultYaml = { explicit: false, version: "1.2" };
   Directives.defaultTags = { "!!": "tag:yaml.org,2002:" };
 
-  // node_modules/yaml/browser/dist/doc/anchors.js
+  // ../../node_modules/yaml/browser/dist/doc/anchors.js
   function anchorIsValid(anchor) {
     if (/[\x00-\x19\s,[\]{}]/.test(anchor)) {
       const sa = JSON.stringify(anchor);
@@ -2028,7 +2033,7 @@ var aceLegacyWorkerModule = (() => {
     };
   }
 
-  // node_modules/yaml/browser/dist/doc/applyReviver.js
+  // ../../node_modules/yaml/browser/dist/doc/applyReviver.js
   function applyReviver(reviver, obj, key, val) {
     if (val && typeof val === "object") {
       if (Array.isArray(val)) {
@@ -2072,7 +2077,7 @@ var aceLegacyWorkerModule = (() => {
     return reviver.call(obj, key, val);
   }
 
-  // node_modules/yaml/browser/dist/nodes/toJS.js
+  // ../../node_modules/yaml/browser/dist/nodes/toJS.js
   function toJS(value, arg, ctx) {
     if (Array.isArray(value))
       return value.map((v, i) => toJS(v, String(i), ctx));
@@ -2095,7 +2100,7 @@ var aceLegacyWorkerModule = (() => {
     return value;
   }
 
-  // node_modules/yaml/browser/dist/nodes/Node.js
+  // ../../node_modules/yaml/browser/dist/nodes/Node.js
   var NodeBase = class {
     constructor(type) {
       Object.defineProperty(this, NODE_TYPE, { value: type });
@@ -2127,7 +2132,7 @@ var aceLegacyWorkerModule = (() => {
     }
   };
 
-  // node_modules/yaml/browser/dist/nodes/Alias.js
+  // ../../node_modules/yaml/browser/dist/nodes/Alias.js
   var Alias = class extends NodeBase {
     constructor(source) {
       super(ALIAS);
@@ -2143,6 +2148,8 @@ var aceLegacyWorkerModule = (() => {
      * instance of the `source` anchor before this node.
      */
     resolve(doc, ctx) {
+      if ((ctx == null ? void 0 : ctx.maxAliasCount) === 0)
+        throw new ReferenceError("Alias resolution is disabled");
       let nodes;
       if (ctx == null ? void 0 : ctx.aliasResolveCache) {
         nodes = ctx.aliasResolveCache;
@@ -2230,7 +2237,7 @@ var aceLegacyWorkerModule = (() => {
     return 1;
   }
 
-  // node_modules/yaml/browser/dist/nodes/Scalar.js
+  // ../../node_modules/yaml/browser/dist/nodes/Scalar.js
   var isScalarValue = (value) => !value || typeof value !== "function" && typeof value !== "object";
   var Scalar = class extends NodeBase {
     constructor(value) {
@@ -2250,7 +2257,7 @@ var aceLegacyWorkerModule = (() => {
   Scalar.QUOTE_DOUBLE = "QUOTE_DOUBLE";
   Scalar.QUOTE_SINGLE = "QUOTE_SINGLE";
 
-  // node_modules/yaml/browser/dist/doc/createNode.js
+  // ../../node_modules/yaml/browser/dist/doc/createNode.js
   var defaultTagPrefix = "tag:yaml.org,2002:";
   function findTagObject(value, tagName, tags) {
     var _a;
@@ -2321,7 +2328,7 @@ var aceLegacyWorkerModule = (() => {
     return node;
   }
 
-  // node_modules/yaml/browser/dist/nodes/Collection.js
+  // ../../node_modules/yaml/browser/dist/nodes/Collection.js
   function collectionFromPath(schema4, path, value) {
     let v = value;
     for (let i = path.length - 1; i >= 0; --i) {
@@ -2453,7 +2460,7 @@ var aceLegacyWorkerModule = (() => {
     }
   };
 
-  // node_modules/yaml/browser/dist/stringify/stringifyComment.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringifyComment.js
   var stringifyComment = (str) => str.replace(/^(?!$)(?: $)?/gm, "#");
   function indentComment(comment, indent) {
     if (/^\n+$/.test(comment))
@@ -2462,7 +2469,7 @@ var aceLegacyWorkerModule = (() => {
   }
   var lineComment = (str, indent, comment) => str.endsWith("\n") ? indentComment(comment, indent) : comment.includes("\n") ? "\n" + indentComment(comment, indent) : (str.endsWith(" ") ? "" : " ") + comment;
 
-  // node_modules/yaml/browser/dist/stringify/foldFlowLines.js
+  // ../../node_modules/yaml/browser/dist/stringify/foldFlowLines.js
   var FOLD_FLOW = "flow";
   var FOLD_BLOCK = "block";
   var FOLD_QUOTED = "quoted";
@@ -2589,7 +2596,7 @@ ${indent}${text.slice(fold + 1, end2)}`;
     return end;
   }
 
-  // node_modules/yaml/browser/dist/stringify/stringifyString.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringifyString.js
   var getFoldOptions = (ctx, isBlock2) => ({
     indentAtStart: isBlock2 ? ctx.indent.length : ctx.indentAtStart,
     lineWidth: ctx.options.lineWidth,
@@ -2867,7 +2874,7 @@ ${indent}`);
     return res;
   }
 
-  // node_modules/yaml/browser/dist/stringify/stringify.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringify.js
   function createStringifyContext(doc, options) {
     const opt = Object.assign({
       blockQuote: true,
@@ -2986,7 +2993,7 @@ ${indent}`);
 ${ctx.indent}${str}`;
   }
 
-  // node_modules/yaml/browser/dist/stringify/stringifyPair.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringifyPair.js
   function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
     var _a, _b;
     const { allNullValues, doc, indent, indentStep, options: { commentString, indentSeq, simpleKeys } } = ctx;
@@ -3110,14 +3117,14 @@ ${ctx.indent}`;
     return str;
   }
 
-  // node_modules/yaml/browser/dist/log.js
+  // ../../node_modules/yaml/browser/dist/log.js
   function warn(logLevel, warning) {
     if (logLevel === "debug" || logLevel === "warn") {
       console.warn(warning);
     }
   }
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/merge.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/merge.js
   var MERGE_KEY = "<<";
   var merge = {
     identify: (value) => value === MERGE_KEY || typeof value === "symbol" && value.description === MERGE_KEY,
@@ -3131,18 +3138,18 @@ ${ctx.indent}`;
   };
   var isMergeKey = (ctx, key) => (merge.identify(key) || isScalar(key) && (!key.type || key.type === Scalar.PLAIN) && merge.identify(key.value)) && (ctx == null ? void 0 : ctx.doc.schema.tags.some((tag) => tag.tag === merge.tag && tag.default));
   function addMergeToJSMap(ctx, map2, value) {
-    value = ctx && isAlias(value) ? value.resolve(ctx.doc) : value;
-    if (isSeq(value))
-      for (const it of value.items)
+    const source = resolveAliasValue(ctx, value);
+    if (isSeq(source))
+      for (const it of source.items)
         mergeValue(ctx, map2, it);
-    else if (Array.isArray(value))
-      for (const it of value)
+    else if (Array.isArray(source))
+      for (const it of source)
         mergeValue(ctx, map2, it);
     else
-      mergeValue(ctx, map2, value);
+      mergeValue(ctx, map2, source);
   }
   function mergeValue(ctx, map2, value) {
-    const source = ctx && isAlias(value) ? value.resolve(ctx.doc) : value;
+    const source = resolveAliasValue(ctx, value);
     if (!isMap(source))
       throw new Error("Merge sources must be maps or map aliases");
     const srcMap = source.toJSON(null, ctx, Map);
@@ -3163,8 +3170,11 @@ ${ctx.indent}`;
     }
     return map2;
   }
+  function resolveAliasValue(ctx, value) {
+    return ctx && isAlias(value) ? value.resolve(ctx.doc, ctx) : value;
+  }
 
-  // node_modules/yaml/browser/dist/nodes/addPairToJSMap.js
+  // ../../node_modules/yaml/browser/dist/nodes/addPairToJSMap.js
   function addPairToJSMap(ctx, map2, { key, value }) {
     if (isNode(key) && key.addToJSMap)
       key.addToJSMap(ctx, map2, value);
@@ -3217,7 +3227,7 @@ ${ctx.indent}`;
     return JSON.stringify(jsKey);
   }
 
-  // node_modules/yaml/browser/dist/nodes/Pair.js
+  // ../../node_modules/yaml/browser/dist/nodes/Pair.js
   function createPair(key, value, ctx) {
     const k = createNode(key, void 0, ctx);
     const v = createNode(value, void 0, ctx);
@@ -3246,7 +3256,7 @@ ${ctx.indent}`;
     }
   };
 
-  // node_modules/yaml/browser/dist/stringify/stringifyCollection.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringifyCollection.js
   function stringifyCollection(collection, ctx, options) {
     var _a;
     const flow = (_a = ctx.inFlow) != null ? _a : collection.flow;
@@ -3389,7 +3399,7 @@ ${indent}${end}`;
     }
   }
 
-  // node_modules/yaml/browser/dist/nodes/YAMLMap.js
+  // ../../node_modules/yaml/browser/dist/nodes/YAMLMap.js
   function findPair(items, key) {
     const k = isScalar(key) ? key.value : key;
     for (const it of items) {
@@ -3522,7 +3532,7 @@ ${indent}${end}`;
     }
   };
 
-  // node_modules/yaml/browser/dist/schema/common/map.js
+  // ../../node_modules/yaml/browser/dist/schema/common/map.js
   var map = {
     collection: "map",
     default: true,
@@ -3536,7 +3546,7 @@ ${indent}${end}`;
     createNode: (schema4, obj, ctx) => YAMLMap.from(schema4, obj, ctx)
   };
 
-  // node_modules/yaml/browser/dist/nodes/YAMLSeq.js
+  // ../../node_modules/yaml/browser/dist/nodes/YAMLSeq.js
   var YAMLSeq = class extends Collection {
     static get tagName() {
       return "tag:yaml.org,2002:seq";
@@ -3640,7 +3650,7 @@ ${indent}${end}`;
     return typeof idx === "number" && Number.isInteger(idx) && idx >= 0 ? idx : null;
   }
 
-  // node_modules/yaml/browser/dist/schema/common/seq.js
+  // ../../node_modules/yaml/browser/dist/schema/common/seq.js
   var seq = {
     collection: "seq",
     default: true,
@@ -3654,7 +3664,7 @@ ${indent}${end}`;
     createNode: (schema4, obj, ctx) => YAMLSeq.from(schema4, obj, ctx)
   };
 
-  // node_modules/yaml/browser/dist/schema/common/string.js
+  // ../../node_modules/yaml/browser/dist/schema/common/string.js
   var string = {
     identify: (value) => typeof value === "string",
     default: true,
@@ -3666,7 +3676,7 @@ ${indent}${end}`;
     }
   };
 
-  // node_modules/yaml/browser/dist/schema/common/null.js
+  // ../../node_modules/yaml/browser/dist/schema/common/null.js
   var nullTag = {
     identify: (value) => value == null,
     createNode: () => new Scalar(null),
@@ -3677,7 +3687,7 @@ ${indent}${end}`;
     stringify: ({ source }, ctx) => typeof source === "string" && nullTag.test.test(source) ? source : ctx.options.nullStr
   };
 
-  // node_modules/yaml/browser/dist/schema/core/bool.js
+  // ../../node_modules/yaml/browser/dist/schema/core/bool.js
   var boolTag = {
     identify: (value) => typeof value === "boolean",
     default: true,
@@ -3694,7 +3704,7 @@ ${indent}${end}`;
     }
   };
 
-  // node_modules/yaml/browser/dist/stringify/stringifyNumber.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringifyNumber.js
   function stringifyNumber({ format, minFractionDigits, tag, value }) {
     if (typeof value === "bigint")
       return String(value);
@@ -3702,7 +3712,7 @@ ${indent}${end}`;
     if (!isFinite(num))
       return isNaN(num) ? ".nan" : num < 0 ? "-.inf" : ".inf";
     let n = Object.is(value, -0) ? "-0" : JSON.stringify(value);
-    if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^\d/.test(n)) {
+    if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^-?\d/.test(n) && !n.includes("e")) {
       let i = n.indexOf(".");
       if (i < 0) {
         i = n.length;
@@ -3715,7 +3725,7 @@ ${indent}${end}`;
     return n;
   }
 
-  // node_modules/yaml/browser/dist/schema/core/float.js
+  // ../../node_modules/yaml/browser/dist/schema/core/float.js
   var floatNaN = {
     identify: (value) => typeof value === "number",
     default: true,
@@ -3751,7 +3761,7 @@ ${indent}${end}`;
     stringify: stringifyNumber
   };
 
-  // node_modules/yaml/browser/dist/schema/core/int.js
+  // ../../node_modules/yaml/browser/dist/schema/core/int.js
   var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
   var intResolve = (str, offset, radix, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str.substring(offset), radix);
   function intStringify(node, radix, prefix) {
@@ -3787,7 +3797,7 @@ ${indent}${end}`;
     stringify: (node) => intStringify(node, 16, "0x")
   };
 
-  // node_modules/yaml/browser/dist/schema/core/schema.js
+  // ../../node_modules/yaml/browser/dist/schema/core/schema.js
   var schema = [
     map,
     seq,
@@ -3802,7 +3812,7 @@ ${indent}${end}`;
     float
   ];
 
-  // node_modules/yaml/browser/dist/schema/json/schema.js
+  // ../../node_modules/yaml/browser/dist/schema/json/schema.js
   function intIdentify2(value) {
     return typeof value === "bigint" || Number.isInteger(value);
   }
@@ -3860,7 +3870,7 @@ ${indent}${end}`;
   };
   var schema2 = [map, seq].concat(jsonScalars, jsonError);
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/binary.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/binary.js
   var binary = {
     identify: (value) => value instanceof Uint8Array,
     // Buffer inherits from Uint8Array
@@ -3913,7 +3923,7 @@ ${indent}${end}`;
     }
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/pairs.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/pairs.js
   function resolvePairs(seq2, onError) {
     var _a;
     if (isSeq(seq2)) {
@@ -3980,7 +3990,7 @@ ${cn.comment}` : item.comment;
     createNode: createPairs
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/omap.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/omap.js
   var YAMLOMap = class _YAMLOMap extends YAMLSeq {
     constructor() {
       super();
@@ -4046,7 +4056,7 @@ ${cn.comment}` : item.comment;
     createNode: (schema4, iterable, ctx) => YAMLOMap.from(schema4, iterable, ctx)
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/bool.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/bool.js
   function boolStringify({ value, source }, ctx) {
     const boolObj = value ? trueTag : falseTag;
     if (source && boolObj.test.test(source))
@@ -4070,7 +4080,7 @@ ${cn.comment}` : item.comment;
     stringify: boolStringify
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/float.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/float.js
   var floatNaN2 = {
     identify: (value) => typeof value === "number",
     default: true,
@@ -4109,7 +4119,7 @@ ${cn.comment}` : item.comment;
     stringify: stringifyNumber
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/int.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/int.js
   var intIdentify3 = (value) => typeof value === "bigint" || Number.isInteger(value);
   function intResolve2(str, offset, radix, { intAsBigInt }) {
     const sign = str[0];
@@ -4178,7 +4188,7 @@ ${cn.comment}` : item.comment;
     stringify: (node) => intStringify2(node, 16, "0x")
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/set.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/set.js
   var YAMLSet = class _YAMLSet extends YAMLMap {
     constructor(schema4) {
       super(schema4);
@@ -4257,7 +4267,7 @@ ${cn.comment}` : item.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/timestamp.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/timestamp.js
   function parseSexagesimal(str, asBigInt) {
     const sign = str[0];
     const parts = sign === "-" || sign === "+" ? str.substring(1) : str;
@@ -4339,7 +4349,7 @@ ${cn.comment}` : item.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/schema/yaml-1.1/schema.js
+  // ../../node_modules/yaml/browser/dist/schema/yaml-1.1/schema.js
   var schema3 = [
     map,
     seq,
@@ -4364,7 +4374,7 @@ ${cn.comment}` : item.comment;
     timestamp
   ];
 
-  // node_modules/yaml/browser/dist/schema/tags.js
+  // ../../node_modules/yaml/browser/dist/schema/tags.js
   var schemas = /* @__PURE__ */ new Map([
     ["core", schema],
     ["failsafe", [map, seq, string]],
@@ -4435,7 +4445,7 @@ ${cn.comment}` : item.comment;
     }, []);
   }
 
-  // node_modules/yaml/browser/dist/schema/Schema.js
+  // ../../node_modules/yaml/browser/dist/schema/Schema.js
   var sortMapEntriesByKey = (a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
   var Schema = class _Schema {
     constructor({ compat, customTags, merge: merge2, resolveKnownTags, schema: schema4, sortMapEntries, toStringDefaults }) {
@@ -4456,7 +4466,7 @@ ${cn.comment}` : item.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/stringify/stringifyDocument.js
+  // ../../node_modules/yaml/browser/dist/stringify/stringifyDocument.js
   function stringifyDocument(doc, options) {
     var _a;
     const lines = [];
@@ -4528,7 +4538,7 @@ ${cn.comment}` : item.comment;
     return lines.join("\n") + "\n";
   }
 
-  // node_modules/yaml/browser/dist/doc/Document.js
+  // ../../node_modules/yaml/browser/dist/doc/Document.js
   var Document = class _Document {
     constructor(value, replacer, options) {
       this.commentBefore = null;
@@ -4820,7 +4830,7 @@ ${cn.comment}` : item.comment;
     throw new Error("Expected a YAML collection as document contents");
   }
 
-  // node_modules/yaml/browser/dist/errors.js
+  // ../../node_modules/yaml/browser/dist/errors.js
   var YAMLError = class extends Error {
     constructor(name, pos, code, message) {
       super();
@@ -4876,7 +4886,7 @@ ${pointer}
     }
   };
 
-  // node_modules/yaml/browser/dist/compose/resolve-props.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-props.js
   function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIndent, startOnNewline }) {
     let spaceBefore = false;
     let atNewline = startOnNewline;
@@ -5004,7 +5014,7 @@ ${pointer}
     };
   }
 
-  // node_modules/yaml/browser/dist/compose/util-contains-newline.js
+  // ../../node_modules/yaml/browser/dist/compose/util-contains-newline.js
   function containsNewline(key) {
     if (!key)
       return null;
@@ -5040,7 +5050,7 @@ ${pointer}
     }
   }
 
-  // node_modules/yaml/browser/dist/compose/util-flow-indent-check.js
+  // ../../node_modules/yaml/browser/dist/compose/util-flow-indent-check.js
   function flowIndentCheck(indent, fc, onError) {
     if ((fc == null ? void 0 : fc.type) === "flow-collection") {
       const end = fc.end[0];
@@ -5051,7 +5061,7 @@ ${pointer}
     }
   }
 
-  // node_modules/yaml/browser/dist/compose/util-map-includes.js
+  // ../../node_modules/yaml/browser/dist/compose/util-map-includes.js
   function mapIncludes(ctx, items, search) {
     const { uniqueKeys } = ctx.options;
     if (uniqueKeys === false)
@@ -5060,7 +5070,7 @@ ${pointer}
     return items.some((pair) => isEqual(pair.key, search));
   }
 
-  // node_modules/yaml/browser/dist/compose/resolve-block-map.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-block-map.js
   var startColMsg = "All mapping items must start at the same column";
   function resolveBlockMap({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, bm, onError, tag) {
     var _a, _b;
@@ -5157,7 +5167,7 @@ ${pointer}
     return map2;
   }
 
-  // node_modules/yaml/browser/dist/compose/resolve-block-seq.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-block-seq.js
   function resolveBlockSeq({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, bs, onError, tag) {
     var _a;
     const NodeClass = (_a = tag == null ? void 0 : tag.nodeClass) != null ? _a : YAMLSeq;
@@ -5200,7 +5210,7 @@ ${pointer}
     return seq2;
   }
 
-  // node_modules/yaml/browser/dist/compose/resolve-end.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-end.js
   function resolveEnd(end, offset, reqSpace, onError) {
     let comment = "";
     if (end) {
@@ -5237,7 +5247,7 @@ ${pointer}
     return { comment, offset };
   }
 
-  // node_modules/yaml/browser/dist/compose/resolve-flow-collection.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-flow-collection.js
   var blockMsg = "Block collections are not allowed within flow collections";
   var isBlock = (token) => token && (token.type === "block-map" || token.type === "block-seq");
   function resolveFlowCollection({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, fc, onError, tag) {
@@ -5418,7 +5428,7 @@ ${pointer}
     return coll;
   }
 
-  // node_modules/yaml/browser/dist/compose/compose-collection.js
+  // ../../node_modules/yaml/browser/dist/compose/compose-collection.js
   function resolveCollection(CN2, ctx, token, onError, tagName, tag) {
     const coll = token.type === "block-map" ? resolveBlockMap(CN2, ctx, token, onError, tag) : token.type === "block-seq" ? resolveBlockSeq(CN2, ctx, token, onError, tag) : resolveFlowCollection(CN2, ctx, token, onError, tag);
     const Coll = coll.constructor;
@@ -5471,7 +5481,7 @@ ${pointer}
     return node;
   }
 
-  // node_modules/yaml/browser/dist/compose/resolve-block-scalar.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-block-scalar.js
   function resolveBlockScalar(ctx, scalar, onError) {
     const start = scalar.offset;
     const header = parseBlockScalarHeader(scalar, ctx.options.strict, onError);
@@ -5647,7 +5657,7 @@ ${pointer}
     return lines;
   }
 
-  // node_modules/yaml/browser/dist/compose/resolve-flow-scalar.js
+  // ../../node_modules/yaml/browser/dist/compose/resolve-flow-scalar.js
   function resolveFlowScalar(scalar, strict, onError) {
     const { offset, type, source, end } = scalar;
     let _type;
@@ -5776,7 +5786,7 @@ ${pointer}
           while (next === " " || next === "	")
             next = source[++i + 1];
         } else if (next === "x" || next === "u" || next === "U") {
-          const length = { x: 2, u: 4, U: 8 }[next];
+          const length = next === "x" ? 2 : next === "u" ? 4 : 8;
           res += parseCharCode(source, i + 1, length, onError);
           i += length;
         } else {
@@ -5851,15 +5861,16 @@ ${pointer}
     const cc = source.substr(offset, length);
     const ok = cc.length === length && /^[0-9a-fA-F]+$/.test(cc);
     const code = ok ? parseInt(cc, 16) : NaN;
-    if (isNaN(code)) {
+    try {
+      return String.fromCodePoint(code);
+    } catch (e) {
       const raw = source.substr(offset - 2, length + 2);
       onError(offset - 2, "BAD_DQ_ESCAPE", `Invalid escape sequence ${raw}`);
       return raw;
     }
-    return String.fromCodePoint(code);
   }
 
-  // node_modules/yaml/browser/dist/compose/compose-scalar.js
+  // ../../node_modules/yaml/browser/dist/compose/compose-scalar.js
   function composeScalar(ctx, token, tagToken, onError) {
     const { value, type, comment, range } = token.type === "block-scalar" ? resolveBlockScalar(ctx, token, onError) : resolveFlowScalar(token, ctx.options.strict, onError);
     const tagName = tagToken ? ctx.directives.tagName(tagToken.source, (msg) => onError(tagToken, "TAG_RESOLVE_FAILED", msg)) : null;
@@ -5938,7 +5949,7 @@ ${pointer}
     return tag;
   }
 
-  // node_modules/yaml/browser/dist/compose/util-empty-scalar-position.js
+  // ../../node_modules/yaml/browser/dist/compose/util-empty-scalar-position.js
   function emptyScalarPosition(offset, before, pos) {
     if (before) {
       pos != null ? pos : pos = before.length;
@@ -5962,7 +5973,7 @@ ${pointer}
     return offset;
   }
 
-  // node_modules/yaml/browser/dist/compose/compose-node.js
+  // ../../node_modules/yaml/browser/dist/compose/compose-node.js
   var CN = { composeNode, composeEmptyNode };
   function composeNode(ctx, token, props, onError) {
     const atKey = ctx.atKey;
@@ -6055,7 +6066,7 @@ ${pointer}
     return alias;
   }
 
-  // node_modules/yaml/browser/dist/compose/compose-doc.js
+  // ../../node_modules/yaml/browser/dist/compose/compose-doc.js
   function composeDoc(options, directives, { offset, start, value, end }, onError) {
     const opts = Object.assign({ _directives: directives }, options);
     const doc = new Document(void 0, opts);
@@ -6088,7 +6099,7 @@ ${pointer}
     return doc;
   }
 
-  // node_modules/yaml/browser/dist/compose/composer.js
+  // ../../node_modules/yaml/browser/dist/compose/composer.js
   function getErrorPos(src) {
     if (typeof src === "number")
       return [src, src + 1];
@@ -6163,8 +6174,10 @@ ${cb}` : comment;
         }
       }
       if (afterDoc) {
-        Array.prototype.push.apply(doc.errors, this.errors);
-        Array.prototype.push.apply(doc.warnings, this.warnings);
+        for (let i = 0; i < this.errors.length; ++i)
+          doc.errors.push(this.errors[i]);
+        for (let i = 0; i < this.warnings.length; ++i)
+          doc.warnings.push(this.warnings[i]);
       } else {
         doc.errors = this.errors;
         doc.warnings = this.warnings;
@@ -6280,7 +6293,7 @@ ${end.comment}` : end.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/parse/cst-visit.js
+  // ../../node_modules/yaml/browser/dist/parse/cst-visit.js
   var BREAK2 = /* @__PURE__ */ Symbol("break visit");
   var SKIP2 = /* @__PURE__ */ Symbol("skip children");
   var REMOVE2 = /* @__PURE__ */ Symbol("remove item");
@@ -6336,7 +6349,7 @@ ${end.comment}` : end.comment;
     return typeof ctrl === "function" ? ctrl(item, path) : ctrl;
   }
 
-  // node_modules/yaml/browser/dist/parse/cst.js
+  // ../../node_modules/yaml/browser/dist/parse/cst.js
   var BOM = "\uFEFF";
   var DOCUMENT = "";
   var FLOW_END = "";
@@ -6401,7 +6414,7 @@ ${end.comment}` : end.comment;
     return null;
   }
 
-  // node_modules/yaml/browser/dist/parse/lexer.js
+  // ../../node_modules/yaml/browser/dist/parse/lexer.js
   function isEmpty(ch) {
     switch (ch) {
       case void 0:
@@ -6600,7 +6613,7 @@ ${end.comment}` : end.comment;
         const n = (yield* __yieldStar(this.pushCount(1))) + (yield* __yieldStar(this.pushSpaces(true)));
         this.indentNext = this.indentValue + 1;
         this.indentValue += n;
-        return yield* __yieldStar(this.parseBlockStart());
+        return "block-start";
       }
       return "doc";
     }
@@ -6899,28 +6912,38 @@ ${end.comment}` : end.comment;
       return 0;
     }
     *pushIndicators() {
-      switch (this.charAt(0)) {
-        case "!":
-          return (yield* __yieldStar(this.pushTag())) + (yield* __yieldStar(this.pushSpaces(true))) + (yield* __yieldStar(this.pushIndicators()));
-        case "&":
-          return (yield* __yieldStar(this.pushUntil(isNotAnchorChar))) + (yield* __yieldStar(this.pushSpaces(true))) + (yield* __yieldStar(this.pushIndicators()));
-        case "-":
-        // this is an error
-        case "?":
-        // this is an error outside flow collections
-        case ":": {
-          const inFlow = this.flowLevel > 0;
-          const ch1 = this.charAt(1);
-          if (isEmpty(ch1) || inFlow && flowIndicatorChars.has(ch1)) {
-            if (!inFlow)
-              this.indentNext = this.indentValue + 1;
-            else if (this.flowKey)
-              this.flowKey = false;
-            return (yield* __yieldStar(this.pushCount(1))) + (yield* __yieldStar(this.pushSpaces(true))) + (yield* __yieldStar(this.pushIndicators()));
+      let n = 0;
+      loop: while (true) {
+        switch (this.charAt(0)) {
+          case "!":
+            n += yield* __yieldStar(this.pushTag());
+            n += yield* __yieldStar(this.pushSpaces(true));
+            continue loop;
+          case "&":
+            n += yield* __yieldStar(this.pushUntil(isNotAnchorChar));
+            n += yield* __yieldStar(this.pushSpaces(true));
+            continue loop;
+          case "-":
+          // this is an error
+          case "?":
+          // this is an error outside flow collections
+          case ":": {
+            const inFlow = this.flowLevel > 0;
+            const ch1 = this.charAt(1);
+            if (isEmpty(ch1) || inFlow && flowIndicatorChars.has(ch1)) {
+              if (!inFlow)
+                this.indentNext = this.indentValue + 1;
+              else if (this.flowKey)
+                this.flowKey = false;
+              n += yield* __yieldStar(this.pushCount(1));
+              n += yield* __yieldStar(this.pushSpaces(true));
+              continue loop;
+            }
           }
         }
+        break loop;
       }
-      return 0;
+      return n;
     }
     *pushTag() {
       if (this.charAt(1) === "<") {
@@ -6974,7 +6997,7 @@ ${end.comment}` : end.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/parse/line-counter.js
+  // ../../node_modules/yaml/browser/dist/parse/line-counter.js
   var LineCounter = class {
     constructor() {
       this.lineStarts = [];
@@ -6999,7 +7022,7 @@ ${end.comment}` : end.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/parse/parser.js
+  // ../../node_modules/yaml/browser/dist/parse/parser.js
   function includesToken(list, type) {
     for (let i = 0; i < list.length; ++i)
       if (list[i].type === type)
@@ -7066,6 +7089,13 @@ ${end.comment}` : end.comment;
     }
     return prev.splice(i, prev.length);
   }
+  function arrayPushArray(target, source) {
+    if (source.length < 1e5)
+      Array.prototype.push.apply(target, source);
+    else
+      for (let i = 0; i < source.length; ++i)
+        target.push(source[i]);
+  }
   function fixFlowSeqItems(fc) {
     if (fc.start.type === "flow-seq-start") {
       for (const it of fc.items) {
@@ -7075,11 +7105,11 @@ ${end.comment}` : end.comment;
           delete it.key;
           if (isFlowToken(it.value)) {
             if (it.value.end)
-              Array.prototype.push.apply(it.value.end, it.sep);
+              arrayPushArray(it.value.end, it.sep);
             else
               it.value.end = it.sep;
           } else
-            Array.prototype.push.apply(it.start, it.sep);
+            arrayPushArray(it.start, it.sep);
           delete it.sep;
         }
       }
@@ -7433,7 +7463,7 @@ ${end.comment}` : end.comment;
               const prev = map2.items[map2.items.length - 2];
               const end = (_a = prev == null ? void 0 : prev.value) == null ? void 0 : _a.end;
               if (Array.isArray(end)) {
-                Array.prototype.push.apply(end, it.start);
+                arrayPushArray(end, it.start);
                 end.push(this.sourceToken);
                 map2.items.pop();
                 return;
@@ -7622,7 +7652,7 @@ ${end.comment}` : end.comment;
               const prev = seq2.items[seq2.items.length - 2];
               const end = (_a = prev == null ? void 0 : prev.value) == null ? void 0 : _a.end;
               if (Array.isArray(end)) {
-                Array.prototype.push.apply(end, it.start);
+                arrayPushArray(end, it.start);
                 end.push(this.sourceToken);
                 seq2.items.pop();
                 return;
@@ -7859,7 +7889,7 @@ ${end.comment}` : end.comment;
     }
   };
 
-  // node_modules/yaml/browser/dist/public-api.js
+  // ../../node_modules/yaml/browser/dist/public-api.js
   function parseOptions(options) {
     const prettyErrors = options.prettyErrors !== false;
     const lineCounter = options.lineCounter || prettyErrors && new LineCounter() || null;

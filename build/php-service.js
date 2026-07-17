@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,7 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -70,7 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -367,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -702,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -715,7 +722,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -733,7 +740,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -825,7 +832,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -899,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -966,7 +973,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1026,7 +1033,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1204,7 +1211,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1314,7 +1321,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1440,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1764,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2347,7 +2354,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2725,7 +2732,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2752,7 +2759,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2860,7 +2867,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -2930,7 +2937,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -7282,7 +7289,7 @@
 			return 0;
 		};
 		browserExports = browser.exports;
-		process$1 = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+		process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
 	}));
 	//#endregion
 	//#region src/utils.ts
@@ -7762,20 +7769,20 @@
 			return el;
 		});
 	}
+	/*!
+	* 
+	*   Package: php-parser
+	*   Parse PHP code from JS and returns its AST
+	*   Build: aad3e9e78d4989c75970 - 6/10/2026
+	*   Copyright (C) 2021 Glayzzle (BSD-3-Clause)
+	*   @authors https://github.com/glayzzle/php-parser/graphs/contributors
+	*   @url http://glayzzle.com
+	*
+	*/
 	//#endregion
 	//#region src/services/php/php-converters.ts
 	var import_php_parser = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module) => {
 		init_dist();
-		/*!
-		* 
-		*   Package: php-parser
-		*   Parse PHP code from JS and returns its AST
-		*   Build: 8ca15bdec2f54ee92ab1 - 2/21/2026
-		*   Copyright (C) 2021 Glayzzle (BSD-3-Clause)
-		*   @authors https://github.com/glayzzle/php-parser/graphs/contributors
-		*   @url http://glayzzle.com
-		*
-		*/
 		(function webpackUniversalModuleDefinition(root, factory) {
 			if (typeof exports === "object" && typeof module === "object") module.exports = factory();
 			else if (typeof define === "function" && define.amd) define([], factory);
@@ -7891,6 +7898,7 @@
 						*       - [Namespace](#namespace)
 						*     - [PropertyStatement](#propertystatement)
 						*     - [Property](#property)
+						*       - [PropertyHook](#propertyhook)
 						*     - [Declaration](#declaration)
 						*       - [Class](#class)
 						*       - [Interface](#interface)
@@ -7951,6 +7959,11 @@
 							],
 							["!"],
 							["instanceof"],
+							[
+								"u-",
+								"u+",
+								"u~"
+							],
 							["cast", "silent"],
 							["**"]
 						].forEach(function(list, index) {
@@ -7976,6 +7989,7 @@
 						*/
 						AST.prototype.swapLocations = function(target, first, last, parser) {
 							if (this.withPositions) {
+								if (!target || !target.loc || !first || !first.loc || !last || !last.loc) return;
 								target.loc.start = first.loc.start;
 								target.loc.end = last.loc.end;
 								if (this.withSource) target.loc.source = parser.lexer._input.substring(target.loc.start.offset, target.loc.end.offset);
@@ -7989,6 +8003,7 @@
 						*/
 						AST.prototype.resolveLocations = function(target, first, last, parser) {
 							if (this.withPositions) {
+								if (!target || !target.loc || !first || !first.loc || !last || !last.loc) return;
 								if (target.loc.start.offset > first.loc.start.offset) target.loc.start = first.loc.start;
 								/* istanbul ignore next */
 								if (target.loc.end.offset < last.loc.end.offset) target.loc.end = last.loc.end;
@@ -8004,7 +8019,7 @@
 						AST.prototype.resolvePrecedence = function(result, parser) {
 							var buffer, lLevel, rLevel;
 							if (result.kind === "call") this.resolveLocations(result, result.what, result, parser);
-							else if (result.kind === "propertylookup" || result.kind === "staticlookup" || result.kind === "offsetlookup" && result.offset) this.resolveLocations(result, result.what, result.offset, parser);
+							else if (result.kind === "propertylookup" || result.kind === "nullsafepropertylookup" || result.kind === "staticlookup" || result.kind === "offsetlookup" && result.offset) this.resolveLocations(result, result.what, result.offset, parser);
 							else if (result.kind === "bin") {
 								if (result.right && !result.right.parenthesizedExpression) {
 									if (result.right.kind === "bin") {
@@ -8050,12 +8065,16 @@
 							} else if (result.kind === "unary") {
 								if (result.what && !result.what.parenthesizedExpression) {
 									if (result.what.kind === "bin") {
-										buffer = result.what;
-										result.what = result.what.left;
-										this.swapLocations(result, result, result.what, parser);
-										buffer.left = this.resolvePrecedence(result, parser);
-										this.swapLocations(buffer, buffer.left, buffer.right, parser);
-										result = buffer;
+										lLevel = AST.precedence["u" + result.type] || AST.precedence[result.type];
+										rLevel = AST.precedence[result.what.type];
+										if (lLevel && rLevel && rLevel < lLevel) {
+											buffer = result.what;
+											result.what = result.what.left;
+											this.swapLocations(result, result, result.what, parser);
+											buffer.left = this.resolvePrecedence(result, parser);
+											this.swapLocations(buffer, buffer.left, buffer.right, parser);
+											result = buffer;
+										}
 									} else if (result.what.kind === "retif") {
 										buffer = result.what;
 										result.what = result.what.test;
@@ -8107,9 +8126,16 @@
 								var args = Array.prototype.slice.call(arguments);
 								args.push(docs);
 								if (self.withPositions || self.withSource) {
+									var nodeStart = start;
+									var nodeEnd = new Position(parser.prev[0], parser.prev[1], parser.prev[2]);
+									if (nodeStart.offset > nodeEnd.offset) {
+										var tmp = nodeStart;
+										nodeStart = nodeEnd;
+										nodeEnd = tmp;
+									}
 									var src = null;
-									if (self.withSource) src = parser.lexer._input.substring(start.offset, parser.prev[2]);
-									var location = new Location(src, start, new Position(parser.prev[0], parser.prev[1], parser.prev[2]));
+									if (self.withSource) src = parser.lexer._input.substring(nodeStart.offset, nodeEnd.offset);
+									var location = new Location(src, nodeStart, nodeEnd);
 									args.push(location);
 								}
 								if (!kind) kind = args.shift();
@@ -8248,6 +8274,7 @@
 							__webpack_require__(4838),
 							__webpack_require__(7869),
 							__webpack_require__(1908),
+							__webpack_require__(4863),
 							__webpack_require__(170),
 							__webpack_require__(1091),
 							__webpack_require__(8276),
@@ -8406,7 +8433,6 @@
 						* @extends {Expression}
 						* @property {Expression} left
 						* @property {Expression} right
-						* @property {String} operator
 						*/
 						module$5.exports = Expression["extends"](KIND, function AssignRef(left, right, docs, location) {
 							Expression.apply(this, [
@@ -8783,13 +8809,14 @@
 						* @return {void}
 						*/
 						ClassConstant.prototype.parseFlags = function(flags) {
-							if (flags[0] === -1) this.visibility = IS_UNDEFINED;
-							else if (flags[0] === null)
+							var getVis = flags[0][0];
+							if (getVis === -1) this.visibility = IS_UNDEFINED;
+							else if (getVis === null)
  /* istanbul ignore next */
 							this.visibility = null;
-							else if (flags[0] === 0) this.visibility = IS_PUBLIC;
-							else if (flags[0] === 1) this.visibility = IS_PROTECTED;
-							else if (flags[0] === 2) this.visibility = IS_PRIVATE;
+							else if (getVis === 0) this.visibility = IS_PUBLIC;
+							else if (getVis === 1) this.visibility = IS_PROTECTED;
+							else if (getVis === 2) this.visibility = IS_PRIVATE;
 							this["final"] = flags[2] === 2;
 						};
 						module$18.exports = ClassConstant;
@@ -8808,14 +8835,16 @@
 						* @memberOf module:php-parser
 						* @extends {Expression}
 						* @property {Expression} what
+						* @property {Expression|null} properties
 						*/
-						module$19.exports = Expression["extends"](KIND, function Clone(what, docs, location) {
+						module$19.exports = Expression["extends"](KIND, function Clone(what, properties, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
 								location
 							]);
 							this.what = what;
+							if (properties) this.properties = properties;
 						});
 					},
 					4824(module$20, __unused_webpack_exports, __webpack_require__) {
@@ -9005,18 +9034,63 @@
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
+						function _slicedToArray(r, e) {
+							return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+						}
+						function _nonIterableRest() {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+						}
+						function _unsupportedIterableToArray(r, a) {
+							if (r) {
+								if ("string" == typeof r) return _arrayLikeToArray(r, a);
+								var t = {}.toString.call(r).slice(8, -1);
+								return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+							}
+						}
+						function _arrayLikeToArray(r, a) {
+							(null == a || a > r.length) && (a = r.length);
+							for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+							return n;
+						}
+						function _iterableToArrayLimit(r, l) {
+							var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+							if (null != t) {
+								var e, n, i, u, a = [], f = !0, o = !1;
+								try {
+									if (i = (t = t.call(r)).next, 0 === l) {
+										if (Object(t) !== t) return;
+										f = !1;
+									} else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+								} catch (r) {
+									o = !0, n = r;
+								} finally {
+									try {
+										if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+									} finally {
+										if (o) throw n;
+									}
+								}
+								return a;
+							}
+						}
+						function _arrayWithHoles(r) {
+							if (Array.isArray(r)) return r;
+						}
 						var Statement = __webpack_require__(9672);
 						var KIND = "declaration";
 						var IS_UNDEFINED = "";
-						var IS_PUBLIC = "public";
-						var IS_PROTECTED = "protected";
-						var IS_PRIVATE = "private";
+						var VISIBILITY_MAP = [
+							"public",
+							"protected",
+							"private"
+						];
 						/**
 						* A declaration statement (function, class, interface...)
 						* @constructor Declaration
 						* @memberOf module:php-parser
 						* @extends {Statement}
 						* @property {Identifier|string} name
+						* @property {string|null} visibilitySet
 						*/
 						var Declaration = Statement["extends"](KIND, function Declaration(kind, name, docs, location) {
 							Statement.apply(this, [
@@ -9039,14 +9113,14 @@
 							this.isFinal = flags[2] === 2;
 							this.isReadonly = flags[3] === 1;
 							if (this.kind !== "class") {
-								if (flags[0] === -1) this.visibility = IS_UNDEFINED;
-								else if (flags[0] === null)
+								var _flags$ = _slicedToArray(flags[0], 2), getVis = _flags$[0], setVis = _flags$[1];
+								if (getVis === -1) this.visibility = IS_UNDEFINED;
+								else if (getVis === null)
  /* istanbul ignore next */
 								this.visibility = null;
-								else if (flags[0] === 0) this.visibility = IS_PUBLIC;
-								else if (flags[0] === 1) this.visibility = IS_PROTECTED;
-								else if (flags[0] === 2) this.visibility = IS_PRIVATE;
+								else this.visibility = VISIBILITY_MAP[getVis];
 								this.isStatic = flags[1] === 1;
+								this.visibilitySet = setVis !== -1 ? VISIBILITY_MAP[setVis] : null;
 							}
 						};
 						module$27.exports = Declaration;
@@ -9210,6 +9284,7 @@
 						* @constructor Empty
 						* @memberOf module:php-parser
 						* @extends {Expression}
+						* @property {Expression} expression
 						*/
 						module$32.exports = Expression["extends"](KIND, function Empty(expression, docs, location) {
 							Expression.apply(this, [
@@ -9876,6 +9951,7 @@
 						* @constructor Isset
 						* @memberOf module:php-parser
 						* @extends {Expression}
+						* @property {Expression[]} variables
 						*/
 						module$55.exports = Expression["extends"](KIND, function Isset(variables, docs, location) {
 							Expression.apply(this, [
@@ -10507,8 +10583,10 @@
 						* @property {boolean} nullable
 						* @property {AttrGroup[]} attrGroups
 						* @property {MODIFIER_PUBLIC|MODIFIER_PROTECTED|MODIFIER_PRIVATE} flags
+						* @property {PropertyHook[]} hooks
+						* @property {MODIFIER_PUBLIC|MODIFIER_PROTECTED|MODIFIER_PRIVATE} flagsSet
 						*/
-						module$77.exports = Declaration["extends"](KIND, function Parameter(name, type, value, isRef, isVariadic, readonly, nullable, flags, docs, location) {
+						module$77.exports = Declaration["extends"](KIND, function Parameter(name, type, value, isRef, isVariadic, readonly, nullable, flags, hooks, flagsSet, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -10522,6 +10600,8 @@
 							this.readonly = readonly;
 							this.nullable = nullable;
 							this.flags = flags || 0;
+							this.hooks = hooks || [];
+							this.flagsSet = flagsSet || 0;
 							this.attrGroups = [];
 						});
 					},
@@ -10614,6 +10694,7 @@
 						* @constructor Print
 						* @memberOf module:php-parser
 						* @extends {Expression}
+						* @property {Expression} expression
 						*/
 						module$82.exports = Expression["extends"](KIND, function Print(expression, docs, location) {
 							Expression.apply(this, [
@@ -10672,8 +10753,9 @@
 						* @property {boolean} nullable
 						* @property {Identifier|Array<Identifier>|null} type
 						* @property {AttrGroup[]} attrGroups
+						* @property {PropertyHook[]} hooks
 						*/
-						module$84.exports = Statement["extends"](KIND, function Property(name, value, readonly, nullable, type, attrGroups, docs, location) {
+						module$84.exports = Statement["extends"](KIND, function Property(name, value, readonly, nullable, type, attrGroups, hooks, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -10685,9 +10767,45 @@
 							this.nullable = nullable;
 							this.type = type;
 							this.attrGroups = attrGroups;
+							this.hooks = hooks || [];
 						});
 					},
-					170(module$85, __unused_webpack_exports, __webpack_require__) {
+					4863(module$85, __unused_webpack_exports, __webpack_require__) {
+						/**
+						* Copyright (C) 2024 Glayzzle (BSD3 License)
+						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
+						* @url http://glayzzle.com
+						*/
+						var Node = __webpack_require__(4065);
+						var KIND = "propertyhook";
+						/**
+						* Defines a class property hook getter & setter
+						*
+						* @constructor PropertyHook
+						* @memberOf module:php-parser
+						* @extends {Node}
+						* @property {string} name
+						* @property {Boolean} isFinal
+						* @property {Boolean} byref
+						* @property {Parameter|null} parameter
+						* @property {Block|Expression|null} body
+						* @property {AttrGroup[]} attrGroups
+						*/
+						module$85.exports = Node["extends"](KIND, function PropertyHook(name, isFinal, byref, parameter, body, attrGroups, docs, location) {
+							Node.apply(this, [
+								KIND,
+								docs,
+								location
+							]);
+							this.name = name;
+							this.isFinal = isFinal;
+							this.byref = byref;
+							this.parameter = parameter;
+							this.body = body;
+							this.attrGroups = attrGroups || [];
+						});
+					},
+					170(module$86, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10701,7 +10819,7 @@
 						* @constructor PropertyLookup
 						* @extends {Lookup}
 						*/
-						module$85.exports = Lookup["extends"](KIND, function PropertyLookup(what, offset, docs, location) {
+						module$86.exports = Lookup["extends"](KIND, function PropertyLookup(what, offset, docs, location) {
 							Lookup.apply(this, [
 								KIND,
 								what,
@@ -10711,18 +10829,62 @@
 							]);
 						});
 					},
-					1091(module$86, __unused_webpack_exports, __webpack_require__) {
+					1091(module$87, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
+						function _slicedToArray(r, e) {
+							return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+						}
+						function _nonIterableRest() {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+						}
+						function _unsupportedIterableToArray(r, a) {
+							if (r) {
+								if ("string" == typeof r) return _arrayLikeToArray(r, a);
+								var t = {}.toString.call(r).slice(8, -1);
+								return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+							}
+						}
+						function _arrayLikeToArray(r, a) {
+							(null == a || a > r.length) && (a = r.length);
+							for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+							return n;
+						}
+						function _iterableToArrayLimit(r, l) {
+							var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+							if (null != t) {
+								var e, n, i, u, a = [], f = !0, o = !1;
+								try {
+									if (i = (t = t.call(r)).next, 0 === l) {
+										if (Object(t) !== t) return;
+										f = !1;
+									} else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+								} catch (r) {
+									o = !0, n = r;
+								} finally {
+									try {
+										if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+									} finally {
+										if (o) throw n;
+									}
+								}
+								return a;
+							}
+						}
+						function _arrayWithHoles(r) {
+							if (Array.isArray(r)) return r;
+						}
 						var Statement = __webpack_require__(9672);
 						var KIND = "propertystatement";
 						var IS_UNDEFINED = "";
-						var IS_PUBLIC = "public";
-						var IS_PROTECTED = "protected";
-						var IS_PRIVATE = "private";
+						var VISIBILITY_MAP = [
+							"public",
+							"protected",
+							"private"
+						];
 						/**
 						* Declares a properties into the current scope
 						* @constructor PropertyStatement
@@ -10730,7 +10892,10 @@
 						* @extends {Statement}
 						* @property {Property[]} properties
 						* @property {string|null} visibility
+						* @property {string|null} visibilitySet
 						* @property {boolean} isStatic
+						* @property {boolean} isAbstract
+						* @property {boolean} isFinal
 						*/
 						var PropertyStatement = Statement["extends"](KIND, function PropertyStatement(kind, properties, flags, docs, location) {
 							Statement.apply(this, [
@@ -10749,16 +10914,18 @@
 						* @return {void}
 						*/
 						PropertyStatement.prototype.parseFlags = function(flags) {
-							if (flags[0] === -1) this.visibility = IS_UNDEFINED;
-							else if (flags[0] === null) this.visibility = null;
-							else if (flags[0] === 0) this.visibility = IS_PUBLIC;
-							else if (flags[0] === 1) this.visibility = IS_PROTECTED;
-							else if (flags[0] === 2) this.visibility = IS_PRIVATE;
+							var _flags$ = _slicedToArray(flags[0], 2), getVis = _flags$[0], setVis = _flags$[1];
+							if (getVis === -1) this.visibility = IS_UNDEFINED;
+							else if (getVis === null) this.visibility = null;
+							else this.visibility = VISIBILITY_MAP[getVis];
 							this.isStatic = flags[1] === 1;
+							this.isAbstract = flags[2] === 1;
+							this.isFinal = flags[2] === 2;
+							this.visibilitySet = setVis !== -1 ? VISIBILITY_MAP[setVis] : null;
 						};
-						module$86.exports = PropertyStatement;
+						module$87.exports = PropertyStatement;
 					},
-					8276(module$87, __unused_webpack_exports, __webpack_require__) {
+					8276(module$88, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10766,7 +10933,7 @@
 						*/
 						var Node = __webpack_require__(4065);
 						var KIND = "reference";
-						module$87.exports = Node["extends"](KIND, function Reference(kind, docs, location) {
+						module$88.exports = Node["extends"](KIND, function Reference(kind, docs, location) {
 							Node.apply(this, [
 								kind || KIND,
 								docs,
@@ -10774,7 +10941,7 @@
 							]);
 						});
 					},
-					1842(module$88, __unused_webpack_exports, __webpack_require__) {
+					1842(module$89, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10791,7 +10958,7 @@
 						* @property {Expression} trueExpr
 						* @property {Expression} falseExpr
 						*/
-						module$88.exports = Expression["extends"](KIND, function RetIf(test, trueExpr, falseExpr, docs, location) {
+						module$89.exports = Expression["extends"](KIND, function RetIf(test, trueExpr, falseExpr, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10802,7 +10969,7 @@
 							this.falseExpr = falseExpr;
 						});
 					},
-					5739(module$89, __unused_webpack_exports, __webpack_require__) {
+					5739(module$90, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10817,7 +10984,7 @@
 						* @extends {Statement}
 						* @property {Expression|null} expr
 						*/
-						module$89.exports = Statement["extends"](KIND, function Return(expr, docs, location) {
+						module$90.exports = Statement["extends"](KIND, function Return(expr, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -10826,7 +10993,7 @@
 							this.expr = expr;
 						});
 					},
-					1274(module$90, __unused_webpack_exports, __webpack_require__) {
+					1274(module$91, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10834,7 +11001,7 @@
 						*/
 						var Reference = __webpack_require__(8276);
 						var KIND = "selfreference";
-						module$90.exports = Reference["extends"](KIND, function SelfReference(raw, docs, location) {
+						module$91.exports = Reference["extends"](KIND, function SelfReference(raw, docs, location) {
 							Reference.apply(this, [
 								KIND,
 								docs,
@@ -10843,7 +11010,7 @@
 							this.raw = raw;
 						});
 					},
-					4352(module$91, __unused_webpack_exports, __webpack_require__) {
+					4352(module$92, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10858,7 +11025,7 @@
 						* @extends {Expression}
 						* @property {Expression} expr
 						*/
-						module$91.exports = Expression["extends"](KIND, function Silent(expr, docs, location) {
+						module$92.exports = Expression["extends"](KIND, function Silent(expr, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -10867,7 +11034,7 @@
 							this.expr = expr;
 						});
 					},
-					9672(module$92, __unused_webpack_exports, __webpack_require__) {
+					9672(module$93, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10881,7 +11048,7 @@
 						* @memberOf module:php-parser
 						* @extends {Node}
 						*/
-						module$92.exports = Node["extends"](KIND, function Statement(kind, docs, location) {
+						module$93.exports = Node["extends"](KIND, function Statement(kind, docs, location) {
 							Node.apply(this, [
 								kind || KIND,
 								docs,
@@ -10889,7 +11056,7 @@
 							]);
 						});
 					},
-					711(module$93, __unused_webpack_exports, __webpack_require__) {
+					711(module$94, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10904,7 +11071,7 @@
 						* @extends {Statement}
 						* @property {StaticVariable[]} variables
 						*/
-						module$93.exports = Statement["extends"](KIND, function Static(variables, docs, location) {
+						module$94.exports = Statement["extends"](KIND, function Static(variables, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -10913,7 +11080,7 @@
 							this.variables = variables;
 						});
 					},
-					1865(module$94, __unused_webpack_exports, __webpack_require__) {
+					1865(module$95, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10927,7 +11094,7 @@
 						* @memberOf module:php-parser
 						* @extends {Lookup}
 						*/
-						module$94.exports = Lookup["extends"](KIND, function StaticLookup(what, offset, docs, location) {
+						module$95.exports = Lookup["extends"](KIND, function StaticLookup(what, offset, docs, location) {
 							Lookup.apply(this, [
 								KIND,
 								what,
@@ -10937,7 +11104,7 @@
 							]);
 						});
 					},
-					1102(module$95, __unused_webpack_exports, __webpack_require__) {
+					1102(module$96, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10945,7 +11112,7 @@
 						*/
 						var Reference = __webpack_require__(8276);
 						var KIND = "staticreference";
-						module$95.exports = Reference["extends"](KIND, function StaticReference(raw, docs, location) {
+						module$96.exports = Reference["extends"](KIND, function StaticReference(raw, docs, location) {
 							Reference.apply(this, [
 								KIND,
 								docs,
@@ -10954,7 +11121,7 @@
 							this.raw = raw;
 						});
 					},
-					1231(module$96, __unused_webpack_exports, __webpack_require__) {
+					1231(module$97, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10970,7 +11137,7 @@
 						* @property {Variable} variable
 						* @property {Node|string|number|boolean|null} defaultValue
 						*/
-						module$96.exports = Node["extends"](KIND, function StaticVariable(variable, defaultValue, docs, location) {
+						module$97.exports = Node["extends"](KIND, function StaticVariable(variable, defaultValue, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -10980,7 +11147,7 @@
 							this.defaultValue = defaultValue;
 						});
 					},
-					7472(module$97, __unused_webpack_exports, __webpack_require__) {
+					7472(module$98, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -10998,7 +11165,7 @@
 						* @see {Encapsed}
 						* @property {string} value
 						*/
-						module$97.exports = Literal["extends"](KIND, function String(isDoubleQuote, value, unicode, raw, docs, location) {
+						module$98.exports = Literal["extends"](KIND, function String(isDoubleQuote, value, unicode, raw, docs, location) {
 							Literal.apply(this, [
 								KIND,
 								value,
@@ -11010,7 +11177,7 @@
 							this.isDoubleQuote = isDoubleQuote;
 						});
 					},
-					6133(module$98, __unused_webpack_exports, __webpack_require__) {
+					6133(module$99, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11027,7 +11194,7 @@
 						* @property {Block} body
 						* @property {boolean} shortForm
 						*/
-						module$98.exports = Statement["extends"](KIND, function Switch(test, body, shortForm, docs, location) {
+						module$99.exports = Statement["extends"](KIND, function Switch(test, body, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11038,7 +11205,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					1197(module$99, __unused_webpack_exports, __webpack_require__) {
+					1197(module$100, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11053,7 +11220,7 @@
 						* @extends {Statement}
 						* @property {Expression} what
 						*/
-						module$99.exports = Statement["extends"](KIND, function Throw(what, docs, location) {
+						module$100.exports = Statement["extends"](KIND, function Throw(what, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11062,7 +11229,7 @@
 							this.what = what;
 						});
 					},
-					6649(module$100, __unused_webpack_exports, __webpack_require__) {
+					6649(module$101, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11077,7 +11244,7 @@
 						* @extends {Declaration}
 						* @property {Declaration[]} body
 						*/
-						module$100.exports = Declaration["extends"](KIND, function Trait(name, body, docs, location) {
+						module$101.exports = Declaration["extends"](KIND, function Trait(name, body, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								name,
@@ -11087,7 +11254,7 @@
 							this.body = body;
 						});
 					},
-					1837(module$101, __unused_webpack_exports, __webpack_require__) {
+					1837(module$102, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11109,7 +11276,7 @@
 						* @property {Identifier|null} as
 						* @property {string|null} visibility
 						*/
-						module$101.exports = Node["extends"](KIND, function TraitAlias(trait, method, as, flags, docs, location) {
+						module$102.exports = Node["extends"](KIND, function TraitAlias(trait, method, as, flags, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11120,13 +11287,14 @@
 							this.as = as;
 							this.visibility = IS_UNDEFINED;
 							if (flags) {
-								if (flags[0] === 0) this.visibility = IS_PUBLIC;
-								else if (flags[0] === 1) this.visibility = IS_PROTECTED;
-								else if (flags[0] === 2) this.visibility = IS_PRIVATE;
+								var getVis = flags[0][0];
+								if (getVis === 0) this.visibility = IS_PUBLIC;
+								else if (getVis === 1) this.visibility = IS_PROTECTED;
+								else if (getVis === 2) this.visibility = IS_PRIVATE;
 							}
 						});
 					},
-					2277(module$102, __unused_webpack_exports, __webpack_require__) {
+					2277(module$103, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11143,7 +11311,7 @@
 						* @property {Identifier} method
 						* @property {Identifier[]} instead
 						*/
-						module$102.exports = Node["extends"](KIND, function TraitPrecedence(trait, method, instead, docs, location) {
+						module$103.exports = Node["extends"](KIND, function TraitPrecedence(trait, method, instead, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11154,7 +11322,7 @@
 							this.instead = instead;
 						});
 					},
-					8010(module$103, __unused_webpack_exports, __webpack_require__) {
+					8010(module$104, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11170,7 +11338,7 @@
 						* @property {Identifier[]} traits
 						* @property {Node[]|null} adaptations
 						*/
-						module$103.exports = Node["extends"](KIND, function TraitUse(traits, adaptations, docs, location) {
+						module$104.exports = Node["extends"](KIND, function TraitUse(traits, adaptations, docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11180,7 +11348,7 @@
 							this.adaptations = adaptations;
 						});
 					},
-					7579(module$104, __unused_webpack_exports, __webpack_require__) {
+					7579(module$105, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11197,7 +11365,7 @@
 						* @property {Catch[]} catches
 						* @property {Block} always
 						*/
-						module$104.exports = Statement["extends"](KIND, function Try(body, catches, always, docs, location) {
+						module$105.exports = Statement["extends"](KIND, function Try(body, catches, always, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11208,7 +11376,7 @@
 							this.always = always;
 						});
 					},
-					3460(module$105, __unused_webpack_exports, __webpack_require__) {
+					3460(module$106, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11242,11 +11410,16 @@
 							"callable",
 							"iterable",
 							"void",
-							"static"
+							"static",
+							"null",
+							"never",
+							"mixed",
+							"true",
+							"false"
 						];
-						module$105.exports = TypeReference;
+						module$106.exports = TypeReference;
 					},
-					2702(module$106, __unused_webpack_exports, __webpack_require__) {
+					2702(module$107, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11262,7 +11435,7 @@
 						* @property {string} type
 						* @property {Expression} what
 						*/
-						module$106.exports = Operation["extends"](KIND, function Unary(type, what, docs, location) {
+						module$107.exports = Operation["extends"](KIND, function Unary(type, what, docs, location) {
 							Operation.apply(this, [
 								KIND,
 								docs,
@@ -11272,7 +11445,7 @@
 							this.what = what;
 						});
 					},
-					514(module$107, __unused_webpack_exports, __webpack_require__) {
+					514(module$108, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11287,7 +11460,7 @@
 						* @extends {Declaration}
 						* @property {TypeReference[]} types
 						*/
-						module$107.exports = Declaration["extends"](KIND, function UnionType(types, docs, location) {
+						module$108.exports = Declaration["extends"](KIND, function UnionType(types, docs, location) {
 							Declaration.apply(this, [
 								KIND,
 								null,
@@ -11297,7 +11470,7 @@
 							this.types = types;
 						});
 					},
-					5684(module$108, __unused_webpack_exports, __webpack_require__) {
+					5684(module$109, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11311,7 +11484,7 @@
 						* @memberOf module:php-parser
 						* @extends {Statement}
 						*/
-						module$108.exports = Statement["extends"](KIND, function Unset(variables, docs, location) {
+						module$109.exports = Statement["extends"](KIND, function Unset(variables, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11320,7 +11493,7 @@
 							this.variables = variables;
 						});
 					},
-					8019(module$109, __unused_webpack_exports, __webpack_require__) {
+					8019(module$110, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11335,11 +11508,11 @@
 						* @extends {Statement}
 						* @property {string|null} name
 						* @property {string|null} type - Possible value : function, const
-						* @property {UseItem[]} item
+						* @property {UseItem[]} items
 						* @see {Namespace}
 						* @see http://php.net/manual/en/language.namespaces.importing.php
 						*/
-						module$109.exports = Statement["extends"](KIND, function UseGroup(name, type, items, docs, location) {
+						module$110.exports = Statement["extends"](KIND, function UseGroup(name, type, items, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11350,7 +11523,7 @@
 							this.items = items;
 						});
 					},
-					7721(module$110, __unused_webpack_exports, __webpack_require__) {
+					7721(module$111, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11391,9 +11564,9 @@
 						* @memberOf module:php-parser
 						*/
 						UseItem.TYPE_FUNCTION = "function";
-						module$110.exports = UseItem;
+						module$111.exports = UseItem;
 					},
-					4369(module$111, __unused_webpack_exports, __webpack_require__) {
+					4369(module$112, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11419,7 +11592,7 @@
 						* @property {string|Node} name The variable name (can be a complex expression when the name is resolved dynamically)
 						* @property {boolean} curly Indicate if the name is defined between curlies, ex `${foo}`
 						*/
-						module$111.exports = Expression["extends"](KIND, function Variable(name, curly, docs, location) {
+						module$112.exports = Expression["extends"](KIND, function Variable(name, curly, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11429,7 +11602,7 @@
 							this.curly = curly || false;
 						});
 					},
-					40(module$112, __unused_webpack_exports, __webpack_require__) {
+					40(module$113, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11445,7 +11618,7 @@
 						* @property {Array|Expression} what
 						* @see https://wiki.php.net/rfc/argument_unpacking
 						*/
-						module$112.exports = Expression["extends"](KIND, function variadic(what, docs, location) {
+						module$113.exports = Expression["extends"](KIND, function variadic(what, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11454,7 +11627,7 @@
 							this.what = what;
 						});
 					},
-					4919(module$113, __unused_webpack_exports, __webpack_require__) {
+					4919(module$114, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11470,7 +11643,7 @@
 						* @see {Namespace}
 						* @see http://php.net/manual/en/language.namespaces.importing.php
 						*/
-						module$113.exports = Node["extends"](KIND, function VariadicPlaceholder(docs, location) {
+						module$114.exports = Node["extends"](KIND, function VariadicPlaceholder(docs, location) {
 							Node.apply(this, [
 								KIND,
 								docs,
@@ -11478,7 +11651,7 @@
 							]);
 						});
 					},
-					7676(module$114, __unused_webpack_exports, __webpack_require__) {
+					7676(module$115, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11495,7 +11668,7 @@
 						* @property {Block | null} body
 						* @property {boolean} shortForm
 						*/
-						module$114.exports = Statement["extends"](KIND, function While(test, body, shortForm, docs, location) {
+						module$115.exports = Statement["extends"](KIND, function While(test, body, shortForm, docs, location) {
 							Statement.apply(this, [
 								KIND,
 								docs,
@@ -11506,7 +11679,7 @@
 							this.shortForm = shortForm;
 						});
 					},
-					2596(module$115, __unused_webpack_exports, __webpack_require__) {
+					2596(module$116, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11523,7 +11696,7 @@
 						* @property {Expression|null} key
 						* @see http://php.net/manual/en/language.generators.syntax.php
 						*/
-						module$115.exports = Expression["extends"](KIND, function Yield(value, key, docs, location) {
+						module$116.exports = Expression["extends"](KIND, function Yield(value, key, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11533,7 +11706,7 @@
 							this.key = key;
 						});
 					},
-					6744(module$116, __unused_webpack_exports, __webpack_require__) {
+					6744(module$117, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11549,7 +11722,7 @@
 						* @property {Expression} value
 						* @see http://php.net/manual/en/language.generators.syntax.php
 						*/
-						module$116.exports = Expression["extends"](KIND, function YieldFrom(value, docs, location) {
+						module$117.exports = Expression["extends"](KIND, function YieldFrom(value, docs, location) {
 							Expression.apply(this, [
 								KIND,
 								docs,
@@ -11558,7 +11731,7 @@
 							this.value = value;
 						});
 					},
-					5362(module$117, __unused_webpack_exports, __webpack_require__) {
+					5362(module$118, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2020 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11584,6 +11757,7 @@
 							var i = keys.length;
 							while (i--) {
 								var k = keys[i];
+								if (k === "__proto__" || k === "constructor" || k === "prototype") continue;
 								var val = src[k];
 								if (val === null) delete to[k];
 								else if (typeof val === "function") to[k] = val.bind(to);
@@ -11757,16 +11931,16 @@
 							return result;
 						};
 						/** @module php-parser */
-						module$117.exports = Engine;
-						module$117.exports.tokens = tokens;
-						module$117.exports.lexer = lexer;
-						module$117.exports.AST = AST;
-						module$117.exports.parser = parser;
-						module$117.exports.combine = combine;
-						module$117.exports.Engine = Engine;
-						module$117.exports["default"] = Engine;
+						module$118.exports = Engine;
+						module$118.exports.tokens = tokens;
+						module$118.exports.lexer = lexer;
+						module$118.exports.AST = AST;
+						module$118.exports.parser = parser;
+						module$118.exports.combine = combine;
+						module$118.exports.Engine = Engine;
+						module$118.exports["default"] = Engine;
 					},
-					9108(module$118, __unused_webpack_exports, __webpack_require__) {
+					9108(module$119, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -11941,6 +12115,7 @@
 								indentation_uses_spaces: false,
 								finished: false,
 								first_encaps_node: false,
+								/* istanbul ignore next */
 								toString: function toString() {
 									this.label;
 								}
@@ -12222,15 +12397,15 @@
 						].forEach(function(ext) {
 							for (var k in ext) Lexer.prototype[k] = ext[k];
 						});
-						module$118.exports = Lexer;
+						module$119.exports = Lexer;
 					},
-					9671(module$119) {
+					9671(module$120) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$119.exports = {
+						module$120.exports = {
 							attributeIndex: 0,
 							attributeListDepth: {},
 							matchST_ATTRIBUTE: function matchST_ATTRIBUTE() {
@@ -12256,6 +12431,7 @@
 									case ")":
 									case ":":
 									case "=":
+									case ";":
 									case "|":
 									case "&":
 									case "^":
@@ -12267,7 +12443,10 @@
 									case "<":
 									case ">":
 									case "!":
-									case ".": return this.consume_TOKEN();
+									case ".":
+									case "{":
+									case "}":
+									case "$": return this.consume_TOKEN();
 									case "[":
 										this.attributeListDepth[this.attributeIndex]++;
 										return "[";
@@ -12295,13 +12474,13 @@
 							}
 						};
 					},
-					2429(module$120) {
+					2429(module$121) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$120.exports = {
+						module$121.exports = {
 							T_COMMENT: function T_COMMENT() {
 								while (this.offset < this.size) {
 									var ch = this.input();
@@ -12336,13 +12515,13 @@
 							}
 						};
 					},
-					3683(module$121) {
+					3683(module$122) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$121.exports = {
+						module$122.exports = {
 							nextINITIAL: function nextINITIAL() {
 								if (this.conditionStack.length > 1 && this.conditionStack[this.conditionStack.length - 1] === "INITIAL") this.popState();
 								else this.begin("ST_IN_SCRIPTING");
@@ -12384,7 +12563,7 @@
 							}
 						};
 					},
-					6545(module$122) {
+					6545(module$123) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -12397,7 +12576,7 @@
 							MAX_LENGTH_OF_LONG = 19;
 							long_min_digits = "9223372036854775808";
 						}
-						module$122.exports = {
+						module$123.exports = {
 							consume_NUM: function consume_NUM() {
 								var ch = this.yytext[0];
 								var hasPoint = ch === ".";
@@ -12519,13 +12698,13 @@
 							}
 						};
 					},
-					3810(module$123) {
+					3810(module$124) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$123.exports = {
+						module$124.exports = {
 							matchST_LOOKING_FOR_PROPERTY: function matchST_LOOKING_FOR_PROPERTY() {
 								var ch = this.input();
 								if (ch === "-") {
@@ -12583,13 +12762,13 @@
 							}
 						};
 					},
-					8510(module$124) {
+					8510(module$125) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$124.exports = {
+						module$125.exports = {
 							matchST_IN_SCRIPTING: function matchST_IN_SCRIPTING() {
 								var ch = this.input();
 								switch (ch) {
@@ -12666,7 +12845,7 @@
 							}
 						};
 					},
-					4401(module$125) {
+					4401(module$126) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -12689,7 +12868,7 @@
 							"!",
 							"."
 						]);
-						module$125.exports = {
+						module$126.exports = {
 							T_CONSTANT_ENCAPSED_STRING: function T_CONSTANT_ENCAPSED_STRING() {
 								var ch;
 								while (this.offset < this.size) {
@@ -13026,13 +13205,13 @@
 							}
 						};
 					},
-					4349(module$126) {
+					4349(module$127) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$126.exports = {
+						module$127.exports = {
 							T_STRING: function T_STRING() {
 								var token = this.yytext.toLowerCase();
 								var id = this.keywords[token];
@@ -13320,14 +13499,14 @@
 							}
 						};
 					},
-					8582(module$127) {
+					8582(module$128) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
 						var tokens = ";:,.\\[]()|^&+-/*=%!~$<>?@";
-						module$127.exports = {
+						module$128.exports = {
 							is_NUM: function is_NUM() {
 								var ch = this._input.charCodeAt(this.offset - 1);
 								return ch > 47 && ch < 58 || ch === 95;
@@ -13396,7 +13575,7 @@
 							}
 						};
 					},
-					7259(module$128, __unused_webpack_exports, __webpack_require__) {
+					7259(module$129, __unused_webpack_exports, __webpack_require__) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -13565,7 +13744,8 @@
 									this.tok.T_PROTECTED,
 									this.tok.T_STATIC,
 									this.tok.T_ABSTRACT,
-									this.tok.T_FINAL
+									this.tok.T_FINAL,
+									this.tok.T_READ_ONLY
 								].map(mapIt)),
 								EOS: new Map([
 									";",
@@ -13707,7 +13887,14 @@
 								err.columnNumber = this.lexer.yylloc.first_column;
 								throw err;
 							}
+							var savedPrev = this.prev;
+							this.prev = [
+								this.lexer.yylloc.last_line,
+								this.lexer.yylloc.last_column,
+								this.lexer.offset
+							];
 							var node = this.ast.prepare("error", null, this)(message, token, this.lexer.yylloc.first_line, expect);
+							this.prev = savedPrev;
 							this._errors.push(node);
 							return node;
 						};
@@ -13963,15 +14150,15 @@
 								Parser.prototype[k] = ext[k];
 							}
 						});
-						module$128.exports = Parser;
+						module$129.exports = Parser;
 					},
-					5525(module$129) {
+					5525(module$130) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$129.exports = {
+						module$130.exports = {
 							read_array: function read_array() {
 								var expect;
 								var shortForm = false;
@@ -14028,7 +14215,7 @@
 							}
 						};
 					},
-					7072(module$130) {
+					7072(module$131) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -14088,7 +14275,7 @@
 							for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
 							return n;
 						}
-						module$130.exports = {
+						module$131.exports = {
 							read_class_declaration_statement: function read_class_declaration_statement(attrs) {
 								var result = this.node("class");
 								var flag = this.read_class_modifiers();
@@ -14154,34 +14341,34 @@
 										result = result.concat(this.read_trait_use_statement());
 										continue;
 									}
+									var locStart = this.position();
+									if (this.token === this.tok.T_ATTRIBUTE) attrs = this.read_attr_list();
 									if (allow_enum_cases && this.token === this.tok.T_CASE) {
-										var enumcase = this.read_enum_case();
+										var enumcase = this.read_enum_case(attrs);
+										attrs = [];
 										if (this.expect(";")) this.next();
 										result = result.concat(enumcase);
 										continue;
 									}
-									if (this.token === this.tok.T_ATTRIBUTE) attrs = this.read_attr_list();
-									var locStart = this.position();
 									var flags = this.read_member_flags(false);
 									if (this.token === this.tok.T_CONST) {
-										var constants = this.read_constant_list(flags, attrs);
+										if (flags[0][1] !== -1) this.raiseError("Cannot use asymmetric visibility on constants");
+										var constants = this.read_constant_list(flags, attrs, locStart);
 										if (this.expect(";")) this.next();
 										result = result.concat(constants);
 										continue;
 									}
 									if (allow_variables && this.token === this.tok.T_VAR) {
 										this.next().expect(this.tok.T_VARIABLE);
-										flags[0] = null;
+										flags[0][0] = null;
 										flags[1] = 0;
 									}
 									if (this.token === this.tok.T_FUNCTION) {
 										result.push(this.read_function(false, flags, attrs, locStart));
 										attrs = [];
 									} else if (allow_variables && (this.token === this.tok.T_VARIABLE || this.version >= 801 && this.token === this.tok.T_READ_ONLY || this.version >= 704 && (this.token === "?" || this.token === this.tok.T_ARRAY || this.token === this.tok.T_CALLABLE || this.token === this.tok.T_NAMESPACE || this.token === this.tok.T_NAME_FULLY_QUALIFIED || this.token === this.tok.T_NAME_QUALIFIED || this.token === this.tok.T_NAME_RELATIVE || this.token === this.tok.T_NS_SEPARATOR || this.token === this.tok.T_STRING))) {
-										var variables = this.read_variable_list(flags, attrs);
+										var variables = this.read_variable_list(flags, attrs, locStart);
 										attrs = [];
-										this.expect(";");
-										this.next();
 										result = result.concat(variables);
 									} else {
 										this.error([this.tok.T_CONST].concat(_toConsumableArray(allow_variables ? [this.tok.T_VARIABLE] : []), _toConsumableArray(allow_enum_cases ? [this.tok.T_CASE] : []), [this.tok.T_FUNCTION]));
@@ -14192,11 +14379,12 @@
 								this.next();
 								return result;
 							},
-							read_variable_list: function read_variable_list(flags, attrs) {
-								return this.node("propertystatement")(null, this.read_list(function read_variable_declaration() {
+							read_variable_list: function read_variable_list(flags, attrs, locStart) {
+								var property_statement = this.node("propertystatement");
+								var properties = this.read_list(function read_variable_declaration() {
 									var result = this.node("property");
-									var readonly = false;
-									if (this.token === this.tok.T_READ_ONLY) {
+									var readonly = flags[3] === 1;
+									if (!readonly && this.token === this.tok.T_READ_ONLY) {
 										readonly = true;
 										this.next();
 									}
@@ -14207,19 +14395,79 @@
 									this.next();
 									propName = propName(name);
 									var value = null;
+									var property_hooks = [];
 									this.expect([
 										",",
 										";",
-										"="
+										"=",
+										"{"
 									]);
 									if (this.token === "=") value = this.next().read_expr();
-									return result(propName, value, readonly, nullable, type, attrs || []);
-								}, ","), flags);
+									if (this.token === "{") property_hooks = this.read_property_hooks();
+									else this.expect([";", ","]);
+									return result(propName, value, readonly, nullable, type, attrs || [], property_hooks);
+								}, ",");
+								property_statement = property_statement(null, properties, flags);
+								if (locStart && property_statement.loc) {
+									property_statement.loc.start = locStart;
+									if (property_statement.loc.source) property_statement.loc.source = this.lexer._input.substr(property_statement.loc.start.offset, property_statement.loc.end.offset - property_statement.loc.start.offset);
+								}
+								if (this.token === ";") this.next();
+								return property_statement;
 							},
-							read_constant_list: function read_constant_list(flags, attrs) {
+							read_property_hooks: function read_property_hooks() {
+								if (this.version < 804) this.raiseError("Parse Error: Property hooks require PHP 8.4+");
+								this.expect("{");
+								this.next();
+								var hooks = [];
+								while (this.token !== this.EOF && this.token !== "}") hooks.push(this.read_property_hook());
+								this.expect("}");
+								this.next();
+								return hooks;
+							},
+							read_property_hook: function read_property_hook() {
+								var property_hooks = this.node("propertyhook");
+								var attrs = [];
+								if (this.token === this.tok.T_ATTRIBUTE) attrs = this.read_attr_list();
+								var is_final = this.token === this.tok.T_FINAL;
+								if (is_final) this.next();
+								var is_reference = this.token === "&";
+								if (is_reference) this.next();
+								var method_name = this.text();
+								if (method_name !== "get" && method_name !== "set") this.raiseError("Parse Error: Property hooks must be either 'get' or 'set'");
+								this.next();
+								var parameter = null;
+								var body = null;
+								this.expect([
+									this.tok.T_DOUBLE_ARROW,
+									"{",
+									"(",
+									";"
+								]);
+								if (this.token === ";") {
+									this.next();
+									return property_hooks(method_name, is_final, is_reference, parameter, body, attrs);
+								}
+								if (this.token === "(") {
+									this.next();
+									parameter = this.read_parameter(false);
+									this.expect(")");
+									this.next();
+								}
+								if (this.token === this.tok.T_DOUBLE_ARROW) {
+									this.next();
+									body = this.read_expr();
+									this.next();
+								} else if (this.token === "{") body = this.read_code_block();
+								return property_hooks(method_name, is_final, is_reference, parameter, body, attrs);
+							},
+							read_constant_list: function read_constant_list(flags, attrs, locStart) {
+								var result = this.node("classconstant");
 								if (this.expect(this.tok.T_CONST)) this.next();
+								if (flags[1] === 1 || flags[2] === 1 || flags[3] === 1) this.error();
+								if (flags[2] === 2 && this.version < 801) this.raiseError("Final class constants are not allowed before PHP 8.1");
 								var _ref2 = _slicedToArray(this.version >= 803 ? this.read_optional_type() : [false, null], 2), nullable = _ref2[0], type = _ref2[1];
-								return this.node("classconstant")(null, this.read_list(function read_constant_declaration() {
+								var node = result(null, this.read_list(function read_constant_declaration() {
 									var result = this.node("constant");
 									var constName = null;
 									var value = null;
@@ -14232,57 +14480,80 @@
 									if (this.expect("=")) value = this.next().read_expr();
 									return result(constName, value);
 								}, ","), flags, nullable, type, attrs || []);
+								if (locStart && node.loc) {
+									node.loc.start = locStart;
+									if (node.loc.source) node.loc.source = this.lexer._input.substr(node.loc.start.offset, node.loc.end.offset - node.loc.start.offset);
+								}
+								return node;
 							},
 							read_member_flags: function read_member_flags(asInterface) {
 								var result = [
-									-1,
-									-1,
-									-1
+									[-1, -1],
+									0,
+									0,
+									0
 								];
-								if (this.is("T_MEMBER_FLAGS")) {
-									var idx = 0, val = 0;
-									do {
-										switch (this.token) {
-											case this.tok.T_PUBLIC:
-												idx = 0;
-												val = 0;
-												break;
-											case this.tok.T_PROTECTED:
-												idx = 0;
-												val = 1;
-												break;
-											case this.tok.T_PRIVATE:
-												idx = 0;
-												val = 2;
-												break;
-											case this.tok.T_STATIC:
-												idx = 1;
-												val = 1;
-												break;
-											case this.tok.T_ABSTRACT:
-												idx = 2;
-												val = 1;
-												break;
-											case this.tok.T_FINAL:
-												idx = 2;
-												val = 2;
-												break;
-										}
-										if (asInterface) {
-											if (idx === 0 && val === 2) {
+								var seen = /* @__PURE__ */ new Set();
+								while (this.is("T_MEMBER_FLAGS")) {
+									var idx = -1, val = -1;
+									switch (this.token) {
+										case this.tok.T_PUBLIC:
+										case this.tok.T_PROTECTED:
+										case this.tok.T_PRIVATE:
+											idx = 0;
+											val = this.token === this.tok.T_PUBLIC ? 0 : this.token === this.tok.T_PROTECTED ? 1 : 2;
+											if (asInterface && val === 2) {
 												this.expect([this.tok.T_PUBLIC, this.tok.T_PROTECTED]);
 												val = -1;
-											} else if (idx === 2 && val === 1) {
-												this.error();
-												val = -1;
 											}
-										}
-										if (result[idx] !== -1) this.error();
-										else if (val !== -1) result[idx] = val;
-									} while (this.next().is("T_MEMBER_FLAGS"));
+											this.next();
+											if (this.version >= 804 && this.token === "(") {
+												if (result[0][0] === -1) result[0][0] = 0;
+												this.next();
+												if (this.token !== this.tok.T_STRING || this.text() !== "set") this.error("set");
+												else this.next();
+												if (this.expect(")")) this.next();
+												if (seen.has("set")) this.error();
+												else if (val !== -1) {
+													seen.add("set");
+													result[0][1] = val;
+												}
+												continue;
+											}
+											if (seen.has(idx)) this.error();
+											else if (val !== -1) {
+												seen.add(idx);
+												result[0][0] = val;
+											}
+											continue;
+										case this.tok.T_STATIC:
+											idx = 1;
+											val = 1;
+											break;
+										case this.tok.T_ABSTRACT:
+											idx = 2;
+											val = 1;
+											break;
+										case this.tok.T_FINAL:
+											idx = 2;
+											val = 2;
+											break;
+										case this.tok.T_READ_ONLY:
+											idx = 3;
+											val = 1;
+											break;
+									}
+									if (asInterface && idx === 2 && val === 1) {
+										this.error();
+										val = -1;
+									}
+									if (seen.has(idx)) this.error();
+									else if (val !== -1) {
+										seen.add(idx);
+										result[idx] = val;
+									}
+									this.next();
 								}
-								if (result[1] === -1) result[1] = 0;
-								if (result[2] === -1) result[2] = 0;
 								return result;
 							},
 							read_optional_type: function read_optional_type() {
@@ -14345,10 +14616,12 @@
 										continue;
 									}
 									var locStart = this.position();
-									attrs = this.read_attr_list();
+									attrs = [];
+									if (this.token === this.tok.T_ATTRIBUTE) attrs = this.read_attr_list();
 									var flags = this.read_member_flags(true);
 									if (this.token === this.tok.T_CONST) {
-										var constants = this.read_constant_list(flags, attrs);
+										if (flags[0][1] !== -1) this.raiseError("Cannot use asymmetric visibility on constants");
+										var constants = this.read_constant_list(flags, attrs, locStart);
 										if (this.expect(";")) this.next();
 										result = result.concat(constants);
 									} else if (this.token === this.tok.T_FUNCTION) {
@@ -14356,15 +14629,20 @@
 										method.parseFlags(flags);
 										result.push(method);
 										if (this.expect(";")) this.next();
-									} else {
-										this.error([this.tok.T_CONST, this.tok.T_FUNCTION]);
+									} else if (this.token === this.tok.T_STRING) result.push(this.read_variable_list(flags, attrs, locStart));
+									else {
+										this.error([
+											this.tok.T_CONST,
+											this.tok.T_FUNCTION,
+											this.tok.T_STRING
+										]);
 										this.next();
 									}
 								}
 								if (this.expect("}")) this.next();
 								return result;
 							},
-							read_trait_declaration_statement: function read_trait_declaration_statement() {
+							read_trait_declaration_statement: function read_trait_declaration_statement(attrs) {
 								var result = this.node("trait");
 								if (this.token !== this.tok.T_TRAIT) {
 									this.error(this.tok.T_TRAIT);
@@ -14378,7 +14656,9 @@
 								propName = propName(name);
 								this.expect("{");
 								var body = this.next().read_class_body(true, false);
-								return result(propName, body);
+								var node = result(propName, body);
+								if (attrs) node.attrGroups = attrs;
+								return node;
 							},
 							read_trait_use_statement: function read_trait_use_statement() {
 								var node = this.node("traituse");
@@ -14429,7 +14709,7 @@
 										var name = this.text();
 										this.next();
 										alias = alias(name);
-									} else if (flags === false) this.expect(this.tok.T_STRING);
+									} else if (flags === null) this.expect(this.tok.T_STRING);
 									return node("traitalias", trait, method, alias, flags);
 								}
 								this.expect([this.tok.T_AS, this.tok.T_INSTEADOF]);
@@ -14437,13 +14717,13 @@
 							}
 						};
 					},
-					3997(module$131) {
+					3997(module$132) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$131.exports = {
+						module$132.exports = {
 							read_comment: function read_comment() {
 								var text = this.text();
 								var result = this.ast.prepare(text.substring(0, 2) === "/*" ? "commentblock" : "commentline", null, this);
@@ -14478,13 +14758,13 @@
 							}
 						};
 					},
-					979(module$132) {
+					979(module$133) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$132.exports = {
+						module$133.exports = {
 							read_enum_declaration_statement: function read_enum_declaration_statement(attrs) {
 								var result = this.node("enum");
 								if (!this.expect(this.tok.T_ENUM)) return null;
@@ -14505,7 +14785,7 @@
 								if (this.token === ":") return this.next().read_namespace_name();
 								return null;
 							},
-							read_enum_case: function read_enum_case() {
+							read_enum_case: function read_enum_case(attrs) {
 								this.expect(this.tok.T_CASE);
 								var result = this.node("enumcase");
 								var caseName = this.node("identifier");
@@ -14514,17 +14794,19 @@
 								caseName = caseName(name);
 								var value = this.token === "=" ? this.next().read_expr() : null;
 								this.expect(";");
-								return result(caseName, value);
+								var node = result(caseName, value);
+								if (attrs && attrs.length > 0) node.attrGroups = attrs;
+								return node;
 							}
 						};
 					},
-					6477(module$133) {
+					6477(module$134) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$133.exports = {
+						module$134.exports = {
 							read_expr: function read_expr(expr) {
 								var result = this.node();
 								if (this.token === "@") {
@@ -14569,7 +14851,9 @@
 								if (this.token === this.tok.T_COALESCE) return result("bin", "??", expr, this.next().read_expr());
 								if (this.token === this.tok.T_PIPE) {
 									if (this.version < 805) this.raiseError("PHP 8.5+ is required to use pipe operator");
-									return result("bin", "|>", expr, this.next().read_expr());
+									var right = this.next().read_expr();
+									if (right.kind === "arrowfunc" && !right.parenthesizedExpression) this.raiseError("Arrow functions in a pipe chain must be wrapped in parentheses");
+									return result("bin", "|>", expr, right);
 								}
 								if (this.token === "?") {
 									var trueArg = null;
@@ -14679,7 +14963,22 @@
 									} else return result(assignList, false);
 								}
 								if (this.token === this.tok.T_ATTRIBUTE) attrs = this.read_attr_list();
-								if (this.token === this.tok.T_CLONE) return this.node("clone")(this.next().read_expr());
+								if (this.token === this.tok.T_CLONE) {
+									var node = this.node("clone");
+									this.next();
+									if (this.version >= 805 && this.token === "(") {
+										this.next();
+										var _what = this.read_variable(false, false);
+										_what = this.handleDereferencable(_what);
+										var properties = null;
+										if (this.token === ",") properties = this.next().read_expr();
+										this.expect(")") && this.next();
+										return node(_what, properties);
+									}
+									var what = this.read_variable(false, false);
+									what = this.handleDereferencable(what);
+									return node(what, null);
+								}
 								switch (this.token) {
 									case this.tok.T_INC: return this.node("pre")("+", this.next().read_variable(false, false));
 									case this.tok.T_DEC: return this.node("pre")("-", this.next().read_variable(false, false));
@@ -14835,6 +15134,10 @@
 								if (this.token === this.tok.T_NEW) {
 									if (this.version >= 700) this.error();
 									right = this.read_new_expr();
+								} else if (this.token === "(") {
+									right = this.next().read_expr();
+									this.expect(")") && this.next();
+									right = this.recursive_variable_chain_scan(right, false, false);
 								} else right = this.read_variable(false, false);
 								return result("assignref", left, right);
 							},
@@ -14844,7 +15147,7 @@
 									_result2.attrGroups = attrs;
 									return _result2;
 								}
-								if (!this.version >= 704) this.raiseError("Arrow Functions are not allowed");
+								if (this.version < 704) this.raiseError("Arrow Functions are not allowed");
 								var node = this.node("arrowfunc");
 								if (this.expect(this.tok.T_FN)) this.next();
 								var isRef = this.is_reference();
@@ -14907,25 +15210,26 @@
 								return conds;
 							},
 							read_attribute: function read_attribute() {
+								var node = this.node("attribute");
 								var name = this.text();
 								var args = [];
 								this.next();
 								if (this.token === "(") args = this.read_argument_list();
-								return this.node("attribute")(name, args);
+								return node(name, args);
 							},
 							read_attr_list: function read_attr_list() {
 								var list = [];
 								if (this.token === this.tok.T_ATTRIBUTE) do {
-									var attrGr = this.node("attrgroup")([]);
+									var node = this.node("attrgroup");
 									this.next();
-									attrGr.attrs.push(this.read_attribute());
+									var attrs = [this.read_attribute()];
 									while (this.token === ",") {
 										this.next();
-										if (this.token !== "]") attrGr.attrs.push(this.read_attribute());
+										if (this.token !== "]") attrs.push(this.read_attribute());
 									}
-									list.push(attrGr);
 									this.expect("]");
 									this.next();
+									list.push(node(attrs));
 								} while (this.token === this.tok.T_ATTRIBUTE);
 								return list;
 							},
@@ -14976,7 +15280,10 @@
 							read_new_class_name: function read_new_class_name() {
 								if (this.token === this.tok.T_NS_SEPARATOR || this.token === this.tok.T_NAME_RELATIVE || this.token === this.tok.T_NAME_QUALIFIED || this.token === this.tok.T_NAME_FULLY_QUALIFIED || this.token === this.tok.T_STRING || this.token === this.tok.T_NAMESPACE) {
 									var result = this.read_namespace_name(true);
-									if (this.token === this.tok.T_DOUBLE_COLON) result = this.read_static_getter(result);
+									if (this.token === this.tok.T_DOUBLE_COLON) {
+										result = this.read_static_getter(result);
+										return this.recursive_variable_chain_scan(result, true, false);
+									}
 									return result;
 								} else if (this.is("VARIABLE")) return this.read_variable(true, false);
 								else this.expect([this.tok.T_STRING, "VARIABLE"]);
@@ -14990,13 +15297,55 @@
 							}
 						};
 					},
-					8214(module$134) {
+					8214(module$135) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$134.exports = {
+						function _slicedToArray(r, e) {
+							return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+						}
+						function _nonIterableRest() {
+							throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+						}
+						function _unsupportedIterableToArray(r, a) {
+							if (r) {
+								if ("string" == typeof r) return _arrayLikeToArray(r, a);
+								var t = {}.toString.call(r).slice(8, -1);
+								return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+							}
+						}
+						function _arrayLikeToArray(r, a) {
+							(null == a || a > r.length) && (a = r.length);
+							for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+							return n;
+						}
+						function _iterableToArrayLimit(r, l) {
+							var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+							if (null != t) {
+								var e, n, i, u, a = [], f = !0, o = !1;
+								try {
+									if (i = (t = t.call(r)).next, 0 === l) {
+										if (Object(t) !== t) return;
+										f = !1;
+									} else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+								} catch (r) {
+									o = !0, n = r;
+								} finally {
+									try {
+										if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+									} finally {
+										if (o) throw n;
+									}
+								}
+								return a;
+							}
+						}
+						function _arrayWithHoles(r) {
+							if (Array.isArray(r)) return r;
+						}
+						module$135.exports = {
 							is_reference: function is_reference() {
 								if (this.token === "&") {
 									this.next();
@@ -15144,7 +15493,7 @@
 									this.next();
 									readonly = true;
 								} else this.raiseError("readonly properties can be used only on class constructor");
-								var flags = this.read_promoted();
+								var _this$read_promoted2 = _slicedToArray(this.read_promoted(), 2), flags = _this$read_promoted2[0], flagsSet = _this$read_promoted2[1];
 								if (!readonly && this.version >= 801 && this.token === this.tok.T_READ_ONLY) if (is_class_constructor) {
 									this.next();
 									readonly = true;
@@ -15164,7 +15513,9 @@
 									parameterName = parameterName(name);
 								}
 								if (this.token == "=") value = this.next().read_expr();
-								var result = node(parameterName, types, value, isRef, isVariadic, readonly, nullable, flags);
+								var hooks = [];
+								if (this.version >= 804 && flags && this.token === "{") hooks = this.read_property_hooks();
+								var result = node(parameterName, types, value, isRef, isVariadic, readonly, nullable, flags, hooks, flagsSet);
 								if (attrs) result.attrGroups = attrs;
 								return result;
 							},
@@ -15174,8 +15525,12 @@
 								var MODE_INTERSECTION = "intersection";
 								var types = [];
 								var mode = MODE_UNSET;
+								var node = this.node();
 								var type = this.read_type();
-								if (!type) return null;
+								if (!type) {
+									node.destroy();
+									return null;
+								}
 								types.push(type);
 								while (this.token === "|" || this.version >= 801 && this.token === "&") {
 									var nextToken = this.peek();
@@ -15185,31 +15540,62 @@
 									this.next();
 									types.push(this.read_type());
 								}
-								if (types.length === 1) return types[0];
-								else return mode === MODE_INTERSECTION ? this.node("intersectiontype")(types) : this.node("uniontype")(types);
+								if (types.length === 1) {
+									node.destroy();
+									return types[0];
+								} else return mode === MODE_INTERSECTION ? node("intersectiontype", types) : node("uniontype", types);
 							},
 							read_promoted: function read_promoted() {
 								var MODIFIER_PUBLIC = 1;
 								var MODIFIER_PROTECTED = 2;
 								var MODIFIER_PRIVATE = 4;
+								var firstModifier;
 								if (this.token === this.tok.T_PUBLIC) {
 									this.next();
-									return MODIFIER_PUBLIC;
+									firstModifier = MODIFIER_PUBLIC;
 								} else if (this.token === this.tok.T_PROTECTED) {
 									this.next();
-									return MODIFIER_PROTECTED;
+									firstModifier = MODIFIER_PROTECTED;
 								} else if (this.token === this.tok.T_PRIVATE) {
 									this.next();
-									return MODIFIER_PRIVATE;
+									firstModifier = MODIFIER_PRIVATE;
+								} else return [0, 0];
+								if (this.version >= 804) {
+									if (this.token === "(") {
+										this.next();
+										if (this.token !== this.tok.T_STRING || this.text() !== "set") this.error("set");
+										else this.next();
+										if (this.expect(")")) this.next();
+										return [0, firstModifier];
+									}
+									var setModifier = 0;
+									if (this.token === this.tok.T_PUBLIC) {
+										this.next();
+										setModifier = MODIFIER_PUBLIC;
+									} else if (this.token === this.tok.T_PROTECTED) {
+										this.next();
+										setModifier = MODIFIER_PROTECTED;
+									} else if (this.token === this.tok.T_PRIVATE) {
+										this.next();
+										setModifier = MODIFIER_PRIVATE;
+									}
+									if (setModifier > 0) {
+										if (this.expect("(")) this.next();
+										if (this.token !== this.tok.T_STRING || this.text() !== "set") this.error("set");
+										else this.next();
+										if (this.expect(")")) this.next();
+										return [firstModifier, setModifier];
+									}
 								}
-								return 0;
+								return [firstModifier, 0];
 							},
 							read_argument_list: function read_argument_list() {
 								var result = [];
 								this.expect("(") && this.next();
 								if (this.version >= 801 && this.token === this.tok.T_ELLIPSIS && this.peek() === ")") {
-									result.push(this.node("variadicplaceholder")());
+									var variadicNode = this.node("variadicplaceholder");
 									this.next();
+									result.push(variadicNode());
 								} else if (this.token !== ")") result = this.read_non_empty_argument_list();
 								this.expect(")") && this.next();
 								return result;
@@ -15253,19 +15639,31 @@
 										result.destroy();
 										return this.read_namespace_name();
 									}
+								} else if (this.version >= 802 && this.token === "(") {
+									this.next();
+									var innerTypes = [];
+									innerTypes.push(this.read_type());
+									while (this.token === "&") {
+										var nextToken = this.peek();
+										if (nextToken === this.tok.T_ELLIPSIS || nextToken === this.tok.T_VARIABLE) break;
+										this.next();
+										innerTypes.push(this.read_type());
+									}
+									this.expect(")") && this.next();
+									return result("intersectiontype", innerTypes);
 								}
 								result.destroy();
 								return null;
 							}
 						};
 					},
-					9461(module$135) {
+					9461(module$136) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$135.exports = {
+						module$136.exports = {
 							read_if: function read_if() {
 								var result = this.node("if");
 								var test = this.next().read_if_expr();
@@ -15274,8 +15672,8 @@
 								var shortForm = false;
 								if (this.token === ":") {
 									shortForm = true;
-									this.next();
 									body = this.node("block");
+									this.next();
 									var items = [];
 									while (this.token !== this.EOF && this.token !== this.tok.T_ENDIF) {
 										if (this.token === this.tok.T_ELSEIF) {
@@ -15287,6 +15685,7 @@
 										}
 										items.push(this.read_inner_statement());
 									}
+									if (items.length === 0 && this.extractDoc && this._docs.length > this._docIndex) items.push(this.node("noop")());
 									body = body(null, items);
 									this.expect(this.tok.T_ENDIF) && this.next();
 									this.expectEndOfStatement();
@@ -15307,8 +15706,8 @@
 								var alternate = null;
 								var result = this.node("if");
 								var test = this.next().read_if_expr();
-								if (this.expect(":")) this.next();
 								var body = this.node("block");
+								if (this.expect(":")) this.next();
 								var items = [];
 								while (this.token != this.EOF && this.token !== this.tok.T_ENDIF) {
 									if (this.token === this.tok.T_ELSEIF) {
@@ -15320,24 +15719,27 @@
 									}
 									items.push(this.read_inner_statement());
 								}
+								if (items.length === 0 && this.extractDoc && this._docs.length > this._docIndex) items.push(this.node("noop")());
 								return result(test, body(null, items), alternate, true);
 							},
 							read_else_short: function read_else_short() {
-								if (this.next().expect(":")) this.next();
+								this.next();
 								var body = this.node("block");
+								if (this.expect(":")) this.next();
 								var items = [];
 								while (this.token != this.EOF && this.token !== this.tok.T_ENDIF) items.push(this.read_inner_statement());
+								if (items.length === 0 && this.extractDoc && this._docs.length > this._docIndex) items.push(this.node("noop")());
 								return body(null, items);
 							}
 						};
 					},
-					5931(module$136) {
+					5931(module$137) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$136.exports = {
+						module$137.exports = {
 							read_while: function read_while() {
 								var result = this.node("while");
 								this.expect(this.tok.T_WHILE) && this.next();
@@ -15430,24 +15832,24 @@
 							}
 						};
 					},
-					9147(module$137) {
+					9147(module$138) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$137.exports = { read_start: function read_start() {
+						module$138.exports = { read_start: function read_start() {
 							if (this.token == this.tok.T_NAMESPACE) return this.read_namespace();
 							else return this.read_top_statement();
 						} };
 					},
-					9219(module$138) {
+					9219(module$139) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$138.exports = {
+						module$139.exports = {
 							read_namespace: function read_namespace() {
 								var result = this.node("namespace");
 								var body;
@@ -15458,8 +15860,7 @@
 								this.currentNamespace = name;
 								if (this.token === ";") {
 									this.currentNamespace = name;
-									body = this.next().read_top_statements();
-									this.expect(this.EOF);
+									body = this.next().read_top_statements(true);
 									return result(name.name, body, false);
 								} else if (this.token === "{") {
 									this.currentNamespace = name;
@@ -15564,7 +15965,7 @@
 							}
 						};
 					},
-					7170(module$139) {
+					7170(module$140) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -15580,10 +15981,10 @@
 							v: String.fromCharCode(11),
 							e: String.fromCharCode(27)
 						};
-						module$139.exports = {
+						module$140.exports = {
 							resolve_special_chars: function resolve_special_chars(text, doubleQuote) {
 								if (!doubleQuote) return text.replace(/\\\\/g, "\\").replace(/\\'/g, "'");
-								return text.replace(/\\"/, "\"").replace(/\\([\\$nrtfve]|[xX][0-9a-fA-F]{1,2}|[0-7]{1,3}|u{([0-9a-fA-F]+)})/g, function($match, p1, p2) {
+								return text.replace(/\\"/g, "\"").replace(/\\([\\$nrtfve]|[xX][0-9a-fA-F]{1,2}|[0-7]{1,3}|u{([0-9a-fA-F]+)})/g, function($match, p1, p2) {
 									if (specialChar[p1]) return specialChar[p1];
 									else if ("x" === p1[0] || "X" === p1[0]) return String.fromCodePoint(parseInt(p1.substr(1), 16));
 									else if ("u" === p1[0]) return String.fromCodePoint(parseInt(p2, 16));
@@ -15603,7 +16004,7 @@
 								var textSize = text.length;
 								var offset = 0;
 								var leadingWhitespaceCharCount = 0;
-								var inCoutingState = true;
+								var inCountingState = true;
 								var chToCheck = indentation_uses_spaces ? " " : "	";
 								var inCheckState = false;
 								if (!first_encaps_node) {
@@ -15612,13 +16013,12 @@
 									offset++;
 								}
 								while (offset < textSize) {
-									if (inCoutingState) if (text[offset] === chToCheck) leadingWhitespaceCharCount++;
+									if (inCountingState) if (text[offset] === chToCheck) leadingWhitespaceCharCount++;
 									else inCheckState = true;
-									else inCoutingState = false;
 									if (text[offset] !== "\n" && inCheckState && leadingWhitespaceCharCount < indentation) this.raiseError("Invalid body indentation level (expecting an indentation at least ".concat(indentation, ")"));
 									else inCheckState = false;
 									if (text[offset] === "\n") {
-										inCoutingState = true;
+										inCountingState = true;
 										leadingWhitespaceCharCount = 0;
 									}
 									offset++;
@@ -15709,7 +16109,7 @@
 								if (this.token === this.tok.T_ENCAPSED_AND_WHITESPACE) {
 									var text = this.text();
 									this.next();
-									result = result("string", false, this.version >= 703 && !this.lexer.heredoc_label.finished ? this.remove_heredoc_leading_whitespace_chars(this.resolve_special_chars(text, isDoubleQuote), this.lexer.heredoc_label.indentation, this.lexer.heredoc_label.indentation_uses_spaces, this.lexer.heredoc_label.first_encaps_node) : text, false, text);
+									result = result("string", false, this.version >= 703 && !this.lexer.heredoc_label.finished ? this.resolve_special_chars(this.remove_heredoc_leading_whitespace_chars(text, this.lexer.heredoc_label.indentation, this.lexer.heredoc_label.indentation_uses_spaces, this.lexer.heredoc_label.first_encaps_node), isDoubleQuote) : this.resolve_special_chars(text, isDoubleQuote), false, text);
 								} else if (this.token === this.tok.T_DOLLAR_OPEN_CURLY_BRACES) {
 									syntax = "simple";
 									curly = true;
@@ -15772,7 +16172,7 @@
 								else if (expect === "\"") type = this.ast.encapsed.TYPE_STRING;
 								else type = this.ast.encapsed.TYPE_HEREDOC;
 								while (this.token !== expect && this.token !== this.EOF) value.push(this.read_encapsed_string_item(true));
-								if (value.length > 0 && value[value.length - 1].kind === "encapsedpart" && value[value.length - 1].expression.kind === "string") {
+								if (type === this.ast.encapsed.TYPE_HEREDOC && value.length > 0 && value[value.length - 1].kind === "encapsedpart" && value[value.length - 1].expression.kind === "string") {
 									var _node = value[value.length - 1].expression;
 									var lastCh = _node.value[_node.value.length - 1];
 									if (lastCh === "\n") if (_node.value[_node.value.length - 2] === "\r") _node.value = _node.value.substring(0, _node.value.length - 2);
@@ -15796,16 +16196,17 @@
 							}
 						};
 					},
-					6261(module$140) {
+					6261(module$141) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$140.exports = {
-							read_top_statements: function read_top_statements() {
+						module$141.exports = {
+							read_top_statements: function read_top_statements(stopAtNamespace) {
 								var result = [];
 								while (this.token !== this.EOF && this.token !== "}") {
+									if (stopAtNamespace && this.token === this.tok.T_NAMESPACE) break;
 									var statement = this.read_top_statement();
 									if (statement) if (Array.isArray(statement)) result = result.concat(statement);
 									else result.push(statement);
@@ -15822,7 +16223,7 @@
 									case this.tok.T_READ_ONLY:
 									case this.tok.T_CLASS: return this.read_class_declaration_statement(attrs);
 									case this.tok.T_INTERFACE: return this.read_interface_declaration_statement(attrs);
-									case this.tok.T_TRAIT: return this.read_trait_declaration_statement();
+									case this.tok.T_TRAIT: return this.read_trait_declaration_statement(attrs);
 									case this.tok.T_ENUM: return this.read_enum_declaration_statement(attrs);
 									case this.tok.T_USE: return this.read_use_statement();
 									case this.tok.T_CONST:
@@ -15891,8 +16292,8 @@
 									case this.tok.T_FINAL:
 									case this.tok.T_CLASS: return this.read_class_declaration_statement();
 									case this.tok.T_INTERFACE: return this.read_interface_declaration_statement();
-									case this.tok.T_TRAIT: return this.read_trait_declaration_statement();
-									case this.tok.T_ENUM: return this.read_enum_declaration_statement();
+									case this.tok.T_TRAIT: return this.read_trait_declaration_statement(attrs);
+									case this.tok.T_ENUM: return this.read_enum_declaration_statement(attrs);
 									case this.tok.T_HALT_COMPILER:
 										this.raiseError("__HALT_COMPILER() can only be used from the outermost scope");
 										var node = this.node("halt");
@@ -16052,13 +16453,13 @@
 							}
 						};
 					},
-					2478(module$141) {
+					2478(module$142) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$141.exports = {
+						module$142.exports = {
 							read_switch: function read_switch() {
 								var result = this.node("switch");
 								this.expect(this.tok.T_SWITCH) && this.next();
@@ -16097,13 +16498,13 @@
 							}
 						};
 					},
-					77(module$142) {
+					77(module$143) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$142.exports = { read_try: function read_try() {
+						module$143.exports = { read_try: function read_try() {
 							this.expect(this.tok.T_TRY);
 							var result = this.node("try");
 							var always = null;
@@ -16122,13 +16523,13 @@
 							return result(body, catches, always);
 						} };
 					},
-					6077(module$143) {
+					6077(module$144) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$143.exports = {
+						module$144.exports = {
 							read_short_form: function read_short_form(token) {
 								var body = this.node("block");
 								var items = [];
@@ -16156,9 +16557,12 @@
 							},
 							read_list: function read_list(item, separator, preserveFirstSeparator) {
 								var result = [];
-								if (this.token == separator) {
-									if (preserveFirstSeparator) result.push(typeof item === "function" ? this.node("noop")() : null);
+								if (this.token == separator) if (preserveFirstSeparator) {
+									result.push(typeof item === "function" ? this.node("noop")() : null);
 									this.next();
+								} else {
+									this.error();
+									return result;
 								}
 								if (typeof item === "function") do {
 									var itemResult = item.apply(this, []);
@@ -16218,13 +16622,13 @@
 							}
 						};
 					},
-					1130(module$144) {
+					1130(module$145) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
 						* @url http://glayzzle.com
 						*/
-						module$144.exports = {
+						module$145.exports = {
 							read_variable: function read_variable(read_only, encapsed) {
 								var result;
 								if (this.token === "&") return this.read_byref(this.read_variable.bind(this, read_only, encapsed));
@@ -16369,7 +16773,6 @@
 										result = node(result, offset);
 										break;
 									case this.tok.T_DOUBLE_COLON:
-										if (result.kind === "staticlookup" && result.offset.kind === "identifier") this.error();
 										node = this.node("staticlookup");
 										result = node(result, this.read_what(true));
 										break;
@@ -16472,7 +16875,7 @@
 							}
 						};
 					},
-					1906(module$145) {
+					1906(module$146) {
 						/**
 						* Copyright (C) 2018 Glayzzle (BSD3 License)
 						* @authors https://github.com/glayzzle/php-parser/graphs/contributors
@@ -16739,16 +17142,16 @@
 							}, {}),
 							names: TokenNames
 						};
-						module$145.exports = Object.freeze(tokens);
+						module$146.exports = Object.freeze(tokens);
 					}
 				};
 				var __webpack_module_cache__ = {};
 				function __webpack_require__(moduleId) {
 					var cachedModule = __webpack_module_cache__[moduleId];
 					if (cachedModule !== void 0) return cachedModule.exports;
-					var module$146 = __webpack_module_cache__[moduleId] = { exports: {} };
-					__webpack_modules__[moduleId](module$146, module$146.exports, __webpack_require__);
-					return module$146.exports;
+					var module$147 = __webpack_module_cache__[moduleId] = { exports: {} };
+					__webpack_modules__[moduleId](module$147, module$147.exports, __webpack_require__);
+					return module$147.exports;
 				}
 				var __webpack_exports__ = __webpack_require__(5362);
 				__webpack_exports__ = __webpack_exports__["default"];

@@ -603,6 +603,11 @@ var aceLegacyWorkerModule = (() => {
         };
         return _self;
       };
+      exports2.sleep = function(ms) {
+        return new Promise(function(resolve) {
+          setTimeout(resolve, ms);
+        });
+      };
       exports2.supportsLookbehind = function() {
         try {
           new RegExp("(?<=.)");

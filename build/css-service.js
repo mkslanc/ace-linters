@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,7 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -70,7 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -367,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -702,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -715,7 +722,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -733,7 +740,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -825,7 +832,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -899,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -966,7 +973,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1026,7 +1033,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1204,7 +1211,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1314,7 +1321,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1440,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1764,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2347,7 +2354,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2725,7 +2732,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2752,7 +2759,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2860,7 +2867,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -2930,7 +2937,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -7281,7 +7288,7 @@
 		return 0;
 	};
 	var browserExports = browser.exports;
-	var process$1 = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
 	//#endregion
 	//#region ../../node_modules/vscode-uri/lib/esm/index.mjs
 	var LIB;
@@ -9658,7 +9665,9 @@
 			return NodeType.RatioValue;
 		}
 	};
-	var _dot = ".".charCodeAt(0), _0 = "0".charCodeAt(0), _9 = "9".charCodeAt(0);
+	var _dot = ".".charCodeAt(0);
+	var _0 = "0".charCodeAt(0);
+	var _9 = "9".charCodeAt(0);
 	var NumericValue = class extends Node {
 		constructor(offset, length) {
 			super(offset, length);
@@ -13823,7 +13832,8 @@ while (this.acceptRegexp(regEx));
 			return true;
 		}
 		function matchesProperty(decl) {
-			return fullPropertyName === decl.getFullPropertyName();
+			const propertyName = decl.getFullPropertyName();
+			return fullPropertyName === propertyName;
 		}
 		function vistNode(node) {
 			if (node instanceof Declaration && node !== declaration) {
@@ -17656,6 +17666,10 @@ while (this.acceptRegexp(regEx));
 						}
 					}
 					break;
+				/**
+				* In CSS, there is no single line comment prefixed with //
+				* All comments are marked as `Comment`
+				*/
 				case TokenType.Comment: {
 					const commentRegionMarkerToDelimiter = (marker) => {
 						if (marker === "#region") return {

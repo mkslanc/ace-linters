@@ -592,6 +592,11 @@ var aceLegacyWorkerModule = (() => {
         };
         return _self;
       };
+      exports.sleep = function(ms) {
+        return new Promise(function(resolve) {
+          setTimeout(resolve, ms);
+        });
+      };
       exports.supportsLookbehind = function() {
         try {
           new RegExp("(?<=.)");
@@ -1238,10 +1243,11 @@ var aceLegacyWorkerModule = (() => {
                   ["*", "/", "%"],
                   ["!"],
                   ["instanceof"],
+                  ["u-", "u+", "u~"],
                   ["cast", "silent"],
                   ["**"]
                   // TODO: [ (array)
-                  // TODO: clone, new
+                  // TODO: new
                 ].forEach(function(list, index) {
                   list.forEach(function(operator) {
                     AST.precedence[operator] = index + 1;
@@ -1252,6 +1258,9 @@ var aceLegacyWorkerModule = (() => {
                 };
                 AST.prototype.swapLocations = function(target, first, last, parser) {
                   if (this.withPositions) {
+                    if (!target || !target.loc || !first || !first.loc || !last || !last.loc) {
+                      return;
+                    }
                     target.loc.start = first.loc.start;
                     target.loc.end = last.loc.end;
                     if (this.withSource) {
@@ -1261,6 +1270,9 @@ var aceLegacyWorkerModule = (() => {
                 };
                 AST.prototype.resolveLocations = function(target, first, last, parser) {
                   if (this.withPositions) {
+                    if (!target || !target.loc || !first || !first.loc || !last || !last.loc) {
+                      return;
+                    }
                     if (target.loc.start.offset > first.loc.start.offset) {
                       target.loc.start = first.loc.start;
                     }
@@ -1276,7 +1288,7 @@ var aceLegacyWorkerModule = (() => {
                   var buffer, lLevel, rLevel;
                   if (result.kind === "call") {
                     this.resolveLocations(result, result.what, result, parser);
-                  } else if (result.kind === "propertylookup" || result.kind === "staticlookup" || result.kind === "offsetlookup" && result.offset) {
+                  } else if (result.kind === "propertylookup" || result.kind === "nullsafepropertylookup" || result.kind === "staticlookup" || result.kind === "offsetlookup" && result.offset) {
                     this.resolveLocations(result, result.what, result.offset, parser);
                   } else if (result.kind === "bin") {
                     if (result.right && !result.right.parenthesizedExpression) {
@@ -1323,12 +1335,16 @@ var aceLegacyWorkerModule = (() => {
                   } else if (result.kind === "unary") {
                     if (result.what && !result.what.parenthesizedExpression) {
                       if (result.what.kind === "bin") {
-                        buffer = result.what;
-                        result.what = result.what.left;
-                        this.swapLocations(result, result, result.what, parser);
-                        buffer.left = this.resolvePrecedence(result, parser);
-                        this.swapLocations(buffer, buffer.left, buffer.right, parser);
-                        result = buffer;
+                        lLevel = AST.precedence["u" + result.type] || AST.precedence[result.type];
+                        rLevel = AST.precedence[result.what.type];
+                        if (lLevel && rLevel && rLevel < lLevel) {
+                          buffer = result.what;
+                          result.what = result.what.left;
+                          this.swapLocations(result, result, result.what, parser);
+                          buffer.left = this.resolvePrecedence(result, parser);
+                          this.swapLocations(buffer, buffer.left, buffer.right, parser);
+                          result = buffer;
+                        }
                       } else if (result.what.kind === "retif") {
                         buffer = result.what;
                         result.what = result.what.test;
@@ -1374,11 +1390,18 @@ var aceLegacyWorkerModule = (() => {
                     var args = Array.prototype.slice.call(arguments);
                     args.push(docs);
                     if (self2.withPositions || self2.withSource) {
+                      var nodeStart = start;
+                      var nodeEnd = new Position(parser.prev[0], parser.prev[1], parser.prev[2]);
+                      if (nodeStart.offset > nodeEnd.offset) {
+                        var tmp = nodeStart;
+                        nodeStart = nodeEnd;
+                        nodeEnd = tmp;
+                      }
                       var src = null;
                       if (self2.withSource) {
-                        src = parser.lexer._input.substring(start.offset, parser.prev[2]);
+                        src = parser.lexer._input.substring(nodeStart.offset, nodeEnd.offset);
                       }
-                      var location = new Location(src, start, new Position(parser.prev[0], parser.prev[1], parser.prev[2]));
+                      var location = new Location(src, nodeStart, nodeEnd);
                       args.push(location);
                     }
                     if (!kind) {
@@ -1449,7 +1472,7 @@ var aceLegacyWorkerModule = (() => {
                   this.stack = {};
                   return errors;
                 };
-                [__webpack_require__2(3160), __webpack_require__2(1654), __webpack_require__2(1240), __webpack_require__2(3979), __webpack_require__2(5553), __webpack_require__2(2207), __webpack_require__2(2916), __webpack_require__2(4628), __webpack_require__2(7509), __webpack_require__2(2906), __webpack_require__2(5723), __webpack_require__2(7561), __webpack_require__2(6473), __webpack_require__2(9626), __webpack_require__2(4782), __webpack_require__2(8477), __webpack_require__2(5045), __webpack_require__2(900), __webpack_require__2(4824), __webpack_require__2(1020), __webpack_require__2(9847), __webpack_require__2(2790), __webpack_require__2(1333), __webpack_require__2(2112), __webpack_require__2(9960), __webpack_require__2(8533), __webpack_require__2(5947), __webpack_require__2(7786), __webpack_require__2(5436), __webpack_require__2(1136), __webpack_require__2(380), __webpack_require__2(6129), __webpack_require__2(9723), __webpack_require__2(5125), __webpack_require__2(9632), __webpack_require__2(4300), __webpack_require__2(1515), __webpack_require__2(3411), __webpack_require__2(9781), __webpack_require__2(839), __webpack_require__2(8374), __webpack_require__2(9754), __webpack_require__2(4251), __webpack_require__2(6553), __webpack_require__2(8630), __webpack_require__2(9786), __webpack_require__2(9742), __webpack_require__2(1234), __webpack_require__2(6), __webpack_require__2(8861), __webpack_require__2(7860), __webpack_require__2(9834), __webpack_require__2(2724), __webpack_require__2(6025), __webpack_require__2(2687), __webpack_require__2(7633), __webpack_require__2(5514), __webpack_require__2(7427), __webpack_require__2(1122), __webpack_require__2(7256), __webpack_require__2(7416), __webpack_require__2(8140), __webpack_require__2(6258), __webpack_require__2(9474), __webpack_require__2(6827), __webpack_require__2(4427), __webpack_require__2(4065), __webpack_require__2(4297), __webpack_require__2(5859), __webpack_require__2(6985), __webpack_require__2(9302), __webpack_require__2(8212), __webpack_require__2(864), __webpack_require__2(8268), __webpack_require__2(7190), __webpack_require__2(8519), __webpack_require__2(4835), __webpack_require__2(2056), __webpack_require__2(4838), __webpack_require__2(7869), __webpack_require__2(1908), __webpack_require__2(170), __webpack_require__2(1091), __webpack_require__2(8276), __webpack_require__2(1842), __webpack_require__2(5739), __webpack_require__2(1274), __webpack_require__2(4352), __webpack_require__2(9672), __webpack_require__2(711), __webpack_require__2(1231), __webpack_require__2(1865), __webpack_require__2(1102), __webpack_require__2(7472), __webpack_require__2(6133), __webpack_require__2(1197), __webpack_require__2(6649), __webpack_require__2(1837), __webpack_require__2(2277), __webpack_require__2(8010), __webpack_require__2(7579), __webpack_require__2(3460), __webpack_require__2(2702), __webpack_require__2(514), __webpack_require__2(5684), __webpack_require__2(8019), __webpack_require__2(7721), __webpack_require__2(4369), __webpack_require__2(40), __webpack_require__2(4919), __webpack_require__2(7676), __webpack_require__2(2596), __webpack_require__2(6744)].forEach(function(ctor) {
+                [__webpack_require__2(3160), __webpack_require__2(1654), __webpack_require__2(1240), __webpack_require__2(3979), __webpack_require__2(5553), __webpack_require__2(2207), __webpack_require__2(2916), __webpack_require__2(4628), __webpack_require__2(7509), __webpack_require__2(2906), __webpack_require__2(5723), __webpack_require__2(7561), __webpack_require__2(6473), __webpack_require__2(9626), __webpack_require__2(4782), __webpack_require__2(8477), __webpack_require__2(5045), __webpack_require__2(900), __webpack_require__2(4824), __webpack_require__2(1020), __webpack_require__2(9847), __webpack_require__2(2790), __webpack_require__2(1333), __webpack_require__2(2112), __webpack_require__2(9960), __webpack_require__2(8533), __webpack_require__2(5947), __webpack_require__2(7786), __webpack_require__2(5436), __webpack_require__2(1136), __webpack_require__2(380), __webpack_require__2(6129), __webpack_require__2(9723), __webpack_require__2(5125), __webpack_require__2(9632), __webpack_require__2(4300), __webpack_require__2(1515), __webpack_require__2(3411), __webpack_require__2(9781), __webpack_require__2(839), __webpack_require__2(8374), __webpack_require__2(9754), __webpack_require__2(4251), __webpack_require__2(6553), __webpack_require__2(8630), __webpack_require__2(9786), __webpack_require__2(9742), __webpack_require__2(1234), __webpack_require__2(6), __webpack_require__2(8861), __webpack_require__2(7860), __webpack_require__2(9834), __webpack_require__2(2724), __webpack_require__2(6025), __webpack_require__2(2687), __webpack_require__2(7633), __webpack_require__2(5514), __webpack_require__2(7427), __webpack_require__2(1122), __webpack_require__2(7256), __webpack_require__2(7416), __webpack_require__2(8140), __webpack_require__2(6258), __webpack_require__2(9474), __webpack_require__2(6827), __webpack_require__2(4427), __webpack_require__2(4065), __webpack_require__2(4297), __webpack_require__2(5859), __webpack_require__2(6985), __webpack_require__2(9302), __webpack_require__2(8212), __webpack_require__2(864), __webpack_require__2(8268), __webpack_require__2(7190), __webpack_require__2(8519), __webpack_require__2(4835), __webpack_require__2(2056), __webpack_require__2(4838), __webpack_require__2(7869), __webpack_require__2(1908), __webpack_require__2(4863), __webpack_require__2(170), __webpack_require__2(1091), __webpack_require__2(8276), __webpack_require__2(1842), __webpack_require__2(5739), __webpack_require__2(1274), __webpack_require__2(4352), __webpack_require__2(9672), __webpack_require__2(711), __webpack_require__2(1231), __webpack_require__2(1865), __webpack_require__2(1102), __webpack_require__2(7472), __webpack_require__2(6133), __webpack_require__2(1197), __webpack_require__2(6649), __webpack_require__2(1837), __webpack_require__2(2277), __webpack_require__2(8010), __webpack_require__2(7579), __webpack_require__2(3460), __webpack_require__2(2702), __webpack_require__2(514), __webpack_require__2(5684), __webpack_require__2(8019), __webpack_require__2(7721), __webpack_require__2(4369), __webpack_require__2(40), __webpack_require__2(4919), __webpack_require__2(7676), __webpack_require__2(2596), __webpack_require__2(6744)].forEach(function(ctor) {
                   AST.prototype[ctor.kind] = ctor;
                 });
                 module2.exports = AST;
@@ -1636,15 +1659,16 @@ var aceLegacyWorkerModule = (() => {
                   this.attrGroups = attrGroups;
                 });
                 ClassConstant.prototype.parseFlags = function(flags) {
-                  if (flags[0] === -1) {
+                  var getVis = flags[0][0];
+                  if (getVis === -1) {
                     this.visibility = IS_UNDEFINED;
-                  } else if (flags[0] === null) {
+                  } else if (getVis === null) {
                     this.visibility = null;
-                  } else if (flags[0] === 0) {
+                  } else if (getVis === 0) {
                     this.visibility = IS_PUBLIC;
-                  } else if (flags[0] === 1) {
+                  } else if (getVis === 1) {
                     this.visibility = IS_PROTECTED;
-                  } else if (flags[0] === 2) {
+                  } else if (getVis === 2) {
                     this.visibility = IS_PRIVATE;
                   }
                   this["final"] = flags[2] === 2;
@@ -1655,9 +1679,12 @@ var aceLegacyWorkerModule = (() => {
               900(module2, __unused_webpack_exports, __webpack_require__2) {
                 var Expression = __webpack_require__2(839);
                 var KIND = "clone";
-                module2.exports = Expression["extends"](KIND, function Clone(what, docs, location) {
+                module2.exports = Expression["extends"](KIND, function Clone(what, properties, docs, location) {
                   Expression.apply(this, [KIND, docs, location]);
                   this.what = what;
+                  if (properties) {
+                    this.properties = properties;
+                  }
                 });
               },
               /***/
@@ -1730,12 +1757,55 @@ var aceLegacyWorkerModule = (() => {
               },
               /***/
               8533(module2, __unused_webpack_exports, __webpack_require__2) {
+                function _slicedToArray(r, e) {
+                  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+                }
+                function _nonIterableRest() {
+                  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+                }
+                function _unsupportedIterableToArray(r, a) {
+                  if (r) {
+                    if ("string" == typeof r) return _arrayLikeToArray(r, a);
+                    var t = {}.toString.call(r).slice(8, -1);
+                    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+                  }
+                }
+                function _arrayLikeToArray(r, a) {
+                  (null == a || a > r.length) && (a = r.length);
+                  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+                  return n;
+                }
+                function _iterableToArrayLimit(r, l) {
+                  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+                  if (null != t) {
+                    var e, n, i, u, a = [], f = true, o = false;
+                    try {
+                      if (i = (t = t.call(r)).next, 0 === l) {
+                        if (Object(t) !== t) return;
+                        f = false;
+                      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = true) ;
+                    } catch (r2) {
+                      o = true, n = r2;
+                    } finally {
+                      try {
+                        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+                      } finally {
+                        if (o) throw n;
+                      }
+                    }
+                    return a;
+                  }
+                }
+                function _arrayWithHoles(r) {
+                  if (Array.isArray(r)) return r;
+                }
                 var Statement = __webpack_require__2(9672);
                 var KIND = "declaration";
                 var IS_UNDEFINED = "";
                 var IS_PUBLIC = "public";
                 var IS_PROTECTED = "protected";
                 var IS_PRIVATE = "private";
+                var VISIBILITY_MAP = [IS_PUBLIC, IS_PROTECTED, IS_PRIVATE];
                 var Declaration = Statement["extends"](KIND, function Declaration2(kind, name, docs, location) {
                   Statement.apply(this, [kind || KIND, docs, location]);
                   this.name = name;
@@ -1745,18 +1815,16 @@ var aceLegacyWorkerModule = (() => {
                   this.isFinal = flags[2] === 2;
                   this.isReadonly = flags[3] === 1;
                   if (this.kind !== "class") {
-                    if (flags[0] === -1) {
+                    var _flags$ = _slicedToArray(flags[0], 2), getVis = _flags$[0], setVis = _flags$[1];
+                    if (getVis === -1) {
                       this.visibility = IS_UNDEFINED;
-                    } else if (flags[0] === null) {
+                    } else if (getVis === null) {
                       this.visibility = null;
-                    } else if (flags[0] === 0) {
-                      this.visibility = IS_PUBLIC;
-                    } else if (flags[0] === 1) {
-                      this.visibility = IS_PROTECTED;
-                    } else if (flags[0] === 2) {
-                      this.visibility = IS_PRIVATE;
+                    } else {
+                      this.visibility = VISIBILITY_MAP[getVis];
                     }
                     this.isStatic = flags[1] === 1;
+                    this.visibilitySet = setVis !== -1 ? VISIBILITY_MAP[setVis] : null;
                   }
                 };
                 module2.exports = Declaration;
@@ -2308,7 +2376,7 @@ var aceLegacyWorkerModule = (() => {
               7190(module2, __unused_webpack_exports, __webpack_require__2) {
                 var Declaration = __webpack_require__2(8533);
                 var KIND = "parameter";
-                module2.exports = Declaration["extends"](KIND, function Parameter(name, type, value, isRef, isVariadic, readonly, nullable, flags, docs, location) {
+                module2.exports = Declaration["extends"](KIND, function Parameter(name, type, value, isRef, isVariadic, readonly, nullable, flags, hooks, flagsSet, docs, location) {
                   Declaration.apply(this, [KIND, name, docs, location]);
                   this.value = value;
                   this.type = type;
@@ -2317,6 +2385,8 @@ var aceLegacyWorkerModule = (() => {
                   this.readonly = readonly;
                   this.nullable = nullable;
                   this.flags = flags || 0;
+                  this.hooks = hooks || [];
+                  this.flagsSet = flagsSet || 0;
                   this.attrGroups = [];
                 });
               },
@@ -2387,7 +2457,7 @@ var aceLegacyWorkerModule = (() => {
               1908(module2, __unused_webpack_exports, __webpack_require__2) {
                 var Statement = __webpack_require__2(9672);
                 var KIND = "property";
-                module2.exports = Statement["extends"](KIND, function Property(name, value, readonly, nullable, type, attrGroups, docs, location) {
+                module2.exports = Statement["extends"](KIND, function Property(name, value, readonly, nullable, type, attrGroups, hooks, docs, location) {
                   Statement.apply(this, [KIND, docs, location]);
                   this.name = name;
                   this.value = value;
@@ -2395,6 +2465,21 @@ var aceLegacyWorkerModule = (() => {
                   this.nullable = nullable;
                   this.type = type;
                   this.attrGroups = attrGroups;
+                  this.hooks = hooks || [];
+                });
+              },
+              /***/
+              4863(module2, __unused_webpack_exports, __webpack_require__2) {
+                var Node = __webpack_require__2(4065);
+                var KIND = "propertyhook";
+                module2.exports = Node["extends"](KIND, function PropertyHook(name, isFinal, byref, parameter, body, attrGroups, docs, location) {
+                  Node.apply(this, [KIND, docs, location]);
+                  this.name = name;
+                  this.isFinal = isFinal;
+                  this.byref = byref;
+                  this.parameter = parameter;
+                  this.body = body;
+                  this.attrGroups = attrGroups || [];
                 });
               },
               /***/
@@ -2407,30 +2492,73 @@ var aceLegacyWorkerModule = (() => {
               },
               /***/
               1091(module2, __unused_webpack_exports, __webpack_require__2) {
+                function _slicedToArray(r, e) {
+                  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+                }
+                function _nonIterableRest() {
+                  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+                }
+                function _unsupportedIterableToArray(r, a) {
+                  if (r) {
+                    if ("string" == typeof r) return _arrayLikeToArray(r, a);
+                    var t = {}.toString.call(r).slice(8, -1);
+                    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+                  }
+                }
+                function _arrayLikeToArray(r, a) {
+                  (null == a || a > r.length) && (a = r.length);
+                  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+                  return n;
+                }
+                function _iterableToArrayLimit(r, l) {
+                  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+                  if (null != t) {
+                    var e, n, i, u, a = [], f = true, o = false;
+                    try {
+                      if (i = (t = t.call(r)).next, 0 === l) {
+                        if (Object(t) !== t) return;
+                        f = false;
+                      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = true) ;
+                    } catch (r2) {
+                      o = true, n = r2;
+                    } finally {
+                      try {
+                        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+                      } finally {
+                        if (o) throw n;
+                      }
+                    }
+                    return a;
+                  }
+                }
+                function _arrayWithHoles(r) {
+                  if (Array.isArray(r)) return r;
+                }
                 var Statement = __webpack_require__2(9672);
                 var KIND = "propertystatement";
                 var IS_UNDEFINED = "";
                 var IS_PUBLIC = "public";
                 var IS_PROTECTED = "protected";
                 var IS_PRIVATE = "private";
+                var VISIBILITY_MAP = [IS_PUBLIC, IS_PROTECTED, IS_PRIVATE];
                 var PropertyStatement = Statement["extends"](KIND, function PropertyStatement2(kind, properties, flags, docs, location) {
                   Statement.apply(this, [KIND, docs, location]);
                   this.properties = properties;
                   this.parseFlags(flags);
                 });
                 PropertyStatement.prototype.parseFlags = function(flags) {
-                  if (flags[0] === -1) {
+                  var _flags$ = _slicedToArray(flags[0], 2), getVis = _flags$[0], setVis = _flags$[1];
+                  if (getVis === -1) {
                     this.visibility = IS_UNDEFINED;
-                  } else if (flags[0] === null) {
+                  } else if (getVis === null) {
                     this.visibility = null;
-                  } else if (flags[0] === 0) {
-                    this.visibility = IS_PUBLIC;
-                  } else if (flags[0] === 1) {
-                    this.visibility = IS_PROTECTED;
-                  } else if (flags[0] === 2) {
-                    this.visibility = IS_PRIVATE;
+                  } else {
+                    this.visibility = VISIBILITY_MAP[getVis];
                   }
                   this.isStatic = flags[1] === 1;
+                  this.isAbstract = flags[2] === 1;
+                  this.isFinal = flags[2] === 2;
+                  this.visibilitySet = setVis !== -1 ? VISIBILITY_MAP[setVis] : null;
                 };
                 module2.exports = PropertyStatement;
               },
@@ -2581,11 +2709,12 @@ var aceLegacyWorkerModule = (() => {
                   this.as = as;
                   this.visibility = IS_UNDEFINED;
                   if (flags) {
-                    if (flags[0] === 0) {
+                    var getVis = flags[0][0];
+                    if (getVis === 0) {
                       this.visibility = IS_PUBLIC;
-                    } else if (flags[0] === 1) {
+                    } else if (getVis === 1) {
                       this.visibility = IS_PROTECTED;
-                    } else if (flags[0] === 2) {
+                    } else if (getVis === 2) {
                       this.visibility = IS_PRIVATE;
                     }
                   }
@@ -2632,7 +2761,7 @@ var aceLegacyWorkerModule = (() => {
                   this.name = name;
                   this.raw = raw;
                 });
-                TypeReference.types = ["int", "float", "string", "bool", "object", "array", "callable", "iterable", "void", "static"];
+                TypeReference.types = ["int", "float", "string", "bool", "object", "array", "callable", "iterable", "void", "static", "null", "never", "mixed", "true", "false"];
                 module2.exports = TypeReference;
               },
               /***/
@@ -2764,6 +2893,9 @@ var aceLegacyWorkerModule = (() => {
                   var i = keys.length;
                   while (i--) {
                     var k = keys[i];
+                    if (k === "__proto__" || k === "constructor" || k === "prototype") {
+                      continue;
+                    }
                     var val = src[k];
                     if (val === null) {
                       delete to[k];
@@ -3299,6 +3431,7 @@ var aceLegacyWorkerModule = (() => {
                       case ")":
                       case ":":
                       case "=":
+                      case ";":
                       case "|":
                       case "&":
                       case "^":
@@ -3311,6 +3444,9 @@ var aceLegacyWorkerModule = (() => {
                       case ">":
                       case "!":
                       case ".":
+                      case "{":
+                      case "}":
+                      case "$":
                         return this.consume_TOKEN();
                       case "[":
                         this.attributeListDepth[this.attributeIndex]++;
@@ -4628,7 +4764,7 @@ var aceLegacyWorkerModule = (() => {
                     VARIABLE: new Map([this.tok.T_VARIABLE, "$", "&", this.tok.T_STRING, this.tok.T_NAME_RELATIVE, this.tok.T_NAME_QUALIFIED, this.tok.T_NAME_FULLY_QUALIFIED, this.tok.T_NAMESPACE, this.tok.T_STATIC].map(mapIt)),
                     SCALAR: new Map([this.tok.T_CONSTANT_ENCAPSED_STRING, this.tok.T_START_HEREDOC, this.tok.T_LNUMBER, this.tok.T_DNUMBER, this.tok.T_ARRAY, "[", this.tok.T_CLASS_C, this.tok.T_TRAIT_C, this.tok.T_FUNC_C, this.tok.T_METHOD_C, this.tok.T_LINE, this.tok.T_FILE, this.tok.T_DIR, this.tok.T_NS_C, '"', 'b"', 'B"', "-", this.tok.T_NS_SEPARATOR].map(mapIt)),
                     T_MAGIC_CONST: new Map([this.tok.T_CLASS_C, this.tok.T_TRAIT_C, this.tok.T_FUNC_C, this.tok.T_METHOD_C, this.tok.T_LINE, this.tok.T_FILE, this.tok.T_DIR, this.tok.T_NS_C].map(mapIt)),
-                    T_MEMBER_FLAGS: new Map([this.tok.T_PUBLIC, this.tok.T_PRIVATE, this.tok.T_PROTECTED, this.tok.T_STATIC, this.tok.T_ABSTRACT, this.tok.T_FINAL].map(mapIt)),
+                    T_MEMBER_FLAGS: new Map([this.tok.T_PUBLIC, this.tok.T_PRIVATE, this.tok.T_PROTECTED, this.tok.T_STATIC, this.tok.T_ABSTRACT, this.tok.T_FINAL, this.tok.T_READ_ONLY].map(mapIt)),
                     EOS: new Map([";", this.EOF, this.tok.T_INLINE_HTML].map(mapIt)),
                     EXPR: new Map([
                       "@",
@@ -4761,7 +4897,10 @@ var aceLegacyWorkerModule = (() => {
                     err.columnNumber = this.lexer.yylloc.first_column;
                     throw err;
                   }
+                  var savedPrev = this.prev;
+                  this.prev = [this.lexer.yylloc.last_line, this.lexer.yylloc.last_column, this.lexer.offset];
                   var node = this.ast.prepare("error", null, this)(message, token, this.lexer.yylloc.first_line, expect);
+                  this.prev = savedPrev;
                   this._errors.push(node);
                   return node;
                 };
@@ -5169,21 +5308,25 @@ var aceLegacyWorkerModule = (() => {
                         result = result.concat(this.read_trait_use_statement());
                         continue;
                       }
+                      var locStart = this.position();
+                      if (this.token === this.tok.T_ATTRIBUTE) {
+                        attrs = this.read_attr_list();
+                      }
                       if (allow_enum_cases && this.token === this.tok.T_CASE) {
-                        var enumcase = this.read_enum_case();
+                        var enumcase = this.read_enum_case(attrs);
+                        attrs = [];
                         if (this.expect(";")) {
                           this.next();
                         }
                         result = result.concat(enumcase);
                         continue;
                       }
-                      if (this.token === this.tok.T_ATTRIBUTE) {
-                        attrs = this.read_attr_list();
-                      }
-                      var locStart = this.position();
                       var flags = this.read_member_flags(false);
                       if (this.token === this.tok.T_CONST) {
-                        var constants = this.read_constant_list(flags, attrs);
+                        if (flags[0][1] !== -1) {
+                          this.raiseError("Cannot use asymmetric visibility on constants");
+                        }
+                        var constants = this.read_constant_list(flags, attrs, locStart);
                         if (this.expect(";")) {
                           this.next();
                         }
@@ -5192,7 +5335,7 @@ var aceLegacyWorkerModule = (() => {
                       }
                       if (allow_variables && this.token === this.tok.T_VAR) {
                         this.next().expect(this.tok.T_VARIABLE);
-                        flags[0] = null;
+                        flags[0][0] = null;
                         flags[1] = 0;
                       }
                       if (this.token === this.tok.T_FUNCTION) {
@@ -5200,10 +5343,8 @@ var aceLegacyWorkerModule = (() => {
                         attrs = [];
                       } else if (allow_variables && (this.token === this.tok.T_VARIABLE || this.version >= 801 && this.token === this.tok.T_READ_ONLY || // support https://wiki.php.net/rfc/typed_properties_v2
                       this.version >= 704 && (this.token === "?" || this.token === this.tok.T_ARRAY || this.token === this.tok.T_CALLABLE || this.token === this.tok.T_NAMESPACE || this.token === this.tok.T_NAME_FULLY_QUALIFIED || this.token === this.tok.T_NAME_QUALIFIED || this.token === this.tok.T_NAME_RELATIVE || this.token === this.tok.T_NS_SEPARATOR || this.token === this.tok.T_STRING))) {
-                        var variables = this.read_variable_list(flags, attrs);
+                        var variables = this.read_variable_list(flags, attrs, locStart);
                         attrs = [];
-                        this.expect(";");
-                        this.next();
                         result = result.concat(variables);
                       } else {
                         this.error([this.tok.T_CONST].concat(_toConsumableArray(allow_variables ? [this.tok.T_VARIABLE] : []), _toConsumableArray(allow_enum_cases ? [this.tok.T_CASE] : []), [this.tok.T_FUNCTION]));
@@ -5220,8 +5361,8 @@ var aceLegacyWorkerModule = (() => {
                    *  variable_list ::= (variable_declaration ',')* variable_declaration
                    * ```
                    */
-                  read_variable_list: function read_variable_list(flags, attrs) {
-                    var result = this.node("propertystatement");
+                  read_variable_list: function read_variable_list(flags, attrs, locStart) {
+                    var property_statement = this.node("propertystatement");
                     var properties = this.read_list(
                       /*
                        * Reads a variable declaration
@@ -5231,9 +5372,9 @@ var aceLegacyWorkerModule = (() => {
                        * ```
                        */
                       function read_variable_declaration() {
-                        var result2 = this.node("property");
-                        var readonly = false;
-                        if (this.token === this.tok.T_READ_ONLY) {
+                        var result = this.node("property");
+                        var readonly = flags[3] === 1;
+                        if (!readonly && this.token === this.tok.T_READ_ONLY) {
                           readonly = true;
                           this.next();
                         }
@@ -5244,15 +5385,85 @@ var aceLegacyWorkerModule = (() => {
                         this.next();
                         propName = propName(name);
                         var value = null;
-                        this.expect([",", ";", "="]);
+                        var property_hooks = [];
+                        this.expect([",", ";", "=", "{"]);
                         if (this.token === "=") {
                           value = this.next().read_expr();
                         }
-                        return result2(propName, value, readonly, nullable, type, attrs || []);
+                        if (this.token === "{") {
+                          property_hooks = this.read_property_hooks();
+                        } else {
+                          this.expect([";", ","]);
+                        }
+                        return result(propName, value, readonly, nullable, type, attrs || [], property_hooks);
                       },
                       ","
                     );
-                    return result(null, properties, flags);
+                    property_statement = property_statement(null, properties, flags);
+                    if (locStart && property_statement.loc) {
+                      property_statement.loc.start = locStart;
+                      if (property_statement.loc.source) {
+                        property_statement.loc.source = this.lexer._input.substr(property_statement.loc.start.offset, property_statement.loc.end.offset - property_statement.loc.start.offset);
+                      }
+                    }
+                    if (this.token === ";") {
+                      this.next();
+                    }
+                    return property_statement;
+                  },
+                  /*
+                   * Reads property hooks
+                   */
+                  read_property_hooks: function read_property_hooks() {
+                    if (this.version < 804) {
+                      this.raiseError("Parse Error: Property hooks require PHP 8.4+");
+                    }
+                    this.expect("{");
+                    this.next();
+                    var hooks = [];
+                    while (this.token !== this.EOF && this.token !== "}") {
+                      hooks.push(this.read_property_hook());
+                    }
+                    this.expect("}");
+                    this.next();
+                    return hooks;
+                  },
+                  read_property_hook: function read_property_hook() {
+                    var property_hooks = this.node("propertyhook");
+                    var attrs = [];
+                    if (this.token === this.tok.T_ATTRIBUTE) {
+                      attrs = this.read_attr_list();
+                    }
+                    var is_final = this.token === this.tok.T_FINAL;
+                    if (is_final) this.next();
+                    var is_reference = this.token === "&";
+                    if (is_reference) this.next();
+                    var method_name = this.text();
+                    if (method_name !== "get" && method_name !== "set") {
+                      this.raiseError("Parse Error: Property hooks must be either 'get' or 'set'");
+                    }
+                    this.next();
+                    var parameter = null;
+                    var body = null;
+                    this.expect([this.tok.T_DOUBLE_ARROW, "{", "(", ";"]);
+                    if (this.token === ";") {
+                      this.next();
+                      return property_hooks(method_name, is_final, is_reference, parameter, body, attrs);
+                    }
+                    if (this.token === "(") {
+                      this.next();
+                      parameter = this.read_parameter(false);
+                      this.expect(")");
+                      this.next();
+                    }
+                    if (this.token === this.tok.T_DOUBLE_ARROW) {
+                      this.next();
+                      body = this.read_expr();
+                      this.next();
+                    } else if (this.token === "{") {
+                      body = this.read_code_block();
+                    }
+                    return property_hooks(method_name, is_final, is_reference, parameter, body, attrs);
                   },
                   /*
                    * Reads constant list
@@ -5260,12 +5471,18 @@ var aceLegacyWorkerModule = (() => {
                    *  constant_list ::= T_CONST [type] (constant_declaration ',')* constant_declaration
                    * ```
                    */
-                  read_constant_list: function read_constant_list(flags, attrs) {
+                  read_constant_list: function read_constant_list(flags, attrs, locStart) {
+                    var result = this.node("classconstant");
                     if (this.expect(this.tok.T_CONST)) {
                       this.next();
                     }
+                    if (flags[1] === 1 || flags[2] === 1 || flags[3] === 1) {
+                      this.error();
+                    }
+                    if (flags[2] === 2 && this.version < 801) {
+                      this.raiseError("Final class constants are not allowed before PHP 8.1");
+                    }
                     var _ref = this.version >= 803 ? this.read_optional_type() : [false, null], _ref2 = _slicedToArray(_ref, 2), nullable = _ref2[0], type = _ref2[1];
-                    var result = this.node("classconstant");
                     var items = this.read_list(
                       /*
                        * Reads a constant declaration
@@ -5294,64 +5511,98 @@ var aceLegacyWorkerModule = (() => {
                       },
                       ","
                     );
-                    return result(null, items, flags, nullable, type, attrs || []);
+                    var node = result(null, items, flags, nullable, type, attrs || []);
+                    if (locStart && node.loc) {
+                      node.loc.start = locStart;
+                      if (node.loc.source) {
+                        node.loc.source = this.lexer._input.substr(node.loc.start.offset, node.loc.end.offset - node.loc.start.offset);
+                      }
+                    }
+                    return node;
                   },
                   /*
                    * Read member flags
                    * @return array
-                   *  1st index : 0 => public, 1 => protected, 2 => private
+                   *  1st index : [get, set] visibility tuple
+                   *    get/set: -1 => no visibility, 0 => public, 1 => protected, 2 => private
                    *  2nd index : 0 => instance member, 1 => static member
                    *  3rd index : 0 => normal, 1 => abstract member, 2 => final member
+                   *  4th index : 0 => no readonly, 1 => readonly
                    */
                   read_member_flags: function read_member_flags(asInterface) {
-                    var result = [-1, -1, -1];
-                    if (this.is("T_MEMBER_FLAGS")) {
-                      var idx = 0, val = 0;
-                      do {
-                        switch (this.token) {
-                          case this.tok.T_PUBLIC:
-                            idx = 0;
-                            val = 0;
-                            break;
-                          case this.tok.T_PROTECTED:
-                            idx = 0;
-                            val = 1;
-                            break;
-                          case this.tok.T_PRIVATE:
-                            idx = 0;
-                            val = 2;
-                            break;
-                          case this.tok.T_STATIC:
-                            idx = 1;
-                            val = 1;
-                            break;
-                          case this.tok.T_ABSTRACT:
-                            idx = 2;
-                            val = 1;
-                            break;
-                          case this.tok.T_FINAL:
-                            idx = 2;
-                            val = 2;
-                            break;
-                        }
-                        if (asInterface) {
-                          if (idx === 0 && val === 2) {
+                    var result = [[-1, -1], 0, 0, 0];
+                    var seen = /* @__PURE__ */ new Set();
+                    while (this.is("T_MEMBER_FLAGS")) {
+                      var idx = -1, val = -1;
+                      switch (this.token) {
+                        case this.tok.T_PUBLIC:
+                        case this.tok.T_PROTECTED:
+                        case this.tok.T_PRIVATE: {
+                          idx = 0;
+                          val = this.token === this.tok.T_PUBLIC ? 0 : this.token === this.tok.T_PROTECTED ? 1 : 2;
+                          if (asInterface && val === 2) {
                             this.expect([this.tok.T_PUBLIC, this.tok.T_PROTECTED]);
                             val = -1;
-                          } else if (idx === 2 && val === 1) {
-                            this.error();
-                            val = -1;
                           }
+                          this.next();
+                          if (this.version >= 804 && this.token === "(") {
+                            if (result[0][0] === -1) {
+                              result[0][0] = 0;
+                            }
+                            this.next();
+                            if (this.token !== this.tok.T_STRING || this.text() !== "set") {
+                              this.error("set");
+                            } else {
+                              this.next();
+                            }
+                            if (this.expect(")")) {
+                              this.next();
+                            }
+                            if (seen.has("set")) {
+                              this.error();
+                            } else if (val !== -1) {
+                              seen.add("set");
+                              result[0][1] = val;
+                            }
+                            continue;
+                          }
+                          if (seen.has(idx)) {
+                            this.error();
+                          } else if (val !== -1) {
+                            seen.add(idx);
+                            result[0][0] = val;
+                          }
+                          continue;
                         }
-                        if (result[idx] !== -1) {
-                          this.error();
-                        } else if (val !== -1) {
-                          result[idx] = val;
-                        }
-                      } while (this.next().is("T_MEMBER_FLAGS"));
+                        case this.tok.T_STATIC:
+                          idx = 1;
+                          val = 1;
+                          break;
+                        case this.tok.T_ABSTRACT:
+                          idx = 2;
+                          val = 1;
+                          break;
+                        case this.tok.T_FINAL:
+                          idx = 2;
+                          val = 2;
+                          break;
+                        case this.tok.T_READ_ONLY:
+                          idx = 3;
+                          val = 1;
+                          break;
+                      }
+                      if (asInterface && idx === 2 && val === 1) {
+                        this.error();
+                        val = -1;
+                      }
+                      if (seen.has(idx)) {
+                        this.error();
+                      } else if (val !== -1) {
+                        seen.add(idx);
+                        result[idx] = val;
+                      }
+                      this.next();
                     }
-                    if (result[1] === -1) result[1] = 0;
-                    if (result[2] === -1) result[2] = 0;
                     return result;
                   },
                   /*
@@ -5457,10 +5708,16 @@ var aceLegacyWorkerModule = (() => {
                         continue;
                       }
                       var locStart = this.position();
-                      attrs = this.read_attr_list();
+                      attrs = [];
+                      if (this.token === this.tok.T_ATTRIBUTE) {
+                        attrs = this.read_attr_list();
+                      }
                       var flags = this.read_member_flags(true);
                       if (this.token === this.tok.T_CONST) {
-                        var constants = this.read_constant_list(flags, attrs);
+                        if (flags[0][1] !== -1) {
+                          this.raiseError("Cannot use asymmetric visibility on constants");
+                        }
+                        var constants = this.read_constant_list(flags, attrs, locStart);
                         if (this.expect(";")) {
                           this.next();
                         }
@@ -5472,8 +5729,10 @@ var aceLegacyWorkerModule = (() => {
                         if (this.expect(";")) {
                           this.next();
                         }
+                      } else if (this.token === this.tok.T_STRING) {
+                        result.push(this.read_variable_list(flags, attrs, locStart));
                       } else {
-                        this.error([this.tok.T_CONST, this.tok.T_FUNCTION]);
+                        this.error([this.tok.T_CONST, this.tok.T_FUNCTION, this.tok.T_STRING]);
                         this.next();
                       }
                     }
@@ -5488,7 +5747,7 @@ var aceLegacyWorkerModule = (() => {
                    * trait ::= T_TRAIT T_STRING (T_EXTENDS (NAMESPACE_NAME ',')* NAMESPACE_NAME)? '{' FUNCTION* '}'
                    * ```
                    */
-                  read_trait_declaration_statement: function read_trait_declaration_statement() {
+                  read_trait_declaration_statement: function read_trait_declaration_statement(attrs) {
                     var result = this.node("trait");
                     if (this.token !== this.tok.T_TRAIT) {
                       this.error(this.tok.T_TRAIT);
@@ -5502,7 +5761,9 @@ var aceLegacyWorkerModule = (() => {
                     propName = propName(name);
                     this.expect("{");
                     var body = this.next().read_class_body(true, false);
-                    return result(propName, body);
+                    var node = result(propName, body);
+                    if (attrs) node.attrGroups = attrs;
+                    return node;
                   },
                   /*
                    * reading a use statement
@@ -5582,7 +5843,7 @@ var aceLegacyWorkerModule = (() => {
                         var name = this.text();
                         this.next();
                         alias = alias(name);
-                      } else if (flags === false) {
+                      } else if (flags === null) {
                         this.expect(this.tok.T_STRING);
                       }
                       return node("traitalias", trait, method, alias, flags);
@@ -5660,7 +5921,7 @@ var aceLegacyWorkerModule = (() => {
                     }
                     return null;
                   },
-                  read_enum_case: function read_enum_case() {
+                  read_enum_case: function read_enum_case(attrs) {
                     this.expect(this.tok.T_CASE);
                     var result = this.node("enumcase");
                     var caseName = this.node("identifier");
@@ -5669,7 +5930,9 @@ var aceLegacyWorkerModule = (() => {
                     caseName = caseName(name);
                     var value = this.token === "=" ? this.next().read_expr() : null;
                     this.expect(";");
-                    return result(caseName, value);
+                    var node = result(caseName, value);
+                    if (attrs && attrs.length > 0) node.attrGroups = attrs;
+                    return node;
                   }
                 };
               },
@@ -5782,7 +6045,11 @@ var aceLegacyWorkerModule = (() => {
                       if (this.version < 805) {
                         this.raiseError("PHP 8.5+ is required to use pipe operator");
                       }
-                      return result("bin", "|>", expr, this.next().read_expr());
+                      var right = this.next().read_expr();
+                      if (right.kind === "arrowfunc" && !right.parenthesizedExpression) {
+                        this.raiseError("Arrow functions in a pipe chain must be wrapped in parentheses");
+                      }
+                      return result("bin", "|>", expr, right);
                     }
                     if (this.token === "?") {
                       var trueArg = null;
@@ -5964,7 +6231,22 @@ var aceLegacyWorkerModule = (() => {
                       attrs = this.read_attr_list();
                     }
                     if (this.token === this.tok.T_CLONE) {
-                      return this.node("clone")(this.next().read_expr());
+                      var node = this.node("clone");
+                      this.next();
+                      if (this.version >= 805 && this.token === "(") {
+                        this.next();
+                        var _what = this.read_variable(false, false);
+                        _what = this.handleDereferencable(_what);
+                        var properties = null;
+                        if (this.token === ",") {
+                          properties = this.next().read_expr();
+                        }
+                        this.expect(")") && this.next();
+                        return node(_what, properties);
+                      }
+                      var what = this.read_variable(false, false);
+                      what = this.handleDereferencable(what);
+                      return node(what, null);
                     }
                     switch (this.token) {
                       case this.tok.T_INC:
@@ -6161,6 +6443,10 @@ var aceLegacyWorkerModule = (() => {
                         this.error();
                       }
                       right = this.read_new_expr();
+                    } else if (this.token === "(") {
+                      right = this.next().read_expr();
+                      this.expect(")") && this.next();
+                      right = this.recursive_variable_chain_scan(right, false, false);
                     } else {
                       right = this.read_variable(false, false);
                     }
@@ -6187,7 +6473,7 @@ var aceLegacyWorkerModule = (() => {
                       _result2.attrGroups = attrs;
                       return _result2;
                     }
-                    if (!this.version >= 704) {
+                    if (this.version < 704) {
                       this.raiseError("Arrow Functions are not allowed");
                     }
                     var node = this.node("arrowfunc");
@@ -6259,28 +6545,29 @@ var aceLegacyWorkerModule = (() => {
                     return conds;
                   },
                   read_attribute: function read_attribute() {
+                    var node = this.node("attribute");
                     var name = this.text();
                     var args = [];
                     this.next();
                     if (this.token === "(") {
                       args = this.read_argument_list();
                     }
-                    return this.node("attribute")(name, args);
+                    return node(name, args);
                   },
                   read_attr_list: function read_attr_list() {
                     var list = [];
                     if (this.token === this.tok.T_ATTRIBUTE) {
                       do {
-                        var attrGr = this.node("attrgroup")([]);
+                        var node = this.node("attrgroup");
                         this.next();
-                        attrGr.attrs.push(this.read_attribute());
+                        var attrs = [this.read_attribute()];
                         while (this.token === ",") {
                           this.next();
-                          if (this.token !== "]") attrGr.attrs.push(this.read_attribute());
+                          if (this.token !== "]") attrs.push(this.read_attribute());
                         }
-                        list.push(attrGr);
                         this.expect("]");
                         this.next();
+                        list.push(node(attrs));
                       } while (this.token === this.tok.T_ATTRIBUTE);
                     }
                     return list;
@@ -6351,6 +6638,7 @@ var aceLegacyWorkerModule = (() => {
                       var result = this.read_namespace_name(true);
                       if (this.token === this.tok.T_DOUBLE_COLON) {
                         result = this.read_static_getter(result);
+                        return this.recursive_variable_chain_scan(result, true, false);
                       }
                       return result;
                     } else if (this.is("VARIABLE")) {
@@ -6377,6 +6665,48 @@ var aceLegacyWorkerModule = (() => {
               },
               /***/
               8214(module2) {
+                function _slicedToArray(r, e) {
+                  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+                }
+                function _nonIterableRest() {
+                  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+                }
+                function _unsupportedIterableToArray(r, a) {
+                  if (r) {
+                    if ("string" == typeof r) return _arrayLikeToArray(r, a);
+                    var t = {}.toString.call(r).slice(8, -1);
+                    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+                  }
+                }
+                function _arrayLikeToArray(r, a) {
+                  (null == a || a > r.length) && (a = r.length);
+                  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+                  return n;
+                }
+                function _iterableToArrayLimit(r, l) {
+                  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+                  if (null != t) {
+                    var e, n, i, u, a = [], f = true, o = false;
+                    try {
+                      if (i = (t = t.call(r)).next, 0 === l) {
+                        if (Object(t) !== t) return;
+                        f = false;
+                      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = true) ;
+                    } catch (r2) {
+                      o = true, n = r2;
+                    } finally {
+                      try {
+                        if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return;
+                      } finally {
+                        if (o) throw n;
+                      }
+                    }
+                    return a;
+                  }
+                }
+                function _arrayWithHoles(r) {
+                  if (Array.isArray(r)) return r;
+                }
                 module2.exports = {
                   /*
                    * checks if current token is a reference keyword
@@ -6602,7 +6932,7 @@ var aceLegacyWorkerModule = (() => {
                         this.raiseError("readonly properties can be used only on class constructor");
                       }
                     }
-                    var flags = this.read_promoted();
+                    var _this$read_promoted = this.read_promoted(), _this$read_promoted2 = _slicedToArray(_this$read_promoted, 2), flags = _this$read_promoted2[0], flagsSet = _this$read_promoted2[1];
                     if (!readonly && this.version >= 801 && this.token === this.tok.T_READ_ONLY) {
                       if (is_class_constructor) {
                         this.next();
@@ -6630,7 +6960,11 @@ var aceLegacyWorkerModule = (() => {
                     if (this.token == "=") {
                       value = this.next().read_expr();
                     }
-                    var result = node(parameterName, types, value, isRef, isVariadic, readonly, nullable, flags);
+                    var hooks = [];
+                    if (this.version >= 804 && flags && this.token === "{") {
+                      hooks = this.read_property_hooks();
+                    }
+                    var result = node(parameterName, types, value, isRef, isVariadic, readonly, nullable, flags, hooks, flagsSet);
                     if (attrs) result.attrGroups = attrs;
                     return result;
                   },
@@ -6640,8 +6974,12 @@ var aceLegacyWorkerModule = (() => {
                     var MODE_INTERSECTION = "intersection";
                     var types = [];
                     var mode = MODE_UNSET;
+                    var node = this.node();
                     var type = this.read_type();
-                    if (!type) return null;
+                    if (!type) {
+                      node.destroy();
+                      return null;
+                    }
                     types.push(type);
                     while (this.token === "|" || this.version >= 801 && this.token === "&") {
                       var nextToken = this.peek();
@@ -6659,26 +6997,69 @@ var aceLegacyWorkerModule = (() => {
                       types.push(this.read_type());
                     }
                     if (types.length === 1) {
+                      node.destroy();
                       return types[0];
                     } else {
-                      return mode === MODE_INTERSECTION ? this.node("intersectiontype")(types) : this.node("uniontype")(types);
+                      return mode === MODE_INTERSECTION ? node("intersectiontype", types) : node("uniontype", types);
                     }
                   },
                   read_promoted: function read_promoted() {
                     var MODIFIER_PUBLIC = 1;
                     var MODIFIER_PROTECTED = 2;
                     var MODIFIER_PRIVATE = 4;
+                    var firstModifier;
                     if (this.token === this.tok.T_PUBLIC) {
                       this.next();
-                      return MODIFIER_PUBLIC;
+                      firstModifier = MODIFIER_PUBLIC;
                     } else if (this.token === this.tok.T_PROTECTED) {
                       this.next();
-                      return MODIFIER_PROTECTED;
+                      firstModifier = MODIFIER_PROTECTED;
                     } else if (this.token === this.tok.T_PRIVATE) {
                       this.next();
-                      return MODIFIER_PRIVATE;
+                      firstModifier = MODIFIER_PRIVATE;
+                    } else {
+                      return [0, 0];
                     }
-                    return 0;
+                    if (this.version >= 804) {
+                      if (this.token === "(") {
+                        this.next();
+                        if (this.token !== this.tok.T_STRING || this.text() !== "set") {
+                          this.error("set");
+                        } else {
+                          this.next();
+                        }
+                        if (this.expect(")")) {
+                          this.next();
+                        }
+                        return [0, firstModifier];
+                      }
+                      var setModifier = 0;
+                      if (this.token === this.tok.T_PUBLIC) {
+                        this.next();
+                        setModifier = MODIFIER_PUBLIC;
+                      } else if (this.token === this.tok.T_PROTECTED) {
+                        this.next();
+                        setModifier = MODIFIER_PROTECTED;
+                      } else if (this.token === this.tok.T_PRIVATE) {
+                        this.next();
+                        setModifier = MODIFIER_PRIVATE;
+                      }
+                      if (setModifier > 0) {
+                        if (this.expect("(")) {
+                          this.next();
+                        }
+                        if (this.token !== this.tok.T_STRING || this.text() !== "set") {
+                          this.error("set");
+                        } else {
+                          this.next();
+                        }
+                        if (this.expect(")")) {
+                          this.next();
+                        }
+                        return [firstModifier, setModifier];
+                      }
+                    }
+                    return [firstModifier, 0];
                   },
                   /*
                    * Reads a list of arguments
@@ -6690,8 +7071,9 @@ var aceLegacyWorkerModule = (() => {
                     var result = [];
                     this.expect("(") && this.next();
                     if (this.version >= 801 && this.token === this.tok.T_ELLIPSIS && this.peek() === ")") {
-                      result.push(this.node("variadicplaceholder")());
+                      var variadicNode = this.node("variadicplaceholder");
                       this.next();
+                      result.push(variadicNode());
                     } else if (this.token !== ")") {
                       result = this.read_non_empty_argument_list();
                     }
@@ -6761,6 +7143,20 @@ var aceLegacyWorkerModule = (() => {
                         result.destroy();
                         return this.read_namespace_name();
                       }
+                    } else if (this.version >= 802 && this.token === "(") {
+                      this.next();
+                      var innerTypes = [];
+                      innerTypes.push(this.read_type());
+                      while (this.token === "&") {
+                        var nextToken = this.peek();
+                        if (nextToken === this.tok.T_ELLIPSIS || nextToken === this.tok.T_VARIABLE) {
+                          break;
+                        }
+                        this.next();
+                        innerTypes.push(this.read_type());
+                      }
+                      this.expect(")") && this.next();
+                      return result("intersectiontype", innerTypes);
                     }
                     result.destroy();
                     return null;
@@ -6785,8 +7181,8 @@ var aceLegacyWorkerModule = (() => {
                     var shortForm = false;
                     if (this.token === ":") {
                       shortForm = true;
-                      this.next();
                       body = this.node("block");
+                      this.next();
                       var items = [];
                       while (this.token !== this.EOF && this.token !== this.tok.T_ENDIF) {
                         if (this.token === this.tok.T_ELSEIF) {
@@ -6797,6 +7193,9 @@ var aceLegacyWorkerModule = (() => {
                           break;
                         }
                         items.push(this.read_inner_statement());
+                      }
+                      if (items.length === 0 && this.extractDoc && this._docs.length > this._docIndex) {
+                        items.push(this.node("noop")());
                       }
                       body = body(null, items);
                       this.expect(this.tok.T_ENDIF) && this.next();
@@ -6827,8 +7226,8 @@ var aceLegacyWorkerModule = (() => {
                     var alternate = null;
                     var result = this.node("if");
                     var test = this.next().read_if_expr();
-                    if (this.expect(":")) this.next();
                     var body = this.node("block");
+                    if (this.expect(":")) this.next();
                     var items = [];
                     while (this.token != this.EOF && this.token !== this.tok.T_ENDIF) {
                       if (this.token === this.tok.T_ELSEIF) {
@@ -6840,17 +7239,24 @@ var aceLegacyWorkerModule = (() => {
                       }
                       items.push(this.read_inner_statement());
                     }
+                    if (items.length === 0 && this.extractDoc && this._docs.length > this._docIndex) {
+                      items.push(this.node("noop")());
+                    }
                     return result(test, body(null, items), alternate, true);
                   },
                   /*
                    *
                    */
                   read_else_short: function read_else_short() {
-                    if (this.next().expect(":")) this.next();
+                    this.next();
                     var body = this.node("block");
+                    if (this.expect(":")) this.next();
                     var items = [];
                     while (this.token != this.EOF && this.token !== this.tok.T_ENDIF) {
                       items.push(this.read_inner_statement());
+                    }
+                    if (items.length === 0 && this.extractDoc && this._docs.length > this._docIndex) {
+                      items.push(this.node("noop")());
                     }
                     return body(null, items);
                   }
@@ -7059,8 +7465,7 @@ var aceLegacyWorkerModule = (() => {
                     this.currentNamespace = name;
                     if (this.token === ";") {
                       this.currentNamespace = name;
-                      body = this.next().read_top_statements();
-                      this.expect(this.EOF);
+                      body = this.next().read_top_statements(true);
                       return result(name.name, body, false);
                     } else if (this.token === "{") {
                       this.currentNamespace = name;
@@ -7252,7 +7657,7 @@ var aceLegacyWorkerModule = (() => {
                     if (!doubleQuote) {
                       return text.replace(/\\\\/g, "\\").replace(/\\'/g, "'");
                     }
-                    return text.replace(/\\"/, '"').replace(/\\([\\$nrtfve]|[xX][0-9a-fA-F]{1,2}|[0-7]{1,3}|u{([0-9a-fA-F]+)})/g, function($match, p1, p2) {
+                    return text.replace(/\\"/g, '"').replace(/\\([\\$nrtfve]|[xX][0-9a-fA-F]{1,2}|[0-7]{1,3}|u{([0-9a-fA-F]+)})/g, function($match, p1, p2) {
                       if (specialChar[p1]) {
                         return specialChar[p1];
                       } else if ("x" === p1[0] || "X" === p1[0]) {
@@ -7295,7 +7700,7 @@ var aceLegacyWorkerModule = (() => {
                     var textSize = text.length;
                     var offset = 0;
                     var leadingWhitespaceCharCount = 0;
-                    var inCoutingState = true;
+                    var inCountingState = true;
                     var chToCheck = indentation_uses_spaces ? " " : "	";
                     var inCheckState = false;
                     if (!first_encaps_node) {
@@ -7306,14 +7711,12 @@ var aceLegacyWorkerModule = (() => {
                       offset++;
                     }
                     while (offset < textSize) {
-                      if (inCoutingState) {
+                      if (inCountingState) {
                         if (text[offset] === chToCheck) {
                           leadingWhitespaceCharCount++;
                         } else {
                           inCheckState = true;
                         }
-                      } else {
-                        inCoutingState = false;
                       }
                       if (text[offset] !== "\n" && inCheckState && leadingWhitespaceCharCount < indentation) {
                         this.raiseError("Invalid body indentation level (expecting an indentation at least ".concat(indentation, ")"));
@@ -7321,7 +7724,7 @@ var aceLegacyWorkerModule = (() => {
                         inCheckState = false;
                       }
                       if (text[offset] === "\n") {
-                        inCoutingState = true;
+                        inCountingState = true;
                         leadingWhitespaceCharCount = 0;
                       }
                       offset++;
@@ -7478,7 +7881,7 @@ var aceLegacyWorkerModule = (() => {
                     if (this.token === this.tok.T_ENCAPSED_AND_WHITESPACE) {
                       var text = this.text();
                       this.next();
-                      result = result("string", false, this.version >= 703 && !this.lexer.heredoc_label.finished ? this.remove_heredoc_leading_whitespace_chars(this.resolve_special_chars(text, isDoubleQuote), this.lexer.heredoc_label.indentation, this.lexer.heredoc_label.indentation_uses_spaces, this.lexer.heredoc_label.first_encaps_node) : text, false, text);
+                      result = result("string", false, this.version >= 703 && !this.lexer.heredoc_label.finished ? this.resolve_special_chars(this.remove_heredoc_leading_whitespace_chars(text, this.lexer.heredoc_label.indentation, this.lexer.heredoc_label.indentation_uses_spaces, this.lexer.heredoc_label.first_encaps_node), isDoubleQuote) : this.resolve_special_chars(text, isDoubleQuote), false, text);
                     } else if (this.token === this.tok.T_DOLLAR_OPEN_CURLY_BRACES) {
                       syntax = "simple";
                       curly = true;
@@ -7554,7 +7957,7 @@ var aceLegacyWorkerModule = (() => {
                     while (this.token !== expect && this.token !== this.EOF) {
                       value.push(this.read_encapsed_string_item(true));
                     }
-                    if (value.length > 0 && value[value.length - 1].kind === "encapsedpart" && value[value.length - 1].expression.kind === "string") {
+                    if (type === this.ast.encapsed.TYPE_HEREDOC && value.length > 0 && value[value.length - 1].kind === "encapsedpart" && value[value.length - 1].expression.kind === "string") {
                       var _node = value[value.length - 1].expression;
                       var lastCh = _node.value[_node.value.length - 1];
                       if (lastCh === "\n") {
@@ -7596,9 +7999,10 @@ var aceLegacyWorkerModule = (() => {
                    *  top_statements ::= top_statement*
                    * ```
                    */
-                  read_top_statements: function read_top_statements() {
+                  read_top_statements: function read_top_statements(stopAtNamespace) {
                     var result = [];
                     while (this.token !== this.EOF && this.token !== "}") {
+                      if (stopAtNamespace && this.token === this.tok.T_NAMESPACE) break;
                       var statement = this.read_top_statement();
                       if (statement) {
                         if (Array.isArray(statement)) {
@@ -7637,7 +8041,7 @@ var aceLegacyWorkerModule = (() => {
                       case this.tok.T_INTERFACE:
                         return this.read_interface_declaration_statement(attrs);
                       case this.tok.T_TRAIT:
-                        return this.read_trait_declaration_statement();
+                        return this.read_trait_declaration_statement(attrs);
                       case this.tok.T_ENUM:
                         return this.read_enum_declaration_statement(attrs);
                       case this.tok.T_USE:
@@ -7754,9 +8158,9 @@ var aceLegacyWorkerModule = (() => {
                       case this.tok.T_INTERFACE:
                         return this.read_interface_declaration_statement();
                       case this.tok.T_TRAIT:
-                        return this.read_trait_declaration_statement();
+                        return this.read_trait_declaration_statement(attrs);
                       case this.tok.T_ENUM:
-                        return this.read_enum_declaration_statement();
+                        return this.read_enum_declaration_statement(attrs);
                       case this.tok.T_HALT_COMPILER: {
                         this.raiseError("__HALT_COMPILER() can only be used from the outermost scope");
                         var node = this.node("halt");
@@ -8135,8 +8539,11 @@ var aceLegacyWorkerModule = (() => {
                     if (this.token == separator) {
                       if (preserveFirstSeparator) {
                         result.push(typeof item === "function" ? this.node("noop")() : null);
+                        this.next();
+                      } else {
+                        this.error();
+                        return result;
                       }
-                      this.next();
                     }
                     if (typeof item === "function") {
                       do {
@@ -8431,9 +8838,6 @@ var aceLegacyWorkerModule = (() => {
                           break;
                         }
                         case this.tok.T_DOUBLE_COLON:
-                          if (result.kind === "staticlookup" && result.offset.kind === "identifier") {
-                            this.error();
-                          }
                           node = this.node("staticlookup");
                           result = node(result, this.read_what(true));
                           break;
@@ -9266,7 +9670,7 @@ php-parser/dist/php-parser.js:
    * 
    *   Package: php-parser
    *   Parse PHP code from JS and returns its AST
-   *   Build: 8ca15bdec2f54ee92ab1 - 2/21/2026
+   *   Build: aad3e9e78d4989c75970 - 6/10/2026
    *   Copyright (C) 2021 Glayzzle (BSD-3-Clause)
    *   @authors https://github.com/glayzzle/php-parser/graphs/contributors
    *   @url http://glayzzle.com

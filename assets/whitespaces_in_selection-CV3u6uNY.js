@@ -1,0 +1,341 @@
+import { n as __esmMin, t as __commonJSMin } from "./modulepreload-polyfill-DxDZhch-.js";
+import { t as require_dom } from "./dom-BjWu4bY5.js";
+import { t as require_lang } from "./lang-k5JViCdG.js";
+import { t as require_config } from "./config-i4E5_Mdd.js";
+import { t as require_editor } from "./editor-Wm2F5SNl.js";
+import { t as require_edit_session } from "./edit_session-D9hX7Sjk.js";
+import { t as require_text } from "./text-DZFUs679.js";
+//#region node_modules/ace-code/src/layer/text_markers.js
+var require_text_markers = /* @__PURE__ */ __commonJSMin(((exports) => {
+	var Text = require_text().Text;
+	var lang = require_lang();
+	/**
+	* @typedef TextMarker
+	* @property {import("../../ace-internal").Ace.IRange} range
+	* @property {number} id
+	* @property {string} className
+	* @property {string} [type]
+	*/
+	/**
+	* @typedef SelectionSegment
+	* @property {number} beforeSelection - Characters before selection
+	* @property {number} selectionLength - Length of selection
+	* @property {number} afterSelection - Characters after selection
+	*/
+	var textMarkerMixin = {
+		/**
+		* @param {string} className
+		* @this {Text}
+		*/
+		$removeClass(className) {
+			if (!this.element || !className) return;
+			var selectedElements = this.element.querySelectorAll("." + className);
+			for (let i = 0; i < selectedElements.length; i++) {
+				var element = selectedElements[i];
+				element.classList.remove(className);
+				if (element.hasAttribute("data-whitespace")) {
+					var originalWhitespace = element.getAttribute("data-whitespace");
+					var textNode = this.dom.createTextNode(originalWhitespace, this.element);
+					textNode["charCount"] = element["charCount"];
+					element.parentNode.replaceChild(textNode, element);
+				}
+			}
+		},
+		/**
+		* @this {Text}
+		*/
+		$applyTextMarkers() {
+			if (this.session.$scheduleForRemove) {
+				this.session.$scheduleForRemove.forEach((className) => {
+					this.$removeClass(className);
+				});
+				this.session.$scheduleForRemove = /* @__PURE__ */ new Set();
+			}
+			var textMarkers = this.session.getTextMarkers();
+			if (textMarkers.length === 0) return;
+			var classNameGroups = /* @__PURE__ */ new Set();
+			textMarkers.forEach((marker) => {
+				classNameGroups.add(marker.className);
+			});
+			classNameGroups.forEach((className) => {
+				this.$removeClass(className);
+			});
+			textMarkers.forEach((marker) => {
+				for (let row = marker.range.start.row; row <= marker.range.end.row; row++) {
+					var cell = this.$lines.cells.find((el) => el.row === row);
+					if (cell) this.$modifyDomForMarkers(cell.element, row, marker);
+				}
+			});
+		},
+		/**
+		* Modifies the DOM for marker rendering.
+		* @param {HTMLElement} lineElement - The line element to modify
+		* @param {number} row - The row being processed
+		* @param {TextMarker} marker - The marker to apply
+		*/
+		$modifyDomForMarkers(lineElement, row, marker) {
+			var lineLength = this.session.getLine(row).length;
+			let startCol = row > marker.range.start.row ? 0 : marker.range.start.column;
+			let endCol = row < marker.range.end.row ? lineLength : marker.range.end.column;
+			if (startCol === endCol) return;
+			var lineElements = [];
+			if (lineElement.classList.contains("ace_line_group")) lineElements = Array.from(lineElement.childNodes);
+			else lineElements = [lineElement];
+			var currentColumn = 0;
+			lineElements.forEach((lineElement) => {
+				var childNodes = Array.from(lineElement.childNodes);
+				for (let i = 0; i < childNodes.length; i++) {
+					let subChildNodes = [childNodes[i]];
+					let parentNode = lineElement;
+					if (childNodes[i].childNodes && childNodes[i].childNodes.length > 0) {
+						subChildNodes = Array.from(childNodes[i].childNodes);
+						parentNode = childNodes[i];
+					}
+					for (let j = 0; j < subChildNodes.length; j++) {
+						var node = subChildNodes[j];
+						var nodeText = node.textContent || "";
+						if (node.parentNode["charCount"]) node["charCount"] = node.parentNode["charCount"];
+						var contentLength = node["charCount"] || nodeText.length;
+						var nodeStart = currentColumn;
+						var nodeEnd = currentColumn + contentLength;
+						if (node["charCount"] === 0 || contentLength === 0) continue;
+						if (nodeStart < endCol && nodeEnd > startCol) {
+							var beforeSelection = Math.max(0, startCol - nodeStart);
+							var afterSelection = Math.max(0, nodeEnd - endCol);
+							var selectionLength = contentLength - beforeSelection - afterSelection;
+							if (marker.type === "invisible") this.$processInvisibleMarker(node, parentNode, {
+								beforeSelection,
+								selectionLength,
+								afterSelection
+							}, marker);
+							else this.$processRegularMarker(node, parentNode, {
+								beforeSelection,
+								selectionLength,
+								afterSelection
+							}, marker, nodeStart, startCol, endCol);
+						}
+						currentColumn = nodeEnd;
+					}
+				}
+			});
+		},
+		/**
+		* Process text nodes for invisible markers (whitespace visualization)
+		* @param {Node} node - The DOM node to process
+		* @param {Node} parentNode - The parent node
+		* @param {SelectionSegment} selectionSegment
+		* @param {object} marker - The marker being applied
+		*/
+		$processInvisibleMarker(node, parentNode, selectionSegment, marker) {
+			var nodeText = node.textContent || "";
+			if (node.nodeType === 3) {
+				var fragment = this.dom.createFragment(this.element);
+				if (selectionSegment.beforeSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(0, selectionSegment.beforeSelection), this.element));
+				if (selectionSegment.selectionLength > 0) {
+					var segments = (selectionSegment.beforeSelection === 0 && selectionSegment.afterSelection === 0 ? nodeText : nodeText.substring(selectionSegment.beforeSelection, selectionSegment.beforeSelection + selectionSegment.selectionLength)).match(/\s+|[^\s]+/g) || [];
+					for (let k = 0; k < segments.length; k++) {
+						var segment = segments[k];
+						let span;
+						if (/^\s+$/.test(segment)) {
+							span = this.dom.createElement("span");
+							span.className = marker.className;
+							var symbol = node["charCount"] ? this.TAB_CHAR : this.SPACE_CHAR;
+							span.textContent = lang.stringRepeat(symbol, segment.length);
+							span.setAttribute("data-whitespace", segment);
+							fragment.appendChild(span);
+						} else {
+							span = this.dom.createElement("span");
+							span.textContent = segment;
+						}
+						if (node["charCount"] && segments.length === 1) span["charCount"] = node["charCount"];
+						fragment.appendChild(span);
+					}
+				}
+				if (selectionSegment.afterSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(selectionSegment.beforeSelection + selectionSegment.selectionLength), this.element));
+				parentNode.replaceChild(fragment, node);
+			}
+		},
+		/**
+		* Process nodes for regular markers (not invisible whitespace)
+		* @param {Node} node - The DOM node to process
+		* @param {Node} parentNode - The parent node
+		* @param {SelectionSegment} selectionSegment
+		* @param {TextMarker} marker - The marker being applied
+		* @param {number} nodeStart - Starting column of the node
+		* @param {number} startCol - Starting column of the selection
+		* @param {number} endCol - Ending column of the selection
+		*/
+		$processRegularMarker(node, parentNode, selectionSegment, marker, nodeStart, startCol, endCol) {
+			var nodeText = node.textContent || "";
+			if (node.nodeType === 3) if (selectionSegment.beforeSelection > 0 || selectionSegment.afterSelection > 0) {
+				var fragment = this.dom.createFragment(this.element);
+				if (selectionSegment.beforeSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(0, selectionSegment.beforeSelection), this.element));
+				if (selectionSegment.selectionLength > 0) {
+					var selectedSpan = this.dom.createElement("span");
+					selectedSpan.classList.add(marker.className);
+					selectedSpan.textContent = nodeText.substring(selectionSegment.beforeSelection, selectionSegment.beforeSelection + selectionSegment.selectionLength);
+					fragment.appendChild(selectedSpan);
+				}
+				if (selectionSegment.afterSelection > 0) fragment.appendChild(this.dom.createTextNode(nodeText.substring(selectionSegment.beforeSelection + selectionSegment.selectionLength), this.element));
+				parentNode.replaceChild(fragment, node);
+			} else {
+				var selectedSpan = this.dom.createElement("span");
+				selectedSpan.classList.add(marker.className);
+				selectedSpan.textContent = nodeText;
+				selectedSpan["charCount"] = node["charCount"];
+				parentNode.replaceChild(selectedSpan, node);
+			}
+			else if (node.nodeType === 1) {
+				if (nodeStart >= startCol && nodeStart + (nodeText.length || 0) <= endCol) node.classList.add(marker.className);
+				else if (selectionSegment.beforeSelection > 0 || selectionSegment.afterSelection > 0) {
+					var nodeClasses = node.className;
+					var fragment = this.dom.createFragment(this.element);
+					if (selectionSegment.beforeSelection > 0) {
+						var beforeSpan = this.dom.createElement("span");
+						beforeSpan.className = nodeClasses;
+						beforeSpan.textContent = nodeText.substring(0, selectionSegment.beforeSelection);
+						fragment.appendChild(beforeSpan);
+					}
+					if (selectionSegment.selectionLength > 0) {
+						var selectedSpan = this.dom.createElement("span");
+						selectedSpan.className = nodeClasses + " " + marker.className;
+						selectedSpan.textContent = nodeText.substring(selectionSegment.beforeSelection, selectionSegment.beforeSelection + selectionSegment.selectionLength);
+						fragment.appendChild(selectedSpan);
+					}
+					if (selectionSegment.afterSelection > 0) {
+						var afterSpan = this.dom.createElement("span");
+						afterSpan.className = nodeClasses;
+						afterSpan.textContent = nodeText.substring(selectionSegment.beforeSelection + selectionSegment.selectionLength);
+						fragment.appendChild(afterSpan);
+					}
+					parentNode.replaceChild(fragment, node);
+				}
+			}
+		}
+	};
+	Object.assign(Text.prototype, textMarkerMixin);
+	var EditSession = require_edit_session().EditSession;
+	var editSessionTextMarkerMixin = {
+		/**
+		* Adds a text marker to the current edit session.
+		*
+		* @param {import("../../ace-internal").Ace.IRange} range - The range to mark in the document
+		* @param {string} className - The CSS class name to apply to the marked text
+		* @param {string} [type] - The type of marker (e.g. "invisible" for whitespace rendering)
+		* @returns {number} The unique identifier for the added text marker
+		*
+		* @this {EditSession}
+		*/
+		addTextMarker(range, className, type) {
+			/**@type{number}*/
+			this.$textMarkerId = this.$textMarkerId || 0;
+			this.$textMarkerId++;
+			var marker = {
+				range,
+				id: this.$textMarkerId,
+				className,
+				type
+			};
+			if (!this.$textMarkers) this.$textMarkers = [];
+			this.$textMarkers[marker.id] = marker;
+			return marker.id;
+		},
+		/**
+		* Removes a text marker from the current edit session.
+		*
+		* @param {number} markerId - The unique identifier of the text marker to remove
+		*
+		* @this {EditSession}
+		*/
+		removeTextMarker(markerId) {
+			if (!this.$textMarkers) return;
+			var marker = this.$textMarkers[markerId];
+			if (!marker) return;
+			if (!this.$scheduleForRemove) this.$scheduleForRemove = /* @__PURE__ */ new Set();
+			this.$scheduleForRemove.add(marker.className);
+			delete this.$textMarkers[markerId];
+		},
+		/**
+		* Retrieves the text markers associated with the current edit session.
+		*
+		* @returns {TextMarker[]} An array of text markers, or an empty array if no markers exist
+		*
+		* @this {EditSession}
+		*/
+		getTextMarkers() {
+			return this.$textMarkers || [];
+		}
+	};
+	Object.assign(EditSession.prototype, editSessionTextMarkerMixin);
+	var onAfterRender = (e, renderer) => {
+		renderer.$textLayer.$applyTextMarkers();
+	};
+	var Editor = require_editor().Editor;
+	require_config().defineOptions(Editor.prototype, "editor", { enableTextMarkers: {
+		/**
+		* @param {boolean} val
+		* @this {Editor}
+		*/
+		set: function(val) {
+			if (val) this.renderer.on("afterRender", onAfterRender);
+			else this.renderer.off("afterRender", onAfterRender);
+		},
+		value: true
+	} });
+	exports.textMarkerMixin = textMarkerMixin;
+	exports.editSessionTextMarkerMixin = editSessionTextMarkerMixin;
+}));
+//#endregion
+//#region node_modules/ace-code/src/ext/whitespaces_in_selection.js
+/**
+* ## Show whitespaces in the current selection
+*
+* This extension adds a configuration option `showWhitespacesInSelection` to the editor
+* that highlights whitespaces within the current selection. When enabled, it adds a
+* marker to the selection that makes whitespaces visible.
+*/
+function $onChangeSelectionForWhitespace() {
+	let invisibleMarkerId = this.session.$invisibleMarkerId;
+	if (invisibleMarkerId) {
+		this.session.removeTextMarker(invisibleMarkerId);
+		this.session.$invisibleMarkerId = null;
+	}
+	var currentRange = this.selection.getRange();
+	if (!currentRange.isEmpty()) this.session.$invisibleMarkerId = this.session.addTextMarker(currentRange, "ace_whitespaces_in_selection", "invisible");
+}
+var Editor, config;
+//#endregion
+__esmMin((() => {
+	require_text_markers();
+	Editor = require_editor().Editor;
+	config = require_config();
+	require_dom().importCssString(`
+.ace_whitespaces_in_selection {
+    color: rgba(0,0,0,0.29);
+}
+
+.ace_dark .ace_whitespaces_in_selection {
+    color: rgba(187, 181, 181, 0.5);
+}
+`, "ace_whitespaces_in_selection", false);
+	config.defineOptions(Editor.prototype, "editor", { showWhitespacesInSelection: {
+		set: function(val) {
+			this.$showWhitespacesInSelection = val;
+			if (val) {
+				if (!this.$boundChangeSelectionForWhitespace) this.$boundChangeSelectionForWhitespace = $onChangeSelectionForWhitespace.bind(this);
+				this.on("changeSelection", this.$boundChangeSelectionForWhitespace);
+			} else {
+				this.off("changeSelection", this.$boundChangeSelectionForWhitespace);
+				if (this.session && this.session.$invisibleMarkerId) {
+					this.session.removeTextMarker(this.session.$invisibleMarkerId);
+					this.session.$invisibleMarkerId = null;
+				}
+				this.$boundChangeSelectionForWhitespace = null;
+			}
+		},
+		get: function() {
+			return this.$showWhitespacesInSelection;
+		},
+		initialValue: false
+	} });
+}))();

@@ -609,6 +609,11 @@ var aceLegacyWorkerModule = (() => {
         };
         return _self;
       };
+      exports.sleep = function(ms) {
+        return new Promise(function(resolve) {
+          setTimeout(resolve, ms);
+        });
+      };
       exports.supportsLookbehind = function() {
         try {
           new RegExp("(?<=.)");

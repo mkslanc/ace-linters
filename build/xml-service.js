@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,7 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -70,7 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -367,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -702,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -715,7 +722,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -733,7 +740,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -825,7 +832,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -899,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -966,7 +973,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1026,7 +1033,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1204,7 +1211,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1314,7 +1321,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1440,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1764,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2347,7 +2354,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2725,7 +2732,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$7();
@@ -2752,7 +2759,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2860,7 +2867,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -2930,7 +2937,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -8244,11 +8251,17 @@
 			};
 			RegExpParser.prototype.classPatternCharacterAtom = function() {
 				switch (this.peekChar()) {
+					// istanbul ignore next
 					case "\n":
+					// istanbul ignore next
 					case "\r":
+					// istanbul ignore next
 					case "\u2028":
+					// istanbul ignore next
 					case "\u2029":
+					// istanbul ignore next
 					case "\\":
+					// istanbul ignore next
 					case "]": throw Error("TBD");
 					default: return {
 						type: "Character",
@@ -8291,10 +8304,15 @@
 			};
 			RegExpParser.prototype.classAtom = function() {
 				switch (this.peekChar()) {
+					// istanbul ignore next
 					case "]":
+					// istanbul ignore next
 					case "\n":
+					// istanbul ignore next
 					case "\r":
+					// istanbul ignore next
 					case "\u2028":
+					// istanbul ignore next
 					case "\u2029": throw Error("TBD");
 					case "\\": return this.classEscape();
 					default: return this.classPatternCharacterAtom();
@@ -8366,20 +8384,35 @@
 			RegExpParser.prototype.patternCharacter = function() {
 				var nextChar = this.popChar();
 				switch (nextChar) {
+					// istanbul ignore next
 					case "\n":
+					// istanbul ignore next
 					case "\r":
+					// istanbul ignore next
 					case "\u2028":
+					// istanbul ignore next
 					case "\u2029":
+					// istanbul ignore next
 					case "^":
+					// istanbul ignore next
 					case "$":
+					// istanbul ignore next
 					case "\\":
+					// istanbul ignore next
 					case ".":
+					// istanbul ignore next
 					case "*":
+					// istanbul ignore next
 					case "+":
+					// istanbul ignore next
 					case "?":
+					// istanbul ignore next
 					case "(":
+					// istanbul ignore next
 					case ")":
+					// istanbul ignore next
 					case "[":
+					// istanbul ignore next
 					case "|":
  // istanbul ignore next
 					throw Error("TBD");
@@ -8733,12 +8766,14 @@
 						case "Group":
 							firstCharOptimizedIndices(atom.value, result, ignoreCase);
 							break;
+						/* istanbul ignore next */
 						default: throw Error("Non Exhaustive Match");
 					}
 					var isOptionalQuantifier = atom.quantifier !== void 0 && atom.quantifier.atLeast === 0;
 					if (atom.type === "Group" && isWholeOptional(atom) === false || atom.type !== "Group" && isOptionalQuantifier === false) break;
 				}
 				break;
+			/* istanbul ignore next */
 			default: throw Error("non exhaustive match!");
 		}
 		return values(result);
@@ -10459,6 +10494,7 @@
 					case Alternation: return this.visitAlternation(nodeAny);
 					case Terminal: return this.visitTerminal(nodeAny);
 					case Rule: return this.visitRule(nodeAny);
+					/* istanbul ignore next */
 					default: throw Error("non exhaustive match");
 				}
 			};
@@ -11211,7 +11247,8 @@
 			}
 			NextAfterTokenWalker.prototype.walkTerminal = function(terminal, currRest, prevRest) {
 				if (this.isAtEndOfPath && terminal.terminalType.name === this.nextTerminalName && terminal.idx === this.nextTerminalOccurrence && !this.found) {
-					this.possibleTokTypes = first(new Alternative({ definition: currRest.concat(prevRest) }));
+					var restProd = new Alternative({ definition: currRest.concat(prevRest) });
+					this.possibleTokTypes = first(restProd);
 					this.found = true;
 				}
 			};
@@ -13234,16 +13271,19 @@
 					acc[tokType.name] = tokType;
 					return acc;
 				}, {});
-				else if (has(tokenVocabulary, "modes") && every(flatten(values(tokenVocabulary.modes)), isTokenType)) this.tokensMap = reduce(uniq(flatten(values(tokenVocabulary.modes))), function(acc, tokType) {
-					acc[tokType.name] = tokType;
-					return acc;
-				}, {});
-				else if (isObject(tokenVocabulary)) this.tokensMap = cloneObj(tokenVocabulary);
+				else if (has(tokenVocabulary, "modes") && every(flatten(values(tokenVocabulary.modes)), isTokenType)) {
+					var uniqueTokens = uniq(flatten(values(tokenVocabulary.modes)));
+					this.tokensMap = reduce(uniqueTokens, function(acc, tokType) {
+						acc[tokType.name] = tokType;
+						return acc;
+					}, {});
+				} else if (isObject(tokenVocabulary)) this.tokensMap = cloneObj(tokenVocabulary);
 				else throw new Error("<tokensDictionary> argument must be An Array of Token constructors, A dictionary of Token constructors or an IMultiModeLexerDefinition");
 				this.tokensMap["EOF"] = EOF;
-				this.tokenMatcher = every(values(tokenVocabulary), function(tokenConstructor) {
+				var noTokenCategoriesUsed = every(values(tokenVocabulary), function(tokenConstructor) {
 					return isEmpty(tokenConstructor.categoryMatches);
-				}) ? tokenStructuredMatcherNoCategories : tokenStructuredMatcher;
+				});
+				this.tokenMatcher = noTokenCategoriesUsed ? tokenStructuredMatcherNoCategories : tokenStructuredMatcher;
 				augmentTokenTypes(values(this.tokensMap));
 			};
 			RecognizerEngine.prototype.defineRule = function(ruleName, impl, config) {
@@ -14685,6 +14725,14 @@
 	//#region ../../node_modules/lodash/lodash.js
 	var require_lodash = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		init_dist();
+		/**
+		* @license
+		* Lodash <https://lodash.com/>
+		* Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
+		* Released under MIT license <https://lodash.com/license>
+		* Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+		* Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+		*/
 		(function() {
 			/** Used as a safe reference for `undefined` in pre-ES5 environments. */
 			var undefined;
@@ -16108,11 +16156,48 @@
 				* @type {Object}
 				*/
 				lodash.templateSettings = {
+					/**
+					* Used to detect `data` property values to be HTML-escaped.
+					*
+					* @memberOf _.templateSettings
+					* @type {RegExp}
+					*/
 					"escape": reEscape,
+					/**
+					* Used to detect code to be evaluated.
+					*
+					* @memberOf _.templateSettings
+					* @type {RegExp}
+					*/
 					"evaluate": reEvaluate,
+					/**
+					* Used to detect `data` property values to inject.
+					*
+					* @memberOf _.templateSettings
+					* @type {RegExp}
+					*/
 					"interpolate": reInterpolate,
+					/**
+					* Used to reference the data object in the template text.
+					*
+					* @memberOf _.templateSettings
+					* @type {string}
+					*/
 					"variable": "",
-					"imports": { "_": lodash }
+					/**
+					* Used to import variables into the compiled template.
+					*
+					* @memberOf _.templateSettings
+					* @type {Object}
+					*/
+					"imports": { 
+					/**
+					* A reference to the `lodash` function.
+					*
+					* @memberOf _.templateSettings.imports
+					* @type {Function}
+					*/
+"_": lodash }
 				};
 				lodash.prototype = baseLodash.prototype;
 				lodash.prototype.constructor = lodash;
@@ -16519,7 +16604,8 @@
 				* @param {Array} [entries] The key-value pairs to cache.
 				*/
 				function Stack(entries) {
-					this.size = (this.__data__ = new ListCache(entries)).size;
+					var data = this.__data__ = new ListCache(entries);
+					this.size = data.size;
 				}
 				/**
 				* Removes all key-value entries from the stack.
@@ -17358,7 +17444,7 @@
 						} else {
 							var stack = new Stack();
 							if (customizer) var result = customizer(objValue, srcValue, key, object, source, stack);
-							if (!(result === undefined ? baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG, customizer, stack) : result)) return false;
+							if (!(result === undefined ? baseIsEqual(srcValue, objValue, 3, customizer, stack) : result)) return false;
 						}
 					}
 					return true;
@@ -17497,7 +17583,7 @@
 					if (isKey(path) && isStrictComparable(srcValue)) return matchesStrictComparable(toKey(path), srcValue);
 					return function(object) {
 						var objValue = get(object, path);
-						return objValue === undefined && objValue === srcValue ? hasIn(object, path) : baseIsEqual(srcValue, objValue, COMPARE_PARTIAL_FLAG | COMPARE_UNORDERED_FLAG);
+						return objValue === undefined && objValue === srcValue ? hasIn(object, path) : baseIsEqual(srcValue, objValue, 3);
 					};
 				}
 				/**
@@ -17605,11 +17691,10 @@
 					var index = -1;
 					iteratees = arrayMap(iteratees, baseUnary(getIteratee()));
 					return baseSortBy(baseMap(collection, function(value, key, collection) {
-						var criteria = arrayMap(iteratees, function(iteratee) {
-							return iteratee(value);
-						});
 						return {
-							"criteria": criteria,
+							"criteria": arrayMap(iteratees, function(iteratee) {
+								return iteratee(value);
+							}),
 							"index": ++index,
 							"value": value
 						};
@@ -17990,7 +18075,7 @@
 					if (isArray(value)) return arrayMap(value, baseToString) + "";
 					if (isSymbol(value)) return symbolToString ? symbolToString.call(value) : "";
 					var result = value + "";
-					return result == "0" && 1 / value == -INFINITY ? "-0" : result;
+					return result == "0" && 1 / value == -Infinity ? "-0" : result;
 				}
 				/**
 				* The base implementation of `_.uniqBy` without support for iteratee shorthands.
@@ -19856,7 +19941,7 @@
 				function toKey(value) {
 					if (typeof value == "string" || isSymbol(value)) return value;
 					var result = value + "";
-					return result == "0" && 1 / value == -INFINITY ? "-0" : result;
+					return result == "0" && 1 / value == -Infinity ? "-0" : result;
 				}
 				/**
 				* Converts `func` to its source code.
@@ -21801,10 +21886,10 @@
 				*/
 				function wrapperNext() {
 					if (this.__values__ === undefined) this.__values__ = toArray(this.value());
-					var done = this.__index__ >= this.__values__.length, value = done ? undefined : this.__values__[this.__index__++];
+					var done = this.__index__ >= this.__values__.length;
 					return {
 						"done": done,
-						"value": value
+						"value": done ? undefined : this.__values__[this.__index__++]
 					};
 				}
 				/**
@@ -23749,7 +23834,7 @@
 				* // => false
 				*/
 				function cloneDeep(value) {
-					return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG);
+					return baseClone(value, 5);
 				}
 				/**
 				* This method is like `_.cloneWith` except that it recursively clones `value`.
@@ -23781,7 +23866,7 @@
 				*/
 				function cloneDeepWith(value, customizer) {
 					customizer = typeof customizer == "function" ? customizer : undefined;
-					return baseClone(value, CLONE_DEEP_FLAG | CLONE_SYMBOLS_FLAG, customizer);
+					return baseClone(value, 5, customizer);
 				}
 				/**
 				* Checks if `object` conforms to `source` by invoking the predicate
@@ -24689,7 +24774,7 @@
 				* // => false
 				*/
 				function isSafeInteger(value) {
-					return isInteger(value) && value >= -MAX_SAFE_INTEGER && value <= MAX_SAFE_INTEGER;
+					return isInteger(value) && value >= -9007199254740991 && value <= MAX_SAFE_INTEGER;
 				}
 				/**
 				* Checks if `value` is classified as a `Set` object.
@@ -24933,7 +25018,7 @@
 				function toFinite(value) {
 					if (!value) return value === 0 ? value : 0;
 					value = toNumber(value);
-					if (value === INFINITY || value === -INFINITY) return (value < 0 ? -1 : 1) * MAX_INTEGER;
+					if (value === INFINITY || value === -Infinity) return (value < 0 ? -1 : 1) * MAX_INTEGER;
 					return value === value ? value : 0;
 				}
 				/**
@@ -25083,7 +25168,7 @@
 				* // => 3
 				*/
 				function toSafeInteger(value) {
-					return value ? baseClamp(toInteger(value), -MAX_SAFE_INTEGER, MAX_SAFE_INTEGER) : value === 0 ? value : 0;
+					return value ? baseClamp(toInteger(value), -9007199254740991, MAX_SAFE_INTEGER) : value === 0 ? value : 0;
 				}
 				/**
 				* Converts `value` to a string. An empty string is returned for `null`
@@ -25992,7 +26077,7 @@
 						return path;
 					});
 					copyObject(object, getAllKeysIn(object), result);
-					if (isDeep) result = baseClone(result, CLONE_DEEP_FLAG | CLONE_FLAT_FLAG | CLONE_SYMBOLS_FLAG, customOmitClone);
+					if (isDeep) result = baseClone(result, 7, customOmitClone);
 					var length = paths.length;
 					while (length--) baseUnset(result, paths[length]);
 					return result;
@@ -29202,8 +29287,7 @@
 		var { findIndex } = require_lodash();
 		function findNextTextualToken(tokenVector, prevTokenEndOffset) {
 			let nextTokenIdx = findIndex(tokenVector, (tok) => tok.endOffset === prevTokenEndOffset);
-			let found = false;
-			while (found === false) {
+			while (true) {
 				nextTokenIdx++;
 				const nextPossibleToken = tokenVector[nextTokenIdx];
 				if (nextPossibleToken === void 0) return null;
@@ -29636,6 +29720,7 @@
 				case "XMLTextContent":
 					if (isFunction(visitor.visitXMLTextContent)) visitor.visitXMLTextContent(node);
 					break;
+				/* istanbul ignore next  defensive programming */
 				default: throw Error("None Exhaustive Match");
 			}
 			forEach(getAstChildrenReflective(node), (childNode) => {
@@ -30202,19 +30287,22 @@
 		module.exports = { getSchemaSuggestionsProviders };
 	}));
 	//#endregion
-	//#region src/ace/range-singleton.ts
-	var import_api$3 = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
+	//#region ../../node_modules/@xml-tools/simple-schema/lib/api.js
+	var require_api = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		var { getSchemaValidators } = require_get_validators();
 		var { getSchemaSuggestionsProviders } = require_get_content_assist();
 		module.exports = {
 			getSchemaValidators,
 			getSchemaSuggestionsProviders
 		};
-	})))();
-	var import_api$2 = require_api$1();
-	var import_api$4 = require_api$2();
-	var import_api$1 = require_api$3();
+	}));
+	//#endregion
+	//#region src/ace/range-singleton.ts
 	var import_api = require_api$5();
+	var import_api$1 = require_api$3();
+	var import_api$4 = require_api$2();
+	var import_api$2 = require_api$1();
+	var import_api$3 = require_api();
 	var AceRange = class AceRange {
 		static getConstructor(editor) {
 			if (!AceRange._instance && editor) AceRange._instance = editor.getSelectionRange().constructor;

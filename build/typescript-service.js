@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,7 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -70,7 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -367,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -702,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -715,7 +722,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -733,7 +740,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -825,7 +832,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -899,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -966,7 +973,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1026,7 +1033,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1204,7 +1211,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1314,7 +1321,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1440,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1764,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2347,7 +2354,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2725,7 +2732,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2752,7 +2759,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2860,7 +2867,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -2930,7 +2937,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -2972,7 +2979,7 @@
 		FormattingOptions: () => FormattingOptions,
 		Hover: () => Hover,
 		InlayHint: () => InlayHint,
-		InlayHintKind: () => InlayHintKind,
+		InlayHintKind: () => InlayHintKind$1,
 		InlayHintLabelPart: () => InlayHintLabelPart,
 		InlineCompletionContext: () => InlineCompletionContext,
 		InlineCompletionItem: () => InlineCompletionItem,
@@ -3019,7 +3026,7 @@
 		integer: () => integer,
 		uinteger: () => uinteger
 	});
-	var DocumentUri, URI, integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity$1, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, TextEditChangeImpl, ChangeAnnotations, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent$1, CompletionItemKind$2, InsertTextFormat$1, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItemLabelDetails, CompletionItem, CompletionList, MarkedString$1, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, WorkspaceSymbol, DocumentSymbol, CodeActionKind, CodeActionTriggerKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind, InlayHintLabelPart, InlayHint, StringValue, InlineCompletionItem, InlineCompletionList, InlineCompletionTriggerKind, SelectedCompletionInfo, InlineCompletionContext, WorkspaceFolder, EOL, TextDocument$1, FullTextDocument$1, Is;
+	var DocumentUri, URI, integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity$1, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, TextEditChangeImpl, ChangeAnnotations, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent$1, CompletionItemKind$2, InsertTextFormat$1, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItemLabelDetails, CompletionItem, CompletionList, MarkedString$1, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, WorkspaceSymbol, DocumentSymbol, CodeActionKind, CodeActionTriggerKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind$1, InlayHintLabelPart, InlayHint, StringValue, InlineCompletionItem, InlineCompletionList, InlineCompletionTriggerKind, SelectedCompletionInfo, InlineCompletionContext, WorkspaceFolder, EOL, TextDocument$1, FullTextDocument$1, Is;
 	var init_main = __esmMin((() => {
 		(function(DocumentUri) {
 			function is(value) {
@@ -4539,7 +4546,7 @@
 				return value === 1 || value === 2;
 			}
 			InlayHintKind.is = is;
-		})(InlayHintKind || (InlayHintKind = {}));
+		})(InlayHintKind$1 || (InlayHintKind$1 = {}));
 		(function(InlayHintLabelPart) {
 			function create(value) {
 				return { value };
@@ -4563,7 +4570,7 @@
 			InlayHint.create = create;
 			function is(value) {
 				const candidate = value;
-				return Is.objectLiteral(candidate) && Position.is(candidate.position) && (Is.string(candidate.label) || Is.typedArray(candidate.label, InlayHintLabelPart.is)) && (candidate.kind === void 0 || InlayHintKind.is(candidate.kind)) && candidate.textEdits === void 0 || Is.typedArray(candidate.textEdits, TextEdit.is) && (candidate.tooltip === void 0 || Is.string(candidate.tooltip) || MarkupContent$1.is(candidate.tooltip)) && (candidate.paddingLeft === void 0 || Is.boolean(candidate.paddingLeft)) && (candidate.paddingRight === void 0 || Is.boolean(candidate.paddingRight));
+				return Is.objectLiteral(candidate) && Position.is(candidate.position) && (Is.string(candidate.label) || Is.typedArray(candidate.label, InlayHintLabelPart.is)) && (candidate.kind === void 0 || InlayHintKind$1.is(candidate.kind)) && candidate.textEdits === void 0 || Is.typedArray(candidate.textEdits, TextEdit.is) && (candidate.tooltip === void 0 || Is.string(candidate.tooltip) || MarkupContent$1.is(candidate.tooltip)) && (candidate.paddingLeft === void 0 || Is.boolean(candidate.paddingLeft)) && (candidate.paddingRight === void 0 || Is.boolean(candidate.paddingRight));
 			}
 			InlayHint.is = is;
 		})(InlayHint || (InlayHint = {}));
@@ -7281,7 +7288,7 @@
 		return 0;
 	};
 	var browserExports = browser.exports;
-	var process$1 = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
 	//#endregion
 	//#region src/utils.ts
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
@@ -9180,9 +9187,6 @@
 	((module) => {
 		"use strict";
 		var __defProp = Object.defineProperty;
-		Object.getOwnPropertyDescriptor;
-		Object.getOwnPropertyNames;
-		Object.prototype.hasOwnProperty;
 		var __export = (target, all) => {
 			for (var name in all) __defProp(target, name, {
 				get: all[name],
@@ -13006,7 +13010,6 @@ Node ${formatSyntaxKind(node.kind)} was unexpected.`, stackCrawlMark || failBadS
 			class DebugTypeMapper {
 				__debugToString() {
 					var _a;
-					type(this);
 					switch (this.kind) {
 						case 3: return ((_a = this.debugInfo) == null ? void 0 : _a.call(this)) || "(function mapper)";
 						case 0: return `${this.source.__debugTypeToString()} -> ${this.target.__debugTypeToString()}`;
@@ -28900,9 +28903,7 @@ ${lanes.join("\n")}
 				case 338:
 				case 346:
 				case 323: return true;
-				default:
-					assertType(node);
-					return isDeclarationWithTypeParameterChildren(node);
+				default: return isDeclarationWithTypeParameterChildren(node);
 			}
 		}
 		function isDeclarationWithTypeParameterChildren(node) {
@@ -28927,9 +28928,7 @@ ${lanes.join("\n")}
 				case 178:
 				case 218:
 				case 219: return true;
-				default:
-					assertType(node);
-					return false;
+				default: return false;
 			}
 		}
 		function isAnyImportSyntax(node) {
@@ -32810,12 +32809,26 @@ ${lanes.join("\n")}
 			"jspm_packages"
 		].join("|")})(/|$))`;
 		var filesMatcher = {
+			/**
+			* Matches any single directory segment unless it is the last segment and a .min.js file
+			* Breakdown:
+			*  [^./]                   # matches everything up to the first . character (excluding directory separators)
+			*  (\\.(?!min\\.js$))?     # matches . characters but not if they are part of the .min.js file extension
+			*/
 			singleAsteriskRegexFragment: "([^./]|(\\.(?!min\\.js$))?)*",
+			/**
+			* Regex for the ** wildcard. Matches any number of subdirectories. When used for including
+			* files or directories, does not match subdirectories that start with a . character
+			*/
 			doubleAsteriskRegexFragment: `(/${implicitExcludePathRegexPattern}[^/.][^/]*)*?`,
 			replaceWildcardCharacter: (match) => replaceWildcardCharacter(match, filesMatcher.singleAsteriskRegexFragment)
 		};
 		var directoriesMatcher = {
 			singleAsteriskRegexFragment: "[^/]*",
+			/**
+			* Regex for the ** wildcard. Matches any number of subdirectories. When used for including
+			* files or directories, does not match subdirectories that start with a . character
+			*/
 			doubleAsteriskRegexFragment: `(/${implicitExcludePathRegexPattern}[^/.][^/]*)*?`,
 			replaceWildcardCharacter: (match) => replaceWildcardCharacter(match, directoriesMatcher.singleAsteriskRegexFragment)
 		};
@@ -34120,9 +34133,7 @@ ${lanes.join("\n")}
 					if (node.operator === 41) return isNumericLiteral(node.operand) || includeBigInt && isBigIntLiteral(node.operand);
 					if (node.operator === 40) return isNumericLiteral(node.operand);
 					return false;
-				default:
-					assertType(node);
-					return false;
+				default: return false;
 			}
 		}
 		function unwrapParenthesizedExpression(o) {
@@ -34142,9 +34153,7 @@ ${lanes.join("\n")}
 				case 260:
 				case 277:
 				case 303: return true;
-				default:
-					assertType(node);
-					return false;
+				default: return false;
 			}
 		}
 		function isSideEffectImport(node) {
@@ -50008,7 +50017,8 @@ ${lanes.join("\n")}
 				directoryToModuleNameMap.update(options2);
 			}
 			function getOrCreateCacheForDirectory(directoryName, redirectedReference) {
-				return getOrCreateCache(directoryToModuleNameMap, redirectedReference, toPath(directoryName, currentDirectory, getCanonicalFileName), () => createModeAwareCache());
+				const path = toPath(directoryName, currentDirectory, getCanonicalFileName);
+				return getOrCreateCache(directoryToModuleNameMap, redirectedReference, path, () => createModeAwareCache());
 			}
 			function getFromDirectoryCache(name, mode, directoryName, redirectedReference) {
 				var _a, _b;
@@ -58203,10 +58213,11 @@ ${lanes.join("\n")}
 					if (!specifier) {
 						const isBundle2 = !!compilerOptions.outFile;
 						const { moduleResolverHost } = context.tracker;
-						specifier = first(getModuleSpecifiers(symbol, checker, isBundle2 ? {
+						const specifierCompilerOptions = isBundle2 ? {
 							...compilerOptions,
 							baseUrl: moduleResolverHost.getCommonSourceDirectory()
-						} : compilerOptions, contextFile, moduleResolverHost, {
+						} : compilerOptions;
+						specifier = first(getModuleSpecifiers(symbol, checker, specifierCompilerOptions, contextFile, moduleResolverHost, {
 							importModuleSpecifierPreference: isBundle2 ? "non-relative" : "project-relative",
 							importModuleSpecifierEnding: isBundle2 ? "minimal" : resolutionMode === 99 ? "js" : void 0
 						}, { overrideImportMode }));
@@ -59148,7 +59159,8 @@ ${lanes.join("\n")}
 						if (some(symbol.declarations, isPartOfParameterDeclaration)) return;
 						Debug.assertIsDefined(deferredPrivatesStack[deferredPrivatesStack.length - 1]);
 						getUnusedName(unescapeLeadingUnderscores(symbol.escapedName), symbol);
-						deferredPrivatesStack[!!(symbol.flags & 2097152) && !some(symbol.declarations, (d) => !!findAncestor(d, isExportDeclaration) || isNamespaceExport(d) || isImportEqualsDeclaration(d) && !isExternalModuleReference(d.moduleReference)) ? 0 : deferredPrivatesStack.length - 1].set(getSymbolId(symbol), symbol);
+						const isExternalImportAlias = !!(symbol.flags & 2097152) && !some(symbol.declarations, (d) => !!findAncestor(d, isExportDeclaration) || isNamespaceExport(d) || isImportEqualsDeclaration(d) && !isExternalModuleReference(d.moduleReference));
+						deferredPrivatesStack[isExternalImportAlias ? 0 : deferredPrivatesStack.length - 1].set(getSymbolId(symbol), symbol);
 					}
 					function isExportingScope(enclosingDeclaration2) {
 						return isSourceFile(enclosingDeclaration2) && (isExternalOrCommonJsModule(enclosingDeclaration2) || isJsonSourceFile(enclosingDeclaration2)) || isAmbientModule(enclosingDeclaration2) && !isGlobalScopeAugmentation(enclosingDeclaration2);
@@ -63203,7 +63215,7 @@ ${lanes.join("\n")}
 						type = getIntendedTypeFromJSDocTypeReference(node);
 						if (!type) {
 							symbol = resolveTypeReferenceName(node, meaning, true);
-							if (symbol === unknownSymbol) symbol = resolveTypeReferenceName(node, meaning | 111551);
+							if (symbol === unknownSymbol) symbol = resolveTypeReferenceName(node, 900095);
 							else resolveTypeReferenceName(node, meaning);
 							type = getTypeReferenceType(node, symbol);
 						}
@@ -74568,7 +74580,8 @@ ${lanes.join("\n")}
 				const exprType = getRegularTypeOfObjectLiteral(getBaseTypeOfLiteralType(links.assertionExpressionType));
 				const targetType = getTypeFromTypeNode(type);
 				if (!isErrorType(targetType)) addLazyDiagnostic(() => {
-					if (!isTypeComparableTo(targetType, getWidenedType(exprType))) checkTypeComparableTo(exprType, targetType, errNode, Diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first);
+					const widenedType = getWidenedType(exprType);
+					if (!isTypeComparableTo(targetType, widenedType)) checkTypeComparableTo(exprType, targetType, errNode, Diagnostics.Conversion_of_type_0_to_type_1_may_be_a_mistake_because_neither_type_sufficiently_overlaps_with_the_other_If_this_was_intentional_convert_the_expression_to_unknown_first);
 				});
 			}
 			function checkNonNullChain(node) {
@@ -85889,7 +85902,8 @@ ${lanes.join("\n")}
 				setOriginalNode(getter, node);
 				setCommentRange(getter, commentRange);
 				setSourceMapRange(getter, sourceMapRange);
-				const setter = createAccessorPropertySetRedirector(factory2, node, factory2.createModifiersFromModifierFlags(modifiersToFlags(modifiers)), setterName, receiver);
+				const setterModifiers = factory2.createModifiersFromModifierFlags(modifiersToFlags(modifiers));
+				const setter = createAccessorPropertySetRedirector(factory2, node, setterModifiers, setterName, receiver);
 				setOriginalNode(setter, node);
 				setEmitFlags(setter, 3072);
 				setSourceMapRange(setter, sourceMapRange);
@@ -90355,7 +90369,8 @@ ${lanes.join("\n")}
 				const tagName = getTagName(node);
 				const attrs = node.attributes.properties;
 				const objectProperties = length(attrs) ? transformJsxAttributesToObjectProps(attrs) : factory2.createNull();
-				const element = createExpressionForJsxElement(factory2, currentFileState.importSpecifier === void 0 ? createJsxFactoryExpression(factory2, context.getEmitResolver().getJsxFactoryEntity(currentSourceFile), compilerOptions.reactNamespace, node) : getImplicitImportForName("createElement"), tagName, objectProperties, mapDefined(children, transformJsxChildToExpression), location);
+				const callee = currentFileState.importSpecifier === void 0 ? createJsxFactoryExpression(factory2, context.getEmitResolver().getJsxFactoryEntity(currentSourceFile), compilerOptions.reactNamespace, node) : getImplicitImportForName("createElement");
+				const element = createExpressionForJsxElement(factory2, callee, tagName, objectProperties, mapDefined(children, transformJsxChildToExpression), location);
 				if (isChild) startOnNewLine(element);
 				return element;
 			}
@@ -95479,9 +95494,7 @@ ${lanes.join("\n")}
 					case 169: return createParameterError(node);
 					case 303: return createExpressionError(node.initializer);
 					case 231: return createClassExpressionError(node);
-					default:
-						assertType(node);
-						return createExpressionError(node);
+					default: return createExpressionError(node);
 				}
 			}
 			function findNearestDeclaration(node) {
@@ -106885,7 +106898,8 @@ ${lanes.join("\n")}
 			}
 			function scheduleInvalidateResolutionsOfFailedLookupLocations() {
 				if (!host.setTimeout || !host.clearTimeout) return resolutionCache.invalidateResolutionsOfFailedLookupLocations();
-				writeLog(`Scheduling invalidateFailedLookup${clearInvalidateResolutionsOfFailedLookupLocations() ? ", Cancelled earlier one" : ""}`);
+				const pending = clearInvalidateResolutionsOfFailedLookupLocations();
+				writeLog(`Scheduling invalidateFailedLookup${pending ? ", Cancelled earlier one" : ""}`);
 				timerToInvalidateFailedLookupResolutions = host.setTimeout(invalidateResolutionsOfFailedLookup, 250, "timerToInvalidateFailedLookupResolutions");
 			}
 			function invalidateResolutionsOfFailedLookup() {
@@ -107607,7 +107621,7 @@ ${lanes.join("\n")}
 							queueReferencingProjects(state, project, projectPath, projectIndex, config, buildOrder, Debug.checkDefined(buildResult));
 							step++;
 							break;
-						default: assertType(step);
+						default:
 					}
 					Debug.assert(step > currentStep);
 				}
@@ -108345,7 +108359,7 @@ ${lanes.join("\n")}
 				case 17: return reportStatus(state, Diagnostics.Project_0_is_being_forcibly_rebuilt, relName(state, configFileName));
 				case 16:
 				case 13: break;
-				default: assertType(status);
+				default:
 			}
 		}
 		function verboseReportProjectStatus(state, configFileName, status) {
@@ -110257,9 +110271,7 @@ ${lanes.join("\n")}
 						case 4: return "property";
 						case 5: return isFunctionExpression(right) ? "method" : "property";
 						case 6: return "local class";
-						default:
-							assertType(kind);
-							return "";
+						default: return "";
 					}
 				case 80: return isImportClause(node.parent) ? "alias" : "";
 				case 277:
@@ -118774,7 +118786,6 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				if (isBlock(body)) return body.statements;
 			} else if (isModuleBlock(scope) || isSourceFile(scope)) return scope.statements;
 			else if (isClassLike(scope)) return scope.members;
-			else assertType(scope);
 			return emptyArray;
 		}
 		function getNodeToInsertFunctionBefore(minPos, scope) {
@@ -122235,7 +122246,8 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				const { sourceFile } = context;
 				const fixedDeclarations = /* @__PURE__ */ new Set();
 				return codeFixAll(context, errorCodes2, (t, diagnostic) => {
-					const decl = getFixableErrorSpanDeclaration(sourceFile, diagnostic.relatedInformation && find(diagnostic.relatedInformation, (r) => r.code === Diagnostics.Did_you_mean_to_mark_this_function_as_async.code));
+					const span = diagnostic.relatedInformation && find(diagnostic.relatedInformation, (r) => r.code === Diagnostics.Did_you_mean_to_mark_this_function_as_async.code);
+					const decl = getFixableErrorSpanDeclaration(sourceFile, span);
 					if (!decl) return;
 					const trackChanges = (cb) => (cb(t), []);
 					return getFix(context, decl, trackChanges, fixedDeclarations);
@@ -127074,7 +127086,8 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					const info = getInfo15(err.file, err.start, checker);
 					if (!info) return;
 					const { typeNode, type } = info;
-					doChange29(changes, sourceFile, typeNode, typeNode.kind === 314 && fixId55 === fixIdNullable ? checker.getNullableType(type, 32768) : type, checker);
+					const fixedType = typeNode.kind === 314 && fixId55 === fixIdNullable ? checker.getNullableType(type, 32768) : type;
+					doChange29(changes, sourceFile, typeNode, fixedType, checker);
 				});
 			}
 		});
@@ -131427,15 +131440,18 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 								symbol: firstAccessibleSymbol,
 								targetFlags: skipAlias(firstAccessibleSymbol, typeChecker).flags
 							}], position, isValidTypeOnlyAliasUseSite(location)) || {};
-							if (moduleSpecifier) symbolToOriginInfoMap[index] = {
-								kind: getNullableSymbolOriginInfoKind(6),
-								moduleSymbol,
-								isDefaultExport: false,
-								symbolName: firstAccessibleSymbol.name,
-								exportName: firstAccessibleSymbol.name,
-								fileName,
-								moduleSpecifier
-							};
+							if (moduleSpecifier) {
+								const origin = {
+									kind: getNullableSymbolOriginInfoKind(6),
+									moduleSymbol,
+									isDefaultExport: false,
+									symbolName: firstAccessibleSymbol.name,
+									exportName: firstAccessibleSymbol.name,
+									fileName,
+									moduleSpecifier
+								};
+								symbolToOriginInfoMap[index] = origin;
+							}
 						}
 					} else if (preferences.includeCompletionsWithInsertText) {
 						if (firstAccessibleSymbolId && seenPropertySymbols.has(firstAccessibleSymbolId)) return;
@@ -131837,10 +131853,13 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 					symbols = concatenate(symbols, filterClassMembersList(baseSymbols, decl.members, classElementModifierFlags));
 					forEach(symbols, (symbol, index) => {
 						const declaration = symbol == null ? void 0 : symbol.valueDeclaration;
-						if (declaration && isClassElement(declaration) && declaration.name && isComputedPropertyName(declaration.name)) symbolToOriginInfoMap[index] = {
-							kind: 512,
-							symbolName: typeChecker.symbolToString(symbol)
-						};
+						if (declaration && isClassElement(declaration) && declaration.name && isComputedPropertyName(declaration.name)) {
+							const origin = {
+								kind: 512,
+								symbolName: typeChecker.symbolToString(symbol)
+							};
+							symbolToOriginInfoMap[index] = origin;
+						}
 					});
 				}
 				return 1;
@@ -136423,7 +136442,7 @@ ${newComment.split("\n").map((c) => ` * ${c}`).join("\n")}
 				};
 			}
 			return {
-				newText: openComment + closeComment,
+				newText: "/** */",
 				caretOffset: 3
 			};
 		}
@@ -138644,10 +138663,11 @@ ${content}
 				}
 			}
 			function writeTypeParametersOfSymbol(symbol2, enclosingDeclaration2) {
-				addRange(displayParts, mapToDisplayParts((writer) => {
+				const typeParameterParts = mapToDisplayParts((writer) => {
 					const params = typeChecker.symbolToTypeParameterDeclarations(symbol2, enclosingDeclaration2, symbolDisplayNodeBuilderFlags);
 					getPrinter().writeList(53776, params, getSourceFileOfNode(getParseTreeNode(enclosingDeclaration2)), writer);
-				}));
+				});
+				addRange(displayParts, typeParameterParts);
 			}
 		}
 		function getSymbolDisplayPartsDocumentationAndSymbolKind(typeChecker, symbol, sourceFile, enclosingDeclaration, location, semanticMeaning = getMeaningFromLocation(location), alias) {
@@ -139845,7 +139865,11 @@ ${options.prefix}` : "\n" : options.prefix
 				return this.nextNodeAllOnSameLine;
 			}
 			TokensAreOnSameLine() {
-				if (this.tokensAreOnSameLine === void 0) this.tokensAreOnSameLine = this.sourceFile.getLineAndCharacterOfPosition(this.currentTokenSpan.pos).line === this.sourceFile.getLineAndCharacterOfPosition(this.nextTokenSpan.pos).line;
+				if (this.tokensAreOnSameLine === void 0) {
+					const startLine = this.sourceFile.getLineAndCharacterOfPosition(this.currentTokenSpan.pos).line;
+					const endLine = this.sourceFile.getLineAndCharacterOfPosition(this.nextTokenSpan.pos).line;
+					this.tokensAreOnSameLine = startLine === endLine;
+				}
 				return this.tokensAreOnSameLine;
 			}
 			ContextNodeBlockIsOnOneLine() {
@@ -144591,12 +144615,13 @@ ${options.prefix}` : "\n" : options.prefix
 					if (this.installTypingHost.fileExists(combinePaths(directory, "package.json"))) return directory;
 				}) || projectRootPath;
 				if (cwd) this.installWorker(-1, [packageName], cwd, (success) => {
+					const message = success ? `Package ${packageName} installed.` : `There was an error installing ${packageName}.`;
 					const response = {
 						kind: ActionPackageInstalled,
 						projectName,
 						id,
 						success,
-						message: success ? `Package ${packageName} installed.` : `There was an error installing ${packageName}.`
+						message
 					};
 					this.sendResponse(response);
 				});
@@ -151225,7 +151250,7 @@ ${json}${newLine}`;
 				this.noGetErrOnBackgroundUpdate = opts.noGetErrOnBackgroundUpdate;
 				const { throttleWaitMilliseconds } = opts;
 				this.eventHandler = this.canUseEvents ? opts.eventHandler || ((event) => this.defaultEventHandler(event)) : void 0;
-				this.errorCheck = new MultistepOperation({
+				const multistepOperationHost = {
 					executeWithRequestId: (requestId, action, performanceData) => this.executeWithRequestId(requestId, action, performanceData),
 					getCurrentRequestId: () => this.currentRequestId,
 					getPerformanceData: () => this.performanceData,
@@ -151233,8 +151258,9 @@ ${json}${newLine}`;
 					logError: (err, cmd) => this.logError(err, cmd),
 					sendRequestCompletedEvent: (requestId, performanceData) => this.sendRequestCompletedEvent(requestId, performanceData),
 					isCancellationRequested: () => this.cancellationToken.isCancellationRequested()
-				});
-				this.projectService = new ProjectService2({
+				};
+				this.errorCheck = new MultistepOperation(multistepOperationHost);
+				const settings = {
 					host: this.host,
 					logger: this.logger,
 					cancellationToken: this.cancellationToken,
@@ -151252,7 +151278,8 @@ ${json}${newLine}`;
 					session: this,
 					canUseWatchEvents: opts.canUseWatchEvents,
 					incrementalVerifier: opts.incrementalVerifier
-				});
+				};
+				this.projectService = new ProjectService2(settings);
 				this.projectService.setPerformanceEventHandler(this.performanceEventHandler.bind(this));
 				this.gcTimer = new GcTimer(this.host, 7e3, this.logger);
 				switch (this.projectService.serverMode) {
@@ -153882,7 +153909,7 @@ ${e.message}`;
 					case ActionWatchTypingLocations:
 						this.projectService.watchTypingLocations(response);
 						break;
-					default: assertType(response);
+					default:
 				}
 			}
 			scheduleRequest(request) {
@@ -153999,6 +154026,2229 @@ ${e.message}`;
 				case 4: return console.log(s);
 			}
 		} };
+		0 && (module.exports = {
+			ANONYMOUS,
+			AccessFlags,
+			AssertionLevel,
+			AssignmentDeclarationKind,
+			AssignmentKind,
+			Associativity,
+			BreakpointResolver,
+			BuilderFileEmit,
+			BuilderProgramKind,
+			BuilderState,
+			CallHierarchy,
+			CharacterCodes,
+			CheckFlags,
+			CheckMode,
+			ClassificationType,
+			ClassificationTypeNames,
+			CommentDirectiveType,
+			Comparison,
+			CompletionInfoFlags,
+			CompletionTriggerKind,
+			Completions,
+			ContainerFlags,
+			ContextFlags,
+			Debug,
+			DiagnosticCategory,
+			Diagnostics,
+			DocumentHighlights,
+			ElementFlags,
+			EmitFlags,
+			EmitHint,
+			EmitOnly,
+			EndOfLineState,
+			ExitStatus,
+			ExportKind,
+			Extension,
+			ExternalEmitHelpers,
+			FileIncludeKind,
+			FilePreprocessingDiagnosticsKind,
+			FileSystemEntryKind,
+			FileWatcherEventKind,
+			FindAllReferences,
+			FlattenLevel,
+			FlowFlags,
+			ForegroundColorEscapeSequences,
+			FunctionFlags,
+			GeneratedIdentifierFlags,
+			GetLiteralTextFlags,
+			GoToDefinition,
+			HighlightSpanKind,
+			IdentifierNameMap,
+			ImportKind,
+			ImportsNotUsedAsValues,
+			IndentStyle,
+			IndexFlags,
+			IndexKind,
+			InferenceFlags,
+			InferencePriority,
+			InlayHintKind,
+			InlayHints,
+			InternalEmitFlags,
+			InternalNodeBuilderFlags,
+			InternalSymbolName,
+			IntersectionFlags,
+			InvalidatedProjectKind,
+			JSDocParsingMode,
+			JsDoc,
+			JsTyping,
+			JsxEmit,
+			JsxFlags,
+			JsxReferenceKind,
+			LanguageFeatureMinimumTarget,
+			LanguageServiceMode,
+			LanguageVariant,
+			LexicalEnvironmentFlags,
+			ListFormat,
+			LogLevel,
+			MapCode,
+			MemberOverrideStatus,
+			ModifierFlags,
+			ModuleDetectionKind,
+			ModuleInstanceState,
+			ModuleKind,
+			ModuleResolutionKind,
+			ModuleSpecifierEnding,
+			NavigateTo,
+			NavigationBar,
+			NewLineKind,
+			NodeBuilderFlags,
+			NodeCheckFlags,
+			NodeFactoryFlags,
+			NodeFlags,
+			NodeResolutionFeatures,
+			ObjectFlags,
+			OperationCanceledException,
+			OperatorPrecedence,
+			OrganizeImports,
+			OrganizeImportsMode,
+			OuterExpressionKinds,
+			OutliningElementsCollector,
+			OutliningSpanKind,
+			OutputFileType,
+			PackageJsonAutoImportPreference,
+			PackageJsonDependencyGroup,
+			PatternMatchKind,
+			PollingInterval,
+			PollingWatchKind,
+			PragmaKindFlags,
+			PredicateSemantics,
+			PrivateIdentifierKind,
+			ProcessLevel,
+			ProgramUpdateLevel,
+			QuotePreference,
+			RegularExpressionFlags,
+			RelationComparisonResult,
+			Rename,
+			ScriptElementKind,
+			ScriptElementKindModifier,
+			ScriptKind,
+			ScriptSnapshot,
+			ScriptTarget,
+			SemanticClassificationFormat,
+			SemanticMeaning,
+			SemicolonPreference,
+			SignatureCheckMode,
+			SignatureFlags,
+			SignatureHelp,
+			SignatureInfo,
+			SignatureKind,
+			SmartSelectionRange,
+			SnippetKind,
+			StatisticType,
+			StructureIsReused,
+			SymbolAccessibility,
+			SymbolDisplay,
+			SymbolDisplayPartKind,
+			SymbolFlags,
+			SymbolFormatFlags,
+			SyntaxKind,
+			Ternary,
+			ThrottledCancellationToken,
+			TokenClass,
+			TokenFlags,
+			TransformFlags,
+			TypeFacts,
+			TypeFlags,
+			TypeFormatFlags,
+			TypeMapKind,
+			TypePredicateKind,
+			TypeReferenceSerializationKind,
+			UnionReduction,
+			UpToDateStatusType,
+			VarianceFlags,
+			Version,
+			VersionRange,
+			WatchDirectoryFlags,
+			WatchDirectoryKind,
+			WatchFileKind,
+			WatchLogLevel,
+			WatchType,
+			accessPrivateIdentifier,
+			addEmitFlags,
+			addEmitHelper,
+			addEmitHelpers,
+			addInternalEmitFlags,
+			addNodeFactoryPatcher,
+			addObjectAllocatorPatcher,
+			addRange,
+			addRelatedInfo,
+			addSyntheticLeadingComment,
+			addSyntheticTrailingComment,
+			addToSeen,
+			advancedAsyncSuperHelper,
+			affectsDeclarationPathOptionDeclarations,
+			affectsEmitOptionDeclarations,
+			allKeysStartWithDot,
+			altDirectorySeparator,
+			and,
+			append,
+			appendIfUnique,
+			arrayFrom,
+			arrayIsEqualTo,
+			arrayIsHomogeneous,
+			arrayOf,
+			arrayReverseIterator,
+			arrayToMap,
+			arrayToMultiMap,
+			arrayToNumericMap,
+			assertType,
+			assign,
+			asyncSuperHelper,
+			attachFileToDiagnostics,
+			base64decode,
+			base64encode,
+			binarySearch,
+			binarySearchKey,
+			bindSourceFile,
+			breakIntoCharacterSpans,
+			breakIntoWordSpans,
+			buildLinkParts,
+			buildOpts,
+			buildOverload,
+			bundlerModuleNameResolver,
+			canBeConvertedToAsync,
+			canHaveDecorators,
+			canHaveExportModifier,
+			canHaveFlowNode,
+			canHaveIllegalDecorators,
+			canHaveIllegalModifiers,
+			canHaveIllegalType,
+			canHaveIllegalTypeParameters,
+			canHaveJSDoc,
+			canHaveLocals,
+			canHaveModifiers,
+			canHaveModuleSpecifier,
+			canHaveSymbol,
+			canIncludeBindAndCheckDiagnostics,
+			canJsonReportNoInputFiles,
+			canProduceDiagnostics,
+			canUsePropertyAccess,
+			canWatchAffectingLocation,
+			canWatchAtTypes,
+			canWatchDirectoryOrFile,
+			cartesianProduct,
+			cast,
+			chainBundle,
+			chainDiagnosticMessages,
+			changeAnyExtension,
+			changeCompilerHostLikeToUseCache,
+			changeExtension,
+			changeFullExtension,
+			changesAffectModuleResolution,
+			changesAffectingProgramStructure,
+			characterCodeToRegularExpressionFlag,
+			childIsDecorated,
+			classElementOrClassElementParameterIsDecorated,
+			classHasClassThisAssignment,
+			classHasDeclaredOrExplicitlyAssignedName,
+			classHasExplicitlyAssignedName,
+			classOrConstructorParameterIsDecorated,
+			classicNameResolver,
+			classifier,
+			cleanExtendedConfigCache,
+			clear,
+			clearMap,
+			clearSharedExtendedConfigFileWatcher,
+			climbPastPropertyAccess,
+			clone,
+			cloneCompilerOptions,
+			closeFileWatcher,
+			closeFileWatcherOf,
+			codefix,
+			collapseTextChangeRangesAcrossMultipleVersions,
+			collectExternalModuleInfo,
+			combine,
+			combinePaths,
+			commandLineOptionOfCustomType,
+			commentPragmas,
+			commonOptionsWithBuild,
+			compact,
+			compareBooleans,
+			compareDataObjects,
+			compareDiagnostics,
+			compareEmitHelpers,
+			compareNumberOfDirectorySeparators,
+			comparePaths,
+			comparePathsCaseInsensitive,
+			comparePathsCaseSensitive,
+			comparePatternKeys,
+			compareProperties,
+			compareStringsCaseInsensitive,
+			compareStringsCaseInsensitiveEslintCompatible,
+			compareStringsCaseSensitive,
+			compareStringsCaseSensitiveUI,
+			compareTextSpans,
+			compareValues,
+			compilerOptionsAffectDeclarationPath,
+			compilerOptionsAffectEmit,
+			compilerOptionsAffectSemanticDiagnostics,
+			compilerOptionsDidYouMeanDiagnostics,
+			compilerOptionsIndicateEsModules,
+			computeCommonSourceDirectoryOfFilenames,
+			computeLineAndCharacterOfPosition,
+			computeLineOfPosition,
+			computeLineStarts,
+			computePositionOfLineAndCharacter,
+			computeSignatureWithDiagnostics,
+			computeSuggestionDiagnostics,
+			computedOptions,
+			concatenate,
+			concatenateDiagnosticMessageChains,
+			consumesNodeCoreModules,
+			contains,
+			containsIgnoredPath,
+			containsObjectRestOrSpread,
+			containsParseError,
+			containsPath,
+			convertCompilerOptionsForTelemetry,
+			convertCompilerOptionsFromJson,
+			convertJsonOption,
+			convertToBase64,
+			convertToJson,
+			convertToObject,
+			convertToOptionsWithAbsolutePaths,
+			convertToRelativePath,
+			convertToTSConfig,
+			convertTypeAcquisitionFromJson,
+			copyComments,
+			copyEntries,
+			copyLeadingComments,
+			copyProperties,
+			copyTrailingAsLeadingComments,
+			copyTrailingComments,
+			couldStartTrivia,
+			countWhere,
+			createAbstractBuilder,
+			createAccessorPropertyBackingField,
+			createAccessorPropertyGetRedirector,
+			createAccessorPropertySetRedirector,
+			createBaseNodeFactory,
+			createBinaryExpressionTrampoline,
+			createBuilderProgram,
+			createBuilderProgramUsingIncrementalBuildInfo,
+			createBuilderStatusReporter,
+			createCacheableExportInfoMap,
+			createCachedDirectoryStructureHost,
+			createClassifier,
+			createCommentDirectivesMap,
+			createCompilerDiagnostic,
+			createCompilerDiagnosticForInvalidCustomType,
+			createCompilerDiagnosticFromMessageChain,
+			createCompilerHost,
+			createCompilerHostFromProgramHost,
+			createCompilerHostWorker,
+			createDetachedDiagnostic,
+			createDiagnosticCollection,
+			createDiagnosticForFileFromMessageChain,
+			createDiagnosticForNode,
+			createDiagnosticForNodeArray,
+			createDiagnosticForNodeArrayFromMessageChain,
+			createDiagnosticForNodeFromMessageChain,
+			createDiagnosticForNodeInSourceFile,
+			createDiagnosticForRange,
+			createDiagnosticMessageChainFromDiagnostic,
+			createDiagnosticReporter,
+			createDocumentPositionMapper,
+			createDocumentRegistry,
+			createDocumentRegistryInternal,
+			createEmitAndSemanticDiagnosticsBuilderProgram,
+			createEmitHelperFactory,
+			createEmptyExports,
+			createEvaluator,
+			createExpressionForJsxElement,
+			createExpressionForJsxFragment,
+			createExpressionForObjectLiteralElementLike,
+			createExpressionForPropertyName,
+			createExpressionFromEntityName,
+			createExternalHelpersImportDeclarationIfNeeded,
+			createFileDiagnostic,
+			createFileDiagnosticFromMessageChain,
+			createFlowNode,
+			createForOfBindingStatement,
+			createFutureSourceFile,
+			createGetCanonicalFileName,
+			createGetIsolatedDeclarationErrors,
+			createGetSourceFile,
+			createGetSymbolAccessibilityDiagnosticForNode,
+			createGetSymbolAccessibilityDiagnosticForNodeName,
+			createGetSymbolWalker,
+			createIncrementalCompilerHost,
+			createIncrementalProgram,
+			createJsxFactoryExpression,
+			createLanguageService,
+			createLanguageServiceSourceFile,
+			createMemberAccessForPropertyName,
+			createModeAwareCache,
+			createModeAwareCacheKey,
+			createModeMismatchDetails,
+			createModuleNotFoundChain,
+			createModuleResolutionCache,
+			createModuleResolutionLoader,
+			createModuleResolutionLoaderUsingGlobalCache,
+			createModuleSpecifierResolutionHost,
+			createMultiMap,
+			createNameResolver,
+			createNodeConverters,
+			createNodeFactory,
+			createOptionNameMap,
+			createOverload,
+			createPackageJsonImportFilter,
+			createPackageJsonInfo,
+			createParenthesizerRules,
+			createPatternMatcher,
+			createPrinter,
+			createPrinterWithDefaults,
+			createPrinterWithRemoveComments,
+			createPrinterWithRemoveCommentsNeverAsciiEscape,
+			createPrinterWithRemoveCommentsOmitTrailingSemicolon,
+			createProgram,
+			createProgramHost,
+			createPropertyNameNodeForIdentifierOrLiteral,
+			createQueue,
+			createRange,
+			createRedirectedBuilderProgram,
+			createResolutionCache,
+			createRuntimeTypeSerializer,
+			createScanner,
+			createSemanticDiagnosticsBuilderProgram,
+			createSet,
+			createSolutionBuilder,
+			createSolutionBuilderHost,
+			createSolutionBuilderWithWatch,
+			createSolutionBuilderWithWatchHost,
+			createSortedArray,
+			createSourceFile,
+			createSourceMapGenerator,
+			createSourceMapSource,
+			createSuperAccessVariableStatement,
+			createSymbolTable,
+			createSymlinkCache,
+			createSyntacticTypeNodeBuilder,
+			createSystemWatchFunctions,
+			createTextChange,
+			createTextChangeFromStartLength,
+			createTextChangeRange,
+			createTextRangeFromNode,
+			createTextRangeFromSpan,
+			createTextSpan,
+			createTextSpanFromBounds,
+			createTextSpanFromNode,
+			createTextSpanFromRange,
+			createTextSpanFromStringLiteralLikeContent,
+			createTextWriter,
+			createTokenRange,
+			createTypeChecker,
+			createTypeReferenceDirectiveResolutionCache,
+			createTypeReferenceResolutionLoader,
+			createWatchCompilerHost,
+			createWatchCompilerHostOfConfigFile,
+			createWatchCompilerHostOfFilesAndCompilerOptions,
+			createWatchFactory,
+			createWatchHost,
+			createWatchProgram,
+			createWatchStatusReporter,
+			createWriteFileMeasuringIO,
+			declarationNameToString,
+			decodeMappings,
+			decodedTextSpanIntersectsWith,
+			deduplicate,
+			defaultInitCompilerOptions,
+			defaultMaximumTruncationLength,
+			diagnosticCategoryName,
+			diagnosticToString,
+			diagnosticsEqualityComparer,
+			directoryProbablyExists,
+			directorySeparator,
+			displayPart,
+			displayPartsToString,
+			disposeEmitNodes,
+			documentSpansEqual,
+			dumpTracingLegend,
+			elementAt,
+			elideNodes,
+			emitDetachedComments,
+			emitFiles,
+			emitFilesAndReportErrors,
+			emitFilesAndReportErrorsAndGetExitStatus,
+			emitModuleKindIsNonNodeESM,
+			emitNewLineBeforeLeadingCommentOfPosition,
+			emitResolverSkipsTypeChecking,
+			emitSkippedWithNoDiagnostics,
+			emptyArray,
+			emptyFileSystemEntries,
+			emptyMap,
+			emptyOptions,
+			endsWith,
+			ensurePathIsNonModuleName,
+			ensureScriptKind,
+			ensureTrailingDirectorySeparator,
+			entityNameToString,
+			enumerateInsertsAndDeletes,
+			equalOwnProperties,
+			equateStringsCaseInsensitive,
+			equateStringsCaseSensitive,
+			equateValues,
+			escapeJsxAttributeString,
+			escapeLeadingUnderscores,
+			escapeNonAsciiString,
+			escapeSnippetText,
+			escapeString,
+			escapeTemplateSubstitution,
+			evaluatorResult,
+			every,
+			executeCommandLine,
+			expandPreOrPostfixIncrementOrDecrementExpression,
+			explainFiles,
+			explainIfFileIsRedirectAndImpliedFormat,
+			exportAssignmentIsAlias,
+			expressionResultIsUnused,
+			extend,
+			extensionFromPath,
+			extensionIsTS,
+			extensionsNotSupportingExtensionlessResolution,
+			externalHelpersModuleNameText,
+			factory,
+			fileContainsPackageImport,
+			fileExtensionIs,
+			fileExtensionIsOneOf,
+			fileIncludeReasonToDiagnostics,
+			fileShouldUseJavaScriptRequire,
+			filter,
+			filterMutate,
+			filterSemanticDiagnostics,
+			find,
+			findAncestor,
+			findBestPatternMatch,
+			findChildOfKind,
+			findComputedPropertyNameCacheAssignment,
+			findConfigFile,
+			findConstructorDeclaration,
+			findContainingList,
+			findDiagnosticForNode,
+			findFirstNonJsxWhitespaceToken,
+			findIndex,
+			findLast,
+			findLastIndex,
+			findListItemInfo,
+			findModifier,
+			findNextToken,
+			findPackageJson,
+			findPackageJsons,
+			findPrecedingMatchingToken,
+			findPrecedingToken,
+			findSuperStatementIndexPath,
+			findTokenOnLeftOfPosition,
+			findUseStrictPrologue,
+			first,
+			firstDefined,
+			firstDefinedIterator,
+			firstIterator,
+			firstOrOnly,
+			firstOrUndefined,
+			firstOrUndefinedIterator,
+			fixupCompilerOptions,
+			flatMap,
+			flatMapIterator,
+			flatMapToMutable,
+			flatten,
+			flattenCommaList,
+			flattenDestructuringAssignment,
+			flattenDestructuringBinding,
+			flattenDiagnosticMessageText,
+			forEach,
+			forEachAncestor,
+			forEachAncestorDirectory,
+			forEachChild,
+			forEachChildRecursively,
+			forEachEmittedFile,
+			forEachEnclosingBlockScopeContainer,
+			forEachEntry,
+			forEachExternalModuleToImportFrom,
+			forEachImportClauseDeclaration,
+			forEachKey,
+			forEachLeadingCommentRange,
+			forEachNameInAccessChainWalkingLeft,
+			forEachNameOfDefaultExport,
+			forEachPropertyAssignment,
+			forEachResolvedProjectReference,
+			forEachReturnStatement,
+			forEachRight,
+			forEachTrailingCommentRange,
+			forEachTsConfigPropArray,
+			forEachUnique,
+			forEachYieldExpression,
+			formatColorAndReset,
+			formatDiagnostic,
+			formatDiagnostics,
+			formatDiagnosticsWithColorAndContext,
+			formatGeneratedName,
+			formatGeneratedNamePart,
+			formatLocation,
+			formatMessage,
+			formatStringFromArgs,
+			formatting,
+			generateDjb2Hash,
+			generateTSConfig,
+			getAdjustedReferenceLocation,
+			getAdjustedRenameLocation,
+			getAliasDeclarationFromName,
+			getAllAccessorDeclarations,
+			getAllDecoratorsOfClass,
+			getAllDecoratorsOfClassElement,
+			getAllJSDocTags,
+			getAllJSDocTagsOfKind,
+			getAllKeys,
+			getAllProjectOutputs,
+			getAllSuperTypeNodes,
+			getAllowJSCompilerOption,
+			getAllowSyntheticDefaultImports,
+			getAncestor,
+			getAnyExtensionFromPath,
+			getAreDeclarationMapsEnabled,
+			getAssignedExpandoInitializer,
+			getAssignedName,
+			getAssignmentDeclarationKind,
+			getAssignmentDeclarationPropertyAccessKind,
+			getAssignmentTargetKind,
+			getAutomaticTypeDirectiveNames,
+			getBaseFileName,
+			getBinaryOperatorPrecedence,
+			getBuildInfo,
+			getBuildInfoFileVersionMap,
+			getBuildInfoText,
+			getBuildOrderFromAnyBuildOrder,
+			getBuilderCreationParameters,
+			getBuilderFileEmit,
+			getCanonicalDiagnostic,
+			getCheckFlags,
+			getClassExtendsHeritageElement,
+			getClassLikeDeclarationOfSymbol,
+			getCombinedLocalAndExportSymbolFlags,
+			getCombinedModifierFlags,
+			getCombinedNodeFlags,
+			getCombinedNodeFlagsAlwaysIncludeJSDoc,
+			getCommentRange,
+			getCommonSourceDirectory,
+			getCommonSourceDirectoryOfConfig,
+			getCompilerOptionValue,
+			getCompilerOptionsDiffValue,
+			getConditions,
+			getConfigFileParsingDiagnostics,
+			getConstantValue,
+			getContainerFlags,
+			getContainerNode,
+			getContainingClass,
+			getContainingClassExcludingClassDecorators,
+			getContainingClassStaticBlock,
+			getContainingFunction,
+			getContainingFunctionDeclaration,
+			getContainingFunctionOrClassStaticBlock,
+			getContainingNodeArray,
+			getContainingObjectLiteralElement,
+			getContextualTypeFromParent,
+			getContextualTypeFromParentOrAncestorTypeNode,
+			getDeclarationDiagnostics,
+			getDeclarationEmitExtensionForPath,
+			getDeclarationEmitOutputFilePath,
+			getDeclarationEmitOutputFilePathWorker,
+			getDeclarationFileExtension,
+			getDeclarationFromName,
+			getDeclarationModifierFlagsFromSymbol,
+			getDeclarationOfKind,
+			getDeclarationsOfKind,
+			getDeclaredExpandoInitializer,
+			getDecorators,
+			getDefaultCompilerOptions,
+			getDefaultFormatCodeSettings,
+			getDefaultLibFileName,
+			getDefaultLibFilePath,
+			getDefaultLikeExportInfo,
+			getDefaultLikeExportNameFromDeclaration,
+			getDefaultResolutionModeForFileWorker,
+			getDiagnosticText,
+			getDiagnosticsWithinSpan,
+			getDirectoryPath,
+			getDirectoryToWatchFailedLookupLocation,
+			getDirectoryToWatchFailedLookupLocationFromTypeRoot,
+			getDocumentPositionMapper,
+			getDocumentSpansEqualityComparer,
+			getESModuleInterop,
+			getEditsForFileRename,
+			getEffectiveBaseTypeNode,
+			getEffectiveConstraintOfTypeParameter,
+			getEffectiveContainerForJSDocTemplateTag,
+			getEffectiveImplementsTypeNodes,
+			getEffectiveInitializer,
+			getEffectiveJSDocHost,
+			getEffectiveModifierFlags,
+			getEffectiveModifierFlagsAlwaysIncludeJSDoc,
+			getEffectiveModifierFlagsNoCache,
+			getEffectiveReturnTypeNode,
+			getEffectiveSetAccessorTypeAnnotationNode,
+			getEffectiveTypeAnnotationNode,
+			getEffectiveTypeParameterDeclarations,
+			getEffectiveTypeRoots,
+			getElementOrPropertyAccessArgumentExpressionOrName,
+			getElementOrPropertyAccessName,
+			getElementsOfBindingOrAssignmentPattern,
+			getEmitDeclarations,
+			getEmitFlags,
+			getEmitHelpers,
+			getEmitModuleDetectionKind,
+			getEmitModuleFormatOfFileWorker,
+			getEmitModuleKind,
+			getEmitModuleResolutionKind,
+			getEmitScriptTarget,
+			getEmitStandardClassFields,
+			getEnclosingBlockScopeContainer,
+			getEnclosingContainer,
+			getEncodedSemanticClassifications,
+			getEncodedSyntacticClassifications,
+			getEndLinePosition,
+			getEntityNameFromTypeNode,
+			getEntrypointsFromPackageJsonInfo,
+			getErrorCountForSummary,
+			getErrorSpanForNode,
+			getErrorSummaryText,
+			getEscapedTextOfIdentifierOrLiteral,
+			getEscapedTextOfJsxAttributeName,
+			getEscapedTextOfJsxNamespacedName,
+			getExpandoInitializer,
+			getExportAssignmentExpression,
+			getExportInfoMap,
+			getExportNeedsImportStarHelper,
+			getExpressionAssociativity,
+			getExpressionPrecedence,
+			getExternalHelpersModuleName,
+			getExternalModuleImportEqualsDeclarationExpression,
+			getExternalModuleName,
+			getExternalModuleNameFromDeclaration,
+			getExternalModuleNameFromPath,
+			getExternalModuleNameLiteral,
+			getExternalModuleRequireArgument,
+			getFallbackOptions,
+			getFileEmitOutput,
+			getFileMatcherPatterns,
+			getFileNamesFromConfigSpecs,
+			getFileWatcherEventKind,
+			getFilesInErrorForSummary,
+			getFirstConstructorWithBody,
+			getFirstIdentifier,
+			getFirstNonSpaceCharacterPosition,
+			getFirstProjectOutput,
+			getFixableErrorSpanExpression,
+			getFormatCodeSettingsForWriting,
+			getFullWidth,
+			getFunctionFlags,
+			getHeritageClause,
+			getHostSignatureFromJSDoc,
+			getIdentifierAutoGenerate,
+			getIdentifierGeneratedImportReference,
+			getIdentifierTypeArguments,
+			getImmediatelyInvokedFunctionExpression,
+			getImpliedNodeFormatForEmitWorker,
+			getImpliedNodeFormatForFile,
+			getImpliedNodeFormatForFileWorker,
+			getImportNeedsImportDefaultHelper,
+			getImportNeedsImportStarHelper,
+			getIndentString,
+			getInferredLibraryNameResolveFrom,
+			getInitializedVariables,
+			getInitializerOfBinaryExpression,
+			getInitializerOfBindingOrAssignmentElement,
+			getInterfaceBaseTypeNodes,
+			getInternalEmitFlags,
+			getInvokedExpression,
+			getIsFileExcluded,
+			getIsolatedModules,
+			getJSDocAugmentsTag,
+			getJSDocClassTag,
+			getJSDocCommentRanges,
+			getJSDocCommentsAndTags,
+			getJSDocDeprecatedTag,
+			getJSDocDeprecatedTagNoCache,
+			getJSDocEnumTag,
+			getJSDocHost,
+			getJSDocImplementsTags,
+			getJSDocOverloadTags,
+			getJSDocOverrideTagNoCache,
+			getJSDocParameterTags,
+			getJSDocParameterTagsNoCache,
+			getJSDocPrivateTag,
+			getJSDocPrivateTagNoCache,
+			getJSDocProtectedTag,
+			getJSDocProtectedTagNoCache,
+			getJSDocPublicTag,
+			getJSDocPublicTagNoCache,
+			getJSDocReadonlyTag,
+			getJSDocReadonlyTagNoCache,
+			getJSDocReturnTag,
+			getJSDocReturnType,
+			getJSDocRoot,
+			getJSDocSatisfiesExpressionType,
+			getJSDocSatisfiesTag,
+			getJSDocTags,
+			getJSDocTemplateTag,
+			getJSDocThisTag,
+			getJSDocType,
+			getJSDocTypeAliasName,
+			getJSDocTypeAssertionType,
+			getJSDocTypeParameterDeclarations,
+			getJSDocTypeParameterTags,
+			getJSDocTypeParameterTagsNoCache,
+			getJSDocTypeTag,
+			getJSXImplicitImportBase,
+			getJSXRuntimeImport,
+			getJSXTransformEnabled,
+			getKeyForCompilerOptions,
+			getLanguageVariant,
+			getLastChild,
+			getLeadingCommentRanges,
+			getLeadingCommentRangesOfNode,
+			getLeftmostAccessExpression,
+			getLeftmostExpression,
+			getLibraryNameFromLibFileName,
+			getLineAndCharacterOfPosition,
+			getLineInfo,
+			getLineOfLocalPosition,
+			getLineStartPositionForPosition,
+			getLineStarts,
+			getLinesBetweenPositionAndNextNonWhitespaceCharacter,
+			getLinesBetweenPositionAndPrecedingNonWhitespaceCharacter,
+			getLinesBetweenPositions,
+			getLinesBetweenRangeEndAndRangeStart,
+			getLinesBetweenRangeEndPositions,
+			getLiteralText,
+			getLocalNameForExternalImport,
+			getLocalSymbolForExportDefault,
+			getLocaleSpecificMessage,
+			getLocaleTimeString,
+			getMappedContextSpan,
+			getMappedDocumentSpan,
+			getMappedLocation,
+			getMatchedFileSpec,
+			getMatchedIncludeSpec,
+			getMeaningFromDeclaration,
+			getMeaningFromLocation,
+			getMembersOfDeclaration,
+			getModeForFileReference,
+			getModeForResolutionAtIndex,
+			getModeForUsageLocation,
+			getModifiedTime,
+			getModifiers,
+			getModuleInstanceState,
+			getModuleNameStringLiteralAt,
+			getModuleSpecifierEndingPreference,
+			getModuleSpecifierResolverHost,
+			getNameForExportedSymbol,
+			getNameFromImportAttribute,
+			getNameFromIndexInfo,
+			getNameFromPropertyName,
+			getNameOfAccessExpression,
+			getNameOfCompilerOptionValue,
+			getNameOfDeclaration,
+			getNameOfExpando,
+			getNameOfJSDocTypedef,
+			getNameOfScriptTarget,
+			getNameOrArgument,
+			getNameTable,
+			getNamespaceDeclarationNode,
+			getNewLineCharacter,
+			getNewLineKind,
+			getNewLineOrDefaultFromHost,
+			getNewTargetContainer,
+			getNextJSDocCommentLocation,
+			getNodeChildren,
+			getNodeForGeneratedName,
+			getNodeId,
+			getNodeKind,
+			getNodeModifiers,
+			getNodeModulePathParts,
+			getNonAssignedNameOfDeclaration,
+			getNonAssignmentOperatorForCompoundAssignment,
+			getNonAugmentationDeclaration,
+			getNonDecoratorTokenPosOfNode,
+			getNonIncrementalBuildInfoRoots,
+			getNonModifierTokenPosOfNode,
+			getNormalizedAbsolutePath,
+			getNormalizedAbsolutePathWithoutRoot,
+			getNormalizedPathComponents,
+			getObjectFlags,
+			getOperatorAssociativity,
+			getOperatorPrecedence,
+			getOptionFromName,
+			getOptionsForLibraryResolution,
+			getOptionsNameMap,
+			getOrCreateEmitNode,
+			getOrUpdate,
+			getOriginalNode,
+			getOriginalNodeId,
+			getOutputDeclarationFileName,
+			getOutputDeclarationFileNameWorker,
+			getOutputExtension,
+			getOutputFileNames,
+			getOutputJSFileNameWorker,
+			getOutputPathsFor,
+			getOwnEmitOutputFilePath,
+			getOwnKeys,
+			getOwnValues,
+			getPackageJsonTypesVersionsPaths,
+			getPackageNameFromTypesPackageName,
+			getPackageScopeForPath,
+			getParameterSymbolFromJSDoc,
+			getParentNodeInSpan,
+			getParseTreeNode,
+			getParsedCommandLineOfConfigFile,
+			getPathComponents,
+			getPathFromPathComponents,
+			getPathUpdater,
+			getPathsBasePath,
+			getPatternFromSpec,
+			getPendingEmitKindWithSeen,
+			getPositionOfLineAndCharacter,
+			getPossibleGenericSignatures,
+			getPossibleOriginalInputExtensionForExtension,
+			getPossibleTypeArgumentsInfo,
+			getPreEmitDiagnostics,
+			getPrecedingNonSpaceCharacterPosition,
+			getPrivateIdentifier,
+			getProperties,
+			getProperty,
+			getPropertyArrayElementValue,
+			getPropertyAssignmentAliasLikeExpression,
+			getPropertyNameForPropertyNameNode,
+			getPropertyNameFromType,
+			getPropertyNameOfBindingOrAssignmentElement,
+			getPropertySymbolFromBindingElement,
+			getPropertySymbolsFromContextualType,
+			getQuoteFromPreference,
+			getQuotePreference,
+			getRangesWhere,
+			getRefactorContextSpan,
+			getReferencedFileLocation,
+			getRegexFromPattern,
+			getRegularExpressionForWildcard,
+			getRegularExpressionsForWildcards,
+			getRelativePathFromDirectory,
+			getRelativePathFromFile,
+			getRelativePathToDirectoryOrUrl,
+			getRenameLocation,
+			getReplacementSpanForContextToken,
+			getResolutionDiagnostic,
+			getResolutionModeOverride,
+			getResolveJsonModule,
+			getResolvePackageJsonExports,
+			getResolvePackageJsonImports,
+			getResolvedExternalModuleName,
+			getResolvedModuleFromResolution,
+			getResolvedTypeReferenceDirectiveFromResolution,
+			getRestIndicatorOfBindingOrAssignmentElement,
+			getRestParameterElementType,
+			getRightMostAssignedExpression,
+			getRootDeclaration,
+			getRootDirectoryOfResolutionCache,
+			getRootLength,
+			getScriptKind,
+			getScriptKindFromFileName,
+			getScriptTargetFeatures,
+			getSelectedEffectiveModifierFlags,
+			getSelectedSyntacticModifierFlags,
+			getSemanticClassifications,
+			getSemanticJsxChildren,
+			getSetAccessorTypeAnnotationNode,
+			getSetAccessorValueParameter,
+			getSetExternalModuleIndicator,
+			getShebang,
+			getSingleVariableOfVariableStatement,
+			getSnapshotText,
+			getSnippetElement,
+			getSourceFileOfModule,
+			getSourceFileOfNode,
+			getSourceFilePathInNewDir,
+			getSourceFileVersionAsHashFromText,
+			getSourceFilesToEmit,
+			getSourceMapRange,
+			getSourceMapper,
+			getSourceTextOfNodeFromSourceFile,
+			getSpanOfTokenAtPosition,
+			getSpellingSuggestion,
+			getStartPositionOfLine,
+			getStartPositionOfRange,
+			getStartsOnNewLine,
+			getStaticPropertiesAndClassStaticBlock,
+			getStrictOptionValue,
+			getStringComparer,
+			getSubPatternFromSpec,
+			getSuperCallFromStatement,
+			getSuperContainer,
+			getSupportedCodeFixes,
+			getSupportedExtensions,
+			getSupportedExtensionsWithJsonIfResolveJsonModule,
+			getSwitchedType,
+			getSymbolId,
+			getSymbolNameForPrivateIdentifier,
+			getSymbolTarget,
+			getSyntacticClassifications,
+			getSyntacticModifierFlags,
+			getSyntacticModifierFlagsNoCache,
+			getSynthesizedDeepClone,
+			getSynthesizedDeepCloneWithReplacements,
+			getSynthesizedDeepClones,
+			getSynthesizedDeepClonesWithReplacements,
+			getSyntheticLeadingComments,
+			getSyntheticTrailingComments,
+			getTargetLabel,
+			getTargetOfBindingOrAssignmentElement,
+			getTemporaryModuleResolutionState,
+			getTextOfConstantValue,
+			getTextOfIdentifierOrLiteral,
+			getTextOfJSDocComment,
+			getTextOfJsxAttributeName,
+			getTextOfJsxNamespacedName,
+			getTextOfNode,
+			getTextOfNodeFromSourceText,
+			getTextOfPropertyName,
+			getThisContainer,
+			getThisParameter,
+			getTokenAtPosition,
+			getTokenPosOfNode,
+			getTokenSourceMapRange,
+			getTouchingPropertyName,
+			getTouchingToken,
+			getTrailingCommentRanges,
+			getTrailingSemicolonDeferringWriter,
+			getTransformers,
+			getTsBuildInfoEmitOutputFilePath,
+			getTsConfigObjectLiteralExpression,
+			getTsConfigPropArrayElementValue,
+			getTypeAnnotationNode,
+			getTypeArgumentOrTypeParameterList,
+			getTypeKeywordOfTypeOnlyImport,
+			getTypeNode,
+			getTypeNodeIfAccessible,
+			getTypeParameterFromJsDoc,
+			getTypeParameterOwner,
+			getTypesPackageName,
+			getUILocale,
+			getUniqueName,
+			getUniqueSymbolId,
+			getUseDefineForClassFields,
+			getWatchErrorSummaryDiagnosticMessage,
+			getWatchFactory,
+			group,
+			groupBy,
+			guessIndentation,
+			handleNoEmitOptions,
+			handleWatchOptionsConfigDirTemplateSubstitution,
+			hasAbstractModifier,
+			hasAccessorModifier,
+			hasAmbientModifier,
+			hasChangesInResolutions,
+			hasContextSensitiveParameters,
+			hasDecorators,
+			hasDocComment,
+			hasDynamicName,
+			hasEffectiveModifier,
+			hasEffectiveModifiers,
+			hasEffectiveReadonlyModifier,
+			hasExtension,
+			hasImplementationTSFileExtension,
+			hasIndexSignature,
+			hasInferredType,
+			hasInitializer,
+			hasInvalidEscape,
+			hasJSDocNodes,
+			hasJSDocParameterTags,
+			hasJSFileExtension,
+			hasJsonModuleEmitEnabled,
+			hasOnlyExpressionInitializer,
+			hasOverrideModifier,
+			hasPossibleExternalModuleReference,
+			hasProperty,
+			hasPropertyAccessExpressionWithName,
+			hasQuestionToken,
+			hasRecordedExternalHelpers,
+			hasResolutionModeOverride,
+			hasRestParameter,
+			hasScopeMarker,
+			hasStaticModifier,
+			hasSyntacticModifier,
+			hasSyntacticModifiers,
+			hasTSFileExtension,
+			hasTabstop,
+			hasTrailingDirectorySeparator,
+			hasType,
+			hasTypeArguments,
+			hasZeroOrOneAsteriskCharacter,
+			hostGetCanonicalFileName,
+			hostUsesCaseSensitiveFileNames,
+			idText,
+			identifierIsThisKeyword,
+			identifierToKeywordKind,
+			identity,
+			identitySourceMapConsumer,
+			ignoreSourceNewlines,
+			ignoredPaths,
+			importFromModuleSpecifier,
+			importSyntaxAffectsModuleResolution,
+			indexOfAnyCharCode,
+			indexOfNode,
+			indicesOf,
+			inferredTypesContainingFile,
+			injectClassNamedEvaluationHelperBlockIfMissing,
+			injectClassThisAssignmentIfMissing,
+			insertImports,
+			insertSorted,
+			insertStatementAfterCustomPrologue,
+			insertStatementAfterStandardPrologue,
+			insertStatementsAfterCustomPrologue,
+			insertStatementsAfterStandardPrologue,
+			intersperse,
+			intrinsicTagNameToString,
+			introducesArgumentsExoticObject,
+			inverseJsxOptionMap,
+			isAbstractConstructorSymbol,
+			isAbstractModifier,
+			isAccessExpression,
+			isAccessibilityModifier,
+			isAccessor,
+			isAccessorModifier,
+			isAliasableExpression,
+			isAmbientModule,
+			isAmbientPropertyDeclaration,
+			isAnyDirectorySeparator,
+			isAnyImportOrBareOrAccessedRequire,
+			isAnyImportOrReExport,
+			isAnyImportOrRequireStatement,
+			isAnyImportSyntax,
+			isAnySupportedFileExtension,
+			isApplicableVersionedTypesKey,
+			isArgumentExpressionOfElementAccess,
+			isArray,
+			isArrayBindingElement,
+			isArrayBindingOrAssignmentElement,
+			isArrayBindingOrAssignmentPattern,
+			isArrayBindingPattern,
+			isArrayLiteralExpression,
+			isArrayLiteralOrObjectLiteralDestructuringPattern,
+			isArrayTypeNode,
+			isArrowFunction,
+			isAsExpression,
+			isAssertClause,
+			isAssertEntry,
+			isAssertionExpression,
+			isAssertsKeyword,
+			isAssignmentDeclaration,
+			isAssignmentExpression,
+			isAssignmentOperator,
+			isAssignmentPattern,
+			isAssignmentTarget,
+			isAsteriskToken,
+			isAsyncFunction,
+			isAsyncModifier,
+			isAutoAccessorPropertyDeclaration,
+			isAwaitExpression,
+			isAwaitKeyword,
+			isBigIntLiteral,
+			isBinaryExpression,
+			isBinaryLogicalOperator,
+			isBinaryOperatorToken,
+			isBindableObjectDefinePropertyCall,
+			isBindableStaticAccessExpression,
+			isBindableStaticElementAccessExpression,
+			isBindableStaticNameExpression,
+			isBindingElement,
+			isBindingElementOfBareOrAccessedRequire,
+			isBindingName,
+			isBindingOrAssignmentElement,
+			isBindingOrAssignmentPattern,
+			isBindingPattern,
+			isBlock,
+			isBlockLike,
+			isBlockOrCatchScoped,
+			isBlockScope,
+			isBlockScopedContainerTopLevel,
+			isBooleanLiteral,
+			isBreakOrContinueStatement,
+			isBreakStatement,
+			isBuild,
+			isBuildInfoFile,
+			isBuilderProgram,
+			isBundle,
+			isCallChain,
+			isCallExpression,
+			isCallExpressionTarget,
+			isCallLikeExpression,
+			isCallLikeOrFunctionLikeExpression,
+			isCallOrNewExpression,
+			isCallOrNewExpressionTarget,
+			isCallSignatureDeclaration,
+			isCallToHelper,
+			isCaseBlock,
+			isCaseClause,
+			isCaseKeyword,
+			isCaseOrDefaultClause,
+			isCatchClause,
+			isCatchClauseVariableDeclaration,
+			isCatchClauseVariableDeclarationOrBindingElement,
+			isCheckJsEnabledForFile,
+			isCircularBuildOrder,
+			isClassDeclaration,
+			isClassElement,
+			isClassExpression,
+			isClassInstanceProperty,
+			isClassLike,
+			isClassMemberModifier,
+			isClassNamedEvaluationHelperBlock,
+			isClassOrTypeElement,
+			isClassStaticBlockDeclaration,
+			isClassThisAssignmentBlock,
+			isColonToken,
+			isCommaExpression,
+			isCommaListExpression,
+			isCommaSequence,
+			isCommaToken,
+			isComment,
+			isCommonJsExportPropertyAssignment,
+			isCommonJsExportedExpression,
+			isCompoundAssignment,
+			isComputedNonLiteralName,
+			isComputedPropertyName,
+			isConciseBody,
+			isConditionalExpression,
+			isConditionalTypeNode,
+			isConstAssertion,
+			isConstTypeReference,
+			isConstructSignatureDeclaration,
+			isConstructorDeclaration,
+			isConstructorTypeNode,
+			isContextualKeyword,
+			isContinueStatement,
+			isCustomPrologue,
+			isDebuggerStatement,
+			isDeclaration,
+			isDeclarationBindingElement,
+			isDeclarationFileName,
+			isDeclarationName,
+			isDeclarationNameOfEnumOrNamespace,
+			isDeclarationReadonly,
+			isDeclarationStatement,
+			isDeclarationWithTypeParameterChildren,
+			isDeclarationWithTypeParameters,
+			isDecorator,
+			isDecoratorTarget,
+			isDefaultClause,
+			isDefaultImport,
+			isDefaultModifier,
+			isDefaultedExpandoInitializer,
+			isDeleteExpression,
+			isDeleteTarget,
+			isDeprecatedDeclaration,
+			isDestructuringAssignment,
+			isDiskPathRoot,
+			isDoStatement,
+			isDocumentRegistryEntry,
+			isDotDotDotToken,
+			isDottedName,
+			isDynamicName,
+			isEffectiveExternalModule,
+			isEffectiveStrictModeSourceFile,
+			isElementAccessChain,
+			isElementAccessExpression,
+			isEmittedFileOfProgram,
+			isEmptyArrayLiteral,
+			isEmptyBindingElement,
+			isEmptyBindingPattern,
+			isEmptyObjectLiteral,
+			isEmptyStatement,
+			isEmptyStringLiteral,
+			isEntityName,
+			isEntityNameExpression,
+			isEnumConst,
+			isEnumDeclaration,
+			isEnumMember,
+			isEqualityOperatorKind,
+			isEqualsGreaterThanToken,
+			isExclamationToken,
+			isExcludedFile,
+			isExclusivelyTypeOnlyImportOrExport,
+			isExpandoPropertyDeclaration,
+			isExportAssignment,
+			isExportDeclaration,
+			isExportModifier,
+			isExportName,
+			isExportNamespaceAsDefaultDeclaration,
+			isExportOrDefaultModifier,
+			isExportSpecifier,
+			isExportsIdentifier,
+			isExportsOrModuleExportsOrAlias,
+			isExpression,
+			isExpressionNode,
+			isExpressionOfExternalModuleImportEqualsDeclaration,
+			isExpressionOfOptionalChainRoot,
+			isExpressionStatement,
+			isExpressionWithTypeArguments,
+			isExpressionWithTypeArgumentsInClassExtendsClause,
+			isExternalModule,
+			isExternalModuleAugmentation,
+			isExternalModuleImportEqualsDeclaration,
+			isExternalModuleIndicator,
+			isExternalModuleNameRelative,
+			isExternalModuleReference,
+			isExternalModuleSymbol,
+			isExternalOrCommonJsModule,
+			isFileLevelReservedGeneratedIdentifier,
+			isFileLevelUniqueName,
+			isFileProbablyExternalModule,
+			isFirstDeclarationOfSymbolParameter,
+			isFixablePromiseHandler,
+			isForInOrOfStatement,
+			isForInStatement,
+			isForInitializer,
+			isForOfStatement,
+			isForStatement,
+			isFullSourceFile,
+			isFunctionBlock,
+			isFunctionBody,
+			isFunctionDeclaration,
+			isFunctionExpression,
+			isFunctionExpressionOrArrowFunction,
+			isFunctionLike,
+			isFunctionLikeDeclaration,
+			isFunctionLikeKind,
+			isFunctionLikeOrClassStaticBlockDeclaration,
+			isFunctionOrConstructorTypeNode,
+			isFunctionOrModuleBlock,
+			isFunctionSymbol,
+			isFunctionTypeNode,
+			isGeneratedIdentifier,
+			isGeneratedPrivateIdentifier,
+			isGetAccessor,
+			isGetAccessorDeclaration,
+			isGetOrSetAccessorDeclaration,
+			isGlobalScopeAugmentation,
+			isGlobalSourceFile,
+			isGrammarError,
+			isHeritageClause,
+			isHoistedFunction,
+			isHoistedVariableStatement,
+			isIdentifier,
+			isIdentifierANonContextualKeyword,
+			isIdentifierName,
+			isIdentifierOrThisTypeNode,
+			isIdentifierPart,
+			isIdentifierStart,
+			isIdentifierText,
+			isIdentifierTypePredicate,
+			isIdentifierTypeReference,
+			isIfStatement,
+			isIgnoredFileFromWildCardWatching,
+			isImplicitGlob,
+			isImportAttribute,
+			isImportAttributeName,
+			isImportAttributes,
+			isImportCall,
+			isImportClause,
+			isImportDeclaration,
+			isImportEqualsDeclaration,
+			isImportKeyword,
+			isImportMeta,
+			isImportOrExportSpecifier,
+			isImportOrExportSpecifierName,
+			isImportSpecifier,
+			isImportTypeAssertionContainer,
+			isImportTypeNode,
+			isImportableFile,
+			isInComment,
+			isInCompoundLikeAssignment,
+			isInExpressionContext,
+			isInJSDoc,
+			isInJSFile,
+			isInJSXText,
+			isInJsonFile,
+			isInNonReferenceComment,
+			isInReferenceComment,
+			isInRightSideOfInternalImportEqualsDeclaration,
+			isInString,
+			isInTemplateString,
+			isInTopLevelContext,
+			isInTypeQuery,
+			isIncrementalBuildInfo,
+			isIncrementalBundleEmitBuildInfo,
+			isIncrementalCompilation,
+			isIndexSignatureDeclaration,
+			isIndexedAccessTypeNode,
+			isInferTypeNode,
+			isInfinityOrNaNString,
+			isInitializedProperty,
+			isInitializedVariable,
+			isInsideJsxElement,
+			isInsideJsxElementOrAttribute,
+			isInsideNodeModules,
+			isInsideTemplateLiteral,
+			isInstanceOfExpression,
+			isInstantiatedModule,
+			isInterfaceDeclaration,
+			isInternalDeclaration,
+			isInternalModuleImportEqualsDeclaration,
+			isInternalName,
+			isIntersectionTypeNode,
+			isIntrinsicJsxName,
+			isIterationStatement,
+			isJSDoc,
+			isJSDocAllType,
+			isJSDocAugmentsTag,
+			isJSDocAuthorTag,
+			isJSDocCallbackTag,
+			isJSDocClassTag,
+			isJSDocCommentContainingNode,
+			isJSDocConstructSignature,
+			isJSDocDeprecatedTag,
+			isJSDocEnumTag,
+			isJSDocFunctionType,
+			isJSDocImplementsTag,
+			isJSDocImportTag,
+			isJSDocIndexSignature,
+			isJSDocLikeText,
+			isJSDocLink,
+			isJSDocLinkCode,
+			isJSDocLinkLike,
+			isJSDocLinkPlain,
+			isJSDocMemberName,
+			isJSDocNameReference,
+			isJSDocNamepathType,
+			isJSDocNamespaceBody,
+			isJSDocNode,
+			isJSDocNonNullableType,
+			isJSDocNullableType,
+			isJSDocOptionalParameter,
+			isJSDocOptionalType,
+			isJSDocOverloadTag,
+			isJSDocOverrideTag,
+			isJSDocParameterTag,
+			isJSDocPrivateTag,
+			isJSDocPropertyLikeTag,
+			isJSDocPropertyTag,
+			isJSDocProtectedTag,
+			isJSDocPublicTag,
+			isJSDocReadonlyTag,
+			isJSDocReturnTag,
+			isJSDocSatisfiesExpression,
+			isJSDocSatisfiesTag,
+			isJSDocSeeTag,
+			isJSDocSignature,
+			isJSDocTag,
+			isJSDocTemplateTag,
+			isJSDocThisTag,
+			isJSDocThrowsTag,
+			isJSDocTypeAlias,
+			isJSDocTypeAssertion,
+			isJSDocTypeExpression,
+			isJSDocTypeLiteral,
+			isJSDocTypeTag,
+			isJSDocTypedefTag,
+			isJSDocUnknownTag,
+			isJSDocUnknownType,
+			isJSDocVariadicType,
+			isJSXTagName,
+			isJsonEqual,
+			isJsonSourceFile,
+			isJsxAttribute,
+			isJsxAttributeLike,
+			isJsxAttributeName,
+			isJsxAttributes,
+			isJsxChild,
+			isJsxClosingElement,
+			isJsxClosingFragment,
+			isJsxElement,
+			isJsxExpression,
+			isJsxFragment,
+			isJsxNamespacedName,
+			isJsxOpeningElement,
+			isJsxOpeningFragment,
+			isJsxOpeningLikeElement,
+			isJsxOpeningLikeElementTagName,
+			isJsxSelfClosingElement,
+			isJsxSpreadAttribute,
+			isJsxTagNameExpression,
+			isJsxText,
+			isJumpStatementTarget,
+			isKeyword,
+			isKeywordOrPunctuation,
+			isKnownSymbol,
+			isLabelName,
+			isLabelOfLabeledStatement,
+			isLabeledStatement,
+			isLateVisibilityPaintedStatement,
+			isLeftHandSideExpression,
+			isLet,
+			isLineBreak,
+			isLiteralComputedPropertyDeclarationName,
+			isLiteralExpression,
+			isLiteralExpressionOfObject,
+			isLiteralImportTypeNode,
+			isLiteralKind,
+			isLiteralNameOfPropertyDeclarationOrIndexAccess,
+			isLiteralTypeLiteral,
+			isLiteralTypeNode,
+			isLocalName,
+			isLogicalOperator,
+			isLogicalOrCoalescingAssignmentExpression,
+			isLogicalOrCoalescingAssignmentOperator,
+			isLogicalOrCoalescingBinaryExpression,
+			isLogicalOrCoalescingBinaryOperator,
+			isMappedTypeNode,
+			isMemberName,
+			isMetaProperty,
+			isMethodDeclaration,
+			isMethodOrAccessor,
+			isMethodSignature,
+			isMinusToken,
+			isMissingDeclaration,
+			isMissingPackageJsonInfo,
+			isModifier,
+			isModifierKind,
+			isModifierLike,
+			isModuleAugmentationExternal,
+			isModuleBlock,
+			isModuleBody,
+			isModuleDeclaration,
+			isModuleExportName,
+			isModuleExportsAccessExpression,
+			isModuleIdentifier,
+			isModuleName,
+			isModuleOrEnumDeclaration,
+			isModuleReference,
+			isModuleSpecifierLike,
+			isModuleWithStringLiteralName,
+			isNameOfFunctionDeclaration,
+			isNameOfModuleDeclaration,
+			isNamedDeclaration,
+			isNamedEvaluation,
+			isNamedEvaluationSource,
+			isNamedExportBindings,
+			isNamedExports,
+			isNamedImportBindings,
+			isNamedImports,
+			isNamedImportsOrExports,
+			isNamedTupleMember,
+			isNamespaceBody,
+			isNamespaceExport,
+			isNamespaceExportDeclaration,
+			isNamespaceImport,
+			isNamespaceReexportDeclaration,
+			isNewExpression,
+			isNewExpressionTarget,
+			isNoSubstitutionTemplateLiteral,
+			isNodeArray,
+			isNodeArrayMultiLine,
+			isNodeDescendantOf,
+			isNodeKind,
+			isNodeLikeSystem,
+			isNodeModulesDirectory,
+			isNodeWithPossibleHoistedDeclaration,
+			isNonContextualKeyword,
+			isNonGlobalAmbientModule,
+			isNonNullAccess,
+			isNonNullChain,
+			isNonNullExpression,
+			isNonStaticMethodOrAccessorWithPrivateName,
+			isNotEmittedStatement,
+			isNullishCoalesce,
+			isNumber,
+			isNumericLiteral,
+			isNumericLiteralName,
+			isObjectBindingElementWithoutPropertyName,
+			isObjectBindingOrAssignmentElement,
+			isObjectBindingOrAssignmentPattern,
+			isObjectBindingPattern,
+			isObjectLiteralElement,
+			isObjectLiteralElementLike,
+			isObjectLiteralExpression,
+			isObjectLiteralMethod,
+			isObjectLiteralOrClassExpressionMethodOrAccessor,
+			isObjectTypeDeclaration,
+			isOmittedExpression,
+			isOptionalChain,
+			isOptionalChainRoot,
+			isOptionalDeclaration,
+			isOptionalJSDocPropertyLikeTag,
+			isOptionalTypeNode,
+			isOuterExpression,
+			isOutermostOptionalChain,
+			isOverrideModifier,
+			isPackageJsonInfo,
+			isPackedArrayLiteral,
+			isParameter,
+			isParameterPropertyDeclaration,
+			isParameterPropertyModifier,
+			isParenthesizedExpression,
+			isParenthesizedTypeNode,
+			isParseTreeNode,
+			isPartOfParameterDeclaration,
+			isPartOfTypeNode,
+			isPartOfTypeQuery,
+			isPartiallyEmittedExpression,
+			isPatternMatch,
+			isPinnedComment,
+			isPlainJsFile,
+			isPlusToken,
+			isPossiblyTypeArgumentPosition,
+			isPostfixUnaryExpression,
+			isPrefixUnaryExpression,
+			isPrimitiveLiteralValue,
+			isPrivateIdentifier,
+			isPrivateIdentifierClassElementDeclaration,
+			isPrivateIdentifierPropertyAccessExpression,
+			isPrivateIdentifierSymbol,
+			isProgramUptoDate,
+			isPrologueDirective,
+			isPropertyAccessChain,
+			isPropertyAccessEntityNameExpression,
+			isPropertyAccessExpression,
+			isPropertyAccessOrQualifiedName,
+			isPropertyAccessOrQualifiedNameOrImportTypeNode,
+			isPropertyAssignment,
+			isPropertyDeclaration,
+			isPropertyName,
+			isPropertyNameLiteral,
+			isPropertySignature,
+			isPrototypeAccess,
+			isPrototypePropertyAssignment,
+			isPunctuation,
+			isPushOrUnshiftIdentifier,
+			isQualifiedName,
+			isQuestionDotToken,
+			isQuestionOrExclamationToken,
+			isQuestionOrPlusOrMinusToken,
+			isQuestionToken,
+			isReadonlyKeyword,
+			isReadonlyKeywordOrPlusOrMinusToken,
+			isRecognizedTripleSlashComment,
+			isReferenceFileLocation,
+			isReferencedFile,
+			isRegularExpressionLiteral,
+			isRequireCall,
+			isRequireVariableStatement,
+			isRestParameter,
+			isRestTypeNode,
+			isReturnStatement,
+			isReturnStatementWithFixablePromiseHandler,
+			isRightSideOfAccessExpression,
+			isRightSideOfInstanceofExpression,
+			isRightSideOfPropertyAccess,
+			isRightSideOfQualifiedName,
+			isRightSideOfQualifiedNameOrPropertyAccess,
+			isRightSideOfQualifiedNameOrPropertyAccessOrJSDocMemberName,
+			isRootedDiskPath,
+			isSameEntityName,
+			isSatisfiesExpression,
+			isSemicolonClassElement,
+			isSetAccessor,
+			isSetAccessorDeclaration,
+			isShiftOperatorOrHigher,
+			isShorthandAmbientModuleSymbol,
+			isShorthandPropertyAssignment,
+			isSideEffectImport,
+			isSignedNumericLiteral,
+			isSimpleCopiableExpression,
+			isSimpleInlineableExpression,
+			isSimpleParameterList,
+			isSingleOrDoubleQuote,
+			isSourceElement,
+			isSourceFile,
+			isSourceFileFromLibrary,
+			isSourceFileJS,
+			isSourceFileNotJson,
+			isSourceMapping,
+			isSpecialPropertyDeclaration,
+			isSpreadAssignment,
+			isSpreadElement,
+			isStatement,
+			isStatementButNotDeclaration,
+			isStatementOrBlock,
+			isStatementWithLocals,
+			isStatic,
+			isStaticModifier,
+			isString,
+			isStringANonContextualKeyword,
+			isStringAndEmptyAnonymousObjectIntersection,
+			isStringDoubleQuoted,
+			isStringLiteral,
+			isStringLiteralLike,
+			isStringLiteralOrJsxExpression,
+			isStringLiteralOrTemplate,
+			isStringOrNumericLiteralLike,
+			isStringOrRegularExpressionOrTemplateLiteral,
+			isStringTextContainingNode,
+			isSuperCall,
+			isSuperKeyword,
+			isSuperProperty,
+			isSupportedSourceFileName,
+			isSwitchStatement,
+			isSyntaxList,
+			isSyntheticExpression,
+			isSyntheticReference,
+			isTagName,
+			isTaggedTemplateExpression,
+			isTaggedTemplateTag,
+			isTemplateExpression,
+			isTemplateHead,
+			isTemplateLiteral,
+			isTemplateLiteralKind,
+			isTemplateLiteralToken,
+			isTemplateLiteralTypeNode,
+			isTemplateLiteralTypeSpan,
+			isTemplateMiddle,
+			isTemplateMiddleOrTemplateTail,
+			isTemplateSpan,
+			isTemplateTail,
+			isTextWhiteSpaceLike,
+			isThis,
+			isThisContainerOrFunctionBlock,
+			isThisIdentifier,
+			isThisInTypeQuery,
+			isThisInitializedDeclaration,
+			isThisInitializedObjectBindingExpression,
+			isThisProperty,
+			isThisTypeNode,
+			isThisTypeParameter,
+			isThisTypePredicate,
+			isThrowStatement,
+			isToken,
+			isTokenKind,
+			isTraceEnabled,
+			isTransientSymbol,
+			isTrivia,
+			isTryStatement,
+			isTupleTypeNode,
+			isTypeAlias,
+			isTypeAliasDeclaration,
+			isTypeAssertionExpression,
+			isTypeDeclaration,
+			isTypeElement,
+			isTypeKeyword,
+			isTypeKeywordTokenOrIdentifier,
+			isTypeLiteralNode,
+			isTypeNode,
+			isTypeNodeKind,
+			isTypeOfExpression,
+			isTypeOnlyExportDeclaration,
+			isTypeOnlyImportDeclaration,
+			isTypeOnlyImportOrExportDeclaration,
+			isTypeOperatorNode,
+			isTypeParameterDeclaration,
+			isTypePredicateNode,
+			isTypeQueryNode,
+			isTypeReferenceNode,
+			isTypeReferenceType,
+			isTypeUsableAsPropertyName,
+			isUMDExportSymbol,
+			isUnaryExpression,
+			isUnaryExpressionWithWrite,
+			isUnicodeIdentifierStart,
+			isUnionTypeNode,
+			isUrl,
+			isValidBigIntString,
+			isValidESSymbolDeclaration,
+			isValidTypeOnlyAliasUseSite,
+			isValueSignatureDeclaration,
+			isVarAwaitUsing,
+			isVarConst,
+			isVarConstLike,
+			isVarUsing,
+			isVariableDeclaration,
+			isVariableDeclarationInVariableStatement,
+			isVariableDeclarationInitializedToBareOrAccessedRequire,
+			isVariableDeclarationInitializedToRequire,
+			isVariableDeclarationList,
+			isVariableLike,
+			isVariableLikeOrAccessor,
+			isVariableStatement,
+			isVoidExpression,
+			isWatchSet,
+			isWhileStatement,
+			isWhiteSpaceLike,
+			isWhiteSpaceSingleLine,
+			isWithStatement,
+			isWriteAccess,
+			isWriteOnlyAccess,
+			isYieldExpression,
+			jsxModeNeedsExplicitImport,
+			keywordPart,
+			last,
+			lastOrUndefined,
+			length,
+			libMap,
+			libs,
+			lineBreakPart,
+			loadModuleFromGlobalCache,
+			loadWithModeAwareCache,
+			makeIdentifierFromModuleName,
+			makeImport,
+			makeStringLiteral,
+			mangleScopedPackageName,
+			map,
+			mapAllOrFail,
+			mapDefined,
+			mapDefinedIterator,
+			mapEntries,
+			mapIterator,
+			mapOneOrMany,
+			mapToDisplayParts,
+			matchFiles,
+			matchPatternOrExact,
+			matchedText,
+			matchesExclude,
+			maxBy,
+			maybeBind,
+			maybeSetLocalizedDiagnosticMessages,
+			memoize,
+			memoizeOne,
+			min,
+			minAndMax,
+			missingFileModifiedTime,
+			modifierToFlag,
+			modifiersToFlags,
+			moduleExportNameIsDefault,
+			moduleExportNameTextEscaped,
+			moduleExportNameTextUnescaped,
+			moduleOptionDeclaration,
+			moduleResolutionIsEqualTo,
+			moduleResolutionNameAndModeGetter,
+			moduleResolutionOptionDeclarations,
+			moduleResolutionSupportsPackageJsonExportsAndImports,
+			moduleResolutionUsesNodeModules,
+			moduleSpecifierToValidIdentifier,
+			moduleSpecifiers,
+			moduleSymbolToValidIdentifier,
+			moveEmitHelpers,
+			moveRangeEnd,
+			moveRangePastDecorators,
+			moveRangePastModifiers,
+			moveRangePos,
+			moveSyntheticComments,
+			mutateMap,
+			mutateMapSkippingNewValues,
+			needsParentheses,
+			needsScopeMarker,
+			newCaseClauseTracker,
+			newPrivateEnvironment,
+			noEmitNotification,
+			noEmitSubstitution,
+			noTransformers,
+			noTruncationMaximumTruncationLength,
+			nodeCanBeDecorated,
+			nodeHasName,
+			nodeIsDecorated,
+			nodeIsMissing,
+			nodeIsPresent,
+			nodeIsSynthesized,
+			nodeModuleNameResolver,
+			nodeModulesPathPart,
+			nodeNextJsonConfigResolver,
+			nodeOrChildIsDecorated,
+			nodeOverlapsWithStartEnd,
+			nodePosToString,
+			nodeSeenTracker,
+			nodeStartsNewLexicalEnvironment,
+			noop,
+			noopFileWatcher,
+			normalizePath,
+			normalizeSlashes,
+			normalizeSpans,
+			not,
+			notImplemented,
+			notImplementedResolver,
+			nullNodeConverters,
+			nullParenthesizerRules,
+			nullTransformationContext,
+			objectAllocator,
+			operatorPart,
+			optionDeclarations,
+			optionMapToObject,
+			optionsAffectingProgramStructure,
+			optionsForBuild,
+			optionsForWatch,
+			optionsHaveChanges,
+			or,
+			orderedRemoveItem,
+			orderedRemoveItemAt,
+			packageIdToPackageName,
+			packageIdToString,
+			parameterIsThisKeyword,
+			parameterNamePart,
+			parseBaseNodeFactory,
+			parseBigInt,
+			parseBuildCommand,
+			parseCommandLine,
+			parseCommandLineWorker,
+			parseConfigFileTextToJson,
+			parseConfigFileWithSystem,
+			parseConfigHostFromCompilerHostLike,
+			parseCustomTypeOption,
+			parseIsolatedEntityName,
+			parseIsolatedJSDocComment,
+			parseJSDocTypeExpressionForTests,
+			parseJsonConfigFileContent,
+			parseJsonSourceFileConfigFileContent,
+			parseJsonText,
+			parseListTypeOption,
+			parseNodeFactory,
+			parseNodeModuleFromPath,
+			parsePackageName,
+			parsePseudoBigInt,
+			parseValidBigInt,
+			pasteEdits,
+			patchWriteFileEnsuringDirectory,
+			pathContainsNodeModules,
+			pathIsAbsolute,
+			pathIsBareSpecifier,
+			pathIsRelative,
+			patternText,
+			performIncrementalCompilation,
+			performance,
+			positionBelongsToNode,
+			positionIsASICandidate,
+			positionIsSynthesized,
+			positionsAreOnSameLine,
+			preProcessFile,
+			probablyUsesSemicolons,
+			processCommentPragmas,
+			processPragmasIntoFields,
+			processTaggedTemplateExpression,
+			programContainsEsModules,
+			programContainsModules,
+			projectReferenceIsEqualTo,
+			propertyNamePart,
+			pseudoBigIntToString,
+			punctuationPart,
+			pushIfUnique,
+			quote,
+			quotePreferenceFromString,
+			rangeContainsPosition,
+			rangeContainsPositionExclusive,
+			rangeContainsRange,
+			rangeContainsRangeExclusive,
+			rangeContainsStartEnd,
+			rangeEndIsOnSameLineAsRangeStart,
+			rangeEndPositionsAreOnSameLine,
+			rangeEquals,
+			rangeIsOnSingleLine,
+			rangeOfNode,
+			rangeOfTypeParameters,
+			rangeOverlapsWithStartEnd,
+			rangeStartIsOnSameLineAsRangeEnd,
+			rangeStartPositionsAreOnSameLine,
+			readBuilderProgram,
+			readConfigFile,
+			readJson,
+			readJsonConfigFile,
+			readJsonOrUndefined,
+			reduceEachLeadingCommentRange,
+			reduceEachTrailingCommentRange,
+			reduceLeft,
+			reduceLeftIterator,
+			reducePathComponents,
+			refactor,
+			regExpEscape,
+			regularExpressionFlagToCharacterCode,
+			relativeComplement,
+			removeAllComments,
+			removeEmitHelper,
+			removeExtension,
+			removeFileExtension,
+			removeIgnoredPath,
+			removeMinAndVersionNumbers,
+			removePrefix,
+			removeSuffix,
+			removeTrailingDirectorySeparator,
+			repeatString,
+			replaceElement,
+			replaceFirstStar,
+			resolutionExtensionIsTSOrJson,
+			resolveConfigFileProjectName,
+			resolveJSModule,
+			resolveLibrary,
+			resolveModuleName,
+			resolveModuleNameFromCache,
+			resolvePackageNameToPackageJson,
+			resolvePath,
+			resolveProjectReferencePath,
+			resolveTripleslashReference,
+			resolveTypeReferenceDirective,
+			resolvingEmptyArray,
+			returnFalse,
+			returnNoopFileWatcher,
+			returnTrue,
+			returnUndefined,
+			returnsPromise,
+			sameFlatMap,
+			sameMap,
+			sameMapping,
+			scanTokenAtPosition,
+			scanner,
+			semanticDiagnosticsOptionDeclarations,
+			serializeCompilerOptions,
+			server,
+			servicesVersion,
+			setCommentRange,
+			setConfigFileInOptions,
+			setConstantValue,
+			setEmitFlags,
+			setGetSourceFileAsHashVersioned,
+			setIdentifierAutoGenerate,
+			setIdentifierGeneratedImportReference,
+			setIdentifierTypeArguments,
+			setInternalEmitFlags,
+			setLocalizedDiagnosticMessages,
+			setNodeChildren,
+			setNodeFlags,
+			setObjectAllocator,
+			setOriginalNode,
+			setParent,
+			setParentRecursive,
+			setPrivateIdentifier,
+			setSnippetElement,
+			setSourceMapRange,
+			setStackTraceLimit,
+			setStartsOnNewLine,
+			setSyntheticLeadingComments,
+			setSyntheticTrailingComments,
+			setSys,
+			setSysLog,
+			setTextRange,
+			setTextRangeEnd,
+			setTextRangePos,
+			setTextRangePosEnd,
+			setTextRangePosWidth,
+			setTokenSourceMapRange,
+			setTypeNode,
+			setUILocale,
+			setValueDeclaration,
+			shouldAllowImportingTsExtension,
+			shouldPreserveConstEnums,
+			shouldUseUriStyleNodeCoreModules,
+			showModuleSpecifier,
+			signatureHasRestParameter,
+			signatureToDisplayParts,
+			single,
+			singleElementArray,
+			singleIterator,
+			singleOrMany,
+			singleOrUndefined,
+			skipAlias,
+			skipConstraint,
+			skipOuterExpressions,
+			skipParentheses,
+			skipPartiallyEmittedExpressions,
+			skipTrivia,
+			skipTypeChecking,
+			skipTypeCheckingIgnoringNoCheck,
+			skipTypeParentheses,
+			skipWhile,
+			sliceAfter,
+			some,
+			sortAndDeduplicate,
+			sortAndDeduplicateDiagnostics,
+			sourceFileAffectingCompilerOptions,
+			sourceFileMayBeEmitted,
+			sourceMapCommentRegExp,
+			sourceMapCommentRegExpDontCareLineStart,
+			spacePart,
+			spanMap,
+			startEndContainsRange,
+			startEndOverlapsWithStartEnd,
+			startOnNewLine,
+			startTracing,
+			startsWith,
+			startsWithDirectory,
+			startsWithUnderscore,
+			startsWithUseStrict,
+			stringContainsAt,
+			stringToToken,
+			stripQuotes,
+			supportedDeclarationExtensions,
+			supportedJSExtensionsFlat,
+			supportedLocaleDirectories,
+			supportedTSExtensionsFlat,
+			supportedTSImplementationExtensions,
+			suppressLeadingAndTrailingTrivia,
+			suppressLeadingTrivia,
+			suppressTrailingTrivia,
+			symbolEscapedNameNoDefault,
+			symbolName,
+			symbolNameNoDefault,
+			symbolToDisplayParts,
+			sys,
+			sysLog,
+			tagNamesAreEquivalent,
+			takeWhile,
+			targetOptionDeclaration,
+			testFormatSettings,
+			textChangeRangeIsUnchanged,
+			textChangeRangeNewSpan,
+			textChanges,
+			textOrKeywordPart,
+			textPart,
+			textRangeContainsPositionInclusive,
+			textRangeContainsTextSpan,
+			textRangeIntersectsWithTextSpan,
+			textSpanContainsPosition,
+			textSpanContainsTextRange,
+			textSpanContainsTextSpan,
+			textSpanEnd,
+			textSpanIntersection,
+			textSpanIntersectsWith,
+			textSpanIntersectsWithPosition,
+			textSpanIntersectsWithTextSpan,
+			textSpanIsEmpty,
+			textSpanOverlap,
+			textSpanOverlapsWith,
+			textSpansEqual,
+			textToKeywordObj,
+			timestamp,
+			toArray,
+			toBuilderFileEmit,
+			toBuilderStateFileInfoForMultiEmit,
+			toEditorSettings,
+			toFileNameLowerCase,
+			toPath,
+			toProgramEmitPending,
+			toSorted,
+			tokenIsIdentifierOrKeyword,
+			tokenIsIdentifierOrKeywordOrGreaterThan,
+			tokenToString,
+			trace,
+			tracing,
+			tracingEnabled,
+			transferSourceFileChildren,
+			transform,
+			transformClassFields,
+			transformDeclarations,
+			transformECMAScriptModule,
+			transformES2015,
+			transformES2016,
+			transformES2017,
+			transformES2018,
+			transformES2019,
+			transformES2020,
+			transformES2021,
+			transformESDecorators,
+			transformESNext,
+			transformGenerators,
+			transformImpliedNodeFormatDependentModule,
+			transformJsx,
+			transformLegacyDecorators,
+			transformModule,
+			transformNamedEvaluation,
+			transformNodes,
+			transformSystemModule,
+			transformTypeScript,
+			transpile,
+			transpileDeclaration,
+			transpileModule,
+			transpileOptionValueCompilerOptions,
+			tryAddToSet,
+			tryAndIgnoreErrors,
+			tryCast,
+			tryDirectoryExists,
+			tryExtractTSExtension,
+			tryFileExists,
+			tryGetClassExtendingExpressionWithTypeArguments,
+			tryGetClassImplementingOrExtendingExpressionWithTypeArguments,
+			tryGetDirectories,
+			tryGetExtensionFromPath,
+			tryGetImportFromModuleSpecifier,
+			tryGetJSDocSatisfiesTypeNode,
+			tryGetModuleNameFromFile,
+			tryGetModuleSpecifierFromDeclaration,
+			tryGetNativePerformanceHooks,
+			tryGetPropertyAccessOrIdentifierToString,
+			tryGetPropertyNameOfBindingOrAssignmentElement,
+			tryGetSourceMappingURL,
+			tryGetTextOfPropertyName,
+			tryParseJson,
+			tryParsePattern,
+			tryParsePatterns,
+			tryParseRawSourceMap,
+			tryReadDirectory,
+			tryReadFile,
+			tryRemoveDirectoryPrefix,
+			tryRemoveExtension,
+			tryRemovePrefix,
+			tryRemoveSuffix,
+			typeAcquisitionDeclarations,
+			typeAliasNamePart,
+			typeDirectiveIsEqualTo,
+			typeKeywords,
+			typeParameterNamePart,
+			typeToDisplayParts,
+			unchangedPollThresholds,
+			unchangedTextChangeRange,
+			unescapeLeadingUnderscores,
+			unmangleScopedPackageName,
+			unorderedRemoveItem,
+			unreachableCodeIsError,
+			unsetNodeChildren,
+			unusedLabelIsError,
+			unwrapInnermostStatementOfLabel,
+			unwrapParenthesizedExpression,
+			updateErrorForNoInputFiles,
+			updateLanguageServiceSourceFile,
+			updateMissingFilePathsWatch,
+			updateResolutionField,
+			updateSharedExtendedConfigFileWatcher,
+			updateSourceFile,
+			updateWatchingWildcardDirectories,
+			usingSingleLineStringWriter,
+			utf16EncodeAsString,
+			validateLocaleAndSetLanguage,
+			version,
+			versionMajorMinor,
+			visitArray,
+			visitCommaListElements,
+			visitEachChild,
+			visitFunctionBody,
+			visitIterationBody,
+			visitLexicalEnvironment,
+			visitNode,
+			visitNodes,
+			visitParameterList,
+			walkUpBindingElementsAndPatterns,
+			walkUpOuterExpressions,
+			walkUpParenthesizedExpressions,
+			walkUpParenthesizedTypes,
+			walkUpParenthesizedTypesAndGetParentAndChild,
+			whitespaceOrMapCommentRegExp,
+			writeCommentRange,
+			writeFile,
+			writeFileEnsuringDirectories,
+			zipWith
+		});
 	})({
 		get exports() {
 			return ts;
@@ -154196,8 +156446,8 @@ ${e.message}`;
 			let ignore = ignoreTaggedDiagnostics && tags.length > 0;
 			let start = el.start ?? 0;
 			let length = el.length ?? 1;
-			if (filterErrors.errorCodesToTreatAsWarning.includes(el.code.toString())) el.category = DiagnosticCategory.Warning;
-			else if (filterErrors.errorCodesToTreatAsInfo.includes(el.code.toString())) el.category = DiagnosticCategory.Message;
+			if (filterErrors.errorCodesToTreatAsWarning.includes(el.code.toString())) el.category = 0;
+			else if (filterErrors.errorCodesToTreatAsInfo.includes(el.code.toString())) el.category = 3;
 			let diagnostic = import_main.Diagnostic.create(import_main.Range.create(doc.positionAt(start), doc.positionAt(start + length)), parseMessageText(el.messageText, el.code), fromTsCategory(el.category), el.code);
 			diagnostic.tags = tags;
 			if (ignore) diagnostic.data = { ignore: true };
@@ -154231,10 +156481,10 @@ ${e.message}`;
 	}
 	function fromTsCategory(category) {
 		switch (category) {
-			case DiagnosticCategory.Error: return 1;
-			case DiagnosticCategory.Suggestion:
-			case DiagnosticCategory.Message:
-			case DiagnosticCategory.Warning: return 2;
+			case 1: return 1;
+			case 2:
+			case 3:
+			case 0: return 2;
 		}
 		return 3;
 	}
@@ -154351,10 +156601,10 @@ ${e.message}`;
 		}));
 	}
 	function getTokenTypeFromClassification(tsClassification) {
-		if (tsClassification > TokenEncodingConsts.modifierMask) return (tsClassification >> TokenEncodingConsts.typeOffset) - 1;
+		if (tsClassification > 255) return (tsClassification >> 8) - 1;
 	}
 	function getTokenModifierFromClassification(tsClassification) {
-		return tsClassification & TokenEncodingConsts.modifierMask;
+		return tsClassification & 255;
 	}
 	function diagnosticsToErrorCodes(diagnostics) {
 		return diagnostics.map((el) => {
@@ -154386,11 +156636,6 @@ ${e.message}`;
 		SemanticClassificationFormat["TwentyTwenty"] = "2020";
 		return SemanticClassificationFormat;
 	}({});
-	var TokenEncodingConsts = /* @__PURE__ */ function(TokenEncodingConsts) {
-		TokenEncodingConsts[TokenEncodingConsts["typeOffset"] = 8] = "typeOffset";
-		TokenEncodingConsts[TokenEncodingConsts["modifierMask"] = 255] = "modifierMask";
-		return TokenEncodingConsts;
-	}(TokenEncodingConsts || {});
 	var ScriptTarget = /* @__PURE__ */ function(ScriptTarget) {
 		ScriptTarget[ScriptTarget["ES3"] = 0] = "ES3";
 		ScriptTarget[ScriptTarget["ES5"] = 1] = "ES5";
@@ -154406,13 +156651,6 @@ ${e.message}`;
 		ScriptTarget[ScriptTarget["JSON"] = 100] = "JSON";
 		ScriptTarget[ScriptTarget["Latest"] = 99] = "Latest";
 		return ScriptTarget;
-	}({});
-	var DiagnosticCategory = /* @__PURE__ */ function(DiagnosticCategory) {
-		DiagnosticCategory[DiagnosticCategory["Warning"] = 0] = "Warning";
-		DiagnosticCategory[DiagnosticCategory["Error"] = 1] = "Error";
-		DiagnosticCategory[DiagnosticCategory["Suggestion"] = 2] = "Suggestion";
-		DiagnosticCategory[DiagnosticCategory["Message"] = 3] = "Message";
-		return DiagnosticCategory;
 	}({});
 	var JsxEmit = /* @__PURE__ */ function(JsxEmit) {
 		JsxEmit[JsxEmit["None"] = 0] = "None";

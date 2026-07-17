@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,7 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -70,7 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -367,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -702,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -715,7 +722,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -733,7 +740,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -825,7 +832,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -899,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -966,7 +973,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1026,7 +1033,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1204,7 +1211,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1314,7 +1321,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1440,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1764,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2347,7 +2354,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2725,7 +2732,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2752,7 +2759,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2860,7 +2867,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -2930,7 +2937,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -7281,7 +7288,7 @@
 		return 0;
 	};
 	var browserExports = browser.exports;
-	var process$1 = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
 	//#endregion
 	//#region ../../node_modules/vscode-uri/lib/esm/index.mjs
 	var LIB;
@@ -10166,14 +10173,14 @@
 				const indent = options.indent || 0;
 				arrMessages.forEach((hint) => {
 					const leftWindow = 40;
-					const rightWindow = leftWindow + 20;
+					const rightWindow = 60;
 					let evidence = hint.evidence;
 					const line = hint.line;
 					const col = hint.col;
 					const evidenceCount = evidence.length;
-					let leftCol = col > leftWindow + 1 ? col - leftWindow : 1;
+					let leftCol = col > 41 ? col - leftWindow : 1;
 					let rightCol = evidence.length > col + rightWindow ? col + rightWindow : evidenceCount;
-					if (col < leftWindow + 1) rightCol += leftWindow - col + 1;
+					if (col < 41) rightCol += leftWindow - col + 1;
 					evidence = evidence.replace(/\t/g, " ").substring(leftCol - 1, rightCol);
 					if (leftCol > 1) {
 						evidence = `...${evidence}`;
@@ -13306,22 +13313,110 @@
 				if (isCompletablePath(fullValue)) if (fullValue === "." || fullValue === "..") result.isIncomplete = true;
 				else {
 					const replaceRange = pathToReplaceRange(attributeCompletion.value, fullValue, attributeCompletion.range);
-					const suggestions = await this.providePathSuggestions(attributeCompletion.value, replaceRange, document, documentContext);
+					const suggestions = await this.providePathSuggestions(attributeCompletion.value, replaceRange, document, documentContext, attributeCompletion);
 					for (const item of suggestions) result.items.push(item);
 				}
 			}
 			return result;
 		}
-		async providePathSuggestions(valueBeforeCursor, replaceRange, document, documentContext) {
+		async providePathSuggestions(valueBeforeCursor, replaceRange, document, documentContext, context) {
 			const valueBeforeLastSlash = valueBeforeCursor.substring(0, valueBeforeCursor.lastIndexOf("/") + 1);
 			let parentDir = documentContext.resolveReference(valueBeforeLastSlash || ".", document.uri);
 			if (parentDir) try {
 				const result = [];
 				const infos = await this.readDirectory(parentDir);
-				for (const [name, type] of infos) if (name.charCodeAt(0) !== CharCode_dot) result.push(createCompletionItem(name, type === FileType.Directory, replaceRange));
+				const extensionFilter = this.getExtensionFilter(context);
+				for (const [name, type] of infos) if (name.charCodeAt(0) !== CharCode_dot) {
+					const item = createCompletionItem(name, type === FileType.Directory, replaceRange);
+					if (extensionFilter) {
+						if (type === FileType.Directory) result.push(item);
+						else if (extensionFilter.extensions.some((ext) => name.toLowerCase().endsWith(ext))) {
+							item.sortText = "0_" + name;
+							result.push(item);
+						} else if (!extensionFilter.exclusive) {
+							item.sortText = "1_" + name;
+							result.push(item);
+						}
+					} else result.push(item);
+				}
 				return result;
 			} catch (e) {}
 			return [];
+		}
+		/**
+		* Determines which file extensions to filter/prioritize based on the HTML tag and attributes
+		*/
+		getExtensionFilter(context) {
+			if (!context) return;
+			if (context.tag === "link" && context.attribute === "href" && context.attributes) {
+				const rel = context.attributes["rel"];
+				if (rel === "stylesheet" || rel === "\"stylesheet\"" || rel === "'stylesheet'") return {
+					extensions: [
+						".css",
+						".scss",
+						".sass",
+						".less"
+					],
+					exclusive: false
+				};
+				if (rel === "icon" || rel === "\"icon\"" || rel === "'icon'" || rel === "apple-touch-icon" || rel === "\"apple-touch-icon\"" || rel === "'apple-touch-icon'") return {
+					extensions: [
+						".ico",
+						".png",
+						".svg",
+						".jpg",
+						".jpeg",
+						".gif",
+						".webp"
+					],
+					exclusive: false
+				};
+			}
+			if (context.tag === "script" && context.attribute === "src") return {
+				extensions: [
+					".js",
+					".mjs",
+					".cjs",
+					".ts",
+					".tsx",
+					".jsx"
+				],
+				exclusive: false
+			};
+			if (context.tag === "img" && context.attribute === "src") return {
+				extensions: [
+					".png",
+					".jpg",
+					".jpeg",
+					".gif",
+					".svg",
+					".webp",
+					".bmp",
+					".ico"
+				],
+				exclusive: false
+			};
+			if (context.tag === "video" && context.attribute === "src") return {
+				extensions: [
+					".mp4",
+					".webm",
+					".ogg",
+					".mov",
+					".avi"
+				],
+				exclusive: false
+			};
+			if (context.tag === "audio" && context.attribute === "src") return {
+				extensions: [
+					".mp3",
+					".wav",
+					".ogg",
+					".m4a",
+					".aac",
+					".flac"
+				],
+				exclusive: false
+			};
 		}
 	};
 	var CharCode_dot = ".".charCodeAt(0);
@@ -13454,6 +13549,7 @@
 				return text.substring(0, offset);
 			}
 			function collectCloseTagSuggestions(afterOpenBracket, inOpenTag, tagNameEnd = offset) {
+				if (settings && settings.hideEndTagSuggestions) return result;
 				const range = getReplaceRange(afterOpenBracket, tagNameEnd);
 				const closeTag = isFollowedBy(text, tagNameEnd, ScannerState.WithinEndTag, TokenType.EndTagClose) ? "" : ">";
 				let curr = node;
@@ -13606,7 +13702,8 @@
 						tag,
 						attribute,
 						value: valuePrefix,
-						range: fullRange
+						range: fullRange,
+						attributes: node.attributes
 					});
 				}
 				dataProviders.forEach((provider) => {
@@ -15941,7 +16038,8 @@
 					return this._current_frame ? this._current_frame.parser_token : null;
 				};
 				TagStack.prototype.record_tag = function(parser_token) {
-					this._current_frame = new TagFrame(this._current_frame, parser_token, this._printer.indent_level);
+					var new_frame = new TagFrame(this._current_frame, parser_token, this._printer.indent_level);
+					this._current_frame = new_frame;
 				};
 				TagStack.prototype._try_pop_frame = function(frame) {
 					var parser_token = null;
@@ -15978,7 +16076,8 @@
 					this._js_beautify = js_beautify;
 					this._css_beautify = css_beautify;
 					this._tag_stack = null;
-					this._options = new Options(options, "html");
+					var optionHtml = new Options(options, "html");
+					this._options = optionHtml;
 					this._is_wrap_attributes_force = this._options.wrap_attributes.substr(0, 5) === "force";
 					this._is_wrap_attributes_force_expand_multiline = this._options.wrap_attributes === "force-expand-multiline";
 					this._is_wrap_attributes_force_aligned = this._options.wrap_attributes === "force-aligned";
@@ -17739,18 +17838,18 @@
 							"value": "This attribute defines the sizes of the icons for visual media contained in the resource. It must be present only if the [`rel`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#attr-rel) contains a value of `icon` or a non-standard type such as Apple's `apple-touch-icon`. It may have the following values:\n\n*   `any`, meaning that the icon can be scaled to any size as it is in a vector format, like `image/svg+xml`.\n*   a white-space separated list of sizes, each in the format `_<width in pixels>_x_<height in pixels>_` or `_<width in pixels>_X_<height in pixels>_`. Each of these sizes must be contained in the resource.\n\n**Note:** Most icon formats are only able to store one single icon; therefore most of the time the [`sizes`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#attr-sizes) contains only one entry. MS's ICO format does, as well as Apple's ICNS. ICO is more ubiquitous; you should definitely use it."
 						},
 						"browsers": [
-							"C80",
-							"CA80",
-							"E80",
-							"FF72",
-							"FFA79",
+							"C15",
+							"CA18",
+							"E79",
+							"FF31",
+							"FFA31",
 							"S6",
 							"SM6"
 						],
 						"status": {
 							"baseline": "high",
-							"baseline_low_date": "≤2020-07-28",
-							"baseline_high_date": "≤2023-01-28"
+							"baseline_low_date": "2020-01-15",
+							"baseline_high_date": "2022-07-15"
 						}
 					},
 					{
@@ -18901,8 +19000,8 @@
 						],
 						"status": {
 							"baseline": "high",
-							"baseline_low_date": "≤2020-01-15",
-							"baseline_high_date": "≤2022-07-15"
+							"baseline_low_date": "2020-01-15",
+							"baseline_high_date": "2022-07-15"
 						}
 					},
 					{
@@ -20572,8 +20671,8 @@
 						],
 						"status": {
 							"baseline": "high",
-							"baseline_low_date": "≤2020-01-15",
-							"baseline_high_date": "≤2022-07-15"
+							"baseline_low_date": "2020-01-15",
+							"baseline_high_date": "2022-07-15"
 						}
 					},
 					{
@@ -21254,15 +21353,7 @@
 					{
 						"name": "codebase",
 						"description": "The base path used to resolve relative URIs specified by **classid**, **data**, or **archive**. If not specified, the default is the base URI of the current document.",
-						"browsers": [
-							"C1",
-							"CA18",
-							"E12",
-							"FF1",
-							"FFA4",
-							"S3",
-							"SM2"
-						],
+						"browsers": [],
 						"status": { "baseline": false }
 					},
 					{
@@ -21653,9 +21744,7 @@
 						"description": {
 							"kind": "markdown",
 							"value": "A Boolean attribute:\xA0if specified, the audio will automatically begin playback as soon as it can do so, without waiting for the entire audio file to finish downloading.\n\n**Note**: Sites that automatically play audio (or videos with an audio track) can be an unpleasant experience for users, so should be avoided when possible. If you must offer autoplay functionality, you should make it opt-in (requiring a user to specifically enable it). However, this can be useful when creating media elements whose source will be set at a later time, under user control."
-						},
-						"browsers": [],
-						"status": { "baseline": false }
+						}
 					},
 					{ "name": "mediagroup" },
 					{
@@ -23220,8 +23309,9 @@
 							"SM6"
 						],
 						"status": {
-							"baseline": "low",
-							"baseline_low_date": "2023-08-01"
+							"baseline": "high",
+							"baseline_low_date": "2023-08-01",
+							"baseline_high_date": "2026-02-01"
 						}
 					},
 					{
@@ -23352,23 +23442,7 @@
 						"name": "inputmode",
 						"valueSet": "im"
 					},
-					{
-						"name": "list",
-						"browsers": [
-							"C20",
-							"CA25",
-							"E12",
-							"FF4",
-							"FFA4",
-							"S12.1",
-							"SM12.2"
-						],
-						"status": {
-							"baseline": "high",
-							"baseline_low_date": "2019-03-25",
-							"baseline_high_date": "2021-09-25"
-						}
-					},
+					{ "name": "list" },
 					{
 						"name": "max",
 						"browsers": [
@@ -24140,6 +24214,7 @@
 					"C20",
 					"CA33",
 					"E12",
+					"FF4",
 					"S12.1",
 					"SM12.2"
 				],
@@ -24164,14 +24239,9 @@
 						"E12",
 						"FF1",
 						"FFA4",
-						"S4",
-						"SM3.2"
+						"S7"
 					],
-					"status": {
-						"baseline": "high",
-						"baseline_low_date": "2015-07-29",
-						"baseline_high_date": "2018-01-29"
-					}
+					"status": { "baseline": false }
 				}, {
 					"name": "label",
 					"description": {
@@ -24395,8 +24465,9 @@
 							"SM6"
 						],
 						"status": {
-							"baseline": "low",
-							"baseline_low_date": "2023-08-01"
+							"baseline": "high",
+							"baseline_low_date": "2023-08-01",
+							"baseline_high_date": "2026-02-01"
 						}
 					},
 					{
@@ -24623,21 +24694,7 @@
 					},
 					{
 						"name": "spellcheck",
-						"description": "Specifies whether the `<textarea>` is subject to spell checking by the underlying browser/OS. the value can be:\n\n*   `true`: Indicates that the element needs to have its spelling and grammar checked.\n*   `default` : Indicates that the element is to act according to a default behavior, possibly based on the parent element's own `spellcheck` value.\n*   `false` : Indicates that the element should not be spell checked.",
-						"browsers": [
-							"C9",
-							"CA18",
-							"E12",
-							"FF2",
-							"FFA4",
-							"S5.1",
-							"SM5"
-						],
-						"status": {
-							"baseline": "high",
-							"baseline_low_date": "2015-07-29",
-							"baseline_high_date": "2018-01-29"
-						}
+						"description": "Specifies whether the `<textarea>` is subject to spell checking by the underlying browser/OS. the value can be:\n\n*   `true`: Indicates that the element needs to have its spelling and grammar checked.\n*   `default` : Indicates that the element is to act according to a default behavior, possibly based on the parent element's own `spellcheck` value.\n*   `false` : Indicates that the element should not be spell checked."
 					}
 				],
 				"references": [{
@@ -25115,6 +25172,25 @@
 						"baseline": "high",
 						"baseline_low_date": "2020-01-15",
 						"baseline_high_date": "2022-07-15"
+					}
+				}, {
+					"name": "name",
+					"description": {
+						"kind": "markdown",
+						"value": "This attribute enables multiple `<details>` elements to be connected, with only one open at a time. This allows developers to easily create UI features such as accordions without scripting.\n\nThe `name` attribute specifies a group name — give multiple `<details>` elements the same `name` value to group them. Only one of the grouped `<details>` elements can be open at a time — opening one will cause another to close. If multiple grouped `<details>` elements are given the `open` attribute, only the first one in the source order will be rendered open.\n\n**Note**: `<details>` elements don't have to be adjacent to one another in the source to be part of the same group."
+					},
+					"browsers": [
+						"C120",
+						"CA120",
+						"E120",
+						"FF130",
+						"FFA130",
+						"S17.2",
+						"SM17.2"
+					],
+					"status": {
+						"baseline": "low",
+						"baseline_low_date": "2024-09-03"
 					}
 				}],
 				"references": [{
@@ -25712,27 +25788,27 @@
 					{
 						"name": "allow",
 						"browsers": [
-							"C115",
-							"CA115",
-							"E115"
+							"C126",
+							"CA126",
+							"E126"
 						],
 						"status": { "baseline": false }
 					},
 					{
 						"name": "height",
 						"browsers": [
-							"C115",
-							"CA115",
-							"E115"
+							"C126",
+							"CA126",
+							"E126"
 						],
 						"status": { "baseline": false }
 					},
 					{
 						"name": "width",
 						"browsers": [
-							"C115",
-							"CA115",
-							"E115"
+							"C126",
+							"CA126",
+							"E126"
 						],
 						"status": { "baseline": false }
 					}
@@ -25742,9 +25818,9 @@
 					"url": "https://developer.mozilla.org/docs/Web/HTML/Reference/Elements/fencedframe"
 				}],
 				"browsers": [
-					"C115",
-					"CA115",
-					"E115"
+					"C126",
+					"CA126",
+					"E126"
 				],
 				"status": { "baseline": false }
 			},
@@ -25760,9 +25836,9 @@
 					"url": "https://developer.mozilla.org/docs/Web/HTML/Reference/Elements/selectedcontent"
 				}],
 				"browsers": [
-					"C134",
-					"CA134",
-					"E134"
+					"C135",
+					"CA135",
+					"E135"
 				],
 				"status": { "baseline": false }
 			}
@@ -25824,7 +25900,12 @@
 					"name": "MDN Reference",
 					"url": "https://developer.mozilla.org/docs/Web/HTML/Reference/Global_attributes/autocorrect"
 				}],
-				"browsers": ["FF136", "FFA136"],
+				"browsers": [
+					"FF136",
+					"FFA136",
+					"S14.1",
+					"SM14.5"
+				],
 				"status": { "baseline": false }
 			},
 			{
@@ -25847,8 +25928,9 @@
 					"SM16.4"
 				],
 				"status": {
-					"baseline": "low",
-					"baseline_low_date": "2023-03-27"
+					"baseline": "high",
+					"baseline_low_date": "2023-03-27",
+					"baseline_high_date": "2025-09-27"
 				}
 			},
 			{
@@ -26019,8 +26101,9 @@
 					"SM15.5"
 				],
 				"status": {
-					"baseline": "low",
-					"baseline_low_date": "2023-04-11"
+					"baseline": "high",
+					"baseline_low_date": "2023-04-11",
+					"baseline_high_date": "2025-10-11"
 				}
 			},
 			{
@@ -26142,15 +26225,15 @@
 					"C61",
 					"CA61",
 					"E79",
-					"FF31",
-					"FFA31",
-					"S15.4",
-					"SM15.4"
+					"FF75",
+					"FFA79",
+					"S15.5",
+					"SM15.5"
 				],
 				"status": {
 					"baseline": "high",
-					"baseline_low_date": "2022-03-14",
-					"baseline_high_date": "2024-09-14"
+					"baseline_low_date": "2022-05-16",
+					"baseline_high_date": "2024-11-16"
 				}
 			},
 			{
@@ -26228,8 +26311,8 @@
 				],
 				"status": {
 					"baseline": "high",
-					"baseline_low_date": "≤2020-01-15",
-					"baseline_high_date": "≤2022-07-15"
+					"baseline_low_date": "2020-01-15",
+					"baseline_high_date": "2022-07-15"
 				}
 			},
 			{
@@ -26250,7 +26333,7 @@
 					"FF2",
 					"FFA57",
 					"S5.1",
-					"SM9.3"
+					"SM5"
 				],
 				"status": {
 					"baseline": "high",
@@ -26354,8 +26437,9 @@
 					"SM6"
 				],
 				"status": {
-					"baseline": "low",
-					"baseline_low_date": "2023-03-14"
+					"baseline": "high",
+					"baseline_low_date": "2023-03-14",
+					"baseline_high_date": "2025-09-14"
 				}
 			},
 			{
@@ -27500,8 +27584,7 @@
 				"values": [
 					{ "name": "button" },
 					{ "name": "submit" },
-					{ "name": "reset" },
-					{ "name": "menu" }
+					{ "name": "reset" }
 				]
 			},
 			{

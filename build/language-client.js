@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,25 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/ral.js
-	var require_ral$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		Object.defineProperty(exports, "__esModule", { value: true });
-		var _ral;
-		function RAL() {
-			if (_ral === void 0) throw new Error(`No runtime abstraction layer installed`);
-			return _ral;
-		}
-		(function(RAL) {
-			function install(ral) {
-				if (ral === void 0) throw new Error(`No runtime abstraction layer provided`);
-				_ral = ral;
-			}
-			RAL.install = install;
-		})(RAL || (RAL = {}));
-		exports.default = RAL;
-	}));
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -88,539 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/events.js
-	var require_events$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.Emitter = exports.Event = void 0;
-		var ral_1 = require_ral$1();
-		var Event;
-		(function(Event) {
-			const _disposable = { dispose() {} };
-			Event.None = function() {
-				return _disposable;
-			};
-		})(Event || (exports.Event = Event = {}));
-		var CallbackList = class {
-			add(callback, context = null, bucket) {
-				if (!this._callbacks) {
-					this._callbacks = [];
-					this._contexts = [];
-				}
-				this._callbacks.push(callback);
-				this._contexts.push(context);
-				if (Array.isArray(bucket)) bucket.push({ dispose: () => this.remove(callback, context) });
-			}
-			remove(callback, context = null) {
-				if (!this._callbacks) return;
-				let foundCallbackWithDifferentContext = false;
-				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) if (this._contexts[i] === context) {
-					this._callbacks.splice(i, 1);
-					this._contexts.splice(i, 1);
-					return;
-				} else foundCallbackWithDifferentContext = true;
-				if (foundCallbackWithDifferentContext) throw new Error("When adding a listener with a context, you should remove it with the same context");
-			}
-			invoke(...args) {
-				if (!this._callbacks) return [];
-				const ret = [], callbacks = this._callbacks.slice(0), contexts = this._contexts.slice(0);
-				for (let i = 0, len = callbacks.length; i < len; i++) try {
-					ret.push(callbacks[i].apply(contexts[i], args));
-				} catch (e) {
-					(0, ral_1.default)().console.error(e);
-				}
-				return ret;
-			}
-			isEmpty() {
-				return !this._callbacks || this._callbacks.length === 0;
-			}
-			dispose() {
-				this._callbacks = void 0;
-				this._contexts = void 0;
-			}
-		};
-		var Emitter = class Emitter {
-			constructor(_options) {
-				this._options = _options;
-			}
-			/**
-			* For the public to allow to subscribe
-			* to events from this Emitter
-			*/
-			get event() {
-				if (!this._event) this._event = (listener, thisArgs, disposables) => {
-					if (!this._callbacks) this._callbacks = new CallbackList();
-					if (this._options && this._options.onFirstListenerAdd && this._callbacks.isEmpty()) this._options.onFirstListenerAdd(this);
-					this._callbacks.add(listener, thisArgs);
-					const result = { dispose: () => {
-						if (!this._callbacks) return;
-						this._callbacks.remove(listener, thisArgs);
-						result.dispose = Emitter._noop;
-						if (this._options && this._options.onLastListenerRemove && this._callbacks.isEmpty()) this._options.onLastListenerRemove(this);
-					} };
-					if (Array.isArray(disposables)) disposables.push(result);
-					return result;
-				};
-				return this._event;
-			}
-			/**
-			* To be kept private to fire an event to
-			* subscribers
-			*/
-			fire(event) {
-				if (this._callbacks) this._callbacks.invoke.call(this._callbacks, event);
-			}
-			dispose() {
-				if (this._callbacks) {
-					this._callbacks.dispose();
-					this._callbacks = void 0;
-				}
-			}
-		};
-		exports.Emitter = Emitter;
-		Emitter._noop = function() {};
-	}));
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/semaphore.js
-	var require_semaphore$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.Semaphore = void 0;
-		var ral_1 = require_ral$1();
-		var Semaphore = class {
-			constructor(capacity = 1) {
-				if (capacity <= 0) throw new Error("Capacity must be greater than 0");
-				this._capacity = capacity;
-				this._active = 0;
-				this._waiting = [];
-			}
-			lock(thunk) {
-				return new Promise((resolve, reject) => {
-					this._waiting.push({
-						thunk,
-						resolve,
-						reject
-					});
-					this.runNext();
-				});
-			}
-			get active() {
-				return this._active;
-			}
-			runNext() {
-				if (this._waiting.length === 0 || this._active === this._capacity) return;
-				(0, ral_1.default)().timer.setImmediate(() => this.doRunNext());
-			}
-			doRunNext() {
-				if (this._waiting.length === 0 || this._active === this._capacity) return;
-				const next = this._waiting.shift();
-				this._active++;
-				if (this._active > this._capacity) throw new Error(`To many thunks active`);
-				try {
-					const result = next.thunk();
-					if (result instanceof Promise) result.then((value) => {
-						this._active--;
-						next.resolve(value);
-						this.runNext();
-					}, (err) => {
-						this._active--;
-						next.reject(err);
-						this.runNext();
-					});
-					else {
-						this._active--;
-						next.resolve(result);
-						this.runNext();
-					}
-				} catch (err) {
-					this._active--;
-					next.reject(err);
-					this.runNext();
-				}
-			}
-		};
-		exports.Semaphore = Semaphore;
-	}));
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messageReader.js
-	var require_messageReader$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
-		var ral_1 = require_ral$1();
-		var Is = require_is$2();
-		var events_1 = require_events$1();
-		var semaphore_1 = require_semaphore$1();
-		var MessageReader;
-		(function(MessageReader) {
-			function is(value) {
-				let candidate = value;
-				return candidate && Is.func(candidate.listen) && Is.func(candidate.dispose) && Is.func(candidate.onError) && Is.func(candidate.onClose) && Is.func(candidate.onPartialMessage);
-			}
-			MessageReader.is = is;
-		})(MessageReader || (exports.MessageReader = MessageReader = {}));
-		var AbstractMessageReader = class {
-			constructor() {
-				this.errorEmitter = new events_1.Emitter();
-				this.closeEmitter = new events_1.Emitter();
-				this.partialMessageEmitter = new events_1.Emitter();
-			}
-			dispose() {
-				this.errorEmitter.dispose();
-				this.closeEmitter.dispose();
-			}
-			get onError() {
-				return this.errorEmitter.event;
-			}
-			fireError(error) {
-				this.errorEmitter.fire(this.asError(error));
-			}
-			get onClose() {
-				return this.closeEmitter.event;
-			}
-			fireClose() {
-				this.closeEmitter.fire(void 0);
-			}
-			get onPartialMessage() {
-				return this.partialMessageEmitter.event;
-			}
-			firePartialMessage(info) {
-				this.partialMessageEmitter.fire(info);
-			}
-			asError(error) {
-				if (error instanceof Error) return error;
-				else return /* @__PURE__ */ new Error(`Reader received error. Reason: ${Is.string(error.message) ? error.message : "unknown"}`);
-			}
-		};
-		exports.AbstractMessageReader = AbstractMessageReader;
-		var ResolvedMessageReaderOptions;
-		(function(ResolvedMessageReaderOptions) {
-			function fromOptions(options) {
-				let charset;
-				let contentDecoder;
-				const contentDecoders = /* @__PURE__ */ new Map();
-				let contentTypeDecoder;
-				const contentTypeDecoders = /* @__PURE__ */ new Map();
-				if (options === void 0 || typeof options === "string") charset = options ?? "utf-8";
-				else {
-					charset = options.charset ?? "utf-8";
-					if (options.contentDecoder !== void 0) {
-						contentDecoder = options.contentDecoder;
-						contentDecoders.set(contentDecoder.name, contentDecoder);
-					}
-					if (options.contentDecoders !== void 0) for (const decoder of options.contentDecoders) contentDecoders.set(decoder.name, decoder);
-					if (options.contentTypeDecoder !== void 0) {
-						contentTypeDecoder = options.contentTypeDecoder;
-						contentTypeDecoders.set(contentTypeDecoder.name, contentTypeDecoder);
-					}
-					if (options.contentTypeDecoders !== void 0) for (const decoder of options.contentTypeDecoders) contentTypeDecoders.set(decoder.name, decoder);
-				}
-				if (contentTypeDecoder === void 0) {
-					contentTypeDecoder = (0, ral_1.default)().applicationJson.decoder;
-					contentTypeDecoders.set(contentTypeDecoder.name, contentTypeDecoder);
-				}
-				return {
-					charset,
-					contentDecoder,
-					contentDecoders,
-					contentTypeDecoder,
-					contentTypeDecoders
-				};
-			}
-			ResolvedMessageReaderOptions.fromOptions = fromOptions;
-		})(ResolvedMessageReaderOptions || (ResolvedMessageReaderOptions = {}));
-		var ReadableStreamMessageReader = class extends AbstractMessageReader {
-			constructor(readable, options) {
-				super();
-				this.readable = readable;
-				this.options = ResolvedMessageReaderOptions.fromOptions(options);
-				this.buffer = (0, ral_1.default)().messageBuffer.create(this.options.charset);
-				this._partialMessageTimeout = 1e4;
-				this.nextMessageLength = -1;
-				this.messageToken = 0;
-				this.readSemaphore = new semaphore_1.Semaphore(1);
-			}
-			set partialMessageTimeout(timeout) {
-				this._partialMessageTimeout = timeout;
-			}
-			get partialMessageTimeout() {
-				return this._partialMessageTimeout;
-			}
-			listen(callback) {
-				this.nextMessageLength = -1;
-				this.messageToken = 0;
-				this.partialMessageTimer = void 0;
-				this.callback = callback;
-				const result = this.readable.onData((data) => {
-					this.onData(data);
-				});
-				this.readable.onError((error) => this.fireError(error));
-				this.readable.onClose(() => this.fireClose());
-				return result;
-			}
-			onData(data) {
-				try {
-					this.buffer.append(data);
-					while (true) {
-						if (this.nextMessageLength === -1) {
-							const headers = this.buffer.tryReadHeaders(true);
-							if (!headers) return;
-							const contentLength = headers.get("content-length");
-							if (!contentLength) {
-								this.fireError(/* @__PURE__ */ new Error(`Header must provide a Content-Length property.\n${JSON.stringify(Object.fromEntries(headers))}`));
-								return;
-							}
-							const length = parseInt(contentLength);
-							if (isNaN(length)) {
-								this.fireError(/* @__PURE__ */ new Error(`Content-Length value must be a number. Got ${contentLength}`));
-								return;
-							}
-							this.nextMessageLength = length;
-						}
-						const body = this.buffer.tryReadBody(this.nextMessageLength);
-						if (body === void 0) {
-							/** We haven't received the full message yet. */
-							this.setPartialMessageTimer();
-							return;
-						}
-						this.clearPartialMessageTimer();
-						this.nextMessageLength = -1;
-						this.readSemaphore.lock(async () => {
-							const bytes = this.options.contentDecoder !== void 0 ? await this.options.contentDecoder.decode(body) : body;
-							const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
-							this.callback(message);
-						}).catch((error) => {
-							this.fireError(error);
-						});
-					}
-				} catch (error) {
-					this.fireError(error);
-				}
-			}
-			clearPartialMessageTimer() {
-				if (this.partialMessageTimer) {
-					this.partialMessageTimer.dispose();
-					this.partialMessageTimer = void 0;
-				}
-			}
-			setPartialMessageTimer() {
-				this.clearPartialMessageTimer();
-				if (this._partialMessageTimeout <= 0) return;
-				this.partialMessageTimer = (0, ral_1.default)().timer.setTimeout((token, timeout) => {
-					this.partialMessageTimer = void 0;
-					if (token === this.messageToken) {
-						this.firePartialMessage({
-							messageToken: token,
-							waitingTime: timeout
-						});
-						this.setPartialMessageTimer();
-					}
-				}, this._partialMessageTimeout, this.messageToken, this._partialMessageTimeout);
-			}
-		};
-		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
-	}));
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/lib/socket/reader.js
-	var import_messageReader = require_messageReader$1();
-	var WebSocketMessageReader = class extends import_messageReader.AbstractMessageReader {
-		socket;
-		state = "initial";
-		callback;
-		events = [];
-		constructor(socket) {
-			super();
-			this.socket = socket;
-			this.socket.onMessage((message) => this.readMessage(message));
-			this.socket.onError((error) => this.fireError(error));
-			this.socket.onClose((code, reason) => {
-				if (code !== 1e3) {
-					const error = {
-						name: "" + code,
-						message: `Error during socket reconnect: code = ${code}, reason = ${reason}`
-					};
-					this.fireError(error);
-				}
-				this.fireClose();
-			});
-		}
-		listen(callback) {
-			if (this.state === "initial") {
-				this.state = "listening";
-				this.callback = callback;
-				while (this.events.length !== 0) {
-					const event = this.events.pop();
-					if (event.message !== void 0) this.readMessage(event.message);
-					else if (event.error !== void 0) this.fireError(event.error);
-					else this.fireClose();
-				}
-			}
-			return { dispose: () => {
-				if (this.callback === callback) {
-					this.state = "initial";
-					this.callback = void 0;
-				}
-			} };
-		}
-		dispose() {
-			super.dispose();
-			this.state = "initial";
-			this.callback = void 0;
-			this.events.splice(0, this.events.length);
-		}
-		readMessage(message) {
-			if (this.state === "initial") this.events.splice(0, 0, { message });
-			else if (this.state === "listening") try {
-				const data = JSON.parse(message);
-				this.callback(data);
-			} catch (err) {
-				const error = {
-					name: "400",
-					message: `Error during message parsing, reason = ${typeof err === "object" ? err.message : "unknown"}`
-				};
-				this.fireError(error);
-			}
-		}
-		fireError(error) {
-			if (this.state === "initial") this.events.splice(0, 0, { error });
-			else if (this.state === "listening") super.fireError(error);
-		}
-		fireClose() {
-			if (this.state === "initial") this.events.splice(0, 0, {});
-			else if (this.state === "listening") super.fireClose();
-			this.state = "closed";
-		}
-	};
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
-	var require_messageWriter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
-		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
-		var ral_1 = require_ral$1();
-		var Is = require_is$2();
-		var semaphore_1 = require_semaphore$1();
-		var events_1 = require_events$1();
-		var ContentLength = "Content-Length: ";
-		var CRLF = "\r\n";
-		var MessageWriter;
-		(function(MessageWriter) {
-			function is(value) {
-				let candidate = value;
-				return candidate && Is.func(candidate.dispose) && Is.func(candidate.onClose) && Is.func(candidate.onError) && Is.func(candidate.write);
-			}
-			MessageWriter.is = is;
-		})(MessageWriter || (exports.MessageWriter = MessageWriter = {}));
-		var AbstractMessageWriter = class {
-			constructor() {
-				this.errorEmitter = new events_1.Emitter();
-				this.closeEmitter = new events_1.Emitter();
-			}
-			dispose() {
-				this.errorEmitter.dispose();
-				this.closeEmitter.dispose();
-			}
-			get onError() {
-				return this.errorEmitter.event;
-			}
-			fireError(error, message, count) {
-				this.errorEmitter.fire([
-					this.asError(error),
-					message,
-					count
-				]);
-			}
-			get onClose() {
-				return this.closeEmitter.event;
-			}
-			fireClose() {
-				this.closeEmitter.fire(void 0);
-			}
-			asError(error) {
-				if (error instanceof Error) return error;
-				else return /* @__PURE__ */ new Error(`Writer received error. Reason: ${Is.string(error.message) ? error.message : "unknown"}`);
-			}
-		};
-		exports.AbstractMessageWriter = AbstractMessageWriter;
-		var ResolvedMessageWriterOptions;
-		(function(ResolvedMessageWriterOptions) {
-			function fromOptions(options) {
-				if (options === void 0 || typeof options === "string") return {
-					charset: options ?? "utf-8",
-					contentTypeEncoder: (0, ral_1.default)().applicationJson.encoder
-				};
-				else return {
-					charset: options.charset ?? "utf-8",
-					contentEncoder: options.contentEncoder,
-					contentTypeEncoder: options.contentTypeEncoder ?? (0, ral_1.default)().applicationJson.encoder
-				};
-			}
-			ResolvedMessageWriterOptions.fromOptions = fromOptions;
-		})(ResolvedMessageWriterOptions || (ResolvedMessageWriterOptions = {}));
-		var WriteableStreamMessageWriter = class extends AbstractMessageWriter {
-			constructor(writable, options) {
-				super();
-				this.writable = writable;
-				this.options = ResolvedMessageWriterOptions.fromOptions(options);
-				this.errorCount = 0;
-				this.writeSemaphore = new semaphore_1.Semaphore(1);
-				this.writable.onError((error) => this.fireError(error));
-				this.writable.onClose(() => this.fireClose());
-			}
-			async write(msg) {
-				return this.writeSemaphore.lock(async () => {
-					return this.options.contentTypeEncoder.encode(msg, this.options).then((buffer) => {
-						if (this.options.contentEncoder !== void 0) return this.options.contentEncoder.encode(buffer);
-						else return buffer;
-					}).then((buffer) => {
-						const headers = [];
-						headers.push(ContentLength, buffer.byteLength.toString(), CRLF);
-						headers.push(CRLF);
-						return this.doWrite(msg, headers, buffer);
-					}, (error) => {
-						this.fireError(error);
-						throw error;
-					});
-				});
-			}
-			async doWrite(msg, headers, data) {
-				try {
-					await this.writable.write(headers.join(""), "ascii");
-					return this.writable.write(data);
-				} catch (error) {
-					this.handleError(error, msg);
-					return Promise.reject(error);
-				}
-			}
-			handleError(error, msg) {
-				this.errorCount++;
-				this.fireError(error, msg, this.errorCount);
-			}
-			end() {
-				this.writable.end();
-			}
-		};
-		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
-	}));
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/lib/socket/writer.js
-	var import_messageWriter = require_messageWriter$1();
-	var WebSocketMessageWriter = class extends import_messageWriter.AbstractMessageWriter {
-		errorCount = 0;
-		socket;
-		constructor(socket) {
-			super();
-			this.socket = socket;
-		}
-		end() {}
-		async write(msg) {
-			try {
-				const content = JSON.stringify(msg);
-				this.socket.send(content);
-			} catch (e) {
-				this.errorCount++;
-				this.fireError(e, msg, this.errorCount);
-			}
-		}
-	};
-	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -917,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -1252,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -1265,7 +722,117 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	var require_ral$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
+		Object.defineProperty(exports, "__esModule", { value: true });
+		var _ral;
+		function RAL() {
+			if (_ral === void 0) throw new Error(`No runtime abstraction layer installed`);
+			return _ral;
+		}
+		(function(RAL) {
+			function install(ral) {
+				if (ral === void 0) throw new Error(`No runtime abstraction layer provided`);
+				_ral = ral;
+			}
+			RAL.install = install;
+		})(RAL || (RAL = {}));
+		exports.default = RAL;
+	}));
+	//#endregion
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	var require_events$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.Emitter = exports.Event = void 0;
+		var ral_1 = require_ral$1();
+		var Event;
+		(function(Event) {
+			const _disposable = { dispose() {} };
+			Event.None = function() {
+				return _disposable;
+			};
+		})(Event || (exports.Event = Event = {}));
+		var CallbackList = class {
+			add(callback, context = null, bucket) {
+				if (!this._callbacks) {
+					this._callbacks = [];
+					this._contexts = [];
+				}
+				this._callbacks.push(callback);
+				this._contexts.push(context);
+				if (Array.isArray(bucket)) bucket.push({ dispose: () => this.remove(callback, context) });
+			}
+			remove(callback, context = null) {
+				if (!this._callbacks) return;
+				let foundCallbackWithDifferentContext = false;
+				for (let i = 0, len = this._callbacks.length; i < len; i++) if (this._callbacks[i] === callback) if (this._contexts[i] === context) {
+					this._callbacks.splice(i, 1);
+					this._contexts.splice(i, 1);
+					return;
+				} else foundCallbackWithDifferentContext = true;
+				if (foundCallbackWithDifferentContext) throw new Error("When adding a listener with a context, you should remove it with the same context");
+			}
+			invoke(...args) {
+				if (!this._callbacks) return [];
+				const ret = [], callbacks = this._callbacks.slice(0), contexts = this._contexts.slice(0);
+				for (let i = 0, len = callbacks.length; i < len; i++) try {
+					ret.push(callbacks[i].apply(contexts[i], args));
+				} catch (e) {
+					(0, ral_1.default)().console.error(e);
+				}
+				return ret;
+			}
+			isEmpty() {
+				return !this._callbacks || this._callbacks.length === 0;
+			}
+			dispose() {
+				this._callbacks = void 0;
+				this._contexts = void 0;
+			}
+		};
+		var Emitter = class Emitter {
+			constructor(_options) {
+				this._options = _options;
+			}
+			/**
+			* For the public to allow to subscribe
+			* to events from this Emitter
+			*/
+			get event() {
+				if (!this._event) this._event = (listener, thisArgs, disposables) => {
+					if (!this._callbacks) this._callbacks = new CallbackList();
+					if (this._options && this._options.onFirstListenerAdd && this._callbacks.isEmpty()) this._options.onFirstListenerAdd(this);
+					this._callbacks.add(listener, thisArgs);
+					const result = { dispose: () => {
+						if (!this._callbacks) return;
+						this._callbacks.remove(listener, thisArgs);
+						result.dispose = Emitter._noop;
+						if (this._options && this._options.onLastListenerRemove && this._callbacks.isEmpty()) this._options.onLastListenerRemove(this);
+					} };
+					if (Array.isArray(disposables)) disposables.push(result);
+					return result;
+				};
+				return this._event;
+			}
+			/**
+			* To be kept private to fire an event to
+			* subscribers
+			*/
+			fire(event) {
+				if (this._callbacks) this._callbacks.invoke.call(this._callbacks, event);
+			}
+			dispose() {
+				if (this._callbacks) {
+					this._callbacks.dispose();
+					this._callbacks = void 0;
+				}
+			}
+		};
+		exports.Emitter = Emitter;
+		Emitter._noop = function() {};
+	}));
+	//#endregion
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -1339,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -1406,7 +973,355 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	var require_semaphore$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.Semaphore = void 0;
+		var ral_1 = require_ral$1();
+		var Semaphore = class {
+			constructor(capacity = 1) {
+				if (capacity <= 0) throw new Error("Capacity must be greater than 0");
+				this._capacity = capacity;
+				this._active = 0;
+				this._waiting = [];
+			}
+			lock(thunk) {
+				return new Promise((resolve, reject) => {
+					this._waiting.push({
+						thunk,
+						resolve,
+						reject
+					});
+					this.runNext();
+				});
+			}
+			get active() {
+				return this._active;
+			}
+			runNext() {
+				if (this._waiting.length === 0 || this._active === this._capacity) return;
+				(0, ral_1.default)().timer.setImmediate(() => this.doRunNext());
+			}
+			doRunNext() {
+				if (this._waiting.length === 0 || this._active === this._capacity) return;
+				const next = this._waiting.shift();
+				this._active++;
+				if (this._active > this._capacity) throw new Error(`To many thunks active`);
+				try {
+					const result = next.thunk();
+					if (result instanceof Promise) result.then((value) => {
+						this._active--;
+						next.resolve(value);
+						this.runNext();
+					}, (err) => {
+						this._active--;
+						next.reject(err);
+						this.runNext();
+					});
+					else {
+						this._active--;
+						next.resolve(result);
+						this.runNext();
+					}
+				} catch (err) {
+					this._active--;
+					next.reject(err);
+					this.runNext();
+				}
+			}
+		};
+		exports.Semaphore = Semaphore;
+	}));
+	//#endregion
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	var require_messageReader$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
+		var ral_1 = require_ral$1();
+		var Is = require_is$2();
+		var events_1 = require_events$1();
+		var semaphore_1 = require_semaphore$1();
+		var MessageReader;
+		(function(MessageReader) {
+			function is(value) {
+				let candidate = value;
+				return candidate && Is.func(candidate.listen) && Is.func(candidate.dispose) && Is.func(candidate.onError) && Is.func(candidate.onClose) && Is.func(candidate.onPartialMessage);
+			}
+			MessageReader.is = is;
+		})(MessageReader || (exports.MessageReader = MessageReader = {}));
+		var AbstractMessageReader = class {
+			constructor() {
+				this.errorEmitter = new events_1.Emitter();
+				this.closeEmitter = new events_1.Emitter();
+				this.partialMessageEmitter = new events_1.Emitter();
+			}
+			dispose() {
+				this.errorEmitter.dispose();
+				this.closeEmitter.dispose();
+			}
+			get onError() {
+				return this.errorEmitter.event;
+			}
+			fireError(error) {
+				this.errorEmitter.fire(this.asError(error));
+			}
+			get onClose() {
+				return this.closeEmitter.event;
+			}
+			fireClose() {
+				this.closeEmitter.fire(void 0);
+			}
+			get onPartialMessage() {
+				return this.partialMessageEmitter.event;
+			}
+			firePartialMessage(info) {
+				this.partialMessageEmitter.fire(info);
+			}
+			asError(error) {
+				if (error instanceof Error) return error;
+				else return /* @__PURE__ */ new Error(`Reader received error. Reason: ${Is.string(error.message) ? error.message : "unknown"}`);
+			}
+		};
+		exports.AbstractMessageReader = AbstractMessageReader;
+		var ResolvedMessageReaderOptions;
+		(function(ResolvedMessageReaderOptions) {
+			function fromOptions(options) {
+				let charset;
+				let contentDecoder;
+				const contentDecoders = /* @__PURE__ */ new Map();
+				let contentTypeDecoder;
+				const contentTypeDecoders = /* @__PURE__ */ new Map();
+				if (options === void 0 || typeof options === "string") charset = options ?? "utf-8";
+				else {
+					charset = options.charset ?? "utf-8";
+					if (options.contentDecoder !== void 0) {
+						contentDecoder = options.contentDecoder;
+						contentDecoders.set(contentDecoder.name, contentDecoder);
+					}
+					if (options.contentDecoders !== void 0) for (const decoder of options.contentDecoders) contentDecoders.set(decoder.name, decoder);
+					if (options.contentTypeDecoder !== void 0) {
+						contentTypeDecoder = options.contentTypeDecoder;
+						contentTypeDecoders.set(contentTypeDecoder.name, contentTypeDecoder);
+					}
+					if (options.contentTypeDecoders !== void 0) for (const decoder of options.contentTypeDecoders) contentTypeDecoders.set(decoder.name, decoder);
+				}
+				if (contentTypeDecoder === void 0) {
+					contentTypeDecoder = (0, ral_1.default)().applicationJson.decoder;
+					contentTypeDecoders.set(contentTypeDecoder.name, contentTypeDecoder);
+				}
+				return {
+					charset,
+					contentDecoder,
+					contentDecoders,
+					contentTypeDecoder,
+					contentTypeDecoders
+				};
+			}
+			ResolvedMessageReaderOptions.fromOptions = fromOptions;
+		})(ResolvedMessageReaderOptions || (ResolvedMessageReaderOptions = {}));
+		var ReadableStreamMessageReader = class extends AbstractMessageReader {
+			constructor(readable, options) {
+				super();
+				this.readable = readable;
+				this.options = ResolvedMessageReaderOptions.fromOptions(options);
+				this.buffer = (0, ral_1.default)().messageBuffer.create(this.options.charset);
+				this._partialMessageTimeout = 1e4;
+				this.nextMessageLength = -1;
+				this.messageToken = 0;
+				this.readSemaphore = new semaphore_1.Semaphore(1);
+			}
+			set partialMessageTimeout(timeout) {
+				this._partialMessageTimeout = timeout;
+			}
+			get partialMessageTimeout() {
+				return this._partialMessageTimeout;
+			}
+			listen(callback) {
+				this.nextMessageLength = -1;
+				this.messageToken = 0;
+				this.partialMessageTimer = void 0;
+				this.callback = callback;
+				const result = this.readable.onData((data) => {
+					this.onData(data);
+				});
+				this.readable.onError((error) => this.fireError(error));
+				this.readable.onClose(() => this.fireClose());
+				return result;
+			}
+			onData(data) {
+				try {
+					this.buffer.append(data);
+					while (true) {
+						if (this.nextMessageLength === -1) {
+							const headers = this.buffer.tryReadHeaders(true);
+							if (!headers) return;
+							const contentLength = headers.get("content-length");
+							if (!contentLength) {
+								this.fireError(/* @__PURE__ */ new Error(`Header must provide a Content-Length property.\n${JSON.stringify(Object.fromEntries(headers))}`));
+								return;
+							}
+							const length = parseInt(contentLength);
+							if (isNaN(length)) {
+								this.fireError(/* @__PURE__ */ new Error(`Content-Length value must be a number. Got ${contentLength}`));
+								return;
+							}
+							this.nextMessageLength = length;
+						}
+						const body = this.buffer.tryReadBody(this.nextMessageLength);
+						if (body === void 0) {
+							/** We haven't received the full message yet. */
+							this.setPartialMessageTimer();
+							return;
+						}
+						this.clearPartialMessageTimer();
+						this.nextMessageLength = -1;
+						this.readSemaphore.lock(async () => {
+							const bytes = this.options.contentDecoder !== void 0 ? await this.options.contentDecoder.decode(body) : body;
+							const message = await this.options.contentTypeDecoder.decode(bytes, this.options);
+							this.callback(message);
+						}).catch((error) => {
+							this.fireError(error);
+						});
+					}
+				} catch (error) {
+					this.fireError(error);
+				}
+			}
+			clearPartialMessageTimer() {
+				if (this.partialMessageTimer) {
+					this.partialMessageTimer.dispose();
+					this.partialMessageTimer = void 0;
+				}
+			}
+			setPartialMessageTimer() {
+				this.clearPartialMessageTimer();
+				if (this._partialMessageTimeout <= 0) return;
+				this.partialMessageTimer = (0, ral_1.default)().timer.setTimeout((token, timeout) => {
+					this.partialMessageTimer = void 0;
+					if (token === this.messageToken) {
+						this.firePartialMessage({
+							messageToken: token,
+							waitingTime: timeout
+						});
+						this.setPartialMessageTimer();
+					}
+				}, this._partialMessageTimeout, this.messageToken, this._partialMessageTimeout);
+			}
+		};
+		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
+	}));
+	//#endregion
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	var require_messageWriter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
+		Object.defineProperty(exports, "__esModule", { value: true });
+		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
+		var ral_1 = require_ral$1();
+		var Is = require_is$2();
+		var semaphore_1 = require_semaphore$1();
+		var events_1 = require_events$1();
+		var ContentLength = "Content-Length: ";
+		var CRLF = "\r\n";
+		var MessageWriter;
+		(function(MessageWriter) {
+			function is(value) {
+				let candidate = value;
+				return candidate && Is.func(candidate.dispose) && Is.func(candidate.onClose) && Is.func(candidate.onError) && Is.func(candidate.write);
+			}
+			MessageWriter.is = is;
+		})(MessageWriter || (exports.MessageWriter = MessageWriter = {}));
+		var AbstractMessageWriter = class {
+			constructor() {
+				this.errorEmitter = new events_1.Emitter();
+				this.closeEmitter = new events_1.Emitter();
+			}
+			dispose() {
+				this.errorEmitter.dispose();
+				this.closeEmitter.dispose();
+			}
+			get onError() {
+				return this.errorEmitter.event;
+			}
+			fireError(error, message, count) {
+				this.errorEmitter.fire([
+					this.asError(error),
+					message,
+					count
+				]);
+			}
+			get onClose() {
+				return this.closeEmitter.event;
+			}
+			fireClose() {
+				this.closeEmitter.fire(void 0);
+			}
+			asError(error) {
+				if (error instanceof Error) return error;
+				else return /* @__PURE__ */ new Error(`Writer received error. Reason: ${Is.string(error.message) ? error.message : "unknown"}`);
+			}
+		};
+		exports.AbstractMessageWriter = AbstractMessageWriter;
+		var ResolvedMessageWriterOptions;
+		(function(ResolvedMessageWriterOptions) {
+			function fromOptions(options) {
+				if (options === void 0 || typeof options === "string") return {
+					charset: options ?? "utf-8",
+					contentTypeEncoder: (0, ral_1.default)().applicationJson.encoder
+				};
+				else return {
+					charset: options.charset ?? "utf-8",
+					contentEncoder: options.contentEncoder,
+					contentTypeEncoder: options.contentTypeEncoder ?? (0, ral_1.default)().applicationJson.encoder
+				};
+			}
+			ResolvedMessageWriterOptions.fromOptions = fromOptions;
+		})(ResolvedMessageWriterOptions || (ResolvedMessageWriterOptions = {}));
+		var WriteableStreamMessageWriter = class extends AbstractMessageWriter {
+			constructor(writable, options) {
+				super();
+				this.writable = writable;
+				this.options = ResolvedMessageWriterOptions.fromOptions(options);
+				this.errorCount = 0;
+				this.writeSemaphore = new semaphore_1.Semaphore(1);
+				this.writable.onError((error) => this.fireError(error));
+				this.writable.onClose(() => this.fireClose());
+			}
+			async write(msg) {
+				return this.writeSemaphore.lock(async () => {
+					return this.options.contentTypeEncoder.encode(msg, this.options).then((buffer) => {
+						if (this.options.contentEncoder !== void 0) return this.options.contentEncoder.encode(buffer);
+						else return buffer;
+					}).then((buffer) => {
+						const headers = [];
+						headers.push(ContentLength, buffer.byteLength.toString(), CRLF);
+						headers.push(CRLF);
+						return this.doWrite(msg, headers, buffer);
+					}, (error) => {
+						this.fireError(error);
+						throw error;
+					});
+				});
+			}
+			async doWrite(msg, headers, data) {
+				try {
+					await this.writable.write(headers.join(""), "ascii");
+					return this.writable.write(data);
+				} catch (error) {
+					this.handleError(error, msg);
+					return Promise.reject(error);
+				}
+			}
+			handleError(error, msg) {
+				this.errorCount++;
+				this.fireError(error, msg, this.errorCount);
+			}
+			end() {
+				this.writable.end();
+			}
+		};
+		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
+	}));
+	//#endregion
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1532,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1856,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2440,7 +2355,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2818,7 +2733,7 @@
 		exports.RAL = require_ral$1().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$2();
@@ -2845,7 +2760,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2953,7 +2868,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-ws-jsonrpc/lib/socket/connection.js
+	//#region ../../node_modules/vscode-ws-jsonrpc/lib/disposable.js
 	var import_main$1 = (/* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -3022,6 +2937,98 @@
 		}
 		exports.createMessageConnection = createMessageConnection;
 	})))();
+	//#endregion
+	//#region ../../node_modules/vscode-ws-jsonrpc/lib/socket/reader.js
+	var WebSocketMessageReader = class extends import_main$1.AbstractMessageReader {
+		socket;
+		state = "initial";
+		callback;
+		events = [];
+		constructor(socket) {
+			super();
+			this.socket = socket;
+			this.socket.onMessage((message) => this.readMessage(message));
+			this.socket.onError((error) => this.fireError(error));
+			this.socket.onClose((code, reason) => {
+				if (code !== 1e3) {
+					const error = {
+						name: "" + code,
+						message: `Error during socket reconnect: code = ${code}, reason = ${reason}`
+					};
+					this.fireError(error);
+				}
+				this.fireClose();
+			});
+		}
+		listen(callback) {
+			if (this.state === "initial") {
+				this.state = "listening";
+				this.callback = callback;
+				while (this.events.length !== 0) {
+					const event = this.events.pop();
+					if (event.message !== void 0) this.readMessage(event.message);
+					else if (event.error !== void 0) this.fireError(event.error);
+					else this.fireClose();
+				}
+			}
+			return { dispose: () => {
+				if (this.callback === callback) {
+					this.state = "initial";
+					this.callback = void 0;
+				}
+			} };
+		}
+		dispose() {
+			super.dispose();
+			this.state = "initial";
+			this.callback = void 0;
+			this.events.splice(0, this.events.length);
+		}
+		readMessage(message) {
+			if (this.state === "initial") this.events.splice(0, 0, { message });
+			else if (this.state === "listening") try {
+				const data = JSON.parse(message);
+				this.callback(data);
+			} catch (err) {
+				const error = {
+					name: "400",
+					message: `Error during message parsing, reason = ${typeof err === "object" ? err.message : "unknown"}`
+				};
+				this.fireError(error);
+			}
+		}
+		fireError(error) {
+			if (this.state === "initial") this.events.splice(0, 0, { error });
+			else if (this.state === "listening") super.fireError(error);
+		}
+		fireClose() {
+			if (this.state === "initial") this.events.splice(0, 0, {});
+			else if (this.state === "listening") super.fireClose();
+			this.state = "closed";
+		}
+	};
+	//#endregion
+	//#region ../../node_modules/vscode-ws-jsonrpc/lib/socket/writer.js
+	var WebSocketMessageWriter = class extends import_main$1.AbstractMessageWriter {
+		errorCount = 0;
+		socket;
+		constructor(socket) {
+			super();
+			this.socket = socket;
+		}
+		end() {}
+		async write(msg) {
+			try {
+				const content = JSON.stringify(msg);
+				this.socket.send(content);
+			} catch (e) {
+				this.errorCount++;
+				this.fireError(e, msg, this.errorCount);
+			}
+		}
+	};
+	//#endregion
+	//#region ../../node_modules/vscode-ws-jsonrpc/lib/socket/connection.js
 	function createWebSocketConnection(socket, logger) {
 		const connection = (0, import_main$1.createMessageConnection)(new WebSocketMessageReader(socket), new WebSocketMessageWriter(socket), logger);
 		connection.onClose(() => connection.dispose());
@@ -3052,7 +3059,8 @@
 		const { webSocket, onConnection } = options;
 		const logger = options.logger || new ConsoleLogger();
 		webSocket.onopen = () => {
-			onConnection(createWebSocketConnection(toSocket(webSocket), logger));
+			const connection = createWebSocketConnection(toSocket(webSocket), logger);
+			onConnection(connection);
 		};
 	}
 	function toSocket(webSocket) {
@@ -3073,7 +3081,7 @@
 		};
 	}
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -3107,7 +3115,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -3404,7 +3412,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -3739,7 +3747,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -3752,7 +3760,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -3770,7 +3778,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -3862,7 +3870,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -3936,7 +3944,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -4003,7 +4011,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -4063,7 +4071,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -4241,7 +4249,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -4351,7 +4359,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -4477,7 +4485,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -4801,7 +4809,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -5384,7 +5392,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -5762,7 +5770,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -5789,7 +5797,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -5897,7 +5905,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -5967,7 +5975,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -10188,11 +10196,14 @@
 		exports.createProtocolConnection = createProtocolConnection;
 	}));
 	//#endregion
-	//#region src/utils.ts
-	var import_browser = (/* @__PURE__ */ __commonJSMin(((exports, module) => {
+	//#region ../../node_modules/vscode-languageserver-protocol/browser.js
+	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main();
-	})))();
+	}));
+	//#endregion
+	//#region src/utils.ts
 	var import_main = /* @__PURE__ */ __toESM(require_main());
+	var import_browser = require_browser();
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
 		if (!obj1) return obj2;
 		if (!obj2) return obj1;

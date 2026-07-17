@@ -9,8 +9,15 @@
 	var __getOwnPropNames = Object.getOwnPropertyNames;
 	var __getProtoOf = Object.getPrototypeOf;
 	var __hasOwnProp = Object.prototype.hasOwnProperty;
-	var __esmMin = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-	var __commonJSMin = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
+	var __esmMin = (fn, res, err) => () => {
+		if (err) throw err[0];
+		try {
+			return fn && (res = fn(fn = 0)), res;
+		} catch (e) {
+			throw err = [e], e;
+		}
+	};
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
 	var __exportAll = (all, no_symbols) => {
 		let target = {};
 		for (var name in all) __defProp(target, name, {
@@ -36,7 +43,7 @@
 	}) : target, mod));
 	var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["module.exports"] : __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/is.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/is.js
 	var require_is$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.stringArray = exports.array = exports.func = exports.error = exports.number = exports.string = exports.boolean = void 0;
@@ -70,7 +77,7 @@
 		exports.stringArray = stringArray;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messages.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messages.js
 	var require_messages$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Message = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType = exports.RequestType0 = exports.AbstractMessageSignature = exports.ParameterStructures = exports.ResponseError = exports.ErrorCodes = void 0;
@@ -367,7 +374,7 @@
 		})(Message || (exports.Message = Message = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/linkedMap.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/linkedMap.js
 	var require_linkedMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
@@ -702,7 +709,7 @@
 		exports.LRUCache = LRUCache;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/disposable.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/disposable.js
 	var require_disposable = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Disposable = void 0;
@@ -715,7 +722,7 @@
 		})(Disposable || (exports.Disposable = Disposable = {}));
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/ral.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/ral.js
 	var require_ral = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var _ral;
@@ -733,7 +740,7 @@
 		exports.default = RAL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/events.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/events.js
 	var require_events = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Emitter = exports.Event = void 0;
@@ -825,7 +832,7 @@
 		Emitter._noop = function() {};
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/cancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/cancellation.js
 	var require_cancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.CancellationTokenSource = exports.CancellationToken = void 0;
@@ -899,7 +906,7 @@
 		exports.CancellationTokenSource = CancellationTokenSource;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/sharedArrayCancellation.js
 	var require_sharedArrayCancellation = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = void 0;
@@ -966,7 +973,7 @@
 		exports.SharedArrayReceiverStrategy = SharedArrayReceiverStrategy;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/semaphore.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/semaphore.js
 	var require_semaphore = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.Semaphore = void 0;
@@ -1026,7 +1033,7 @@
 		exports.Semaphore = Semaphore;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageReader.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageReader.js
 	var require_messageReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = void 0;
@@ -1204,7 +1211,7 @@
 		exports.ReadableStreamMessageReader = ReadableStreamMessageReader;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageWriter.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageWriter.js
 	var require_messageWriter = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = void 0;
@@ -1314,7 +1321,7 @@
 		exports.WriteableStreamMessageWriter = WriteableStreamMessageWriter;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/messageBuffer.js
 	var require_messageBuffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.AbstractMessageBuffer = void 0;
@@ -1440,7 +1447,7 @@
 		exports.AbstractMessageBuffer = AbstractMessageBuffer;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/connection.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/connection.js
 	var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.createMessageConnection = exports.ConnectionOptions = exports.MessageStrategy = exports.CancellationStrategy = exports.CancellationSenderStrategy = exports.CancellationReceiverStrategy = exports.RequestCancellationReceiverStrategy = exports.IdCancellationReceiverStrategy = exports.ConnectionStrategy = exports.ConnectionError = exports.ConnectionErrors = exports.LogTraceNotification = exports.SetTraceNotification = exports.TraceFormat = exports.TraceValues = exports.Trace = exports.NullLogger = exports.ProgressType = exports.ProgressToken = void 0;
@@ -1764,7 +1771,7 @@
 						const toCancel = messageQueue.get(key);
 						if (messages_1.Message.isRequest(toCancel)) {
 							const strategy = options?.connectionStrategy;
-							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : cancelUndispatched(toCancel);
+							const response = strategy && strategy.cancelUndispatched ? strategy.cancelUndispatched(toCancel, cancelUndispatched) : void 0;
 							if (response && (response.error !== void 0 || response.result !== void 0)) {
 								messageQueue.delete(key);
 								requestTokens.delete(cancelId);
@@ -2347,7 +2354,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/common/api.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/common/api.js
 	var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.ProgressType = exports.ProgressToken = exports.createMessageConnection = exports.NullLogger = exports.ConnectionOptions = exports.ConnectionStrategy = exports.AbstractMessageBuffer = exports.WriteableStreamMessageWriter = exports.AbstractMessageWriter = exports.MessageWriter = exports.ReadableStreamMessageReader = exports.AbstractMessageReader = exports.MessageReader = exports.SharedArrayReceiverStrategy = exports.SharedArraySenderStrategy = exports.CancellationToken = exports.CancellationTokenSource = exports.Emitter = exports.Event = exports.Disposable = exports.LRUCache = exports.Touch = exports.LinkedMap = exports.ParameterStructures = exports.NotificationType9 = exports.NotificationType8 = exports.NotificationType7 = exports.NotificationType6 = exports.NotificationType5 = exports.NotificationType4 = exports.NotificationType3 = exports.NotificationType2 = exports.NotificationType1 = exports.NotificationType0 = exports.NotificationType = exports.ErrorCodes = exports.ResponseError = exports.RequestType9 = exports.RequestType8 = exports.RequestType7 = exports.RequestType6 = exports.RequestType5 = exports.RequestType4 = exports.RequestType3 = exports.RequestType2 = exports.RequestType1 = exports.RequestType0 = exports.RequestType = exports.Message = exports.RAL = void 0;
@@ -2725,7 +2732,7 @@
 		exports.RAL = require_ral().default;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/ril.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/ril.js
 	var require_ril = /* @__PURE__ */ __commonJSMin(((exports) => {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		var api_1 = require_api$1();
@@ -2752,7 +2759,7 @@
 				return new Uint8Array(length);
 			}
 		};
-		MessageBuffer.emptyBuffer = new Uint8Array(0);
+		MessageBuffer.emptyBuffer = /* @__PURE__ */ new Uint8Array(0);
 		var ReadableStreamWrapper = class {
 			constructor(socket) {
 				this.socket = socket;
@@ -2860,7 +2867,7 @@
 		exports.default = RIL;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/lib/browser/main.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/lib/browser/main.js
 	var require_main$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 		var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 			if (k2 === void 0) k2 = k;
@@ -2930,7 +2937,7 @@
 		exports.createMessageConnection = createMessageConnection;
 	}));
 	//#endregion
-	//#region ../../node_modules/vscode-jsonrpc/browser.js
+	//#region ../../node_modules/vscode-languageserver-protocol/node_modules/vscode-jsonrpc/browser.js
 	var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		module.exports = require_main$1();
 	}));
@@ -7281,7 +7288,7 @@
 		return 0;
 	};
 	var browserExports = browser.exports;
-	var process$1 = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
 	//#endregion
 	//#region ../../node_modules/vscode-uri/lib/esm/index.mjs
 	var LIB;
@@ -8672,7 +8679,7 @@
 			if (Array.isArray(currentParent)) currentParent.push(value);
 			else if (currentProperty !== null) currentParent[currentProperty] = value;
 		}
-		visit$1(text, {
+		visit(text, {
 			onObjectBegin: () => {
 				const object = {};
 				onValue(object);
@@ -8761,7 +8768,7 @@
 	/**
 	* Parses the given text and invokes the visitor functions for each object, array and literal reached.
 	*/
-	function visit$1(text, visitor, options = ParseOptions.DEFAULT) {
+	function visit(text, visitor, options = ParseOptions.DEFAULT) {
 		const _scanner = createScanner$1(text, false);
 		const _jsonPath = [];
 		let suppressedCallbacks = 0;
@@ -11576,370 +11583,6 @@
 		return getNodeValue(node) || t("<empty>");
 	}
 	//#endregion
-	//#region ../../node_modules/vscode-json-languageservice/lib/esm/services/schemas/draft-2019-09-flat.js
-	var draft_2019_09_flat_default = {
-		$id: "https://json-schema.org/draft/2019-09/schema",
-		$schema: "https://json-schema.org/draft/2019-09/schema",
-		title: "(Flattened static) Core and Validation specifications meta-schema",
-		type: ["object", "boolean"],
-		properties: {
-			definitions: {
-				$comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				default: {}
-			},
-			dependencies: {
-				$comment: "\"dependencies\" is no longer a keyword, but schema authors should avoid redefining it to facilitate a smooth transition to \"dependentSchemas\" and \"dependentRequired\"",
-				type: "object",
-				additionalProperties: { anyOf: [{ $ref: "#" }, { $ref: "#/$defs/stringArray" }] }
-			},
-			$id: {
-				type: "string",
-				format: "uri-reference",
-				$comment: "Non-empty fragments not allowed.",
-				pattern: "^[^#]*#?$"
-			},
-			$schema: {
-				type: "string",
-				format: "uri"
-			},
-			$anchor: {
-				type: "string",
-				pattern: "^[A-Za-z][-A-Za-z0-9.:_]*$"
-			},
-			$ref: {
-				type: "string",
-				format: "uri-reference"
-			},
-			$recursiveAnchor: {
-				type: "boolean",
-				default: false
-			},
-			$vocabulary: {
-				type: "object",
-				propertyNames: {
-					type: "string",
-					format: "uri"
-				},
-				additionalProperties: { type: "boolean" }
-			},
-			$comment: { type: "string" },
-			$defs: {
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				default: {}
-			},
-			additionalItems: { $ref: "#" },
-			unevaluatedItems: { $ref: "#" },
-			items: { anyOf: [{ $ref: "#" }, { $ref: "#/$defs/schemaArray" }] },
-			contains: { $ref: "#" },
-			additionalProperties: { $ref: "#" },
-			unevaluatedProperties: { $ref: "#" },
-			properties: {
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				default: {}
-			},
-			patternProperties: {
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				propertyNames: { format: "regex" },
-				default: {}
-			},
-			dependentSchemas: {
-				type: "object",
-				additionalProperties: { $ref: "#" }
-			},
-			propertyNames: { $ref: "#" },
-			if: { $ref: "#" },
-			then: { $ref: "#" },
-			else: { $ref: "#" },
-			allOf: { $ref: "#/$defs/schemaArray" },
-			anyOf: { $ref: "#/$defs/schemaArray" },
-			oneOf: { $ref: "#/$defs/schemaArray" },
-			not: { $ref: "#" },
-			multipleOf: {
-				type: "number",
-				exclusiveMinimum: 0
-			},
-			maximum: { type: "number" },
-			exclusiveMaximum: { type: "number" },
-			minimum: { type: "number" },
-			exclusiveMinimum: { type: "number" },
-			maxLength: { $ref: "#/$defs/nonNegativeInteger" },
-			minLength: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
-			pattern: {
-				type: "string",
-				format: "regex"
-			},
-			maxItems: { $ref: "#/$defs/nonNegativeInteger" },
-			minItems: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
-			uniqueItems: {
-				type: "boolean",
-				default: false
-			},
-			maxContains: { $ref: "#/$defs/nonNegativeInteger" },
-			minContains: {
-				$ref: "#/$defs/nonNegativeInteger",
-				default: 1
-			},
-			maxProperties: { $ref: "#/$defs/nonNegativeInteger" },
-			minProperties: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
-			required: { $ref: "#/$defs/stringArray" },
-			dependentRequired: {
-				type: "object",
-				additionalProperties: { $ref: "#/$defs/stringArray" }
-			},
-			const: true,
-			enum: {
-				type: "array",
-				items: true
-			},
-			type: { anyOf: [{ $ref: "#/$defs/simpleTypes" }, {
-				type: "array",
-				items: { $ref: "#/$defs/simpleTypes" },
-				minItems: 1,
-				uniqueItems: true
-			}] },
-			title: { type: "string" },
-			description: { type: "string" },
-			default: true,
-			deprecated: {
-				type: "boolean",
-				default: false
-			},
-			readOnly: {
-				type: "boolean",
-				default: false
-			},
-			writeOnly: {
-				type: "boolean",
-				default: false
-			},
-			examples: {
-				type: "array",
-				items: true
-			},
-			format: { type: "string" },
-			contentMediaType: { type: "string" },
-			contentEncoding: { type: "string" },
-			contentSchema: { $ref: "#" }
-		},
-		$defs: {
-			schemaArray: {
-				type: "array",
-				minItems: 1,
-				items: { $ref: "#" }
-			},
-			nonNegativeInteger: {
-				type: "integer",
-				minimum: 0
-			},
-			nonNegativeIntegerDefault0: {
-				$ref: "#/$defs/nonNegativeInteger",
-				default: 0
-			},
-			simpleTypes: { enum: [
-				"array",
-				"boolean",
-				"integer",
-				"null",
-				"number",
-				"object",
-				"string"
-			] },
-			stringArray: {
-				type: "array",
-				items: { type: "string" },
-				uniqueItems: true,
-				default: []
-			}
-		}
-	};
-	//#endregion
-	//#region ../../node_modules/vscode-json-languageservice/lib/esm/services/schemas/draft-2020-12-flat.js
-	var draft_2020_12_flat_default = {
-		$id: "https://json-schema.org/draft/2020-12/schema",
-		$schema: "https://json-schema.org/draft/2020-12/schema",
-		title: "(Flattened static) Core and Validation specifications meta-schema",
-		type: ["object", "boolean"],
-		properties: {
-			definitions: {
-				$comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				default: {}
-			},
-			dependencies: {
-				$comment: "\"dependencies\" is no longer a keyword, but schema authors should avoid redefining it to facilitate a smooth transition to \"dependentSchemas\" and \"dependentRequired\"",
-				type: "object",
-				additionalProperties: { anyOf: [{ $ref: "#" }, { $ref: "#/$defs/stringArray" }] }
-			},
-			$id: {
-				type: "string",
-				format: "uri-reference",
-				$comment: "Non-empty fragments not allowed.",
-				pattern: "^[^#]*#?$"
-			},
-			$schema: {
-				type: "string",
-				format: "uri"
-			},
-			$anchor: {
-				type: "string",
-				pattern: "^[A-Za-z_][-A-Za-z0-9._]*$"
-			},
-			$ref: {
-				type: "string",
-				format: "uri-reference"
-			},
-			$dynamicRef: {
-				type: "string",
-				format: "uri-reference"
-			},
-			$vocabulary: {
-				type: "object",
-				propertyNames: {
-					type: "string",
-					format: "uri"
-				},
-				additionalProperties: { type: "boolean" }
-			},
-			$comment: { type: "string" },
-			$defs: {
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				default: {}
-			},
-			prefixItems: { $ref: "#/$defs/schemaArray" },
-			items: { $ref: "#" },
-			contains: { $ref: "#" },
-			additionalProperties: { $ref: "#" },
-			properties: {
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				default: {}
-			},
-			patternProperties: {
-				type: "object",
-				additionalProperties: { $ref: "#" },
-				propertyNames: { format: "regex" },
-				default: {}
-			},
-			dependentSchemas: {
-				type: "object",
-				additionalProperties: { $ref: "#" }
-			},
-			propertyNames: { $ref: "#" },
-			if: { $ref: "#" },
-			then: { $ref: "#" },
-			else: { $ref: "#" },
-			allOf: { $ref: "#/$defs/schemaArray" },
-			anyOf: { $ref: "#/$defs/schemaArray" },
-			oneOf: { $ref: "#/$defs/schemaArray" },
-			not: { $ref: "#" },
-			unevaluatedItems: { $ref: "#" },
-			unevaluatedProperties: { $ref: "#" },
-			multipleOf: {
-				type: "number",
-				exclusiveMinimum: 0
-			},
-			maximum: { type: "number" },
-			exclusiveMaximum: { type: "number" },
-			minimum: { type: "number" },
-			exclusiveMinimum: { type: "number" },
-			maxLength: { $ref: "#/$defs/nonNegativeInteger" },
-			minLength: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
-			pattern: {
-				type: "string",
-				format: "regex"
-			},
-			maxItems: { $ref: "#/$defs/nonNegativeInteger" },
-			minItems: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
-			uniqueItems: {
-				type: "boolean",
-				default: false
-			},
-			maxContains: { $ref: "#/$defs/nonNegativeInteger" },
-			minContains: {
-				$ref: "#/$defs/nonNegativeInteger",
-				default: 1
-			},
-			maxProperties: { $ref: "#/$defs/nonNegativeInteger" },
-			minProperties: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
-			required: { $ref: "#/$defs/stringArray" },
-			dependentRequired: {
-				type: "object",
-				additionalProperties: { $ref: "#/$defs/stringArray" }
-			},
-			const: true,
-			enum: {
-				type: "array",
-				items: true
-			},
-			type: { anyOf: [{ $ref: "#/$defs/simpleTypes" }, {
-				type: "array",
-				items: { $ref: "#/$defs/simpleTypes" },
-				minItems: 1,
-				uniqueItems: true
-			}] },
-			title: { type: "string" },
-			description: { type: "string" },
-			default: true,
-			deprecated: {
-				type: "boolean",
-				default: false
-			},
-			readOnly: {
-				type: "boolean",
-				default: false
-			},
-			writeOnly: {
-				type: "boolean",
-				default: false
-			},
-			examples: {
-				type: "array",
-				items: true
-			},
-			format: { type: "string" },
-			contentMediaType: { type: "string" },
-			contentEncoding: { type: "string" },
-			contentSchema: { $ref: "#" }
-		},
-		$defs: {
-			schemaArray: {
-				type: "array",
-				minItems: 1,
-				items: { $ref: "#" }
-			},
-			nonNegativeInteger: {
-				type: "integer",
-				minimum: 0
-			},
-			nonNegativeIntegerDefault0: {
-				$ref: "#/$defs/nonNegativeInteger",
-				default: 0
-			},
-			simpleTypes: { enum: [
-				"array",
-				"boolean",
-				"integer",
-				"null",
-				"number",
-				"object",
-				"string"
-			] },
-			stringArray: {
-				type: "array",
-				items: { type: "string" },
-				uniqueItems: true,
-				default: []
-			}
-		}
-	};
-	//#endregion
 	//#region ../../node_modules/vscode-json-languageservice/lib/esm/services/configuration.js
 	var schemaContributions = {
 		schemaAssociations: [],
@@ -12214,8 +11857,366 @@
 				},
 				"default": true
 			},
-			"https://json-schema.org/draft/2020-12/schema": draft_2020_12_flat_default,
-			"https://json-schema.org/draft/2019-09/schema": draft_2019_09_flat_default
+			"https://json-schema.org/draft/2020-12/schema": {
+				$id: "https://json-schema.org/draft/2020-12/schema",
+				$schema: "https://json-schema.org/draft/2020-12/schema",
+				title: "(Flattened static) Core and Validation specifications meta-schema",
+				type: ["object", "boolean"],
+				properties: {
+					definitions: {
+						$comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						default: {}
+					},
+					dependencies: {
+						$comment: "\"dependencies\" is no longer a keyword, but schema authors should avoid redefining it to facilitate a smooth transition to \"dependentSchemas\" and \"dependentRequired\"",
+						type: "object",
+						additionalProperties: { anyOf: [{ $ref: "#" }, { $ref: "#/$defs/stringArray" }] }
+					},
+					$id: {
+						type: "string",
+						format: "uri-reference",
+						$comment: "Non-empty fragments not allowed.",
+						pattern: "^[^#]*#?$"
+					},
+					$schema: {
+						type: "string",
+						format: "uri"
+					},
+					$anchor: {
+						type: "string",
+						pattern: "^[A-Za-z_][-A-Za-z0-9._]*$"
+					},
+					$ref: {
+						type: "string",
+						format: "uri-reference"
+					},
+					$dynamicRef: {
+						type: "string",
+						format: "uri-reference"
+					},
+					$vocabulary: {
+						type: "object",
+						propertyNames: {
+							type: "string",
+							format: "uri"
+						},
+						additionalProperties: { type: "boolean" }
+					},
+					$comment: { type: "string" },
+					$defs: {
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						default: {}
+					},
+					prefixItems: { $ref: "#/$defs/schemaArray" },
+					items: { $ref: "#" },
+					contains: { $ref: "#" },
+					additionalProperties: { $ref: "#" },
+					properties: {
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						default: {}
+					},
+					patternProperties: {
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						propertyNames: { format: "regex" },
+						default: {}
+					},
+					dependentSchemas: {
+						type: "object",
+						additionalProperties: { $ref: "#" }
+					},
+					propertyNames: { $ref: "#" },
+					if: { $ref: "#" },
+					then: { $ref: "#" },
+					else: { $ref: "#" },
+					allOf: { $ref: "#/$defs/schemaArray" },
+					anyOf: { $ref: "#/$defs/schemaArray" },
+					oneOf: { $ref: "#/$defs/schemaArray" },
+					not: { $ref: "#" },
+					unevaluatedItems: { $ref: "#" },
+					unevaluatedProperties: { $ref: "#" },
+					multipleOf: {
+						type: "number",
+						exclusiveMinimum: 0
+					},
+					maximum: { type: "number" },
+					exclusiveMaximum: { type: "number" },
+					minimum: { type: "number" },
+					exclusiveMinimum: { type: "number" },
+					maxLength: { $ref: "#/$defs/nonNegativeInteger" },
+					minLength: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+					pattern: {
+						type: "string",
+						format: "regex"
+					},
+					maxItems: { $ref: "#/$defs/nonNegativeInteger" },
+					minItems: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+					uniqueItems: {
+						type: "boolean",
+						default: false
+					},
+					maxContains: { $ref: "#/$defs/nonNegativeInteger" },
+					minContains: {
+						$ref: "#/$defs/nonNegativeInteger",
+						default: 1
+					},
+					maxProperties: { $ref: "#/$defs/nonNegativeInteger" },
+					minProperties: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+					required: { $ref: "#/$defs/stringArray" },
+					dependentRequired: {
+						type: "object",
+						additionalProperties: { $ref: "#/$defs/stringArray" }
+					},
+					const: true,
+					enum: {
+						type: "array",
+						items: true
+					},
+					type: { anyOf: [{ $ref: "#/$defs/simpleTypes" }, {
+						type: "array",
+						items: { $ref: "#/$defs/simpleTypes" },
+						minItems: 1,
+						uniqueItems: true
+					}] },
+					title: { type: "string" },
+					description: { type: "string" },
+					default: true,
+					deprecated: {
+						type: "boolean",
+						default: false
+					},
+					readOnly: {
+						type: "boolean",
+						default: false
+					},
+					writeOnly: {
+						type: "boolean",
+						default: false
+					},
+					examples: {
+						type: "array",
+						items: true
+					},
+					format: { type: "string" },
+					contentMediaType: { type: "string" },
+					contentEncoding: { type: "string" },
+					contentSchema: { $ref: "#" }
+				},
+				$defs: {
+					schemaArray: {
+						type: "array",
+						minItems: 1,
+						items: { $ref: "#" }
+					},
+					nonNegativeInteger: {
+						type: "integer",
+						minimum: 0
+					},
+					nonNegativeIntegerDefault0: {
+						$ref: "#/$defs/nonNegativeInteger",
+						default: 0
+					},
+					simpleTypes: { enum: [
+						"array",
+						"boolean",
+						"integer",
+						"null",
+						"number",
+						"object",
+						"string"
+					] },
+					stringArray: {
+						type: "array",
+						items: { type: "string" },
+						uniqueItems: true,
+						default: []
+					}
+				}
+			},
+			"https://json-schema.org/draft/2019-09/schema": {
+				$id: "https://json-schema.org/draft/2019-09/schema",
+				$schema: "https://json-schema.org/draft/2019-09/schema",
+				title: "(Flattened static) Core and Validation specifications meta-schema",
+				type: ["object", "boolean"],
+				properties: {
+					definitions: {
+						$comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						default: {}
+					},
+					dependencies: {
+						$comment: "\"dependencies\" is no longer a keyword, but schema authors should avoid redefining it to facilitate a smooth transition to \"dependentSchemas\" and \"dependentRequired\"",
+						type: "object",
+						additionalProperties: { anyOf: [{ $ref: "#" }, { $ref: "#/$defs/stringArray" }] }
+					},
+					$id: {
+						type: "string",
+						format: "uri-reference",
+						$comment: "Non-empty fragments not allowed.",
+						pattern: "^[^#]*#?$"
+					},
+					$schema: {
+						type: "string",
+						format: "uri"
+					},
+					$anchor: {
+						type: "string",
+						pattern: "^[A-Za-z][-A-Za-z0-9.:_]*$"
+					},
+					$ref: {
+						type: "string",
+						format: "uri-reference"
+					},
+					$recursiveAnchor: {
+						type: "boolean",
+						default: false
+					},
+					$vocabulary: {
+						type: "object",
+						propertyNames: {
+							type: "string",
+							format: "uri"
+						},
+						additionalProperties: { type: "boolean" }
+					},
+					$comment: { type: "string" },
+					$defs: {
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						default: {}
+					},
+					additionalItems: { $ref: "#" },
+					unevaluatedItems: { $ref: "#" },
+					items: { anyOf: [{ $ref: "#" }, { $ref: "#/$defs/schemaArray" }] },
+					contains: { $ref: "#" },
+					additionalProperties: { $ref: "#" },
+					unevaluatedProperties: { $ref: "#" },
+					properties: {
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						default: {}
+					},
+					patternProperties: {
+						type: "object",
+						additionalProperties: { $ref: "#" },
+						propertyNames: { format: "regex" },
+						default: {}
+					},
+					dependentSchemas: {
+						type: "object",
+						additionalProperties: { $ref: "#" }
+					},
+					propertyNames: { $ref: "#" },
+					if: { $ref: "#" },
+					then: { $ref: "#" },
+					else: { $ref: "#" },
+					allOf: { $ref: "#/$defs/schemaArray" },
+					anyOf: { $ref: "#/$defs/schemaArray" },
+					oneOf: { $ref: "#/$defs/schemaArray" },
+					not: { $ref: "#" },
+					multipleOf: {
+						type: "number",
+						exclusiveMinimum: 0
+					},
+					maximum: { type: "number" },
+					exclusiveMaximum: { type: "number" },
+					minimum: { type: "number" },
+					exclusiveMinimum: { type: "number" },
+					maxLength: { $ref: "#/$defs/nonNegativeInteger" },
+					minLength: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+					pattern: {
+						type: "string",
+						format: "regex"
+					},
+					maxItems: { $ref: "#/$defs/nonNegativeInteger" },
+					minItems: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+					uniqueItems: {
+						type: "boolean",
+						default: false
+					},
+					maxContains: { $ref: "#/$defs/nonNegativeInteger" },
+					minContains: {
+						$ref: "#/$defs/nonNegativeInteger",
+						default: 1
+					},
+					maxProperties: { $ref: "#/$defs/nonNegativeInteger" },
+					minProperties: { $ref: "#/$defs/nonNegativeIntegerDefault0" },
+					required: { $ref: "#/$defs/stringArray" },
+					dependentRequired: {
+						type: "object",
+						additionalProperties: { $ref: "#/$defs/stringArray" }
+					},
+					const: true,
+					enum: {
+						type: "array",
+						items: true
+					},
+					type: { anyOf: [{ $ref: "#/$defs/simpleTypes" }, {
+						type: "array",
+						items: { $ref: "#/$defs/simpleTypes" },
+						minItems: 1,
+						uniqueItems: true
+					}] },
+					title: { type: "string" },
+					description: { type: "string" },
+					default: true,
+					deprecated: {
+						type: "boolean",
+						default: false
+					},
+					readOnly: {
+						type: "boolean",
+						default: false
+					},
+					writeOnly: {
+						type: "boolean",
+						default: false
+					},
+					examples: {
+						type: "array",
+						items: true
+					},
+					format: { type: "string" },
+					contentMediaType: { type: "string" },
+					contentEncoding: { type: "string" },
+					contentSchema: { $ref: "#" }
+				},
+				$defs: {
+					schemaArray: {
+						type: "array",
+						minItems: 1,
+						items: { $ref: "#" }
+					},
+					nonNegativeInteger: {
+						type: "integer",
+						minimum: 0
+					},
+					nonNegativeIntegerDefault0: {
+						$ref: "#/$defs/nonNegativeInteger",
+						default: 0
+					},
+					simpleTypes: { enum: [
+						"array",
+						"boolean",
+						"integer",
+						"null",
+						"number",
+						"object",
+						"string"
+					] },
+					stringArray: {
+						type: "array",
+						items: { type: "string" },
+						uniqueItems: true,
+						default: []
+					}
+				}
+			}
 		}
 	};
 	var descriptions = {

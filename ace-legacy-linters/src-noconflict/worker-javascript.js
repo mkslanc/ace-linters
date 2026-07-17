@@ -2397,7 +2397,7 @@ var aceLegacyWorkerModule = (() => {
         }
         flowParseDeclareVariable(node) {
           this.next();
-          node.id = this.flowParseTypeAnnotatableIdentifier(true);
+          node.id = this.flowParseTypeAnnotatableIdentifier();
           this.scope.declareName(node.id.name, 5, node.id.loc.start);
           this.semicolon();
           return this.finishNode(node, "DeclareVariable");
@@ -2571,9 +2571,14 @@ var aceLegacyWorkerModule = (() => {
             reservedType: word
           });
         }
-        flowParseRestrictedIdentifier(liberal, declaration) {
+        flowParseRestrictedIdentifierName(liberal, declaration) {
           this.checkReservedType(this.state.value, this.state.startLoc, declaration);
-          return this.parseIdentifier(liberal);
+          return this.parseIdentifierName(liberal);
+        }
+        flowParseRestrictedIdentifier(liberal, declaration) {
+          const node = this.startNode();
+          const name = this.flowParseRestrictedIdentifierName(liberal, declaration);
+          return this.createIdentifier(node, name);
         }
         flowParseTypeAlias(node) {
           node.id = this.flowParseRestrictedIdentifier(false, true);
@@ -2607,14 +2612,21 @@ var aceLegacyWorkerModule = (() => {
           this.semicolon();
           return this.finishNode(node, "OpaqueType");
         }
+        flowParseTypeParameterBound() {
+          if (this.match(14) || this.isContextual(81)) {
+            const node = this.startNode();
+            this.next();
+            node.typeAnnotation = this.flowParseType();
+            return this.finishNode(node, "TypeAnnotation");
+          }
+        }
         flowParseTypeParameter(requireDefault = false) {
           const nodeStartLoc = this.state.startLoc;
           const node = this.startNode();
           const variance = this.flowParseVariance();
-          const ident = this.flowParseTypeAnnotatableIdentifier();
-          node.name = ident.name;
+          node.name = this.flowParseRestrictedIdentifierName();
           node.variance = variance;
-          node.bound = ident.typeAnnotation;
+          node.bound = this.flowParseTypeParameterBound();
           if (this.match(29)) {
             this.eat(29);
             node.default = this.flowParseType();
@@ -3309,13 +3321,13 @@ var aceLegacyWorkerModule = (() => {
           node.typeAnnotation = this.flowParseTypeInitialiser();
           return this.finishNode(node, "TypeAnnotation");
         }
-        flowParseTypeAnnotatableIdentifier(allowPrimitiveOverride) {
-          const ident = allowPrimitiveOverride ? this.parseIdentifier() : this.flowParseRestrictedIdentifier();
+        flowParseTypeAnnotatableIdentifier() {
+          const node = this.startNode();
+          const name = this.parseIdentifierName();
           if (this.match(14)) {
-            ident.typeAnnotation = this.flowParseTypeAnnotation();
-            this.resetEndLocation(ident);
+            node.typeAnnotation = this.flowParseTypeAnnotation();
           }
-          return ident;
+          return this.createIdentifier(node, name);
         }
         typeCastToParameter(node) {
           node.expression.typeAnnotation = node.typeAnnotation;
@@ -5532,6 +5544,7 @@ var aceLegacyWorkerModule = (() => {
                   adjustInnerComments(node, node.properties, commentWS);
                   break;
                 case "CallExpression":
+                case "NewExpression":
                 case "OptionalCallExpression":
                   adjustInnerComments(node, node.arguments, commentWS);
                   break;
@@ -5544,6 +5557,7 @@ var aceLegacyWorkerModule = (() => {
                 case "ObjectMethod":
                 case "ClassMethod":
                 case "ClassPrivateMethod":
+                case "TSTypeParameterDeclaration":
                   adjustInnerComments(node, node.params, commentWS);
                   break;
                 case "ArrayExpression":
@@ -5559,6 +5573,9 @@ var aceLegacyWorkerModule = (() => {
                   break;
                 case "TSEnumBody":
                   adjustInnerComments(node, node.members, commentWS);
+                  break;
+                case "TSInterfaceBody":
+                  adjustInnerComments(node, node.body, commentWS);
                   break;
                 default: {
                   if (node.type === "RecordExpression") {
@@ -15164,6 +15181,11 @@ var aceLegacyWorkerModule = (() => {
         };
         return _self;
       };
+      exports.sleep = function(ms) {
+        return new Promise(function(resolve) {
+          setTimeout(resolve, ms);
+        });
+      };
       exports.supportsLookbehind = function() {
         try {
           new RegExp("(?<=.)");
@@ -15757,625 +15779,9 @@ var aceLegacyWorkerModule = (() => {
     }
   });
 
-  // node_modules/estraverse/estraverse.js
+  // ../../node_modules/estraverse/estraverse.js
   var require_estraverse = __commonJS({
-    "node_modules/estraverse/estraverse.js"(exports) {
-      (function clone(exports2) {
-        "use strict";
-        var Syntax4, VisitorOption, VisitorKeys, BREAK, SKIP, REMOVE;
-        function deepCopy(obj) {
-          var ret = {}, key, val;
-          for (key in obj) {
-            if (obj.hasOwnProperty(key)) {
-              val = obj[key];
-              if (typeof val === "object" && val !== null) {
-                ret[key] = deepCopy(val);
-              } else {
-                ret[key] = val;
-              }
-            }
-          }
-          return ret;
-        }
-        function upperBound(array, func) {
-          var diff, len, i, current;
-          len = array.length;
-          i = 0;
-          while (len) {
-            diff = len >>> 1;
-            current = i + diff;
-            if (func(array[current])) {
-              len = diff;
-            } else {
-              i = current + 1;
-              len -= diff + 1;
-            }
-          }
-          return i;
-        }
-        Syntax4 = {
-          AssignmentExpression: "AssignmentExpression",
-          AssignmentPattern: "AssignmentPattern",
-          ArrayExpression: "ArrayExpression",
-          ArrayPattern: "ArrayPattern",
-          ArrowFunctionExpression: "ArrowFunctionExpression",
-          AwaitExpression: "AwaitExpression",
-          // CAUTION: It's deferred to ES7.
-          BlockStatement: "BlockStatement",
-          BinaryExpression: "BinaryExpression",
-          BreakStatement: "BreakStatement",
-          CallExpression: "CallExpression",
-          CatchClause: "CatchClause",
-          ChainExpression: "ChainExpression",
-          ClassBody: "ClassBody",
-          ClassDeclaration: "ClassDeclaration",
-          ClassExpression: "ClassExpression",
-          ComprehensionBlock: "ComprehensionBlock",
-          // CAUTION: It's deferred to ES7.
-          ComprehensionExpression: "ComprehensionExpression",
-          // CAUTION: It's deferred to ES7.
-          ConditionalExpression: "ConditionalExpression",
-          ContinueStatement: "ContinueStatement",
-          DebuggerStatement: "DebuggerStatement",
-          DirectiveStatement: "DirectiveStatement",
-          DoWhileStatement: "DoWhileStatement",
-          EmptyStatement: "EmptyStatement",
-          ExportAllDeclaration: "ExportAllDeclaration",
-          ExportDefaultDeclaration: "ExportDefaultDeclaration",
-          ExportNamedDeclaration: "ExportNamedDeclaration",
-          ExportSpecifier: "ExportSpecifier",
-          ExpressionStatement: "ExpressionStatement",
-          ForStatement: "ForStatement",
-          ForInStatement: "ForInStatement",
-          ForOfStatement: "ForOfStatement",
-          FunctionDeclaration: "FunctionDeclaration",
-          FunctionExpression: "FunctionExpression",
-          GeneratorExpression: "GeneratorExpression",
-          // CAUTION: It's deferred to ES7.
-          Identifier: "Identifier",
-          IfStatement: "IfStatement",
-          ImportExpression: "ImportExpression",
-          ImportDeclaration: "ImportDeclaration",
-          ImportDefaultSpecifier: "ImportDefaultSpecifier",
-          ImportNamespaceSpecifier: "ImportNamespaceSpecifier",
-          ImportSpecifier: "ImportSpecifier",
-          Literal: "Literal",
-          LabeledStatement: "LabeledStatement",
-          LogicalExpression: "LogicalExpression",
-          MemberExpression: "MemberExpression",
-          MetaProperty: "MetaProperty",
-          MethodDefinition: "MethodDefinition",
-          ModuleSpecifier: "ModuleSpecifier",
-          NewExpression: "NewExpression",
-          ObjectExpression: "ObjectExpression",
-          ObjectPattern: "ObjectPattern",
-          PrivateIdentifier: "PrivateIdentifier",
-          Program: "Program",
-          Property: "Property",
-          PropertyDefinition: "PropertyDefinition",
-          RestElement: "RestElement",
-          ReturnStatement: "ReturnStatement",
-          SequenceExpression: "SequenceExpression",
-          SpreadElement: "SpreadElement",
-          Super: "Super",
-          SwitchStatement: "SwitchStatement",
-          SwitchCase: "SwitchCase",
-          TaggedTemplateExpression: "TaggedTemplateExpression",
-          TemplateElement: "TemplateElement",
-          TemplateLiteral: "TemplateLiteral",
-          ThisExpression: "ThisExpression",
-          ThrowStatement: "ThrowStatement",
-          TryStatement: "TryStatement",
-          UnaryExpression: "UnaryExpression",
-          UpdateExpression: "UpdateExpression",
-          VariableDeclaration: "VariableDeclaration",
-          VariableDeclarator: "VariableDeclarator",
-          WhileStatement: "WhileStatement",
-          WithStatement: "WithStatement",
-          YieldExpression: "YieldExpression"
-        };
-        VisitorKeys = {
-          AssignmentExpression: ["left", "right"],
-          AssignmentPattern: ["left", "right"],
-          ArrayExpression: ["elements"],
-          ArrayPattern: ["elements"],
-          ArrowFunctionExpression: ["params", "body"],
-          AwaitExpression: ["argument"],
-          // CAUTION: It's deferred to ES7.
-          BlockStatement: ["body"],
-          BinaryExpression: ["left", "right"],
-          BreakStatement: ["label"],
-          CallExpression: ["callee", "arguments"],
-          CatchClause: ["param", "body"],
-          ChainExpression: ["expression"],
-          ClassBody: ["body"],
-          ClassDeclaration: ["id", "superClass", "body"],
-          ClassExpression: ["id", "superClass", "body"],
-          ComprehensionBlock: ["left", "right"],
-          // CAUTION: It's deferred to ES7.
-          ComprehensionExpression: ["blocks", "filter", "body"],
-          // CAUTION: It's deferred to ES7.
-          ConditionalExpression: ["test", "consequent", "alternate"],
-          ContinueStatement: ["label"],
-          DebuggerStatement: [],
-          DirectiveStatement: [],
-          DoWhileStatement: ["body", "test"],
-          EmptyStatement: [],
-          ExportAllDeclaration: ["source"],
-          ExportDefaultDeclaration: ["declaration"],
-          ExportNamedDeclaration: ["declaration", "specifiers", "source"],
-          ExportSpecifier: ["exported", "local"],
-          ExpressionStatement: ["expression"],
-          ForStatement: ["init", "test", "update", "body"],
-          ForInStatement: ["left", "right", "body"],
-          ForOfStatement: ["left", "right", "body"],
-          FunctionDeclaration: ["id", "params", "body"],
-          FunctionExpression: ["id", "params", "body"],
-          GeneratorExpression: ["blocks", "filter", "body"],
-          // CAUTION: It's deferred to ES7.
-          Identifier: [],
-          IfStatement: ["test", "consequent", "alternate"],
-          ImportExpression: ["source"],
-          ImportDeclaration: ["specifiers", "source"],
-          ImportDefaultSpecifier: ["local"],
-          ImportNamespaceSpecifier: ["local"],
-          ImportSpecifier: ["imported", "local"],
-          Literal: [],
-          LabeledStatement: ["label", "body"],
-          LogicalExpression: ["left", "right"],
-          MemberExpression: ["object", "property"],
-          MetaProperty: ["meta", "property"],
-          MethodDefinition: ["key", "value"],
-          ModuleSpecifier: [],
-          NewExpression: ["callee", "arguments"],
-          ObjectExpression: ["properties"],
-          ObjectPattern: ["properties"],
-          PrivateIdentifier: [],
-          Program: ["body"],
-          Property: ["key", "value"],
-          PropertyDefinition: ["key", "value"],
-          RestElement: ["argument"],
-          ReturnStatement: ["argument"],
-          SequenceExpression: ["expressions"],
-          SpreadElement: ["argument"],
-          Super: [],
-          SwitchStatement: ["discriminant", "cases"],
-          SwitchCase: ["test", "consequent"],
-          TaggedTemplateExpression: ["tag", "quasi"],
-          TemplateElement: [],
-          TemplateLiteral: ["quasis", "expressions"],
-          ThisExpression: [],
-          ThrowStatement: ["argument"],
-          TryStatement: ["block", "handler", "finalizer"],
-          UnaryExpression: ["argument"],
-          UpdateExpression: ["argument"],
-          VariableDeclaration: ["declarations"],
-          VariableDeclarator: ["id", "init"],
-          WhileStatement: ["test", "body"],
-          WithStatement: ["object", "body"],
-          YieldExpression: ["argument"]
-        };
-        BREAK = {};
-        SKIP = {};
-        REMOVE = {};
-        VisitorOption = {
-          Break: BREAK,
-          Skip: SKIP,
-          Remove: REMOVE
-        };
-        function Reference2(parent, key) {
-          this.parent = parent;
-          this.key = key;
-        }
-        Reference2.prototype.replace = function replace2(node) {
-          this.parent[this.key] = node;
-        };
-        Reference2.prototype.remove = function remove() {
-          if (Array.isArray(this.parent)) {
-            this.parent.splice(this.key, 1);
-            return true;
-          } else {
-            this.replace(null);
-            return false;
-          }
-        };
-        function Element(node, path, wrap, ref) {
-          this.node = node;
-          this.path = path;
-          this.wrap = wrap;
-          this.ref = ref;
-        }
-        function Controller() {
-        }
-        Controller.prototype.path = function path() {
-          var i, iz, j, jz, result, element;
-          function addToPath(result2, path2) {
-            if (Array.isArray(path2)) {
-              for (j = 0, jz = path2.length; j < jz; ++j) {
-                result2.push(path2[j]);
-              }
-            } else {
-              result2.push(path2);
-            }
-          }
-          if (!this.__current.path) {
-            return null;
-          }
-          result = [];
-          for (i = 2, iz = this.__leavelist.length; i < iz; ++i) {
-            element = this.__leavelist[i];
-            addToPath(result, element.path);
-          }
-          addToPath(result, this.__current.path);
-          return result;
-        };
-        Controller.prototype.type = function() {
-          var node = this.current();
-          return node.type || this.__current.wrap;
-        };
-        Controller.prototype.parents = function parents() {
-          var i, iz, result;
-          result = [];
-          for (i = 1, iz = this.__leavelist.length; i < iz; ++i) {
-            result.push(this.__leavelist[i].node);
-          }
-          return result;
-        };
-        Controller.prototype.current = function current() {
-          return this.__current.node;
-        };
-        Controller.prototype.__execute = function __execute(callback, element) {
-          var previous, result;
-          result = void 0;
-          previous = this.__current;
-          this.__current = element;
-          this.__state = null;
-          if (callback) {
-            result = callback.call(this, element.node, this.__leavelist[this.__leavelist.length - 1].node);
-          }
-          this.__current = previous;
-          return result;
-        };
-        Controller.prototype.notify = function notify(flag) {
-          this.__state = flag;
-        };
-        Controller.prototype.skip = function() {
-          this.notify(SKIP);
-        };
-        Controller.prototype["break"] = function() {
-          this.notify(BREAK);
-        };
-        Controller.prototype.remove = function() {
-          this.notify(REMOVE);
-        };
-        Controller.prototype.__initialize = function(root, visitor) {
-          this.visitor = visitor;
-          this.root = root;
-          this.__worklist = [];
-          this.__leavelist = [];
-          this.__current = null;
-          this.__state = null;
-          this.__fallback = null;
-          if (visitor.fallback === "iteration") {
-            this.__fallback = Object.keys;
-          } else if (typeof visitor.fallback === "function") {
-            this.__fallback = visitor.fallback;
-          }
-          this.__keys = VisitorKeys;
-          if (visitor.keys) {
-            this.__keys = Object.assign(Object.create(this.__keys), visitor.keys);
-          }
-        };
-        function isNode(node) {
-          if (node == null) {
-            return false;
-          }
-          return typeof node === "object" && typeof node.type === "string";
-        }
-        function isProperty(nodeType, key) {
-          return (nodeType === Syntax4.ObjectExpression || nodeType === Syntax4.ObjectPattern) && "properties" === key;
-        }
-        function candidateExistsInLeaveList(leavelist, candidate) {
-          for (var i = leavelist.length - 1; i >= 0; --i) {
-            if (leavelist[i].node === candidate) {
-              return true;
-            }
-          }
-          return false;
-        }
-        Controller.prototype.traverse = function traverse2(root, visitor) {
-          var worklist, leavelist, element, node, nodeType, ret, key, current, current2, candidates, candidate, sentinel;
-          this.__initialize(root, visitor);
-          sentinel = {};
-          worklist = this.__worklist;
-          leavelist = this.__leavelist;
-          worklist.push(new Element(root, null, null, null));
-          leavelist.push(new Element(null, null, null, null));
-          while (worklist.length) {
-            element = worklist.pop();
-            if (element === sentinel) {
-              element = leavelist.pop();
-              ret = this.__execute(visitor.leave, element);
-              if (this.__state === BREAK || ret === BREAK) {
-                return;
-              }
-              continue;
-            }
-            if (element.node) {
-              ret = this.__execute(visitor.enter, element);
-              if (this.__state === BREAK || ret === BREAK) {
-                return;
-              }
-              worklist.push(sentinel);
-              leavelist.push(element);
-              if (this.__state === SKIP || ret === SKIP) {
-                continue;
-              }
-              node = element.node;
-              nodeType = node.type || element.wrap;
-              candidates = this.__keys[nodeType];
-              if (!candidates) {
-                if (this.__fallback) {
-                  candidates = this.__fallback(node);
-                } else {
-                  throw new Error("Unknown node type " + nodeType + ".");
-                }
-              }
-              current = candidates.length;
-              while ((current -= 1) >= 0) {
-                key = candidates[current];
-                candidate = node[key];
-                if (!candidate) {
-                  continue;
-                }
-                if (Array.isArray(candidate)) {
-                  current2 = candidate.length;
-                  while ((current2 -= 1) >= 0) {
-                    if (!candidate[current2]) {
-                      continue;
-                    }
-                    if (candidateExistsInLeaveList(leavelist, candidate[current2])) {
-                      continue;
-                    }
-                    if (isProperty(nodeType, candidates[current])) {
-                      element = new Element(candidate[current2], [key, current2], "Property", null);
-                    } else if (isNode(candidate[current2])) {
-                      element = new Element(candidate[current2], [key, current2], null, null);
-                    } else {
-                      continue;
-                    }
-                    worklist.push(element);
-                  }
-                } else if (isNode(candidate)) {
-                  if (candidateExistsInLeaveList(leavelist, candidate)) {
-                    continue;
-                  }
-                  worklist.push(new Element(candidate, key, null, null));
-                }
-              }
-            }
-          }
-        };
-        Controller.prototype.replace = function replace2(root, visitor) {
-          var worklist, leavelist, node, nodeType, target, element, current, current2, candidates, candidate, sentinel, outer, key;
-          function removeElem(element2) {
-            var i, key2, nextElem, parent;
-            if (element2.ref.remove()) {
-              key2 = element2.ref.key;
-              parent = element2.ref.parent;
-              i = worklist.length;
-              while (i--) {
-                nextElem = worklist[i];
-                if (nextElem.ref && nextElem.ref.parent === parent) {
-                  if (nextElem.ref.key < key2) {
-                    break;
-                  }
-                  --nextElem.ref.key;
-                }
-              }
-            }
-          }
-          this.__initialize(root, visitor);
-          sentinel = {};
-          worklist = this.__worklist;
-          leavelist = this.__leavelist;
-          outer = {
-            root
-          };
-          element = new Element(root, null, null, new Reference2(outer, "root"));
-          worklist.push(element);
-          leavelist.push(element);
-          while (worklist.length) {
-            element = worklist.pop();
-            if (element === sentinel) {
-              element = leavelist.pop();
-              target = this.__execute(visitor.leave, element);
-              if (target !== void 0 && target !== BREAK && target !== SKIP && target !== REMOVE) {
-                element.ref.replace(target);
-              }
-              if (this.__state === REMOVE || target === REMOVE) {
-                removeElem(element);
-              }
-              if (this.__state === BREAK || target === BREAK) {
-                return outer.root;
-              }
-              continue;
-            }
-            target = this.__execute(visitor.enter, element);
-            if (target !== void 0 && target !== BREAK && target !== SKIP && target !== REMOVE) {
-              element.ref.replace(target);
-              element.node = target;
-            }
-            if (this.__state === REMOVE || target === REMOVE) {
-              removeElem(element);
-              element.node = null;
-            }
-            if (this.__state === BREAK || target === BREAK) {
-              return outer.root;
-            }
-            node = element.node;
-            if (!node) {
-              continue;
-            }
-            worklist.push(sentinel);
-            leavelist.push(element);
-            if (this.__state === SKIP || target === SKIP) {
-              continue;
-            }
-            nodeType = node.type || element.wrap;
-            candidates = this.__keys[nodeType];
-            if (!candidates) {
-              if (this.__fallback) {
-                candidates = this.__fallback(node);
-              } else {
-                throw new Error("Unknown node type " + nodeType + ".");
-              }
-            }
-            current = candidates.length;
-            while ((current -= 1) >= 0) {
-              key = candidates[current];
-              candidate = node[key];
-              if (!candidate) {
-                continue;
-              }
-              if (Array.isArray(candidate)) {
-                current2 = candidate.length;
-                while ((current2 -= 1) >= 0) {
-                  if (!candidate[current2]) {
-                    continue;
-                  }
-                  if (isProperty(nodeType, candidates[current])) {
-                    element = new Element(candidate[current2], [key, current2], "Property", new Reference2(candidate, current2));
-                  } else if (isNode(candidate[current2])) {
-                    element = new Element(candidate[current2], [key, current2], null, new Reference2(candidate, current2));
-                  } else {
-                    continue;
-                  }
-                  worklist.push(element);
-                }
-              } else if (isNode(candidate)) {
-                worklist.push(new Element(candidate, key, null, new Reference2(node, key)));
-              }
-            }
-          }
-          return outer.root;
-        };
-        function traverse(root, visitor) {
-          var controller = new Controller();
-          return controller.traverse(root, visitor);
-        }
-        function replace(root, visitor) {
-          var controller = new Controller();
-          return controller.replace(root, visitor);
-        }
-        function extendCommentRange(comment, tokens) {
-          var target;
-          target = upperBound(tokens, function search(token) {
-            return token.range[0] > comment.range[0];
-          });
-          comment.extendedRange = [comment.range[0], comment.range[1]];
-          if (target !== tokens.length) {
-            comment.extendedRange[1] = tokens[target].range[0];
-          }
-          target -= 1;
-          if (target >= 0) {
-            comment.extendedRange[0] = tokens[target].range[1];
-          }
-          return comment;
-        }
-        function attachComments(tree, providedComments, tokens) {
-          var comments = [], comment, len, i, cursor;
-          if (!tree.range) {
-            throw new Error("attachComments needs range information");
-          }
-          if (!tokens.length) {
-            if (providedComments.length) {
-              for (i = 0, len = providedComments.length; i < len; i += 1) {
-                comment = deepCopy(providedComments[i]);
-                comment.extendedRange = [0, tree.range[0]];
-                comments.push(comment);
-              }
-              tree.leadingComments = comments;
-            }
-            return tree;
-          }
-          for (i = 0, len = providedComments.length; i < len; i += 1) {
-            comments.push(extendCommentRange(deepCopy(providedComments[i]), tokens));
-          }
-          cursor = 0;
-          traverse(tree, {
-            enter: function(node) {
-              var comment2;
-              while (cursor < comments.length) {
-                comment2 = comments[cursor];
-                if (comment2.extendedRange[1] > node.range[0]) {
-                  break;
-                }
-                if (comment2.extendedRange[1] === node.range[0]) {
-                  if (!node.leadingComments) {
-                    node.leadingComments = [];
-                  }
-                  node.leadingComments.push(comment2);
-                  comments.splice(cursor, 1);
-                } else {
-                  cursor += 1;
-                }
-              }
-              if (cursor === comments.length) {
-                return VisitorOption.Break;
-              }
-              if (comments[cursor].extendedRange[0] > node.range[1]) {
-                return VisitorOption.Skip;
-              }
-            }
-          });
-          cursor = 0;
-          traverse(tree, {
-            leave: function(node) {
-              var comment2;
-              while (cursor < comments.length) {
-                comment2 = comments[cursor];
-                if (node.range[1] < comment2.extendedRange[0]) {
-                  break;
-                }
-                if (node.range[1] === comment2.extendedRange[0]) {
-                  if (!node.trailingComments) {
-                    node.trailingComments = [];
-                  }
-                  node.trailingComments.push(comment2);
-                  comments.splice(cursor, 1);
-                } else {
-                  cursor += 1;
-                }
-              }
-              if (cursor === comments.length) {
-                return VisitorOption.Break;
-              }
-              if (comments[cursor].extendedRange[0] > node.range[1]) {
-                return VisitorOption.Skip;
-              }
-            }
-          });
-          return tree;
-        }
-        exports2.Syntax = Syntax4;
-        exports2.traverse = traverse;
-        exports2.replace = replace;
-        exports2.attachComments = attachComments;
-        exports2.VisitorKeys = VisitorKeys;
-        exports2.VisitorOption = VisitorOption;
-        exports2.Controller = Controller;
-        exports2.cloneEnvironment = function() {
-          return clone({});
-        };
-        return exports2;
-      })(exports);
-    }
-  });
-
-  // ../../node_modules/esrecurse/node_modules/estraverse/estraverse.js
-  var require_estraverse2 = __commonJS({
-    "../../node_modules/esrecurse/node_modules/estraverse/estraverse.js"(exports) {
+    "../../node_modules/estraverse/estraverse.js"(exports) {
       (function clone(exports2) {
         "use strict";
         var Syntax4, VisitorOption, VisitorKeys, BREAK, SKIP, REMOVE;
@@ -17052,7 +16458,7 @@ var aceLegacyWorkerModule = (() => {
     "../../node_modules/esrecurse/esrecurse.js"(exports) {
       (function() {
         "use strict";
-        var estraverse4 = require_estraverse2();
+        var estraverse4 = require_estraverse();
         function isNode(node) {
           if (node == null) {
             return false;
