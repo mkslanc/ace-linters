@@ -1,7 +1,7 @@
 {
   "name": "ace-linters",
   "author": "Azat Alimov <mkslanc@gmail.com>",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "scripts": {
     "clean": "rimraf build",
     "postbuild": "node postbuild.js",
@@ -17,13 +17,13 @@
     "generate-typescript-service": "node tools/generate-typescript-service.js"
   },
   "dependencies": {
-    "vscode-languageserver-protocol": "^3.17.5",
+    "vscode-languageserver-protocol": "3.17.5",
     "vscode-languageserver-textdocument": "^1.0.12",
-    "vscode-languageserver-types": "^3.17.5"
+    "vscode-languageserver-types": "3.17.5"
   },
   "devDependencies": {
-    "vite": "^8.0.0",
-    "vite-plugin-node-polyfills": "^0.25.0",
+    "vite": "^8.1.5",
+    "vite-plugin-node-polyfills": "^0.28.0",
     "rimraf": "^5.0.0",
     "vscode-html-languageservice": "^5.4.0",
     "vscode-css-languageservice": "^6.3.10",

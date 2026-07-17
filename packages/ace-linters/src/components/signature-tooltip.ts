@@ -104,13 +104,21 @@ export class SignatureTooltip extends BaseTooltip {
 
     }
 
+    $onBlur = (e: FocusEvent) => {
+        const relatedTarget = e.relatedTarget;
+        if (relatedTarget instanceof Node && this.getElement().contains(relatedTarget)) {
+            return;
+        }
+        this.$hide();
+    }
+
     $registerEditorEvents() {
         this.$activeEditor!.renderer.on("afterRender", this.$onAfterRender);
-        this.$activeEditor!.on("blur", this.$hide);
+        this.$activeEditor!.on("blur", this.$onBlur);
     }
 
     $removeEditorEvents() {
         this.$activeEditor!.renderer.off("afterRender", this.$onAfterRender);
-        this.$activeEditor!.off("blur", this.$hide);
+        this.$activeEditor!.off("blur", this.$onBlur);
     }
 }
