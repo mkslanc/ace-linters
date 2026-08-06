@@ -128,6 +128,10 @@ export class TypescriptService extends BaseService<TsServiceOptions> implements 
             else return "1";
         } else if (fileName === this.getDefaultLibFileName(this.getCompilationSettings())) {
             return '1';
+        } else if (fileName in this.$extraLibs) {
+            return this.$extraLibs[fileName].version.toString();
+        } else if (fileName.replace("file:///", "") in this.$extraLibs) {
+            return this.$extraLibs[fileName.replace("file:///", "")].version.toString();
         }
         return '';
     }
