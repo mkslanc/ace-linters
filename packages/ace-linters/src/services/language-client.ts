@@ -290,7 +290,7 @@ export class LanguageClient extends BaseService implements LanguageService {
             capabilities: this.clientCapabilities,
             initializationOptions: initializationOptions,
             processId: null,
-            rootUri: null, //TODO: this.documentInfo.rootUri
+            rootUri: this.serverData.rootUri || null, //TODO: this.documentInfo.rootUri
         };
         if (this.workspaceUri) {
             message.workspaceFolders = [this.workspaceFolder];
