@@ -141,6 +141,9 @@ export declare class LanguageClient extends BaseService implements LanguageServi
 	private socket;
 	private connection;
 	private requestsQueue;
+	private serverWorkspaceUri?;
+	private openedDocumentUris;
+	private workspaceFoldersChangeRegistrations;
 	callbackId: number;
 	callbacks: {};
 	serverData: LanguageClientConfig;
@@ -156,11 +159,12 @@ export declare class LanguageClient extends BaseService implements LanguageServi
 	showLog(params: lsp.ShowMessageParams): void;
 	showTrace(params: lsp.LogTraceParams): void;
 	addDocument(document: lsp.TextDocumentItem): void;
+	private $openDocument;
 	enqueueIfNotConnected(callback: () => void): void;
 	removeDocument(document: lsp.TextDocumentIdentifier): void;
 	dispose(): Promise<void>;
 	closeConnection(): Promise<void>;
-	sendInitialize(initializationOptions: any): void;
+	sendInitialize(initializationOptions: any): Promise<void> | undefined;
 	applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]): void;
 	setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string): void;
 	doHover(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.Hover | null>;
@@ -172,6 +176,7 @@ export declare class LanguageClient extends BaseService implements LanguageServi
 	setGlobalOptions(options: ServiceOptions): void;
 	setWorkspace(workspaceUri: string): void;
 	get workspaceFolder(): WorkspaceFolder;
+	private $workspaceFolder;
 	findDocumentHighlights(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.DocumentHighlight[]>;
 	provideSignatureHelp(document: lsp.TextDocumentIdentifier, position: lsp.Position): Promise<lsp.SignatureHelp | null>;
 	getSemanticTokens(document: lsp.TextDocumentIdentifier, range: lsp.Range): Promise<lsp.SemanticTokens | null>;

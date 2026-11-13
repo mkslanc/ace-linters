@@ -14479,7 +14479,7 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 				if (this.options.functionality[key] === void 0) this.options.functionality[key] = value;
 			});
 			this.options.markdownConverter ||= defaultMarkdownConverter;
-			if (options?.workspacePath) this.workspaceUri = convertToUri(options.workspacePath);
+			if (options?.workspacePath) this.changeWorkspaceFolder(options.workspacePath);
 			if (this.options.functionality.inlineCompletion) this.checkInlineCompletionAdapter(() => {
 				if (!this.options.aceComponents?.InlineAutocomplete || !this.options.aceComponents?.CommandBarTooltip || !this.options.aceComponents?.CompletionProvider) throw new Error("Inline completion requires the InlineAutocomplete, CompletionProvider and CommandBarTooltip to be defined");
 				this.completerAdapter = createInlineCompleterAdapter(this.options.aceComponents.InlineAutocomplete, this.options.aceComponents.CommandBarTooltip, this.options.aceComponents.CompletionProvider);
@@ -14776,8 +14776,9 @@ Please report this to https://github.com/markedjs/marked.`, e) {
 		* @param workspaceUri - The new workspace URI. Could be simple path, not URI itself.
 		*/
 		changeWorkspaceFolder(workspaceUri) {
+			workspaceUri = convertToUri(workspaceUri);
 			if (workspaceUri === this.workspaceUri) return;
-			this.workspaceUri = convertToUri(workspaceUri);
+			this.workspaceUri = workspaceUri;
 			this.$messageController.setWorkspace(this.workspaceUri);
 		}
 		/**

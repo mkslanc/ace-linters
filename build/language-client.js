@@ -6055,7 +6055,7 @@
 		TextDocumentIdentifier: () => TextDocumentIdentifier,
 		TextDocumentItem: () => TextDocumentItem,
 		TextEdit: () => TextEdit,
-		URI: () => URI,
+		URI: () => URI$1,
 		VersionedTextDocumentIdentifier: () => VersionedTextDocumentIdentifier,
 		WorkspaceChange: () => WorkspaceChange,
 		WorkspaceEdit: () => WorkspaceEdit,
@@ -6064,7 +6064,7 @@
 		integer: () => integer,
 		uinteger: () => uinteger
 	});
-	var DocumentUri, URI, integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, TextEditChangeImpl, ChangeAnnotations, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent, CompletionItemKind, InsertTextFormat, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItemLabelDetails, CompletionItem, CompletionList, MarkedString, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, WorkspaceSymbol, DocumentSymbol, CodeActionKind, CodeActionTriggerKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind, InlayHintLabelPart, InlayHint, StringValue, InlineCompletionItem, InlineCompletionList, InlineCompletionTriggerKind, SelectedCompletionInfo, InlineCompletionContext, WorkspaceFolder, EOL, TextDocument$1, FullTextDocument$1, Is;
+	var DocumentUri, URI$1, integer, uinteger, Position, Range, Location, LocationLink, Color, ColorInformation, ColorPresentation, FoldingRangeKind, FoldingRange, DiagnosticRelatedInformation, DiagnosticSeverity, DiagnosticTag, CodeDescription, Diagnostic, Command, TextEdit, ChangeAnnotation, ChangeAnnotationIdentifier, AnnotatedTextEdit, TextDocumentEdit, CreateFile, RenameFile, DeleteFile, WorkspaceEdit, TextEditChangeImpl, ChangeAnnotations, WorkspaceChange, TextDocumentIdentifier, VersionedTextDocumentIdentifier, OptionalVersionedTextDocumentIdentifier, TextDocumentItem, MarkupKind, MarkupContent, CompletionItemKind, InsertTextFormat, CompletionItemTag, InsertReplaceEdit, InsertTextMode, CompletionItemLabelDetails, CompletionItem, CompletionList, MarkedString, Hover, ParameterInformation, SignatureInformation, DocumentHighlightKind, DocumentHighlight, SymbolKind, SymbolTag, SymbolInformation, WorkspaceSymbol, DocumentSymbol, CodeActionKind, CodeActionTriggerKind, CodeActionContext, CodeAction, CodeLens, FormattingOptions, DocumentLink, SelectionRange, SemanticTokenTypes, SemanticTokenModifiers, SemanticTokens, InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression, InlineValueContext, InlayHintKind, InlayHintLabelPart, InlayHint, StringValue, InlineCompletionItem, InlineCompletionList, InlineCompletionTriggerKind, SelectedCompletionInfo, InlineCompletionContext, WorkspaceFolder, EOL, TextDocument$1, FullTextDocument$1, Is;
 	var init_main = __esmMin((() => {
 		(function(DocumentUri) {
 			function is(value) {
@@ -6077,7 +6077,7 @@
 				return typeof value === "string";
 			}
 			URI.is = is;
-		})(URI || (URI = {}));
+		})(URI$1 || (URI$1 = {}));
 		(function(integer) {
 			integer.MIN_VALUE = -2147483648;
 			integer.MAX_VALUE = 2147483647;
@@ -7669,7 +7669,7 @@
 		(function(WorkspaceFolder) {
 			function is(value) {
 				const candidate = value;
-				return Is.objectLiteral(candidate) && URI.is(candidate.uri) && Is.string(candidate.name);
+				return Is.objectLiteral(candidate) && URI$1.is(candidate.uri) && Is.string(candidate.name);
 			}
 			WorkspaceFolder.is = is;
 		})(WorkspaceFolder || (WorkspaceFolder = {}));
@@ -10201,9 +10201,522 @@
 		module.exports = require_main();
 	}));
 	//#endregion
-	//#region src/utils.ts
+	//#region ../../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js
 	var import_main = /* @__PURE__ */ __toESM(require_main());
 	var import_browser = require_browser();
+	function getDefaultExportFromCjs(x) {
+		return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+	}
+	var browser = { exports: {} };
+	var process = browser.exports = {};
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+	function defaultSetTimout() {
+		throw new Error("setTimeout has not been defined");
+	}
+	function defaultClearTimeout() {
+		throw new Error("clearTimeout has not been defined");
+	}
+	(function() {
+		try {
+			if (typeof setTimeout === "function") cachedSetTimeout = setTimeout;
+			else cachedSetTimeout = defaultSetTimout;
+		} catch (e) {
+			cachedSetTimeout = defaultSetTimout;
+		}
+		try {
+			if (typeof clearTimeout === "function") cachedClearTimeout = clearTimeout;
+			else cachedClearTimeout = defaultClearTimeout;
+		} catch (e) {
+			cachedClearTimeout = defaultClearTimeout;
+		}
+	})();
+	function runTimeout(fun) {
+		if (cachedSetTimeout === setTimeout) return setTimeout(fun, 0);
+		if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+			cachedSetTimeout = setTimeout;
+			return setTimeout(fun, 0);
+		}
+		try {
+			return cachedSetTimeout(fun, 0);
+		} catch (e) {
+			try {
+				return cachedSetTimeout.call(null, fun, 0);
+			} catch (e) {
+				return cachedSetTimeout.call(this, fun, 0);
+			}
+		}
+	}
+	function runClearTimeout(marker) {
+		if (cachedClearTimeout === clearTimeout) return clearTimeout(marker);
+		if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+			cachedClearTimeout = clearTimeout;
+			return clearTimeout(marker);
+		}
+		try {
+			return cachedClearTimeout(marker);
+		} catch (e) {
+			try {
+				return cachedClearTimeout.call(null, marker);
+			} catch (e) {
+				return cachedClearTimeout.call(this, marker);
+			}
+		}
+	}
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	function cleanUpNextTick() {
+		if (!draining || !currentQueue) return;
+		draining = false;
+		if (currentQueue.length) queue = currentQueue.concat(queue);
+		else queueIndex = -1;
+		if (queue.length) drainQueue();
+	}
+	function drainQueue() {
+		if (draining) return;
+		var timeout = runTimeout(cleanUpNextTick);
+		draining = true;
+		var len = queue.length;
+		while (len) {
+			currentQueue = queue;
+			queue = [];
+			while (++queueIndex < len) if (currentQueue) currentQueue[queueIndex].run();
+			queueIndex = -1;
+			len = queue.length;
+		}
+		currentQueue = null;
+		draining = false;
+		runClearTimeout(timeout);
+	}
+	process.nextTick = function(fun) {
+		var args = new Array(arguments.length - 1);
+		if (arguments.length > 1) for (var i = 1; i < arguments.length; i++) args[i - 1] = arguments[i];
+		queue.push(new Item(fun, args));
+		if (queue.length === 1 && !draining) runTimeout(drainQueue);
+	};
+	function Item(fun, array) {
+		this.fun = fun;
+		this.array = array;
+	}
+	Item.prototype.run = function() {
+		this.fun.apply(null, this.array);
+	};
+	process.title = "browser";
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = "";
+	process.versions = {};
+	function noop() {}
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+	process.listeners = function(name) {
+		return [];
+	};
+	process.binding = function(name) {
+		throw new Error("process.binding is not supported");
+	};
+	process.cwd = function() {
+		return "/";
+	};
+	process.chdir = function(dir) {
+		throw new Error("process.chdir is not supported");
+	};
+	process.umask = function() {
+		return 0;
+	};
+	var browserExports = browser.exports;
+	var process$1 = /*@__PURE__*/ getDefaultExportFromCjs(browserExports);
+	//#endregion
+	//#region ../../node_modules/vscode-uri/lib/esm/index.mjs
+	var LIB;
+	(() => {
+		"use strict";
+		var t = { 975: (t) => {
+			function e(t) {
+				if ("string" != typeof t) throw new TypeError("Path must be a string. Received " + JSON.stringify(t));
+			}
+			function r(t, e) {
+				for (var r, n = "", i = 0, o = -1, s = 0, h = 0; h <= t.length; ++h) {
+					if (h < t.length) r = t.charCodeAt(h);
+					else {
+						if (47 === r) break;
+						r = 47;
+					}
+					if (47 === r) {
+						if (o === h - 1 || 1 === s);
+						else if (o !== h - 1 && 2 === s) {
+							if (n.length < 2 || 2 !== i || 46 !== n.charCodeAt(n.length - 1) || 46 !== n.charCodeAt(n.length - 2)) {
+								if (n.length > 2) {
+									var a = n.lastIndexOf("/");
+									if (a !== n.length - 1) {
+										-1 === a ? (n = "", i = 0) : i = (n = n.slice(0, a)).length - 1 - n.lastIndexOf("/"), o = h, s = 0;
+										continue;
+									}
+								} else if (2 === n.length || 1 === n.length) {
+									n = "", i = 0, o = h, s = 0;
+									continue;
+								}
+							}
+							e && (n.length > 0 ? n += "/.." : n = "..", i = 2);
+						} else n.length > 0 ? n += "/" + t.slice(o + 1, h) : n = t.slice(o + 1, h), i = h - o - 1;
+						o = h, s = 0;
+					} else 46 === r && -1 !== s ? ++s : s = -1;
+				}
+				return n;
+			}
+			var n = {
+				resolve: function() {
+					for (var t, n = "", i = !1, o = arguments.length - 1; o >= -1 && !i; o--) {
+						var s;
+						o >= 0 ? s = arguments[o] : (void 0 === t && (t = process$1.cwd()), s = t), e(s), 0 !== s.length && (n = s + "/" + n, i = 47 === s.charCodeAt(0));
+					}
+					return n = r(n, !i), i ? n.length > 0 ? "/" + n : "/" : n.length > 0 ? n : ".";
+				},
+				normalize: function(t) {
+					if (e(t), 0 === t.length) return ".";
+					var n = 47 === t.charCodeAt(0), i = 47 === t.charCodeAt(t.length - 1);
+					return 0 !== (t = r(t, !n)).length || n || (t = "."), t.length > 0 && i && (t += "/"), n ? "/" + t : t;
+				},
+				isAbsolute: function(t) {
+					return e(t), t.length > 0 && 47 === t.charCodeAt(0);
+				},
+				join: function() {
+					if (0 === arguments.length) return ".";
+					for (var t, r = 0; r < arguments.length; ++r) {
+						var i = arguments[r];
+						e(i), i.length > 0 && (void 0 === t ? t = i : t += "/" + i);
+					}
+					return void 0 === t ? "." : n.normalize(t);
+				},
+				relative: function(t, r) {
+					if (e(t), e(r), t === r) return "";
+					if ((t = n.resolve(t)) === (r = n.resolve(r))) return "";
+					for (var i = 1; i < t.length && 47 === t.charCodeAt(i); ++i);
+					for (var o = t.length, s = o - i, h = 1; h < r.length && 47 === r.charCodeAt(h); ++h);
+					for (var a = r.length - h, c = s < a ? s : a, f = -1, u = 0; u <= c; ++u) {
+						if (u === c) {
+							if (a > c) {
+								if (47 === r.charCodeAt(h + u)) return r.slice(h + u + 1);
+								if (0 === u) return r.slice(h + u);
+							} else s > c && (47 === t.charCodeAt(i + u) ? f = u : 0 === u && (f = 0));
+							break;
+						}
+						var l = t.charCodeAt(i + u);
+						if (l !== r.charCodeAt(h + u)) break;
+						47 === l && (f = u);
+					}
+					var g = "";
+					for (u = i + f + 1; u <= o; ++u) u !== o && 47 !== t.charCodeAt(u) || (0 === g.length ? g += ".." : g += "/..");
+					return g.length > 0 ? g + r.slice(h + f) : (h += f, 47 === r.charCodeAt(h) && ++h, r.slice(h));
+				},
+				_makeLong: function(t) {
+					return t;
+				},
+				dirname: function(t) {
+					if (e(t), 0 === t.length) return ".";
+					for (var r = t.charCodeAt(0), n = 47 === r, i = -1, o = !0, s = t.length - 1; s >= 1; --s) if (47 === (r = t.charCodeAt(s))) {
+						if (!o) {
+							i = s;
+							break;
+						}
+					} else o = !1;
+					return -1 === i ? n ? "/" : "." : n && 1 === i ? "//" : t.slice(0, i);
+				},
+				basename: function(t, r) {
+					if (void 0 !== r && "string" != typeof r) throw new TypeError("\"ext\" argument must be a string");
+					e(t);
+					var n, i = 0, o = -1, s = !0;
+					if (void 0 !== r && r.length > 0 && r.length <= t.length) {
+						if (r.length === t.length && r === t) return "";
+						var h = r.length - 1, a = -1;
+						for (n = t.length - 1; n >= 0; --n) {
+							var c = t.charCodeAt(n);
+							if (47 === c) {
+								if (!s) {
+									i = n + 1;
+									break;
+								}
+							} else -1 === a && (s = !1, a = n + 1), h >= 0 && (c === r.charCodeAt(h) ? -1 == --h && (o = n) : (h = -1, o = a));
+						}
+						return i === o ? o = a : -1 === o && (o = t.length), t.slice(i, o);
+					}
+					for (n = t.length - 1; n >= 0; --n) if (47 === t.charCodeAt(n)) {
+						if (!s) {
+							i = n + 1;
+							break;
+						}
+					} else -1 === o && (s = !1, o = n + 1);
+					return -1 === o ? "" : t.slice(i, o);
+				},
+				extname: function(t) {
+					e(t);
+					for (var r = -1, n = 0, i = -1, o = !0, s = 0, h = t.length - 1; h >= 0; --h) {
+						var a = t.charCodeAt(h);
+						if (47 !== a) -1 === i && (o = !1, i = h + 1), 46 === a ? -1 === r ? r = h : 1 !== s && (s = 1) : -1 !== r && (s = -1);
+						else if (!o) {
+							n = h + 1;
+							break;
+						}
+					}
+					return -1 === r || -1 === i || 0 === s || 1 === s && r === i - 1 && r === n + 1 ? "" : t.slice(r, i);
+				},
+				format: function(t) {
+					if (null === t || "object" != typeof t) throw new TypeError("The \"pathObject\" argument must be of type Object. Received type " + typeof t);
+					return function(t, e) {
+						var r = e.dir || e.root, n = e.base || (e.name || "") + (e.ext || "");
+						return r ? r === e.root ? r + n : r + "/" + n : n;
+					}(0, t);
+				},
+				parse: function(t) {
+					e(t);
+					var r = {
+						root: "",
+						dir: "",
+						base: "",
+						ext: "",
+						name: ""
+					};
+					if (0 === t.length) return r;
+					var n, i = t.charCodeAt(0), o = 47 === i;
+					o ? (r.root = "/", n = 1) : n = 0;
+					for (var s = -1, h = 0, a = -1, c = !0, f = t.length - 1, u = 0; f >= n; --f) if (47 !== (i = t.charCodeAt(f))) -1 === a && (c = !1, a = f + 1), 46 === i ? -1 === s ? s = f : 1 !== u && (u = 1) : -1 !== s && (u = -1);
+					else if (!c) {
+						h = f + 1;
+						break;
+					}
+					return -1 === s || -1 === a || 0 === u || 1 === u && s === a - 1 && s === h + 1 ? -1 !== a && (r.base = r.name = 0 === h && o ? t.slice(1, a) : t.slice(h, a)) : (0 === h && o ? (r.name = t.slice(1, s), r.base = t.slice(1, a)) : (r.name = t.slice(h, s), r.base = t.slice(h, a)), r.ext = t.slice(s, a)), h > 0 ? r.dir = t.slice(0, h - 1) : o && (r.dir = "/"), r;
+				},
+				sep: "/",
+				delimiter: ":",
+				win32: null,
+				posix: null
+			};
+			n.posix = n, t.exports = n;
+		} }, e = {};
+		function r(n) {
+			var i = e[n];
+			if (void 0 !== i) return i.exports;
+			var o = e[n] = { exports: {} };
+			return t[n](o, o.exports, r), o.exports;
+		}
+		r.d = (t, e) => {
+			for (var n in e) r.o(e, n) && !r.o(t, n) && Object.defineProperty(t, n, {
+				enumerable: !0,
+				get: e[n]
+			});
+		}, r.o = (t, e) => Object.prototype.hasOwnProperty.call(t, e), r.r = (t) => {
+			"undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(t, Symbol.toStringTag, { value: "Module" }), Object.defineProperty(t, "__esModule", { value: !0 });
+		};
+		var n = {};
+		let i;
+		if (r.r(n), r.d(n, {
+			URI: () => l,
+			Utils: () => I
+		}), "object" == typeof process$1) i = "win32" === process$1.platform;
+		else if ("object" == typeof navigator) i = navigator.userAgent.indexOf("Windows") >= 0;
+		const o = /^\w[\w\d+.-]*$/, s = /^\//, h = /^\/\//;
+		function a(t, e) {
+			if (!t.scheme && e) throw new Error(`[UriError]: Scheme is missing: {scheme: "", authority: "${t.authority}", path: "${t.path}", query: "${t.query}", fragment: "${t.fragment}"}`);
+			if (t.scheme && !o.test(t.scheme)) throw new Error("[UriError]: Scheme contains illegal characters.");
+			if (t.path) {
+				if (t.authority) {
+					if (!s.test(t.path)) throw new Error("[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash (\"/\") character");
+				} else if (h.test(t.path)) throw new Error("[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters (\"//\")");
+			}
+		}
+		const c = "", f = "/", u = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+		class l {
+			static isUri(t) {
+				return t instanceof l || !!t && "string" == typeof t.authority && "string" == typeof t.fragment && "string" == typeof t.path && "string" == typeof t.query && "string" == typeof t.scheme && "string" == typeof t.fsPath && "function" == typeof t.with && "function" == typeof t.toString;
+			}
+			scheme;
+			authority;
+			path;
+			query;
+			fragment;
+			constructor(t, e, r, n, i, o = !1) {
+				"object" == typeof t ? (this.scheme = t.scheme || c, this.authority = t.authority || c, this.path = t.path || c, this.query = t.query || c, this.fragment = t.fragment || c) : (this.scheme = function(t, e) {
+					return t || e ? t : "file";
+				}(t, o), this.authority = e || c, this.path = function(t, e) {
+					switch (t) {
+						case "https":
+						case "http":
+						case "file": e ? e[0] !== f && (e = f + e) : e = f;
+					}
+					return e;
+				}(this.scheme, r || c), this.query = n || c, this.fragment = i || c, a(this, o));
+			}
+			get fsPath() {
+				return v(this, !1);
+			}
+			with(t) {
+				if (!t) return this;
+				let { scheme: e, authority: r, path: n, query: i, fragment: o } = t;
+				return void 0 === e ? e = this.scheme : null === e && (e = c), void 0 === r ? r = this.authority : null === r && (r = c), void 0 === n ? n = this.path : null === n && (n = c), void 0 === i ? i = this.query : null === i && (i = c), void 0 === o ? o = this.fragment : null === o && (o = c), e === this.scheme && r === this.authority && n === this.path && i === this.query && o === this.fragment ? this : new d(e, r, n, i, o);
+			}
+			static parse(t, e = !1) {
+				const r = u.exec(t);
+				return r ? new d(r[2] || c, w(r[4] || c), w(r[5] || c), w(r[7] || c), w(r[9] || c), e) : new d(c, c, c, c, c);
+			}
+			static file(t) {
+				let e = c;
+				if (i && (t = t.replace(/\\/g, f)), t[0] === f && t[1] === f) {
+					const r = t.indexOf(f, 2);
+					-1 === r ? (e = t.substring(2), t = f) : (e = t.substring(2, r), t = t.substring(r) || f);
+				}
+				return new d("file", e, t, c, c);
+			}
+			static from(t) {
+				const e = new d(t.scheme, t.authority, t.path, t.query, t.fragment);
+				return a(e, !0), e;
+			}
+			toString(t = !1) {
+				return b(this, t);
+			}
+			toJSON() {
+				return this;
+			}
+			static revive(t) {
+				if (t) {
+					if (t instanceof l) return t;
+					{
+						const e = new d(t);
+						return e._formatted = t.external, e._fsPath = t._sep === g ? t.fsPath : null, e;
+					}
+				}
+				return t;
+			}
+		}
+		const g = i ? 1 : void 0;
+		class d extends l {
+			_formatted = null;
+			_fsPath = null;
+			get fsPath() {
+				return this._fsPath || (this._fsPath = v(this, !1)), this._fsPath;
+			}
+			toString(t = !1) {
+				return t ? b(this, !0) : (this._formatted || (this._formatted = b(this, !1)), this._formatted);
+			}
+			toJSON() {
+				const t = { $mid: 1 };
+				return this._fsPath && (t.fsPath = this._fsPath, t._sep = g), this._formatted && (t.external = this._formatted), this.path && (t.path = this.path), this.scheme && (t.scheme = this.scheme), this.authority && (t.authority = this.authority), this.query && (t.query = this.query), this.fragment && (t.fragment = this.fragment), t;
+			}
+		}
+		const p = {
+			58: "%3A",
+			47: "%2F",
+			63: "%3F",
+			35: "%23",
+			91: "%5B",
+			93: "%5D",
+			64: "%40",
+			33: "%21",
+			36: "%24",
+			38: "%26",
+			39: "%27",
+			40: "%28",
+			41: "%29",
+			42: "%2A",
+			43: "%2B",
+			44: "%2C",
+			59: "%3B",
+			61: "%3D",
+			32: "%20"
+		};
+		function m(t, e, r) {
+			let n, i = -1;
+			for (let o = 0; o < t.length; o++) {
+				const s = t.charCodeAt(o);
+				if (s >= 97 && s <= 122 || s >= 65 && s <= 90 || s >= 48 && s <= 57 || 45 === s || 46 === s || 95 === s || 126 === s || e && 47 === s || r && 91 === s || r && 93 === s || r && 58 === s) -1 !== i && (n += encodeURIComponent(t.substring(i, o)), i = -1), void 0 !== n && (n += t.charAt(o));
+				else {
+					void 0 === n && (n = t.substr(0, o));
+					const e = p[s];
+					void 0 !== e ? (-1 !== i && (n += encodeURIComponent(t.substring(i, o)), i = -1), n += e) : -1 === i && (i = o);
+				}
+			}
+			return -1 !== i && (n += encodeURIComponent(t.substring(i))), void 0 !== n ? n : t;
+		}
+		function y(t) {
+			let e;
+			for (let r = 0; r < t.length; r++) {
+				const n = t.charCodeAt(r);
+				35 === n || 63 === n ? (void 0 === e && (e = t.substr(0, r)), e += p[n]) : void 0 !== e && (e += t[r]);
+			}
+			return void 0 !== e ? e : t;
+		}
+		function v(t, e) {
+			let r;
+			return r = t.authority && t.path.length > 1 && "file" === t.scheme ? `//${t.authority}${t.path}` : 47 === t.path.charCodeAt(0) && (t.path.charCodeAt(1) >= 65 && t.path.charCodeAt(1) <= 90 || t.path.charCodeAt(1) >= 97 && t.path.charCodeAt(1) <= 122) && 58 === t.path.charCodeAt(2) ? e ? t.path.substr(1) : t.path[1].toLowerCase() + t.path.substr(2) : t.path, i && (r = r.replace(/\//g, "\\")), r;
+		}
+		function b(t, e) {
+			const r = e ? y : m;
+			let n = "", { scheme: i, authority: o, path: s, query: h, fragment: a } = t;
+			if (i && (n += i, n += ":"), (o || "file" === i) && (n += f, n += f), o) {
+				let t = o.indexOf("@");
+				if (-1 !== t) {
+					const e = o.substr(0, t);
+					o = o.substr(t + 1), t = e.lastIndexOf(":"), -1 === t ? n += r(e, !1, !1) : (n += r(e.substr(0, t), !1, !1), n += ":", n += r(e.substr(t + 1), !1, !0)), n += "@";
+				}
+				o = o.toLowerCase(), t = o.lastIndexOf(":"), -1 === t ? n += r(o, !1, !0) : (n += r(o.substr(0, t), !1, !0), n += o.substr(t));
+			}
+			if (s) {
+				if (s.length >= 3 && 47 === s.charCodeAt(0) && 58 === s.charCodeAt(2)) {
+					const t = s.charCodeAt(1);
+					t >= 65 && t <= 90 && (s = `/${String.fromCharCode(t + 32)}:${s.substr(3)}`);
+				} else if (s.length >= 2 && 58 === s.charCodeAt(1)) {
+					const t = s.charCodeAt(0);
+					t >= 65 && t <= 90 && (s = `${String.fromCharCode(t + 32)}:${s.substr(2)}`);
+				}
+				n += r(s, !0, !1);
+			}
+			return h && (n += "?", n += r(h, !1, !1)), a && (n += "#", n += e ? a : m(a, !1, !1)), n;
+		}
+		function C(t) {
+			try {
+				return decodeURIComponent(t);
+			} catch {
+				return t.length > 3 ? t.substr(0, 3) + C(t.substr(3)) : t;
+			}
+		}
+		const A = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+		function w(t) {
+			return t.match(A) ? t.replace(A, ((t) => C(t))) : t;
+		}
+		var x = r(975);
+		const P = x.posix || x, _ = "/";
+		var I;
+		(function(t) {
+			t.joinPath = function(t, ...e) {
+				return t.with({ path: P.join(t.path, ...e) });
+			}, t.resolvePath = function(t, ...e) {
+				let r = t.path, n = !1;
+				r[0] !== _ && (r = _ + r, n = !0);
+				let i = P.resolve(r, ...e);
+				return n && i[0] === _ && !t.authority && (i = i.substring(1)), t.with({ path: i });
+			}, t.dirname = function(t) {
+				if (0 === t.path.length || t.path === _) return t;
+				let e = P.dirname(t.path);
+				return 1 === e.length && 46 === e.charCodeAt(0) && (e = ""), t.with({ path: e });
+			}, t.basename = function(t) {
+				return P.basename(t.path);
+			}, t.extname = function(t) {
+				return P.extname(t.path);
+			};
+		})(I || (I = {})), LIB = n;
+	})();
+	var { URI, Utils } = LIB;
+	//#endregion
+	//#region src/utils.ts
 	function mergeObjects(obj1, obj2, excludeUndefined = false) {
 		if (!obj1) return obj2;
 		if (!obj2) return obj1;
@@ -10649,8 +11162,11 @@
 			this.isConnected = false;
 			this.isInitialized = false;
 			this.requestsQueue = [];
+			this.openedDocumentUris = /* @__PURE__ */ new Set();
+			this.workspaceFoldersChangeRegistrations = /* @__PURE__ */ new Set();
 			this.callbackId = 0;
 			this.callbacks = {};
+			this.clientCapabilities.workspace.workspaceFolders = true;
 			this.ctx = ctx;
 			this.serverData = serverData;
 			this.$connect();
@@ -10687,7 +11203,6 @@
 			connection.listen();
 			this.isConnected = true;
 			this.connection = connection;
-			this.sendInitialize(initializationOptions);
 			this.connection.onNotification("textDocument/publishDiagnostics", (result) => {
 				let postMessage = {
 					"type": MessageType.validate,
@@ -10710,6 +11225,9 @@
 			});
 			this.connection.onRequest("workspace/configuration", (params) => {
 				console.log(params);
+			});
+			this.connection.onRequest("workspace/workspaceFolders", () => {
+				return this.workspaceUri ? [this.workspaceFolder] : null;
 			});
 			this.connection.onRequest("client/registerCapability", (params) => {
 				params.registrations.forEach((registration) => {
@@ -10758,11 +11276,13 @@
 			});
 			this.connection.onClose(() => {
 				this.isConnected = false;
+				this.isInitialized = false;
 			});
+			this.sendInitialize(initializationOptions);
 		}
 		async $reconnect() {
-			Object.values(this.documents).forEach((document) => this.removeDocument(document));
 			await this.dispose();
+			this.requestsQueue.unshift(...Object.keys(this.documents).map((uri) => () => this.$openDocument(uri)));
 			this.$connect();
 		}
 		sendAppliedResult(result, callbackId) {
@@ -10799,8 +11319,19 @@
 				return;
 			}
 			super.addDocument(document);
-			const textDocumentMessage = { textDocument: document };
-			this.enqueueIfNotConnected(() => this.connection.sendNotification("textDocument/didOpen", textDocumentMessage));
+			this.enqueueIfNotConnected(() => this.$openDocument(document.uri));
+		}
+		$openDocument(uri) {
+			const document = this.getDocument(uri);
+			if (!document || this.openedDocumentUris.has(uri)) return;
+			this.openedDocumentUris.add(uri);
+			const textDocumentMessage = { textDocument: {
+				uri,
+				languageId: document.languageId,
+				version: document.version,
+				text: document.getText()
+			} };
+			return this.connection.sendNotification("textDocument/didOpen", textDocumentMessage);
 		}
 		enqueueIfNotConnected(callback) {
 			if (!this.isConnected || !this.isInitialized) this.requestsQueue.push(callback);
@@ -10808,9 +11339,16 @@
 		}
 		removeDocument(document) {
 			super.removeDocument(document);
-			this.enqueueIfNotConnected(() => this.connection.sendNotification("textDocument/didClose", { textDocument: { uri: document.uri } }));
+			this.enqueueIfNotConnected(() => {
+				if (!this.openedDocumentUris.delete(document.uri)) return;
+				return this.connection.sendNotification("textDocument/didClose", { textDocument: { uri: document.uri } });
+			});
 		}
 		async dispose() {
+			this.isConnected = false;
+			this.isInitialized = false;
+			this.openedDocumentUris.clear();
+			this.workspaceFoldersChangeRegistrations.clear();
 			this.connection?.dispose();
 		}
 		async closeConnection() {
@@ -10835,15 +11373,18 @@
 		}
 		sendInitialize(initializationOptions) {
 			if (!this.isConnected) return;
+			const rootUri = this.workspaceUri ?? null;
+			const root = rootUri ? URI.parse(rootUri) : null;
 			const message = {
 				capabilities: this.clientCapabilities,
 				initializationOptions,
 				processId: null,
-				rootUri: null
+				rootUri,
+				rootPath: root?.scheme === "file" ? root.fsPath : null,
+				workspaceFolders: rootUri ? [this.workspaceFolder] : null
 			};
-			if (this.workspaceUri) message.workspaceFolders = [this.workspaceFolder];
-			this.connection.sendRequest("initialize", message).then((params) => {
-				this.isInitialized = true;
+			this.serverWorkspaceUri = this.workspaceUri;
+			return this.connection.sendRequest("initialize", message).then((params) => {
 				this.serviceCapabilities = params.capabilities;
 				const serviceName = this.serviceName;
 				Object.keys(this.documents).forEach((documentUri) => {
@@ -10854,16 +11395,16 @@
 					};
 					this.ctx.postMessage(postMessage);
 				});
-				this.connection.sendNotification("initialized", {}).then(() => {
+				return this.connection.sendNotification("initialized", {}).then(() => {
+					this.isInitialized = true;
 					this.connection.sendNotification("workspace/didChangeConfiguration", { settings: {} });
-					this.requestsQueue.forEach((requestCallback) => requestCallback());
-					this.requestsQueue = [];
+					this.requestsQueue.splice(0).forEach((requestCallback) => this.enqueueIfNotConnected(requestCallback));
 				});
 			});
 		}
 		applyDeltas(identifier, deltas) {
 			super.applyDeltas(identifier, deltas);
-			if (!this.isConnected || !this.serviceCapabilities) return;
+			if (!this.isConnected || !this.isInitialized) return;
 			if (this.serviceCapabilities?.textDocumentSync === import_main.TextDocumentSyncKind.None) return;
 			if (this.serviceCapabilities?.textDocumentSync !== import_main.TextDocumentSyncKind.Incremental) return this.setValue(identifier, this.getDocument(identifier.uri).getText());
 			const textDocumentChange = {
@@ -10877,7 +11418,7 @@
 		}
 		setValue(identifier, value) {
 			super.setValue(identifier, value);
-			if (!this.isConnected) return;
+			if (!this.isConnected || !this.isInitialized) return;
 			if (this.serviceCapabilities?.textDocumentSync === import_main.TextDocumentSyncKind.None) return;
 			const textDocumentChange = {
 				textDocument: {
@@ -10951,21 +11492,27 @@
 			this.enqueueIfNotConnected(() => this.connection.sendNotification("workspace/didChangeConfiguration", configChanges));
 		}
 		setWorkspace(workspaceUri) {
+			if (workspaceUri === this.workspaceUri) return;
 			super.setWorkspace(workspaceUri);
 			this.enqueueIfNotConnected(() => {
-				if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) return this.$reconnect();
-				const message = {
-					added: [this.workspaceFolder],
-					removed: []
-				};
-				return this.connection.sendRequest("workspace/didChangeWorkspaceFolders", message);
+				if (this.workspaceUri === this.serverWorkspaceUri) return;
+				if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications && this.workspaceFoldersChangeRegistrations.size === 0) return this.$reconnect();
+				const message = { event: {
+					added: this.workspaceUri ? [this.workspaceFolder] : [],
+					removed: this.serverWorkspaceUri ? [this.$workspaceFolder(this.serverWorkspaceUri)] : []
+				} };
+				this.serverWorkspaceUri = this.workspaceUri;
+				return this.connection.sendNotification("workspace/didChangeWorkspaceFolders", message);
 			});
 		}
 		get workspaceFolder() {
-			let workspaceUri = this.workspaceUri;
+			return this.$workspaceFolder(this.workspaceUri);
+		}
+		$workspaceFolder(workspaceUri) {
+			const uri = URI.parse(workspaceUri);
 			return {
 				uri: workspaceUri,
-				name: workspaceUri.split("/").pop()
+				name: uri.path.replace(/\/+$/, "").split("/").pop() || uri.authority || uri.path || workspaceUri
 			};
 		}
 		async findDocumentHighlights(document, position) {
@@ -11031,6 +11578,9 @@
 		registerCapability(registration) {
 			if (!this.serviceCapabilities) this.serviceCapabilities = {};
 			switch (registration.method) {
+				case "workspace/didChangeWorkspaceFolders":
+					this.workspaceFoldersChangeRegistrations.add(registration.id);
+					break;
 				case "textDocument/diagnostic":
 					if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) this.serviceCapabilities.diagnosticProvider = registration.registerOptions;
 					break;
@@ -11071,6 +11621,10 @@
 		unregisterCapability(unregistration) {
 			if (!this.serviceCapabilities) return;
 			switch (unregistration.method) {
+				case "workspace/didChangeWorkspaceFolders":
+					this.workspaceFoldersChangeRegistrations.delete(unregistration.id);
+					if (this.serviceCapabilities.workspace?.workspaceFolders?.changeNotifications === unregistration.id) delete this.serviceCapabilities.workspace.workspaceFolders.changeNotifications;
+					break;
 				case "textDocument/diagnostic":
 					if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) delete this.serviceCapabilities.diagnosticProvider;
 					break;
