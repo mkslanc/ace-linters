@@ -1,6 +1,6 @@
 {
   "name": "ace-linters-root",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "scripts": {
     "build:parts": "npm run build -ws",
     "build": "npm run build:parts && vite build",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/node": "^20.4.2",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "vite": "^8.1.5",
+    "vite": "^8.3.8",
     "vite-plugin-static-copy": "^3.3.0",
     "puppeteer": "^24.39.1"
   },
