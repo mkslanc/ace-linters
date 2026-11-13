@@ -93,6 +93,11 @@ export const cspellGeneratedSettings = {
       description: "Css dictionary."
     },
     {
+      name: "cuda",
+      path: "/__cspell_vfs/@cspell/dict-cpp/dict/cuda.txt.gz",
+      description: "CUDA keywords, built-ins, and runtime and library functions."
+    },
+    {
       name: "dart",
       path: "/__cspell_vfs/@cspell/dict-dart/dict/dart.txt.gz",
       description: "Dart dictionary."
@@ -205,7 +210,10 @@ export const cspellGeneratedSettings = {
         ]
       ],
       description: "British English Dictionary",
-      ignoreForbiddenWords: true
+      ignoreForbiddenWords: true,
+      dictionaryInformation: {
+        locale: "en-GB"
+      }
     },
     {
       name: "filetypes",
@@ -338,6 +346,16 @@ export const cspellGeneratedSettings = {
       description: "Php dictionary."
     },
     {
+      name: "posix-errno",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/posix-errno.txt",
+      description: "Symbolic error names corresponding to POSIX errno values."
+    },
+    {
+      name: "posix-signals",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/posix-signals.txt",
+      description: "Names of POSIX standard signals."
+    },
+    {
       name: "powershell",
       path: "/__cspell_vfs/@cspell/dict-powershell/dict/powershell.txt",
       description: "PowerShell Keyword Dictionary"
@@ -393,13 +411,18 @@ export const cspellGeneratedSettings = {
       description: "ShellScript dictionary."
     },
     {
+      name: "software-terms-alternative",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/software-terms-alternative.txt",
+      description: "Alternative software terms dictionary."
+    },
+    {
       name: "software-tools",
       path: "/__cspell_vfs/@cspell/dict-software-terms/dict/software-tools.txt",
       description: "Software tools dictionary."
     },
     {
       name: "softwareTerms",
-      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/softwareTerms.txt",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/softwareTerms.txt.gz",
       description: "Software terms dictionary."
     },
     {
@@ -612,7 +635,7 @@ export const cspellGeneratedSettings = {
       ]
     },
     {
-      languageId: "c,cpp",
+      languageId: "c,cpp,cuda-cpp",
       locale: "*",
       ignoreRegExpList: [
         "includes",
@@ -635,6 +658,13 @@ export const cspellGeneratedSettings = {
         "cpp-compound-words"
       ],
       dictionaryDefinitions: []
+    },
+    {
+      languageId: "c,cpp,cuda-cpp,python,julia,fortran,FortranFreeForm,FortranFixedForm",
+      locale: "*",
+      dictionaries: [
+        "cuda"
+      ]
     },
     {
       languageId: "csharp",
@@ -664,7 +694,9 @@ export const cspellGeneratedSettings = {
       languageId: "css",
       locale: "*",
       includeRegExpList: [],
-      ignoreRegExpList: [],
+      ignoreRegExpList: [
+        "CSS-url"
+      ],
       patterns: [],
       dictionaries: [
         "css"
@@ -993,6 +1025,9 @@ export const cspellGeneratedSettings = {
       ],
       dictionaries: [
         "latex"
+      ],
+      substitutions: [
+        "latex-accents"
       ]
     },
     {
