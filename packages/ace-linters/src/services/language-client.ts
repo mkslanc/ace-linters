@@ -14,6 +14,7 @@ import {
 import {BaseService} from "./base-service";
 import {MessageType} from "../message-types";
 import {WorkspaceFolder} from "vscode-languageserver-protocol";
+import {URI} from "vscode-uri";
 
 export class LanguageClient extends BaseService implements LanguageService {
     $service;
@@ -21,7 +22,10 @@ export class LanguageClient extends BaseService implements LanguageService {
     private isInitialized = false;
     private socket: WebSocket;
     private connection: lsp.ProtocolConnection;
-    private requestsQueue: Function[] = [];
+    private requestsQueue: (() => void)[] = [];
+    private serverWorkspaceUri?: string;
+    private openedDocumentUris = new Set<string>();
+    private workspaceFoldersChangeRegistrations = new Set<string>();
     callbackId = 0;
     callbacks = {};
 
@@ -30,6 +34,7 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     constructor(serverData: LanguageClientConfig, ctx, workspaceUri?: string) {
         super(serverData.modes, workspaceUri);
+        this.clientCapabilities.workspace!.workspaceFolders = true;
         this.ctx = ctx;
         this.serverData = serverData;
         this.$connect();
@@ -81,7 +86,6 @@ export class LanguageClient extends BaseService implements LanguageService {
         this.isConnected = true;
 
         this.connection = connection;
-        this.sendInitialize(initializationOptions);
 
         this.connection.onNotification('textDocument/publishDiagnostics', (
             result: lsp.PublishDiagnosticsParams,
@@ -111,6 +115,10 @@ export class LanguageClient extends BaseService implements LanguageService {
 
         this.connection.onRequest('workspace/configuration', (params: lsp.ConfigurationParams) => {
             console.log(params);
+        });
+
+        this.connection.onRequest('workspace/workspaceFolders', () => {
+            return this.workspaceUri ? [this.workspaceFolder] : null;
         });
 
         this.connection.onRequest('client/registerCapability', (params: lsp.RegistrationParams) => {
@@ -166,12 +174,15 @@ export class LanguageClient extends BaseService implements LanguageService {
 
         this.connection.onClose(() => {
             this.isConnected = false;
+            this.isInitialized = false;
         });
+
+        this.sendInitialize(initializationOptions);
     }
 
     private async $reconnect() {
-        Object.values(this.documents).forEach(document => this.removeDocument(document));
         await this.dispose();
+        this.requestsQueue.unshift(...Object.keys(this.documents).map(uri => () => this.$openDocument(uri)));
         this.$connect();
     }
 
@@ -220,11 +231,25 @@ export class LanguageClient extends BaseService implements LanguageService {
             return;
         }
         super.addDocument(document);
+        this.enqueueIfNotConnected(() => this.$openDocument(document.uri));
+    }
+
+    private $openDocument(uri: string) {
+        const document = this.getDocument(uri);
+        if (!document || this.openedDocumentUris.has(uri)) {
+            return;
+        }
+        this.openedDocumentUris.add(uri);
         const textDocumentMessage: lsp.DidOpenTextDocumentParams = {
-            textDocument: document
+            textDocument: {
+                uri,
+                languageId: document.languageId,
+                version: document.version,
+                text: document.getText()
+            }
         };
 
-        this.enqueueIfNotConnected(() => this.connection.sendNotification('textDocument/didOpen', textDocumentMessage));
+        return this.connection.sendNotification('textDocument/didOpen', textDocumentMessage);
     }
 
     enqueueIfNotConnected(callback: () => void) {
@@ -237,14 +262,21 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     removeDocument(document: lsp.TextDocumentIdentifier) {
         super.removeDocument(document);
-        this.enqueueIfNotConnected(() => this.connection.sendNotification('textDocument/didClose', {
-            textDocument: {
-                uri: document.uri
+        this.enqueueIfNotConnected(() => {
+            if (!this.openedDocumentUris.delete(document.uri)) {
+                return;
             }
-        } as lsp.DidCloseTextDocumentParams));
+            return this.connection.sendNotification('textDocument/didClose', {
+                textDocument: {uri: document.uri}
+            } as lsp.DidCloseTextDocumentParams);
+        });
     }
 
     async dispose() {
+        this.isConnected = false;
+        this.isInitialized = false;
+        this.openedDocumentUris.clear();
+        this.workspaceFoldersChangeRegistrations.clear();
         this.connection?.dispose();
     }
 
@@ -286,18 +318,19 @@ export class LanguageClient extends BaseService implements LanguageService {
     sendInitialize(initializationOptions) {
         if (!this.isConnected)
             return;
+        const rootUri = this.workspaceUri ?? null;
+        const root = rootUri ? URI.parse(rootUri) : null;
         const message: lsp.InitializeParams = {
             capabilities: this.clientCapabilities,
             initializationOptions: initializationOptions,
             processId: null,
-            rootUri: null, //TODO: this.documentInfo.rootUri
+            rootUri,
+            rootPath: root?.scheme === 'file' ? root.fsPath : null,
+            workspaceFolders: rootUri ? [this.workspaceFolder] : null,
         };
-        if (this.workspaceUri) {
-            message.workspaceFolders = [this.workspaceFolder];
-        }
+        this.serverWorkspaceUri = this.workspaceUri;
 
-        this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
-            this.isInitialized = true;
+        return this.connection.sendRequest("initialize", message).then((params: lsp.InitializeResult) => {
             this.serviceCapabilities = params.capabilities as lsp.ServerCapabilities;
             const serviceName = this.serviceName;
             Object.keys(this.documents).forEach((documentUri) => {
@@ -312,20 +345,20 @@ export class LanguageClient extends BaseService implements LanguageService {
             });
 
 
-            this.connection.sendNotification('initialized', {}).then(() => {
+            return this.connection.sendNotification('initialized', {}).then(() => {
+                this.isInitialized = true;
                 this.connection.sendNotification('workspace/didChangeConfiguration', {
                     settings: {},
                 });
 
-                this.requestsQueue.forEach((requestCallback) => requestCallback());
-                this.requestsQueue = [];
+                this.requestsQueue.splice(0).forEach(requestCallback => this.enqueueIfNotConnected(requestCallback));
             });
         });
     }
 
     applyDeltas(identifier: lsp.VersionedTextDocumentIdentifier, deltas: lsp.TextDocumentContentChangeEvent[]) {
         super.applyDeltas(identifier, deltas);
-        if (!this.isConnected || !this.serviceCapabilities) {
+        if (!this.isConnected || !this.isInitialized) {
             return;
         }
         if (this.serviceCapabilities?.textDocumentSync === lsp.TextDocumentSyncKind.None) {
@@ -346,7 +379,7 @@ export class LanguageClient extends BaseService implements LanguageService {
 
     setValue(identifier: lsp.VersionedTextDocumentIdentifier, value: string) {
         super.setValue(identifier, value);
-        if (!this.isConnected) {
+        if (!this.isConnected || !this.isInitialized) {
             return;
         }
         if (this.serviceCapabilities?.textDocumentSync === lsp.TextDocumentSyncKind.None) {
@@ -468,25 +501,39 @@ export class LanguageClient extends BaseService implements LanguageService {
 
 
     setWorkspace(workspaceUri: string) {
+        if (workspaceUri === this.workspaceUri) {
+            return;
+        }
         super.setWorkspace(workspaceUri);
         this.enqueueIfNotConnected(() => {
-            if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications) {
+            if (this.workspaceUri === this.serverWorkspaceUri) {
+                return;
+            }
+            if (!this.serviceCapabilities?.workspace?.workspaceFolders?.changeNotifications &&
+                this.workspaceFoldersChangeRegistrations.size === 0) {
                 return this.$reconnect();
             }
-            const message: lsp.WorkspaceFoldersChangeEvent = {
-                added: [this.workspaceFolder],
-                removed: []
+            const message: lsp.DidChangeWorkspaceFoldersParams = {
+                event: {
+                    added: this.workspaceUri ? [this.workspaceFolder] : [],
+                    removed: this.serverWorkspaceUri ? [this.$workspaceFolder(this.serverWorkspaceUri)] : []
+                }
             };
+            this.serverWorkspaceUri = this.workspaceUri;
 
-            return this.connection.sendRequest('workspace/didChangeWorkspaceFolders', message);
+            return this.connection.sendNotification('workspace/didChangeWorkspaceFolders', message);
         });
     }
 
     get workspaceFolder(): WorkspaceFolder {
-        let workspaceUri = this.workspaceUri!;
+        return this.$workspaceFolder(this.workspaceUri!);
+    }
+
+    private $workspaceFolder(workspaceUri: string): WorkspaceFolder {
+        const uri = URI.parse(workspaceUri);
         return {
             uri: workspaceUri,
-            name: workspaceUri.split("/").pop()!,
+            name: uri.path.replace(/\/+$/, "").split("/").pop() || uri.authority || uri.path || workspaceUri,
         }
     }
 
@@ -587,6 +634,9 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
 
         switch (registration.method) {
+            case 'workspace/didChangeWorkspaceFolders':
+                this.workspaceFoldersChangeRegistrations.add(registration.id);
+                break;
             case 'textDocument/diagnostic':
                 if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) {
                     this.serviceCapabilities.diagnosticProvider = registration.registerOptions;
@@ -656,6 +706,12 @@ export class LanguageClient extends BaseService implements LanguageService {
         }
 
         switch (unregistration.method) {
+            case 'workspace/didChangeWorkspaceFolders':
+                this.workspaceFoldersChangeRegistrations.delete(unregistration.id);
+                if (this.serviceCapabilities.workspace?.workspaceFolders?.changeNotifications === unregistration.id) {
+                    delete this.serviceCapabilities.workspace.workspaceFolders.changeNotifications;
+                }
+                break;
             case 'textDocument/diagnostic':
                 if (this.clientCapabilities.textDocument?.diagnostic?.dynamicRegistration) {
                     delete this.serviceCapabilities.diagnosticProvider;

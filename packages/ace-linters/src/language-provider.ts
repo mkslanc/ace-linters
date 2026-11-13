@@ -157,7 +157,7 @@ export class LanguageProvider {
 
         this.options.markdownConverter ||= defaultMarkdownConverter;
         if (options?.workspacePath) {
-            this.workspaceUri = convertToUri(options.workspacePath);
+            this.changeWorkspaceFolder(options.workspacePath);
         }
         if (this.options.functionality.inlineCompletion) {
             this.checkInlineCompletionAdapter(() => {
@@ -607,9 +607,10 @@ export class LanguageProvider {
      * @param workspaceUri - The new workspace URI. Could be simple path, not URI itself.
      */
     changeWorkspaceFolder(workspaceUri: string) {
+        workspaceUri = convertToUri(workspaceUri);
         if (workspaceUri === this.workspaceUri)
             return;
-        this.workspaceUri = convertToUri(workspaceUri);
+        this.workspaceUri = workspaceUri;
         this.$messageController.setWorkspace(this.workspaceUri);
     }
 
