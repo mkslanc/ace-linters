@@ -1,12 +1,12 @@
 {
   "name": "@ace-linters/eslint-linter-bundle",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "build": "rimraf dist && node ./build.js"
   },
   "dependencies": {
     "path-browserify": "^1.0.0",
-    "eslint": "^9.39.2"
+    "eslint": "^10.14.0"
   },
   "devDependencies": {
     "esbuild": "^0.27.2"

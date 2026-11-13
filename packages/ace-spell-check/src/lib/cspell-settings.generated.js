@@ -93,6 +93,11 @@ export const cspellGeneratedSettings = {
       description: "Css dictionary."
     },
     {
+      name: "cuda",
+      path: "/__cspell_vfs/@cspell/dict-cpp/dict/cuda.txt.gz",
+      description: "CUDA keywords, built-ins, and runtime and library functions."
+    },
+    {
       name: "dart",
       path: "/__cspell_vfs/@cspell/dict-dart/dict/dart.txt.gz",
       description: "Dart dictionary."
@@ -205,7 +210,10 @@ export const cspellGeneratedSettings = {
         ]
       ],
       description: "British English Dictionary",
-      ignoreForbiddenWords: true
+      ignoreForbiddenWords: true,
+      dictionaryInformation: {
+        locale: "en-GB"
+      }
     },
     {
       name: "filetypes",
@@ -338,6 +346,16 @@ export const cspellGeneratedSettings = {
       description: "Php dictionary."
     },
     {
+      name: "posix-errno",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/posix-errno.txt",
+      description: "Symbolic error names corresponding to POSIX errno values."
+    },
+    {
+      name: "posix-signals",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/posix-signals.txt",
+      description: "Names of POSIX standard signals."
+    },
+    {
       name: "powershell",
       path: "/__cspell_vfs/@cspell/dict-powershell/dict/powershell.txt",
       description: "PowerShell Keyword Dictionary"
@@ -393,13 +411,18 @@ export const cspellGeneratedSettings = {
       description: "ShellScript dictionary."
     },
     {
+      name: "software-terms-alternative",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/software-terms-alternative.txt",
+      description: "Alternative software terms dictionary."
+    },
+    {
       name: "software-tools",
       path: "/__cspell_vfs/@cspell/dict-software-terms/dict/software-tools.txt",
       description: "Software tools dictionary."
     },
     {
       name: "softwareTerms",
-      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/softwareTerms.txt",
+      path: "/__cspell_vfs/@cspell/dict-software-terms/dict/softwareTerms.txt.gz",
       description: "Software terms dictionary."
     },
     {
@@ -612,7 +635,7 @@ export const cspellGeneratedSettings = {
       ]
     },
     {
-      languageId: "c,cpp",
+      languageId: "c,cpp,cuda-cpp",
       locale: "*",
       ignoreRegExpList: [
         "includes",
@@ -635,6 +658,13 @@ export const cspellGeneratedSettings = {
         "cpp-compound-words"
       ],
       dictionaryDefinitions: []
+    },
+    {
+      languageId: "c,cpp,cuda-cpp,python,julia,fortran,FortranFreeForm,FortranFixedForm",
+      locale: "*",
+      dictionaries: [
+        "cuda"
+      ]
     },
     {
       languageId: "csharp",
@@ -664,7 +694,9 @@ export const cspellGeneratedSettings = {
       languageId: "css",
       locale: "*",
       includeRegExpList: [],
-      ignoreRegExpList: [],
+      ignoreRegExpList: [
+        "CSS-url"
+      ],
       patterns: [],
       dictionaries: [
         "css"
@@ -993,6 +1025,9 @@ export const cspellGeneratedSettings = {
       ],
       dictionaries: [
         "latex"
+      ],
+      substitutions: [
+        "latex-accents"
       ]
     },
     {
@@ -1323,6 +1358,341 @@ export const cspellGeneratedSettings = {
   import: [],
   noConfigSearch: true,
   loadDefaultConfiguration: false,
+  substitutionDefinitions: [
+    {
+      name: "latex-accents",
+      entries: [
+        [
+          "\\.a",
+          "ȧ"
+        ],
+        [
+          "\\.c",
+          "ċ"
+        ],
+        [
+          "\\.e",
+          "ė"
+        ],
+        [
+          "\\.n",
+          "ṅ"
+        ],
+        [
+          "\\.o",
+          "ȯ"
+        ],
+        [
+          "\\.s",
+          "ṡ"
+        ],
+        [
+          "\\.y",
+          "ẏ"
+        ],
+        [
+          "\\'a",
+          "á"
+        ],
+        [
+          "\\'c",
+          "ć"
+        ],
+        [
+          "\\'e",
+          "é"
+        ],
+        [
+          "\\'i",
+          "í"
+        ],
+        [
+          "\\'n",
+          "ń"
+        ],
+        [
+          "\\'o",
+          "ó"
+        ],
+        [
+          "\\'s",
+          "ś"
+        ],
+        [
+          "\\'u",
+          "ú"
+        ],
+        [
+          "\\'y",
+          "ý"
+        ],
+        [
+          "\\\"a",
+          "ä"
+        ],
+        [
+          "\\\"e",
+          "ë"
+        ],
+        [
+          "\\\"i",
+          "ï"
+        ],
+        [
+          "\\\"o",
+          "ö"
+        ],
+        [
+          "\\\"u",
+          "ü"
+        ],
+        [
+          "\\\"y",
+          "ÿ"
+        ],
+        [
+          "\\`a",
+          "à"
+        ],
+        [
+          "\\`e",
+          "è"
+        ],
+        [
+          "\\`i",
+          "ì"
+        ],
+        [
+          "\\`n",
+          "ǹ"
+        ],
+        [
+          "\\`o",
+          "ò"
+        ],
+        [
+          "\\`u",
+          "ù"
+        ],
+        [
+          "\\`y",
+          "ỳ"
+        ],
+        [
+          "\\^a",
+          "â"
+        ],
+        [
+          "\\^c",
+          "ĉ"
+        ],
+        [
+          "\\^e",
+          "ê"
+        ],
+        [
+          "\\^i",
+          "î"
+        ],
+        [
+          "\\^o",
+          "ô"
+        ],
+        [
+          "\\^s",
+          "ŝ"
+        ],
+        [
+          "\\^u",
+          "û"
+        ],
+        [
+          "\\^y",
+          "ŷ"
+        ],
+        [
+          "\\=a",
+          "ā"
+        ],
+        [
+          "\\=e",
+          "ē"
+        ],
+        [
+          "\\=i",
+          "ī"
+        ],
+        [
+          "\\=o",
+          "ō"
+        ],
+        [
+          "\\=u",
+          "ū"
+        ],
+        [
+          "\\=y",
+          "ȳ"
+        ],
+        [
+          "\\~a",
+          "ã"
+        ],
+        [
+          "\\~e",
+          "ẽ"
+        ],
+        [
+          "\\~i",
+          "ĩ"
+        ],
+        [
+          "\\~n",
+          "ñ"
+        ],
+        [
+          "\\~o",
+          "õ"
+        ],
+        [
+          "\\~u",
+          "ũ"
+        ],
+        [
+          "\\~y",
+          "ỹ"
+        ],
+        [
+          "\\cc",
+          "ç"
+        ],
+        [
+          "\\ce",
+          "ȩ"
+        ],
+        [
+          "\\cn",
+          "ņ"
+        ],
+        [
+          "\\cs",
+          "ş"
+        ],
+        [
+          "\\da",
+          "ạ"
+        ],
+        [
+          "\\de",
+          "ẹ"
+        ],
+        [
+          "\\di",
+          "ị"
+        ],
+        [
+          "\\dn",
+          "ṇ"
+        ],
+        [
+          "\\do",
+          "ọ"
+        ],
+        [
+          "\\ds",
+          "ṣ"
+        ],
+        [
+          "\\du",
+          "ụ"
+        ],
+        [
+          "\\dy",
+          "ỵ"
+        ],
+        [
+          "\\Ho",
+          "ő"
+        ],
+        [
+          "\\Hu",
+          "ű"
+        ],
+        [
+          "\\ka",
+          "ą"
+        ],
+        [
+          "\\ke",
+          "ę"
+        ],
+        [
+          "\\ki",
+          "į"
+        ],
+        [
+          "\\ko",
+          "ǫ"
+        ],
+        [
+          "\\ku",
+          "ų"
+        ],
+        [
+          "\\ua",
+          "ă"
+        ],
+        [
+          "\\ue",
+          "ĕ"
+        ],
+        [
+          "\\ui",
+          "ĭ"
+        ],
+        [
+          "\\uo",
+          "ŏ"
+        ],
+        [
+          "\\uu",
+          "ŭ"
+        ],
+        [
+          "\\va",
+          "ǎ"
+        ],
+        [
+          "\\vc",
+          "č"
+        ],
+        [
+          "\\ve",
+          "ě"
+        ],
+        [
+          "\\vi",
+          "ǐ"
+        ],
+        [
+          "\\vn",
+          "ň"
+        ],
+        [
+          "\\vo",
+          "ǒ"
+        ],
+        [
+          "\\vs",
+          "š"
+        ],
+        [
+          "\\vu",
+          "ǔ"
+        ]
+      ]
+    }
+  ],
   overrides: [
     {
       filename: "*.{adb,ads}",

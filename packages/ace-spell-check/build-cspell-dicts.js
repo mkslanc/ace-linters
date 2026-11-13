@@ -145,6 +145,7 @@ function mergeExtSettings(baseSettings, extSettings, extFile, dictDefByName, dic
 
   baseSettings.dictionaries.push(...dictionaries);
   baseSettings.languageSettings.push(...languageSettings);
+  baseSettings.substitutionDefinitions.push(...(extSettings.substitutionDefinitions || []));
   baseSettings.overrides.push(...overrides);
   baseSettings.words.push(...words);
   baseSettings.flagWords.push(...flagWords);
@@ -263,6 +264,7 @@ async function run() {
     dictionaries: [...(defaultSettings.dictionaries || [])],
     dictionaryDefinitions: [...(defaultSettings.dictionaryDefinitions || [])],
     languageSettings: [...(defaultSettings.languageSettings || [])],
+    substitutionDefinitions: [...(defaultSettings.substitutionDefinitions || [])],
     overrides: [...(defaultSettings.overrides || [])],
     words: [...(defaultSettings.words || [])],
     flagWords: [...(defaultSettings.flagWords || [])],
@@ -295,6 +297,7 @@ async function run() {
   settings.dictionaryDefinitions = Array.from(dictDefByName.values()).sort((a, b) => a.name.localeCompare(b.name));
   settings.dictionaries = Array.from(new Set(settings.dictionaries)).sort((a, b) => a.localeCompare(b));
   settings.languageSettings = dedupeArray(settings.languageSettings);
+  settings.substitutionDefinitions = dedupeArray(settings.substitutionDefinitions);
   settings.overrides = dedupeArray(settings.overrides || []);
   settings.words = Array.from(new Set(settings.words));
   settings.flagWords = Array.from(new Set(settings.flagWords));
